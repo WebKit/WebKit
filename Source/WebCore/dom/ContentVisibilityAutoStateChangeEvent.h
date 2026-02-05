@@ -36,9 +36,9 @@ public:
         bool skipped = false;
     };
 
-    static Ref<ContentVisibilityAutoStateChangeEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<ContentVisibilityAutoStateChangeEvent> create(const AtomString& type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new ContentVisibilityAutoStateChangeEvent(type, initializer, isTrusted));
+        return adoptRef(*new ContentVisibilityAutoStateChangeEvent(type, WTF::move(initializer), isTrusted));
     }
 
     virtual ~ContentVisibilityAutoStateChangeEvent();
@@ -46,7 +46,7 @@ public:
     bool skipped() const { return m_skipped; }
 
 private:
-    ContentVisibilityAutoStateChangeEvent(const AtomString&, const Init&, IsTrusted);
+    ContentVisibilityAutoStateChangeEvent(const AtomString&, Init&&, IsTrusted);
 
     bool m_skipped;
 };

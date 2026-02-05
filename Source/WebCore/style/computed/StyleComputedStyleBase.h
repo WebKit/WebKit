@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2014-2021 Google Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
@@ -439,7 +439,7 @@ using WebkitBoxFlex = Number<CSS::All, float>;
 using WebkitBoxFlexGroup = Integer<CSS::Nonnegative>;
 using WebkitBoxOrdinalGroup = Integer<CSS::Positive>;
 
-constexpr auto PublicPseudoIDBits = 17;
+constexpr auto PublicPseudoIDBits = 18;
 constexpr auto TextDecorationLineBits = 5;
 constexpr auto TextTransformBits = 6;
 constexpr auto PseudoElementTypeBits = 5;
@@ -845,14 +845,16 @@ protected:
 
     const SVGData& svgData() const { return m_svgData; }
 
+    // Non-inherited and inherited flags
+    NonInheritedFlags m_nonInheritedFlags;
+    InheritedFlags m_inheritedFlags;
+
     // Non-inherited data
     DataRef<NonInheritedData> m_nonInheritedData;
-    NonInheritedFlags m_nonInheritedFlags;
 
     // Inherited data
     DataRef<InheritedRareData> m_inheritedRareData;
     DataRef<InheritedData> m_inheritedData;
-    InheritedFlags m_inheritedFlags;
 
     // Non-inherited and inherited data specialized to SVG
     DataRef<SVGData> m_svgData;

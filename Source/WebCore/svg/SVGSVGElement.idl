@@ -52,7 +52,7 @@
     [NewObject] SVGMatrix createSVGMatrix();
     [NewObject] SVGRect createSVGRect();
     [NewObject] SVGTransform createSVGTransform();
-    [NewObject] SVGTransform createSVGTransformFromMatrix(optional DOMMatrix2DInit matrix);
+    [NewObject] SVGTransform createSVGTransformFromMatrix(optional DOMMatrix2DInit matrix = {});
 
     Element? getElementById([RequiresExistingAtomString] DOMString elementId);
 

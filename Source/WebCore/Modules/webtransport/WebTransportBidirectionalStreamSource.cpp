@@ -33,6 +33,7 @@ namespace WebCore {
 void WebTransportBidirectionalStreamSource::doCancel()
 {
     m_isCancelled = true;
+    cancelFinished();
 }
 
 bool WebTransportBidirectionalStreamSource::receiveIncomingStream(JSC::JSGlobalObject& globalObject, Ref<WebTransportBidirectionalStream>& stream)

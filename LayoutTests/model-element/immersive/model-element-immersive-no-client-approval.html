@@ -15,7 +15,7 @@ promise_test(async t => {
 
     await test_driver.bless("immersive");
 
-    await promise_rejects_js(t, TypeError, 
+    await promise_rejects_dom(t, "AbortError", 
         model.requestImmersive(),
         'Should reject without client\'s approval'
     );

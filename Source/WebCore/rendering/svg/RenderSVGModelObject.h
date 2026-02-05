@@ -71,7 +71,12 @@ public:
     LayoutRect borderBoxRectEquivalent() const { return { LayoutPoint(), m_layoutRect.size() }; }
     LayoutRect contentBoxRectEquivalent() const { return borderBoxRectEquivalent(); }
     LayoutRect frameRectEquivalent() const { return m_layoutRect; }
-    LayoutRect visualOverflowRectEquivalent() const { return SVGBoundingBoxComputation::computeVisualOverflowRect(*this); }
+    LayoutRect visualOverflowRectEquivalent() const
+    {
+        if (!m_cachedVisualOverflowRect)
+            m_cachedVisualOverflowRect = SVGBoundingBoxComputation::computeVisualOverflowRect(*this);
+        return *m_cachedVisualOverflowRect;
+    }
     LayoutSize locationOffsetEquivalent() const { return toLayoutSize(currentSVGLayoutLocation()); }
 
     bool hasVisualOverflow() const { return !borderBoxRectEquivalent().contains(visualOverflowRectEquivalent()); }
@@ -84,6 +89,8 @@ public:
 
     virtual Path computeClipPath(AffineTransform&) const;
     virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer) const;
+
+    void invalidateCachedVisualOverflowRect() override { m_cachedVisualOverflowRect = std::nullopt; }
 
 protected:
     RenderSVGModelObject(Type, Document&, RenderStyle&&, OptionSet<SVGModelObjectFlag> = { });
@@ -107,6 +114,8 @@ protected:
     // Returns false if the rect has no intersection with the applied clip rect. When the context specifies edge-inclusive
     // intersection, this return value allows distinguishing between no intersection and zero-area intersection.
     bool applyCachedClipAndScrollPosition(RepaintRects&, const RenderLayerModelObject* container, VisibleRectContext) const final;
+
+    mutable std::optional<LayoutRect> m_cachedVisualOverflowRect;
 
 private:
     LayoutSize cachedSizeForOverflowClip() const;

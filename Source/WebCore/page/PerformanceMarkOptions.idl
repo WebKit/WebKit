@@ -26,9 +26,7 @@
 typedef double DOMHighResTimeStamp;
 
 // https://w3c.github.io/user-timing/#ref-for-dom-performancemarkoptions-1
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary PerformanceMarkOptions {
+dictionary PerformanceMarkOptions {
     any detail;
     DOMHighResTimeStamp startTime;
 };

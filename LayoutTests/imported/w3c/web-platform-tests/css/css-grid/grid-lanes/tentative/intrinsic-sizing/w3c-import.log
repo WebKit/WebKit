@@ -68,6 +68,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-contain-intrinsic-size-row-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-contain-intrinsic-size-row-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-contain-intrinsic-size-row-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-contain-intrinsic-size-row-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-contain-intrinsic-size-row-004-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-contain-intrinsic-size-row-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-contain-intrinsic-size-row-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-contain-intrinsic-size-row-005-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-contain-intrinsic-size-row-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-intrinsic-sizing-cols-001-auto-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-intrinsic-sizing-cols-001-auto-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/intrinsic-sizing/grid-lanes-intrinsic-sizing-cols-001-auto.html

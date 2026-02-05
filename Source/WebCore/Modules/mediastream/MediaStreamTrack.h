@@ -86,7 +86,7 @@ public:
     virtual bool isCanvas() const { return false; }
 
     const AtomString& kind() const;
-    WEBCORE_EXPORT const String& id() const;
+    const String& id() const { return m_private->id(); }
     const String& label() const;
 
     const AtomString& contentHint() const;
@@ -122,9 +122,9 @@ public:
         std::optional<int> sampleRate;
         std::optional<int> sampleSize;
         std::optional<bool> echoCancellation;
-        String displaySurface;
         String deviceId;
         String groupId;
+        String displaySurface;
 
         String whiteBalanceMode;
         std::optional<double> zoom;
@@ -190,10 +190,20 @@ public:
     void setMediaStreamId(const String& id) { m_mediaStreamId = id; }
     const String& mediaStreamId() const { return m_mediaStreamId; }
 
+    ScriptExecutionContext* scriptExecutionContext() const final;
+
+    class Keeper : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Keeper> {
+    public:
+        static Ref<Keeper> create() { return adoptRef(*new Keeper);}
+    private:
+        Keeper() = default;
+    };
+
+    Ref<Keeper> keeper();
+
 protected:
     MediaStreamTrack(ScriptExecutionContext&, Ref<MediaStreamTrackPrivate>&&);
 
-    ScriptExecutionContext* scriptExecutionContext() const final;
     using ActiveDOMObject::protectedScriptExecutionContext;
 
 private:
@@ -245,6 +255,7 @@ private:
     bool m_isDetached { false };
     mutable AtomString m_kind;
     mutable AtomString m_contentHint;
+    ThreadSafeWeakPtr<Keeper> m_keeper;
 };
 
 typedef Vector<Ref<MediaStreamTrack>> MediaStreamTrackVector;

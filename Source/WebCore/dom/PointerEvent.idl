@@ -48,7 +48,7 @@
     JSGenerateToNativeObject,
     ExportToWrappedFunction
 ] interface PointerEvent : MouseEvent {
-    constructor([AtomString] DOMString type, optional PointerEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional PointerEventInit eventInitDict = {});
 
     readonly attribute long pointerId;
     readonly attribute double width;

@@ -186,7 +186,7 @@ void BaseAudioContext::lazyInitialize()
     if (m_isAudioThreadFinished)
         return;
 
-    protectedDestination()->initialize();
+    protect(destination())->initialize();
 
     m_isInitialized = true;
 }
@@ -212,7 +212,7 @@ void BaseAudioContext::uninitialize()
         return;
 
     // This stops the audio thread and all audio rendering.
-    protectedDestination()->uninitialize();
+    protect(destination())->uninitialize();
 
     // Don't allow the context to initialize a second time after it's already been explicitly uninitialized.
     m_isAudioThreadFinished = true;
@@ -278,7 +278,7 @@ void BaseAudioContext::stop()
     m_isStopScheduled = true;
 
     ASSERT(document());
-    protectedDocument()->updateIsPlayingMedia();
+    protect(document())->updateIsPlayingMedia();
 
     uninitialize();
     clear();
@@ -289,18 +289,13 @@ Document* BaseAudioContext::document() const
     return downcast<Document>(scriptExecutionContext());
 }
 
-RefPtr<Document> BaseAudioContext::protectedDocument() const
-{
-    return document();
-}
-
 bool BaseAudioContext::wouldTaintOrigin(const URL& url) const
 {
     if (url.protocolIsData())
         return false;
 
     if (RefPtr document = this->document())
-        return !document->protectedSecurityOrigin()->canRequest(url, OriginAccessPatternsForWebProcess::singleton());
+        return !protect(document->securityOrigin())->canRequest(url, OriginAccessPatternsForWebProcess::singleton());
 
     return false;
 }
@@ -989,7 +984,7 @@ void BaseAudioContext::workletIsReady()
 
     // If we're already rendering when the worklet becomes ready, we need to restart
     // rendering in order to switch to the audio worklet thread.
-    protectedDestination()->restartRendering();
+    protect(destination())->restartRendering();
 }
 
 #if !RELEASE_LOG_DISABLED

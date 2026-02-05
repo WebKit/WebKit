@@ -47,7 +47,7 @@ constexpr bool verbose = false;
 // This tells you those things that die on the boundary between nodeBefore and nodeAfter. It is
 // conservative in the sense that it might resort to telling you some things that are still live at
 // nodeAfter.
-template<typename Functor>
+template<WTF::ConstInvocable<void(Operand)> Functor>
 void forAllKilledOperands(Graph& graph, Node* nodeBefore, Node* nodeAfter, const Functor& functor)
 {
     CodeOrigin before = nodeBefore->origin.forExit;
@@ -125,7 +125,7 @@ void forAllKilledOperands(Graph& graph, Node* nodeBefore, Node* nodeAfter, const
 }
     
 // Tells you all of the nodes that would no longer be live across the node at this nodeIndex.
-template<typename Functor>
+template<WTF::ConstInvocable<void(Node*)> Functor>
 void forAllKilledNodesAtNodeIndex(
     Graph& graph, AvailabilityMap& availabilityMap, BasicBlock* block, unsigned nodeIndex,
     const Functor& functor)
@@ -173,7 +173,7 @@ void forAllKilledNodesAtNodeIndex(
 // Tells you all of the places to start searching from in a basic block. Gives you the node index at which
 // the value is either no longer live. This pretends that nodes are dead at the end of the block, so that
 // you can use this to do per-basic-block analyses.
-template<typename Functor>
+template<WTF::ConstInvocable<void(unsigned, Node*)> Functor>
 void forAllKillsInBlock(
     Graph& graph, const CombinedLiveness& combinedLiveness, BasicBlock* block,
     const Functor& functor)

@@ -4,7 +4,7 @@ layer at (0,0) size 800x170
   RenderBlock {html} at (0,0) size 800x170
     RenderBody {body} at (8,16) size 784x146
       RenderBlock {p} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 172x19
+        RenderText {#text} at (0,0) size 172x20
           text run at (0,0) width 172: "COLGROUP WIDTH=pct"
       RenderTable {table} at (0,36) size 400x110 [border: (1px outset #000000)]
         RenderTableCol {colgroup} at (0,0) size 0x0
@@ -12,7 +12,7 @@ layer at (0,0) size 800x170
         RenderTableSection (anonymous) at (1,1) size 398x108
           RenderTableRow {tr} at (0,2) size 398x104
             RenderTableCell {td} at (2,2) size 98x104 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 88x99
+              RenderText {#text} at (2,2) size 88x100
                 text run at (2,2) width 81: "This column"
                 text run at (2,22) width 88: "should have a"
                 text run at (2,42) width 88: "width of 25%"
@@ -20,7 +20,7 @@ layer at (0,0) size 800x170
                 text run at (2,82) width 18: "or "
                 text run at (19,82) width 41: "100px"
             RenderTableCell {td} at (102,32) size 294x44 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,32) size 281x39
+              RenderText {#text} at (2,32) size 281x40
                 text run at (2,2) width 281: "This column should have a width of 75% of"
                 text run at (2,22) width 88: "400 pixels or "
                 text run at (89,22) width 41: "300px"

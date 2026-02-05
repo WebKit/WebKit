@@ -26,7 +26,6 @@
 [
     Conditional=WEBXR_LAYERS,
     EnabledBySetting=WebXRLayersAPIEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary XRLayerEventInit : EventInit {
     required WebXRLayer layer;
 };

@@ -571,7 +571,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
 
             auto& renderer = downcast<RenderBox>(*box.layoutBox().rendererForIntegration());
 
-            if (auto* layer = renderer.layer())
+            if (CheckedPtr layer = renderer.layer())
                 layer->setIsHiddenByOverflowTruncation(box.isFullyTruncated());
 
             renderer.setLocation(Layout::toLayoutPoint(box.visualRectIgnoringBlockDirection().location()));
@@ -642,9 +642,9 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
 
         if (layoutBox.isOutOfFlowPositioned()) {
             ASSERT(renderer.layer());
-            auto& layer = *renderer.layer();
+            CheckedRef layer = *renderer.layer();
             auto borderBoxLogicalTopLeft = Layout::BoxGeometry::borderBoxTopLeft(logicalGeometry);
-            auto previousStaticPosition = LayoutPoint { layer.staticInlinePosition(), layer.staticBlockPosition() };
+            auto previousStaticPosition = LayoutPoint { layer->staticInlinePosition(), layer->staticBlockPosition() };
             auto delta = borderBoxLogicalTopLeft - previousStaticPosition;
             auto hasStaticInlinePositioning = layoutBox.style().hasStaticInlinePosition(renderer.isHorizontalWritingMode());
 
@@ -654,8 +654,8 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
                     renderer.move(delta.width(), delta.height());
             }
 
-            layer.setStaticBlockPosition(borderBoxLogicalTopLeft.y());
-            layer.setStaticInlinePosition(borderBoxLogicalTopLeft.x());
+            layer->setStaticBlockPosition(borderBoxLogicalTopLeft.y());
+            layer->setStaticInlinePosition(borderBoxLogicalTopLeft.x());
             continue;
         }
     }
@@ -1298,11 +1298,11 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
         auto shouldHitTestForPhase = [&] {
             switch (hitTestAction) {
             case HitTestForeground:
-                // Inline boxes around block-in-inline are hit tested in block background phase.
+                // Inline boxes around block-in-inline are hit tested in block background phases.
                 return !m_inlineContent->isInlineBoxWrapperForBlockLevelBox(box);
             case HitTestChildBlockBackground:
-                return box.isBlockLevelBox() || m_inlineContent->isInlineBoxWrapperForBlockLevelBox(box);
             case HitTestChildBlockBackgrounds:
+                return box.isBlockLevelBox() || m_inlineContent->isInlineBoxWrapperForBlockLevelBox(box);
             case HitTestFloat:
                 return box.isBlockLevelBox();
             case HitTestBlockBackground:

@@ -25,7 +25,6 @@
 
 [
     Conditional=APPLE_PAY,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ApplePayRequestBase {
     sequence<ApplePayFeature> features;
 
@@ -40,7 +39,7 @@
     ApplePayPaymentContact shippingContact;
 
     DOMString applicationData;
-    sequence<DOMString> supportedCountries;
+    sequence<DOMString> supportedCountries = [];
 
     [Conditional=APPLE_PAY_INSTALLMENTS] ApplePayInstallmentConfiguration installmentConfiguration;
 

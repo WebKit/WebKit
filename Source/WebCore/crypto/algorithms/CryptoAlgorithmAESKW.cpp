@@ -66,7 +66,7 @@ void CryptoAlgorithmAESKW::generateKey(const CryptoAlgorithmParameters& paramete
         return;
     }
 
-    callback(WTF::move(result));
+    callback(result.releaseNonNull());
 }
 
 void CryptoAlgorithmAESKW::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)

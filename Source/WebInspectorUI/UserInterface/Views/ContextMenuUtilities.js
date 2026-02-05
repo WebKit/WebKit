@@ -52,9 +52,9 @@ WI.addMouseDownContextMenuHandlers = function(element, populateContextMenuCallba
     });
 };
 
-WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocation)
+WI.appendContextMenuItemsForNetworkResource = function(contextMenu, sourceCodeOrLocation)
 {
-    console.assert(contextMenu instanceof WI.ContextMenu);
+    console.assert(contextMenu instanceof WI.ContextMenu, contextMenu);
     if (!(contextMenu instanceof WI.ContextMenu))
         return;
 
@@ -67,8 +67,8 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
         location = sourceCodeOrLocation;
     }
 
-    console.assert(sourceCode instanceof WI.SourceCode);
-    if (!(sourceCode instanceof WI.SourceCode))
+    console.assert(sourceCode instanceof WI.SourceCode || sourceCode instanceof WI.Redirect, sourceCode);
+    if (!(sourceCode instanceof WI.SourceCode) && !(sourceCode instanceof WI.Redirect))
         return;
 
     if (contextMenu.__domBreakpointItemsAdded)
@@ -178,27 +178,32 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
 
     WI.appendContextMenuItemsForURL(contextMenu, sourceCode.url, {sourceCode, location});
 
-    if (sourceCode instanceof WI.Resource && !sourceCode.localResourceOverride && sourceCode.hasMetadata) {
-        if (sourceCode.urlComponents.scheme !== "data") {
-            contextMenu.appendItem(WI.UIString("Copy as fetch", "Copy the URL, method, headers, etc. of the given network request in the format of a JS fetch expression."), () => {
-                InspectorFrontendHost.copyText(sourceCode.generateFetchCode());
+    let shouldShowCopyOptions = false;
+    if (sourceCode instanceof WI.Resource && !sourceCode.localResourceOverride && sourceCode.hasMetadata)
+        shouldShowCopyOptions = true;
+    else if (sourceCode instanceof WI.Redirect)
+        shouldShowCopyOptions = true;
+
+    if (shouldShowCopyOptions && sourceCode.urlComponents.scheme !== "data") {
+        contextMenu.appendItem(WI.UIString("Copy as fetch", "Copy the URL, method, headers, etc. of the given network request in the format of a JS fetch expression."), () => {
+            InspectorFrontendHost.copyText(sourceCode.generateFetchCode());
+        });
+
+        contextMenu.appendItem(WI.UIString("Copy as cURL"), () => {
+            InspectorFrontendHost.copyText(sourceCode.generateCURLCommand());
+        });
+
+        contextMenu.appendSeparator();
+
+        contextMenu.appendItem(WI.UIString("Copy HTTP Request Headers"), () => {
+            InspectorFrontendHost.copyText(sourceCode.stringifyHTTPRequestHeaders());
+        });
+
+        let hasResponseHeaders = sourceCode instanceof WI.Redirect || (sourceCode instanceof WI.Resource && sourceCode.hasResponse());
+        if (hasResponseHeaders) {
+            contextMenu.appendItem(WI.UIString("Copy HTTP Response Headers"), () => {
+                InspectorFrontendHost.copyText(sourceCode.stringifyHTTPResponseHeaders());
             });
-
-            contextMenu.appendItem(WI.UIString("Copy as cURL"), () => {
-                InspectorFrontendHost.copyText(sourceCode.generateCURLCommand());
-            });
-
-            contextMenu.appendSeparator();
-
-            contextMenu.appendItem(WI.UIString("Copy HTTP Request Headers"), () => {
-                InspectorFrontendHost.copyText(sourceCode.stringifyHTTPRequestHeaders());
-            });
-
-            if (sourceCode.hasResponse()) {
-                contextMenu.appendItem(WI.UIString("Copy HTTP Response Headers"), () => {
-                    InspectorFrontendHost.copyText(sourceCode.stringifyHTTPResponseHeaders());
-                });
-            }
         }
     }
 
@@ -271,11 +276,11 @@ WI.appendContextMenuItemsForURL = function(contextMenu, url, options = {})
 
 WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {})
 {
-    console.assert(contextMenu instanceof WI.ContextMenu);
+    console.assert(contextMenu instanceof WI.ContextMenu, contextMenu);
     if (!(contextMenu instanceof WI.ContextMenu))
         return;
 
-    console.assert(domNode instanceof WI.DOMNode);
+    console.assert(domNode instanceof WI.DOMNode, domNode);
     if (!(domNode instanceof WI.DOMNode))
         return;
 

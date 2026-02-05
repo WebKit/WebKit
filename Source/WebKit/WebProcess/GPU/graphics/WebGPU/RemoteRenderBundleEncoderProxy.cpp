@@ -59,7 +59,7 @@ void RemoteRenderBundleEncoderProxy::setPipeline(const WebCore::WebGPU::RenderPi
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteRenderBundleEncoderProxy::setIndexBuffer(const WebCore::WebGPU::Buffer& buffer, WebCore::WebGPU::IndexFormat indexFormat, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)
+void RemoteRenderBundleEncoderProxy::setIndexBuffer(const WebCore::WebGPU::Buffer& buffer, WebCore::WebGPU::IndexFormat indexFormat, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size)
 {
     auto convertedBuffer = m_convertToBackingContext->convertToBacking(buffer);
 
@@ -67,7 +67,7 @@ void RemoteRenderBundleEncoderProxy::setIndexBuffer(const WebCore::WebGPU::Buffe
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteRenderBundleEncoderProxy::setVertexBuffer(WebCore::WebGPU::Index32 slot, const WebCore::WebGPU::Buffer* buffer, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)
+void RemoteRenderBundleEncoderProxy::setVertexBuffer(WebCore::WebGPU::Index32 slot, const WebCore::WebGPU::Buffer* buffer, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size)
 {
     if (!buffer) {
         auto sendResult = send(Messages::RemoteRenderBundleEncoder::UnsetVertexBuffer(slot, offset, size));
@@ -80,18 +80,18 @@ void RemoteRenderBundleEncoderProxy::setVertexBuffer(WebCore::WebGPU::Index32 sl
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteRenderBundleEncoderProxy::draw(WebCore::WebGPU::Size32 vertexCount, std::optional<WebCore::WebGPU::Size32> instanceCount,
-    std::optional<WebCore::WebGPU::Size32> firstVertex, std::optional<WebCore::WebGPU::Size32> firstInstance)
+void RemoteRenderBundleEncoderProxy::draw(WebCore::WebGPU::Size32 vertexCount, WebCore::WebGPU::Size32 instanceCount,
+    WebCore::WebGPU::Size32 firstVertex, WebCore::WebGPU::Size32 firstInstance)
 {
     auto sendResult = send(Messages::RemoteRenderBundleEncoder::Draw(vertexCount, instanceCount, firstVertex, firstInstance));
     UNUSED_VARIABLE(sendResult);
 }
 
 void RemoteRenderBundleEncoderProxy::drawIndexed(WebCore::WebGPU::Size32 indexCount,
-    std::optional<WebCore::WebGPU::Size32> instanceCount,
-    std::optional<WebCore::WebGPU::Size32> firstIndex,
-    std::optional<WebCore::WebGPU::SignedOffset32> baseVertex,
-    std::optional<WebCore::WebGPU::Size32> firstInstance)
+    WebCore::WebGPU::Size32 instanceCount,
+    WebCore::WebGPU::Size32 firstIndex,
+    WebCore::WebGPU::SignedOffset32 baseVertex,
+    WebCore::WebGPU::Size32 firstInstance)
 {
     auto sendResult = send(Messages::RemoteRenderBundleEncoder::DrawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance));
     UNUSED_VARIABLE(sendResult);

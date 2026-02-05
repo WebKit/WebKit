@@ -23,7 +23,6 @@
 #include "config.h"
 #include "SVGTRefElement.h"
 
-#include "AddEventListenerOptionsInlines.h"
 #include "ElementRareData.h"
 #include "EventListener.h"
 #include "EventNames.h"
@@ -85,8 +84,8 @@ void SVGTRefTargetEventListener::attach(RefPtr<Element>&& target)
     ASSERT(target.get());
     ASSERT(target->isConnected());
 
-    target->addEventListener(eventNames().DOMSubtreeModifiedEvent, *this, false);
-    target->addEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, *this, false);
+    target->addEventListener(eventNames().DOMSubtreeModifiedEvent, *this);
+    target->addEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, *this);
     m_target = WTF::move(target);
 }
 
@@ -96,8 +95,8 @@ void SVGTRefTargetEventListener::detach()
         return;
 
     RefPtr target = m_target;
-    target->removeEventListener(eventNames().DOMSubtreeModifiedEvent, *this, false);
-    target->removeEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, *this, false);
+    target->removeEventListener(eventNames().DOMSubtreeModifiedEvent, *this, { .capture = false });
+    target->removeEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, *this, { .capture = false });
     m_target = nullptr;
 }
 
@@ -147,10 +146,10 @@ void SVGTRefElement::updateReferencedText(Element* target)
     ASSERT(root);
     ScriptDisallowedScope::EventAllowedScope allowedScope(*root);
     if (!root->firstChild())
-        root->appendChild(Text::create(protectedDocument(), WTF::move(textContent)));
+        root->appendChild(Text::create(protect(document()), WTF::move(textContent)));
     else {
         ASSERT(root->firstChild()->isTextNode());
-        root->protectedFirstChild()->setTextContent(WTF::move(textContent));
+        protect(root->firstChild())->setTextContent(WTF::move(textContent));
     }
 }
 
@@ -168,7 +167,7 @@ void SVGTRefElement::detachTarget()
         return;
 
     // Mark the referenced ID as pending.
-    auto target = SVGURIReference::targetElementFromIRIString(href(), protectedDocument());
+    auto target = SVGURIReference::targetElementFromIRIString(href(), protect(document()));
     if (!target.identifier.isEmpty())
         treeScopeForSVGReferences().addPendingSVGResource(target.identifier, *this);
 }

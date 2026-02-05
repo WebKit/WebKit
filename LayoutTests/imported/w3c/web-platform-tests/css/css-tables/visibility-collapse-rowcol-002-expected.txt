@@ -4,6 +4,6 @@ Spec
 Setting row and spanning column to visibility:collapse changes height and width.
 
 
-FAIL spanning row visibility:collapse doesn't change table width assert_equals: spanning row visibility:collapse doesn't change table width expected 45 but got 130
+PASS spanning row visibility:collapse doesn't change table width
 PASS spanning row visibility:collapse doesn't change height in this case
 

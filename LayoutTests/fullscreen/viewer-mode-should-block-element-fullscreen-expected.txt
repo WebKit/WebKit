@@ -1,0 +1,8 @@
+
+EVENT(canplay)
+RUN(window.internals.enterViewerMode(video))
+EVENT(fullscreenchange)
+RUN(document.body.requestFullscreen())
+Promise rejected correctly OK
+END OF TEST
+

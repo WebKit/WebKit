@@ -53,7 +53,6 @@ public:
 
 #if USE(COCOA_EVENT_LOOP)
     dispatch_queue_t dispatchQueue() const { return m_dispatchQueue.get(); }
-    OSObjectPtr<dispatch_queue_t> protectedDispatchQueue() const { return dispatchQueue(); }
 #endif
 
     virtual void ref() const = 0;

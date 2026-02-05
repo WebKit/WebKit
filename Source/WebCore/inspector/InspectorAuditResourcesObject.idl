@@ -32,7 +32,6 @@
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary Resource {
     DOMString id;
     DOMString url;

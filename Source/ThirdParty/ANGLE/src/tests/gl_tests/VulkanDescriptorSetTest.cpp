@@ -210,5 +210,6 @@ TEST_P(VulkanDescriptorSetLayoutDescTest, Basic)
 
 ANGLE_INSTANTIATE_TEST(VulkanDescriptorSetTest, ES31_VULKAN(), ES31_VULKAN_SWIFTSHADER());
 ANGLE_INSTANTIATE_TEST(VulkanDescriptorSetLayoutDescTest, ES31_VULKAN());
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanDescriptorSetLayoutDescTest);
 
 }  // namespace

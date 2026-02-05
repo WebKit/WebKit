@@ -1,3 +1,3 @@
 
-PASS FontFaceSet fires correct loading event, with the loading fontfaces
+PASS FontFaceSet fires correct loading event
 

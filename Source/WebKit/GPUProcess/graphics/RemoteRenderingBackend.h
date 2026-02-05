@@ -39,6 +39,7 @@
 #include "RemoteDisplayListRecorderIdentifier.h"
 #include "RemoteGradientIdentifier.h"
 #include "RemoteGraphicsContextIdentifier.h"
+#include "RemotePathImplIdentifier.h"
 #include "RemoteRenderingBackendIdentifier.h"
 #include "RemoteResourceCache.h"
 #include "RemoteSerializedImageBufferIdentifier.h"
@@ -162,6 +163,8 @@ private:
     void cacheNativeImage(WebCore::ShareableBitmap::Handle&&, WebCore::RenderingResourceIdentifier);
     void cacheNativeImageFromSharedNativeImage(WebCore::RenderingResourceIdentifier);
     void releaseNativeImage(WebCore::RenderingResourceIdentifier);
+    void cachePathImpl(Ref<WebCore::PathImpl>&&, RemotePathImplIdentifier);
+    void releasePathImpl(RemotePathImplIdentifier);
     void cacheGradient(Ref<WebCore::Gradient>&&, RemoteGradientIdentifier);
     void releaseGradient(RemoteGradientIdentifier);
     void cacheFilter(Ref<WebCore::Filter>&&);

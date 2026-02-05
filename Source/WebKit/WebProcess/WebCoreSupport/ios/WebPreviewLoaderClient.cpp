@@ -51,7 +51,7 @@ WebPreviewLoaderClient::~WebPreviewLoaderClient() = default;
 
 void WebPreviewLoaderClient::didReceiveData(const SharedBuffer& buffer)
 {
-    auto webPage = WebProcess::singleton().webPage(m_pageID);
+    RefPtr webPage = WebProcess::singleton().webPage(m_pageID);
     if (!webPage)
         return;
 
@@ -63,7 +63,7 @@ void WebPreviewLoaderClient::didReceiveData(const SharedBuffer& buffer)
 
 void WebPreviewLoaderClient::didFinishLoading()
 {
-    auto webPage = WebProcess::singleton().webPage(m_pageID);
+    RefPtr webPage = WebProcess::singleton().webPage(m_pageID);
     if (!webPage)
         return;
 
@@ -77,7 +77,7 @@ void WebPreviewLoaderClient::didFail()
 
 void WebPreviewLoaderClient::didRequestPassword(Function<void(const String&)>&& completionHandler)
 {
-    auto webPage = WebProcess::singleton().webPage(m_pageID);
+    RefPtr webPage = WebProcess::singleton().webPage(m_pageID);
     if (!webPage) {
         completionHandler({ });
         return;

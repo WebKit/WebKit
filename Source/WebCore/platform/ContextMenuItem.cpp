@@ -253,6 +253,8 @@ static bool isValidContextMenuAction(WebCore::ContextMenuAction action)
     case ContextMenuAction::ContextMenuItemTagMakeLowerCase:
     case ContextMenuAction::ContextMenuItemTagCapitalize:
     case ContextMenuAction::ContextMenuItemTagChangeBack:
+    case ContextMenuAction::ContextMenuItemTagConvertToTraditionalChinese:
+    case ContextMenuAction::ContextMenuItemTagConvertToSimplifiedChinese:
 #endif
     case ContextMenuAction::ContextMenuItemTagOpenMediaInNewWindow:
     case ContextMenuAction::ContextMenuItemTagDownloadMediaToDisk:

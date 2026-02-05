@@ -171,11 +171,6 @@ IPC::Connection& SpeechRecognitionRealtimeMediaSourceManager::connection() const
     return *m_process->parentProcessConnection();
 }
 
-Ref<IPC::Connection> SpeechRecognitionRealtimeMediaSourceManager::protectedConnection() const
-{
-    return *m_process->parentProcessConnection();
-}
-
 void SpeechRecognitionRealtimeMediaSourceManager::ref() const
 {
     m_process->ref();
@@ -196,7 +191,7 @@ void SpeechRecognitionRealtimeMediaSourceManager::createSource(RealtimeMediaSour
     }
 
     ASSERT(!m_sources.contains(identifier));
-    m_sources.add(identifier, makeUnique<Source>(identifier, result.source(), protectedConnection()));
+    m_sources.add(identifier, makeUnique<Source>(identifier, result.source(), protect(connection())));
 }
 
 void SpeechRecognitionRealtimeMediaSourceManager::deleteSource(RealtimeMediaSourceIdentifier identifier)

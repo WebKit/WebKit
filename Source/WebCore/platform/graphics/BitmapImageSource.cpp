@@ -121,7 +121,7 @@ EncodedDataStatus BitmapImageSource::dataChanged(FragmentedSharedBuffer* data, b
     return status;
 }
 
-void BitmapImageSource::destroyDecodedData(bool destroyAll)
+void BitmapImageSource::destroyDecodedFrames(bool destroyAll)
 {
     LOG(Images, "BitmapImageSource::%s - %p - url: %s. Decoded data with destroyAll = %d will be destroyed.", __FUNCTION__, this, sourceUTF8().data(), destroyAll);
 
@@ -142,6 +142,11 @@ void BitmapImageSource::destroyDecodedData(bool destroyAll)
     }
 
     decodedSizeReset(decodedSize);
+}
+
+void BitmapImageSource::destroyDecodedData(bool destroyAll)
+{
+    destroyDecodedFrames(destroyAll);
 
     // There's no need to throw away the decoder unless we're explicitly asked
     // to destroy all of the frames.
@@ -258,6 +263,18 @@ void BitmapImageSource::resetData()
 
     if (m_bitmapImage)
         setData(m_bitmapImage->data(), m_allDataReceived);
+}
+
+void BitmapImageSource::dataReplaced(FragmentedSharedBuffer* data)
+{
+    destroyDecodedFrames(true);
+
+    m_decoder = nullptr;
+    m_descriptor.clear();
+
+    // This function is only meant to replace complete data with an identical copy of that data (which is clean and backed by disk cache).
+    ASSERT(m_allDataReceived);
+    setData(data, true);
 }
 
 void BitmapImageSource::startAnimation()

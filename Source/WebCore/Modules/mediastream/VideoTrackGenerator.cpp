@@ -208,16 +208,17 @@ void VideoTrackGenerator::Sink::write(ScriptExecutionContext&, JSC::JSValue valu
     promise.resolve();
 }
 
-void VideoTrackGenerator::Sink::close()
+void VideoTrackGenerator::Sink::close(JSDOMGlobalObject&)
 {
     callOnMainThread([source = m_source] {
         source->endImmediatly();
     });
 }
 
-void VideoTrackGenerator::Sink::abort(JSC::JSValue)
+void VideoTrackGenerator::Sink::abort(JSDOMGlobalObject& globalObject, JSC::JSValue, DOMPromiseDeferred<void>&& promise)
 {
-    close();
+    close(globalObject);
+    promise.resolve();
 }
 
 } // namespace WebCore

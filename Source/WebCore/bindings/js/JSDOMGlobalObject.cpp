@@ -133,7 +133,7 @@ JSC_DEFINE_HOST_FUNCTION(makeThisTypeErrorForBuiltins, (JSGlobalObject* globalOb
     ASSERT(callFrame->argumentCount() == 2);
     VM& vm = globalObject->vm();
     DeferTermination deferScope(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     auto interfaceName = callFrame->uncheckedArgument(0).getString(globalObject);
     scope.assertNoException();
@@ -148,7 +148,7 @@ JSC_DEFINE_HOST_FUNCTION(makeGetterTypeErrorForBuiltins, (JSGlobalObject* global
     ASSERT(callFrame->argumentCount() == 2);
     VM& vm = globalObject->vm();
     DeferTermination deferScope(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     auto interfaceName = callFrame->uncheckedArgument(0).getString(globalObject);
     scope.assertNoException();
@@ -167,7 +167,7 @@ JSC_DEFINE_HOST_FUNCTION(makeDOMExceptionForBuiltins, (JSGlobalObject* globalObj
 
     auto& vm = globalObject->vm();
     DeferTermination deferScope(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     auto codeValue = callFrame->uncheckedArgument(0).getString(globalObject);
     scope.assertNoException();
@@ -423,7 +423,7 @@ bool JSDOMGlobalObject::canCompileStrings(JSGlobalObject* globalObject, Compilat
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    auto& thisObject = static_cast<JSDOMGlobalObject&>(*globalObject);
+    auto& thisObject = *jsCast<JSDOMGlobalObject*>(globalObject);
     CheckedPtr scriptExecutionContext = thisObject.scriptExecutionContext();
 
     auto result = canCompile(*scriptExecutionContext, compilationType, codeString, args);
@@ -441,7 +441,7 @@ bool JSDOMGlobalObject::canCompileStrings(JSGlobalObject* globalObject, Compilat
 
 Structure* JSDOMGlobalObject::trustedScriptStructure(JSGlobalObject* globalObject)
 {
-    auto& thisObject = static_cast<JSDOMGlobalObject&>(*globalObject);
+    auto& thisObject = *jsCast<JSDOMGlobalObject*>(globalObject);
 
     return getDOMStructure<JSTrustedScript>(globalObject->vm(), thisObject);
 }
@@ -609,7 +609,7 @@ static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* glob
             if (result.hasException()) {
                 auto exception = result.exception();
                 if (exception.code() == ExceptionCode::ExistingExceptionError) {
-                    auto scope = DECLARE_CATCH_SCOPE(vm);
+                    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
                     EXCEPTION_ASSERT(scope.exception());
 
@@ -760,7 +760,7 @@ JSC::JSGlobalObject* JSDOMGlobalObject::deriveShadowRealmGlobalObject(JSC::JSGlo
 
         while (!document->isTopDocument()) {
             CheckedPtr candidateDocument = document->parentDocument();
-            if (!candidateDocument || !candidateDocument->protectedSecurityOrigin()->isSameOriginDomain(originalOrigin))
+            if (!candidateDocument || !protect(candidateDocument->securityOrigin())->isSameOriginDomain(originalOrigin))
                 break;
 
             document = candidateDocument;

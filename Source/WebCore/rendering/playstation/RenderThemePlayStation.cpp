@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-RenderTheme& RenderTheme::singleton()
+RenderThemePlayStation& RenderTheme::singleton()
 {
     static NeverDestroyed<RenderThemePlayStation> theme;
     return theme;

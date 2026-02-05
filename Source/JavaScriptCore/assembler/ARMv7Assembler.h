@@ -3110,7 +3110,7 @@ private:
     template <RepatchingInfo repatch = jitMemcpyRepatch>
     static void linkJumpT1(Condition cond, uint16_t* writeTarget, const uint16_t* instruction, void* target)
     {
-        // FIMXE: this should be up in the MacroAssembler layer. :-(        
+        // FIXME: this should be up in the MacroAssembler layer. :-(
         ASSERT(!(reinterpret_cast<intptr_t>(instruction) & 1));
         ASSERT(!(reinterpret_cast<intptr_t>(target) & 1));
         ASSERT(canBeJumpT1(instruction, target));
@@ -3130,7 +3130,7 @@ private:
     template <RepatchingInfo repatch = jitMemcpyRepatch>
     static void linkJumpT2(uint16_t* writeTarget, const uint16_t* instruction, void* target)
     {
-        // FIMXE: this should be up in the MacroAssembler layer. :-(        
+        // FIXME: this should be up in the MacroAssembler layer. :-(
         ASSERT(!(reinterpret_cast<intptr_t>(instruction) & 1));
         ASSERT(!(reinterpret_cast<intptr_t>(target) & 1));
         ASSERT(canBeJumpT2(instruction, target));
@@ -3150,7 +3150,7 @@ private:
     template <RepatchingInfo repatch = jitMemcpyRepatch>
     static void linkJumpT3(Condition cond, uint16_t* writeTarget, const uint16_t* instruction, void* target)
     {
-        // FIMXE: this should be up in the MacroAssembler layer. :-(
+        // FIXME: this should be up in the MacroAssembler layer. :-(
         ASSERT(!(reinterpret_cast<intptr_t>(instruction) & 1));
         ASSERT(!(reinterpret_cast<intptr_t>(target) & 1));
         ASSERT(canBeJumpT3(instruction, target));
@@ -3168,7 +3168,7 @@ private:
     template <RepatchingInfo repatch = jitMemcpyRepatch>
     static void linkJumpT4(uint16_t* writeTarget, const uint16_t* instruction, void* target, BranchWithLink link)
     {
-        // FIMXE: this should be up in the MacroAssembler layer. :-(        
+        // FIXME: this should be up in the MacroAssembler layer. :-(
         ASSERT(!(reinterpret_cast<intptr_t>(instruction) & 1));
         ASSERT(!(reinterpret_cast<intptr_t>(target) & 1));
         ASSERT(canBeJumpT4(instruction, target));
@@ -3189,7 +3189,7 @@ private:
     template <RepatchingInfo repatch = jitMemcpyRepatch>
     static void linkConditionalJumpT4(Condition cond, uint16_t* writeTarget, const uint16_t* instruction, void* target)
     {
-        // FIMXE: this should be up in the MacroAssembler layer. :-(        
+        // FIXME: this should be up in the MacroAssembler layer. :-(
         ASSERT(!(reinterpret_cast<intptr_t>(instruction) & 1));
         ASSERT(!(reinterpret_cast<intptr_t>(target) & 1));
         
@@ -3201,7 +3201,7 @@ private:
     template <RepatchingInfo repatch = jitMemcpyRepatch>
     static void linkBX(uint16_t* writeTarget, const uint16_t* instruction, void* target)
     {
-        // FIMXE: this should be up in the MacroAssembler layer. :-(
+        // FIXME: this should be up in the MacroAssembler layer. :-(
         ASSERT_UNUSED(instruction, !(reinterpret_cast<intptr_t>(instruction) & 1));
         ASSERT(!(reinterpret_cast<intptr_t>(writeTarget) & 1));
         ASSERT(!(reinterpret_cast<intptr_t>(target) & 1));
@@ -3222,7 +3222,7 @@ private:
     template <RepatchingInfo repatch = jitMemcpyRepatch>
     static void linkConditionalBX(Condition cond, uint16_t* writeTarget, const uint16_t* instruction, void* target)
     {
-        // FIMXE: this should be up in the MacroAssembler layer. :-(        
+        // FIXME: this should be up in the MacroAssembler layer. :-(
         ASSERT(!(reinterpret_cast<intptr_t>(instruction) & 1));
         ASSERT(!(reinterpret_cast<intptr_t>(target) & 1));
         
@@ -3233,7 +3233,7 @@ private:
 
     static void linkJumpAbsolute(uint16_t* writeTarget, const uint16_t* instruction, void* target)
     {
-        // FIMXE: this should be up in the MacroAssembler layer. :-(
+        // FIXME: this should be up in the MacroAssembler layer. :-(
         ASSERT(!(reinterpret_cast<intptr_t>(instruction) & 1));
         ASSERT(!(reinterpret_cast<intptr_t>(target) & 1));
         

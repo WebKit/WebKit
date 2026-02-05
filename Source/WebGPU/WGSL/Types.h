@@ -30,11 +30,13 @@
 #include "WGSLEnums.h"
 #include <array>
 #include <functional>
+#include <variant>
 #include <wtf/FixedVector.h>
 #include <wtf/HashMap.h>
 #include <wtf/Markable.h>
 #include <wtf/PrintStream.h>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 
 namespace WGSL {

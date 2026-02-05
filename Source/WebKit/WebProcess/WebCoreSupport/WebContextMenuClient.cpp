@@ -97,7 +97,7 @@ void WebContextMenuClient::stopSpeaking()
 
 void WebContextMenuClient::showContextMenu()
 {
-    protectedPage()->protectedContextMenu()->show();
+    protect(protectedPage()->contextMenu())->show();
 }
 
 #endif

@@ -24,9 +24,7 @@
  */
 // https://github.com/WICG/observable
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary SubscriptionObserver {
+dictionary SubscriptionObserver {
   SubscriptionObserverCallback next;
   SubscriptionObserverCallback error;
   VoidCallback complete;

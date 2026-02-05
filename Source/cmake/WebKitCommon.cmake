@@ -201,11 +201,22 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     # Set the variable with uppercase name to keep compatibility with code and users expecting it.
     set(PYTHON_EXECUTABLE ${Python_EXECUTABLE} CACHE FILEPATH "Path to the Python interpreter")
 
-    # We cannot check for RUBY_FOUND because it is set only when the full package is installed and
+    # We cannot check for Ruby_FOUND because it is set only when the full package is installed and
     # the only thing we need is the interpreter. Unlike Python, cmake does not provide a macro
     # for finding only the Ruby interpreter.
-    find_package(Ruby 2.5)
-    if (NOT RUBY_EXECUTABLE OR RUBY_VERSION VERSION_LESS 2.5)
+    message(CHECK_START "Ruby interpreter executable")
+    find_package(Ruby 2.5 QUIET)
+    if (Ruby_EXECUTABLE AND Ruby_VERSION)
+        if (Ruby_VERSION VERSION_LESS 2.5)
+            message(CHECK_FAIL "${Ruby_EXECUTABLE} (version: ${Ruby_VERSION}, minimum required 2.5)")
+            set(Ruby_EXECUTABLE NOTFOUND)
+        else ()
+            message(CHECK_PASS "${Ruby_EXECUTABLE} (version: ${Ruby_VERSION})")
+        endif ()
+    else ()
+        message(CHECK_FAIL "not found")
+    endif ()
+    if (NOT Ruby_EXECUTABLE)
         message(FATAL_ERROR "Ruby 2.5 or higher is required.")
     endif ()
 

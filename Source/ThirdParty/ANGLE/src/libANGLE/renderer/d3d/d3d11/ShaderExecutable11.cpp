@@ -23,8 +23,7 @@ ShaderExecutable11::ShaderExecutable11(const void *function,
       mPixelExecutable(std::move(executable)),
       mVertexExecutable(),
       mGeometryExecutable(),
-      mStreamOutExecutable(),
-      mComputeExecutable()
+      mStreamOutExecutable()
 {}
 
 ShaderExecutable11::ShaderExecutable11(const void *function,
@@ -35,8 +34,7 @@ ShaderExecutable11::ShaderExecutable11(const void *function,
       mPixelExecutable(),
       mVertexExecutable(std::move(executable)),
       mGeometryExecutable(),
-      mStreamOutExecutable(std::move(streamOut)),
-      mComputeExecutable()
+      mStreamOutExecutable(std::move(streamOut))
 {}
 
 ShaderExecutable11::ShaderExecutable11(const void *function,
@@ -46,19 +44,7 @@ ShaderExecutable11::ShaderExecutable11(const void *function,
       mPixelExecutable(),
       mVertexExecutable(),
       mGeometryExecutable(std::move(executable)),
-      mStreamOutExecutable(),
-      mComputeExecutable()
-{}
-
-ShaderExecutable11::ShaderExecutable11(const void *function,
-                                       size_t length,
-                                       d3d11::ComputeShader &&executable)
-    : ShaderExecutableD3D(function, length),
-      mPixelExecutable(),
-      mVertexExecutable(),
-      mGeometryExecutable(),
-      mStreamOutExecutable(),
-      mComputeExecutable(std::move(executable))
+      mStreamOutExecutable()
 {}
 
 ShaderExecutable11::~ShaderExecutable11() {}
@@ -81,11 +67,6 @@ const d3d11::GeometryShader &ShaderExecutable11::getGeometryShader() const
 const d3d11::GeometryShader &ShaderExecutable11::getStreamOutShader() const
 {
     return mStreamOutExecutable;
-}
-
-const d3d11::ComputeShader &ShaderExecutable11::getComputeShader() const
-{
-    return mComputeExecutable;
 }
 
 UniformStorage11::UniformStorage11(size_t initialSize)

@@ -56,7 +56,6 @@
 
 SOFT_LINK_PRIVATE_FRAMEWORK(CoreSVG)
 SOFT_LINK(CoreSVG, CGSVGDocumentCreateFromData, CGSVGDocumentRef, (CFDataRef data, CFDictionaryRef options), (data, options))
-SOFT_LINK(CoreSVG, CGSVGDocumentRelease, void, (CGSVGDocumentRef document), (document))
 #endif
 
 namespace WebKit {
@@ -335,13 +334,12 @@ Expected<Ref<WebCore::Icon>, RefPtr<API::Error>> WebExtension::iconForPath(const
 #if !USE(APPKIT)
     auto imageType = resourceMIMETypeForPath(imagePath);
     if (equalLettersIgnoringASCIICase(imageType, "image/svg+xml"_s)) {
-        CGSVGDocumentRef document = CGSVGDocumentCreateFromData(bridge_cast(imageData), nullptr);
+        RetainPtr document = adoptCF(CGSVGDocumentCreateFromData(bridge_cast(imageData), nullptr));
         if (!document)
             return makeUnexpected(nullptr);
 
         // Since we need to rasterize, scale the image for the densest display, so it will have enough pixels to be sharp.
-        result = [UIImage _imageWithCGSVGDocument:document scale:displayScale orientation:UIImageOrientationUp];
-        CGSVGDocumentRelease(document);
+        result = [UIImage _imageWithCGSVGDocument:document.get() scale:displayScale orientation:UIImageOrientationUp];
     }
 #endif // !USE(APPKIT)
 

@@ -39,7 +39,8 @@ public:
 #if PLATFORM(COCOA)
     void initializePlatformElementWithRemoteToken(AccessibilityRemoteToken, int);
     AccessibilityRemoteToken generateRemoteToken() const;
-    RetainPtr<id> remoteFramePlatformElement() const { return m_remoteFramePlatformElement; }
+    RetainPtr<id> remoteFramePlatformElement() const final { return m_remoteFramePlatformElement; }
+    pid_t remoteFrameProcessIdentifier() const final { return m_processIdentifier; }
     pid_t processIdentifier() const { return m_processIdentifier; }
     std::optional<FrameIdentifier> frameID() const { return m_frameID; }
     void setFrameID(FrameIdentifier frameID) { m_frameID = frameID; }
@@ -50,7 +51,7 @@ private:
     explicit AXRemoteFrame(AXID, AXObjectCache&);
 
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::RemoteFrame; }
-    bool computeIsIgnored() const final { return false; }
+    bool computeIsIgnored() const final;
     bool isAXRemoteFrame() const final { return true; }
     LayoutRect elementRect() const final;
 

@@ -27,6 +27,7 @@
 #include "SourceTaintedOrigin.h"
 
 #include "CodeBlock.h"
+#include "JSCellInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "StackVisitor.h"
 #include "VM.h"

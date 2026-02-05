@@ -73,7 +73,6 @@ public:
     WebKit::WebsitePopUpPolicy popUpPolicy() const { return m_data.popUpPolicy; }
     void setPopUpPolicy(WebKit::WebsitePopUpPolicy policy) { m_data.popUpPolicy = policy; }
 
-    RefPtr<WebKit::WebsiteDataStore> protectedWebsiteDataStore() const;
     WebKit::WebsiteDataStore* websiteDataStore() const { return m_websiteDataStore.get(); }
     void setWebsiteDataStore(RefPtr<WebKit::WebsiteDataStore>&&);
     

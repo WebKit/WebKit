@@ -155,9 +155,9 @@ class MultiDrawTest : public ANGLETestBase,
 
     void SetUp() override { ANGLETestBase::ANGLETestSetUp(); }
 
-    bool IsDrawIDTest() const { return std::get<1>(GetParam()) == DrawIDOption::UseDrawID; }
+    bool isDrawIDTest() const { return std::get<1>(GetParam()) == DrawIDOption::UseDrawID; }
 
-    bool IsInstancedTest() const
+    bool isInstancedTest() const
     {
         return std::get<2>(GetParam()) == InstancingOption::UseInstancing;
     }
@@ -168,18 +168,39 @@ class MultiDrawTest : public ANGLETestBase,
                                                                             : GL_DYNAMIC_DRAW;
     }
 
-    std::string VertexShaderSource()
-    {
+    virtual bool isES3() { return false; }
 
+    std::stringstream &vertexShaderPreamble(std::stringstream &shader)
+    {
+        const char *attribute = "attribute";
+        const char *varying   = "varying";
+        if (isES3())
+        {
+            shader << "#version 300 es\n";
+            attribute = "in";
+            varying   = "out";
+        }
+        if (isDrawIDTest())
+        {
+            shader << "#extension GL_ANGLE_multi_draw : require\n";
+        }
+        if (isInstancedTest())
+        {
+            shader << attribute << " float vInstance;";
+        }
+        shader << attribute << " vec2 vPosition;\n";
+        shader << varying << " vec4 color;\n";
+        return shader;
+    }
+
+    std::string vertexShaderSource()
+    {
         std::stringstream shader;
-        shader << (IsDrawIDTest() ? "#extension GL_ANGLE_multi_draw : require\n" : "")
-               << (IsInstancedTest() ? "attribute float vInstance;" : "") << R"(
-attribute vec2 vPosition;
-varying vec4 color;
+        vertexShaderPreamble(shader) << R"(
 void main()
 {
-    int id = )" << (IsDrawIDTest() ? "gl_DrawID" : "0")
-               << ";" << R"(
+    int id = )" << (isDrawIDTest() ? "gl_DrawID" : "0")
+                                     << ";" << R"(
     float quad_id = float(id / 2);
     float color_id = quad_id - (3.0 * floor(quad_id / 3.0));
     if (color_id == 0.0) {
@@ -192,7 +213,7 @@ void main()
 
     mat3 transform = mat3(1.0);
 )"
-               << (IsInstancedTest() ? R"(
+                                     << (isInstancedTest() ? R"(
     transform[0][0] = 0.5;
     transform[1][1] = 0.5;
     if (vInstance == 0.0) {
@@ -206,29 +227,26 @@ void main()
         transform[2][1] = 0.5;
     }
 )"
-                                     : "")
-               << R"(
+                                                           : "")
+                                     << R"(
     gl_Position = vec4(transform * vec3(vPosition, 1.0) * 2.0 - 1.0, 1);
 })";
 
         return shader.str();
     }
 
-    std::string VertexShaderSourceWithUniforms()
+    std::string vertexShaderSourceWithUniforms()
     {
         std::stringstream shader;
-        shader << (IsDrawIDTest() ? "#extension GL_ANGLE_multi_draw : require\n" : "")
-               << (IsInstancedTest() ? "attribute float vInstance;" : "") << R"(
+        vertexShaderPreamble(shader) << R"(
 uniform bool boolUniform;
 uniform highp vec4 colorId0Uniform;
 uniform highp vec4 colorId1Uniform;
 uniform highp vec4 colorId2Uniform;
-attribute vec2 vPosition;
-varying vec4 color;
 void main()
 {
-    int id = )" << (IsDrawIDTest() ? "gl_DrawID" : "0")
-               << ";" << R"(
+    int id = )" << (isDrawIDTest() ? "gl_DrawID" : "0")
+                                     << ";" << R"(
     float quad_id = float(id / 2);
     float color_id = quad_id - (3.0 * floor(quad_id / 3.0));
     if (color_id == 0.0) {
@@ -253,7 +271,7 @@ void main()
 
     mat3 transform = mat3(1.0);
 )"
-               << (IsInstancedTest() ? R"(
+                                     << (isInstancedTest() ? R"(
     transform[0][0] = 0.5;
     transform[1][1] = 0.5;
     if (vInstance == 0.0) {
@@ -267,28 +285,35 @@ void main()
         transform[2][1] = 0.5;
     }
 )"
-                                     : "")
-               << R"(
+                                                           : "")
+                                     << R"(
     gl_Position = vec4(transform * vec3(vPosition, 1.0) * 2.0 - 1.0, 1);
 })";
 
         return shader.str();
     }
 
-    std::string FragmentShaderSource()
+    std::string fragmentShaderSource()
     {
-        return
-            R"(precision mediump float;
-            varying vec4 color;
-            void main()
-            {
-                gl_FragColor = color;
-            })";
+        return isES3() ? R"(#version 300 es
+precision mediump float;
+in vec4 color;
+out vec4 colorOut;
+void main()
+{
+    colorOut = color;
+})"
+                       : R"(precision mediump float;
+varying vec4 color;
+void main()
+{
+    gl_FragColor = color;
+})";
     }
 
-    void SetupProgram()
+    void setupProgram()
     {
-        mProgram = CompileProgram(VertexShaderSource().c_str(), FragmentShaderSource().c_str());
+        mProgram = CompileProgram(vertexShaderSource().c_str(), fragmentShaderSource().c_str());
         EXPECT_GL_NO_ERROR();
         ASSERT_GE(mProgram, 1u);
         glUseProgram(mProgram);
@@ -296,7 +321,7 @@ void main()
         mInstanceLoc = glGetAttribLocation(mProgram, "vInstance");
     }
 
-    void SetupBuffers()
+    void setupBuffers()
     {
         for (uint32_t y = 0; y < kCountY; ++y)
         {
@@ -353,7 +378,7 @@ void main()
         ASSERT_GL_NO_ERROR();
     }
 
-    void DoVertexAttribDivisor(GLint location, GLuint divisor)
+    void doVertexAttribDivisor(GLint location, GLuint divisor)
     {
         if (getClientMajorVersion() <= 2)
         {
@@ -366,7 +391,7 @@ void main()
         }
     }
 
-    void DoDrawArrays()
+    void doDrawArrays()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glBindBuffer(GL_ARRAY_BUFFER, mNonIndexedVertexBuffer);
@@ -380,12 +405,12 @@ void main()
             firsts[i] = i * 3;
         }
 
-        if (IsInstancedTest())
+        if (isInstancedTest())
         {
             glBindBuffer(GL_ARRAY_BUFFER, mInstanceBuffer);
             glEnableVertexAttribArray(mInstanceLoc);
             glVertexAttribPointer(mInstanceLoc, 1, GL_FLOAT, GL_FALSE, 0, nullptr);
-            DoVertexAttribDivisor(mInstanceLoc, 1);
+            doVertexAttribDivisor(mInstanceLoc, 1);
             std::vector<GLsizei> instanceCounts(kTriCount, 4);
             glMultiDrawArraysInstancedANGLE(GL_TRIANGLES, firsts.data(), counts.data(),
                                             instanceCounts.data(), kTriCount);
@@ -396,7 +421,7 @@ void main()
         }
     }
 
-    void DoDrawElements()
+    void doDrawElements()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer);
@@ -411,12 +436,12 @@ void main()
             indices[i] = reinterpret_cast<GLvoid *>(static_cast<uintptr_t>(i * 3 * 2));
         }
 
-        if (IsInstancedTest())
+        if (isInstancedTest())
         {
             glBindBuffer(GL_ARRAY_BUFFER, mInstanceBuffer);
             glEnableVertexAttribArray(mInstanceLoc);
             glVertexAttribPointer(mInstanceLoc, 1, GL_FLOAT, GL_FALSE, 0, nullptr);
-            DoVertexAttribDivisor(mInstanceLoc, 1);
+            doVertexAttribDivisor(mInstanceLoc, 1);
             std::vector<GLsizei> instanceCounts(kTriCount, 4);
             glMultiDrawElementsInstancedANGLE(GL_TRIANGLES, counts.data(), GL_UNSIGNED_SHORT,
                                               indices.data(), instanceCounts.data(), kTriCount);
@@ -435,7 +460,7 @@ void main()
         UseDrawID,
     };
 
-    void CheckDrawResult(DrawIDOptionOverride overrideDrawID)
+    void checkDrawResult(DrawIDOptionOverride overrideDrawID)
     {
         for (uint32_t y = 0; y < kCountY; ++y)
         {
@@ -443,7 +468,7 @@ void main()
             {
                 uint32_t center_x = x * kTilePixelSize[0] + kTilePixelSize[0] / 2;
                 uint32_t center_y = y * kTilePixelSize[1] + kTilePixelSize[1] / 2;
-                uint32_t quadID = IsDrawIDTest() && overrideDrawID != DrawIDOptionOverride::NoDrawID
+                uint32_t quadID = isDrawIDTest() && overrideDrawID != DrawIDOptionOverride::NoDrawID
                                       ? y * kCountX + x
                                       : 0;
                 uint32_t colorID              = quadID % 3u;
@@ -451,7 +476,7 @@ void main()
                                                  GLColor(0, 0, 255, 255)};
                 GLColor expected              = colors[colorID];
 
-                if (IsInstancedTest())
+                if (isInstancedTest())
                 {
                     EXPECT_PIXEL_RECT_EQ(center_x / 2 - kPixelCheckSize[0] / 4,
                                          center_y / 2 - kPixelCheckSize[1] / 4,
@@ -510,7 +535,7 @@ void main()
 
     bool requestExtensions()
     {
-        if (IsInstancedTest() && getClientMajorVersion() <= 2)
+        if (isInstancedTest() && getClientMajorVersion() <= 2)
         {
             if (!requestInstancedExtension())
             {
@@ -533,14 +558,17 @@ void main()
 };
 
 class MultiDrawTestES3 : public MultiDrawTest
-{};
+{
+  protected:
+    bool isES3() override { return true; }
+};
 
 class MultiDrawNoInstancingSupportTest : public MultiDrawTest
 {
     void SetUp() override
     {
         ASSERT_LE(getClientMajorVersion(), 2);
-        ASSERT_TRUE(IsInstancedTest());
+        ASSERT_TRUE(isInstancedTest());
         MultiDrawTest::SetUp();
     }
 };
@@ -651,7 +679,7 @@ void main()
 TEST_P(MultiDrawTest, CanCompile)
 {
     ANGLE_SKIP_TEST_IF(!requestExtensions());
-    SetupProgram();
+    setupProgram();
 }
 
 // Tests basic drawcount validation
@@ -675,7 +703,7 @@ TEST_P(MultiDrawTest, Validation)
     glMultiDrawElementsANGLE(GL_TRIANGLES, &count, GL_UNSIGNED_SHORT, indices, 0);
     EXPECT_GL_NO_ERROR();
 
-    if (IsInstancedTest())
+    if (isInstancedTest())
     {
         const GLsizei instances = 0;
 
@@ -701,13 +729,13 @@ TEST_P(MultiDrawTest, MultiDrawArrays)
     ANGLE_SKIP_TEST_IF(!requestExtensions());
 
     // http://anglebug.com/40644769
-    ANGLE_SKIP_TEST_IF(IsInstancedTest() && IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(isInstancedTest() && IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
 
-    SetupBuffers();
-    SetupProgram();
-    DoDrawArrays();
+    setupBuffers();
+    setupProgram();
+    doDrawArrays();
     EXPECT_GL_NO_ERROR();
-    CheckDrawResult(DrawIDOptionOverride::Default);
+    checkDrawResult(DrawIDOptionOverride::Default);
 }
 
 // Tests basic functionality of glMultiDrawArraysANGLE after a failed program relink
@@ -716,10 +744,10 @@ TEST_P(MultiDrawTestES3, MultiDrawArraysAfterFailedRelink)
     ANGLE_SKIP_TEST_IF(!requestExtensions());
 
     // http://anglebug.com/40644769
-    ANGLE_SKIP_TEST_IF(IsInstancedTest() && IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(isInstancedTest() && IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
 
-    SetupBuffers();
-    SetupProgram();
+    setupBuffers();
+    setupProgram();
 
     // mProgram is already installed.  Destroy its state by a failed relink.
     const char *tfVaryings = "invalidvaryingname";
@@ -730,20 +758,20 @@ TEST_P(MultiDrawTestES3, MultiDrawArraysAfterFailedRelink)
     ASSERT_GL_NO_ERROR();
     ASSERT_EQ(linkStatus, GL_FALSE);
 
-    DoDrawArrays();
+    doDrawArrays();
     EXPECT_GL_NO_ERROR();
-    CheckDrawResult(DrawIDOptionOverride::Default);
+    checkDrawResult(DrawIDOptionOverride::Default);
 }
 
 // Tests basic functionality of glMultiDrawElementsANGLE
 TEST_P(MultiDrawTest, MultiDrawElements)
 {
     ANGLE_SKIP_TEST_IF(!requestExtensions());
-    SetupBuffers();
-    SetupProgram();
-    DoDrawElements();
+    setupBuffers();
+    setupProgram();
+    doDrawElements();
     EXPECT_GL_NO_ERROR();
-    CheckDrawResult(DrawIDOptionOverride::Default);
+    checkDrawResult(DrawIDOptionOverride::Default);
 }
 
 // Bool uniform does not have a precision. If the "uniform sort by precision" places bool uniform
@@ -768,9 +796,9 @@ TEST_P(MultiDrawTest, MultiDrawElements)
 TEST_P(MultiDrawTest, MultiDrawElementsWithBoolUniforms)
 {
     ANGLE_SKIP_TEST_IF(!requestExtensions());
-    SetupBuffers();
+    setupBuffers();
     mProgram =
-        CompileProgram(VertexShaderSourceWithUniforms().c_str(), FragmentShaderSource().c_str());
+        CompileProgram(vertexShaderSourceWithUniforms().c_str(), fragmentShaderSource().c_str());
     EXPECT_GL_NO_ERROR();
     ASSERT_GE(mProgram, 1u);
     glUseProgram(mProgram);
@@ -787,9 +815,9 @@ TEST_P(MultiDrawTest, MultiDrawElementsWithBoolUniforms)
     GLfloat colorId2UniformValue[4] = {0.0, 0.0, 1.0, 1.0};
     GLint colorId2UniformLoc        = glGetUniformLocation(mProgram, "colorId2Uniform");
     glUniform4fv(colorId2UniformLoc, 1, colorId2UniformValue);
-    DoDrawElements();
+    doDrawElements();
     EXPECT_GL_NO_ERROR();
-    CheckDrawResult(DrawIDOptionOverride::Default);
+    checkDrawResult(DrawIDOptionOverride::Default);
 }
 
 // Tests that glMultiDrawArraysANGLE followed by glDrawArrays works.  gl_DrawID in the second call
@@ -799,15 +827,15 @@ TEST_P(MultiDrawTest, MultiDrawArraysThenDrawArrays)
     ANGLE_SKIP_TEST_IF(!requestExtensions());
 
     // http://anglebug.com/40644769
-    ANGLE_SKIP_TEST_IF(IsInstancedTest() && IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(isInstancedTest() && IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
 
-    SetupBuffers();
-    SetupProgram();
-    DoDrawArrays();
+    setupBuffers();
+    setupProgram();
+    doDrawArrays();
     EXPECT_GL_NO_ERROR();
-    CheckDrawResult(DrawIDOptionOverride::Default);
+    checkDrawResult(DrawIDOptionOverride::Default);
 
-    if (IsInstancedTest())
+    if (isInstancedTest())
     {
         ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_instanced_arrays") &&
                            !IsGLExtensionEnabled("GL_ANGLE_instanced_arrays"));
@@ -826,7 +854,7 @@ TEST_P(MultiDrawTest, MultiDrawArraysThenDrawArrays)
         glDrawArrays(GL_TRIANGLES, 0, 3 * kTriCount);
         ASSERT_GL_NO_ERROR();
     }
-    CheckDrawResult(DrawIDOptionOverride::NoDrawID);
+    checkDrawResult(DrawIDOptionOverride::NoDrawID);
 }
 
 // Tests basic functionality of glMultiDrawArraysIndirectEXT
@@ -1364,8 +1392,8 @@ TEST_P(MultiDrawNoInstancingSupportTest, InvalidOperation)
 {
     ANGLE_SKIP_TEST_IF(IsGLExtensionEnabled("GL_ANGLE_instanced_arrays"));
     requestMultiDrawExtension();
-    SetupBuffers();
-    SetupProgram();
+    setupBuffers();
+    setupProgram();
 
     GLint first       = 0;
     GLsizei count     = 3;
@@ -1395,7 +1423,7 @@ TEST_P(MultiDrawTest, ClearThenNoopMultiDraw)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_multi_draw"));
 
-    SetupProgram();
+    setupProgram();
 
     GLFramebuffer fbo;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -1431,6 +1459,68 @@ TEST_P(MultiDrawTest, ClearThenNoopMultiDraw)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
 }
 
+class MultiDrawEmulationTest : public ANGLETest<>
+{
+  public:
+    MultiDrawEmulationTest()
+    {
+        setWindowWidth(16);
+        setWindowHeight(16);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+    }
+};
+
+// gl_DrawID is translated to angle_DrawID internally.  Check that a user-defined angle_DrawID is
+// permitted.
+TEST_P(MultiDrawEmulationTest, AllowsUserDefinedANGLEDrawID)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_multi_draw"));
+
+    constexpr char kVS[] = R"(#extension GL_ANGLE_multi_draw : require
+attribute vec2 position;
+uniform int angle_DrawID;
+varying vec4 verified;
+
+void main()
+{
+    // Expect gl_DrawID to be untouched when angle_DrawID is not.
+    verified = vec4(gl_DrawID == 0, 0, angle_DrawID == 3, 1);
+    gl_Position = vec4(position, 0, 1);
+})";
+
+    constexpr char kFS[] = R"(precision mediump float;
+varying vec4 verified;
+
+void main()
+{
+    gl_FragColor = verified;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    glUniform1i(glGetUniformLocation(program, "angle_DrawID"), 3);
+
+    constexpr std::array<GLfloat, 3 * 2> kVertexData = {
+        -1, -1, 3, -1, -1, 3,
+    };
+
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(kVertexData), kVertexData.data(), GL_STATIC_DRAW);
+    const GLint positionLoc = glGetAttribLocation(program, "position");
+    glEnableVertexAttribArray(positionLoc);
+    glVertexAttribPointer(positionLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    const GLint first = 0;
+    const GLint count = 3;
+    glMultiDrawArraysANGLE(GL_TRIANGLES, &first, &count, 1);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
+    ASSERT_GL_NO_ERROR();
+}
+
 #define ANGLE_ALL_MULTIDRAW_TEST_PLATFORMS_ES2                                             \
     ES2_D3D11().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions),                  \
         ES2_OPENGL().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions),             \
@@ -1448,7 +1538,6 @@ TEST_P(MultiDrawTest, ClearThenNoopMultiDraw)
         ES3_METAL().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions)
 
 #define ANGLE_ALL_MULTIDRAW_TEST_PLATFORMS_ES3_1                                            \
-    ES31_D3D11().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions),                  \
         ES31_OPENGL().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions),             \
         ES31_OPENGLES().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions),           \
         ES31_VULKAN().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions),             \
@@ -1486,4 +1575,6 @@ ANGLE_INSTANTIATE_TEST_COMBINE_3(MultiDrawTestES3,
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultiDrawIndirectTest);
 ANGLE_INSTANTIATE_TEST(MultiDrawIndirectTest, ANGLE_ALL_MULTIDRAW_TEST_PLATFORMS_ES3_1);
+
+ANGLE_INSTANTIATE_TEST(MultiDrawEmulationTest, ANGLE_ALL_MULTIDRAW_TEST_PLATFORMS_ES2);
 }  // namespace

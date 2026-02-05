@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://wicg.github.io/cookie-store/#cookiechangeevent
-
+// https://cookiestore.spec.whatwg.org/#cookiechangeevent
 [
     EnabledBySetting=CookieStoreAPIEnabled,
     Exposed=Window,

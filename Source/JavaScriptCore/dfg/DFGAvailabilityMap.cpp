@@ -105,16 +105,20 @@ void AvailabilityMap::validateAvailability(Graph& graph, Node* where) const
         for (auto& heapPair : m_heap) {
             if (heapPair.value.isFlushUseful()) {
                 FlushedAt heapFlushLocation = heapPair.value.flushedAt();
-                // We should always have an SSA value to use for materializations in the heap.
-                DFG_ASSERT(graph, where, heapPair.value.hasNode());
+                // We should always have an SSA value to use for materializations in the heap. The only exception is
+                // Arguments allocations because those could have values propagated via Load/ForwardVarargs, which
+                // don't have a reasonable way to SSA track individual entries.
+                if (!heapPair.key.base()->isPhantomArgumentsAllocation())
+                    DFG_ASSERT(graph, where, heapPair.value.hasNode());
 
+                // If we don't have a location on the stack yet then there's not much to validate.
                 if (!heapFlushLocation.virtualRegister().isValid()) {
-                    // If we don't have a location on the stack yet then there's not much to validate.
+                    DFG_ASSERT(graph, where, graph.m_planStage < PlanStage::AfterStackLayout);
                     continue;
                 }
 
                 for (unsigned i = 0; i < m_locals.size(); ++i) {
-                    // Look for our flush in the locals it should be there and match our heap location.
+                    // Look for our flush in the locals, it should be there and match our heap location.
                     Availability localAvailability = m_locals[i];
 
                     if (localAvailability.flushedAt().virtualRegister() == heapFlushLocation.virtualRegister()) {

@@ -11,6 +11,7 @@
 #include "libANGLE/renderer/wgpu/ContextWgpu.h"
 #include "libANGLE/renderer/wgpu/DisplayWgpu.h"
 #include "libANGLE/renderer/wgpu/wgpu_pipeline_state.h"
+#include "webgpu/webgpu.h"
 
 namespace rx
 {
@@ -73,7 +74,7 @@ PackedRenderPassColorAttachment CreateNewClearColorAttachment(const gl::ColorF &
     return colorAttachment;
 }
 
-PackedRenderPassDepthStencilAttachment CreateNewDepthStencilAttachment(
+PackedRenderPassDepthStencilAttachment CreateNewClearDepthStencilAttachment(
     float depthClearValue,
     uint32_t stencilClearValue,
     TextureViewHandle textureView,
@@ -98,6 +99,30 @@ PackedRenderPassDepthStencilAttachment CreateNewDepthStencilAttachment(
         depthStencilAttachment.stencilLoadOp     = WGPULoadOp_Clear;
         depthStencilAttachment.stencilStoreOp    = WGPUStoreOp_Store;
         depthStencilAttachment.stencilClearValue = stencilClearValue;
+    }
+
+    return depthStencilAttachment;
+}
+
+PackedRenderPassDepthStencilAttachment
+CreateNewDepthStencilAttachment(TextureViewHandle textureView, bool hasDepth, bool hasStencilValue)
+{
+    PackedRenderPassDepthStencilAttachment depthStencilAttachment;
+    depthStencilAttachment.view = textureView;
+    // WebGPU requires that depth/stencil attachments have a load op if the correlated ReadOnly
+    // value is set to false, so we make sure to set the value here to to support cases where only a
+    // depth or stencil mask is set.
+    depthStencilAttachment.depthReadOnly   = !hasDepth;
+    depthStencilAttachment.stencilReadOnly = !hasStencilValue;
+    if (hasDepth)
+    {
+        depthStencilAttachment.depthLoadOp  = WGPULoadOp_Load;
+        depthStencilAttachment.depthStoreOp = WGPUStoreOp_Store;
+    }
+    if (hasStencilValue)
+    {
+        depthStencilAttachment.stencilLoadOp  = WGPULoadOp_Load;
+        depthStencilAttachment.stencilStoreOp = WGPUStoreOp_Store;
     }
 
     return depthStencilAttachment;
@@ -235,6 +260,7 @@ void GenerateCaps(const WGPULimits &limitsWgpu,
     glExtensions->EGLImageExternalEssl3OES     = true;
     glExtensions->EGLImageExternalWrapModesEXT = true;
     glExtensions->requiredInternalformatOES    = true;
+    glExtensions->copyTextureCHROMIUM          = true;
 
     // OpenGL ES caps
     glCaps->maxElementIndex       = std::numeric_limits<GLuint>::max() - 1;
@@ -286,10 +312,8 @@ void GenerateCaps(const WGPULimits &limitsWgpu,
     glCaps->fragmentMediumpInt.setTwosComplementInt(16);
     glCaps->fragmentLowpInt.setTwosComplementInt(16);
 
-    // Clamp the maxUniformBlockSize to 64KB (majority of devices support up to this size
-    // currently), on AMD the maxUniformBufferRange is near uint32_t max.
-    GLuint maxUniformBlockSize = static_cast<GLuint>(
-        std::min(static_cast<uint64_t>(0x10000), limitsWgpu.maxUniformBufferBindingSize));
+    const GLuint maxUniformBlockSize = static_cast<GLuint>(std::min<uint64_t>(
+        gl::IMPLEMENTATION_MAX_UNIFORM_BLOCK_SIZE, limitsWgpu.maxUniformBufferBindingSize));
 
     const GLuint maxUniformVectors    = maxUniformBlockSize / (sizeof(GLfloat) * 4);
     const GLuint maxUniformComponents = maxUniformVectors * 4;

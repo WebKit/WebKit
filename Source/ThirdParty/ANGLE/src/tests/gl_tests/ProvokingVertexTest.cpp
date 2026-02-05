@@ -745,13 +745,9 @@ TEST_P(ProvokingVertexBufferUpdateTest, DrawFlatWithPartialBufferSubUpdatesBetwe
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProvokingVertexTest);
-ANGLE_INSTANTIATE_TEST(ProvokingVertexTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES(), ES3_METAL());
+ANGLE_INSTANTIATE_TEST_ES3(ProvokingVertexTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProvokingVertexBufferUpdateTest);
-ANGLE_INSTANTIATE_TEST(ProvokingVertexBufferUpdateTest,
-                       ES3_D3D11(),
-                       ES3_OPENGL(),
-                       ES3_OPENGLES(),
-                       ES3_METAL());
+ANGLE_INSTANTIATE_TEST_ES3(ProvokingVertexBufferUpdateTest);
 
 }  // anonymous namespace

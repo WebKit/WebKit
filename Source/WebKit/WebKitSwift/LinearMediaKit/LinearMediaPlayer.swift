@@ -388,16 +388,9 @@ extension WKSLinearMediaPlayer {
 
 #endif // os(visionOS)
 
-#if compiler(>=6.0)
 #if os(visionOS)
 @_spi(Internal) extension WKSLinearMediaPlayer: @preconcurrency Playable {
 }
-#endif
-#else
-#if os(visionOS)
-@_spi(Internal) extension WKSLinearMediaPlayer: Playable {
-}
-#endif
 #endif
 
 #if os(visionOS)

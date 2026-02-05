@@ -27,7 +27,6 @@
 
 #if ENABLE(VIDEO)
 
-#include "HTMLMediaElementEnums.h"
 #include "JSValueInWrappedObject.h"
 #include "MediaSession.h"
 #include <wtf/Ref.h>

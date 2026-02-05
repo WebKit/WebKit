@@ -326,6 +326,9 @@ void Scrollbar::setHoveredPart(ScrollbarPart part)
         theme().invalidatePart(*this, m_hoveredPart);
     }
     m_hoveredPart = part;
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    checkedScrollableArea()->scrollbarsController().hoveredPartChanged(*this);
+#endif
 }
 
 void Scrollbar::setPressedPart(ScrollbarPart part)
@@ -337,6 +340,9 @@ void Scrollbar::setPressedPart(ScrollbarPart part)
         theme().invalidatePart(*this, m_pressedPart);
     else if (m_hoveredPart != NoPart)  // When we no longer have a pressed part, we can start drawing a hovered state on the hovered part.
         theme().invalidatePart(*this, m_hoveredPart);
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    checkedScrollableArea()->scrollbarsController().pressedPartChanged(*this);
+#endif
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -510,7 +516,7 @@ bool Scrollbar::supportsUpdateOnSecondaryThread() const
 {
     // It's unfortunate that this needs to be done with an ifdef. Ideally there would be a way to feature-detect
     // the necessary support within AppKit.
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
     CheckedRef scrollableArea = m_scrollableArea.get();
     return !scrollableArea->forceUpdateScrollbarsOnMainThreadForPerformanceTesting()
         && (scrollableArea->hasLayerForVerticalScrollbar() || scrollableArea->hasLayerForHorizontalScrollbar())

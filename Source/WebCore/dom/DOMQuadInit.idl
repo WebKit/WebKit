@@ -24,12 +24,9 @@
  */
 
 // https://drafts.fxtf.org/geometry/#dictdef-domquadinit
-
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary DOMQuadInit {
-    DOMPointInit p1;
-    DOMPointInit p2;
-    DOMPointInit p3;
-    DOMPointInit p4;
+dictionary DOMQuadInit {
+    [ImplementationDefaultValue={}] DOMPointInit p1;
+    [ImplementationDefaultValue={}] DOMPointInit p2;
+    [ImplementationDefaultValue={}] DOMPointInit p3;
+    [ImplementationDefaultValue={}] DOMPointInit p4;
 };

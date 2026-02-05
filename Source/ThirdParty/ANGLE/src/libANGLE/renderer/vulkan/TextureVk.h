@@ -466,7 +466,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                                   gl::LevelIndex sourceLevelGL,
                                                   uint32_t layerCount,
                                                   const gl::Box &sourceArea,
-                                                  RenderPassClosureReason reason,
+                                                  QueueSubmitReason reason,
                                                   vk::BufferHelper *copyBuffer,
                                                   uint8_t **outDataPtr);
 

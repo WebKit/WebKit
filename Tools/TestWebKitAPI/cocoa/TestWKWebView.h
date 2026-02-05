@@ -115,6 +115,7 @@ class Color;
 #endif // PLATFORM(IOS_FAMILY)
 
 - (CALayer *)firstLayerWithName:(NSString *)layerName;
+- (CALayer *)firstLayerWithNameContaining:(NSString *)layerName;
 - (void)forEachCALayer:(IterationStatus(^)(CALayer *))visitor;
 
 @property (nonatomic, readonly) CGImageRef snapshotAfterScreenUpdates;
@@ -210,6 +211,7 @@ class Color;
 - (Vector<WebCore::Color>)sampleColorsWithInterval:(unsigned)interval;
 - (RetainPtr<_WKFrameTreeNode>)frameTree;
 - (void)typeCharacter:(char)character;
+- (void)setVisibility:(BOOL)isVisible;
 @end
 
 #if PLATFORM(IOS_FAMILY)

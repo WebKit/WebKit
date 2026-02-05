@@ -51,11 +51,11 @@ static bool webClipExists(const String& webClipIdentifier)
         return false;
 
     @autoreleasepool {
-        NSString *path = [UIWebClip pathForWebClipWithIdentifier:webClipIdentifier.createNSString().get()];
+        RetainPtr path = [UIWebClip pathForWebClipWithIdentifier:webClipIdentifier.createNSString().get()];
         if (!path)
             return false;
         path = [path stringByAppendingPathComponent:@"Info.plist"];
-        return [[NSFileManager defaultManager] fileExistsAtPath:path];
+        return [[NSFileManager defaultManager] fileExistsAtPath:path.get()];
     }
 }
 
@@ -148,15 +148,15 @@ static RetainPtr<NSArray> loadWebClipCachePropertyList(NSString *path)
             return nil;
         }
 
-        NSArray *entries = (NSArray *)propertyList;
-        for (id entry in entries) {
+        RetainPtr entries = (NSArray *)propertyList;
+        for (id entry in entries.get()) {
             if (![entry isKindOfClass:[NSArray class]] || [entry count] != 3) {
                 RELEASE_LOG_ERROR(Push, "WebClipCache::load failed to deserialize %{public}@: entry isn't an array", path);
                 return nil;
             }
 
-            NSArray *array = (NSArray *)entry;
-            for (id val in array) {
+            RetainPtr array = (NSArray *)entry;
+            for (id val in array.get()) {
                 if (![val isKindOfClass:[NSString class]] || ![val length]) {
                     RELEASE_LOG_ERROR(Push, "WebClipCache::load failed to deserialize %{public}@: value isn't a string", path);
                     return nil;
@@ -164,7 +164,7 @@ static RetainPtr<NSArray> loadWebClipCachePropertyList(NSString *path)
             }
         }
 
-        return entries;
+        return entries.autorelease();
     }
 }
 
@@ -247,11 +247,11 @@ bool WebClipCache::isWebClipVisible(const String& bundleIdentifier, const String
     if (bundleIdentifier == "com.apple.SafariViewService"_s)
         return true;
 
-    UIWebClip *webClip = [UIWebClip webClipWithIdentifier:webClipIdentifier.createNSString().get()];
+    RetainPtr webClip = [UIWebClip webClipWithIdentifier:webClipIdentifier.createNSString().get()];
     if (![webClip respondsToSelector:@selector(trustedClientBundleIdentifiers)])
         return true;
 
-    return [webClip.trustedClientBundleIdentifiers containsObject:bundleIdentifier.createNSString().get()];
+    return [webClip.get().trustedClientBundleIdentifiers containsObject:bundleIdentifier.createNSString().get()];
 }
 
 } // namespace WebPushD

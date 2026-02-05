@@ -43,7 +43,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 766x39
+        RenderText {#text} at (0,0) size 766x40
           text run at (0,0) width 265: "This testcase demonstrates a bug (9441). "
           text run at (264,0) width 455: "When 'as' is deleted, there should be a space before and after the caret. "
           text run at (718,0) width 48: "Editing"

@@ -19,7 +19,6 @@
 #include "config.h"
 #include "WebKitDOMDeprecated.h"
 
-#include <WebCore/AddEventListenerOptionsInlines.h>
 #include "ConvertToUTF8String.h"
 #include <WebCore/DOMException.h>
 #include <WebCore/Document.h>

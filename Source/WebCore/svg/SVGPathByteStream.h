@@ -40,9 +40,9 @@ namespace WebCore {
 class SVGPathByteStream final : public CanMakeSingleThreadWeakPtr<SVGPathByteStream> {
     WTF_MAKE_TZONE_ALLOCATED(SVGPathByteStream);
 public:
-    class Data final : public RefCounted<Data> {
+    class Data final : public ThreadSafeRefCounted<Data> {
     public:
-        friend class NeverDestroyed<Data, MainThreadAccessTraits>;
+        friend class NeverDestroyed<Data>;
 
         using Bytes = Vector<uint8_t>;
 
@@ -58,7 +58,7 @@ public:
 
         static Ref<Data> empty()
         {
-            static MainThreadNeverDestroyed<Data> singleton;
+            static NeverDestroyed<Data> singleton;
             return Ref { singleton.get() };
         }
 
@@ -151,7 +151,7 @@ public:
 
     static SVGPathByteStream& empty()
     {
-        static MainThreadNeverDestroyed<SVGPathByteStream> singleton;
+        static NeverDestroyed<SVGPathByteStream> singleton;
         return singleton;
     }
 

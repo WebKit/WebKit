@@ -44,7 +44,6 @@ public:
 
     const WebKit::WebHitTestResultData& hitTestResultData() const { return m_hitTestResultData; }
     WebKit::WebPageProxy* page() { return m_page.get(); }
-    RefPtr<WebKit::WebPageProxy> protectedPage() { return page(); }
     const WTF::String& qrCodePayloadString() const { return m_qrCodePayloadString; }
     bool hasEntireImage() const { return m_hasEntireImage; }
     bool allowsFollowingLink() const { return m_allowsFollowingLink; }

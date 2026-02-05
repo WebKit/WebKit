@@ -107,9 +107,6 @@ config("skia_private") {
   if (skia_use_gl && skia_use_angle) {
     defines += [ "SK_ANGLE" ]
   }
-  if (skia_use_vma) {
-    defines += [ "SK_USE_VMA" ]
-  }
   if (skia_enable_winuwp) {
     defines += [ "SK_WINUWP" ]
   }
@@ -914,7 +911,7 @@ optional("gpu_shared") {
     if (skia_enable_vulkan_debug_layers) {
       public_defines += [ "SK_ENABLE_VK_LAYERS" ]
     }
-    if (skia_use_vma) {
+    if (skia_use_vma || skia_use_backup_vma) {
       sources += skia_vma_sources
       public_deps += [ "src/gpu/vk/vulkanmemoryallocator" ]
     }
@@ -928,6 +925,10 @@ optional("gpu_shared") {
   if (is_android) {
     sources += skia_shared_android_sources
   }
+}
+
+config("use_backup_vma") {
+  defines = [ "SK_USE_VMA" ]
 }
 
 optional("gpu") {
@@ -952,6 +953,7 @@ optional("gpu") {
   frameworks = []
 
   if (is_android) {
+    public += skia_gpu_android_private_hdrs
     sources += skia_gpu_android_private
 
     # this lib is required to link against AHardwareBuffer
@@ -1017,6 +1019,9 @@ optional("gpu") {
     configs += [ ":use_skia_vulkan_headers" ]
     if (is_android) {
       sources += skia_gpu_vk_android_private
+    }
+    if (skia_use_backup_vma) {
+      configs += [ ":use_backup_vma" ]
     }
   }
 
@@ -1206,6 +1211,9 @@ optional("graphite") {
         "//third_party/externals/spirv-tools:spvtools_val",
       ]
     }
+    if (skia_use_backup_vma) {
+      configs += [ ":use_backup_vma" ]
+    }
   }
   if (skia_enable_precompile) {
     public += skia_graphite_precompile_public
@@ -1305,7 +1313,7 @@ optional("png_encode_libpng") {
     "SK_CODEC_ENCODES_PNG_WITH_LIBPNG",
   ]
 
-  public = skia_encode_png_public
+  public = skia_encode_libpng_public
   deps = [
     ":png_encode_common",
     "//third_party/libpng",
@@ -1859,6 +1867,7 @@ skia_component("skia") {
   public += skia_utils_public
   public += skia_effects_public
   public += skia_effects_imagefilter_public
+  public += skia_android_core_hdrs
 
   sources = []
   sources += skia_utils_private
@@ -1873,9 +1882,9 @@ skia_component("skia") {
   sources += skia_sksl_core_module_sources
   sources += skia_sksl_tracing_sources
   sources += skia_ports_sources
+  sources += skia_android_core_srcs
   sources += [
     "src/android/SkAndroidFrameworkUtils.cpp",
-    "src/android/SkAnimatedImage.cpp",
     "src/codec/SkAndroidCodec.cpp",
     "src/codec/SkAndroidCodecAdapter.cpp",
     "src/codec/SkSampledCodec.cpp",
@@ -1990,10 +1999,6 @@ skia_component("skia") {
   if (skia_android_framework_use_perfetto) {
     defines += [ "SK_ANDROID_FRAMEWORK_USE_PERFETTO" ]
     sources += [ "src/android/SkAndroidFrameworkPerfettoStaticStorage.cpp" ]
-  }
-
-  if (!skia_enable_ganesh && !skia_enable_graphite) {
-    sources += skia_no_slug_srcs
   }
 }
 
@@ -2410,6 +2415,8 @@ if (skia_enable_tools) {
           sources += [
             "tools/graphite/dawn/GraphiteDawnTestContext.cpp",
             "tools/graphite/dawn/GraphiteDawnTestContext.h",
+            "tools/graphite/dawn/GraphiteDawnToggles.cpp",
+            "tools/graphite/dawn/GraphiteDawnToggles.h",
           ]
         }
         if (skia_use_metal) {
@@ -2494,6 +2501,8 @@ if (skia_enable_tools) {
       "tools/AutoreleasePool.h",
       "tools/DecodeUtils.cpp",
       "tools/DecodeUtils.h",
+      "tools/DeserialProcsUtils.cpp",
+      "tools/DeserialProcsUtils.h",
       "tools/EncodeUtils.cpp",
       "tools/EncodeUtils.h",
       "tools/GpuToolUtils.h",
@@ -3145,41 +3154,6 @@ if (skia_enable_tools) {
           "modules/skottie",
           "modules/skshaper",
           "modules/skunicode",
-        ]
-      }
-
-      test_app("jetski") {
-        is_shared_library = true
-
-        sources = [
-          "modules/jetski/src/Canvas.cpp",
-          "modules/jetski/src/ColorFilters.cpp",
-          "modules/jetski/src/Gradients.cpp",
-          "modules/jetski/src/Image.cpp",
-          "modules/jetski/src/ImageFilter.cpp",
-          "modules/jetski/src/JetSki.cpp",
-          "modules/jetski/src/Matrix.cpp",
-          "modules/jetski/src/Paint.cpp",
-          "modules/jetski/src/Path.cpp",
-          "modules/jetski/src/PathBuilder.cpp",
-          "modules/jetski/src/RuntimeShaderBuilder.cpp",
-          "modules/jetski/src/Shader.cpp",
-          "modules/jetski/src/SkottieAnimation.cpp",
-          "modules/jetski/src/Surface.cpp",
-          "modules/jetski/src/Surface.h",
-          "modules/jetski/src/SurfaceThread.cpp",
-          "modules/jetski/src/SurfaceThread.h",
-          "modules/jetski/src/Utils.cpp",
-        ]
-        libs = [
-          "android",
-          "jnigraphics",
-        ]
-
-        deps = [
-          ":skia",
-          "modules/skottie",
-          "tools/window",
         ]
       }
     }

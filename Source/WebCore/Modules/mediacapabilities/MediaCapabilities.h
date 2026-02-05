@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "MediaEngineConfigurationFactory.h"
+#include "PlatformMediaEngineConfigurationFactory.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
@@ -34,6 +34,8 @@ namespace WebCore {
 
 class DeferredPromise;
 class ScriptExecutionContext;
+struct MediaDecodingConfiguration;
+struct MediaEncodingConfiguration;
 
 class MediaCapabilities : public RefCountedAndCanMakeWeakPtr<MediaCapabilities> {
 public:
@@ -46,8 +48,8 @@ private:
     MediaCapabilities() = default;
 
     uint64_t m_nextTaskIdentifier { 0 };
-    HashMap<uint64_t, MediaEngineConfigurationFactory::DecodingConfigurationCallback> m_decodingTasks;
-    HashMap<uint64_t, MediaEngineConfigurationFactory::EncodingConfigurationCallback> m_encodingTasks;
+    HashMap<uint64_t, PlatformMediaEngineConfigurationFactory::DecodingConfigurationCallback> m_decodingTasks;
+    HashMap<uint64_t, PlatformMediaEngineConfigurationFactory::EncodingConfigurationCallback> m_encodingTasks;
 };
 
 } // namespace WebCore

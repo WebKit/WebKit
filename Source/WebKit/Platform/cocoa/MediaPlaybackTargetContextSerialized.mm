@@ -111,7 +111,7 @@ Ref<MediaPlaybackTarget> MediaPlaybackTargetContextSerialized::playbackTarget() 
 
 #if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
     if (m_targetType == MediaPlaybackTargetType::WirelessPlayback)
-        return MediaPlaybackTargetWirelessPlayback::create(m_identifier);
+        return MediaPlaybackTargetWirelessPlayback::create(m_identifier, m_hasActiveRoute);
 #endif
 
     ASSERT(m_targetType == MediaPlaybackTargetType::AVOutputContext);

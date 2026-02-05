@@ -46,8 +46,8 @@ public:
 
 
 private:
-    bool supportsDisplayMode(PDFDocumentLayout::DisplayMode) const override;
-    void willChangeDisplayMode(PDFDocumentLayout::DisplayMode) override { }
+    bool supportsDisplayMode(PDFDisplayMode) const override;
+    void willChangeDisplayMode(PDFDisplayMode) override { }
 
     void teardown() override;
 

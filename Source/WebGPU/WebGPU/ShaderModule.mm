@@ -44,13 +44,13 @@
 namespace WebGPU {
 
 struct ShaderModuleParameters {
-    const char* wgslCode;
+    String wgslCode;
     const WGPUShaderModuleCompilationHint* hints;
 };
 
 static std::optional<ShaderModuleParameters> findShaderModuleParameters(const WGPUShaderModuleDescriptor& descriptor)
 {
-    const char* wgslCode = descriptor.wgslDescriptor;
+    const auto& wgslCode = descriptor.wgslDescriptor;
     const WGPUShaderModuleCompilationHint* hints = descriptor.hints;
 
     if (!wgslCode)
@@ -178,7 +178,7 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
         return ShaderModule::createInvalid(*this);
 
     auto supportedFeatures = buildFeatureSet(m_capabilities.features);
-    auto checkResult = WGSL::staticCheck(fromAPI(shaderModuleParameters->wgslCode), std::nullopt, WGSL::Configuration {
+    auto checkResult = WGSL::staticCheck(shaderModuleParameters->wgslCode, std::nullopt, WGSL::Configuration {
         .maxBuffersPlusVertexBuffersForVertexStage = maxBuffersPlusVertexBuffersForVertexStage(),
         .maxBuffersForFragmentStage = maxBuffersForFragmentStage(),
         .maxBuffersForComputeStage = maxBuffersForComputeStage(),

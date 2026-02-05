@@ -7,25 +7,25 @@ layer at (0,0) size 800x600
   RenderBlock (positioned) {DIV} at (0,0) size 800x600
 layer at (8,8) size 1280x31
   RenderBlock (relative positioned) {DIV} at (0,0) size 1280x32 [color=#FFFFFF] [bgcolor=#333333]
-    RenderText {#text} at (0,0) size 6x24
+    RenderText {#text} at (0,0) size 6x25
       text run at (0,0) width 6: "."
 layer at (8,39) size 1280x31
   RenderBlock (relative positioned) {DIV} at (0,31) size 1280x32 [color=#FFFFFF] [bgcolor=#333333]
-    RenderText {#text} at (0,0) size 6x24
+    RenderText {#text} at (0,0) size 6x25
       text run at (0,0) width 6: "."
 layer at (8,70) size 1280x32
   RenderBlock (relative positioned) {DIV} at (0,62) size 1280x32 [color=#FFFFFF] [bgcolor=#333333]
-    RenderText {#text} at (0,0) size 6x24
+    RenderText {#text} at (0,0) size 6x25
       text run at (0,0) width 6: "."
 layer at (8,102) size 1280x31
   RenderBlock (relative positioned) {DIV} at (0,93) size 1280x32 [color=#FFFFFF] [bgcolor=#333333]
-    RenderText {#text} at (0,0) size 6x24
+    RenderText {#text} at (0,0) size 6x25
       text run at (0,0) width 6: "."
 layer at (8,133) size 1280x31
   RenderBlock (relative positioned) {DIV} at (0,124) size 1280x32 [color=#FFFFFF] [bgcolor=#333333]
-    RenderText {#text} at (0,0) size 6x24
+    RenderText {#text} at (0,0) size 6x25
       text run at (0,0) width 6: "."
 layer at (8,164) size 1280x31
   RenderBlock (relative positioned) {DIV} at (0,155) size 1280x33 [color=#FFFFFF] [bgcolor=#333333]
-    RenderText {#text} at (0,0) size 6x24
+    RenderText {#text} at (0,0) size 6x25
       text run at (0,0) width 6: "."

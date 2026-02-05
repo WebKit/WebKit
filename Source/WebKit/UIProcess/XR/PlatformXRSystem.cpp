@@ -50,7 +50,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PlatformXRSystem);
 PlatformXRSystem::PlatformXRSystem(WebPageProxy& page)
     : m_page(page)
 {
-    page.protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::PlatformXRSystem::messageReceiverName(), page.webPageIDInMainFrameProcess(), *this);
+    protect(page.legacyMainFrameProcess())->addMessageReceiver(Messages::PlatformXRSystem::messageReceiverName(), page.webPageIDInMainFrameProcess(), *this);
 }
 
 PlatformXRSystem::~PlatformXRSystem()
@@ -59,7 +59,7 @@ PlatformXRSystem::~PlatformXRSystem()
     if (!page)
         return;
 
-    page->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::PlatformXRSystem::messageReceiverName(), page->webPageIDInMainFrameProcess());
+    protect(page->legacyMainFrameProcess())->removeMessageReceiver(Messages::PlatformXRSystem::messageReceiverName(), page->webPageIDInMainFrameProcess());
 }
 
 std::optional<SharedPreferencesForWebProcess> PlatformXRSystem::sharedPreferencesForWebProcess(IPC::Connection& connection) const
@@ -94,7 +94,7 @@ void PlatformXRSystem::ensureImmersiveSessionActivity()
     if (m_immersiveSessionActivity && m_immersiveSessionActivity->isValid())
         return;
 
-    m_immersiveSessionActivity = page->protectedLegacyMainFrameProcess()->protectedThrottler()->foregroundActivity("XR immersive session"_s);
+    m_immersiveSessionActivity = protect(protect(page->legacyMainFrameProcess())->throttler())->foregroundActivity("XR immersive session"_s);
 }
 
 void PlatformXRSystem::enumerateImmersiveXRDevices(CompletionHandler<void(Vector<XRDeviceInfo>&&)>&& completionHandler)
@@ -354,7 +354,7 @@ void PlatformXRSystem::sessionDidEnd(XRDeviceIdentifier deviceIdentifier)
         if (!page)
             return;
 
-        page->protectedLegacyMainFrameProcess()->send(Messages::PlatformXRSystemProxy::SessionDidEnd(deviceIdentifier), page->webPageIDInMainFrameProcess());
+        protect(page->legacyMainFrameProcess())->send(Messages::PlatformXRSystemProxy::SessionDidEnd(deviceIdentifier), page->webPageIDInMainFrameProcess());
         protectedThis->m_immersiveSessionActivity = nullptr;
         // If this is called when the session is running, the ending of the session is triggered by the system side
         // and we should set the state to SessionEndingFromSystem. We expect the web process to send a
@@ -375,7 +375,7 @@ void PlatformXRSystem::sessionDidUpdateVisibilityState(XRDeviceIdentifier device
         if (!page)
             return;
 
-        page->protectedLegacyMainFrameProcess()->send(Messages::PlatformXRSystemProxy::SessionDidUpdateVisibilityState(deviceIdentifier, visibilityState), page->webPageIDInMainFrameProcess());
+        protect(page->legacyMainFrameProcess())->send(Messages::PlatformXRSystemProxy::SessionDidUpdateVisibilityState(deviceIdentifier, visibilityState), page->webPageIDInMainFrameProcess());
     });
 }
 
@@ -417,7 +417,7 @@ void PlatformXRSystem::invalidateImmersiveSessionState(ImmersiveSessionState nex
 bool PlatformXRSystem::webXREnabled() const
 {
     RefPtr page = m_page.get();
-    return page && page->protectedPreferences()->webXREnabled();
+    return page && protect(page->preferences())->webXREnabled();
 }
 
 #if !USE(APPLE_INTERNAL_SDK) && !USE(OPENXR)

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKWebProcessPlugInFrameInternal.h"
 
+#import "APIJSHandle.h"
+#import "FrameInfoData.h"
 #import "WKNSArray.h"
 #import "WKNSURLExtras.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
@@ -36,11 +38,16 @@
 #import "WKWebProcessPlugInScriptWorldInternal.h"
 #import "WebProcess.h"
 #import "_WKFrameHandleInternal.h"
+#import "_WKJSHandleInternal.h"
+#import <JavaScriptCore/APICast.h>
+#import <JavaScriptCore/JSGlobalObject.h>
 #import <JavaScriptCore/JSValue.h>
 #import <WebCore/CertificateInfo.h>
+#import <WebCore/DOMWrapperWorld.h>
 #import <WebCore/DocumentInlines.h>
 #import <WebCore/DocumentSecurityOrigin.h>
 #import <WebCore/IntPoint.h>
+#import <WebCore/JSWebKitJSHandle.h>
 #import <WebCore/LinkIconCollector.h>
 #import <WebCore/LinkIconType.h>
 #import <WebCore/LocalFrameInlines.h>
@@ -71,6 +78,31 @@ static Ref<WebKit::WebFrame> protectedFrame(WKWebProcessPlugInFrame *frame)
 + (instancetype)lookUpContentFrameFromWindowOrFrameElement:(JSValue *)value
 {
     return wrapper(WebKit::WebFrame::contentFrameForWindowOrFrameElement(value.context.JSGlobalContextRef, value.JSValueRef)).autorelease();
+}
+
+// FIXME: Remove this once it is no longer helpful to help Safari transition away from the injected bundle.
++ (_WKJSHandle *)jsHandleFromValue:(JSValue *)value withContext:(JSContext *)context
+{
+#if PLATFORM(MAC)
+    RELEASE_ASSERT(WTF::MacApplication::isSafari() || applicationBundleIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s);
+#else
+    RELEASE_ASSERT(WTF::IOSApplication::isMobileSafari() || applicationBundleIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s);
+#endif
+    JSObjectRef object = JSValueToObject(context.JSGlobalContextRef, value.JSValueRef, 0);
+    JSC::JSGlobalObject* globalObject = ::toJS(context.JSGlobalContextRef);
+    JSC::JSObject* jsObject = ::toJS(globalObject, object).toObject(globalObject);
+
+    if (auto* info = jsDynamicCast<WebCore::JSWebKitJSHandle*>(jsObject)) {
+        RELEASE_ASSERT(globalObject->template inherits<WebCore::JSDOMGlobalObject>());
+        auto* domGlobalObject = jsCast<WebCore::JSDOMGlobalObject*>(globalObject);
+        RefPtr document = dynamicDowncast<WebCore::Document>(domGlobalObject->scriptExecutionContext());
+        RefPtr frame = WebKit::WebFrame::webFrame(document->frameID());
+        RefPtr world = WebKit::InjectedBundleScriptWorld::get(Ref { domGlobalObject->world() });
+        Ref ref { info->wrapped() };
+        WebKit::JSHandleInfo handleInfo { ref->identifier(), world->identifier(), frame->info(), ref->windowFrameIdentifier() };
+        return wrapper(API::JSHandle::create(WTF::move(handleInfo))).autorelease();
+    }
+    return nil;
 }
 
 - (void)dealloc
@@ -162,7 +194,7 @@ static Ref<WebKit::WebFrame> protectedFrame(WKWebProcessPlugInFrame *frame)
     RefPtr coreFrame = protectedFrame(self)->coreLocalFrame();
     if (!coreFrame)
         return nil;
-    return coreFrame->protectedDocument()->protectedSecurityOrigin()->toString().createNSString().autorelease();
+    return protect(protect(coreFrame->document())->securityOrigin())->toString().createNSString().autorelease();
 }
 
 static RetainPtr<NSArray> collectIcons(WebCore::LocalFrame* frame, OptionSet<WebCore::LinkIconType> iconTypes)
@@ -179,12 +211,12 @@ static RetainPtr<NSArray> collectIcons(WebCore::LocalFrame* frame, OptionSet<Web
 
 - (NSArray *)appleTouchIconURLs
 {
-    return collectIcons(protectedFrame(self)->protectedCoreLocalFrame().get(), { WebCore::LinkIconType::TouchIcon, WebCore::LinkIconType::TouchPrecomposedIcon }).autorelease();
+    return collectIcons(protect(protectedFrame(self)->coreLocalFrame()).get(), { WebCore::LinkIconType::TouchIcon, WebCore::LinkIconType::TouchPrecomposedIcon }).autorelease();
 }
 
 - (NSArray *)faviconURLs
 {
-    return collectIcons(protectedFrame(self)->protectedCoreLocalFrame().get(), WebCore::LinkIconType::Favicon).autorelease();
+    return collectIcons(protect(protectedFrame(self)->coreLocalFrame()).get(), WebCore::LinkIconType::Favicon).autorelease();
 }
 
 - (WKWebProcessPlugInFrame *)_parentFrame
@@ -198,7 +230,7 @@ static RetainPtr<NSArray> collectIcons(WebCore::LocalFrame* frame, OptionSet<Web
     if (!frame->isMainFrame())
         return false;
 
-    return frame->protectedPage()->mainFrameHasCustomContentProvider();
+    return protect(frame->page())->mainFrameHasCustomContentProvider();
 }
 
 - (NSArray *)_certificateChain

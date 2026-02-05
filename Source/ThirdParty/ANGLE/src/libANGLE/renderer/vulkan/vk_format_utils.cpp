@@ -261,6 +261,14 @@ void FormatTable::initialize(Renderer *renderer, gl::TextureCapsMap *outTextureC
         const auto intendedFormatID              = static_cast<angle::FormatID>(formatIndex);
         const angle::Format &intendedAngleFormat = angle::Format::Get(intendedFormatID);
 
+        // Skip querying device caps for ASTC 3D formats if VK_EXT_texture_compression_astc_3d is
+        // not enabled
+        if (renderer->getFeatures().supportsAstc3d.enabled == false &&
+            IsASTC3DFormat(intendedFormatID))
+        {
+            continue;
+        }
+
         format.initialize(renderer, intendedAngleFormat);
         format.mIntendedFormatID = intendedFormatID;
 
@@ -524,6 +532,39 @@ bool IsETCFormat(angle::FormatID formatID)
     return formatID >= angle::FormatID::EAC_R11G11_SNORM_BLOCK &&
            formatID <= angle::FormatID::ETC2_R8G8B8_UNORM_BLOCK;
 }
+
+// Checks if it is an ASTC 3D texture format
+bool IsASTC3DFormat(angle::FormatID formatID)
+{
+    switch (formatID)
+    {
+        case angle::FormatID::ASTC_3x3x3_UNORM_BLOCK:
+        case angle::FormatID::ASTC_3x3x3_UNORM_SRGB_BLOCK:
+        case angle::FormatID::ASTC_4x3x3_UNORM_BLOCK:
+        case angle::FormatID::ASTC_4x3x3_UNORM_SRGB_BLOCK:
+        case angle::FormatID::ASTC_4x4x3_UNORM_BLOCK:
+        case angle::FormatID::ASTC_4x4x3_UNORM_SRGB_BLOCK:
+        case angle::FormatID::ASTC_4x4x4_UNORM_BLOCK:
+        case angle::FormatID::ASTC_4x4x4_UNORM_SRGB_BLOCK:
+        case angle::FormatID::ASTC_5x4x4_UNORM_BLOCK:
+        case angle::FormatID::ASTC_5x4x4_UNORM_SRGB_BLOCK:
+        case angle::FormatID::ASTC_5x5x4_UNORM_BLOCK:
+        case angle::FormatID::ASTC_5x5x4_UNORM_SRGB_BLOCK:
+        case angle::FormatID::ASTC_5x5x5_UNORM_BLOCK:
+        case angle::FormatID::ASTC_5x5x5_UNORM_SRGB_BLOCK:
+        case angle::FormatID::ASTC_6x5x5_UNORM_BLOCK:
+        case angle::FormatID::ASTC_6x5x5_UNORM_SRGB_BLOCK:
+        case angle::FormatID::ASTC_6x6x5_UNORM_BLOCK:
+        case angle::FormatID::ASTC_6x6x5_UNORM_SRGB_BLOCK:
+        case angle::FormatID::ASTC_6x6x6_UNORM_BLOCK:
+        case angle::FormatID::ASTC_6x6x6_UNORM_SRGB_BLOCK:
+            return true;
+
+        default:
+            return false;
+    }
+}
+
 // Checks if it is a BC texture format
 bool IsBCFormat(angle::FormatID formatID)
 {

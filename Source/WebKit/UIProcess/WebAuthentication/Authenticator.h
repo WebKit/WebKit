@@ -75,7 +75,6 @@ protected:
     Authenticator() = default;
 
     AuthenticatorObserver* observer() const { return m_observer.get(); }
-    RefPtr<AuthenticatorObserver> protectedObserver() const { return m_observer.get(); }
     const WebAuthenticationRequestData& requestData() const { return m_pendingRequestData; }
 
     void receiveRespond(AuthenticatorObserverRespond&&) const;

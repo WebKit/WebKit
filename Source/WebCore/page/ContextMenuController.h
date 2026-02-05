@@ -93,7 +93,7 @@ private:
 #if PLATFORM(COCOA)
     void createAndAppendSpeechSubMenu(ContextMenuItem&);
     void createAndAppendSubstitutionsSubMenu(ContextMenuItem&);
-    void createAndAppendTransformationsSubMenu(ContextMenuItem&);
+    bool createAndAppendTransformationsSubMenu(ContextMenuItem&);
 #endif
 #if PLATFORM(GTK)
     void createAndAppendUnicodeSubMenu(ContextMenuItem&);

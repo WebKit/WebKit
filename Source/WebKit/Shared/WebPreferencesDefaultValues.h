@@ -105,6 +105,7 @@ bool defaultPassiveWheelListenersAsDefaultOnDocument();
 bool defaultWheelEventGesturesBecomeNonBlocking();
 bool defaultAppleMailPaginationQuirkEnabled();
 bool defaultUseAppKitGestures();
+bool defaultTextInputClientSelectionUpdatesEnabled();
 #endif
 
 #if ENABLE(MEDIA_STREAM)

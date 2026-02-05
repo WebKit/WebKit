@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef WebPopupMenu_h
-#define WebPopupMenu_h
+#pragma once
 
 #include "WebPopupItem.h"
 #include <WebCore/PopupMenu.h>
@@ -45,8 +44,12 @@ public:
     WebPage* page();
 
     void disconnectFromPage() { m_page = nullptr; }
+#if !PLATFORM(IOS_FAMILY)
     void didChangeSelectedIndex(int newIndex);
+#endif
+#if !PLATFORM(COCOA)
     void setTextForIndex(int newIndex);
+#endif
 #if PLATFORM(GTK)
     WebCore::PopupMenuClient* client() const { return m_popupClient.get(); }
 #endif
@@ -67,5 +70,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebPopupMenu_h

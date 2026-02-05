@@ -96,7 +96,7 @@ void RemoteCDMProxy::createInstance(CompletionHandler<void(std::optional<RemoteC
     auto identifier = RemoteCDMInstanceIdentifier::generate();
     auto instance = RemoteCDMInstanceProxy::create(*this, privateInstance.releaseNonNull(), identifier);
     RemoteCDMInstanceConfiguration configuration = instance->configuration();
-    protectedFactory()->addInstance(identifier, WTF::move(instance));
+    protect(factory())->addInstance(identifier, WTF::move(instance));
     completion(identifier, WTF::move(configuration));
 }
 

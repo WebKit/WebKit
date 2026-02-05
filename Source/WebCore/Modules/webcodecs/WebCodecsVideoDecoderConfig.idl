@@ -31,7 +31,6 @@ typedef [EnforceRange] unsigned long WebCodecsVideoDecoderConfigSize;
     Conditional=WEB_CODECS,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary WebCodecsVideoDecoderConfig {
     required DOMString codec;
     [AllowShared] (ArrayBufferView or ArrayBuffer) description;

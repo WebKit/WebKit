@@ -42,8 +42,8 @@ struct GPUExtent3DDict {
     }
 
     GPUIntegerCoordinate width { 0 };
-    GPUIntegerCoordinate height { 0 };
-    GPUIntegerCoordinate depthOrArrayLayers { 0 };
+    GPUIntegerCoordinate height { 1 };
+    GPUIntegerCoordinate depthOrArrayLayers { 1 };
 };
 
 using GPUExtent3D = Variant<Vector<GPUIntegerCoordinate>, GPUExtent3DDict>;

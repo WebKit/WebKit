@@ -98,21 +98,24 @@ void ProgressValueElement::setInlineSizePercentage(double size)
 
 Ref<ProgressInnerElement> ProgressInnerElement::create(Document& document)
 {
-    Ref<ProgressInnerElement> result = adoptRef(*new ProgressInnerElement(document));
+    Ref result = adoptRef(*new ProgressInnerElement(document));
+    ScriptDisallowedScope::EventAllowedScope resultScope { result };
     result->setUserAgentPart(UserAgentParts::webkitProgressInnerElement());
     return result;
 }
 
 Ref<ProgressBarElement> ProgressBarElement::create(Document& document)
 {
-    Ref<ProgressBarElement> result = adoptRef(*new ProgressBarElement(document));
+    Ref result = adoptRef(*new ProgressBarElement(document));
+    ScriptDisallowedScope::EventAllowedScope resultScope { result };
     result->setUserAgentPart(UserAgentParts::webkitProgressBar());
     return result;
 }
 
 Ref<ProgressValueElement> ProgressValueElement::create(Document& document)
 {
-    Ref<ProgressValueElement> result = adoptRef(*new ProgressValueElement(document));
+    Ref result = adoptRef(*new ProgressValueElement(document));
+    ScriptDisallowedScope::EventAllowedScope resultScope { result };
     result->setUserAgentPart(UserAgentParts::webkitProgressValue());
     return result;
 }

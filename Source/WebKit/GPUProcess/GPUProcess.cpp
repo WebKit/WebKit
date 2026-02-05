@@ -201,7 +201,7 @@ void GPUProcess::tryExitIfUnused()
     m_idleExitTimer.stop();
 
     RELEASE_LOG(Process, "GPUProcess::tryExitIfUnused: GPUProcess is exiting because we are under memory pressure and the process is no longer useful.");
-    protectedParentProcessConnection()->send(Messages::GPUProcessProxy::ProcessIsReadyToExit(), 0);
+    protect(parentProcessConnection())->send(Messages::GPUProcessProxy::ProcessIsReadyToExit(), 0);
 }
 
 void GPUProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)
@@ -436,7 +436,7 @@ void GPUProcess::enableMicrophoneMuteStatusAPI()
 #if PLATFORM(COCOA)
     CoreAudioCaptureUnit::defaultSingleton().setMuteStatusChangedCallback([weakProcess = WeakPtr { *this }] (bool isMuting) {
         if (RefPtr process = weakProcess.get())
-            process->protectedParentProcessConnection()->send(Messages::GPUProcessProxy::MicrophoneMuteStatusChanged(isMuting), 0);
+            protect(process->parentProcessConnection())->send(Messages::GPUProcessProxy::MicrophoneMuteStatusChanged(isMuting), 0);
     });
 #endif
 }
@@ -518,7 +518,7 @@ void GPUProcess::setShouldListenToVoiceActivity(bool shouldListen)
     }
 
     RealtimeMediaSourceCenter::singleton().audioCaptureFactory().enableMutedSpeechActivityEventListener([] {
-        GPUProcess::singleton().protectedParentProcessConnection()->send(Messages::GPUProcessProxy::VoiceActivityDetected { }, 0);
+        protect(GPUProcess::singleton().parentProcessConnection())->send(Messages::GPUProcessProxy::VoiceActivityDetected { }, 0);
     });
 #endif
 }
@@ -599,11 +599,6 @@ RemoteAudioSessionProxyManager& GPUProcess::audioSessionManager() const
         m_audioSessionManager = RemoteAudioSessionProxyManager::create(const_cast<GPUProcess&>(*this));
     return *m_audioSessionManager;
 }
-
-Ref<RemoteAudioSessionProxyManager> GPUProcess::protectedAudioSessionManager() const
-{
-    return audioSessionManager();
-}
 #endif
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
@@ -631,7 +626,7 @@ void GPUProcess::webProcessConnectionCountForTesting(CompletionHandler<void(uint
 
 void GPUProcess::terminateWebProcess(WebCore::ProcessIdentifier identifier)
 {
-    protectedParentProcessConnection()->send(Messages::GPUProcessProxy::TerminateWebProcess(identifier), 0);
+    protect(parentProcessConnection())->send(Messages::GPUProcessProxy::TerminateWebProcess(identifier), 0);
 }
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)

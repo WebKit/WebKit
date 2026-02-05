@@ -44,7 +44,11 @@
 #include "RemoteLayerTreeDrawingAreaMac.h"
 #include "TiledCoreAnimationDrawingArea.h"
 #elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#include "DrawingAreaCoordinatedGraphicsGLib.h"
+#else
 #include "DrawingAreaCoordinatedGraphics.h"
+#endif
 #endif
 #if USE(GRAPHICS_LAYER_WC)
 #include "DrawingAreaWC.h"

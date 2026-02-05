@@ -35,8 +35,8 @@ PASS minmax replaced IMG svg 32
 PASS minmax replaced IMG svg 33
 PASS minmax replaced IMG 34
 PASS minmax replaced IMG 35
-FAIL minmax replaced IMG 36 assert_equals: incorrect offsetWidth expected "188" but got "388"
-FAIL minmax replaced IMG 37 assert_equals: incorrect offsetWidth expected "188" but got "138"
+PASS minmax replaced IMG 36
+PASS minmax replaced IMG 37
 PASS minmax replaced IMG 38
 PASS minmax replaced IMG 39
 PASS minmax replaced IMG 40

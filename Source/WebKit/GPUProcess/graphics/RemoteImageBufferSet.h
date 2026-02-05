@@ -93,7 +93,6 @@ private:
     RemoteImageBufferSetConfiguration m_configuration;
     IPC::ScopedActiveMessageReceiveQueue<RemoteImageBufferGraphicsContext> m_context;
 
-    std::optional<WebCore::IntRect> m_previouslyPaintedRect;
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     WebCore::DynamicContentScalingResourceCache m_dynamicContentScalingResourceCache;
 #endif

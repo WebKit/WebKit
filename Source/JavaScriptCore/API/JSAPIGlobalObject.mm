@@ -30,7 +30,6 @@
 
 #import "APICast.h"
 #import "CallFrameInlines.h"
-#import "CatchScope.h"
 #import "Completion.h"
 #import "Error.h"
 #import "Exception.h"
@@ -51,6 +50,7 @@
 #import "ObjectConstructor.h"
 #import "SourceOrigin.h"
 #import "StrongInlines.h"
+#import "TopExceptionScope.h"
 #import <wtf/URL.h>
 #import <wtf/text/MakeString.h>
 

@@ -102,7 +102,7 @@ void LinkBuffer::logJITCodeForJITDump(CodeRef<LinkBufferPtrTag>& codeRef, ASCIIL
     case Profile::WasmOMG:
     case Profile::WasmBBQ: {
         if (m_ownerUID)
-            out.print(makeString(uncheckedDowncast<Wasm::Callee>(reinterpret_cast<NativeCallee*>(m_ownerUID))->indexOrName()));
+            uncheckedDowncast<Wasm::Callee>(reinterpret_cast<NativeCallee*>(m_ownerUID))->dumpSimpleName(out);
         else
             dumpSimpleName(out, simpleName);
         break;

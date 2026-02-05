@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -141,6 +141,11 @@ private:
 
     unsigned dropAllLocks(DropAllLocks*);
     void grabAllLocks(DropAllLocks*, unsigned lockCount);
+
+#if PLATFORM(COCOA) && CPU(ADDRESS64) && CPU(ARM64)
+    // FIXME: rdar://168614004
+    NO_RETURN_DUE_TO_CRASH NEVER_INLINE void dumpInfoAndCrashForLockNotOwned();
+#endif
 
     Lock m_lock;
     bool m_isWebThreadAware { false };

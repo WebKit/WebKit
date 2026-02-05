@@ -174,15 +174,14 @@ struct AV1CodecConfigurationRecord {
     uint32_t height { defaultHeight };
 };
 
-struct MediaCapabilitiesInfo;
-struct VideoConfiguration;
+struct PlatformMediaCapabilitiesVideoConfiguration;
 class VideoInfo;
 
 WEBCORE_EXPORT std::optional<AV1CodecConfigurationRecord> parseAV1CodecParameters(StringView codecString);
 WEBCORE_EXPORT String createAV1CodecParametersString(const AV1CodecConfigurationRecord&);
 
 WEBCORE_EXPORT bool validateAV1ConfigurationRecord(const AV1CodecConfigurationRecord&);
-WEBCORE_EXPORT bool validateAV1PerLevelConstraints(const AV1CodecConfigurationRecord&, const VideoConfiguration&);
+WEBCORE_EXPORT bool validateAV1PerLevelConstraints(const AV1CodecConfigurationRecord&, const PlatformMediaCapabilitiesVideoConfiguration&);
 
 std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(std::span<const uint8_t>);
 std::optional<AV1CodecConfigurationRecord> parseSequenceHeaderOBU(std::span<const uint8_t>);

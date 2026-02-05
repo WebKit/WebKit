@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include <bmalloc/bmalloc.h>
+#include <wtf/AvailableMemory.h>
 #include <wtf/MemoryFootprint.h>
 #include <wtf/Platform.h>
 
@@ -32,7 +33,8 @@ namespace WTF {
 
 size_t memoryFootprint()
 {
-    return bmalloc::api::memoryFootprint();
+    auto memoryUse = memoryStatus();
+    return memoryUse.memoryFootprint;
 }
 
 } // namespace WTF

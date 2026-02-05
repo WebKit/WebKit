@@ -902,10 +902,13 @@ void Coder<WebCore::ServiceWorkerRouteCondition>::encodeForPersistence(Encoder& 
     encoder << condition.requestDestination;
     encoder << condition.runningStatus;
     encoder << condition.orConditions;
-    if (condition.notCondition) {
-        encoder << true;
-        encoder << *condition.notCondition;
+
+    if (!condition.notCondition) {
+        encoder << false;
+        return;
     }
+    encoder << true;
+    encoder << *condition.notCondition;
 }
 
 std::optional<WebCore::ServiceWorkerRouteCondition> Coder<WebCore::ServiceWorkerRouteCondition>::decodeForPersistence(Decoder& decoder)

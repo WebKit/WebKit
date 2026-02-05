@@ -33,10 +33,10 @@
 #include "LibWebRTCLogSink.h"
 #include "LibWebRTCUtils.h"
 #include "Logging.h"
-#include "MediaCapabilitiesDecodingInfo.h"
-#include "MediaCapabilitiesEncodingInfo.h"
-#include "MediaDecodingConfiguration.h"
-#include "MediaEncodingConfiguration.h"
+#include "PlatformMediaCapabilitiesDecodingInfo.h"
+#include "PlatformMediaCapabilitiesEncodingInfo.h"
+#include "PlatformMediaDecodingConfiguration.h"
+#include "PlatformMediaEncodingConfiguration.h"
 #include "ProcessQualified.h"
 #include <dlfcn.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -279,7 +279,7 @@ void LibWebRTCProvider::disableNonLocalhostConnections()
     m_disableNonLocalhostConnections = true;
 }
 
-std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> LibWebRTCProvider::createSocketFactory(String&& /* userAgent */, ScriptExecutionContextIdentifier, bool /* isFirstParty */, RegistrableDomain&&)
+std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> LibWebRTCProvider::createSocketFactory(String&& /* userAgent */, ScriptExecutionContextIdentifier, bool /* isFirstParty */, RegistrableDomain&&, bool)
 {
     return nullptr;
 }
@@ -571,9 +571,9 @@ void LibWebRTCProvider::initializeVideoEncodingCapabilities()
         m_videoEncodingCapabilities = toRTCRtpCapabilities(factory->GetRtpSenderCapabilities(webrtc::MediaType::VIDEO));
 }
 
-std::optional<MediaCapabilitiesDecodingInfo> LibWebRTCProvider::videoDecodingCapabilitiesOverride(const VideoConfiguration& configuration)
+std::optional<PlatformMediaCapabilitiesDecodingInfo> LibWebRTCProvider::videoDecodingCapabilitiesOverride(const PlatformMediaCapabilitiesVideoConfiguration& configuration)
 {
-    MediaCapabilitiesDecodingInfo info;
+    PlatformMediaCapabilitiesDecodingInfo info;
     ContentType contentType { configuration.contentType };
     auto containerType = contentType.containerType();
     if (equalLettersIgnoringASCIICase(containerType, "video/vp8"_s)) {
@@ -600,9 +600,9 @@ std::optional<MediaCapabilitiesDecodingInfo> LibWebRTCProvider::videoDecodingCap
     return { info };
 }
 
-std::optional<MediaCapabilitiesEncodingInfo> LibWebRTCProvider::videoEncodingCapabilitiesOverride(const VideoConfiguration& configuration)
+std::optional<PlatformMediaCapabilitiesEncodingInfo> LibWebRTCProvider::videoEncodingCapabilitiesOverride(const PlatformMediaCapabilitiesVideoConfiguration& configuration)
 {
-    MediaCapabilitiesEncodingInfo info;
+    PlatformMediaCapabilitiesEncodingInfo info;
     ContentType contentType { configuration.contentType };
     auto containerType = contentType.containerType();
     if (equalLettersIgnoringASCIICase(containerType, "video/vp8"_s) || equalLettersIgnoringASCIICase(containerType, "video/vp9"_s))
@@ -615,7 +615,7 @@ std::optional<MediaCapabilitiesEncodingInfo> LibWebRTCProvider::videoEncodingCap
         info.powerEfficient = info.smooth = false;
 
     info.supported = true;
-    info.configuration.type = MediaEncodingType::WebRTC;
+    info.configuration.type = PlatformMediaEncodingType::WebRTC;
     return { info };
 }
 

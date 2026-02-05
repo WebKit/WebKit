@@ -63,29 +63,29 @@ static void updateImplWithNamespaceAndElementName(QualifiedName::QualifiedNameIm
 Ref<QualifiedName::QualifiedNameImpl> QualifiedNameCache::getOrCreate(const QualifiedNameComponents& components)
 {
     auto addResult = m_cache.add<QNameComponentsTranslator>(components);
-    auto& impl = **addResult.iterator;
+    Ref impl = **addResult.iterator;
 
     if (addResult.isNewEntry) {
         auto nodeNamespace = findNamespace(components.m_namespaceURI.get());
         auto nodeName = findNodeName(nodeNamespace, components.m_localName.get());
-        updateImplWithNamespaceAndElementName(impl, nodeNamespace, nodeName);
-        return adoptRef(impl);
+        updateImplWithNamespaceAndElementName(impl.get(), nodeNamespace, nodeName);
+        return adoptRef(impl.get());
     }
 
-    return Ref { impl };
+    return Ref { impl.get() };
 }
 
 Ref<QualifiedName::QualifiedNameImpl> QualifiedNameCache::getOrCreate(const QualifiedNameComponents& components, Namespace nodeNamespace, NodeName nodeName)
 {
     auto addResult = m_cache.add<QNameComponentsTranslator>(components);
-    auto& impl = **addResult.iterator;
+    Ref impl = **addResult.iterator;
 
     if (addResult.isNewEntry) {
-        updateImplWithNamespaceAndElementName(impl, nodeNamespace, nodeName);
-        return adoptRef(impl);
+        updateImplWithNamespaceAndElementName(impl.get(), nodeNamespace, nodeName);
+        return adoptRef(impl.get());
     }
 
-    return Ref { impl };
+    return Ref { impl.get() };
 }
 
 void QualifiedNameCache::remove(QualifiedName::QualifiedNameImpl& impl)

@@ -451,7 +451,7 @@ void FrameConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Re
             Ref frame = m_frame.get();
             if (RefPtr localMainFrame = frame->localMainFrame()) {
                 // If no target is provided, capture an image of the viewport.
-                auto viewportRect = localMainFrame->protectedView()->unobscuredContentRect();
+                auto viewportRect = protect(localMainFrame->view())->unobscuredContentRect();
                 if (RefPtr snapshot = WebCore::snapshotFrameRect(*localMainFrame, viewportRect, { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() }))
                     dataURL = snapshot->toDataURL("image/png"_s, /* quality */ std::nullopt, PreserveResolution::Yes);
             }

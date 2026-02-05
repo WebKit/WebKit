@@ -221,6 +221,10 @@ void FetchBodySource::NonByteSource::doPull()
 
 void FetchBodySource::NonByteSource::doCancel(JSC::JSValue)
 {
+    auto scope = makeScopeExit([&] {
+        cancelFinished();
+    });
+
     m_isCancelling = true;
     RefPtr bodyOwner = m_bodyOwner.get();
     if (!bodyOwner)

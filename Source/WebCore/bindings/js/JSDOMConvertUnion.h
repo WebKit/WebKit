@@ -34,6 +34,7 @@
 #include <WebCore/JSDOMConvertBufferSource.h>
 #include <WebCore/JSDOMConvertInterface.h>
 #include <WebCore/JSDOMConvertNull.h>
+#include <WebCore/JSDOMConvertNullable.h>
 #include <WebCore/JSDOMConvertUndefined.h>
 
 namespace WebCore {
@@ -407,9 +408,18 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
 };
 
 // FIXME: This is needed to work around unions storing non-nullable interfaces using RefPtr rather than Ref<>.
-// See "Support using Ref for IDLInterfaces in IDL unions (https://bugs.webkit.org/show_bug.cgi?id=274729)".
-template<typename T> struct AddNullableIfInterface { using type = T; };
-template<typename T> struct AddNullableIfInterface<IDLInterface<T>> { using type = IDLNullable<IDLInterface<T>>; };
+// See "Support using Ref for interfaces and typed arrays in IDL unions (https://bugs.webkit.org/show_bug.cgi?id=274729)".
+template<typename T> struct AddNullableIfInterfaceOrArrayBufferSource {
+    using type = std::conditional_t<
+        IsIDLInterface<T>::value
+            || IsIDLTypedArray<T>::value
+            || IsIDLArrayBuffer<T>::value
+            || IsIDLArrayBufferView<T>::value
+            || std::same_as<T, IDLDataView>,
+        IDLNullable<T>,
+        T
+    >;
+};
 
 template<typename... T> struct JSConverter<IDLUnion<T...>> {
     using Type = IDLUnion<T...>;
@@ -429,7 +439,7 @@ template<typename... T> struct JSConverter<IDLUnion<T...>> {
         forEach<Sequence>([&]<typename I>() {
             if (I::value == index) {
                 ASSERT(!returnValue);
-                returnValue = toJS<typename AddNullableIfInterface<brigand::at<TypeList, I>>::type>(lexicalGlobalObject, globalObject, std::get<I::value>(variant));
+                returnValue = toJS<typename AddNullableIfInterfaceOrArrayBufferSource<brigand::at<TypeList, I>>::type>(lexicalGlobalObject, globalObject, std::get<I::value>(variant));
             }
         });
 

@@ -27,6 +27,7 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
 
+#include "MockMediaDeviceRouteURLCallback.h"
 #include <WebKitAdditions/MediaDeviceRouteAdditions.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -44,12 +45,12 @@ public:
 
     WebMediaDevicePlatformRoute *platformRoute() const;
 
+    void setURLCallback(MockMediaDeviceRouteURLCallback*);
+
 private:
     MockMediaDeviceRoute();
 
-#if HAVE(AVROUTING_FRAMEWORK)
     RetainPtr<WebMockMediaDeviceRoute> m_platformRoute;
-#endif
 };
 
 } // namespace WebCore

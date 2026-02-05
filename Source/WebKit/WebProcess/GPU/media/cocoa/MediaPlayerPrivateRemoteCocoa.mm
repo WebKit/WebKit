@@ -51,7 +51,7 @@ PlatformLayerContainer MediaPlayerPrivateRemote::createVideoFullscreenLayer()
 
 void MediaPlayerPrivateRemote::pushVideoFrameMetadata(WebCore::VideoFrameMetadata&& videoFrameMetadata, RemoteVideoFrameProxy::Properties&& properties)
 {
-    auto videoFrame = RemoteVideoFrameProxy::create(protectedConnection(), protectedVideoFrameObjectHeapProxy(), WTF::move(properties));
+    auto videoFrame = RemoteVideoFrameProxy::create(protect(connection()), protect(videoFrameObjectHeapProxy()), WTF::move(properties));
     if (!m_isGatheringVideoFrameMetadata)
         return;
     m_videoFrameMetadata = WTF::move(videoFrameMetadata);
@@ -67,7 +67,7 @@ RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
     if (!videoFrame)
         return nullptr;
 
-    return WebProcess::singleton().ensureProtectedGPUProcessConnection()->protectedVideoFrameObjectHeapProxy()->getNativeImage(*videoFrame);
+    return protect(WebProcess::singleton().ensureProtectedGPUProcessConnection()->videoFrameObjectHeapProxy())->getNativeImage(*videoFrame);
 }
 
 WebCore::DestinationColorSpace MediaPlayerPrivateRemote::colorSpace()
@@ -75,7 +75,7 @@ WebCore::DestinationColorSpace MediaPlayerPrivateRemote::colorSpace()
     if (readyState() < MediaPlayer::ReadyState::HaveCurrentData)
         return DestinationColorSpace::SRGB();
 
-    auto sendResult = protectedConnection()->sendSync(Messages::RemoteMediaPlayerProxy::ColorSpace(), m_id);
+    auto sendResult = protect(connection())->sendSync(Messages::RemoteMediaPlayerProxy::ColorSpace(), m_id);
     auto [colorSpace] = sendResult.takeReplyOr(DestinationColorSpace::SRGB());
     return colorSpace;
 }
@@ -106,7 +106,7 @@ WebCore::FloatSize MediaPlayerPrivateRemote::videoLayerSize() const
 
 void MediaPlayerPrivateRemote::setVideoLayerSizeFenced(const FloatSize& size, WTF::MachSendRightAnnotated&& sendRightAnnotated)
 {
-    protectedConnection()->send(Messages::RemoteMediaPlayerProxy::SetVideoLayerSizeFenced(size, WTF::move(sendRightAnnotated)), m_id);
+    protect(connection())->send(Messages::RemoteMediaPlayerProxy::SetVideoLayerSizeFenced(size, WTF::move(sendRightAnnotated)), m_id);
 }
 
 } // namespace WebKit

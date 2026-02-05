@@ -22,9 +22,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://webaudio.github.io/web-audio-api/#ConvolverOptions
 [
     Conditional=WEB_AUDIO,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ConvolverOptions : AudioNodeOptions {
     AudioBuffer? buffer;
     boolean disableNormalization = false;

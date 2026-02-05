@@ -78,13 +78,8 @@ public:
     bool hasRowGroupTag() const final;
 
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) final;
-#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     AXIsolatedObject* parentObject() const final { return tree()->objectForID(parent()); }
     AXIsolatedObject* parentObjectUnignored() const final { return downcast<AXIsolatedObject>(AXCoreObject::parentObjectUnignored()); }
-#else
-    AXIsolatedObject* parentObject() const final { return parentObjectUnignored(); }
-    AXIsolatedObject* parentObjectUnignored() const final { return tree()->objectForID(parent()); }
-#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     bool isEditableWebArea() const final { return boolAttributeValue(AXProperty::IsEditableWebArea); }
     bool canSetFocusAttribute() const final { return boolAttributeValue(AXProperty::CanSetFocusAttribute); }
     AttributedStringStyle stylesForAttributedString() const final;
@@ -109,13 +104,7 @@ public:
 
     String description() const final { return stringAttributeValue(AXProperty::Description); }
 
-#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     bool isIgnored() const final { return boolAttributeValue(AXProperty::IsIgnored); }
-#else
-    // When not including ignored objects in the core tree, we should never create an isolated object from
-    // an ignored live object, so we can hardcode this to false.
-    bool isIgnored() const final { return false; }
-#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
 
     AXTextMarkerRange textMarkerRange() const final;
 
@@ -598,6 +587,7 @@ private:
 #if PLATFORM(COCOA)
     bool hasApplePDFAnnotationAttribute() const final { return boolAttributeValue(AXProperty::HasApplePDFAnnotationAttribute); }
     RetainPtr<id> remoteFramePlatformElement() const final;
+    pid_t remoteFrameProcessIdentifier() const final { return propertyValue<pid_t>(AXProperty::RemoteFrameProcessIdentifier); }
 #endif
     bool hasRemoteFrameChild() const final { return boolAttributeValue(AXProperty::HasRemoteFrameChild); }
 

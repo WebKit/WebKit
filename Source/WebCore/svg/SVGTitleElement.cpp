@@ -46,7 +46,7 @@ Node::InsertedIntoAncestorResult SVGTitleElement::insertedIntoAncestor(Insertion
 {
     auto result = SVGElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument && parentNode() == document().documentElement())
-        protectedDocument()->titleElementAdded(*this);
+        protect(document())->titleElementAdded(*this);
     return result;
 }
 
@@ -72,7 +72,7 @@ void SVGTitleElement::childrenChanged(const ChildChange& change)
 {
     SVGElement::childrenChanged(change);
     if (isConnected() && parentNode() == document().documentElement())
-        protectedDocument()->titleElementTextChanged(*this);
+        protect(document())->titleElementTextChanged(*this);
 }
 
 } // namespace WebCore

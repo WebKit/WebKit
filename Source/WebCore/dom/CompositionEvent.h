@@ -47,9 +47,9 @@ public:
         String data;
     };
 
-    static Ref<CompositionEvent> create(const AtomString& type, const Init& initializer)
+    static Ref<CompositionEvent> create(const AtomString& type, Init&& initializer)
     {
-        return adoptRef(*new CompositionEvent(type, initializer));
+        return adoptRef(*new CompositionEvent(type, WTF::move(initializer)));
     }
 
     virtual ~CompositionEvent();
@@ -61,7 +61,7 @@ public:
 private:
     CompositionEvent();
     CompositionEvent(const AtomString& type, RefPtr<WindowProxy>&&, const String&);
-    CompositionEvent(const AtomString& type, const Init&);
+    CompositionEvent(const AtomString& type, Init&&);
 
     String m_data;
 };

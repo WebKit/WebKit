@@ -7,7 +7,7 @@ layer at (0,0) size 800x1513
         RenderTableSection {TBODY} at (0,0) size 232x499
           RenderTableRow {TR} at (0,2) size 232x22
             RenderTableCell {TD} at (2,2) size 228x22 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 226x19
+              RenderText {#text} at (1,1) size 226x20
                 text run at (1,1) width 226: "Occasional height/width on images"
           RenderTableRow {TR} at (0,26) size 232x34
             RenderTableCell {TD} at (2,26) size 228x34 [r=1 c=0 rs=1 cs=1]
@@ -70,7 +70,7 @@ layer at (0,0) size 800x1513
         RenderTableSection {TBODY} at (0,0) size 271x499
           RenderTableRow {TR} at (0,2) size 271x22
             RenderTableCell {TD} at (2,2) size 267x22 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 265x19
+              RenderText {#text} at (1,1) size 265x20
                 text run at (1,1) width 265: "Images with height/width never specified"
           RenderTableRow {TR} at (0,26) size 271x34
             RenderTableCell {TD} at (2,26) size 267x34 [r=1 c=0 rs=1 cs=1]
@@ -133,7 +133,7 @@ layer at (0,0) size 800x1513
         RenderTableSection {TBODY} at (0,0) size 280x499
           RenderTableRow {TR} at (0,2) size 280x22
             RenderTableCell {TD} at (2,2) size 276x22 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 274x19
+              RenderText {#text} at (1,1) size 274x20
                 text run at (1,1) width 274: "Images with height/width always specified"
           RenderTableRow {TR} at (0,26) size 280x34
             RenderTableCell {TD} at (2,26) size 276x34 [r=1 c=0 rs=1 cs=1]

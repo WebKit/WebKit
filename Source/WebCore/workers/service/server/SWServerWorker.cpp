@@ -51,7 +51,7 @@ SWServerWorker* SWServerWorker::existingWorkerForIdentifier(ServiceWorkerIdentif
 }
 
 // FIXME: Use r-value references for script and contentSecurityPolicy
-SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registration, const URL& scriptURL, const ScriptBuffer& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy, String&& referrerPolicy, WorkerType type, ServiceWorkerIdentifier identifier, MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap)
+SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registration, const URL& scriptURL, const ScriptBuffer& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy, String&& referrerPolicy, WorkerType type, ServiceWorkerIdentifier identifier, MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap, Vector<ServiceWorkerRoute>&& routes)
     : m_server(server)
     , m_registrationKey(registration.key())
     , m_registration(registration)
@@ -66,13 +66,14 @@ SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registrat
     , m_terminationTimer(*this, &SWServerWorker::terminationTimerFired)
     , m_terminationIfPossibleTimer(*this, &SWServerWorker::terminationIfPossibleTimerFired)
     , m_lastNavigationWasAppInitiated(server.clientIsAppInitiatedForRegistrableDomain(m_topSite.domain()))
+    , m_routes(WTF::move(routes))
 {
     m_data.scriptURL.removeFragmentIdentifier();
 
     auto result = allWorkers().add(identifier, *this);
     ASSERT_UNUSED(result, result.isNewEntry);
 
-    ASSERT(protectedServer()->getRegistration(m_registrationKey) == &registration);
+    ASSERT(server.getRegistration(m_registrationKey) == &registration);
 }
 
 SWServerWorker::~SWServerWorker()
@@ -84,11 +85,6 @@ SWServerWorker::~SWServerWorker()
     ASSERT_UNUSED(taken, taken == this);
 
     callTerminationCallbacks();
-}
-
-RefPtr<SWServer> SWServerWorker::protectedServer() const
-{
-    return m_server.get();
 }
 
 ServiceWorkerContextData SWServerWorker::contextData() const
@@ -141,7 +137,7 @@ void SWServerWorker::startTermination(CompletionHandler<void()>&& callback)
         RELEASE_LOG_ERROR(ServiceWorker, "Request to terminate a worker %" PRIu64 " whose context connection does not exist", identifier().toUInt64());
         setState(State::NotRunning);
         callback();
-        protectedServer()->workerContextTerminated(*this);
+        protect(*server())->workerContextTerminated(*this);
         return;
     }
 
@@ -240,7 +236,7 @@ std::optional<ServiceWorkerClientData> SWServerWorker::findClientByIdentifier(co
     ASSERT(m_server);
     if (!m_server)
         return { };
-    return protectedServer()->serviceWorkerClientWithOriginByID(origin(), clientId);
+    return protect(*server())->serviceWorkerClientWithOriginByID(origin(), clientId);
 }
 
 void SWServerWorker::findClientByVisibleIdentifier(const String& clientIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&& callback)
@@ -250,7 +246,7 @@ void SWServerWorker::findClientByVisibleIdentifier(const String& clientIdentifie
         return;
     }
 
-    auto internalIdentifier = protectedServer()->clientIdFromVisibleClientId(clientIdentifier);
+    auto internalIdentifier = protect(*server())->clientIdFromVisibleClientId(clientIdentifier);
     if (!internalIdentifier) {
         callback({ });
         return;
@@ -264,7 +260,7 @@ void SWServerWorker::matchAll(const ServiceWorkerClientQueryOptions& options, Se
     ASSERT(m_server);
     if (!m_server)
         return callback({ });
-    return protectedServer()->matchAll(*this, options, WTF::move(callback));
+    return protect(*server())->matchAll(*this, options, WTF::move(callback));
 }
 
 String SWServerWorker::userAgent() const
@@ -272,7 +268,7 @@ String SWServerWorker::userAgent() const
     ASSERT(m_server);
     if (!m_server)
         return { };
-    return protectedServer()->serviceWorkerClientUserAgent(origin());
+    return protect(server())->serviceWorkerClientUserAgent(origin());
 }
 
 void SWServerWorker::setScriptResource(URL&& url, ServiceWorkerContextData::ImportedScript&& script)
@@ -362,7 +358,7 @@ void SWServerWorker::setState(ServiceWorkerState state)
         connectionIdentifiers.add(connectionIdentifierWithServiceWorker);
 
     for (auto connectionIdentifier : connectionIdentifiers) {
-        if (RefPtr connection = protectedServer()->connection(connectionIdentifier))
+        if (RefPtr connection = protect(server())->connection(connectionIdentifier))
             connection->updateWorkerStateInClient(this->identifier(), state);
     }
 
@@ -416,7 +412,7 @@ void SWServerWorker::didFailHeartBeatCheck()
 
 WorkerThreadMode SWServerWorker::workerThreadMode() const
 {
-    if ((m_server && protectedServer()->shouldRunServiceWorkersOnMainThreadForTesting()) || serviceWorkerPageIdentifier())
+    if ((m_server && protect(server())->shouldRunServiceWorkersOnMainThreadForTesting()) || serviceWorkerPageIdentifier())
         return WorkerThreadMode::UseMainThread;
     return WorkerThreadMode::CreateNewThread;
 }
@@ -443,7 +439,7 @@ void SWServerWorker::setAsInspected(bool isInspected)
 
 bool SWServerWorker::shouldBeTerminated() const
 {
-    return !m_functionalEventCounter && !m_isInspected && m_server && !protectedServer()->hasClientsWithOrigin(origin());
+    return !m_functionalEventCounter && !m_isInspected && m_server && !protect(server())->hasClientsWithOrigin(origin());
 }
 
 void SWServerWorker::terminateIfPossible()
@@ -462,14 +458,14 @@ void SWServerWorker::terminationIfPossibleTimerFired()
         return;
 
     terminate();
-    protectedServer()->removeContextConnectionIfPossible(topRegistrableDomain());
+    protect(server())->removeContextConnectionIfPossible(topRegistrableDomain());
 }
 
 bool SWServerWorker::isClientActiveServiceWorker(ScriptExecutionContextIdentifier clientIdentifier) const
 {
     if (!m_server)
         return false;
-    auto registrationIdentifier = protectedServer()->clientIdentifierToControllingRegistration(clientIdentifier);
+    auto registrationIdentifier = protect(server())->clientIdentifierToControllingRegistration(clientIdentifier);
     return registrationIdentifier == m_data.registrationIdentifier;
 }
 
@@ -533,13 +529,18 @@ std::optional<ExceptionData> SWServerWorker::addRoutes(Vector<ServiceWorkerRoute
 }
 
 // https://w3c.github.io/ServiceWorker/#get-router-source
-RouterSource SWServerWorker::getRouterSource(const FetchOptions& options, const ResourceRequest& request) const
+std::optional<RouterSource> SWServerWorker::getRouterSource(const FetchOptions& options, const ResourceRequest& request) const
 {
     for (auto& route : m_routes) {
         if (matchRouterCondition(route.condition, options, request, isRunning()))
             return route.source;
     }
 
+    return { };
+}
+
+RouterSource SWServerWorker::defaultRouterSource() const
+{
     return m_shouldSkipHandleFetch ? RouterSourceEnum::Network : RouterSourceEnum::FetchEvent;
 }
 

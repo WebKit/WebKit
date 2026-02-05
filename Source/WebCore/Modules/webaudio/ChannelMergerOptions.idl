@@ -25,7 +25,6 @@
 
 [
     Conditional=WEB_AUDIO,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ChannelMergerOptions : AudioNodeOptions {
     unsigned long numberOfInputs = 6;
 };

@@ -46,7 +46,6 @@
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderLayer.h"
 #include "RenderObjectInlines.h"
-#include "RenderScrollbar.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "SearchInputType.h"
@@ -208,6 +207,12 @@ void RenderSearchField::updatePopup(const AtomString& name, const Vector<RecentS
     protectedSearchPopup()->saveRecentSearches(name, searchItems);
 }
 
+void RenderSearchField::popupDidHide()
+{
+    m_searchPopupIsVisible = false;
+}
+
+#if PLATFORM(WIN)
 int RenderSearchField::clientInsetLeft() const
 {
     // Inset the menu by the radius of the cap on the left so that
@@ -244,20 +249,15 @@ LayoutUnit RenderSearchField::clientPaddingRight() const
     return padding;
 }
 
-
-void RenderSearchField::popupDidHide()
-{
-    m_searchPopupIsVisible = false;
-}
-
 FontSelector* RenderSearchField::fontSelector() const
 {
-    return &protectedDocument()->fontSelector();
+    return &protect(document())->fontSelector();
 }
 
 HostWindow* RenderSearchField::hostWindow() const
 {
     return RenderTextControlSingleLine::hostWindow();
 }
+#endif
 
 }

@@ -38,7 +38,7 @@ namespace WebCore {
 class PlatformSpeechSynthesisUtteranceClient : public CanMakeWeakPtr<PlatformSpeechSynthesisUtteranceClient>, public AbstractRefCounted {
 public:
     virtual ~PlatformSpeechSynthesisUtteranceClient() = default;
-    virtual void eventOccurred(const AtomString& type, unsigned long charIndex, unsigned long charLength, const String& name) = 0;
+    virtual void eventOccurred(const AtomString& type, uint32_t charIndex, uint32_t charLength, const String& name) = 0;
 
     virtual bool isSpeechSynthesisUtterance() const { return false; }
 

@@ -40,41 +40,31 @@ class PopupMenuClient : public AbstractRefCountedAndCanMakeWeakPtr<PopupMenuClie
 public:
     virtual ~PopupMenuClient() = default;
     virtual void valueChanged(unsigned listIndex, bool fireEvents = true) = 0;
-    virtual void selectionChanged(unsigned listIndex, bool fireEvents = true) = 0;
-    virtual void selectionCleared() = 0;
 
     virtual String itemText(unsigned listIndex) const = 0;
-    virtual String itemLabel(unsigned listIndex) const = 0;
-    virtual String itemIcon(unsigned listIndex) const = 0;
     virtual String itemToolTip(unsigned listIndex) const = 0;
     virtual String itemAccessibilityText(unsigned listIndex) const = 0;
     virtual bool itemIsEnabled(unsigned listIndex) const = 0;
     virtual PopupMenuStyle itemStyle(unsigned listIndex) const = 0;
     virtual PopupMenuStyle menuStyle() const = 0;
-    virtual int clientInsetLeft() const = 0;
-    virtual int clientInsetRight() const = 0;
-    virtual LayoutUnit clientPaddingLeft() const = 0;
-    virtual LayoutUnit clientPaddingRight() const = 0;
     virtual int listSize() const = 0;
-    virtual int popupSelectedIndex() const = 0;
     virtual void popupDidHide() = 0;
     virtual bool itemIsSeparator(unsigned listIndex) const = 0;
     virtual bool itemIsLabel(unsigned listIndex) const = 0;
     virtual bool itemIsSelected(unsigned listIndex) const = 0;
     virtual bool shouldPopOver() const = 0;
+#if !PLATFORM(COCOA)
     virtual void setTextFromItem(unsigned listIndex) = 0;
+#endif
 
-    virtual void listBoxSelectItem(int /*listIndex*/, bool /*allowMultiplySelections*/, bool /*shift*/, bool /*fireOnChangeNow*/ = true) { ASSERT_NOT_REACHED(); }
-    virtual bool popupMultiple() const
-    {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-
+#if PLATFORM(WIN)
+    virtual int clientInsetLeft() const = 0;
+    virtual int clientInsetRight() const = 0;
+    virtual LayoutUnit clientPaddingLeft() const = 0;
+    virtual LayoutUnit clientPaddingRight() const = 0;
     virtual FontSelector* fontSelector() const = 0;
     virtual HostWindow* hostWindow() const = 0;
-
-    virtual Ref<Scrollbar> createScrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarWidth) = 0;
+#endif
 };
 
 }

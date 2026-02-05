@@ -74,7 +74,7 @@ static Ref<WebCore::Document> protectedImpl(WKDOMDocument *document)
 
 - (WKDOMElement *)body
 {
-    return WebKit::toWKDOMElement(protectedImpl(self)->protectedBodyOrFrameset().get());
+    return WebKit::toWKDOMElement(protect(protectedImpl(self)->bodyOrFrameset()).get());
 }
 
 - (WKDOMNode *)createDocumentFragmentWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL

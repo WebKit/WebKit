@@ -31,6 +31,7 @@
 #include "GridLayoutUtils.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
+#include "NotImplemented.h"
 #include "PlacedGridItem.h"
 #include "RenderStyle+GettersInlines.h"
 #include "StyleGapGutter.h"
@@ -105,10 +106,91 @@ UnplacedGridItems GridFormattingContext::constructUnplacedGridItems() const
     return unplacedGridItems;
 }
 
+static Style::GridTrackSize trackSizeWithPercentagesConvertedToAuto(const Style::GridTrackSize& trackSize)
+{
+    return WTF::switchOn(trackSize,
+        [&trackSize](const Style::GridTrackBreadth& breadth) {
+            if (breadth.isPercentOrCalculated())
+                return Style::GridTrackSize { CSS::Keyword::Auto { } };
+            return trackSize;
+        },
+        [&trackSize](const Style::GridTrackSize::FitContent& fitContent) {
+            if (fitContent->isPercentOrCalculated())
+                return Style::GridTrackSize { CSS::Keyword::Auto { } };
+            return trackSize;
+        },
+        [&trackSize](const Style::GridTrackBreadth::Flex&) {
+            return trackSize;
+        },
+        [](const Style::GridTrackSize::MinMax& minMax) {
+            auto minTrackSizingFunction = !minMax->min.isPercentOrCalculated() ? minMax->min : Style::GridTrackBreadth { CSS::Keyword::Auto { } };
+            auto maxTrackSizingFunction = !minMax->max.isPercentOrCalculated() ? minMax->max : Style::GridTrackBreadth { CSS::Keyword::Auto { } };
+            return Style::GridTrackSize { Style::GridTrackSize::MinMax { minTrackSizingFunction, maxTrackSizingFunction } };
+        });
+}
+
+static Style::RepeatTrackList repeatTrackListWithPercentagesConvertedToAuto(const Style::RepeatTrackList& repeatList)
+{
+    return repeatList.map([](const Style::RepeatEntry& entry) {
+        return WTF::switchOn(entry,
+            [](const Style::GridTrackSize& trackSize) -> Style::RepeatEntry {
+                return trackSizeWithPercentagesConvertedToAuto(trackSize);
+            },
+            [](const Vector<String>& lineNames) -> Style::RepeatEntry {
+                return lineNames;
+            });
+    });
+}
+
+static Style::GridTemplateList gridTemplateListWithPercentagesConvertedToAuto(const Style::GridTemplateList& computedGridTemplateList)
+{
+    Style::GridTrackList transformedList = computedGridTemplateList.list.map([](const Style::GridTrackEntry& entry) {
+        return WTF::switchOn(entry,
+            [](const Style::GridTrackSize& trackSize) -> Style::GridTrackEntry {
+                return trackSizeWithPercentagesConvertedToAuto(trackSize);
+            },
+            [](const Vector<String>& lineNames) -> Style::GridTrackEntry {
+                return lineNames;
+            },
+            [](const Style::GridTrackEntryRepeat& repeat) -> Style::GridTrackEntry {
+                return Style::GridTrackEntryRepeat { repeat.repeats, repeatTrackListWithPercentagesConvertedToAuto(repeat.list) };
+            },
+            [](const Style::GridTrackEntryAutoRepeat& autoRepeat) -> Style::GridTrackEntry {
+                return Style::GridTrackEntryAutoRepeat { autoRepeat.type, repeatTrackListWithPercentagesConvertedToAuto(autoRepeat.list) };
+            },
+            [](const Style::GridTrackEntrySubgrid& subgrid) -> Style::GridTrackEntry {
+                return subgrid;
+            });
+    });
+    return Style::GridTemplateList { WTF::move(transformedList) };
+}
+
 void GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
 {
     auto unplacedGridItems = constructUnplacedGridItems();
-    auto [ usedTrackSizes, gridItemRects ] = GridLayout { *this }.layout(layoutConstraints, unplacedGridItems);
+
+    CheckedRef gridStyle = root().style();
+
+    GridAutoFlowOptions autoFlowOptions {
+        .strategy = gridStyle->gridAutoFlow().isDense() ? PackingStrategy::Dense : PackingStrategy::Sparse,
+        .direction = gridStyle->gridAutoFlow().isRow() ? GridAutoFlowDirection::Row : GridAutoFlowDirection::Column
+    };
+
+    // https://drafts.csswg.org/css-grid-1/#track-sizes
+    // If the size of the grid container depends on the size of its tracks, then the
+    // <percentage> must be treated as auto, for the purpose of calculating the intrinsic
+    // sizes of the grid container and then resolve against that resulting grid container
+    // size for the purpose of laying out the grid and its items.
+    auto gridContainerSizeDependsOnSizeOfTracks = [] {
+        notImplemented();
+        return false;
+    }();
+    auto gridTemplateColumns = gridContainerSizeDependsOnSizeOfTracks ? gridTemplateListWithPercentagesConvertedToAuto(gridStyle->gridTemplateColumns()) : gridStyle->gridTemplateColumns();
+    auto gridTemplateRows = gridContainerSizeDependsOnSizeOfTracks ? gridTemplateListWithPercentagesConvertedToAuto(gridStyle->gridTemplateRows()) : gridStyle->gridTemplateRows();
+
+    GridDefinition gridDefinition { gridTemplateColumns, gridTemplateRows, autoFlowOptions };
+
+    auto [ usedTrackSizes, gridItemRects ] = GridLayout { *this }.layout(layoutConstraints, unplacedGridItems, gridDefinition);
 
     // Grid layout positions each item within its containing block which is the grid area.
     // Here we translate it to the coordinate space of the grid.
@@ -116,7 +198,6 @@ void GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
 
         // Compute gap values for columns and rows.
         // For now, we handle fixed gaps only (not percentages or calc).
-        CheckedRef gridStyle = root().style();
 
         auto columnGap = GridLayoutUtils::computeGapValue(gridStyle->columnGap());
         auto rowGap = GridLayoutUtils::computeGapValue(gridStyle->rowGap());
@@ -153,7 +234,7 @@ PlacedGridItems GridFormattingContext::constructPlacedGridItems(const GridAreas&
             return root().style().alignItems().resolve();
         };
 
-        PlacedGridItem::ComputedSizes inlineAxisSizes {
+        ComputedSizes inlineAxisSizes {
             gridItemStyle->width(),
             gridItemStyle->minWidth(),
             gridItemStyle->maxWidth(),
@@ -161,7 +242,7 @@ PlacedGridItems GridFormattingContext::constructPlacedGridItems(const GridAreas&
             gridItemStyle->marginRight()
         };
 
-        PlacedGridItem::ComputedSizes blockAxisSizes {
+        ComputedSizes blockAxisSizes {
             gridItemStyle->height(),
             gridItemStyle->minHeight(),
             gridItemStyle->maxHeight(),

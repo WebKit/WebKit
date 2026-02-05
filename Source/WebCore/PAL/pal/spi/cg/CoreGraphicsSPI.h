@@ -85,6 +85,7 @@ typedef CF_ENUM (int32_t, CGContextDelegateCallbackName)
     deDrawGlyphs = 8,
     deBeginLayer = 17,
     deEndLayer = 18,
+    deGetColorSpace = 30,
 };
 
 typedef const struct CGColorTransform* CGColorTransformRef;
@@ -396,7 +397,7 @@ typedef bool (^CGPDFAnnotationDrawCallbackType)(CGContextRef context, CGPDFPageR
 void CGContextDrawPDFPageWithAnnotations(CGContextRef, CGPDFPageRef, CGPDFAnnotationDrawCallbackType);
 void CGContextDrawPathDirect(CGContextRef, CGPathDrawingMode, CGPathRef, const CGRect* boundingBox);
 
-CGColorSpaceRef CGContextCopyDeviceColorSpace(CGContextRef);
+CGColorSpaceRef CGContextGetColorSpace(CGContextRef);
 CFPropertyListRef CGColorSpaceCopyPropertyList(CGColorSpaceRef);
 CGError CGSNewRegionWithRect(const CGRect*, CGRegionRef*);
 CGError CGSPackagesEnableConnectionOcclusionNotifications(CGSConnectionID, bool flag, bool* outCurrentVisibilityState);
@@ -464,6 +465,12 @@ CGError CGSSetDenyWindowServerConnections(bool);
 CG_EXTERN void CGEnterLockdownModeForPDF();
 CG_LOCAL bool CGIsInLockdownModeForPDF();
 CG_EXTERN void CGEnterLockdownModeForFonts();
+#endif
+
+#if HAVE(CGCONTEXT_STROKE_ARC)
+void CGContextStrokeArc(CGContextRef cg_nullable,
+    CGFloat x, CGFloat y, CGFloat radius, CGFloat startAngle, CGFloat endAngle,
+    bool clockwise);
 #endif
 
 extern CGDataProviderRef __nullable CGDataProviderCreateWithCopyOfData(const void *, size_t);

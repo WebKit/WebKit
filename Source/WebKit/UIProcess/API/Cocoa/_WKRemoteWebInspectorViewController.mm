@@ -184,7 +184,7 @@ private:
         return;
     }
 
-    m_remoteInspectorProxy->protectedExtensionController()->registerExtension(extensionID, extensionBundleIdentifier, displayName, [protectedExtensionID = retainPtr(extensionID), protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<Ref<API::InspectorExtension>, Inspector::ExtensionError> result) mutable {
+    protect(m_remoteInspectorProxy->extensionController())->registerExtension(extensionID, extensionBundleIdentifier, displayName, [protectedExtensionID = retainPtr(extensionID), protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<Ref<API::InspectorExtension>, Inspector::ExtensionError> result) mutable {
         if (!result) {
             capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()).createNSString().get() }]).get(), nil);
             return;
@@ -205,7 +205,7 @@ private:
         completionHandler(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(Inspector::ExtensionError::InvalidRequest).createNSString().get() }]).get());
         return;
     }
-    m_remoteInspectorProxy->protectedExtensionController()->unregisterExtension(extension.extensionID, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<void, Inspector::ExtensionError> result) mutable {
+    protect(m_remoteInspectorProxy->extensionController())->unregisterExtension(extension.extensionID, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<void, Inspector::ExtensionError> result) mutable {
         if (!result) {
             capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()).createNSString().get() }]).get());
             return;
@@ -237,7 +237,7 @@ private:
         return;
     }
 
-    m_remoteInspectorProxy->protectedExtensionController()->showExtensionTab(extensionTabIdentifier, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<void, Inspector::ExtensionError>&& result) mutable {
+    protect(m_remoteInspectorProxy->extensionController())->showExtensionTab(extensionTabIdentifier, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (Expected<void, Inspector::ExtensionError>&& result) mutable {
         if (!result) {
             capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()).createNSString().get() }]).get());
             return;
@@ -257,7 +257,7 @@ private:
         return;
     }
 
-    m_remoteInspectorProxy->protectedExtensionController()->navigateTabForExtension(extensionTabIdentifier, url, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (const std::optional<Inspector::ExtensionError> result) mutable {
+    protect(m_remoteInspectorProxy->extensionController())->navigateTabForExtension(extensionTabIdentifier, url, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(completionHandler)] (const std::optional<Inspector::ExtensionError> result) mutable {
         if (result) {
             capturedBlock(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.value()).createNSString().get() }]).get());
             return;

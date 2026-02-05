@@ -90,6 +90,7 @@ public:
     using Socket = std::pair<String, RTCIceProtocol>;
     virtual HashMap<Socket, String> gatherSocketAddresses(ScriptExecutionContextIdentifier, unsigned) = 0;
     virtual void finalizeStream(unsigned) = 0;
+    virtual void setSocketTypeOfService(unsigned, unsigned) = 0;
 
 protected:
     RiceBackend() = default;

@@ -96,10 +96,10 @@ bool isHTMLListElement(const Node& node)
 // Returns the enclosing list with respect to the DOM order.
 static Element* enclosingList(const RenderListItem& listItem)
 {
-    auto* element = listItem.element();
-    auto* pseudoElement = dynamicDowncast<PseudoElement>(element);
-    auto* parent = pseudoElement ? pseudoElement->hostElement() : element->parentElement();
-    for (auto* ancestor = parent; ancestor; ancestor = ancestor->parentElement()) {
+    SUPPRESS_UNCOUNTED_LOCAL auto* element = listItem.element();
+    SUPPRESS_UNCOUNTED_LOCAL auto* pseudoElement = dynamicDowncast<PseudoElement>(element);
+    SUPPRESS_UNCOUNTED_LOCAL auto* parent = pseudoElement ? pseudoElement->hostElement() : element->parentElement();
+    for (SUPPRESS_UNCOUNTED_LOCAL auto* ancestor = parent; ancestor; ancestor = ancestor->parentElement()) {
         if (isHTMLListElement(*ancestor) || (ancestor->renderer() && ancestor->renderer()->shouldApplyStyleContainment()))
             return ancestor;
     }
@@ -112,7 +112,7 @@ static Element* enclosingList(const RenderListItem& listItem)
 
 static RenderListItem* nextListItemHelper(const Element& list, const Element& element)
 {
-    auto* current = &element;
+    RefPtr current = &element;
     auto advance = [&] {
         if (!current->renderOrDisplayContentsStyle())
             current = ElementTraversal::nextIncludingPseudoSkippingChildren(*current, &list);
@@ -126,7 +126,7 @@ static RenderListItem* nextListItemHelper(const Element& list, const Element& el
             advance();
             continue;
         }
-        auto* otherList = enclosingList(*item);
+        RefPtr otherList = enclosingList(*item);
         if (!otherList) {
             advance();
             continue;
@@ -155,7 +155,7 @@ static inline RenderListItem* firstListItem(const Element& list)
 
 static RenderListItem* previousListItem(const Element& list, const RenderListItem& item)
 {
-    auto* current = item.element();
+    RefPtr current = item.element();
     auto advance = [&] {
         current = ElementTraversal::previousIncludingPseudo(*current, &list);
     };
@@ -166,7 +166,7 @@ static RenderListItem* previousListItem(const Element& list, const RenderListIte
             advance();
             continue;
         }
-        auto* otherList = enclosingList(*item);
+        RefPtr otherList = enclosingList(*item);
         if (!otherList) {
             advance();
             continue;
@@ -200,8 +200,8 @@ unsigned RenderListItem::itemCountForOrderedList(const HTMLOListElement& list)
 
 void RenderListItem::updateValueNow() const
 {
-    auto* list = enclosingList(*this);
-    auto* orderedList = dynamicDowncast<HTMLOListElement>(list);
+    RefPtr list = enclosingList(*this);
+    RefPtr orderedList = dynamicDowncast<HTMLOListElement>(list);
 
     // The start item is either the closest item before this one in the list that already has a value,
     // or the first item in the list if none have before this have values yet.
@@ -305,7 +305,7 @@ void RenderListItem::usedCounterDirectivesChanged()
         m_marker->setNeedsLayoutAndPreferredWidthsUpdate();
 
     updateValue();
-    auto* list = enclosingList(*this);
+    RefPtr list = enclosingList(*this);
     if (!list)
         return;
     auto* item = this;
@@ -315,7 +315,7 @@ void RenderListItem::usedCounterDirectivesChanged()
 
 void RenderListItem::updateListMarkerNumbers()
 {
-    auto* list = enclosingList(*this);
+    RefPtr list = enclosingList(*this);
     if (!list)
         return;
 
@@ -335,7 +335,7 @@ void RenderListItem::updateListMarkerNumbers()
 
 bool RenderListItem::isInReversedOrderedList() const
 {
-    auto* list = dynamicDowncast<HTMLOListElement>(enclosingList(*this));
+    RefPtr list = dynamicDowncast<HTMLOListElement>(enclosingList(*this));
     return list && list->isReversed();
 }
 

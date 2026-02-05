@@ -208,7 +208,7 @@ void Resolver::initialize()
         document().fontSelector().incrementIsComputingRootStyleFont();
         m_rootDefaultStyle->fontCascade().update(&document().fontSelector());
         m_rootDefaultStyle->fontCascade().primaryFont();
-        document().protectedFontSelector()->decrementIsComputingRootStyleFont();
+        protect(document().fontSelector())->decrementIsComputingRootStyleFont();
     }
 
     if (m_rootDefaultStyle && view)
@@ -833,7 +833,7 @@ static CSSSelectorList viewTransitionSelector(CSSSelector::PseudoElement element
     }
 
     groupSelector->setValue(selectorName);
-    groupSelector->setArgumentList({ { name } });
+    groupSelector->setStringList({ { name } });
 
     selectorList.first()->prependInComplexSelector(CSSSelector::Relation::Subselector, WTF::move(groupSelector));
 

@@ -23,16 +23,29 @@
 
 #pragma once
 
+#include <WebCore/CollectionType.h>
+
+namespace WebCore {
+
+class HTMLOptionsCollection;
+
+template<>
+struct CollectionClassTraits<HTMLOptionsCollection> {
+    static constexpr CollectionType collectionType = CollectionType::SelectOptions;
+};
+
+} // namespace WebCore
+
 #include <WebCore/CachedHTMLCollection.h>
 #include <WebCore/HTMLOptionElement.h>
 #include <WebCore/HTMLSelectElement.h>
 
 namespace WebCore {
 
-class HTMLOptionsCollection final : public CachedHTMLCollection<HTMLOptionsCollection, CollectionTypeTraits<CollectionType::SelectOptions>::traversalType> {
+class HTMLOptionsCollection final : public CachedHTMLCollection<HTMLOptionsCollection> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(HTMLOptionsCollection, WEBCORE_EXPORT);
 public:
-    using Base = CachedHTMLCollection<HTMLOptionsCollection, CollectionTypeTraits<CollectionType::SelectOptions>::traversalType>;
+    using Base = CachedHTMLCollection<HTMLOptionsCollection>;
 
     static Ref<HTMLOptionsCollection> create(HTMLSelectElement&, CollectionType);
 
@@ -64,4 +77,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLOptionsCollection, CollectionType::SelectOptions)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLOptionsCollection)

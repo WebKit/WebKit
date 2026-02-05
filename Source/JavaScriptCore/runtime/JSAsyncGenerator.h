@@ -95,12 +95,17 @@ public:
         } };
     }
 
+    using Base::internalField;
+    const WriteBarrier<Unknown>& internalField(Field field) const { return Base::internalField(static_cast<uint32_t>(field)); }
+    WriteBarrier<Unknown>& internalField(Field field) { return Base::internalField(static_cast<uint32_t>(field)); }
+
     static JSAsyncGenerator* create(VM&, Structure*);
+    static JSAsyncGenerator* createWithInitialValues(VM&, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     int32_t state() const
     {
-        return Base::internalField(static_cast<unsigned>(Field::State)).get().asInt32AsAnyInt();
+        return internalField(Field::State).get().asInt32AsAnyInt();
     }
 
     void setState(int32_t state)

@@ -42,6 +42,9 @@ public:
         return adoptRef(*new SVGLengthListAnimator(attributeName, WTF::move(property), animationMode, calcMode, isAccumulated, isAdditive, SVGLengthMode::Other));
     }
 
+private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::CSSLengthList; }
+
     void start(SVGElement& targetElement) final
     {
         String baseValue = computeCSSPropertyValue(targetElement, cssPropertyID(m_attributeName.localName()));

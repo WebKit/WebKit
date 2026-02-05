@@ -22,20 +22,20 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/webrtc-pc/#dom-rtcrtpheaderextensioncapability
 [
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCRtpHeaderExtensionCapability {
     DOMString uri;
 };
 
+// https://w3c.github.io/webrtc-pc/#dom-rtcrtpcapabilities
 [
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCRtpCapabilities {
     required sequence<RTCRtpCodecCapability> codecs;
     required sequence<RTCRtpHeaderExtensionCapability> headerExtensions;

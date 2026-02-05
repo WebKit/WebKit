@@ -47,9 +47,7 @@ public:
     ~ProvisionalFrameProxy();
 
     WebFrameProxy& frame() const { return m_frame.get(); }
-    Ref<WebFrameProxy> protectedFrame() const;
     WebProcessProxy& process() const;
-    Ref<WebProcessProxy> protectedProcess() const;
 
     RefPtr<FrameProcess> takeFrameProcess();
 

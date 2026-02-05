@@ -106,13 +106,11 @@ public:
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     WebInspectorUIExtensionControllerProxy* extensionController() const { return m_extensionController.get(); }
-    RefPtr<WebInspectorUIExtensionControllerProxy> protectedExtensionController() const;
 #endif
     
 #if PLATFORM(MAC)
     NSWindow *window() const { return m_window.get(); }
     WKWebView *webView() const;
-    RetainPtr<WKWebView> protectedWebView() const;
 
     const WebCore::FloatRect& sheetRect() const { return m_sheetRect; }
 
@@ -134,7 +132,6 @@ public:
 
 private:
     RemoteWebInspectorUIProxy();
-    RefPtr<WebPageProxy> protectedInspectorPage();
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

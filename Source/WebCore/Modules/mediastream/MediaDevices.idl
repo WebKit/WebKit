@@ -40,13 +40,12 @@ typedef (MediaDeviceInfo or InputDeviceInfo) DeviceInfo;
     Promise<sequence<DeviceInfo>> enumerateDevices();
 
     MediaTrackSupportedConstraints getSupportedConstraints();
-    [PrivateIdentifier, PublicIdentifier] Promise<MediaStream> getUserMedia(optional MediaStreamConstraints constraints);
-    [EnabledBySetting=ScreenCaptureEnabled] Promise<MediaStream> getDisplayMedia(optional DisplayMediaStreamConstraints constraints);
+    [PrivateIdentifier, PublicIdentifier] Promise<MediaStream> getUserMedia(optional MediaStreamConstraints constraints = {});
+    [EnabledBySetting=ScreenCaptureEnabled] Promise<MediaStream> getDisplayMedia(optional DisplayMediaStreamConstraints constraints = {});
 };
 
 [
     Conditional=MEDIA_STREAM,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary DisplayMediaStreamConstraints {
     (boolean or MediaTrackConstraints) video = true;
     (boolean or MediaTrackConstraints) audio = false;
@@ -54,7 +53,6 @@ typedef (MediaDeviceInfo or InputDeviceInfo) DeviceInfo;
 
 [
     Conditional=MEDIA_STREAM,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary MediaStreamConstraints {
     (boolean or MediaTrackConstraints) video = false;
     (boolean or MediaTrackConstraints) audio = false;

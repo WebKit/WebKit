@@ -54,11 +54,11 @@ Ref<StorageArea> StorageNamespaceProvider::localStorageArea(Document& document)
 
     RefPtr<StorageNamespace> storageNamespace;
     if (document.canAccessResource(ScriptExecutionContext::ResourceType::LocalStorage) == ScriptExecutionContext::HasResourceAccess::DefaultForThirdParty)
-        storageNamespace = transientLocalStorageNamespace(document.protectedTopOrigin().get(), document.protectedPage()->sessionID());
+        storageNamespace = transientLocalStorageNamespace(protect(document.topOrigin()).get(), protect(document.page())->sessionID());
     else
-        storageNamespace = localStorageNamespace(document.protectedPage()->sessionID());
+        storageNamespace = localStorageNamespace(protect(document.page())->sessionID());
 
-    return storageNamespace->storageArea(document.protectedSecurityOrigin().get());
+    return storageNamespace->storageArea(protect(document.securityOrigin()).get());
 }
 
 Ref<StorageArea> StorageNamespaceProvider::sessionStorageArea(Document& document)
@@ -67,7 +67,7 @@ Ref<StorageArea> StorageNamespaceProvider::sessionStorageArea(Document& document
     // so the Document had better still actually have a Page.
     ASSERT(document.page());
 
-    return sessionStorageNamespace(document.protectedTopOrigin().get(), *document.protectedPage())->storageArea(document.protectedSecurityOrigin().get());
+    return sessionStorageNamespace(protect(document.topOrigin()).get(), *protect(document.page()))->storageArea(protect(document.securityOrigin()).get());
 }
 
 StorageNamespace& StorageNamespaceProvider::localStorageNamespace(PAL::SessionID sessionID)

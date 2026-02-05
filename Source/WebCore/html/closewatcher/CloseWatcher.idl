@@ -14,8 +14,7 @@
   attribute EventHandler onclose;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary CloseWatcherOptions {
+// https://html.spec.whatwg.org/multipage/interaction.html#closewatcheroptions
+dictionary CloseWatcherOptions {
   AbortSignal signal;
 };

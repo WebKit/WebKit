@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebPage.h"
 
-#include "DrawingAreaCoordinatedGraphics.h"
+#include "DrawingAreaCoordinatedGraphicsGLib.h"
 #include "EditorState.h"
 #include "InputMethodState.h"
 #include "MessageSenderInlines.h"
@@ -292,9 +292,7 @@ void WebPage::getRenderProcessInfo(CompletionHandler<void(RenderProcessInfo&&)>&
         break;
     }
 
-#if USE(SKIA)
     info.msaaSampleCount = display->msaaSampleCount();
-#endif
 
 #if USE(GBM)
     if (info.platform != "WPE"_s) {

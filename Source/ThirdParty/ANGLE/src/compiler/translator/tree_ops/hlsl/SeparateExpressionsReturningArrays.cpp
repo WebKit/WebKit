@@ -97,8 +97,15 @@ bool SeparateExpressionsTraverser::visitAggregate(Visit visit, TIntermAggregate 
     mFoundArrayExpression = true;
 
     TIntermDeclaration *arrayVariableDeclaration;
-    TVariable *arrayVariable = DeclareTempVariable(mSymbolTable, node->shallowCopy(), EvqTemporary,
-                                                   &arrayVariableDeclaration);
+    const bool isConstExpression       = node->hasConstantValue();
+    const TConstantUnion *constValue   = isConstExpression ? node->getConstantValue() : nullptr;
+    const TQualifier arrayVarQualifier = isConstExpression ? EvqConst : EvqTemporary;
+    TVariable *arrayVariable           = DeclareTempVariable(mSymbolTable, node->shallowCopy(),
+                                                             arrayVarQualifier, &arrayVariableDeclaration);
+    if (constValue != nullptr)
+    {
+        arrayVariable->shareConstPointer(constValue);
+    }
     insertStatementInParentBlock(arrayVariableDeclaration);
 
     queueReplacement(CreateTempSymbolNode(arrayVariable), OriginalNode::IS_DROPPED);

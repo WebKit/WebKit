@@ -32,7 +32,7 @@
 namespace WebCore {
 
 struct ConvolverOptions : AudioNodeOptions {
-    RefPtr<AudioBuffer> buffer;
+    std::optional<RefPtr<AudioBuffer>> buffer;
     bool disableNormalization { false };
 };
 

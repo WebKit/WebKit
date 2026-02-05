@@ -103,7 +103,7 @@ static Ref<WebCore::Range> protectedImpl(WKDOMRange *range)
 
 - (WKDOMNode *)startContainer
 {
-    return WebKit::toWKDOMNode(protectedImpl(self)->protectedStartContainer().ptr());
+    return WebKit::toWKDOMNode(protect(protectedImpl(self)->startContainer()).ptr());
 }
 
 - (NSInteger)startOffset
@@ -113,7 +113,7 @@ static Ref<WebCore::Range> protectedImpl(WKDOMRange *range)
 
 - (WKDOMNode *)endContainer
 {
-    return WebKit::toWKDOMNode(protectedImpl(self)->protectedEndContainer().ptr());
+    return WebKit::toWKDOMNode(protect(protectedImpl(self)->endContainer()).ptr());
 }
 
 - (NSInteger)endOffset
@@ -124,7 +124,7 @@ static Ref<WebCore::Range> protectedImpl(WKDOMRange *range)
 - (NSString *)text
 {
     auto range = makeSimpleRange(protectedImpl(self));
-    range.start.protectedDocument()->updateLayout();
+    protect(range.start.document())->updateLayout();
     return plainText(range).createNSString().autorelease();
 }
 
@@ -136,7 +136,7 @@ static Ref<WebCore::Range> protectedImpl(WKDOMRange *range)
 - (NSArray *)textRects
 {
     auto range = makeSimpleRange(protectedImpl(self));
-    range.start.protectedDocument()->updateLayout(WebCore::LayoutOptions::IgnorePendingStylesheets);
+    protect(range.start.document())->updateLayout(WebCore::LayoutOptions::IgnorePendingStylesheets);
     return createNSArray(WebCore::RenderObject::absoluteTextRects(range)).autorelease();
 }
 

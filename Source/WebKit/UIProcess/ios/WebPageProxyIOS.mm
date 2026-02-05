@@ -352,7 +352,7 @@ void WebPageProxy::setDeviceOrientation(IntDegrees deviceOrientation)
     if (m_screenOrientationManager)
         m_screenOrientationManager->setCurrentOrientation(orientation);
 
-    protectedBrowsingContextGroup()->forEachRemotePage(*this, [orientation](auto& remotePageProxy) {
+    protect(browsingContextGroup())->forEachRemotePage(*this, [orientation](auto& remotePageProxy) {
         remotePageProxy.setCurrentOrientation(orientation);
     });
 
@@ -384,14 +384,6 @@ bool WebPageProxy::updateLayoutViewportParameters(const MainFrameData& mainFrame
     internals().maxStableLayoutViewportOrigin = mainFrameData.maxStableLayoutViewportOrigin;
     LOG_WITH_STREAM(VisibleRects, stream << "WebPageProxy::updateLayoutViewportParameters: baseLayoutViewportSize: " << internals().baseLayoutViewportSize << " minStableLayoutViewportOrigin: " << internals().minStableLayoutViewportOrigin << " maxStableLayoutViewportOrigin: " << internals().maxStableLayoutViewportOrigin);
     return true;
-}
-
-void WebPageProxy::selectWithGesture(IntPoint point, GestureType gestureType, GestureRecognizerState gestureState, bool isInteractingWithFocusedElement, CompletionHandler<void(const IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&& callback)
-{
-    if (!hasRunningProcess())
-        return callback({ }, GestureType::Loupe, GestureRecognizerState::Possible, { });
-
-    legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::SelectWithGesture(point, gestureType, gestureState, isInteractingWithFocusedElement), WTF::move(callback), webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::updateSelectionWithTouches(IntPoint point, SelectionTouch touches, bool baseIsStart, CompletionHandler<void(const WebCore::IntPoint&, SelectionTouch, OptionSet<SelectionFlags>)>&& callback)
@@ -450,7 +442,7 @@ void WebPageProxy::selectTextWithGranularityAtPoint(const WebCore::IntPoint poin
         return;
     }
 
-    legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::SelectTextWithGranularityAtPoint(point, granularity, isInteractingWithFocusedElement), [callbackFunction = WTF::move(callbackFunction), backgroundActivity = m_legacyMainFrameProcess->protectedThrottler()->backgroundActivity("WebPageProxy::selectTextWithGranularityAtPoint"_s)] () mutable {
+    legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::SelectTextWithGranularityAtPoint(point, granularity, isInteractingWithFocusedElement), [callbackFunction = WTF::move(callbackFunction), backgroundActivity = protect(m_legacyMainFrameProcess->throttler())->backgroundActivity("WebPageProxy::selectTextWithGranularityAtPoint"_s)] () mutable {
         callbackFunction();
     }, webPageIDInMainFrameProcess());
 }
@@ -462,7 +454,7 @@ void WebPageProxy::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint
         return;
     }
 
-    legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::SelectPositionAtBoundaryWithDirection(point, granularity, direction, isInteractingWithFocusedElement), [callbackFunction = WTF::move(callbackFunction), backgroundActivity = m_legacyMainFrameProcess->protectedThrottler()->backgroundActivity("WebPageProxy::selectPositionAtBoundaryWithDirection"_s)] () mutable {
+    legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::SelectPositionAtBoundaryWithDirection(point, granularity, direction, isInteractingWithFocusedElement), [callbackFunction = WTF::move(callbackFunction), backgroundActivity = protect(m_legacyMainFrameProcess->throttler())->backgroundActivity("WebPageProxy::selectPositionAtBoundaryWithDirection"_s)] () mutable {
         callbackFunction();
     }, webPageIDInMainFrameProcess());
 }
@@ -474,7 +466,7 @@ void WebPageProxy::moveSelectionAtBoundaryWithDirection(WebCore::TextGranularity
         return;
     }
 
-    legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::MoveSelectionAtBoundaryWithDirection(granularity, direction), [callbackFunction = WTF::move(callbackFunction), backgroundActivity = m_legacyMainFrameProcess->protectedThrottler()->backgroundActivity("WebPageProxy::moveSelectionAtBoundaryWithDirection"_s)] () mutable {
+    legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::MoveSelectionAtBoundaryWithDirection(granularity, direction), [callbackFunction = WTF::move(callbackFunction), backgroundActivity = protect(m_legacyMainFrameProcess->throttler())->backgroundActivity("WebPageProxy::moveSelectionAtBoundaryWithDirection"_s)] () mutable {
         callbackFunction();
     }, webPageIDInMainFrameProcess());
 }
@@ -486,7 +478,7 @@ void WebPageProxy::selectPositionAtPoint(const WebCore::IntPoint point, bool isI
         return;
     }
 
-    legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::SelectPositionAtPoint(point, isInteractingWithFocusedElement), [callbackFunction = WTF::move(callbackFunction), backgroundActivity = m_legacyMainFrameProcess->protectedThrottler()->backgroundActivity("WebPageProxy::selectPositionAtPoint"_s)] () mutable {
+    legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::SelectPositionAtPoint(point, isInteractingWithFocusedElement), [callbackFunction = WTF::move(callbackFunction), backgroundActivity = protect(m_legacyMainFrameProcess->throttler())->backgroundActivity("WebPageProxy::selectPositionAtPoint"_s)] () mutable {
         callbackFunction();
     }, webPageIDInMainFrameProcess());
 }
@@ -642,7 +634,7 @@ void WebPageProxy::applicationDidEnterBackground()
     // We normally delay process suspension when the app is backgrounded until the current page load completes. However,
     // we do not want to do so when the screen is locked for power reasons.
     if (isSuspendedUnderLock) {
-        if (auto* navigationState = NavigationState::fromWebPage(*this))
+        if (RefPtr navigationState = NavigationState::fromWebPage(*this))
             navigationState->releaseNetworkActivity(NavigationState::NetworkActivityReleaseReason::ScreenLocked);
     }
 #endif
@@ -756,7 +748,7 @@ void WebPageProxy::moveSelectionByOffset(int32_t offset, CompletionHandler<void(
         return;
     }
     
-    legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::MoveSelectionByOffset(offset), [callbackFunction = WTF::move(callbackFunction), backgroundActivity = m_legacyMainFrameProcess->protectedThrottler()->backgroundActivity("WebPageProxy::moveSelectionByOffset"_s)] () mutable {
+    legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::MoveSelectionByOffset(offset), [callbackFunction = WTF::move(callbackFunction), backgroundActivity = protect(m_legacyMainFrameProcess->throttler())->backgroundActivity("WebPageProxy::moveSelectionByOffset"_s)] () mutable {
         callbackFunction();
     }, webPageIDInMainFrameProcess());
 }
@@ -788,7 +780,7 @@ void WebPageProxy::registerWebProcessAccessibilityToken(std::span<const uint8_t>
 {
     // Note: The WebFrameProxy with this FrameIdentifier might not exist in the UI process. See rdar://130998804.
     if (RefPtr pageClient = this->pageClient())
-        pageClient->accessibilityWebProcessTokenReceived(data, protectedLegacyMainFrameProcess()->protectedConnection()->remoteProcessID());
+        pageClient->accessibilityWebProcessTokenReceived(data, protect(protect(legacyMainFrameProcess())->connection())->remoteProcessID());
 }
 
 void WebPageProxy::relayAccessibilityNotification(String&& notificationName, std::span<const uint8_t> data)
@@ -1104,7 +1096,7 @@ void WebPageProxy::focusNextFocusedElement(bool isForward, CompletionHandler<voi
         return;
     }
     
-    legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::FocusNextFocusedElement(isForward), [callbackFunction = WTF::move(callbackFunction), backgroundActivity = m_legacyMainFrameProcess->protectedThrottler()->backgroundActivity("WebPageProxy::focusNextFocusedElement"_s)] () mutable {
+    legacyMainFrameProcess().sendWithAsyncReply(Messages::WebPage::FocusNextFocusedElement(isForward), [callbackFunction = WTF::move(callbackFunction), backgroundActivity = protect(m_legacyMainFrameProcess->throttler())->backgroundActivity("WebPageProxy::focusNextFocusedElement"_s)] () mutable {
         callbackFunction();
     }, webPageIDInMainFrameProcess());
 }
@@ -1607,17 +1599,17 @@ String WebPageProxy::predictedUserAgentForRequest(const WebCore::ResourceRequest
     if (!customUserAgent().isEmpty())
         return customUserAgent();
 
-    const API::WebsitePolicies& policies = m_configuration->defaultWebsitePolicies();
-    if (!policies.customUserAgent().isEmpty())
-        return policies.customUserAgent();
+    Ref policies = m_configuration->defaultWebsitePolicies();
+    if (!policies->customUserAgent().isEmpty())
+        return policies->customUserAgent();
 
-    if (policies.applicationNameForDesktopUserAgent().isEmpty())
+    if (policies->applicationNameForDesktopUserAgent().isEmpty())
         return userAgent();
 
     if (!useDesktopClassBrowsing(policies, request))
         return userAgent();
 
-    return standardUserAgentWithApplicationName(policies.applicationNameForDesktopUserAgent(), emptyString(), UserAgentType::Desktop);
+    return standardUserAgentWithApplicationName(policies->applicationNameForDesktopUserAgent(), emptyString(), UserAgentType::Desktop);
 }
 
 WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::WebsitePolicies& policies, const WebCore::ResourceRequest& request)
@@ -1762,9 +1754,9 @@ void WebPageProxy::processWillBecomeForeground()
 void WebPageProxy::Internals::isUserFacingChanged(bool isUserFacing)
 {
     if (!isUserFacing)
-        protectedPage()->suspendAllMediaPlayback([] { });
+        protect(page)->suspendAllMediaPlayback([] { });
     else
-        protectedPage()->resumeAllMediaPlayback([] { });
+        protect(page)->resumeAllMediaPlayback([] { });
 }
 
 #endif
@@ -1882,7 +1874,7 @@ FloatSize WebPageProxy::viewLayoutSize() const
 
 void WebPageProxy::didRefreshDisplay()
 {
-    m_configuration->protectedProcessPool()->didRefreshDisplay();
+    protect(m_configuration->processPool())->didRefreshDisplay();
 }
 
 #if ENABLE(PDF_PAGE_NUMBER_INDICATOR)
@@ -1926,7 +1918,7 @@ void WebPageProxy::setPromisedDataForImage(IPC::Connection&, const String&, Shar
 
 void WebPageProxy::isPotentialTapInProgress(CompletionHandler<void(bool)>&& completion)
 {
-    completion(protectedPageClient()->isPotentialTapInProgress());
+    completion(protect(pageClient())->isPotentialTapInProgress());
 }
 
 #endif // PLATFORM(IOS_FAMILY)

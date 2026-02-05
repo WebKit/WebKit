@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmGDBPacketParser.h"
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -155,4 +155,4 @@ GDBPacketParser::ParseResult GDBPacketParser::processByte(uint8_t byte)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

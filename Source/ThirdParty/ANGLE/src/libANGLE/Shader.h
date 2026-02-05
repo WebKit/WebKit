@@ -190,12 +190,7 @@ class Shader final : angle::NonCopyable, public LabeledObject
                           GLsizei length,
                           angle::JobResultExpectancy resultExpectancy);
 
-    void writeShaderKey(BinaryOutputStream *streamOut) const
-    {
-        ASSERT(streamOut && !mShaderHash.empty());
-        streamOut->writeBytes(mShaderHash.data(), egl::BlobCache::kKeyLength);
-        return;
-    }
+    void writeShaderKey(BinaryOutputStream *streamOut) const { streamOut->writeBytes(mShaderHash); }
 
   private:
     ~Shader() override;

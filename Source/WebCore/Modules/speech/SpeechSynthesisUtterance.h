@@ -79,7 +79,7 @@ public:
 
     PlatformSpeechSynthesisUtterance& platformUtterance() const { return m_platformUtterance.get(); }
 
-    void eventOccurred(const AtomString& type, unsigned long charIndex, unsigned long charLength, const String& name) final;
+    void eventOccurred(const AtomString& type, uint32_t charIndex, uint32_t charLength, const String& name) final;
     void errorEventOccurred(const AtomString& type, SpeechSynthesisErrorCode);
     void setIsActiveForEventDispatch(bool);
 

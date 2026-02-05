@@ -125,7 +125,7 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&
     , m_shouldDelayClosingUntilFirstLayerFlush(shouldDelayClosingUntilFirstLayerFlush)
     , m_suspensionTimeoutTimer(RunLoop::mainSingleton(), "SuspendedPageProxy::SuspensionTimeoutTimer"_s, this, &SuspendedPageProxy::suspensionTimedOut)
 #if USE(RUNNINGBOARD)
-    , m_suspensionActivity(m_process->protectedThrottler()->backgroundActivity("Page suspension for back/forward cache"_s))
+    , m_suspensionActivity(protect(m_process->throttler())->backgroundActivity("Page suspension for back/forward cache"_s))
 #endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     , m_contextIDForVisibilityPropagationInWebProcess(page.contextIDForVisibilityPropagationInWebProcess())
@@ -181,11 +181,6 @@ void SuspendedPageProxy::didDestroyNavigation(WebCore::NavigationIdentifier navi
 {
     if (RefPtr page = m_page.get())
         page->didDestroyNavigationShared(m_process.copyRef(), navigationID);
-}
-
-Ref<WebBackForwardCache> SuspendedPageProxy::protectedBackForwardCache() const
-{
-    return backForwardCache();
 }
 
 WebBackForwardCache& SuspendedPageProxy::backForwardCache() const
@@ -288,7 +283,7 @@ void SuspendedPageProxy::didProcessRequestToSuspend(SuspensionState newSuspensio
 void SuspendedPageProxy::suspensionTimedOut()
 {
     RELEASE_LOG_ERROR(ProcessSwapping, "%p - SuspendedPageProxy::suspensionTimedOut() destroying the suspended page because it failed to suspend in time", this);
-    protectedBackForwardCache()->removeEntry(*this); // Will destroy |this|.
+    protect(backForwardCache())->removeEntry(*this); // Will destroy |this|.
 }
 
 WebPageProxy* SuspendedPageProxy::page() const

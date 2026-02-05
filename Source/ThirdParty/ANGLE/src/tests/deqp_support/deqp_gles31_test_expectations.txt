@@ -11,91 +11,9 @@
 // Crashing Tests
 42260436 OPENGL : dEQP-GLES31.functional.program_interface_query.transform_feedback_varying.resource_list.vertex_fragment.builtin_gl_position = SKIP
 
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32f_rgba8ui = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32f_rgba8i = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32f_rgba8 = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32f_rgba8_snorm = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8ui_r32f = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8ui_r32ui = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8ui_r32i = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32ui_rgba8ui = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32ui_rgba8i = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32ui_rgba8 = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32ui_rgba8_snorm = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8i_r32f = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8i_r32ui = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8i_r32i = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32i_rgba8ui = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32i_rgba8i = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32i_rgba8 = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.r32i_rgba8_snorm = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8_r32f = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8_r32ui = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8_r32i = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8_snorm_r32f = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8_snorm_r32ui = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8_snorm_r32i = SKIP
-42265815 D3D11 : dEQP-GLES31.functional.image_load_store.*.qualifiers.* = SKIP
-
-// D3D11 Failing Tests
-// Below cases are failed due to binding multi-UAVs to a single buffer is not supported in D3D backend.
-// http://anglebug.com/42261718
-42261718 D3D11 : dEQP-GLES31.functional.ssbo.layout.*.single_buffer* = FAIL
-42261718 D3D11 : dEQP-GLES31.functional.ssbo.layout.random.all_shared_buffer* = FAIL
-
-42260436 D3D11 : dEQP-GLES31.functional.state_query.integer.max_compute_atomic_counters_* = FAIL
-42260436 D3D11 : dEQP-GLES31.functional.state_query.integer.max_atomic_counter_buffer_size_* = FAIL
-42260436 D3D11 : dEQP-GLES31.functional.state_query.integer.max_combined_atomic_counters* = FAIL
-42260436 D3D11 : dEQP-GLES31.functional.state_query.integer.max_uniform_buffer_bindings_* = FAIL
-42260436 D3D11 : dEQP-GLES31.functional.state_query.integer.max_combined_texture_image_units_* = FAIL
-42260436 D3D11 : dEQP-GLES31.functional.state_query.program.compute_work_group_size_get_programiv = FAIL
-42260436 D3D11 : dEQP-GLES31.functional.debug.async.case_4_log = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.debug.async.case_5_callback = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.debug.error_filters.case_2 = FAIL
-42260436 D3D11 : dEQP-GLES31.functional.debug.error_filters.case_3 = FAIL
-42260436 D3D11 : dEQP-GLES31.functional.debug.error_filters.case_9 = FAIL
-42260436 D3D11 : dEQP-GLES31.functional.debug.error_filters.case_10 = FAIL
-42260436 D3D11 : dEQP-GLES31.functional.debug.error_filters.case_27 = FAIL
-42260436 D3D11 : dEQP-GLES31.functional.debug.error_filters.case_28 = FAIL
-42260436 D3D11 : dEQP-GLES31.functional.debug.error_groups.case_2 = FAIL
-42260436 D3D11 : dEQP-GLES31.functional.debug.error_groups.case_3 = FAIL
-42260436 D3D11 : dEQP-GLES31.functional.debug.error_groups.case_9 = FAIL
-42260436 D3D11 : dEQP-GLES31.functional.debug.error_groups.case_10 = FAIL
-
-42260728 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.common.*geometry = FAIL
-42260728 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.pack_unpack.*geometry = FAIL
-42260728 D3D11 : dEQP-GLES31.functional.shaders.builtin_functions.integer.*geometry = FAIL
-42260728 D3D11 : dEQP-GLES31.functional.shaders.builtin_constants.geometry_shader.* = FAIL
-42260728 D3D11 : dEQP-GLES31.functional.state_query.program.geometry_shader_state_get_programiv = FAIL
-42260728 D3D11 : dEQP-GLES31.functional.geometry_shading.query.* = FAIL
-42260728 D3D11 : dEQP-GLES31.functional.geometry_shading.basic.* = FAIL
-42260728 D3D11 : dEQP-GLES31.functional.geometry_shading.conversion.* = FAIL
-42260728 D3D11 : dEQP-GLES31.functional.geometry_shading.emit.* = FAIL
-42260728 D3D11 : dEQP-GLES31.functional.geometry_shading.varying.* = FAIL
-42260728 D3D11 : dEQP-GLES31.functional.geometry_shading.layered.* = FAIL
-42260728 D3D11 : dEQP-GLES31.functional.geometry_shading.instanced.* = FAIL
-42260728 D3D11 : dEQP-GLES31.functional.geometry_shading.input.* = FAIL
-42260728 D3D11 : dEQP-GLES31.functional.geometry_shading.negative.* = FAIL
-42260728 D3D11 : dEQP-GLES31.functional.geometry_shading.vertex_transform_feedback.* = FAIL
-42260728 D3D11 : dEQP-GLES31.functional.shaders.linkage.es31.geometry.* = FAIL
-42260728 D3D11 : dEQP-GLES31.functional.debug.negative_coverage.callbacks.shader_directive.geometry_shader = FAIL
-42260728 D3D11 : dEQP-GLES31.functional.debug.negative_coverage.log.shader_directive.geometry_shader = FAIL
-42260728 D3D11 : dEQP-GLES31.functional.debug.negative_coverage.get_error.shader_directive.geometry_shader = FAIL
-42261528 D3D11 : dEQP-GLES31.functional.texture.gather.basic.cube.rgba8.texture_swizzle.* = FAIL
-42261528 D3D11 : dEQP-GLES31.functional.texture.gather.basic.cube.rgba8i.* = FAIL
-42261528 D3D11 : dEQP-GLES31.functional.texture.gather.basic.cube.rgba8ui.* = FAIL
-42262509 D3D11 : dEQP-GLES31.functional.compute.basic.copy_image_to_ssbo_large = FAIL
-42262509 D3D11 : dEQP-GLES31.functional.compute.basic.copy_ssbo_to_image_large = FAIL
-
 // Failing with dEQP roll
-42262109 D3D11 : dEQP-GLES31.functional.ssbo.layout.random.all_per_block_buffers.22 = FAIL
-42262109 D3D11 : dEQP-GLES31.functional.ssbo.layout.random.all_per_block_buffers.41 = FAIL
-42262862 D3D11 : dEQP-GLES31.functional.debug.negative_coverage.get_error.compute.program_not_active = SKIP
 42262862 OPENGL : dEQP-GLES31.functional.debug.negative_coverage.get_error.compute.program_not_active = SKIP
-42262862 D3D11 : dEQP-GLES31.functional.debug.negative_coverage.log.compute.program_not_active = SKIP
 42262862 OPENGL : dEQP-GLES31.functional.debug.negative_coverage.log.compute.program_not_active = SKIP
-42262862 D3D11 : dEQP-GLES31.functional.debug.negative_coverage.get_error.buffer.renderbuffer_storage_multisample = FAIL
-42262862 D3D11 : dEQP-GLES31.functional.debug.negative_coverage.callbacks.compute.program_not_active = SKIP
 42262862 OPENGL : dEQP-GLES31.functional.debug.negative_coverage.callbacks.compute.program_not_active = SKIP
 
 // OpenGL Passing tests.
@@ -127,30 +45,9 @@ b/266710445 WIN OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.a
 
 // OpenGL/D3D11 Failing Tests
 42260436 OPENGL : dEQP-GLES31.functional.shaders.opaque_type_indexing.* = FAIL
-42260436 OPENGL : dEQP-GLES31.functional.separate_shader.* = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.separate_shader.* = SKIP
+42260436 OPENGL : dEQP-GLES31.functional.separate_shader.* = FAIL
 42260436 OPENGL : dEQP-GLES31.functional.state_query.program.program_separable_get_programiv = FAIL
-42260436 OPENGL : dEQP-GLES31.functional.state_query.program_pipeline.* = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.state_query.program_pipeline.* = SKIP
-
-// These tests are failing because of compile errors with SSBOs in compute shaders.
-
-42260436 D3D11 : dEQP-GLES31.functional.stencil_texturing.* = SKIP
-// TODO(xinghua.cao@intel.com): FAIL expectation instead of SKIP should be sufficient for OpenGL, but the
-// test expectations parser doesn't support having FAIL for GL and SKIP for D3D with the same test filter.
-
-42262961 D3D11 : dEQP-GLES31.functional.program_interface_query.buffer_variable.referenced_by.separable_vertex.* = SKIP
-42262959 D3D11 : dEQP-GLES31.functional.program_interface_query.buffer_variable.referenced_by.separable_fragment.* = SKIP
-42262959 D3D11 : dEQP-GLES31.functional.program_interface_query.buffer_variable.random.* = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.program_interface_query.program_input.* = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.program_interface_query.program_output.* = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.program_interface_query.shader_storage_block.* = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.program_interface_query.transform_feedback_varying.* = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.program_interface_query.uniform* = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.synchronization.* = SKIP
-42260436 D3D11 : dEQP-GLES31.functional.layout_binding.image.* = SKIP
-// This case is skipped since it uses atomic counter builtin functions which haven't been implemented.
-42260658 D3D11 : dEQP-GLES31.functional.state_query.program.active_atomic_counter_buffers_get_programiv = SKIP
+42260436 OPENGL : dEQP-GLES31.functional.state_query.program_pipeline.* = FAIL
 
 ////
 //// Failures blocking an official GLES 3.1 conformance run on SwiftShader

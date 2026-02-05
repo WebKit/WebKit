@@ -61,8 +61,8 @@ public:
     void load(ScriptExecutionContext&, const String& font, const String& text, LoadPromise&&);
     ExceptionOr<bool> check(ScriptExecutionContext&, const String& font, const String& text);
 
-    enum class LoadStatus : bool { Loading, Loaded };
-    LoadStatus status() const { return m_status; }
+    enum class LoadStatus { Loading, Loaded };
+    LoadStatus status() const;
 
     using ReadyPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<FontFaceSet>>;
     ReadyPromise& ready() { return m_readyPromise.get(); }
@@ -98,24 +98,11 @@ private:
         bool hasReachedTerminalState { false };
     };
 
-    explicit FontFaceSet(ScriptExecutionContext&);
+    FontFaceSet(ScriptExecutionContext&, const Vector<Ref<FontFace>>&);
     FontFaceSet(ScriptExecutionContext&, CSSFontFaceSet&);
 
-    void setInitialState();
-
-    bool isPendingOnEnvironment() const;
-    void stopPendingOnEnvironment();
-
-    void switchStateToLoading();
-    void switchStateToLoaded();
-
     // FontEventClient
-    void faceDidStartLoading(CSSFontFace&) final;
-    void faceDidFinishLoading(CSSFontFace&, CSSFontFace::Status) final;
-
-    void didAddFace(CSSFontFace&) final;
-    void didDeletedFace(CSSFontFace&) final;
-
+    void faceFinished(CSSFontFace&, CSSFontFace::Status) final;
     void startedLoading() final;
     void completedLoading() final;
 
@@ -133,14 +120,7 @@ private:
     HashMap<RefPtr<FontFace>, Vector<Ref<PendingPromise>>> m_pendingPromises;
     UniqueRef<ReadyPromise> m_readyPromise;
 
-    // https://drafts.csswg.org/css-font-loading/#dom-fontfaceset-loadingfonts-slot
-    HashSet<Ref<FontFace>> m_failedFonts;
-    HashSet<Ref<FontFace>> m_loadingFonts;
-    HashSet<Ref<FontFace>> m_loadedFonts;
-
-    LoadStatus m_status { LoadStatus::Loaded };
-    bool m_isStuckOnEnvironment { true };
-    bool m_isDocumentLoaded { false };
+    bool m_isDocumentLoaded { true };
 };
 
 } // namespace WebCore

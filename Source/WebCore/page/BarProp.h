@@ -38,17 +38,14 @@ namespace WebCore {
 class BarProp final : public ScriptWrappable, public RefCounted<BarProp>, public LocalDOMWindowProperty {
     WTF_MAKE_TZONE_ALLOCATED(BarProp);
 public:
-    enum Type { Locationbar, Menubar, Personalbar, Scrollbars, Statusbar, Toolbar };
-
-    static Ref<BarProp> create(LocalDOMWindow& window, Type type) { return adoptRef(*new BarProp(window, type)); }
+    static Ref<BarProp> create(LocalDOMWindow& window) { return adoptRef(*new BarProp(window)); }
 
     ~BarProp();
 
     bool visible() const;
 
 private:
-    BarProp(LocalDOMWindow&, Type);
-    Type m_type;
+    BarProp(LocalDOMWindow&);
 };
 
 } // namespace WebCore

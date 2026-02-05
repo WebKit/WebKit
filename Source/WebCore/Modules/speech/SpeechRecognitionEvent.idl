@@ -35,9 +35,7 @@
     readonly attribute SpeechRecognitionResultList? results;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary SpeechRecognitionEventInit : EventInit {
+dictionary SpeechRecognitionEventInit : EventInit {
     unsigned long resultIndex = 0;
     required SpeechRecognitionResultList results;
 };

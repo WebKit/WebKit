@@ -179,4 +179,4 @@ struct WebPageTransferableTests {
     }
 }
 
-#endif // ENABLE_SWIFTUI && canImport(Testing) && compiler(>=6.0)
+#endif // ENABLE_SWIFTUI && canImport(Testing) && compiler(>=6.2)

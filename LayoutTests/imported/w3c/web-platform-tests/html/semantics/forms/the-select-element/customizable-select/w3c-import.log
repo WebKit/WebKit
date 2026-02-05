@@ -14,9 +14,14 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/appearance-base-and-base-select-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/appearance-base-and-base-select.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/appearance-base-and-base-select.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/appearance-base-select-other-elements-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/appearance-base-select-other-elements-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/appearance-base-select-other-elements.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/base-appearance-inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/border-rendering-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/border-rendering-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/border-rendering.html
@@ -27,9 +32,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/focus-ring-rendering-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/focus-ring-rendering-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/focus-ring-rendering.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/nested-options.tenative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/nested-options.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/nested-select-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/option-color-inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/option-disabled-invalid-nesting.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/option-disabled-optgroup.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/option-form-ancestor-select.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/option-list.html
@@ -94,6 +100,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-hover-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-hover-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-hover.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-mixing-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-mixing-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-mixing.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-optgroup-legend-and-label-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-optgroup-legend-and-label.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-optgroup-legend-expected.html
@@ -121,10 +130,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-writing-mode-vertical-rl.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-wrong-picker-argument-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-wrong-picker-argument.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-base-appearance-computed-style.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-button-behaviors.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-click-drag-option.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-click-drag-option.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-click-picker-light-dismiss.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-dialog-mode-focus.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-disabled.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-display-block-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-display-block.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-display-block.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-events-2.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-events.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-explicit-size-expected.html
@@ -134,6 +148,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-font-size-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-font-size-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-font-size.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-grid-before-after-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-grid-before-after-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-grid-before-after.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-highlight-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-home-end-pagedown-pageup-detailed.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-home-end-pagedown-pageup.optional.html
@@ -141,7 +158,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-icon-color-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-icon-color.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-initial-focus-display-animation.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-innertext.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-inside-top-layer.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-iterate-before-beginning.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-keyboard-behavior.optional.html

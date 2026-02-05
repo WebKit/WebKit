@@ -71,7 +71,9 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr* rawSorts,
                 } else if (xmlStrEqual(stype, reinterpret_cast<const xmlChar*>("number")))
                     number[j] = 1;
                 else
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
                     xsltTransformError(ctxt, nullptr, sorts[j], "xsltDoSortFunction: no support for data-type = %s\n", stype);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 xmlFree(stype);
             }
         } else
@@ -85,7 +87,9 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr* rawSorts,
                 } else if (xmlStrEqual(order, reinterpret_cast<const xmlChar*>("descending")))
                     desc[j] = 1;
                 else
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
                     xsltTransformError(ctxt, nullptr, sorts[j], "xsltDoSortFunction: invalid value %s for order\n", order);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 xmlFree(order);
             }
         } else

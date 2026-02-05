@@ -148,7 +148,7 @@ void testLoadPreIndex32()
 
     auto code = compileProc(proc);
     if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
-        checkUsesInstruction(*code, "#4]!");
+        checkUsesInstruction(*code, "#0x4]!");
 
     auto expected = [&] () -> int32_t {
         int32_t r = 0;
@@ -222,7 +222,7 @@ void testLoadPreIndex64()
 
     auto code = compileProc(proc);
     if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
-        checkUsesInstruction(*code, "#8]!");
+        checkUsesInstruction(*code, "#0x8]!");
 
     auto expected = [&] () -> int64_t {
         int64_t r = 0;
@@ -296,7 +296,7 @@ void testLoadPostIndex32()
 
     auto code = compileProc(proc);
     if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
-        checkUsesInstruction(*code, "], #4");
+        checkUsesInstruction(*code, "], #0x4");
 
     auto expected = [&] () -> int32_t {
         int32_t r = 0;
@@ -370,7 +370,7 @@ void testLoadPostIndex64()
 
     auto code = compileProc(proc);
     if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
-        checkUsesInstruction(*code, "], #8");
+        checkUsesInstruction(*code, "], #0x8");
 
     auto expected = [&] () -> int64_t {
         int64_t r = 0;
@@ -481,7 +481,7 @@ void testStorePreIndex32()
 
     auto code = compileProc(proc);
     if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
-        checkUsesInstruction(*code, "#4]!");
+        checkUsesInstruction(*code, "#0x4]!");
     intptr_t res = invoke<intptr_t>(*code, std::bit_cast<intptr_t>(ptr), 4);
     ptr = std::bit_cast<int32_t*>(res);
     CHECK_EQ(nums[2], *ptr);
@@ -508,7 +508,7 @@ void testStorePreIndex64()
 
     auto code = compileProc(proc);
     if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
-        checkUsesInstruction(*code, "#8]!");
+        checkUsesInstruction(*code, "#0x8]!");
     intptr_t res = invoke<intptr_t>(*code, std::bit_cast<intptr_t>(ptr), 4);
     ptr = std::bit_cast<int64_t*>(res);
     CHECK_EQ(nums[2], *ptr);
@@ -535,7 +535,7 @@ void testStorePostIndex32()
 
     auto code = compileProc(proc);
     if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
-        checkUsesInstruction(*code, "], #4");
+        checkUsesInstruction(*code, "], #0x4");
     intptr_t res = invoke<intptr_t>(*code, std::bit_cast<intptr_t>(ptr), 4);
     ptr = std::bit_cast<int32_t*>(res);
     CHECK_EQ(nums[1], 4);
@@ -563,7 +563,7 @@ void testStorePostIndex64()
 
     auto code = compileProc(proc);
     if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
-        checkUsesInstruction(*code, "], #8");
+        checkUsesInstruction(*code, "], #0x8");
     intptr_t res = invoke<intptr_t>(*code, std::bit_cast<intptr_t>(ptr), 4ULL);
     ptr = std::bit_cast<int64_t*>(res);
     CHECK_EQ(nums[1], 4);

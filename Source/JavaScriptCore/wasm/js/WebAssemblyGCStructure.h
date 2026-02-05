@@ -67,8 +67,6 @@ class WebAssemblyGCStructure final : public Structure {
 public:
     friend class Structure;
 
-    static constexpr unsigned inlinedTypeDisplaySize = 6;
-
     template<typename CellType, SubspaceAccess>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
@@ -81,7 +79,6 @@ public:
     static WebAssemblyGCStructure* create(VM&, JSGlobalObject*, const TypeInfo&, const ClassInfo*, Ref<const Wasm::TypeDefinition>&& unexpandedType, Ref<const Wasm::TypeDefinition>&& expandedType, Ref<const Wasm::RTT>&&);
 
     static constexpr ptrdiff_t offsetOfRTT() { return OBJECT_OFFSETOF(WebAssemblyGCStructure, m_rtt); }
-    static constexpr ptrdiff_t offsetOfInlinedTypeDisplay() { return OBJECT_OFFSETOF(WebAssemblyGCStructure, m_inlinedTypeDisplay); }
 
 private:
     WebAssemblyGCStructure(VM&, JSGlobalObject*, const TypeInfo&, const ClassInfo*, Ref<const Wasm::TypeDefinition>&& unexpandedType, Ref<const Wasm::TypeDefinition>&& expandedType, Ref<const Wasm::RTT>&&);
@@ -89,7 +86,6 @@ private:
 
     Ref<const Wasm::RTT> m_rtt;
     Ref<const Wasm::TypeDefinition> m_type;
-    std::array<RefPtr<const Wasm::RTT>, inlinedTypeDisplaySize> m_inlinedTypeDisplay { };
     WebAssemblyGCStructureTypeDependencies m_typeDependencies;
 };
 

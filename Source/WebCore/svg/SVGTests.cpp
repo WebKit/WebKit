@@ -88,24 +88,14 @@ bool SVGTests::isValid() const
     return true;
 }
 
-Ref<SVGStringList> SVGTests::protectedRequiredExtensions()
-{
-    return requiredExtensions();
-}
-
-Ref<SVGStringList> SVGTests::protectedSystemLanguage()
-{
-    return systemLanguage();
-}
-
 void SVGTests::parseAttribute(const QualifiedName& attributeName, const AtomString& value)
 {
     switch (attributeName.nodeName()) {
     case AttributeNames::requiredExtensionsAttr:
-        protectedRequiredExtensions()->reset(value);
+        protect(requiredExtensions())->reset(value);
         break;
     case AttributeNames::systemLanguageAttr:
-        protectedSystemLanguage()->reset(value);
+        protect(systemLanguage())->reset(value);
         break;
     default:
         break;

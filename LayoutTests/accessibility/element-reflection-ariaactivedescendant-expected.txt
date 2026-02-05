@@ -5,12 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS: axTarget1.selectedChildrenCount === 1
 PASS: axTarget1.selectedChildAtIndex(0).isEqual(axDescendant1) === true
-PASS: axTarget2.selectedChildrenCount === 1
-PASS: axTarget2.selectedChildAtIndex(0).isEqual(axDescendantFirstChild) === true
-PASS: axTarget2.selectedChildrenCount === 1
-PASS: axTarget2.selectedChildAtIndex(0).isEqual(axDescendant2) === true
-PASS: axTarget3.selectedChildrenCount === 1
-PASS: axTarget3.selectedChildAtIndex(0).isEqual(axDescendant3) === true
+PASS: selectedChild.isEqual(axDescendantFirstChild) === true
+PASS: selectedChild.isEqual(axDescendant2) === true
+PASS: selectedChild.isEqual(axDescendant3) === true
 
 PASS successfullyParsed is true
 

@@ -35,24 +35,24 @@ class SpeechRecognitionEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(SpeechRecognitionEvent);
 public:
     struct Init : EventInit {
-        uint64_t resultIndex;
-        RefPtr<SpeechRecognitionResultList> results;
+        uint32_t resultIndex;
+        Ref<SpeechRecognitionResultList> results;
     };
 
     static Ref<SpeechRecognitionEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
-    static Ref<SpeechRecognitionEvent> create(const AtomString&, uint64_t resultIndex, RefPtr<SpeechRecognitionResultList>&&);
+    static Ref<SpeechRecognitionEvent> create(const AtomString&, uint32_t resultIndex, RefPtr<SpeechRecognitionResultList>&&);
 
     virtual ~SpeechRecognitionEvent();
 
-    uint64_t resultIndex() const { return m_resultIndex; }
-    SpeechRecognitionResultList* results() const { return m_results.get(); }
+    uint32_t resultIndex() const { return m_resultIndex; }
+    const SpeechRecognitionResultList* results() const { return m_results.get(); }
 
 private:
     SpeechRecognitionEvent(const AtomString&, Init&&, IsTrusted);
-    SpeechRecognitionEvent(const AtomString&, uint64_t resultIndex, RefPtr<SpeechRecognitionResultList>&&);
+    SpeechRecognitionEvent(const AtomString&, uint32_t resultIndex, RefPtr<SpeechRecognitionResultList>&&);
 
-    uint64_t m_resultIndex;
-    RefPtr<SpeechRecognitionResultList> m_results;
+    uint32_t m_resultIndex;
+    const RefPtr<SpeechRecognitionResultList> m_results;
 };
 
 } // namespace WebCore

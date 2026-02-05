@@ -39,7 +39,6 @@ public:
     static Ref<WebURLSchemeHandlerCocoa> create(id<WKURLSchemeHandler>);
 
     id<WKURLSchemeHandler> apiHandler() const { return m_apiHandler.get(); }
-    RetainPtr<id<WKURLSchemeHandler>> protectedAPIHandler() const;
 
     bool isAPIHandler() final { return true; }
 

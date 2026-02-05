@@ -23,8 +23,6 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary ImageBitmapRenderingContextSettings {
+dictionary ImageBitmapRenderingContextSettings {
     boolean alpha = true;
 };

@@ -18,8 +18,10 @@
 #include <vector>
 
 #include "common/hash_utils.h"
+#include "common/span.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Context.inl.h"
+#include "libANGLE/ErrorStrings.h"
 #include "libANGLE/Program.h"
 #include "libANGLE/ResourceManager.h"
 #include "libANGLE/Shader.h"
@@ -64,7 +66,7 @@ bool operator!=(const GLES1ShaderState &a, const GLES1ShaderState &b)
 
 size_t GLES1ShaderState::hash() const
 {
-    return angle::ComputeGenericHash(*this);
+    return angle::ComputeGenericHash(angle::byte_span_from_ref(*this));
 }
 
 GLES1Renderer::GLES1Renderer() : mRendererProgramInitialized(false) {}
@@ -661,15 +663,17 @@ angle::Result GLES1Renderer::compileShader(Context *context,
     rx::ContextImpl *implementation = context->getImplementation();
     const Limitations &limitations  = implementation->getNativeLimitations();
 
-    ShaderProgramID shader = mShaderPrograms->createShader(implementation, limitations, shaderType);
+    if (!mShaderPrograms->createShader(implementation, limitations, shaderType, shaderOut))
+    {
+        ANGLE_CHECK(context, false, err::kHandleExhaustion, GL_OUT_OF_MEMORY);
+        return angle::Result::Stop;
+    }
 
-    Shader *shaderObject = getShader(shader);
+    Shader *shaderObject = getShader(*shaderOut);
     ANGLE_CHECK(context, shaderObject, "Missing shader object", GL_INVALID_OPERATION);
 
     shaderObject->setSource(context, 1, &src, nullptr);
     shaderObject->compile(context, angle::JobResultExpectancy::Immediate);
-
-    *shaderOut = shader;
 
     if (!shaderObject->isCompiled(context))
     {
@@ -693,12 +697,14 @@ angle::Result GLES1Renderer::linkProgram(Context *context,
                                          const angle::HashMap<GLint, std::string> &attribLocs,
                                          ShaderProgramID *programOut)
 {
-    ShaderProgramID program = mShaderPrograms->createProgram(context->getImplementation());
+    if (!mShaderPrograms->createProgram(context->getImplementation(), programOut))
+    {
+        ANGLE_CHECK(context, false, err::kHandleExhaustion, GL_OUT_OF_MEMORY);
+        return angle::Result::Stop;
+    }
 
-    Program *programObject = getProgram(program);
+    Program *programObject = getProgram(*programOut);
     ANGLE_CHECK(context, programObject, "Missing program object", GL_INVALID_OPERATION);
-
-    *programOut = program;
 
     programObject->attachShader(context, getShader(vertexShader));
     programObject->attachShader(context, getShader(fragmentShader));

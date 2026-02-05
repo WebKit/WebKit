@@ -57,10 +57,6 @@ namespace IPC {
 class Connection;
 }
 
-namespace DDMeshDescriptor {
-struct DDMeshDescriptor;
-}
-
 namespace WebCore {
 class MediaPlayer;
 class NativeImage;
@@ -126,7 +122,7 @@ private:
 
 
     void requestAdapter(const WebGPU::RequestAdapterOptions&, WebGPUIdentifier, CompletionHandler<void(std::optional<RemoteGPURequestAdapterResponse>&&)>&&);
-    void createModelBacking(unsigned width, unsigned height, const WebCore::DDModel::DDImageAsset& diffuseTexture, const WebCore::DDModel::DDImageAsset& specularTexture, WebKit::DDModelIdentifier, CompletionHandler<void(Vector<MachSendRight>&&)>&&);
+    void createModelBacking(unsigned width, unsigned height, const WebModel::ImageAsset& diffuseTexture, const WebModel::ImageAsset& specularTexture, WebKit::WebModelIdentifier, CompletionHandler<void(Vector<MachSendRight>&&)>&&);
 
     void createPresentationContext(const WebGPU::PresentationContextDescriptor&, WebGPUIdentifier);
 
@@ -140,7 +136,7 @@ private:
     RefPtr<IPC::StreamServerConnection> m_streamConnection;
     RefPtr<WebCore::WebGPU::GPU> m_backing WTF_GUARDED_BY_CAPABILITY(workQueue());
     Ref<WebGPU::ObjectHeap> m_objectHeap WTF_GUARDED_BY_CAPABILITY(workQueue());
-    Ref<DDModel::ObjectHeap> m_modelObjectHeap WTF_GUARDED_BY_CAPABILITY(workQueue());
+    Ref<ModelObjectHeap> m_modelObjectHeap WTF_GUARDED_BY_CAPABILITY(workQueue());
     const WebGPUIdentifier m_identifier;
     Ref<RemoteRenderingBackend> m_renderingBackend;
 };

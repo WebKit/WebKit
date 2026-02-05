@@ -28,7 +28,6 @@
     EnabledBySetting=PeerConnectionEnabled,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCRtpHeaderExtensionParameters {
     required DOMString uri;
     required unsigned short id;

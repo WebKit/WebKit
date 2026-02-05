@@ -97,7 +97,7 @@ RefPtr<SVGSVGElement> SVGImage::rootElement() const
     if (!localMainFrame)
         return nullptr;
 
-    return DocumentSVG::rootElement(*localMainFrame->protectedDocument());
+    return DocumentSVG::rootElement(*protect(localMainFrame->document()));
 }
 
 bool SVGImage::renderingTaintsOrigin() const
@@ -204,7 +204,7 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Float
     adjustedSrcSize.scale(roundedContainerSize.width() / containerSize.width(), roundedContainerSize.height() / containerSize.height());
     scaledSrc.setSize(adjustedSrcSize);
 
-    protectedFrameView()->scrollToFragment(initialFragmentURL);
+    protect(frameView())->scrollToFragment(initialFragmentURL);
 
     ImageDrawResult result = draw(context, dstRect, scaledSrc, options);
 
@@ -373,11 +373,6 @@ LocalFrameView* SVGImage::frameView() const
     return localMainFrame->view();
 }
 
-RefPtr<LocalFrameView> SVGImage::protectedFrameView() const
-{
-    return frameView();
-}
-
 bool SVGImage::hasRelativeWidth() const
 {
     // FIXME: This seems wrong.
@@ -532,7 +527,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
         });
         activeDocumentLoader->writer().end();
 
-        localMainFrame->protectedDocument()->updateLayoutIgnorePendingStylesheets();
+        protect(localMainFrame->document())->updateLayoutIgnorePendingStylesheets();
 
         // Set the intrinsic size before a container size is available.
         m_intrinsicSize = containerSize();

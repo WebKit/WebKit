@@ -51,7 +51,8 @@ JSWrappable* JSWrapper::unwrap(JSContextRef context, JSValueRef value)
     ASSERT_ARG(value, value);
     if (!context || !value)
         return 0;
-    return static_cast<JSWrappable*>(JSObjectGetPrivate(JSValueToObject(context, value, 0)));
+    JSObjectRef object = JSValueToObject(context, value, 0);
+    return static_cast<JSWrappable*>(JSObjectGetPrivate(object));
 }
 
 static JSWrappable* unwrapObject(JSObjectRef object)

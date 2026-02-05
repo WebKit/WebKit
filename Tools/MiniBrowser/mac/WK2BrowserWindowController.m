@@ -196,7 +196,7 @@ static const int testFooterBannerHeight = 58;
 {
     [urlText setStringValue:[self addProtocolIfNecessary:urlText.stringValue]];
     NSURL *url = [NSURL _webkit_URLWithUserTypedString:urlText.stringValue];
-    [_webView loadRequest:[NSURLRequest requestWithURL:url]];
+    [_webView loadURL:url];
 }
 
 - (IBAction)setPageScale:(id)sender

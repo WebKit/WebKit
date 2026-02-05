@@ -66,11 +66,6 @@ GeolocationClient& GeolocationController::client()
     return *m_client;
 }
 
-Ref<GeolocationClient> GeolocationController::protectedClient()
-{
-    return client();
-}
-
 void GeolocationController::addObserver(Geolocation& observer, bool enableHighAccuracy)
 {
     bool highAccuracyWasRequired = needsHighAccuracy();
@@ -81,7 +76,7 @@ void GeolocationController::addObserver(Geolocation& observer, bool enableHighAc
 
     if (m_isUpdating) {
         if (!highAccuracyWasRequired && enableHighAccuracy)
-            protectedClient()->setEnableHighAccuracy(true);
+            protect(client())->setEnableHighAccuracy(true);
     } else
         startUpdatingIfNecessary();
 }
@@ -102,12 +97,12 @@ void GeolocationController::removeObserver(Geolocation& observer)
     if (m_observers.isEmpty())
         stopUpdatingIfNecessary();
     else if (highAccuracyWasRequired && !needsHighAccuracy())
-        protectedClient()->setEnableHighAccuracy(false);
+        protect(client())->setEnableHighAccuracy(false);
 }
 
 void GeolocationController::revokeAuthorizationToken(const String& authorizationToken)
 {
-    protectedClient()->revokeAuthorizationToken(authorizationToken);
+    protect(client())->revokeAuthorizationToken(authorizationToken);
 }
 
 void GeolocationController::requestPermission(Geolocation& geolocation)
@@ -117,7 +112,7 @@ void GeolocationController::requestPermission(Geolocation& geolocation)
         return;
     }
 
-    protectedClient()->requestPermission(geolocation);
+    protect(client())->requestPermission(geolocation);
 }
 
 void GeolocationController::cancelPermissionRequest(Geolocation& geolocation)
@@ -125,7 +120,7 @@ void GeolocationController::cancelPermissionRequest(Geolocation& geolocation)
     if (m_pendingPermissionRequest.remove(geolocation))
         return;
 
-    protectedClient()->cancelPermissionRequest(geolocation);
+    protect(client())->cancelPermissionRequest(geolocation);
 }
 
 void GeolocationController::positionChanged(const std::optional<GeolocationPositionData>& position)
@@ -146,7 +141,7 @@ std::optional<GeolocationPositionData> GeolocationController::lastPosition()
     if (m_lastPosition)
         return m_lastPosition.value();
 
-    return protectedClient()->lastPosition();
+    return protect(client())->lastPosition();
 }
 
 void GeolocationController::activityStateDidChange(OptionSet<ActivityState> oldActivityState, OptionSet<ActivityState> newActivityState)
@@ -174,7 +169,7 @@ void GeolocationController::startUpdatingIfNecessary()
     if (m_isUpdating || !m_page->isVisible() || m_observers.isEmpty())
         return;
 
-    protectedClient()->startUpdating((*m_observers.random())->authorizationToken(), needsHighAccuracy());
+    protect(client())->startUpdating((*m_observers.random())->authorizationToken(), needsHighAccuracy());
     m_isUpdating = true;
 }
 
@@ -183,7 +178,7 @@ void GeolocationController::stopUpdatingIfNecessary()
     if (!m_isUpdating)
         return;
 
-    protectedClient()->stopUpdating();
+    protect(client())->stopUpdating();
     m_isUpdating = false;
 }
 

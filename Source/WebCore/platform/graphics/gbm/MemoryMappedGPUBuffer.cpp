@@ -75,7 +75,8 @@ std::unique_ptr<MemoryMappedGPUBuffer> MemoryMappedGPUBuffer::create(const IntSi
         return nullptr;
     }
 
-    constexpr FourCC preferredDMABufFormat = DRM_FORMAT_ABGR8888;
+    bool preferBGRA = flags.contains(BufferFlag::UseBGRALayout);
+    const auto preferredDMABufFormat = FourCC(preferBGRA ? DRM_FORMAT_ARGB8888 : DRM_FORMAT_ABGR8888);
 
     auto negotiateBufferFormat = [&]() -> std::optional<GLDisplay::BufferFormat> {
         const auto& supportedFormats = PlatformDisplay::sharedDisplay().bufferFormats();

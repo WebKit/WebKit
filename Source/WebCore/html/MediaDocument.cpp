@@ -124,7 +124,7 @@ void MediaDocumentParser::createDocumentStructure()
     if (!frame)
         return;
 
-    frame->loader().protectedActiveDocumentLoader()->setMainResourceDataBufferingPolicy(DataBufferingPolicy::DoNotBufferData);
+    protect(frame->loader().activeDocumentLoader())->setMainResourceDataBufferingPolicy(DataBufferingPolicy::DoNotBufferData);
     frame->loader().setOutgoingReferrer(document->completeURL(m_outgoingReferrer));
 }
 
@@ -183,7 +183,7 @@ void MediaDocument::replaceMediaElementTimerFired()
         if (RefPtr loader = this->loader())
             embedElement->setAttributeWithoutSynchronization(typeAttr, AtomString { loader->writer().mimeType() });
 
-        videoElement->protectedParentNode()->replaceChild(embedElement, *videoElement);
+        protect(videoElement->parentNode())->replaceChild(embedElement, *videoElement);
     }
 }
 

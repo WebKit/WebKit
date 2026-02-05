@@ -45,7 +45,6 @@ public:
 
     FrameInfo* sourceFrame() const { return m_sourceFrame.get(); }
     FrameInfo* targetFrame() const { return m_targetFrame.get(); }
-    RefPtr<FrameInfo> protectedTargetFrame() const { return m_targetFrame; }
     const WTF::String& targetFrameName() const { return m_targetFrameName; }
 
     const WebCore::ResourceRequest& request() const { return m_request; }
@@ -71,10 +70,8 @@ public:
     bool isProcessingUserGesture() const { return m_userInitiatedAction; }
     bool isProcessingUnconsumedUserGesture() const { return m_userInitiatedAction && !m_userInitiatedAction->consumed(); }
     UserInitiatedAction* userInitiatedAction() const { return m_userInitiatedAction.get(); }
-    RefPtr<UserInitiatedAction> protectedUserInitiatedAction() const { return m_userInitiatedAction; }
 
     Navigation* mainFrameNavigation() const { return m_mainFrameNavigation.get(); }
-    RefPtr<Navigation> protectedMainFrameNavigation() const { return m_mainFrameNavigation; }
 
 #if HAVE(APP_SSO)
     bool shouldPerformSOAuthorization() { return m_shouldPerformSOAuthorization; }

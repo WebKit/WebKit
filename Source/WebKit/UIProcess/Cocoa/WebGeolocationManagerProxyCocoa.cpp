@@ -43,8 +43,8 @@ void WebGeolocationManagerProxy::positionChanged(const String& websiteIdentifier
 
     auto& perDomainData = *it->value;
     perDomainData.lastPosition = WTF::move(position);
-    for (auto& webProcessProxy : perDomainData.watchers)
-        webProcessProxy.send(Messages::WebGeolocationManager::DidChangePosition(registrableDomain, perDomainData.lastPosition.value()), 0);
+    for (Ref webProcessProxy : perDomainData.watchers)
+        webProcessProxy->send(Messages::WebGeolocationManager::DidChangePosition(registrableDomain, perDomainData.lastPosition.value()), 0);
 }
 
 void WebGeolocationManagerProxy::errorOccurred(const String& websiteIdentifier, const String& errorMessage)
@@ -55,8 +55,8 @@ void WebGeolocationManagerProxy::errorOccurred(const String& websiteIdentifier, 
         return;
 
     auto& perDomainData = *it->value;
-    for (auto& webProcessProxy : perDomainData.watchers)
-        webProcessProxy.send(Messages::WebGeolocationManager::DidFailToDeterminePosition(registrableDomain, errorMessage), 0);
+    for (Ref webProcessProxy : perDomainData.watchers)
+        webProcessProxy->send(Messages::WebGeolocationManager::DidFailToDeterminePosition(registrableDomain, errorMessage), 0);
 }
 
 void WebGeolocationManagerProxy::resetGeolocation(const String& websiteIdentifier)
@@ -67,8 +67,8 @@ void WebGeolocationManagerProxy::resetGeolocation(const String& websiteIdentifie
         return;
 
     auto& perDomainData = *it->value;
-    for (auto& webProcessProxy : perDomainData.watchers)
-        webProcessProxy.send(Messages::WebGeolocationManager::ResetPermissions(registrableDomain), 0);
+    for (Ref webProcessProxy : perDomainData.watchers)
+        webProcessProxy->send(Messages::WebGeolocationManager::ResetPermissions(registrableDomain), 0);
 }
 
 #endif

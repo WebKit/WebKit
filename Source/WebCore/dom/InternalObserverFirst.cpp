@@ -84,13 +84,13 @@ private:
     const Ref<DeferredPromise> m_promise;
 };
 
-void createInternalObserverOperatorFirst(ScriptExecutionContext& context, Observable& observable, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+void createInternalObserverOperatorFirst(ScriptExecutionContext& context, Observable& observable, SubscribeOptions&& options, Ref<DeferredPromise>&& promise)
 {
     Ref signal = AbortSignal::create(&context);
 
     Vector<Ref<AbortSignal>> dependentSignals = { signal };
     if (options.signal)
-        dependentSignals.append(Ref { *options.signal });
+        dependentSignals.append(options.signal.releaseNonNull());
     Ref dependentSignal = AbortSignal::any(context, dependentSignals);
 
     if (dependentSignal->aborted())

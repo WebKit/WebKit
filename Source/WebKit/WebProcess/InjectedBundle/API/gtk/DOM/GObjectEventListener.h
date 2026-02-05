@@ -42,7 +42,7 @@ public:
     static bool removeEventListener(GObject* target, WebCore::EventTarget* coreTarget, const char* domEventName, GClosure* handler, bool useCapture)
     {
         GObjectEventListener key(target, coreTarget, domEventName, handler, useCapture);
-        return coreTarget->removeEventListener(key.m_eventType, key, useCapture);
+        return coreTarget->removeEventListener(key.m_eventType, key, { .capture = useCapture });
     }
 
     static void gobjectDestroyedCallback(GObjectEventListener* listener, GObject*)

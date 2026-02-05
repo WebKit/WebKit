@@ -30,6 +30,7 @@
 #include "MessageReceiver.h"
 #include "ProvisionalFrameCreationParameters.h"
 #include <WebCore/CertificateInfo.h>
+#include <WebCore/DocumentSecurityPolicy.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
@@ -79,13 +80,14 @@ enum class MouseEventPolicy : uint8_t;
 enum class ResourceResponseSource : uint8_t;
 enum class SandboxFlag : uint16_t;
 enum class ScrollbarMode : uint8_t;
+enum class ShouldFocusElement : bool;
 
 namespace TextExtraction {
 struct ExtractedText;
 struct InteractionDescription;
 struct Interaction;
-struct Item;
 struct Request;
+struct Result;
 }
 
 using FrameIdentifier = ObjectIdentifier<FrameIdentifierType>;
@@ -145,7 +147,6 @@ public:
 
     WebCore::FrameIdentifier frameID() const { return m_frameID; }
     WebPageProxy* page() const;
-    RefPtr<WebPageProxy> protectedPage() const;
 
     bool pageIsClosed() const { return !m_page; } // Needs to be thread-safe.
 
@@ -191,7 +192,7 @@ public:
     void didExplicitOpen(URL&&, String&& mimeType);
     void didReceiveServerRedirectForProvisionalLoad(URL&&);
     void didFailProvisionalLoad();
-    void didCommitLoad(const String& contentType, const WebCore::CertificateInfo&, bool containsPluginDocument);
+    void didCommitLoad(const String& contentType, const WebCore::CertificateInfo&, bool containsPluginDocument, WebCore::DocumentSecurityPolicy&&);
     void didFinishLoad();
     void didFailLoad();
     void didSameDocumentNavigation(URL&&); // eg. anchor navigation, session state change.
@@ -217,7 +218,7 @@ public:
     ProcessID processID() const;
     void prepareForProvisionalLoadInProcess(WebProcessProxy&, API::Navigation&, BrowsingContextGroup&, std::optional<WebCore::SecurityOriginData>, CompletionHandler<void(WebCore::PageIdentifier)>&&);
 
-    void commitProvisionalFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, String&& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, String&& proxyName, WebCore::ResourceResponseSource, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
+    void commitProvisionalFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, String&& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, String&& proxyName, WebCore::ResourceResponseSource, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, WebCore::DocumentSecurityPolicy&&, const UserData&);
 
     void getFrameTree(CompletionHandler<void(std::optional<FrameTreeNodeData>&&)>&&);
     void getFrameInfo(CompletionHandler<void(std::optional<FrameInfoData>&&)>&&);
@@ -228,7 +229,6 @@ public:
     RefPtr<WebFrameProxy> childFrame(uint64_t index) const;
 
     WebProcessProxy& process() const;
-    Ref<WebProcessProxy> protectedProcess() const;
     void setProcess(FrameProcess&);
     const FrameProcess& frameProcess() const { return m_frameProcess.get(); }
     FrameProcess& frameProcess() { return m_frameProcess.get(); }
@@ -266,7 +266,9 @@ public:
 
     WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
     void setAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t> badge);
-    void findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection, const WebCore::FocusEventData&, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&&);
+    void findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection, const WebCore::FocusEventData&, WebCore::ShouldFocusElement, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&&);
+
+    std::optional<WebCore::DocumentSecurityPolicy> documentSecurityPolicy() const { return m_documentSecurityPolicy; }
 
     WebCore::SandboxFlags effectiveSandboxFlags() const { return m_effectiveSandboxFlags; }
     void updateSandboxFlags(WebCore::SandboxFlags sandboxFlags) { m_effectiveSandboxFlags = sandboxFlags; }
@@ -294,7 +296,7 @@ public:
 
     void sendMessageToInspectorFrontend(const String& targetId, const String& message);
 
-    void requestTextExtraction(WebCore::TextExtraction::Request&&, CompletionHandler<void(WebCore::TextExtraction::Item&&)>&&);
+    void requestTextExtraction(WebCore::TextExtraction::Request&&, CompletionHandler<void(WebCore::TextExtraction::Result&&)>&&);
     void handleTextExtractionInteraction(WebCore::TextExtraction::Interaction&&, CompletionHandler<void(bool, String&&)>&&);
     void describeTextExtractionInteraction(WebCore::TextExtraction::Interaction&&, CompletionHandler<void(WebCore::TextExtraction::InteractionDescription&&)>&&);
     void takeSnapshotOfExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&&);
@@ -345,6 +347,7 @@ private:
     WebCore::SandboxFlags m_effectiveSandboxFlags;
     WebCore::ReferrerPolicy m_effectiveReferrerPolicy { WebCore::ReferrerPolicy::EmptyString };
     WebCore::ScrollbarMode m_scrollingMode;
+    std::optional<WebCore::DocumentSecurityPolicy> m_documentSecurityPolicy;
 } SWIFT_SHARED_REFERENCE(refWebFrameProxy, derefWebFrameProxy);
 
 } // namespace WebKit

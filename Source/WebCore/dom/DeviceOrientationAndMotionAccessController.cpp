@@ -58,7 +58,7 @@ DeviceOrientationOrMotionPermissionState DeviceOrientationAndMotionAccessControl
 
     // Check per-site setting.
     Ref topDocument = m_topDocument.get();
-    if (&document == topDocument.ptr() || document.protectedSecurityOrigin()->isSameOriginAs(topDocument->protectedSecurityOrigin())) {
+    if (&document == topDocument.ptr() || protect(document.securityOrigin())->isSameOriginAs(protect(topDocument->securityOrigin()))) {
         RefPtr frame = topDocument->frame();
         if (RefPtr documentLoader = frame ? frame->loader().documentLoader() : nullptr)
             return documentLoader->deviceOrientationAndMotionAccessState();

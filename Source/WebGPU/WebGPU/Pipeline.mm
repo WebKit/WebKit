@@ -83,7 +83,6 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
             return { };
 
         const auto& specializationConstant = indexIterator->value;
-        keyEntry = specializationConstant.mangledName;
         switch (specializationConstant.type) {
         case WGSL::Reflection::SpecializationConstantType::Boolean: {
             bool value = entry.value;
@@ -121,28 +120,6 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
             break;
         }
         }
-    }
-
-    for (auto& kvp : entryPointInformation.specializationConstants) {
-        auto& specializationConstant = kvp.value;
-        if (!specializationConstant.defaultValue || wgslConstantValues.contains(kvp.value.mangledName)) {
-            if (!specializationConstant.defaultValue && !wgslConstantValues.contains(kvp.value.mangledName)) {
-                if (error)
-                    *error = [NSError errorWithDomain:@"WebGPU" code:1 userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Override %s is used in shader but not provided", kvp.key.utf8().data()] }];
-                return std::nullopt;
-            }
-
-            continue;
-        }
-
-        auto constantValue = WGSL::evaluate(*kvp.value.defaultValue, wgslConstantValues);
-        if (!constantValue) {
-            if (error)
-                *error = [NSError errorWithDomain:@"WebGPU" code:1 userInfo:@{ NSLocalizedDescriptionKey: @"Failed to evaluate override value" }];
-            return std::nullopt;
-        }
-        auto addResult = wgslConstantValues.add(kvp.value.mangledName, *constantValue);
-        ASSERT_UNUSED(addResult, addResult.isNewEntry);
     }
 
     if (pipelineLayout) {

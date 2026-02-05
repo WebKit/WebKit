@@ -59,11 +59,9 @@ enum class ShouldComputePath : bool  {
 
 class RenderThemeCocoa : public RenderTheme {
 public:
-    WEBCORE_EXPORT static RenderThemeCocoa& singleton();
-
     Color controlTintColor(const RenderStyle&, OptionSet<StyleColorOptions>) const;
 
-    void adjustRepaintRect(const RenderBox&, FloatRect&) override;
+    void adjustRepaintRect(const RenderBox&, FloatRect&) final;
 
 #if ENABLE(FORM_CONTROL_REFRESH)
     Color controlTintColorWithContrast(const RenderStyle&, OptionSet<StyleColorOptions>) const;
@@ -82,6 +80,25 @@ public:
         FloatSize size;
     };
 
+#if ENABLE(VIDEO)
+    Vector<String, 2> mediaControlsStyleSheets(const HTMLMediaElement&) final;
+    String mediaControlsBase64StringForIconNameAndType(const String&, const String&) final;
+    Vector<String, 2> mediaControlsScripts() final;
+    RefPtr<FragmentedSharedBuffer> mediaControlsImageDataForIconNameAndType(const String&, const String&) final;
+    String mediaControlsFormattedStringForDuration(double) final;
+#endif
+
+#if ENABLE(FORM_CONTROL_REFRESH)
+    Color submitButtonTextColor(const RenderText&) const final;
+    float adjustedMaximumLogicalWidthForControl(const RenderStyle&, const Element&, float) const final;
+#endif
+
+    void purgeCaches() final;
+    void adjustTextControlInnerContainerStyle(RenderStyle&, const RenderStyle&, const Element*) const final;
+    void adjustTextControlInnerTextStyle(RenderStyle&, const RenderStyle&, const Element*) const final;
+    void adjustTextControlInnerPlaceholderStyle(RenderStyle&, const RenderStyle&, const Element*) const final;
+    bool shouldHaveCapsLockIndicator(const HTMLInputElement&) const final;
+
 protected:
     virtual Color pictureFrameColor(const RenderElement&);
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -93,9 +110,9 @@ protected:
 
     Style::LineWidthBox controlBorder(StyleAppearance, const FontCascade&, const Style::LineWidthBox& zoomedBox, float zoomFactor, const Element*) const override;
 
-    Color platformSpellingMarkerColor(OptionSet<StyleColorOptions>) const override;
-    Color platformDictationAlternativesMarkerColor(OptionSet<StyleColorOptions>) const override;
-    Color platformGrammarMarkerColor(OptionSet<StyleColorOptions>) const override;
+    Color platformSpellingMarkerColor(OptionSet<StyleColorOptions>) const final;
+    Color platformDictationAlternativesMarkerColor(OptionSet<StyleColorOptions>) const final;
+    Color platformGrammarMarkerColor(OptionSet<StyleColorOptions>) const final;
 
     void adjustCheckboxStyle(RenderStyle&, const Element*) const override;
     bool paintCheckbox(const RenderElement&, const PaintInfo&, const FloatRect&) override;
@@ -104,47 +121,43 @@ protected:
     bool paintRadio(const RenderElement&, const PaintInfo&, const FloatRect&) override;
 
     void adjustButtonStyle(RenderStyle&, const Element*) const override;
-    bool paintButton(const RenderElement&, const PaintInfo&, const FloatRect&) override;
+    bool paintButton(const RenderElement&, const PaintInfo&, const FloatRect&) final;
 
-    void adjustColorWellStyle(RenderStyle&, const Element*) const override;
-    bool paintColorWell(const RenderElement&, const PaintInfo&, const FloatRect&) override;
+    void adjustColorWellStyle(RenderStyle&, const Element*) const final;
+    bool paintColorWell(const RenderElement&, const PaintInfo&, const FloatRect&) final;
     void paintColorWellDecorations(const RenderElement&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustColorWellSwatchStyle(RenderStyle&, const Element*) const override;
-    void adjustColorWellSwatchOverlayStyle(RenderStyle&, const Element*) const override;
-    void adjustColorWellSwatchWrapperStyle(RenderStyle&, const Element*) const override;
-    bool paintColorWellSwatch(const RenderElement&, const PaintInfo&, const FloatRect&) override;
+    void adjustColorWellSwatchStyle(RenderStyle&, const Element*) const final;
+    void adjustColorWellSwatchOverlayStyle(RenderStyle&, const Element*) const final;
+    void adjustColorWellSwatchWrapperStyle(RenderStyle&, const Element*) const final;
+    bool paintColorWellSwatch(const RenderElement&, const PaintInfo&, const FloatRect&) final;
 
     void adjustInnerSpinButtonStyle(RenderStyle&, const Element*) const override;
-    bool paintInnerSpinButton(const RenderElement&, const PaintInfo&, const FloatRect&) override;
+    bool paintInnerSpinButton(const RenderElement&, const PaintInfo&, const FloatRect&) final;
 
     void adjustTextFieldStyle(RenderStyle&, const Element*) const override;
-    bool paintTextField(const RenderElement&, const PaintInfo&, const FloatRect&) override;
+    bool paintTextField(const RenderElement&, const PaintInfo&, const FloatRect&) final;
     void paintTextFieldDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustTextControlInnerContainerStyle(RenderStyle&, const RenderStyle&, const Element*) const override;
-    void adjustTextControlInnerPlaceholderStyle(RenderStyle&, const RenderStyle&, const Element*) const override;
-    void adjustTextControlInnerTextStyle(RenderStyle&, const RenderStyle&, const Element*) const override;
-
     void adjustTextAreaStyle(RenderStyle&, const Element*) const override;
-    bool paintTextArea(const RenderElement&, const PaintInfo&, const FloatRect&) override;
+    bool paintTextArea(const RenderElement&, const PaintInfo&, const FloatRect&) final;
     void paintTextAreaDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
 
     void adjustMenuListStyle(RenderStyle&, const Element*) const override;
-    bool paintMenuList(const RenderElement&, const PaintInfo&, const FloatRect&) override;
-    void paintMenuListDecorations(const RenderElement&, const PaintInfo&, const FloatRect&) override;
+    bool paintMenuList(const RenderElement&, const PaintInfo&, const FloatRect&) final;
+    void paintMenuListDecorations(const RenderElement&, const PaintInfo&, const FloatRect&) final;
 
     void adjustMenuListButtonStyle(RenderStyle&, const Element*) const override;
     void paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
     bool paintMenuListButton(const RenderElement&, const PaintInfo&, const FloatRect&) final;
 
-    void adjustMeterStyle(RenderStyle&, const Element*) const override;
+    void adjustMeterStyle(RenderStyle&, const Element*) const final;
     bool paintMeter(const RenderElement&, const PaintInfo&, const FloatRect&) override;
 
     void adjustListButtonStyle(RenderStyle&, const Element*) const override;
     bool paintListButton(const RenderElement&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustProgressBarStyle(RenderStyle&, const Element*) const override;
+    void adjustProgressBarStyle(RenderStyle&, const Element*) const final;
     bool paintProgressBar(const RenderElement&, const PaintInfo&, const FloatRect&) override;
 
     void adjustSliderTrackStyle(RenderStyle&, const Element*) const override;
@@ -152,14 +165,14 @@ protected:
 
     void adjustSliderThumbSize(RenderStyle&, const Element*) const override;
     void adjustSliderThumbStyle(RenderStyle&, const Element*) const override;
-    bool paintSliderThumb(const RenderElement&, const PaintInfo&, const FloatRect&) override;
+    bool paintSliderThumb(const RenderElement&, const PaintInfo&, const FloatRect&) final;
 
     void adjustSearchFieldStyle(RenderStyle&, const Element*) const override;
-    bool paintSearchField(const RenderElement&, const PaintInfo&, const FloatRect&) override;
+    bool paintSearchField(const RenderElement&, const PaintInfo&, const FloatRect&) final;
     void paintSearchFieldDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
 
     void adjustSearchFieldCancelButtonStyle(RenderStyle&, const Element*) const override;
-    bool paintSearchFieldCancelButton(const RenderBox&, const PaintInfo&, const FloatRect&) override;
+    bool paintSearchFieldCancelButton(const RenderBox&, const PaintInfo&, const FloatRect&) final;
 
     void adjustSearchFieldDecorationPartStyle(RenderStyle&, const Element*) const override;
     bool paintSearchFieldDecorationPart(const RenderElement&, const PaintInfo&, const FloatRect&) override;
@@ -170,12 +183,12 @@ protected:
     void adjustSearchFieldResultsButtonStyle(RenderStyle&, const Element*) const override;
     bool paintSearchFieldResultsButton(const RenderBox&, const PaintInfo&, const FloatRect&) override;
 
-    void adjustSwitchStyle(RenderStyle&, const Element*) const override;
-    bool paintSwitchThumb(const RenderElement&, const PaintInfo&, const FloatRect&) override;
-    bool paintSwitchTrack(const RenderElement&, const PaintInfo&, const FloatRect&) override;
+    void adjustSwitchStyle(RenderStyle&, const Element*) const final;
+    bool paintSwitchThumb(const RenderElement&, const PaintInfo&, const FloatRect&) final;
+    bool paintSwitchTrack(const RenderElement&, const PaintInfo&, const FloatRect&) final;
 
-    void paintPlatformResizer(const RenderLayerModelObject&, GraphicsContext&, const LayoutRect&) override;
-    void paintPlatformResizerFrame(const RenderLayerModelObject&, GraphicsContext&, const LayoutRect&) override;
+    void paintPlatformResizer(const RenderLayerModelObject&, GraphicsContext&, const LayoutRect&) final;
+    void paintPlatformResizerFrame(const RenderLayerModelObject&, GraphicsContext&, const LayoutRect&) final;
 
     bool supportsFocusRing(const RenderElement&, const RenderStyle&) const override;
 
@@ -268,37 +281,23 @@ protected:
 
     Color buttonTextColor(OptionSet<StyleColorOptions>, bool) const;
 
-    Color submitButtonTextColor(const RenderText&) const final;
-
     bool mayNeedBleedAvoidance(const RenderStyle&) const final;
-
-    float adjustedMaximumLogicalWidthForControl(const RenderStyle&, const Element&, float) const final;
 #endif
 
     bool isSubmitStyleButton(const Node*) const;
 
 private:
-    void purgeCaches() override;
-
-    bool shouldHaveCapsLockIndicator(const HTMLInputElement&) const final;
-
-    void paintFileUploadIconDecorations(const RenderElement& inputRenderer, const RenderElement& buttonRenderer, const PaintInfo&, const FloatRect&, Icon*, FileUploadDecorations) override;
+    void paintFileUploadIconDecorations(const RenderElement& inputRenderer, const RenderElement& buttonRenderer, const PaintInfo&, const FloatRect&, Icon*, FileUploadDecorations) final;
 
     Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const final;
 
 #if ENABLE(APPLE_PAY)
-    void adjustApplePayButtonStyle(RenderStyle&, const Element*) const override;
+    void adjustApplePayButtonStyle(RenderStyle&, const Element*) const final;
 #endif
 
     LayoutRect adjustedPaintRect(const RenderBox&, const LayoutRect&) const final;
 
 #if ENABLE(VIDEO)
-    Vector<String, 2> mediaControlsStyleSheets(const HTMLMediaElement&) override;
-    Vector<String, 2> mediaControlsScripts() override;
-    RefPtr<FragmentedSharedBuffer> mediaControlsImageDataForIconNameAndType(const String&, const String&) override;
-    String mediaControlsBase64StringForIconNameAndType(const String&, const String&) override;
-    String mediaControlsFormattedStringForDuration(double) override;
-
     String m_mediaControlsLocalizedStringsScript;
     String m_mediaControlsScript;
     String m_mediaControlsStyleSheet;

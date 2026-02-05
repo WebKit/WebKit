@@ -25,11 +25,13 @@
 
 WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.NetworkDetailView
 {
-    constructor(resource, delegate)
+    constructor(resource, entry, delegate)
     {
-        console.assert(resource instanceof WI.Resource);
+        console.assert(resource instanceof WI.Resource, resource);
 
         super(resource, delegate);
+
+        this._entry = entry;
 
         this.element.classList.add("resource");
 
@@ -72,6 +74,16 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.Networ
         this._contentBrowser.navigationBar.selectedNavigationItem = this.detailNavigationItemForIdentifier("preview");
 
         this._resourceContentView.showRequest();
+    }
+
+    showRedirect(redirect, parentResource, parentEntry)
+    {
+        this._delegate?.showRedirect?.(redirect, parentResource, parentEntry || this._entry);
+    }
+
+    showRepresentedObject(representedObject)
+    {
+        this._delegate?.showRepresentedObject?.(representedObject);
     }
 
     // ResourceSizesContentView delegate
@@ -128,7 +140,7 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.Networ
             break;
         case "headers":
             if (!this._headersContentView)
-                this._headersContentView = new WI.ResourceHeadersContentView(this.representedObject, this);
+                this._headersContentView = new WI.ResourceHeadersContentView(this.representedObject, this._entry, this);
             this._contentBrowser.showContentView(this._headersContentView, this._contentViewCookie);
             break;
         case "cookies":

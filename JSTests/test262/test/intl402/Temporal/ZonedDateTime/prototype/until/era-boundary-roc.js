@@ -23,12 +23,12 @@ const tests = [
   [
     broc5, roc5,
     [9, 0, 0, 0, "9y  from BROC 5 to ROC 5 (no year 0)"],
-    [0, 108, 0, 0, 0, "108mo  from BROC 5 to ROC 5 (no year 0)"],
+    [0, 108, 0, 0, "108mo  from BROC 5 to ROC 5 (no year 0)"],
   ],
   [
     roc5, broc5,
     [-9, 0, 0, 0, "-9y backwards  from BROC 5 to ROC 5 (no year 0)"],
-    [0, -108, 0, 0, 0, "-108mo backwards  from BROC 5 to ROC 5 (no year 0)"],
+    [0, -108, 0, 0, "-108mo backwards  from BROC 5 to ROC 5 (no year 0)"],
   ],
   // Era boundary
   [

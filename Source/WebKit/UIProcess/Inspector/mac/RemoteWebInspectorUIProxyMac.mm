@@ -110,7 +110,7 @@ WKWebView *RemoteWebInspectorUIProxy::webView() const
 
 void RemoteWebInspectorUIProxy::didBecomeActive()
 {
-    protectedInspectorPage()->protectedLegacyMainFrameProcess()->send(Messages::RemoteWebInspectorUI::UpdateFindString(WebKit::stringForFind()), m_inspectorPage->webPageIDInMainFrameProcess());
+    protect(protect(m_inspectorPage)->legacyMainFrameProcess())->send(Messages::RemoteWebInspectorUI::UpdateFindString(WebKit::stringForFind()), m_inspectorPage->webPageIDInMainFrameProcess());
 }
 
 WebPageProxy* RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow()
@@ -158,7 +158,7 @@ void RemoteWebInspectorUIProxy::platformResetState()
 void RemoteWebInspectorUIProxy::platformBringToFront()
 {
     [m_window makeKeyAndOrderFront:nil];
-    [m_window makeFirstResponder:protectedWebView().get()];
+    [m_window makeFirstResponder:protect(webView()).get()];
 }
 
 void RemoteWebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
@@ -228,7 +228,7 @@ void RemoteWebInspectorUIProxy::platformSetForcedAppearance(InspectorFrontendCli
         break;
     }
 
-    protectedWebView().get().appearance = platformAppearance;
+    protect(webView()).get().appearance = platformAppearance;
 
     RetainPtr window = m_window.get();
     ASSERT(window);
@@ -237,7 +237,7 @@ void RemoteWebInspectorUIProxy::platformSetForcedAppearance(InspectorFrontendCli
 
 void RemoteWebInspectorUIProxy::platformStartWindowDrag()
 {
-    protectedWebView().get()._protectedPage->startWindowDrag();
+    protect(webView()).get()._protectedPage->startWindowDrag();
 }
 
 void RemoteWebInspectorUIProxy::platformOpenURLExternally(const String& url)
@@ -265,11 +265,6 @@ void RemoteWebInspectorUIProxy::platformShowCertificate(const CertificateInfo& c
     [certificateView setEditableTrust:NO];
     [certificateView setDisplayDetails:YES];
     [certificateView setDetailsDisclosed:YES];
-}
-
-RetainPtr<WKWebView> RemoteWebInspectorUIProxy::protectedWebView() const
-{
-    return webView();
 }
 
 } // namespace WebKit

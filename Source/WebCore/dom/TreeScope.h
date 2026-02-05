@@ -100,7 +100,6 @@ public:
     void removeElementByName(const AtomString&, Element&);
 
     Document& documentScope() const { return m_documentScope.get(); }
-    Ref<Document> protectedDocumentScope() const;
     static constexpr ptrdiff_t documentScopeMemoryOffset() { return OBJECT_OFFSETOF(TreeScope, m_documentScope); }
 
     // https://dom.spec.whatwg.org/#retarget

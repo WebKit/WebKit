@@ -29,9 +29,10 @@
 typedef [EnforceRange] unsigned long GPUIntegerCoordinate;
 typedef (sequence<GPUIntegerCoordinate> or GPUOrigin2DDict) GPUOrigin2D;
 
+// FIXME: This has been renamed to `GPUCopyExternalImageSourceInfo`.
+// https://gpuweb.github.io/gpuweb/#gpucopyexternalimagesourceinfo
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUImageCopyExternalImage {
     required (ImageBitmap or
 #if defined(ENABLE_VIDEO) && ENABLE_VIDEO && defined(ENABLE_WEB_CODECS) && ENABLE_WEB_CODECS

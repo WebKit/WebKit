@@ -167,6 +167,11 @@ public:
     virtual void uppercaseWord() = 0;
     virtual void lowercaseWord() = 0;
     virtual void capitalizeWord() = 0;
+    virtual bool canApplyCaseTransformations(const String&) = 0;
+    virtual bool canConvertToTraditionalChinese(const String&) = 0;
+    virtual bool canConvertToSimplifiedChinese(const String&) = 0;
+    virtual void convertToTraditionalChinese() = 0;
+    virtual void convertToSimplifiedChinese() = 0;
 #endif
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)

@@ -40,6 +40,10 @@ namespace JSC {
 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(ctiMasmProbeTrampoline, void, ());
 JSC_ANNOTATE_JIT_OPERATION_PROBE(ctiMasmProbeTrampoline);
+#if !OS(DARWIN)
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(ctiMasmProbeTrampolineAVX, void, ());
+JSC_ANNOTATE_JIT_OPERATION_PROBE(ctiMasmProbeTrampolineAVX);
+#endif
 
 // The following are offsets for Probe::State fields accessed by the ctiMasmProbeTrampoline stub.
 
@@ -153,203 +157,266 @@ static_assert(sizeof(Probe::State) == PROBE_SIZE, "Probe::State::size's matches 
 
 #undef PROBE_OFFSETOF
 
-__asm__(
-    ".text" "\n"
-    ".globl " SYMBOL_STRING(ctiMasmProbeTrampoline) "\n"
-    HIDE_SYMBOL(ctiMasmProbeTrampoline) "\n"
-    SYMBOL_STRING(ctiMasmProbeTrampoline) ":" "\n"
-
-    "pushq %rbp" "\n"
-    "movq  %rsp, %rbp" "\n"
-
-    "pushfq" "\n"
-
-    // MacroAssemblerX86_64::probe() has already generated code to store some values.
-    // Together with the rbp and rflags pushed above, the top of stack now looks like this:
-    //     rbp[-1 * ptrSize]: rflags
-    //     rbp[0 * ptrSize]: rbp / previousCallFrame
-    //     rbp[1 * ptrSize]: return address / saved rip
-    //     rbp[2 * ptrSize]: saved rbx
-    //     rbp[3 * ptrSize]: saved rdx
-    //     rbp[4 * ptrSize]: saved rax
-    //
-    // Incoming registers contain:
-    //     rdx: probe function
-    //     rbx: probe arg
-    //     rax: scratch (was ctiMasmProbeTrampoline)
-
-    "subq $" STRINGIZE_VALUE_OF(PROBE_SIZE + OUT_SIZE) ", %rsp" "\n"
-
-    // The X86_64 ABI specifies that the worse case stack alignment requirement is 32 bytes.
-    "andq $~0x1f, %rsp" "\n"
-    // Since sp points to the Probe::State, we've ensured that it's protected from interrupts before we initialize it.
-
-    "movq %rdx, " STRINGIZE_VALUE_OF(PROBE_PROBE_FUNCTION_OFFSET) "(%rsp)" "\n"
-    "movq %rbx, " STRINGIZE_VALUE_OF(PROBE_ARG_OFFSET) "(%rsp)" "\n"
-    "movq %rsi, " STRINGIZE_VALUE_OF(PROBE_CPU_ESI_OFFSET) "(%rsp)" "\n"
-    "movq %rdi, " STRINGIZE_VALUE_OF(PROBE_CPU_EDI_OFFSET) "(%rsp)" "\n"
-
-    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_ECX_OFFSET) "(%rsp)" "\n"
-
-    "movq -1 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rbp), %rcx" "\n"
-    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EFLAGS_OFFSET) "(%rsp)" "\n"
-    "movq 0 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rbp), %rcx" "\n"
-    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EBP_OFFSET) "(%rsp)" "\n"
-    "movq 1 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rbp), %rcx" "\n"
-    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EIP_OFFSET) "(%rsp)" "\n"
-    "movq 2 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rbp), %rcx" "\n"
-    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EBX_OFFSET) "(%rsp)" "\n"
-    "movq 3 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rbp), %rcx" "\n"
-    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EDX_OFFSET) "(%rsp)" "\n"
-    "movq 4 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rbp), %rcx" "\n"
-    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EAX_OFFSET) "(%rsp)" "\n"
-
-    "movq %rbp, %rcx" "\n"
-    "addq $" STRINGIZE_VALUE_OF(6 * PTR_SIZE) ", %rcx" "\n"
-    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_ESP_OFFSET) "(%rsp)" "\n"
-
-    "movq %r8, " STRINGIZE_VALUE_OF(PROBE_CPU_R8_OFFSET) "(%rsp)" "\n"
-    "movq %r9, " STRINGIZE_VALUE_OF(PROBE_CPU_R9_OFFSET) "(%rsp)" "\n"
-    "movq %r10, " STRINGIZE_VALUE_OF(PROBE_CPU_R10_OFFSET) "(%rsp)" "\n"
-    "movq %r11, " STRINGIZE_VALUE_OF(PROBE_CPU_R11_OFFSET) "(%rsp)" "\n"
-    "movq %r12, " STRINGIZE_VALUE_OF(PROBE_CPU_R12_OFFSET) "(%rsp)" "\n"
-    "movq %r13, " STRINGIZE_VALUE_OF(PROBE_CPU_R13_OFFSET) "(%rsp)" "\n"
-    "movq %r14, " STRINGIZE_VALUE_OF(PROBE_CPU_R14_OFFSET) "(%rsp)" "\n"
-    "movq %r15, " STRINGIZE_VALUE_OF(PROBE_CPU_R15_OFFSET) "(%rsp)" "\n"
-
-    "vmovaps %xmm0,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM0_VECTOR_OFFSET) "(%rsp)" "\n"
-    "vmovaps %xmm1,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM1_VECTOR_OFFSET) "(%rsp)" "\n"
-    "vmovaps %xmm2,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM2_VECTOR_OFFSET) "(%rsp)" "\n"
-    "vmovaps %xmm3,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM3_VECTOR_OFFSET) "(%rsp)" "\n"
-    "vmovaps %xmm4,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM4_VECTOR_OFFSET) "(%rsp)" "\n"
-    "vmovaps %xmm5,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM5_VECTOR_OFFSET) "(%rsp)" "\n"
-    "vmovaps %xmm6,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM6_VECTOR_OFFSET) "(%rsp)" "\n"
-    "vmovaps %xmm7,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM7_VECTOR_OFFSET) "(%rsp)" "\n"
-    "vmovaps %xmm8,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM8_VECTOR_OFFSET) "(%rsp)" "\n"
-    "vmovaps %xmm9,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM9_VECTOR_OFFSET) "(%rsp)" "\n"
-    "vmovaps %xmm10, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM10_VECTOR_OFFSET) "(%rsp)" "\n"
-    "vmovaps %xmm11, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM11_VECTOR_OFFSET) "(%rsp)" "\n"
-    "vmovaps %xmm12, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM12_VECTOR_OFFSET) "(%rsp)" "\n"
-    "vmovaps %xmm13, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM13_VECTOR_OFFSET) "(%rsp)" "\n"
-    "vmovaps %xmm14, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM14_VECTOR_OFFSET) "(%rsp)" "\n"
+#define PROBE_XMM_SAVE_VMOVAPS \
+    "vmovaps %xmm0,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM0_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "vmovaps %xmm1,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM1_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "vmovaps %xmm2,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM2_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "vmovaps %xmm3,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM3_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "vmovaps %xmm4,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM4_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "vmovaps %xmm5,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM5_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "vmovaps %xmm6,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM6_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "vmovaps %xmm7,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM7_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "vmovaps %xmm8,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM8_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "vmovaps %xmm9,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM9_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "vmovaps %xmm10, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM10_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "vmovaps %xmm11, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM11_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "vmovaps %xmm12, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM12_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "vmovaps %xmm13, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM13_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "vmovaps %xmm14, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM14_VECTOR_OFFSET) "(%rsp)" "\n" \
     "vmovaps %xmm15, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM15_VECTOR_OFFSET) "(%rsp)" "\n"
 
-    "movq %rsp, %rdi" "\n" // the Probe::State* arg.
-    "call " SYMBOL_STRING(executeJSCJITProbe) "\n"
-
-    // Make sure the Probe::State is entirely below the result stack pointer so
-    // that register values are still preserved when we call the initializeStack
-    // function.
-    "movq %rsp, %rbp" "\n"
-    "movq $" STRINGIZE_VALUE_OF(PROBE_SIZE + OUT_SIZE) ", %rcx" "\n"
-    "movq %rsp, %rax" "\n"
-    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_ESP_OFFSET) "(%rbp), %rdx" "\n"
-    "addq %rcx, %rax" "\n"
-    "cmpq %rax, %rdx" "\n"
-    "jge " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineProbeStateIsSafe) "\n"
-
-    // Allocate a safe place on the stack below the result stack pointer to stash the Probe::State.
-    "subq %rcx, %rdx" "\n"
-    "andq $~0x1f, %rdx" "\n" // Keep the stack pointer 32 bytes aligned.
-    "xorq %rax, %rax" "\n"
-    "movq %rdx, %rsp" "\n"
-
-    "movq $" STRINGIZE_VALUE_OF(PROBE_SIZE) ", %rcx" "\n"
-
-    // Copy the Probe::State to the safe place.
-    LOCAL_LABEL_STRING(ctiMasmProbeTrampolineCopyLoop) ":" "\n"
-    "movq (%rbp, %rax), %rdx" "\n"
-    "movq %rdx, (%rsp, %rax)" "\n"
-    "addq $" STRINGIZE_VALUE_OF(PTR_SIZE) ", %rax" "\n"
-    "cmpq %rax, %rcx" "\n"
-    "jg " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineCopyLoop) "\n"
-
-    "movq %rsp, %rbp" "\n"
-
-    // Call initializeStackFunction if present.
-    LOCAL_LABEL_STRING(ctiMasmProbeTrampolineProbeStateIsSafe) ":" "\n"
-    "xorq %rcx, %rcx" "\n"
-    "addq " STRINGIZE_VALUE_OF(PROBE_INIT_STACK_FUNCTION_OFFSET) "(%rbp), %rcx" "\n"
-    "je " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineRestoreRegisters) "\n"
-
-    "movq %rbp, %rdi" "\n" // the Probe::State* arg.
-    "call *%rcx" "\n"
-
-    LOCAL_LABEL_STRING(ctiMasmProbeTrampolineRestoreRegisters) ":" "\n"
-
-    // To enable probes to modify register state, we copy all registers
-    // out of the Probe::State before returning.
-
-    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_EDX_OFFSET) "(%rbp), %rdx" "\n"
-    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_EBX_OFFSET) "(%rbp), %rbx" "\n"
-    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_ESI_OFFSET) "(%rbp), %rsi" "\n"
-    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_EDI_OFFSET) "(%rbp), %rdi" "\n"
-
-    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R8_OFFSET) "(%rbp), %r8" "\n"
-    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R9_OFFSET) "(%rbp), %r9" "\n"
-    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R10_OFFSET) "(%rbp), %r10" "\n"
-    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R11_OFFSET) "(%rbp), %r11" "\n"
-    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R12_OFFSET) "(%rbp), %r12" "\n"
-    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R13_OFFSET) "(%rbp), %r13" "\n"
-    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R14_OFFSET) "(%rbp), %r14" "\n"
-    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R15_OFFSET) "(%rbp), %r15" "\n"
-
-    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM0_VECTOR_OFFSET) "(%rbp), %xmm0" "\n"
-    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM1_VECTOR_OFFSET) "(%rbp), %xmm1" "\n"
-    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM2_VECTOR_OFFSET) "(%rbp), %xmm2" "\n"
-    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM3_VECTOR_OFFSET) "(%rbp), %xmm3" "\n"
-    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM4_VECTOR_OFFSET) "(%rbp), %xmm4" "\n"
-    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM5_VECTOR_OFFSET) "(%rbp), %xmm5" "\n"
-    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM6_VECTOR_OFFSET) "(%rbp), %xmm6" "\n"
-    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM7_VECTOR_OFFSET) "(%rbp), %xmm7" "\n"
-    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM8_VECTOR_OFFSET) "(%rbp), %xmm8" "\n"
-    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM9_VECTOR_OFFSET) "(%rbp), %xmm9" "\n"
-    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM10_VECTOR_OFFSET) "(%rbp), %xmm10" "\n"
-    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM11_VECTOR_OFFSET) "(%rbp), %xmm11" "\n"
-    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM12_VECTOR_OFFSET) "(%rbp), %xmm12" "\n"
-    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM13_VECTOR_OFFSET) "(%rbp), %xmm13" "\n"
-    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM14_VECTOR_OFFSET) "(%rbp), %xmm14" "\n"
+#define PROBE_XMM_RESTORE_VMOVAPS \
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM0_VECTOR_OFFSET) "(%rbp), %xmm0" "\n" \
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM1_VECTOR_OFFSET) "(%rbp), %xmm1" "\n" \
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM2_VECTOR_OFFSET) "(%rbp), %xmm2" "\n" \
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM3_VECTOR_OFFSET) "(%rbp), %xmm3" "\n" \
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM4_VECTOR_OFFSET) "(%rbp), %xmm4" "\n" \
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM5_VECTOR_OFFSET) "(%rbp), %xmm5" "\n" \
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM6_VECTOR_OFFSET) "(%rbp), %xmm6" "\n" \
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM7_VECTOR_OFFSET) "(%rbp), %xmm7" "\n" \
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM8_VECTOR_OFFSET) "(%rbp), %xmm8" "\n" \
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM9_VECTOR_OFFSET) "(%rbp), %xmm9" "\n" \
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM10_VECTOR_OFFSET) "(%rbp), %xmm10" "\n" \
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM11_VECTOR_OFFSET) "(%rbp), %xmm11" "\n" \
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM12_VECTOR_OFFSET) "(%rbp), %xmm12" "\n" \
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM13_VECTOR_OFFSET) "(%rbp), %xmm13" "\n" \
+    "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM14_VECTOR_OFFSET) "(%rbp), %xmm14" "\n" \
     "vmovaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM15_VECTOR_OFFSET) "(%rbp), %xmm15" "\n"
 
-    // There are 6 more registers left to restore:
-    //     rax, rcx, rbp, rsp, rip, and rflags.
+#if !OS(DARWIN)
+#define PROBE_XMM_SAVE_MOVAPS \
+    "movaps %xmm0,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM0_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "movaps %xmm1,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM1_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "movaps %xmm2,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM2_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "movaps %xmm3,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM3_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "movaps %xmm4,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM4_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "movaps %xmm5,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM5_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "movaps %xmm6,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM6_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "movaps %xmm7,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM7_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "movaps %xmm8,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM8_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "movaps %xmm9,  " STRINGIZE_VALUE_OF(PROBE_CPU_XMM9_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "movaps %xmm10, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM10_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "movaps %xmm11, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM11_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "movaps %xmm12, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM12_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "movaps %xmm13, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM13_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "movaps %xmm14, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM14_VECTOR_OFFSET) "(%rsp)" "\n" \
+    "movaps %xmm15, " STRINGIZE_VALUE_OF(PROBE_CPU_XMM15_VECTOR_OFFSET) "(%rsp)" "\n"
 
-    // The restoration process at ctiMasmProbeTrampolineEnd below works by popping
-    // 5 words off the stack into rflags, rax, rcx, rbp, and rip. These 5 words need
-    // to be pushed on top of the final esp value so that just by popping the 5 words,
-    // we'll get the esp that the probe wants to set. Let's call this area (for storing
-    // these 5 words) the restore area.
-    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_ESP_OFFSET) "(%rbp), %rcx" "\n"
-    "subq $5 * " STRINGIZE_VALUE_OF(PTR_SIZE) ", %rcx" "\n"
+#define PROBE_XMM_RESTORE_MOVAPS \
+    "movaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM0_VECTOR_OFFSET) "(%rbp), %xmm0" "\n" \
+    "movaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM1_VECTOR_OFFSET) "(%rbp), %xmm1" "\n" \
+    "movaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM2_VECTOR_OFFSET) "(%rbp), %xmm2" "\n" \
+    "movaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM3_VECTOR_OFFSET) "(%rbp), %xmm3" "\n" \
+    "movaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM4_VECTOR_OFFSET) "(%rbp), %xmm4" "\n" \
+    "movaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM5_VECTOR_OFFSET) "(%rbp), %xmm5" "\n" \
+    "movaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM6_VECTOR_OFFSET) "(%rbp), %xmm6" "\n" \
+    "movaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM7_VECTOR_OFFSET) "(%rbp), %xmm7" "\n" \
+    "movaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM8_VECTOR_OFFSET) "(%rbp), %xmm8" "\n" \
+    "movaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM9_VECTOR_OFFSET) "(%rbp), %xmm9" "\n" \
+    "movaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM10_VECTOR_OFFSET) "(%rbp), %xmm10" "\n" \
+    "movaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM11_VECTOR_OFFSET) "(%rbp), %xmm11" "\n" \
+    "movaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM12_VECTOR_OFFSET) "(%rbp), %xmm12" "\n" \
+    "movaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM13_VECTOR_OFFSET) "(%rbp), %xmm13" "\n" \
+    "movaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM14_VECTOR_OFFSET) "(%rbp), %xmm14" "\n" \
+    "movaps " STRINGIZE_VALUE_OF(PROBE_CPU_XMM15_VECTOR_OFFSET) "(%rbp), %xmm15" "\n"
+#endif // !OS(DARWIN)
 
-    // rcx now points to the restore area.
-
-    // Copy remaining restore values from the Probe::State to the restore area.
-    // Note: We already ensured above that the Probe::State is in a safe location before
-    // calling the initializeStackFunction. The initializeStackFunction is not allowed to
-    // change the stack pointer again.
-    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_EFLAGS_OFFSET) "(%rbp), %rax" "\n"
-    "movq %rax, 0 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rcx)" "\n"
-    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_EAX_OFFSET) "(%rbp), %rax" "\n"
-    "movq %rax, 1 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rcx)" "\n"
-    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_ECX_OFFSET) "(%rbp), %rax" "\n"
-    "movq %rax, 2 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rcx)" "\n"
-    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_EBP_OFFSET) "(%rbp), %rax" "\n"
-    "movq %rax, 3 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rcx)" "\n"
-    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_EIP_OFFSET) "(%rbp), %rax" "\n"
-    "movq %rax, 4 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rcx)" "\n"
-    "movq %rcx, %rsp" "\n"
-
-    // Do the remaining restoration by popping off the restore area.
-    "popfq" "\n"
-    "popq %rax" "\n"
-    "popq %rcx" "\n"
-    "popq %rbp" "\n"
-    "ret" "\n"
-#if !COMPILER(MSVC)
-    ".previous" "\n"
+#if COMPILER(MSVC)
+#define ASM_PREVIOUS_SECTION
+#else
+#define ASM_PREVIOUS_SECTION ".previous" "\n"
 #endif
+
+#define DEFINE_PROBE_TRAMPOLINE(trampolineName, xmmSave, xmmRestore, copyLoopLabel, stateIsSafeLabel, restoreRegsLabel) \
+__asm__( \
+    ".text" "\n" \
+    ".globl " SYMBOL_STRING(trampolineName) "\n" \
+    HIDE_SYMBOL(trampolineName) "\n" \
+    SYMBOL_STRING(trampolineName) ":" "\n" \
+    \
+    "pushq %rbp" "\n" \
+    "movq  %rsp, %rbp" "\n" \
+    \
+    "pushfq" "\n" \
+    \
+    /* MacroAssemblerX86_64::probe() has already generated code to store some values. */ \
+    /* Together with the rbp and rflags pushed above, the top of stack now looks like this: */ \
+    /*     rbp[-1 * ptrSize]: rflags */ \
+    /*     rbp[0 * ptrSize]: rbp / previousCallFrame */ \
+    /*     rbp[1 * ptrSize]: return address / saved rip */ \
+    /*     rbp[2 * ptrSize]: saved rbx */ \
+    /*     rbp[3 * ptrSize]: saved rdx */ \
+    /*     rbp[4 * ptrSize]: saved rax */ \
+    /* */ \
+    /* Incoming registers contain: */ \
+    /*     rdx: probe function */ \
+    /*     rbx: probe arg */ \
+    /*     rax: scratch (was ctiMasmProbeTrampoline) */ \
+    \
+    "subq $" STRINGIZE_VALUE_OF(PROBE_SIZE + OUT_SIZE) ", %rsp" "\n" \
+    \
+    /* The X86_64 ABI specifies that the worse case stack alignment requirement is 32 bytes. */ \
+    "andq $~0x1f, %rsp" "\n" \
+    /* Since sp points to the Probe::State, we've ensured that it's protected from interrupts before we initialize it. */ \
+    \
+    "movq %rdx, " STRINGIZE_VALUE_OF(PROBE_PROBE_FUNCTION_OFFSET) "(%rsp)" "\n" \
+    "movq %rbx, " STRINGIZE_VALUE_OF(PROBE_ARG_OFFSET) "(%rsp)" "\n" \
+    "movq %rsi, " STRINGIZE_VALUE_OF(PROBE_CPU_ESI_OFFSET) "(%rsp)" "\n" \
+    "movq %rdi, " STRINGIZE_VALUE_OF(PROBE_CPU_EDI_OFFSET) "(%rsp)" "\n" \
+    \
+    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_ECX_OFFSET) "(%rsp)" "\n" \
+    \
+    "movq -1 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rbp), %rcx" "\n" \
+    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EFLAGS_OFFSET) "(%rsp)" "\n" \
+    "movq 0 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rbp), %rcx" "\n" \
+    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EBP_OFFSET) "(%rsp)" "\n" \
+    "movq 1 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rbp), %rcx" "\n" \
+    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EIP_OFFSET) "(%rsp)" "\n" \
+    "movq 2 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rbp), %rcx" "\n" \
+    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EBX_OFFSET) "(%rsp)" "\n" \
+    "movq 3 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rbp), %rcx" "\n" \
+    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EDX_OFFSET) "(%rsp)" "\n" \
+    "movq 4 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rbp), %rcx" "\n" \
+    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_EAX_OFFSET) "(%rsp)" "\n" \
+    \
+    "movq %rbp, %rcx" "\n" \
+    "addq $" STRINGIZE_VALUE_OF(6 * PTR_SIZE) ", %rcx" "\n" \
+    "movq %rcx, " STRINGIZE_VALUE_OF(PROBE_CPU_ESP_OFFSET) "(%rsp)" "\n" \
+    \
+    "movq %r8, " STRINGIZE_VALUE_OF(PROBE_CPU_R8_OFFSET) "(%rsp)" "\n" \
+    "movq %r9, " STRINGIZE_VALUE_OF(PROBE_CPU_R9_OFFSET) "(%rsp)" "\n" \
+    "movq %r10, " STRINGIZE_VALUE_OF(PROBE_CPU_R10_OFFSET) "(%rsp)" "\n" \
+    "movq %r11, " STRINGIZE_VALUE_OF(PROBE_CPU_R11_OFFSET) "(%rsp)" "\n" \
+    "movq %r12, " STRINGIZE_VALUE_OF(PROBE_CPU_R12_OFFSET) "(%rsp)" "\n" \
+    "movq %r13, " STRINGIZE_VALUE_OF(PROBE_CPU_R13_OFFSET) "(%rsp)" "\n" \
+    "movq %r14, " STRINGIZE_VALUE_OF(PROBE_CPU_R14_OFFSET) "(%rsp)" "\n" \
+    "movq %r15, " STRINGIZE_VALUE_OF(PROBE_CPU_R15_OFFSET) "(%rsp)" "\n" \
+    \
+    xmmSave \
+    \
+    "movq %rsp, %rdi" "\n" /* the Probe::State* arg. */ \
+    "call " SYMBOL_STRING(executeJSCJITProbe) "\n" \
+    \
+    /* Make sure the Probe::State is entirely below the result stack pointer so */ \
+    /* that register values are still preserved when we call the initializeStack */ \
+    /* function. */ \
+    "movq %rsp, %rbp" "\n" \
+    "movq $" STRINGIZE_VALUE_OF(PROBE_SIZE + OUT_SIZE) ", %rcx" "\n" \
+    "movq %rsp, %rax" "\n" \
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_ESP_OFFSET) "(%rbp), %rdx" "\n" \
+    "addq %rcx, %rax" "\n" \
+    "cmpq %rax, %rdx" "\n" \
+    "jge " LOCAL_LABEL_STRING(stateIsSafeLabel) "\n" \
+    \
+    /* Allocate a safe place on the stack below the result stack pointer to stash the Probe::State. */ \
+    "subq %rcx, %rdx" "\n" \
+    "andq $~0x1f, %rdx" "\n" /* Keep the stack pointer 32 bytes aligned. */ \
+    "xorq %rax, %rax" "\n" \
+    "movq %rdx, %rsp" "\n" \
+    \
+    "movq $" STRINGIZE_VALUE_OF(PROBE_SIZE) ", %rcx" "\n" \
+    \
+    /* Copy the Probe::State to the safe place. */ \
+    LOCAL_LABEL_STRING(copyLoopLabel) ":" "\n" \
+    "movq (%rbp, %rax), %rdx" "\n" \
+    "movq %rdx, (%rsp, %rax)" "\n" \
+    "addq $" STRINGIZE_VALUE_OF(PTR_SIZE) ", %rax" "\n" \
+    "cmpq %rax, %rcx" "\n" \
+    "jg " LOCAL_LABEL_STRING(copyLoopLabel) "\n" \
+    \
+    "movq %rsp, %rbp" "\n" \
+    \
+    /* Call initializeStackFunction if present. */ \
+    LOCAL_LABEL_STRING(stateIsSafeLabel) ":" "\n" \
+    "xorq %rcx, %rcx" "\n" \
+    "addq " STRINGIZE_VALUE_OF(PROBE_INIT_STACK_FUNCTION_OFFSET) "(%rbp), %rcx" "\n" \
+    "je " LOCAL_LABEL_STRING(restoreRegsLabel) "\n" \
+    \
+    "movq %rbp, %rdi" "\n" /* the Probe::State* arg. */ \
+    "call *%rcx" "\n" \
+    \
+    LOCAL_LABEL_STRING(restoreRegsLabel) ":" "\n" \
+    \
+    /* To enable probes to modify register state, we copy all registers */ \
+    /* out of the Probe::State before returning. */ \
+    \
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_EDX_OFFSET) "(%rbp), %rdx" "\n" \
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_EBX_OFFSET) "(%rbp), %rbx" "\n" \
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_ESI_OFFSET) "(%rbp), %rsi" "\n" \
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_EDI_OFFSET) "(%rbp), %rdi" "\n" \
+    \
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R8_OFFSET) "(%rbp), %r8" "\n" \
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R9_OFFSET) "(%rbp), %r9" "\n" \
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R10_OFFSET) "(%rbp), %r10" "\n" \
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R11_OFFSET) "(%rbp), %r11" "\n" \
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R12_OFFSET) "(%rbp), %r12" "\n" \
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R13_OFFSET) "(%rbp), %r13" "\n" \
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R14_OFFSET) "(%rbp), %r14" "\n" \
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_R15_OFFSET) "(%rbp), %r15" "\n" \
+    \
+    xmmRestore \
+    \
+    /* There are 6 more registers left to restore: */ \
+    /*     rax, rcx, rbp, rsp, rip, and rflags. */ \
+    \
+    /* The restoration process at ctiMasmProbeTrampolineEnd below works by popping */ \
+    /* 5 words off the stack into rflags, rax, rcx, rbp, and rip. These 5 words need */ \
+    /* to be pushed on top of the final esp value so that just by popping the 5 words, */ \
+    /* we'll get the esp that the probe wants to set. Let's call this area (for storing */ \
+    /* these 5 words) the restore area. */ \
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_ESP_OFFSET) "(%rbp), %rcx" "\n" \
+    "subq $5 * " STRINGIZE_VALUE_OF(PTR_SIZE) ", %rcx" "\n" \
+    \
+    /* rcx now points to the restore area. */ \
+    \
+    /* Copy remaining restore values from the Probe::State to the restore area. */ \
+    /* Note: We already ensured above that the Probe::State is in a safe location before */ \
+    /* calling the initializeStackFunction. The initializeStackFunction is not allowed to */ \
+    /* change the stack pointer again. */ \
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_EFLAGS_OFFSET) "(%rbp), %rax" "\n" \
+    "movq %rax, 0 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rcx)" "\n" \
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_EAX_OFFSET) "(%rbp), %rax" "\n" \
+    "movq %rax, 1 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rcx)" "\n" \
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_ECX_OFFSET) "(%rbp), %rax" "\n" \
+    "movq %rax, 2 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rcx)" "\n" \
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_EBP_OFFSET) "(%rbp), %rax" "\n" \
+    "movq %rax, 3 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rcx)" "\n" \
+    "movq " STRINGIZE_VALUE_OF(PROBE_CPU_EIP_OFFSET) "(%rbp), %rax" "\n" \
+    "movq %rax, 4 * " STRINGIZE_VALUE_OF(PTR_SIZE) "(%rcx)" "\n" \
+    "movq %rcx, %rsp" "\n" \
+    \
+    /* Do the remaining restoration by popping off the restore area. */ \
+    "popfq" "\n" \
+    "popq %rax" "\n" \
+    "popq %rcx" "\n" \
+    "popq %rbp" "\n" \
+    "ret" "\n" \
+    ASM_PREVIOUS_SECTION \
 );
+
+#if OS(DARWIN)
+// On macOS, all x86_64 CPUs support AVX. Use vmovaps unconditionally.
+DEFINE_PROBE_TRAMPOLINE(ctiMasmProbeTrampoline, PROBE_XMM_SAVE_VMOVAPS, PROBE_XMM_RESTORE_VMOVAPS,
+    ctiMasmProbeTrampolineCopyLoop, ctiMasmProbeTrampolineProbeStateIsSafe, ctiMasmProbeTrampolineRestoreRegisters)
+#else
+// On Linux/Windows, AVX may not be available. Provide two trampolines:
+// - ctiMasmProbeTrampoline: uses movaps (SSE, always available on x86_64)
+// - ctiMasmProbeTrampolineAVX: uses vmovaps (requires AVX)
+DEFINE_PROBE_TRAMPOLINE(ctiMasmProbeTrampoline, PROBE_XMM_SAVE_MOVAPS, PROBE_XMM_RESTORE_MOVAPS,
+    ctiMasmProbeTrampolineCopyLoop, ctiMasmProbeTrampolineProbeStateIsSafe, ctiMasmProbeTrampolineRestoreRegisters)
+DEFINE_PROBE_TRAMPOLINE(ctiMasmProbeTrampolineAVX, PROBE_XMM_SAVE_VMOVAPS, PROBE_XMM_RESTORE_VMOVAPS,
+    ctiMasmProbeTrampolineAVXCopyLoop, ctiMasmProbeTrampolineAVXProbeStateIsSafe, ctiMasmProbeTrampolineAVXRestoreRegisters)
+#endif
 
 // What code is emitted for the probe?
 // ==================================
@@ -397,7 +464,14 @@ void MacroAssembler::probe(Probe::Function function, void* arg)
     push(RegisterID::eax);
     push(RegisterID::eax);
 
+#if OS(DARWIN)
     move(TrustedImmPtr(reinterpret_cast<void*>(ctiMasmProbeTrampoline)), RegisterID::eax);
+#else
+    if (supportsAVX())
+        move(TrustedImmPtr(reinterpret_cast<void*>(ctiMasmProbeTrampolineAVX)), RegisterID::eax);
+    else
+        move(TrustedImmPtr(reinterpret_cast<void*>(ctiMasmProbeTrampoline)), RegisterID::eax);
+#endif
 
     push(RegisterID::edx);
     move(TrustedImmPtr(reinterpret_cast<void*>(function)), RegisterID::edx);

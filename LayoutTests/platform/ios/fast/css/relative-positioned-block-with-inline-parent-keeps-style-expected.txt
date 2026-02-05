@@ -4,14 +4,14 @@ layer at (0,0) size 800x100
   RenderBlock {HTML} at (0,0) size 800x100
     RenderBody {BODY} at (8,16) size 784x76
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 570x19
+        RenderText {#text} at (0,0) size 570x20
           text run at (0,0) width 570: "Test passes if the blue box sits atop the orange box and both are in the center of the view."
       RenderBlock {DIV} at (0,36) size 192x40 [bgcolor=#FF0000]
         RenderText {#text} at (0,0) size 0x0
 layer at (200,244) size 192x40
   RenderInline (relative positioned) {SPAN} at (0,0) size 192x40 [bgcolor=#0000FF]
-    RenderText {#text} at (0,0) size 75x19
+    RenderText {#text} at (0,0) size 75x20
       text run at (0,0) width 75: "Filler Text1"
     RenderBlock {DIV} at (0,20) size 192x20 [bgcolor=#FFA500]
-      RenderText {#text} at (0,0) size 67x19
+      RenderText {#text} at (0,0) size 67x20
         text run at (0,0) width 67: "Filler Text"

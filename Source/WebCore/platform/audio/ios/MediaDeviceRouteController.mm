@@ -26,7 +26,7 @@
 #import "config.h"
 #import "MediaDeviceRouteController.h"
 
-#if HAVE(AVROUTING_FRAMEWORK)
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
 
 #import "MediaStrategy.h"
 #import "PlatformStrategies.h"
@@ -43,11 +43,15 @@ MediaDeviceRouteController& MediaDeviceRouteController::singleton()
 }
 
 MediaDeviceRouteController::MediaDeviceRouteController()
+#if HAVE(AVROUTING_FRAMEWORK)
     : m_controller { adoptNS([[WebMediaDeviceRouteController alloc] init]) }
     , m_platformController { [WebMediaDevicePlatformRouteControllerClass sharedRoutingSystemController] }
+#endif
 {
+#if HAVE(AVROUTING_FRAMEWORK)
     ASSERT([m_platformController systemDelegate] == nil);
     [m_platformController setSystemDelegate:m_controller.get()];
+#endif
 }
 
 RefPtr<MediaDeviceRoute> MediaDeviceRouteController::mostRecentActiveRoute() const
@@ -94,7 +98,7 @@ bool MediaDeviceRouteController::deactivateRoute(WebMediaDevicePlatformRoute *pl
 
 } // namespace WebCore
 
-#endif // HAVE(AVROUTING_FRAMEWORK)
+#endif // ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
 
 namespace WebCore {
 

@@ -130,7 +130,7 @@ void LayerHostingContextManager::setVideoLayerSizeIfPossible()
     // We do not want animations here.
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
-    [m_inlineLayerHostingContext->protectedRootLayer() setFrame:CGRectMake(0, 0, m_videoLayerSize.width(), m_videoLayerSize.height())];
+    [protect(m_inlineLayerHostingContext->rootLayer()) setFrame:CGRectMake(0, 0, m_videoLayerSize.width(), m_videoLayerSize.height())];
     [CATransaction commit];
 }
 

@@ -82,10 +82,12 @@
 #import <WebCore/RenderEmbeddedObject.h>
 #import <WebCore/RenderLayer.h>
 #import <WebCore/RenderLayerScrollableArea.h>
+#import <WebCore/RenderTheme.h>
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/ScrollAnimator.h>
 #import <WebCore/Settings.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/StyleColorOptions.h>
 #import <WebCore/VoidCallback.h>
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/StdLibExtras.h>
@@ -132,7 +134,7 @@ PluginInfo PDFPluginBase::pluginInfo()
 }
 
 PDFPluginBase::PDFPluginBase(HTMLPlugInElement& element)
-    : m_frame(*WebFrame::fromCoreFrame(*element.protectedDocument()->protectedFrame()))
+    : m_frame(*WebFrame::fromCoreFrame(*protect(element.document())->protectedFrame()))
     , m_element(element)
 #if HAVE(INCREMENTAL_PDF_APIS)
     , m_incrementalPDFLoadingEnabled(element.document().settings().incrementalPDFLoadingEnabled())
@@ -212,11 +214,6 @@ Page* PDFPluginBase::page() const
     return nullptr;
 }
 
-RefPtr<WebCore::GraphicsLayer> PDFPluginBase::protectedGraphicsLayer() const
-{
-    return graphicsLayer();
-}
-
 void PDFPluginBase::setView(PluginView& view)
 {
     ASSERT(!m_view);
@@ -291,7 +288,7 @@ void PDFPluginBase::notifySelectionChanged()
     if (!page)
         return;
 
-    page->didChangeSelection(*frame->protectedCoreLocalFrame());
+    page->didChangeSelection(*protect(frame->coreLocalFrame()));
 }
 
 NSData *PDFPluginBase::originalData() const
@@ -625,7 +622,7 @@ void PDFPluginBase::startByteRangeRequest(NetscapePlugInStreamLoaderClient& stre
     resourceRequest.setHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes="_s, position, '-', position + count - 1));
     resourceRequest.setCachePolicy(ResourceRequestCachePolicy::DoNotUseAnyCache);
 
-    WebProcess::singleton().protectedWebLoaderStrategy()->schedulePluginStreamLoad(*coreFrame, streamLoaderClient, WTF::move(resourceRequest), [incrementalLoader = Ref { *m_incrementalLoader }, requestIdentifier] (RefPtr<NetscapePlugInStreamLoader>&& streamLoader) {
+    protect(WebProcess::singleton().webLoaderStrategy())->schedulePluginStreamLoad(*coreFrame, streamLoaderClient, WTF::move(resourceRequest), [incrementalLoader = Ref { *m_incrementalLoader }, requestIdentifier] (RefPtr<NetscapePlugInStreamLoader>&& streamLoader) {
         incrementalLoader->streamLoaderDidStart(requestIdentifier, WTF::move(streamLoader));
     });
 }
@@ -690,7 +687,7 @@ void PDFPluginBase::addArchiveResource()
 
     RetainPtr data = originalData();
     auto resource = ArchiveResource::create(SharedBuffer::create(data.get()), view->mainResourceURL(), "application/pdf"_s, String(), String(), synthesizedResponse);
-    view->protectedFrame()->protectedDocument()->protectedLoader()->addArchiveResource(resource.releaseNonNull());
+    protect(protect(protect(view->frame())->document())->loader())->addArchiveResource(resource.releaseNonNull());
 }
 
 void PDFPluginBase::tryRunScriptsInPDFDocument()
@@ -1144,7 +1141,7 @@ void PDFPluginBase::wantsWheelEventsChanged()
 void PDFPluginBase::print()
 {
     if (RefPtr page = this->page())
-        page->chrome().print(*protectedFrame()->protectedCoreLocalFrame());
+        page->chrome().print(*protect(protectedFrame()->coreLocalFrame()));
 }
 
 std::optional<PageIdentifier> PDFPluginBase::pageIdentifier() const
@@ -1268,7 +1265,7 @@ void PDFPluginBase::updateHUDLocation()
 {
     if (!shouldShowHUD())
         return;
-    protectedFrame()->protectedPage()->updatePDFHUDLocation(*this, frameForHUDInRootViewCoordinates());
+    protect(protectedFrame()->page())->updatePDFHUDLocation(*this, frameForHUDInRootViewCoordinates());
 }
 
 IntRect PDFPluginBase::frameForHUDInRootViewCoordinates() const
@@ -1403,13 +1400,6 @@ void PDFPluginBase::navigateToURL(const URL& url, std::optional<PlatformMouseEve
 
     coreFrame->loader().changeLocation(url, emptyAtom(), coreEvent.get(), ReferrerPolicy::NoReferrer, ShouldOpenExternalURLsPolicy::ShouldAllow);
 }
-
-#if PLATFORM(MAC)
-RefPtr<PDFPluginAnnotation> PDFPluginBase::protectedActiveAnnotation() const
-{
-    return m_activeAnnotation;
-}
-#endif
 
 id PDFPluginBase::accessibilityAssociatedPluginParentForElement(Element* element) const
 {
@@ -1631,16 +1621,18 @@ String PDFPluginBase::annotationStyle() const
     "}"_s;
 }
 
-Color PDFPluginBase::pluginBackgroundColor()
+Color PDFPluginBase::pluginBackgroundColor() const
 {
-    static NeverDestroyed color = roundAndClampToSRGBALossy(RetainPtr {
 #if HAVE(LIQUID_GLASS)
-        [CocoaColor whiteColor].CGColor
+    RefPtr element = m_element.get();
+    OptionSet<WebCore::StyleColorOptions> options;
+    if (RefPtr element = m_element.get())
+        options = element->checkedRenderer()->styleColorOptions();
+    return WebCore::RenderTheme::singleton().systemColor(CSSValueAppleSystemBackground, WTF::move(options));
 #else
-        [CocoaColor grayColor].CGColor
-#endif
-    }.get());
+    static NeverDestroyed color = roundAndClampToSRGBALossy(RetainPtr { [CocoaColor grayColor].CGColor }.get());
     return color.get();
+#endif
 }
 
 unsigned PDFPluginBase::countFindMatches(const String& target, WebCore::FindOptions options, unsigned maxMatchCount)

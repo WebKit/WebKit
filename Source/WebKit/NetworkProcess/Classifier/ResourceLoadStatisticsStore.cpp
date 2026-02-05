@@ -1211,7 +1211,7 @@ bool ResourceLoadStatisticsStore::insertObservedDomain(const ResourceLoadStatist
     ASSERT(!RunLoop::isMain());
 
     if (domainID(loadStatistics.registrableDomain)) {
-        ITP_RELEASE_LOG_ERROR("insertObservedDomain: failed to find domain");
+        ITP_RELEASE_LOG_ERROR("insertObservedDomain: domain already exists");
         return false;
     }
     auto scopedStatement = this->scopedStatement(m_insertObservedDomainStatement, insertObservedDomainQuery, "insertObservedDomain"_s);
@@ -2528,7 +2528,12 @@ std::pair<ResourceLoadStatisticsStore::AddedRecord, std::optional<unsigned>> Res
         return { AddedRecord::No, std::nullopt };
     }
 
-    return { AddedRecord::Yes, domainID(domain).value() };
+    auto domainID = this->domainID(domain);
+    if (!domainID) {
+        ITP_RELEASE_LOG_ERROR("ensureResourceStatisticsForRegistrableDomain: reason %" PUBLIC_LOG_STRING ", failed to retrieve domain ID after successful insertion", reason.characters());
+        return { AddedRecord::No, std::nullopt };
+    }
+    return { AddedRecord::Yes, domainID.value() };
 }
 
 void ResourceLoadStatisticsStore::clearDatabaseContents()

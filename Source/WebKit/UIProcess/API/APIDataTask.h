@@ -58,10 +58,8 @@ public:
     void cancel();
 
     WebKit::WebPageProxy* page() { return m_page.get(); }
-    RefPtr<WebKit::WebPageProxy> protectedPage() const { return m_page.get(); }
     const WTF::URL& originalURL() const { return m_originalURL; }
     const DataTaskClient& client() const { return m_client.get(); }
-    Ref<DataTaskClient> protectedClient() const;
     void setClient(Ref<DataTaskClient>&&);
     void networkProcessCrashed();
     void didCompleteWithError(WebCore::ResourceError&&);

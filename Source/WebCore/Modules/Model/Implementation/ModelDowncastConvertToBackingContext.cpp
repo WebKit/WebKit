@@ -28,16 +28,16 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
-#include "DDMeshImpl.h"
+#include "MeshImpl.h"
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore::DDModel {
+namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(DowncastConvertToBackingContext);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ModelDowncastConvertToBackingContext);
 
-WGPUDDMesh DowncastConvertToBackingContext::convertToBacking(const DDMesh& mesh)
+WebMesh ModelDowncastConvertToBackingContext::convertToBacking(const Mesh& mesh)
 {
-    return downcast<DDMeshImpl>(mesh).backing();
+    return downcast<MeshImpl>(mesh).backing();
 }
 
 }

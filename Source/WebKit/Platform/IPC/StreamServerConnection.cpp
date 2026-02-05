@@ -218,7 +218,7 @@ bool StreamServerConnection::processStreamMessage(Decoder& decoder, StreamMessag
     if (decoder.isSyncMessage()) {
         result = m_buffer.releaseAll();
         if (m_syncReplyToDispatch)
-            protectedConnection()->sendSyncReply(makeUniqueRefFromNonNullUniquePtr(WTF::move(m_syncReplyToDispatch)));
+            protect(connection())->sendSyncReply(makeUniqueRefFromNonNullUniquePtr(WTF::move(m_syncReplyToDispatch)));
     } else
         result = m_buffer.release(decoder.currentBufferOffset());
     if (result == WakeUpClient::Yes)

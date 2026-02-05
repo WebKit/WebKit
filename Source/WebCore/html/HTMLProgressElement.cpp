@@ -30,6 +30,7 @@
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderProgress.h"
 #include "RenderStyle+GettersInlines.h"
+#include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -70,7 +71,7 @@ RenderProgress* HTMLProgressElement::renderProgress() const
 {
     if (auto* renderProgress = dynamicDowncast<RenderProgress>(renderer()))
         return renderProgress;
-    return downcast<RenderProgress>(descendantsOfType<Element>(*protectedUserAgentShadowRoot()).first()->renderer());
+    return downcast<RenderProgress>(descendantsOfType<Element>(*protect(userAgentShadowRoot())).first()->renderer());
 }
 
 RefPtr<ProgressValueElement> HTMLProgressElement::protectedValueElement()
@@ -135,7 +136,7 @@ void HTMLProgressElement::didElementStateChange()
     if (CheckedPtr renderer = renderProgress())
         renderer->updateFromElement();
 
-    if (CheckedPtr cache = protectedDocument()->existingAXObjectCache())
+    if (CheckedPtr cache = protect(document())->existingAXObjectCache())
         cache->valueChanged(*this);
 }
 
@@ -145,11 +146,14 @@ void HTMLProgressElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 
     Ref document = this->document();
     Ref inner = ProgressInnerElement::create(document);
+    ScriptDisallowedScope::EventAllowedScope rootScope { root };
     root.appendChild(inner);
 
     Ref bar = ProgressBarElement::create(document);
     Ref valueElement = ProgressValueElement::create(document);
+    ScriptDisallowedScope::EventAllowedScope valueElementScope { valueElement };
     valueElement->setInlineSizePercentage(HTMLProgressElement::IndeterminatePosition * 100);
+    ScriptDisallowedScope::EventAllowedScope barScope { bar };
     bar->appendChild(valueElement);
     m_valueElement = WTF::move(valueElement);
 

@@ -17,6 +17,11 @@ Defines a comma-separated list of logging channels and their levels for WebKit's
         - `WebDriverClassic` - For the HTTP-based [WebDriver](https://w3c.github.io/webdriver/) Classic prototol.
         - `WebDriverBiDi` - For the WebSockets-based [WebDriver BiDi](https://github.com/w3c/webdriver-bidi) protocol.
         - `SessionHost` - For messages related to the management of the Browser under automation.
+    - **OpenGL context debugging**: When the `GLContext` logging channel is enabled, WebKit creates
+      EGL contexts with [debug logging](https://wikis.khronos.org/opengl/Debug_Output) configured,
+      which may result in a small graphics performance penalty. If the log level is set to `debug`,
+      e.g. with `WEBKIT_DEBUG='GLContext=debug'`, backtraces leading to errors are added to the
+      error messages.
 
 ## Graphics-related variables
 

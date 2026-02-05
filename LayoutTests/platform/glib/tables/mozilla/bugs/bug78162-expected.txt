@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
                               RenderInline {A} at (0,46) size 468x17 [color=#0000EE]
                                 RenderImage {IMG} at (0,0) size 468x60
                       RenderBlock (anonymous) at (2,82) size 488x72
-                        RenderText {#text} at (0,0) size 480x71
+                        RenderText {#text} at (0,0) size 480x72
                           text run at (0,0) width 295: "Your donation to protect our wildlife was paid "
                           text run at (294,0) width 167: "for by the sponsors on this"
                           text run at (0,18) width 109: "page, so it's free. "

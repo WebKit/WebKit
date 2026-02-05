@@ -7,14 +7,14 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 626x28
           RenderTableRow {TR} at (0,2) size 626x24
             RenderTableCell {TD} at (2,2) size 132x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 24x19
+              RenderText {#text} at (2,2) size 24x20
                 text run at (2,2) width 24: "one"
             RenderTableCell {TD} at (135,2) size 136x24 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 24x19
+              RenderText {#text} at (2,2) size 24x20
                 text run at (2,2) width 24: "two"
             RenderTableCell {TD} at (272,2) size 176x24 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 32x19
+              RenderText {#text} at (2,2) size 32x20
                 text run at (2,2) width 32: "three"
             RenderTableCell {TD} at (449,2) size 175x24 [border: (1px inset #000000)] [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 32x19
+              RenderText {#text} at (2,2) size 32x20
                 text run at (2,2) width 32: "four!"

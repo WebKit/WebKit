@@ -66,9 +66,7 @@ public:
     void close(DOMPromiseDeferred<void>&&);
 
     DefaultAudioDestinationNode& destination() final { return m_destinationNode.get(); }
-    Ref<DefaultAudioDestinationNode> protectedDestination() { return destination(); }
     const DefaultAudioDestinationNode& destination() const final { return m_destinationNode.get(); }
-    Ref<const DefaultAudioDestinationNode> protectedDestination() const { return destination(); }
 
     double baseLatency();
     double outputLatency();

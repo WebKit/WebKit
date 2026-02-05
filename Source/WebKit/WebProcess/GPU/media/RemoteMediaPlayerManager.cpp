@@ -286,11 +286,6 @@ GPUProcessConnection& RemoteMediaPlayerManager::gpuProcessConnection()
     return WebProcess::singleton().ensureGPUProcessConnection();
 }
 
-Ref<GPUProcessConnection> RemoteMediaPlayerManager::protectedGPUProcessConnection()
-{
-    return gpuProcessConnection();
-}
-
 void RemoteMediaPlayerManager::gpuProcessConnectionDidClose(GPUProcessConnection& connection)
 {
     ASSERT(m_gpuProcessConnection.get() == &connection);

@@ -122,10 +122,10 @@ int MathMLSelectElement::getSelectedActionChildAndIndex(Element*& selectedChild)
     int selection = integralAttribute(MathMLNames::selectionAttr);
     int i;
     for (i = 1; i < selection; i++) {
-        auto* nextChild = selectedChild->nextElementSibling();
+        RefPtr nextChild = selectedChild->nextElementSibling();
         if (!nextChild)
             break;
-        selectedChild = nextChild;
+        selectedChild = nextChild.get();
     }
 
     return i;
@@ -165,7 +165,7 @@ RefPtr<Element> MathMLSelectElement::getSelectedSemanticsChild()
     if (!child)
         return nullptr;
 
-    if (auto* childElement = dynamicDowncast<MathMLElement>(*child); !childElement || !childElement->isPresentationMathML()) {
+    if (RefPtr childElement = dynamicDowncast<MathMLElement>(*child); !childElement || !childElement->isPresentationMathML()) {
         // The first child is not a presentation MathML element. Hence we move to the second child and start searching an annotation child that could be displayed.
         child = child->nextElementSibling();
     } else if (!downcast<MathMLElement>(*child).isSemanticAnnotation()) {

@@ -73,20 +73,33 @@ RemoteAnimationStack::RemoteAnimationStack(RemoteAnimations&& animations, WebCor
 #if PLATFORM(MAC)
 const WebCore::FilterOperations* RemoteAnimationStack::longestFilterList() const
 {
-    // FIXME: this assumes there is no WebCore::AcceleratedEffectProperty::BackdropFilter anymore, only Filter.
     if (!m_affectedLayerProperties.contains(LayerProperty::Filter))
         return nullptr;
 
+    // FIXME: while m_affectedLayerProperties does not make the distinction between backdrop-filter
+    // and filter, the animations and keyframes do so we must check against both. However, it should
+    // only be either filter or backdrop-filter as a different layer will be used for those properties.
+    OptionSet<WebCore::AcceleratedEffectProperty> filterOrBackdropFilter = { WebCore::AcceleratedEffectProperty::Filter, WebCore::AcceleratedEffectProperty::BackdropFilter };
+
+    auto keyframeFilter = [](const WebCore::AcceleratedEffect::Keyframe& keyframe) -> const WebCore::FilterOperations* {
+        auto& animatedProperties = keyframe.animatedProperties();
+        if (animatedProperties.contains(WebCore::AcceleratedEffectProperty::Filter))
+            return &keyframe.values().filter;
+        if (animatedProperties.contains(WebCore::AcceleratedEffectProperty::BackdropFilter))
+            return &keyframe.values().backdropFilter;
+        return nullptr;
+    };
+
     const WebCore::FilterOperations* longestFilterList = nullptr;
     for (auto& animation : m_animations) {
-        if (!animation->animatedProperties().contains(WebCore::AcceleratedEffectProperty::Filter))
+        if (!animation->animatedProperties().containsAny(filterOrBackdropFilter))
             continue;
         for (auto& keyframe : animation->keyframes()) {
-            if (!keyframe.animatedProperties().contains(WebCore::AcceleratedEffectProperty::Filter))
+            auto* filter = keyframeFilter(keyframe);
+            if (!filter)
                 continue;
-            auto& filter = keyframe.values().filter;
-            if (!longestFilterList || longestFilterList->size() < filter.size())
-                longestFilterList = &filter;
+            if (!longestFilterList || longestFilterList->size() < filter->size())
+                longestFilterList = filter;
         }
     }
 

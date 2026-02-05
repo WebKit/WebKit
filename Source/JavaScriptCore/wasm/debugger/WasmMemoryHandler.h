@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 #include "WasmDebugServerUtilities.h"
 #include "WasmVirtualAddress.h"
@@ -68,4 +68,4 @@ private:
 } // namespace Wasm
 } // namespace JSC
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

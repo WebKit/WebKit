@@ -27,6 +27,7 @@
 
 #include "CommandLineAPIHost.h"
 #include <JavaScriptCore/InjectedScriptManager.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -34,10 +35,10 @@ namespace WebCore {
 
 class LocalDOMWindow;
 
-// FIXME <https://webkit.org/b/302124>: Make the base class InjectedScriptManager ref-counted instead.
 class WebInjectedScriptManager final : public Inspector::InjectedScriptManager, public RefCounted<WebInjectedScriptManager> {
     WTF_MAKE_NONCOPYABLE(WebInjectedScriptManager);
     WTF_MAKE_TZONE_ALLOCATED(WebInjectedScriptManager);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebInjectedScriptManager);
 public:
     static Ref<WebInjectedScriptManager> create(Inspector::InspectorEnvironment&, Ref<Inspector::InjectedScriptHost>&&);
 

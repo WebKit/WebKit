@@ -723,7 +723,12 @@ void GraphicsContextGLANGLE::readPixelsBufferObject(IntRect rect, GCGLenum forma
     if (!makeContextCurrent())
         return;
     setPackParameters(alignment, rowLength, false);
-    std::span<uint8_t> data(reinterpret_cast<uint8_t*>(offset), 0);
+    GLsizei bufferSize = 0;
+    GL_GetBufferParameterivRobustANGLE(GL_PIXEL_PACK_BUFFER, GL_BUFFER_SIZE, 1, nullptr, &bufferSize);
+    // FIXME: Remove redundant use of unsafe std::span by calling GL_ReadnPixelsRobustANGLE directly.
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    std::span<uint8_t> data(reinterpret_cast<uint8_t*>(offset), static_cast<size_t>(bufferSize));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     readPixelsImpl(rect, format, type, data);
 }
 

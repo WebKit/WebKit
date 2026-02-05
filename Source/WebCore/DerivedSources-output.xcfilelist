@@ -909,6 +909,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalCredential.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalCredential.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalCredentialGetRequest.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalCredentialGetRequest.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalCredentialPresentationProtocol.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalCredentialPresentationProtocol.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalCredentialRequestOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalCredentialRequestOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDistanceModelType.cpp
@@ -1163,10 +1165,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFace.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFace.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSet.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSet.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSetLoadEvent.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSetLoadEvent.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSetLoadEventInit.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSetLoadEventInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSource.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSource.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFormDataEvent.cpp
@@ -1751,8 +1749,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIIRFilterOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIIRFilterOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIPAddressSpace.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIPAddressSpace.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdentityCredentialProtocol.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdentityCredentialProtocol.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdleDeadline.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdleDeadline.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdleRequestCallback.cpp
@@ -1983,6 +1979,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamTrack.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamTrack.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamTrackEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamTrackEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamTrackHandle.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamTrackHandle.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamTrackProcessor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamTrackProcessor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaTrackCapabilities.cpp
@@ -2015,6 +2013,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockMediaDeviceRoute.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockMediaDeviceRoute.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockMediaDeviceRouteController.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockMediaDeviceRouteController.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockMediaDeviceRouteURLCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockMediaDeviceRouteURLCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockPageOverlay.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockPageOverlay.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockPaymentAddress.cpp
@@ -2078,8 +2078,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Clipboard.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Clipboard.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Contacts.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Contacts.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+CookieConsent.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+CookieConsent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Credentials.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Credentials.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+EME.cpp
@@ -2621,8 +2619,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReportingObserverCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReportingObserverCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRequestAnimationFrameCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRequestAnimationFrameCallback.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRequestCookieConsentOptions.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRequestCookieConsentOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRequestPriority.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRequestPriority.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSResidentKeyRequirement.cpp

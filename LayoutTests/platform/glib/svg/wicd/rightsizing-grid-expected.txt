@@ -5,10 +5,10 @@ layer at (0,0) size 785x1360
     RenderBody {body} at (8,8) size 769x0
       RenderBlock (floating) {div} at (0,0) size 769x1353
         RenderBlock {h1} at (0,21) size 769x38
-          RenderText {#text} at (0,0) size 444x36
+          RenderText {#text} at (0,0) size 444x37
             text run at (0,0) width 444: "SVG grid with percentage width"
         RenderBlock {h4} at (0,79) size 769x19
-          RenderText {#text} at (0,0) size 149x17
+          RenderText {#text} at (0,0) size 149x18
             text run at (0,0) width 149: "WICD Core 1.0 #20-3"
         RenderBlock {p} at (0,119) size 769x0
           RenderEmbeddedObject {object} at (0,0) size 385x129
@@ -84,7 +84,7 @@ layer at (0,0) size 785x1360
                   RenderSVGText {text} at (32,29) size 16x23 contains 1 chunk(s)
                     RenderSVGInlineText {#text} at (0,0) size 15x23
                       chunk 1 (middle anchor) text run 1 at (32.81,47.00) startOffset 0 endOffset 1 width 14.38: "K"
-            RenderBR {br} at (256,0) size 1x17
+            RenderBR {br} at (256,0) size 1x18
             RenderEmbeddedObject {object} at (0,256) size 257x193
               layer at (0,0) size 256x192
                 RenderView at (0,0) size 256x192
@@ -266,36 +266,36 @@ layer at (0,0) size 785x1360
                     RenderSVGInlineText {#text} at (0,0) size 13x23
                       chunk 1 (middle anchor) text run 1 at (8.91,27.00) startOffset 0 endOffset 1 width 12.19: "T"
         RenderBlock {p} at (0,119) size 769x1044 [color=#FFFFFF]
-          RenderBR {br} at (769,0) size 0x17
-          RenderText {#text} at (0,1025) size 8x17
+          RenderBR {br} at (769,0) size 0x18
+          RenderText {#text} at (0,1025) size 8x18
             text run at (0,1025) width 8: ".."
         RenderBlock {p} at (0,1178) size 769x55
-          RenderText {#text} at (0,0) size 755x53
+          RenderText {#text} at (0,0) size 755x54
             text run at (0,0) width 633: "Above, you should see a grid of 17 SVG child elements sticked together to build one rectangle grid. "
             text run at (633,0) width 122: "You should be able"
             text run at (0,18) width 750: "to resize your browser window and the grid rendering should adjust to it. The outcome should look like in these sample"
             text run at (0,36) width 80: "screenshots: "
-          RenderInline {a} at (80,36) size 33x17 [color=#0000EE]
-            RenderText {#text} at (80,36) size 33x17
+          RenderInline {a} at (80,36) size 33x18 [color=#0000EE]
+            RenderText {#text} at (80,36) size 33x18
               text run at (80,36) width 33: "small"
-          RenderText {#text} at (113,36) size 8x17
+          RenderText {#text} at (113,36) size 8x18
             text run at (113,36) width 8: ", "
-          RenderInline {a} at (121,36) size 40x17 [color=#0000EE]
-            RenderText {#text} at (121,36) size 40x17
+          RenderInline {a} at (121,36) size 40x18 [color=#0000EE]
+            RenderText {#text} at (121,36) size 40x18
               text run at (121,36) width 40: "bigger"
-          RenderText {#text} at (161,36) size 31x17
+          RenderText {#text} at (161,36) size 31x18
             text run at (161,36) width 31: " and "
-          RenderInline {a} at (192,36) size 20x17 [color=#0000EE]
-            RenderText {#text} at (192,36) size 20x17
+          RenderInline {a} at (192,36) size 20x18 [color=#0000EE]
+            RenderText {#text} at (192,36) size 20x18
               text run at (192,36) width 20: "big"
-          RenderText {#text} at (212,36) size 4x17
+          RenderText {#text} at (212,36) size 4x18
             text run at (212,36) width 4: "."
         RenderBlock {p} at (0,1248) size 769x37
-          RenderText {#text} at (0,0) size 749x35
+          RenderText {#text} at (0,0) size 749x36
             text run at (0,0) width 749: "The test is successful, if all SVG elements resize exacly dependend on the width of the browser window, but keep their"
             text run at (0,18) width 622: "aspect ratio and relative position. The complete grid should always show a perfect rectangle object."
         RenderBlock {p} at (0,1300) size 769x37
-          RenderBR {br} at (0,0) size 0x17
-          RenderInline {a} at (0,18) size 33x17 [color=#0000EE]
-            RenderText {#text} at (0,18) size 33x17
+          RenderBR {br} at (0,0) size 0x18
+          RenderInline {a} at (0,18) size 33x18 [color=#0000EE]
+            RenderText {#text} at (0,18) size 33x18
               text run at (0,18) width 33: "Back"

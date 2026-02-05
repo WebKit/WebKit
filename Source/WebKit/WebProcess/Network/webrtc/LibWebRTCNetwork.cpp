@@ -62,7 +62,7 @@ void LibWebRTCNetwork::networkProcessCrashed()
 {
     setConnection(nullptr);
 
-    protectedMonitor()->networkProcessCrashed();
+    protect(monitor())->networkProcessCrashed();
 }
 
 void LibWebRTCNetwork::setConnection(RefPtr<IPC::Connection>&& connection)

@@ -157,8 +157,6 @@ WK_USE_RESTRICTED_ENTITLEMENTS = $(USE_INTERNAL_SDK);
 
 JSC_SEC_LD_FLAGS[sdk=iphoneos*] = -weak_framework BrowserEngineCore;
 JSC_SEC_LD_FLAGS[sdk=macosx*] = -weak_framework BrowserEngineCore;
-JSC_SEC_LD_FLAGS[sdk=macosx13*] = ;
-JSC_SEC_LD_FLAGS[sdk=macosx14*] = ;
 JSC_SEC_LD_FLAGS[sdk=appletv*] = ;
 JSC_SEC_LD_FLAGS[sdk=watch*] = ;
 JSC_SEC_LD_FLAGS[sdk=xr*] = ;

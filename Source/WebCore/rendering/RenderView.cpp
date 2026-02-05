@@ -174,7 +174,7 @@ bool RenderView::isChildAllowed(const RenderObject& child, const RenderStyle&) c
 void RenderView::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
-    if (!protectedDocument()->paginated())
+    if (!protect(document())->paginated())
         m_pageLogicalSize = { };
 
     if (shouldUsePrintingLayout()) {
@@ -219,7 +219,7 @@ void RenderView::layout()
 
 void RenderView::updateQuirksMode()
 {
-    m_layoutState->updateQuirksMode(protectedDocument());
+    m_layoutState->updateQuirksMode(protect(document()));
 }
 
 void RenderView::updateInitialContainingBlockSize()
@@ -369,7 +369,7 @@ RenderElement* RenderView::rendererForRootBackground() const
     if (documentRenderer.shouldApplyAnyContainment())
         return nullptr;
 
-    if (RefPtr body = protectedDocument()->body()) {
+    if (RefPtr body = protect(document())->body()) {
         if (auto* renderer = body->renderer()) {
             if (!renderer->shouldApplyAnyContainment())
                 return renderer;
@@ -414,14 +414,14 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
     // FIXME: This needs to be dynamic.  We should be able to go back to blitting if we ever stop being inside
     // a transform, transparency layer, etc.
     Ref document = this->document();
-    for (RefPtr element = document->ownerElement(); element && element->renderer(); element = element->protectedDocument()->ownerElement()) {
-        RenderLayer* layer = element->renderer()->enclosingLayer();
+    for (RefPtr element = document->ownerElement(); element && element->renderer(); element = protect(element->document())->ownerElement()) {
+        CheckedPtr layer = element->renderer()->enclosingLayer();
         if (layer->cannotBlitToWindow()) {
             frameView().setCannotBlitToWindow();
             break;
         }
 
-        if (auto* compositingLayer = layer->enclosingCompositingLayerForRepaint().layer) {
+        if (CheckedPtr compositingLayer = layer->enclosingCompositingLayerForRepaint().layer) {
             if (!compositingLayer->backing()->paintsIntoWindow()) {
                 frameView().setCannotBlitToWindow();
                 break;
@@ -582,7 +582,7 @@ void RenderView::flushAccumulatedRepaintRegion() const
     IntSize rectOffset;
 
     CheckedPtr<RenderBox> iframeOwnerRenderer;
-    if (RefPtr ownerElement = protectedDocument()->ownerElement()) {
+    if (RefPtr ownerElement = protect(document())->ownerElement()) {
         iframeOwnerRenderer = ownerElement->renderBox();
         if (!iframeOwnerRenderer) {
             m_accumulatedRepaintRegion = nullptr;
@@ -646,7 +646,7 @@ auto RenderView::computeVisibleRectsInContainer(const RepaintRects& rects, const
 
     // Apply our transform if we have one (because of full page zooming).
     if (!container && hasLayer() && layer()->transform())
-        adjustedRects.transform(*layer()->transform(), protectedDocument()->deviceScaleFactor());
+        adjustedRects.transform(*layer()->transform(), protect(document())->deviceScaleFactor());
 
     return adjustedRects;
 }
@@ -674,7 +674,7 @@ void RenderView::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 
 bool RenderView::printing() const
 {
-    return protectedDocument()->printing();
+    return protect(document())->printing();
 }
 
 bool RenderView::shouldUsePrintingLayout() const

@@ -24,10 +24,7 @@
  */
 
 // https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#gethtmloptions
-
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary GetHTMLOptions {
+dictionary GetHTMLOptions {
     boolean serializableShadowRoots = false;
     sequence<ShadowRoot> shadowRoots = [];
 };

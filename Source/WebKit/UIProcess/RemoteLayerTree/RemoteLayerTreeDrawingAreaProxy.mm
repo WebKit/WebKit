@@ -104,10 +104,10 @@ RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& p
     // FIXME: We should do this somewhere else.
     IOSurfacePool::sharedPoolSingleton().setPoolSize(0);
 
-    if (pageProxy.protectedPreferences()->tiledScrollingIndicatorVisible())
+    if (protect(pageProxy.preferences())->tiledScrollingIndicatorVisible())
         initializeDebugIndicator();
 
-    if (pageProxy.protectedPreferences()->slowFrameIndicatorVisible())
+    if (protect(pageProxy.preferences())->slowFrameIndicatorVisible())
         initializeSlowFrameIndicator();
 }
 
@@ -475,7 +475,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
                 if (!m_replyForUnhidingContent) {
                     if (m_hasDetachedRootLayer)
                         RELEASE_LOG(RemoteLayerTree, "RemoteLayerTreeDrawingAreaProxy(%" PRIu64 ") Unhiding layer tree", identifier().toUInt64());
-                    page->setRemoteLayerTreeRootNode(m_remoteLayerTreeHost->protectedRootNode().get());
+                    page->setRemoteLayerTreeRootNode(protect(m_remoteLayerTreeHost->rootNode()).get());
                     m_hasDetachedRootLayer = false;
                 } else
                     m_remoteLayerTreeHost->detachRootLayer();
@@ -527,7 +527,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
             scrollPosition = layerTreeTransaction.scrollPosition();
 #endif
             updateDebugIndicator(layerTreeTransaction.contentsSize(), rootLayerChanged, scale, scrollPosition);
-            m_debugIndicatorLayerTreeHost->protectedRootLayer().get().name = @"Indicator host root";
+            protect(m_debugIndicatorLayerTreeHost->rootLayer()).get().name = @"Indicator host root";
         }
     }
 
@@ -624,7 +624,7 @@ void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator(IntSize contentsSize,
 
     if (rootLayerChanged) {
         [m_tileMapHostLayer setSublayers:@[]];
-        [m_tileMapHostLayer addSublayer:m_debugIndicatorLayerTreeHost->protectedRootLayer().get()];
+        [m_tileMapHostLayer addSublayer:protect(m_debugIndicatorLayerTreeHost->rootLayer()).get()];
         [m_tileMapHostLayer addSublayer:m_exposedRectIndicatorLayer.get()];
     }
     
@@ -773,7 +773,7 @@ TextStream& operator<<(TextStream& ts, const PendingCommit& pendingCommit)
 bool RemoteLayerTreeDrawingAreaProxy::allowMultipleCommitLayerTreePending()
 {
     if (RefPtr page = this->page())
-        return page->protectedPreferences()->allowMultipleCommitLayerTreePending();
+        return protect(page->preferences())->allowMultipleCommitLayerTreePending();
     return false;
 }
 
@@ -829,7 +829,7 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay(IPC::Connection* connect
     } else {
         forEachProcessState([&](ProcessState& state, WebProcessProxy& webProcess) {
             if (webProcess.hasConnection())
-                didRefreshDisplay(state, webProcess.protectedConnection());
+                didRefreshDisplay(state, protect(webProcess.connection()));
         });
     }
 

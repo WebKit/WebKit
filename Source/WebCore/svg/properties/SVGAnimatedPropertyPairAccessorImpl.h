@@ -49,7 +49,7 @@ public:
     constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedAngleOrientAccessor, property1, property2>(); }
 
 private:
-    void setDirty(const OwnerType& owner, SVGAnimatedProperty& animatedProperty) const final
+    void setDirty(const OwnerType& owner, SVGAnimatedPropertyBase& animatedProperty) const final
     {
         auto type = property2(owner)->baseVal();
         if (m_accessor1.matches(owner, animatedProperty) && type != SVGMarkerOrientAngle)
@@ -80,7 +80,7 @@ private:
 
     void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
     {
-        static_cast<SVGAnimatedAngleOrientAnimator&>(animator).appendAnimatedInstance(property1(owner), property2(owner));
+        downcast<SVGAnimatedAngleOrientAnimator>(animator).appendAnimatedInstance(property1(owner), property2(owner));
     }
 };
 
@@ -115,7 +115,7 @@ private:
 
     void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
     {
-        static_cast<SVGAnimatedIntegerPairAnimator&>(animator).appendAnimatedInstance(property1(owner), property2(owner));
+        downcast<SVGAnimatedIntegerPairAnimator>(animator).appendAnimatedInstance(property1(owner), property2(owner));
     }
 };
 
@@ -150,7 +150,7 @@ private:
 
     void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
     {
-        static_cast<SVGAnimatedNumberPairAnimator&>(animator).appendAnimatedInstance(property1(owner), property2(owner));
+        downcast<SVGAnimatedNumberPairAnimator>(animator).appendAnimatedInstance(property1(owner), property2(owner));
     }
 };
 

@@ -43,13 +43,13 @@ class SharedBuffer;
 namespace WebKit {
 
 class RemoteMediaPlayerProxy;
-class RemoteMediaResourceManager;
+class RemoteMediaResourceLoader;
 
 class RemoteMediaResource : public WebCore::PlatformMediaResource {
     WTF_MAKE_TZONE_ALLOCATED(RemoteMediaResource);
 public:
     // Called on the main thread.
-    static Ref<RemoteMediaResource> create(RemoteMediaResourceManager&, RemoteMediaPlayerProxy&, RemoteMediaResourceIdentifier);
+    static Ref<RemoteMediaResource> create(RemoteMediaResourceLoader&, RemoteMediaResourceIdentifier);
 
     // Thread-safe
     ~RemoteMediaResource();
@@ -68,9 +68,9 @@ public:
     void loadFinished(const WebCore::NetworkLoadMetrics&);
 
 private:
-    RemoteMediaResource(RemoteMediaResourceManager&, RemoteMediaPlayerProxy&, RemoteMediaResourceIdentifier);
+    RemoteMediaResource(RemoteMediaResourceLoader&, RemoteMediaResourceIdentifier);
 
-    ThreadSafeWeakPtr<RemoteMediaResourceManager> m_remoteMediaResourceManager;
+    const ThreadSafeWeakPtr<RemoteMediaResourceLoader> m_remoteMediaResourceLoader;
     WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;
     RemoteMediaResourceIdentifier m_id;
     std::atomic<bool> m_didPassAccessControlCheck { false };

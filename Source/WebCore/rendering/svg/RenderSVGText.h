@@ -74,7 +74,14 @@ public:
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final;
     FloatRect decoratedBoundingBox() const final;
 
-    LayoutRect visualOverflowRectEquivalent() const { return SVGBoundingBoxComputation::computeVisualOverflowRect(*this); }
+    LayoutRect visualOverflowRectEquivalent() const
+    {
+        if (!m_cachedVisualOverflowRect)
+            m_cachedVisualOverflowRect = SVGBoundingBoxComputation::computeVisualOverflowRect(*this);
+        return *m_cachedVisualOverflowRect;
+    }
+
+    void invalidateCachedVisualOverflowRect() final { m_cachedVisualOverflowRect = std::nullopt; }
 
     void updatePositionAndOverflow(const FloatRect&);
 
@@ -124,6 +131,7 @@ private:
     SVGTextLayoutAttributesBuilder m_layoutAttributesBuilder;
     Vector<SVGTextLayoutAttributes*> m_layoutAttributes;
     FloatRect m_objectBoundingBox;
+    mutable std::optional<LayoutRect> m_cachedVisualOverflowRect;
 };
 
 } // namespace WebCore

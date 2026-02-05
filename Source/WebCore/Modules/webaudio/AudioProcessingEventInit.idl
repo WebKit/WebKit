@@ -25,7 +25,6 @@
 
 [
     Conditional=WEB_AUDIO,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary AudioProcessingEventInit : EventInit {
     required double playbackTime;
     required AudioBuffer inputBuffer;

@@ -122,6 +122,12 @@ typedef NS_ENUM(NSInteger, WKFullscreenState) {
  */
 - (nullable WKNavigation *)loadRequest:(NSURLRequest *)request;
 
+/*! @abstract Navigates to a requested URL.
+ @param url The URL to which to navigate.
+ @result A new navigation for the given request.
+ */
+- (nullable WKNavigation *)loadURL:(NSURL *)url NS_SWIFT_NAME(load(_:)) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 /*! @abstract Navigates to the requested file URL on the filesystem.
  @param URL The file URL to which to navigate.
  @param readAccessURL The URL to allow read access to.

@@ -649,7 +649,7 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::removeBreakpoint(const Pro
 
     for (auto& debuggerBreakpoint : m_debuggerBreakpointsForProtocolBreakpointID.take(protocolBreakpointID)) {
         for (const auto& action : debuggerBreakpoint->actions())
-            m_injectedScriptManager.releaseObjectGroup(objectGroupForBreakpointAction(action.id));
+            injectedScriptManager().releaseObjectGroup(objectGroupForBreakpointAction(action.id));
 
         JSC::JSLockHolder locker(m_debugger.vm());
         m_debugger.removeBreakpoint(debuggerBreakpoint);
@@ -972,7 +972,7 @@ Protocol::ErrorStringOr<Ref<Protocol::Debugger::FunctionDetails>> InspectorDebug
 {
     Protocol::ErrorString errorString;
 
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(functionId);
+    auto injectedScript = injectedScriptManager().injectedScriptForObjectId(functionId);
     if (injectedScript.hasNoValue())
         return makeUnexpected("Missing injected script for given functionId"_s);
 
@@ -1257,7 +1257,7 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setPauseOnMicrotasks(bool 
 
 Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> InspectorDebuggerAgent::evaluateOnCallFrame(const Protocol::Debugger::CallFrameId& callFrameId, const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture)
 {
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(callFrameId);
+    auto injectedScript = injectedScriptManager().injectedScriptForObjectId(callFrameId);
     if (injectedScript.hasNoValue())
         return makeUnexpected("Missing injected script for given callFrameId"_s);
 
@@ -1586,7 +1586,7 @@ bool InspectorDebuggerAgent::isInspectorDebuggerAgent() const
 
 JSC::JSObject* InspectorDebuggerAgent::debuggerScopeExtensionObject(JSC::Debugger& debugger, JSC::JSGlobalObject* globalObject, JSC::DebuggerCallFrame& debuggerCallFrame)
 {
-    auto injectedScript = m_injectedScriptManager.injectedScriptFor(globalObject);
+    auto injectedScript = injectedScriptManager().injectedScriptFor(globalObject);
     ASSERT(!injectedScript.hasNoValue());
     if (injectedScript.hasNoValue())
         return JSC::Debugger::Client::debuggerScopeExtensionObject(debugger, globalObject, debuggerCallFrame);
@@ -1694,7 +1694,7 @@ void InspectorDebuggerAgent::didPause(JSC::JSGlobalObject* globalObject, JSC::De
     auto* debuggerGlobalObject = debuggerCallFrame.scope(globalObject->vm())->globalObject();
     m_currentCallStack = { m_pausedGlobalObject->vm(), toJS(debuggerGlobalObject, debuggerGlobalObject, JavaScriptCallFrame::create(debuggerCallFrame).ptr()) };
 
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(m_pausedGlobalObject);
+    auto injectedScript = injectedScriptManager().injectedScriptFor(m_pausedGlobalObject);
 
     // If a high level pause pause reason is not already set, try to infer a reason from the debugger.
     if (m_pauseReason == DebuggerFrontendDispatcher::Reason::Other) {
@@ -1780,7 +1780,7 @@ void InspectorDebuggerAgent::didPause(JSC::JSGlobalObject* globalObject, JSC::De
         m_continueToLocationDebuggerBreakpoint = nullptr;
     }
 
-    auto& stopwatch = m_injectedScriptManager.checkedInspectorEnvironment()->executionStopwatch();
+    auto& stopwatch = injectedScriptManager().checkedInspectorEnvironment()->executionStopwatch();
     if (stopwatch.isActive()) {
         stopwatch.stop();
         m_didPauseStopwatch = true;
@@ -1809,7 +1809,7 @@ void InspectorDebuggerAgent::breakpointActionSound(JSC::BreakpointActionID id)
 
 void InspectorDebuggerAgent::breakpointActionProbe(JSC::JSGlobalObject* globalObject, JSC::BreakpointActionID actionID, unsigned batchId, unsigned sampleId, JSC::JSValue sample)
 {
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(globalObject);
+    auto injectedScript = injectedScriptManager().injectedScriptFor(globalObject);
     auto payload = injectedScript.wrapObject(sample, objectGroupForBreakpointAction(actionID), true);
     if (!payload)
         return;
@@ -1818,7 +1818,7 @@ void InspectorDebuggerAgent::breakpointActionProbe(JSC::JSGlobalObject* globalOb
         .setProbeId(actionID)
         .setBatchId(batchId)
         .setSampleId(sampleId)
-        .setTimestamp(m_injectedScriptManager.checkedInspectorEnvironment()->executionStopwatch().elapsedTime().seconds())
+        .setTimestamp(injectedScriptManager().checkedInspectorEnvironment()->executionStopwatch().elapsedTime().seconds())
         .setPayload(payload.releaseNonNull())
         .release();
     m_frontendDispatcher->didSampleProbe(WTF::move(result));
@@ -1828,12 +1828,12 @@ void InspectorDebuggerAgent::didContinue()
 {
     if (m_didPauseStopwatch) {
         m_didPauseStopwatch = false;
-        m_injectedScriptManager.checkedInspectorEnvironment()->executionStopwatch().start();
+        injectedScriptManager().checkedInspectorEnvironment()->executionStopwatch().start();
     }
 
     m_pausedGlobalObject = nullptr;
     m_currentCallStack = { };
-    m_injectedScriptManager.releaseObjectGroup(InspectorDebuggerAgent::backtraceObjectGroup);
+    injectedScriptManager().releaseObjectGroup(InspectorDebuggerAgent::backtraceObjectGroup);
     clearPauseDetails();
     clearExceptionValue();
 
@@ -1954,7 +1954,7 @@ void InspectorDebuggerAgent::clearPauseDetails()
 void InspectorDebuggerAgent::clearExceptionValue()
 {
     if (m_hasExceptionValue) {
-        m_injectedScriptManager.clearExceptionValue();
+        injectedScriptManager().clearExceptionValue();
         m_hasExceptionValue = false;
     }
 }

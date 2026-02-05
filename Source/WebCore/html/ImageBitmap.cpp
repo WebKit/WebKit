@@ -98,7 +98,7 @@ static inline RenderingMode bufferRenderingMode(ScriptExecutionContext& scriptEx
     static RenderingMode defaultRenderingMode = RenderingMode::Unaccelerated;
 #endif
 
-#if PLATFORM(GTK) && USE(SKIA)
+#if PLATFORM(GTK)
     if (!scriptExecutionContext.settingsValues().acceleratedCompositingEnabled)
         return RenderingMode::Unaccelerated;
 #else
@@ -219,7 +219,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
 
 static bool taintsOrigin(CachedImage& cachedImage)
 {
-    auto* image = cachedImage.image();
+    RefPtr image = cachedImage.image();
     if (!image)
         return false;
 

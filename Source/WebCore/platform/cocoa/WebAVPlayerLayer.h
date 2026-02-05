@@ -46,7 +46,7 @@ WEBCORE_EXPORT @interface WebAVPlayerLayer : CALayer
 @property (nonatomic, getter=isReadyForDisplay) BOOL readyForDisplay;
 @property (nonatomic, assign) RefPtr<WebCore::VideoPresentationModel> presentationModel;
 @property (nonatomic, retain, nonnull) AVPlayerController *playerController;
-@property (nonatomic, retain, nonnull) CALayer *videoSublayer;
+@property (nonatomic, retain, nullable) CALayer *videoSublayer;
 @property (nonatomic, retain, nullable) CALayer *captionsLayer;
 @property (nonatomic, copy, nullable) NSDictionary *pixelBufferAttributes;
 @property CGSize videoDimensions;

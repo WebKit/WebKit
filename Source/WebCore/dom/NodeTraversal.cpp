@@ -33,13 +33,13 @@ namespace NodeTraversal {
 
 Node* previousIncludingPseudo(const Node& current, const Node* stayWithin)
 {
-    Node* previous;
+    CheckedPtr<Node> previous;
     if (&current == stayWithin)
         return nullptr;
     if ((previous = current.pseudoAwarePreviousSibling())) {
         while (previous->pseudoAwareLastChild())
             previous = previous->pseudoAwareLastChild();
-        return previous;
+        return previous.unsafeGet();
     }
     auto* pseudoElement = dynamicDowncast<PseudoElement>(current);
     return pseudoElement ? pseudoElement->hostElement() : current.parentNode();
@@ -47,38 +47,38 @@ Node* previousIncludingPseudo(const Node& current, const Node* stayWithin)
 
 Node* nextIncludingPseudo(const Node& current, const Node* stayWithin)
 {
-    Node* next;
+    CheckedPtr<Node> next;
     if ((next = current.pseudoAwareFirstChild()))
-        return next;
+        return next.unsafeGet();
     if (&current == stayWithin)
         return nullptr;
     if ((next = current.pseudoAwareNextSibling()))
-        return next;
+        return next.unsafeGet();
     auto* pseudoElement = dynamicDowncast<PseudoElement>(current);
-    const Node* ancestor = pseudoElement ? pseudoElement->hostElement() : current.parentNode();
+    CheckedPtr<const Node> ancestor = pseudoElement ? pseudoElement->hostElement() : current.parentNode();
     for (; ancestor; ancestor = ancestor->parentNode()) {
         if (ancestor == stayWithin)
             return nullptr;
         if ((next = ancestor->pseudoAwareNextSibling()))
-            return next;
+            return next.unsafeGet();
     }
     return nullptr;
 }
 
 Node* nextIncludingPseudoSkippingChildren(const Node& current, const Node* stayWithin)
 {
-    Node* next;
+    CheckedPtr<Node> next;
     if (&current == stayWithin)
         return nullptr;
     if ((next = current.pseudoAwareNextSibling()))
-        return next;
+        return next.unsafeGet();
     auto* pseudoElement = dynamicDowncast<PseudoElement>(current);
-    const Node* ancestor = pseudoElement ? pseudoElement->hostElement() : current.parentNode();
+    CheckedPtr<const Node> ancestor = pseudoElement ? pseudoElement->hostElement() : current.parentNode();
     for (; ancestor; ancestor = ancestor->parentNode()) {
         if (ancestor == stayWithin)
             return nullptr;
         if ((next = ancestor->pseudoAwareNextSibling()))
-            return next;
+            return next.unsafeGet();
     }
     return nullptr;
 }

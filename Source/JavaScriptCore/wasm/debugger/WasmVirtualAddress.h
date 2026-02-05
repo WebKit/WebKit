@@ -27,7 +27,7 @@
 
 #include <wtf/Platform.h>
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 #include <JavaScriptCore/JSExportMacros.h>
 #include <cstdint>
@@ -174,4 +174,4 @@ template<> struct HashTraits<JSC::Wasm::VirtualAddress> : GenericHashTraits<JSC:
 
 } // namespace WTF
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

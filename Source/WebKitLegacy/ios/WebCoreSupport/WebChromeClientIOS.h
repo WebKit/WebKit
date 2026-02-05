@@ -100,8 +100,6 @@ private:
     void addOrUpdateScrollingLayer(WebCore::Node*, PlatformLayer*, PlatformLayer*, const WebCore::IntSize&, bool allowHorizontalScrollbar, bool allowVerticalScrollbar) final;
     void removeScrollingLayer(WebCore::Node*, PlatformLayer*, PlatformLayer*) final;
 
-    bool selectItemWritingDirectionIsNatural() final;
-    bool selectItemAlignmentFollowsMenuWritingDirection() final;
     RefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient&) const final;
     RefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient&) const final;
     void relayAccessibilityNotification(String&&, RetainPtr<NSData>&&) const final { }

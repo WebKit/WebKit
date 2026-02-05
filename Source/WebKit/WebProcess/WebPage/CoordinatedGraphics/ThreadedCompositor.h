@@ -105,7 +105,7 @@ private:
     void scheduleUpdateLocked();
     void flushCompositingState(const OptionSet<WebCore::CompositionReason>&);
     void renderLayerTree();
-    void paintToCurrentGLContext(const WebCore::TransformationMatrix&, const WebCore::IntSize&);
+    void paintToCurrentGLContext(const WebCore::TransformationMatrix&, const WebCore::IntSize&, const OptionSet<WebCore::CompositionReason>&);
     void frameComplete();
 
     void didCompositeRunLoopObserverFired();

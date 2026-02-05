@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -205,9 +205,11 @@ public:
             m_data.point0 = { p0.x() + firstOffset * (p1.x() - p0.x()), p0.y() + firstOffset * (p1.y() - p0.y()) };
             m_data.point1 = { p1.x() + (lastOffset - 1) * (p1.x() - p0.x()), p1.y() + (lastOffset - 1) * (p1.y() - p0.y()) };
         } else {
-            // There's a single position that is outside the scale, clamp the positions to 1.
+            // All stops at same position - clamp offsets but keep all colors.
+            // This creates a hard color stop at the clamped position.
+            float clampedOffset = std::clamp(firstOffset, 0.0f, 1.0f);
             for (auto& stop : stops)
-                stop.offset = 1;
+                stop.offset = clampedOffset;
         }
     }
 

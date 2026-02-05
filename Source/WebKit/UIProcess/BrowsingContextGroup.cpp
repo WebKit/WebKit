@@ -61,13 +61,13 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
     }
     websiteDataStore.fetchDomainsWithUserInteraction([
         protectedThis = Ref { *this },
-        websiteDataStore = Ref { websiteDataStore },
-        preferences = Ref { preferences },
+        websiteDataStore = protect(websiteDataStore),
+        preferences = protect(preferences),
         site = Site { site },
         mainFrameSite = Site { mainFrameSite },
         lockdownMode,
         enhancedSecurity,
-        pageConfiguration = Ref { pageConfiguration },
+        pageConfiguration = protect(pageConfiguration),
         completionHandler = WTF::move(completionHandler)
     ](const HashSet<WebCore::RegistrableDomain>& domainsWithUserInteraction) mutable {
 
@@ -81,7 +81,7 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
             return completionHandler(frameProcess.get());
         }
 
-        Ref process = pageConfiguration->protectedProcessPool()->processForSite(websiteDataStore.get(), WebProcessPool::IsSharedProcess::Yes, site, mainFrameSite, domainsWithUserInteraction, lockdownMode, enhancedSecurity, pageConfiguration.get(), ProcessSwapDisposition::Other);
+        Ref process = protect(pageConfiguration->processPool())->processForSite(websiteDataStore.get(), WebProcessProxy::IsolatedProcessType::Shared, site, mainFrameSite, domainsWithUserInteraction, lockdownMode, enhancedSecurity, pageConfiguration.get(), ProcessSwapDisposition::Other);
         ASSERT(!process->isInProcessCache());
         Ref frameProcess = FrameProcess::create(process, protectedThis, std::nullopt, mainFrameSite, preferences, LoadedWebArchive::No, BrowsingContextGroupUpdate::AddProcessAndInjectBrowsingContext);
         ASSERT(frameProcess->isSharedProcess());
@@ -288,7 +288,7 @@ void BrowsingContextGroup::transitionPageToRemotePage(WebPageProxy& page, const 
         return HashSet<Ref<RemotePageProxy>> { };
     }).iterator->value;
 
-    Ref newRemotePage = RemotePageProxy::create(page, page.protectedLegacyMainFrameProcess(), openerSite, &page.messageReceiverRegistration(), page.webPageIDInMainFrameProcess());
+    Ref newRemotePage = RemotePageProxy::create(page, protect(page.legacyMainFrameProcess()), openerSite, &page.messageReceiverRegistration(), page.webPageIDInMainFrameProcess());
 #if ASSERT_ENABLED
     for (auto& existingPage : set) {
         ASSERT(existingPage->process().coreProcessIdentifier() != newRemotePage->process().coreProcessIdentifier() || existingPage->site() != newRemotePage->site());
@@ -300,11 +300,11 @@ void BrowsingContextGroup::transitionPageToRemotePage(WebPageProxy& page, const 
 
 void BrowsingContextGroup::transitionProvisionalPageToRemotePage(ProvisionalPageProxy& page, const Site& provisionalNavigationFailureSite)
 {
-    auto& set = m_remotePages.ensure(*page.protectedPage(), [] {
+    auto& set = m_remotePages.ensure(*protect(page.page()), [] {
         return HashSet<Ref<RemotePageProxy>> { };
     }).iterator->value;
 
-    Ref newRemotePage = RemotePageProxy::create(*page.protectedPage(), page.protectedProcess(), provisionalNavigationFailureSite, &page.messageReceiverRegistration(), page.webPageID());
+    Ref newRemotePage = RemotePageProxy::create(*protect(page.page()), protect(page.process()), provisionalNavigationFailureSite, &page.messageReceiverRegistration(), page.webPageID());
 #if ASSERT_ENABLED
     for (auto& existingPage : set) {
         ASSERT(existingPage->process().coreProcessIdentifier() != newRemotePage->process().coreProcessIdentifier() || existingPage->site() != newRemotePage->site());
@@ -318,20 +318,6 @@ bool BrowsingContextGroup::hasRemotePages(const WebPageProxy& page)
 {
     auto it = m_remotePages.find(page);
     return it != m_remotePages.end() && !it->value.isEmpty();
-}
-
-bool BrowsingContextGroup::isFrameProcessInUseForMainFrame(const FrameProcess& process)
-{
-    for (Ref page : m_pages) {
-        RefPtr mainFrame = page->mainFrame();
-        if (!mainFrame)
-            continue;
-
-        if (&mainFrame->frameProcess() == &process)
-            return true;
-    }
-
-    return false;
 }
 
 } // namespace WebKit

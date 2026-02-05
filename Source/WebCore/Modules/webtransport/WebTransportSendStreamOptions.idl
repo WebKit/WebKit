@@ -23,9 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/webtransport/#dictdef-webtransportsendstreamoptions
+// FIXME: `WebTransportSendStreamOptions` should have a parent dictionary `WebTransportSendOptions`.
 [
     EnabledBySetting=WebTransportEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary WebTransportSendStreamOptions {
+    // FIXME: `sendOrder` should be in parent dictionary `WebTransportSendOptions`.
     long long? sendOrder = null;
+    // FIXME: Add support for `waitUntilAvailable`.
+    // boolean waitUntilAvailable = false;
 };

@@ -32,7 +32,7 @@ interface mixin HTMLOrForeignElement {
 
     [CEReactions=NotNeeded, Reflect] attribute boolean autofocus;
     [CEReactions=Needed, ImplementedAs=tabIndexForBindings] attribute long tabIndex;
-    [ImplementedAs=focusForBindings] undefined focus(optional FocusOptions options);
+    [ImplementedAs=focusForBindings] undefined focus(optional FocusOptions options = {});
     undefined blur();
 };
 

@@ -91,7 +91,6 @@ ANGLE_CHROMIUM_DEPS = [
     'third_party/zlib',
     'tools/android',
     'tools/clang',
-    'tools/clang/dsymutil',
     'tools/luci-go',
     'tools/mb',
     'tools/md_browser',

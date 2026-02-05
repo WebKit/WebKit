@@ -32,7 +32,9 @@ import OSLog
 internal import QuickLook_SPI_Temp
 #endif
 
-@objc @implementation extension WKPreviewWindowController {
+@objc
+@implementation
+extension WKPreviewWindowController {
     enum UpdateError: Error {
         case newUpdateQueued
     }
@@ -52,29 +54,37 @@ internal import QuickLook_SPI_Temp
         }
     }
 
-    @nonobjc private static let logger = Logger(subsystem: "com.apple.WebKit", category: "Fullscreen")
+    @nonobjc
+    private static let logger = Logger(subsystem: "com.apple.WebKit", category: "Fullscreen")
 
-    @nonobjc private let base: Base
+    @nonobjc
+    private let base: Base
 
-    @nonobjc private var isClosing = false
-    @nonobjc private var isOpen = false
+    @nonobjc
+    private var isClosing = false
+    @nonobjc
+    private var isOpen = false
 
-    @nonobjc private final var previewSession: PreviewSession? {
+    @nonobjc
+    private final var previewSession: PreviewSession? {
         get { base.previewSession }
         set { base.previewSession = newValue }
     }
 
-    @nonobjc private final var item: PreviewItem {
+    @nonobjc
+    private final var item: PreviewItem {
         get { base.item }
         set { base.item = newValue }
     }
 
-    @nonobjc private final var previewConfiguration: PreviewApplication.PreviewConfiguration {
+    @nonobjc
+    private final var previewConfiguration: PreviewApplication.PreviewConfiguration {
         get { base.previewConfiguration }
         set { base.previewConfiguration = newValue }
     }
 
-    @nonobjc private final var windowOpenedContinuation: CheckedContinuation<Void, Error>? {
+    @nonobjc
+    private final var windowOpenedContinuation: CheckedContinuation<Void, Error>? {
         get { base.windowOpenedContinuation }
         set { base.windowOpenedContinuation = newValue }
     }
@@ -117,10 +127,10 @@ internal import QuickLook_SPI_Temp
             }
         }
     }
-    
+
     func updateImage(_ url: URL) async {
-        item = PreviewItem(url: url, displayName: nil, editingMode: .disabled);
-        
+        item = PreviewItem(url: url, displayName: nil, editingMode: .disabled)
+
         do {
             if !isOpen {
                 if let continuation = windowOpenedContinuation {
@@ -134,7 +144,7 @@ internal import QuickLook_SPI_Temp
             }
             try await previewSession?.update(items: [item])
         } catch UpdateError.newUpdateQueued {
-            Self.logger.debug("WKPreviewWindowController.updateImage skipped: newer image update queued");
+            Self.logger.debug("WKPreviewWindowController.updateImage skipped: newer image update queued")
         } catch {
             Self.logger.error("WKPreviewWindowController.updateImage failed: \(error, privacy: .public)")
         }
@@ -146,7 +156,7 @@ internal import QuickLook_SPI_Temp
         }
 
         do {
-            try await previewSession?.close();
+            try await previewSession?.close()
         } catch {
             Self.logger.error("WKPreviewWindowController.dismissWindow failed: \(error, privacy: .public)")
         }

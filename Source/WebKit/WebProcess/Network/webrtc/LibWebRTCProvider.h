@@ -72,7 +72,7 @@ public:
 private:
     bool isLibWebRTCProvider() const final { return true; }
 
-    std::unique_ptr<SuspendableSocketFactory> createSocketFactory(String&& /* userAgent */, WebCore::ScriptExecutionContextIdentifier, bool /* isFirstParty */, WebCore::RegistrableDomain&&) final;
+    std::unique_ptr<SuspendableSocketFactory> createSocketFactory(String&& /* userAgent */, WebCore::ScriptExecutionContextIdentifier, bool /* isFirstParty */, WebCore::RegistrableDomain&&, bool /* enableServiceClass */) final;
 
     webrtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(WebCore::ScriptExecutionContextIdentifier, webrtc::PeerConnectionObserver&, webrtc::PacketSocketFactory*, webrtc::PeerConnectionInterface::RTCConfiguration&&) final;
 

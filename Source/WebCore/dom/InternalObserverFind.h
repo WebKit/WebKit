@@ -35,6 +35,6 @@ class ScriptExecutionContext;
 class PredicateCallback;
 struct SubscribeOptions;
 
-void createInternalObserverOperatorFind(ScriptExecutionContext&, Observable&, Ref<PredicateCallback>&&, const SubscribeOptions&, Ref<DeferredPromise>&&);
+void createInternalObserverOperatorFind(ScriptExecutionContext&, Observable&, Ref<PredicateCallback>&&, SubscribeOptions&&, Ref<DeferredPromise>&&);
 
 } // namespace WebCore

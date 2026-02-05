@@ -32,6 +32,7 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "WKWebViewConfigurationExtras.h"
+#import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKNavigationResponsePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WebKit.h>
@@ -39,12 +40,18 @@
 
 @interface WKNavigationResponseTestNavigationDelegate : NSObject <WKNavigationDelegate>
 @property (nonatomic) BOOL expectation;
+@property (nonatomic, retain) WKNavigation *inProgressNavigation;
 @end
 
 @implementation WKNavigationResponseTestNavigationDelegate
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
 {
+    EXPECT_EQ(navigationResponse.mainFrameNavigation, navigationResponse._navigation);
+
+    if (self.inProgressNavigation)
+        EXPECT_EQ(navigationResponse.mainFrameNavigation, self.inProgressNavigation);
+
     EXPECT_EQ(navigationResponse.canShowMIMEType, self.expectation);
     decisionHandler(WKNavigationResponsePolicyAllow);
 }
@@ -88,7 +95,7 @@ TEST(WebKit, WKNavigationResponseJSONMIMEType)
     navigationDelegate.get().expectation = YES;
 
     NSURL *testURL = [NSURL URLWithString:@"test:///json-response"];
-    [webView loadRequest:[NSURLRequest requestWithURL:testURL]];
+    navigationDelegate.get().inProgressNavigation = [webView loadRequest:[NSURLRequest requestWithURL:testURL]];
     TestWebKitAPI::Util::run(&isDone);
 }
 
@@ -106,7 +113,7 @@ TEST(WebKit, WKNavigationResponseJSONMIMEType2)
     navigationDelegate.get().expectation = YES;
 
     NSURL *testURL = [NSURL URLWithString:@"test:///json-response"];
-    [webView loadRequest:[NSURLRequest requestWithURL:testURL]];
+    navigationDelegate.get().inProgressNavigation = [webView loadRequest:[NSURLRequest requestWithURL:testURL]];
     TestWebKitAPI::Util::run(&isDone);
 }
 
@@ -124,7 +131,7 @@ TEST(WebKit, WKNavigationResponseUnknownMIMEType)
     navigationDelegate.get().expectation = NO;
 
     NSURL *testURL = [NSURL URLWithString:@"test:///json-response"];
-    [webView loadRequest:[NSURLRequest requestWithURL:testURL]];
+    navigationDelegate.get().inProgressNavigation = [webView loadRequest:[NSURLRequest requestWithURL:testURL]];
     TestWebKitAPI::Util::run(&isDone);
 }
 
@@ -148,7 +155,7 @@ TEST(WebKit, WKNavigationResponsePDFType)
     [navigationDelegate setExpectation:YES];
 
     NSURL *testURL = [NSURL URLWithString:@"test:///pdf-response"];
-    [webView loadRequest:[NSURLRequest requestWithURL:testURL]];
+    navigationDelegate.get().inProgressNavigation = [webView loadRequest:[NSURLRequest requestWithURL:testURL]];
     TestWebKitAPI::Util::run(&isDone);
 }
 

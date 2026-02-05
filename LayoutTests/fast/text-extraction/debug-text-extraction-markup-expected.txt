@@ -20,7 +20,8 @@
             <div uid=… role='button'>Clickable Div</div>
         </section>
         <section aria-label='ARIA Labeling Examples'>
-            Name Field           Description
+            Name Field
+            Description
             <input type='text' uid=… aria-labelledby='Name Field' placeholder='Your name'>
             <div role='region' aria-labelledby='Description'>This region is labeled by another element.</div>
             <input type='text' uid=… aria-labelledby='Name Field' placeholder='Full name'>
@@ -31,7 +32,11 @@
             </div>
         </section>
         <section aria-label='Content with Roles'>
-            <article role='article'>Article Title                   January 1, 2024                            This is some article content with highlighted text.</article>
+            <article role='article'>
+                Article Title
+                January 1, 2024
+                This is some article content with highlighted text.
+            </article>
             <aside role='complementary' aria-label='Related information'>
                 Related Links
                 <ul>

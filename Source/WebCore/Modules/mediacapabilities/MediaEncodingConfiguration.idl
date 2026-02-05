@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/media-capabilities/#dictdef-mediaencodingconfiguration
 [
     EnabledBySetting=MediaCapabilitiesEnabled,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary MediaEncodingConfiguration : MediaConfiguration {
   required MediaEncodingType type;
 };

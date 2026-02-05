@@ -30,11 +30,7 @@ import Foundation
 @_spi(Safari) @_weakLinked import GroupActivities
 #else
 import GroupActivities
-#if compiler(>=6.0)
 internal import GroupActivities_SPI
-#else
-@_implementationOnly import GroupActivities_SPI
-#endif
 #endif
 
 extension WKGroupSessionState {
@@ -54,9 +50,10 @@ extension WKGroupSessionState {
     }
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKURLActivity {
-    // Used to workaround the fact that `@_objcImplementation` does not support stored properties whose size can change
+    // Used to workaround the fact that `@objc @implementation` does not support stored properties whose size can change
     // due to Library Evolution. Do not use this property directly.
     @nonobjc
     private var backingURLActivity: Any
@@ -75,14 +72,10 @@ extension WKURLActivity {
         self.init()
         self.backingURLActivity = activity as Any
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKGroupSession {
     @nonobjc
     private var groupSession: GroupSession<URLActivity>
@@ -148,14 +141,10 @@ extension WKGroupSession {
 
         callback(.init(state))
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKGroupSessionObserver {
     @nonobjc
     private var incomingSessionsTask: Task<Void, Never>?
@@ -180,11 +169,6 @@ extension WKGroupSessionObserver {
 
         callback(.init(groupSession: session))
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
 #endif // ENABLE_MEDIA_SESSION_COORDINATOR && HAVE_GROUP_ACTIVITIES

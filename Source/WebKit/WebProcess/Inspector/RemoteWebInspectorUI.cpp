@@ -57,7 +57,7 @@ Ref<RemoteWebInspectorUI> RemoteWebInspectorUI::create(WebPage& page)
 
 RemoteWebInspectorUI::RemoteWebInspectorUI(WebPage& page)
     : m_page(page)
-    , m_frontendAPIDispatcher(InspectorFrontendAPIDispatcher::create(*page.protectedCorePage()))
+    , m_frontendAPIDispatcher(InspectorFrontendAPIDispatcher::create(*protect(page.corePage())))
 {
 }
 
@@ -72,7 +72,7 @@ void RemoteWebInspectorUI::initialize(DebuggableInfoData&& debuggableInfo, const
     m_debuggableInfo = WTF::move(debuggableInfo);
     m_backendCommandsURL = backendCommandsURL;
 
-    protectedWebPage()->protectedCorePage()->inspectorController().setInspectorFrontendClient(this);
+    protect(protectedWebPage()->corePage())->inspectorController().setInspectorFrontendClient(this);
 
     m_frontendAPIDispatcher->reset();
     m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDockingUnavailable"_s, { JSON::Value::create(true) });
@@ -90,7 +90,7 @@ void RemoteWebInspectorUI::sendMessageToFrontend(const String& message)
 
 void RemoteWebInspectorUI::sendMessageToBackend(const String& message)
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::SendMessageToBackend(message), m_page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::RemoteWebInspectorUIProxy::SendMessageToBackend(message), m_page->identifier());
 }
 
 void RemoteWebInspectorUI::windowObjectCleared()
@@ -98,7 +98,7 @@ void RemoteWebInspectorUI::windowObjectCleared()
     if (RefPtr frontendHost = m_frontendHost)
         frontendHost->disconnectClient();
 
-    m_frontendHost = InspectorFrontendHost::create(this, protectedWebPage()->protectedCorePage().get());
+    m_frontendHost = InspectorFrontendHost::create(this, protect(protectedWebPage()->corePage()).get());
     RefPtr { m_frontendHost }->addSelfToGlobalObjectInWorld(mainThreadNormalWorldSingleton());
 }
 
@@ -108,7 +108,7 @@ void RemoteWebInspectorUI::frontendLoaded()
 
     m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setIsVisible"_s, { JSON::Value::create(true) });
 
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::FrontendLoaded(), m_page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::RemoteWebInspectorUIProxy::FrontendLoaded(), m_page->identifier());
 
     bringToFront();
 }
@@ -125,17 +125,17 @@ void RemoteWebInspectorUI::pageUnpaused()
 
 void RemoteWebInspectorUI::changeSheetRect(const FloatRect& rect)
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::SetSheetRect(rect), m_page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::RemoteWebInspectorUIProxy::SetSheetRect(rect), m_page->identifier());
 }
 
 void RemoteWebInspectorUI::setForcedAppearance(WebCore::InspectorFrontendClient::Appearance appearance)
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::SetForcedAppearance(appearance), m_page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::RemoteWebInspectorUIProxy::SetForcedAppearance(appearance), m_page->identifier());
 }
 
 void RemoteWebInspectorUI::startWindowDrag()
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::StartWindowDrag(), m_page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::RemoteWebInspectorUIProxy::StartWindowDrag(), m_page->identifier());
 }
 
 void RemoteWebInspectorUI::moveWindowBy(float x, float y)
@@ -168,28 +168,28 @@ bool RemoteWebInspectorUI::supportsDockSide(DockSide dockSide)
 
 void RemoteWebInspectorUI::bringToFront()
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::BringToFront(), m_page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::RemoteWebInspectorUIProxy::BringToFront(), m_page->identifier());
 }
 
 void RemoteWebInspectorUI::closeWindow()
 {
-    protectedWebPage()->protectedCorePage()->inspectorController().setInspectorFrontendClient(nullptr);
+    protect(protectedWebPage()->corePage())->inspectorController().setInspectorFrontendClient(nullptr);
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     m_extensionController = nullptr;
 #endif
     
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::FrontendDidClose(), m_page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::RemoteWebInspectorUIProxy::FrontendDidClose(), m_page->identifier());
 }
 
 void RemoteWebInspectorUI::reopen()
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::Reopen(), m_page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::RemoteWebInspectorUIProxy::Reopen(), m_page->identifier());
 }
 
 void RemoteWebInspectorUI::resetState()
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::ResetState(), m_page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::RemoteWebInspectorUIProxy::ResetState(), m_page->identifier());
 }
 
 void RemoteWebInspectorUI::showConsole()
@@ -204,27 +204,27 @@ void RemoteWebInspectorUI::showResources()
 
 void RemoteWebInspectorUI::openURLExternally(const String& url)
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::OpenURLExternally(url), m_page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::RemoteWebInspectorUIProxy::OpenURLExternally(url), m_page->identifier());
 }
 
 void RemoteWebInspectorUI::revealFileExternally(const String& path)
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::RevealFileExternally(path), m_page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::RemoteWebInspectorUIProxy::RevealFileExternally(path), m_page->identifier());
 }
 
 void RemoteWebInspectorUI::save(Vector<WebCore::InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::Save(WTF::move(saveDatas), forceSaveAs), m_page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::RemoteWebInspectorUIProxy::Save(WTF::move(saveDatas), forceSaveAs), m_page->identifier());
 }
 
 void RemoteWebInspectorUI::load(const String& path, CompletionHandler<void(const String&)>&& completionHandler)
 {
-    WebProcess::singleton().protectedParentProcessConnection()->sendWithAsyncReply(Messages::RemoteWebInspectorUIProxy::Load(path), WTF::move(completionHandler), m_page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->sendWithAsyncReply(Messages::RemoteWebInspectorUIProxy::Load(path), WTF::move(completionHandler), m_page->identifier());
 }
 
 void RemoteWebInspectorUI::pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
 {
-    WebProcess::singleton().protectedParentProcessConnection()->sendWithAsyncReply(Messages::RemoteWebInspectorUIProxy::PickColorFromScreen(), WTF::move(completionHandler), m_page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->sendWithAsyncReply(Messages::RemoteWebInspectorUIProxy::PickColorFromScreen(), WTF::move(completionHandler), m_page->identifier());
 }
 
 void RemoteWebInspectorUI::inspectedURLChanged(const String& urlString)
@@ -234,18 +234,18 @@ void RemoteWebInspectorUI::inspectedURLChanged(const String& urlString)
 
 void RemoteWebInspectorUI::showCertificate(const CertificateInfo& certificateInfo)
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::ShowCertificate(certificateInfo), m_page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::RemoteWebInspectorUIProxy::ShowCertificate(certificateInfo), m_page->identifier());
 }
 
 void RemoteWebInspectorUI::setInspectorPageDeveloperExtrasEnabled(bool enabled)
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::SetInspectorPageDeveloperExtrasEnabled(enabled), m_page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::RemoteWebInspectorUIProxy::SetInspectorPageDeveloperExtrasEnabled(enabled), m_page->identifier());
 }
 
 void RemoteWebInspectorUI::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
 {
     m_pageZoomFactor = pageZoomFactor;
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::SetPageAndTextZoomFactors(pageZoomFactor, textZoomFactor), m_page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::RemoteWebInspectorUIProxy::SetPageAndTextZoomFactors(pageZoomFactor, textZoomFactor), m_page->identifier());
 }
 
 double RemoteWebInspectorUI::pageZoomFactor() const
@@ -286,7 +286,7 @@ bool RemoteWebInspectorUI::supportsDiagnosticLogging()
 
 void RemoteWebInspectorUI::logDiagnosticEvent(const String& eventName,  const DiagnosticLoggingClient::ValueDictionary& dictionary)
 {
-    protectedWebPage()->protectedCorePage()->checkedDiagnosticLoggingClient()->logDiagnosticMessageWithValueDictionary(eventName, "Remote Web Inspector Frontend Diagnostics"_s, dictionary, ShouldSample::No);
+    protect(protectedWebPage()->corePage())->checkedDiagnosticLoggingClient()->logDiagnosticMessageWithValueDictionary(eventName, "Remote Web Inspector Frontend Diagnostics"_s, dictionary, ShouldSample::No);
 }
 
 void RemoteWebInspectorUI::setDiagnosticLoggingAvailable(bool available)

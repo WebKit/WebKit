@@ -609,6 +609,14 @@ cl_mem CL_API_CALL clCreateImageWithProperties(cl_context context,
                                                void *host_ptr,
                                                cl_int *errcode_ret);
 
+// cl_arm_import_memory
+cl_mem CL_API_CALL clImportMemoryARM(cl_context context,
+                                     cl_mem_flags flags,
+                                     const cl_import_properties_arm *properties,
+                                     void *memory,
+                                     size_t size,
+                                     cl_int *errcode_ret);
+
 // cl_khr_external_memory
 cl_int CL_API_CALL clEnqueueAcquireExternalMemObjectsKHR(cl_command_queue command_queue,
                                                          cl_uint num_mem_objects,

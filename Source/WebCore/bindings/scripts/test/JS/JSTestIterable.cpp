@@ -229,9 +229,10 @@ const JSC::ClassInfo TestIterableIteratorPrototype::s_info = { "TestIterable Ite
 
 static inline EncodedJSValue jsTestIterablePrototypeFunction_entriesCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestIterable* thisObject)
 {
-    UNUSED_PARAM(callFrame);
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
     RELEASE_AND_RETURN(throwScope, JSValue::encode(iteratorCreate<TestIterableIterator>(*thisObject, *lexicalGlobalObject, throwScope, IterationKind::Values)));
 }
 
@@ -242,9 +243,10 @@ JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunction_entries, (JSC::JSGlobal
 
 static inline EncodedJSValue jsTestIterablePrototypeFunction_keysCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestIterable* thisObject)
 {
-    UNUSED_PARAM(callFrame);
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
     RELEASE_AND_RETURN(throwScope, JSValue::encode(iteratorCreate<TestIterableIterator>(*thisObject, *lexicalGlobalObject, throwScope, IterationKind::Keys)));
 }
 
@@ -255,9 +257,10 @@ JSC_DEFINE_HOST_FUNCTION(jsTestIterablePrototypeFunction_keys, (JSC::JSGlobalObj
 
 static inline EncodedJSValue jsTestIterablePrototypeFunction_valuesCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestIterable* thisObject)
 {
-    UNUSED_PARAM(callFrame);
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
     RELEASE_AND_RETURN(throwScope, JSValue::encode(iteratorCreate<TestIterableIterator>(*thisObject, *lexicalGlobalObject, throwScope, IterationKind::Values)));
 }
 

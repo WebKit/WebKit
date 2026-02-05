@@ -29,7 +29,7 @@
 
 #include "Connection.h"
 #include "MessageReceiver.h"
-#include <WebCore/MediaEngineConfigurationFactory.h>
+#include <WebCore/PlatformMediaEngineConfigurationFactory.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
@@ -57,8 +57,8 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // Messages
-    void createDecodingConfiguration(WebCore::MediaDecodingConfiguration&&, CompletionHandler<void(WebCore::MediaCapabilitiesDecodingInfo&&)>&&);
-    void createEncodingConfiguration(WebCore::MediaEncodingConfiguration&&, CompletionHandler<void(WebCore::MediaCapabilitiesEncodingInfo&&)>&&);
+    void createDecodingConfiguration(WebCore::PlatformMediaDecodingConfiguration&&, CompletionHandler<void(WebCore::PlatformMediaCapabilitiesDecodingInfo&&)>&&);
+    void createEncodingConfiguration(WebCore::PlatformMediaEncodingConfiguration&&, CompletionHandler<void(WebCore::PlatformMediaCapabilitiesEncodingInfo&&)>&&);
 
     ThreadSafeWeakRef<GPUConnectionToWebProcess> m_connection;
 };

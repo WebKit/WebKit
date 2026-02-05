@@ -41,7 +41,7 @@
 
     GPUBuffer createBuffer(GPUBufferDescriptor descriptor);
     GPUTexture createTexture(GPUTextureDescriptor descriptor);
-    GPUSampler createSampler(optional GPUSamplerDescriptor descriptor);
+    GPUSampler createSampler(optional GPUSamplerDescriptor descriptor = {});
     GPUExternalTexture importExternalTexture(GPUExternalTextureDescriptor descriptor);
 
     GPUBindGroupLayout createBindGroupLayout(GPUBindGroupLayoutDescriptor descriptor);
@@ -54,7 +54,7 @@
     Promise<GPUComputePipeline> createComputePipelineAsync(GPUComputePipelineDescriptor descriptor);
     Promise<GPURenderPipeline> createRenderPipelineAsync(GPURenderPipelineDescriptor descriptor);
 
-    GPUCommandEncoder createCommandEncoder(optional GPUCommandEncoderDescriptor descriptor);
+    GPUCommandEncoder createCommandEncoder(optional GPUCommandEncoderDescriptor descriptor = {});
     GPURenderBundleEncoder createRenderBundleEncoder(GPURenderBundleEncoderDescriptor descriptor);
 
     GPUQuerySet createQuerySet(GPUQuerySetDescriptor descriptor);

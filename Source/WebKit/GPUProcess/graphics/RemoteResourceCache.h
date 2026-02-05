@@ -29,6 +29,7 @@
 
 #include "RemoteDisplayListIdentifier.h"
 #include "RemoteGradientIdentifier.h"
+#include "RemotePathImplIdentifier.h"
 #include <WebCore/DisplayList.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/HashMap.h>
@@ -55,6 +56,10 @@ public:
     bool cacheNativeImage(WebCore::RenderingResourceIdentifier, Ref<WebCore::NativeImage>&&);
     bool releaseNativeImage(WebCore::RenderingResourceIdentifier);
     RefPtr<WebCore::NativeImage> cachedNativeImage(WebCore::RenderingResourceIdentifier) const;
+
+    bool cachePathImpl(RemotePathImplIdentifier, Ref<WebCore::PathImpl>&&);
+    bool releasePathImpl(RemotePathImplIdentifier);
+    RefPtr<WebCore::PathImpl> cachedPathImpl(RemotePathImplIdentifier) const;
 
     bool cacheGradient(RemoteGradientIdentifier, Ref<WebCore::Gradient>&&);
     bool releaseGradient(RemoteGradientIdentifier);
@@ -86,6 +91,7 @@ private:
     HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::Filter>> m_filters;
     HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::Font>> m_fonts;
     HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::FontCustomPlatformData>> m_fontCustomPlatformDatas;
+    HashMap<RemotePathImplIdentifier, Ref<WebCore::PathImpl>> m_paths;
     HashMap<RemoteDisplayListIdentifier, Ref<const WebCore::DisplayList::DisplayList>> m_displayLists;
 };
 

@@ -98,16 +98,6 @@
     return _page->editorState().postLayoutData->selectionBoundingRect;
 }
 
-- (void)viewDidChangeEffectiveAppearance
-{
-    // This can be called during [super initWithCoder:] and [super initWithFrame:].
-    // That is before _impl is ready to be used, so check. <rdar://problem/39611236>
-    if (!_impl)
-        return;
-
-    _impl->effectiveAppearanceDidChange();
-}
-
 - (NSSet<NSView *> *)_pdfHUDs
 {
     return _impl->pdfHUDs().autorelease();

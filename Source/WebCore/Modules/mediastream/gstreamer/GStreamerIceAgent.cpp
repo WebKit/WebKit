@@ -532,9 +532,22 @@ static GstWebRTCICETransport* webkitGstWebRTCIceAgentFindTransport(GstWebRTCICE*
     return webkitGstWebRTCIceStreamFindTransport(stream, component);
 }
 
-static void webkitGstWebRTCIceAgentSetTos(GstWebRTCICE*, GstWebRTCICEStream*, guint)
+static void webkitGstWebRTCIceAgentSetTos(GstWebRTCICE* ice, GstWebRTCICEStream* stream, guint tos)
 {
-    GST_FIXME("Not implemented yet.");
+    auto self = WEBKIT_GST_WEBRTC_ICE_BACKEND(ice);
+    auto backend = self->priv->iceBackend;
+    if (!backend) [[unlikely]]
+        return;
+
+    for (auto& riceStream : self->priv->streams.values()) {
+        if (riceStream->stream->stream_id != stream->stream_id)
+            continue;
+
+        GST_DEBUG_OBJECT(ice, "Setting socket TOS to %u on stream %u", tos, riceStream->riceStreamId);
+        backend->setSocketTypeOfService(riceStream->riceStreamId, tos);
+        return;
+    }
+    GST_WARNING_OBJECT(ice, "Unable to find stream %u and apply TOS on its sockets", stream->stream_id);
 }
 
 static gboolean webkitGstWebRTCIceAgentSetLocalCredentials(GstWebRTCICE*, GstWebRTCICEStream* stream, const gchar* ufrag, const gchar* pwd)
@@ -618,7 +631,7 @@ void webkitGstWebRTCIceAgentClosed(WebKitGstIceAgent* agent)
     agent->priv->closePromise.clear();
 }
 
-#if GST_CHECK_VERSION(1, 27, 0)
+#if GST_CHECK_VERSION(1, 28, 0)
 static void webkitGstWebRTCIceAgentClose(GstWebRTCICE* ice, GstPromise* promise)
 {
     auto backend = WEBKIT_GST_WEBRTC_ICE_BACKEND(ice);
@@ -728,7 +741,7 @@ static void webkit_gst_webrtc_ice_backend_class_init(WebKitGstIceAgentClass* kla
     iceClass->set_http_proxy = webkitGstWebRTCIceAgentSetHttpProxy;
     iceClass->get_http_proxy = webkitGstWebRTCIceAgentGetHttpProxy;
     iceClass->get_selected_pair = webkitGstWebRTCIceAgentGetSelectedPair;
-#if GST_CHECK_VERSION(1, 27, 0)
+#if GST_CHECK_VERSION(1, 28, 0)
     iceClass->close = webkitGstWebRTCIceAgentClose;
 #endif
 }

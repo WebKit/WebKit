@@ -135,7 +135,7 @@ void HTMLScriptElement::potentiallyBlockRendering()
 {
     bool explicitRenderBlocking = m_blockingList && m_blockingList->contains("render"_s);
     if (explicitRenderBlocking || isImplicitlyPotentiallyRenderBlocking()) {
-        protectedDocument()->blockRenderingOn(*this, explicitRenderBlocking ? Document::ImplicitRenderBlocking::No : Document::ImplicitRenderBlocking::Yes);
+        protect(document())->blockRenderingOn(*this, explicitRenderBlocking ? Document::ImplicitRenderBlocking::No : Document::ImplicitRenderBlocking::Yes);
         m_isRenderBlocking = true;
     }
 }
@@ -143,7 +143,7 @@ void HTMLScriptElement::potentiallyBlockRendering()
 void HTMLScriptElement::unblockRendering()
 {
     if (m_isRenderBlocking) {
-        protectedDocument()->unblockRenderingOn(*this);
+        protect(document())->unblockRenderingOn(*this);
         m_isRenderBlocking = false;
     }
 }
@@ -219,7 +219,7 @@ void HTMLScriptElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) cons
 {
     HTMLElement::addSubresourceAttributeURLs(urls);
 
-    addSubresourceURL(urls, protectedDocument()->completeURL(sourceAttributeValue()));
+    addSubresourceURL(urls, protect(document())->completeURL(sourceAttributeValue()));
 }
 
 String HTMLScriptElement::sourceAttributeValue() const

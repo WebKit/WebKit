@@ -51,8 +51,8 @@ MediaStreamTrackEvent::MediaStreamTrackEvent(const AtomString& type, CanBubble c
 }
 
 MediaStreamTrackEvent::MediaStreamTrackEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::MediaStreamTrackEvent, type, initializer, isTrusted)
-    , m_track(initializer.track.releaseNonNull())
+    : Event(EventInterfaceType::MediaStreamTrackEvent, type, WTF::move(initializer), isTrusted)
+    , m_track(WTF::move(initializer.track))
 {
 }
 

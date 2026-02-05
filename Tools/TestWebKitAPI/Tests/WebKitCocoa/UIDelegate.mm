@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #import "IOSMouseEventTestHarness.h"
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
+#import "ScreenWakeLock.h"
 #import "TestCocoa.h"
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
@@ -688,79 +689,9 @@ TEST(WebKit, LockdownModeAskAgainFirstUseMessage)
 
 #endif // (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000) || PLATFORM(VISION)
 
-#if PLATFORM(IOS_FAMILY)
-
-static bool gShouldKeepScreenAwake = false;
-
-@interface SetShouldKeepScreenAwakeDelegate : NSObject <WKUIDelegatePrivate>
-@end
-
-@implementation SetShouldKeepScreenAwakeDelegate
-
-- (void)_webView:(WKWebView *)webView setShouldKeepScreenAwake:(BOOL)shouldKeepScreenAwake
-{
-    EXPECT_NE(gShouldKeepScreenAwake, shouldKeepScreenAwake);
-    gShouldKeepScreenAwake = shouldKeepScreenAwake;
-}
-
-@end
-
-TEST(WebKit, SetShouldKeepScreenAwake)
-{
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
-    auto delegate = adoptNS([SetShouldKeepScreenAwakeDelegate new]);
-    [webView setUIDelegate:delegate.get()];
-    [webView synchronouslyLoadHTMLString:@"<body></body>"];
-    [webView evaluateJavaScript:@"navigator.wakeLock.request('screen').then((wakeLock) => { window.lock = wakeLock; }); true;" completionHandler:nil];
-    TestWebKitAPI::Util::run(&gShouldKeepScreenAwake);
-    [webView evaluateJavaScript:@"window.lock.release(); true;" completionHandler:nil];
-    while (gShouldKeepScreenAwake)
-        TestWebKitAPI::Util::spinRunLoop(10);
-}
-
-TEST(WebKit, SetShouldKeepScreenAwakeLastPageIsClosed)
-{
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
-    auto delegate = adoptNS([SetShouldKeepScreenAwakeDelegate new]);
-    [webView setUIDelegate:delegate.get()];
-    [webView synchronouslyLoadHTMLString:@"<body></body>"];
-    [webView evaluateJavaScript:@"navigator.wakeLock.request('screen').then((wakeLock) => { window.lock = wakeLock; }); true;" completionHandler:nil];
-    TestWebKitAPI::Util::run(&gShouldKeepScreenAwake);
-
-    [webView evaluateJavaScript:@"navigator.wakeLock.request('screen').then((wakeLock) => { window.lock = wakeLock; }); true;" completionHandler:nil];
-    TestWebKitAPI::Util::run(&gShouldKeepScreenAwake);
-
-    // Close the last page while holding the lock.
-    [webView _close];
-    webView = nil;
-
-    while (gShouldKeepScreenAwake)
-        TestWebKitAPI::Util::spinRunLoop(10);
-}
-
-TEST(WebKit, SetShouldKeepScreenAwakeWebProcessCrash)
-{
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
-    auto delegate = adoptNS([SetShouldKeepScreenAwakeDelegate new]);
-    [webView setUIDelegate:delegate.get()];
-    [webView synchronouslyLoadHTMLString:@"<body></body>"];
-    [webView evaluateJavaScript:@"navigator.wakeLock.request('screen').then((wakeLock) => { window.lock = wakeLock; }); true;" completionHandler:nil];
-    TestWebKitAPI::Util::run(&gShouldKeepScreenAwake);
-
-    [webView evaluateJavaScript:@"navigator.wakeLock.request('screen').then((wakeLock) => { window.lock = wakeLock; }); true;" completionHandler:nil];
-    TestWebKitAPI::Util::run(&gShouldKeepScreenAwake);
-
-    // Kill the WebProcess while holding the screen lock.
-    kill([webView _webProcessIdentifier], 9);
-
-    while (gShouldKeepScreenAwake)
-        TestWebKitAPI::Util::spinRunLoop(10);
-}
-
-#endif // PLATFORM(IOS_FAMILY)
+INSTANTIATE_TEST_SUITE_P(WebKit, ScreenWakeLockTests, testing::Values(
+    ScreenWakeLockTestsConfig::CrossSite::No,
+    ScreenWakeLockTestsConfig::CrossSite::Yes));
 
 #if PLATFORM(MAC)
 
@@ -1022,16 +953,6 @@ TEST(WebKit, NotificationPermission)
     [webView synchronouslyLoadHTMLString:html baseURL:[NSURL URLWithString:@"https://example.com"]];
     [webView evaluateJavaScript:@"requestPermission()" completionHandler:nil];
     TestWebKitAPI::Util::run(&done);
-}
-
-TEST(WebKit, ToolbarVisible)
-{
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:adoptNS([[WKWebViewConfiguration alloc] init]).get()]);
-    [webView loadHTMLString:@"<script>alert('visible:' + window.toolbar.visible)</script>" baseURL:nil];
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "visible:true");
-    webView.get()._toolbarsAreVisible = NO;
-    [webView evaluateJavaScript:@"alert('visible:' + window.toolbar.visible)" completionHandler:nil];
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "visible:false");
 }
 
 @interface MouseMoveOverElementDelegate : NSObject <WKUIDelegatePrivate>

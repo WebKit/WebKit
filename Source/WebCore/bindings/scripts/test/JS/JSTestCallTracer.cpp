@@ -502,7 +502,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     UNUSED_PARAM(callFrame);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     EnsureStillAliveScope argument0 = callFrame->argument(0);
-    auto variantDefaultArgConversionResult = convertOptionalWithDefault<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(*lexicalGlobalObject, argument0.value(), [&]() -> ConversionResult<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>> { return Converter<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>::ReturnType { emptyString() }; });
+    auto variantDefaultArgConversionResult = convertOptionalWithDefault<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(*lexicalGlobalObject, argument0.value(), [&] -> ConversionResult<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>> { return Converter<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>::ReturnType { emptyString() }; });
     if (variantDefaultArgConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     if (impl.hasActiveTestInterfaceCallTracer()) [[unlikely]]

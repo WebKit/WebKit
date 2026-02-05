@@ -29,9 +29,9 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "Logging.h"
-#import "MediaConfiguration.h"
 #import "MediaPlaybackTargetCocoa.h"
 #import "MediaPlayer.h"
+#import "PlatformMediaConfiguration.h"
 #import "PlatformMediaSession.h"
 #import "SystemMemory.h"
 #import "WebCoreThreadRun.h"
@@ -181,7 +181,7 @@ void MediaSessionManageriOS::activeAudioRouteSupportsSpatialPlaybackDidChange(Su
     setSupportsSpatialAudioPlayback(supportsSpatialPlayback == SupportsSpatialAudioPlayback::Yes);
 }
 
-std::optional<bool> MediaSessionManagerCocoa::supportsSpatialAudioPlaybackForConfiguration(const MediaConfiguration& configuration)
+std::optional<bool> MediaSessionManagerCocoa::supportsSpatialAudioPlaybackForConfiguration(const PlatformMediaConfiguration& configuration)
 {
     ASSERT(configuration.audio);
 

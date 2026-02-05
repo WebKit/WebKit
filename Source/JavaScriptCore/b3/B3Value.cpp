@@ -42,6 +42,7 @@
 #include "B3ValueInlines.h"
 #include "B3ValueKeyInlines.h"
 #include "B3WasmBoundsCheckValue.h"
+#include "B3WasmRefTypeCheckValue.h"
 #include "B3WasmStructGetValue.h"
 #include "B3WasmStructNewValue.h"
 #include "B3WasmStructSetValue.h"
@@ -897,6 +898,15 @@ Effects Value::effects() const
         result.writes = HeapRange::top();
         result.exitsSideways = true;
         break;
+    case WasmRefCast:
+        result.reads = HeapRange::top();
+        result.controlDependent = true;
+        result.exitsSideways = true;
+        break;
+    case WasmRefTest:
+        result.reads = HeapRange::top();
+        result.controlDependent = true;
+        break;
     case Upsilon:
     case Set:
         result.writesLocalState = true;
@@ -1093,6 +1103,20 @@ ValueKey Value::key() const
         if (numChildren() == 2)
             return ValueKey(kind(), type(), as<SIMDValue>()->simdInfo(), child(0), child(1), nullptr);
         return ValueKey(kind(), type(), as<SIMDValue>()->simdInfo(), child(0), child(1), child(2));
+    case WasmRefCast:
+    case WasmRefTest: {
+        auto* wasmValue = as<WasmRefTypeCheckValue>();
+        OptionSet<WasmRefTypeCheckFlag> flags = wasmValue->flags();
+
+        // Check if RTT is present and set HasRTT flag accordingly
+        if (wasmValue->targetRTT()) {
+            flags.add(WasmRefTypeCheckFlag::HasRTT);
+            return ValueKey(kind(), type(), child(0), flags.toRaw(), wasmValue->targetRTT());
+        }
+
+        // Use targetHeapType when RTT is null (builtin types)
+        return ValueKey(kind(), type(), child(0), flags.toRaw(), wasmValue->targetHeapType());
+    }
     case Nop:
     case Set:
     case Get:

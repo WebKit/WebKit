@@ -40,7 +40,7 @@
 
 namespace WebCore {
 static RetainPtr<CGColorRef> createCGColor(const Color&);
-static RetainPtr<CGColorRef> createSDRCGColorForColorspace(const Color&, const DestinationColorSpace&);
+static RetainPtr<CGColorRef> createCGColorInDestinationStandardRange(const Color&, const DestinationColorSpace&);
 }
 
 namespace WTF {
@@ -54,7 +54,7 @@ RetainPtr<CGColorRef> TinyLRUCachePolicy<WebCore::Color, RetainPtr<CGColorRef>>:
 template<>
 RetainPtr<CGColorRef> TinyLRUCachePolicy<std::pair<WebCore::Color, std::optional<WebCore::DestinationColorSpace>>, RetainPtr<CGColorRef>>::createValueForKey(const std::pair<WebCore::Color, std::optional<WebCore::DestinationColorSpace>>& colorAndColorSpace)
 {
-    return WebCore::createSDRCGColorForColorspace(colorAndColorSpace.first, *colorAndColorSpace.second);
+    return WebCore::createCGColorInDestinationStandardRange(colorAndColorSpace.first, *colorAndColorSpace.second);
 }
 
 } // namespace WTF
@@ -201,16 +201,18 @@ RetainPtr<CGColorRef> cachedCGColor(const Color& color)
     return cache.get().get(color);
 }
 
-RetainPtr<CGColorRef> createSDRCGColorForColorspace(const Color& color, const DestinationColorSpace& colorSpace)
+RetainPtr<CGColorRef> createCGColorInDestinationStandardRange(const Color& color, const DestinationColorSpace& colorSpace)
 {
-    RetainPtr result = cachedCGColor(color);
-    RetainPtr standardRangeColorSpace = adoptCF(CGColorSpaceCreateCopyWithStandardRange(colorSpace.protectedPlatformColorSpace().get()));
-    return adoptCF(CGColorCreateCopyByMatchingToColorSpace(standardRangeColorSpace.get(), kCGRenderingIntentDefault, result.get(), nullptr));
+    auto clampingSpace = CGColorSpaceIsWideGamutRGB(colorSpace.protectedPlatformColorSpace().get()) ? ColorSpace::DisplayP3 : ColorSpace::SRGB;
+    auto [r, g, b, a] = color.toResolvedColorComponentsInColorSpace(clampingSpace);
+
+    std::array<CGFloat, 4> sourceComponents { r, g, b, a };
+    return adoptCF(CGColorCreate(cachedNullableCGColorSpaceSingleton(clampingSpace), sourceComponents.data()));
 }
 
-RetainPtr<CGColorRef> cachedSDRCGColorForColorspace(const Color& color, const DestinationColorSpace& colorSpace)
+RetainPtr<CGColorRef> cachedCGColorInDestinationStandardRange(const Color& color, const DestinationColorSpace& colorSpace)
 {
-    if (!colorSpace.usesExtendedRange() || color.tryGetAsSRGBABytes())
+    if (color.tryGetAsSRGBABytes())
         return cachedCGColor(color);
 
     static Lock cachedSDRColorLock;

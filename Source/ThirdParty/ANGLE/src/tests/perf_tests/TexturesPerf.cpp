@@ -354,7 +354,7 @@ TexturesParams OpenGLOrGLESParams(bool webglCompat,
                                   Frequency stateUpdateFrequency)
 {
     TexturesParams params;
-    params.eglParameters = egl_platform::OPENGL_OR_GLES_NULL();
+    params.eglParameters = egl_platform::OPENGL_OR_GLES();
     params.webgl         = webglCompat;
     return ApplyFrequencies(params, rebindFrequency, stateUpdateFrequency);
 }

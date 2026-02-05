@@ -261,7 +261,7 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (paintInfo.phase == PaintPhase::Foreground) {
         page->addRelevantRepaintedObject(*this, rect);
         if (displayingPoster && !context.paintingDisabled())
-            protectedDocument()->didPaintImage(videoElement.get(), cachedImage(), videoBoxRect);
+            protect(document())->didPaintImage(videoElement.get(), cachedImage(), videoBoxRect);
     }
 
     LayoutRect contentRect = contentBoxRect();

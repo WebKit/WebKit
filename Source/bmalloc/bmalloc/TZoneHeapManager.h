@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,38 @@ namespace bmalloc { namespace api {
 
 extern BEXPORT class TZoneHeapManager* tzoneHeapManager;
 
+// The TZone heaps are organized as follows (from top to bottom):
+//
+//                        Category
+//               ┌────────────┼────────────┐
+//               ▼                         ▼
+//             Group                      Group
+//       ┌───────┼───────┐         ┌───────┼───────┐
+//       ▼       ▼       ▼         ▼       ▼       ▼
+//    Bucket  Bucket  Bucket    Bucket  Bucket  Bucket
+//
+// A TZone (TZONE_ALLOCATED) type can only belong in one and only one category. At
+// present, there is only 1 category: sorting by SizeAndAlignment. So, all TZone types
+// will belong in the SizeAndAlignment catgeory by default. Eventually, we'll add other
+// categories that types / type hierarchies can opt themselves into.
+//
+// 1. Category: a set of Groups. Each category sorts its TZone types into Groups based on
+//    the sorting algorithm for that category. The sorting order is deterministic and is
+//    based on properties of the type determined at compile time. For example, the
+//    SizeAndAlignment category sorts types based on their size and alignment.
+//
+// 2. Group: a group of Buckets. Each group sorts its TZone types into Buckets by some
+//    randomness criteria. Hence, for any different launch of the process, a TZone type
+//    can randomly end up in a different Bucket based on the randomness criteria.
+//    See TZoneHeapManager::Group.
+//
+// 3. Bucket: corresponds to a single isoheap, from which a TZone type's allocations are
+//    made. See TZoneHeapManager::Bucket.
+//
+// Each TZone type has a TZoneSpecification with a TZoneDescriptor. The descriptor is
+// used to determine which category and group the instances of TZone type will be sorted
+// into, and hence, will be allocated allocated out of a bucket in that group.
+
 class TZoneHeapManager {
     enum class State {
         Uninitialized,
@@ -59,25 +91,25 @@ class TZoneHeapManager {
     typedef uint64_t SHA256ResultAsUnsigned[CC_SHA256_DIGEST_LENGTH / sizeof(uint64_t)];
     static_assert(!(CC_SHA256_DIGEST_LENGTH % sizeof(uint64_t)));
 
-    struct TZoneBucket {
+    struct Bucket {
         bmalloc_type type;
         pas_heap_ref heapref;
         char typeName[typeNameLen];
     };
 
-    struct TZoneTypeBuckets {
+    struct Group {
         unsigned numberOfBuckets;
 #if TZONE_VERBOSE_DEBUG
-        unsigned numberOfTypesThisSizeClass;
+        unsigned numberOfTypesInGroup;
         unsigned usedBucketBitmap;
         Vector<unsigned> bucketUseCounts;
 #endif
-        TZoneBucket nonCompactBucket;
-        TZoneBucket buckets[1];
+        Bucket nonCompactBucket;
+        Bucket buckets[1];
     };
 
-// TZoneTypeBuckets already includes room for 1 bucket. Hence, we only need to add count - 1 buckets.
-#define SIZE_TZONE_TYPE_BUCKETS(count) (sizeof(struct TZoneTypeBuckets) + (count - 1) * sizeof(TZoneBucket))
+// Group already includes room for 1 bucket. Hence, we only need to add count - 1 buckets.
+#define TZONE_GROUP_SIZE(count) (sizeof(struct Group) + (count - 1) * sizeof(Bucket))
 
     struct TZoneTypeKey {
         TZoneTypeKey() = default;
@@ -165,10 +197,10 @@ private:
 
     BINLINE pas_heap_ref* heapRefForTZoneType(const TZoneSpecification&, LockHolder&);
 
-    inline static unsigned bucketCountForSizeClass(SizeAndAlignment::Value);
+    inline static unsigned bucketCountForSizeClass(unsigned sizeClass);
 
-    inline unsigned tzoneBucketForKey(const TZoneSpecification&, unsigned bucketCountForSize, LockHolder&);
-    TZoneTypeBuckets* populateBucketsForSizeClass(LockHolder&, SizeAndAlignment::Value);
+    inline unsigned bucketForKey(const TZoneSpecification&, unsigned bucketCountForSize, LockHolder&);
+    Group* populateGroupBuckets(LockHolder&, const TZoneSpecification&);
 
     static TZoneHeapManager::State s_state;
     Mutex m_mutex;
@@ -176,9 +208,9 @@ private:
     uint64_t m_tzoneKeySeed;
 #if TZONE_VERBOSE_DEBUG
     unsigned largestBucketCount { 0 };
-    Vector<SizeAndAlignment::Value> m_typeSizes;
+    Vector<TZoneDescriptor> m_registeredDescriptors;
 #endif
-    Map<SizeAndAlignment::Value, TZoneTypeBuckets*, SizeAndAlignment> m_heapRefsBySizeAndAlignment;
+    Map<TZoneDescriptor, Group*, TZoneDescriptorHashTrait> m_groupByDescriptor;
     Map<TZoneTypeKey, pas_heap_ref*, TZoneTypeKey> m_differentSizedHeapRefs;
 };
 

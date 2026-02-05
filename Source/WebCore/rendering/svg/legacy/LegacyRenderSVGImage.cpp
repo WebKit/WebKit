@@ -234,7 +234,7 @@ void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
 
     auto* cachedImage = imageResource().cachedImage();
     if (cachedImage && !context.paintingDisabled())
-        protectedDocument()->didPaintImage(imageElement(), cachedImage, destRect);
+        protect(document())->didPaintImage(imageElement(), cachedImage, destRect);
 }
 
 void LegacyRenderSVGImage::invalidateBufferedForeground()
@@ -298,7 +298,7 @@ void LegacyRenderSVGImage::imageChanged(WrappedImagePtr, const IntRect*)
 
     if (auto* image = imageResource().cachedImage(); image && image->currentFrameIsComplete(this)) {
         if (auto styleable = Styleable::fromRenderer(*this))
-            protectedDocument()->didLoadImage(styleable->protectedElement().get(), image);
+            protect(document())->didLoadImage(styleable->protectedElement().get(), image);
     }
 }
 

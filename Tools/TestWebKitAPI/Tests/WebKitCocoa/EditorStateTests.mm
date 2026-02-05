@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "EditingTestHarness.h"
+#import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestCocoa.h"
 #import "TestInputDelegate.h"
@@ -570,5 +571,82 @@ TEST(EditorStateTests, MarkedTextRange_VerticalRangeSelection)
 }
 
 #endif // PLATFORM(IOS_FAMILY)
+
+#if PLATFORM(MAC)
+
+TEST(EditorStateTests, UnionRectInVisibleSelectedRangeAndDocumentVisibleRect)
+{
+    __block unsigned didUpdateSelectionCount = 0;
+    __block bool willStartScrollingOrZooming = false;
+    __block bool didEndScrollingOrZooming = false;
+
+    InstanceMethodSwizzler didUpdateSelectionSwizzler {
+        NSTextInputContext.class,
+        @selector(textInputClientDidUpdateSelection),
+        imp_implementationWithBlock(^(id) {
+            didUpdateSelectionCount++;
+        })
+    };
+
+    InstanceMethodSwizzler willStartScrollingOrZoomingSwizzler {
+        NSTextInputContext.class,
+        @selector(textInputClientWillStartScrollingOrZooming),
+        imp_implementationWithBlock(^(id) {
+            willStartScrollingOrZooming = true;
+        })
+    };
+
+    InstanceMethodSwizzler didEndScrollingOrZoomingSwizzler {
+        NSTextInputContext.class,
+        @selector(textInputClientDidEndScrollingOrZooming),
+        imp_implementationWithBlock(^(id) {
+            didEndScrollingOrZooming = true;
+        })
+    };
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    RetainPtr preferences = [configuration preferences];
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"TextInputClientSelectionUpdatesEnabled"]) {
+            [preferences _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+
+    RetainPtr webView = adoptNS([[TestWKWebView<NSTextInputClient> alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView _setEditable:YES];
+    [webView synchronouslyLoadHTMLString:@"<body style='height: 500vh;'>Hello world, this is a test.</body>"];
+    [webView waitForNextPresentationUpdate];
+    [webView mouseDownAtPoint:NSMakePoint(15, 390) simulatePressure:NO];
+    [webView mouseDragToPoint:NSMakePoint(300, 390)];
+    [webView mouseUpAtPoint:NSMakePoint(300, 390)];
+    [webView waitForPendingMouseEvents];
+    [webView waitForNextPresentationUpdate];
+
+    [webView stringByEvaluatingJavaScript:@"document.execCommand('selectAll', true)"];
+    [webView waitForNextPresentationUpdate];
+
+    auto isInDocumentVisibleRect = [&](NSRect rect) {
+        return NSContainsRect([webView documentVisibleRect], rect);
+    };
+
+    EXPECT_TRUE(isInDocumentVisibleRect([webView unionRectInVisibleSelectedRange]));
+    EXPECT_FALSE(NSIsEmptyRect([webView unionRectInVisibleSelectedRange]));
+    EXPECT_GT(didUpdateSelectionCount, 0u);
+
+    [webView stringByEvaluatingJavaScript:@"scrollBy(0, 2000)"];
+    [webView waitForNextPresentationUpdate];
+
+    Util::run(&willStartScrollingOrZooming);
+    Util::run(&didEndScrollingOrZooming);
+    EXPECT_FALSE(isInDocumentVisibleRect([webView unionRectInVisibleSelectedRange]));
+    EXPECT_FALSE(NSIsEmptyRect([webView unionRectInVisibleSelectedRange]));
+
+    [webView stringByEvaluatingJavaScript:@"getSelection().removeAllRanges()"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE(NSIsEmptyRect([webView unionRectInVisibleSelectedRange]));
+}
+
+#endif // PLATFORM(MAC)
 
 } // namespace TestWebKitAPI

@@ -60,6 +60,15 @@ WTF_OS_OBJECT_DISPATCH_TYPES(WTF_DECLARE_OS_OBJECT_DISPATCH_TYPE_CAST_TRAITS)
 WTF_OS_OBJECT_DISPATCH_TYPES(WTF_IMPLEMENT_IS_OS_OBJECT_FUNCTIONS_DISPATCH)
 #undef WTF_IMPLEMENT_IS_OS_OBJECT_FUNCTIONS_DISPATCH
 
+// Dispatch protect() functions.
+#define WTF_DECLARE_DISPATCH_PROTECT(TypeName) \
+ALWAYS_INLINE CLANG_POINTER_CONVERSION OSObjectPtr<TypeName##_t> protect(TypeName##_t ptr) \
+{ \
+    return ptr; \
+}
+WTF_OS_OBJECT_DISPATCH_TYPES(WTF_DECLARE_DISPATCH_PROTECT)
+#undef WTF_DECLARE_DISPATCH_PROTECT
+
 #if !__has_feature(objc_arc)
 // Template specializations for dispatch retain/release traits (non-ARC only).
 #define WTF_DECLARE_DISPATCH_OSOBJECT_RETAIN_TRAITS(TypeName) \
@@ -80,3 +89,5 @@ WTF_OS_OBJECT_DISPATCH_TYPES(WTF_DECLARE_DISPATCH_OSOBJECT_RETAIN_TRAITS)
 #endif // !__has_feature(objc_arc)
 
 } // namespace WTF
+
+using WTF::protect;

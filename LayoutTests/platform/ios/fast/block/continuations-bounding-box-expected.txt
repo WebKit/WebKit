@@ -1,4 +1,4 @@
-Bounding box is {"x":17,"y":17,"width":766,"height":73}
+Bounding box is {"x":17,"y":17,"width":766,"height":70}
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -35,14 +35,16 @@ namespace WebCore {
 class AnimationPlaybackEvent final : public AnimationEventBase {
     WTF_MAKE_TZONE_ALLOCATED(AnimationPlaybackEvent);
 public:
+    using Init = AnimationPlaybackEventInit;
+
     static Ref<AnimationPlaybackEvent> create(const AtomString& type, WebAnimation* animation, std::optional<WebAnimationTime> scheduledTime, std::optional<WebAnimationTime> timelineTime, std::optional<WebAnimationTime> currentTime)
     {
         return adoptRef(*new AnimationPlaybackEvent(type, animation, scheduledTime, timelineTime, currentTime));
     }
 
-    static Ref<AnimationPlaybackEvent> create(const AtomString& type, const AnimationPlaybackEventInit& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<AnimationPlaybackEvent> create(const AtomString& type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new AnimationPlaybackEvent(type, initializer, isTrusted));
+        return adoptRef(*new AnimationPlaybackEvent(type, WTF::move(initializer), isTrusted));
     }
 
     virtual ~AnimationPlaybackEvent();
@@ -52,7 +54,7 @@ public:
 
 private:
     AnimationPlaybackEvent(const AtomString&, WebAnimation*, std::optional<WebAnimationTime> scheduledTime, std::optional<WebAnimationTime> timelineTime, std::optional<WebAnimationTime> currentTime);
-    AnimationPlaybackEvent(const AtomString&, const AnimationPlaybackEventInit&, IsTrusted);
+    AnimationPlaybackEvent(const AtomString&, Init&&, IsTrusted);
 
     std::optional<WebAnimationTime> m_timelineTime;
     std::optional<WebAnimationTime> m_currentTime;

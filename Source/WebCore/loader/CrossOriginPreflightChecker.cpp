@@ -144,7 +144,7 @@ void CrossOriginPreflightChecker::startPreflight()
     preflightRequest.setInitiatorType(AtomString { loader->options().initiatorType });
 
     ASSERT(!m_resource);
-    m_resource = loader->document().protectedCachedResourceLoader()->requestRawResource(WTF::move(preflightRequest)).value_or(nullptr);
+    m_resource = protect(loader->document().cachedResourceLoader())->requestRawResource(WTF::move(preflightRequest)).value_or(nullptr);
     if (CachedResourceHandle resource = m_resource)
         resource->addClient(*this);
 }
@@ -169,7 +169,7 @@ void CrossOriginPreflightChecker::doPreflight(DocumentThreadableLoader& loader, 
             error.setType(ResourceError::Type::AccessControl);
 
         if (!error.isTimeout())
-            loader.protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "CORS-preflight request was blocked"_s);
+            protect(loader.document())->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "CORS-preflight request was blocked"_s);
 
         loader.preflightFailure(identifier, error);
         return;
@@ -179,7 +179,7 @@ void CrossOriginPreflightChecker::doPreflight(DocumentThreadableLoader& loader, 
     bool isRedirect = preflightRequest.url().strippedForUseAsReferrer().string != response.url().strippedForUseAsReferrer().string;
     if (isRedirect || !response.isSuccessful()) {
         auto errorMessage = makeString("Preflight response is not successful. Status code: "_s, response.httpStatusCode());
-        loader.protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, errorMessage);
+        protect(loader.document())->addConsoleMessage(MessageSource::Security, MessageLevel::Error, errorMessage);
 
         loader.preflightFailure(identifier, ResourceError { errorDomainWebKitInternal, 0, request.url(), errorMessage, ResourceError::Type::AccessControl });
         return;

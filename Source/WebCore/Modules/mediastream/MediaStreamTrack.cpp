@@ -141,11 +141,6 @@ const AtomString& MediaStreamTrack::kind() const
     return m_kind;
 }
 
-const String& MediaStreamTrack::id() const
-{
-    return m_private->id();
-}
-
 const String& MediaStreamTrack::label() const
 {
     return m_private->label();
@@ -622,7 +617,7 @@ void MediaStreamTrack::suspend(ReasonForSuspension reason)
 
 bool MediaStreamTrack::virtualHasPendingActivity() const
 {
-    return !m_ended && hasEventListeners();
+    return !m_ended && (hasEventListeners() || m_keeper.get());
 }
 
 #if ENABLE(WEB_AUDIO)
@@ -684,6 +679,17 @@ RefPtr<MediaSessionManagerInterface> MediaStreamTrack::mediaSessionManager() con
 ScriptExecutionContext* MediaStreamTrack::scriptExecutionContext() const
 {
     return ActiveDOMObject::scriptExecutionContext();
+}
+
+Ref<MediaStreamTrack::Keeper> MediaStreamTrack::keeper()
+{
+    RefPtr keeper = m_keeper.get();
+    if (!keeper) {
+        keeper = Keeper::create();
+        m_keeper = *keeper;
+    }
+
+    return keeper.releaseNonNull();
 }
 
 #if !RELEASE_LOG_DISABLED

@@ -483,9 +483,6 @@ LayoutUnit RenderTableSection::distributeExtraLogicalHeightToRows(LayoutUnit ext
     if (!totalRows)
         return extraLogicalHeight;
 
-    if (!m_rowPos[totalRows] && nextSibling())
-        return extraLogicalHeight;
-
     unsigned autoRowsCount = 0;
     int totalPercent = 0;
     for (unsigned r = 0; r < totalRows; r++) {
@@ -493,6 +490,13 @@ LayoutUnit RenderTableSection::distributeExtraLogicalHeightToRows(LayoutUnit ext
             ++autoRowsCount;
         else if (auto percentageLogicalHeight = m_grid[r].logicalHeight.tryPercentage())
             totalPercent += percentageLogicalHeight->value;
+    }
+
+    // If this section has no intrinsic height and there are other sections,
+    // distribute based on whether we have percentage/auto rows that can grow.
+    if (!m_rowPos[totalRows] && nextSibling()) {
+        if (!autoRowsCount && !totalPercent)
+            return extraLogicalHeight;
     }
 
     LayoutUnit remainingExtraLogicalHeight = extraLogicalHeight;

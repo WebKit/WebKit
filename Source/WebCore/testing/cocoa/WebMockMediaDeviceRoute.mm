@@ -26,11 +26,27 @@
 #import "config.h"
 #import "WebMockMediaDeviceRoute.h"
 
-#if HAVE(AVROUTING_FRAMEWORK)
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+
+#import "MockMediaDeviceRouteURLCallback.h"
+#import <WebCore/JSDOMPromise.h>
+#import <WebKitAdditions/WebMockMediaDeviceRouteAdditions.mm>
+#import <wtf/BlockPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@implementation WebMockMediaDeviceRoute
+static NSErrorDomain const WebMockMediaDeviceRouteErrorDomain = @"WebMockMediaDeviceRouteErrorDomain";
+
+typedef NS_ENUM(NSInteger, WebMockMediaDeviceRouteErrorCode) {
+    WebMockMediaDeviceRouteErrorCodeInvalidState,
+    WebMockMediaDeviceRouteErrorCodeURLPromiseRejected,
+};
+
+@implementation WebMockMediaDeviceRoute {
+    RefPtr<WebCore::MockMediaDeviceRouteURLCallback> _urlCallback;
+    RefPtr<WebCore::DOMPromise> _urlPromise;
+}
 
 @synthesize currentAudioOption;
 @synthesize currentSegment;
@@ -52,8 +68,42 @@ NS_ASSUME_NONNULL_BEGIN
 @synthesize supportedModes;
 @synthesize volume;
 
+- (WebCore::MockMediaDeviceRouteURLCallback* _Nullable)urlCallback
+{
+    return _urlCallback.get();
+}
+
+- (void)setURLCallback:(WebCore::MockMediaDeviceRouteURLCallback* _Nullable)urlCallback
+{
+    _urlCallback = urlCallback;
+}
+
+- (void)startApplicationWithURL:(NSURL *)url launchType:(WebMediaDevicePlatformRouteLaunchType)launchType withCompletionHandler:(void (^)(NSError * _Nullable, WebMediaDevicePlatformRouteLaunchResult * _Nullable))completionHandler
+{
+    if (!_urlCallback)
+        return completionHandler([NSError errorWithDomain:WebMockMediaDeviceRouteErrorDomain code:WebMockMediaDeviceRouteErrorCodeInvalidState userInfo:nil], nil);
+
+    _urlPromise = _urlCallback->invoke(url.absoluteString).releaseReturnValue();
+    _urlPromise->whenSettled([weakSelf = WeakObjCPtr { self }, completionHandler = makeBlockPtr(completionHandler)]() {
+        RetainPtr protectedSelf = weakSelf.get();
+        if (!protectedSelf)
+            return completionHandler([NSError errorWithDomain:WebMockMediaDeviceRouteErrorDomain code:WebMockMediaDeviceRouteErrorCodeInvalidState userInfo:nil], nil);
+
+        switch (std::exchange(protectedSelf->_urlPromise, nullptr)->status()) {
+        case WebCore::DOMPromise::Status::Fulfilled:
+            return completionHandler(nil, nil);
+        case WebCore::DOMPromise::Status::Rejected:
+            return completionHandler([NSError errorWithDomain:WebMockMediaDeviceRouteErrorDomain code:WebMockMediaDeviceRouteErrorCodeURLPromiseRejected userInfo:nil], nil);
+        case WebCore::DOMPromise::Status::Pending:
+            break;
+        }
+
+        RELEASE_ASSERT_NOT_REACHED();
+    });
+}
+
 @end
 
 NS_ASSUME_NONNULL_END
 
-#endif // HAVE(AVROUTING_FRAMEWORK)
+#endif // ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)

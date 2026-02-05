@@ -110,7 +110,7 @@ void HTMLResourcePreloader::preload(std::unique_ptr<PreloadRequest> preload)
     if (!MQ::MediaQueryEvaluator { screenAtom(), *document, document->renderStyle() }.evaluate(queries))
         return;
 
-    std::ignore = document->protectedCachedResourceLoader()->preload(preload->resourceType(), preload->resourceRequest(*document));
+    std::ignore = protect(document->cachedResourceLoader())->preload(preload->resourceType(), preload->resourceRequest(*document));
 }
 
 }

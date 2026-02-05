@@ -72,6 +72,42 @@ promise_test(async (test) => {
     worker.postMessage("getResult");
     assert_equals(await new Promise(resolve => navigator.serviceWorker.onmessage = e => resolve(e.data)), "OK");
 }, "add route extend installation of service worker");
+
+promise_test(async (test) => {
+    let registration = await navigator.serviceWorker.getRegistration("5");
+    if (registration)
+        await registration.unregister();
+    registration = await navigator.serviceWorker.register("service-worker-add-skip-fetch-event-routes.js", { scope : "5" });
+    const worker = registration.installing;
+
+    await waitForState(worker, "activated");
+
+    const frame1 = await withIframe("5/a");
+    frame1.contentWindow.navigator.serviceWorker.controller.postMessage("getResult");
+    assert_equals(await new Promise(resolve => frame1.contentWindow.navigator.serviceWorker.onmessage = e => resolve(e.data)), "OK", "Validate route of frame1");
+    frame1.remove();
+
+    if (window.internals)
+        await internals.storeRegistrationsOnDisk();
+    await waitFor(100);
+    if (window.testRunner && window.testRunner.terminateNetworkProcess)
+        testRunner.terminateNetworkProcess();
+
+    let frame2
+    let counter = 0;
+    while (++counter < 10) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        frame2 = await withIframe("5/b");
+        if (frame2.contentWindow.navigator.serviceWorker.controller)
+            break;
+        frame2.remove();
+    }
+    assert_less_than(counter, 10);
+
+    frame2.contentWindow.navigator.serviceWorker.controller.postMessage("getResult");
+    assert_equals(await new Promise(resolve => frame2.contentWindow.navigator.serviceWorker.onmessage = e => resolve(e.data)), "OK", "Validate route of frame2");
+    frame2.remove();
+}, "routes should be set when service worker restarts");
 </script>
 </body>
 </html>

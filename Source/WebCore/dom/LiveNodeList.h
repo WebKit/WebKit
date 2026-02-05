@@ -38,6 +38,12 @@ class QualifiedName;
 
 inline bool shouldInvalidateTypeOnAttributeChange(NodeListInvalidationType, const QualifiedName&);
 
+enum class LiveNodeListType : uint8_t {
+    NameNodeList = 0,
+    RadioNodeList = 1,
+    LabelsNodeList = 2
+};
+
 class LiveNodeList : public NodeList {
     WTF_MAKE_TZONE_NON_HEAP_ALLOCATABLE(LiveNodeList);
 public:
@@ -45,6 +51,8 @@ public:
 
     virtual bool elementMatches(Element&) const = 0;
     virtual bool isRootedAtTreeScope() const = 0;
+
+    LiveNodeListType type() const { return m_type; }
 
     NodeListInvalidationType invalidationType() const { return m_invalidationType; }
     ContainerNode& ownerNode() const { return m_ownerNode; }
@@ -57,7 +65,7 @@ public:
     void setRegisteredForInvalidationAtDocument(bool isRegistered) { m_isRegisteredForInvalidationAtDocument = isRegistered; }
 
 protected:
-    LiveNodeList(ContainerNode& ownerNode, NodeListInvalidationType);
+    LiveNodeList(ContainerNode& ownerNode, LiveNodeListType, NodeListInvalidationType);
 
     inline Document& document() const;
     inline Ref<Document> protectedDocument() const;
@@ -67,6 +75,7 @@ private:
 
     const Ref<ContainerNode> m_ownerNode;
 
+    const LiveNodeListType m_type;
     const NodeListInvalidationType m_invalidationType;
     bool m_isRegisteredForInvalidationAtDocument { false };
 };
@@ -100,7 +109,7 @@ public:
     }
 
 protected:
-    inline CachedLiveNodeList(ContainerNode& rootNode, NodeListInvalidationType);
+    inline CachedLiveNodeList(ContainerNode& rootNode, LiveNodeListType, NodeListInvalidationType);
 
 private:
     NodeListType& nodeList() { return static_cast<NodeListType&>(*this); }
@@ -113,4 +122,12 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LiveNodeList)
     static bool isType(const WebCore::NodeList& nodeList) { return nodeList.isLiveNodeList(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+#define SPECIALIZE_TYPE_TRAITS_LIVENODELIST(ClassName) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ClassName) \
+    static bool isType(const WebCore::LiveNodeList& nodeList) \
+    { \
+        return nodeList.type() == WebCore::LiveNodeListType::ClassName; \
+    } \
 SPECIALIZE_TYPE_TRAITS_END()

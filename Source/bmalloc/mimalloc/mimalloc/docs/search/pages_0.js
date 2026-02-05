@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['building_0',['Building',['../build.html',1,'']]]
+  ['build_20modes_0',['Build Modes',['../modes.html',1,'']]],
+  ['building_1',['Building',['../build.html',1,'']]]
 ];

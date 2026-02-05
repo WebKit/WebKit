@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -105,6 +105,7 @@ struct IntegrityPolicy;
 enum class ClearSiteDataValue : uint8_t;
 enum class LoadWillContinueInAnotherProcess : bool;
 enum class ShouldContinue;
+enum class ShouldTreatAsContinuingLoad : uint8_t;
 
 using ResourceLoaderMap = HashSet<RefPtr<ResourceLoader>>;
 
@@ -187,9 +188,14 @@ class DocumentLoader
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DocumentLoader, DocumentLoader);
     friend class ContentFilter;
 public:
+    static Ref<DocumentLoader> create(ResourceRequest&& request, SubstituteData&& data, ResourceRequest&& originalRequest)
+    {
+        return adoptRef(*new DocumentLoader(WTF::move(request), WTF::move(data), WTF::move(originalRequest)));
+    }
+
     static Ref<DocumentLoader> create(ResourceRequest&& request, SubstituteData&& data)
     {
-        return adoptRef(*new DocumentLoader(WTF::move(request), WTF::move(data)));
+        return adoptRef(*new DocumentLoader(WTF::move(request), WTF::move(data), { }));
     }
 
     USING_CAN_MAKE_WEAKPTR(CachedRawResourceClient);
@@ -207,7 +213,6 @@ public:
     WEBCORE_EXPORT virtual void detachFromFrame(LoadWillContinueInAnotherProcess);
 
     WEBCORE_EXPORT FrameLoader* frameLoader() const;
-    WEBCORE_EXPORT RefPtr<FrameLoader> protectedFrameLoader() const;
     WEBCORE_EXPORT SubresourceLoader* mainResourceLoader() const;
     WEBCORE_EXPORT RefPtr<FragmentedSharedBuffer> mainResourceData() const;
     
@@ -220,7 +225,6 @@ public:
     ResourceRequest& request();
 
     CachedResourceLoader& cachedResourceLoader() { return m_cachedResourceLoader; }
-    Ref<CachedResourceLoader> protectedCachedResourceLoader() const;
 
     const SubstituteData& substituteData() const { return m_substituteData; }
 
@@ -516,8 +520,9 @@ public:
     std::unique_ptr<IntegrityPolicy> integrityPolicy();
     std::unique_ptr<IntegrityPolicy> integrityPolicyReportOnly();
 
-    bool isContinuingLoadAfterProvisionalLoadStarted() const { return m_isContinuingLoadAfterProvisionalLoadStarted; }
-    void setIsContinuingLoadAfterProvisionalLoadStarted(bool isContinuingLoadAfterProvisionalLoadStarted) { m_isContinuingLoadAfterProvisionalLoadStarted = isContinuingLoadAfterProvisionalLoadStarted; }
+    bool isContinuingLoadAfterProvisionalLoadStarted() const { return m_isContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted; }
+    bool isContinuingLoadAfterNavigationPolicyDecision() const { return m_isContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision; }
+    void setIsContinuingLoad(ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad) { m_isContinuingLoad = shouldTreatAsContinuingLoad; }
 
     bool isRequestFromClientOrUserInput() const { return m_isRequestFromClientOrUserInput; }
     void setIsRequestFromClientOrUserInput(bool isRequestFromClientOrUserInput) { m_isRequestFromClientOrUserInput = isRequestFromClientOrUserInput; }
@@ -548,6 +553,7 @@ public:
     void setCrossSiteRequester(NavigationRequester&& crossSiteRequester) { m_crossSiteRequester = WTF::move(crossSiteRequester); }
 
 protected:
+    WEBCORE_EXPORT DocumentLoader(ResourceRequest&&, SubstituteData&&, ResourceRequest&&);
     WEBCORE_EXPORT DocumentLoader(ResourceRequest&&, SubstituteData&&);
 
     WEBCORE_EXPORT virtual void attachToFrame();
@@ -596,8 +602,11 @@ private:
     WEBCORE_EXPORT ResourceError contentFilterDidBlock(ContentFilterUnblockHandler&&, String&& unblockRequestDeniedScript) final;
     WEBCORE_EXPORT void cancelMainResourceLoadForContentFilter(const ResourceError&) final;
     WEBCORE_EXPORT void handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, SubstituteData&&) final;
+#if HAVE(WEBCONTENTRESTRICTIONS)
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
     WEBCORE_EXPORT String webContentRestrictionsConfigurationPath() const final;
+#endif
+    WEBCORE_EXPORT URL mainDocumentURL() const final;
 #endif
 #endif
 
@@ -727,7 +736,7 @@ private:
     std::unique_ptr<IntegrityPolicy> m_integrityPolicyReportOnly;
 
 #if ENABLE(CONTENT_FILTERING)
-    std::unique_ptr<ContentFilter> m_contentFilter;
+    RefPtr<ContentFilter> m_contentFilter;
     ResourceError m_blockedError;
     URL m_blockedPageURL;
     SubstituteData m_substituteDataFromContentFilter;
@@ -773,6 +782,7 @@ private:
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     PushAndNotificationsEnabledPolicy m_pushAndNotificationsEnabledPolicy { PushAndNotificationsEnabledPolicy::UseGlobalPolicy };
     InlineMediaPlaybackPolicy m_inlineMediaPlaybackPolicy { InlineMediaPlaybackPolicy::Default };
+    ShouldTreatAsContinuingLoad m_isContinuingLoad { ShouldTreatAsContinuingLoad::No };
     WebpagePreferences m_preferences;
     // The triggering action's requester should take precedence. This is used for site-isolation situations that require a cross-site requester.
     std::optional<NavigationRequester> m_crossSiteRequester;
@@ -796,7 +806,6 @@ private:
     bool m_isContentRuleListRedirect { false };
     bool m_isClientRedirect { false };
     bool m_isLoadingMultipartContent { false };
-    bool m_isContinuingLoadAfterProvisionalLoadStarted { false };
     bool m_isInFinishedLoadingOfEmptyDocument { false };
     bool m_isInitialAboutBlank { false };
 

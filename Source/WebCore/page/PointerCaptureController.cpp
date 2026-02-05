@@ -366,7 +366,7 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
     bool shouldWaitForSyntheticClick = [&] {
 #if PLATFORM(IOS_FAMILY)
         if (platformTouchEvent.isPotentialTap())
-            return currentTarget->protectedDocument()->quirks().shouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick();
+            return protect(currentTarget->document())->quirks().shouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick();
 #endif
         return false;
     }();

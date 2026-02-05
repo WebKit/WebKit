@@ -177,10 +177,7 @@ public:
     bool canRunModal() const;
     void runModal();
 
-    bool toolbarsVisible() const;
-    bool statusbarVisible() const;
-    bool scrollbarsVisible() const;
-    bool menubarVisible() const;
+    bool isPopup() const;
 
     void setResizable(bool);
 
@@ -228,8 +225,6 @@ public:
     WEBCORE_EXPORT void focusNSView(NSView*);
 #endif
 
-    bool selectItemWritingDirectionIsNatural();
-    bool selectItemAlignmentFollowsMenuWritingDirection();
     RefPtr<PopupMenu> createPopupMenu(PopupMenuClient&) const;
     RefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient&) const;
 

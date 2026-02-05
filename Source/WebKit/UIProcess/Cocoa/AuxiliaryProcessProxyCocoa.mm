@@ -103,7 +103,7 @@ void AuxiliaryProcessProxy::platformStartConnectionTerminationWatchdog()
     if (!m_connection)
         return;
 
-    XPCObjectPtr<xpc_connection_t> xpcConnection = m_connection->xpcConnection();
+    OSObjectPtr<xpc_connection_t> xpcConnection = m_connection->xpcConnection();
     if (!xpcConnection)
         return;
 

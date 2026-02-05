@@ -3,5 +3,7 @@ CONSOLE MESSAGE: The X-Frame-Option 'deny' supplied in a <meta> element was igno
 
 == Running test suite: Console.XFrameOptionsMessages
 -- Running test case: XFrameOptionsDeny
-{"targetType":"frame","messageText":"The X-Frame-Option 'deny' supplied in a <meta> element was ignored. X-Frame-Options may only be provided by an HTTP header sent with the document.","source":"security","level":"error"}
+Evaluating expression: triggerXFrameOptionDeny();
+PASS: ConsoleMessage type should be 'security'.
+PASS: ConsoleMessage level should be 'error'.
 

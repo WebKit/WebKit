@@ -43,6 +43,7 @@
 #include "RenderView.h"
 #include "StyleCalculationValue.h"
 #include "StyleLengthResolution.h"
+#include "StylePrimitiveNumericTypes+Rounding.h"
 #include <wtf/Hasher.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
@@ -500,12 +501,12 @@ bool CSSPrimitiveValue::conversionToCanonicalUnitRequiresConversionData() const
 
 template<> int CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
 {
-    return roundForImpreciseConversion<int>(resolveAsLengthDouble(conversionData));
+    return Style::roundForImpreciseConversion<int>(resolveAsLengthDouble(conversionData));
 }
 
 template<> unsigned CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
 {
-    return roundForImpreciseConversion<unsigned>(resolveAsLengthDouble(conversionData));
+    return Style::roundForImpreciseConversion<unsigned>(resolveAsLengthDouble(conversionData));
 }
 
 template<> float CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
@@ -520,12 +521,12 @@ template<> double CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversion
 
 template<> short CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
 {
-    return roundForImpreciseConversion<short>(resolveAsLengthDouble(conversionData));
+    return Style::roundForImpreciseConversion<short>(resolveAsLengthDouble(conversionData));
 }
 
 template<> unsigned short CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
 {
-    return roundForImpreciseConversion<unsigned short>(resolveAsLengthDouble(conversionData));
+    return Style::roundForImpreciseConversion<unsigned short>(resolveAsLengthDouble(conversionData));
 }
 
 template<> LayoutUnit CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const

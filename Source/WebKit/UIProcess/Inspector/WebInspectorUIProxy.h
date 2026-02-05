@@ -121,13 +121,10 @@ public:
 
     // Public APIs
     WebPageProxy* inspectedPage() const { return m_inspectedPage; }
-    RefPtr<WebPageProxy> protectedInspectedPage() const { return m_inspectedPage; }
     WebPageProxy* inspectorPage() const { return m_inspectorPage; }
-    RefPtr<WebPageProxy> protectedInspectorPage() const { return m_inspectorPage; }
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     WebInspectorUIExtensionControllerProxy* extensionController() const { return m_extensionController.get(); }
-    RefPtr<WebInspectorUIExtensionControllerProxy> protectedExtensionController() const;
 #endif
 
     bool isConnected() const { return !!m_inspectorPage; }
@@ -311,7 +308,6 @@ private:
     unsigned inspectionLevel() const;
 
     WebPreferences& inspectorPagePreferences() const;
-    Ref<WebPreferences> protectedInspectorPagePreferences() const;
 
 #if PLATFORM(MAC)
     void applyForcedAppearance();

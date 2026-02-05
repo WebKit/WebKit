@@ -101,7 +101,6 @@ public:
     virtual bool isNavigatorBeacon() const { return false; }
     virtual bool isNavigatorClipboard() const { return false; }
     virtual bool isNavigatorContacts() const { return false; }
-    virtual bool isNavigatorCookieConsent() const { return false; }
     virtual bool isNavigatorCredentials() const { return false; }
     virtual bool isNavigatorGamepad() const { return false; }
     virtual bool isNavigatorGeolocation() const { return false; }

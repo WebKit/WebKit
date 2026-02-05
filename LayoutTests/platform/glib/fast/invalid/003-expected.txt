@@ -4,52 +4,52 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x86
-        RenderInline {FONT} at (0,0) size 89x17 [color=#FF0000]
-          RenderInline {I} at (0,0) size 89x17
-            RenderText {#text} at (0,0) size 89x17
+        RenderInline {FONT} at (0,0) size 89x18 [color=#FF0000]
+          RenderInline {I} at (0,0) size 89x18
+            RenderText {#text} at (0,0) size 89x18
               text run at (0,0) width 89: "Italic and Red"
-        RenderInline {I} at (0,0) size 784x85
+        RenderInline {I} at (0,0) size 784x86
           RenderBlock {P} at (0,34) size 784x18
-            RenderInline {FONT} at (0,0) size 93x17 [color=#FF0000]
-              RenderText {#text} at (0,0) size 93x17
+            RenderInline {FONT} at (0,0) size 93x18 [color=#FF0000]
+              RenderText {#text} at (0,0) size 93x18
                 text run at (0,0) width 93: "Italic and Red "
-            RenderText {#text} at (93,0) size 64x17
+            RenderText {#text} at (93,0) size 64x18
               text run at (93,0) width 64: "Just italic."
-          RenderText {#text} at (0,68) size 67x17
+          RenderText {#text} at (0,68) size 67x18
             text run at (0,68) width 67: "Italic only."
-        RenderText {#text} at (66,68) size 37x17
+        RenderText {#text} at (66,68) size 37x18
           text run at (66,68) width 37: " Plain"
       RenderBlock {P} at (0,102) size 784x18
-        RenderText {#text} at (0,0) size 126x17
+        RenderText {#text} at (0,0) size 126x18
           text run at (0,0) width 126: "I should not be red. "
-        RenderInline {FONT} at (126,0) size 123x17 [color=#FF0000]
-          RenderText {#text} at (126,0) size 34x17
+        RenderInline {FONT} at (126,0) size 123x18 [color=#FF0000]
+          RenderText {#text} at (126,0) size 34x18
             text run at (126,0) width 34: "Red. "
-          RenderInline {I} at (160,0) size 89x17
-            RenderText {#text} at (160,0) size 89x17
+          RenderInline {I} at (160,0) size 89x18
+            RenderText {#text} at (160,0) size 89x18
               text run at (160,0) width 89: "Italic and red."
       RenderBlock (anonymous) at (0,136) size 784x0
         RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
           RenderInline {I} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,136) size 784x18
-        RenderInline {FONT} at (0,0) size 123x17 [color=#FF0000]
-          RenderInline {I} at (0,0) size 93x17
-            RenderText {#text} at (0,0) size 93x17
+        RenderInline {FONT} at (0,0) size 123x18 [color=#FF0000]
+          RenderInline {I} at (0,0) size 93x18
+            RenderText {#text} at (0,0) size 93x18
               text run at (0,0) width 93: "Italic and red. "
-          RenderText {#text} at (92,0) size 31x17
+          RenderText {#text} at (92,0) size 31x18
             text run at (92,0) width 31: "Red."
-        RenderText {#text} at (122,0) size 127x17
+        RenderText {#text} at (122,0) size 127x18
           text run at (122,0) width 127: " I should not be red."
       RenderBlock (anonymous) at (0,170) size 784x18
-        RenderInline {B} at (0,0) size 131x17
-          RenderText {#text} at (0,0) size 36x17
+        RenderInline {B} at (0,0) size 131x18
+          RenderText {#text} at (0,0) size 36x18
             text run at (0,0) width 36: "Bold "
-          RenderInline {I} at (36,0) size 95x17
-            RenderText {#text} at (36,0) size 95x17
+          RenderInline {I} at (36,0) size 95x18
+            RenderText {#text} at (36,0) size 95x18
               text run at (36,0) width 95: "Bold and italic"
-        RenderInline {I} at (131,0) size 75x17
-          RenderText {#text} at (131,0) size 75x17
+        RenderInline {I} at (131,0) size 75x18
+          RenderText {#text} at (131,0) size 75x18
             text run at (131,0) width 75: " Only Italic "
-        RenderText {#text} at (206,0) size 32x17
+        RenderText {#text} at (206,0) size 32x18
           text run at (206,0) width 32: "Plain"

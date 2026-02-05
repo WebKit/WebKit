@@ -25,13 +25,13 @@
 
 typedef double DOMHighResTimeStamp;
 
+// https://w3c.github.io/webtransport/#dictdef-webtransportsendstreamstats
 [
     EnabledBySetting=WebTransportEnabled,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary WebTransportSendStreamStats {
-    unsigned long long bytesWritten;
-    unsigned long long bytesSent;
-    unsigned long long bytesAcknowledged;
+    [ImplementationDefaultValue=0] unsigned long long bytesWritten;
+    [ImplementationDefaultValue=0] unsigned long long bytesSent;
+    [ImplementationDefaultValue=0] unsigned long long bytesAcknowledged;
 };

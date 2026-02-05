@@ -555,7 +555,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'clean-derived-sources',
             'compile-webkit'
         ],
-        'WPE-Cairo-LibWebRTC-Build-EWS': [
+        'WPE-LibWebRTC-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -811,6 +811,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'buildbot-check-config-for-build-webkit',
             'ews-unit-tests',
             'buildbot-check-config-for-ews',
+            'shared-unit-tests',
             'resultsdbpy-unit-tests'
         ],
         'Commit-Queue': [

@@ -51,7 +51,7 @@ public:
     void hidePopupMenu() override;
     void cancelTracking() override;
 
-    RetainPtr<NSPopUpButtonCell> protectedPopup() const;
+    NSPopUpButtonCell *popup() const;
     bool isVisible() const { return m_isVisible; }
 
 private:
@@ -59,7 +59,7 @@ private:
 
     void populate(const Vector<WebPopupItem>&, NSFont *, WebCore::TextDirection);
     bool isWebPopupMenuProxyMac() const final { return true; }
-    RetainPtr<NSMenu> protectedMenu() const;
+    NSMenu *menu() const;
 
     RetainPtr<NSPopUpButtonCell> m_popup;
     WeakObjCPtr<NSView> m_webView;

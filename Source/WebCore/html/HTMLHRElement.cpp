@@ -62,7 +62,7 @@ auto HTMLHRElement::insertedIntoAncestor(InsertionType insertionType, ContainerN
     if (!document().settings().htmlEnhancedSelectParsingEnabled() || m_ownerSelect)
         return result;
 
-    if (RefPtr select = HTMLSelectElement::findOwnerSelect(protectedParentNode().get(), HTMLSelectElement::ExcludeOptGroup::Yes)) {
+    if (RefPtr select = HTMLSelectElement::findOwnerSelect(protect(parentNode()).get(), HTMLSelectElement::ExcludeOptGroup::Yes)) {
         m_ownerSelect = select.get();
         select->setRecalcListItems();
     }
@@ -77,7 +77,7 @@ void HTMLHRElement::removedFromAncestor(RemovalType removalType, ContainerNode& 
     if (!document().settings().htmlEnhancedSelectParsingEnabled() || !m_ownerSelect)
         return;
 
-    if (RefPtr select = HTMLSelectElement::findOwnerSelect(protectedParentNode().get(), HTMLSelectElement::ExcludeOptGroup::Yes)) {
+    if (RefPtr select = HTMLSelectElement::findOwnerSelect(protect(parentNode()).get(), HTMLSelectElement::ExcludeOptGroup::Yes)) {
         ASSERT_UNUSED(select, select == m_ownerSelect.get());
         return;
     }

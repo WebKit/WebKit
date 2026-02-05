@@ -51,7 +51,7 @@ int FrameView::headerHeight() const
     Ref frame = this->frame();
     if (!frame->isMainFrame())
         return 0;
-    Page* page = frame->page();
+    RefPtr page = frame->page();
     return page ? page->headerHeight() : 0;
 }
 
@@ -60,7 +60,7 @@ int FrameView::footerHeight() const
     Ref frame = this->frame();
     if (!frame->isMainFrame())
         return 0;
-    Page* page = frame->page();
+    RefPtr page = frame->page();
     return page ? page->footerHeight() : 0;
 }
 
@@ -79,13 +79,25 @@ FloatBoxExtent FrameView::obscuredContentInsets(InsetType type) const
     return { };
 }
 
+CornerRadii FrameView::scrollbarAvoidanceCornerRadii() const
+{
+    Ref frame = this->frame();
+    if (!frame->isMainFrame())
+        return { };
+
+    if (RefPtr page = frame->page())
+        return page->chrome().client().scrollbarAvoidanceCornerRadii();
+
+    return { };
+}
+
 float FrameView::visibleContentScaleFactor() const
 {
     Ref frame = this->frame();
     if (!frame->isMainFrame())
         return 1;
 
-    Page* page = frame->page();
+    RefPtr page = frame->page();
     // FIXME: This !delegatesScaling() is confusing, and the opposite behavior to Frame::frameScaleFactor().
     // This function should probably be renamed to delegatedPageScaleFactor().
     if (!page || !page->delegatesScaling())
@@ -96,7 +108,7 @@ float FrameView::visibleContentScaleFactor() const
 
 bool FrameView::isActive() const
 {
-    Page* page = frame().page();
+    RefPtr page = frame().page();
     return page && page->focusController().isActive();
 }
 
@@ -106,7 +118,7 @@ ScrollableArea* FrameView::enclosingScrollableArea() const
     if (frame->isMainFrame())
         return nullptr;
 
-    auto* ownerElement = frame->ownerElement();
+    RefPtr ownerElement = frame->ownerElement();
     if (!ownerElement)
         return nullptr;
 
@@ -114,11 +126,11 @@ ScrollableArea* FrameView::enclosingScrollableArea() const
     if (!ownerRenderer)
         return nullptr;
 
-    auto* layer = ownerRenderer->enclosingLayer();
+    CheckedPtr layer = ownerRenderer->enclosingLayer();
     if (!layer)
         return nullptr;
 
-    auto* enclosingScrollableLayer = layer->enclosingScrollableLayer(IncludeSelfOrNot::IncludeSelf, CrossFrameBoundaries::No);
+    CheckedPtr enclosingScrollableLayer = layer->enclosingScrollableLayer(IncludeSelfOrNot::IncludeSelf, CrossFrameBoundaries::No);
     if (!enclosingScrollableLayer)
         return nullptr;
 
@@ -129,7 +141,7 @@ void FrameView::invalidateRect(const IntRect& rect)
 {
     Ref frame = this->frame();
     if (!parent()) {
-        if (auto* page = frame->page())
+        if (RefPtr page = frame->page())
             page->chrome().invalidateContentsAndRootView(rect);
         return;
     }
@@ -145,7 +157,7 @@ void FrameView::invalidateRect(const IntRect& rect)
 
 bool FrameView::forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const
 {
-    Page* page = frame().page();
+    RefPtr page = frame().page();
     return page && page->settings().scrollingPerformanceTestingEnabled();
 }
 
@@ -160,7 +172,7 @@ IntRect FrameView::scrollableAreaBoundingBox(bool*) const
 
 HostWindow* FrameView::hostWindow() const
 {
-    auto* page = frame().page();
+    RefPtr page = frame().page();
     return page ? &page->chrome() : nullptr;
 }
 
@@ -170,7 +182,7 @@ void FrameView::scrollbarStyleChanged(ScrollbarStyle newStyle, bool forceUpdate)
     if (!frame->isMainFrame())
         return;
 
-    if (Page* page = frame->page())
+    if (RefPtr page = frame->page())
         page->chrome().client().recommendedScrollbarStyleDidChange(newStyle);
 
     ScrollView::scrollbarStyleChanged(newStyle, forceUpdate);
@@ -315,10 +327,10 @@ FloatRect FrameView::absoluteToLayoutViewportRect(FloatRect rect) const
 
 IntPoint FrameView::convertToContainingView(IntPoint localPoint) const
 {
-    if (auto* parentScrollView = parent()) {
-        if (auto* parentView = dynamicDowncast<FrameView>(*parentScrollView)) {
+    if (RefPtr parentScrollView = parent()) {
+        if (RefPtr parentView = dynamicDowncast<FrameView>(*parentScrollView)) {
             // Get our renderer in the parent view
-            RenderWidget* renderer = protectedFrame()->ownerRenderer();
+            RefPtr renderer = protectedFrame()->ownerRenderer();
             if (!renderer)
                 return localPoint;
 
@@ -333,10 +345,10 @@ IntPoint FrameView::convertToContainingView(IntPoint localPoint) const
 
 FloatPoint FrameView::convertToContainingView(FloatPoint localPoint) const
 {
-    if (auto* parentScrollView = parent()) {
-        if (auto* parentView = dynamicDowncast<FrameView>(*parentScrollView)) {
+    if (RefPtr parentScrollView = parent()) {
+        if (RefPtr parentView = dynamicDowncast<FrameView>(*parentScrollView)) {
             // Get our renderer in the parent view
-            RenderWidget* renderer = protectedFrame()->ownerRenderer();
+            RefPtr renderer = protectedFrame()->ownerRenderer();
             if (!renderer)
                 return localPoint;
 
@@ -356,10 +368,10 @@ Ref<Frame> FrameView::protectedFrame() const
 
 IntRect FrameView::convertToContainingView(const IntRect& localRect) const
 {
-    if (auto* parentScrollView = parent()) {
-        if (auto* parentView = dynamicDowncast<FrameView>(*parentScrollView)) {
+    if (RefPtr parentScrollView = parent()) {
+        if (RefPtr parentView = dynamicDowncast<FrameView>(*parentScrollView)) {
             // Get our renderer in the parent view
-            RenderWidget* renderer = protectedFrame()->ownerRenderer();
+            RefPtr renderer = protectedFrame()->ownerRenderer();
             if (!renderer)
                 return localRect;
 
@@ -374,10 +386,10 @@ IntRect FrameView::convertToContainingView(const IntRect& localRect) const
 
 FloatRect FrameView::convertToContainingView(const FloatRect& localRect) const
 {
-    if (auto* parentScrollView = parent()) {
-        if (auto* parentView = dynamicDowncast<FrameView>(*parentScrollView)) {
+    if (RefPtr parentScrollView = parent()) {
+        if (RefPtr parentView = dynamicDowncast<FrameView>(*parentScrollView)) {
             // Get our renderer in the parent view
-            RenderWidget* renderer = protectedFrame()->ownerRenderer();
+            RefPtr renderer = protectedFrame()->ownerRenderer();
             if (!renderer)
                 return localRect;
 
@@ -394,10 +406,10 @@ FloatRect FrameView::convertToContainingView(const FloatRect& localRect) const
 
 IntPoint FrameView::convertFromContainingView(IntPoint parentPoint) const
 {
-    if (auto* parentScrollView = parent()) {
-        if (auto* parentView = dynamicDowncast<FrameView>(*parentScrollView)) {
+    if (RefPtr parentScrollView = parent()) {
+        if (RefPtr parentView = dynamicDowncast<FrameView>(*parentScrollView)) {
             // Get our renderer in the parent view
-            RenderWidget* renderer = protectedFrame()->ownerRenderer();
+            RefPtr renderer = protectedFrame()->ownerRenderer();
             if (!renderer)
                 return parentPoint;
 
@@ -412,10 +424,10 @@ IntPoint FrameView::convertFromContainingView(IntPoint parentPoint) const
 
 FloatPoint FrameView::convertFromContainingView(FloatPoint parentPoint) const
 {
-    if (auto* parentScrollView = parent()) {
-        if (auto* parentView = dynamicDowncast<FrameView>(*parentScrollView)) {
+    if (RefPtr parentScrollView = parent()) {
+        if (RefPtr parentView = dynamicDowncast<FrameView>(*parentScrollView)) {
             // Get our renderer in the parent view
-            RenderWidget* renderer = protectedFrame()->ownerRenderer();
+            RefPtr renderer = protectedFrame()->ownerRenderer();
             if (!renderer)
                 return parentPoint;
 
@@ -449,10 +461,10 @@ DoublePoint FrameView::convertFromContainingView(DoublePoint parentPoint) const
 
 IntRect FrameView::convertFromContainingView(const IntRect& parentRect) const
 {
-    if (auto* parentScrollView = parent()) {
-        if (auto* parentView = dynamicDowncast<FrameView>(*parentScrollView)) {
+    if (RefPtr parentScrollView = parent()) {
+        if (RefPtr parentView = dynamicDowncast<FrameView>(*parentScrollView)) {
             // Get our renderer in the parent view
-            RenderWidget* renderer = protectedFrame()->ownerRenderer();
+            RefPtr renderer = protectedFrame()->ownerRenderer();
             if (!renderer)
                 return parentRect;
 
@@ -467,10 +479,10 @@ IntRect FrameView::convertFromContainingView(const IntRect& parentRect) const
 
 FloatRect FrameView::convertFromContainingView(const FloatRect& parentRect) const
 {
-    if (auto* parentScrollView = parent()) {
-        if (auto* parentView = dynamicDowncast<FrameView>(*parentScrollView)) {
+    if (RefPtr parentScrollView = parent()) {
+        if (RefPtr parentView = dynamicDowncast<FrameView>(*parentScrollView)) {
             // Get our renderer in the parent view
-            RenderWidget* renderer = protectedFrame()->ownerRenderer();
+            RefPtr renderer = protectedFrame()->ownerRenderer();
             if (!renderer)
                 return parentRect;
 

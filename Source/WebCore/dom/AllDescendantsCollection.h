@@ -25,11 +25,24 @@
 
 #pragma once
 
-#include "CachedHTMLCollection.h"
+#include <WebCore/CollectionType.h>
 
 namespace WebCore {
 
-class AllDescendantsCollection : public CachedHTMLCollection<AllDescendantsCollection, CollectionTypeTraits<CollectionType::AllDescendants>::traversalType> {
+class AllDescendantsCollection;
+
+template<>
+struct CollectionClassTraits<AllDescendantsCollection> {
+    static constexpr CollectionType collectionType = CollectionType::AllDescendants;
+};
+
+} // namespace WebCore
+
+#include <WebCore/CachedHTMLCollection.h>
+
+namespace WebCore {
+
+class AllDescendantsCollection : public CachedHTMLCollection<AllDescendantsCollection> {
     WTF_MAKE_TZONE_ALLOCATED(AllDescendantsCollection);
 public:
     static Ref<AllDescendantsCollection> create(ContainerNode& rootNode, CollectionType type)
@@ -44,4 +57,6 @@ protected:
     AllDescendantsCollection(ContainerNode&, CollectionType);
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(AllDescendantsCollection)

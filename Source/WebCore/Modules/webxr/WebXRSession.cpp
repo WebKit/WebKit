@@ -444,7 +444,7 @@ void WebXRSession::didCompleteShutdown()
 
     // From https://immersive-web.github.io/webxr/#shut-down-the-session
     // 7. Queue a task that fires an XRSessionEvent named end on session.
-    auto event = XRSessionEvent::create(eventNames().endEvent, { RefPtr { this } });
+    auto event = XRSessionEvent::create(eventNames().endEvent, { { false, false, false }, Ref { *this } });
     queueTaskToDispatchEvent(*this, TaskSource::WebXR, WTF::move(event));
 }
 
@@ -520,7 +520,7 @@ void WebXRSession::updateSessionVisibilityState(PlatformXR::VisibilityState visi
     // From https://immersive-web.github.io/webxr/#event-types
     // A user agent MUST dispatch a visibilitychange event on an XRSession each time the
     // visibility state of the XRSession has changed. The event MUST be of type XRSessionEvent.
-    auto event = XRSessionEvent::create(eventNames().visibilitychangeEvent, { RefPtr { this } });
+    auto event = XRSessionEvent::create(eventNames().visibilitychangeEvent, { { false, false, false }, Ref { *this } });
     queueTaskToDispatchEvent(*this, TaskSource::WebXR, WTF::move(event));
 }
 

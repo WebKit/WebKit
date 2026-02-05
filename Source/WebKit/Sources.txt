@@ -45,7 +45,7 @@ GPUProcess/graphics/ScopedRenderingResourcesRequest.cpp
 GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp
 GPUProcess/graphics/ShareablePixelBuffer.cpp
 GPUProcess/graphics/Model/ModelObjectHeap.cpp
-GPUProcess/graphics/Model/RemoteDDMesh.cpp
+GPUProcess/graphics/Model/RemoteMesh.cpp
 GPUProcess/graphics/WebGPU/RemoteAdapter.cpp
 GPUProcess/graphics/WebGPU/RemoteBindGroup.cpp
 GPUProcess/graphics/WebGPU/RemoteBindGroupLayout.cpp
@@ -92,7 +92,6 @@ GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp
 GPUProcess/media/RemoteMediaPlayerProxy.cpp
 GPUProcess/media/RemoteMediaResource.cpp
 GPUProcess/media/RemoteMediaResourceLoader.cpp
-GPUProcess/media/RemoteMediaResourceManager.cpp
 GPUProcess/media/RemoteVideoFrameObjectHeap.cpp
 GPUProcess/media/RemoteMediaSourceProxy.cpp
 GPUProcess/media/RemoteRemoteCommandListenerProxy.cpp
@@ -328,8 +327,6 @@ Shared/Extensions/WebExtensionRegisteredScriptsSQLiteStore.cpp
 Shared/Gamepad/GamepadData.cpp
 
 Shared/graphics/ImageBufferSet.cpp
-
-Shared/Model/ModelObjectDescriptorBase.cpp
 
 Shared/WebGPU/WebGPUBindGroupDescriptor.cpp
 Shared/WebGPU/WebGPUBindGroupEntry.cpp
@@ -774,7 +771,7 @@ WebProcess/GPU/RemoteSharedResourceCacheProxy.cpp
 WebProcess/GPU/ShapeDetection/RemoteBarcodeDetectorProxy.cpp
 WebProcess/GPU/ShapeDetection/RemoteFaceDetectorProxy.cpp
 WebProcess/GPU/ShapeDetection/RemoteTextDetectorProxy.cpp
-WebProcess/GPU/graphics/Model/RemoteDDMeshProxy.cpp
+WebProcess/GPU/graphics/Model/RemoteMeshProxy.cpp
 WebProcess/GPU/graphics/Model/ModelDowncastConvertToBackingContext.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteAdapterProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteBindGroupLayoutProxy.cpp
@@ -836,6 +833,7 @@ WebProcess/GPU/media/RemoteLegacyCDMSession.cpp
 WebProcess/GPU/media/RemoteMediaEngineConfigurationFactory.cpp
 WebProcess/GPU/media/RemoteMediaPlayerManager.cpp
 WebProcess/GPU/media/RemoteMediaPlayerMIMETypeCache.cpp @no-unify
+WebProcess/GPU/media/RemoteMediaResourceLoaderProxy.cpp
 WebProcess/GPU/media/RemoteMediaResourceProxy.cpp
 WebProcess/GPU/media/RemoteVideoFrameProxy.cpp
 WebProcess/GPU/media/RemoteRemoteCommandListener.cpp
@@ -995,7 +993,7 @@ RemoteCommandEncoderMessageReceiver.cpp
 RemoteCompositorIntegrationMessageReceiver.cpp
 RemoteComputePassEncoderMessageReceiver.cpp
 RemoteComputePipelineMessageReceiver.cpp
-RemoteDDMeshMessageReceiver.cpp
+RemoteMeshMessageReceiver.cpp
 RemoteDeviceMessageReceiver.cpp
 RemoteExternalTextureMessageReceiver.cpp
 RemoteFaceDetectorMessageReceiver.cpp

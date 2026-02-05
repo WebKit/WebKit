@@ -71,7 +71,7 @@ auto MessageEvent::create(JSC::JSGlobalObject& globalObject, Ref<SerializedScrip
 {
     auto& vm = globalObject.vm();
     Locker<JSC::JSLock> locker(vm.apiLock());
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     bool didFail = false;
 
@@ -153,8 +153,6 @@ size_t MessageEvent::memoryCost() const
     Locker locker { m_concurrentDataAccessLock };
     return WTF::switchOn(m_data, [](JSValueTag) -> size_t {
         return 0;
-    }, [](const Ref<SerializedScriptValue>& data) -> size_t {
-        return data->memoryCost();
     }, [](const String& string) -> size_t {
         return string.sizeInBytes();
     }, [](const Ref<Blob>& blob) -> size_t {

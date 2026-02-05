@@ -205,7 +205,7 @@ static void writeSVGStrokePaintingResource(TextStream& ts, const RenderElement& 
 
     SVGLengthContext lengthContext(&shape);
     double dashOffset = lengthContext.valueForLength(style.strokeDashOffset(), Style::ZoomNeeded { });
-    double strokeWidth = lengthContext.valueForLength(style.strokeWidth(), Style::ZoomNeeded { });
+    double strokeWidth = lengthContext.valueForLength(style.strokeWidth(), style.usedZoomForLength());
     auto dashArray = DashArray::map(style.strokeDashArray(), [&](auto& length) -> DashArrayElement {
         return lengthContext.valueForLength(length, Style::ZoomNeeded { });
     });
@@ -261,7 +261,7 @@ void writeSVGPaintingFeatures(TextStream& ts, const RenderElement& renderer, Opt
         if (!element)
             return;
 
-        auto fragment = SVGURIReference::fragmentIdentifierFromIRIString(value, element->protectedDocument());
+        auto fragment = SVGURIReference::fragmentIdentifierFromIRIString(value, protect(element->document()));
         writeIfNotEmpty(ts, name, fragment);
     };
 
@@ -446,7 +446,7 @@ void writeSVGResourceContainer(TextStream& ts, const LegacyRenderSVGResourceCont
     const AtomString& id = resource.element().getIdAttribute();
     writeNameAndQuotedValue(ts, "id"_s, id);
 
-    if (auto* masker = dynamicDowncast<const LegacyRenderSVGResourceMasker>(resource)) {
+    if (auto* masker = dynamicDowncast<LegacyRenderSVGResourceMasker>(resource)) {
         writeNameValuePair(ts, "maskUnits"_s, masker->maskUnits());
         writeNameValuePair(ts, "maskContentUnits"_s, masker->maskContentUnits());
         ts << '\n';
@@ -465,20 +465,18 @@ void writeSVGResourceContainer(TextStream& ts, const LegacyRenderSVGResourceCont
             TextStream::IndentScope indentScope(ts);
             placeholderFilter->externalRepresentation(ts, FilterRepresentation::TestOutput);
         }
-    } else if (resource.resourceType() == ClipperResourceType) {
-        auto& clipper = static_cast<const LegacyRenderSVGResourceClipper&>(resource);
-        writeNameValuePair(ts, "clipPathUnits"_s, clipper.clipPathUnits());
+    } else if (auto* clipper = dynamicDowncast<LegacyRenderSVGResourceClipper>(resource)) {
+        writeNameValuePair(ts, "clipPathUnits"_s, clipper->clipPathUnits());
         ts << '\n';
-    } else if (resource.resourceType() == MarkerResourceType) {
-        auto& marker = static_cast<const LegacyRenderSVGResourceMarker&>(resource);
-        writeNameValuePair(ts, "markerUnits"_s, marker.markerUnits());
-        ts << " [ref at "_s << marker.referencePoint() << ']';
+    } else if (auto* marker = dynamicDowncast<LegacyRenderSVGResourceMarker>(resource)) {
+        writeNameValuePair(ts, "markerUnits"_s, marker->markerUnits());
+        ts << " [ref at "_s << marker->referencePoint() << ']';
         ts << " [angle="_s;
-        if (auto angle = marker.angle())
+        if (auto angle = marker->angle())
             ts << *angle << "]\n"_s;
         else
             ts << "auto"_s << "]\n"_s;
-    } else if (auto* pattern = dynamicDowncast<const LegacyRenderSVGResourcePattern>(resource)) {
+    } else if (auto* pattern = dynamicDowncast<LegacyRenderSVGResourcePattern>(resource)) {
         // Dump final results that are used for rendering. No use in asking SVGPatternElement for its patternUnits(), as it may
         // link to other patterns using xlink:href, we need to build the full inheritance chain, aka. collectPatternProperties()
         PatternAttributes attributes;
@@ -491,7 +489,7 @@ void writeSVGResourceContainer(TextStream& ts, const LegacyRenderSVGResourceCont
         if (!transform.isIdentity())
             ts << " [patternTransform="_s << transform << ']';
         ts << '\n';
-    } else if (auto* gradient = dynamicDowncast<const LegacyRenderSVGResourceLinearGradient>(resource)) {
+    } else if (auto* gradient = dynamicDowncast<LegacyRenderSVGResourceLinearGradient>(resource)) {
         // Dump final results that are used for rendering. No use in asking SVGGradientElement for its gradientUnits(), as it may
         // link to other gradients using xlink:href, we need to build the full inheritance chain, aka. collectGradientProperties()
         LinearGradientAttributes attributes;
@@ -499,7 +497,7 @@ void writeSVGResourceContainer(TextStream& ts, const LegacyRenderSVGResourceCont
         writeCommonGradientProperties(ts, attributes.spreadMethod(), attributes.gradientTransform(), attributes.gradientUnits());
 
         ts << " [start="_s << gradient->startPoint(attributes) << "] [end="_s << gradient->endPoint(attributes) << "]\n"_s;
-    }  else if (auto* gradient = dynamicDowncast<const LegacyRenderSVGResourceRadialGradient>(resource)) {
+    }  else if (auto* gradient = dynamicDowncast<LegacyRenderSVGResourceRadialGradient>(resource)) {
         // Dump final results that are used for rendering. No use in asking SVGGradientElement for its gradientUnits(), as it may
         // link to other gradients using xlink:href, we need to build the full inheritance chain, aka. collectGradientProperties()
         RadialGradientAttributes attributes;

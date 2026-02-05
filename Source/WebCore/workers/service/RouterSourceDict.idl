@@ -23,8 +23,6 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary RouterSourceDict {
+dictionary RouterSourceDict {
     DOMString cacheName;
 };

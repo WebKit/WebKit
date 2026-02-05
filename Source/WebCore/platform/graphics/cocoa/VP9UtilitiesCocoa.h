@@ -32,8 +32,8 @@
 
 namespace WebCore {
 
-struct MediaCapabilitiesInfo;
-struct VideoConfiguration;
+struct PlatformMediaCapabilitiesInfo;
+struct PlatformMediaCapabilitiesVideoConfiguration;
 class VideoInfo;
 
 WEBCORE_EXPORT bool shouldEnableVP9Decoder();
@@ -46,9 +46,9 @@ WEBCORE_EXPORT bool vp9HardwareDecoderAvailableInProcess();
 WEBCORE_EXPORT void setVP9HardwareDecoderAvailableInProcess(bool);
 bool isVP8DecoderAvailable();
 bool isVPCodecConfigurationRecordSupported(const VPCodecConfigurationRecord&);
-std::optional<MediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigurationRecord&, const VideoConfiguration&);
-std::optional<MediaCapabilitiesInfo> computeVPParameters(const VideoConfiguration&, bool vp9HardwareDecoderAvailable);
-bool isVPSoftwareDecoderSmooth(const VideoConfiguration&);
+std::optional<PlatformMediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigurationRecord&, const PlatformMediaCapabilitiesVideoConfiguration&);
+std::optional<PlatformMediaCapabilitiesInfo> computeVPParameters(const PlatformMediaCapabilitiesVideoConfiguration&, bool vp9HardwareDecoderAvailable);
+bool isVPSoftwareDecoderSmooth(const PlatformMediaCapabilitiesVideoConfiguration&);
 
 struct VP8FrameHeader {
     bool keyframe { false };

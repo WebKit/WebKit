@@ -122,9 +122,11 @@ void AdvancedBlendTest::testAdvancedBlendNotAppliedWhenBlendIsDisabled(
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     // Disable the blend. The next glDrawElements() should not blend the a_color with clear color
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
     glDisable(GL_BLEND);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, &indices[0]);
-    EXPECT_PIXEL_COLOR_NEAR(64, 64, GLColor(255, 51, 128, 255), kPixelColorThreshhold);
+    EXPECT_PIXEL_COLOR_NEAR(w / 2, h / 2, GLColor(255, 51, 128, 255), kPixelColorThreshhold);
 }
 
 // Test that when blending is disabled, advanced blend is not applied.
@@ -181,7 +183,7 @@ void AdvancedBlendTest::testAdvancedBlendDisabledAndThenEnabled(APIExtensionVers
 
     constexpr char kFragSrcBody[] = R"(
         in mediump vec4 v_color;
-        layout(blend_support_colorburn) out;
+        layout(blend_support_colorburn, blend_support_multiply) out;
         layout(location = 0) out mediump vec4 o_color;
         void main()
         {
@@ -218,6 +220,10 @@ void AdvancedBlendTest::testAdvancedBlendDisabledAndThenEnabled(APIExtensionVers
     glDisable(GL_BLEND);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, &indices[0]);
 
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, w / 2, h);
     // Enable the blend. The next glDrawElements() should blend a_color
     // with the the existing framebuffer output with GL_COLORBURN blend mode
     glEnable(GL_BLEND);
@@ -234,7 +240,8 @@ void AdvancedBlendTest::testAdvancedBlendDisabledAndThenEnabled(APIExtensionVers
     glVertexAttribPointer(attribColorLoc, 4, GL_FLOAT, GL_FALSE, 0, attribColorData2.data());
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, &indices[0]);
 
-    EXPECT_PIXEL_COLOR_NEAR(64, 64, GLColor(255, 0, 0, 255), kPixelColorThreshhold);
+    EXPECT_PIXEL_COLOR_NEAR(w / 4, h / 2, GLColor(255, 0, 0, 255), kPixelColorThreshhold);
+    EXPECT_PIXEL_COLOR_NEAR(3 * w / 4, h / 2, GLColor(255, 51, 128, 255), kPixelColorThreshhold);
 }
 
 // Test that when blending is disabled, advanced blend is not applied, but is applied after
@@ -293,7 +300,7 @@ void AdvancedBlendTest::testAdvancedBlendEnabledAndThenDisabled(APIExtensionVers
 
     constexpr char kFragSrcBody[] = R"(
         in mediump vec4 v_color;
-        layout(blend_support_colorburn) out;
+        layout(blend_support_colorburn, blend_support_darken) out;
         layout(location = 0) out mediump vec4 o_color;
         void main()
         {
@@ -320,14 +327,14 @@ void AdvancedBlendTest::testAdvancedBlendEnabledAndThenDisabled(APIExtensionVers
     glEnableVertexAttribArray(attribColorLoc);
     glVertexAttribPointer(attribColorLoc, 4, GL_FLOAT, GL_FALSE, 0, attribColorData1.data());
 
-    glBlendEquation(GL_COLORBURN);
+    glBlendEquation(GL_DARKEN);
 
     const uint16_t indices[] = {0, 1, 2, 2, 1, 3};
     glClearColor(0.5, 0.5, 0.5, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     // Enable the blend. The next glDrawElements() should blend the a_color with clear color
-    // using the GL_COLORBURN blend mode
+    // using the GL_DARKEN blend mode
     glEnable(GL_BLEND);
     // Test the blend with coherent blend disabled. This make the test cover both devices that
     // support / do not support GL_KHR_blend_equation_advanced_coherent
@@ -339,7 +346,11 @@ void AdvancedBlendTest::testAdvancedBlendEnabledAndThenDisabled(APIExtensionVers
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, &indices[0]);
 
     // Disable the blend. The next glDrawElements() should not blend the a_color with
-    // the existing framebuffer output with GL_COLORBURN blend mode
+    // the existing framebuffer output with GL_DARKEN blend mode
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, w / 2, h);
     glDisable(GL_BLEND);
     std::array<GLfloat, 16> attribColorData2 = {0.5, 0.5, 0, 1, 0.5, 0.5, 0, 1,
                                                 0.5, 0.5, 0, 1, 0.5, 0.5, 0, 1};
@@ -347,7 +358,8 @@ void AdvancedBlendTest::testAdvancedBlendEnabledAndThenDisabled(APIExtensionVers
     glVertexAttribPointer(attribColorLoc, 4, GL_FLOAT, GL_FALSE, 0, attribColorData2.data());
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, &indices[0]);
 
-    EXPECT_PIXEL_COLOR_NEAR(64, 64, GLColor(128, 128, 0, 255), kPixelColorThreshhold);
+    EXPECT_PIXEL_COLOR_NEAR(w / 4, h / 2, GLColor(128, 128, 0, 255), kPixelColorThreshhold);
+    EXPECT_PIXEL_COLOR_NEAR(3 * w / 4, h / 2, GLColor(128, 51, 128, 255), kPixelColorThreshhold);
 }
 
 // Test that when blending is enabled, advanced blend is applied, but is not applied after

@@ -45,7 +45,7 @@ class GridLayout;
 }
 
 class GridArea;
-class GridLayoutState;
+class RenderGridLayoutState;
 class GridSpan;
 class LayoutRange;
 
@@ -170,7 +170,7 @@ private:
     inline void updateGridAreaWithEstimate(RenderBox& gridItem, const GridTrackSizingAlgorithm&) const;
     inline void updateGridAreaIncludingAlignment(RenderBox& gridItem) const;
 
-    void computeLayoutRequirementsForItemsBeforeLayout(GridLayoutState&) const;
+    void computeLayoutRequirementsForItemsBeforeLayout(RenderGridLayoutState&) const;
     bool canSetColumnAxisStretchRequirementForItem(const RenderBox&) const;
 
     ASCIILiteral renderName() const override;
@@ -216,16 +216,16 @@ private:
     bool hasStaticPositionForGridItem(const RenderBox&, Style::GridTrackSizingDirection) const;
     void layoutOutOfFlowBox(RenderBox&, RelayoutChildren, bool fixedPositionObjectsOnly) override;
 
-    void computeTrackSizesForDefiniteSize(Style::GridTrackSizingDirection, LayoutUnit availableSpace, GridLayoutState&);
-    void computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm&, Style::GridTrackSizingDirection, GridLayoutState&, LayoutUnit* minIntrinsicSize = nullptr, LayoutUnit* maxIntrinsicSize = nullptr) const;
+    void computeTrackSizesForDefiniteSize(Style::GridTrackSizingDirection, LayoutUnit availableSpace, RenderGridLayoutState&);
+    void computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm&, Style::GridTrackSizingDirection, RenderGridLayoutState&, LayoutUnit* minIntrinsicSize = nullptr, LayoutUnit* maxIntrinsicSize = nullptr) const;
     LayoutUnit computeTrackBasedLogicalHeight() const;
 
-    void repeatTracksSizingIfNeeded(LayoutUnit availableSpaceForColumns, LayoutUnit availableSpaceForRows, GridLayoutState&);
+    void repeatTracksSizingIfNeeded(LayoutUnit availableSpaceForColumns, LayoutUnit availableSpaceForRows, RenderGridLayoutState&);
 
-    void updateGridAreaForAspectRatioItems(const Vector<RenderBox*>&, GridLayoutState&);
+    void updateGridAreaForAspectRatioItems(const Vector<RenderBox*>&, RenderGridLayoutState&);
 
-    void layoutGridItems(GridLayoutState&);
-    void layoutMasonryItems(GridLayoutState&);
+    void layoutGridItems(RenderGridLayoutState&);
+    void layoutMasonryItems(RenderGridLayoutState&);
 
     void populateGridPositionsForDirection(const GridTrackSizingAlgorithm&, Style::GridTrackSizingDirection);
 
@@ -247,7 +247,7 @@ private:
     LayoutOptionalOutsets allowedLayoutOverflow() const override;
     LayoutRect contentOverflowRect() const;
 
-    void applyStretchAlignmentToGridItemIfNeeded(RenderBox&, GridLayoutState&);
+    void applyStretchAlignmentToGridItemIfNeeded(RenderBox&, RenderGridLayoutState&);
     void applySubgridStretchAlignmentToGridItemIfNeeded(RenderBox&);
     bool isChildEligibleForMarginTrim(Style::MarginTrimSide, const RenderBox&) const final;
 
@@ -266,7 +266,7 @@ private:
 
     bool aspectRatioPrefersInline(const RenderBox& gridItem, bool blockFlowIsColumnAxis);
 
-    Vector<RenderBox*> computeAspectRatioDependentAndBaselineItems(GridLayoutState&);
+    Vector<RenderBox*> computeAspectRatioDependentAndBaselineItems(RenderGridLayoutState&);
 
     GridSpan gridSpanForOutOfFlowGridItem(const RenderBox&, Style::GridTrackSizingDirection) const;
 

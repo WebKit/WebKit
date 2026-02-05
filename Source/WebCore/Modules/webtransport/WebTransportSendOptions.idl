@@ -23,9 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary WebTransportSendOptions {
+// https://w3c.github.io/webtransport/#dictdef-webtransportsendoptions
+dictionary WebTransportSendOptions {
     WebTransportSendGroup? sendGroup = null;
     long long sendOrder = 0;
 };

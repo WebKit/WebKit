@@ -23,20 +23,21 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// https://w3c.github.io/webrtc-pc/#dom-rtcrtpencodingparameters
 [
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCRtpEncodingParameters : RTCRtpCodingParameters {
-    unsigned long ssrc;
+    [ImplementationDefaultValue=0] unsigned long ssrc;
 
     boolean active = true;
     unsigned long maxBitrate;
+    // FIXME: `maxFramerate` should be of type `double`.
     unsigned long maxFramerate;
     double scaleResolutionDownBy;
 
-    RTCPriorityType priority;
+    RTCPriorityType priority = "low";
     RTCPriorityType networkPriority;
 };

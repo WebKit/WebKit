@@ -74,10 +74,6 @@ messages -> MediaPlayerPrivateRemote {
     UpdateGenericCue(WebCore::TrackID trackID, struct WebCore::GenericCueData cue)
     RemoveGenericCue(WebCore::TrackID trackID, struct WebCore::GenericCueData cue)
 
-    // FIXME: This should be an OptionSet<LoadOption>
-    RequestResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest request, unsigned options)
-    RemoveResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier)
-    SendH2Ping(URL url) -> (Expected<Seconds, WebCore::ResourceError> result)
     ResourceNotSupported()
 
     ActiveSourceBuffersChanged()
@@ -107,6 +103,9 @@ messages -> MediaPlayerPrivateRemote {
     CommitAllTransactions() -> ()
     ReportGPUMemoryFootprint(uint64_t memoryFootPrint)
     SendInternalMessage(struct WebCore::MessageForTesting message)
+
+    CreateResourceLoader(WebKit::RemoteMediaResourceLoaderIdentifier loaderIdentifier)
+    DestroyResourceLoader(WebKit::RemoteMediaResourceLoaderIdentifier loaderIdentifier)
 }
 
 #endif

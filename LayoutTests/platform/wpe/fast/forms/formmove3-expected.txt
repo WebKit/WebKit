@@ -16,10 +16,10 @@ layer at (0,0) size 800x600
                 RenderTableCell {TD} at (6,2) size 61x29 [r=0 c=1 rs=1 cs=1]
                   RenderButton {INPUT} at (1,1) size 59x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                     RenderBlock (anonymous) at (8,4) size 43x18
-                      RenderText at (0,0) size 43x17
+                      RenderText at (0,0) size 43x18
                         text run at (0,0) width 43: "Search"
         RenderInline {A} at (0,33) size 0x0 [color=#0000EE]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,33) size 784x18
-        RenderText {#text} at (0,0) size 104x17
+        RenderText {#text} at (0,0) size 104x18
           text run at (0,0) width 104: "Form did submit"

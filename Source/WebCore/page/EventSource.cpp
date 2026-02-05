@@ -62,7 +62,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(EventSource);
 
 const uint64_t EventSource::defaultReconnectDelay = 3000;
 
-inline EventSource::EventSource(ScriptExecutionContext& context, const URL& url, const Init& eventSourceInit)
+inline EventSource::EventSource(ScriptExecutionContext& context, const URL& url, Init&& eventSourceInit)
     : ActiveDOMObject(&context)
     , m_url(url)
     , m_withCredentials(eventSourceInit.withCredentials)
@@ -70,7 +70,7 @@ inline EventSource::EventSource(ScriptExecutionContext& context, const URL& url,
 {
 }
 
-ExceptionOr<Ref<EventSource>> EventSource::create(ScriptExecutionContext& context, const String& url, const Init& eventSourceInit)
+ExceptionOr<Ref<EventSource>> EventSource::create(ScriptExecutionContext& context, const String& url, Init&& eventSourceInit)
 {
     URL fullURL = context.completeURL(url);
     if (!fullURL.isValid())
@@ -82,7 +82,7 @@ ExceptionOr<Ref<EventSource>> EventSource::create(ScriptExecutionContext& contex
         return Exception { ExceptionCode::SecurityError };
     }
 
-    auto source = adoptRef(*new EventSource(context, fullURL, eventSourceInit));
+    auto source = adoptRef(*new EventSource(context, fullURL, WTF::move(eventSourceInit)));
     source->scheduleInitialConnect();
     source->suspendIfNeeded();
     return source;

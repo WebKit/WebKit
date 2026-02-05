@@ -24,7 +24,6 @@
 
 [
     Conditional=WEB_AUDIO,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary BiquadFilterOptions : AudioNodeOptions {
     BiquadFilterType type = "lowpass";
     float Q = 1;

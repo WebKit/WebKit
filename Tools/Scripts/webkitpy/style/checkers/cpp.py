@@ -2038,6 +2038,21 @@ def check_function_definition(filename, file_extension, clean_lines, line_number
                     error(line_number, 'security/missing_warn_unused_return', 5,
                           'decode() function returning a value is missing WARN_UNUSED_RETURN attribute')
 
+    # Check for new protected*() member functions that should use regular getters with protect() at call site.
+    if function_state.is_declaration:
+        # Extract the simple function name (without class qualifiers).
+        simple_function_name = function_name.split('::')[-1] if '::' in function_name else function_name
+        # Only check getter-style functions with no parameters.
+        parameter_list = function_state.parameter_list()
+        # Check if it starts with 'protected', has no parameters (getter-style).
+        if simple_function_name.startswith('protected') and len(simple_function_name) > len('protected') and not parameter_list:
+            error(line_number, 'readability/protected_getter', 4,
+                  'Do not add new protected*() getter functions. Call the regular getter and use protect() at the call site instead.')
+        # Check if it starts with 'checked', has no parameters (getter-style).
+        if simple_function_name.startswith('checked') and len(simple_function_name) > len('checked') and not parameter_list:
+            error(line_number, 'readability/checked_getter', 4,
+                  'Do not add new checked*() getter functions. Call the regular getter and use protect() at the call site instead.')
+
     attributes = function_state.attributes_after_definition(r'(\bWARN_[0-9A-Z_]+\b|__attribute__\(\(__[a-z_]+__\)\))')
     if len(attributes) > 0:
         attribute_text = ', '.join(attributes)
@@ -3038,7 +3053,7 @@ def check_wtf_os_object_ptr(clean_lines, line_number, file_state, error):
         return
 
 def check_wtf_xpc_object_ptr(clean_lines, line_number, file_state, error):
-    """Looks for usage of RetainPtr / OSObjectPtr with XPC objects, which should be replaced with XPCObjectPtr.
+    """Looks for usage of RetainPtr with XPC objects, which should be replaced with OSObjectPtr.
 
     Args:
       clean_lines: A CleansedLines instance containing the file.
@@ -3051,19 +3066,11 @@ def check_wtf_xpc_object_ptr(clean_lines, line_number, file_state, error):
     line = clean_lines.elided[line_number]  # Get rid of comments and strings.
     using_retain_ptr = search(r'RetainPtr<xpc_', line)
     if using_retain_ptr:
-        error(line_number, 'runtime/wtf_xpc_object_ptr', 4, "Use 'XPCObjectPtr' instead of 'RetainPtr' for XPC objects.")
+        error(line_number, 'runtime/wtf_xpc_object_ptr', 4, "Use 'OSObjectPtr' instead of 'RetainPtr' for XPC objects.")
         return
     using_adoptns = search(r'adoptNS\(xpc_', line)
     if using_adoptns:
-        error(line_number, 'runtime/wtf_xpc_object_ptr', 4, "Use 'adoptXPCObject()' instead of 'adoptNS()' for XPC objects.")
-        return
-    using_osobject_ptr = search(r'OSObjectPtr<xpc_', line)
-    if using_osobject_ptr:
-        error(line_number, 'runtime/wtf_xpc_object_ptr', 4, "Use 'XPCObjectPtr' instead of 'OSObjectPtr' for XPC objects.")
-        return
-    using_adoptosobject = search(r'adoptOSObject\(xpc_', line)
-    if using_adoptosobject:
-        error(line_number, 'runtime/wtf_xpc_object_ptr', 4, "Use 'adoptXPCObject()' instead of 'adoptOSObject()' for XPC objects.")
+        error(line_number, 'runtime/wtf_xpc_object_ptr', 4, "Use 'adoptOSObject()' instead of 'adoptNS()' for XPC objects.")
         return
 
 
@@ -3799,11 +3806,23 @@ def check_safer_cpp(clean_lines, line_number, error):
     if search(r'sqlite3_column_blob\(', line):
         error(line_number, 'safercpp/sqlite3_column_blob', 4, "Use sqliteColumnBlob() instead of sqlite3_column_blob().")
 
+    # FIXME: Remove protectedFoo() check once all protectedFoo() getters are removed from WebKit.
+    # See: https://github.com/WebKit/WebKit/wiki/Safer-CPP-Guidelines#do-not-call-protect-free-function-to-initialize-local-variables
     if search(r'= [a-zA-Z0-9_.(),\s\->]*protected[a-zA-Z0-9]+\(\)(;|\))(?!;)', line):
         error(line_number, 'safercpp/protected_getter_for_init', 4, "Use m_foo or foo() instead of protectedFoo() for variable initialization.")
 
+    # FIXME: Remove checkedFoo() check once all checkedFoo() getters are removed from WebKit.
+    # See: https://github.com/WebKit/WebKit/wiki/Safer-CPP-Guidelines#do-not-call-protect-free-function-to-initialize-local-variables
     if search(r'= [a-zA-Z0-9_.(),\s\->]*checked[a-zA-Z0-9]+\(\)(;|\))(?!;)', line):
         error(line_number, 'safercpp/checked_getter_for_init', 4, "Use m_foo or foo() instead of checkedFoo() for variable initialization.")
+
+    # Check for protect() free function used in variable initialization (violates SaferCPP guidelines).
+    # Valid uses: protect(foo)->method(), protect(foo).method(), func(protect(foo)), return protect(foo), lambda captures
+    # The regex handles one level of nested parentheses in the argument (e.g., protect(bar()) is correctly parsed).
+    # Deeper nesting (e.g., protect(a(b()))) is not supported but is rare in practice.
+    if search(r'=\s*[a-zA-Z0-9_.(),\s\->]*protect\((?:[^()]|\([^()]*\))*\)\s*(;|\))(?!;)', line):
+        error(line_number, 'safercpp/protected_getter_for_init', 4,
+              "Do not use protect() for variable initialization. Use the declared type (not auto) and remove the call to protect().")
 
 def check_style(clean_lines, line_number, file_extension, class_state, file_state, enum_state, error):
     """Checks rules from the 'C++ style rules' section of cppguide.html.
@@ -5117,6 +5136,8 @@ class CppChecker(object):
         'readability/naming/protected',
         'readability/naming/underscores',
         'readability/null',
+        'readability/checked_getter',
+        'readability/protected_getter',
         'readability/streams',
         'readability/todo',
         'readability/utf8',

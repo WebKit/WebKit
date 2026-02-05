@@ -82,7 +82,7 @@ static inline bool canAccessDocument(JSC::JSGlobalObject* lexicalGlobalObject, D
 
     auto& active = activeDOMWindow(*lexicalGlobalObject);
 
-    if (active.document()->protectedSecurityOrigin()->isSameOriginDomain(targetDocument->securityOrigin()))
+    if (protect(active.document()->securityOrigin())->isSameOriginDomain(targetDocument->securityOrigin()))
         return true;
 
     switch (reportingOption) {
@@ -118,7 +118,7 @@ bool BindingSecurity::shouldAllowAccessToDOMWindow(JSGlobalObject& lexicalGlobal
 bool BindingSecurity::shouldAllowAccessToDOMWindow(JSGlobalObject& lexicalGlobalObject, LocalDOMWindow& globalObject, String& message)
 {
     VM& vm = lexicalGlobalObject.vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, globalObject, DoNotReportSecurityError);
     EXCEPTION_ASSERT_UNUSED(scope, !scope.exception());

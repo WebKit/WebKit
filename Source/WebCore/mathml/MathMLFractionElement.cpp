@@ -88,17 +88,17 @@ MathMLFractionElement::FractionAlignment MathMLFractionElement::cachedFractionAl
         return alignment.value();
 
     if (document().settings().coreMathMLEnabled()) {
-        alignment = FractionAlignmentCenter;
+        alignment = FractionAlignment::Center;
         return alignment.value();
     }
 
     auto& value = attributeWithoutSynchronization(name);
     if (equalLettersIgnoringASCIICase(value, "left"_s))
-        alignment = FractionAlignmentLeft;
+        alignment = FractionAlignment::Left;
     else if (equalLettersIgnoringASCIICase(value, "right"_s))
-        alignment = FractionAlignmentRight;
+        alignment = FractionAlignment::Right;
     else
-        alignment = FractionAlignmentCenter;
+        alignment = FractionAlignment::Center;
     return alignment.value();
 }
 

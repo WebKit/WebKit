@@ -8,8 +8,8 @@ layer at (0,0) size 800x359
           RenderSVGEllipse {circle} at (8,8) size 302x302 [fill={[type=SOLID] [color=#FF0000]}] [cx=300.00] [cy=300.00] [r=50.00]
         RenderText {#text} at (0,0) size 0x0
         RenderBR {br} at (302,287) size 0x19
-      RenderBlock {p} at (0,323) size 784x0
-      RenderBlock {p} at (0,323) size 784x0
-      RenderBlock (anonymous) at (0,323) size 784x20
-        RenderText {#text} at (0,0) size 569x19
+      RenderBlock {p} at (0,322) size 784x0
+      RenderBlock {p} at (0,322) size 784x0
+      RenderBlock (anonymous) at (0,322) size 784x21
+        RenderText {#text} at (0,0) size 569x20
           text run at (0,0) width 569: "The circle should not be (partially or fully)visible at the original position after moving it."

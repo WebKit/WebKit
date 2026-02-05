@@ -126,7 +126,7 @@ static bool registerDaemonWithLaunchD(WebPushTool::PreferTestService preferTestS
     const char* serviceName = (preferTestService == WebPushTool::PreferTestService::Yes) ? "org.webkit.webpushtestdaemon.service" : "com.apple.webkit.webpushd.service";
 
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto plist = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto plist = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(plist.get(), "_ManagedBy", "webpushtool");
     xpc_dictionary_set_string(plist.get(), "Label", "org.webkit.webpushtestdaemon");
     xpc_dictionary_set_bool(plist.get(), "LaunchOnlyOnce", true);
@@ -134,20 +134,20 @@ static bool registerDaemonWithLaunchD(WebPushTool::PreferTestService preferTestS
 
     {
         // FIXME: This is a false positive. <rdar://164843889>
-        SUPPRESS_RETAINPTR_CTOR_ADOPT auto environmentVariables = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT auto environmentVariables = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
         xpc_dictionary_set_string(environmentVariables.get(), "DYLD_FRAMEWORK_PATH", currentExecutableDirectoryURL.get().fileSystemRepresentation);
         xpc_dictionary_set_string(environmentVariables.get(), "DYLD_LIBRARY_PATH", currentExecutableDirectoryURL.get().fileSystemRepresentation);
         xpc_dictionary_set_value(plist.get(), "EnvironmentVariables", environmentVariables.get());
     }
     {
         // FIXME: This is a false positive. <rdar://164843889>
-        SUPPRESS_RETAINPTR_CTOR_ADOPT auto machServices = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT auto machServices = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
         xpc_dictionary_set_bool(machServices.get(), serviceName, true);
         xpc_dictionary_set_value(plist.get(), "MachServices", machServices.get());
     }
     {
         // FIXME: This is a false positive. <rdar://164843889>
-        SUPPRESS_RETAINPTR_CTOR_ADOPT auto programArguments = adoptXPCObject(xpc_array_create(nullptr, 0));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT auto programArguments = adoptOSObject(xpc_array_create(nullptr, 0));
 #if PLATFORM(MAC)
         xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, daemonExecutablePathURL.get().fileSystemRepresentation);
 #else

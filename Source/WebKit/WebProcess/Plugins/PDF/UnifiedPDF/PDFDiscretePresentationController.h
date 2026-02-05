@@ -59,8 +59,8 @@ public:
 
 
 private:
-    bool supportsDisplayMode(PDFDocumentLayout::DisplayMode) const override;
-    void willChangeDisplayMode(PDFDocumentLayout::DisplayMode) override;
+    bool supportsDisplayMode(PDFDisplayMode) const override;
+    void willChangeDisplayMode(PDFDisplayMode) override;
 
     void teardown() override;
 
@@ -224,7 +224,7 @@ private:
     Vector<RowData> m_rows;
 
     WeakHashMap<WebCore::GraphicsLayer, unsigned> m_layerToRowIndexMap;
-    std::optional<PDFDocumentLayout::DisplayMode> m_displayModeAtLastLayerSetup;
+    std::optional<PDFDisplayMode> m_displayModeAtLastLayerSetup;
 
     unsigned m_visibleRowIndex { 0 };
 

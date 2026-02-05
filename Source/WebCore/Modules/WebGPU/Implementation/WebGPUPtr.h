@@ -27,6 +27,7 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
+#include <WebGPU/ModelTypes.h>
 #include <WebGPU/WebGPU.h>
 #include <WebGPU/WebGPUExt.h>
 #include <type_traits>
@@ -75,7 +76,7 @@ template <> struct WebGPURefDerefTraits<WGPUComputePassEncoder> : public BaseWeb
 template <> struct WebGPURefDerefTraits<WGPUComputePipeline> : public BaseWebGPURefDerefTraits<WGPUComputePipeline, wgpuComputePipelineReference, wgpuComputePipelineRelease> { };
 template <> struct WebGPURefDerefTraits<WGPUDevice> : public BaseWebGPURefDerefTraits<WGPUDevice, wgpuDeviceReference, wgpuDeviceRelease> { };
 template <> struct WebGPURefDerefTraits<WGPUInstance> : public BaseWebGPURefDerefTraits<WGPUInstance, wgpuInstanceReference, wgpuInstanceRelease> { };
-template <> struct WebGPURefDerefTraits<WGPUDDMesh> : public BaseWebGPURefDerefTraits<WGPUDDMesh, wgpuDDMeshReference, wgpuDDMeshRelease> { };
+template <> struct WebGPURefDerefTraits<WebMesh> : public BaseWebGPURefDerefTraits<WebMesh, webModelMeshReference, webModelMeshRelease> { };
 template <> struct WebGPURefDerefTraits<WGPUPipelineLayout> : public BaseWebGPURefDerefTraits<WGPUPipelineLayout, wgpuPipelineLayoutReference, wgpuPipelineLayoutRelease> { };
 template <> struct WebGPURefDerefTraits<WGPUQuerySet> : public BaseWebGPURefDerefTraits<WGPUQuerySet, wgpuQuerySetReference, wgpuQuerySetRelease> { };
 template <> struct WebGPURefDerefTraits<WGPUQueue> : public BaseWebGPURefDerefTraits<WGPUQueue, wgpuQueueReference, wgpuQueueRelease> { };

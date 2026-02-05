@@ -36,6 +36,7 @@
 #import "RestrictedOpenerType.h"
 #import "ShouldGrandfatherStatistics.h"
 #import "UserNotificationsSPI.h"
+#import "WKAPICast.h"
 #import "WKError.h"
 #import "WKHTTPCookieStoreInternal.h"
 #import "WKNSArray.h"
@@ -1168,7 +1169,7 @@ struct WKWebsiteData {
 - (void)_appBoundDomains:(void (^)(NSArray<NSString *> *))completionHandler
 {
 #if ENABLE(APP_BOUND_DOMAINS)
-    _websiteDataStore->getAppBoundDomains([completionHandler = makeBlockPtr(completionHandler)](auto& domains) mutable {
+    protect(*_websiteDataStore)->getAppBoundDomains([completionHandler = makeBlockPtr(completionHandler)](auto& domains) mutable {
         auto apiDomains = WTF::map(domains, [](auto& domain) -> RefPtr<API::Object> {
             return API::String::create(domain.string());
         });
@@ -1182,7 +1183,7 @@ struct WKWebsiteData {
 - (void)_appBoundSchemes:(void (^)(NSArray<NSString *> *))completionHandler
 {
 #if ENABLE(APP_BOUND_DOMAINS)
-    _websiteDataStore->getAppBoundSchemes([completionHandler = makeBlockPtr(completionHandler)](auto& schemes) mutable {
+    protect(*_websiteDataStore)->getAppBoundSchemes([completionHandler = makeBlockPtr(completionHandler)](auto& schemes) mutable {
         auto apiSchemes = WTF::map(schemes, [](auto& scheme) -> RefPtr<API::Object> {
             return API::String::create(scheme);
         });
@@ -1218,7 +1219,7 @@ struct WKWebsiteData {
 
 - (void)_synthesizeAppIsBackground:(BOOL)background
 {
-    protectedWebsiteDataStore(self)->protectedNetworkProcess()->synthesizeAppIsBackground(background);
+    protect(protectedWebsiteDataStore(self)->networkProcess())->synthesizeAppIsBackground(background);
 }
 
 - (pid_t)_networkProcessIdentifier
@@ -1239,7 +1240,7 @@ struct WKWebsiteData {
 - (void)_forceNetworkProcessToTaskSuspendForTesting
 {
     if (RefPtr networkProcess = _websiteDataStore->networkProcessIfExists())
-        networkProcess->protectedThrottler()->invalidateAllActivitiesAndDropAssertion();
+        protect(networkProcess->throttler())->invalidateAllActivitiesAndDropAssertion();
 }
 
 - (BOOL)_networkProcessExists
@@ -1268,7 +1269,7 @@ struct WKWebsiteData {
 {
     RELEASE_LOG(Push, "Getting pending push message");
 
-    protectedWebsiteDataStore(self)->protectedNetworkProcess()->getPendingPushMessage(_websiteDataStore->sessionID(), [completionHandler = makeBlockPtr(completionHandler)] (const auto& message) {
+    protect(protectedWebsiteDataStore(self)->networkProcess())->getPendingPushMessage(_websiteDataStore->sessionID(), [completionHandler = makeBlockPtr(completionHandler)] (const auto& message) {
         RetainPtr<NSDictionary> result;
         if (message)
             result = message->toDictionary();
@@ -1282,7 +1283,7 @@ struct WKWebsiteData {
 {
     RELEASE_LOG(Push, "Getting pending push messages");
 
-    protectedWebsiteDataStore(self)->protectedNetworkProcess()->getPendingPushMessages(_websiteDataStore->sessionID(), [completionHandler = makeBlockPtr(completionHandler)] (const Vector<WebKit::WebPushMessage>& messages) {
+    protect(protectedWebsiteDataStore(self)->networkProcess())->getPendingPushMessages(_websiteDataStore->sessionID(), [completionHandler = makeBlockPtr(completionHandler)] (const Vector<WebKit::WebPushMessage>& messages) {
         auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:messages.size()]);
         for (auto& message : messages)
             [result addObject:message.toDictionary().get()];
@@ -1324,7 +1325,7 @@ struct WKWebsiteData {
     RELEASE_LOG(Push, "Sending persistent notification click from origin %" SENSITIVE_LOG_STRING " to network process to handle", notificationData.originString.utf8().data());
 
     notificationData.sourceSession = _websiteDataStore->sessionID();
-    protectedWebsiteDataStore(self)->protectedNetworkProcess()->processNotificationEvent(notificationData, WebCore::NotificationEventType::Click, [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
+    protect(protectedWebsiteDataStore(self)->networkProcess())->processNotificationEvent(notificationData, WebCore::NotificationEventType::Click, [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
         RELEASE_LOG(Push, "Notification click event processing complete. Callback result: %d", wasProcessed);
         completionHandler(wasProcessed);
     });
@@ -1346,7 +1347,7 @@ struct WKWebsiteData {
 {
     RELEASE_LOG(Push, "Sending persistent notification close from origin %" SENSITIVE_LOG_STRING " to network process to handle", notificationData.originString.utf8().data());
 
-    protectedWebsiteDataStore(self)->protectedNetworkProcess()->processNotificationEvent(notificationData, WebCore::NotificationEventType::Close, [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
+    protect(protectedWebsiteDataStore(self)->networkProcess())->processNotificationEvent(notificationData, WebCore::NotificationEventType::Close, [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
         RELEASE_LOG(Push, "Notification close event processing complete. Callback result: %d", wasProcessed);
         completionHandler(wasProcessed);
     });
@@ -1366,7 +1367,7 @@ struct WKWebsiteData {
 
 -(void)_getAllBackgroundFetchIdentifiers:(void(^)(NSArray<NSString *> *identifiers))completionHandler
 {
-    protectedWebsiteDataStore(self)->protectedNetworkProcess()->getAllBackgroundFetchIdentifiers(_websiteDataStore->sessionID(), [completionHandler = makeBlockPtr(completionHandler)] (auto identifiers) {
+    protect(protectedWebsiteDataStore(self)->networkProcess())->getAllBackgroundFetchIdentifiers(_websiteDataStore->sessionID(), [completionHandler = makeBlockPtr(completionHandler)] (auto identifiers) {
         auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:identifiers.size()]);
         for (auto identifier : identifiers)
             [result addObject:identifier.createNSString().get()];
@@ -1376,7 +1377,7 @@ struct WKWebsiteData {
 
 -(void)_getBackgroundFetchState:(NSString *) identifier completionHandler:(void(^)(NSDictionary *state))completionHandler
 {
-    protectedWebsiteDataStore(self)->protectedNetworkProcess()->getBackgroundFetchState(_websiteDataStore->sessionID(), identifier, [completionHandler = makeBlockPtr(completionHandler)] (auto state) {
+    protect(protectedWebsiteDataStore(self)->networkProcess())->getBackgroundFetchState(_websiteDataStore->sessionID(), identifier, [completionHandler = makeBlockPtr(completionHandler)] (auto state) {
         completionHandler(state ? state->toDictionary() : nil);
     });
 }
@@ -1386,7 +1387,7 @@ struct WKWebsiteData {
     if (!completionHandler)
         completionHandler = [] { };
 
-    protectedWebsiteDataStore(self)->protectedNetworkProcess()->abortBackgroundFetch(_websiteDataStore->sessionID(), identifier, [completionHandler = makeBlockPtr(completionHandler)] {
+    protect(protectedWebsiteDataStore(self)->networkProcess())->abortBackgroundFetch(_websiteDataStore->sessionID(), identifier, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 }
@@ -1395,7 +1396,7 @@ struct WKWebsiteData {
     if (!completionHandler)
         completionHandler = [] { };
 
-    protectedWebsiteDataStore(self)->protectedNetworkProcess()->pauseBackgroundFetch(_websiteDataStore->sessionID(), identifier, [completionHandler = makeBlockPtr(completionHandler)] {
+    protect(protectedWebsiteDataStore(self)->networkProcess())->pauseBackgroundFetch(_websiteDataStore->sessionID(), identifier, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 }
@@ -1405,7 +1406,7 @@ struct WKWebsiteData {
     if (!completionHandler)
         completionHandler = [] { };
 
-    protectedWebsiteDataStore(self)->protectedNetworkProcess()->resumeBackgroundFetch(_websiteDataStore->sessionID(), identifier, [completionHandler = makeBlockPtr(completionHandler)] {
+    protect(protectedWebsiteDataStore(self)->networkProcess())->resumeBackgroundFetch(_websiteDataStore->sessionID(), identifier, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 }
@@ -1418,7 +1419,7 @@ struct WKWebsiteData {
     if (!completionHandler)
         completionHandler = [] { };
 
-    protectedWebsiteDataStore(self)->protectedNetworkProcess()->clickBackgroundFetch(_websiteDataStore->sessionID(), identifier, [completionHandler = makeBlockPtr(completionHandler)] {
+    protect(protectedWebsiteDataStore(self)->networkProcess())->clickBackgroundFetch(_websiteDataStore->sessionID(), identifier, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 }
@@ -1438,7 +1439,7 @@ struct WKWebsiteData {
 -(void)_scopeURL:(NSURL *)scopeURL hasPushSubscriptionForTesting:(void(^)(BOOL))completionHandler
 {
     auto completionHandlerCopy = makeBlockPtr(completionHandler);
-    protectedWebsiteDataStore(self)->protectedNetworkProcess()
+    protect(protectedWebsiteDataStore(self)->networkProcess())
         ->hasPushSubscriptionForTesting(_websiteDataStore->sessionID(), scopeURL, [completionHandlerCopy](bool result) {
             completionHandlerCopy(result);
         });
@@ -1459,7 +1460,7 @@ struct WKWebsiteData {
 -(void)_setBackupExclusionPeriodForTesting:(double)seconds completionHandler:(void(^)(void))completionHandler
 {
 #if PLATFORM(IOS_FAMILY)
-    _websiteDataStore->setBackupExclusionPeriodForTesting(Seconds(seconds), [completionHandler = makeBlockPtr(completionHandler)] {
+    protect(*_websiteDataStore)->setBackupExclusionPeriodForTesting(Seconds(seconds), [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 #else
@@ -1656,7 +1657,7 @@ struct WKWebsiteData {
         return NO;
 
     dispatch_async(mainDispatchQueueSingleton(), ^{
-        WKWebsiteDataStore *dataStore = _WKWebsiteDataStoreBSActionHandler.shared->_webPushActionHandler.get()(webPushAction.get());
+        RetainPtr dataStore = _WKWebsiteDataStoreBSActionHandler.shared->_webPushActionHandler.get()(webPushAction.get());
         [dataStore _handleWebPushAction:webPushAction.get()];
     });
 
@@ -1675,7 +1676,7 @@ struct WKWebsiteData {
             continue;
         }
 
-        WKWebsiteDataStore *dataStoreForPushAction = _webPushActionHandler.get()(pushAction);
+        RetainPtr dataStoreForPushAction = _webPushActionHandler.get()(pushAction);
         if (dataStoreForPushAction) {
             [dataStoreForPushAction _handleWebPushAction:pushAction];
             if (action.canSendResponse)

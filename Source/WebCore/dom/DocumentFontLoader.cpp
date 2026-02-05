@@ -72,7 +72,7 @@ CachedFont* DocumentFontLoader::cachedFont(URL&& url, bool isSVG, bool isInitiat
 
     CachedResourceRequest request(ResourceRequest(WTF::move(url)), options);
     request.setInitiatorType(cachedResourceRequestInitiatorTypes().css);
-    return protectedDocument()->protectedCachedResourceLoader()->requestFont(WTF::move(request), isSVG).value_or(nullptr).get();
+    return protect(protectedDocument()->cachedResourceLoader())->requestFont(WTF::move(request), isSVG).value_or(nullptr).get();
 }
 
 void DocumentFontLoader::beginLoadingFontSoon(CachedFont& font)
@@ -84,7 +84,7 @@ void DocumentFontLoader::beginLoadingFontSoon(CachedFont& font)
     // Increment the request count now, in order to prevent didFinishLoad from being dispatched
     // after this font has been requested but before it began loading. Balanced by
     // decrementRequestCount() in fontLoadingTimerFired() and in stopLoadingAndClearFonts().
-    protectedDocument()->protectedCachedResourceLoader()->incrementRequestCount(font);
+    protect(protectedDocument()->cachedResourceLoader())->incrementRequestCount(font);
 
     if (!m_isFontLoadingSuspended && !m_fontLoadingTimer.isActive())
         m_fontLoadingTimer.startOneShot(0_s);
@@ -114,7 +114,7 @@ void DocumentFontLoader::fontLoadingTimerFired()
     // FIXME: Use SubresourceLoader instead.
     // Call FrameLoader::loadDone before FrameLoader::subresourceLoadDone to match the order in SubresourceLoader::notifyDone.
     Ref document = m_document.get();
-    document->protectedCachedResourceLoader()->loadDone(LoadCompletionType::Finish);
+    protect(document->cachedResourceLoader())->loadDone(LoadCompletionType::Finish);
     // Ensure that if the request count reaches zero, the frame loader will know about it.
     // New font loads may be triggered by layout after the document load is complete but before we have dispatched
     // didFinishLoading for the frame. Make sure the delegate is always dispatched by checking explicitly.

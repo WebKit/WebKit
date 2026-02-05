@@ -30,22 +30,16 @@
 
 enum ReadableStreamReaderMode { "byob" };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary ReadableStreamGetReaderOptions {
+dictionary ReadableStreamGetReaderOptions {
     ReadableStreamReaderMode mode;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary ReadableWritablePair {
+dictionary ReadableWritablePair {
     required ReadableStream readable;
     required WritableStream writable;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary ReadableStreamIteratorOptions {
+dictionary ReadableStreamIteratorOptions {
     boolean preventCancel = false;
 };
 
@@ -60,14 +54,15 @@ typedef (ReadableStreamDefaultReader or ReadableStreamBYOBReader) ReadableStream
     PublicIdentifier
 ] interface ReadableStream {
     [CallWith=CurrentGlobalObject] constructor(optional object underlyingSource, optional object options);
+    [EnabledBySetting=ReadableStreamFromEnabled, CallWith=CurrentGlobalObject] static ReadableStream from(any asyncIterable);
 
     [ImplementedAs=isLocked] readonly attribute boolean locked;
 
     [CallWith=CurrentGlobalObject, ReturnsOwnPromise, ImplementedAs=cancelForBindings] Promise<undefined> cancel(optional any reason);
-    [CallWith=CurrentGlobalObject] ReadableStreamReader getReader(optional ReadableStreamGetReaderOptions options = { });
+    [CallWith=CurrentGlobalObject] ReadableStreamReader getReader(optional ReadableStreamGetReaderOptions options = {});
     [CallWith=CurrentGlobalObject] Promise<undefined> pipeTo(WritableStream destination, optional StreamPipeOptions options = {});
     [CallWith=CurrentGlobalObject] ReadableStream pipeThrough(ReadableWritablePair transform, optional StreamPipeOptions options = {});
     [CallWith=CurrentGlobalObject] sequence<ReadableStream> tee();
 
-    [EnabledBySetting=ReadableStreamIterableEnabled] async iterable<any>(optional ReadableStreamIteratorOptions options = {});
+    [EnabledBySetting=ReadableStreamIterableEnabled] async_iterable<any>(optional ReadableStreamIteratorOptions options = {});
 };

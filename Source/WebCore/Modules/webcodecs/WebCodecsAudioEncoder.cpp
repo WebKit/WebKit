@@ -268,9 +268,9 @@ WebCodecsEncodedAudioChunkMetadata WebCodecsAudioEncoder::createEncodedChunkMeta
         auto baseConfigurationNumberOfChannels = m_baseConfiguration.numberOfChannels;
         metadata.decoderConfig = WebCodecsAudioDecoderConfig {
             !m_activeConfiguration.codec.isEmpty() ? WTF::move(m_activeConfiguration.codec) : String { m_baseConfiguration.codec },
-            { },
             m_activeConfiguration.sampleRate.value_or(baseConfigurationSampleRate),
-            m_activeConfiguration.numberOfChannels.value_or(baseConfigurationNumberOfChannels)
+            m_activeConfiguration.numberOfChannels.value_or(baseConfigurationNumberOfChannels),
+            { },
         };
 
         if (m_activeConfiguration.description && m_activeConfiguration.description->size()) {

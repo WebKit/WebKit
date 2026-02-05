@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WGSLShaderModule.h"
 
+#include "AST.h"
+#include "ConstantFunctions.h"
 #include "WGSL.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -33,23 +35,71 @@ namespace WGSL {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ShaderModule);
 
-std::optional<Error> ShaderModule::validateOverrides(const HashMap<String, ConstantValue>& constantValues)
+Result<ConstantValue> ShaderModule::ensureOverrideValue(const AST::Expression& expression, const HashMap<String, ConstantValue>& overrideValues) const
 {
-    for (const auto& [expression, validators] : m_overrideValidations) {
-        auto maybeValue = evaluate(*expression, constantValues);
-        if (!maybeValue)
-            return { Error("failed to evaluate override expression"_s, expression->span()) };
+    auto maybeValue = evaluate(*this, expression, overrideValues);
+    if (!maybeValue)
+        return makeUnexpected(Error("Failed to evaluate override value"_s, expression.span()));
+    return { *maybeValue };
+}
 
-        for (const auto& validator : validators) {
-            if (auto maybeError = validator(*maybeValue))
-                return { Error(*maybeError, expression->span()) };
+std::optional<Error> ShaderModule::validateOverrides(const PrepareResult& prepareResult, HashMap<String, ConstantValue>& overrideValues)
+{
+    for (auto* variable : m_overrides) {
+        String name = variable->id().has_value() ? String::number(*variable->id()) : variable->originalName();
+        auto userDefinedValue = overrideValues.find(name);
+        if (userDefinedValue != overrideValues.end()) {
+            auto value = userDefinedValue->value;
+            overrideValues.remove(name);
+            overrideValues.add(variable->name(), value);
+            continue;
         }
+
+        bool isUsed = false;
+        for (const auto& [_, entryPoint] : prepareResult.entryPoints) {
+            if (entryPoint.specializationConstants.contains(name)) {
+                isUsed = true;
+                break;
+            }
+        }
+
+        if (!isUsed)
+            continue;
+
+        auto* initializer = variable->maybeInitializer();
+        if (!initializer) {
+            if (isUsed)
+                return { Error(makeString("override "_s, variable->originalName(), " is used in shader but not provided"_s), variable->span()) };
+            continue;
+        }
+
+        auto maybeValue = ensureOverrideValue(*initializer, overrideValues);
+        if (!maybeValue)
+            return maybeValue.error();
+
+        overrideValues.add(variable->name(), *maybeValue);
     }
-    for (const auto& validator : m_finalOverrideValidations) {
-        if (auto maybeError = validator())
+
+    for (const auto& validator : m_overrideValidations) {
+        if (auto maybeError = validator(overrideValues))
             return maybeError;
     }
+
     return std::nullopt;
+}
+
+void ShaderModule::initializeOverloads()
+{
+    // This file contains the overloads generated from `TypeDeclarations.rb`
+    #include "TypeOverloads.h" // NOLINT
+}
+
+const OverloadedDeclaration* ShaderModule::lookupOverload(const String& name) const
+{
+    auto it = m_overloadedOperations.find(name);
+    if (it == m_overloadedOperations.end())
+        return nullptr;
+    return &it->value;
 }
 
 } // namespace WGSL

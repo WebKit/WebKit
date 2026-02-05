@@ -23,10 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://drafts.csswg.org/web-animations-1/#dictdef-effecttiming
+//   and then modified by
+// https://drafts.csswg.org/web-animations-2/#the-effecttiming-dictionaries
 [
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary EffectTiming {
     double delay = 0;
     double endDelay = 0;

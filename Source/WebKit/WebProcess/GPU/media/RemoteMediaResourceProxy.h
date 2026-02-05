@@ -36,10 +36,12 @@
 
 namespace WebKit {
 
+class RemoteMediaResourceLoaderProxy;
+
 class RemoteMediaResourceProxy final : public WebCore::PlatformMediaResourceClient {
     WTF_MAKE_TZONE_ALLOCATED(RemoteMediaResourceProxy);
 public:
-    RemoteMediaResourceProxy(Ref<IPC::Connection>&&, WebCore::PlatformMediaResource&, RemoteMediaResourceIdentifier);
+    RemoteMediaResourceProxy(Ref<RemoteMediaResourceLoaderProxy>&&, WebCore::PlatformMediaResource&, RemoteMediaResourceIdentifier);
     ~RemoteMediaResourceProxy();
 
 private:
@@ -55,7 +57,7 @@ private:
 
     Ref<WebCore::PlatformMediaResource> mediaResource() const;
 
-    const Ref<IPC::Connection> m_connection;
+    const Ref<RemoteMediaResourceLoaderProxy> m_loader;
     ThreadSafeWeakRef<WebCore::PlatformMediaResource> m_platformMediaResource;
     RemoteMediaResourceIdentifier m_id;
 };

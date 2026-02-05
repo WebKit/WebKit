@@ -18,6 +18,7 @@
 
 #include "common/hash_containers.h"
 #include "common/hash_utils.h"
+#include "common/span.h"
 #include "compiler/translator/Compiler.h"
 #include "compiler/translator/IntermNode.h"
 #include "compiler/translator/Symbol.h"
@@ -180,13 +181,11 @@ struct ObjectAndAccessChainHash
 {
     size_t operator()(const ObjectAndAccessChain &object) const
     {
-        size_t result = angle::ComputeGenericHash(&object.variable, sizeof(object.variable));
+        size_t result = angle::ComputeGenericHash(angle::byte_span_from_ref(object.variable));
         if (!object.accessChain.getChain().empty())
         {
-            result =
-                result ^ angle::ComputeGenericHash(object.accessChain.getChain().data(),
-                                                   object.accessChain.getChain().size() *
-                                                       sizeof(object.accessChain.getChain()[0]));
+            result = result ^
+                     angle::ComputeGenericHash(angle::as_byte_span(object.accessChain.getChain()));
         }
         return result;
     }

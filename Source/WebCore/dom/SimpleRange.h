@@ -49,10 +49,8 @@ struct SimpleRange {
     BoundaryPoint end;
 
     Node& startContainer() const { return start.container.get(); }
-    Ref<Node> protectedStartContainer() const { return start.container.copyRef(); }
     unsigned startOffset() const { return start.offset; }
     Node& endContainer() const { return end.container.get(); }
-    Ref<Node> protectedEndContainer() const { return end.container.copyRef(); }
     unsigned endOffset() const { return end.offset; }
     WeakSimpleRange makeWeakSimpleRange() const { return { WeakBoundaryPoint(start.container.get(), start.offset), WeakBoundaryPoint(end.container.get(), end.offset) }; }
 
@@ -156,8 +154,6 @@ public:
 
 private:
     void enforceEndInvariant();
-
-    RefPtr<Node> protectedNode() const { return m_node; }
 
     RefPtr<Node> m_node;
     RefPtr<Node> m_pastLastNode;

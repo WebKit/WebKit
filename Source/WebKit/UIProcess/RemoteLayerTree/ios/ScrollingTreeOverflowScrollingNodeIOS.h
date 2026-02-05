@@ -48,6 +48,8 @@ private:
 
     ScrollingTreeScrollingNodeDelegateIOS& delegate() const;
 
+    bool isScrollingTreeOverflowScrollingNodeIOS() const final { return true; }
+
     bool commitStateBeforeChildren(const WebCore::ScrollingStateNode&) final;
     bool commitStateAfterChildren(const WebCore::ScrollingStateNode&) final;
     
@@ -55,5 +57,10 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ScrollingTreeOverflowScrollingNodeIOS)
+    static bool isType(const WebCore::ScrollingTreeOverflowScrollingNode& node) { return node.isScrollingTreeOverflowScrollingNodeIOS(); }
+    static bool isType(const WebCore::ScrollingTreeNode& node) { return is<WebCore::ScrollingTreeOverflowScrollingNode>(node) && isType(uncheckedDowncast<WebCore::ScrollingTreeOverflowScrollingNode>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // PLATFORM(IOS_FAMILY)

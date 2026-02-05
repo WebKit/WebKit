@@ -8,8 +8,8 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,0) size 49x20
             RenderTableCell {TD} at (0,0) size 16x20 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderListItem {LI} at (1,1) size 14x18
-                RenderListMarker at (-1,0) size 7x17: bullet
+                RenderListMarker at (-1,0) size 7x18: bullet
                 RenderImage {IMG} at (14,14) size 0x0
             RenderTableCell {TD} at (16,0) size 33x20 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 31x17
+              RenderText {#text} at (1,1) size 31x18
                 text run at (1,1) width 31: "hello"

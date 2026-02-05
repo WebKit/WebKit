@@ -236,7 +236,7 @@ static bool hasAncestorQualifyingForWritingToolsPreservation(Element* ancestor, 
 
     auto entry = cache.find(*ancestor);
     if (entry == cache.end()) {
-        auto result = elementQualifiesForWritingToolsPreservation(ancestor) || hasAncestorQualifyingForWritingToolsPreservation(ancestor->protectedParentElement().get(), cache);
+        auto result = elementQualifiesForWritingToolsPreservation(ancestor) || hasAncestorQualifyingForWritingToolsPreservation(protect(ancestor->parentElement()).get(), cache);
 
         cache.set(*ancestor, result);
         return result;
@@ -336,7 +336,7 @@ static void updateAttributes(const Node* node, const RenderStyle& style, OptionS
 {
 #if ENABLE(WRITING_TOOLS)
     if (includedElements.contains(IncludedElement::PreservedContent)) {
-        if (hasAncestorQualifyingForWritingToolsPreservation(node->protectedParentElement().get(), elementQualifiesForWritingToolsPreservationCache))
+        if (hasAncestorQualifyingForWritingToolsPreservation(protect(node->parentElement()).get(), elementQualifiesForWritingToolsPreservationCache))
             [attributes setObject:@(1) forKey:WTWritingToolsPreservedAttributeName];
         else
             [attributes removeObjectForKey:WTWritingToolsPreservedAttributeName];

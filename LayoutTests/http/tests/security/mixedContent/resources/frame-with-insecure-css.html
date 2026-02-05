@@ -8,14 +8,13 @@ This background color should be blue.
 <script>
 var cssDidLoad = false;
 
-// rdar://161348735: onload doesn't fire with Site Isolation when resource is blocked by mixed content. so use setTimeout for now
-setTimeout(function()
+onload = function()
 {
     if (window.opener)
         window.opener.postMessage(cssDidLoad ? 'done' : 'blocked', '*');
     else if (window.parent !== window)
         window.parent.postMessage(cssDidLoad ? 'done' : 'blocked', '*');
-}, 2000);
+};
 </script>
 </body>
 </html>

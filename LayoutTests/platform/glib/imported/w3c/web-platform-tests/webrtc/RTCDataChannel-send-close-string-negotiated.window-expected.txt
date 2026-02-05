@@ -1,0 +1,3 @@
+
+PASS Negotiated datachannel should be able to send and receive all string messages on close
+

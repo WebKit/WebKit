@@ -139,7 +139,7 @@ void Navigation::initializeForNewWindow(std::optional<NavigationNavigationType> 
             if (!previousNavigation->m_entries.size())
                 return false;
 
-            if (!frame()->protectedDocument()->protectedSecurityOrigin()->isSameOriginAs(previousWindow->protectedDocument()->protectedSecurityOrigin()))
+            if (!protect(protect(frame()->document())->securityOrigin())->isSameOriginAs(protect(protect(previousWindow->document())->securityOrigin())))
                 return false;
 
             return true;
@@ -154,7 +154,7 @@ void Navigation::initializeForNewWindow(std::optional<NavigationNavigationType> 
             if (navigationType == NavigationNavigationType::Traverse) {
                 m_currentEntryIndex = getEntryIndexOfHistoryItem(m_entries, *currentItem);
                 if (m_currentEntryIndex) {
-                    setActivation(frame()->loader().history().protectedPreviousItem().get(), navigationType);
+                    setActivation(protect(frame()->loader().history().previousItem()).get(), navigationType);
                     return;
                 }
                 // We are doing a cross document traversal, we can't rely on previous window, so clear
@@ -180,7 +180,7 @@ void Navigation::initializeForNewWindow(std::optional<NavigationNavigationType> 
     m_entries.append(NavigationHistoryEntry::create(*this, *currentItem));
     m_currentEntryIndex = m_entries.size() - 1;
 
-    setActivation(frame()->loader().history().protectedPreviousItem().get(), navigationType);
+    setActivation(protect(frame()->loader().history().previousItem()).get(), navigationType);
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#navigation-activation
@@ -198,7 +198,7 @@ void Navigation::setActivation(HistoryItem* previousItem, std::optional<Navigati
     if (wasAboutBlank) // FIXME: For navigations on the initial about blank this should already be the type.
         type = NavigationNavigationType::Replace;
 
-    bool isSameOrigin = frame()->document() && previousItem && SecurityOrigin::create(previousItem->url())->isSameOriginAs(frame()->protectedDocument()->protectedSecurityOrigin());
+    bool isSameOrigin = frame()->document() && previousItem && SecurityOrigin::create(previousItem->url())->isSameOriginAs(protect(protect(frame()->document())->securityOrigin()));
     auto previousEntryIndex = previousItem ? getEntryIndexOfHistoryItem(m_entries, *previousItem) : std::nullopt;
 
     RefPtr<NavigationHistoryEntry> previousEntry = nullptr;
@@ -220,7 +220,7 @@ RefPtr<NavigationActivation> Navigation::createForPageswapEvent(HistoryItem* new
         return nullptr;
 
     // Skip cross-origin requests, or if any cross-origin redirects have been made.
-    bool isSameOrigin = SecurityOrigin::create(documentLoader->documentURL())->isSameOriginAs(protectedWindow()->protectedDocument()->protectedSecurityOrigin());
+    bool isSameOrigin = SecurityOrigin::create(documentLoader->documentURL())->isSameOriginAs(protect(protect(protectedWindow()->document())->securityOrigin()));
     if (!isSameOrigin || (!documentLoader->request().isSameSite() && !fromBackForwardCache))
         return nullptr;
 
@@ -382,7 +382,7 @@ Navigation::Result Navigation::reload(ReloadOptions&& options, Ref<DeferredPromi
         state = currentEntry()->associatedHistoryItem().navigationAPIStateObject();
 
     RefPtr window = this->window();
-    if (!window->protectedDocument()->isFullyActive() || window->document()->unloadCounter())
+    if (!protect(window->document())->isFullyActive() || window->document()->unloadCounter())
         return createErrorResult(WTF::move(committed), WTF::move(finished), ExceptionCode::InvalidStateError, "Invalid state"_s);
 
     RefPtr apiMethodTracker = maybeSetUpcomingNonTraversalTracker(WTF::move(committed), WTF::move(finished), WTF::move(options.info), WTF::move(state));
@@ -406,7 +406,7 @@ Navigation::Result Navigation::reload(ReloadOptions&& options, Ref<DeferredPromi
 Navigation::Result Navigation::navigate(const String& url, NavigateOptions&& options, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
     RefPtr window = this->window();
-    auto newURL = window->protectedDocument()->completeURL(url, ScriptExecutionContext::ForceUTF8::Yes);
+    auto newURL = protect(window->document())->completeURL(url, ScriptExecutionContext::ForceUTF8::Yes);
     const URL& currentURL = protectedScriptExecutionContext()->url();
 
     if (!newURL.isValid())
@@ -423,7 +423,7 @@ Navigation::Result Navigation::navigate(const String& url, NavigateOptions&& opt
     if (serializedState.hasException())
         return createErrorResult(WTF::move(committed), WTF::move(finished), serializedState.releaseException());
 
-    if (!window->protectedDocument()->isFullyActive() || window->document()->unloadCounter())
+    if (!protect(window->document())->isFullyActive() || window->document()->unloadCounter())
         return createErrorResult(WTF::move(committed), WTF::move(finished), ExceptionCode::InvalidStateError, "Invalid state"_s);
 
     RefPtr apiMethodTracker = maybeSetUpcomingNonTraversalTracker(WTF::move(committed), WTF::move(finished), WTF::move(options.info), serializedState.releaseReturnValue());
@@ -449,14 +449,14 @@ Navigation::Result Navigation::navigate(const String& url, NavigateOptions&& opt
 Navigation::Result Navigation::performTraversal(const String& key, Navigation::Options options, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
     RefPtr window = this->window();
-    if (!window->protectedDocument()->isFullyActive() || window->document()->unloadCounter())
+    if (!protect(window->document())->isFullyActive() || window->document()->unloadCounter())
         return createErrorResult(WTF::move(committed), WTF::move(finished), ExceptionCode::InvalidStateError, "Invalid state"_s);
 
     if (!hasEntryWithKey(key))
         createErrorResult(WTF::move(committed), WTF::move(finished), ExceptionCode::AbortError, "Navigation aborted"_s);
 
     RefPtr frame = this->frame();
-    if (!frame->isMainFrame() && window->protectedDocument()->canNavigate(&frame->protectedPage()->protectedMainFrame().get()) != CanNavigateState::Able)
+    if (!frame->isMainFrame() && protect(window->document())->canNavigate(&protect(frame->page())->protectedMainFrame().get()) != CanNavigateState::Able)
         return createErrorResult(WTF::move(committed), WTF::move(finished), ExceptionCode::SecurityError, "Invalid state"_s);
 
     RefPtr current = currentEntry();
@@ -555,7 +555,7 @@ ExceptionOr<void> Navigation::updateCurrentEntry(UpdateCurrentEntryOptions&& opt
     auto currentEntryChangeEvent = NavigationCurrentEntryChangeEvent::create(eventNames().currententrychangeEvent, {
         { false, false, false },
         std::nullopt,
-        current
+        current.releaseNonNull()
     });
     dispatchEvent(currentEntryChangeEvent);
 
@@ -756,7 +756,9 @@ void Navigation::updateForNavigation(Ref<HistoryItem>&& item, NavigationNavigati
         notifyCommittedToEntry(ongoingAPIMethodTracker.get(), protectedCurrentEntry().get(), navigationType);
 
     auto currentEntryChangeEvent = NavigationCurrentEntryChangeEvent::create(eventNames().currententrychangeEvent, {
-        { false, false, false }, navigationType, oldCurrentEntry
+        { false, false, false },
+        navigationType,
+        oldCurrentEntry.releaseNonNull()
     });
     dispatchEvent(currentEntryChangeEvent);
 
@@ -1026,7 +1028,7 @@ Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavi
         // Log a warning once per window when the limit is reached.
         if (!m_rateLimiter.wasReported()) {
             m_rateLimiter.markReported();
-            if (RefPtr document = protectedWindow()->document())
+            if (RefPtr document = protect(window())->document())
                 document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Excessive navigation attempts blocked."_s);
         }
 
@@ -1039,7 +1041,7 @@ Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavi
         return DispatchResult::Aborted;
     }
 
-    RefPtr document = protectedWindow()->document();
+    RefPtr document = protect(window())->document();
 
     RefPtr<NavigationAPIMethodTracker> apiMethodTracker;
     {
@@ -1078,16 +1080,16 @@ Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavi
     auto init = NavigateEvent::Init {
         { false, canBeCanceled, false },
         navigationType,
-        destination.ptr(),
+        destination,
+        canIntercept,
+        UserGestureIndicator::processingUserGesture(document.get()),
+        hashChange,
         Ref { abortController->signal() },
         formData,
         downloadRequestFilename,
         info,
-        updatedSourceElement.get(),
-        canIntercept,
-        UserGestureIndicator::processingUserGesture(document.get()),
-        hashChange,
         document->page() && document->page()->isInSwipeAnimation(),
+        updatedSourceElement.get(),
     };
 
     // Free up no longer needed info.
@@ -1167,7 +1169,7 @@ Navigation::DispatchResult Navigation::innerDispatchNavigateEvent(NavigationNavi
         for (auto& handler : event->handlers()) {
             auto callbackResult = handler->invoke();
             if (callbackResult.type() != CallbackResultType::UnableToExecute) {
-                Ref promise = callbackResult.releaseReturnValue().releaseNonNull();
+                Ref promise = callbackResult.releaseReturnValue();
                 // Because rejection is reported as `navigateerror` event, we can mark this as handled.
                 if (!promise->isSuspended())
                     promise->markAsHandled();

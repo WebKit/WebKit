@@ -42,7 +42,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    virtual CallbackResult<RefPtr<DOMPromise>> invoke() = 0;
+    virtual bool isJSViewTransitionUpdateCallback() const { return false; }
+    virtual CallbackResult<Ref<DOMPromise>> invoke() = 0;
 
 private:
     virtual bool hasCallback() const = 0;

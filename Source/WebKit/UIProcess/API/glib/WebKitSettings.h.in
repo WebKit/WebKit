@@ -73,7 +73,7 @@ WEBKIT_DECLARE_FINAL_TYPE (WebKitSettings, webkit_settings, WEBKIT, SETTINGS, GO
 #else
 /**
  * WebKitHardwareAccelerationPolicy:
- * @WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND: Hardware acceleration is enabled/disabled as request by web contents.
+ * @WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND: Hardware acceleration is enabled/disabled as request by web contents. Deprecated 2.54.
  * @WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS: Hardware acceleration is always enabled, even for websites not requesting it.
  * @WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER: Hardware acceleration is always disabled, even for websites requesting it.
  *

@@ -62,10 +62,16 @@
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 #include "RemotePageVideoPresentationManagerProxy.h"
+#include "VideoPresentationManagerProxy.h"
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
 #include "WebDeviceOrientationUpdateProviderProxy.h"
+#endif
+
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=306415
+#if ENABLE(BACK_FORWARD_LIST_SWIFT)
+#include "WebKit-Swift.h"
 #endif
 
 namespace WebKit {
@@ -85,9 +91,9 @@ RemotePageProxy::RemotePageProxy(WebPageProxy& page, WebProcessProxy& process, c
     , m_processActivityState(makeUniqueRef<WebProcessActivityState>(*this))
 {
     if (registrationToTransfer)
-        m_messageReceiverRegistration.transferMessageReceivingFrom(*registrationToTransfer, *this, page.backForwardList());
+        m_messageReceiverRegistration.transferMessageReceivingFrom(*registrationToTransfer, *this, page.backForwardListMessageReceiver());
     else
-        m_messageReceiverRegistration.startReceivingMessages(m_process, m_webPageID, *this, page.backForwardList());
+        m_messageReceiverRegistration.startReceivingMessages(m_process, m_webPageID, *this, page.backForwardListMessageReceiver());
 
     m_process->addRemotePageProxy(*this);
 }
@@ -143,16 +149,16 @@ void RemotePageProxy::injectPageIntoNewProcess()
     Ref drawingArea = *page->drawingArea();
     m_drawingArea = RemotePageDrawingAreaProxy::create(drawingArea.get(), m_process);
 #if ENABLE(FULLSCREEN_API)
-    m_fullscreenManager = RemotePageFullscreenManagerProxy::create(pageID(), page->protectedFullScreenManager().get(), m_process);
+    m_fullscreenManager = RemotePageFullscreenManagerProxy::create(pageID(), protect(page->fullScreenManager()), m_process);
 #endif
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    m_videoPresentationManager = RemotePageVideoPresentationManagerProxy::create(pageID(), m_process, page->protectedVideoPresentationManager().get());
+    m_videoPresentationManager = RemotePageVideoPresentationManagerProxy::create(pageID(), m_process, protect(page->videoPresentationManager()));
 #endif
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
-    m_webDeviceOrientationUpdateProvider = RemotePageWebDeviceOrientationUpdateProviderProxy::create(pageID(), m_process, page->protectedWebDeviceOrientationUpdateProviderProxy().get());
+    m_webDeviceOrientationUpdateProvider = RemotePageWebDeviceOrientationUpdateProviderProxy::create(pageID(), m_process, protect(page->webDeviceOrientationUpdateProviderProxy()));
 #endif
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-    m_playbackSessionManager = RemotePagePlaybackSessionManagerProxy::create(pageID(), page->protectedPlaybackSessionManager().get(), m_process);
+    m_playbackSessionManager = RemotePagePlaybackSessionManagerProxy::create(pageID(), protect(page->playbackSessionManager()), m_process);
 #endif
 
     if (RefPtr screenOrientationManager = page->screenOrientationManager())
@@ -166,7 +172,7 @@ void RemotePageProxy::injectPageIntoNewProcess()
             m_webPageID,
             page->creationParametersForRemotePage(m_process, drawingArea.get(), RemotePageParameters {
                 URL(page->pageLoadState().url()),
-                page->protectedMainFrame()->frameTreeCreationParameters(),
+                protect(page->mainFrame())->frameTreeCreationParameters(),
                 websitePolicies ? std::make_optional(websitePolicies->dataForProcess(m_process)) : std::nullopt
             })
         ), 0
@@ -203,7 +209,7 @@ void RemotePageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decode
 
     if (RefPtr page = m_page.get()) {
         if (decoder.messageReceiverName() == Messages::WebBackForwardList::messageReceiverName())
-            page->backForwardList().didReceiveMessage(connection, decoder);
+            page->backForwardListMessageReceiver().didReceiveMessage(connection, decoder);
         else
             page->didReceiveMessage(connection, decoder);
     }
@@ -213,15 +219,10 @@ void RemotePageProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::De
 {
     if (RefPtr page = m_page.get()) {
         if (decoder.messageReceiverName() == Messages::WebBackForwardList::messageReceiverName())
-            page->backForwardList().didReceiveSyncMessage(connection, decoder, encoder);
+            page->backForwardListMessageReceiver().didReceiveSyncMessage(connection, decoder, encoder);
         else
             page->didReceiveSyncMessage(connection, decoder, encoder);
     }
-}
-
-RefPtr<WebPageProxy> RemotePageProxy::protectedPage() const
-{
-    return m_page.get();
 }
 
 WebPageProxy* RemotePageProxy::page() const

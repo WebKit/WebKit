@@ -27,7 +27,6 @@
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUStorageTextureBindingLayout {
     GPUStorageTextureAccess access = "write-only";
     required GPUTextureFormat format;

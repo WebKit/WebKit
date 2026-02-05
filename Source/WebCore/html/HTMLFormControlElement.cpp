@@ -242,7 +242,7 @@ bool HTMLFormControlElement::isMouseFocusable() const
 #else
     // FIXME: We can remove needsFormControlToBeMouseFocusable if there are no more quirks
     // or if we decide to change the default behavior and make form control elements focusable
-    if (!!tabIndexSetExplicitly() || protectedDocument()->quirks().needsFormControlToBeMouseFocusable())
+    if (!!tabIndexSetExplicitly() || protect(document())->quirks().needsFormControlToBeMouseFocusable())
         return HTMLElement::isMouseFocusable();
     return false;
 #endif
@@ -250,7 +250,7 @@ bool HTMLFormControlElement::isMouseFocusable() const
 
 void HTMLFormControlElement::runFocusingStepsForAutofocus()
 {
-    focus({ SelectionRestorationMode::PlaceCaretAtStart });
+    focus({ { }, { }, SelectionRestorationMode::PlaceCaretAtStart });
 }
 
 void HTMLFormControlElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedElement)
@@ -393,7 +393,7 @@ void HTMLFormControlElement::handlePopoverTargetAction(const EventTarget* eventT
     bool shouldShow = canShow && popover->popoverData()->visibilityState() == PopoverVisibilityState::Hidden;
 
     if (shouldHide)
-        popover->hidePopover();
+        popover->hidePopoverInternal(FocusPreviousElement::Yes, FireEvents::Yes, this);
     else if (shouldShow)
         popover->showPopoverInternal(this);
 }

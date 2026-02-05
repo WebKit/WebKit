@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 
 #include "common/hash_utils.h"
+#include "common/span.h"
 
 using namespace angle;
 
@@ -23,8 +24,8 @@ TEST(HashUtilsTest, ComputeGenericHash)
     ASSERT_TRUE(a.size() % 4 == 0);
     ASSERT_TRUE(b.size() % 4 == 0);
 
-    size_t aHash = ComputeGenericHash(a.c_str(), a.size());
-    size_t bHash = ComputeGenericHash(b.c_str(), b.size());
+    size_t aHash = ComputeGenericHash(angle::as_byte_span(a));
+    size_t bHash = ComputeGenericHash(angle::as_byte_span(b));
 
     EXPECT_NE(aHash, bHash);
 }

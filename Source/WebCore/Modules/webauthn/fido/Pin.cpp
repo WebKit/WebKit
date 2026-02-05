@@ -284,21 +284,28 @@ static Vector<uint8_t> deriveProtocolSharedSecret(PINUVAuthProtocol protocol, Ve
         sharedSecret.reserveInitialCapacity(64);
         auto hkdfKey = CryptoKeyRaw::create(CryptoAlgorithmIdentifier::HKDF, WTF::move(ecdhResult), CryptoKeyUsageDeriveBits);
 
-        CryptoAlgorithmHkdfParams hmacHkdfParams;
-        hmacHkdfParams.hashIdentifier = CryptoAlgorithmIdentifier::SHA_256;
         Vector<uint8_t> hkdfSalt(32, 0);
-        hmacHkdfParams.salt = toBufferSource(hkdfSalt.span());
-        hmacHkdfParams.info = toBufferSource(std::span { kHKDFInfoHMACKey });
+
+        auto hmacHkdfParamsInit = CryptoAlgorithmHkdfParamsInit {
+            CryptoAlgorithmParametersInit { "HKDF"_s },
+            String(),
+            toBufferSource(hkdfSalt.span()),
+            toBufferSource(std::span { kHKDFInfoHMACKey }),
+        };
+        auto hmacHkdfParams = CryptoAlgorithmHkdfParams(CryptoAlgorithmIdentifier::HKDF, WTF::move(hmacHkdfParamsInit), CryptoAlgorithmIdentifier::SHA_256);
 
         auto hmacKeyMaterial = CryptoAlgorithmHKDF::deriveBits(hmacHkdfParams, hkdfKey.get(), 32 * 8);
         if (hmacKeyMaterial.hasException())
             return { };
         sharedSecret.appendVector(hmacKeyMaterial.releaseReturnValue());
 
-        CryptoAlgorithmHkdfParams aesHkdfParams;
-        aesHkdfParams.hashIdentifier = CryptoAlgorithmIdentifier::SHA_256;
-        aesHkdfParams.salt = toBufferSource(hkdfSalt.span());
-        aesHkdfParams.info = toBufferSource(std::span { kHKDFInfoAESKey });
+        auto aesHkdfParamsInit = CryptoAlgorithmHkdfParamsInit {
+            CryptoAlgorithmParametersInit { "HKDF"_s },
+            String(),
+            toBufferSource(hkdfSalt.span()),
+            toBufferSource(std::span { kHKDFInfoAESKey }),
+        };
+        auto aesHkdfParams = CryptoAlgorithmHkdfParams(CryptoAlgorithmIdentifier::HKDF, WTF::move(aesHkdfParamsInit), CryptoAlgorithmIdentifier::SHA_256);
 
         auto aesKeyMaterial = CryptoAlgorithmHKDF::deriveBits(aesHkdfParams, hkdfKey.get(), 32 * 8);
         if (aesKeyMaterial.hasException())

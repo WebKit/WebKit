@@ -65,7 +65,7 @@ void ResourceTimingInformation::addResourceTiming(CachedResource& resource, Docu
     if (resource.type() == CachedResource::Type::MainResource && document.frame() && document.frame()->loader().shouldReportResourceTimingToParentFrame()) {
         initiatorDocument = document.parentDocument();
         if (initiatorDocument)
-            resourceTiming.updateExposure(initiatorDocument->protectedSecurityOrigin());
+            resourceTiming.updateExposure(protect(initiatorDocument->securityOrigin()));
     }
     if (!initiatorDocument)
         return;

@@ -212,7 +212,6 @@ set(BUILD_VARIANTS
 
 set(LLINT_ASM
     llint/InPlaceInterpreter.asm
-    llint/InPlaceInterpreter32_64.asm
     llint/InPlaceInterpreter64.asm
     llint/LowLevelInterpreter.asm
     llint/LowLevelInterpreter32_64.asm
@@ -263,7 +262,7 @@ add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeStructs.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeIndices.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeDumperGenerated.cpp
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/generator/main.rb
     DEPENDS ${GENERATOR} bytecode/BytecodeList.rb ${JAVASCRIPTCORE_DIR}/wasm/wasm.json
-    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/generator/main.rb --bytecodes_h ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h --init_bytecodes_asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm --bytecode_structs_h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeStructs.h --bytecode_indices_h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeIndices.h ${JAVASCRIPTCORE_DIR}/bytecode/BytecodeList.rb --wasm_json ${JAVASCRIPTCORE_DIR}/wasm/wasm.json  --bytecode_dumper ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeDumperGenerated.cpp
+    COMMAND ${Ruby_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/generator/main.rb --bytecodes_h ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h --init_bytecodes_asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm --bytecode_structs_h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeStructs.h --bytecode_indices_h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeIndices.h ${JAVASCRIPTCORE_DIR}/bytecode/BytecodeList.rb --wasm_json ${JAVASCRIPTCORE_DIR}/wasm/wasm.json  --bytecode_dumper ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeDumperGenerated.cpp
     VERBATIM)
 add_custom_target(Bytecodes DEPENDS "${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h")
 
@@ -294,7 +293,7 @@ add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/AirOpcode.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/AirOpcodeGenerated.h
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/b3/air/AirOpcode.opcodes
     DEPENDS ${JAVASCRIPTCORE_DIR}/b3/air/opcode_generator.rb
-    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/b3/air/opcode_generator.rb ${JAVASCRIPTCORE_DIR}/b3/air/AirOpcode.opcodes VERBATIM
+    COMMAND ${Ruby_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/b3/air/opcode_generator.rb ${JAVASCRIPTCORE_DIR}/b3/air/AirOpcode.opcodes VERBATIM
     WORKING_DIRECTORY ${JavaScriptCore_DERIVED_SOURCES_DIR}
 )
 
@@ -307,14 +306,14 @@ add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredSettings.h
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/offlineasm/generate_settings_extractor.rb
     DEPENDS ${LLINT_ASM} ${OFFLINE_ASM} ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm
-    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/generate_settings_extractor.rb -I${JavaScriptCore_DERIVED_SOURCES_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredSettings.h ${OFFLINE_ASM_BACKEND}
+    COMMAND ${Ruby_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/generate_settings_extractor.rb -I${JavaScriptCore_DERIVED_SOURCES_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredSettings.h ${OFFLINE_ASM_BACKEND}
     VERBATIM)
 
 add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredOffsets.h
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/offlineasm/generate_offset_extractor.rb
     DEPENDS LLIntSettingsExtractor ${LLINT_ASM} ${OFFLINE_ASM} ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/AirOpcode.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/WasmOps.h
-    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/generate_offset_extractor.rb -I${JavaScriptCore_DERIVED_SOURCES_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm $<TARGET_FILE:LLIntSettingsExtractor> ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredOffsets.h ${OFFLINE_ASM_BACKEND} ${BUILD_VARIANTS}
+    COMMAND ${Ruby_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/generate_offset_extractor.rb -I${JavaScriptCore_DERIVED_SOURCES_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm $<TARGET_FILE:LLIntSettingsExtractor> ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredOffsets.h ${OFFLINE_ASM_BACKEND} ${BUILD_VARIANTS}
     VERBATIM)
 
 # JSCBuiltins
@@ -448,7 +447,7 @@ add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/${LLIntOutput}
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/offlineasm/asm.rb
     DEPENDS LLIntOffsetsExtractor ${LLINT_ASM} ${OFFLINE_ASM} ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm
-    COMMAND ${CMAKE_COMMAND} -E env CMAKE_CXX_COMPILER_ID=${CMAKE_CXX_COMPILER_ID} GCC_OFFLINEASM_SOURCE_MAP=${GCC_OFFLINEASM_SOURCE_MAP} ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/asm.rb -I${JavaScriptCore_DERIVED_SOURCES_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm $<TARGET_FILE:LLIntOffsetsExtractor> ${JavaScriptCore_DERIVED_SOURCES_DIR}/${LLIntOutput} ${BUILD_VARIANTS} ${OFFLINE_ASM_ARGS}
+    COMMAND ${CMAKE_COMMAND} -E env CMAKE_CXX_COMPILER_ID=${CMAKE_CXX_COMPILER_ID} GCC_OFFLINEASM_SOURCE_MAP=${GCC_OFFLINEASM_SOURCE_MAP} ${Ruby_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/asm.rb -I${JavaScriptCore_DERIVED_SOURCES_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm $<TARGET_FILE:LLIntOffsetsExtractor> ${JavaScriptCore_DERIVED_SOURCES_DIR}/${LLIntOutput} ${BUILD_VARIANTS} ${OFFLINE_ASM_ARGS}
     COMMAND ${CMAKE_COMMAND} -E touch_nocreate ${JavaScriptCore_DERIVED_SOURCES_DIR}/${LLIntOutput}
     WORKING_DIRECTORY ${JavaScriptCore_DERIVED_SOURCES_DIR}
     VERBATIM)
@@ -976,6 +975,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     lol/LOLRegisterAllocator.h
 
     parser/Lexer.h
+    parser/LexerUnicodeProperties.h
     parser/ParserArena.h
     parser/ParserError.h
     parser/ParserModes.h
@@ -1046,7 +1046,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/CacheUpdate.h
     runtime/CagedBarrierPtr.h
     runtime/CallData.h
-    runtime/CatchScope.h
+    runtime/TopExceptionScope.h
     runtime/ClassInfo.h
     runtime/ClonedArguments.h
     runtime/CodeSpecializationKind.h
@@ -1181,6 +1181,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSFloat64Array.h
     runtime/JSFunction.h
     runtime/JSFunctionInlines.h
+    runtime/JSFunctionWithFields.h
     runtime/JSGenerator.h
     runtime/JSGeneratorFunction.h
     runtime/JSGenericTypedArrayView.h
@@ -1520,6 +1521,15 @@ list(APPEND JavaScriptCore_HEADERS ${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr/Re
 WEBKIT_ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/yarr/YarrPattern.cpp ${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr/RegExpJitTables.h)
 
 add_custom_command(
+    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/LexerUnicodePropertyTables.h
+    MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/parser/generateLexerUnicodePropertyTables.py
+    DEPENDS ${JAVASCRIPTCORE_DIR}/ucd/UnicodeData.txt
+    COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/parser/generateLexerUnicodePropertyTables.py ${JAVASCRIPTCORE_DIR}/ucd/UnicodeData.txt ${JavaScriptCore_DERIVED_SOURCES_DIR}/LexerUnicodePropertyTables.h
+    VERBATIM)
+list(APPEND JavaScriptCore_HEADERS ${JavaScriptCore_DERIVED_SOURCES_DIR}/LexerUnicodePropertyTables.h)
+WEBKIT_ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/parser/Lexer.cpp ${JavaScriptCore_DERIVED_SOURCES_DIR}/LexerUnicodePropertyTables.h)
+
+add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr/UnicodePatternTables.h
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/yarr/generateYarrUnicodePropertyTables.py
     DEPENDS ${JAVASCRIPTCORE_DIR}/yarr/hasher.py ${JAVASCRIPTCORE_DIR}/ucd/DerivedBinaryProperties.txt ${JAVASCRIPTCORE_DIR}/ucd/DerivedCoreProperties.txt ${JAVASCRIPTCORE_DIR}/ucd/DerivedNormalizationProps.txt ${JAVASCRIPTCORE_DIR}/ucd/PropList.txt ${JAVASCRIPTCORE_DIR}/ucd/PropertyAliases.txt ${JAVASCRIPTCORE_DIR}/ucd/PropertyValueAliases.txt ${JAVASCRIPTCORE_DIR}/ucd/ScriptExtensions.txt ${JAVASCRIPTCORE_DIR}/ucd/Scripts.txt ${JAVASCRIPTCORE_DIR}/ucd/UnicodeData.txt ${JAVASCRIPTCORE_DIR}/ucd/emoji-data.txt
@@ -1680,7 +1690,7 @@ endif ()
 if (CMAKE_COMPILER_IS_GNUCXX AND GCC_OFFLINEASM_SOURCE_MAP)
     message(STATUS "Enabling asm postprocessing")
 
-    set(LowLevelInterpreter_LAUNCHER "${RUBY_EXECUTABLE} ${JavaScriptCore_SCRIPTS_SOURCES_DIR}/postprocess-asm")
+    set(LowLevelInterpreter_LAUNCHER "${Ruby_EXECUTABLE} ${JavaScriptCore_SCRIPTS_SOURCES_DIR}/postprocess-asm")
     get_target_property(PROP_RULE_LAUNCH_COMPILE LowLevelInterpreterLib RULE_LAUNCH_COMPILE)
     if (PROP_RULE_LAUNCH_COMPILE)
         set(LowLevelInterpreter_LAUNCHER "${LowLevelInterpreter_LAUNCHER} ${PROP_RULE_LAUNCH_COMPILE}")

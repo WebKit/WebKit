@@ -538,7 +538,9 @@ TEST(WKNavigation, DecidePolicyForPageCacheNavigation)
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
     EXPECT_TRUE(!!navigationAction._mainFrameNavigation);
+    EXPECT_TRUE(!!navigationAction.mainFrameNavigation);
     EXPECT_EQ(navigationAction._mainFrameNavigation, navigation);
+    EXPECT_EQ(navigationAction.mainFrameNavigation, navigation);
     decisionHandler(WKNavigationActionPolicyAllow);
 }
 
@@ -809,6 +811,7 @@ TEST(WKNavigation, ShouldGoToBackForwardListItem)
     if (isSiteIsolationEnabled(webView.get()))
         return;
 
+    navigationComplete = false;
     auto delegate = adoptNS([[BackForwardDelegateWithShouldGo alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
@@ -1928,7 +1931,7 @@ TEST(WKNavigation, HTTPSOnlyNonHTTPSSecureSchemes)
 
     auto url = [NSURL URLWithString:@"secure://bundle-file/simple.html"];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    [webView loadURL:url];
     Util::run(&didFailNavigation);
 
     EXPECT_FALSE(finishedSuccessfully);
@@ -1941,7 +1944,7 @@ TEST(WKNavigation, HTTPSOnlyNonHTTPSSecureSchemes)
 
     [webView.get().configuration.processPool _registerURLSchemeAsSecure:secureScheme];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    [webView loadURL:url];
     Util::run(&finishedSuccessfully);
 
     EXPECT_FALSE(didFailNavigation);
@@ -2540,13 +2543,30 @@ TEST(WKNavigation, HTTPSOnlyWithHTTPRedirect)
     EXPECT_EQ(loadCount, 3);
     EXPECT_WK_STREQ(@"http://site2.example/secure2", [webView URL].absoluteString);
 
+    // Now use a different domain to the above to ensure a process swap happens,
+    // this ensures testing of an edge case in the HTTPS upgrade / same-site HTTP logic.
+    errorCode = 0;
+    finishedSuccessfully = false;
+    didFailNavigation = false;
+    loadCount = 0;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://different.example/secure2"]]];
+    TestWebKitAPI::Util::run(&finishedSuccessfully);
+
+    EXPECT_EQ(errorCode, 0);
+    EXPECT_TRUE(finishedSuccessfully);
+    EXPECT_EQ(loadCount, 3);
+    EXPECT_WK_STREQ(@"http://site2.example/secure2", [webView URL].absoluteString);
+
     configuration.get().defaultWebpagePreferences._networkConnectionIntegrityPolicy = _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSOnly;
 
     errorCode = 0;
     finishedSuccessfully = false;
     didFailNavigation = false;
     loadCount = 0;
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure2"]]];
+
+    // Using a different domain here standardises behaviour with EnhancedSecurityHeuristics enabled or disabled by
+    // encouring a PSON on the initial load.
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://different.example/secure2"]]];
 
     EXPECT_NULL([webView _safeBrowsingWarning]);
     while (![webView _safeBrowsingWarning])
@@ -2558,7 +2578,7 @@ TEST(WKNavigation, HTTPSOnlyWithHTTPRedirect)
 
     EXPECT_EQ(errorCode, 0);
     EXPECT_FALSE(didFailNavigation);
-    EXPECT_EQ(loadCount, 23);
+    EXPECT_EQ(loadCount, 22);
 
     [webView evaluateJavaScript:@"location = \"http://site2.example/secure3\";" completionHandler:nil];
 

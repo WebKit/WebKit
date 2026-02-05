@@ -73,7 +73,6 @@ public:
 
     WEBCORE_EXPORT void setConnection(RefPtr<Connection>&&);
     WEBCORE_EXPORT Connection* connection() const;
-    RefPtr<Connection> protectedConnection() const { return m_connection; }
 
     WEBCORE_EXPORT void registerSharedWorkerThread(Ref<SharedWorkerThreadProxy>&&);
 

@@ -73,6 +73,7 @@ class WeakPtrImplWithEventTargetData;
 
 struct MediaEndpointConfiguration;
 struct RTCAnswerOptions;
+struct RTCConfiguration;
 struct RTCDataChannelInit;
 struct RTCOfferOptions;
 struct RTCRtpTransceiverInit;
@@ -231,6 +232,8 @@ public:
 
     WEBCORE_EXPORT void ref() const;
     WEBCORE_EXPORT void deref() const;
+
+    virtual bool shouldEnableServiceClass() const { return true; }
 
 protected:
     void doneGatheringCandidates();

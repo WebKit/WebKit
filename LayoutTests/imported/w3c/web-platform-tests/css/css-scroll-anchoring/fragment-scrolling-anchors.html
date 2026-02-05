@@ -48,7 +48,7 @@
     var ch = document.getElementById('changer');
     ch.style.height = 100;
 
-    await (new Promise((resolve) => window.addEventListener('scroll', resolve)));
+    await new Promise(resolve => addEventListener('scroll', resolve, {once: true}));
 
     // Height of first + height changer + fragment margin-top.
     assert_equals(window.scrollY, 1110);

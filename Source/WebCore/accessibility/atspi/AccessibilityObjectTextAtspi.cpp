@@ -969,7 +969,7 @@ bool AccessibilityObjectAtspi::scrollToMakeVisible(int startOffset, int endOffse
 
     IntRect rect = m_coreObject->doAXBoundsForRange(CharacterRange(utf16StartOffset, utf16EndOffset - utf16StartOffset));
 
-    if (m_coreObject->isScrollView()) {
+    if (m_coreObject->isScrollArea()) {
         if (auto* parent = m_coreObject->parentObject())
             parent->scrollToMakeVisible();
     }

@@ -810,6 +810,33 @@ TEST(SiteIsolation, NavigationAfterWindowOpen)
         Util::spinRunLoop();
 }
 
+TEST(SiteIsolation, CrossSiteIFrameWindowOpensMainFrameSite)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<script>w = window.open('https://example.com/opened')</script>"_s } },
+        { "/opened"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [opener, opened] = openerAndOpenedViews(server);
+
+    checkFrameTreesInProcesses(opener.webView.get(), {
+        { // example.com process
+            "https://example.com"_s, // Main frame
+            Vector<ExpectedFrameTree> { { RemoteFrame } } // Child frame
+        },
+        { // webkit.org process
+            RemoteFrame, // Main frame
+            Vector<ExpectedFrameTree> { { "https://webkit.org"_s } } // Child frame
+        }
+    });
+
+    checkFrameTreesInProcesses(opened.webView.get(), {
+        { RemoteFrame },
+        { "https://example.com"_s }
+    });
+}
+
 TEST(SiteIsolation, OpenBeforeInitialLoad)
 {
     HTTPServer server({
@@ -1696,6 +1723,40 @@ TEST(SiteIsolation, CrossOriginOpenerPolicy)
     [webView waitForNextPresentationUpdate];
 }
 
+TEST(SiteIsolation, CrossOriginPopupWithCOOPValueSameOrigin)
+{
+    HTTPServer server({
+        { "/example"_s, { "<script>w = window.open('https://webkit.org/webkit')</script>"_s } },
+        { "/webkit"_s, { { { "Content-Type"_s, "text/html"_s }, { "cross-origin-opener-policy"_s, "same-origin"_s } }, "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [opener, opened] = openerAndOpenedViews(server);
+    EXPECT_NE([opener.webView _webProcessIdentifier], [opened.webView _webProcessIdentifier]);
+
+    [opened.webView evaluateJavaScript:@"alert(!!window.opener)" completionHandler:nil];
+    EXPECT_WK_STREQ([opened.uiDelegate waitForAlert], "false");
+
+    [opener.webView evaluateJavaScript:@"alert(w.closed)" completionHandler:nil];
+    EXPECT_WK_STREQ([opener.uiDelegate waitForAlert], "true");
+}
+
+TEST(SiteIsolation, CrossOriginPopupWithOpenerCOOPValueSameOrigin)
+{
+    HTTPServer server({
+        { "/example"_s, { { { "Content-Type"_s, "text/html"_s }, { "cross-origin-opener-Policy"_s, "same-origin"_s } }, "<script>w = window.open('https://webkit.org/webkit')</script>"_s } },
+        { "/webkit"_s, { "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [opener, opened] = openerAndOpenedViews(server);
+    EXPECT_NE([opener.webView _webProcessIdentifier], [opened.webView _webProcessIdentifier]);
+
+    [opened.webView evaluateJavaScript:@"alert(!!window.opener)" completionHandler:nil];
+    EXPECT_WK_STREQ([opened.uiDelegate waitForAlert], "false");
+
+    [opener.webView evaluateJavaScript:@"alert(w.closed)" completionHandler:nil];
+    EXPECT_WK_STREQ([opener.uiDelegate waitForAlert], "true");
+}
+
 static void testCrossOriginOpenerPolicyMainFrame(bool useSharedProcess)
 {
     HTTPServer server({
@@ -2223,6 +2284,111 @@ TEST(SiteIsolation, PasteGIF)
     EXPECT_WK_STREQ("image.gif", events[0]);
 }
 
+#endif
+
+#if ENABLE(DRAG_SUPPORT) && !PLATFORM(MACCATALYST)
+TEST(SiteIsolation, DragAndDropWithoutNavigation)
+{
+    auto mainframeHTML = "<!DOCTYPE html>"
+    "<html>"
+    "    <head>"
+    "        <meta charset='utf8'>"
+    "        <meta name='viewport' content='width=device-width, initial-scale=1, user-scalable=no'>"
+    "        <style>"
+    "            body {"
+    "                width: 100%;"
+    "                height: 100%;"
+    "                margin: 0;"
+    "                background-color: antiquewhite;"
+    "            }"
+    "        </style>"
+    "    </head>"
+    "    <body>"
+    "        <iframe src='https://domain2.com/subframe' style='width: 600px; height: 600px;'></iframe>"
+    "    </body>"
+    "</html>"_s;
+
+    auto subframeHTML = "<!DOCTYPE html>"
+    "<html>"
+    "    <head>"
+    "    <meta charset='utf8'>"
+    "    <meta name='viewport' content='width=device-width, initial-scale=1' />"
+    "    <style>"
+    "        body {"
+    "            margin: 0;"
+    "        }"
+    "       #draggable {"
+    "           background-color: cyan;"
+    "           width: 200px;"
+    "           height: 200px;"
+    "           border: 1px black dotted;"
+    "       }"
+    "       #dropzone {"
+    "           background-color: pink;"
+    "           width: 200px;"
+    "           height: 200px;"
+    "           border: 1px black dotted;"
+    "       }"
+    "    </style>"
+    "    </head>"
+    "    <body>"
+    "       <div draggable='true' id='draggable'>Hello World</div>"
+    "       <div id='dropzone'></div>"
+    "    <script>"
+    "        window.dropCount = 0;"
+    "        const draggable = document.getElementById('draggable');"
+    "        draggable.addEventListener('dragstart', function(e) {"
+    "               e.dataTransfer.setData('text/plain', 'hello world');"
+    "           });"
+    "       const dropzone = document.getElementById('dropzone');"
+    "       dropzone.addEventListener('dragenter', e => e.preventDefault());"
+    "       dropzone.addEventListener('dragover', e => e.preventDefault());"
+    "       dropzone.addEventListener('drop', function(e) {"
+    "           e.preventDefault();"
+    "           const data = e.dataTransfer.getData('text/plain');"
+    "           window.dropCount = 1;"
+    "       });"
+    "    </script>"
+    "    </body>"
+    "</html>"_s;
+
+    HTTPServer server({
+        { "/mainframe"_s, { { { "Content-Type"_s, "text/html "_s } }, mainframeHTML } },
+        { "/subframe"_s, { { { "Content-Type"_s, "text/html "_s } }, subframeHTML } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr webView = [simulator webView];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+    [simulator runFrom:CGPointMake(72, 92) to:CGPointMake(86, 274)];
+
+    __block bool didDecideNavigationPolicy = false;
+    [navigationDelegate setDecidePolicyForNavigationAction:^(WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        decisionHandler(WKNavigationActionPolicyAllow);
+        didDecideNavigationPolicy = true;
+    }];
+
+    __block bool done = false;
+    __block int windowDropCount = 0;
+    [webView evaluateJavaScript:@"window.dropCount" inFrame:[webView firstChildFrame] completionHandler:^(id resultValue, NSError *error) {
+        EXPECT_NULL(error);
+        done = true;
+        windowDropCount = [resultValue intValue];
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE(didDecideNavigationPolicy);
+    EXPECT_EQ(windowDropCount, 1);
+}
 #endif
 
 TEST(SiteIsolation, ShutDownFrameProcessesAfterNavigation)
@@ -3792,7 +3958,7 @@ TEST(SiteIsolation, ValidateSessionRestoreWithoutNavigating)
     EXPECT_TRUE([newIsolatedSessionState isEqualForTesting:normalSessionState.get()]);
 }
 
-TEST(SiteIsolation, DiscardUncachedBackItemForNavigatedOverIframe)
+TEST(SiteIsolation, BackNavigationOverCrossSiteIframeWithoutBFCache)
 {
     HTTPServer server({
         { "/example"_s, { "<iframe src='https://webkit.org/a'></iframe>"_s } },
@@ -3817,7 +3983,7 @@ TEST(SiteIsolation, DiscardUncachedBackItemForNavigatedOverIframe)
     EXPECT_WK_STREQ("c", [webView _test_waitForAlert]);
 
     [webView goBack];
-    EXPECT_WK_STREQ("a", [webView _test_waitForAlert]);
+    EXPECT_WK_STREQ("b", [webView _test_waitForAlert]);
 }
 
 TEST(SiteIsolation, ProtocolProcessSeparation)
@@ -6407,6 +6573,55 @@ TEST(SiteIsolation, SharedProcessWithResourceLoadStatistics)
     });
 }
 
+TEST(SiteIsolation, PartitionWebProcessCache)
+{
+    HTTPServer server({
+        { "/empty"_s, { ""_s } },
+        { "/first"_s, { "<!DOCTYPE html><iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/second"_s, { "<!DOCTYPE html><iframe src='https://example.com/empty'></iframe>"_s } },
+        { "/webkit"_s, { "webkit"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewWithSharedProcess(server, EnableProcessCache::Yes);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/first"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    checkFrameTreesInProcesses(webView.get(), {
+        {
+            "https://example.com"_s,
+            { { RemoteFrame } }
+        },
+        {
+            RemoteFrame,
+            { { "https://webkit.org"_s } }
+        },
+    });
+    auto mainFrameProcess = [webView mainFrame].info._processIdentifier;
+    auto childFrameProcess = [webView mainFrame].childFrames[0].info._processIdentifier;
+    EXPECT_NE(childFrameProcess, mainFrameProcess);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example2.com/second"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    checkFrameTreesInProcesses(webView.get(), {
+        {
+            "https://example2.com"_s,
+            { { RemoteFrame } }
+        },
+        {
+            RemoteFrame,
+            { { "https://example.com"_s } }
+        },
+    });
+    auto mainFrameProcessB = [webView mainFrame].info._processIdentifier;
+    auto childFrameProcessB = [webView mainFrame].childFrames[0].info._processIdentifier;
+    EXPECT_NE(mainFrameProcessB, mainFrameProcess);
+    EXPECT_NE(childFrameProcessB, childFrameProcess);
+
+    EXPECT_NE(mainFrameProcess, childFrameProcessB);
+}
+
+
 #if PLATFORM(MAC)
 
 TEST(SiteIsolation, SharedProcessAfterClick)
@@ -7067,11 +7282,6 @@ TEST(SiteIsolation, StatusBarVisibility)
     auto [opener, opened] = openerAndOpenedViews(server);
     NSString *statusBarVisible = @"window.statusbar.visible";
     EXPECT_TRUE([[opener.webView objectByEvaluatingJavaScript:statusBarVisible] boolValue]);
-    EXPECT_FALSE([[opened.webView objectByEvaluatingJavaScript:statusBarVisible] boolValue]);
-    EXPECT_FALSE([[opened.webView objectByEvaluatingJavaScript:statusBarVisible inFrame:[opened.webView firstChildFrame]] boolValue]);
-    EXPECT_TRUE([opener.webView _statusBarIsVisible]);
-    EXPECT_FALSE([opened.webView _statusBarIsVisible]);
-    [opened.webView _setStatusBarIsVisible:YES];
     EXPECT_TRUE([[opened.webView objectByEvaluatingJavaScript:statusBarVisible] boolValue]);
     EXPECT_TRUE([[opened.webView objectByEvaluatingJavaScript:statusBarVisible inFrame:[opened.webView firstChildFrame]] boolValue]);
 }

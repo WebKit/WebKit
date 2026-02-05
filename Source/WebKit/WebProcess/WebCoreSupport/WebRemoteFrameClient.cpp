@@ -70,7 +70,7 @@ void WebRemoteFrameClient::frameDetached()
     m_frame->invalidate();
 
     if (ownerElement)
-        ownerElement->protectedDocument()->checkCompleted();
+        protect(ownerElement->document())->checkCompleted();
 }
 
 void WebRemoteFrameClient::frameRectDidChange(IntRect rect)
@@ -144,6 +144,14 @@ void WebRemoteFrameClient::updateRemoteFrameAccessibilityOffset(WebCore::FrameId
     if (RefPtr page = m_frame->page())
         page->send(Messages::WebPageProxy::UpdateRemoteFrameAccessibilityOffset(frameID, offset));
 }
+
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+void WebRemoteFrameClient::updateRemoteFrameAccessibilityInheritedState(WebCore::FrameIdentifier frameID, const WebCore::InheritedFrameState& state)
+{
+    if (RefPtr page = m_frame->page())
+        page->send(Messages::WebPageProxy::UpdateRemoteFrameAccessibilityInheritedState(frameID, state));
+}
+#endif
 
 void WebRemoteFrameClient::bindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, WebCore::AccessibilityRemoteToken dataToken, CompletionHandler<void(AccessibilityRemoteToken, int)>&& completionHandler)
 {
@@ -252,9 +260,9 @@ void WebRemoteFrameClient::reportMixedContentViolation(bool blocked, const URL& 
         page->send(Messages::WebPageProxy::ReportMixedContentViolation(m_frame->frameID(), blocked, target));
 }
 
-void WebRemoteFrameClient::findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection direction, const WebCore::FocusEventData& focusEventData, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&& completionHandler)
+void WebRemoteFrameClient::findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection direction, const WebCore::FocusEventData& focusEventData, WebCore::ShouldFocusElement shouldFocusElement, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&& completionHandler)
 {
-    m_frame->sendWithAsyncReply(Messages::WebFrameProxy::FindFocusableElementDescendingIntoRemoteFrame(direction, focusEventData), WTF::move(completionHandler));
+    m_frame->sendWithAsyncReply(Messages::WebFrameProxy::FindFocusableElementDescendingIntoRemoteFrame(direction, focusEventData, shouldFocusElement), WTF::move(completionHandler));
 }
 
 }

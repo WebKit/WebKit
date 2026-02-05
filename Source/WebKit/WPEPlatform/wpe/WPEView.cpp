@@ -40,7 +40,7 @@
 #include <wtf/glib/WTFGType.h>
 
 #if USE(ATK)
-#include "WPEViewAccessibleAtk.h"
+#include "atk/WPEViewAccessibleAtk.h"
 #endif
 
 /**
@@ -106,6 +106,7 @@ static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 enum {
     CLOSED,
     RESIZED,
+    BUFFERS_CHANGED,
     BUFFER_RENDERED,
     BUFFER_RELEASED,
     EVENT,
@@ -370,6 +371,39 @@ static void wpe_view_class_init(WPEViewClass* viewClass)
         0, nullptr, nullptr,
         g_cclosure_marshal_generic,
         G_TYPE_NONE, 0);
+
+    /**
+     * WPEView::buffers-changed:
+     * @view: a #WPEView
+     * @buffers: (nullable) (array length=n_buffers) (element-type WPEBuffer):
+     *    array of buffers
+     * @n_buffers: the amount of buffers in the @buffers array
+     *
+     * Emitted to notify that the set of graphics buffers used to render
+     * the view have changed.
+     *
+     * When buffers are about to be released, @n_buffers will be zero
+     * and @buffers will be %NULL.
+     *
+     * Buffers may be reconfigured at any time, but it is guaranteed that
+     * after buffer configuration and before buffers get released, buffers
+     * used for rendered content will be among those from the @buffers array.
+     *
+     * Platform implementations may use this to inspect the @buffers and
+     * prior to their usage.
+     *
+     * See also [id@wpe_view_buffers_changed].
+     */
+    signals[BUFFERS_CHANGED] = g_signal_new(
+        "buffers-changed",
+        G_TYPE_FROM_CLASS(viewClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WPEViewClass, buffers_changed),
+        nullptr, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 2,
+        G_TYPE_POINTER,
+        G_TYPE_UINT);
 
     /**
      * WPEView::buffer-rendered:
@@ -907,6 +941,23 @@ gboolean wpe_view_render_buffer(WPEView* view, WPEBuffer* buffer, const WPERecta
 
     auto* viewClass = WPE_VIEW_GET_CLASS(view);
     return viewClass->render_buffer(view, buffer, damageRects, nDamageRects, error);
+}
+
+/**
+ * wpe_view_buffers_changed:
+ * @view: a #WPEView
+ * @buffers: (nullable) (array length=n_buffers):
+ * @n_buffers: the number of buffers in @buffers
+ *
+ * Notify that the set of graphics buffers used to render the view have changed.
+ *
+ * The [signal@View::buffers_changed] signal will be emitted.
+ */
+void wpe_view_buffers_changed(WPEView* view, WPEBuffer** buffers, guint nBuffers)
+{
+    g_return_if_fail(WPE_IS_VIEW(view));
+
+    g_signal_emit(view, signals[BUFFERS_CHANGED], 0, buffers, nBuffers);
 }
 
 /**

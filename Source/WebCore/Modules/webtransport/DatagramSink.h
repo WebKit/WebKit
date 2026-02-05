@@ -44,8 +44,7 @@ private:
     DatagramSink(WebTransportSession*);
 
     void write(ScriptExecutionContext&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
-    void close() final { m_isClosed = true; }
-    void abort(JSC::JSValue) final { }
+    void close(JSDOMGlobalObject&) final { m_isClosed = true; }
 
     ThreadSafeWeakPtr<WebTransportSession> m_session;
     WeakPtr<WebTransportDatagramsWritable> m_datagrams;

@@ -28,6 +28,25 @@ import subprocess
 import sys
 
 
+WEBKIT_CHECKERS = [
+    'alpha.webkit.ForwardDeclChecker',
+    'alpha.webkit.MemoryUnsafeCastChecker',
+    'alpha.webkit.NoUncheckedPtrMemberChecker',
+    'alpha.webkit.NoUnretainedMemberChecker',
+    'alpha.webkit.RetainPtrCtorAdoptChecker',
+    'alpha.webkit.UncheckedCallArgsChecker',
+    'alpha.webkit.UncheckedLocalVarsChecker',
+    'alpha.webkit.UncountedCallArgsChecker',
+    'alpha.webkit.UncountedLocalVarsChecker',
+    'alpha.webkit.UnretainedCallArgsChecker',
+    'alpha.webkit.UnretainedLambdaCapturesChecker',
+    'alpha.webkit.UnretainedLocalVarsChecker',
+    'webkit.NoUncountedMemberChecker',
+    'webkit.RefCntblBaseVirtualDtor',
+    'webkit.UncountedLambdaCapturesChecker',
+]
+
+
 def args_for_additional_checkers(checker_names):
     if not len(checker_names):
         return []
@@ -79,14 +98,7 @@ def make_analyzer_flags(output_dir, args):
         ])
 
     if args.enable_webkit_checkers:
-        additional_checkers.extend([
-            'webkit.NoUncountedMemberChecker',
-            'webkit.RefCntblBaseVirtualDtor',
-            'webkit.UncountedLambdaCapturesChecker',
-            'alpha.webkit.NoUncheckedPtrMemberChecker',
-            'alpha.webkit.UncountedCallArgsChecker',
-            'alpha.webkit.UncountedLocalVarsChecker'
-        ])
+        additional_checkers.extend(WEBKIT_CHECKERS)
 
     if args.enable_checkers:
         delimiters = re.compile(r'[\s,]+')
@@ -94,23 +106,7 @@ def make_analyzer_flags(output_dir, args):
         additional_checkers.extend(checkers)
 
     if args.only_smart_pointers:
-        additional_checkers.extend([
-            'alpha.webkit.ForwardDeclChecker',
-            'alpha.webkit.MemoryUnsafeCastChecker',
-            'alpha.webkit.NoUncheckedPtrMemberChecker',
-            'alpha.webkit.NoUnretainedMemberChecker',
-            'alpha.webkit.RetainPtrCtorAdoptChecker',
-            'alpha.webkit.UncheckedCallArgsChecker',
-            'alpha.webkit.UncheckedLocalVarsChecker',
-            'alpha.webkit.UncountedCallArgsChecker',
-            'alpha.webkit.UncountedLocalVarsChecker',
-            'alpha.webkit.UnretainedCallArgsChecker',
-            'alpha.webkit.UnretainedLambdaCapturesChecker',
-            'alpha.webkit.UnretainedLocalVarsChecker',
-            'webkit.NoUncountedMemberChecker',
-            'webkit.RefCntblBaseVirtualDtor',
-            'webkit.UncountedLambdaCapturesChecker',
-        ])
+        additional_checkers.extend(WEBKIT_CHECKERS)
 
     if additional_checkers:
         analyzer_flags.extend(args_for_additional_checkers(additional_checkers))

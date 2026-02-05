@@ -58,7 +58,7 @@ RefPtr<Node> PerformanceEventTiming::target() const
     if (!node || !node->isConnected())
         return nullptr;
 
-    if (!node->protectedDocument()->isFullyActive())
+    if (!protect(node->document())->isFullyActive())
         return nullptr;
 
     return node;

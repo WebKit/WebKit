@@ -238,6 +238,12 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/WritingModeTests.cpp
     )
 
+    if (USE_SKIA)
+        list(APPEND TestWebCore_SOURCES
+            Tests/WebCore/skia/SkiaTextureAtlasPackerTests.cpp
+        )
+    endif ()
+
     set(TestWebCore_LIBRARIES
         WebKit::gtest
     )

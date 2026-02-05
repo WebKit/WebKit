@@ -17,8 +17,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,110) size 784x100 [border: (25px solid #000000) (3px solid #000000)]
         RenderText {#text} at (3,25) size 176x18
           text run at (3,25) width 176: "This element has a class of "
-        RenderInline {TT} at (178,27) size 25x15
-          RenderText {#text} at (178,27) size 25x15
+        RenderInline {TT} at (178,27) size 25x16
+          RenderText {#text} at (178,27) size 25x16
             text run at (178,27) width 25: "one"
         RenderText {#text} at (202,25) size 164x18
           text run at (202,25) width 9: ". "
@@ -26,8 +26,8 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (365,24) size 178x22 [border: (1px solid #000000) (3px solid #000000)]
           RenderText {#text} at (368,25) size 149x18
             text run at (368,25) width 149: "inline element of class "
-          RenderInline {TT} at (516,27) size 24x15
-            RenderText {#text} at (516,27) size 24x15
+          RenderInline {TT} at (516,27) size 24x16
+            RenderText {#text} at (516,27) size 24x16
               text run at (516,27) width 24: "two"
         RenderText {#text} at (3,25) size 765x54
           text run at (542,25) width 226: ", which should result in a thin solid"
@@ -37,8 +37,8 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (51,61) size 188x18
           RenderText {#text} at (51,61) size 149x18
             text run at (51,61) width 149: "inline element of class "
-          RenderInline {TT} at (199,63) size 40x15
-            RenderText {#text} at (199,63) size 40x15
+          RenderInline {TT} at (199,63) size 40x16
+            RenderText {#text} at (199,63) size 40x16
               text run at (199,63) width 40: "three"
         RenderText {#text} at (3,61) size 759x36
           text run at (238,61) width 524: ", which should have no top border width or visible border because no border style"
@@ -58,8 +58,8 @@ layer at (0,0) size 800x600
               RenderBlock {P} at (4,4) size 762x100 [border: (25px solid #000000) (3px solid #000000)]
                 RenderText {#text} at (3,25) size 176x18
                   text run at (3,25) width 176: "This element has a class of "
-                RenderInline {TT} at (178,27) size 25x15
-                  RenderText {#text} at (178,27) size 25x15
+                RenderInline {TT} at (178,27) size 25x16
+                  RenderText {#text} at (178,27) size 25x16
                     text run at (178,27) width 25: "one"
                 RenderText {#text} at (202,25) size 164x18
                   text run at (202,25) width 9: ". "
@@ -67,8 +67,8 @@ layer at (0,0) size 800x600
                 RenderInline {SPAN} at (365,24) size 178x22 [border: (1px solid #000000) (3px solid #000000)]
                   RenderText {#text} at (368,25) size 149x18
                     text run at (368,25) width 149: "inline element of class "
-                  RenderInline {TT} at (516,27) size 24x15
-                    RenderText {#text} at (516,27) size 24x15
+                  RenderInline {TT} at (516,27) size 24x16
+                    RenderText {#text} at (516,27) size 24x16
                       text run at (516,27) width 24: "two"
                 RenderText {#text} at (3,25) size 737x54
                   text run at (542,25) width 191: ", which should result in a thin"
@@ -77,8 +77,8 @@ layer at (0,0) size 800x600
                 RenderInline {SPAN} at (107,61) size 188x18
                   RenderText {#text} at (107,61) size 149x18
                     text run at (107,61) width 149: "inline element of class "
-                  RenderInline {TT} at (255,63) size 40x15
-                    RenderText {#text} at (255,63) size 40x15
+                  RenderInline {TT} at (255,63) size 40x16
+                    RenderText {#text} at (255,63) size 40x16
                       text run at (255,63) width 40: "three"
                 RenderText {#text} at (3,61) size 735x36
                   text run at (294,61) width 444: ", which should have no top border width or visible border because no"

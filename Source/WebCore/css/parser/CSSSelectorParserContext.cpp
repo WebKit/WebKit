@@ -41,7 +41,7 @@ CSSSelectorParserContext::CSSSelectorParserContext(const CSSParserContext& conte
     , popoverAttributeEnabled(context.popoverAttributeEnabled)
     , htmlEnhancedSelectPseudoElementsEnabled(context.htmlEnhancedSelectPseudoElementsEnabled)
     , targetTextPseudoElementEnabled(context.targetTextPseudoElementEnabled)
-    , thumbAndTrackPseudoElementsEnabled(context.thumbAndTrackPseudoElementsEnabled)
+    , cssAppearanceBaseEnabled(context.cssAppearanceBaseEnabled)
     , viewTransitionsEnabled(context.propertySettings.viewTransitionsEnabled)
     , webkitMediaTextTrackDisplayQuirkEnabled(context.webkitMediaTextTrackDisplayQuirkEnabled)
     , openPseudoClassEnabled(context.openPseudoClassEnabled)
@@ -56,7 +56,7 @@ CSSSelectorParserContext::CSSSelectorParserContext(const Document& document)
     , popoverAttributeEnabled(document.settings().popoverAttributeEnabled())
     , htmlEnhancedSelectPseudoElementsEnabled(document.settings().htmlEnhancedSelectPseudoElementsEnabled())
     , targetTextPseudoElementEnabled(document.settings().targetTextPseudoElementEnabled())
-    , thumbAndTrackPseudoElementsEnabled(document.settings().thumbAndTrackPseudoElementsEnabled())
+    , cssAppearanceBaseEnabled(document.settings().cssAppearanceBaseEnabled())
     , viewTransitionsEnabled(document.settings().viewTransitionsEnabled())
     , webkitMediaTextTrackDisplayQuirkEnabled(document.quirks().needsWebKitMediaTextTrackDisplayQuirk())
     , openPseudoClassEnabled(document.settings().openPseudoClassEnabled())
@@ -72,7 +72,7 @@ void add(Hasher& hasher, const CSSSelectorParserContext& context)
         context.popoverAttributeEnabled,
         context.htmlEnhancedSelectPseudoElementsEnabled,
         context.targetTextPseudoElementEnabled,
-        context.thumbAndTrackPseudoElementsEnabled,
+        context.cssAppearanceBaseEnabled,
         context.viewTransitionsEnabled,
         context.webkitMediaTextTrackDisplayQuirkEnabled,
         context.openPseudoClassEnabled

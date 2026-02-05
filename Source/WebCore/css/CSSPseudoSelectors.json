@@ -134,6 +134,9 @@
         "has": {
             "argument": "required"
         },
+        "heading": {
+            "argument": "optional"
+        },
         "horizontal": {
             "comment": "For scrollbar styling.",
             "status": "non-standard"
@@ -511,6 +514,9 @@
         "before": {
             "supports-single-colon-for-compatibility": true
         },
+        "checkmark": {
+            "settings-flag": "cssAppearanceBaseEnabled"
+        },
         "cue": {
             "argument": "optional",
             "conditional": "ENABLE(VIDEO)",
@@ -563,11 +569,11 @@
             "settings-flag": "targetTextPseudoElementEnabled"
         },
         "thumb": {
-            "settings-flag": "thumbAndTrackPseudoElementsEnabled",
+            "settings-flag": "cssAppearanceBaseEnabled",
             "user-agent-part": true
         },
         "track": {
-            "settings-flag": "thumbAndTrackPseudoElementsEnabled",
+            "settings-flag": "cssAppearanceBaseEnabled",
             "user-agent-part": true
         },
         "view-transition": {

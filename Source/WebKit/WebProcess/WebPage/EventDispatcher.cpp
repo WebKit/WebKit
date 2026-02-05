@@ -337,7 +337,7 @@ void EventDispatcher::dispatchGestureEvent(FrameIdentifier frameID, PageIdentifi
 
 void EventDispatcher::sendDidReceiveEvent(PageIdentifier pageID, WebEventType eventType, bool didHandleEvent)
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebPageProxy::DidReceiveEventIPC(eventType, didHandleEvent, std::nullopt), pageID);
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::DidReceiveEventIPC(eventType, didHandleEvent, std::nullopt), pageID);
 }
 
 void EventDispatcher::notifyScrollingTreesDisplayDidRefresh(PlatformDisplayID displayID)
@@ -394,12 +394,12 @@ void EventDispatcher::handleSyntheticWheelEvent(WebCore::PageIdentifier pageIden
 
 void EventDispatcher::startDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID displayID)
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebProcessProxy::StartDisplayLink(m_observerID, displayID, WebCore::FullSpeedFramesPerSecond), 0);
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebProcessProxy::StartDisplayLink(m_observerID, displayID, WebCore::FullSpeedFramesPerSecond), 0);
 }
 
 void EventDispatcher::stopDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID displayID)
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebProcessProxy::StopDisplayLink(m_observerID, displayID), 0);
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebProcessProxy::StopDisplayLink(m_observerID, displayID), 0);
 }
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)

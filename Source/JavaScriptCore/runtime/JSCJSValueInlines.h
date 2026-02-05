@@ -29,7 +29,6 @@
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
-#include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/Error.h>
 #include <JavaScriptCore/ExceptionHelpers.h>
 #include <JavaScriptCore/Identifier.h>
@@ -43,6 +42,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/JSStringInlines.h>
 #include <JavaScriptCore/MathCommon.h>
+#include <JavaScriptCore/TopExceptionScope.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringImpl.h>
 

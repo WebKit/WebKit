@@ -36,7 +36,6 @@
 OBJC_CLASS NSError;
 OBJC_CLASS SCContentFilter;
 OBJC_CLASS SCContentSharingPicker;
-OBJC_CLASS SCContentSharingSession;
 OBJC_CLASS SCStream;
 OBJC_CLASS SCStreamConfiguration;
 OBJC_CLASS SCStreamDelegate;
@@ -61,12 +60,11 @@ class ScreenCaptureSessionSource
     , public CanMakeWeakPtr<ScreenCaptureSessionSource> {
 public:
     using CleanupFunction = CompletionHandler<void(ScreenCaptureSessionSource&)>;
-    static Ref<ScreenCaptureSessionSource> create(WeakPtr<ScreenCaptureSessionSourceObserver>, RetainPtr<SCStream>, RetainPtr<SCContentFilter>, RetainPtr<SCContentSharingSession>, CleanupFunction&&);
+    static Ref<ScreenCaptureSessionSource> create(WeakPtr<ScreenCaptureSessionSourceObserver>, RetainPtr<SCStream>, RetainPtr<SCContentFilter>, CleanupFunction&&);
     virtual ~ScreenCaptureSessionSource();
 
     SCStream* stream() const { return m_stream.get(); }
     SCContentFilter* contentFilter() const { return m_contentFilter.get(); }
-    SCContentSharingSession* sharingSession() const { return m_sharingSession.get(); }
     ScreenCaptureSessionSourceObserver* observer() const { return m_observer.get(); }
     CheckedPtr<ScreenCaptureSessionSourceObserver> checkedObserver() const { return m_observer.get(); }
 
@@ -76,11 +74,10 @@ public:
     bool operator==(const ScreenCaptureSessionSource&) const;
 
 private:
-    ScreenCaptureSessionSource(WeakPtr<ScreenCaptureSessionSourceObserver>&&, RetainPtr<SCStream>&&, RetainPtr<SCContentFilter>&&, RetainPtr<SCContentSharingSession>&&, CleanupFunction&&);
+    ScreenCaptureSessionSource(WeakPtr<ScreenCaptureSessionSourceObserver>&&, RetainPtr<SCStream>&&, RetainPtr<SCContentFilter>&&, CleanupFunction&&);
 
     RetainPtr<SCStream> m_stream;
     RetainPtr<SCContentFilter> m_contentFilter;
-    RetainPtr<SCContentSharingSession> m_sharingSession;
     WeakPtr<ScreenCaptureSessionSourceObserver> m_observer;
     CleanupFunction m_cleanupFunction;
 };
@@ -89,45 +86,36 @@ class ScreenCaptureKitSharingSessionManager : public RefCountedAndCanMakeWeakPtr
 public:
     WEBCORE_EXPORT static ScreenCaptureKitSharingSessionManager& singleton();
     WEBCORE_EXPORT static bool isAvailable();
-    WEBCORE_EXPORT static bool useSCContentSharingPicker();
 
     ~ScreenCaptureKitSharingSessionManager();
 
-    void sharingSessionDidChangeContent(SCContentSharingSession*);
-    void sharingSessionDidEnd(SCContentSharingSession*);
     void contentSharingPickerSelectedFilterForStream(SCContentFilter*, SCStream*);
     void contentSharingPickerFailedWithError(NSError*);
     void contentSharingPickerUpdatedFilterForStream(SCContentFilter*, SCStream*);
 
     void cancelPicking();
 
-    std::pair<RetainPtr<SCContentFilter>, RetainPtr<SCContentSharingSession>> contentFilterAndSharingSessionFromCaptureDevice(const CaptureDevice&);
-    RefPtr<ScreenCaptureSessionSource> createSessionSourceForDevice(WeakPtr<ScreenCaptureSessionSourceObserver>, SCContentFilter*, SCContentSharingSession*, SCStreamConfiguration*, SCStreamDelegate*);
+    RetainPtr<SCContentFilter> contentFilter(const CaptureDevice&);
+    RefPtr<ScreenCaptureSessionSource> createSessionSourceForDevice(WeakPtr<ScreenCaptureSessionSourceObserver>, SCContentFilter*, SCStreamConfiguration*, SCStreamDelegate*);
     void cancelPendingSessionForDevice(const CaptureDevice&);
 
     WEBCORE_EXPORT void promptForGetDisplayMedia(DisplayCapturePromptType, CompletionHandler<void(std::optional<CaptureDevice>)>&&);
     WEBCORE_EXPORT void cancelGetDisplayMediaPrompt();
 
-    void cleanupSharingSession(SCContentSharingSession*);
-
 private:
     ScreenCaptureKitSharingSessionManager();
 
     void cleanupAllSessions();
-    void completeDeviceSelection(SCContentFilter*, SCContentSharingSession* = nullptr);
+    void completeDeviceSelection(SCContentFilter*);
 
-    bool promptWithSCContentSharingSession(DisplayCapturePromptType);
     bool promptWithSCContentSharingPicker(DisplayCapturePromptType);
 
     bool promptingInProgress() const;
 
     void cleanupSessionSource(ScreenCaptureSessionSource&);
 
-    WeakPtr<ScreenCaptureSessionSource> findActiveSource(SCContentSharingSession*);
-
     Vector<WeakPtr<ScreenCaptureSessionSource>> m_activeSources;
 
-    RetainPtr<SCContentSharingSession> m_pendingSession;
     RetainPtr<SCContentFilter> m_pendingContentFilter;
 
     RetainPtr<WebDisplayMediaPromptHelper> m_promptHelper;

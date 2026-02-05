@@ -19,8 +19,8 @@ if (window.IPC) {
     assert_equals(IPC.messages.WebPageTesting_IsLayerTreeFrozenReply.isAsyncReply, true);
     assert_equals(IPC.messages.WebPageProxy_DecidePolicyForNavigationActionAsync.isAsyncReply, false);
     assert_equals(IPC.messages.WebPageProxy_DecidePolicyForNavigationActionAsyncReply.isAsyncReply, true);
-    assert_equals(IPC.messages.RemoteMediaResourceManager_ResponseReceived.isAsyncReply, false);
-    assert_equals(IPC.messages.RemoteMediaResourceManager_ResponseReceivedReply.isAsyncReply, true);
+    assert_equals(IPC.messages.RemoteMediaResourceLoader_ResponseReceived.isAsyncReply, false);
+    assert_equals(IPC.messages.RemoteMediaResourceLoader_ResponseReceivedReply.isAsyncReply, true);
 }
 
 document.write("PASS");

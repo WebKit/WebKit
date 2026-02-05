@@ -36,19 +36,19 @@ class MediaRecorderErrorEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(MediaRecorderErrorEvent);
 public:
     struct Init : EventInit {
-        RefPtr<DOMException> error;
+        Ref<DOMException> error;
     };
-    
+
     static Ref<MediaRecorderErrorEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
     static Ref<MediaRecorderErrorEvent> create(const AtomString&, Exception&&);
-    
-    DOMException& error() const { return m_domError.get(); }
+
+    DOMException& error() const { return m_error; }
 
 private:
-    MediaRecorderErrorEvent(const AtomString&, Init&&, Ref<DOMException>&&, IsTrusted);
+    MediaRecorderErrorEvent(const AtomString&, Init&&, IsTrusted);
     MediaRecorderErrorEvent(const AtomString&, Exception&&);
 
-    const Ref<DOMException> m_domError;
+    const Ref<DOMException> m_error;
 };
     
 } // namespace WebCore

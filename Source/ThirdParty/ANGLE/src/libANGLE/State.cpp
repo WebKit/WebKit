@@ -219,9 +219,14 @@ bool UpdateIndexedBufferBinding(const Context *context,
         ASSERT(!isBindingDirty);
         isBindingDirty = binding->get() != buffer || binding->getOffset() != offset ||
                          binding->getSize() != size;
-        if (isBindingDirty)
+        // If buffer changed, update everything otherwise update just the offset and size
+        if (binding->get() != buffer)
         {
             binding->set(context, buffer, offset, size);
+        }
+        else if (buffer != nullptr)
+        {
+            binding->assignOffsetAndSize(offset, size);
         }
     }
 
@@ -364,6 +369,7 @@ PrivateState::PrivateState(const Version &clientVersion,
       mFragmentShaderDerivativeHint(GL_NONE),
       mNearZ(0),
       mFarZ(0),
+      mGroupMarkerCount(0),
       mProvokingVertex(gl::ProvokingVertexConvention::LastVertexConvention),
       mActiveSampler(0),
       mPrimitiveRestart(false),
@@ -402,7 +408,8 @@ PrivateState::PrivateState(const Version &clientVersion,
       mRobustResourceInit(robustResourceInit),
       mProgramBinaryCacheEnabled(programBinaryCacheEnabled),
       mVertexArrayPrivate(nullptr),
-      mDebug(debug)
+      mDebug(debug),
+      mVertexArrayHandleAllocator(IMPLEMENTATION_MAX_OBJECT_HANDLES)
 {}
 
 PrivateState::~PrivateState() = default;

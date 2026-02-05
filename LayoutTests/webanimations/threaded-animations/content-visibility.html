@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="threaded-animations-utils.js"></script>
+<style>
+
+div {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+<script>
+
+const createContainerAndTarget = test => {
+    const container = document.createElement("div");
+    const target = document.createElement("div");
+    target.style.backgroundColor = "red";
+
+    test.add_cleanup(() => {
+        container.remove();
+        target.remove();
+    });
+
+    container.appendChild(target);
+    document.body.appendChild(container);
+
+    return [container, target];
+}
+
+const duration = 1000 * 1000; // 1000s.
+
+promise_test(async test => {
+    const [container, target] = createContainerAndTarget(test);
+
+    container.style.contentVisibility = "hidden";
+    const animation = target.animate({ opacity: 0.5 }, duration);
+    await animationAcceleration(animation);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0);
+}, "Setting 'content-visiblity' to 'auto' prevents an 'opacity' animation from being accelerated.");
+
+promise_test(async test => {
+    const [container, target] = createContainerAndTarget(test);
+
+    const animation = target.animate({ opacity: 0.5 }, duration);
+    await animationAcceleration(animation);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 1);
+
+    container.style.contentVisibility = "hidden";
+    await threadedAnimationsCommit();
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0);
+}, "Setting 'content-visiblity' to 'auto' interrupts a running accelerated 'opacity' animation.");
+
+</script>
+
+<div id="container"><div id="target"></div></div>
+
+</body>

@@ -37,7 +37,7 @@ class RTCDataChannelEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(RTCDataChannelEvent);
 public:
     struct Init : EventInit {
-        RefPtr<RTCDataChannel> channel;
+        Ref<RTCDataChannel> channel;
     };
 
     static Ref<RTCDataChannelEvent> create(const AtomString& type, CanBubble, IsCancelable, Ref<RTCDataChannel>&&);

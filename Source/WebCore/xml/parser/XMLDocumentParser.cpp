@@ -134,7 +134,7 @@ void XMLDocumentParser::append(RefPtr<StringImpl>&& inputSource)
 void XMLDocumentParser::handleError(XMLErrors::Type type, const char* m, TextPosition position)
 {
     if (!m_xmlErrors)
-        m_xmlErrors = makeUnique<XMLErrors>(*protectedDocument());
+        m_xmlErrors = makeUnique<XMLErrors>(*protect(document()));
     m_xmlErrors->handleError(type, m, position);
     if (type != XMLErrors::Type::Warning)
         m_sawError = true;
@@ -149,7 +149,7 @@ void XMLDocumentParser::createLeafTextNode()
 
     ASSERT(m_bufferedText.size() == 0);
     ASSERT(!m_leafTextNode);
-    m_leafTextNode = Text::create(m_currentNode->protectedDocument(), String { emptyString() });
+    m_leafTextNode = Text::create(protect(m_currentNode->document()), String { emptyString() });
     if (RefPtr currentNode = m_currentNode.get())
         currentNode->parserAppendChild(*protectedLeafTextNode());
 }
@@ -211,9 +211,9 @@ void XMLDocumentParser::end()
 
     if (isParsing())
         prepareToStopParsing();
-    protectedDocument()->setReadyState(Document::ReadyState::Interactive);
+    protect(document())->setReadyState(Document::ReadyState::Interactive);
     clearCurrentNodeStack();
-    protectedDocument()->finishedParsing();
+    protect(document())->finishedParsing();
 }
 
 void XMLDocumentParser::finish()
@@ -297,7 +297,7 @@ bool XMLDocumentParser::parseDocumentFragment(const String& chunk, DocumentFragm
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-xhtml-syntax.html#xml-fragment-parsing-algorithm
     // For now we have a hack for script/style innerHTML support:
     if (contextElement && (contextElement->hasLocalName(HTMLNames::scriptTag->localName()) || contextElement->hasLocalName(HTMLNames::styleTag->localName()))) {
-        fragment.parserAppendChild(fragment.protectedDocument()->createTextNode(String { chunk }));
+        fragment.parserAppendChild(protect(fragment.document())->createTextNode(String { chunk }));
         return true;
     }
 

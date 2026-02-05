@@ -199,7 +199,7 @@ void Connection::platformOpen()
     // Change the message queue length for the receive port.
     setMachPortQueueLength(m_receivePort, largeOutgoingMessageQueueCountThreshold);
 
-    m_receiveSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, m_receivePort, 0, m_connectionQueue->protectedDispatchQueue().get()));
+    m_receiveSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, m_receivePort, 0, protect(m_connectionQueue->dispatchQueue()).get()));
     dispatch_source_set_event_handler(m_receiveSource.get(), [this, protectedThis = Ref { *this }] {
         receiveSourceEventHandler();
     });
@@ -344,7 +344,7 @@ void Connection::initializeSendSource()
         return;
     RELEASE_ASSERT(m_sendPort != MACH_PORT_NULL);
 
-    m_sendSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_SEND, m_sendPort, DISPATCH_MACH_SEND_POSSIBLE, m_connectionQueue->protectedDispatchQueue().get()));
+    m_sendSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_SEND, m_sendPort, DISPATCH_MACH_SEND_POSSIBLE, protect(m_connectionQueue->dispatchQueue()).get()));
     dispatch_source_set_registration_handler(m_sendSource.get(), [this, protectedThis = Ref { *this }] {
         if (!m_sendSource)
             return;

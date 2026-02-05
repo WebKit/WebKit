@@ -305,6 +305,22 @@ static inline std::optional<RTCErrorDetailType> toRTCErrorDetailType(GstWebRTCEr
     };
 }
 
+static inline GstWebRTCPriorityType fromRTCPriorityType(RTCPriorityType priority)
+{
+    switch (priority) {
+    case RTCPriorityType::VeryLow:
+        return GST_WEBRTC_PRIORITY_TYPE_VERY_LOW;
+    case RTCPriorityType::Low:
+        return GST_WEBRTC_PRIORITY_TYPE_LOW;
+    case RTCPriorityType::Medium:
+        return GST_WEBRTC_PRIORITY_TYPE_MEDIUM;
+    case RTCPriorityType::High:
+        return GST_WEBRTC_PRIORITY_TYPE_HIGH;
+    }
+    ASSERT_NOT_REACHED();
+    return GST_WEBRTC_PRIORITY_TYPE_MEDIUM;
+}
+
 RefPtr<RTCError> toRTCError(GError*);
 
 ExceptionOr<GUniquePtr<GstStructure>> fromRTCEncodingParameters(const RTCRtpEncodingParameters&, const String& kind);

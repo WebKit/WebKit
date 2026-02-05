@@ -167,6 +167,26 @@
         "ASTC_12x10_SRGB_BLOCK": "VK_FORMAT_ASTC_12x10_SRGB_BLOCK",
         "ASTC_12x12_UNORM_BLOCK": "VK_FORMAT_ASTC_12x12_UNORM_BLOCK",
         "ASTC_12x12_SRGB_BLOCK": "VK_FORMAT_ASTC_12x12_SRGB_BLOCK",
+        "ASTC_3x3x3_UNORM_BLOCK": "VK_FORMAT_ASTC_3x3x3_SFLOAT_BLOCK_EXT",
+        "ASTC_4x3x3_UNORM_BLOCK": "VK_FORMAT_ASTC_4x3x3_SFLOAT_BLOCK_EXT",
+        "ASTC_4x4x3_UNORM_BLOCK": "VK_FORMAT_ASTC_4x4x3_SFLOAT_BLOCK_EXT",
+        "ASTC_4x4x4_UNORM_BLOCK": "VK_FORMAT_ASTC_4x4x4_SFLOAT_BLOCK_EXT",
+        "ASTC_5x4x4_UNORM_BLOCK": "VK_FORMAT_ASTC_5x4x4_SFLOAT_BLOCK_EXT",
+        "ASTC_5x5x4_UNORM_BLOCK": "VK_FORMAT_ASTC_5x5x4_SFLOAT_BLOCK_EXT",
+        "ASTC_5x5x5_UNORM_BLOCK": "VK_FORMAT_ASTC_5x5x5_SFLOAT_BLOCK_EXT",
+        "ASTC_6x5x5_UNORM_BLOCK": "VK_FORMAT_ASTC_6x5x5_SFLOAT_BLOCK_EXT",
+        "ASTC_6x6x5_UNORM_BLOCK": "VK_FORMAT_ASTC_6x6x5_SFLOAT_BLOCK_EXT",
+        "ASTC_6x6x6_UNORM_BLOCK": "VK_FORMAT_ASTC_6x6x6_SFLOAT_BLOCK_EXT",
+        "ASTC_3x3x3_UNORM_SRGB_BLOCK": "VK_FORMAT_ASTC_3x3x3_SRGB_BLOCK_EXT",
+        "ASTC_4x3x3_UNORM_SRGB_BLOCK": "VK_FORMAT_ASTC_4x3x3_SRGB_BLOCK_EXT",
+        "ASTC_4x4x3_UNORM_SRGB_BLOCK": "VK_FORMAT_ASTC_4x4x3_SRGB_BLOCK_EXT",
+        "ASTC_4x4x4_UNORM_SRGB_BLOCK": "VK_FORMAT_ASTC_4x4x4_SRGB_BLOCK_EXT",
+        "ASTC_5x4x4_UNORM_SRGB_BLOCK": "VK_FORMAT_ASTC_5x4x4_SRGB_BLOCK_EXT",
+        "ASTC_5x5x4_UNORM_SRGB_BLOCK": "VK_FORMAT_ASTC_5x5x4_SRGB_BLOCK_EXT",
+        "ASTC_5x5x5_UNORM_SRGB_BLOCK": "VK_FORMAT_ASTC_5x5x5_SRGB_BLOCK_EXT",
+        "ASTC_6x5x5_UNORM_SRGB_BLOCK": "VK_FORMAT_ASTC_6x5x5_SRGB_BLOCK_EXT",
+        "ASTC_6x6x5_UNORM_SRGB_BLOCK": "VK_FORMAT_ASTC_6x6x5_SRGB_BLOCK_EXT",
+        "ASTC_6x6x6_UNORM_SRGB_BLOCK": "VK_FORMAT_ASTC_6x6x6_SRGB_BLOCK_EXT",
         "G8_B8_R8_3PLANE_420_UNORM": "VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM",
         "G8_B8R8_2PLANE_420_UNORM": "VK_FORMAT_G8_B8R8_2PLANE_420_UNORM",
         "R10X6G10X6B10X6A10X6_UNORM": "VK_FORMAT_R10X6G10X6B10X6A10X6_UNORM_4PACK16",
@@ -240,7 +260,7 @@
             "image": "R8G8B8A8_UNORM_SRGB"
         },
         "D24_UNORM_X8_UINT": {
-            "image": ["D24_UNORM_S8_UINT", "D32_FLOAT_S8X24_UINT"]
+            "image": ["D24_UNORM_S8_UINT", "D32_FLOAT", "D32_FLOAT_S8X24_UINT"]
         },
         "D32_UNORM": {
             "buffer": "NONE",
@@ -614,6 +634,66 @@
             "image": "R8G8B8A8_UNORM_SRGB"
         },
         "ASTC_12x12_SRGB_BLOCK": {
+            "image": "R8G8B8A8_UNORM_SRGB"
+        },
+        "ASTC_3x3x3_UNORM_BLOCK": {
+            "image": "R8G8B8A8_UNORM"
+        },
+        "ASTC_4x3x3_UNORM_BLOCK": {
+            "image": "R8G8B8A8_UNORM"
+        },
+        "ASTC_4x4x3_UNORM_BLOCK": {
+            "image": "R8G8B8A8_UNORM"
+        },
+        "ASTC_4x4x4_UNORM_BLOCK": {
+            "image": "R8G8B8A8_UNORM"
+        },
+        "ASTC_5x4x4_UNORM_BLOCK": {
+            "image": "R8G8B8A8_UNORM"
+        },
+        "ASTC_5x5x4_UNORM_BLOCK": {
+            "image": "R8G8B8A8_UNORM"
+        },
+        "ASTC_5x5x5_UNORM_BLOCK": {
+            "image": "R8G8B8A8_UNORM"
+        },
+        "ASTC_6x5x5_UNORM_BLOCK": {
+            "image": "R8G8B8A8_UNORM"
+        },
+        "ASTC_6x6x5_UNORM_BLOCK": {
+            "image": "R8G8B8A8_UNORM"
+        },
+        "ASTC_6x6x6_UNORM_BLOCK": {
+            "image": "R8G8B8A8_UNORM"
+        },
+        "ASTC_3x3x3_UNORM_SRGB_BLOCK": {
+            "image": "R8G8B8A8_UNORM_SRGB"
+        },
+        "ASTC_4x3x3_UNORM_SRGB_BLOCK": {
+            "image": "R8G8B8A8_UNORM_SRGB"
+        },
+        "ASTC_4x4x3_UNORM_SRGB_BLOCK": {
+            "image": "R8G8B8A8_UNORM_SRGB"
+        },
+        "ASTC_4x4x4_UNORM_SRGB_BLOCK": {
+            "image": "R8G8B8A8_UNORM_SRGB"
+        },
+        "ASTC_5x4x4_UNORM_SRGB_BLOCK": {
+            "image": "R8G8B8A8_UNORM_SRGB"
+        },
+        "ASTC_5x5x4_UNORM_SRGB_BLOCK": {
+            "image": "R8G8B8A8_UNORM_SRGB"
+        },
+        "ASTC_5x5x5_UNORM_SRGB_BLOCK": {
+            "image": "R8G8B8A8_UNORM_SRGB"
+        },
+        "ASTC_6x5x5_UNORM_SRGB_BLOCK": {
+            "image": "R8G8B8A8_UNORM_SRGB"
+        },
+        "ASTC_6x6x5_UNORM_SRGB_BLOCK": {
+            "image": "R8G8B8A8_UNORM_SRGB"
+        },
+        "ASTC_6x6x6_UNORM_SRGB_BLOCK": {
             "image": "R8G8B8A8_UNORM_SRGB"
         },
 

@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://drafts.csswg.org/css-contain/#contentvisibilityautostatechangeevent
 [
     Exposed=Window
 ] interface ContentVisibilityAutoStateChangeEvent : Event {
@@ -30,8 +31,7 @@
     readonly attribute boolean skipped;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary ContentVisibilityAutoStateChangeEventInit : EventInit {
+// https://drafts.csswg.org/css-contain/#dictdef-contentvisibilityautostatechangeeventinit
+dictionary ContentVisibilityAutoStateChangeEventInit : EventInit {
     boolean skipped = false;
 };

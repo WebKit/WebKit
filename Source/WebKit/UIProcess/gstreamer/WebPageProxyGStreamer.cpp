@@ -62,19 +62,19 @@ void WebPageProxy::Internals::didResumeSpeaking(WebCore::PlatformSpeechSynthesis
 void WebPageProxy::Internals::speakingErrorOccurred(WebCore::PlatformSpeechSynthesisUtterance&)
 {
     Ref protectedPage = page.get();
-    protectedPage->protectedLegacyMainFrameProcess()->send(Messages::WebPage::SpeakingErrorOccurred(), protectedPage->webPageIDInMainFrameProcess());
+    protect(protectedPage->legacyMainFrameProcess())->send(Messages::WebPage::SpeakingErrorOccurred(), protectedPage->webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::Internals::boundaryEventOccurred(WebCore::PlatformSpeechSynthesisUtterance&, WebCore::SpeechBoundary speechBoundary, unsigned charIndex, unsigned charLength)
 {
     Ref protectedPage = page.get();
-    protectedPage->protectedLegacyMainFrameProcess()->send(Messages::WebPage::BoundaryEventOccurred(speechBoundary == WebCore::SpeechBoundary::SpeechWordBoundary, charIndex, charLength), protectedPage->webPageIDInMainFrameProcess());
+    protect(protectedPage->legacyMainFrameProcess())->send(Messages::WebPage::BoundaryEventOccurred(speechBoundary == WebCore::SpeechBoundary::SpeechWordBoundary, charIndex, charLength), protectedPage->webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::Internals::voicesDidChange()
 {
     Ref protectedPage = page.get();
-    protectedPage->protectedLegacyMainFrameProcess()->send(Messages::WebPage::VoicesDidChange(), protectedPage->webPageIDInMainFrameProcess());
+    protect(protectedPage->legacyMainFrameProcess())->send(Messages::WebPage::VoicesDidChange(), protectedPage->webPageIDInMainFrameProcess());
 }
 
 } // namespace WebKit

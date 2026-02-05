@@ -16,53 +16,53 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (324,0) size 25x20 [r=0 c=1 rs=1 cs=1]
                 RenderImage {IMG} at (5,0) size 19x20
               RenderTableCell {TD} at (348,4) size 453x12 [bgcolor=#000000] [r=0 c=2 rs=1 cs=2]
-                RenderInline {FONT} at (103,4) size 349x12 [color=#FFFFFF]
+                RenderInline {FONT} at (103,3) size 349x14 [color=#FFFFFF]
                   RenderText {#text} at (0,0) size 0x0
-                  RenderInline {B} at (103,4) size 349x12
-                    RenderText {#text} at (103,4) size 8x12
-                      text run at (103,0) width 8: "  "
-                    RenderInline {A} at (110,4) size 69x12
-                      RenderInline {FONT} at (110,4) size 69x12
-                        RenderText {#text} at (110,4) size 69x12
-                          text run at (110,0) width 69: "All Products"
-                    RenderText {#text} at (178,4) size 8x12
-                      text run at (178,0) width 8: "  "
-                    RenderInline {FONT} at (185,4) size 6x12
-                      RenderText {#text} at (185,4) size 6x12
-                        text run at (185,0) width 6: "|"
-                    RenderText {#text} at (190,4) size 11x12
-                      text run at (190,0) width 5: " "
-                      text run at (194,0) width 7: "  "
-                    RenderInline {A} at (200,4) size 46x12
-                      RenderInline {FONT} at (200,4) size 46x12
-                        RenderText {#text} at (200,4) size 46x12
-                          text run at (200,0) width 46: "Support"
-                    RenderText {#text} at (245,4) size 8x12
-                      text run at (245,0) width 8: "  "
-                    RenderInline {FONT} at (252,4) size 6x12
-                      RenderText {#text} at (252,4) size 6x12
-                        text run at (252,0) width 6: "|"
-                    RenderText {#text} at (257,4) size 12x12
-                      text run at (257,0) width 5: " "
-                      text run at (261,0) width 8: "  "
-                    RenderInline {A} at (268,4) size 39x12
-                      RenderInline {FONT} at (268,4) size 39x12
-                        RenderText {#text} at (268,4) size 39x12
-                          text run at (268,0) width 39: "Search"
-                    RenderText {#text} at (306,4) size 8x12
-                      text run at (306,0) width 8: "  "
-                    RenderInline {FONT} at (313,4) size 6x12
-                      RenderText {#text} at (313,4) size 6x12
-                        text run at (313,0) width 6: "|"
-                    RenderText {#text} at (318,4) size 12x12
-                      text run at (318,0) width 5: " "
-                      text run at (322,0) width 8: "  "
-                    RenderInline {A} at (329,4) size 117x12
-                      RenderInline {FONT} at (329,4) size 117x12
-                        RenderText {#text} at (329,4) size 117x12
-                          text run at (329,0) width 117: "microsoft.com Home"
-                    RenderText {#text} at (445,4) size 7x12
-                      text run at (445,0) width 7: "  "
+                  RenderInline {B} at (103,3) size 349x14
+                    RenderText {#text} at (103,3) size 8x14
+                      text run at (103,-1) width 8: "  "
+                    RenderInline {A} at (110,3) size 69x14
+                      RenderInline {FONT} at (110,3) size 69x14
+                        RenderText {#text} at (110,3) size 69x14
+                          text run at (110,-1) width 69: "All Products"
+                    RenderText {#text} at (178,3) size 8x14
+                      text run at (178,-1) width 8: "  "
+                    RenderInline {FONT} at (185,3) size 6x14
+                      RenderText {#text} at (185,3) size 6x14
+                        text run at (185,-1) width 6: "|"
+                    RenderText {#text} at (190,3) size 11x14
+                      text run at (190,-1) width 5: " "
+                      text run at (194,-1) width 7: "  "
+                    RenderInline {A} at (200,3) size 46x14
+                      RenderInline {FONT} at (200,3) size 46x14
+                        RenderText {#text} at (200,3) size 46x14
+                          text run at (200,-1) width 46: "Support"
+                    RenderText {#text} at (245,3) size 8x14
+                      text run at (245,-1) width 8: "  "
+                    RenderInline {FONT} at (252,3) size 6x14
+                      RenderText {#text} at (252,3) size 6x14
+                        text run at (252,-1) width 6: "|"
+                    RenderText {#text} at (257,3) size 12x14
+                      text run at (257,-1) width 5: " "
+                      text run at (261,-1) width 8: "  "
+                    RenderInline {A} at (268,3) size 39x14
+                      RenderInline {FONT} at (268,3) size 39x14
+                        RenderText {#text} at (268,3) size 39x14
+                          text run at (268,-1) width 39: "Search"
+                    RenderText {#text} at (306,3) size 8x14
+                      text run at (306,-1) width 8: "  "
+                    RenderInline {FONT} at (313,3) size 6x14
+                      RenderText {#text} at (313,3) size 6x14
+                        text run at (313,-1) width 6: "|"
+                    RenderText {#text} at (318,3) size 12x14
+                      text run at (318,-1) width 5: " "
+                      text run at (322,-1) width 8: "  "
+                    RenderInline {A} at (329,3) size 117x14
+                      RenderInline {FONT} at (329,3) size 117x14
+                        RenderText {#text} at (329,3) size 117x14
+                          text run at (329,-1) width 117: "microsoft.com Home"
+                    RenderText {#text} at (445,3) size 7x14
+                      text run at (445,-1) width 7: "  "
                   RenderText {#text} at (0,0) size 0x0
             RenderTableRow {TR} at (0,20) size 800x40
               RenderTableCell {TD} at (324,20) size 477x40 [r=1 c=1 rs=1 cs=2]
@@ -70,89 +70,89 @@ layer at (0,0) size 800x600
                   RenderImage {IMG} at (363,0) size 113x40
             RenderTableRow {TR} at (0,60) size 800x20
               RenderTableCell {TD} at (0,64) size 801x12 [bgcolor=#6699CC] [r=2 c=0 rs=1 cs=4]
-                RenderInline {FONT} at (0,4) size 596x12 [color=#FFFFFF]
-                  RenderInline {B} at (0,4) size 596x12
-                    RenderText {#text} at (0,4) size 7x12
-                      text run at (0,0) width 7: "  "
-                    RenderInline {A} at (6,4) size 34x12
-                      RenderInline {FONT} at (6,4) size 34x12
-                        RenderText {#text} at (6,4) size 34x12
-                          text run at (6,0) width 34: "Home"
-                    RenderText {#text} at (39,4) size 8x12
-                      text run at (39,0) width 8: "  "
-                    RenderInline {FONT} at (46,4) size 6x12
-                      RenderText {#text} at (46,4) size 6x12
-                        text run at (46,0) width 6: "|"
-                    RenderText {#text} at (51,4) size 11x12
-                      text run at (51,0) width 4: " "
-                      text run at (54,0) width 8: "  "
-                    RenderInline {A} at (61,4) size 39x12
-                      RenderInline {FONT} at (61,4) size 39x12
-                        RenderText {#text} at (61,4) size 39x12
-                          text run at (61,0) width 39: "Events"
-                    RenderText {#text} at (99,4) size 8x12
-                      text run at (99,0) width 8: "  "
-                    RenderInline {FONT} at (106,4) size 6x12
-                      RenderText {#text} at (106,4) size 6x12
-                        text run at (106,0) width 6: "|"
-                    RenderText {#text} at (111,4) size 11x12
-                      text run at (111,0) width 5: " "
-                      text run at (115,0) width 7: "  "
-                    RenderInline {A} at (121,4) size 48x12
-                      RenderInline {FONT} at (121,4) size 48x12
-                        RenderText {#text} at (121,4) size 48x12
-                          text run at (121,0) width 48: "Training"
-                    RenderText {#text} at (168,4) size 8x12
-                      text run at (168,0) width 8: "  "
-                    RenderInline {FONT} at (175,4) size 6x12
-                      RenderText {#text} at (175,4) size 6x12
-                        text run at (175,0) width 6: "|"
-                    RenderText {#text} at (180,4) size 11x12
-                      text run at (180,0) width 5: " "
-                      text run at (184,0) width 7: "  "
-                    RenderInline {A} at (190,4) size 63x12
-                      RenderInline {FONT} at (190,4) size 63x12
-                        RenderText {#text} at (190,4) size 63x12
-                          text run at (190,0) width 63: "Downloads"
-                    RenderText {#text} at (252,4) size 8x12
-                      text run at (252,0) width 8: "  "
-                    RenderInline {FONT} at (259,4) size 7x12
-                      RenderText {#text} at (259,4) size 7x12
-                        text run at (259,0) width 7: "|"
-                    RenderText {#text} at (265,4) size 11x12
-                      text run at (265,0) width 4: " "
-                      text run at (268,0) width 8: "  "
-                    RenderInline {A} at (275,4) size 69x12
-                      RenderInline {FONT} at (275,4) size 69x12
-                        RenderText {#text} at (275,4) size 69x12
-                          text run at (275,0) width 69: "Newsletters"
-                    RenderText {#text} at (343,4) size 7x12
-                      text run at (343,0) width 7: "  "
-                    RenderInline {FONT} at (349,4) size 7x12
-                      RenderText {#text} at (349,4) size 7x12
-                        text run at (349,0) width 7: "|"
-                    RenderText {#text} at (355,4) size 11x12
-                      text run at (355,0) width 4: " "
-                      text run at (358,0) width 8: "  "
-                    RenderInline {A} at (365,4) size 114x12
-                      RenderInline {FONT} at (365,4) size 114x12
-                        RenderText {#text} at (365,4) size 114x12
-                          text run at (365,0) width 114: "U.S. & International"
-                    RenderText {#text} at (478,4) size 7x12
-                      text run at (478,0) width 7: "  "
-                    RenderInline {FONT} at (484,4) size 7x12
-                      RenderText {#text} at (484,4) size 7x12
-                        text run at (484,0) width 7: "|"
-                    RenderText {#text} at (490,4) size 11x12
-                      text run at (490,0) width 4: " "
-                      text run at (493,0) width 8: "  "
-                    RenderInline {A} at (500,4) size 84x12
-                      RenderInline {FONT} at (500,4) size 84x12
-                        RenderText {#text} at (500,4) size 84x12
-                          text run at (500,0) width 84: "About Our Site"
-                    RenderText {#text} at (583,4) size 7x12
-                      text run at (583,0) width 7: "  "
-                    RenderInline {FONT} at (589,4) size 7x12
-                      RenderText {#text} at (589,4) size 7x12
-                        text run at (589,0) width 7: "|"
+                RenderInline {FONT} at (0,3) size 596x14 [color=#FFFFFF]
+                  RenderInline {B} at (0,3) size 596x14
+                    RenderText {#text} at (0,3) size 7x14
+                      text run at (0,-1) width 7: "  "
+                    RenderInline {A} at (6,3) size 34x14
+                      RenderInline {FONT} at (6,3) size 34x14
+                        RenderText {#text} at (6,3) size 34x14
+                          text run at (6,-1) width 34: "Home"
+                    RenderText {#text} at (39,3) size 8x14
+                      text run at (39,-1) width 8: "  "
+                    RenderInline {FONT} at (46,3) size 6x14
+                      RenderText {#text} at (46,3) size 6x14
+                        text run at (46,-1) width 6: "|"
+                    RenderText {#text} at (51,3) size 11x14
+                      text run at (51,-1) width 4: " "
+                      text run at (54,-1) width 8: "  "
+                    RenderInline {A} at (61,3) size 39x14
+                      RenderInline {FONT} at (61,3) size 39x14
+                        RenderText {#text} at (61,3) size 39x14
+                          text run at (61,-1) width 39: "Events"
+                    RenderText {#text} at (99,3) size 8x14
+                      text run at (99,-1) width 8: "  "
+                    RenderInline {FONT} at (106,3) size 6x14
+                      RenderText {#text} at (106,3) size 6x14
+                        text run at (106,-1) width 6: "|"
+                    RenderText {#text} at (111,3) size 11x14
+                      text run at (111,-1) width 5: " "
+                      text run at (115,-1) width 7: "  "
+                    RenderInline {A} at (121,3) size 48x14
+                      RenderInline {FONT} at (121,3) size 48x14
+                        RenderText {#text} at (121,3) size 48x14
+                          text run at (121,-1) width 48: "Training"
+                    RenderText {#text} at (168,3) size 8x14
+                      text run at (168,-1) width 8: "  "
+                    RenderInline {FONT} at (175,3) size 6x14
+                      RenderText {#text} at (175,3) size 6x14
+                        text run at (175,-1) width 6: "|"
+                    RenderText {#text} at (180,3) size 11x14
+                      text run at (180,-1) width 5: " "
+                      text run at (184,-1) width 7: "  "
+                    RenderInline {A} at (190,3) size 63x14
+                      RenderInline {FONT} at (190,3) size 63x14
+                        RenderText {#text} at (190,3) size 63x14
+                          text run at (190,-1) width 63: "Downloads"
+                    RenderText {#text} at (252,3) size 8x14
+                      text run at (252,-1) width 8: "  "
+                    RenderInline {FONT} at (259,3) size 7x14
+                      RenderText {#text} at (259,3) size 7x14
+                        text run at (259,-1) width 7: "|"
+                    RenderText {#text} at (265,3) size 11x14
+                      text run at (265,-1) width 4: " "
+                      text run at (268,-1) width 8: "  "
+                    RenderInline {A} at (275,3) size 69x14
+                      RenderInline {FONT} at (275,3) size 69x14
+                        RenderText {#text} at (275,3) size 69x14
+                          text run at (275,-1) width 69: "Newsletters"
+                    RenderText {#text} at (343,3) size 7x14
+                      text run at (343,-1) width 7: "  "
+                    RenderInline {FONT} at (349,3) size 7x14
+                      RenderText {#text} at (349,3) size 7x14
+                        text run at (349,-1) width 7: "|"
+                    RenderText {#text} at (355,3) size 11x14
+                      text run at (355,-1) width 4: " "
+                      text run at (358,-1) width 8: "  "
+                    RenderInline {A} at (365,3) size 114x14
+                      RenderInline {FONT} at (365,3) size 114x14
+                        RenderText {#text} at (365,3) size 114x14
+                          text run at (365,-1) width 114: "U.S. & International"
+                    RenderText {#text} at (478,3) size 7x14
+                      text run at (478,-1) width 7: "  "
+                    RenderInline {FONT} at (484,3) size 7x14
+                      RenderText {#text} at (484,3) size 7x14
+                        text run at (484,-1) width 7: "|"
+                    RenderText {#text} at (490,3) size 11x14
+                      text run at (490,-1) width 4: " "
+                      text run at (493,-1) width 8: "  "
+                    RenderInline {A} at (500,3) size 84x14
+                      RenderInline {FONT} at (500,3) size 84x14
+                        RenderText {#text} at (500,3) size 84x14
+                          text run at (500,-1) width 84: "About Our Site"
+                    RenderText {#text} at (583,3) size 7x14
+                      text run at (583,-1) width 7: "  "
+                    RenderInline {FONT} at (589,3) size 7x14
+                      RenderText {#text} at (589,3) size 7x14
+                        text run at (589,-1) width 7: "|"
                     RenderText {#text} at (0,0) size 0x0

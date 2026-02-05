@@ -42,16 +42,17 @@ bool useSmoothScrolling(ScrollBehavior behavior, Element* associatedElement)
 
     // FIXME: Should we use document()->scrollingElement()?
     // See https://bugs.webkit.org/show_bug.cgi?id=205059
-    if (associatedElement == associatedElement->document().scrollingElement())
-        associatedElement = associatedElement->document().documentElement();
+    RefPtr element = associatedElement;
+    if (element == element->document().scrollingElement())
+        element = element->document().documentElement();
 
-    if (!associatedElement->renderer())
+    if (!element->renderer())
         return false;
 
     // https://drafts.csswg.org/cssom-view/#scrolling
     switch (behavior) {
     case ScrollBehavior::Auto:
-        return associatedElement->renderer()->style().scrollBehavior() == Style::ScrollBehavior::Smooth;
+        return element->renderer()->style().scrollBehavior() == Style::ScrollBehavior::Smooth;
     case ScrollBehavior::Instant:
         return false;
     case ScrollBehavior::Smooth:

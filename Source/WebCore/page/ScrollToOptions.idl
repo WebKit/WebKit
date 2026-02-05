@@ -26,9 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary ScrollToOptions : ScrollOptions {
+// https://drafts.csswg.org/cssom-view/#dictdef-scrolltooptions
+dictionary ScrollToOptions : ScrollOptions {
     unrestricted double left;
     unrestricted double top;
 };

@@ -129,10 +129,16 @@ void MutableCSSSelector::adoptSelectorVector(MutableCSSSelectorList&& selectorVe
     m_selector.setSelectorList(makeUnique<CSSSelectorList>(WTF::move(selectorVector)));
 }
 
-void MutableCSSSelector::setArgumentList(FixedVector<AtomString> list)
+void MutableCSSSelector::setIntegerList(FixedVector<int> list)
 {
     ASSERT(!list.isEmpty());
-    m_selector.setArgumentList(WTF::move(list));
+    m_selector.setIntegerList(WTF::move(list));
+}
+
+void MutableCSSSelector::setStringList(FixedVector<AtomString> list)
+{
+    ASSERT(!list.isEmpty());
+    m_selector.setStringList(WTF::move(list));
 }
 
 void MutableCSSSelector::setLangList(FixedVector<PossiblyQuotedIdentifier> list)

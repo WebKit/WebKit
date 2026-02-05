@@ -370,10 +370,7 @@ static void testWebKitSettings(Test*, gconstpointer)
     g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS);
     webkit_settings_set_hardware_acceleration_policy(settings, WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER);
     g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER);
-#if !USE(GTK4)
-    webkit_settings_set_hardware_acceleration_policy(settings, WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND);
-    g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND);
-#endif
+
     webkit_settings_set_hardware_acceleration_policy(settings, WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS);
     g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS);
 
@@ -415,12 +412,10 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
-#if USE(SKIA)
     // 2D canvas acceleration is enabled by default.
     g_assert_true(webkit_settings_get_enable_2d_canvas_acceleration(settings));
     webkit_settings_set_enable_2d_canvas_acceleration(settings, FALSE);
     g_assert_false(webkit_settings_get_enable_2d_canvas_acceleration(settings));
-#endif
 
     // WebSecurity is enabled by default.
     g_assert_false(webkit_settings_get_disable_web_security(settings));

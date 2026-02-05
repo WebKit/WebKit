@@ -28,7 +28,6 @@
     EnabledBySetting=ModelElementEnabled,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary HTMLModelElementCamera {
     required double pitch;
     required double yaw;

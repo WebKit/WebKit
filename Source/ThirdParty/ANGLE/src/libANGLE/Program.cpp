@@ -21,6 +21,7 @@
 #include "common/debug.h"
 #include "common/platform.h"
 #include "common/platform_helpers.h"
+#include "common/span_util.h"
 #include "common/string_utils.h"
 #include "common/utilities.h"
 #include "compiler/translator/blocklayout.h"
@@ -1423,7 +1424,7 @@ angle::Result Program::loadBinary(const Context *context,
     ASSERT(mLinkingState);
     unlink();
 
-    BinaryInputStream stream(binary, length);
+    BinaryInputStream stream(angle::Span(static_cast<const uint8_t *>(binary), length));
     if (!deserialize(context, stream))
     {
         return angle::Result::Continue;
@@ -2101,8 +2102,9 @@ bool Program::linkAttributes(const Caps &caps,
     // Assign locations to attributes that don't have a binding location.
     for (ProgramInput &attribute : mState.mExecutable->mProgramInputs)
     {
-        // Not set by glBindAttribLocation or by location layout qualifier
-        if (attribute.getLocation() == -1)
+        // Not set by glBindAttribLocation or by location layout qualifier and not built-in
+        // attribute
+        if (!attribute.isBuiltIn() && attribute.getLocation() == -1)
         {
             int regs           = VariableRegisterCount(attribute.getType());
             int availableIndex = AllocateFirstFreeBits(&usedLocations, regs, maxAttribs);
@@ -2140,16 +2142,18 @@ bool Program::linkAttributes(const Caps &caps,
 
     for (const ProgramInput &attribute : mState.mExecutable->getProgramInputs())
     {
-        ASSERT(attribute.isActive());
-        ASSERT(attribute.getLocation() != -1);
-        unsigned int regs = static_cast<unsigned int>(VariableRegisterCount(attribute.getType()));
-
-        unsigned int location = static_cast<unsigned int>(attribute.getLocation());
-        for (unsigned int r = 0; r < regs; r++)
+        // Built-in active program inputs don't have a bound attribute.
+        if (!attribute.isBuiltIn())
         {
-            // Built-in active program inputs don't have a bound attribute.
-            if (!attribute.isBuiltIn())
+            ASSERT(attribute.isActive());
+            ASSERT(attribute.getLocation() != -1);
+            unsigned int regs =
+                static_cast<unsigned int>(VariableRegisterCount(attribute.getType()));
+
+            unsigned int location = static_cast<unsigned int>(attribute.getLocation());
+            for (unsigned int r = 0; r < regs; r++)
             {
+
                 mState.mExecutable->mPod.activeAttribLocationsMask.set(location);
                 mState.mExecutable->mPod.maxActiveAttribLocation =
                     std::max(mState.mExecutable->mPod.maxActiveAttribLocation, location + 1);
@@ -2184,8 +2188,8 @@ angle::Result Program::serialize(const Context *context)
     BinaryOutputStream stream;
 
     stream.writeBytes(
-        reinterpret_cast<const unsigned char *>(angle::GetANGLEShaderProgramVersion()),
-        angle::GetANGLEShaderProgramVersionHashSize());
+        angle::Span(reinterpret_cast<const uint8_t *>(angle::GetANGLEShaderProgramVersion()),
+                    angle::GetANGLEShaderProgramVersionHashSize()));
 
     stream.writeBool(angle::Is64Bit());
 
@@ -2252,23 +2256,22 @@ angle::Result Program::serialize(const Context *context)
     mProgram->save(context, &stream);
     ASSERT(mState.mExecutable->mPostLinkSubTasks.empty());
 
-    if (!mBinary.resize(stream.length()))
+    if (!mBinary.resize(stream.size()))
     {
         ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
                            "Failed to allocate enough memory to serialize a program. (%zu bytes)",
-                           stream.length());
+                           stream.size());
         return angle::Result::Stop;
     }
-    memcpy(mBinary.data(), stream.data(), stream.length());
+    angle::SpanMemcpy(mBinary.span(), angle::Span(stream));
     return angle::Result::Continue;
 }
 
 bool Program::deserialize(const Context *context, BinaryInputStream &stream)
 {
     std::vector<uint8_t> angleShaderProgramVersionString(
-        angle::GetANGLEShaderProgramVersionHashSize(), 0);
-    stream.readBytes(angleShaderProgramVersionString.data(),
-                     angleShaderProgramVersionString.size());
+        angle::GetANGLEShaderProgramVersionHashSize());
+    stream.readBytes(angleShaderProgramVersionString);
     if (memcmp(angleShaderProgramVersionString.data(), angle::GetANGLEShaderProgramVersion(),
                angleShaderProgramVersionString.size()) != 0)
     {

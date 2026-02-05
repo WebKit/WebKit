@@ -106,6 +106,7 @@ public:
     ExceptionOr<bool> dispatchEventForBindings(Event&);
 
     virtual bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&);
+    bool addEventListener(const AtomString& eventType, Ref<EventListener>&&);
     virtual bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions& = { });
 
     virtual void removeAllEventListeners();

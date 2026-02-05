@@ -67,6 +67,7 @@ public:
     void updateState(State);
 
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, StructuredSerializeOptions&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
 
     ServiceWorkerIdentifier identifier() const { return m_data.identifier; }
     ServiceWorkerRegistrationIdentifier registrationIdentifier() const { return m_data.registrationIdentifier; }
@@ -88,7 +89,6 @@ private:
     void stop() final;
 
     SWClientConnection& swConnection();
-    Ref<SWClientConnection> protectedSWConnection();
 
     ServiceWorkerData m_data;
     bool m_isStopped { false };

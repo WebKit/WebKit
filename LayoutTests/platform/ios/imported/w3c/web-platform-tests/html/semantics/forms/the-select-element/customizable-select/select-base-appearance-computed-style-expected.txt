@@ -1,0 +1,13 @@
+
+SIBLING
+
+FAIL UA styles of base appearance <select>. assert_equals: background-color expected "rgba(0, 0, 0, 0)" but got "rgb(233, 233, 234)"
+FAIL UA styles of base appearance select::picker-icon. assert_equals: content expected "counter(fake-counter-name, disclosure-open)" but got ""
+FAIL UA styles of base appearance ::picker(select) assert_equals: box-sizing expected "border-box" but got ""
+FAIL UA styles of base appearance <option>. assert_equals: min-inline-size expected "24px" but got "0px"
+FAIL UA styles of base appearance option::checkmark. assert_equals: content expected "\"✓\"" but got ""
+FAIL UA styles of base appearance <optgroup>. assert_equals: display expected "block" but got "inline"
+FAIL UA styles of base appearance <legend>. assert_equals: min-block-size expected "13px" but got "0px"
+FAIL UA styles of base appearance select <button>. assert_equals: display expected "contents" but got "inline-block"
+PASS UA styles of base appearance <option> in <optgroup>.
+

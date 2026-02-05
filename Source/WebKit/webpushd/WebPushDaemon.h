@@ -148,8 +148,8 @@ private:
 #endif
 
     PushClientConnection* toPushClientConnection(xpc_connection_t);
-    HashSet<XPCObjectPtr<xpc_connection_t>> m_pendingConnectionSet;
-    HashMap<XPCObjectPtr<xpc_connection_t>, Ref<PushClientConnection>> m_connectionMap;
+    HashSet<OSObjectPtr<xpc_connection_t>> m_pendingConnectionSet;
+    HashMap<OSObjectPtr<xpc_connection_t>, Ref<PushClientConnection>> m_connectionMap;
 
     const RefPtr<PushService> m_pushService;
     bool m_usingMockPushService { false };

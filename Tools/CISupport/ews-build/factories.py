@@ -318,7 +318,7 @@ class WPEBuildFactory(BuildFactory):
     branches = [r'main', r'webkit.+']
 
 
-class WPECairoLibWebRTCBuildFactory(WPEBuildFactory):
+class WPELibWebRTCBuildFactory(WPEBuildFactory):
     skipUpload = True
 
 
@@ -335,6 +335,7 @@ class ServicesFactory(Factory):
         self.addStep(RunBuildbotCheckConfigForBuildWebKit())
         self.addStep(RunEWSUnitTests())
         self.addStep(RunBuildbotCheckConfigForEWS())
+        self.addStep(RunSharedUnitTests())
         self.addStep(RunResultsdbpyTests())
 
 

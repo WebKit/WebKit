@@ -41,6 +41,7 @@
 #include <WebCore/RenderObjectInlines.h>
 #include <WebCore/RenderVideo.h>
 #include <WebCore/ShareableBitmap.h>
+#include <wtf/NativePromise.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -77,7 +78,7 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
 
 #if ENABLE(VIDEO)
     if (auto* renderVideo = dynamicDowncast<RenderVideo>(renderImage))
-        return renderVideo->protectedVideoElement()->bitmapImageForCurrentTime();
+        return renderVideo->protectedVideoElement()->bitmapImageForCurrentTimeSync();
 #endif // ENABLE(VIDEO)
 
     auto* cachedImage = renderImage.cachedImage();
@@ -108,6 +109,15 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
 
     graphicsContext->drawImage(*image, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()), { renderImage.imageOrientation() });
     return sharedBitmap;
+}
+
+Ref<NativePromise<Ref<WebCore::ShareableBitmap>, void>> createShareableBitmapAsync(WebCore::RenderImage& renderImage, CreateShareableBitmapFromImageOptions&& options)
+{
+    if (auto* renderVideo = dynamicDowncast<RenderVideo>(renderImage))
+        return renderVideo->protectedVideoElement()->bitmapImageForCurrentTime();
+    if (RefPtr shareableBitmap = createShareableBitmap(renderImage, WTF::move(options)))
+        return NativePromise<Ref<WebCore::ShareableBitmap>, void>::createAndResolve(shareableBitmap.releaseNonNull());
+    return NativePromise<Ref<WebCore::ShareableBitmap>, void>::createAndReject();
 }
 
 }

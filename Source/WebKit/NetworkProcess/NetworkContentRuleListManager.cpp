@@ -79,7 +79,7 @@ void NetworkContentRuleListManager::contentExtensionsBackend(UserContentControll
     m_pendingCallbacks.ensure(identifier, [] {
         return Vector<BackendCallback> { };
     }).iterator->value.append(WTF::move(callback));
-    protectedNetworkProcess()->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::ContentExtensionRules { identifier }, 0);
+    protect(protectedNetworkProcess()->parentProcessConnection())->send(Messages::NetworkProcessProxy::ContentExtensionRules { identifier }, 0);
 }
 
 void NetworkContentRuleListManager::addContentRuleLists(UserContentControllerIdentifier identifier, Vector<std::pair<WebCompiledContentRuleListData, URL>>&& contentRuleLists)

@@ -29,8 +29,6 @@ dfg/DFGByteCodeParser.cpp
 dfg/DFGConstantFoldingPhase.cpp
 dfg/DFGOSRExitCompilerCommon.cpp
 dfg/DFGOperations.cpp
-[ Mac ] disassembler/ARM64/A64DOpcode.cpp
-[ Mac ] disassembler/ARM64/A64DOpcode.h
 ftl/FTLState.cpp
 heap/ConservativeRoots.cpp
 heap/Heap.cpp

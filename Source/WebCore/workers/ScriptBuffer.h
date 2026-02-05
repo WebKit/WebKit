@@ -46,7 +46,7 @@ public:
     String toString() const;
     const SharedBufferBuilder& bufferBuilder() const { return m_buffer; }
     const FragmentedSharedBuffer* buffer() const { return m_buffer.buffer(); }
-    RefPtr<const FragmentedSharedBuffer> protectedBuffer() const { return m_buffer.buffer(); }
+    RefPtr<const FragmentedSharedBuffer> bufferForSerialization() const { return m_buffer.buffer(); }
     size_t size() const { return m_buffer.size(); }
 
     ScriptBuffer isolatedCopy() const { return ScriptBuffer(m_buffer ? RefPtr<FragmentedSharedBuffer>(m_buffer.copyBuffer()) : nullptr); }

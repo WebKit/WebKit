@@ -126,10 +126,10 @@ void JSTestCallbackWithFunctionOrDict::visitJSFunction(JSC::SlotVisitor& visitor
 
 JSC::JSValue toJS(TestCallbackWithFunctionOrDict& impl)
 {
-    if (!static_cast<JSTestCallbackWithFunctionOrDict&>(impl).callbackData())
-        return jsNull();
+    if (auto* callbackData = downcast<JSTestCallbackWithFunctionOrDict>(impl).callbackData())
+        return callbackData->callback();
+    return jsNull();
 
-    return static_cast<JSTestCallbackWithFunctionOrDict&>(impl).callbackData()->callback();
 }
 
 ScriptExecutionContext* JSTestCallbackWithFunctionOrDict::scriptExecutionContext() const

@@ -69,12 +69,12 @@ void CachedCSSStyleSheet::didAddClient(CachedResourceClient& client)
 
 void CachedCSSStyleSheet::setEncoding(const String& chs)
 {
-    protectedDecoder()->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
+    protect(m_decoder)->setEncoding(chs, TextResourceDecoder::EncodingFromHTTPHeader);
 }
 
 ASCIILiteral CachedCSSStyleSheet::encoding() const
 {
-    return protectedDecoder()->encoding().name();
+    return protect(m_decoder)->encoding().name();
 }
 
 const String CachedCSSStyleSheet::sheetText(MIMETypeCheckHint mimeTypeCheckHint, bool* hasValidMIMEType, bool* hasHTTPStatusOK) const
@@ -92,7 +92,7 @@ const String CachedCSSStyleSheet::sheetText(MIMETypeCheckHint mimeTypeCheckHint,
         return m_decodedSheetText;
 
     // Don't cache the decoded text, regenerating is cheap and it can use quite a bit of memory.
-    return protectedDecoder()->decodeAndFlush(data->makeContiguous()->span());
+    return protect(m_decoder)->decodeAndFlush(data->makeContiguous()->span());
 }
 
 void CachedCSSStyleSheet::setBodyDataFrom(const CachedResource& resource)
@@ -114,7 +114,7 @@ void CachedCSSStyleSheet::finishLoading(const FragmentedSharedBuffer* data, cons
         Ref contiguousData = data->makeContiguous();
         setEncodedSize(data->size());
         // Decode the data to find out the encoding and keep the sheet text around during checkNotify()
-        m_decodedSheetText = protectedDecoder()->decodeAndFlush(contiguousData->span());
+        m_decodedSheetText = protect(m_decoder)->decodeAndFlush(contiguousData->span());
         m_data = WTF::move(contiguousData);
     } else {
         m_data = nullptr;
@@ -126,11 +126,6 @@ void CachedCSSStyleSheet::finishLoading(const FragmentedSharedBuffer* data, cons
     m_decodedSheetText = String();
 }
 
-Ref<TextResourceDecoder> CachedCSSStyleSheet::protectedDecoder() const
-{
-    return m_decoder;
-}
-
 void CachedCSSStyleSheet::checkNotify(const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
     if (isLoading())
@@ -138,7 +133,7 @@ void CachedCSSStyleSheet::checkNotify(const NetworkLoadMetrics&, LoadWillContinu
 
     CachedResourceClientWalker<CachedStyleSheetClient> walker(*this);
     while (RefPtr client = walker.next())
-        client->setCSSStyleSheet(m_resourceRequest.url().string(), response().url(), protectedDecoder()->encoding().name(), this);
+        client->setCSSStyleSheet(m_resourceRequest.url().string(), response().url(), protect(m_decoder)->encoding().name(), this);
 }
 
 String CachedCSSStyleSheet::responseMIMEType() const

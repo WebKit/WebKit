@@ -160,7 +160,12 @@ bool ScrollAnimatorMac::allowsHorizontalStretching(const PlatformWheelEvent& whe
     return false;
 }
 
-bool ScrollAnimatorMac::shouldRubberBandOnSide(BoxSide) const
+bool ScrollAnimatorMac::isScrollDeltaOpposingStretch(ScrollEventAxis axis, float delta) const
+{
+    return ScrollingEffectsController::isScrollDeltaOpposingStretch(stretchAmount(), axis, delta);
+}
+
+bool ScrollAnimatorMac::shouldRubberBandOnSide(BoxSide, FloatSize) const
 {
     return false;
 }

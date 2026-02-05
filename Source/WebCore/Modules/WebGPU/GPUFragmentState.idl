@@ -27,7 +27,6 @@
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUFragmentState : GPUProgrammableStage {
     required sequence<GPUColorTargetState?> targets;
 };

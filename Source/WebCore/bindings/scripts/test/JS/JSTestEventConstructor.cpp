@@ -82,7 +82,7 @@ template<> ConversionResult<IDLDictionary<TestEventConstructor::Init>> convertDi
         bubblesValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "bubbles"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto bubblesConversionResult = convertOptionalWithDefault<IDLBoolean>(lexicalGlobalObject, bubblesValue, [&]() -> ConversionResult<IDLBoolean> { return Converter<IDLBoolean>::ReturnType { false }; });
+    auto bubblesConversionResult = convert<IDLBoolean>(lexicalGlobalObject, bubblesValue);
     if (bubblesConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
     JSValue cancelableValue;
@@ -92,7 +92,7 @@ template<> ConversionResult<IDLDictionary<TestEventConstructor::Init>> convertDi
         cancelableValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "cancelable"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto cancelableConversionResult = convertOptionalWithDefault<IDLBoolean>(lexicalGlobalObject, cancelableValue, [&]() -> ConversionResult<IDLBoolean> { return Converter<IDLBoolean>::ReturnType { false }; });
+    auto cancelableConversionResult = convert<IDLBoolean>(lexicalGlobalObject, cancelableValue);
     if (cancelableConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
     JSValue composedValue;
@@ -102,7 +102,7 @@ template<> ConversionResult<IDLDictionary<TestEventConstructor::Init>> convertDi
         composedValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "composed"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto composedConversionResult = convertOptionalWithDefault<IDLBoolean>(lexicalGlobalObject, composedValue, [&]() -> ConversionResult<IDLBoolean> { return Converter<IDLBoolean>::ReturnType { false }; });
+    auto composedConversionResult = convert<IDLBoolean>(lexicalGlobalObject, composedValue);
     if (composedConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
     JSValue attr2Value;
@@ -112,7 +112,7 @@ template<> ConversionResult<IDLDictionary<TestEventConstructor::Init>> convertDi
         attr2Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "attr2"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto attr2ConversionResult = convertOptionalWithDefault<IDLDOMString>(lexicalGlobalObject, attr2Value, [&]() -> ConversionResult<IDLDOMString> { return Converter<IDLDOMString>::ReturnType { emptyString() }; });
+    auto attr2ConversionResult = convertOptionalWithDefault<IDLDOMString>(lexicalGlobalObject, attr2Value, [&] -> ConversionResult<IDLDOMString> { return Converter<IDLDOMString>::ReturnType { emptyString() }; });
     if (attr2ConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
 #if ENABLE(SPECIAL_EVENT)
@@ -123,7 +123,7 @@ template<> ConversionResult<IDLDictionary<TestEventConstructor::Init>> convertDi
         attr3Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "attr3"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto attr3ConversionResult = convertOptionalWithDefault<IDLDOMString>(lexicalGlobalObject, attr3Value, [&]() -> ConversionResult<IDLDOMString> { return Converter<IDLDOMString>::ReturnType { emptyString() }; });
+    auto attr3ConversionResult = convertOptionalWithDefault<IDLDOMString>(lexicalGlobalObject, attr3Value, [&] -> ConversionResult<IDLDOMString> { return Converter<IDLDOMString>::ReturnType { emptyString() }; });
     if (attr3ConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
 #endif

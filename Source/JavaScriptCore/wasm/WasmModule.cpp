@@ -45,14 +45,18 @@ Module::Module(IPIntPlan& plan)
     , m_ipintCallees(IPIntCallees::createFromVector(plan.takeCallees()))
     , m_wasmToJSExitStubs(plan.takeWasmToJSExitStubs())
 {
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
     if (Options::enableWasmDebugger()) [[unlikely]]
         Wasm::DebugServer::singleton().trackModule(*this);
+#endif
 }
 
 Module::~Module()
 {
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
     if (Options::enableWasmDebugger()) [[unlikely]]
         Wasm::DebugServer::singleton().untrackModule(*this);
+#endif
 }
 
 Wasm::TypeIndex Module::typeIndexFromFunctionIndexSpace(FunctionSpaceIndex functionIndexSpace) const
@@ -165,8 +169,10 @@ std::unique_ptr<MergedProfile> Module::createMergedProfile(const IPIntCallee& ca
     return result;
 }
 
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 uint32_t Module::debugId() const { return m_moduleInformation->debugInfo->id; }
 void Module::setDebugId(uint32_t id) { m_moduleInformation->debugInfo->id = id; }
+#endif
 
 } } // namespace JSC::Wasm
 

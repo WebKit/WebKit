@@ -91,7 +91,6 @@ public:
 
 #if PLATFORM(COCOA)
     dispatch_data_t dispatchData() const { return m_dispatchData.get(); }
-    OSObjectPtr<dispatch_data_t> protectedDispatchData() const;
     Data copyData() const;
 #endif
 

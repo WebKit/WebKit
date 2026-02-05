@@ -2126,7 +2126,7 @@ LayoutUnit RenderFlexibleBox::staticBlockPositionForPositionedFlexItem(const Ren
 bool RenderFlexibleBox::setStaticPositionForPositionedLayout(const RenderBox& flexItem)
 {
     bool positionChanged = false;
-    auto* layer = flexItem.layer();
+    CheckedPtr layer = flexItem.layer();
     if (flexItem.style().hasStaticInlinePosition(writingMode().isHorizontal())) {
         LayoutUnit inlinePosition = staticInlinePositionForPositionedFlexItem(flexItem);
         if (layer->staticInlinePosition() != inlinePosition) {
@@ -2179,7 +2179,7 @@ void RenderFlexibleBox::prepareFlexItemForPositionedLayout(RenderBox& flexItem)
 {
     ASSERT(flexItem.isOutOfFlowPositioned());
     flexItem.containingBlock()->addOutOfFlowBox(flexItem);
-    auto* layer = flexItem.layer();
+    CheckedPtr layer = flexItem.layer();
     LayoutUnit staticInlinePosition = flowAwareBorderStart() + flowAwarePaddingStart();
     if (layer->staticInlinePosition() != staticInlinePosition) {
         layer->setStaticInlinePosition(staticInlinePosition);

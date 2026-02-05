@@ -197,7 +197,7 @@ private:
 static float deviceScaleFactor(const FeatureEvaluationContext& context)
 {
     Ref frame = *context.document->frame();
-    auto mediaType = frame->protectedView()->mediaType();
+    auto mediaType = protect(frame->view())->mediaType();
     
     if (mediaType == screenAtom())
         return frame->page() ? frame->page()->deviceScaleFactor() : 1;
@@ -426,7 +426,7 @@ static const LengthSchema& heightFeatureSchema()
         "height"_s,
         MediaQueryDynamicDependency::Viewport,
         [](auto& context) {
-            auto height = context.document->protectedView()->layoutHeight();
+            auto height = protect(context.document->view())->layoutHeight();
             if (CheckedPtr renderView = context.document->renderView())
                 height = adjustForAbsoluteZoom(height, *renderView);
             return height;
@@ -488,11 +488,11 @@ static const IntegerSchema& monochromeFeatureSchema()
                 if (frame->settings().forcedDisplayIsMonochromeAccessibilityValue() == ForcedAccessibilityValue::Off)
                     return false;
                 if (localFrame)
-                    return screenIsMonochrome(localFrame->protectedView().get());
+                    return screenIsMonochrome(protect(localFrame->view()).get());
                 return false;
             }();
 
-            return isMonochrome && localFrame ? screenDepthPerComponent(localFrame->protectedView().get()) : 0;
+            return isMonochrome && localFrame ? screenDepthPerComponent(protect(localFrame->view()).get()) : 0;
         }
     };
     return schema;
@@ -718,7 +718,7 @@ static const LengthSchema& widthFeatureSchema()
         "width"_s,
         MediaQueryDynamicDependency::Viewport,
         [](auto& context) {
-            auto width = context.document->protectedView()->layoutWidth();
+            auto width = protect(context.document->view())->layoutWidth();
             if (CheckedPtr renderView = context.document->renderView())
                 width = adjustForAbsoluteZoom(width, *renderView);
             return width;

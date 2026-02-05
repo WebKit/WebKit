@@ -26,6 +26,6 @@
 [
     Exposed=TestGlobalObject
 ] interface TestAsyncIterableWithoutFlags {
-    async iterable<TestNode>;
+    async_iterable<TestNode>;
 };
 

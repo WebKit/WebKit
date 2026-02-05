@@ -27,10 +27,16 @@
 
 #include <wtf/DataLog.h>
 
-#if ENABLE(WEBASSEMBLY)
+#if OS(WINDOWS)
+#include <windows.h>
+#include <wtf/win/WTFCRTDebug.h>
+#endif
+
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
+#include "ExecutionHandlerIdleStopTest.h"
 #include "ExecutionHandlerTest.h"
 #include "GDBPacketParserTest.h"
 #include "InitializeThreading.h"
@@ -40,10 +46,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <wtf/HexNumber.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
-
-#if OS(WINDOWS)
-#include <wtf/win/WTFCRTDebug.h>
-#endif
 
 using namespace JSC;
 using namespace JSC::Wasm;
@@ -310,14 +312,18 @@ static int runAllTests()
     dataLogLn("\n--- WASM Debugger Execution Handler Tests ---");
     int executionHandlerTestsFailed = testExecutionHandler();
 
+    dataLogLn("\n--- WASM Debugger Idle VM Stress Tests ---");
+    int idleStopTestsFailed = testExecutionHandlerIdleStop();
+
     dataLogLn("===============================================");
     dataLogLn("Combined Test Results:");
     dataLogLn("  VirtualAddress Tests - PASSED (assertion-based)");
     dataLogLn("  WASM Debug Info Tests - See detailed results above");
     dataLogLn("  WASM Debugger Stress Tests - See detailed results above");
-    dataLogLn("  Total Failures: ", testsFailed, " (VirtualAddress) + ", debugInfoTestsFailed, " (Debug Info) + ", executionHandlerTestsFailed, " (Stress) = ", testsFailed + debugInfoTestsFailed + executionHandlerTestsFailed);
+    dataLogLn("  WASM Debugger Idle VM Tests - See detailed results above");
+    dataLogLn("  Total Failures: ", testsFailed, " (VirtualAddress) + ", debugInfoTestsFailed, " (Debug Info) + ", executionHandlerTestsFailed, " (Stress) + ", idleStopTestsFailed, " (Idle VM) = ", testsFailed + debugInfoTestsFailed + executionHandlerTestsFailed + idleStopTestsFailed);
 
-    int totalFailures = testsFailed + debugInfoTestsFailed + executionHandlerTestsFailed;
+    int totalFailures = testsFailed + debugInfoTestsFailed + executionHandlerTestsFailed + idleStopTestsFailed;
     if (!totalFailures) {
         dataLogLn("All tests PASSED!");
         dataLogLn("WASM debugger infrastructure is working correctly");
@@ -359,7 +365,7 @@ extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, cons
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#else // !ENABLE(WEBASSEMBLY)
+#else // !ENABLE(WEBASSEMBLY_DEBUGGER)
 
 int main(int argc, char** argv)
 {
@@ -378,4 +384,4 @@ extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, cons
 }
 #endif
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

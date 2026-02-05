@@ -51,7 +51,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRulesetStateFromStorage()
     auto *savedRulesetState = objectForKey<NSDictionary>(m_state, declarativeNetRequestRulesetStateKey);
     if (!savedRulesetState.count) {
         // Populate with the default enabled state.
-        for (auto& ruleset : protectedExtension()->declarativeNetRequestRulesets()) {
+        for (auto& ruleset : protect(extension())->declarativeNetRequestRulesets()) {
             if (ruleset.enabled)
                 m_enabledStaticRulesetIDs.add(ruleset.rulesetID);
         }

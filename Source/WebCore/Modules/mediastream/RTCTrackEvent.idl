@@ -44,9 +44,8 @@
     readonly attribute RTCRtpTransceiver? transceiver;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary RTCTrackEventInit : EventInit {
+// https://w3c.github.io/webrtc-pc/#dom-rtctrackeventinit
+dictionary RTCTrackEventInit : EventInit {
     required RTCRtpReceiver receiver;
     required MediaStreamTrack track;
     sequence<MediaStream> streams = [];

@@ -413,6 +413,15 @@ void BlendingKeyframes::updatedComputedOffsets(NOESCAPE const Function<double(co
     std::ranges::stable_sort(m_keyframes, { }, &BlendingKeyframe::offset);
 }
 
+bool BlendingKeyframes::hasKeyframeWithUnresolvedComputedOffset() const
+{
+    for (auto& keyframe : m_keyframes) {
+        if (std::isnan(keyframe.offset()))
+            return true;
+    }
+    return false;
+}
+
 uint64_t BlendingKeyframes::nextAnonymousIdentifier()
 {
     // Start from a random number so acceleratedAnimationName() won't ever collide with an author specified one.

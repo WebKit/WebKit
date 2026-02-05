@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary EventListenerOptions {
+// https://dom.spec.whatwg.org/#dictdef-eventlisteneroptions
+dictionary EventListenerOptions {
     boolean capture = false;
 };

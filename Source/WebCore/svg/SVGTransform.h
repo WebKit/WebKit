@@ -64,7 +64,7 @@ public:
 
     ~SVGTransform()
     {
-        m_value.protectedMatrix()->detach();
+        protect(m_value.matrix())->detach();
     }
 
     Ref<SVGTransform> clone() const
@@ -75,7 +75,6 @@ public:
     unsigned short type() { return m_value.type(); }
     float angle() { return m_value.angle(); }
     SVGMatrix& matrix() { return m_value.matrix(); }
-    Ref<SVGMatrix> protectedMatrix() { return matrix(); }
 
     ExceptionOr<void> setMatrix(DOMMatrix2DInit&& matrixInit)
     {
@@ -154,14 +153,14 @@ public:
     {
         Base::attach(owner, access);
         // Reattach the SVGMatrix to the SVGTransformValue with the new SVGPropertyAccess.
-        m_value.protectedMatrix()->reattach(this, access);
+        protect(m_value.matrix())->reattach(this, access);
     }
 
     void detach() override
     {
         Base::detach();
         // Reattach the SVGMatrix to the SVGTransformValue with the SVGPropertyAccess::ReadWrite.
-        m_value.protectedMatrix()->reattach(this, access());
+        protect(m_value.matrix())->reattach(this, access());
     }
 
 private:
@@ -175,7 +174,7 @@ private:
     SVGTransform(SVGTransformValue&& value)
         : Base(WTF::move(value))
     {
-        m_value.protectedMatrix()->attach(this, SVGPropertyAccess::ReadWrite);
+        protect(m_value.matrix())->attach(this, SVGPropertyAccess::ReadWrite);
     }
 
     SVGPropertyOwner* owner() const override { return m_owner; }

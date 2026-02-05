@@ -40,6 +40,8 @@ public:
     NonCompositedFrameRenderer(WebPage&);
     ~NonCompositedFrameRenderer();
 
+    uint64_t surfaceID() const { return m_surface->surfaceID(); }
+
     void setNeedsDisplayInRect(const WebCore::IntRect&);
 
     void display();

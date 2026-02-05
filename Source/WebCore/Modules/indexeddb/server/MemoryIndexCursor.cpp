@@ -80,8 +80,9 @@ void MemoryIndexCursor::currentData(IDBGetResult& getResult)
     if (info().cursorType() == IndexedDB::CursorType::KeyOnly)
         getResult = { m_currentKey, m_currentPrimaryKey };
     else {
-        IDBValue value = { m_index->protectedObjectStore()->valueForKey(m_currentPrimaryKey), { }, { } };
-        getResult = { m_currentKey, m_currentPrimaryKey, WTF::move(value), m_index->protectedObjectStore()->info().keyPath() };
+        RefPtr objectStore = m_index->objectStore();
+        IDBValue value = { objectStore->valueForKey(m_currentPrimaryKey), { }, { } };
+        getResult = { m_currentKey, m_currentPrimaryKey, WTF::move(value), objectStore->info().keyPath() };
     }
 }
 

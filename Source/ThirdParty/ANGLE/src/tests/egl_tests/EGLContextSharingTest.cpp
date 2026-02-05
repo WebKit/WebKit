@@ -415,7 +415,7 @@ TEST_P(EGLContextSharingTest, DisplayShareGroupReleaseShareGroupThatOwnsStagedUp
 // Tests that after creating a texture using EGL_ANGLE_display_texture_share_group,
 // and use it for sampling, and then deleting the Context (which destroys shareGroup) works. If
 // anything cached in ShareGroup, it should be handled nicely if texture can outlive ShareGroup (for
-// example, bugs like angleproject:7466).
+// example, bugs like http://anglebug.com/42265935).
 TEST_P(EGLContextSharingTest, DisplayShareGroupReleaseShareGroupThenDestroyTexture)
 {
     EGLDisplay display = getEGLWindow()->getDisplay();

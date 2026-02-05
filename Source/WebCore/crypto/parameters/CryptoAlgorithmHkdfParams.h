@@ -25,10 +25,11 @@
 
 #pragma once
 
-#include "BufferSource.h"
-#include "CryptoAlgorithmParameters.h"
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>
+#include <WebCore/BufferSource.h>
+#include <WebCore/CryptoAlgorithmHkdfParamsInit.h>
+#include <WebCore/CryptoAlgorithmParameters.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -39,24 +40,40 @@ public:
     // FIXME: Consider merging hash and hashIdentifier.
     Variant<JSC::Strong<JSC::JSObject>, String> hash;
     CryptoAlgorithmIdentifier hashIdentifier;
-    BufferSource salt;
-    BufferSource info;
+    std::optional<BufferSource> salt;
+    std::optional<BufferSource> info;
+
+    CryptoAlgorithmHkdfParams(CryptoAlgorithmIdentifier identifier)
+        : CryptoAlgorithmParameters { WTF::move(identifier) }
+    {
+    }
+
+    CryptoAlgorithmHkdfParams(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmHkdfParamsInit init, CryptoAlgorithmIdentifier hashIdentifier)
+        : CryptoAlgorithmParameters { WTF::move(identifier), WTF::move(init) }
+        , hash { WTF::move(init.hash) }
+        , hashIdentifier { WTF::move(hashIdentifier) }
+        , salt { WTF::move(init.salt) }
+        , info { WTF::move(init.info) }
+    {
+    }
 
     const Vector<uint8_t>& saltVector() const
     {
-        if (!m_saltVector.isEmpty() || !salt.length())
+        if (!m_saltVector.isEmpty() || !salt || !salt->length())
             return m_saltVector;
 
-        m_saltVector.append(salt.span());
+        if (salt)
+            m_saltVector.append(salt->span());
         return m_saltVector;
     }
 
     const Vector<uint8_t>& infoVector() const
     {
-        if (!m_infoVector.isEmpty() || !info.length())
+        if (!m_infoVector.isEmpty() || !info || !info->length())
             return m_infoVector;
 
-        m_infoVector.append(info.span());
+        if (info)
+            m_infoVector.append(info->span());
         return m_infoVector;
     }
 
@@ -64,8 +81,7 @@ public:
 
     CryptoAlgorithmHkdfParams isolatedCopy() const
     {
-        CryptoAlgorithmHkdfParams result;
-        result.identifier = identifier;
+        CryptoAlgorithmHkdfParams result { identifier };
         result.m_saltVector = saltVector();
         result.m_infoVector = infoVector();
         result.hashIdentifier = hashIdentifier;

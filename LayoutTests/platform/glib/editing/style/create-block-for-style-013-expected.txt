@@ -12,20 +12,20 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x82 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 723x53
+        RenderText {#text} at (14,14) size 723x54
           text run at (14,14) width 723: "Should see the \"baz\" line centered in its red box inside the box containing "
           text run at (14,41) width 540: "\"bar\". The \"foo\" and \"bar\" lines should not be centered."
       RenderBlock {DIV} at (0,106) size 784x137
         RenderBlock {DIV} at (0,0) size 784x137 [border: (2px solid #FF0000)]
           RenderBlock (anonymous) at (14,14) size 756x27
-            RenderText {#text} at (0,0) size 32x26
+            RenderText {#text} at (0,0) size 32x27
               text run at (0,0) width 32: "foo"
           RenderBlock {DIV} at (14,41) size 756x82 [border: (2px solid #FF0000)]
             RenderBlock (anonymous) at (14,14) size 728x27
-              RenderText {#text} at (0,0) size 31x26
+              RenderText {#text} at (0,0) size 31x27
                 text run at (0,0) width 31: "bar"
-              RenderBR {BR} at (31,0) size 0x26
+              RenderBR {BR} at (31,0) size 0x27
             RenderBlock {DIV} at (14,41) size 728x27
-              RenderText {#text} at (347,0) size 34x26
+              RenderText {#text} at (347,0) size 34x27
                 text run at (347,0) width 34: "baz"
 caret: position 1 of child 0 {#text} of child 2 {DIV} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body

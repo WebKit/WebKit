@@ -68,7 +68,7 @@ OSREntryPlan::OSREntryPlan(VM& vm, Ref<Module>&& module, Ref<Callee>&& callee, F
 void OSREntryPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffer, const TypeDefinition& signature, FunctionSpaceIndex functionIndexSpace)
 {
     CompilationMode targetCompilationMode = CompilationMode::OMGForOSREntryMode;
-    dataLogLnIf(context.procedure->shouldDumpIR() || shouldDumpDisassemblyFor(targetCompilationMode), "Generated OMGforOSREntry functionIndexSpace:(", functionIndexSpace, "),sig:(", signature.toString().ascii().data(), "),name:(", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data(), "),wasmSize:(", m_moduleInformation->functionWasmSizeImportSpace(functionIndexSpace), ")");
+    dataLogLnIf(context.procedure->shouldDumpIR() || shouldDumpDisassemblyFor(targetCompilationMode), "Generated OMGforOSREntry functionIndexSpace:(", functionIndexSpace, "),sig:(", signature.toString().ascii().data(), "),name:(", m_callee->nameWithHash(), "),wasmSize:(", m_moduleInformation->functionWasmSizeImportSpace(functionIndexSpace), ")");
     if (shouldDumpDisassemblyFor(targetCompilationMode)) [[unlikely]] {
         auto* disassembler = context.procedure->code().disassembler();
 
@@ -106,7 +106,7 @@ void OSREntryPlan::work()
     const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
 
     Ref<IPIntCallee> profiledCallee = m_calleeGroup->ipintCalleeFromFunctionIndexSpace(functionIndexSpace);
-    Ref<OMGOSREntryCallee> callee = OMGOSREntryCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), m_loopIndex);
+    Ref<OMGOSREntryCallee> callee = OMGOSREntryCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), Ref { profiledCallee }, m_loopIndex);
 
     beginCompilerSignpost(callee.get());
     Vector<UnlinkedWasmToWasmCall> unlinkedCalls;
@@ -136,7 +136,7 @@ void OSREntryPlan::work()
 
     dumpDisassembly(context, linkBuffer, signature, functionIndexSpace);
     omgEntrypoint.compilation = makeUnique<Compilation>(
-        FINALIZE_CODE_IF(context.procedure->shouldDumpIR(), linkBuffer, JITCompilationPtrTag, nullptr, "WebAssembly OMGForOSREntry function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
+        FINALIZE_CODE_IF(context.procedure->shouldDumpIR(), linkBuffer, JITCompilationPtrTag, nullptr, "WebAssembly OMGForOSREntry function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), m_callee->nameWithHash().ascii().data()),
         WTF::move(context.wasmEntrypointByproducts));
 
     omgEntrypoint.calleeSaveRegisters = WTF::move(internalFunction->entrypoint.calleeSaveRegisters);

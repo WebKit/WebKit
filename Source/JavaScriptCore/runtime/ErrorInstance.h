@@ -116,6 +116,12 @@ public:
     bool materializeErrorInfoIfNeeded(VM&);
     bool materializeErrorInfoIfNeeded(VM&, PropertyName);
 
+    void setStackPropertyAlreadyMaterialized()
+    {
+        if (!m_errorInfoMaterialized)
+            m_stackPropertyAlreadyMaterialized = true;
+    }
+
     void finalizeUnconditionally(VM&, CollectionScope);
 
 protected:
@@ -143,6 +149,7 @@ protected:
     bool m_stackOverflowError : 1;
     bool m_outOfMemoryError : 1;
     bool m_errorInfoMaterialized : 1;
+    bool m_stackPropertyAlreadyMaterialized : 1;
     bool m_nativeGetterTypeError : 1;
 #if ENABLE(WEBASSEMBLY)
     bool m_catchableFromWasm : 1;

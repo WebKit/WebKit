@@ -52,14 +52,6 @@ bool shouldRun(const TestConfig* config, const char* testName)
         }
     }
 
-    if (!filter && isARM_THUMB2()) {
-        for (auto& failingTest : {
-#include "testb3_failingArmV7Tests.inc"
-        }) {
-            if (WTF::findIgnoringASCIICaseWithoutLength(testName, failingTest) != WTF::notFound)
-                return false;
-        }
-    }
     return !filter || WTF::findIgnoringASCIICaseWithoutLength(testName, filter) != WTF::notFound;
 }
 

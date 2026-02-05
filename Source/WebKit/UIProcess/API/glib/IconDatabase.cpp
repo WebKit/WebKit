@@ -63,26 +63,33 @@ IconDatabase::IconDatabase(const String& path, AllowDatabaseWrite allowDatabaseW
         auto databaseDirectory = FileSystem::parentPath(path);
         FileSystem::makeAllDirectories(databaseDirectory);
         if (!m_db->open(path)) {
-            LOG_ERROR("Unable to open favicon database at path %s - %s", path.utf8().data(), m_db->lastErrorMsg());
+            RELEASE_LOG_ERROR(IconDatabase, "Unable to open favicon database '%s' (%i) - %s", path.utf8().data(), m_db->lastError(), m_db->lastErrorMsg());
             return;
         }
 
-        auto versionStatement = m_db->prepareStatement("SELECT value FROM IconDatabaseInfo WHERE key = 'Version';"_s);
-        auto databaseVersionNumber = versionStatement ? versionStatement->columnInt(0) : 0;
-        if (databaseVersionNumber > currentDatabaseVersion) {
-            LOG(IconDatabase, "Database version number %d is greater than our current version number %d - closing the database to prevent overwriting newer versions",
-                databaseVersionNumber, currentDatabaseVersion);
-            m_db->close();
-            return;
-        }
+        if (m_db->tableExists("IconDatabaseInfo"_s)) {
+            auto versionStatement = m_db->prepareStatement("SELECT value FROM IconDatabaseInfo WHERE key = 'Version';"_s);
+            if (!versionStatement) {
+                RELEASE_LOG_ERROR(IconDatabase, "Unable to prepare version statement (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
+                return;
+            }
 
-        if (databaseVersionNumber < currentDatabaseVersion) {
-            if (m_allowDatabaseWrite == AllowDatabaseWrite::No) {
+            auto databaseVersionNumber = versionStatement ? versionStatement->columnInt(0) : 0;
+            if (databaseVersionNumber > currentDatabaseVersion) {
+                LOG(IconDatabase, "Database version number %d is greater than our current version number %d - closing the database to prevent overwriting newer versions",
+                    databaseVersionNumber, currentDatabaseVersion);
                 m_db->close();
                 return;
             }
 
-            m_db->clearAllTables();
+            if (databaseVersionNumber < currentDatabaseVersion) {
+                if (m_allowDatabaseWrite == AllowDatabaseWrite::No) {
+                    m_db->close();
+                    return;
+                }
+
+                m_db->clearAllTables();
+            }
         }
 
         // Reduce sqlite RAM cache size from default 2000 pages (~1.5kB per page). 3MB of cache for icon database is overkill.
@@ -126,43 +133,43 @@ bool IconDatabase::createTablesIfNeeded()
     m_db->clearAllTables();
 
     if (!m_db->executeCommand("CREATE TABLE PageURL (url TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,iconID INTEGER NOT NULL ON CONFLICT FAIL);"_s)) {
-        LOG_ERROR("Could not create PageURL table in database (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
+        RELEASE_LOG_ERROR(IconDatabase, "Could not create PageURL table in database (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
         m_db->close();
         return false;
     }
     if (!m_db->executeCommand("CREATE INDEX PageURLIndex ON PageURL (url);"_s)) {
-        LOG_ERROR("Could not create PageURL index in database (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
+        RELEASE_LOG_ERROR(IconDatabase, "Could not create PageURL index in database (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
         m_db->close();
         return false;
     }
     if (!m_db->executeCommand("CREATE TABLE IconInfo (iconID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE ON CONFLICT REPLACE, url TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, stamp INTEGER);"_s)) {
-        LOG_ERROR("Could not create IconInfo table in database (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
+        RELEASE_LOG_ERROR(IconDatabase, "Could not create IconInfo table in database (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
         m_db->close();
         return false;
     }
     if (!m_db->executeCommand("CREATE INDEX IconInfoIndex ON IconInfo (url, iconID);"_s)) {
-        LOG_ERROR("Could not create PageURL index in database (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
+        RELEASE_LOG_ERROR(IconDatabase, "Could not create PageURL index in database (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
         m_db->close();
         return false;
     }
     if (!m_db->executeCommand("CREATE TABLE IconData (iconID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE ON CONFLICT REPLACE, data BLOB);"_s)) {
-        LOG_ERROR("Could not create IconData table in database (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
+        RELEASE_LOG_ERROR(IconDatabase, "Could not create IconData table in database (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
         m_db->close();
         return false;
     }
     if (!m_db->executeCommand("CREATE INDEX IconDataIndex ON IconData (iconID);"_s)) {
-        LOG_ERROR("Could not create PageURL index in database (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
+        RELEASE_LOG_ERROR(IconDatabase, "Could not create PageURL index in database (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
         m_db->close();
         return false;
     }
     if (!m_db->executeCommand("CREATE TABLE IconDatabaseInfo (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);"_s)) {
-        LOG_ERROR("Could not create IconDatabaseInfo table in database (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
+        RELEASE_LOG_ERROR(IconDatabase, "Could not create IconDatabaseInfo table in database (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
         m_db->close();
         return false;
     }
     auto statement = m_db->prepareStatement("INSERT INTO IconDatabaseInfo VALUES ('Version', ?);"_s);
     if (!statement || statement->bindInt(1, currentDatabaseVersion) != SQLITE_OK || !statement->executeCommand()) {
-        LOG_ERROR("Could not insert icon database version into IconDatabaseInfo table (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
+        RELEASE_LOG_ERROR(IconDatabase, "Could not insert icon database version into IconDatabaseInfo table (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
         m_db->close();
         return false;
     }
@@ -179,12 +186,12 @@ void IconDatabase::populatePageURLToIconURLsMap()
 
     auto query = m_db->prepareStatement("SELECT PageURL.url, IconInfo.url, IconInfo.stamp FROM PageURL INNER JOIN IconInfo ON PageURL.iconID=IconInfo.iconID WHERE IconInfo.stamp > (?);"_s);
     if (!query) {
-        LOG_ERROR("Unable to prepare icon url import query");
+        RELEASE_LOG_ERROR(IconDatabase, "Unable to prepare icon URL import query (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
         return;
     }
 
     if (query->bindInt64(1, floor((WallTime::now() - notUsedIconExpirationTime).secondsSinceEpoch().seconds())) != SQLITE_OK) {
-        LOG_ERROR("Could not bind timestamp: %s", m_db->lastErrorMsg());
+        RELEASE_LOG_ERROR(IconDatabase, "Could not bind timestamp (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
         return;
     }
 
@@ -225,14 +232,14 @@ void IconDatabase::pruneTimerFired()
 
     if (!m_pruneIconsStatement) {
         m_pruneIconsStatement = m_db->prepareStatement("DELETE FROM IconInfo WHERE stamp <= (?);"_s);
-        if (m_pruneIconsStatement) {
-            LOG_ERROR("Preparing statement pruneIcons failed");
+        if (!m_pruneIconsStatement) {
+            RELEASE_LOG_ERROR(IconDatabase, "Preparing statement pruneIcons failed: %s", m_db->lastErrorMsg());
             return;
         }
     }
 
     if (m_pruneIconsStatement->bindInt64(1, floor((WallTime::now() - notUsedIconExpirationTime).secondsSinceEpoch().seconds())) != SQLITE_OK) {
-        LOG_ERROR("Could not bind timestamp: %s", m_db->lastErrorMsg());
+        RELEASE_LOG_ERROR(IconDatabase, "Could not bind timestamp: %s", m_db->lastErrorMsg());
         return;
     }
 
@@ -296,13 +303,13 @@ std::optional<int64_t> IconDatabase::iconIDForIconURL(const String& iconURL, boo
     if (!m_iconIDForIconURLStatement) {
         m_iconIDForIconURLStatement = m_db->prepareStatement("SELECT IconInfo.iconID, IconInfo.stamp FROM IconInfo WHERE IconInfo.url = (?);"_s);
         if (!m_iconIDForIconURLStatement) {
-            LOG_ERROR("Preparing statement iconIDForIconURL failed");
+            RELEASE_LOG_ERROR(IconDatabase, "Preparing statement iconIDForIconURL failed (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
             return std::nullopt;
         }
     }
 
     if (m_iconIDForIconURLStatement->bindText(1, iconURL) != SQLITE_OK) {
-        LOG_ERROR("Could not bind iconURL: %s", m_db->lastErrorMsg());
+        RELEASE_LOG_ERROR(IconDatabase, "Could not bind iconURL (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
         return std::nullopt;
     }
 
@@ -325,14 +332,14 @@ bool IconDatabase::setIconIDForPageURL(int64_t iconID, const String& pageURL)
     if (!m_setIconIDForPageURLStatement) {
         m_setIconIDForPageURLStatement = m_db->prepareStatement("INSERT INTO PageURL (url, iconID) VALUES ((?), ?);"_s);
         if (!m_setIconIDForPageURLStatement) {
-            LOG_ERROR("Preparing statement setIconIDForPageURL failed");
+            RELEASE_LOG_ERROR(IconDatabase, "Preparing statement setIconIDForPageURL failed (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
             return false;
         }
     }
 
     if (m_setIconIDForPageURLStatement->bindText(1, pageURL) != SQLITE_OK
         || m_setIconIDForPageURLStatement->bindInt64(2, iconID) != SQLITE_OK) {
-        LOG_ERROR("Could not bind pageURL or iconID: %s", m_db->lastErrorMsg());
+        RELEASE_LOG_ERROR(IconDatabase, "Could not bind pageURL or iconID (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
         return false;
     }
 
@@ -351,13 +358,13 @@ Vector<uint8_t> IconDatabase::iconData(int64_t iconID)
     if (!m_iconDataStatement) {
         m_iconDataStatement = m_db->prepareStatement("SELECT IconData.data FROM IconData WHERE IconData.iconID = (?);"_s);
         if (!m_iconDataStatement) {
-            LOG_ERROR("Preparing statement iconData failed");
+            RELEASE_LOG_ERROR(IconDatabase, "Preparing statement iconData failed (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
             return { };
         }
     }
 
     if (m_iconDataStatement->bindInt64(1, iconID) != SQLITE_OK) {
-        LOG_ERROR("Could not bind iconID: %s", m_db->lastErrorMsg());
+        RELEASE_LOG_ERROR(IconDatabase, "Could not bind iconID (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
         return { };
     }
 
@@ -375,20 +382,20 @@ std::optional<int64_t> IconDatabase::addIcon(const String& iconURL, const Vector
     if (!m_addIconStatement) {
         m_addIconStatement = m_db->prepareStatement("INSERT INTO IconInfo (url, stamp) VALUES (?, 0);"_s);
         if (!m_addIconStatement) {
-            LOG_ERROR("Preparing statement addIcon failed");
+            RELEASE_LOG_ERROR(IconDatabase, "Preparing statement addIcon failed (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
             return std::nullopt;
         }
     }
     if (!m_addIconDataStatement) {
         m_addIconDataStatement = m_db->prepareStatement("INSERT INTO IconData (iconID, data) VALUES (?, ?);"_s);
         if (!m_addIconDataStatement) {
-            LOG_ERROR("Preparing statement addIconData failed");
+            RELEASE_LOG_ERROR(IconDatabase, "Preparing statement addIconData failed (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
             return std::nullopt;
         }
     }
 
     if (m_addIconStatement->bindText(1, iconURL) != SQLITE_OK) {
-        LOG_ERROR("Could not bind iconURL: %s", m_db->lastErrorMsg());
+        RELEASE_LOG_ERROR(IconDatabase, "Could not bind iconURL (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
         return std::nullopt;
     }
 
@@ -397,7 +404,7 @@ std::optional<int64_t> IconDatabase::addIcon(const String& iconURL, const Vector
 
     auto iconID = m_db->lastInsertRowID();
     if (m_addIconDataStatement->bindInt64(1, iconID) != SQLITE_OK || m_addIconDataStatement->bindBlob(2, iconData) != SQLITE_OK) {
-        LOG_ERROR("Could not bind iconID: %s", m_db->lastErrorMsg());
+        RELEASE_LOG_ERROR(IconDatabase, "Could not bind iconID (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
         return std::nullopt;
     }
 
@@ -416,13 +423,13 @@ void IconDatabase::updateIconTimestamp(int64_t iconID, int64_t timestamp)
     if (!m_updateIconTimestampStatement) {
         m_updateIconTimestampStatement = m_db->prepareStatement("UPDATE IconInfo SET stamp = ? WHERE iconID = ?;"_s);
         if (!m_updateIconTimestampStatement) {
-            LOG_ERROR("Preparing statement updateIconTimestamp failed");
+            RELEASE_LOG_ERROR(IconDatabase, "Preparing statement updateIconTimestamp failed (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
             return;
         }
     }
 
     if (m_updateIconTimestampStatement->bindInt64(1, timestamp) != SQLITE_OK || m_updateIconTimestampStatement->bindInt64(2, iconID) != SQLITE_OK) {
-        LOG_ERROR("Could not bind timestamp or iconID: %s", m_db->lastErrorMsg());
+        RELEASE_LOG_ERROR(IconDatabase, "Could not bind timestamp or iconID (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
         return;
     }
 
@@ -439,21 +446,21 @@ void IconDatabase::deleteIcon(int64_t iconID)
     if (!m_deletePageURLsForIconStatement) {
         m_deletePageURLsForIconStatement = m_db->prepareStatement("DELETE FROM PageURL WHERE PageURL.iconID = (?);"_s);
         if (!m_deletePageURLsForIconStatement) {
-            LOG_ERROR("Preparing statement deletePageURLsForIcon failed");
+            RELEASE_LOG_ERROR(IconDatabase, "Preparing statement deletePageURLsForIcon failed (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
             return;
         }
     }
     if (!m_deleteIconDataStatement) {
         m_deleteIconDataStatement = m_db->prepareStatement("DELETE FROM IconData WHERE IconData.iconID = (?);"_s);
         if (!m_deleteIconDataStatement) {
-            LOG_ERROR("Preparing statement deleteIcon failed");
+            RELEASE_LOG_ERROR(IconDatabase, "Preparing statement deleteIcon failed (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
             return;
         }
     }
     if (!m_deleteIconStatement) {
         m_deleteIconStatement = m_db->prepareStatement("DELETE FROM IconInfo WHERE IconInfo.iconID = (?);"_s);
         if (!m_deleteIconStatement) {
-            LOG_ERROR("Preparing statement deleteIcon failed");
+            RELEASE_LOG_ERROR(IconDatabase, "Preparing statement deleteIcon failed (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
             return;
         }
     }
@@ -461,7 +468,7 @@ void IconDatabase::deleteIcon(int64_t iconID)
     if (m_deletePageURLsForIconStatement->bindInt64(1, iconID) != SQLITE_OK
         || m_deleteIconDataStatement->bindInt64(1, iconID) != SQLITE_OK
         || m_deleteIconStatement->bindInt64(1, iconID) != SQLITE_OK) {
-        LOG_ERROR("Could not bind iconID: %s", m_db->lastErrorMsg());
+        RELEASE_LOG_ERROR(IconDatabase, "Could not bind iconID (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
         return;
     }
 

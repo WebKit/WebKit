@@ -17,9 +17,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary ScrollIntoViewOptions : ScrollOptions {
+// https://drafts.csswg.org/cssom-view/#dictdef-scrollintoviewoptions
+dictionary ScrollIntoViewOptions : ScrollOptions {
     [ImplementedAs=blockPosition] ScrollLogicalPosition block = "start";
     [ImplementedAs=inlinePosition] ScrollLogicalPosition inline = "nearest";
+    // FIXME: Add support for `container`.
+    // ScrollIntoViewContainer container = "all";
 };

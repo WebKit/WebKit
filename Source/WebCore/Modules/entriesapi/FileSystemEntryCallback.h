@@ -42,6 +42,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
+    virtual bool isJSFileSystemEntryCallback() const { return false; }
+
     virtual CallbackResult<void> invoke(FileSystemEntry&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(FileSystemEntry&) = 0;
 

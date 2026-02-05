@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,14 +29,21 @@
 
 WI.HARBuilder = class HARBuilder
 {
-    static async buildArchive(resources)
+    static async buildArchive(entries)
     {
         let promises = [];
-        for (let resource of resources) {
-            console.assert(resource.finished);
+        for (let entry of entries) {
+            // Handle redirect entries (which don't need content)
+            if (entry.redirect) {
+                promises.push(Promise.resolve());
+                continue;
+            }
+
+            // Handle regular resources
+            console.assert(entry.finished);
             promises.push(new Promise((resolve, reject) => {
                 // Always resolve.
-                resource.requestContent().then(
+                entry.requestContent().then(
                     (x) => resolve(x),
                     () => resolve(null)
                 );
@@ -44,14 +51,14 @@ WI.HARBuilder = class HARBuilder
         }
 
         let contents = await Promise.all(promises);
-        console.assert(contents.length === resources.length);
+        console.assert(contents.length === entries.length);
 
         return {
             log: {
                 version: "1.2",
                 creator: HARBuilder.creator(),
                 pages: HARBuilder.pages(),
-                entries: resources.map((resource, index) => HARBuilder.entry(resource, contents[index])),
+                entries: entries.map((entry, index) => HARBuilder.entry(entry, contents[index])),
             }
         };
     }
@@ -89,8 +96,29 @@ WI.HARBuilder = class HARBuilder
         return result;
     }
 
-    static entry(resource, content)
+    static entry(entryOrResource, content)
     {
+        // Handle redirect entries
+        if (entryOrResource.redirect) {
+            let redirect = entryOrResource.redirect;
+            let parentResource = entryOrResource.parentResource;
+
+            return {
+                pageref: "page_0",
+                startedDateTime: HARBuilder.date(new Date(redirect.timestamp * 1000)),
+                time: 0, // Redirects don't have detailed timing
+                request: HARBuilder.requestForRedirect(redirect, parentResource),
+                response: HARBuilder.responseForRedirect(redirect),
+                cache: {},
+                timings: HARBuilder.timingsForRedirect(),
+                connection: String(parentResource.connectionIdentifier),
+                serverIPAddress: parentResource.remoteAddress ? HARBuilder.ipAddress(parentResource.remoteAddress) : undefined,
+                _serverPort: parentResource.remoteAddress ? HARBuilder.port(parentResource.remoteAddress) : undefined,
+            };
+        }
+
+        // Handle regular resources
+        let resource = entryOrResource;
         let entry = {
             pageref: "page_0",
             startedDateTime: HARBuilder.date(resource.requestSentDate),
@@ -111,7 +139,7 @@ WI.HARBuilder = class HARBuilder
                 entry._serverPort = HARBuilder.port(resource.remoteAddress);
         }
         if (resource.connectionIdentifier)
-            entry.connection = "" + resource.connectionIdentifier;
+            entry.connection = String(resource.connectionIdentifier);
 
         // CFNetwork Custom Field `_fetchType`.
         if (resource.responseSource !== WI.Resource.ResponseSource.Unknown)
@@ -283,6 +311,53 @@ WI.HARBuilder = class HARBuilder
         }
 
         return result;
+    }
+
+    static requestForRedirect(redirect, parentResource)
+    {
+        return {
+            method: redirect.requestMethod || "",
+            url: redirect.url || "",
+            httpVersion: "", // Not available for redirects
+            cookies: [], // Not available for redirects
+            headers: HARBuilder.headers(redirect.requestHeaders),
+            queryString: [], // Could parse from URL if needed
+            headersSize: -1,
+            bodySize: -1,
+        };
+    }
+
+    static responseForRedirect(redirect)
+    {
+        return {
+            status: redirect.responseStatusCode || 0,
+            statusText: redirect.responseStatusText || "",
+            httpVersion: "", // Not available for redirects
+            cookies: [], // Not available for redirects
+            headers: HARBuilder.headers(redirect.responseHeaders),
+            content: {
+                size: 0,
+                mimeType: "x-unknown",
+            },
+            redirectURL: redirect.responseHeaders.Location || redirect.responseHeaders.location || "",
+            headersSize: -1,
+            bodySize: -1,
+        };
+    }
+
+    static timingsForRedirect()
+    {
+        // FIXME: <https://webkit.org/b/195694> Web Inspector: HAR Extension for Redirect Timing Info
+        // Redirects don't currently have detailed timing breakdown
+        return {
+            blocked: -1,
+            dns: -1,
+            connect: -1,
+            ssl: -1,
+            send: 0,
+            wait: 0,
+            receive: 0,
+        };
     }
 
     // Helpers

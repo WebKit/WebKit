@@ -283,7 +283,7 @@ bool NetworkLoadChecker::checkTAO(const ResourceResponse& response)
         const auto& timingAllowOriginString = response.httpHeaderField(HTTPHeaderName::TimingAllowOrigin);
         for (auto originWithSpace : StringView(timingAllowOriginString).split(',')) {
             auto origin = originWithSpace.trim(isASCIIWhitespaceWithoutFF<char16_t>);
-            if (origin == "*"_s || origin == protectedOrigin()->toString())
+            if (origin == "*"_s || origin == protect(m_origin)->toString())
                 return true;
         }
     }
@@ -404,7 +404,7 @@ bool NetworkLoadChecker::isAllowedByContentSecurityPolicy(const ResourceRequest&
 void NetworkLoadChecker::continueCheckingRequest(ResourceRequest&& request, ValidationHandler&& handler)
 {
     if (m_options.credentials == FetchOptions::Credentials::SameOrigin)
-        m_storedCredentialsPolicy = m_isSameOriginRequest && protectedOrigin()->canRequest(request.url(), originAccessPatterns()) ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
+        m_storedCredentialsPolicy = m_isSameOriginRequest && protect(origin())->canRequest(request.url(), originAccessPatterns()) ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
 
     m_isSameOriginRequest = m_isSameOriginRequest && isSameOrigin(request.url(), m_origin.get());
 
@@ -414,7 +414,7 @@ void NetworkLoadChecker::continueCheckingRequest(ResourceRequest&& request, Vali
     }
 
     if (m_options.mode == FetchOptions::Mode::SameOrigin) {
-        handler(accessControlErrorForValidationHandler(makeString("Unsafe attempt to load URL "_s, request.url().stringCenterEllipsizedToLength(), " from origin "_s, protectedOrigin()->toString(), ". Domains, protocols and ports must match.\n"_s)));
+        handler(accessControlErrorForValidationHandler(makeString("Unsafe attempt to load URL "_s, request.url().stringCenterEllipsizedToLength(), " from origin "_s, protect(origin())->toString(), ". Domains, protocols and ports must match.\n"_s)));
         return;
     }
 
@@ -457,7 +457,7 @@ void NetworkLoadChecker::checkCORSRedirectedRequest(ResourceRequest&& request, V
     // Force any subsequent request to use these checks.
     m_isSameOriginRequest = false;
 
-    if (!protectedOrigin()->canRequest(m_previousURL, originAccessPatterns()) && !protocolHostAndPortAreEqual(m_previousURL, request.url())) {
+    if (!protect(origin())->canRequest(m_previousURL, originAccessPatterns()) && !protocolHostAndPortAreEqual(m_previousURL, request.url())) {
         // Use an opaque origin for subsequent loads if needed.
         // https://fetch.spec.whatwg.org/#concept-http-redirect-fetch (Step 10).
         if (!m_origin || !m_origin->isOpaque())
@@ -542,7 +542,7 @@ ContentSecurityPolicy* NetworkLoadChecker::contentSecurityPolicy()
 {
     if (!m_contentSecurityPolicy && m_cspResponseHeaders) {
         // FIXME: Pass the URL of the protected resource instead of its origin.
-        m_contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { protectedOrigin()->toRawString() }, nullptr, m_networkResourceLoader.get());
+        m_contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { protect(origin())->toRawString() }, nullptr, m_networkResourceLoader.get());
         CheckedPtr { m_contentSecurityPolicy.get() }->didReceiveHeaders(*m_cspResponseHeaders, String { m_referrer }, ContentSecurityPolicy::ReportParsingErrors::No);
         if (!m_documentURL.isEmpty())
             m_contentSecurityPolicy->setDocumentURL(m_documentURL);
@@ -560,7 +560,7 @@ void NetworkLoadChecker::processContentRuleListsForLoad(ResourceRequest&& reques
         return;
     }
 
-    m_networkProcess->protectedNetworkContentRuleListManager()->contentExtensionsBackend(*m_userContentControllerIdentifier, [weakThis = WeakPtr { *this }, request = WTF::move(request), callback = WTF::move(callback)](auto& backend) mutable {
+    protect(m_networkProcess->networkContentRuleListManager())->contentExtensionsBackend(*m_userContentControllerIdentifier, [weakThis = WeakPtr { *this }, request = WTF::move(request), callback = WTF::move(callback)](auto& backend) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             callback(makeUnexpected(ResourceError { ResourceError::Type::Cancellation }));
@@ -579,11 +579,6 @@ void NetworkLoadChecker::storeRedirectionIfNeeded(const ResourceRequest& request
     if (!m_shouldCaptureExtraNetworkLoadMetrics)
         return;
     m_loadInformation.transactions.append(NetworkTransactionInformation { NetworkTransactionInformation::Type::Redirection, ResourceRequest { request }, ResourceResponse { response }, { } });
-}
-
-Ref<NetworkProcess> NetworkLoadChecker::protectedNetworkProcess()
-{
-    return m_networkProcess;
 }
 
 } // namespace WebKit

@@ -33,7 +33,7 @@
 ] interface DOMMatrixReadOnly {
     [CallWith=CurrentScriptExecutionContext] constructor(optional (DOMString or sequence<unrestricted double>) init);
 
-    [NewObject] static DOMMatrixReadOnly fromMatrix(optional DOMMatrixInit other);
+    [NewObject] static DOMMatrixReadOnly fromMatrix(optional DOMMatrixInit other = {});
     [NewObject] static DOMMatrixReadOnly fromFloat32Array(Float32Array array32);
     [NewObject] static DOMMatrixReadOnly fromFloat64Array(Float64Array array64);
 
@@ -92,12 +92,12 @@
                                           optional unrestricted double angle = 0); // Angle is in degrees.
     [NewObject] DOMMatrix skewX(optional unrestricted double sx = 0); // Angle is in degrees.
     [NewObject] DOMMatrix skewY(optional unrestricted double sy = 0); // Angle is in degrees.
-    [NewObject] DOMMatrix multiply(optional DOMMatrixInit other);
+    [NewObject] DOMMatrix multiply(optional DOMMatrixInit other = {});
     [NewObject] DOMMatrix flipX();
     [NewObject] DOMMatrix flipY();
     [NewObject] DOMMatrix inverse();
 
-    [NewObject] DOMPoint transformPoint(optional DOMPointInit point);
+    [NewObject] DOMPoint transformPoint(optional DOMPointInit point = {});
     Float32Array toFloat32Array();
     Float64Array toFloat64Array();
 

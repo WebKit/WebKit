@@ -31,11 +31,11 @@
 #include "Chrome.h"
 #include "CredentialRequestCoordinator.h"
 #include "CredentialRequestOptions.h"
+#include "DigitalCredentialPresentationProtocol.h"
 #include "DocumentPage.h"
 #include "ExceptionOr.h"
 #include "FrameDestructionObserverInlines.h"
 #include "IDLTypes.h"
-#include "IdentityCredentialProtocol.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "MediationRequirement.h"
@@ -50,24 +50,24 @@
 
 namespace WebCore {
 
-Ref<DigitalCredential> DigitalCredential::create(JSC::Strong<JSC::JSObject>&& data, IdentityCredentialProtocol protocol)
+Ref<DigitalCredential> DigitalCredential::create(JSC::Strong<JSC::JSObject>&& data, DigitalCredentialPresentationProtocol protocol)
 {
     return adoptRef(*new DigitalCredential(WTF::move(data), protocol));
 }
 
 DigitalCredential::~DigitalCredential() = default;
 
-DigitalCredential::DigitalCredential(JSC::Strong<JSC::JSObject>&& data, IdentityCredentialProtocol protocol)
+DigitalCredential::DigitalCredential(JSC::Strong<JSC::JSObject>&& data, DigitalCredentialPresentationProtocol protocol)
     : BasicCredential(createVersion4UUIDString(), Type::DigitalCredential, Discovery::CredentialStore)
     , m_protocol(protocol)
     , m_data(WTF::move(data))
 {
 }
 
-static std::optional<IdentityCredentialProtocol> convertProtocolString(const String& protocolString)
+static std::optional<DigitalCredentialPresentationProtocol> convertProtocolString(const String& protocolString)
 {
     if (protocolString == "org-iso-mdoc"_s)
-        return IdentityCredentialProtocol::OrgIsoMdoc;
+        return DigitalCredentialPresentationProtocol::OrgIsoMdoc;
     return std::nullopt;
 }
 
@@ -86,7 +86,7 @@ static ExceptionOr<std::optional<UnvalidatedDigitalCredentialRequest>> jsToCrede
         return std::optional<UnvalidatedDigitalCredentialRequest> { std::nullopt }; // Return empty optional for unknown protocols
 
     switch (*protocol) {
-    case IdentityCredentialProtocol::OrgIsoMdoc: {
+    case DigitalCredentialPresentationProtocol::OrgIsoMdoc: {
         auto result = convertDictionary<MobileDocumentRequest>(*globalObject, request.data.get());
         if (result.hasException(scope)) [[unlikely]]
             return Exception { ExceptionCode::ExistingExceptionError };

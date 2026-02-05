@@ -131,7 +131,7 @@ inline void copy_matrix_row_major(void *dst,
         }
     }
 }
-// TODO(angleproject:7979) Upgrade ANGLE Uniform buffer remapper to compute shaders
+// TODO(http://anglebug.com/42266442) Upgrade ANGLE Uniform buffer remapper to compute shaders
 angle::Result ConvertUniformBufferData(ContextMtl *contextMtl,
                                        const UBOConversionInfo &blockConversionInfo,
                                        mtl::BufferPool *dynamicBuffer,
@@ -788,7 +788,7 @@ angle::Result ProgramExecutableMtl::resizeDefaultUniformBlocksMemory(
     return angle::Result::Continue;
 }
 
-// TODO(angleproject:7979) Upgrade ANGLE Uniform buffer remapper to compute shaders
+// TODO(http://anglebug.com/42266442) Upgrade ANGLE Uniform buffer remapper to compute shaders
 void ProgramExecutableMtl::initUniformBlocksRemapper(const gl::SharedCompiledShaderState &shader)
 {
     std::unordered_map<std::string, UBOConversionInfo> conversionMap;

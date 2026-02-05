@@ -1267,14 +1267,19 @@ void WebFrameLoaderClient::prepareForDataSourceReplacement()
 #endif
 }
 
-Ref<WebCore::DocumentLoader> WebFrameLoaderClient::createDocumentLoader(WebCore::ResourceRequest&& request, WebCore::SubstituteData&& substituteData)
+Ref<WebCore::DocumentLoader> WebFrameLoaderClient::createDocumentLoader(WebCore::ResourceRequest&& request, WebCore::SubstituteData&& substituteData, WebCore::ResourceRequest&& originalRequest)
 {
-    auto loader = WebDocumentLoaderMac::create(WTF::move(request), WTF::move(substituteData));
+    auto loader = WebDocumentLoaderMac::create(WTF::move(request), WTF::move(substituteData), WTF::move(originalRequest));
 
     auto dataSource = adoptNS([[WebDataSource alloc] _initWithDocumentLoader:loader.copyRef()]);
     loader->setDataSource(dataSource.get(), getWebView(m_webFrame.get()));
 
     return WTF::move(loader);
+}
+
+Ref<WebCore::DocumentLoader> WebFrameLoaderClient::createDocumentLoader(WebCore::ResourceRequest&& request, WebCore::SubstituteData&& substituteData)
+{
+    return createDocumentLoader(WTF::move(request), WTF::move(substituteData), { });
 }
 
 void WebFrameLoaderClient::setTitle(const WebCore::StringWithDirection& title, const URL& url)

@@ -75,7 +75,7 @@
 
 #if ENABLE(FORM_CONTROL_REFRESH)
 #include "PathCG.h"
-#include "RenderThemeCocoa.h"
+#include "RenderTheme.h"
 #endif
 
 namespace WebCore {
@@ -338,7 +338,7 @@ static bool cachedImageIsPhoto(const CachedImage& cachedImage)
     if (cachedImage.errorOccurred())
         return false;
 
-    auto* image = cachedImage.image();
+    RefPtr image = cachedImage.image();
     if (!image || !image->isBitmapImage())
         return false;
 
@@ -354,7 +354,7 @@ static RefPtr<Image> findIconImage(const RenderObject& renderer)
         if (!renderImage->cachedImage() || renderImage->cachedImage()->errorOccurred())
             return nullptr;
 
-        auto* image = renderImage->cachedImage()->imageForRenderer(renderImage);
+        RefPtr image = renderImage->cachedImage()->imageForRenderer(renderImage);
         if (!image)
             return nullptr;
 
@@ -396,22 +396,22 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
     if (!regionRenderer.node())
         return std::nullopt;
 
-    auto originalElement = dynamicDowncast<Element>(regionRenderer.node());
+    RefPtr originalElement = dynamicDowncast<Element>(regionRenderer.node());
     if (originalElement && originalElement->isPseudoElement())
         return std::nullopt;
 
-    auto matchedElement = originalElement;
+    RefPtr matchedElement = originalElement;
     if (!matchedElement)
         matchedElement = regionRenderer.node()->parentElement();
     if (!matchedElement)
         return std::nullopt;
 
     bool isLabelable = [&] {
-        auto* htmlElement = dynamicDowncast<HTMLElement>(matchedElement);
+        RefPtr htmlElement = dynamicDowncast<HTMLElement>(matchedElement);
         return htmlElement && htmlElement->isLabelable();
     }();
-    for (Node* node = matchedElement; node; node = node->parentInComposedTree()) {
-        auto* element = dynamicDowncast<Element>(node);
+    for (RefPtr<ContainerNode> node = matchedElement; node; node = node->parentInComposedTree()) {
+        RefPtr element = dynamicDowncast<Element>(node);
         if (!element)
             continue;
         bool matchedButton = is<HTMLButtonElement>(*element);
@@ -458,7 +458,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
     auto nodeIdentifier = matchedElement->nodeIdentifier();
 
     if (!hasPointer) {
-        if (auto* labelElement = dynamicDowncast<HTMLLabelElement>(matchedElement)) {
+        if (RefPtr labelElement = dynamicDowncast<HTMLLabelElement>(matchedElement)) {
             // Could be a `<label for="...">` or a label with a descendant.
             // In cases where both elements get a region we want to group them by the same `nodeIdentifier`.
             auto associatedElement = labelElement->control();

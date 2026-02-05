@@ -33,6 +33,7 @@
 #include "B3SlotBaseValue.h"
 #include "B3ValueInlines.h"
 #include "B3ValueKeyInlines.h"
+#include "B3WasmRefTypeCheckValue.h"
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -211,6 +212,28 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
         if (u.indices[2] == UINT32_MAX)
             return proc.add<SIMDValue>(origin, kind(), type(), simdInfo(), child(proc, 0), child(proc, 1));
         return proc.add<SIMDValue>(origin, kind(), type(), simdInfo(), child(proc, 0), child(proc, 1), child(proc, 2));
+    case WasmRefTest:
+    case WasmRefCast: {
+        OptionSet<WasmRefTypeCheckFlag> flags = OptionSet<WasmRefTypeCheckFlag>::fromRaw(u.indices[1]);
+
+        int32_t targetHeapType = 0;
+        RefPtr<const Wasm::RTT> targetRTT;
+
+        if (flags.contains(WasmRefTypeCheckFlag::HasRTT)) {
+            // Reconstruct RTT pointer when HasRTT flag is set
+            uintptr_t rttPtr = static_cast<uintptr_t>(static_cast<uint64_t>(u.indices[2]) | (static_cast<uint64_t>(u.indices[3]) << 32));
+            targetRTT = reinterpret_cast<const Wasm::RTT*>(rttPtr);
+        } else {
+            // Use targetHeapType when HasRTT flag is not set (builtin types)
+            targetHeapType = static_cast<int32_t>(u.indices[2]);
+            targetRTT = nullptr;
+        }
+
+        // Remove HasRTT from flags before passing to constructor (it's not stored in the value)
+        flags.remove(WasmRefTypeCheckFlag::HasRTT);
+
+        return proc.add<WasmRefTypeCheckValue>(kind(), type(), origin, targetHeapType, flags, WTF::move(targetRTT), child(proc, 0));
+    }
     case Nop:
     case Set:
     case Get:

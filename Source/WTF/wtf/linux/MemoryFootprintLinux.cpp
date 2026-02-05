@@ -26,26 +26,14 @@
 #include "config.h"
 #include <wtf/MemoryFootprint.h>
 
-#include <stdio.h>
-#include <wtf/MonotonicTime.h>
-#include <wtf/StdLibExtras.h>
 #include <wtf/linux/CurrentProcessMemoryStatus.h>
-#include <wtf/text/StringView.h>
 
 namespace WTF {
 
-static const Seconds s_memoryFootprintUpdateInterval = 1_s;
-
 size_t memoryFootprint()
 {
-    static ProcessMemoryStatus memoryStatus;
-    static MonotonicTime previousUpdateTime = { };
-    Seconds elapsed = MonotonicTime::now() - previousUpdateTime;
-    if (elapsed >= s_memoryFootprintUpdateInterval) {
-        currentProcessMemoryStatus(memoryStatus);
-        previousUpdateTime = MonotonicTime::now();
-    }
-
+    ProcessMemoryStatus memoryStatus;
+    currentProcessMemoryStatus(memoryStatus);
     return memoryStatus.resident;
 }
 

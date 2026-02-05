@@ -367,7 +367,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObjec
         return makeUnexpected("Animation is detached from context"_s);
 
     auto* state = scriptExecutionContext->globalObject();
-    auto injectedScript = m_injectedScriptManager.injectedScriptFor(state);
+    auto injectedScript = m_injectedScriptManager->injectedScriptFor(state);
     ASSERT(!injectedScript.hasNoValue());
 
     JSC::JSValue value;

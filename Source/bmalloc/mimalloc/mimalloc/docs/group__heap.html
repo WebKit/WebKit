@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.11.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>mi-malloc: Heap Allocation</title>
+<title>mi-malloc: Heaps</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -34,7 +34,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mimalloc-logo.svg"/></td>
   <td id="projectalign">
-   <div id="projectname">mi-malloc<span id="projectnumber">&#160;3.2</span>
+   <div id="projectname">mi-malloc<span id="projectnumber">&#160;v1.9,  v2.2,  v3.2</span>
    </div>
   </td>
     <td>        <div id="MSearchBox" class="MSearchBoxInactive">
@@ -107,9 +107,12 @@ $(function(){initNavTree('group__heap.html',''); initResizable(true); });
   <div class="summary">
 <a href="#typedef-members">Typedefs</a> &#124;
 <a href="#func-members">Functions</a>  </div>
-  <div class="headertitle"><div class="title">Heap Allocation</div></div>
+  <div class="headertitle"><div class="title">Heaps</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>First-class heaps.  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -129,14 +132,41 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga9f9c0844edb9717f4feacd79116b8e0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy a heap, freeing all its still allocated blocks.  <br /></td></tr>
 <tr class="separator:ga9f9c0844edb9717f4feacd79116b8e0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga349b677dec7da5eacdbc7a385bd62a4a" id="r_ga349b677dec7da5eacdbc7a385bd62a4a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#ga34a47cde5a5b38c29f1aa3c5e76943c2">mi_heap_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga349b677dec7da5eacdbc7a385bd62a4a">mi_heap_set_default</a> (<a class="el" href="#ga34a47cde5a5b38c29f1aa3c5e76943c2">mi_heap_t</a> *heap)</td></tr>
-<tr class="memdesc:ga349b677dec7da5eacdbc7a385bd62a4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the default heap to use in the current thread for <a class="el" href="group__malloc.html#gae1dd97b542420c87ae085e822b1229e8" title="Allocate size bytes.">mi_malloc()</a> et al.  <br /></td></tr>
+<tr class="memdesc:ga349b677dec7da5eacdbc7a385bd62a4a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><b>v1</b>,<b>v2</b>: Set the default heap to use in the current thread for <a class="el" href="group__malloc.html#gae1dd97b542420c87ae085e822b1229e8" title="Allocate size bytes.">mi_malloc()</a> et al.  <br /></td></tr>
 <tr class="separator:ga349b677dec7da5eacdbc7a385bd62a4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga14c667a6e2c5d28762d8cb7d4e057909" id="r_ga14c667a6e2c5d28762d8cb7d4e057909"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#ga34a47cde5a5b38c29f1aa3c5e76943c2">mi_heap_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga14c667a6e2c5d28762d8cb7d4e057909">mi_heap_get_default</a> ()</td></tr>
-<tr class="memdesc:ga14c667a6e2c5d28762d8cb7d4e057909"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the default heap that is used for <a class="el" href="group__malloc.html#gae1dd97b542420c87ae085e822b1229e8" title="Allocate size bytes.">mi_malloc()</a> et al.  <br /></td></tr>
+<tr class="memdesc:ga14c667a6e2c5d28762d8cb7d4e057909"><td class="mdescLeft">&#160;</td><td class="mdescRight"><b>v1</b>,<b>v2</b>: Get the default heap that is used for <a class="el" href="group__malloc.html#gae1dd97b542420c87ae085e822b1229e8" title="Allocate size bytes.">mi_malloc()</a> et al.  <br /></td></tr>
 <tr class="separator:ga14c667a6e2c5d28762d8cb7d4e057909"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gac6ac9f0e7be9ab4ff70acfc8dad1235a" id="r_gac6ac9f0e7be9ab4ff70acfc8dad1235a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#ga34a47cde5a5b38c29f1aa3c5e76943c2">mi_heap_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gac6ac9f0e7be9ab4ff70acfc8dad1235a">mi_heap_get_backing</a> ()</td></tr>
-<tr class="memdesc:gac6ac9f0e7be9ab4ff70acfc8dad1235a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the backing heap.  <br /></td></tr>
+<tr class="memdesc:gac6ac9f0e7be9ab4ff70acfc8dad1235a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><b>v1</b>,<b>v2</b>: Get the backing heap.  <br /></td></tr>
 <tr class="separator:gac6ac9f0e7be9ab4ff70acfc8dad1235a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaab93abbc0624f570e2900f95cac18591" id="r_gaab93abbc0624f570e2900f95cac18591"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaab93abbc0624f570e2900f95cac18591">mi_heap_set_numa_affinity</a> (<a class="el" href="#ga34a47cde5a5b38c29f1aa3c5e76943c2">mi_heap_t</a> *heap, int numa_node)</td></tr>
+<tr class="memdesc:gaab93abbc0624f570e2900f95cac18591"><td class="mdescLeft">&#160;</td><td class="mdescRight"><b>v3</b>: set NUMA affinity for a heap.  <br /></td></tr>
+<tr class="separator:gaab93abbc0624f570e2900f95cac18591"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8fc318a65dc79ee8778c6a0e52d12477" id="r_ga8fc318a65dc79ee8778c6a0e52d12477"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#ga34a47cde5a5b38c29f1aa3c5e76943c2">mi_heap_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga8fc318a65dc79ee8778c6a0e52d12477">mi_heap_main</a> (void)</td></tr>
+<tr class="memdesc:ga8fc318a65dc79ee8778c6a0e52d12477"><td class="mdescLeft">&#160;</td><td class="mdescRight"><b>v3</b>: the main heap (of the current sub-process)  <br /></td></tr>
+<tr class="separator:ga8fc318a65dc79ee8778c6a0e52d12477"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga424b69f285109b2515631d59f5eecb1b" id="r_ga424b69f285109b2515631d59f5eecb1b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#ga34a47cde5a5b38c29f1aa3c5e76943c2">mi_heap_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga424b69f285109b2515631d59f5eecb1b">mi_heap_of</a> (const void *p)</td></tr>
+<tr class="memdesc:ga424b69f285109b2515631d59f5eecb1b"><td class="mdescLeft">&#160;</td><td class="mdescRight"><b>v3</b>: return the heap that contains the given pointer.  <br /></td></tr>
+<tr class="separator:ga424b69f285109b2515631d59f5eecb1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac988496aea8ffc5c8bf92a8b10165fa0" id="r_gac988496aea8ffc5c8bf92a8b10165fa0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gac988496aea8ffc5c8bf92a8b10165fa0">mi_heap_contains</a> (const <a class="el" href="#ga34a47cde5a5b38c29f1aa3c5e76943c2">mi_heap_t</a> *heap, const void *p)</td></tr>
+<tr class="memdesc:gac988496aea8ffc5c8bf92a8b10165fa0"><td class="mdescLeft">&#160;</td><td class="mdescRight"><b>v3</b>: does a heap contain a specific pointer?  <br /></td></tr>
+<tr class="separator:gac988496aea8ffc5c8bf92a8b10165fa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga29589f427702a1b873de8efb884a611b" id="r_ga29589f427702a1b873de8efb884a611b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga29589f427702a1b873de8efb884a611b">mi_any_heap_contains</a> (const void *p)</td></tr>
+<tr class="memdesc:ga29589f427702a1b873de8efb884a611b"><td class="mdescLeft">&#160;</td><td class="mdescRight"><b>v3</b>: is a pointer pointing into mimalloc managed memory?  <br /></td></tr>
+<tr class="separator:ga29589f427702a1b873de8efb884a611b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5f071b10d4df1c3658e04e7fd67a94e6" id="r_ga5f071b10d4df1c3658e04e7fd67a94e6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga5f071b10d4df1c3658e04e7fd67a94e6">mi_is_in_heap_region</a> (const void *p)</td></tr>
+<tr class="memdesc:ga5f071b10d4df1c3658e04e7fd67a94e6"><td class="mdescLeft">&#160;</td><td class="mdescRight"><b>v1</b>,<b>v2</b>: Is a pointer part of our heap?  <br /></td></tr>
+<tr class="separator:ga5f071b10d4df1c3658e04e7fd67a94e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga628c237489c2679af84a4d0d143b3dd5" id="r_ga628c237489c2679af84a4d0d143b3dd5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga628c237489c2679af84a4d0d143b3dd5">mi_check_owned</a> (const void *p)</td></tr>
+<tr class="memdesc:ga628c237489c2679af84a4d0d143b3dd5"><td class="mdescLeft">&#160;</td><td class="mdescRight"><b>v1</b>,<b>v2</b>: Check if any pointer is part of the default heap of this thread.  <br /></td></tr>
+<tr class="separator:ga628c237489c2679af84a4d0d143b3dd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa862aa8ed8d57d84cae41fc1022d71af" id="r_gaa862aa8ed8d57d84cae41fc1022d71af"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaa862aa8ed8d57d84cae41fc1022d71af">mi_heap_contains_block</a> (<a class="el" href="#ga34a47cde5a5b38c29f1aa3c5e76943c2">mi_heap_t</a> *heap, const void *p)</td></tr>
+<tr class="memdesc:gaa862aa8ed8d57d84cae41fc1022d71af"><td class="mdescLeft">&#160;</td><td class="mdescRight"><b>v1</b>,<b>v2</b>: Does a heap contain a pointer to a previously allocated block?  <br /></td></tr>
+<tr class="separator:gaa862aa8ed8d57d84cae41fc1022d71af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0d67c1789faaa15ff366c024fcaf6377" id="r_ga0d67c1789faaa15ff366c024fcaf6377"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga0d67c1789faaa15ff366c024fcaf6377">mi_heap_check_owned</a> (<a class="el" href="#ga34a47cde5a5b38c29f1aa3c5e76943c2">mi_heap_t</a> *heap, const void *p)</td></tr>
+<tr class="memdesc:ga0d67c1789faaa15ff366c024fcaf6377"><td class="mdescLeft">&#160;</td><td class="mdescRight"><b>v1</b>,<b>v2</b>: Check safely if any pointer is part of a heap.  <br /></td></tr>
+<tr class="separator:ga0d67c1789faaa15ff366c024fcaf6377"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga7922f7495cde30b1984d0e6072419298" id="r_ga7922f7495cde30b1984d0e6072419298"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga7922f7495cde30b1984d0e6072419298">mi_heap_collect</a> (<a class="el" href="#ga34a47cde5a5b38c29f1aa3c5e76943c2">mi_heap_t</a> *heap, bool force)</td></tr>
 <tr class="memdesc:ga7922f7495cde30b1984d0e6072419298"><td class="mdescLeft">&#160;</td><td class="mdescRight">Release outstanding resources in a specific heap.  <br /></td></tr>
 <tr class="separator:ga7922f7495cde30b1984d0e6072419298"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -188,7 +218,10 @@ Functions</h2></td></tr>
 <tr class="separator:ga6df988a7219d5707f010d5f3eb0dc3f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>First-class heaps that can be destroyed in one go. </p>
+<p>First-class heaps. </p>
+<p>Heaps allow allocations to be grouped, and for example be destroyed in one go. Heaps can also be associated with a specific allocation arena (<code><a class="el" href="group__arenas.html#gaaf2d9976576d5efd5544be12848af949" title="Create a new heap that only allocates in the specified arena.">mi_heap_new_in_arena()</a></code>).</p>
+<p><b>v1</b>,<b>v2</b>: heaps are only semi-first-class and <b>one can only use heap allocation functions from the thread that created the heap</b>. (of course, <a class="el" href="group__malloc.html#gaf2c7b89c327d1f60f59e68b9ea644d95" title="Free previously allocated memory.">mi_free()</a> can always be used from any thread to free objects from any heap).</p>
+<p><b>v3</b>: heaps are fully first-class and can be used to allocate efficiently from from any thread. In v3, the old v1/v2 heaps still exist but are now called <em>theaps</em> (<a class="el" href="group__theap.html#ga8722f6ac4f638b4692e06ddfddc844f8" title="Type of thread-local heaps.">mi_theap_t()</a>) for thread-local heaps. A v3 heap creates internally such theaps on demand to efficiently allocate without needing taking locks for example. </p>
 <h2 class="groupheader">Typedef Documentation</h2>
 <a id="ga34a47cde5a5b38c29f1aa3c5e76943c2" name="ga34a47cde5a5b38c29f1aa3c5e76943c2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga34a47cde5a5b38c29f1aa3c5e76943c2">&#9670;&#160;</a></span>mi_heap_t</h2>
@@ -203,11 +236,63 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Type of first-class heaps. </p>
-<p>A heap can only be used for (re)allocation in the thread that created this heap! Any allocated blocks can be freed by any other thread though. </p>
+<p><b>v1</b>,<b>v2</b>: in mimalloc v1 and v2, a heap can only be used for allocation in the thread that created this heap! </p>
 
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="ga29589f427702a1b873de8efb884a611b" name="ga29589f427702a1b873de8efb884a611b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga29589f427702a1b873de8efb884a611b">&#9670;&#160;</a></span>mi_any_heap_contains()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool mi_any_heap_contains </td>
+          <td>(</td>
+          <td class="paramtype">const void *</td>          <td class="paramname"><span class="paramname"><em>p</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><b>v3</b>: is a pointer pointing into mimalloc managed memory? </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">p</td><td>Any pointer &ndash; not required to be previously allocated by mimalloc. This is a constant time efficient function. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga628c237489c2679af84a4d0d143b3dd5" name="ga628c237489c2679af84a4d0d143b3dd5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga628c237489c2679af84a4d0d143b3dd5">&#9670;&#160;</a></span>mi_check_owned()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool mi_check_owned </td>
+          <td>(</td>
+          <td class="paramtype">const void *</td>          <td class="paramname"><span class="paramname"><em>p</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><b>v1</b>,<b>v2</b>: Check if any pointer is part of the default heap of this thread. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">p</td><td>Any pointer &ndash; not required to be previously allocated by us. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><em>true</em> if <em>p</em> points to a block in default heap of this thread. Note: expensive function, linear in the pages in the heap. </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ga29589f427702a1b873de8efb884a611b" title="v3: is a pointer pointing into mimalloc managed memory?">mi_any_heap_contains()</a> for <b>v3</b> </dd></dl>
+
+</div>
+</div>
 <a id="gac0098aaf231d3e9586c73136d5df95da" name="gac0098aaf231d3e9586c73136d5df95da"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gac0098aaf231d3e9586c73136d5df95da">&#9670;&#160;</a></span>mi_heap_calloc()</h2>
 
@@ -304,6 +389,38 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="ga0d67c1789faaa15ff366c024fcaf6377" name="ga0d67c1789faaa15ff366c024fcaf6377"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0d67c1789faaa15ff366c024fcaf6377">&#9670;&#160;</a></span>mi_heap_check_owned()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool mi_heap_check_owned </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#ga34a47cde5a5b38c29f1aa3c5e76943c2">mi_heap_t</a> *</td>          <td class="paramname"><span class="paramname"><em>heap</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *</td>          <td class="paramname"><span class="paramname"><em>p</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><b>v1</b>,<b>v2</b>: Check safely if any pointer is part of a heap. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">heap</td><td>The heap. </td></tr>
+    <tr><td class="paramname">p</td><td>Any pointer &ndash; not required to be previously allocated by us. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><em>true</em> if <em>p</em> points to a block in <em>heap</em>. Note: expensive function, linear in the pages in the heap. </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#gaa862aa8ed8d57d84cae41fc1022d71af" title="v1,v2: Does a heap contain a pointer to a previously allocated block?">mi_heap_contains_block()</a>, <a class="el" href="#gac988496aea8ffc5c8bf92a8b10165fa0" title="v3: does a heap contain a specific pointer?">mi_heap_contains()</a> for <b>v3</b> </dd></dl>
+
+</div>
+</div>
 <a id="ga7922f7495cde30b1984d0e6072419298" name="ga7922f7495cde30b1984d0e6072419298"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga7922f7495cde30b1984d0e6072419298">&#9670;&#160;</a></span>mi_heap_collect()</h2>
 
@@ -327,6 +444,68 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="gac988496aea8ffc5c8bf92a8b10165fa0" name="gac988496aea8ffc5c8bf92a8b10165fa0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac988496aea8ffc5c8bf92a8b10165fa0">&#9670;&#160;</a></span>mi_heap_contains()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool mi_heap_contains </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="#ga34a47cde5a5b38c29f1aa3c5e76943c2">mi_heap_t</a> *</td>          <td class="paramname"><span class="paramname"><em>heap</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *</td>          <td class="paramname"><span class="paramname"><em>p</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><b>v3</b>: does a heap contain a specific pointer? </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">heap</td><td>The heap to query. </td></tr>
+    <tr><td class="paramname">p</td><td>Any pointer &ndash; not required to be previously allocated by mimalloc. This is a constant time efficient function. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gaa862aa8ed8d57d84cae41fc1022d71af" name="gaa862aa8ed8d57d84cae41fc1022d71af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa862aa8ed8d57d84cae41fc1022d71af">&#9670;&#160;</a></span>mi_heap_contains_block()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool mi_heap_contains_block </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#ga34a47cde5a5b38c29f1aa3c5e76943c2">mi_heap_t</a> *</td>          <td class="paramname"><span class="paramname"><em>heap</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *</td>          <td class="paramname"><span class="paramname"><em>p</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><b>v1</b>,<b>v2</b>: Does a heap contain a pointer to a previously allocated block? </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">heap</td><td>The heap. </td></tr>
+    <tr><td class="paramname">p</td><td>Pointer to a previously allocated block (in any heap)&ndash; cannot be some random pointer! </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><em>true</em> if the block pointed to by <em>p</em> is in the <em>heap</em>. </dd></dl>
+<dl class="section see"><dt>See also</dt><dd>mi_heap_owned(), <a class="el" href="#gac988496aea8ffc5c8bf92a8b10165fa0" title="v3: does a heap contain a specific pointer?">mi_heap_contains()</a> for <b>v3</b> </dd></dl>
+
+</div>
+</div>
 <a id="ga2ab1af8d438819b55319c7ef51d1e409" name="ga2ab1af8d438819b55319c7ef51d1e409"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga2ab1af8d438819b55319c7ef51d1e409">&#9670;&#160;</a></span>mi_heap_delete()</h2>
 
@@ -343,8 +522,8 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Delete a previously allocated heap. </p>
-<p>This will release resources and migrate any still allocated blocks in this heap (efficiently) to the default heap.</p>
-<p>If <em>heap</em> is the default heap, the default heap is set to the backing heap. </p>
+<p>This will release internal resources but not free still allocated blocks in this heap (and should be <code>mi_free</code>'d later on as usual).</p>
+<p>Note: trying to delete the main heap of a subprocess is ignored. </p>
 
 </div>
 </div>
@@ -364,8 +543,8 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Destroy a heap, freeing all its still allocated blocks. </p>
-<p>Use with care as this will free all blocks still allocated in the heap. However, this can be a very efficient way to free all heap memory in one go.</p>
-<p>If <em>heap</em> is the default heap, the default heap is set to the backing heap. </p>
+<p>Use with care as this will free all blocks still allocated in the heap. However, this can be an efficient way to free all heap memory in one go.</p>
+<p>Note: trying to destroy the main heap of a subprocess is ignored. </p>
 
 </div>
 </div>
@@ -384,8 +563,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Get the backing heap. </p>
-<p>The <em>backing</em> heap is the initial default heap for a thread and always available for allocations. It cannot be destroyed or deleted except by exiting the thread. </p>
+<p><b>v1</b>,<b>v2</b>: Get the backing heap. </p>
+<p>The <em>backing</em> heap is the initial default heap for a thread and always available for allocations. It cannot be destroyed or deleted except by exiting the thread. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="#ga8fc318a65dc79ee8778c6a0e52d12477" title="v3: the main heap (of the current sub-process)">mi_heap_main()</a> for <b>v3</b> </dd></dl>
 
 </div>
 </div>
@@ -404,8 +583,29 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Get the default heap that is used for <a class="el" href="group__malloc.html#gae1dd97b542420c87ae085e822b1229e8" title="Allocate size bytes.">mi_malloc()</a> et al. </p>
+<p><b>v1</b>,<b>v2</b>: Get the default heap that is used for <a class="el" href="group__malloc.html#gae1dd97b542420c87ae085e822b1229e8" title="Allocate size bytes.">mi_malloc()</a> et al. </p>
 <p>(for the current thread). </p><dl class="section return"><dt>Returns</dt><dd>The current default heap. </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__theap.html#ga78afbb07c1e0cd333c7539cf7403dfd5" title="Get the default theap that is used for mi_malloc() et al. for the current thread.">mi_theap_get_default()</a> for <b>v3</b> </dd></dl>
+
+</div>
+</div>
+<a id="ga8fc318a65dc79ee8778c6a0e52d12477" name="ga8fc318a65dc79ee8778c6a0e52d12477"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8fc318a65dc79ee8778c6a0e52d12477">&#9670;&#160;</a></span>mi_heap_main()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#ga34a47cde5a5b38c29f1aa3c5e76943c2">mi_heap_t</a> * mi_heap_main </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><b>v3</b>: the main heap (of the current sub-process) </p>
+<dl class="section return"><dt>Returns</dt><dd>a pointer to the main heap Every (sub)process has a main heap that cannot be deleted or destroyed until (sub)process exit. If other heaps are deleted their live objects are migrated to the main heap. </dd></dl>
 
 </div>
 </div>
@@ -559,6 +759,32 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Create a new heap that can be used for allocation. </p>
+
+</div>
+</div>
+<a id="ga424b69f285109b2515631d59f5eecb1b" name="ga424b69f285109b2515631d59f5eecb1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga424b69f285109b2515631d59f5eecb1b">&#9670;&#160;</a></span>mi_heap_of()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#ga34a47cde5a5b38c29f1aa3c5e76943c2">mi_heap_t</a> * mi_heap_of </td>
+          <td>(</td>
+          <td class="paramtype">const void *</td>          <td class="paramname"><span class="paramname"><em>p</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><b>v3</b>: return the heap that contains the given pointer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">p</td><td>Any pointer &ndash; not required to be previously allocated by mimalloc. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the heap that contains the given pointer, or <code>NULL</code> if the pointer does not point into mimalloc allocated memory. This is a constant time efficient function. </dd></dl>
 
 </div>
 </div>
@@ -756,7 +982,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Set the default heap to use in the current thread for <a class="el" href="group__malloc.html#gae1dd97b542420c87ae085e822b1229e8" title="Allocate size bytes.">mi_malloc()</a> et al. </p>
+<p><b>v1</b>,<b>v2</b>: Set the default heap to use in the current thread for <a class="el" href="group__malloc.html#gae1dd97b542420c87ae085e822b1229e8" title="Allocate size bytes.">mi_malloc()</a> et al. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">heap</td><td>The new default heap. </td></tr>
@@ -764,6 +990,37 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The previous default heap. </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__theap.html#ga04420ce52785019412397e4de24a984a" title="Set the default thread-local theap to use in the current thread for mi_malloc() et al.">mi_theap_set_default()</a> for <b>v3</b> </dd></dl>
+
+</div>
+</div>
+<a id="gaab93abbc0624f570e2900f95cac18591" name="gaab93abbc0624f570e2900f95cac18591"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaab93abbc0624f570e2900f95cac18591">&#9670;&#160;</a></span>mi_heap_set_numa_affinity()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void mi_heap_set_numa_affinity </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#ga34a47cde5a5b38c29f1aa3c5e76943c2">mi_heap_t</a> *</td>          <td class="paramname"><span class="paramname"><em>heap</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>numa_node</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><b>v3</b>: set NUMA affinity for a heap. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">heap</td><td>the heap which should be associated with a specific numa node. </td></tr>
+    <tr><td class="paramname">numa_node</td><td>the numa node to associate to (<code>&gt;=0</code>) </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -898,6 +1155,33 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="ga5f071b10d4df1c3658e04e7fd67a94e6" name="ga5f071b10d4df1c3658e04e7fd67a94e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5f071b10d4df1c3658e04e7fd67a94e6">&#9670;&#160;</a></span>mi_is_in_heap_region()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool mi_is_in_heap_region </td>
+          <td>(</td>
+          <td class="paramtype">const void *</td>          <td class="paramname"><span class="paramname"><em>p</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><b>v1</b>,<b>v2</b>: Is a pointer part of our heap? </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">p</td><td>The pointer to check. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><em>true</em> if this is a pointer into our heap. This function is relatively fast. </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ga29589f427702a1b873de8efb884a611b" title="v3: is a pointer pointing into mimalloc managed memory?">mi_any_heap_contains()</a> for <b>v3</b>. </dd></dl>
 
 </div>
 </div>

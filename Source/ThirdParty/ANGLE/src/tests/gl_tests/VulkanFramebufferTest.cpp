@@ -127,5 +127,6 @@ TEST_P(VulkanFramebufferTest, R4G4B4A4TextureSampleOnlyActuallyUses444Format)
 }
 
 ANGLE_INSTANTIATE_TEST(VulkanFramebufferTest, ES3_VULKAN());
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanFramebufferTest);
 
 }  // anonymous namespace

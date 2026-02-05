@@ -59,7 +59,6 @@ static void applyUASheetBehaviorsToContext(CSSParserContext& context)
 #if HAVE(CORE_MATERIAL)
     context.propertySettings.useSystemAppearance = true;
 #endif
-    context.thumbAndTrackPseudoElementsEnabled = true;
     context.cssInternalAutoBaseParsingEnabled = true;
 }
 
@@ -85,7 +84,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     this->charset = charset;
     mode = document.inQuirksMode() ? HTMLQuirksMode : HTMLStandardMode;
     isHTMLDocument = document.isHTMLDocument();
-    hasDocumentSecurityOrigin = sheetBaseURL.isNull() || document.protectedSecurityOrigin()->canRequest(baseURL, OriginAccessPatternsForWebProcess::singleton());
+    hasDocumentSecurityOrigin = sheetBaseURL.isNull() || protect(document.securityOrigin())->canRequest(baseURL, OriginAccessPatternsForWebProcess::singleton());
     webkitMediaTextTrackDisplayQuirkEnabled = document.quirks().needsWebKitMediaTextTrackDisplayQuirk();
 }
 
@@ -105,7 +104,6 @@ CSSParserContext::CSSParserContext(const Settings& settings)
     , popoverAttributeEnabled { settings.popoverAttributeEnabled() }
     , sidewaysWritingModesEnabled { settings.sidewaysWritingModesEnabled() }
     , cssTextWrapPrettyEnabled { settings.cssTextWrapPrettyEnabled() }
-    , thumbAndTrackPseudoElementsEnabled { settings.thumbAndTrackPseudoElementsEnabled() }
 #if ENABLE(SERVICE_CONTROLS)
     , imageControlsEnabled { settings.imageControlsEnabled() }
 #endif
@@ -145,7 +143,6 @@ void add(Hasher& hasher, const CSSParserContext& context)
         context.popoverAttributeEnabled,
         context.sidewaysWritingModesEnabled,
         context.cssTextWrapPrettyEnabled,
-        context.thumbAndTrackPseudoElementsEnabled,
 #if ENABLE(SERVICE_CONTROLS)
         context.imageControlsEnabled,
 #endif

@@ -52,7 +52,6 @@ typedef double DOMHighResTimeStamp;
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCStats {
     required DOMHighResTimeStamp timestamp;
     required RTCStatsType type;
@@ -62,7 +61,6 @@ typedef double DOMHighResTimeStamp;
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCRtpStreamStats : RTCStats {
     required unsigned long ssrc;
     required DOMString kind;
@@ -72,7 +70,6 @@ typedef double DOMHighResTimeStamp;
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCReceivedRtpStreamStats : RTCRtpStreamStats {
     unsigned long long packetsReceived;
     long long packetsLost;
@@ -81,7 +78,6 @@ typedef double DOMHighResTimeStamp;
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCInboundRtpStreamStats : RTCReceivedRtpStreamStats {
     required DOMString trackIdentifier;
     DOMString mid;
@@ -138,7 +134,6 @@ typedef double DOMHighResTimeStamp;
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCRemoteInboundRtpStreamStats : RTCReceivedRtpStreamStats {
     DOMString localId;
     double roundTripTime;
@@ -149,7 +144,6 @@ typedef double DOMHighResTimeStamp;
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCSentRtpStreamStats : RTCRtpStreamStats {
     unsigned long packetsSent;
     unsigned long long bytesSent;
@@ -164,7 +158,6 @@ enum RTCQualityLimitationReason {
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCOutboundRtpStreamStats : RTCSentRtpStreamStats {
     DOMString mid;
     DOMString mediaSourceId;
@@ -198,7 +191,6 @@ enum RTCQualityLimitationReason {
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCRemoteOutboundRtpStreamStats : RTCSentRtpStreamStats {
     DOMString localId;
     DOMHighResTimeStamp remoteTimestamp;
@@ -217,7 +209,6 @@ enum RTCCodecType {
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCCodecStats : RTCStats {
     required unsigned long payloadType;
     required DOMString transportId;
@@ -229,7 +220,6 @@ enum RTCCodecType {
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCMediaSourceStats : RTCStats {
     required DOMString  trackIdentifier;
     required DOMString  kind;
@@ -239,7 +229,6 @@ enum RTCCodecType {
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCAudioSourceStats : RTCMediaSourceStats {
     double audioLevel;
     double totalAudioEnergy;
@@ -250,7 +239,6 @@ enum RTCCodecType {
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCVideoSourceStats : RTCMediaSourceStats {
     unsigned long width;
     unsigned long height;
@@ -260,7 +248,6 @@ enum RTCCodecType {
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCAudioPlayoutStats : RTCStats {
     required DOMString kind;
     double synthesizedSamplesDuration;
@@ -272,7 +259,6 @@ enum RTCCodecType {
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCPeerConnectionStats : RTCStats {
     unsigned long dataChannelsOpened;
     unsigned long dataChannelsClosed;
@@ -280,7 +266,6 @@ enum RTCCodecType {
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCDataChannelStats : RTCStats {
     DOMString label;
     DOMString protocol;
@@ -300,7 +285,6 @@ enum RTCDtlsRole {
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCTransportStats : RTCStats {
     unsigned long long packetsSent;
     unsigned long long packetsReceived;
@@ -322,7 +306,6 @@ enum RTCDtlsRole {
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCIceCandidateStats : RTCStats {
     required DOMString transportId;
     DOMString? address;
@@ -349,7 +332,6 @@ enum RTCStatsIceCandidatePairState {
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCIceCandidatePairStats : RTCStats {
     required DOMString transportId;
     required DOMString localCandidateId;
@@ -377,7 +359,6 @@ enum RTCStatsIceCandidatePairState {
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCCertificateStats : RTCStats {
     required DOMString fingerprint;
     required DOMString fingerprintAlgorithm;

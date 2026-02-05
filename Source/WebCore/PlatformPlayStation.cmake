@@ -18,6 +18,7 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     ${WEBCORE_DIR}/platform/graphics/libwpe
     ${WEBCORE_DIR}/platform/mediacapabilities
     ${WEBCORE_DIR}/platform/video-codecs
+    ${WEBCORE_DIR}/rendering/playstation
 )
 
 list(APPEND WebCore_SOURCES
@@ -75,6 +76,8 @@ list(APPEND WebCore_LIBRARIES
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/libwpe/PlatformDisplayLibWPE.h
+
+    rendering/playstation/RenderThemePlayStation.h
 )
 
 if (ENABLE_GAMEPAD)

@@ -79,13 +79,14 @@ void appendPlatformProperties(AXPropertyVector& properties, OptionSet<AXProperty
         setProperty(AXProperty::StringValue, object->stringValue().isolatedCopy());
 
     setProperty(AXProperty::RemoteFramePlatformElement, object->remoteFramePlatformElement());
+    setProperty(AXProperty::RemoteFrameProcessIdentifier, object->remoteFrameProcessIdentifier());
 
     if (object->isWebArea()) {
         setProperty(AXProperty::PreventKeyboardDOMEventDispatch, object->preventKeyboardDOMEventDispatch());
         setProperty(AXProperty::CaretBrowsingEnabled, object->caretBrowsingEnabled());
     }
 
-    if (object->isScrollView()) {
+    if (object->isScrollArea()) {
         setProperty(AXProperty::PlatformWidget, RetainPtr(object->platformWidget()));
         setProperty(AXProperty::RemoteParent, object->remoteParent());
     }
@@ -115,7 +116,7 @@ AttributedStringStyle AXIsolatedObject::stylesForAttributedString() const
 RetainPtr<RemoteAXObjectRef> AXIsolatedObject::remoteParent() const
 {
     RefPtr scrollView = Accessibility::findAncestor<AXCoreObject>(*this, true, [] (const AXCoreObject& object) {
-        return object.isScrollView();
+        return object.isScrollArea();
     });
     RefPtr isolatedObject = dynamicDowncast<AXIsolatedObject>(scrollView);
     return isolatedObject ? isolatedObject->propertyValue<RetainPtr<id>>(AXProperty::RemoteParent) : nil;

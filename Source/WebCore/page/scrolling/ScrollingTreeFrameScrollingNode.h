@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(ASYNC_SCROLLING)
 
 #include <WebCore/ScrollingTreeScrollingNode.h>
@@ -60,6 +62,10 @@ public:
     virtual void viewSizeDidChange() { }
 
     virtual bool isScrollingTreeFrameScrollingNodeMac() const { return false; };
+
+#if PLATFORM(IOS_FAMILY)
+    virtual bool isScrollingTreeFrameScrollingNodeIOS() const { return false; }
+#endif
 
 protected:
     ScrollingTreeFrameScrollingNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);

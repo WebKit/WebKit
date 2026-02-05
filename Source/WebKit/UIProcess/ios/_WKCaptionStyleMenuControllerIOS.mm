@@ -101,13 +101,13 @@ static const UIMenuIdentifier WKCaptionStyleMenuSystemSettingsIdentifier = @"WKC
             if (auto strongSelf = weakSelf.get())
                 [strongSelf profileActionSelected:profileID];
         });
-        UIAction *profileAction = [UIAction actionWithTitle:title.createNSString().get() image:nil identifier:profileID.createNSString().get() handler:profileSelectedHandler.get()];
-        profileAction.attributes = UIMenuElementAttributesKeepsMenuPresented;
+        RetainPtr profileAction = [UIAction actionWithTitle:title.createNSString().get() image:nil identifier:profileID.createNSString().get() handler:profileSelectedHandler.get()];
+        profileAction.get().attributes = UIMenuElementAttributesKeepsMenuPresented;
 
         if ([profileID.createNSString().autorelease() isEqualToString:self.savedActiveProfileID])
-            profileAction.state = UIMenuElementStateOn;
+            profileAction.get().state = UIMenuElementStateOn;
 
-        [profileElements addObject:profileAction];
+        [profileElements addObject:profileAction.get()];
     }
     auto *profileGroup = [UIMenu menuWithTitle:@"" image:nil identifier:WKCaptionStyleMenuProfileGroupIdentifier options:UIMenuOptionsDisplayInline children:profileElements];
 
@@ -194,12 +194,12 @@ static bool menuHasMenuAncestor(UIMenu *targetMenu, UIMenu *ancestorMenu)
 - (void)profileActionSelected:(const WTF::String&)profileID
 {
     for (UIMenuElement *childMenu in [_menu children]) {
-        auto *childAction = dynamic_objc_cast<UIAction>(childMenu);
+        RetainPtr childAction = dynamic_objc_cast<UIAction>(childMenu);
         if (!childAction)
             continue;
 
-        String childActionIdentifier = childAction.identifier;
-        childAction.state = profileID == childActionIdentifier ? UIMenuElementStateOn : UIMenuElementStateOff;
+        String childActionIdentifier = childAction.get().identifier;
+        childAction.get().state = profileID == childActionIdentifier ? UIMenuElementStateOn : UIMenuElementStateOff;
     }
 
     self.savedActiveProfileID = profileID.createNSString().autorelease();

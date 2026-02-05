@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,7 +50,6 @@
 #include "RenderLayer.h"
 #include "RenderLineBreak.h"
 #include "RenderMathMLFenced.h"
-#include "RenderMenuList.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
@@ -360,11 +359,6 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
         return;
     }
 
-    if (auto* menuList = dynamicDowncast<RenderMenuList>(parent)) {
-        formControlsBuilder().attach(*menuList, WTF::move(child), beforeChild);
-        return;
-    }
-
     if (auto* container = dynamicDowncast<LegacyRenderSVGContainer>(parent)) {
         svgBuilder().attach(*container, WTF::move(child), beforeChild);
         return;
@@ -436,9 +430,6 @@ RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderO
     if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(parent))
         return blockBuilder().detach(*blockFlow, child, willBeDestroyed, canCollapseAnonymousBlock);
 
-    if (auto* menuList = dynamicDowncast<RenderMenuList>(parent))
-        return formControlsBuilder().detach(*menuList, child, willBeDestroyed);
-
     if (auto* button = dynamicDowncast<RenderButton>(parent))
         return formControlsBuilder().detach(*button, child, willBeDestroyed);
 
@@ -468,7 +459,7 @@ void RenderTreeBuilder::attachToRenderElement(RenderElement& parent, RenderPtr<R
         if (afterChild && afterChild->isAnonymous() && !afterChild->isBeforeContent())
             table = afterChild;
         else {
-            auto newTable = Table::createAnonymousTableWithStyle(parent.protectedDocument(), parent.style());
+            auto newTable = Table::createAnonymousTableWithStyle(protect(parent.document()), parent.style());
             table = newTable.get();
             attach(parent, WTF::move(newTable), beforeChild);
         }
@@ -792,7 +783,7 @@ void RenderTreeBuilder::createAnonymousWrappersForInlineContent(RenderBlock& par
 
         child = inlineRunEnd->nextSibling();
 
-        auto newBlock = Block::createAnonymousBlockWithStyle(parent.protectedDocument(), parent.style());
+        auto newBlock = Block::createAnonymousBlockWithStyle(protect(parent.document()), parent.style());
         auto& block = *newBlock;
         attachToRenderElementInternal(parent, WTF::move(newBlock), inlineRunStart);
         moveChildren(parent, block, inlineRunStart, child, RenderTreeBuilder::NormalizeAfterInsertion::No);
@@ -862,7 +853,7 @@ void RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock(RenderElement
     }
     // An anonymous block must be made to wrap this inline.
     auto* parent = child.parent();
-    auto newBlock = Block::createAnonymousBlockWithStyle(parent->protectedDocument(), parent->style());
+    auto newBlock = Block::createAnonymousBlockWithStyle(protect(parent->document()), parent->style());
     auto& block = *newBlock;
     attachToRenderElementInternal(*parent, WTF::move(newBlock), &child);
     auto thisToMove = detachFromRenderElement(*parent, child, WillBeDestroyed::No);
@@ -1018,8 +1009,10 @@ void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)
         firstLetterBuilder().updateAfterDescendants(*block);
     if (auto* listItem = dynamicDowncast<RenderListItem>(renderer))
         listBuilder().updateItemMarker(*listItem);
-    if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(renderer))
+    if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(renderer)) {
         multiColumnBuilder().updateAfterDescendants(*blockFlow);
+        formControlsBuilder().updateAfterDescendants(*blockFlow);
+    }
 }
 
 RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderGrid(RenderGrid& parent, RenderObject& child, WillBeDestroyed willBeDestroyed)
@@ -1183,19 +1176,19 @@ void RenderTreeBuilder::removeFloatingObjects(RenderBlock& renderer)
 RenderPtr<RenderBox> RenderTreeBuilder::createAnonymousBoxWithSameTypeAndWithStyle(const RenderBox& renderer, const RenderStyle& style)
 {
     if (is<RenderTableCell>(renderer))
-        return Table::createAnonymousTableCellWithStyle(renderer.protectedDocument(), style);
+        return Table::createAnonymousTableCellWithStyle(protect(renderer.document()), style);
 
     if (is<RenderTableRow>(renderer))
-        return Table::createAnonymousTableRowWithStyle(renderer.protectedDocument(), style);
+        return Table::createAnonymousTableRowWithStyle(protect(renderer.document()), style);
 
     if (is<RenderTableSection>(renderer))
-        return Table::createAnonymousTableSectionWithStyle(renderer.protectedDocument(), style);
+        return Table::createAnonymousTableSectionWithStyle(protect(renderer.document()), style);
 
     if (is<RenderTable>(renderer))
-        return Table::createAnonymousTableWithStyle(renderer.protectedDocument(), style);
+        return Table::createAnonymousTableWithStyle(protect(renderer.document()), style);
 
     if (is<RenderBlock>(renderer))
-        return Block::createAnonymousBlockWithStyle(renderer.protectedDocument(), style);
+        return Block::createAnonymousBlockWithStyle(protect(renderer.document()), style);
 
     ASSERT_NOT_REACHED();
     return { };

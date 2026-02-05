@@ -44,6 +44,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
+    virtual bool isJSWebCodecsErrorCallback() const { return false; }
+
     virtual CallbackResult<void> invoke(DOMException&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(DOMException&) = 0;
 

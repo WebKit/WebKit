@@ -81,7 +81,7 @@ class LibWebRTCMediaEndpoint final
 #endif
 {
 public:
-    static RefPtr<LibWebRTCMediaEndpoint> create(RTCPeerConnection&, LibWebRTCProvider&, Document&, webrtc::PeerConnectionInterface::RTCConfiguration&&);
+    static RefPtr<LibWebRTCMediaEndpoint> create(RTCPeerConnection&, LibWebRTCProvider&, Document&, webrtc::PeerConnectionInterface::RTCConfiguration&&, bool shouldEnableServiceClass);
     ~LibWebRTCMediaEndpoint();
 
     void restartIce();
@@ -131,8 +131,10 @@ public:
 
     void setPeerConnectionBackend(LibWebRTCPeerConnectionBackend&);
 
+    bool shouldEnableServiceClass() const { return m_rtcSocketFactory && m_rtcSocketFactory->shouldEnableServiceClass(); }
+
 private:
-    LibWebRTCMediaEndpoint(RTCPeerConnection&, LibWebRTCProvider&, Document&);
+    LibWebRTCMediaEndpoint(RTCPeerConnection&, LibWebRTCProvider&, Document&, bool shouldEnableServiceClass);
 
     // webrtc::PeerConnectionObserver API
     void OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState) final;
@@ -184,7 +186,6 @@ private:
 #endif
 
     RefPtr<LibWebRTCPeerConnectionBackend> protectedPeerConnectionBackend() const;
-    RefPtr<webrtc::PeerConnectionInterface> createBackend(LibWebRTCProvider&, webrtc::PeerConnectionInterface::RTCConfiguration&&);
 
     WeakPtr<LibWebRTCPeerConnectionBackend> m_peerConnectionBackend;
     const Ref<webrtc::PeerConnectionFactoryInterface> m_peerConnectionFactory;

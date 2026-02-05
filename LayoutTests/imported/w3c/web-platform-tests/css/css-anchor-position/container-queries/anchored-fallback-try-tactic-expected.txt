@@ -1,4 +1,5 @@
 
 FAIL @container anchored(fallback) matching flip-block assert_equals: expected "yes" but got "no"
 FAIL @container anchored(fallback) matching flip-inline flip-block assert_equals: expected "yes" but got "no"
+FAIL @container anchored(fallback) matching flip-x flip-y assert_equals: expected "yes" but got "no"
 

@@ -506,7 +506,7 @@ void NetworkStorageManager::donePrepareForEviction(const std::optional<HashMap<W
     HashMap<WebCore::SecurityOriginData, AccessRecord> originRecords;
     uint64_t totalUsage = 0;
     for (auto& origin : getAllOrigins()) {
-        auto usage = checkedOriginStorageManager(origin)->protectedQuotaManager()->usage();
+        auto usage = protect(checkedOriginStorageManager(origin)->quotaManager())->usage();
         totalUsage += usage;
         WallTime accessTime;
         if (domainsWithLastAccessedTime)
@@ -888,7 +888,7 @@ void NetworkStorageManager::didIncreaseQuota(WebCore::ClientOrigin&& origin, Quo
     workQueue().dispatch([this, protectedThis = Ref { *this }, origin = crossThreadCopy(WTF::move(origin)), identifier, newQuota]() mutable {
         assertIsCurrent(workQueue());
         if (CheckedPtr manager = m_originStorageManagers.get(origin))
-            manager->protectedQuotaManager()->didIncreaseQuota(identifier, newQuota);
+            protect(manager->quotaManager())->didIncreaseQuota(identifier, newQuota);
     });
 }
 
@@ -1450,7 +1450,7 @@ void NetworkStorageManager::requestSpace(const WebCore::ClientOrigin& origin, ui
     ASSERT(!m_closed);
 
     workQueue().dispatch([this, protectedThis = Ref { *this }, origin = crossThreadCopy(origin), size, completionHandler = WTF::move(completionHandler)]() mutable {
-        checkedOriginStorageManager(origin)->protectedQuotaManager()->requestSpace(size, [completionHandler = WTF::move(completionHandler)](auto decision) mutable {
+        protect(checkedOriginStorageManager(origin)->quotaManager())->requestSpace(size, [completionHandler = WTF::move(completionHandler)](auto decision) mutable {
             RunLoop::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler), decision]() mutable {
                 completionHandler(decision == OriginQuotaManager::Decision::Grant);
             });
@@ -1465,7 +1465,7 @@ void NetworkStorageManager::resetQuotaForTesting(CompletionHandler<void()>&& com
     workQueue().dispatch([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
         assertIsCurrent(workQueue());
         for (auto& manager : m_originStorageManagers.values())
-            manager->protectedQuotaManager()->resetQuotaForTesting();
+            protect(manager->quotaManager())->resetQuotaForTesting();
         RunLoop::mainSingleton().dispatch(WTF::move(completionHandler));
     });
 }
@@ -1475,7 +1475,7 @@ void NetworkStorageManager::resetQuotaUpdatedBasedOnUsageForTesting(WebCore::Cli
     assertIsCurrent(workQueue());
 
     if (CheckedPtr manager = m_originStorageManagers.get(origin))
-        manager->protectedQuotaManager()->resetQuotaUpdatedBasedOnUsageForTesting();
+        protect(manager->quotaManager())->resetQuotaUpdatedBasedOnUsageForTesting();
 }
 
 void NetworkStorageManager::setOriginQuotaRatioEnabledForTesting(bool enabled, CompletionHandler<void()>&& completionHandler)
@@ -1487,7 +1487,7 @@ void NetworkStorageManager::setOriginQuotaRatioEnabledForTesting(bool enabled, C
         if (m_originQuotaRatioEnabled != enabled) {
             m_originQuotaRatioEnabled = enabled;
             for (auto& [origin, manager] : m_originStorageManagers)
-                CheckedRef { *manager }->protectedQuotaManager()->updateParametersForTesting(originQuotaManagerParameters(origin));
+                protect(CheckedRef { *manager }->quotaManager())->updateParametersForTesting(originQuotaManagerParameters(origin));
         }
 
         RunLoop::mainSingleton().dispatch(WTF::move(completionHandler));

@@ -25,17 +25,32 @@
 
 #pragma once
 
+#include <WebCore/CollectionType.h>
+
+namespace WebCore {
+
+template <CollectionType type>
+class GenericCachedHTMLCollection;
+
+template<CollectionType type>
+struct CollectionClassTraits<GenericCachedHTMLCollection<type>> {
+    static constexpr CollectionType collectionType = type;
+};
+
+} // namespace WebCore
+
 #include "CachedHTMLCollection.h"
 
 namespace WebCore {
 
-template <CollectionTraversalType traversalType>
-class GenericCachedHTMLCollection final : public CachedHTMLCollection<GenericCachedHTMLCollection<traversalType>, traversalType> {
+template <CollectionType type>
+class GenericCachedHTMLCollection final : public CachedHTMLCollection<GenericCachedHTMLCollection<type>> {
     WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(GenericCachedHTMLCollection);
-    static_assert(traversalType != CollectionTraversalType::CustomForwardOnly, "CustomForwardOnly should use non GenericCachedHTMLCollection.");
+    static_assert(CollectionTypeTraits<type>::traversalType != CollectionTraversalType::CustomForwardOnly, "CustomForwardOnly should use non GenericCachedHTMLCollection.");
 public:
     static Ref<GenericCachedHTMLCollection> create(ContainerNode& base, CollectionType collectionType)
     {
+        ASSERT(collectionType == CollectionClassTraits<GenericCachedHTMLCollection>::collectionType); // Verify correct instantiation.
         return adoptRef(*new GenericCachedHTMLCollection(base, collectionType));
     }
 
@@ -47,6 +62,37 @@ private:
     GenericCachedHTMLCollection(ContainerNode&, CollectionType);
 };
 
-WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<CollectionTraversalType traversalType>, GenericCachedHTMLCollection<traversalType>);
+WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<CollectionType type>, GenericCachedHTMLCollection<type>);
+
+// Type aliases for GenericCachedHTMLCollection instantiations.
+using HTMLNodeChildrenCollection = GenericCachedHTMLCollection<CollectionType::NodeChildren>;
+using HTMLTRCellsCollection = GenericCachedHTMLCollection<CollectionType::TRCells>;
+using HTMLTSectionRowsCollection = GenericCachedHTMLCollection<CollectionType::TSectionRows>;
+using HTMLTableTBodiesCollection = GenericCachedHTMLCollection<CollectionType::TableTBodies>;
+using HTMLSelectedOptionsCollection = GenericCachedHTMLCollection<CollectionType::SelectedOptions>;
+using HTMLMapAreasCollection = GenericCachedHTMLCollection<CollectionType::MapAreas>;
+using HTMLDocImagesCollection = GenericCachedHTMLCollection<CollectionType::DocImages>;
+using HTMLDocScriptsCollection = GenericCachedHTMLCollection<CollectionType::DocScripts>;
+using HTMLDocFormsCollection = GenericCachedHTMLCollection<CollectionType::DocForms>;
+using HTMLDocEmbedsCollection = GenericCachedHTMLCollection<CollectionType::DocEmbeds>;
+using HTMLDocLinksCollection = GenericCachedHTMLCollection<CollectionType::DocLinks>;
+using HTMLDocAnchorsCollection = GenericCachedHTMLCollection<CollectionType::DocAnchors>;
+using HTMLDataListOptionsCollection = GenericCachedHTMLCollection<CollectionType::DataListOptions>;
+using HTMLFieldSetElementsCollection = GenericCachedHTMLCollection<CollectionType::FieldSetElements>;
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLNodeChildrenCollection)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLTRCellsCollection)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLTSectionRowsCollection)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLTableTBodiesCollection)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLSelectedOptionsCollection)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLMapAreasCollection)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLDocImagesCollection)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLDocScriptsCollection)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLDocFormsCollection)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLDocEmbedsCollection)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLDocLinksCollection)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLDocAnchorsCollection)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLDataListOptionsCollection)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLFieldSetElementsCollection)

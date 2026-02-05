@@ -511,7 +511,7 @@ void Performance::clearMarks(const String& markName)
     m_userTiming->clearMarks(markName);
 }
 
-ExceptionOr<Ref<PerformanceMeasure>> Performance::measure(JSC::JSGlobalObject& globalObject, const String& measureName, std::optional<StartOrMeasureOptions>&& startOrMeasureOptions, const String& endMark)
+ExceptionOr<Ref<PerformanceMeasure>> Performance::measure(JSC::JSGlobalObject& globalObject, const String& measureName, StartOrMeasureOptions&& startOrMeasureOptions, const String& endMark)
 {
     if (!m_userTiming)
         m_userTiming = makeUnique<PerformanceUserTiming>(*this);

@@ -60,10 +60,10 @@ void Connection::connectionReceivedEvent(xpc_object_t request)
     m_networkSession->networkProcess().broadcastConsoleMessage(m_networkSession->sessionID(), MessageSource::PrivateClickMeasurement, messageLevel, debugMessage);
 }
 
-XPCObjectPtr<xpc_object_t> Connection::dictionaryFromMessage(MessageType messageType, EncodedMessage&& message) const
+OSObjectPtr<xpc_object_t> Connection::dictionaryFromMessage(MessageType messageType, EncodedMessage&& message) const
 {
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto dictionary = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     addVersionAndEncodedMessageToDictionary(WTF::move(message), dictionary.get());
     xpc_dictionary_set_uint64(dictionary.get(), protocolMessageTypeKey, static_cast<uint64_t>(messageType));
     return dictionary;

@@ -350,28 +350,6 @@ std::string getImage2DGroupReturnType(Image2DHLSLGroup group, Image2DMethod meth
     }
 }
 
-std::string getImageMetadata(Image2DHLSLGroup group)
-{
-    switch (group)
-    {
-        case IMAGE2D_R_FLOAT4:
-        case IMAGE2D_R_UNORM:
-        case IMAGE2D_R_SNORM:
-        case IMAGE2D_R_UINT4:
-        case IMAGE2D_R_INT4:
-            return "readonlyImageMetadata[imageIndex - readonlyImageIndexStart]";
-        case IMAGE2D_W_FLOAT4:
-        case IMAGE2D_W_UNORM:
-        case IMAGE2D_W_SNORM:
-        case IMAGE2D_W_UINT4:
-        case IMAGE2D_W_INT4:
-            return "imageMetadata[imageIndex - imageIndexStart]";
-        default:
-            UNREACHABLE();
-            return "unknown image method";
-    }
-}
-
 void OutputImage2DFunctionArgumentList(std::ostringstream &out,
                                        Image2DHLSLGroup group,
                                        Image2DMethod method)
@@ -543,8 +521,7 @@ void OutputImage2DLoadFunction(std::ostringstream &out,
         if (texture3DCount == totalCount)
         {
             out << "    const uint index = imageIndex -  " << offsetStr << "3D;\n";
-            out << "    result = " << declarationStr << "3D[index][uint3(p.x, p.y, "
-                << getImageMetadata(textureGroup) << ".layer)];\n";
+            out << "    result = " << declarationStr << "3D[index][uint3(p.x, p.y, 0)];\n";
         }
         else
         {
@@ -567,8 +544,7 @@ void OutputImage2DLoadFunction(std::ostringstream &out,
             }
             out << "    {\n";
             out << "        const uint index = imageIndex -  " << offsetStr << "3D;\n";
-            out << "        result = " << declarationStr << "3D[index][uint3(p.x, p.y, "
-                << getImageMetadata(textureGroup) << ".layer)];\n";
+            out << "        result = " << declarationStr << "3D[index][uint3(p.x, p.y, 0)];\n";
             out << "    }\n";
         }
     }
@@ -578,16 +554,14 @@ void OutputImage2DLoadFunction(std::ostringstream &out,
         if (texture2DArrayCount == totalCount)
         {
             out << "    const uint index = imageIndex -  " << offsetStr << "2DArray;\n";
-            out << "    result = " << declarationStr << "2DArray[index][uint3(p.x, p.y, "
-                << getImageMetadata(textureGroup) << ".layer)];\n";
+            out << "    result = " << declarationStr << "2DArray[index][uint3(p.x, p.y, 0)];\n";
         }
         else
         {
             out << "    else\n";
             out << "    {\n";
             out << "        const uint index = imageIndex -  " << offsetStr << "2DArray;\n";
-            out << "        result = " << declarationStr << "2DArray[index][uint3(p.x, p.y, "
-                << getImageMetadata(textureGroup) << ".layer)];\n";
+            out << "        result = " << declarationStr << "2DArray[index][uint3(p.x, p.y, 0)];\n";
             out << "    }\n";
         }
     }
@@ -634,8 +608,7 @@ void OutputImage2DStoreFunction(std::ostringstream &out,
         if (texture3DCount == totalCount)
         {
             out << "    const uint index = imageIndex -  " << offsetStr << "3D;\n";
-            out << "    " << declarationStr << "3D[index][uint3(p.x, p.y, "
-                << getImageMetadata(textureGroup) << ".layer)] = data;\n";
+            out << "    " << declarationStr << "3D[index][uint3(p.x, p.y, 0)] = data;\n";
         }
         else
         {
@@ -658,8 +631,7 @@ void OutputImage2DStoreFunction(std::ostringstream &out,
             }
             out << "    {\n";
             out << "        const uint index = imageIndex -  " << offsetStr << "3D;\n";
-            out << "        " << declarationStr << "3D[index][uint3(p.x, p.y, "
-                << getImageMetadata(textureGroup) << ".layer)] = data;\n";
+            out << "        " << declarationStr << "3D[index][uint3(p.x, p.y, 0)] = data;\n";
             out << "    }\n";
         }
     }
@@ -669,16 +641,14 @@ void OutputImage2DStoreFunction(std::ostringstream &out,
         if (texture2DArrayCount == totalCount)
         {
             out << "    const uint index = imageIndex -  " << offsetStr << "2DArray;\n";
-            out << "    " << declarationStr << "2DArray[index][uint3(p.x, p.y, "
-                << getImageMetadata(textureGroup) << ".layer)] = data;\n";
+            out << "    " << declarationStr << "2DArray[index][uint3(p.x, p.y, 0)] = data;\n";
         }
         else
         {
             out << "    else\n";
             out << "    {\n";
             out << "        const uint index = imageIndex -  " << offsetStr << "2DArray;\n";
-            out << "        " << declarationStr << "2DArray[index][uint3(p.x, p.y, "
-                << getImageMetadata(textureGroup) << ".layer)] = data;\n";
+            out << "        " << declarationStr << "2DArray[index][uint3(p.x, p.y, 0)] = data;\n";
             out << "    }\n";
         }
     }

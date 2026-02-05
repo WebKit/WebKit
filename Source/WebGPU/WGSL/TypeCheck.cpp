@@ -239,7 +239,6 @@ private:
 
     void inferred(const Type*);
     [[nodiscard]] bool unify(const Type*, const Type*);
-    [[nodiscard]] bool convertValueImpl(const SourceSpan&, const Type*, ConstantValue&);
 
     [[nodiscard]] Result<void> binaryExpression(const SourceSpan&, AST::Expression*, AST::BinaryOperation, AST::Expression&, AST::Expression&);
 
@@ -276,7 +275,6 @@ private:
 
     TypeStore& m_types;
     Vector<BreakTarget> m_breakTargetStack;
-    HashMap<String, OverloadedDeclaration> m_overloadedOperations;
     HashMap<String, AST::IdentifierExpression*> m_arrayCountOverrides;
 };
 
@@ -611,6 +609,7 @@ Result<void> TypeChecker::visit(AST::Variable& variable)
         RELEASE_ASSERT(isModuleScope());
         if (!satisfies(result, Constraints::ConcreteScalar)) [[unlikely]]
             TYPE_ERROR(variable.span(), '\'', *result, "' cannot be used as the type of an 'override'"_s);
+        m_shaderModule.addOverride(variable);
         break;
     case AST::VariableFlavor::Var:
         AddressSpace addressSpace;
@@ -1276,12 +1275,12 @@ Result<void> TypeChecker::visit(AST::IndexAccessExpression& access)
         auto size = typeSize.value_or(0);
         if (!size && constantBase)
             size = std::get<T>(*constantBase).upperBound();
-        if (!size)
-            return { };
 
         auto index = constantIndex->integerValue();
-        if (index < 0 || static_cast<size_t>(index) >= size) [[unlikely]]
-            TYPE_ERROR(access.span(), "index "_s, index, " is out of bounds [0.."_s, size - 1, ']');
+        if (index < 0 || (size && static_cast<size_t>(index) >= size)) [[unlikely]] {
+            String bounds = size ?  makeString(" [0.."_s, size - 1, "]"_s) : ""_s;
+            TYPE_ERROR(access.span(), "index "_s, index, " is out of bounds"_s, bounds);
+        }
 
         if (constantBase)
             access.setConstantValue(std::get<T>(*constantBase)[index]);
@@ -1536,6 +1535,7 @@ Result<void> TypeChecker::visit(AST::CallExpression& call)
     }
 
     if (isNamedType || isParameterizedType) {
+        call.m_resolvedTarget = targetName;
         UNWRAP(result, chooseOverload("initializer"_s, call.span(), &call, targetName, call.arguments(), typeArguments));
         if (result) {
             target.m_inferredType = result;
@@ -1618,6 +1618,7 @@ Result<void> TypeChecker::visit(AST::CallExpression& call)
     }
 
     RELEASE_ASSERT(isArrayType);
+    call.m_resolvedTarget = "array"_s;
     auto* array = dynamicDowncast<AST::ArrayTypeExpression>(target);
     const Types::Array* arrayType = targetBinding ? std::get_if<Types::Array>(targetBinding->type) : nullptr;
     const Type* elementType = nullptr;
@@ -1889,7 +1890,7 @@ Result<void> TypeChecker::visit(AST::ArrayTypeExpression& array)
 
     Types::Array::Size size;
     if (array.maybeElementCount()) {
-        UNWRAP(elementCountType, infer(*array.maybeElementCount(), Evaluation::Override));
+        UNWRAP(elementCountType, infer(*array.maybeElementCount(), std::min(m_evaluation, Evaluation::Override)));
         if (!unify(m_types.i32Type(), elementCountType) && !unify(m_types.u32Type(), elementCountType)) [[unlikely]]
             TYPE_ERROR(array.span(), "array count must be an i32 or u32 value, found '"_s, *elementCountType, '\'');
 
@@ -1907,12 +1908,6 @@ Result<void> TypeChecker::visit(AST::ArrayTypeExpression& array)
                 auto result = m_arrayCountOverrides.add(identifier->identifier().id(), identifier);
                 countExpression = result.iterator->value;
             }
-
-            m_shaderModule.addOverrideValidation(*countExpression, [&](const ConstantValue& elementCount) -> std::optional<String> {
-                if (elementCount.integerValue() < 1)
-                    return { "array count must be greater than 0"_s };
-                return std::nullopt;
-            });
             size = { countExpression };
         }
     }
@@ -2092,8 +2087,8 @@ Result<const Type*> TypeChecker::vectorFieldAccess(const Types::Vector& vector, 
 template<typename CallArguments>
 Result<const Type*> TypeChecker::chooseOverload(ASCIILiteral kind, const SourceSpan& span, AST::Expression* expression, const String& target, CallArguments&& callArguments, const Vector<const Type*>& typeArguments)
 {
-    auto it = m_overloadedOperations.find(target);
-    if (it == m_overloadedOperations.end())
+    auto* overload = m_shaderModule.lookupOverload(target);
+    if (!overload)
         return { nullptr };
 
     Vector<const Type*> valueArguments;
@@ -2103,22 +2098,22 @@ Result<const Type*> TypeChecker::chooseOverload(ASCIILiteral kind, const SourceS
         valueArguments.append(type);
     }
 
-    auto overload = resolveOverloads(m_types, it->value.overloads, valueArguments, typeArguments);
-    if (overload.has_value()) {
-        ASSERT(overload->parameters.size() == callArguments.size());
-        if (m_discardResult == DiscardResult::Yes && it->value.mustUse) [[unlikely]]
+    auto selectedOverload = resolveOverloads(m_types, overload->overloads, valueArguments, typeArguments);
+    if (selectedOverload.has_value()) {
+        ASSERT(selectedOverload->parameters.size() == callArguments.size());
+        if (m_discardResult == DiscardResult::Yes && overload->mustUse) [[unlikely]]
             TYPE_ERROR(span, "ignoring return value of builtin '"_s, target, '\'');
 
         for (unsigned i = 0; i < callArguments.size(); ++i)
-            callArguments[i].m_inferredType = overload->parameters[i];
-        inferred(overload->result);
+            callArguments[i].m_inferredType = selectedOverload->parameters[i];
+        inferred(selectedOverload->result);
 
         if (expression && is<AST::CallExpression>(*expression)) {
             auto& call = uncheckedDowncast<AST::CallExpression>(*expression);
-            call.m_isConstructor = it->value.kind == OverloadedDeclaration::Constructor;
-            call.m_visibility = it->value.visibility;
+            call.m_isConstructor = overload->kind == OverloadedDeclaration::Constructor;
+            call.m_visibility = overload->visibility;
 
-            if (call.isFloatToIntConversion(overload->result))
+            if (call.isFloatToIntConversion(selectedOverload->result))
                 m_shaderModule.setUsesFtoi();
         }
 
@@ -2136,19 +2131,19 @@ Result<const Type*> TypeChecker::chooseOverload(ASCIILiteral kind, const SourceS
             }
         }
 
-        auto constantFunction = it->value.constantFunction;
+        auto constantFunction = overload->constantFunction;
         if (!constantFunction && m_evaluation < Evaluation::Runtime) [[unlikely]]
             TYPE_ERROR(span, "cannot call function from "_s, evaluationToString(m_evaluation), " context"_s);
 
         if (isConstant && constantFunction) {
-            auto result = constantFunction(overload->result, WTF::move(arguments));
+            auto result = constantFunction(selectedOverload->result, WTF::move(arguments));
             if (!result) [[unlikely]]
                 TYPE_ERROR(span, result.error());
             if (expression)
-                CHECK(setConstantValue(*expression, overload->result, WTF::move(*result)));
+                CHECK(setConstantValue(*expression, selectedOverload->result, WTF::move(*result)));
         }
 
-        return { overload->result };
+        return { selectedOverload->result };
     }
 
     StringPrintStream valueArgumentsStream;
@@ -2458,6 +2453,12 @@ Result<void> TypeChecker::convertValue(const SourceSpan& span, const Type* type,
     if (!value)
         return { };
 
+    if (shouldDumpConstantValues) [[unlikely]] {
+        StringPrintStream valueString;
+        value->dump(valueString);
+        dataLogLn("converting value ", valueString.toString(), " to '", *type, "'");
+    }
+
     if (!convertValueImpl(span, type, *value)) [[unlikely]] {
         StringPrintStream valueString;
         value->dump(valueString);
@@ -2467,172 +2468,6 @@ Result<void> TypeChecker::convertValue(const SourceSpan& span, const Type* type,
     return { };
 }
 
-bool TypeChecker::convertValueImpl(const SourceSpan& span, const Type* type, ConstantValue& value)
-{
-    if (shouldDumpConstantValues) [[unlikely]] {
-        StringPrintStream valueString;
-        value.dump(valueString);
-        dataLogLn("converting value ", valueString.toString(), " to '", *type, "'");
-    }
-
-    return WTF::switchOn(*type,
-        [&](const Types::Primitive& primitive) -> bool {
-            switch (primitive.kind) {
-            case Types::Primitive::F32: {
-                std::optional<float> result;
-                if (auto* f32 = std::get_if<float>(&value))
-                    result = convertFloat<float>(*f32);
-                else if (auto* abstractFloat = std::get_if<double>(&value))
-                    result = convertFloat<float>(*abstractFloat);
-                else if (auto* abstractInt = std::get_if<int64_t>(&value))
-                    result = convertFloat<float>(static_cast<double>(*abstractInt));
-
-                if (!result.has_value())
-                    return false;
-                value = { *result };
-                return true;
-            }
-            case Types::Primitive::F16: {
-                std::optional<half> result;
-                if (auto* f16 = std::get_if<half>(&value))
-                    result = convertFloat<half>(*f16);
-                else if (auto* abstractFloat = std::get_if<double>(&value))
-                    result = convertFloat<half>(*abstractFloat);
-                else if (auto* abstractInt = std::get_if<int64_t>(&value))
-                    result = convertFloat<half>(static_cast<double>(*abstractInt));
-
-                if (!result.has_value())
-                    return false;
-                value = { *result };
-                return true;
-            }
-            case Types::Primitive::I32: {
-                if (std::holds_alternative<int32_t>(value))
-                    return true;
-                std::optional<int32_t> result;
-                if (auto* abstractInt = std::get_if<int64_t>(&value))
-                    result = convertInteger<int32_t>(*abstractInt);
-
-                if (!result.has_value())
-                    return false;
-                value = { *result };
-                return true;
-            }
-            case Types::Primitive::U32: {
-                if (std::holds_alternative<uint32_t>(value))
-                    return true;
-                std::optional<uint32_t> result;
-                if (auto* abstractInt = std::get_if<int64_t>(&value))
-                    result = convertInteger<uint32_t>(*abstractInt);
-
-                if (!result.has_value())
-                    return false;
-                value = { *result };
-                return true;
-            }
-            case Types::Primitive::AbstractInt:
-                RELEASE_ASSERT(std::holds_alternative<int64_t>(value));
-                return true;
-            case Types::Primitive::AbstractFloat: {
-                std::optional<double> result;
-                if (auto* abstractFloat = std::get_if<double>(&value))
-                    result = convertFloat<double>(*abstractFloat);
-                else if (auto* abstractInt = std::get_if<int64_t>(&value))
-                    result = convertFloat<double>(static_cast<double>(*abstractInt));
-                else
-                    RELEASE_ASSERT_NOT_REACHED();
-                if (!result.has_value())
-                    return false;
-                value = { *result };
-                return true;
-            }
-            case Types::Primitive::Bool:
-                RELEASE_ASSERT(std::holds_alternative<bool>(value));
-                return true;
-            case Types::Primitive::Void:
-            case Types::Primitive::Sampler:
-            case Types::Primitive::SamplerComparison:
-            case Types::Primitive::TextureExternal:
-            case Types::Primitive::AccessMode:
-            case Types::Primitive::TexelFormat:
-            case Types::Primitive::AddressSpace:
-                return false;
-            }
-        },
-        [&](const Types::Vector& vectorType) -> bool {
-            ASSERT(value.isVector());
-            auto& vector = std::get<ConstantVector>(value);
-            for (auto& element : vector.elements) {
-                if (!convertValueImpl(span, vectorType.element, element))
-                    return false;
-            }
-            return true;
-        },
-        [&](const Types::Matrix& matrixType) -> bool {
-            ASSERT(value.isMatrix());
-            auto& matrix = std::get<ConstantMatrix>(value);
-            for (auto& element : matrix.elements) {
-                if (!convertValueImpl(span, matrixType.element, element))
-                    return false;
-            }
-            return true;
-        },
-        [&](const Types::Array& arrayType) -> bool {
-            ASSERT(value.isArray());
-            auto& array = std::get<ConstantArray>(value);
-            for (auto& element : array.elements) {
-                if (!convertValueImpl(span, arrayType.element, element))
-                    return false;
-            }
-            return true;
-        },
-        [&](const Types::Struct& structType) -> bool {
-            auto& constantStruct = std::get<ConstantStruct>(value);
-            for (auto& [key, type] : structType.fields) {
-                auto it = constantStruct.fields.find(key);
-                RELEASE_ASSERT(it != constantStruct.fields.end());
-                if (!convertValueImpl(span, type, it->value))
-                    return false;
-            }
-            return true;
-        },
-        [&](const Types::PrimitiveStruct& primitiveStruct) -> bool {
-            auto& constantStruct = std::get<ConstantStruct>(value);
-            const auto& keys = Types::PrimitiveStruct::keys[primitiveStruct.kind];
-            for (auto& entry : constantStruct.fields) {
-                auto* key = keys.tryGet(entry.key);
-                RELEASE_ASSERT(key);
-                auto* type = primitiveStruct.values[*key];
-                if (!convertValueImpl(span, type, entry.value))
-                    return false;
-            }
-            return true;
-        },
-        [&](const Types::Function&) -> bool {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const Types::Texture&) -> bool {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const Types::TextureStorage&) -> bool {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const Types::TextureDepth&) -> bool {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const Types::Reference&) -> bool {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const Types::Pointer&) -> bool {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const Types::Atomic&) -> bool {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const Types::TypeConstructor&) -> bool {
-            RELEASE_ASSERT_NOT_REACHED();
-        });
-}
 
 Result<void> TypeChecker::introduceValue(const AST::Identifier& name, const Type* type, Evaluation evaluation, std::optional<ConstantValue> value)
 {

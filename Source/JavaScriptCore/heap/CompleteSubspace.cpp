@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "Subspace.h"
+#include "CompleteSubspace.h"
 
 #include "AlignedMemoryAllocator.h"
 #include "AllocatorInlines.h"

@@ -905,7 +905,7 @@ void WebAnimation::enqueueAnimationEvent(Ref<AnimationEventBase>&& event)
         }
         if (RefPtr keyframeEffect = this->keyframeEffect()) {
             if (RefPtr target = keyframeEffect->target())
-                return target->protectedDocument()->existingTimeline();
+                return protect(target->document())->existingTimeline();
         }
         return nullptr;
     };
@@ -1788,7 +1788,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
         return Exception { ExceptionCode::NoModificationAllowedError };
 
     // 2.2 If, after applying any pending style changes, target is not being rendered, throw an "InvalidStateError" DOMException and abort these steps.
-    styledElement->protectedDocument()->updateStyleIfNeeded();
+    protect(styledElement->document())->updateStyleIfNeeded();
     CheckedPtr renderer = styledElement->renderer();
     if (!renderer)
         return Exception { ExceptionCode::InvalidStateError };

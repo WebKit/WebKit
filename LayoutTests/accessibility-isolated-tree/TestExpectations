@@ -24,8 +24,6 @@ accessibility/mac/attributed-string/attributed-string-has-completion-annotation.
 # we never create an isolated object for #menu-item-one, causing ariaLabelledByElementAtIndex(0) to return null.
 accessibility/menuitem-is-selected.html [ Failure ]
 
-accessibility/element-reflection-ariaactivedescendant.html [ Failure ]
-
 # This test only passes with ITM due to a workaround in the test that we should fix.
 # accessibility/mac/text-marker-from-typing-notification.html
 

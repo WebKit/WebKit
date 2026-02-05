@@ -35,7 +35,7 @@ template<typename> class ExceptionOr;
 
 class InternalReadableStream final : public DOMGuarded<JSC::JSObject> {
 public:
-    static ExceptionOr<Ref<InternalReadableStream>> createFromUnderlyingSource(JSDOMGlobalObject&, JSC::JSValue underlyingSink, JSC::JSValue strategy);
+    static ExceptionOr<Ref<InternalReadableStream>> createFromUnderlyingSource(JSDOMGlobalObject&, JSC::JSValue underlyingSink, JSC::JSValue strategy, std::optional<double>);
     static Ref<InternalReadableStream> fromObject(JSDOMGlobalObject&, JSC::JSObject&);
 
     operator JSC::JSValue() const { return guarded(); }

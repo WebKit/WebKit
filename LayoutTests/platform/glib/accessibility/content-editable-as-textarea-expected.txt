@@ -25,7 +25,7 @@ Line for index(0): 0
 Line for index(7): 1
 Range for line(0): {0, 6}
 Range for line(1): {6, 5}
-Bounds for range: {8, 8, 31, 35}
+Bounds for range: {8, 8, 31, 36}
 Selected text range: {0, 3}
 Selected text: hel
 Updated value: AXValue: qlo<\n>world

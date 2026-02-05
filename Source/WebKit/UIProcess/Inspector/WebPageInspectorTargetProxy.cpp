@@ -74,7 +74,7 @@ void WebPageInspectorTargetProxy::connect(Inspector::FrontendChannel::Connection
 
     Ref page = m_page.get();
     if (page->hasRunningProcess())
-        page->protectedLegacyMainFrameProcess()->send(Messages::WebPage::ConnectInspector(connectionType), page->webPageIDInMainFrameProcess());
+        protect(page->legacyMainFrameProcess())->send(Messages::WebPage::ConnectInspector(connectionType), page->webPageIDInMainFrameProcess());
 }
 
 void WebPageInspectorTargetProxy::disconnect()
@@ -89,7 +89,7 @@ void WebPageInspectorTargetProxy::disconnect()
 
     Ref page = m_page.get();
     if (page->hasRunningProcess())
-        page->protectedLegacyMainFrameProcess()->send(Messages::WebPage::DisconnectInspector(), page->webPageIDInMainFrameProcess());
+        protect(page->legacyMainFrameProcess())->send(Messages::WebPage::DisconnectInspector(), page->webPageIDInMainFrameProcess());
 }
 
 void WebPageInspectorTargetProxy::sendMessageToTargetBackend(const String& message)
@@ -101,7 +101,7 @@ void WebPageInspectorTargetProxy::sendMessageToTargetBackend(const String& messa
 
     Ref page = m_page.get();
     if (page->hasRunningProcess())
-        page->protectedLegacyMainFrameProcess()->send(Messages::WebPage::SendMessageToTargetBackend(message), page->webPageIDInMainFrameProcess());
+        protect(page->legacyMainFrameProcess())->send(Messages::WebPage::SendMessageToTargetBackend(message), page->webPageIDInMainFrameProcess());
 }
 
 void WebPageInspectorTargetProxy::didCommitProvisionalTarget()

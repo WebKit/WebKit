@@ -25,11 +25,11 @@
 
 typedef double DOMHighResTimeStamp;
 
+// https://w3c.github.io/webrtc-pc/#dom-rtcrtpsynchronizationsource
 [
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCRtpSynchronizationSource : RTCRtpContributingSource {
     boolean voiceActivityFlag;
 };

@@ -1007,7 +1007,7 @@ private:
 
             case CreateGenerator:
             case CreateAsyncGenerator: {
-                auto foldConstant = [&] (NodeType newOp, const ClassInfo* classInfo) {
+                auto foldConstant = [&] (const ClassInfo* classInfo) {
                     JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
                     if (JSValue base = m_state.forNode(node->child1()).m_value) {
                         if (auto* function = jsDynamicCast<JSFunction*>(base)) {
@@ -1019,7 +1019,7 @@ private:
                                         && structure->globalObject() == globalObject) {
                                         m_graph.freeze(rareData);
                                         m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
-                                        node->convertToNewInternalFieldObjectWithInlineFields(newOp, m_graph.registerStructure(structure));
+                                        node->convertToNewInternalFieldObject(m_graph.registerStructure(structure));
                                         changed = true;
                                         return;
                                     }
@@ -1031,10 +1031,10 @@ private:
 
                 switch (node->op()) {
                 case CreateGenerator:
-                    foldConstant(NewGenerator, JSGenerator::info());
+                    foldConstant(JSGenerator::info());
                     break;
                 case CreateAsyncGenerator:
-                    foldConstant(NewAsyncGenerator, JSAsyncGenerator::info());
+                    foldConstant(JSAsyncGenerator::info());
                     break;
                 default:
                     RELEASE_ASSERT_NOT_REACHED();

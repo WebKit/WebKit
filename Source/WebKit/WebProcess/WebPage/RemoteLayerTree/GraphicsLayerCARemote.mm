@@ -74,7 +74,7 @@ Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformCALaye
     Ref result = PlatformCALayerRemote::create(layerType, owner, context.get());
 
     if (result->canHaveBackingStore()) {
-        RefPtr localMainFrameView = context->protectedWebPage()->localMainFrameView();
+        RefPtr localMainFrameView = protect(context->webPage())->localMainFrameView();
         result->setContentsFormat(PlatformCALayer::contentsFormatForLayer(owner));
     }
     return WTF::move(result);
@@ -252,7 +252,7 @@ private:
     std::unique_ptr<ThreadSafeImageBufferFlusher> m_flusher;
 };
 
-void GraphicsLayerCARemote::setLayerContentsToImageBuffer(PlatformCALayer* layer, ImageBuffer* image)
+void GraphicsLayerCARemote::setLayerContentsToImageBuffer(PlatformCALayer& layer, ImageBuffer* image)
 {
     if (!image)
         return;
@@ -270,11 +270,11 @@ void GraphicsLayerCARemote::setLayerContentsToImageBuffer(PlatformCALayer* layer
     auto backendHandle = sharing->createBackendHandle(SharedMemory::Protection::ReadOnly);
     ASSERT(backendHandle);
 
-    layer->setAcceleratesDrawing(true);
+    layer.setAcceleratesDrawing(true);
 #if HAVE(SUPPORT_HDR_DISPLAY)
-    layer->setTonemappingEnabled(true);
+    layer.setTonemappingEnabled(true);
 #endif
-    downcast<PlatformCALayerRemote>(layer)->setRemoteDelegatedContents({ ImageBufferBackendHandle { *backendHandle }, fence, std::nullopt });
+    downcast<PlatformCALayerRemote>(layer).setRemoteDelegatedContents({ ImageBufferBackendHandle { *backendHandle }, fence, std::nullopt });
 }
 
 GraphicsLayer::LayerMode GraphicsLayerCARemote::layerMode() const

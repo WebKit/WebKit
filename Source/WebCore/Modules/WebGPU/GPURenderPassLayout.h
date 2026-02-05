@@ -40,9 +40,7 @@ struct GPURenderPassLayout : public GPUObjectDescriptorBase {
         return {
             { label },
             colorFormats.map([](auto& colorFormat) -> std::optional<WebGPU::TextureFormat> {
-                if (colorFormat)
-                    return WebCore::convertToBacking(*colorFormat);
-                return std::nullopt;
+                return colorFormat ? std::optional { WebCore::convertToBacking(*colorFormat) } : std::nullopt;
             }),
             depthStencilFormat ? std::optional { WebCore::convertToBacking(*depthStencilFormat) } : std::nullopt,
             sampleCount,

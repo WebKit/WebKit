@@ -17,6 +17,8 @@ FAIL :array_index_lhs_assignment: assert_unreached:
     runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:102:39
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:244:21
     runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:530:22
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
     WGSL:
 
     struct Outputs {
@@ -73,6 +75,8 @@ FAIL :array_index_lhs_member_assignment: assert_unreached:
     runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:102:39
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:276:21
     runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:530:22
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
     WGSL:
 
     struct Outputs {
@@ -132,6 +136,8 @@ FAIL :array_index_via_ptrs: assert_unreached:
     runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:102:39
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:309:21
     runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:530:22
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
     WGSL:
 
     struct Outputs {
@@ -193,6 +199,8 @@ FAIL :matrix_index_via_ptr: assert_unreached:
     runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:102:39
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:399:21
     runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:530:22
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
     WGSL:
 
     struct Outputs {
@@ -259,6 +267,8 @@ FAIL :1d_array_assignment: assert_unreached:
     runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:102:39
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:862:21
     runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:530:22
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
     WGSL:
 
     struct Outputs {
@@ -308,6 +318,8 @@ FAIL :2d_array_assignment: assert_unreached:
     runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:102:39
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:885:21
     runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:530:22
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
     WGSL:
 
     struct Outputs {
@@ -365,6 +377,8 @@ FAIL :1d_array_compound_assignment: assert_unreached:
     runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:102:39
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:916:21
     runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:530:22
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
     WGSL:
 
     struct Outputs {
@@ -414,6 +428,8 @@ FAIL :2d_array_compound_assignment: assert_unreached:
     runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:102:39
     @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/eval_order.spec.js:939:21
     runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:530:22
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
     WGSL:
 
     struct Outputs {

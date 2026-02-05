@@ -310,7 +310,7 @@ LayoutRect RenderListBox::itemBoundingBoxRect(const LayoutPoint& additionalOffse
     LayoutUnit x = additionalOffset.x() + borderLeft() + paddingLeft();
     LayoutUnit y = additionalOffset.y() + borderTop() + paddingTop();
 
-    if (auto* vBar = verticalScrollbar(); vBar && shouldPlaceVerticalScrollbarOnLeft())
+    if (RefPtr vBar = verticalScrollbar(); vBar && shouldPlaceVerticalScrollbarOnLeft())
         x += vBar->occupiedWidth();
 
     auto itemOffset = itemLogicalHeight() * (index - indexOffset());
@@ -535,7 +535,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
         return;
 
     Color backColor;
-    if (auto* option = dynamicDowncast<HTMLOptionElement>(*listItemElement); option && option->selected()) {
+    if (RefPtr option = dynamicDowncast<HTMLOptionElement>(*listItemElement); option && option->selected()) {
         if (frame().selection().isFocusedAndActive() && document().focusedElement() == &selectElement())
             backColor = theme().activeListBoxSelectionBackgroundColor(styleColorOptions());
         else
@@ -554,7 +554,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
 
 bool RenderListBox::isPointInOverflowControl(HitTestResult& result, const LayoutPoint& locationInContainer, const LayoutPoint& accumulatedOffset)
 {
-    auto* activeScrollbar = verticalScrollbar();
+    RefPtr activeScrollbar = verticalScrollbar();
     if (!activeScrollbar)
         activeScrollbar = horizontalScrollbar();
 
@@ -567,7 +567,7 @@ bool RenderListBox::isPointInOverflowControl(HitTestResult& result, const Layout
     if (!scrollbarRect.contains(locationInContainer))
         return false;
 
-    result.setScrollbar(activeScrollbar);
+    result.setScrollbar(WTF::move(activeScrollbar));
     return true;
 }
 
@@ -577,14 +577,14 @@ int RenderListBox::listIndexAtOffset(const LayoutSize& offset) const
         return -1;
 
     int scrollbarHeight = 0;
-    if (auto* hBar = horizontalScrollbar())
+    if (RefPtr hBar = horizontalScrollbar())
         scrollbarHeight = hBar->height();
 
     if (offset.height() < borderTop() || offset.height() > height() - borderBottom() - scrollbarHeight)
         return -1;
 
     int scrollbarWidth = 0;
-    if (auto* vBar = verticalScrollbar())
+    if (RefPtr vBar = verticalScrollbar())
         scrollbarWidth = vBar->width();
 
     if (shouldPlaceVerticalScrollbarOnLeft() && (offset.width() < borderLeft() + paddingLeft() + scrollbarWidth || offset.width() > width() - borderRight() - paddingRight()))
@@ -831,7 +831,7 @@ LayoutUnit RenderListBox::itemLogicalHeight() const
 
 int RenderListBox::verticalScrollbarWidth() const
 {
-    if (auto* vBar = verticalScrollbar())
+    if (RefPtr vBar = verticalScrollbar())
         return vBar->occupiedWidth();
 
     return 0;
@@ -839,7 +839,7 @@ int RenderListBox::verticalScrollbarWidth() const
 
 int RenderListBox::horizontalScrollbarHeight() const
 {
-    if (auto* hBar = horizontalScrollbar())
+    if (RefPtr hBar = horizontalScrollbar())
         return hBar->occupiedHeight();
 
     return 0;
@@ -1094,11 +1094,11 @@ bool RenderListBox::forceUpdateScrollbarsOnMainThreadForPerformanceTesting() con
 
 ScrollableArea* RenderListBox::enclosingScrollableArea() const
 {
-    auto* layer = enclosingLayer();
+    CheckedPtr layer = enclosingLayer();
     if (!layer)
         return nullptr;
 
-    auto* enclosingScrollableLayer = layer->enclosingScrollableLayer(IncludeSelfOrNot::ExcludeSelf, CrossFrameBoundaries::No);
+    CheckedPtr enclosingScrollableLayer = layer->enclosingScrollableLayer(IncludeSelfOrNot::ExcludeSelf, CrossFrameBoundaries::No);
     if (!enclosingScrollableLayer)
         return nullptr;
 
@@ -1201,7 +1201,7 @@ void RenderListBox::scrollDidEnd()
 {
     if (ScrollAnimator* scrollAnimator = existingScrollAnimator(); scrollAnimator && !scrollAnimator->isUserScrollInProgress() && !isAwaitingScrollend()) {
         setIsAwaitingScrollend(false);
-        selectElement().protectedDocument()->addPendingScrollEventTarget(selectElement(), ScrollEventType::Scrollend);
+        protect(selectElement().document())->addPendingScrollEventTarget(selectElement(), ScrollEventType::Scrollend);
     }
 }
 

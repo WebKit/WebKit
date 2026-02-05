@@ -484,7 +484,7 @@ unsigned DocumentTimeline::numberOfAnimationTimelineInvalidationsForTesting() co
     return m_numberOfAnimationTimelineInvalidationsForTesting;
 }
 
-ExceptionOr<Ref<WebAnimation>> DocumentTimeline::animate(Ref<CustomEffectCallback>&& callback, std::optional<Variant<double, CustomAnimationOptions>>&& options)
+ExceptionOr<Ref<WebAnimation>> DocumentTimeline::animate(Ref<CustomEffectCallback>&& callback, Variant<double, CustomAnimationOptions>&& options)
 {
     RefPtr document = m_document.get();
     if (!document)
@@ -492,20 +492,17 @@ ExceptionOr<Ref<WebAnimation>> DocumentTimeline::animate(Ref<CustomEffectCallbac
 
     String id = emptyString();
     Variant<FramesPerSecond, AnimationFrameRatePreset> frameRate = AnimationFrameRatePreset::Auto;
-    std::optional<Variant<double, EffectTiming>> customEffectOptions;
 
-    if (options) {
-        Variant<double, EffectTiming> customEffectOptionsVariant;
-        if (std::holds_alternative<double>(*options))
-            customEffectOptionsVariant = std::get<double>(*options);
-        else {
-            auto customEffectOptions = std::get<CustomAnimationOptions>(*options);
-            id = customEffectOptions.id;
-            frameRate = customEffectOptions.frameRate;
-            customEffectOptionsVariant = WTF::move(customEffectOptions);
+    auto customEffectOptions = WTF::switchOn(options,
+        [](double value) -> Variant<double, EffectTiming> {
+            return value;
+        },
+        [&](const CustomAnimationOptions& options) -> Variant<double, EffectTiming> {
+            id = options.id;
+            frameRate = options.frameRate;
+            return options;
         }
-        customEffectOptions = customEffectOptionsVariant;
-    }
+    );
 
     auto customEffectResult = CustomEffect::create(*document, WTF::move(callback), WTF::move(customEffectOptions));
     if (customEffectResult.hasException())

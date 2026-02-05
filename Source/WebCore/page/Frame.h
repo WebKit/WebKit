@@ -83,6 +83,8 @@ public:
     WEBCORE_EXPORT std::optional<uint64_t> indexInFrameTreeSiblings() const;
     WEBCORE_EXPORT Vector<uint64_t> pathToFrame() const;
     FrameIdentifier frameID() const { return m_frameID; }
+    SecurityOrigin& topOrigin() const;
+    WEBCORE_EXPORT Ref<SecurityOrigin> protectedTopOrigin() const;
     inline Page* page() const; // Defined in DocumentPage.h.
     inline RefPtr<Page> protectedPage() const; // Defined in DocumentPage.h.
     inline std::optional<PageIdentifier> pageID() const; // Defined in DocumentPage.h.
@@ -154,6 +156,7 @@ public:
     FrameTreeSyncData& frameTreeSyncData() const { return m_frameTreeSyncData.get(); }
     Ref<FrameTreeSyncData> protectedFrameTreeSyncData() const { return m_frameTreeSyncData.get(); }
     WEBCORE_EXPORT virtual SecurityOrigin* frameDocumentSecurityOrigin() const = 0;
+    WEBCORE_EXPORT virtual std::optional<DocumentSecurityPolicy> frameDocumentSecurityPolicy() const = 0;
     WEBCORE_EXPORT virtual String frameURLProtocol() const = 0;
 
     // Scale factor of this frame with respect to the container.

@@ -77,15 +77,12 @@ WebAssemblyGCStructure::WebAssemblyGCStructure(VM& vm, JSGlobalObject* globalObj
     , m_type(WTF::move(type))
     , m_typeDependencies(WebAssemblyGCStructureTypeDependencies { WTF::move(unexpandedType) })
 {
-    for (unsigned i = 0; i < std::min((m_rtt->displaySizeExcludingThis() + 1), inlinedTypeDisplaySize); ++i)
-        m_inlinedTypeDisplay[i] = m_rtt->displayEntry(i);
 }
 
 WebAssemblyGCStructure::WebAssemblyGCStructure(VM& vm, WebAssemblyGCStructure* previous)
     : Structure(vm, StructureVariant::WebAssemblyGC, previous)
     , m_rtt(previous->m_rtt)
     , m_type(previous->m_type)
-    , m_inlinedTypeDisplay(previous->m_inlinedTypeDisplay)
     , m_typeDependencies(previous->m_typeDependencies)
 {
 }

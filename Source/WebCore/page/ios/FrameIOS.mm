@@ -117,7 +117,7 @@ void LocalFrame::setViewportArguments(const ViewportArguments& arguments)
 
 NSArray *LocalFrame::wordsInCurrentParagraph() const
 {
-    protectedDocument()->updateLayout();
+    protect(document())->updateLayout();
 
     if (!page() || !page()->selection().isCaret())
         return nil;
@@ -488,7 +488,7 @@ static inline NodeQualifier ancestorRespondingToClickEventsNodeQualifier(Securit
             *nodeBounds = IntRect();
 
         auto node = hitTestResult.innerNode();
-        if (!node || (securityOrigin && !securityOrigin->isSameOriginAs(node->protectedDocument()->protectedSecurityOrigin())))
+        if (!node || (securityOrigin && !securityOrigin->isSameOriginAs(protect(protect(node->document())->securityOrigin()))))
             return nullptr;
 
         for (; node && node != terminationNode; node = node->parentInComposedTree()) {

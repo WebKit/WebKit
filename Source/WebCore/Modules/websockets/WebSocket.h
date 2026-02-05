@@ -37,6 +37,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 
 namespace JSC {
@@ -47,6 +48,7 @@ class ArrayBufferView;
 namespace WebCore {
 
 class Blob;
+class SecurityOrigin;
 class ThreadableWebSocketChannel;
 template<typename> class ExceptionOr;
 

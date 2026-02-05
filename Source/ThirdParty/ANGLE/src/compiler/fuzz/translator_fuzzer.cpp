@@ -253,7 +253,12 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 
     auto &translator = (*translators)[key];
 
+    // Enable options that any security-sensitive application should enable, otherwise it's easy to
+    // trigger various inactionable errors.
     options.limitExpressionComplexity = true;
+    options.limitCallStackDepth                     = true;
+    options.rejectWebglShadersWithLargeVariables    = true;
+    options.rejectWebglShadersWithUndefinedBehavior = true;
     const char *shaderStrings[]       = {reinterpret_cast<const char *>(data)};
 
     // Dump the string being passed to the compiler to ease debugging.
@@ -273,7 +278,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     }
     std::cerr << "\nEnd of compile input.\n\n";
 
-    translator->compile(shaderStrings, 1, options);
+    translator->compile(shaderStrings, options);
 
     sh::Finalize();
     return 0;

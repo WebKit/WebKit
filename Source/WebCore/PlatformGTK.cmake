@@ -2,15 +2,9 @@ include(platform/Adwaita.cmake)
 include(platform/GCrypt.cmake)
 include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
+include(platform/Skia.cmake)
 include(platform/Soup.cmake)
 include(platform/TextureMapper.cmake)
-
-if (USE_CAIRO)
-    include(platform/Cairo.cmake)
-    include(platform/FreeType.cmake)
-elseif (USE_SKIA)
-    include(platform/Skia.cmake)
-endif ()
 
 list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
     "SourcesGTK.txt"
@@ -62,8 +56,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/graphics/x11/XErrorTrapper.h
 
-    platform/gtk/ScrollbarThemeGtk.h
-
     platform/text/enchant/TextCheckerEnchant.h
 )
 
@@ -81,13 +73,6 @@ list(APPEND WebCore_LIBRARIES
 list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
     ${UPOWERGLIB_INCLUDE_DIRS}
 )
-
-if (USE_CAIRO)
-    # GTK is only used by WebCore when building with cairo enabled.
-    list(APPEND WebCore_LIBRARIES
-        GTK::GTK
-    )
-endif ()
 
 if (ENABLE_WAYLAND_TARGET)
     list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
@@ -111,25 +96,18 @@ if (ENABLE_BUBBLEWRAP_SANDBOX)
     list(APPEND WebCore_LIBRARIES Libseccomp::Libseccomp)
 endif ()
 
-if (USE_CAIRO)
-    list(APPEND WebCore_SOURCES
-        platform/cairo/DragImageCairo.cpp
-    )
-elseif (USE_SKIA)
-    # When building with Skia we don't build Cairo sources, but since
-    # Cairo is still needed in the UI process API we need to include
-    # here the Cairo sources required.
-    list(APPEND WebCore_SOURCES
-        platform/graphics/cairo/IntRectCairo.cpp
-        platform/graphics/cairo/RefPtrCairo.cpp
+# We don't build most Cairo sources, but since Cairo is still needed in the
+# UI process API we need to include here the Cairo sources required.
+list(APPEND WebCore_SOURCES
+    platform/graphics/cairo/IntRectCairo.cpp
+    platform/graphics/cairo/RefPtrCairo.cpp
 
-        platform/skia/DragImageSkia.cpp
-    )
+    platform/skia/DragImageSkia.cpp
+)
 
-    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-        platform/graphics/cairo/RefPtrCairo.h
-    )
-endif ()
+list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    platform/graphics/cairo/RefPtrCairo.h
+)
 
 include_directories(SYSTEM
     ${WebCore_SYSTEM_INCLUDE_DIRECTORIES}

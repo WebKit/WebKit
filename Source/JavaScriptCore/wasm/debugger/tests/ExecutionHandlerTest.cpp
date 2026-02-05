@@ -28,7 +28,7 @@
 
 #include <wtf/DataLog.h>
 
-#if ENABLE(WEBASSEMBLY) && ENABLE(REMOTE_INSPECTOR)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 #include "ExecutionHandlerTestSupport.h"
 #include "JSWebAssemblyInstance.h"
@@ -438,11 +438,11 @@ UNUSED_FUNCTION static int runTests()
 
 } // namespace ExecutionHandlerTest
 
-#endif // ENABLE(WEBASSEMBLY) && ENABLE(REMOTE_INSPECTOR)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)
 
 int testExecutionHandler()
 {
-#if ENABLE(WEBASSEMBLY) && ENABLE(REMOTE_INSPECTOR) && CPU(ARM64)
+#if ENABLE(WEBASSEMBLY_DEBUGGER) && CPU(ARM64)
     return ExecutionHandlerTest::runTests();
 #else
     dataLogLn("WASM Debugger Stress Tests SKIPPED (only supported on ARM64)");

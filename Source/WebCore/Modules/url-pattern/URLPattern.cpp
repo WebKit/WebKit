@@ -268,12 +268,9 @@ ExceptionOr<Ref<URLPattern>> URLPattern::create(ScriptExecutionContext& context,
 }
 
 // https://urlpattern.spec.whatwg.org/#urlpattern-initialize
-ExceptionOr<Ref<URLPattern>> URLPattern::create(ScriptExecutionContext& context, std::optional<URLPatternInput>&& input, URLPatternOptions&& options)
+ExceptionOr<Ref<URLPattern>> URLPattern::create(ScriptExecutionContext& context, URLPatternInput&& input, URLPatternOptions&& options)
 {
-    if (!input)
-        input = URLPatternInit { };
-
-    return create(context, WTF::move(*input), String { }, WTF::move(options));
+    return create(context, WTF::move(input), String { }, WTF::move(options));
 }
 
 // https://urlpattern.spec.whatwg.org/#build-a-url-pattern-from-a-web-idl-value
@@ -293,12 +290,9 @@ ExceptionOr<Ref<URLPattern>> URLPattern::create(ScriptExecutionContext& context,
 URLPattern::~URLPattern() = default;
 
 // https://urlpattern.spec.whatwg.org/#dom-urlpattern-test
-ExceptionOr<bool> URLPattern::test(ScriptExecutionContext& context, std::optional<URLPatternInput>&& input, String&& baseURL) const
+ExceptionOr<bool> URLPattern::test(ScriptExecutionContext& context, URLPatternInput&& input, String&& baseURL) const
 {
-    if (!input)
-        input = URLPatternInit { };
-
-    auto maybeResult = match(context, WTF::move(*input), WTF::move(baseURL));
+    auto maybeResult = match(context, WTF::move(input), WTF::move(baseURL));
     if (maybeResult.hasException())
         return maybeResult.releaseException();
 
@@ -306,12 +300,9 @@ ExceptionOr<bool> URLPattern::test(ScriptExecutionContext& context, std::optiona
 }
 
 // https://urlpattern.spec.whatwg.org/#dom-urlpattern-exec
-ExceptionOr<std::optional<URLPatternResult>> URLPattern::exec(ScriptExecutionContext& context, std::optional<URLPatternInput>&& input, String&& baseURL) const
+ExceptionOr<std::optional<URLPatternResult>> URLPattern::exec(ScriptExecutionContext& context, URLPatternInput&& input, String&& baseURL) const
 {
-    if (!input)
-        input = URLPatternInit { };
-
-    return match(context, WTF::move(*input), WTF::move(baseURL));
+    return match(context, WTF::move(input), WTF::move(baseURL));
 }
 
 ExceptionOr<void> URLPattern::compileAllComponents(ScriptExecutionContext& context, URLPatternInit&& processedInit)
@@ -402,7 +393,7 @@ ExceptionOr<std::optional<URLPatternResult>> URLPattern::match(ScriptExecutionCo
         matchHelperAssignInputsFromURL(*inputURL, protocol, username, password, hostname, port, pathname, search, hash);
         result.inputs = Vector<URLPatternInput> { String { inputURL->string() } };
     } else {
-        URLPatternInput* inputPattern = std::get_if<URLPatternInput>(&input);
+        auto* inputPattern = std::get_if<URLPatternInput>(&input);
         result.inputs.append(*inputPattern);
 
         auto hasError = WTF::switchOn(*inputPattern, [&](const URLPatternInit& value) -> ExceptionOr<bool> {

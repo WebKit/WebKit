@@ -33,15 +33,15 @@
 
 namespace WebCore {
 
-ExceptionOr<Ref<WritableStream>> WritableStream::create(JSC::JSGlobalObject& globalObject, std::optional<JSC::Strong<JSC::JSObject>>&& underlyingSink, std::optional<JSC::Strong<JSC::JSObject>>&& strategy)
+ExceptionOr<Ref<WritableStream>> WritableStream::create(JSC::JSGlobalObject& globalObject, JSC::Strong<JSC::JSObject>&& underlyingSink, JSC::Strong<JSC::JSObject>&& strategy)
 {
     JSC::JSValue underlyingSinkValue = JSC::jsUndefined();
     if (underlyingSink)
-        underlyingSinkValue = underlyingSink->get();
+        underlyingSinkValue = underlyingSink.get();
 
     JSC::JSValue strategyValue = JSC::jsUndefined();
     if (strategy)
-        strategyValue = strategy->get();
+        strategyValue = strategy.get();
 
     return create(globalObject, underlyingSinkValue, strategyValue);
 }

@@ -26,12 +26,12 @@
 #include "config.h"
 #include "ConsoleClient.h"
 
-#include "CatchScope.h"
 #include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
+#include "TopExceptionScope.h"
 #include <wtf/Assertions.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
@@ -224,7 +224,7 @@ void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, Messa
     for (size_t i = 0; i < arguments->argumentCount(); ++i) {
         builder.append(' ');
         auto* globalObject = arguments->globalObject();
-        auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
+        auto scope = DECLARE_TOP_EXCEPTION_SCOPE(globalObject->vm());
         builder.append(arguments->argumentAt(i).toWTFString(globalObject));
         scope.clearException();
     }

@@ -94,7 +94,7 @@ IPC::Connection* WebResourceLoader::messageSenderConnection() const
 uint64_t WebResourceLoader::messageSenderDestinationID() const
 {
     RELEASE_ASSERT(RunLoop::isMain());
-    return protectedResourceLoader()->identifier()->toUInt64();
+    return protect(resourceLoader())->identifier()->toUInt64();
 }
 
 void WebResourceLoader::detachFromCoreLoader()
@@ -152,7 +152,40 @@ void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, IPC::
 
 void WebResourceLoader::didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent)
 {
-    protectedResourceLoader()->didSendData(bytesSent, totalBytesToBeSent);
+    protect(resourceLoader())->didSendData(bytesSent, totalBytesToBeSent);
+}
+
+static ASCIILiteral toString(WebCore::RouterSourceEnum source)
+{
+    switch (source) {
+    case WebCore::RouterSourceEnum::Cache:
+        return "cache"_s;
+    case WebCore::RouterSourceEnum::FetchEvent:
+        return "fetch-event"_s;
+    case WebCore::RouterSourceEnum::Network:
+        return "network"_s;
+    case WebCore::RouterSourceEnum::RaceNetworkAndFetchHandler:
+        return "race-network-and-fetch-handler"_s;
+    }
+
+    ASSERT_NOT_REACHED();
+    return ""_s;
+}
+
+void WebResourceLoader::updateNetworkLoadMetrics(NetworkLoadMetrics& metrics)
+{
+    if (!m_serviceWorkerTimingInfo)
+        return;
+
+    metrics.workerStart = m_serviceWorkerTimingInfo->workerStart;
+    metrics.workerRouterEvaluationStart = m_serviceWorkerTimingInfo->workerRouterEvaluationStart;
+    metrics.workerCacheLookupStart = m_serviceWorkerTimingInfo->workerCacheLookupStart;
+    if (m_serviceWorkerTimingInfo->workerMatchedRouterSource)
+        metrics.workerMatchedRouterSource = toString(*m_serviceWorkerTimingInfo->workerMatchedRouterSource);
+    if (m_serviceWorkerTimingInfo->workerFinalRouterSource) {
+        ASSERT(*m_serviceWorkerTimingInfo->workerFinalRouterSource != WebCore::RouterSourceEnum::RaceNetworkAndFetchHandler);
+        metrics.workerFinalRouterSource = toString(*m_serviceWorkerTimingInfo->workerFinalRouterSource);
+    }
 }
 
 void WebResourceLoader::didReceiveResponse(ResourceResponse&& response, PrivateRelayed privateRelayed, bool needsContinueDidReceiveResponseMessage, std::optional<NetworkLoadMetrics>&& metrics)
@@ -164,7 +197,7 @@ void WebResourceLoader::didReceiveResponse(ResourceResponse&& response, PrivateR
     Ref<WebResourceLoader> protectedThis(*this);
 
     if (metrics) {
-        metrics->workerStart = m_workerStart;
+        updateNetworkLoadMetrics(*metrics);
         response.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics>::create(WTF::move(*metrics)));
     }
 
@@ -287,7 +320,8 @@ void WebResourceLoader::didFinishResourceLoad(NetworkLoadMetrics&& networkLoadMe
         return;
     }
 
-    networkLoadMetrics.workerStart = m_workerStart;
+    updateNetworkLoadMetrics(networkLoadMetrics);
+    networkLoadMetrics.markComplete();
 
 #if ENABLE(CONTENT_EXTENSIONS)
     if (networkLoadMetrics.responseBodyBytesReceived != std::numeric_limits<uint64_t>::max()) {
@@ -367,7 +401,7 @@ void WebResourceLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDeni
     LOG(Network, "(WebProcess) WebResourceLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied for '%s'", coreLoader->url().string().latin1().data());
     WEBRESOURCELOADER_RELEASE_LOG(WEBRESOURCELOADER_STOPLOADINGAFTERSECURITYPOLICYDENIED);
 
-    coreLoader->protectedDocumentLoader()->stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(*coreLoader->identifier(), response);
+    protect(coreLoader->documentLoader())->stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(*coreLoader->identifier(), response);
 }
 
 #if ENABLE(SHAREABLE_RESOURCE)
@@ -425,11 +459,6 @@ size_t WebResourceLoader::calculateBytesTransferredOverNetworkDelta(size_t bytes
 
     m_bytesTransferredOverNetwork = bytesTransferredOverNetwork;
     return delta;
-}
-
-RefPtr<WebCore::ResourceLoader> WebResourceLoader::protectedResourceLoader() const
-{
-    return RefPtr { m_coreLoader };
 }
 
 } // namespace WebKit

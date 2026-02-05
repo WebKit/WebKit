@@ -45,6 +45,7 @@
 #include "WebPopupMenuProxy.h"
 #include "WebURLSchemeHandlerIdentifier.h"
 #include "WindowKind.h"
+#include <WebCore/CornerRadii.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RegistrableDomain.h>
@@ -174,7 +175,6 @@ struct SpeechSynthesisData {
     CompletionHandler<void()> speakingPausedCompletionHandler;
     CompletionHandler<void()> speakingResumedCompletionHandler;
 
-    Ref<WebCore::PlatformSpeechSynthesizer> protectedSynthesizer() { return synthesizer; }
 };
 #endif
 
@@ -392,7 +392,7 @@ public:
 #if ENABLE(WRITING_TOOLS)
     HashMap<WTF::UUID, RefPtr<WebCore::TextIndicator>> textIndicatorForAnimationID;
     HashMap<WTF::UUID, CompletionHandler<void(WebCore::TextAnimationRunMode)>> completionHandlerForAnimationID;
-    HashMap<WTF::UUID, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>)>> completionHandlerForDestinationTextIndicatorForSourceID;
+    HashMap<WTF::UUID, CompletionHandler<void(RefPtr<WebCore::TextIndicator>)>> completionHandlerForDestinationTextIndicatorForSourceID;
     HashMap<WTF::UUID, WTF::UUID> sourceAnimationIDtoDestinationAnimationID;
 #endif
 
@@ -445,18 +445,24 @@ public:
 
     EnhancedSecurityTracking enhancedSecurityTracker;
 
-    explicit Internals(WebPageProxy&, std::optional<WebCore::SecurityOriginData>);
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+    WebCore::CornerRadii scrollbarAvoidanceCornerRadii;
+#endif
 
-    Ref<WebPageProxy> protectedPage() const;
+    explicit Internals(WebPageProxy&, std::optional<WebCore::SecurityOriginData>);
 
 #if ENABLE(SPEECH_SYNTHESIS)
     SpeechSynthesisData& speechSynthesisData();
 #endif
 
     // WebPopupMenuProxy::Client
+#if !PLATFORM(IOS_FAMILY)
     void valueChangedForPopupMenu(WebPopupMenuProxy*, int32_t newSelectedIndex) final;
-    void setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index) final;
     NativeWebMouseEvent* currentlyProcessedMouseDownEvent() final;
+#endif
+#if !PLATFORM(COCOA)
+    void setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index) final;
+#endif
 #if PLATFORM(GTK)
     void failedToShowPopupMenu() final;
 #endif
@@ -513,16 +519,12 @@ public:
     void externalOutputDeviceAvailableDidChange(WebCore::PlaybackTargetClientContextIdentifier, bool) final;
     void setShouldPlayToPlaybackTarget(WebCore::PlaybackTargetClientContextIdentifier, bool) final;
     void playbackTargetPickerWasDismissed(WebCore::PlaybackTargetClientContextIdentifier) final;
-    bool alwaysOnLoggingAllowed() const final { return protectedPage()->isAlwaysOnLoggingAllowed(); }
+    bool alwaysOnLoggingAllowed() const final { return protect(page)->isAlwaysOnLoggingAllowed(); }
     RetainPtr<CocoaView> platformView() const final;
 #endif
 
-    Ref<PageLoadState> protectedPageLoadState() { return pageLoadState; }
-    Ref<WebNotificationManagerMessageHandler> protectedNotificationManagerMessageHandler() { return notificationManagerMessageHandler; }
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
-    RefPtr<WebPageProxyFrameLoadStateObserver> protectedFrameLoadStateObserver() { return frameLoadStateObserver; }
 #endif
-    Ref<GeolocationPermissionRequestManagerProxy> protectedGeolocationPermissionRequestManager() { return geolocationPermissionRequestManager; }
 
     std::optional<WebCore::SecurityOriginData> openerOrigin;
 };

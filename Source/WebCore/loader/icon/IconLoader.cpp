@@ -92,7 +92,7 @@ void IconLoader::startLoading()
 
     request.setInitiatorType(cachedResourceRequestInitiatorTypes().icon);
 
-    auto cachedResource = frame->protectedDocument()->protectedCachedResourceLoader()->requestIcon(WTF::move(request));
+    auto cachedResource = protect(protect(frame->document())->cachedResourceLoader())->requestIcon(WTF::move(request));
     m_resource = cachedResource.value_or(nullptr);
     if (CachedResourceHandle resource = m_resource)
         resource->addClient(*this);

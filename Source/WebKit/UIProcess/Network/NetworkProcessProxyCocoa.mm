@@ -99,10 +99,10 @@ bool NetworkProcessProxy::sendXPCEndpointToProcess(AuxiliaryProcessProxy& proces
         return false;
     if (!process.hasConnection())
         return false;
-    XPCObjectPtr<xpc_object_t> message = xpcEndpointMessage();
+    OSObjectPtr<xpc_object_t> message = xpcEndpointMessage();
     if (!message)
         return false;
-    XPCObjectPtr<xpc_connection_t> xpcConnection = process.connection().xpcConnection();
+    OSObjectPtr<xpc_connection_t> xpcConnection = process.connection().xpcConnection();
     RELEASE_ASSERT(xpcConnection);
     xpc_connection_send_message(xpcConnection.get(), message.get());
     return true;

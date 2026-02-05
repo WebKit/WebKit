@@ -113,7 +113,6 @@ public:
 
     const RemoteLayerTreeHost* layerTreeHost() const;
     WebPageProxy& webPageProxy() const;
-    Ref<WebPageProxy> protectedWebPageProxy() const;
 
     void stickyScrollingTreeNodeBeganSticking(WebCore::ScrollingNodeID);
 

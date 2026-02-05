@@ -147,7 +147,7 @@ OptionSet<FilterRenderingMode> FEDropShadow::supportedFilterRenderingModes(Optio
 #if (USE(CORE_IMAGE)) || (USE(SKIA))
     modes.add(FilterRenderingMode::Accelerated);
 #endif
-#if USE(CG) && HAVE(FIX_FOR_RADAR_163968203)
+#if USE(CG) && HAVE(CGSTYLE_FIXES_DROP_SHADOW_BLUR)
     if (m_stdX == m_stdY)
         modes.add(FilterRenderingMode::GraphicsContext);
 #endif

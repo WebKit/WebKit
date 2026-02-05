@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2012, 2026 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,8 +29,7 @@
 #include <pal/text/TextEncoding.h>
 #include <wtf/FileSystem.h>
 #include <wtf/URL.h>
-#include <wtf/glib/GRefPtr.h>
-#include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 
@@ -317,18 +316,16 @@ void webkit_file_chooser_request_select_files(WebKitFileChooserRequest* request,
     GRefPtr<GPtrArray> selectedFiles = adoptGRef(g_ptr_array_new_with_free_func(g_free));
     Vector<String> chosenFiles;
 
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
-    for (int i = 0; files[i]; i++) {
-        chosenFiles.append(PAL::decodeURLEscapeSequences(String::fromUTF8(files[i])));
-        g_ptr_array_add(selectedFiles.get(), g_strdup(files[i]));
+    for (const auto* filePath : span(files)) {
+        chosenFiles.append(PAL::decodeURLEscapeSequences(String::fromUTF8(filePath)));
+        g_ptr_array_add(selectedFiles.get(), g_strdup(filePath));
     }
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     g_ptr_array_add(selectedFiles.get(), nullptr);
 
     // Select the files in WebCore and update local private attributes.
     request->priv->listener->chooseFiles(chosenFiles);
-    request->priv->selectedFiles = selectedFiles;
+    request->priv->selectedFiles = WTF::move(selectedFiles);
     request->priv->handledRequest = true;
 }
 

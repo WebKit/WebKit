@@ -30,6 +30,7 @@
 #include <WebCore/Document.h>
 #include <WebCore/GCReachableRef.h>
 #include <WebCore/HTMLModelElement.h>
+#include <WebCore/LayerHostingContextIdentifier.h>
 #include <wtf/Deque.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -53,7 +54,6 @@ public:
     // Helpers.
     Document& document() { return m_document; }
     const Document& document() const { return m_document; }
-    Ref<Document> protectedDocument() const { return m_document; }
 
     HTMLModelElement* immersiveElement() const;
     RefPtr<HTMLModelElement> protectedImmersiveElement() const { return immersiveElement(); }
@@ -74,10 +74,32 @@ protected:
     void clearPendingEvents() { m_pendingEvents.clear(); }
 
 private:
+    using CompletionHandlerScope = Document::CompletionHandlerScope;
+
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     WeakPtr<HTMLModelElement, WeakPtrImplWithEventTargetData> m_immersiveElement;
     void updateElementIsImmersive(HTMLModelElement*, bool);
+
+    WeakPtr<HTMLModelElement, WeakPtrImplWithEventTargetData> m_pendingImmersiveElement;
+    bool m_pendingExitImmersive { false };
+    CompletionHandler<void()> m_pendingExitCompletionHandler;
+
+    struct ActiveRequest {
+        enum class Stage : uint8_t { None, Permission, ModelPlayer, Presentation };
+        Stage stage { Stage::None };
+        WeakPtr<HTMLModelElement, WeakPtrImplWithEventTargetData> element;
+    };
+    ActiveRequest m_activeRequest;
+    std::optional<Exception> checkRequestStillValid(HTMLModelElement*, ActiveRequest::Stage expectedStage);
+
+    void cancelActiveRequest(CompletionHandler<void()>&&);
+    void beginImmersiveRequest(Ref<HTMLModelElement>&&, CompletionHandler<void(ExceptionOr<void>)>&&);
+    void createModelPlayerForImmersive(Ref<HTMLModelElement>&&, CompletionHandler<void(ExceptionOr<void>)>&&);
+    void presentImmersiveElement(Ref<HTMLModelElement>&&, LayerHostingContextIdentifier, CompletionHandler<void(ExceptionOr<void>)>&&);
     void dismissClientImmersivePresentation(HTMLModelElement*, CompletionHandler<void()>&&);
+
+    enum class EmitErrorEvent : bool { No, Yes };
+    void handleImmersiveError(HTMLModelElement*, const String& message, EmitErrorEvent, ExceptionCode, CompletionHandler<void(ExceptionOr<void>)>&&);
 
     Deque<std::pair<EventType, GCReachableRef<Element>>> m_pendingEvents;
 };

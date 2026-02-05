@@ -28,9 +28,8 @@ enum PremultiplyAlpha { "none", "premultiply", "default" };
 enum ColorSpaceConversion { "none", "default" };
 enum ResizeQuality { "pixelated", "low", "medium", "high" };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary ImageBitmapOptions {
+// https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#imagebitmapoptions
+dictionary ImageBitmapOptions {
     [ImplementedAs=orientation] ImageOrientation imageOrientation = "from-image";
     PremultiplyAlpha premultiplyAlpha = "default";
     ColorSpaceConversion colorSpaceConversion = "default";

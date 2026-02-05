@@ -44,11 +44,11 @@ void Connection::newConnectionWasInitialized() const
     sendWithoutUsingIPCConnection(Messages::PushClientConnection::InitializeConnection(m_configuration));
 }
 
-static XPCObjectPtr<xpc_object_t> messageDictionaryFromEncoder(UniqueRef<IPC::Encoder>&& encoder)
+static OSObjectPtr<xpc_object_t> messageDictionaryFromEncoder(UniqueRef<IPC::Encoder>&& encoder)
 {
     auto xpcData = encoderToXPCData(WTF::move(encoder));
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto dictionary = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_uint64(dictionary.get(), WebPushD::protocolVersionKey, WebPushD::protocolVersionValue);
     xpc_dictionary_set_value(dictionary.get(), WebPushD::protocolEncodedMessageKey, xpcData.get());
 

@@ -930,13 +930,41 @@ TEST_P(DebugTestES3, Rendering)
             glDebugMessageInsertKHR(GL_DEBUG_SOURCE_THIRD_PARTY, GL_DEBUG_TYPE_OTHER, 0,
                                     GL_DEBUG_SEVERITY_HIGH, -1, inGroup3Marker.c_str());
         }
-        glPopGroupMarkerEXT();
+        glPopDebugGroupKHR();
 
         glDebugMessageInsertKHR(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0,
                                 GL_DEBUG_SEVERITY_HIGH, -1, afterDrawMarker.c_str());
     }
-    glPopGroupMarkerEXT();
+    glPopDebugGroupKHR();
 
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that glPushGroupMarker() issues a stack overflow error when the stack size is capped.
+TEST_P(DebugTestES3, PushTooManyGroupMarkers)
+{
+    ANGLE_SKIP_TEST_IF(!mDebugExtensionAvailable);
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_debug_marker"));
+
+    GLint maxStackDepth;
+    glGetIntegerv(GL_MAX_DEBUG_GROUP_STACK_DEPTH_KHR, &maxStackDepth);
+
+    const std::string markerLabel = "Test Group Marker";
+    for (GLint i = 0; i < maxStackDepth; i++)
+    {
+        glPushGroupMarkerEXT(0, markerLabel.c_str());
+        ASSERT_GL_NO_ERROR();
+    }
+
+    glPushGroupMarkerEXT(0, markerLabel.c_str());
+    EXPECT_GL_ERROR(GL_STACK_OVERFLOW);
+}
+
+// Test that glPopGroupMarker() is ignored if the stack is already empty.
+TEST_P(DebugTestES3, PopGroupMarkerWithEmptyStack)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_debug_marker"));
+    glPopGroupMarkerEXT();
     ASSERT_GL_NO_ERROR();
 }
 

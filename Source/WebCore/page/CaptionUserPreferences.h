@@ -105,6 +105,9 @@ public:
     void setPrimaryAudioTrackLanguageOverride(const String& language) { m_primaryAudioTrackLanguageOverride = language;  }
     String primaryAudioTrackLanguageOverride() const;
 
+    void setPreferredAudioCharacteristicsForTesting(const Vector<String>& characteristics) { m_preferredAudioCharacteristicsForTesting = characteristics; }
+    const Vector<String>& preferredAudioCharacteristicsForTesting() const { return m_preferredAudioCharacteristicsForTesting; }
+
     virtual bool testingMode() const { return m_testingModeCount; }
 
     friend class CaptionUserPreferencesTestingModeToken;
@@ -141,6 +144,7 @@ private:
     String m_userPreferredAudioCharacteristic;
     String m_captionsStyleSheetOverride;
     String m_primaryAudioTrackLanguageOverride;
+    Vector<String> m_preferredAudioCharacteristicsForTesting;
     unsigned m_blockNotificationsCounter { 0 };
     bool m_havePreferences { false };
     unsigned m_testingModeCount { 0 };

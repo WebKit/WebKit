@@ -380,6 +380,10 @@ NSType typeFromObject(id object)
         return NSType::NSValue;
     if ([object isKindOfClass:[NSString class]])
         return NSType::String;
+#if HAVE(WK_SECURE_CODING_PKPAYMENTSETUPFEATURE)
+    if ([object isKindOfClass:[NSSet class]])
+        return NSType::Set;
+#endif
     if ([object isKindOfClass:[NSURL class]])
         return NSType::URL;
 #if USE(PASSKIT)

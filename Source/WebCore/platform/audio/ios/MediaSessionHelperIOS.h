@@ -69,7 +69,7 @@ public:
 };
 
 class WEBCORE_EXPORT MediaSessionHelper
-#if HAVE(AVROUTING_FRAMEWORK)
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
     : public MediaDeviceRouteControllerClient
 #else
     : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaSessionHelper>
@@ -119,7 +119,7 @@ public:
     void setActiveAudioRouteSupportsSpatialPlayback(bool);
     void updateActiveAudioRouteSupportsSpatialPlayback();
 
-#if HAVE(AVROUTING_FRAMEWORK)
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
     void activeRoutesDidChange(MediaDeviceRouteController&) final;
 #endif
 

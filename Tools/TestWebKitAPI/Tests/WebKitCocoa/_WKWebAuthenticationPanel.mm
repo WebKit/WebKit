@@ -1095,9 +1095,8 @@ TEST(WebAuthenticationPanel, MakeCredentialPinAuthBlockedError)
 
     webAuthenticationPanelPin = "1234"_s;
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
-    [webView waitForMessage:@"Unknown internal error. Error code: 52"];
+    Util::run(&webAuthenticationPanelUpdatePINAuthBlocked);
     EXPECT_FALSE(webAuthenticationPanelUpdatePINInvalid);
-    EXPECT_TRUE(webAuthenticationPanelUpdatePINAuthBlocked);
 }
 
 TEST(WebAuthenticationPanel, MakeCredentialPinInvalidErrorAndRetry)
@@ -1192,9 +1191,8 @@ TEST(WebAuthenticationPanel, GetAssertionPinAuthBlockedError)
 
     webAuthenticationPanelPin = "1234"_s;
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
-    [webView waitForMessage:@"Unknown internal error. Error code: 52"];
+    Util::run(&webAuthenticationPanelUpdatePINAuthBlocked);
     EXPECT_FALSE(webAuthenticationPanelUpdatePINInvalid);
-    EXPECT_TRUE(webAuthenticationPanelUpdatePINAuthBlocked);
 }
 
 // FIXME rdar://145102423

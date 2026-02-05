@@ -19,7 +19,7 @@ promise_test(async test => {
         localVideo.src = videoFile;
         localVideo.load();
         await localVideo.play();
-        await waitForVideoFrame(localVideo);
+        await waitForVideoFrameWithTimeout(localVideo, 15 * 1000, `timed out waiting for video frame ${cptr}`);
     }
     stream.getTracks().forEach(t => t.stop());
 }, "Check switching between playing with and without stream");

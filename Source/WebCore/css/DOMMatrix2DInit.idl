@@ -24,10 +24,7 @@
  */
 
 // https://drafts.fxtf.org/geometry/#dictdef-dommatrix2dinit
-
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary DOMMatrix2DInit {
+dictionary DOMMatrix2DInit {
     unrestricted double a;
     unrestricted double b;
     unrestricted double c;

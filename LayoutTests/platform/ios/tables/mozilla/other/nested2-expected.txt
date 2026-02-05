@@ -11,10 +11,10 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (1,1) size 260x48
                   RenderTableRow {TR} at (0,3) size 260x42
                     RenderTableCell {TD} at (3,3) size 254x42 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 164x39
+                      RenderText {#text} at (1,1) size 164x40
                         text run at (1,1) width 164: "TheMozillaOrganization-"
                         text run at (1,21) width 158: "TheMozillaOrganization"
             RenderTableCell {TD} at (271,8) size 507x44 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,7) size 401x39
+              RenderText {#text} at (2,7) size 401x40
                 text run at (2,2) width 401: "Checkin Guidelines for the Seamonkey Tree xxxxxxxxxxxxxx"
                 text run at (2,22) width 228: "xxxxxxxxxxxxxxxx xxxxxxxxxxxx"

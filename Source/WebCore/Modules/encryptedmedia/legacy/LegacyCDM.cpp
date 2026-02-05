@@ -129,17 +129,12 @@ LegacyCDM::~LegacyCDM() = default;
 
 bool LegacyCDM::supportsMIMEType(const String& mimeType) const
 {
-    return protectedCDMPrivate()->supportsMIMEType(mimeType);
-}
-
-RefPtr<CDMPrivateInterface> LegacyCDM::protectedCDMPrivate() const
-{
-    return cdmPrivate();
+    return protect(cdmPrivate())->supportsMIMEType(mimeType);
 }
 
 RefPtr<LegacyCDMSession> LegacyCDM::createSession(LegacyCDMSessionClient& client)
 {
-    RefPtr session = protectedCDMPrivate()->createSession(client);
+    RefPtr session = protect(cdmPrivate())->createSession(client);
     if (mediaPlayer())
         mediaPlayer()->setCDMSession(session.get());
     return session;

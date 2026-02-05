@@ -825,9 +825,9 @@ void TextBoxPainter::collectDecoratingBoxesForBackgroundPainting(DecoratingBoxLi
         if (&inlineBox->renderer() != &parentInlineBox->renderer()) {
             auto decoratingBoxContentBoxTop = inlineBox->logicalTop() + (!inlineBox->isRootInlineBox() ? inlineBox->renderer().borderAndPaddingBefore() : LayoutUnit(0_lu));
             auto parentInlineBoxContentBoxTop = parentInlineBox->logicalTop() + (!parentInlineBox->isRootInlineBox() ? parentInlineBox->renderer().borderAndPaddingBefore() : LayoutUnit(0_lu));
-            decoratingBoxLocation.moveBy(FloatPoint { 0.f, decoratingBoxContentBoxTop - parentInlineBoxContentBoxTop + textBoxEdgeAdjustmentForUnderline(parentInlineBox->style()) });
+            decoratingBoxLocation.moveBy(FloatPoint { 0.f, decoratingBoxContentBoxTop - parentInlineBoxContentBoxTop + snap(textBoxEdgeAdjustmentForUnderline(parentInlineBox->style()), m_renderer) });
         } else
-            decoratingBoxLocation.moveBy(FloatPoint { 0.f, textBoxEdgeAdjustmentForUnderline(inlineBox->style()) });
+            decoratingBoxLocation.moveBy(FloatPoint { 0.f, snap(textBoxEdgeAdjustmentForUnderline(inlineBox->style()), m_renderer) });
         auto& decorationStyleToUse = useOverriderDecorationStyle == UseOverriderDecorationStyle::Yes ? overrideDecorationStyle : computedDecorationStyle();
         decoratingBoxList.append({ inlineBox, style, decorationStyleToUse, decoratingBoxLocation });
     };
@@ -878,7 +878,7 @@ void TextBoxPainter::paintBackgroundDecorations(TextDecorationPainter& decoratio
 
             return TextDecorationPainter::BackgroundDecorationGeometry {
                 textOriginFromPaintRect(textBoxPaintRect),
-                roundPointToDevicePixels(LayoutPoint { decoratingBox.location }, m_document->deviceScaleFactor(), m_paintTextRun.ltr()),
+                decoratingBox.location,
                 textBoxPaintRect.width(),
                 textDecorationThickness,
                 underlineOffset(),
@@ -889,7 +889,7 @@ void TextBoxPainter::paintBackgroundDecorations(TextDecorationPainter& decoratio
             };
         };
 
-        decorationPainter.paintBackgroundDecorations(m_style, textRun, computedBackgroundDecorationGeometry(), computedTextDecorationType, decoratingBox.textDecorationStyles);
+        decorationPainter.paintBackgroundDecorations(m_style, textRun, computedBackgroundDecorationGeometry(), computedTextDecorationType, decoratingBox.textDecorationStyles, m_document->deviceScaleFactor());
     }
 
     if (m_isCombinedText)

@@ -30,6 +30,7 @@
 #include <JavaScriptCore/InspectorAgentBase.h>
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
@@ -82,7 +83,7 @@ protected:
 private:
     std::optional<JSC::HeapSnapshotNode> nodeForHeapObjectIdentifier(Protocol::ErrorString&, unsigned heapObjectIdentifier);
 
-    InjectedScriptManager& m_injectedScriptManager;
+    const CheckedRef<InjectedScriptManager> m_injectedScriptManager;
     const UniqueRef<HeapFrontendDispatcher> m_frontendDispatcher;
     const Ref<HeapBackendDispatcher> m_backendDispatcher;
     WeakRef<InspectorEnvironment> m_environment;

@@ -30,6 +30,7 @@
 #include "RemoteDisplayListIdentifier.h"
 #include "RemoteGradientIdentifier.h"
 #include "RemoteGraphicsContextIdentifier.h"
+#include "RemotePathImplIdentifier.h"
 #include <WebCore/DisplayListRecorder.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -147,6 +148,7 @@ private:
 
     [[nodiscard]] bool recordResourceUse(WebCore::NativeImage&);
     [[nodiscard]] bool recordResourceUse(WebCore::ImageBuffer&);
+    std::optional<RemotePathImplIdentifier> recordResourceUse(const WebCore::PathImpl&);
     bool recordResourceUse(const WebCore::SourceImage&);
     bool recordResourceUse(WebCore::Font&);
     std::optional<RemoteGradientIdentifier> recordResourceUse(WebCore::Gradient&);

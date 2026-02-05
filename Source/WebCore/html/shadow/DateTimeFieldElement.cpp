@@ -176,7 +176,7 @@ void DateTimeFieldElement::handleBlurEvent(Event& event)
 
 Locale& DateTimeFieldElement::localeForOwner() const
 {
-    return protectedDocument()->getCachedLocale(localeIdentifier());
+    return protect(document())->getCachedLocale(localeIdentifier());
 }
 
 AtomString DateTimeFieldElement::localeIdentifier() const
@@ -194,7 +194,7 @@ String DateTimeFieldElement::visibleValue() const
 void DateTimeFieldElement::updateVisibleValue(EventBehavior eventBehavior)
 {
     if (!firstChild())
-        appendChild(Text::create(protectedDocument().get(), String { emptyString() }));
+        appendChild(Text::create(protect(document()).get(), String { emptyString() }));
 
     Ref textNode = downcast<Text>(*firstChild());
     String newVisibleValue = visibleValue();

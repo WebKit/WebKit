@@ -100,7 +100,7 @@ void WindowProxy::replaceFrame(Frame& frame)
 {
     ASSERT(m_frame);
     m_frame = frame;
-    setDOMWindow(frame.protectedWindow().get());
+    setDOMWindow(protect(frame.window()).get());
 }
 
 void WindowProxy::destroyJSWindowProxy(DOMWrapperWorld& world)
@@ -119,7 +119,7 @@ JSWindowProxy& WindowProxy::createJSWindowProxy(DOMWrapperWorld& world)
 
     VM& vm = world.vm();
 
-    Strong<JSWindowProxy> jsWindowProxy(vm, &JSWindowProxy::create(vm, *m_frame->protectedWindow().get(), world));
+    Strong<JSWindowProxy> jsWindowProxy(vm, &JSWindowProxy::create(vm, *protect(m_frame->window()).get(), world));
     m_jsWindowProxies.add(world, jsWindowProxy);
     world.didCreateWindowProxy(this);
     return *jsWindowProxy.get();

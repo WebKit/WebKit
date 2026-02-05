@@ -57,14 +57,14 @@ ScreenOrientation::ScreenOrientation(Document* document)
     : ActiveDOMObject(document)
 {
     if (shouldListenForChangeNotification()) {
-        if (auto* manager = this->manager())
+        if (RefPtr manager = this->manager())
             manager->addObserver(*this);
     }
 }
 
 ScreenOrientation::~ScreenOrientation()
 {
-    if (auto* manager = this->manager())
+    if (RefPtr manager = this->manager())
         manager->removeObserver(*this);
 }
 
@@ -78,7 +78,7 @@ ScreenOrientationManager* ScreenOrientation::manager() const
     RefPtr document = this->document();
     if (!document)
         return nullptr;
-    auto* page = document->page();
+    RefPtr page = document->page();
     return page ? page->screenOrientationManager() : nullptr;
 }
 
@@ -103,7 +103,7 @@ void ScreenOrientation::lock(LockType lockType, Ref<DeferredPromise>&& promise)
         return;
     }
 
-    auto* manager = this->manager();
+    RefPtr manager = this->manager();
     if (!manager) {
         promise->reject(Exception { ExceptionCode::InvalidStateError, "No browsing context"_s });
         return;
@@ -160,7 +160,7 @@ void ScreenOrientation::lock(LockType lockType, Ref<DeferredPromise>&& promise)
 
 ExceptionOr<void> ScreenOrientation::unlock()
 {
-    auto* document = this->document();
+    RefPtr document = this->document();
     if (!document || !document->isFullyActive())
         return Exception { ExceptionCode::InvalidStateError, "Document is not fully active."_s };
 
@@ -170,14 +170,14 @@ ExceptionOr<void> ScreenOrientation::unlock()
     if (document->page() && !document->page()->isVisible())
         return Exception { ExceptionCode::SecurityError, "Only visible documents can unlock the screen orientation"_s };
 
-    if (auto* manager = this->manager())
+    if (RefPtr manager = this->manager())
         manager->unlock();
     return { };
 }
 
 auto ScreenOrientation::type() const -> Type
 {
-    auto* manager = this->manager();
+    RefPtr manager = this->manager();
     if (!manager)
         return naturalScreenOrientationType();
     return manager->currentOrientation();
@@ -185,7 +185,7 @@ auto ScreenOrientation::type() const -> Type
 
 uint16_t ScreenOrientation::angle() const
 {
-    auto* manager = this->manager();
+    RefPtr manager = this->manager();
     auto orientation = manager ? manager->currentOrientation() : naturalScreenOrientationType();
 
     // https://w3c.github.io/screen-orientation/#dfn-screen-orientation-values-table
@@ -218,10 +218,10 @@ uint16_t ScreenOrientation::angle() const
 
 void ScreenOrientation::visibilityStateChanged()
 {
-    auto* document = this->document();
+    RefPtr document = this->document();
     if (!document)
         return;
-    auto* manager = this->manager();
+    RefPtr manager = this->manager();
     if (!manager)
         return;
 
@@ -233,7 +233,7 @@ void ScreenOrientation::visibilityStateChanged()
 
 bool ScreenOrientation::shouldListenForChangeNotification() const
 {
-    auto* document = this->document();
+    RefPtr document = this->document();
     if (!document || !document->frame())
         return false;
     return document->visibilityState() == VisibilityState::Visible;
@@ -246,7 +246,7 @@ void ScreenOrientation::screenOrientationDidChange(ScreenOrientationType)
 
 void ScreenOrientation::suspend(ReasonForSuspension)
 {
-    if (auto* manager = this->manager())
+    if (RefPtr manager = this->manager())
         manager->removeObserver(*this);
 }
 
@@ -254,13 +254,13 @@ void ScreenOrientation::resume()
 {
     if (!shouldListenForChangeNotification())
         return;
-    if (auto* manager = this->manager())
+    if (RefPtr manager = this->manager())
         manager->addObserver(*this);
 }
 
 void ScreenOrientation::stop()
 {
-    auto* manager = this->manager();
+    RefPtr manager = this->manager();
     if (!manager)
         return;
 

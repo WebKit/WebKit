@@ -4,28 +4,28 @@ layer at (0,0) size 800x258
   RenderBlock {HTML} at (0,0) size 800x258
     RenderBody {BODY} at (8,16) size 784x226
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 512x17
+        RenderText {#text} at (0,0) size 512x18
           text run at (0,0) width 497: "The following two blocks should be identical, including overflow. (Force bidi: "
           text run at (496,0) width 11 RTL: "\x{5D0}"
           text run at (506,0) width 6: ")"
       RenderBlock {DIV} at (0,34) size 784x192
         RenderBlock {P} at (16,0) size 294x88 [bgcolor=#FFFFCC] [border: (3px solid #000000)]
-          RenderInline {SPAN} at (11,16) size 121x37 [color=#000080] [border: (3px solid #000080) none (3px solid #000080)]
-            RenderText {#text} at (30,26) size 102x17
+          RenderInline {SPAN} at (11,17) size 121x36 [color=#000080] [border: (3px solid #000080) none (3px solid #000080)]
+            RenderText {#text} at (30,26) size 102x18
               text run at (30,26) width 102: "AAABBBCCC"
-          RenderText {#text} at (132,26) size 93x17
+          RenderText {#text} at (132,26) size 93x18
             text run at (132,26) width 93: "DDDEEEFFF"
-          RenderInline {SPAN} at (225,16) size 106x37 [color=#000080] [border: (3px solid #000080) none]
-            RenderText {#text} at (225,26) size 87x17
+          RenderInline {SPAN} at (225,17) size 106x36 [color=#000080] [border: (3px solid #000080) none]
+            RenderText {#text} at (225,26) size 87x18
               text run at (225,26) width 87: "GGGHHHIII"
-          RenderText {#text} at (11,59) size 198x17
+          RenderText {#text} at (11,59) size 198x18
             text run at (11,59) width 198: "JJJKKKLLLMMMNNNOOO"
         RenderBlock {P} at (16,104) size 294x88 [bgcolor=#FFFFCC] [border: (3px solid #000000)]
-          RenderInline {SPAN} at (11,16) size 320x37 [color=#000080] [border: (3px solid #000080)]
-            RenderText {#text} at (30,26) size 282x17
+          RenderInline {SPAN} at (11,17) size 320x36 [color=#000080] [border: (3px solid #000080)]
+            RenderText {#text} at (30,26) size 282x18
               text run at (30,26) width 102: "AAABBBCCC"
               text run at (225,26) width 87 RTL: "\x{202E}IIIHHHGGG"
-          RenderText {#text} at (11,26) size 214x50
+          RenderText {#text} at (11,26) size 214x51
             text run at (132,26) width 93 RTL: "FFFEEEDDD"
             text run at (11,59) width 84 RTL: "LLLKKKJJJ"
             text run at (95,59) width 114: "\x{202C}MMMNNNOOO"

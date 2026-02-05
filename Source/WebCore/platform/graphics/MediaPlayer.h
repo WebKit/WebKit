@@ -100,6 +100,7 @@ class NativeImage;
 class PlatformMediaResourceLoader;
 class PlatformTimeRanges;
 class SecurityOriginData;
+class ShareableBitmap;
 class SharedBuffer;
 class TextTrackRepresentation;
 class VideoFrame;
@@ -122,6 +123,9 @@ struct MediaEngineSupportParameters {
     std::optional<Vector<FourCC>> allowedMediaVideoCodecIDs;
     std::optional<Vector<FourCC>> allowedMediaAudioCodecIDs;
     std::optional<Vector<FourCC>> allowedMediaCaptionFormatTypes;
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    MediaPlaybackTargetType playbackTargetType { MediaPlaybackTargetType::None };
+#endif
 };
 
 struct SeekTarget {
@@ -353,6 +357,10 @@ public:
 #if PLATFORM(IOS_FAMILY)
     virtual bool canShowWhileLocked() const { return false; }
 #endif
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    virtual MediaPlaybackTargetType playbackTargetType() const = 0;
+#endif
 };
 
 class WEBCORE_EXPORT MediaPlayer : public MediaPlayerEnums, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaPlayer, WTF::DestructionThread::Main> {
@@ -536,6 +544,9 @@ public:
 
     RefPtr<VideoFrame> videoFrameForCurrentTime();
     RefPtr<NativeImage> nativeImageForCurrentTime();
+    RefPtr<ShareableBitmap> bitmapImageForCurrentTimeSync();
+    using BitmapImagePromise = NativePromise<Ref<ShareableBitmap>, void>;
+    Ref<BitmapImagePromise> bitmapImageForCurrentTime();
     DestinationColorSpace colorSpace();
     bool shouldGetNativeImageForCanvasDrawing() const;
 
@@ -820,6 +831,10 @@ private:
     void loadWithNextMediaEngine(const MediaPlayerFactory*);
     CheckedPtr<const MediaPlayerFactory> nextMediaEngine(const MediaPlayerFactory*);
     void reloadTimerFired();
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    MediaPlaybackTargetType playbackTargetType() const;
+#endif
 
     WeakPtr<MediaPlayerClient> m_client;
     Timer m_reloadTimer;

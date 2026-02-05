@@ -26,10 +26,15 @@
 #include "GStreamerCommon.h"
 #include "GStreamerElementHarness.h"
 #include "GStreamerRegistryScanner.h"
+#include "PlatformDisplay.h"
 #include "VideoFrameGStreamer.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/MakeString.h>
+
+#if USE(GSTREAMER_GL)
+#include <gst/gl/gl.h>
+#endif
 
 namespace WebCore {
 
@@ -165,6 +170,14 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
     GST_DEBUG_OBJECT(element.get(), "Configuring decoder for codec %s", codecName.ascii().data());
     configureVideoDecoderForHarnessing(element);
 
+#if USE(GSTREAMER_GL)
+    static ASCIILiteral gstGlDisplayContextType = ASCIILiteral::fromLiteralUnsafe(GST_GL_DISPLAY_CONTEXT_TYPE);
+    if (!setGstElementGLContext(element.get(), gstGlDisplayContextType))
+        return;
+    if (!setGstElementGLContext(element.get(), "gst.gl.app_context"_s))
+        return;
+#endif
+
     auto* factory = gst_element_get_factory(element.get());
     ASCIILiteral parser;
     if (codecName.startsWith("avc1"_s)) {
@@ -193,7 +206,7 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
         if (!gst_element_factory_can_sink_all_caps(factory, m_inputCaps.get()))
             parser = "h265parse"_s;
     } else {
-        WTFLogAlways("Codec %s not wired in yet", codecName.ascii().data());
+        GST_ERROR("Codec %s not wired in yet", codecName.ascii().data());
         return;
     }
 
@@ -219,8 +232,15 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
     } else
         harnessedElement = WTF::move(element);
 
-    // FIXME: Add DMABuf and GL caps here. See also https://bugs.webkit.org/show_bug.cgi?id=288625.
-    auto allowedSinkCaps = adoptGRef(gst_caps_from_string("video/x-raw"));
+    auto allowedSinkCaps = adoptGRef(gst_caps_new_empty());
+#if USE(GSTREAMER_GL)
+#if USE(GBM)
+    gst_caps_append(allowedSinkCaps.get(), buildDMABufCaps().leakRef());
+#endif // USE(GBM)
+    gst_caps_append(allowedSinkCaps.get(), gst_caps_from_string("video/x-raw(memory:GLMemory)"));
+#endif // USE(GSTREAMER_GL)
+    gst_caps_append(allowedSinkCaps.get(), gst_caps_from_string("video/x-raw"));
+
     m_harness = GStreamerElementHarness::create(WTF::move(harnessedElement), [weakThis = ThreadSafeWeakPtr { *this }, this](auto& stream, GRefPtr<GstSample>&& outputSample) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)

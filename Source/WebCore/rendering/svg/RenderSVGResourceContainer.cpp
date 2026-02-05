@@ -46,6 +46,12 @@ RenderSVGResourceContainer::RenderSVGResourceContainer(Type type, SVGElement& el
 
 RenderSVGResourceContainer::~RenderSVGResourceContainer() = default;
 
+void RenderSVGResourceContainer::layout()
+{
+    RenderSVGHiddenContainer::layout();
+    repaintAllClients();
+}
+
 void RenderSVGResourceContainer::willBeDestroyed()
 {
     m_registered = false;

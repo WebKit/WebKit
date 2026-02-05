@@ -80,6 +80,7 @@ protected:
     void scheduleSessionStatusUpdate() final;
     void updateNowPlayingInfo() final;
     void setNowPlayingUpdateInterval(double) final;
+    double nowPlayingUpdateInterval() final;
     void updateActiveNowPlayingSession(RefPtr<PlatformMediaSessionInterface>);
     bool shouldUpdateNowPlaying(const NowPlayingInfo&);
 
@@ -115,11 +116,13 @@ private:
 
     void possiblyChangeAudioCategory();
 
-    std::optional<bool> supportsSpatialAudioPlaybackForConfiguration(const MediaConfiguration&) final;
+    std::optional<bool> supportsSpatialAudioPlaybackForConfiguration(const PlatformMediaConfiguration&) final;
 
 #if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
     static void updateNowPlayingSuppression(const NowPlayingInfo*);
 #endif
+
+    void adjustNowPlayingUpdateInterval();
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const override;

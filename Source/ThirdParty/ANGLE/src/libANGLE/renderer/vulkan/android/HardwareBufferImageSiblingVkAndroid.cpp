@@ -444,7 +444,16 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
     bool robustInitEnabled = false;
 
     mImage->setTilingMode(imageTilingMode);
+
     VkImageCreateFlags imageCreateFlags = AhbDescUsageToVkImageCreateFlags(ahbDescription);
+    if (renderer->getFeatures().supportsMultisampledRenderToSingleSampled.enabled &&
+        (usage &
+         (VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT)) != 0)
+    {
+        // We don't know if it will be used for MSRTSS or not, so always create with the bit
+        imageCreateFlags |= VK_IMAGE_CREATE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_BIT_EXT;
+    }
+
     vk::YcbcrConversionDesc conversionDesc{};
 
     if (isExternal)
@@ -508,8 +517,8 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
                                    vkFormat->getIntendedFormatID(), actualRenderableFormatID, 1,
                                    usage, imageCreateFlags, vk::ImageAccess::ExternalPreInitialized,
                                    imageCreateInfoPNext, gl::LevelIndex(0), mLevelCount, layerCount,
-                                   robustInitEnabled, hasProtectedContent(), conversionDesc,
-                                   nullptr));
+                                   robustInitEnabled, hasProtectedContent(),
+                                   vk::TileMemory::Prohibited, conversionDesc, nullptr));
 
     VkImportAndroidHardwareBufferInfoANDROID importHardwareBufferInfo = {};
     importHardwareBufferInfo.sType  = VK_STRUCTURE_TYPE_IMPORT_ANDROID_HARDWARE_BUFFER_INFO_ANDROID;

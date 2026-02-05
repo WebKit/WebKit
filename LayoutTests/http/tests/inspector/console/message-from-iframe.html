@@ -1,10 +1,10 @@
 <script src="/inspector/resources/inspector-test.js"></script>
 <script>
     // Utilities for page code.
-    function addIFrame(iframeID, url) {
-        let iframe = document.createElement("iframe");
+    function addIFrame(url) {
+        const iframe = document.createElement("iframe");
         iframe.src = url;
-        iframe.onload = () => console.log(`iframe ${iframeID} is loaded in ${location.href}`);
+        iframe.onload = () => console.log("iframe is loaded in " + location.href);
         document.body.appendChild(iframe);
     }
 
@@ -34,25 +34,25 @@
         suite.addTestCase({
             name: "MessageFromIFrame.SameOriginIFrame",
             description: "console message comming from same origin iframe",
-            test: (resolve) => runMessageTest(resolve, 4, `addIFrame(1, "resources/console-messages.html")`),
+            test: (resolve) => runMessageTest(resolve, 4, `addIFrame("resources/console-messages.html")`),
         });
 
         suite.addTestCase({
             name: "MessageFromIFrame.CrossOriginIFrame",
             description: "console message comming from cross origin iframe",
-            test: (resolve) => runMessageTest(resolve, 4, `addIFrame(2, "http://localhost:8000/inspector/console/resources/console-messages.html")`),
+            test: (resolve) => runMessageTest(resolve, 4, `addIFrame("http://localhost:8000/inspector/console/resources/console-messages.html")`),
         });
 
         suite.addTestCase({
             name: "MessageFromIFrame.GrandChildSameOriginIFrameInSameOrigin",
             description: "console message comming from same origin grand-child iframe in same origin iframe",
-            test: (resolve) => runMessageTest(resolve, 5, `addIFrame(3, "resources/embedded-same-origin.html")`),
+            test: (resolve) => runMessageTest(resolve, 5, `addIFrame("resources/embedded-same-origin.html")`),
         });
 
         suite.addTestCase({
             name: "MessageFromIFrame.GrandChildSameOriginIFrameInCrossOrigin",
             description: "console message comming from same origin grand-child iframe in cross origin iframe",
-            test: (resolve) => runMessageTest(resolve, 5, `addIFrame(4, "http://localhost:8000/inspector/console/resources/embedded-cross-origin.html")`),
+            test: (resolve) => runMessageTest(resolve, 5, `addIFrame("http://localhost:8000/inspector/console/resources/embedded-cross-origin.html")`),
         });
 
         suite.runTestCasesAndFinish();

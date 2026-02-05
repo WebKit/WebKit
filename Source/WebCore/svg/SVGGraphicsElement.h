@@ -72,7 +72,6 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGGraphicsElement, SVGElement, SVGTests>;
 
     const SVGTransformList& transform() const { return m_transform->currentValue(); }
-    Ref<const SVGTransformList> protectedTransform() const;
     SVGAnimatedTransformList& transformAnimated() { return m_transform; }
 
 protected:

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmMemoryHandler.h"
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -288,4 +288,4 @@ NO_RETURN_DUE_TO_CRASH void MemoryHandler::write(StringView)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

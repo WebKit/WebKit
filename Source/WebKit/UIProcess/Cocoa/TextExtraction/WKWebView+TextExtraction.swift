@@ -23,13 +23,8 @@
 
 #if HAVE_UIINTELLIGENCESUPPORT_FRAMEWORK
 
-#if compiler(>=6.0)
 internal import WebKit_Internal
 internal import WebKit_Private
-#else
-@_implementationOnly import WebKit_Internal
-@_implementationOnly import WebKit_Private
-#endif
 
 @_spiOnly import UIIntelligenceSupport
 

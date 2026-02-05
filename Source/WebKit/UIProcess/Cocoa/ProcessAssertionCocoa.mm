@@ -432,8 +432,8 @@ void ProcessAssertion::init(const String& environmentIdentifier)
     else
         target = [RBSTarget targetWithPid:m_pid environmentIdentifier:environmentIdentifier.createNSString().get()];
 
-    RBSDomainAttribute *domainAttribute = [RBSDomainAttribute attributeWithDomain:runningBoardDomainForAssertionType(m_assertionType).createNSString().get() name:runningBoardAssertionName.createNSString().get()];
-    m_rbsAssertion = adoptNS([[RBSAssertion alloc] initWithExplanation:m_reason.createNSString().get() target:target attributes:@[domainAttribute]]);
+    RetainPtr domainAttribute = [RBSDomainAttribute attributeWithDomain:runningBoardDomainForAssertionType(m_assertionType).createNSString().get() name:runningBoardAssertionName.createNSString().get()];
+    m_rbsAssertion = adoptNS([[RBSAssertion alloc] initWithExplanation:m_reason.createNSString().get() target:target attributes:@[domainAttribute.get()]]);
 
     m_delegate = adoptNS([[WKRBSAssertionDelegate alloc] init]);
     [m_rbsAssertion addObserver:m_delegate.get()];
@@ -467,7 +467,7 @@ double ProcessAssertion::remainingRunTimeInSeconds(ProcessID pid)
 void ProcessAssertion::acquireAsync(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(isMainRunLoop());
-    assertionsWorkQueue().dispatch([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
+    protect(assertionsWorkQueue())->dispatch([protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
         protectedThis->acquireSync();
         RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), completionHandler = WTF::move(completionHandler)]() mutable {
             if (completionHandler)

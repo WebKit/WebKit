@@ -28,10 +28,8 @@
 
 #if OS(WINDOWS)
 
-#include "ContainerNodeInlines.h"
 #include "Element.h"
 #include "KeyboardEvent.h"
-#include "RenderMenuList.h"
 
 namespace WebCore {
 
@@ -46,8 +44,7 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
     // Save the selection so it can be compared to the new selection when dispatching change events during setSelectedIndex,
     // which gets called from RenderMenuList::valueChanged, which gets called after the user makes a selection from the menu.
     saveLastSelection();
-    if (auto* menuList = downcast<RenderMenuList>(renderer()))
-        menuList->showPopup();
+    showPopup();
 
     int index = selectedIndex();
     ASSERT(index >= 0);

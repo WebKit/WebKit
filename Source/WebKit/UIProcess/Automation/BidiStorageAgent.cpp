@@ -161,7 +161,7 @@ Inspector::Protocol::ErrorStringOr<Ref<API::HTTPCookieStore>> BidiStorageAgent::
         auto page = session->webPageProxyForHandle("default"_s);
         if (!page)
             SYNC_FAIL_WITH_PREDEFINED_ERROR(InternalError);
-        return { page->protectedWebsiteDataStore()->cookieStore() };
+        return { protect(page->websiteDataStore())->cookieStore() };
     }
 
     auto type = partitionDescriptor->getString("type"_s);
@@ -174,7 +174,7 @@ Inspector::Protocol::ErrorStringOr<Ref<API::HTTPCookieStore>> BidiStorageAgent::
         if (!page)
             SYNC_FAIL_WITH_PREDEFINED_ERROR(InternalError);
 
-        return { page->protectedWebsiteDataStore()->cookieStore() };
+        return { protect(page->websiteDataStore())->cookieStore() };
     }
 
     SYNC_FAIL_WITH_PREDEFINED_ERROR(InternalError);

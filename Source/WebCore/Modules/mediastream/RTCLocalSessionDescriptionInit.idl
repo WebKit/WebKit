@@ -22,9 +22,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/webrtc-pc/#dom-rtclocalsessiondescriptioninit
 [
     Conditional=WEB_RTC,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCLocalSessionDescriptionInit {
     RTCSdpType type;
     DOMString sdp = "";

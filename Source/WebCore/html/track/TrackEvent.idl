@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
- // https://html.spec.whatwg.org/multipage/media.html#the-trackevent-interface
-
+// https://html.spec.whatwg.org/multipage/media.html#trackevent
 [
     Conditional=VIDEO,
     Exposed=Window
@@ -34,8 +33,7 @@
     readonly attribute (VideoTrack or AudioTrack or TextTrack)? track;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary TrackEventInit : EventInit {
+// https://html.spec.whatwg.org/multipage/media.html#trackeventinit
+dictionary TrackEventInit : EventInit {
     (VideoTrack or AudioTrack or TextTrack)? track = null;
 };

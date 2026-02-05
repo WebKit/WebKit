@@ -7,15 +7,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 354x19
+        RenderText {#text} at (0,0) size 354x20
           text run at (0,0) width 354: "In the block below, the second 'bar ' should be selected."
       RenderBlock {DIV} at (0,36) size 52x42 [border: (1px solid #000000)]
-        RenderText {#text} at (1,1) size 46x19
+        RenderText {#text} at (1,1) size 46x20
           text run at (1,1) width 46: "foo bar"
-        RenderInline {SPAN} at (1,21) size 21x19
-          RenderText {#text} at (1,21) size 21x19
+        RenderInline {SPAN} at (1,21) size 21x20
+          RenderText {#text} at (1,21) size 21x20
             text run at (1,21) width 21: "bar"
-        RenderText {#text} at (21,21) size 27x19
+        RenderText {#text} at (21,21) size 27x20
           text run at (21,21) width 27: " baz"
 selection start: position 0 of child 0 {#text} of child 1 {SPAN} of child 2 {DIV} of body
 selection end:   position 1 of child 2 {#text} of child 2 {DIV} of body

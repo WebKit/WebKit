@@ -155,20 +155,20 @@ void RejectedPromiseTracker::reportUnhandledRejections(Vector<UnhandledPromise>&
     JSC::JSLockHolder lock(vm);
 
     for (auto& unhandledPromise : unhandledPromises) {
-        auto& domPromise = unhandledPromise.promise();
-        if (domPromise.isSuspended())
+        Ref domPromise = unhandledPromise.promise();
+        if (domPromise->isSuspended())
             continue;
-        auto& lexicalGlobalObject = *domPromise.globalObject();
-        auto& promise = *domPromise.promise();
+        auto& lexicalGlobalObject = *domPromise->globalObject();
+        auto& promise = *domPromise->promise();
 
         if (promise.isHandled())
             continue;
 
-        PromiseRejectionEvent::Init initializer;
-        initializer.cancelable = true;
-        initializer.promise = domPromise;
-        initializer.reason = promise.result();
-
+        auto initializer = PromiseRejectionEvent::Init {
+            { false, true, false },
+            WTF::move(domPromise),
+            promise.result(),
+        };
         Ref event = PromiseRejectionEvent::create(eventNames().unhandledrejectionEvent, WTF::move(initializer));
         RefPtr target = m_context->errorEventTarget();
         target->dispatchEvent(event);
@@ -193,10 +193,11 @@ void RejectedPromiseTracker::reportRejectionHandled(Ref<DOMPromise>&& rejectedPr
 
     auto& promise = *rejectedPromise->promise();
 
-    PromiseRejectionEvent::Init initializer;
-    initializer.promise = rejectedPromise.ptr();
-    initializer.reason = promise.result();
-
+    auto initializer = PromiseRejectionEvent::Init {
+        { false, false, false },
+        WTF::move(rejectedPromise),
+        promise.result(),
+    };
     Ref event = PromiseRejectionEvent::create(eventNames().rejectionhandledEvent, WTF::move(initializer));
     RefPtr target = m_context->errorEventTarget();
     target->dispatchEvent(event);

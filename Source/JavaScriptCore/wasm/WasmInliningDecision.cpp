@@ -132,9 +132,6 @@ void InliningNode::inlineNode(InliningDecision& decision)
     m_callSites.grow(profile->size());
 
     for (unsigned index = 0; index < m_callSites.size(); ++index) {
-        if (!profile->isCalled(index))
-            continue;
-
         if (profile->isMegamorphic(index))
             continue;
 

@@ -169,8 +169,6 @@ WK_APPLEJPEGXL_LDFLAGS_YES = -weak_framework AppleJPEGXL;
 
 JSC_SEC_LD_FLAGS[sdk=iphoneos*] = -weak_framework BrowserEngineCore;
 JSC_SEC_LD_FLAGS[sdk=macosx*] = -weak_framework BrowserEngineCore;
-JSC_SEC_LD_FLAGS[sdk=macosx13*] = ;
-JSC_SEC_LD_FLAGS[sdk=macosx14*] = ;
 JSC_SEC_LD_FLAGS[sdk=appletv*] = ;
 JSC_SEC_LD_FLAGS[sdk=watch*] = ;
 JSC_SEC_LD_FLAGS[sdk=xr*] = ;
@@ -230,7 +228,6 @@ WK_HAVE_URL_FORMATTING_macosx = $(WK_HAVE_URL_FORMATTING$(WK_MACOS_1014));
 WK_HAVE_URL_FORMATTING_MACOS_SINCE_1014 = YES;
 
 SWIFT_VERSION = 6.0;
-SWIFT_VERSION[sdk=macosx14*] = 5.0;
 
 SWIFT_INSTALL_OBJC_HEADER = NO;
 BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
@@ -267,9 +264,7 @@ WK_VERIFY_WEBCORE_MODULE[sdk=xr*26.3*] = ;
 
 ENABLE_MODULE_VERIFIER = $(WK_VERIFY_WEBCORE_MODULE);
 MODULE_VERIFIER_SUPPORTED_LANGUAGES = objective-c++;
-MODULE_VERIFIER_SUPPORTED_LANGUAGES[sdk=macosx14*] = ;
 MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = c++23;
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS[sdk=macosx14*] = ;
 MODULE_VERIFIER_KIND = builtin;
 
 OTHER_SWIFT_FLAGS = $(inherited) -Xcc -std=c++2b -enable-upcoming-feature InternalImportsByDefault -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature ExistentialAny -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault;

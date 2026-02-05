@@ -24,12 +24,12 @@
 #include "include/codec/SkAndroidCodec.h"
 #include "include/codec/SkCodec.h"
 #include "include/codec/SkJpegDecoder.h"
-#include "include/codec/SkPngDecoder.h"
 #include "include/core/SkBBHFactory.h"
 #include "include/core/SkCanvas.h"
 #include "include/core/SkData.h"
 #include "include/core/SkGraphics.h"
 #include "include/core/SkPictureRecorder.h"
+#include "include/core/SkSerialProcs.h"
 #include "include/core/SkString.h"
 #include "include/core/SkSurface.h"
 #include "include/encode/SkPngEncoder.h"
@@ -46,6 +46,7 @@
 #include "src/utils/SkShaderUtils.h"
 #include "tools/AutoreleasePool.h"
 #include "tools/CrashHandler.h"
+#include "tools/DeserialProcsUtils.h"
 #include "tools/MSKPPlayer.h"
 #include "tools/ProcStats.h"
 #include "tools/Stats.h"
@@ -78,6 +79,12 @@
 #include "tools/graphite/ContextFactory.h"
 #include "tools/graphite/GraphiteTestContext.h"
 #include "tools/graphite/GraphiteToolUtils.h"
+#endif
+
+#if defined(SK_CODEC_DECODES_PNG_WITH_RUST)
+#include "include/codec/SkPngRustDecoder.h"
+#else
+#include "include/codec/SkPngDecoder.h"
 #endif
 
 #include <cinttypes>
@@ -854,8 +861,8 @@ public:
             SkDebugf("Could not read %s.\n", path);
             return nullptr;
         }
-
-        return SkPicture::MakeFromStream(stream.get());
+        SkDeserialProcs procs = ToolUtils::get_default_skp_deserial_procs();
+        return SkPicture::MakeFromStream(stream.get(), &procs);
     }
 
     static std::unique_ptr<MSKPPlayer> ReadMSKP(const char* path) {
@@ -1372,7 +1379,11 @@ int main(int argc, char** argv) {
     }
 
     // Our benchmarks only currently decode .png or .jpg files
+#if defined(SK_CODEC_DECODES_PNG_WITH_RUST)
+    SkCodecs::Register(SkPngRustDecoder::Decoder());
+#else
     SkCodecs::Register(SkPngDecoder::Decoder());
+#endif
     SkCodecs::Register(SkJpegDecoder::Decoder());
 
     SkTaskGroup::Enabler enabled(FLAGS_threads);

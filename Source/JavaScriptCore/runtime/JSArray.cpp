@@ -1980,6 +1980,7 @@ bool JSArray::isIteratorProtocolFastAndNonObservable()
     if (!globalObject->isArrayPrototypeIteratorProtocolFastAndNonObservable())
         return false;
 
+    VM& vm = globalObject->vm();
     Structure* structure = this->structure();
     // This is the fast case. Many arrays will be an original array.
     if (globalObject->isOriginalArrayStructure(structure))
@@ -1991,7 +1992,10 @@ bool JSArray::isIteratorProtocolFastAndNonObservable()
     if (getPrototypeDirect() != globalObject->arrayPrototype())
         return false;
 
-    return !structure->hasSpecialProperties();
+    if (getDirectOffset(vm, vm.propertyNames->iteratorSymbol) != invalidOffset)
+        return false;
+
+    return true;
 }
 
 bool JSArray::isToPrimitiveFastAndNonObservable()
@@ -2382,7 +2386,7 @@ static uint64_t fastFlatIntoBuffer(JSGlobalObject* globalObject, T* resultBuffer
 JSArray* JSArray::fastFlat(JSGlobalObject* globalObject, uint64_t depth, uint64_t length)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     IndexingType sourceType = this->indexingType();
 

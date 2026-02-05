@@ -26,6 +26,9 @@
 #pragma once
 
 #include <WebCore/ISO18013DocumentRequest.h>
+#if ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
+#include <WebCore/ISO18013DocumentRequestInfo.h>
+#endif // ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
 #include <WebCore/ISO18013DocumentRequestSet.h>
 #include <WebCore/ISO18013ElementInfo.h>
 #include <WebCore/ISO18013PresentmentRequest.h>

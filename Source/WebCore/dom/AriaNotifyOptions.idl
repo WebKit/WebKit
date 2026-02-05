@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/Accessibility/ConfirmationOfAction/explainer.md
+
 enum AriaNotificationPriority {
     "normal",
     "high"
@@ -34,9 +36,7 @@ enum AriaNotificationInterrupt {
     "pending"
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary AriaNotifyOptions {
+dictionary AriaNotifyOptions {
     AriaNotificationPriority priority;
     AriaNotificationInterrupt interrupt;
 };

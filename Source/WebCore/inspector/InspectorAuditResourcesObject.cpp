@@ -71,7 +71,7 @@ ExceptionOr<Vector<InspectorAuditResourcesObject::Resource>> InspectorAuditResou
 
     Vector<Resource> resources;
 
-    auto* frame = document.frame();
+    RefPtr frame = document.frame();
     if (!frame)
         return Exception { ExceptionCode::NotAllowedError, "Cannot be called with a detached document"_s };
 
@@ -105,7 +105,7 @@ ExceptionOr<InspectorAuditResourcesObject::ResourceContent> InspectorAuditResour
 {
     ERROR_IF_NO_ACTIVE_AUDIT();
 
-    auto* frame = document.frame();
+    RefPtr frame = document.frame();
     if (!frame)
         return Exception { ExceptionCode::NotAllowedError, "Cannot be called with a detached document"_s };
 

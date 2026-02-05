@@ -27,7 +27,6 @@
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUStencilFaceState {
     GPUCompareFunction compare = "always";
     GPUStencilOperation failOp = "keep";

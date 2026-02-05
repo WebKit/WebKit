@@ -93,10 +93,10 @@ struct ValidateASTOptions
     //  - Case expressions have the same type as the switch selector
     bool validateExpressionTypes = true;
     // If SeparateDeclarations has been run, check for the absence of multi declarations as well.
-    bool validateMultiDeclarations = false;
+    bool validateMultiDeclarations = true;
     // If PruneNoOps has been run, check that no statements are ever added after branches in the
     // same block.  Those statements would be dead code.
-    bool validateNoStatementsAfterBranch = false;
+    bool validateNoStatementsAfterBranch = true;
     // Check that swizzle is not applied to swizzle.  Swizzles of swizzles are folded in
     // TIntermSwizzle::fold.
     bool validateNoSwizzleOfSwizzle = true;

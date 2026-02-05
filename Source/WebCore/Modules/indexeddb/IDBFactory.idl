@@ -23,6 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/IndexedDB/#idbfactory
 [
     EnabledBySetting=IndexedDBAPIEnabled,
     SkipVTableValidation,
@@ -36,9 +37,9 @@
     [CallWith=CurrentGlobalObject] short cmp(any first, any second);
 };
 
+// https://w3c.github.io/IndexedDB/#dictdef-idbdatabaseinfo
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary IDBDatabaseInfo {
     DOMString name;
     unsigned long long version;

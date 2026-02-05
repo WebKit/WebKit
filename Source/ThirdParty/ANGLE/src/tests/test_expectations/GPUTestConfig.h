@@ -97,6 +97,7 @@ struct GPUTestConfig
         kConditionASan,
         kConditionTSan,
         kConditionUBSan,
+        kConditionIR,
 
         kNumberOfConditions,
     };

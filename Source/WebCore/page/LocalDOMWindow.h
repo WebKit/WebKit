@@ -274,6 +274,7 @@ public:
     // Events
     // EventTarget API
     WEBCORE_EXPORT bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
+    using EventTarget::addEventListener;
     WEBCORE_EXPORT bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) final;
     void removeAllEventListeners() final;
 
@@ -410,6 +411,7 @@ private:
     EventTimingInteractionID& ensureUserInteractionValue();
     EventTimingInteractionID generateInteractionID();
     EventTimingInteractionID generateInteractionIDWithoutIncreasingInteractionCount();
+    void queueEventTimingCandidateForDispatch(PerformanceEventTimingCandidate&);
 
     bool isSameSecurityOriginAsMainFrame() const;
 

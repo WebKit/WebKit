@@ -46,7 +46,6 @@ private:
         WebCore::PageIdentifier webPageID;
         Ref<WebProcessProxy> process;
 
-        Ref<WebProcessProxy> protectedProcess();
     };
     std::optional<Data> m_data;
 };

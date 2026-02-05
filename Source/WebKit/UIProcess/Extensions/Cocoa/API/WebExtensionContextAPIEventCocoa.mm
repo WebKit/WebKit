@@ -55,7 +55,7 @@ void WebExtensionContext::addListener(WebCore::FrameIdentifier frameIdentifier, 
 
     RELEASE_LOG_DEBUG(Extensions, "Registered event listener for type %{public}hhu in %{public}@ world", enumToUnderlyingType(listenerType), toDebugString(contentWorldType).createNSString().get());
 
-    if (!protectedExtension()->backgroundContentIsPersistent() && isBackgroundPage(frameIdentifier))
+    if (!protect(extension())->backgroundContentIsPersistent() && isBackgroundPage(frameIdentifier))
         m_backgroundContentEventListeners.add(listenerType);
 
     auto result = m_eventListenerFrames.add({ listenerType, contentWorldType }, WeakFrameCountedSet { });
@@ -95,7 +95,7 @@ void WebExtensionContext::removeListener(WebCore::FrameIdentifier frameIdentifie
 
     RELEASE_LOG_DEBUG(Extensions, "Unregistered %{public}llu event listener(s) for type %{public}hhu in %{public}@ world", removedCount, enumToUnderlyingType(listenerType), toDebugString(contentWorldType).createNSString().get());
 
-    if (!protectedExtension()->backgroundContentIsPersistent() && isBackgroundPage(frameIdentifier)) {
+    if (!protect(extension())->backgroundContentIsPersistent() && isBackgroundPage(frameIdentifier)) {
         for (size_t i = 0; i < removedCount; ++i)
             m_backgroundContentEventListeners.remove(listenerType);
     }

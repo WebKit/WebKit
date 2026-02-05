@@ -1,5 +1,5 @@
 
-FAIL Appending and removing children to maction assert_approx_equals: block position (child 0) expected -43 +/- 1 but got -63
+FAIL Appending and removing children to maction assert_approx_equals: block position (child 0) expected -43.5 +/- 1 but got -63.5
 PASS Appending and removing children to menclose
 PASS Appending and removing children to merror
 PASS Appending and removing children to mfrac
@@ -23,7 +23,7 @@ PASS Appending and removing children to mtable
 PASS Appending and removing children to mtext
 PASS Appending and removing children to munder
 PASS Appending and removing children to munderover
-FAIL Appending and removing children to semantics assert_approx_equals: block position (child 0) expected -123 +/- 1 but got -143
+FAIL Appending and removing children to semantics assert_approx_equals: block position (child 0) expected -123.5 +/- 1 but got -143.5
 maction:
 semantics:
 

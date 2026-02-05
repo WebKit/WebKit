@@ -57,11 +57,9 @@ public:
     virtual bool hasValidAttributeName() const;
     virtual void animationAttributeChanged() = 0;
 
-    SMILTimeContainer* timeContainer() { return m_timeContainer.get(); }
-    RefPtr<SMILTimeContainer> protectedTimeContainer() const;
+    SMILTimeContainer* timeContainer() { return m_timeContainer; }
 
     SVGElement* targetElement() const { return m_targetElement; }
-    RefPtr<SVGElement> protectedTargetElement() const { return m_targetElement; }
     const QualifiedName& attributeName() const { return m_attributeName; }
 
     void beginByLinkActivation();

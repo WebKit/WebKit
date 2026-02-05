@@ -280,7 +280,7 @@ void CheckboxInputType::startSwitchPointerTracking(LayoutPoint absoluteLocation)
     ASSERT(element());
     Ref element = *this->element();
     ASSERT(element->renderer());
-    if (RefPtr frame = element->protectedDocument()->frame()) {
+    if (RefPtr frame = protect(element->document())->frame()) {
         frame->eventHandler().setCapturingMouseEventsElement(element.ptr());
         m_isSwitchVisuallyOn = element->checked();
         m_switchPointerTrackingLogicalLeftPositionStart = switchPointerTrackingLogicalLeftPosition(element.get(), absoluteLocation);
@@ -293,7 +293,7 @@ void CheckboxInputType::stopSwitchPointerTracking()
     if (!isSwitchPointerTracking())
         return;
 
-    if (RefPtr frame = protectedElement()->protectedDocument()->frame())
+    if (RefPtr frame = protect(protectedElement()->document())->frame())
         frame->eventHandler().setCapturingMouseEventsElement(nullptr);
     m_hasSwitchVisuallyOnChanged = false;
     m_switchPointerTrackingLogicalLeftPositionStart = { };
@@ -342,7 +342,7 @@ void CheckboxInputType::willUpdateCheckedness(bool, WasSetByJavaScript wasChecke
 // ask a more knowledgable system for a refresh callback (perhaps passing a desired FPS).
 static Seconds switchAnimationUpdateInterval(HTMLInputElement& element)
 {
-    if (RefPtr page = element.protectedDocument()->page())
+    if (RefPtr page = protect(element.document())->page())
         return page->preferredRenderingUpdateInterval();
     return 0_s;
 }

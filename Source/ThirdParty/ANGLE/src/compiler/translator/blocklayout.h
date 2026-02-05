@@ -119,6 +119,7 @@ class BlockLayoutEncoder
     virtual ~BlockLayoutEncoder() {}
 
     virtual BlockMemberInfo encodeType(GLenum type,
+                                       size_t bytesPerComponent,
                                        const std::vector<unsigned int> &arraySizes,
                                        bool isRowMajorMatrix);
     // Advance the offset based on struct size and array dimensions.  Size can be calculated with
@@ -138,6 +139,8 @@ class BlockLayoutEncoder
     static constexpr size_t kBytesPerComponent           = 4u;
     static constexpr unsigned int kComponentsPerRegister = 4u;
 
+    static constexpr size_t kBytesPer16BitComponent = 2u;
+
     static size_t GetBlockRegister(const BlockMemberInfo &info);
     static size_t GetBlockRegisterElement(const BlockMemberInfo &info);
 
@@ -145,11 +148,13 @@ class BlockLayoutEncoder
     void align(size_t baseAlignment);
 
     virtual void getBlockLayoutInfo(GLenum type,
+                                    size_t bytesPerComponent,
                                     const std::vector<unsigned int> &arraySizes,
                                     bool isRowMajorMatrix,
                                     int *arrayStrideOut,
                                     int *matrixStrideOut) = 0;
     virtual void advanceOffset(GLenum type,
+                               size_t bytesPerComponent,
                                const std::vector<unsigned int> &arraySizes,
                                bool isRowMajorMatrix,
                                int arrayStride,
@@ -169,17 +174,64 @@ class StubBlockEncoder : public BlockLayoutEncoder
 
   protected:
     void getBlockLayoutInfo(GLenum type,
+                            size_t bytesPerComponent,
                             const std::vector<unsigned int> &arraySizes,
                             bool isRowMajorMatrix,
                             int *arrayStrideOut,
                             int *matrixStrideOut) override;
 
     void advanceOffset(GLenum type,
+                       size_t bytesPerComponent,
                        const std::vector<unsigned int> &arraySizes,
                        bool isRowMajorMatrix,
                        int arrayStride,
                        int matrixStride) override
     {}
+};
+
+// The unit of mCurrentOffset in PackedSPIRVBlockEncoder is byte, instead of 4-byte as used by
+// Std140BlockEncoder. The data type that the PackedSPIRVBlockEncoder processes can be half float,
+// which is 2 bytes, and the VK_KHR_relaxed_block_layout allows 2 byte alignment, therefore changing
+// mCurrentOffset unit from 4-byte to byte to allow more fine-grained offsets.
+class PackedSPIRVBlockEncoder : public BlockLayoutEncoder
+{
+  public:
+    PackedSPIRVBlockEncoder();
+
+    BlockMemberInfo encodeType(GLenum type,
+                               size_t bytesPerComponent,
+                               const std::vector<unsigned int> &arraySizes,
+                               bool isRowMajorMatrix) override;
+
+    BlockMemberInfo encodeArrayOfPreEncodedStructs(
+        size_t size,
+        const std::vector<unsigned int> &arraySizes) override;
+
+    size_t getCurrentOffset() const override;
+
+    void enterAggregateType(const ShaderVariable &structVar) override;
+    void exitAggregateType(const ShaderVariable &structVar) override;
+
+  protected:
+    void getBlockLayoutInfo(GLenum type,
+                            size_t bytesPerComponent,
+                            const std::vector<unsigned int> &arraySizes,
+                            bool isRowMajorMatrix,
+                            int *arrayStrideOut,
+                            int *matrixStrideOut) override;
+    void advanceOffset(GLenum type,
+                       size_t bytesPerComponent,
+                       const std::vector<unsigned int> &arraySizes,
+                       bool isRowMajorMatrix,
+                       int arrayStride,
+                       int matrixStride) override;
+
+    virtual size_t getBaseAlignment(const ShaderVariable &variable) const;
+    virtual size_t getTypeBaseAlignment(GLenum type, bool isRowMajorMatrix) const;
+
+  private:
+    bool isVectorStraddle(GLenum type);
+    void adjustAlignmentForStraddleVector();
 };
 
 // Block layout according to the std140 block layout
@@ -195,11 +247,13 @@ class Std140BlockEncoder : public BlockLayoutEncoder
 
   protected:
     void getBlockLayoutInfo(GLenum type,
+                            size_t bytesPerComponent,
                             const std::vector<unsigned int> &arraySizes,
                             bool isRowMajorMatrix,
                             int *arrayStrideOut,
                             int *matrixStrideOut) override;
     void advanceOffset(GLenum type,
+                       size_t bytesPerComponent,
                        const std::vector<unsigned int> &arraySizes,
                        bool isRowMajorMatrix,
                        int arrayStride,

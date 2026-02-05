@@ -242,6 +242,6 @@ Variant<PrepareResult, Error> prepare(ShaderModule&, const String& entryPointNam
 
 Variant<String, Error> generate(ShaderModule&, PrepareResult&, HashMap<String, ConstantValue>&, DeviceState&&);
 
-std::optional<ConstantValue> evaluate(const AST::Expression&, const HashMap<String, ConstantValue>&);
+std::optional<ConstantValue> evaluate(const ShaderModule&, const AST::Expression&, const HashMap<String, ConstantValue>&);
 
 } // namespace WGSL

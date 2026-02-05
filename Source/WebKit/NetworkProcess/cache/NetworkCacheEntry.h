@@ -59,7 +59,6 @@ public:
     const Vector<std::pair<String, String>>& varyingRequestHeaders() const { return m_varyingRequestHeaders; }
 
     WebCore::FragmentedSharedBuffer* buffer() const;
-    RefPtr<WebCore::FragmentedSharedBuffer> protectedBuffer() const;
     const std::optional<WebCore::ResourceRequest>& redirectRequest() const { return m_redirectRequest; }
 
 #if ENABLE(SHAREABLE_RESOURCE)

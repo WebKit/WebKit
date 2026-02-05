@@ -33,8 +33,8 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AnimationPlaybackEvent);
 
-AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, const AnimationPlaybackEventInit& initializer, IsTrusted isTrusted)
-    : AnimationEventBase(EventInterfaceType::AnimationPlaybackEvent, type, initializer, isTrusted)
+AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+    : AnimationEventBase(EventInterfaceType::AnimationPlaybackEvent, type, WTF::move(initializer), isTrusted)
     , m_timelineTime(initializer.timelineTime)
     , m_currentTime(initializer.currentTime)
 {

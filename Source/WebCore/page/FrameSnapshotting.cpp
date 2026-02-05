@@ -195,7 +195,7 @@ Color estimatedBackgroundColorForRange(const SimpleRange& range, const LocalFram
     auto estimatedBackgroundColor = frame.view() ? frame.view()->documentBackgroundColor() : Color::transparentBlack;
 
     RenderElement* renderer = nullptr;
-    auto commonAncestor = commonInclusiveAncestor<ComposedTree>(range);
+    RefPtr commonAncestor = commonInclusiveAncestor<ComposedTree>(range);
     while (commonAncestor) {
         if (auto* renderElement = dynamicDowncast<RenderElement>(commonAncestor->renderer())) {
             renderer = renderElement;

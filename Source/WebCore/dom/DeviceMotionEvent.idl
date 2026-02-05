@@ -23,11 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// https://w3c.github.io/deviceorientation/#devicemotionevent
 [
     Conditional=DEVICE_ORIENTATION,
     Exposed=Window,
     SecureContext
 ] interface DeviceMotionEvent : Event {
+    // FIXME: Add support for `DeviceMotionEvent` constructor.
+    // constructor(DOMString type, optional DeviceMotionEventInit eventInitDict = {});
+
     readonly attribute Acceleration? acceleration;
     readonly attribute Acceleration? accelerationIncludingGravity;
     readonly attribute RotationRate? rotationRate;
@@ -44,24 +48,26 @@
                                optional unrestricted double? interval = null);
 };
 
+// https://w3c.github.io/deviceorientation/#dictdef-devicemotioneventaccelerationinit
+// FIXME: Rename to DeviceMotionEventAccelerationInit
 [
     Conditional=DEVICE_ORIENTATION,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary Acceleration {
-    double? x;
-    double? y;
-    double? z;
+    double? x = null;
+    double? y = null;
+    double? z = null;
 };
 
+// https://w3c.github.io/deviceorientation/#dictdef-devicemotioneventrotationrateinit
+// FIXME: Rename to DeviceMotionEventRotationRateInit
 [
     Conditional=DEVICE_ORIENTATION,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RotationRate {
-    double? alpha;
-    double? beta;
-    double? gamma;
+    double? alpha = null;
+    double? beta = null;
+    double? gamma = null;
 };

@@ -115,12 +115,12 @@ void AuthenticatorPresenterCoordinator::updatePresenter(WebAuthenticationStatus 
     switch (status) {
     case WebAuthenticationStatus::PinBlocked: {
         auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorAuthenticatorPermanentlyLocked userInfo:nil]);
-        m_credentialRequestHandler(nil, error.get());
+        [m_presenter updateInterfaceForUserVisibleError:error.get()];
         break;
     }
     case WebAuthenticationStatus::PinAuthBlocked: {
         auto error = adoptNS([[NSError alloc] initWithDomain:ASCAuthorizationErrorDomain code:ASCAuthorizationErrorAuthenticatorTemporarilyLocked userInfo:nil]);
-        m_credentialRequestHandler(nil, error.get());
+        [m_presenter updateInterfaceForUserVisibleError:error.get()];
         break;
     }
     case WebAuthenticationStatus::PinInvalid: {

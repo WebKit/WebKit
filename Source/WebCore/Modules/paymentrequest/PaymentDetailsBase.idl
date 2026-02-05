@@ -25,7 +25,6 @@
 
 [
     Conditional=PAYMENT_REQUEST,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary PaymentDetailsBase {
     sequence<PaymentItem> displayItems;
     sequence<PaymentShippingOption> shippingOptions;

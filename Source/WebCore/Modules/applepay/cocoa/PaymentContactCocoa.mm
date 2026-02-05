@@ -124,15 +124,11 @@ static ApplePayPaymentContact convert(unsigned version, PKContact *contact)
     RetainPtr<NSPersonNameComponents> name = contact.name;
     result.givenName = name.get().givenName;
     result.familyName = name.get().familyName;
-    if (name)
-        result.localizedName = [NSPersonNameComponentsFormatter localizedStringFromPersonNameComponents:name.get() style:NSPersonNameComponentsFormatterStyleDefault options:0];
 
     if (version >= 3) {
         RetainPtr<NSPersonNameComponents> phoneticName = name.get().phoneticRepresentation;
         result.phoneticGivenName = phoneticName.get().givenName;
         result.phoneticFamilyName = phoneticName.get().familyName;
-        if (phoneticName)
-            result.localizedPhoneticName = [NSPersonNameComponentsFormatter localizedStringFromPersonNameComponents:name.get() style:NSPersonNameComponentsFormatterStyleDefault options:NSPersonNameComponentsFormatterPhonetic];
     }
 
     RetainPtr<CNPostalAddress> postalAddress = contact.postalAddress;
@@ -147,6 +143,27 @@ static ApplePayPaymentContact convert(unsigned version, PKContact *contact)
     result.countryCode = postalAddress.get().ISOCountryCode;
 
     return result;
+}
+
+static LocalizedApplePayPaymentContact convertLocalized(unsigned version, PKContact *contact)
+{
+    String localizedName;
+    String localizedPhoneticName;
+
+    if (RetainPtr<NSPersonNameComponents> name = contact.name) {
+        localizedName = [NSPersonNameComponentsFormatter localizedStringFromPersonNameComponents:name.get() style:NSPersonNameComponentsFormatterStyleDefault options:0];
+
+        if (version >= 3) {
+            if (RetainPtr<NSPersonNameComponents> phoneticName = name.get().phoneticRepresentation)
+                localizedPhoneticName = [NSPersonNameComponentsFormatter localizedStringFromPersonNameComponents:name.get() style:NSPersonNameComponentsFormatterStyleDefault options:NSPersonNameComponentsFormatterPhonetic];
+        }
+    }
+
+    return LocalizedApplePayPaymentContact {
+        convert(version, contact),
+        WTF::move(localizedName),
+        WTF::move(localizedPhoneticName),
+    };
 }
 
 PaymentContact::PaymentContact() = default;
@@ -166,6 +183,11 @@ PaymentContact PaymentContact::fromApplePayPaymentContact(unsigned version, cons
 ApplePayPaymentContact PaymentContact::toApplePayPaymentContact(unsigned version) const
 {
     return convert(version, m_pkContact.get());
+}
+
+LocalizedApplePayPaymentContact PaymentContact::toLocalizedApplePayPaymentContact(unsigned version) const
+{
+    return convertLocalized(version, m_pkContact.get());
 }
 
 RetainPtr<PKContact> PaymentContact::pkContact() const

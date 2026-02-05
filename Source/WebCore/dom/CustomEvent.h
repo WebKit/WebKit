@@ -43,7 +43,7 @@ public:
         JSC::JSValue detail;
     };
 
-    WEBCORE_EXPORT static Ref<CustomEvent> create(const AtomString& type, const Init&, IsTrusted = IsTrusted::No);
+    WEBCORE_EXPORT static Ref<CustomEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
 
     void initCustomEvent(const AtomString& type, bool canBubble, bool cancelable, JSC::JSValue detail = JSC::JSValue::JSUndefined);
 
@@ -52,7 +52,7 @@ public:
 
 private:
     CustomEvent(IsTrusted);
-    CustomEvent(const AtomString& type, const Init& initializer, IsTrusted);
+    CustomEvent(const AtomString& type, Init&&, IsTrusted);
 
     JSValueInWrappedObject m_detail;
     JSValueInWrappedObject m_cachedDetail;

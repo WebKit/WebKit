@@ -212,7 +212,7 @@ static String normalize(const String& string)
 
 static bool containsInvalidCharacters(const String& string)
 {
-    // The invalid characters are specified at https://wicg.github.io/cookie-store/#set-a-cookie.
+    // The invalid characters are specified at https://cookiestore.spec.whatwg.org/#set-a-cookie.
     return string.contains([](char16_t character) {
         return character == 0x003B || character == 0x007F || (character <= 0x001F && character != 0x0009);
     });
@@ -300,10 +300,10 @@ void CookieStore::getShared(GetType getType, CookieStoreGetOptions&& options, Re
                 return;
             }
 
-            promise->resolve<IDLDictionary<CookieListItem>>(CookieListItem(WTF::move(cookies[0])));
+            promise->resolve<IDLDictionary<CookieListItem>>(CookieListItem::fromCookie(WTF::move(cookies[0])));
         } else {
             promise->resolve<IDLSequence<IDLDictionary<CookieListItem>>>(WTF::map(WTF::move(cookies), [](Cookie&& cookie) {
-                return CookieListItem { WTF::move(cookie) };
+                return CookieListItem::fromCookie(WTF::move(cookie));
             }));
         }
     };
@@ -539,14 +539,21 @@ void CookieStore::cookiesAdded(const String& host, const Vector<Cookie>& cookies
 
     ASSERT_UNUSED(host, host == downcast<Document>(context)->url().host().toString());
 
-    CookieChangeEventInit eventInit;
+    Vector<CookieListItem> deleted;
+    Vector<CookieListItem> changed;
     for (auto cookie : cookies) {
         if (cookie.expires && *cookie.expires <= cookie.created) {
             cookie.value = nullString();
-            eventInit.deleted.append(CookieListItem { WTF::move(cookie) });
+            deleted.append(CookieListItem::fromCookie(WTF::move(cookie)));
         } else
-            eventInit.changed.append(CookieListItem { WTF::move(cookie) });
+            changed.append(CookieListItem::fromCookie(WTF::move(cookie)));
     }
+
+    auto eventInit = CookieChangeEvent::Init {
+        { false, false, false },
+        WTF::move(changed),
+        WTF::move(deleted),
+    };
 
     queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, CookieChangeEvent::create(eventNames().changeEvent, WTF::move(eventInit), CookieChangeEvent::IsTrusted::Yes));
 }
@@ -564,7 +571,7 @@ void CookieStore::cookiesDeleted(const String& host, const Vector<Cookie>& cooki
     CookieChangeEventInit eventInit;
     eventInit.deleted = cookies.map([](auto cookie) {
         cookie.value = nullString();
-        return CookieListItem { WTF::move(cookie) };
+        return CookieListItem::fromCookie(WTF::move(cookie));
     });
 
     queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, CookieChangeEvent::create(eventNames().changeEvent, WTF::move(eventInit), CookieChangeEvent::IsTrusted::Yes));

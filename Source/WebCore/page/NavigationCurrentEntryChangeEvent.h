@@ -37,7 +37,7 @@ class NavigationCurrentEntryChangeEvent final : public Event {
 public:
     struct Init : EventInit {
         std::optional<NavigationNavigationType> navigationType;
-        RefPtr<NavigationHistoryEntry> from;
+        Ref<NavigationHistoryEntry> from;
     };
 
     static Ref<NavigationCurrentEntryChangeEvent> create(const AtomString& type, Init&&);

@@ -33,6 +33,7 @@
 #include "WebFoundTextRange.h"
 #include "WebMouseEvent.h"
 #include <WebCore/AffineTransform.h>
+#include <WebCore/EventTarget.h>
 #include <WebCore/FindOptions.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/PageIdentifier.h>
@@ -63,6 +64,7 @@ OBJC_CLASS PDFSelection;
 OBJC_CLASS WKAccessibilityPDFDocumentObject;
 
 namespace WebCore {
+class AXObjectCache;
 class Color;
 class FragmentedSharedBuffer;
 class GraphicsContext;
@@ -138,7 +140,6 @@ public:
     virtual WebCore::PluginLayerHostingStrategy layerHostingStrategy() const = 0;
     virtual PlatformLayer* platformLayer() const { return nullptr; }
     virtual WebCore::GraphicsLayer* graphicsLayer() const { return nullptr; }
-    RefPtr<WebCore::GraphicsLayer> protectedGraphicsLayer() const;
 
     virtual void setView(PluginView&);
 
@@ -250,8 +251,6 @@ public:
     WebCore::ScrollPosition scrollPositionForTesting() const { return scrollPosition(); }
     WebCore::Scrollbar* horizontalScrollbar() const override { return m_horizontalScrollbar.get(); }
     WebCore::Scrollbar* verticalScrollbar() const override { return m_verticalScrollbar.get(); }
-    RefPtr<WebCore::Scrollbar> protectedHorizontalScrollbar() const { return horizontalScrollbar(); }
-    RefPtr<WebCore::Scrollbar> protectedVerticalScrollbar() const { return verticalScrollbar(); }
     void setScrollOffset(const WebCore::ScrollOffset&) final;
 
     virtual void willAttachScrollingNode() { }
@@ -273,7 +272,6 @@ public:
 
 #if PLATFORM(MAC)
     PDFPluginAnnotation* activeAnnotation() const { return m_activeAnnotation.get(); }
-    RefPtr<PDFPluginAnnotation> protectedActiveAnnotation() const;
 #endif
 
     enum class IsInPluginCleanup : bool { No, Yes };
@@ -343,6 +341,8 @@ public:
     virtual void frameViewLayoutOrVisualViewportChanged(const WebCore::IntRect&) { }
 
     virtual bool delegatesScrollingToMainFrame() const { return false; }
+
+    virtual void effectiveAppearanceDidChange() { }
 
 protected:
     virtual double contentScaleFactor() const = 0;
@@ -469,7 +469,7 @@ protected:
 
     std::optional<WebCore::PageIdentifier> pageIdentifier() const;
 
-    static WebCore::Color pluginBackgroundColor();
+    WebCore::Color pluginBackgroundColor() const;
 
     RefPtr<PluginView> protectedView() const;
     RefPtr<WebFrame> protectedFrame() const;

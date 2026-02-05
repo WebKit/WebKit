@@ -391,8 +391,11 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
                 logEditor.value = channel.level;
                 logEditor.addEventListener(WI.SettingEditor.Event.ValueDidChange, function(event) {
                     for (let target of WI.targets) {
-                        if (target.hasDomain("Console"))
-                            target.ConsoleAgent.setLoggingChannelLevel(channel.source, this.value);
+                        // FIXME: <https://webkit.org/b/298911> Add Console support for FrameTarget.
+                        if (target instanceof WI.FrameTarget)
+                            continue;
+
+                        target.ConsoleAgent.setLoggingChannelLevel(channel.source, this.value);
                     }
                 }, logEditor);
             }

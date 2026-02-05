@@ -502,6 +502,29 @@ void WebEditorClient::capitalizeWord()
     [m_webView capitalizeWord:nil];
 }
 
+bool WebEditorClient::canApplyCaseTransformations(const String&)
+{
+    return true;
+}
+
+bool WebEditorClient::canConvertToTraditionalChinese(const String&)
+{
+    return false;
+}
+
+bool WebEditorClient::canConvertToSimplifiedChinese(const String&)
+{
+    return false;
+}
+
+void WebEditorClient::convertToTraditionalChinese()
+{
+}
+
+void WebEditorClient::convertToSimplifiedChinese()
+{
+}
+
 #endif
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)

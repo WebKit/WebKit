@@ -99,6 +99,10 @@ static ObjectValue valueFromID(id object)
         return CoreIPCURL((NSURL *)object);
     case IPC::NSType::CF:
         return CoreIPCCFType((CFTypeRef)object);
+#if HAVE(WK_SECURE_CODING_PKPAYMENTSETUPFEATURE)
+    case IPC::NSType::Set:
+        return nullptr; // Wrapped WKKeyedCoder serialization of PKPaymentSetupFeature
+#endif
     case IPC::NSType::Unknown:
         break;
     }

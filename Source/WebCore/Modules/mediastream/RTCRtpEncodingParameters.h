@@ -35,7 +35,7 @@ namespace WebCore {
 struct RTCRtpEncodingParameters : RTCRtpCodingParameters {
     unsigned long ssrc { 0 };
 
-    bool active { false};
+    bool active { true };
     std::optional<unsigned long> maxBitrate;
     std::optional<unsigned long> maxFramerate;
     std::optional<double> scaleResolutionDownBy;

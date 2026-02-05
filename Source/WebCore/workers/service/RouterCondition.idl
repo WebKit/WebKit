@@ -25,9 +25,7 @@
 
 typedef (USVString or URLPatternInit or URLPattern) URLPatternCompatible;
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary RouterCondition {
+dictionary RouterCondition {
     URLPatternCompatible urlPattern;
     ByteString requestMethod;
     FetchRequestMode requestMode;

@@ -70,13 +70,10 @@
 		314164E82D38449E006B8C0D /* pas_promote_intrinsic_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 314164E72D38449E006B8C0D /* pas_promote_intrinsic_heap.h */; };
 		4426E2801C838EE0008EB042 /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4426E27E1C838EE0008EB042 /* Logging.cpp */; };
 		4426E2811C838EE0008EB042 /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 4426E27F1C838EE0008EB042 /* Logging.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		52F47249210BA30200B730BB /* MemoryStatusSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 52F47248210BA2F500B730BB /* MemoryStatusSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C3986CA2E0D89A600C450A4 /* module.modulemap in Headers */ = {isa = PBXBuildFile; fileRef = 5CDA07D92E0D894900E6D3DD /* module.modulemap */; settings = {ATTRIBUTES = (Private, ); }; };
 		65072AE72B6195B90065065C /* TZoneHeapManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65072AE52B6195B90065065C /* TZoneHeapManager.cpp */; };
 		652E16972C4869D000C377D7 /* TZoneLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 652E16962C4869D000C377D7 /* TZoneLog.cpp */; };
 		652E16982C4869D000C377D7 /* TZoneLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 652E16952C4869D000C377D7 /* TZoneLog.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		6599C5CC1EC3F15900A2F7BB /* AvailableMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6599C5CA1EC3F15900A2F7BB /* AvailableMemory.cpp */; };
-		6599C5CD1EC3F15900A2F7BB /* AvailableMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6599C5CB1EC3F15900A2F7BB /* AvailableMemory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65FE739D2B79E09800C5CDAF /* TZoneHeapManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 65072AE62B6195B90065065C /* TZoneHeapManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7234F6B62D01112E000B645D /* pas_small_medium_bootstrap_heap_page_provider.h in Headers */ = {isa = PBXBuildFile; fileRef = 7234F6B42D01112E000B645D /* pas_small_medium_bootstrap_heap_page_provider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7234F6B72D01112E000B645D /* pas_small_medium_bootstrap_free_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 7234F6B22D01112E000B645D /* pas_small_medium_bootstrap_free_heap.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1220,14 +1217,11 @@
 		314164E72D38449E006B8C0D /* pas_promote_intrinsic_heap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_promote_intrinsic_heap.h; path = libpas/src/libpas/pas_promote_intrinsic_heap.h; sourceTree = "<group>"; };
 		4426E27E1C838EE0008EB042 /* Logging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Logging.cpp; path = bmalloc/Logging.cpp; sourceTree = "<group>"; };
 		4426E27F1C838EE0008EB042 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = bmalloc/Logging.h; sourceTree = "<group>"; };
-		52F47248210BA2F500B730BB /* MemoryStatusSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MemoryStatusSPI.h; path = bmalloc/darwin/MemoryStatusSPI.h; sourceTree = "<group>"; };
 		5CDA07D92E0D894900E6D3DD /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		65072AE52B6195B90065065C /* TZoneHeapManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TZoneHeapManager.cpp; path = bmalloc/TZoneHeapManager.cpp; sourceTree = "<group>"; };
 		65072AE62B6195B90065065C /* TZoneHeapManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TZoneHeapManager.h; path = bmalloc/TZoneHeapManager.h; sourceTree = "<group>"; };
 		652E16952C4869D000C377D7 /* TZoneLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TZoneLog.h; path = bmalloc/TZoneLog.h; sourceTree = "<group>"; };
 		652E16962C4869D000C377D7 /* TZoneLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TZoneLog.cpp; path = bmalloc/TZoneLog.cpp; sourceTree = "<group>"; };
-		6599C5CA1EC3F15900A2F7BB /* AvailableMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AvailableMemory.cpp; path = bmalloc/AvailableMemory.cpp; sourceTree = "<group>"; };
-		6599C5CB1EC3F15900A2F7BB /* AvailableMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AvailableMemory.h; path = bmalloc/AvailableMemory.h; sourceTree = "<group>"; };
 		7234F6B22D01112E000B645D /* pas_small_medium_bootstrap_free_heap.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; name = pas_small_medium_bootstrap_free_heap.h; path = libpas/src/libpas/pas_small_medium_bootstrap_free_heap.h; sourceTree = "<group>"; };
 		7234F6B32D01112E000B645D /* pas_small_medium_bootstrap_free_heap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pas_small_medium_bootstrap_free_heap.c; path = libpas/src/libpas/pas_small_medium_bootstrap_free_heap.c; sourceTree = "<group>"; };
 		7234F6B42D01112E000B645D /* pas_small_medium_bootstrap_heap_page_provider.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; name = pas_small_medium_bootstrap_heap_page_provider.h; path = libpas/src/libpas/pas_small_medium_bootstrap_heap_page_provider.h; sourceTree = "<group>"; };
@@ -1930,10 +1924,7 @@
 		14D9DB4F17F2868900EAAB79 /* stdlib */ = {
 			isa = PBXGroup;
 			children = (
-				4408F2961C9896C40012EC64 /* darwin */,
 				1421A87718EE462A00B4DD68 /* Algorithm.h */,
-				6599C5CA1EC3F15900A2F7BB /* AvailableMemory.cpp */,
-				6599C5CB1EC3F15900A2F7BB /* AvailableMemory.h */,
 				1413E468189EEDE400546D68 /* BAssert.h */,
 				AD0934321FCF405000E85EB5 /* BCompiler.h */,
 				0F5BF1721F23C5710029D91D /* BExport.h */,
@@ -1961,14 +1952,6 @@
 			name = stdlib;
 			sourceTree = "<group>";
 		};
-		4408F2961C9896C40012EC64 /* darwin */ = {
-			isa = PBXGroup;
-			children = (
-				52F47248210BA2F500B730BB /* MemoryStatusSPI.h */,
-			);
-			name = darwin;
-			sourceTree = "<group>";
-		};
 		F3D6990D2E1EFCD0006B54BD /* mar */ = {
 			isa = PBXGroup;
 			children = (
@@ -1993,7 +1976,6 @@
 				1448C30118F3754C00502839 /* bmalloc.h in Headers */,
 				14DD78C518F48D7500950702 /* Algorithm.h in Headers */,
 				304B034B2B18FBE00063B1B5 /* AllocationCounts.h in Headers */,
-				6599C5CD1EC3F15900A2F7BB /* AvailableMemory.h in Headers */,
 				14DD78C718F48D7500950702 /* BAssert.h in Headers */,
 				AD0934331FCF406D00E85EB5 /* BCompiler.h in Headers */,
 				0F5BF1731F23C5710029D91D /* BExport.h in Headers */,
@@ -2012,7 +1994,6 @@
 				0F5BF1471F22A8B10029D91D /* HeapKind.h in Headers */,
 				4426E2811C838EE0008EB042 /* Logging.h in Headers */,
 				14C8992B1CC485E70027A057 /* Map.h in Headers */,
-				52F47249210BA30200B730BB /* MemoryStatusSPI.h in Headers */,
 				5C3986CA2E0D89A600C450A4 /* module.modulemap in Headers */,
 				143CB81D19022BC900B16A45 /* Mutex.h in Headers */,
 				AD14AD29202529C400890E3B /* ProcessCheck.h in Headers */,
@@ -2580,7 +2561,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6599C5CC1EC3F15900A2F7BB /* AvailableMemory.cpp in Sources */,
 				0F5167741FAD685C008236A8 /* bmalloc.cpp in Sources */,
 				07FB5E3D2EA4B31B00603B46 /* bmalloc.swift in Sources */,
 				0F74B93F1F89713E00B935D3 /* CryptoRandom.cpp in Sources */,

@@ -23,12 +23,12 @@ const tests = [
   [
     bce5, ce5,
     [9, 0, 0, 0, "9y  from 5 BCE to 5 CE (no year 0)"],
-    [0, 108, 0, 0, 0, "108mo  from 5 BCE to 5 CE (no year 0)"],
+    [0, 108, 0, 0, "108mo  from 5 BCE to 5 CE (no year 0)"],
   ],
   [
     ce5, bce5,
     [-9, 0, 0, 0, "-9y backwards  from 5 BCE to 5 CE (no year 0)"],
-    [0, -108, 0, 0, 0, "-108mo backwards  from 5 BCE to 5 CE (no year 0)"],
+    [0, -108, 0, 0, "-108mo backwards  from 5 BCE to 5 CE (no year 0)"],
   ],
   // CE-BCE boundary
   [

@@ -29,7 +29,7 @@
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
 ] interface ExtendableEvent : Event {
-    constructor([AtomString] DOMString type, optional ExtendableEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional ExtendableEventInit eventInitDict = {});
 
     undefined waitUntil(Promise<any> f);
 };

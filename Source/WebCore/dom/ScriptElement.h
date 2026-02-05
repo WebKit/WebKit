@@ -49,7 +49,6 @@ public:
 
     Element& element() { return m_element; }
     const Element& element() const { return m_element; }
-    Ref<Element> protectedElement() const { return m_element; }
 
     bool prepareScript(const TextPosition& scriptStartPosition = TextPosition());
 
@@ -79,7 +78,6 @@ public:
     bool willExecuteWhenDocumentFinishedParsing() const { return m_willExecuteWhenDocumentFinishedParsing; }
     bool willExecuteInOrder() const { return m_willExecuteInOrder; }
     LoadableScript* loadableScript() { return m_loadableScript.get(); }
-    RefPtr<LoadableScript> protectedLoadableScript() { return m_loadableScript; }
 
     ScriptType scriptType() const { return m_scriptType; }
 

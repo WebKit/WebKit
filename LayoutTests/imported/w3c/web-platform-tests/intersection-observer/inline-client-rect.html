@@ -75,7 +75,7 @@ function step0() {
   runTestCycle(step1, "scroller.scrollLeft = 90");
 
   checkLastEntry(entries, 0, [left, right, top, bottom,
-                              0, 0, 0, 0, 0, vw, 0, vh, false]);
+                              0, 0, 0, 0, 0, vw, 0, vh, false], 0.5);
 }
 
 function step1() {
@@ -88,6 +88,6 @@ function step1() {
   let scrollerRight = 258;
   checkLastEntry(entries, 1, [left, right, top, bottom,
                               left, scrollerRight, top, bottom,
-                              0, vw, 0, vh, true]);
+                              0, vw, 0, vh, true], 0.5);
 }
 </script>

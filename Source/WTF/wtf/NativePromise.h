@@ -952,11 +952,6 @@ private:
         }
 
     private:
-        RefPtr<ThenCallbackType> protectedThenCallback()
-        {
-            return m_thenCallback;
-        }
-
         Ref<PromiseType> completionPromise()
         {
             ASSERT(m_thenCallback, "Conversion can only be done once");
@@ -964,7 +959,7 @@ private:
             // with the value returned by the callbacks provided to then().
             auto producer = makeUnique<typename PromiseType::Producer>(PromiseDispatchMode::Default, Logger::LogSiteIdentifier { "<completion promise>", 0 });
             auto promise = producer->promise();
-            protectedThenCallback()->setCompletionPromise(WTF::move(producer));
+            protect(m_thenCallback)->setCompletionPromise(WTF::move(producer));
             m_promise->maybeSettle(m_thenCallback.releaseNonNull(), m_logSiteIdentifier);
             return promise;
         }
@@ -1331,7 +1326,7 @@ public:
         , m_creationSite(creationSite)
     {
         if constexpr (PromiseType::IsExclusive)
-            protectedPromise()->setDispatchMode(dispatchMode, creationSite);
+            protect(m_promise)->setDispatchMode(dispatchMode, creationSite);
     }
 
     template<typename RejectValueT_ = RejectValueT, typename = std::enable_if<AutoRejectNonVoid>>
@@ -1350,8 +1345,8 @@ public:
     ~NativePromiseProducer()
     {
         if constexpr (AutoReject) {
-            if (m_promise && !protectedPromise()->isSettled()) {
-                PROMISE_LOG("Non settled AutoRejectProducer, reject with default value", *protectedPromise());
+            if (m_promise && !protect(m_promise)->isSettled()) {
+                PROMISE_LOG("Non settled AutoRejectProducer, reject with default value", *protect(m_promise));
                 if constexpr (std::is_void_v<RejectValueT>)
                     reject();
                 else
@@ -1364,13 +1359,13 @@ public:
     bool isSettled() const
     {
         ASSERT(m_promise, "used after moved");
-        return m_promise && protectedPromise()->isSettled();
+        return m_promise && protect(m_promise)->isSettled();
     }
     explicit operator bool() const { return isSettled(); }
     bool isNothing() const
     {
         ASSERT(m_promise, "used after moved");
-        return m_promise && !protectedPromise()->isSettled();
+        return m_promise && !protect(m_promise)->isSettled();
     }
 
     template<typename ResolveValueType_, typename = std::enable_if<!std::is_void_v<ResolveValueT>>>
@@ -1378,10 +1373,10 @@ public:
     {
         ASSERT(isNothing());
         if (!isNothing()) {
-            PROMISE_LOG(resolveSite, " ignored already resolved or rejected ", *protectedPromise());
+            PROMISE_LOG(resolveSite, " ignored already resolved or rejected ", *protect(m_promise));
             return;
         }
-        protectedPromise()->resolve(std::forward<ResolveValueType_>(resolveValue), resolveSite);
+        protect(m_promise)->resolve(std::forward<ResolveValueType_>(resolveValue), resolveSite);
     }
 
     template<typename = std::enable_if<std::is_void_v<ResolveValueT>>>
@@ -1389,10 +1384,10 @@ public:
     {
         ASSERT(isNothing());
         if (!isNothing()) {
-            PROMISE_LOG(resolveSite, " ignored already resolved or rejected ", *protectedPromise());
+            PROMISE_LOG(resolveSite, " ignored already resolved or rejected ", *protect(m_promise));
             return;
         }
-        protectedPromise()->resolve(resolveSite);
+        protect(m_promise)->resolve(resolveSite);
     }
 
     template<typename RejectValueType_, typename = std::enable_if<!std::is_void_v<RejectValueT>>>
@@ -1400,10 +1395,10 @@ public:
     {
         ASSERT(isNothing());
         if (!isNothing()) {
-            PROMISE_LOG(rejectSite, " ignored already resolved or rejected ", *protectedPromise());
+            PROMISE_LOG(rejectSite, " ignored already resolved or rejected ", *protect(m_promise));
             return;
         }
-        protectedPromise()->reject(std::forward<RejectValueType_>(rejectValue), rejectSite);
+        protect(m_promise)->reject(std::forward<RejectValueType_>(rejectValue), rejectSite);
     }
 
     template<typename = std::enable_if<std::is_void_v<RejectValueT>>>
@@ -1411,10 +1406,10 @@ public:
     {
         ASSERT(isNothing());
         if (!isNothing()) {
-            PROMISE_LOG(rejectSite, " ignored already resolved or rejected ", *protectedPromise());
+            PROMISE_LOG(rejectSite, " ignored already resolved or rejected ", *protect(m_promise));
             return;
         }
-        protectedPromise()->reject(rejectSite);
+        protect(m_promise)->reject(rejectSite);
     }
 
     template<typename SettleValue>
@@ -1422,13 +1417,13 @@ public:
     {
         ASSERT(isNothing());
         if (!isNothing()) {
-            PROMISE_LOG(site, " ignored already resolved or rejected ", *protectedPromise());
+            PROMISE_LOG(site, " ignored already resolved or rejected ", *protect(m_promise));
             return;
         }
         if constexpr (PromiseType::IsExclusive && std::is_invocable_r_v<typename PromiseType::Result, SettleValue>)
-            protectedPromise()->settleWithFunction(std::forward<SettleValue>(result), site);
+            protect(m_promise)->settleWithFunction(std::forward<SettleValue>(result), site);
         else
-            protectedPromise()->settle(std::forward<SettleValue>(result), site);
+            protect(m_promise)->settle(std::forward<SettleValue>(result), site);
     }
 
     template<typename = std::enable_if<PromiseType::IsExclusive>>
@@ -1436,10 +1431,10 @@ public:
     {
         ASSERT(isNothing());
         if (!isNothing()) {
-            PROMISE_LOG(site, " ignored already resolved or rejected ", *protectedPromise());
+            PROMISE_LOG(site, " ignored already resolved or rejected ", *protect(m_promise));
             return;
         }
-        protectedPromise()->settleWithFunction(WTF::move(resultRunnable), site);
+        protect(m_promise)->settleWithFunction(WTF::move(resultRunnable), site);
     }
 
     operator Ref<PromiseType>() const
@@ -1516,19 +1511,14 @@ private:
     void setDispatchMode(PromiseDispatchMode dispatchMode, const Logger::LogSiteIdentifier& callSite) const
     {
         ASSERT(m_promise, "used after move");
-        protectedPromise()->setDispatchMode(dispatchMode, callSite);
+        protect(m_promise)->setDispatchMode(dispatchMode, callSite);
     }
 
     friend PromiseType;
     void assertIsDead() const
     {
         if (m_promise)
-            protectedPromise()->assertIsDead();
-    }
-
-    RefPtr<PromiseType> protectedPromise() const
-    {
-        return m_promise;
+            protect(m_promise)->assertIsDead();
     }
 
     // The Producer may be moved to resolve/reject the completion promise.

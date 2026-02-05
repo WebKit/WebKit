@@ -1,0 +1,6 @@
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+This test should not crash or assert.

@@ -31,13 +31,13 @@
 #import "CMUtilities.h"
 #import "FourCC.h"
 #import "LibWebRTCProvider.h"
-#import "MediaCapabilitiesInfo.h"
+#import "PlatformMediaCapabilitiesInfo.h"
+#import "PlatformMediaCapabilitiesVideoConfiguration.h"
 #import "PlatformScreen.h"
 #import "ScreenProperties.h"
 #import "SharedBuffer.h"
 #import "SystemBattery.h"
 #import "TrackInfo.h"
-#import "VideoConfiguration.h"
 #import "VideoDecoder.h"
 #import <JavaScriptCore/DataView.h>
 #import <webm/common/vp9_header_parser.h>
@@ -313,30 +313,30 @@ bool isVPCodecConfigurationRecordSupported(const VPCodecConfigurationRecord& cod
     return false;
 }
 
-std::optional<MediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigurationRecord& codecConfiguration, const VideoConfiguration& videoConfiguration)
+std::optional<PlatformMediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigurationRecord& codecConfiguration, const PlatformMediaCapabilitiesVideoConfiguration& videoConfiguration)
 {
     if (!isVPCodecConfigurationRecordSupported(codecConfiguration))
         return std::nullopt;
 
-    // VideoConfiguration and VPCodecConfigurationRecord can have conflicting values for HDR properties. If so, reject.
+    // PlatformMediaCapabilitiesVideoConfiguration and VPCodecConfigurationRecord can have conflicting values for HDR properties. If so, reject.
     if (videoConfiguration.transferFunction) {
         // Note: Transfer Characteristics are defined by ISO/IEC 23091-2:2019.
-        if (*videoConfiguration.transferFunction == TransferFunction::SRGB && codecConfiguration.transferCharacteristics > 15)
+        if (*videoConfiguration.transferFunction == PlatformMediaCapabilitiesTransferFunction::SRGB && codecConfiguration.transferCharacteristics > 15)
             return std::nullopt;
-        if (*videoConfiguration.transferFunction == TransferFunction::PQ && codecConfiguration.transferCharacteristics != 16)
+        if (*videoConfiguration.transferFunction == PlatformMediaCapabilitiesTransferFunction::PQ && codecConfiguration.transferCharacteristics != 16)
             return std::nullopt;
-        if (*videoConfiguration.transferFunction == TransferFunction::HLG && codecConfiguration.transferCharacteristics != 18)
+        if (*videoConfiguration.transferFunction == PlatformMediaCapabilitiesTransferFunction::HLG && codecConfiguration.transferCharacteristics != 18)
             return std::nullopt;
     }
 
     if (videoConfiguration.colorGamut) {
-        if (*videoConfiguration.colorGamut == ColorGamut::Rec2020 && codecConfiguration.colorPrimaries != 9)
+        if (*videoConfiguration.colorGamut == PlatformMediaCapabilitiesColorGamut::Rec2020 && codecConfiguration.colorPrimaries != 9)
             return std::nullopt;
     }
     return computeVPParameters(videoConfiguration, vp9HardwareDecoderAvailable());
 }
 
-bool isVPSoftwareDecoderSmooth(const VideoConfiguration& videoConfiguration)
+bool isVPSoftwareDecoderSmooth(const PlatformMediaCapabilitiesVideoConfiguration& videoConfiguration)
 {
     if (videoConfiguration.height <= 1080 && videoConfiguration.framerate > 60)
         return false;
@@ -347,9 +347,9 @@ bool isVPSoftwareDecoderSmooth(const VideoConfiguration& videoConfiguration)
     return true;
 }
 
-std::optional<MediaCapabilitiesInfo> computeVPParameters(const VideoConfiguration& videoConfiguration, bool vp9HardwareDecoderAvailable)
+std::optional<PlatformMediaCapabilitiesInfo> computeVPParameters(const PlatformMediaCapabilitiesVideoConfiguration& videoConfiguration, bool vp9HardwareDecoderAvailable)
 {
-    MediaCapabilitiesInfo info;
+    PlatformMediaCapabilitiesInfo info;
 
     if (vp9HardwareDecoderAvailable) {
         // HW VP9 Decoder does not support alpha channel:

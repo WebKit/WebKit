@@ -39,17 +39,17 @@ namespace Layout {
 
 class UnplacedGridItem;
 
+struct ComputedSizes {
+    Style::PreferredSize preferredSize;
+    Style::MinimumSize minimumSize;
+    Style::MaximumSize maximumSize;
+
+    Style::MarginEdge marginStart;
+    Style::MarginEdge marginEnd;
+};
+
 class PlacedGridItem {
 public:
-    struct ComputedSizes {
-        Style::PreferredSize preferredSize;
-        Style::MinimumSize minimumSize;
-        Style::MaximumSize maximumSize;
-
-        Style::MarginEdge marginStart;
-        Style::MarginEdge marginEnd;
-    };
-
     PlacedGridItem(const UnplacedGridItem&, GridAreaLines, const ComputedSizes& inlineAxisSizes, const ComputedSizes& blockAxisSizes,
     const StyleSelfAlignmentData& inlineAxisAlignment, const StyleSelfAlignmentData& blockAxisAlignment, const Style::ZoomFactor& usedZoom);
 

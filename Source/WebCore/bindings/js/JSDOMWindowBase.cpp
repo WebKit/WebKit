@@ -168,7 +168,7 @@ void JSDOMWindowBase::updateDocument()
     ASSERT(m_wrapped->documentIfLocal());
     JSGlobalObject* lexicalGlobalObject = this;
     VM& vm = lexicalGlobalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     bool shouldThrowReadOnlyError = false;
     bool ignoreReadOnlyErrors = true;
@@ -190,7 +190,7 @@ void JSDOMWindowBase::printErrorMessage(const String& message) const
 
 bool JSDOMWindowBase::supportsRichSourceInfo(const JSGlobalObject* object)
 {
-    const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
+    auto* thisObject = jsCast<const JSDOMWindowBase*>(object);
     auto* frame = thisObject->wrapped().frame();
     if (!frame)
         return false;
@@ -218,7 +218,7 @@ static inline bool shouldInterruptScriptToPreventInfiniteRecursionWhenClosingPag
 
 bool JSDOMWindowBase::shouldInterruptScript(const JSGlobalObject* object)
 {
-    const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
+    auto* thisObject = jsCast<const JSDOMWindowBase*>(object);
     ASSERT(thisObject->wrapped().frame());
     Page* page = thisObject->wrapped().frame()->page();
     return shouldInterruptScriptToPreventInfiniteRecursionWhenClosingPage(page);
@@ -226,7 +226,7 @@ bool JSDOMWindowBase::shouldInterruptScript(const JSGlobalObject* object)
 
 bool JSDOMWindowBase::shouldInterruptScriptBeforeTimeout(const JSGlobalObject* object)
 {
-    const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
+    auto* thisObject = jsCast<const JSDOMWindowBase*>(object);
     ASSERT(thisObject->wrapped().frame());
     Page* page = thisObject->wrapped().frame()->page();
 
@@ -243,7 +243,7 @@ bool JSDOMWindowBase::shouldInterruptScriptBeforeTimeout(const JSGlobalObject* o
 
 RuntimeFlags JSDOMWindowBase::javaScriptRuntimeFlags(const JSGlobalObject* object)
 {
-    const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
+    auto* thisObject = jsCast<const JSDOMWindowBase*>(object);
     auto* frame = thisObject->wrapped().frame();
     if (!frame)
         return RuntimeFlags();
@@ -286,7 +286,7 @@ WTF_MAKE_COMPACT_TZONE_ALLOCATED_IMPL(UserGestureInitiatedMicrotaskDispatcher);
 
 void JSDOMWindowBase::queueMicrotaskToEventLoop(JSGlobalObject& object, QueuedTask&& task)
 {
-    JSDOMWindowBase& thisObject = static_cast<JSDOMWindowBase&>(object);
+    auto& thisObject = *jsCast<JSDOMWindowBase*>(&object);
 
     CheckedPtr objectScriptExecutionContext = thisObject.scriptExecutionContext();
     CheckedRef eventLoop = objectScriptExecutionContext->eventLoop();
@@ -305,7 +305,7 @@ void JSDOMWindowBase::queueMicrotaskToEventLoop(JSGlobalObject& object, QueuedTa
 
 JSC::JSObject* JSDOMWindowBase::currentScriptExecutionOwner(JSGlobalObject* object)
 {
-    auto* thisObject = static_cast<JSDOMWindowBase*>(object);
+    auto* thisObject = jsCast<JSDOMWindowBase*>(object);
     RefPtr document = thisObject->wrapped().documentIfLocal();
     return jsCast<JSObject*>(document ? toJS(thisObject, thisObject, document.releaseNonNull()) : jsNull());
 }
@@ -317,7 +317,7 @@ JSC::ScriptExecutionStatus JSDOMWindowBase::scriptExecutionStatus(JSC::JSGlobalO
 
 void JSDOMWindowBase::reportViolationForUnsafeEval(JSGlobalObject* object, const String& source)
 {
-    const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
+    auto* thisObject = jsCast<const JSDOMWindowBase*>(object);
     CheckedPtr<ContentSecurityPolicy> contentSecurityPolicy;
     RefPtr localWindow = dynamicDowncast<LocalDOMWindow>(thisObject->wrapped());
     if (CheckedPtr element = localWindow ? localWindow->frameElement() : nullptr)

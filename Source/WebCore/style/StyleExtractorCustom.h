@@ -1794,13 +1794,13 @@ template<CSSPropertyID property> inline Ref<CSSValue> extractFillLayerPropertySh
         if (i == layerCount - 1 && lastValue)
             beforeList.append(*lastValue);
         for (size_t j = 0; j < propertiesBeforeSlashSeparator.length(); j++) {
-            auto& value = *before->item(j);
-            beforeList.append(const_cast<CSSValue&>(layerCount == 1 ? value : *downcast<CSSValueList>(value).item(i)));
+            Ref value = *before->item(j);
+            beforeList.append(const_cast<CSSValue&>(layerCount == 1 ? value.get() : *downcast<CSSValueList>(value.get()).item(i)));
         }
         CSSValueListBuilder afterList;
         for (size_t j = 0; j < propertiesAfterSlashSeparator.length(); j++) {
-            auto& value = *after->item(j);
-            afterList.append(const_cast<CSSValue&>(layerCount == 1 ? value : *downcast<CSSValueList>(value).item(i)));
+            Ref value = *after->item(j);
+            afterList.append(const_cast<CSSValue&>(layerCount == 1 ? value.get() : *downcast<CSSValueList>(value.get()).item(i)));
         }
         auto list = CSSValueList::createSlashSeparated(CSSValueList::createSpaceSeparated(WTF::move(beforeList)), CSSValueList::createSpaceSeparated(WTF::move(afterList)));
         if (layerCount == 1)

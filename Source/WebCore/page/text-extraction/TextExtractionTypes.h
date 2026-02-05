@@ -29,6 +29,7 @@
 #include <WebCore/CharacterRange.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FloatSize.h>
+#include <WebCore/IntPoint.h>
 #include <WebCore/NodeIdentifier.h>
 #include <WebCore/WebKitJSHandle.h>
 #include <wtf/Forward.h>
@@ -124,6 +125,9 @@ struct TextItemData {
 
 struct ScrollableItemData {
     FloatSize contentSize;
+    IntPoint scrollPosition;
+    bool isRoot { false };
+    bool hasOverflowItems { false };
 };
 
 struct ImageItemData {
@@ -167,13 +171,18 @@ struct TextFormControlData {
     bool isChecked { false };
 };
 
+struct SelectOptionData {
+    String value;
+    String label;
+    bool isSelected { false };
+};
+
 struct SelectData {
-    Vector<String> selectedValues;
+    Vector<SelectOptionData> options;
     bool isMultiple { false };
 };
 
 enum class ContainerType : uint8_t {
-    Root,
     ViewportConstrained,
     List,
     ListItem,
@@ -192,8 +201,6 @@ enum class ContainerType : uint8_t {
 using ItemData = Variant<ContainerType, TextItemData, ScrollableItemData, ImageItemData, SelectData, ContentEditableData, TextFormControlData, FormData, LinkItemData, IFrameData>;
 
 struct Item {
-    WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(Item, WEBCORE_EXPORT);
-
     ItemData data;
     FloatRect rectInRootView;
     Vector<Item> children;
@@ -220,12 +227,19 @@ struct Item {
     }
 };
 
-struct PageItems {
-    Item mainFrameItem;
-    HashMap<FrameIdentifier, UniqueRef<Item>> subFrameItems;
+struct Result {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(Result, WEBCORE_EXPORT);
+
+    Item rootItem;
+    unsigned visibleTextLength { 0 };
 };
 
-WEBCORE_EXPORT Item collatePageItems(PageItems&&);
+struct PageResults {
+    Result mainFrameResult;
+    HashMap<FrameIdentifier, UniqueRef<Result>> subFrameResults;
+};
+
+WEBCORE_EXPORT Result collatePageResults(PageResults&&);
 
 struct FilterRuleData {
     String name;

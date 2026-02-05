@@ -38,14 +38,14 @@ public:
     }
 
     struct Init : EventInit {
-        String animationName;
+        String animationName { emptyString() };
         double elapsedTime { 0 };
-        String pseudoElement;
+        String pseudoElement { emptyString() };
     };
 
-    static Ref<CSSAnimationEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<CSSAnimationEvent> create(const AtomString& type, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new CSSAnimationEvent(type, initializer, isTrusted));
+        return adoptRef(*new CSSAnimationEvent(type, WTF::move(initializer), isTrusted));
     }
 
     virtual ~CSSAnimationEvent();
@@ -54,7 +54,7 @@ public:
 
 private:
     CSSAnimationEvent(const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&, const String& animationName);
-    CSSAnimationEvent(const AtomString&, const Init&, IsTrusted);
+    CSSAnimationEvent(const AtomString&, Init&&, IsTrusted);
 
     String m_animationName;
 };

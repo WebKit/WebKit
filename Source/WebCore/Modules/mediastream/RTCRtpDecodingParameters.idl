@@ -27,6 +27,5 @@
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCRtpDecodingParameters : RTCRtpCodingParameters {
 };

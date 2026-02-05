@@ -4,19 +4,19 @@ layer at (0,0) size 800x386
   RenderBlock {HTML} at (0,0) size 800x386
     RenderBody {BODY} at (8,16) size 784x338
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 201x17
+        RenderText {#text} at (0,0) size 201x18
           text run at (0,0) width 201: "The black border below should "
-        RenderInline {I} at (201,0) size 20x17
-          RenderText {#text} at (201,0) size 20x17
+        RenderInline {I} at (201,0) size 20x18
+          RenderText {#text} at (201,0) size 20x18
             text run at (201,0) width 20: "not"
-        RenderText {#text} at (0,0) size 746x35
+        RenderText {#text} at (0,0) size 746x36
           text run at (221,0) width 212: " cut through the top left corner of "
           text run at (433,0) width 313: "the blue border. It would cut through with our old"
           text run at (0,18) width 87: "behavior, but "
-        RenderInline {A} at (86,18) size 23x17 [color=#0000EE]
-          RenderText {#text} at (86,18) size 23x17
+        RenderInline {A} at (86,18) size 23x18 [color=#0000EE]
+          RenderText {#text} at (86,18) size 23x18
             text run at (86,18) width 23: "this"
-        RenderText {#text} at (108,18) size 308x17
+        RenderText {#text} at (108,18) size 308x18
           text run at (108,18) width 5: " "
           text run at (112,18) width 304: "bug fix changed our behavior to match the spec."
       RenderBlock {DIV} at (32,68) size 720x270 [border: (1px solid #0000FF)]

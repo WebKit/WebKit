@@ -1467,6 +1467,12 @@ bool ValidateES3TexStorageParametersFormat(const Context *context,
         return false;
     }
 
+    if (formatInfo.paletted)
+    {
+        ANGLE_VALIDATION_ERRORF(GL_INVALID_ENUM, kInvalidInternalFormat, internalformat);
+        return false;
+    }
+
     if (formatInfo.compressed)
     {
         if (target == TextureType::Rectangle)
@@ -1498,6 +1504,12 @@ bool ValidateES3TexStorageParametersFormat(const Context *context,
         if (!ValidCompressedImageSize(context, formatInfo.internalFormat, 0, width, height, depth))
         {
             ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidCompressedImageSize);
+            return false;
+        }
+
+        if (formatInfo.compressedBlockDepth > 1 && target != TextureType::_3D)
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidTextureTarget);
             return false;
         }
     }
@@ -2900,13 +2912,12 @@ bool ValidateDeleteTransformFeedbacks(const Context *context,
     return true;
 }
 
-bool ValidateGenVertexArrays(const PrivateState &state,
-                             ErrorSet *errors,
+bool ValidateGenVertexArrays(const Context *context,
                              angle::EntryPoint entryPoint,
                              GLsizei n,
                              const VertexArrayID *arrays)
 {
-    return ValidateGenOrDelete(errors, entryPoint, n, arrays);
+    return ValidateGenOrDelete(context->getMutableErrorSetForValidation(), entryPoint, n, arrays);
 }
 
 bool ValidateDeleteVertexArrays(const Context *context,
@@ -3451,7 +3462,7 @@ bool ValidateRenderbufferStorageMultisample(const Context *context,
 
     // The behavior is different than the ANGLE version, which would generate a GL_OUT_OF_MEMORY.
     const TextureCaps &formatCaps = context->getTextureCaps().get(internalformat);
-    if (static_cast<GLuint>(samples) > formatCaps.getMaxSamples())
+    if (static_cast<GLuint>(samples) > formatCaps.sampleCounts.getMaxSamples())
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kSamplesOutOfRange);
         return false;
@@ -3527,13 +3538,13 @@ bool ValidateGetSynciv(const Context *context,
                        angle::EntryPoint entryPoint,
                        SyncID syncPacked,
                        GLenum pname,
-                       GLsizei bufSize,
+                       GLsizei count,
                        const GLsizei *length,
                        const GLint *values)
 {
-    if (bufSize < 0)
+    if (count < 0)
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufSize);
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeCount);
         return false;
     }
 
@@ -3806,6 +3817,56 @@ bool ValidateFramebufferTextureMultiviewOVR(const Context *context,
 
         if (!ValidateFramebufferTextureMultiviewLevelAndFormat(context, entryPoint, tex, level))
         {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool ValidateFramebufferTextureMultisampleMultiviewOVR(const Context *context,
+                                                       angle::EntryPoint entryPoint,
+                                                       GLenum target,
+                                                       GLenum attachment,
+                                                       TextureID texturePacked,
+                                                       GLint level,
+                                                       GLsizei samples,
+                                                       GLint baseViewIndex,
+                                                       GLsizei numViews)
+{
+    // OVR_multiview_multisampled_render_to_texture states that <target>, <attachment>, <texture>,
+    // <level>, <baseViewIndex>, and <numViews> correspond to the same parameters for
+    // FramebufferTextureMultiviewOVR and have the same restrictions and errors.
+    if (!ValidateFramebufferTextureMultiviewOVR(context, entryPoint, target, attachment,
+                                                texturePacked, level, baseViewIndex, numViews))
+    {
+        return false;
+    }
+
+    // OVR_multiview_multisampled_render_to_texture states that the value of samples
+    // must be less than or equal to MAX_SAMPLES_EXT (Context::getCaps().maxSamples)
+    // otherwise GL_INVALID_VALUE is generated.
+    if (samples < 0 || samples > context->getCaps().maxSamples)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kSamplesOutOfRange);
+        return false;
+    }
+
+    // OVR_multiview_multisampled_render_to_texture says <samples> corresponds to the same parameter
+    // for FramebufferTexture2DMultisampleEXT and has the same restrictions and errors.
+    // EXT_multisampled_render_to_texture returns INVALID_OPERATION when a sample number higher than
+    // the maximum sample number supported by this format is passed.
+    // The getMaxSamples method is only guaranteed to be valid when the context is ES3.
+    if (texturePacked.value != 0 && context->getClientVersion() >= ES_3_0)
+    {
+        Texture *tex = context->getTexture(texturePacked);
+        GLenum sizedInternalFormat =
+            tex->getFormat(TextureTypeToTarget(tex->getType(), baseViewIndex), level)
+                .info->sizedInternalFormat;
+        const TextureCaps &formatCaps = context->getTextureCaps().get(sizedInternalFormat);
+        if (static_cast<GLuint>(samples) > formatCaps.sampleCounts.getMaxSamples())
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kSamplesOutOfRange);
             return false;
         }
     }
@@ -4675,11 +4736,11 @@ bool ValidateGetInternalformativ(const Context *context,
                                  GLenum target,
                                  GLenum internalformat,
                                  GLenum pname,
-                                 GLsizei bufSize,
+                                 GLsizei count,
                                  const GLint *params)
 {
     return ValidateGetInternalFormativBase(context, entryPoint, target, internalformat, pname,
-                                           bufSize, nullptr);
+                                           count, nullptr);
 }
 
 bool ValidateBindFragDataLocationIndexedEXT(const Context *context,

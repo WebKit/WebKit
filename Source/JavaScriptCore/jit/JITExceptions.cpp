@@ -27,7 +27,6 @@
 #include "JITExceptions.h"
 
 #include "CallFrame.h"
-#include "CatchScope.h"
 #include "CodeBlock.h"
 #include "Interpreter.h"
 #include "JSCJSValueInlines.h"
@@ -35,13 +34,14 @@
 #include "LLIntExceptions.h"
 #include "Opcode.h"
 #include "ShadowChicken.h"
+#include "TopExceptionScope.h"
 #include "VMInlines.h"
 
 namespace JSC {
 
 void genericUnwind(VM& vm, CallFrame* callFrame)
 {
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     CallFrame* topJSCallFrame = vm.topJSCallFrame();
     if (Options::breakOnThrow()) [[unlikely]] {
         CodeBlock* codeBlock = topJSCallFrame->isNativeCalleeFrame() ? nullptr : topJSCallFrame->codeBlock();

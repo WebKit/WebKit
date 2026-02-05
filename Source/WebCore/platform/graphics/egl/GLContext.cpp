@@ -23,6 +23,7 @@
 #include "GraphicsContextGL.h"
 #include "Logging.h"
 #include "PlatformDisplay.h"
+#include <wtf/StringPrintStream.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -310,6 +311,108 @@ std::unique_ptr<GLContext> GLContext::createSharing(PlatformDisplay& platformDis
     return GLContext::create(platformDisplay.glDisplay(), targetForPlatformDisplay(platformDisplay));
 }
 
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+static void logGLDebugMessage(GLenum source, GLenum type, GLuint identifier, GLenum severity, GLsizei, const GLchar* message, const void*)
+{
+    static constexpr auto sourceName = [](GLenum source) -> const char* {
+        switch (source) {
+        case GL_DEBUG_SOURCE_API_KHR:
+            return "API call";
+        case GL_DEBUG_SOURCE_WINDOW_SYSTEM_KHR:
+            return "Window System";
+        case GL_DEBUG_SOURCE_SHADER_COMPILER_KHR:
+            return "Shader Compiler";
+        case GL_DEBUG_SOURCE_THIRD_PARTY_KHR:
+            return "Third Party";
+        case GL_DEBUG_SOURCE_APPLICATION_KHR:
+            return "Application";
+        case GL_DEBUG_SOURCE_OTHER_KHR:
+        default:
+            return "Other";
+        };
+    };
+
+    static constexpr auto typeName = [](GLenum type) -> const char* {
+        switch (type) {
+        case GL_DEBUG_TYPE_ERROR_KHR:
+            return "Error";
+        case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR_KHR:
+            return "Deprecated Behaviour";
+        case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR_KHR:
+            return "Undefined Behaviour";
+        case GL_DEBUG_TYPE_PORTABILITY_KHR:
+            return "Non-portable";
+        case GL_DEBUG_TYPE_PERFORMANCE_KHR:
+            return "Performance";
+        case GL_DEBUG_TYPE_MARKER_KHR:
+            return "Marker";
+        case GL_DEBUG_TYPE_PUSH_GROUP_KHR:
+            return "Group Push";
+        case GL_DEBUG_TYPE_POP_GROUP_KHR:
+            return "Group Pop";
+        case GL_DEBUG_TYPE_OTHER_KHR:
+        default:
+            return "Other";
+        }
+    };
+
+    static constexpr auto logLevel = [](GLenum severity) -> WTFLogLevel {
+        switch (severity) {
+        case GL_DEBUG_SEVERITY_HIGH_KHR:
+            return WTFLogLevel::Error;
+        case GL_DEBUG_SEVERITY_MEDIUM_KHR:
+            return WTFLogLevel::Warning;
+        case GL_DEBUG_SEVERITY_LOW_KHR:
+            return WTFLogLevel::Info;
+        case GL_DEBUG_SEVERITY_NOTIFICATION_KHR:
+        default:
+            return WTFLogLevel::Debug;
+        }
+    };
+
+    RELEASE_LOG_WITH_LEVEL(GLContext, logLevel(severity), "%s (%s) [id=%ld]: %s", sourceName(source), typeName(type), identifier, message);
+    if (type == GL_DEBUG_TYPE_ERROR_KHR && LOG_CHANNEL(GLContext).level >= WTFLogLevel::Debug) {
+        WTF::StringPrintStream backtraceStream;
+        WTFReportBacktraceWithPrefixAndPrintStream(backtraceStream, "#");
+        RELEASE_LOG(GLContext, "Backtrace leading to error:\n%s", backtraceStream.toString().utf8().data());
+    }
+}
+
+bool GLContext::enableDebugLogging()
+{
+    const char* glExtensions = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+    const bool backtraceOnError = LOG_CHANNEL(GLContext).level >= WTFLogLevel::Debug;
+
+#if USE(LIBEPOXY)
+    if ((!epoxy_is_desktop_gl() && glVersion() >= 320) || isExtensionSupported(glExtensions, "GL_KHR_debug") || isExtensionSupported(glExtensions, "GL_ARB_debug_output")) {
+        glDebugMessageCallbackKHR(logGLDebugMessage, nullptr);
+        glEnable(backtraceOnError ? GL_DEBUG_OUTPUT_SYNCHRONOUS_KHR : GL_DEBUG_OUTPUT_KHR);
+        return true;
+    }
+#else
+    // Assume EGL/GLES2+, which is the case for platforms that do not use Epoxy.
+    PFNGLDEBUGMESSAGECALLBACKKHRPROC debugMessageCallback = nullptr;
+    if (glVersion() >= 320)
+        debugMessageCallback = reinterpret_cast<PFNGLDEBUGMESSAGECALLBACKKHRPROC>(eglGetProcAddress("glDebugMessageCallback"));
+    else if (isExtensionSupported(glExtensions, "GL_KHR_debug"))
+        debugMessageCallback = reinterpret_cast<PFNGLDEBUGMESSAGECALLBACKKHRPROC>(eglGetProcAddress("glDebugMessageCallbackKHR"));
+
+    if (debugMessageCallback) {
+        debugMessageCallback(logGLDebugMessage, nullptr);
+        glEnable(backtraceOnError ? GL_DEBUG_OUTPUT_SYNCHRONOUS_KHR : GL_DEBUG_OUTPUT_KHR);
+        return true;
+    }
+#endif
+
+    return false;
+}
+
+static inline bool shouldEnableDebugLogging()
+{
+    return LOG_CHANNEL(GLContext).state != WTFLogChannelState::Off;
+}
+#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
+
 GLContext::GLContext(GLDisplay& display, EGLContext context, EGLSurface surface, EGLConfig config)
     : m_display(display)
     , m_context(context)
@@ -317,6 +420,26 @@ GLContext::GLContext(GLDisplay& display, EGLContext context, EGLSurface surface,
     , m_config(config)
 {
     RELEASE_ASSERT(context != EGL_NO_CONTEXT);
+
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+    if (shouldEnableDebugLogging()) [[unlikely]] {
+        GLContext* previousContext = nullptr;
+        if (!isCurrent()) {
+            previousContext = current();
+            makeContextCurrent();
+        }
+
+        if (!enableDebugLogging()) {
+            static std::once_flag onceFlag;
+            std::call_once(onceFlag, []() {
+                RELEASE_LOG_FAULT(GLContext, "No debug logging support, neither GL_KHR_debug, GL_ARB_debug_output, nor GLES 3.2+ are available");
+            });
+        }
+
+        if (previousContext)
+            previousContext->makeContextCurrent();
+    }
+#endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 #if ENABLE(MEDIA_TELEMETRY)
     if (m_surface != EGL_NO_SURFACE) {
@@ -358,19 +481,13 @@ RefPtr<GLDisplay> GLContext::display() const
 
 EGLContext GLContext::createContextForEGLVersion(EGLDisplay eglDisplay, EGLConfig config, EGLContext sharingContext)
 {
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib / Windows ports.
-    static EGLint contextAttributes[3];
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-    static bool contextAttributesInitialized = false;
-
-    if (!contextAttributesInitialized) {
-        contextAttributesInitialized = true;
-
-        contextAttributes[0] = EGL_CONTEXT_CLIENT_VERSION;
-        contextAttributes[1] = 2;
-        contextAttributes[2] = EGL_NONE;
-    }
-
+    EGLint contextAttributes[] = {
+        EGL_CONTEXT_CLIENT_VERSION, 2,
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+        EGL_CONTEXT_OPENGL_DEBUG, shouldEnableDebugLogging() ? EGL_TRUE : EGL_FALSE,
+#endif
+        EGL_NONE,
+    };
     return eglCreateContext(eglDisplay, config, sharingContext, contextAttributes);
 }
 

@@ -27,7 +27,6 @@
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUBindGroupDescriptor : GPUObjectDescriptorBase {
     required GPUBindGroupLayout layout;
     required sequence<GPUBindGroupEntry> entries;

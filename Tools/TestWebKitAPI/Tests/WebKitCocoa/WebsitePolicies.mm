@@ -1873,6 +1873,48 @@ TEST(WebpagePreferences, ToggleAdvancedPrivacyProtections)
     EXPECT_TRUE([preferences _networkConnectionIntegrityEnabled]);
 }
 
+TEST(WebpagePreferences, AlternateRequestSPIToAPI)
+{
+    RetainPtr request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]];
+
+    auto preferences = adoptNS([WKWebpagePreferences new]);
+    EXPECT_NULL([preferences alternateRequest]);
+    EXPECT_NULL([preferences _alternateRequest]);
+
+    preferences.get()._alternateRequest = request.get();
+    EXPECT_EQ(preferences.get().alternateRequest, preferences.get()._alternateRequest);
+    EXPECT_EQ(preferences.get().alternateRequest, request.get());
+
+    [preferences setAlternateRequest:nil];
+    EXPECT_NULL([preferences alternateRequest]);
+    EXPECT_NULL([preferences _alternateRequest]);
+
+    [preferences setAlternateRequest:request.get()];
+    EXPECT_EQ(preferences.get().alternateRequest, preferences.get()._alternateRequest);
+    EXPECT_EQ(preferences.get().alternateRequest, request.get());
+}
+
+TEST(WebpagePreferences, OverrideReferrerSPIToAPI)
+{
+    NSString *referrer = @"hello";
+
+    auto preferences = adoptNS([WKWebpagePreferences new]);
+    EXPECT_NULL([preferences overrideReferrer]);
+    EXPECT_NULL([preferences _overrideReferrerForAllRequests]);
+
+    preferences.get()._overrideReferrerForAllRequests = referrer;
+    EXPECT_EQ(preferences.get().overrideReferrer, preferences.get()._overrideReferrerForAllRequests);
+    EXPECT_TRUE([preferences.get().overrideReferrer isEqual:referrer]);
+
+    [preferences setOverrideReferrer:nil];
+    EXPECT_NULL([preferences overrideReferrer]);
+    EXPECT_NULL([preferences _overrideReferrerForAllRequests]);
+
+    [preferences setOverrideReferrer:referrer];
+    EXPECT_EQ(preferences.get().overrideReferrer, preferences.get()._overrideReferrerForAllRequests);
+    EXPECT_TRUE([preferences.get().overrideReferrer isEqual:referrer]);
+}
+
 TEST(WebpagePreferences, HttpPageContentBlockers)
 {
     [[WKContentRuleListStore defaultStore] _removeAllContentRuleLists];

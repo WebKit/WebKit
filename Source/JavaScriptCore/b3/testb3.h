@@ -562,6 +562,20 @@ inline float modelLoad<float, float>(float value) { return value; }
 template<>
 inline double modelLoad<double, double>(double value) { return value; }
 
+inline std::string toHex(uint32_t number)
+{
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    static constexpr std::array<char, 16> hexDigits { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+    std::array<char, 128> buffer;
+    size_t startIndex = buffer.size();
+    do {
+        buffer[--startIndex] = hexDigits[number & 0xF];
+        number >>= 4;
+    } while (number);
+    return std::string(buffer.data() + startIndex, buffer.data() + buffer.size());
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+}
+
 struct TestConfig {
     enum class Mode {
         ListTests,

@@ -88,7 +88,7 @@ static bool hasSameOriginAsAllAncestors(const Document& document)
 
     Ref securityOrigin = document.securityOrigin();
     for (RefPtr parentDocument = document.parentDocument(); parentDocument; parentDocument = parentDocument->parentDocument()) {
-        if (!securityOrigin->equal(parentDocument->protectedSecurityOrigin()))
+        if (!securityOrigin->equal(protect(parentDocument->securityOrigin())))
             break;
         if (parentDocument->isTopDocument())
             return true;
@@ -106,7 +106,7 @@ std::optional<bool> DocumentStorageAccess::hasStorageAccessQuickCheck()
     if (frame && hasFrameSpecificStorageAccess())
         return true;
 
-    if (!frame || document->protectedSecurityOrigin()->isOpaque())
+    if (!frame || protect(document->securityOrigin())->isOpaque())
         return false;
 
     if (hasSameOriginAsAllAncestors(document))
@@ -146,7 +146,7 @@ void DocumentStorageAccess::hasStorageAccess(Ref<DeferredPromise>&& promise)
         return;
     }
 
-    page->chrome().client().hasStorageAccess(RegistrableDomain::uncheckedCreateFromHost(document->protectedSecurityOrigin()->host()), RegistrableDomain::uncheckedCreateFromHost(document->protectedTopOrigin()->host()), *frame, [weakThis = WeakPtr { *this }, promise = WTF::move(promise)] (bool hasAccess) {
+    page->chrome().client().hasStorageAccess(RegistrableDomain::uncheckedCreateFromHost(protect(document->securityOrigin())->host()), RegistrableDomain::uncheckedCreateFromHost(protect(document->topOrigin())->host()), *frame, [weakThis = WeakPtr { *this }, promise = WTF::move(promise)] (bool hasAccess) {
         if (!weakThis)
             return;
 
@@ -193,7 +193,7 @@ std::optional<StorageAccessQuickResult> DocumentStorageAccess::requestStorageAcc
     if (hasSameOriginAsAllAncestors(document))
         return StorageAccessQuickResult::Grant;
 
-    if (securityOrigin->isSameSiteAs(document->protectedTopOrigin()))
+    if (securityOrigin->isSameSiteAs(protect(document->topOrigin())))
         return std::nullopt;
 
     // If there is a sandbox, it has to allow the storage access API to be called.
@@ -235,7 +235,7 @@ void DocumentStorageAccess::requestStorageAccess(Ref<DeferredPromise>&& promise)
         m_storageAccessScope = StorageAccessScope::PerFrame;
 
     auto hasOrShouldIgnoreUserGesture = frame->requestSkipUserActivationCheckForStorageAccess(RegistrableDomain { document->url() }) || UserGestureIndicator::processingUserGesture() ? HasOrShouldIgnoreUserGesture::Yes : HasOrShouldIgnoreUserGesture::No;
-    page->chrome().client().requestStorageAccess(RegistrableDomain::uncheckedCreateFromHost(document->protectedSecurityOrigin()->host()), RegistrableDomain::uncheckedCreateFromHost(document->protectedTopOrigin()->host()), *frame, m_storageAccessScope, hasOrShouldIgnoreUserGesture, [weakThis = WeakPtr { *this }, promise = WTF::move(promise)] (RequestStorageAccessResult result) mutable {
+    page->chrome().client().requestStorageAccess(RegistrableDomain::uncheckedCreateFromHost(protect(document->securityOrigin())->host()), RegistrableDomain::uncheckedCreateFromHost(protect(document->topOrigin())->host()), *frame, m_storageAccessScope, hasOrShouldIgnoreUserGesture, [weakThis = WeakPtr { *this }, promise = WTF::move(promise)] (RequestStorageAccessResult result) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -318,7 +318,7 @@ void DocumentStorageAccess::requestStorageAccessForDocumentQuirk(CompletionHandl
         *quickCheckResult == StorageAccessQuickResult::Grant ? completionHandler(StorageAccessWasGranted::Yes) : completionHandler(StorageAccessWasGranted::No);
         return;
     }
-    requestStorageAccessQuirk(RegistrableDomain::uncheckedCreateFromHost(protectedDocument()->protectedSecurityOrigin()->host()), WTF::move(completionHandler));
+    requestStorageAccessQuirk(RegistrableDomain::uncheckedCreateFromHost(protect(protectedDocument()->securityOrigin())->host()), WTF::move(completionHandler));
 }
 
 void DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(Document& hostingDocument, RegistrableDomain&& requestingDomain, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)

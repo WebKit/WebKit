@@ -6,13 +6,10 @@ include(GNUInstallDirs)
 include(GLibMacros)
 include(InspectorGResources.cmake)
 include(ModernMediaControlsGResources.cmake)
+include(Platform/Skia.cmake)
 
 if (ENABLE_PDFJS)
     include(PdfJSGResources.cmake)
-endif ()
-
-if (USE_SKIA)
-    include(Platform/Skia.cmake)
 endif ()
 
 set(WebKit_OUTPUT_NAME WPEWebKit-${WPE_API_VERSION})
@@ -480,25 +477,14 @@ if (ANDROID)
 endif ()
 
 if (USE_ATK)
-    list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
-        ${ATK_INCLUDE_DIRS}
-    )
-
-    list(APPEND WebKit_LIBRARIES
+    list(APPEND WebKit_PRIVATE_LIBRARIES
+        ATK::ATK
         ATK::Bridge
-        ${ATK_LIBRARIES}
     )
 endif ()
 
 if (USE_OPENXR)
    list(APPEND WebKit_LIBRARIES OpenXR::openxr_loader)
-endif ()
-
-if (USE_CAIRO)
-    include(Platform/Cairo.cmake)
-    list(APPEND WebKit_LIBRARIES
-        Freetype::Freetype
-    )
 endif ()
 
 if (ENABLE_BUBBLEWRAP_SANDBOX)

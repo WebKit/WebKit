@@ -27,6 +27,7 @@
             transform: translateX(0px);
         }
     </style>
+    <script src="../../webanimations/threaded-animations/threaded-animations-utils.js"></script>
     <script>
         if (window.testRunner) {
             testRunner.dumpAsText();
@@ -48,9 +49,11 @@
             }
         }
 
-        window.addEventListener("load", function() {
+        window.addEventListener("load", async () => {
             document.body.classList.add('changed');
-            requestAnimationFrame(dumpLayers);
+            const animation = document.getAnimations()[0];
+            await animationAcceleration(animation);
+            dumpLayers();
         });
     </script>
 </head>

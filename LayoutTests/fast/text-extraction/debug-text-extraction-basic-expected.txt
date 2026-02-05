@@ -14,7 +14,8 @@ root
             input,'text',uid=…,[…],placeholder='Enter text here'
             uid=…,role='button',events=[click,keyboard],'Clickable Div',[…]
         section,aria-label='ARIA Labeling Examples'
-            'Name Field\n\n        \nDescription',[…]
+            'Name Field',[…]
+            'Description',[…]
             input,'text',uid=…,[…],aria-labelledby='Name Field',placeholder='Your name'
             role='region',aria-labelledby='Description','This region is labeled by another element.',[…]
             input,'text',uid=…,[…],aria-labelledby='Name Field',placeholder='Full name'
@@ -23,7 +24,10 @@ root
                 'Username:',[…]
                 input,'text',uid=…,[…],label='Username:'
         section,aria-label='Content with Roles'
-            article,role='article','Article Title\n\n\n                January 1, 2024\n            \n\n            \nThis is some article content with highlighted text.',[…]
+            article,role='article'
+                'Article Title',[…]
+                'January 1, 2024',[…]
+                'This is some article content with highlighted text.',[…]
             role='complementary',aria-label='Related information'
                 'Related Links',[…]
                 list

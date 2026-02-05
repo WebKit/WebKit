@@ -24,14 +24,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/picture-in-picture/#dictdef-pictureinpictureeventinit
 [
     Conditional=PICTURE_IN_PICTURE_API,
     EnabledBySetting=PictureInPictureAPIEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary PictureInPictureEventInit : EventInit {
     required PictureInPictureWindow pictureInPictureWindow;
 };
 
+// https://w3c.github.io/picture-in-picture/#pictureinpictureevent
 [
     Conditional=PICTURE_IN_PICTURE_API,
     EnabledBySetting=PictureInPictureAPIEnabled,

@@ -308,7 +308,7 @@ static void pas_report_config(void)
         pas_scavenger_period_in_milliseconds, pas_scavenger_deep_sleep_timeout_in_milliseconds, pas_scavenger_max_epoch_delta,
         mte_conf[0], mte_conf[1], mte_conf[2], mte_conf[3], mte_conf[4], mte_conf[5],
 #if PAS_ENABLE_BMALLOC
-        pas_system_heap_is_enabled(pas_heap_config_kind_bmalloc),
+        pas_system_heap_should_supplant_bmalloc(pas_heap_config_kind_bmalloc),
         LOG_FMT_VARS_FOR_HEAP_CONFIG(bmalloc_heap_config),
         LOG_FMT_VARS_FOR_HEAP_RUNTIME_CONFIG(bmalloc_flex_runtime_config),
         LOG_FMT_VARS_FOR_HEAP_RUNTIME_CONFIG(bmalloc_intrinsic_runtime_config),

@@ -42,6 +42,28 @@ class UnplacedGridItem;
 struct GridAreaLines;
 struct UnplacedGridItems;
 
+enum class PackingStrategy : bool {
+    Sparse,
+    Dense
+};
+
+enum class GridAutoFlowDirection : bool {
+    Row,
+    Column
+};
+
+struct GridAutoFlowOptions {
+    PackingStrategy strategy;
+    GridAutoFlowDirection direction;
+};
+
+// https://drafts.csswg.org/css-grid-1/#grid-definition
+struct GridDefinition {
+    Style::GridTemplateList gridTemplateColumns;
+    Style::GridTemplateList gridTemplateRows;
+    GridAutoFlowOptions autoFlowOptions;
+};
+
 class GridFormattingContext {
     WTF_MAKE_TZONE_ALLOCATED(GridFormattingContext);
 public:
@@ -62,6 +84,8 @@ public:
     const IntegrationUtils& integrationUtils() const { return m_integrationUtils; }
 
     const BoxGeometry& geometryForGridItem(const ElementBox&) const;
+
+    const Style::ZoomFactor zoomFactor() const { return m_gridBox->style().usedZoomForLength(); }
 
 private:
     UnplacedGridItems constructUnplacedGridItems() const;

@@ -11,9 +11,9 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 132x40
           RenderTableRow {TR} at (0,0) size 132x20
             RenderTableCell {TD} at (0,0) size 132x20 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 32x19
+              RenderText {#text} at (0,0) size 32x20
                 text run at (0,0) width 32: "hello"
           RenderTableRow {TR} at (0,20) size 132x20
             RenderTableCell {TD} at (0,20) size 132x20 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 56x19
+              RenderText {#text} at (0,0) size 56x20
                 text run at (0,0) width 56: "goodbye"

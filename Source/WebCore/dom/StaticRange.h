@@ -42,9 +42,9 @@ class StaticRange final : public AbstractRange, public SimpleRange {
     WTF_MAKE_TZONE_ALLOCATED(StaticRange);
 public:
     struct Init {
-        RefPtr<Node> startContainer;
+        Ref<Node> startContainer;
         unsigned startOffset { 0 };
-        RefPtr<Node> endContainer;
+        Ref<Node> endContainer;
         unsigned endOffset { 0 };
     };
 

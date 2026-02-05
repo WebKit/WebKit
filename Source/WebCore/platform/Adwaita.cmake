@@ -2,6 +2,8 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/adwaita"
 
     "${WEBCORE_DIR}/platform/graphics/adwaita"
+
+    "${WEBCORE_DIR}/rendering/adwaita"
 )
 
 list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
@@ -9,6 +11,7 @@ list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
 )
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    platform/adwaita/AdwaitaScrollbarPainter.h
     platform/adwaita/ScrollbarThemeAdwaita.h
     platform/adwaita/ThemeAdwaita.h
 

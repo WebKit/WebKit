@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.11.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>mi-malloc: Using the library</title>
+<title>mi-malloc: Using the Library</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -34,7 +34,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mimalloc-logo.svg"/></td>
   <td id="projectalign">
-   <div id="projectname">mi-malloc<span id="projectnumber">&#160;3.2</span>
+   <div id="projectname">mi-malloc<span id="projectnumber">&#160;v1.9,  v2.2,  v3.2</span>
    </div>
   </td>
     <td>        <div id="MSearchBox" class="MSearchBoxInactive">
@@ -104,7 +104,7 @@ $(function(){initNavTree('using.html',''); initResizable(true); });
 </div>
 
 <div><div class="header">
-  <div class="headertitle"><div class="title">Using the library</div></div>
+  <div class="headertitle"><div class="title">Using the Library</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><h3>Build</h3>
@@ -115,40 +115,59 @@ $(function(){initNavTree('using.html',''); initResizable(true); });
 </div><!-- fragment --><p> to link with the static library. See <code>test\CMakeLists.txt</code> for an example.</p>
 <h3>C++</h3>
 <p>For best performance in C++ programs, it is also recommended to override the global <code>new</code> and <code>delete</code> operators. For convenience, mimalloc provides <a href="https://github.com/microsoft/mimalloc/blob/master/include/mimalloc-new-delete.h"><code>mimalloc-new-delete.h</code></a> which does this for you &ndash; just include it in a single(!) source file in your project.</p>
-<p>In C++, mimalloc also provides the <code><a class="el" href="group__cpp.html#structmi__stl__allocator" title="std::allocator implementation for mimalloc for use in STL containers.">mi_stl_allocator</a></code> struct which implements the <code>std::allocator</code> interface. For example: </p><div class="fragment"><div class="line">std::vector&lt;some_struct, mi_stl_allocator&lt;some_struct&gt;&gt; vec;</div>
+<p>In C++, mimalloc also provides the <code><a class="el" href="group__cpp.html#structmi__stl__allocator" title="std::allocator implementation for mimalloc for use in STL containers. For example:">mi_stl_allocator</a></code> struct which implements the <code>std::allocator</code> interface. For example: </p><div class="fragment"><div class="line">std::vector&lt;some_struct, mi_stl_allocator&lt;some_struct&gt;&gt; vec;</div>
 <div class="line">vec.push_back(some_struct());</div>
 </div><!-- fragment --><h3>Statistics</h3>
 <p>You can pass environment variables to print verbose messages (<code>MIMALLOC_VERBOSE=1</code>) and statistics (<code>MIMALLOC_SHOW_STATS=1</code>) (in the debug version): </p><div class="fragment"><div class="line">&gt; env MIMALLOC_SHOW_STATS=1 ./cfrac 175451865205073170563711388363</div>
 <div class="line"> </div>
 <div class="line">175451865205073170563711388363 = 374456281610909315237213 * 468551</div>
 <div class="line"> </div>
-<div class="line">heap stats:     peak      total      freed       unit</div>
-<div class="line">normal   2:    16.4 kb    17.5 mb    17.5 mb      16 b   ok</div>
-<div class="line">normal   3:    16.3 kb    15.2 mb    15.2 mb      24 b   ok</div>
-<div class="line">normal   4:      64 b      4.6 kb     4.6 kb      32 b   ok</div>
-<div class="line">normal   5:      80 b    118.4 kb   118.4 kb      40 b   ok</div>
-<div class="line">normal   6:      48 b       48 b       48 b       48 b   ok</div>
-<div class="line">normal  17:     960 b      960 b      960 b      320 b   ok</div>
+<div class="line">subproc 0</div>
+<div class="line"> blocks          peak       total     current       block      total#</div>
+<div class="line">  bin S    4:    75.3 KiB    55.2 MiB     0          32   B       1.8 M    ok</div>
+<div class="line">  bin S    6:    31.0 KiB   180.4 KiB     0          48   B       3.8 K    ok</div>
+<div class="line">  bin S    8:    64   B      64   B       0          64   B       1        ok</div>
+<div class="line">  bin S    9:   160   B     160   B       0          80   B       2        ok</div>
+<div class="line">  bin S   17:     1.2 KiB     1.2 KiB     0         320   B       4        ok</div>
+<div class="line">  bin S   21:   640   B       3.1 KiB     0         640   B       5        ok</div>
+<div class="line">  bin S   33:     5.0 KiB     5.0 KiB     0           5.0 KiB     1        ok</div>
 <div class="line"> </div>
-<div class="line">heap stats:     peak      total      freed       unit</div>
-<div class="line">    normal:    33.9 kb    32.8 mb    32.8 mb       1 b   ok</div>
-<div class="line">      huge:       0 b        0 b        0 b        1 b   ok</div>
-<div class="line">     total:    33.9 kb    32.8 mb    32.8 mb       1 b   ok</div>
-<div class="line">malloc requested:         32.8 mb</div>
+<div class="line">  binned    :    84.2 Ki     41.5 Mi      0                                ok</div>
+<div class="line">  huge      :     0           0           0                                ok</div>
+<div class="line">  total     :    84.2 KiB    41.5 MiB     0</div>
+<div class="line">  malloc req:                29.7 MiB</div>
 <div class="line"> </div>
-<div class="line"> committed:    58.2 kb    58.2 kb    58.2 kb       1 b   ok</div>
-<div class="line">  reserved:     2.0 mb     2.0 mb     2.0 mb       1 b   ok</div>
-<div class="line">     reset:       0 b        0 b        0 b        1 b   ok</div>
-<div class="line">  segments:       1          1          1</div>
-<div class="line">-abandoned:       0</div>
-<div class="line">     pages:       6          6          6</div>
-<div class="line">-abandoned:       0</div>
-<div class="line">     mmaps:       3</div>
-<div class="line"> mmap fast:       0</div>
-<div class="line"> mmap slow:       1</div>
-<div class="line">   threads:       0</div>
-<div class="line">   elapsed:     2.022s</div>
-<div class="line">   process: user: 1.781s, system: 0.016s, faults: 756, reclaims: 0, rss: 2.7 mb</div>
+<div class="line"> pages           peak       total     current       block      total#</div>
+<div class="line">  touched   :   152.8 KiB   152.8 KiB   152.8 KiB</div>
+<div class="line">  pages     :     8          14           0                                ok</div>
+<div class="line">  abandoned :     1         249           0                                ok</div>
+<div class="line">  reclaima  :     0</div>
+<div class="line">  reclaimf  :   249</div>
+<div class="line">  reabandon :     0</div>
+<div class="line">  waits     :     0</div>
+<div class="line">  extended  :    38</div>
+<div class="line">  retire    :    35</div>
+<div class="line">  searches  :     0.7 avg</div>
+<div class="line"> </div>
+<div class="line"> arenas          peak       total     current       block      total#</div>
+<div class="line">  reserved  :     1.0 GiB     1.0 GiB     1.0 GiB</div>
+<div class="line">  committed :     4.8 MiB     4.8 MiB     4.4 MiB</div>
+<div class="line">  reset     :     0</div>
+<div class="line">  purged    :   385.5 Ki</div>
+<div class="line">  arenas    :     1</div>
+<div class="line">  rollback  :     0</div>
+<div class="line">  mmaps     :     3</div>
+<div class="line">  commits   :     0</div>
+<div class="line">  resets    :     1</div>
+<div class="line">  purges    :     2</div>
+<div class="line">  guarded   :     0</div>
+<div class="line">  heaps     :     1           1           1</div>
+<div class="line"> </div>
+<div class="line"> process         peak       total     current       block      total#</div>
+<div class="line">  threads   :     1           1           1</div>
+<div class="line">  numa nodes:     1</div>
+<div class="line">  elapsed   :     0.553 s</div>
+<div class="line">  process   : user: 0.557 s, system: 0.013 s, faults: 29, peak rss: 2.1 MiB, peak commit: 4.8 MiB</div>
 </div><!-- fragment --><p>The above model of using the <code>mi_</code> prefixed API is not always possible though in existing programs that already use the standard malloc interface, and another option is to override the standard malloc interface completely and redirect all calls to the <em>mimalloc</em> library instead.</p>
 <p>See <a class="el" href="overrides.html">Overriding Malloc</a> for more info. </p>
 </div></div><!-- contents -->

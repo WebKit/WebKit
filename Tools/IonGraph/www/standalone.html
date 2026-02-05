@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+
+<head>
+  <title>iongraph</title>
+  <style>{{ include-dist "style.css" }}</style>
+  <style>{{ include-dist "standalone.css" }}</style>
+</head>
+
+<body>
+  <script>{{ include-dist "main.standalone.js" }}</script>
+  <script>window.__exportedIonJSON = {{ IONJSON }}</script>
+  <script>
+    const ui = new iongraph.StandaloneUI();
+    document.body.appendChild(ui.root);
+    ui.setIonJSON(window.__exportedIonJSON);
+  </script>
+</body>

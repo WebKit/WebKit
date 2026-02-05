@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmDebuggerDebuggable.h"
 
-#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
 
 #include "WebProcessProxy.h"
 #include "WebProcessProxyMessages.h"
@@ -166,4 +166,4 @@ void WasmDebuggerDebuggable::sendResponseToFrontend(const String& response)
 
 } // namespace WebKit
 
-#endif // ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)

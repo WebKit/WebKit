@@ -38,7 +38,7 @@ public:
     struct FunctionParameter {
         String name;
         String type;
-        String defaultValue;
+        std::optional<String> defaultValue;
     };
 
     String name() const;

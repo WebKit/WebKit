@@ -26,10 +26,9 @@
 [
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCOfferOptions : RTCOfferAnswerOptions {
     boolean iceRestart = false;
 
-    [EnabledBySetting=LegacyWebRTCOfferOptionsEnabled] boolean? offerToReceiveVideo;
-    [EnabledBySetting=LegacyWebRTCOfferOptionsEnabled] boolean? offerToReceiveAudio;
+    [EnabledBySetting=LegacyWebRTCOfferOptionsEnabled, ImplementationDefaultValue=null] boolean? offerToReceiveVideo;
+    [EnabledBySetting=LegacyWebRTCOfferOptionsEnabled, ImplementationDefaultValue=null] boolean? offerToReceiveAudio;
 };

@@ -132,9 +132,7 @@ private:
     XrGraphicsBindingEGLMNDX m_graphicsBinding;
 #endif
     std::unique_ptr<WebCore::GLContext> m_glContext;
-#if ENABLE(WEBXR_HIT_TEST)
     XrSpace m_viewerSpace { XR_NULL_HANDLE };
-#endif
     XrSpace m_localSpace { XR_NULL_HANDLE };
     XrSpace m_floorSpace { XR_NULL_HANDLE };
 

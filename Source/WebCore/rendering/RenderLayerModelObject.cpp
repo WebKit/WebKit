@@ -204,7 +204,7 @@ void RenderLayerModelObject::styleDidChange(Style::Difference diff, const Render
         if (isDocumentElementRenderer()) {
             LocalFrameView& frameView = view().frameView();
             frameView.updateScrollbarSteps();
-        } else if (RenderLayer* renderLayer = layer())
+        } else if (CheckedPtr renderLayer = layer())
             renderLayer->updateScrollbarSteps();
     }
 
@@ -467,7 +467,7 @@ RenderSVGResourceClipper* RenderLayerModelObject::svgClipperResourceFromStyle() 
                     return referencedClipperRenderer;
             }
 
-            if (auto* svgElement = dynamicDowncast<SVGElement>(this->element()))
+            if (RefPtr svgElement = dynamicDowncast<SVGElement>(this->element()))
                 document().addPendingSVGResource(clipPath.fragment(), *svgElement);
 
             return nullptr;
@@ -514,14 +514,14 @@ RenderSVGResourceMasker* RenderLayerModelObject::svgMaskerResourceFromStyle() co
     if (!maskImage)
         return nullptr;
 
-    auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(maskImage->url(), protectedDocument());
+    auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(maskImage->url(), protect(document()));
 
     if (RefPtr referencedMaskElement = ReferencedSVGResources::referencedMaskElement(treeScopeForSVGReferences(), *maskImage)) {
         if (auto* referencedMaskerRenderer = dynamicDowncast<RenderSVGResourceMasker>(referencedMaskElement->renderer()))
             return referencedMaskerRenderer;
     }
 
-    if (auto* element = this->element())
+    if (RefPtr element = this->element())
         document().addPendingSVGResource(resourceID, downcast<SVGElement>(*element));
 
     return nullptr;
@@ -556,7 +556,7 @@ RenderSVGResourceMarker* RenderLayerModelObject::svgMarkerResourceFromStyle(cons
             return referencedMarkerRenderer;
     }
 
-    if (auto* element = dynamicDowncast<SVGElement>(this->element()))
+    if (RefPtr element = dynamicDowncast<SVGElement>(this->element()))
         document().addPendingSVGResource(AtomString(markerResourceURL->resolved.string()), *element);
 
     return nullptr;
@@ -576,7 +576,7 @@ RenderSVGResourcePaintServer* RenderLayerModelObject::svgFillPaintServerResource
             return referencedPaintServerRenderer;
     }
 
-    if (auto* element = this->element())
+    if (RefPtr element = this->element())
         document().addPendingSVGResource(AtomString(fillURL->resolved.string()), downcast<SVGElement>(*element));
 
     return nullptr;
@@ -596,7 +596,7 @@ RenderSVGResourcePaintServer* RenderLayerModelObject::svgStrokePaintServerResour
             return referencedPaintServerRenderer;
     }
 
-    if (auto* element = this->element())
+    if (RefPtr element = this->element())
         document().addPendingSVGResource(AtomString(strokeURL->resolved.string()), downcast<SVGElement>(*element));
 
     return nullptr;

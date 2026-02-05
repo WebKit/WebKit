@@ -32,21 +32,4 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SecurityPolicyViolationEvent);
 
-SecurityPolicyViolationEventInit::SecurityPolicyViolationEventInit(EventInit&& eventInit, String&& documentURI, String&& referrer, String&& blockedURI, String&& violatedDirective, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition disposition, unsigned short statusCode, unsigned lineNumber, unsigned columnNumber)
-    : EventInit(WTF::move(eventInit))
-    , documentURI(WTF::move(documentURI))
-    , referrer(WTF::move(referrer))
-    , blockedURI(WTF::move(blockedURI))
-    , violatedDirective(WTF::move(violatedDirective))
-    , effectiveDirective(WTF::move(effectiveDirective))
-    , originalPolicy(WTF::move(originalPolicy))
-    , sourceFile(WTF::move(sourceFile))
-    , sample(WTF::move(sample))
-    , disposition(disposition)
-    , statusCode(statusCode)
-    , lineNumber(lineNumber)
-    , columnNumber(columnNumber)
-{
-}
-
 }

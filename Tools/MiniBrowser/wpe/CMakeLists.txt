@@ -20,13 +20,7 @@ if (ENABLE_WPE_LEGACY_API)
 endif ()
 
 if (USE_ATK)
-    list(APPEND MiniBrowser_SYSTEM_INCLUDE_DIRECTORIES
-        ${ATK_INCLUDE_DIRS}
-    )
-
-    list(APPEND MiniBrowser_PRIVATE_LIBRARIES
-        ${ATK_LIBRARIES}
-    )
+    list(APPEND MiniBrowser_PRIVATE_LIBRARIES ATK::ATK)
 endif ()
 
 if (ENABLE_WPE_PLATFORM)

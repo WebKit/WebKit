@@ -141,7 +141,7 @@ promise_test(async t => {
     
     model.remove();
     
-    assert_equals(document.immersiveElement, null, 'No immersive element after removal');
+    await t.step_wait(() => document.immersiveElement === null, 'Waiting for immersive element to be cleared after removal');
 }, 'Removing immersive model from DOM exits immersive mode');
 
 promise_test(async t => {

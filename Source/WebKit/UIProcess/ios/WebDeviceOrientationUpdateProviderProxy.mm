@@ -48,13 +48,13 @@ Ref<WebDeviceOrientationUpdateProviderProxy> WebDeviceOrientationUpdateProviderP
 WebDeviceOrientationUpdateProviderProxy::WebDeviceOrientationUpdateProviderProxy(WebPageProxy& page)
     : m_page(page)
 {
-    page.protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::WebDeviceOrientationUpdateProviderProxy::messageReceiverName(), page.webPageIDInMainFrameProcess(), *this);
+    protect(page.legacyMainFrameProcess())->addMessageReceiver(Messages::WebDeviceOrientationUpdateProviderProxy::messageReceiverName(), page.webPageIDInMainFrameProcess(), *this);
 }
 
 WebDeviceOrientationUpdateProviderProxy::~WebDeviceOrientationUpdateProviderProxy()
 {
     if (RefPtr page = m_page.get())
-        page->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::WebDeviceOrientationUpdateProviderProxy::messageReceiverName(), page->webPageIDInMainFrameProcess());
+        protect(page->legacyMainFrameProcess())->removeMessageReceiver(Messages::WebDeviceOrientationUpdateProviderProxy::messageReceiverName(), page->webPageIDInMainFrameProcess());
 }
 
 void WebDeviceOrientationUpdateProviderProxy::startUpdatingDeviceOrientation()

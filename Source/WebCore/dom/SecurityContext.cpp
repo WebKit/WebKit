@@ -68,11 +68,6 @@ SecurityOrigin* SecurityContext::securityOrigin() const
     return &policy->origin();
 }
 
-RefPtr<SecurityOrigin> SecurityContext::protectedSecurityOrigin() const
-{
-    return securityOrigin();
-}
-
 SecurityOriginPolicy* SecurityContext::securityOriginPolicy() const
 {
     if (!m_securityOriginPolicy && m_hasEmptySecurityOriginPolicy)

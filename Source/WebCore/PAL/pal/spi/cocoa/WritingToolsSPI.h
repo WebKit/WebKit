@@ -28,13 +28,11 @@
 #import <wtf/Compiler.h>
 #import <wtf/Platform.h>
 
-#if !__has_feature(modules) || !USE(APPLE_INTERNAL_SDK)
-
 DECLARE_SYSTEM_HEADER
 
 #if ENABLE(WRITING_TOOLS)
 
-#if USE(APPLE_INTERNAL_SDK)
+#if USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
 #import <WritingTools/WTSession_Private.h>
 #import <WritingTools/WritingTools.h>
 #else
@@ -68,6 +66,10 @@ typedef NS_ENUM(NSInteger, WTRequestedTool) {
     WTRequestedToolSmartReply = 101,
 
     WTRequestedToolCompose = 201,
+
+#if HAVE(WT_REQUESTED_TOOL_NONE)
+    WTRequestedToolNone = 999,
+#endif
 };
 
 // MARK: WTContext
@@ -177,10 +179,18 @@ typedef NS_ENUM(NSInteger, WTTextSuggestionState) {
 
 - (void)proofreadingSessionWithUUID:(NSUUID *)sessionUUID updateState:(WTTextSuggestionState)state forSuggestionWithUUID:(NSUUID *)suggestionUUID;
 
+#if !PLATFORM(MAC) || HAVE(SUPPORTS_WRITING_TOOLS_ACTION)
+
+- (void)proofreadingSessionWithUUID:(NSUUID *)sessionUUID showDetailsForSuggestionWithUUID:(NSUUID *)suggestionUUID relativeToRect:(CGRect)rect inView:(id)sourceView;
+
+#else
+
 #if PLATFORM(IOS_FAMILY)
 - (void)proofreadingSessionWithUUID:(NSUUID *)sessionUUID showDetailsForSuggestionWithUUID:(NSUUID *)suggestionUUID relativeToRect:(CGRect)rect inView:(UIView *)sourceView;
 #else
 - (void)proofreadingSessionWithUUID:(NSUUID *)sessionUUID showDetailsForSuggestionWithUUID:(NSUUID *)suggestionUUID relativeToRect:(NSRect)rect inView:(NSView *)sourceView;
+#endif
+
 #endif
 
 - (void)textSystemWillBeginEditingDuringSessionWithUUID:(NSUUID *)sessionUUID;
@@ -203,13 +213,9 @@ typedef NS_ENUM(NSInteger, WTAction) {
     WTActionShowOriginal = 1,
     WTActionShowRewritten,
     WTActionCompositionRestart,
+#if !PLATFORM(MAC) || HAVE(NSRESPONDER_WRITING_TOOLS_SUPPORT)
     WTActionCompositionRefine,
-};
-
-typedef NS_ENUM(NSInteger, WTFormSheetUIType) {
-    WTFormSheetUITypeUnspecified,
-    WTFormSheetUITypeEnrollment,
-    WTFormSheetUITypeShareSheet,
+#endif
 };
 
 - (void)writingToolsSession:(WTSession *)session didReceiveAction:(WTAction)action;
@@ -224,9 +230,21 @@ typedef NS_ENUM(NSInteger, WTFormSheetUIType) {
 
 @optional
 
+#if !PLATFORM(MAC) || HAVE(SUPPORTS_WRITING_TOOLS_ACTION)
+
 - (BOOL)supportsWritingToolsAction:(WTAction)action;
 
+#else
+
+@property (nonatomic) BOOL wantsWritingToolsInlineEditing;
+
+#endif
+
+#if !PLATFORM(MAC) || HAVE(NSRESPONDER_WRITING_TOOLS_SUPPORT)
+
 @property (readonly, nonatomic) BOOL includesTextListMarkers;
+
+#endif
 
 @end
 
@@ -239,5 +257,3 @@ NS_ASSUME_NONNULL_END
 #endif
 
 #endif // ENABLE(WRITING_TOOLS)
-
-#endif // !__has_feature(modules)

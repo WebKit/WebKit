@@ -1693,6 +1693,16 @@ public:
         store32(dataTempRegister, dest.withOffset(sizeof(int)));
     }
 
+    void transfer64(BaseIndex src, BaseIndex dest)
+    {
+        if (src == dest)
+            return;
+        load32(src, dataTempRegister);
+        store32(dataTempRegister, dest);
+        load32(src.withOffset(sizeof(int)), dataTempRegister);
+        store32(dataTempRegister, dest.withOffset(sizeof(int)));
+    }
+
     void transferPtr(Address src, Address dest)
     {
         transfer32(src, dest);

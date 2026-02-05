@@ -160,7 +160,7 @@ private:
     _playerController = (WebAVPlayerController *)playerController;
 }
 
-- (void)setVideoSublayer:(CALayer *)videoSublayer
+- (void)setVideoSublayer:(nullable CALayer *)videoSublayer
 {
     _videoSublayer = videoSublayer;
 }

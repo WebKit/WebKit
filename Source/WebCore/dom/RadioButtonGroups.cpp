@@ -177,8 +177,7 @@ void RadioButtonGroup::remove(HTMLInputElement& button)
 
 void RadioButtonGroup::setNeedsStyleRecalcForAllButtons()
 {
-    for (auto& checkedButton : m_members) {
-        Ref button = checkedButton;
+    for (Ref button : m_members) {
         ASSERT(button->isRadioButton());
         button->invalidateStyleForSubtree();
     }
@@ -186,8 +185,7 @@ void RadioButtonGroup::setNeedsStyleRecalcForAllButtons()
 
 void RadioButtonGroup::updateValidityForAllButtons()
 {
-    for (auto& checkedButton : m_members) {
-        Ref button = checkedButton;
+    for (Ref button : m_members) {
         ASSERT(button->isRadioButton());
         button->updateValidity();
     }
@@ -221,7 +219,7 @@ void RadioButtonGroups::addButton(HTMLInputElement& element)
         group = makeUnique<RadioButtonGroup>();
     group->add(element);
 
-    if (CheckedPtr cache = element.protectedDocument()->existingAXObjectCache())
+    if (CheckedPtr cache = protect(element.document())->existingAXObjectCache())
         cache->onRadioGroupMembershipChanged(element);
 }
 
@@ -298,7 +296,7 @@ void RadioButtonGroups::removeButton(HTMLInputElement& element)
     if (it->value->isEmpty())
         m_nameToGroupMap.remove(it);
 
-    if (CheckedPtr cache = element.protectedDocument()->existingAXObjectCache())
+    if (CheckedPtr cache = protect(element.document())->existingAXObjectCache())
         cache->onRadioGroupMembershipChanged(element);
 }
 

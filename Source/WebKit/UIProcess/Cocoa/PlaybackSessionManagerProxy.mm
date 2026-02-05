@@ -567,7 +567,7 @@ PlaybackSessionManagerProxy::PlaybackSessionManagerProxy(WebPageProxy& page)
     ALWAYS_LOG(LOGIDENTIFIER);
 
     RefPtr protectedPage = m_page.get();
-    protectedPage->protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::PlaybackSessionManagerProxy::messageReceiverName(), protectedPage->webPageIDInMainFrameProcess(), *this);
+    protect(protectedPage->legacyMainFrameProcess())->addMessageReceiver(Messages::PlaybackSessionManagerProxy::messageReceiverName(), protectedPage->webPageIDInMainFrameProcess(), *this);
 }
 
 PlaybackSessionManagerProxy::~PlaybackSessionManagerProxy()
@@ -582,7 +582,7 @@ void PlaybackSessionManagerProxy::invalidate()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     if (RefPtr page = m_page.get()) {
-        page->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::PlaybackSessionManagerProxy::messageReceiverName(), page->webPageIDInMainFrameProcess());
+        protect(page->legacyMainFrameProcess())->removeMessageReceiver(Messages::PlaybackSessionManagerProxy::messageReceiverName(), page->webPageIDInMainFrameProcess());
         m_page = nullptr;
     }
 
@@ -1033,7 +1033,7 @@ void PlaybackSessionManagerProxy::setVideoReceiverEndpoint(PlaybackSessionContex
 
     Ref gpuProcess = process->processPool().ensureProtectedGPUProcess();
     Ref connection = gpuProcess->connection();
-    XPCObjectPtr<xpc_connection_t> xpcConnection = connection->xpcConnection();
+    OSObjectPtr<xpc_connection_t> xpcConnection = connection->xpcConnection();
     if (!xpcConnection)
         return;
 
@@ -1073,7 +1073,7 @@ void PlaybackSessionManagerProxy::swapVideoReceiverEndpoints(PlaybackSessionCont
 
     Ref gpuProcess = process->processPool().ensureProtectedGPUProcess();
     Ref connection = gpuProcess->connection();
-    XPCObjectPtr<xpc_connection_t> xpcConnection = connection->xpcConnection();
+    OSObjectPtr<xpc_connection_t> xpcConnection = connection->xpcConnection();
     if (!xpcConnection)
         return;
 
@@ -1153,7 +1153,7 @@ bool PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabled()
 void PlaybackSessionManagerProxy::requestControlledElementID()
 {
     if (RefPtr page = m_page.get(); m_controlsManagerContextId)
-        page->protectedLegacyMainFrameProcess()->send(Messages::PlaybackSessionManager::HandleControlledElementIDRequest(m_controlsManagerContextId->object()), page->webPageIDInMainFrameProcess());
+        protect(page->legacyMainFrameProcess())->send(Messages::PlaybackSessionManager::HandleControlledElementIDRequest(m_controlsManagerContextId->object()), page->webPageIDInMainFrameProcess());
 }
 
 PlatformPlaybackSessionInterface* PlaybackSessionManagerProxy::controlsManagerInterface()
@@ -1162,11 +1162,6 @@ PlatformPlaybackSessionInterface* PlaybackSessionManagerProxy::controlsManagerIn
         return nullptr;
 
     return &ensureInterface(*m_controlsManagerContextId);
-}
-
-RefPtr<WebCore::PlatformPlaybackSessionInterface> PlaybackSessionManagerProxy::protectedControlsManagerInterface()
-{
-    return controlsManagerInterface();
 }
 
 bool PlaybackSessionManagerProxy::isPaused(PlaybackSessionContextIdentifier identifier) const

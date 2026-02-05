@@ -59,7 +59,7 @@ void AXRelayProcessSuspendedNotification::sendProcessSuspendMessage(bool suspend
 #else
     NSDictionary *message = @{ @"pid" : @(getpid()), @"suspended" : @(suspended) };
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:message requiringSecureCoding:YES error:nil];
-    m_page->relayAccessibilityNotification("AXProcessSuspended"_s, data);
+    protect(m_page)->relayAccessibilityNotification("AXProcessSuspended"_s, data);
 #endif
 }
 

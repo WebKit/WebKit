@@ -74,6 +74,10 @@ static constexpr GLbitfield kWriteAfterAccessImageMemoryBarriers =
 static constexpr GLbitfield kWriteAfterAccessMemoryBarriers =
     kWriteAfterAccessImageMemoryBarriers | GL_SHADER_STORAGE_BARRIER_BIT;
 
+// The number of minimum commands in the command buffer to prefer submit at FBO boundary or
+// immediately submit when the device is idle after calling to flush.
+static constexpr size_t kMinCommandCountToSubmit = 1024;
+
 // For shader uniforms such as gl_DepthRange and the viewport size.
 struct GraphicsDriverUniforms
 {
@@ -180,6 +184,24 @@ constexpr gl::ShaderMap<vk::ImageAccess> kShaderWriteImageAccess = {
     {gl::ShaderType::Fragment, vk::ImageAccess::FragmentShaderWrite},
     {gl::ShaderType::Compute, vk::ImageAccess::ComputeShaderWrite}};
 
+constexpr angle::PackedEnumMap<gl::PrimitiveMode, gl::PrimitiveMode> kPrimitiveTopologyClass = {{
+    {gl::PrimitiveMode::Points, gl::PrimitiveMode::Points},
+    {gl::PrimitiveMode::Lines, gl::PrimitiveMode::Lines},
+    {gl::PrimitiveMode::LineLoop, gl::PrimitiveMode::Lines},
+    {gl::PrimitiveMode::LineStrip, gl::PrimitiveMode::Lines},
+    {gl::PrimitiveMode::Triangles, gl::PrimitiveMode::Triangles},
+    {gl::PrimitiveMode::TriangleStrip, gl::PrimitiveMode::Triangles},
+    {gl::PrimitiveMode::TriangleFan, gl::PrimitiveMode::Triangles},
+    {gl::PrimitiveMode::LinesAdjacency, gl::PrimitiveMode::Lines},
+    {gl::PrimitiveMode::LineStripAdjacency, gl::PrimitiveMode::Lines},
+    {gl::PrimitiveMode::TrianglesAdjacency, gl::PrimitiveMode::Triangles},
+    {gl::PrimitiveMode::TriangleStripAdjacency, gl::PrimitiveMode::Triangles},
+    {gl::PrimitiveMode::Patches, gl::PrimitiveMode::Patches},
+    // Use Unused1 as a placeholder for "uninitialized".  Using that instead of InvalidEnum allows a
+    // look up in this table and avoid special-casing it.
+    {gl::PrimitiveMode::Unused1, gl::PrimitiveMode::InvalidEnum},
+}};
+
 constexpr VkBufferUsageFlags kVertexBufferUsage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 constexpr size_t kDynamicVertexDataSize         = 16 * 1024;
 
@@ -269,15 +291,6 @@ SurfaceRotation DetermineSurfaceRotation(const gl::Framebuffer *framebuffer,
         // Do not rotate gl_Position (offscreen framebuffer):
         return SurfaceRotation::Identity;
     }
-}
-
-// Should not generate a copy with modern C++.
-EventName GetTraceEventName(const char *title, uint64_t counter)
-{
-    EventName buf;
-    snprintf(buf.data(), kMaxGpuEventNameLen - 1, "%s %llu", title,
-             static_cast<unsigned long long>(counter));
-    return buf;
 }
 
 vk::ResourceAccess GetColorAccess(const gl::State &state,
@@ -585,16 +598,11 @@ void OnImageBufferWrite(vk::Context *context,
     vk::BufferHelper &buffer = bufferVk->getBuffer();
     VkAccessFlags accessFlags = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
     commandBufferHelper->bufferWrite(context, accessFlags, stages, &buffer);
+    bufferVk->onDataChanged();
 }
 
 constexpr angle::PackedEnumMap<RenderPassClosureReason, const char *> kRenderPassClosureReason = {{
     {RenderPassClosureReason::AlreadySpecifiedElsewhere, nullptr},
-    {RenderPassClosureReason::ContextDestruction, "Render pass closed due to context destruction"},
-    {RenderPassClosureReason::ContextChange, "Render pass closed due to context change"},
-    {RenderPassClosureReason::GLFlush, "Render pass closed due to glFlush()"},
-    {RenderPassClosureReason::GLFinish, "Render pass closed due to glFinish()"},
-    {RenderPassClosureReason::EGLSwapBuffers, "Render pass closed due to eglSwapBuffers()"},
-    {RenderPassClosureReason::EGLWaitClient, "Render pass closed due to eglWaitClient()"},
     {RenderPassClosureReason::SurfaceUnMakeCurrent,
      "Render pass closed due to onSurfaceUnMakeCurrent()"},
     {RenderPassClosureReason::FramebufferBindingChange,
@@ -621,8 +629,6 @@ constexpr angle::PackedEnumMap<RenderPassClosureReason, const char *> kRenderPas
     {RenderPassClosureReason::XfbWriteThenTextureBuffer,
      "Render pass closed due to read of texture buffer previously used as transform feedback "
      "output in render pass"},
-    {RenderPassClosureReason::BufferWriteThenMap,
-     "Render pass closed due to mapping buffer being written to by said render pass"},
     {RenderPassClosureReason::BufferWriteThenOutOfRPRead,
      "Render pass closed due to non-render-pass read of buffer that was written to in render pass"},
     {RenderPassClosureReason::BufferUseThenOutOfRPWrite,
@@ -640,7 +646,6 @@ constexpr angle::PackedEnumMap<RenderPassClosureReason, const char *> kRenderPas
     {RenderPassClosureReason::ImageAttachmentThenComputeRead,
      "Render pass closed due to compute read of image previously used as framebuffer attachment in "
      "render pass"},
-    {RenderPassClosureReason::GetQueryResult, "Render pass closed due to getting query result"},
     {RenderPassClosureReason::BeginNonRenderPassQuery,
      "Render pass closed due to non-render-pass query begin"},
     {RenderPassClosureReason::EndNonRenderPassQuery,
@@ -648,28 +653,17 @@ constexpr angle::PackedEnumMap<RenderPassClosureReason, const char *> kRenderPas
     {RenderPassClosureReason::TimestampQuery, "Render pass closed due to timestamp query"},
     {RenderPassClosureReason::EndRenderPassQuery,
      "Render pass closed due to switch from query enabled draw to query disabled draw"},
-    {RenderPassClosureReason::GLReadPixels, "Render pass closed due to glReadPixels()"},
     {RenderPassClosureReason::BufferUseThenReleaseToExternal,
      "Render pass closed due to buffer (used by render pass) release to external"},
     {RenderPassClosureReason::ImageUseThenReleaseToExternal,
      "Render pass closed due to image (used by render pass) release to external"},
-    {RenderPassClosureReason::BufferInUseWhenSynchronizedMap,
-     "Render pass closed due to mapping buffer in use by GPU without GL_MAP_UNSYNCHRONIZED_BIT"},
     {RenderPassClosureReason::GLMemoryBarrierThenStorageResource,
      "Render pass closed due to glMemoryBarrier before storage output in render pass"},
     {RenderPassClosureReason::StorageResourceUseThenGLMemoryBarrier,
      "Render pass closed due to glMemoryBarrier after storage output in render pass"},
-    {RenderPassClosureReason::ExternalSemaphoreSignal,
-     "Render pass closed due to external semaphore signal"},
     {RenderPassClosureReason::SyncObjectInit, "Render pass closed due to sync object insertion"},
-    {RenderPassClosureReason::SyncObjectWithFdInit,
-     "Render pass closed due to sync object with fd insertion"},
     {RenderPassClosureReason::SyncObjectClientWait,
      "Render pass closed due to sync object client wait"},
-    {RenderPassClosureReason::SyncObjectServerWait,
-     "Render pass closed due to sync object server wait"},
-    {RenderPassClosureReason::SyncObjectGetStatus,
-     "Render pass closed due to sync object get status"},
     {RenderPassClosureReason::ForeignImageRelease,
      "Render pass closed due to release of foreign image"},
     {RenderPassClosureReason::XfbPause, "Render pass closed due to transform feedback pause"},
@@ -683,17 +677,28 @@ constexpr angle::PackedEnumMap<RenderPassClosureReason, const char *> kRenderPas
      "Render pass closed due to fallback to CPU when copying texture"},
     {RenderPassClosureReason::TextureReformatToRenderable,
      "Render pass closed due to reformatting texture to a renderable fallback"},
-    {RenderPassClosureReason::DeviceLocalBufferMap,
-     "Render pass closed due to mapping device local buffer"},
     {RenderPassClosureReason::PrepareForBlit, "Render pass closed prior to draw-based blit"},
     {RenderPassClosureReason::PrepareForImageCopy,
      "Render pass closed prior to draw-based image copy"},
+    {RenderPassClosureReason::GenerateMipmapWithDraw,
+     "Temporary render pass used to generate mipmap using draws"},
+    {RenderPassClosureReason::TemporaryForClearTexture,
+     "Temporary render pass used for clear texture closed"},
     {RenderPassClosureReason::TemporaryForImageClear,
      "Temporary render pass used for image clear closed"},
     {RenderPassClosureReason::TemporaryForImageCopy,
      "Temporary render pass used for image copy closed"},
     {RenderPassClosureReason::TemporaryForOverlayDraw,
      "Temporary render pass used for overlay draw closed"},
+    {RenderPassClosureReason::GraphicsTextureImageAccessThenComputeAccess,
+     "Render pass closed due to implicit layout transition when image is used in compute after "
+     "sampling"},
+    {RenderPassClosureReason::OutOfReservedQueueSerialForOutsideCommands,
+     "Render pass closed due to running out of reserved serials"},
+    {RenderPassClosureReason::LegacyDithering, "Render pass closed due to updating legacy dither"},
+    {RenderPassClosureReason::SubmitCommands, "Render pass closed at command buffer submission"},
+    {RenderPassClosureReason::TileMemorySimulatedClear,
+     "Temporary render pass used for tile memory clear simulation"},
 }};
 
 VkDependencyFlags GetLocalDependencyFlags(ContextVk *contextVk)
@@ -827,7 +832,7 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, vk::Rendere
       mCurrentGraphicsPipeline(nullptr),
       mCurrentGraphicsPipelineShaders(nullptr),
       mCurrentComputePipeline(nullptr),
-      mCurrentDrawMode(gl::PrimitiveMode::InvalidEnum),
+      mCurrentDrawMode(gl::PrimitiveMode::Unused1),
       mCurrentWindowSurface(nullptr),
       mCurrentRotationDrawFramebuffer(SurfaceRotation::Identity),
       mCurrentRotationReadFramebuffer(SurfaceRotation::Identity),
@@ -848,10 +853,13 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, vk::Rendere
       mFlipViewportForReadFramebuffer(false),
       mIsAnyHostVisibleBufferWritten(false),
       mCurrentQueueSerialIndex(kInvalidQueueSerialIndex),
+      mInitialContextPriority(renderer->getDriverPriority(GetContextPriority(state))),
+      mCommandState(renderer,
+                    vk::ConvertProtectionBoolToType(state.hasProtectedContent()),
+                    mInitialContextPriority),
       mOutsideRenderPassCommands(nullptr),
       mRenderPassCommands(nullptr),
       mQueryEventType(GraphicsEventCmdBuf::NotInQueryCmd),
-      mGpuEventsEnabled(false),
       mPrimaryBufferEventCounter(0),
       mHasDeferredFlush(false),
       mHasAnyCommandsPendingSubmission(false),
@@ -861,12 +869,6 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, vk::Rendere
       mTotalBufferToImageCopySize(0),
       mEstimatedPendingImageGarbageSize(0),
       mRenderPassCountSinceSubmit(0),
-      mHasWaitSemaphoresPendingSubmission(false),
-      mGpuClockSync{std::numeric_limits<double>::max(), std::numeric_limits<double>::max()},
-      mGpuEventTimestampOrigin(0),
-      mInitialContextPriority(renderer->getDriverPriority(GetContextPriority(state))),
-      mContextPriority(mInitialContextPriority),
-      mProtectionType(vk::ConvertProtectionBoolToType(state.hasProtectedContent())),
       mShareGroupVk(vk::GetImpl(state.getShareGroup())),
       mCommandsPendingSubmissionCount(0)
 {
@@ -925,6 +927,10 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, vk::Rendere
     if (mRenderer->getFeatures().useFrontFaceDynamicState.enabled)
     {
         mDynamicStateDirtyBits.set(DIRTY_BIT_DYNAMIC_FRONT_FACE);
+    }
+    if (mRenderer->getFeatures().usePrimitiveTopologyDynamicState.enabled)
+    {
+        mDynamicStateDirtyBits.set(DIRTY_BIT_DYNAMIC_PRIMITIVE_TOPOLOGY);
     }
     if (mRenderer->getFeatures().useDepthTestEnableDynamicState.enabled)
     {
@@ -1039,6 +1045,8 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, vk::Rendere
         &ContextVk::handleDirtyGraphicsDynamicCullMode;
     mGraphicsDirtyBitHandlers[DIRTY_BIT_DYNAMIC_FRONT_FACE] =
         &ContextVk::handleDirtyGraphicsDynamicFrontFace;
+    mGraphicsDirtyBitHandlers[DIRTY_BIT_DYNAMIC_PRIMITIVE_TOPOLOGY] =
+        &ContextVk::handleDirtyGraphicsDynamicPrimitiveTopology;
     mGraphicsDirtyBitHandlers[DIRTY_BIT_DYNAMIC_DEPTH_TEST_ENABLE] =
         &ContextVk::handleDirtyGraphicsDynamicDepthTestEnable;
     mGraphicsDirtyBitHandlers[DIRTY_BIT_DYNAMIC_DEPTH_WRITE_ENABLE] =
@@ -1192,24 +1200,22 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, vk::Rendere
     mShareGroupRefCountedEventsGarbageRecycler =
         mShareGroupVk->getRefCountedEventsGarbageRecycler();
 
-    mDeviceQueueIndex = renderer->getDeviceQueueIndex(mContextPriority);
+    mDeviceQueueIndex = renderer->getDeviceQueueIndex(getPriority());
 
+    angle::PerfMonitorCounterGroupInfo vulkanGroupInfo;
     angle::PerfMonitorCounterGroup vulkanGroup;
-    vulkanGroup.name = "vulkan";
+    vulkanGroupInfo.name = "vulkan";
 
 #define ANGLE_ADD_PERF_MONITOR_COUNTER_GROUP(COUNTER) \
-    {                                                 \
-        angle::PerfMonitorCounter counter;            \
-        counter.name  = #COUNTER;                     \
-        counter.value = 0;                            \
-        vulkanGroup.counters.push_back(counter);      \
-    }
+    vulkanGroupInfo.counters.emplace_back(#COUNTER);  \
+    vulkanGroup.counters.emplace_back(0);
 
     ANGLE_VK_PERF_COUNTERS_X(ANGLE_ADD_PERF_MONITOR_COUNTER_GROUP)
 
 #undef ANGLE_ADD_PERF_MONITOR_COUNTER_GROUP
 
-    mPerfMonitorCounters.push_back(vulkanGroup);
+    mPerfMonitorCountersInfo.emplace_back(std::move(vulkanGroupInfo));
+    mPerfMonitorCounters.emplace_back(std::move(vulkanGroup));
 
     mCurrentGarbage.reserve(32);
 
@@ -1221,6 +1227,12 @@ ContextVk::~ContextVk() {}
 
 void ContextVk::onDestroy(const gl::Context *context)
 {
+    VkDevice device = getDevice();
+
+    ASSERT(mImagesWithTileMemory.empty());
+
+    mCommandState.destroy(device);
+
     // If there is a context lost, destroy all the command buffers and resources regardless of
     // whether they finished execution on GPU.
     if (mRenderer->isDeviceLost())
@@ -1232,7 +1244,7 @@ void ContextVk::onDestroy(const gl::Context *context)
     mIncompleteTextures.onDestroy(context);
 
     // Flush and complete current outstanding work before destruction.
-    (void)finishImpl(RenderPassClosureReason::ContextDestruction);
+    (void)finishImpl(QueueSubmitReason::ContextDestruction);
 
     // The finish call could also generate device loss.
     if (mRenderer->isDeviceLost())
@@ -1242,8 +1254,6 @@ void ContextVk::onDestroy(const gl::Context *context)
 
     // Everything must be finished
     ASSERT(mRenderer->hasResourceUseFinished(mSubmittedResourceUse));
-
-    VkDevice device = getDevice();
 
     mShareGroupVk->cleanupRefCountedEventGarbage();
 
@@ -1275,7 +1285,6 @@ void ContextVk::onDestroy(const gl::Context *context)
 
     mRenderPassCache.destroy(this);
     mShaderLibrary.destroy(device);
-    mGpuEventQueryPool.destroy(device);
 
     // Must release all Vulkan secondary command buffers before destroying the pools.
     if ((!vk::OutsideRenderPassCommandBuffer::ExecutesInline() ||
@@ -1376,17 +1385,6 @@ angle::Result ContextVk::initialize(const angle::ImageLoadContext &imageLoadCont
                     kDynamicVertexDataSize, true);
     }
 
-#if ANGLE_ENABLE_VULKAN_GPU_TRACE_EVENTS
-    angle::PlatformMethods *platform = ANGLEPlatformCurrent();
-    ASSERT(platform);
-
-    // GPU tracing workaround for anglebug.com/42261625.  The renderer should not emit gpu events
-    // during platform discovery.
-    const unsigned char *gpuEventsEnabled =
-        platform->getTraceCategoryEnabledFlag(platform, "gpu.angle.gpu");
-    mGpuEventsEnabled = gpuEventsEnabled && *gpuEventsEnabled;
-#endif
-
     // Assign initial command buffers from queue
     ANGLE_TRY(vk::OutsideRenderPassCommandBuffer::InitializeCommandPool(
         this, &mCommandPools.outsideRenderPassPool, mRenderer->getQueueFamilyIndex(),
@@ -1405,20 +1403,6 @@ angle::Result ContextVk::initialize(const angle::ImageLoadContext &imageLoadCont
     // Initialize serials to be valid but appear submitted and finished.
     mLastFlushedQueueSerial   = QueueSerial(mCurrentQueueSerialIndex, Serial());
     mLastSubmittedQueueSerial = mLastFlushedQueueSerial;
-
-    if (mGpuEventsEnabled)
-    {
-        // GPU events should only be available if timestamp queries are available.
-        ASSERT(mRenderer->getQueueFamilyProperties().timestampValidBits > 0);
-        // Calculate the difference between CPU and GPU clocks for GPU event reporting.
-        ANGLE_TRY(mGpuEventQueryPool.init(this, VK_QUERY_TYPE_TIMESTAMP,
-                                          vk::kDefaultTimestampQueryPoolSize));
-        ANGLE_TRY(synchronizeCpuGpuTime());
-
-        EventName eventName = GetTraceEventName("Primary", mPrimaryBufferEventCounter);
-        ANGLE_TRY(traceGpuEvent(&mOutsideRenderPassCommands->getCommandBuffer(),
-                                TRACE_EVENT_PHASE_BEGIN, eventName));
-    }
 
     size_t minAlignment = static_cast<size_t>(
         mRenderer->getPhysicalDeviceProperties().limits.minUniformBufferOffsetAlignment);
@@ -1450,6 +1434,11 @@ angle::Result ContextVk::initialize(const angle::ImageLoadContext &imageLoadCont
         {
             ANGLE_TRY(vk::GetImpl(context.second)->flushOutsideRenderPassCommands());
         }
+    }
+
+    if (getFeatures().supportsTileMemoryHeap.enabled)
+    {
+        mImagesWithTileMemory.reserve(4);
     }
 
     return angle::Result::Continue;
@@ -1496,7 +1485,7 @@ angle::Result ContextVk::flushImpl(const gl::Context *context)
     uint32_t currentRPCommandCount =
         mRenderPassCommands->getCommandBuffer().getRenderPassWriteCommandCount() +
         mCommandsPendingSubmissionCount;
-    if (currentRPCommandCount >= mRenderer->getMinCommandCountToSubmit())
+    if (currentRPCommandCount >= kMinCommandCountToSubmit)
     {
         if (!mRenderer->isInFlightCommandsEmpty())
         {
@@ -1506,7 +1495,7 @@ angle::Result ContextVk::flushImpl(const gl::Context *context)
         // If the device is now idle, the pending work should be submitted.
         if (mRenderer->isInFlightCommandsEmpty())
         {
-            ANGLE_TRY(flushAndSubmitCommands(nullptr, nullptr, RenderPassClosureReason::GLFlush));
+            ANGLE_TRY(flushAndSubmitCommands(nullptr, nullptr, QueueSubmitReason::GLFlush));
             return angle::Result::Continue;
         }
     }
@@ -1523,7 +1512,7 @@ angle::Result ContextVk::flushImpl(const gl::Context *context)
         return mCurrentWindowSurface->onSharedPresentContextFlush(this);
     }
 
-    return flushAndSubmitCommands(nullptr, nullptr, RenderPassClosureReason::GLFlush);
+    return flushAndSubmitCommands(nullptr, nullptr, QueueSubmitReason::GLFlush);
 }
 
 angle::Result ContextVk::flush(const gl::Context *context)
@@ -1550,7 +1539,7 @@ angle::Result ContextVk::finish(const gl::Context *context)
         // need to wait for submitted commands.
     }
 
-    ANGLE_TRY(finishImpl(RenderPassClosureReason::GLFinish));
+    ANGLE_TRY(finishImpl(QueueSubmitReason::GLFinish));
 
     if (!mCurrentWindowSurface || singleBufferedFlush)
     {
@@ -1578,9 +1567,7 @@ angle::Result ContextVk::setupDraw(const gl::Context *context,
     // Set any dirty bits that depend on draw call parameters or other objects.
     if (mode != mCurrentDrawMode)
     {
-        invalidateCurrentGraphicsPipeline();
-        mCurrentDrawMode = mode;
-        mGraphicsPipelineDesc->updateTopology(&mGraphicsPipelineTransition, mCurrentDrawMode);
+        updateTopology(mode);
     }
 
     // Submit pending commands if the number of write-commands in the current render pass reaches a
@@ -1589,7 +1576,8 @@ angle::Result ContextVk::setupDraw(const gl::Context *context,
                        mRenderer->getMinRenderPassWriteCommandCountToEarlySubmit()) &&
         (mCommandsPendingSubmissionCount > 0))
     {
-        ANGLE_TRY(submitCommands(nullptr, nullptr));
+        ANGLE_TRY(
+            submitCommands(nullptr, nullptr, QueueSubmitReason::RenderPassCommandLimitReached));
         mCommandsPendingSubmissionCount = 0;
     }
 
@@ -2375,7 +2363,8 @@ angle::Result ContextVk::handleDirtyGraphicsReadOnlyDepthFeedbackLoopMode(
 angle::Result ContextVk::handleDirtyAnySamplePassedQueryEnd(DirtyBits::Iterator *dirtyBitsIterator,
                                                             DirtyBits dirtyBitMask)
 {
-    if (mRenderPassCommands->started())
+    // If we are using tile memory, don't enable this optimization to prevent fallback.
+    if (mRenderPassCommands->started() && mImagesWithTileMemory.empty())
     {
         // When we switch from query enabled draw to query disabled draw, we do immediate flush to
         // ensure the query result will be ready early so that application thread calling
@@ -2690,11 +2679,9 @@ angle::Result ContextVk::handleDirtyGraphicsVertexBuffersVertexInputDynamicState
 
     if (maxAttrib > 0)
     {
-        if (getFeatures().useVertexInputBindingStrideDynamicState.enabled)
+        if (getFeatures().supportsBindVertexBuffers2.enabled)
         {
-            // bindVertexBuffers2EXT() requires extended dynamic state or shader object extension.
             // Since the strides are already set in setVertexInput(), they need not be set here.
-            ASSERT(getFeatures().supportsExtendedDynamicState.enabled);
             if (mUseSizePointerForBindingVertexBuffers)
             {
                 const gl::AttribArray<VkDeviceSize> &bufferSizes =
@@ -2759,8 +2746,7 @@ angle::Result ContextVk::handleDirtyGraphicsVertexBuffersVertexInputDynamicState
                 mismatchingType ? 0 : vertexArrayVk->getCurrentArrayBufferStride(attribIndex);
         }
 
-        // bindVertexBuffers2EXT() requires the extension extended dynamic state or shader object.
-        ASSERT(getFeatures().supportsExtendedDynamicState.enabled);
+        ASSERT(getFeatures().supportsBindVertexBuffers2.enabled);
         if (mUseSizePointerForBindingVertexBuffers)
         {
             const gl::AttribArray<VkDeviceSize> &bufferSizes =
@@ -3220,6 +3206,14 @@ angle::Result ContextVk::handleDirtyGraphicsDynamicFrontFace(DirtyBits::Iterator
     const gl::RasterizerState &rasterState = mState.getRasterizerState();
     mRenderPassCommandBuffer->setFrontFace(
         gl_vk::GetFrontFace(rasterState.frontFace, isYFlipEnabledForDrawFBO()));
+    return angle::Result::Continue;
+}
+
+angle::Result ContextVk::handleDirtyGraphicsDynamicPrimitiveTopology(
+    DirtyBits::Iterator *dirtyBitsIterator,
+    DirtyBits dirtyBitMask)
+{
+    mRenderPassCommandBuffer->setPrimitiveTopology(gl_vk::GetPrimitiveTopology(mCurrentDrawMode));
     return angle::Result::Continue;
 }
 
@@ -3732,16 +3726,32 @@ void ContextVk::addOverlayUsedBuffersCount(vk::CommandBufferHelperCommon *comman
 }
 
 angle::Result ContextVk::submitCommands(const vk::Semaphore *signalSemaphore,
-                                        const vk::SharedExternalFence *externalFence)
+                                        const vk::SharedExternalFence *externalFence,
+                                        QueueSubmitReason reason)
 {
+    // Since we just about to flush, deferred flush is no longer deferred.
+    mHasDeferredFlush = false;
+
     if (kEnableCommandStreamDiagnostics)
     {
         dumpCommandStreamDiagnostics();
     }
 
-    ANGLE_TRY(mRenderer->submitCommands(
-        this, getProtectionType(), mContextPriority, signalSemaphore, externalFence,
-        std::move(mImagesToTransitionToForeign), mLastFlushedQueueSerial));
+    // If there are foreign images to transition, issue the barrier now.
+    if (!mImagesToTransitionToForeign.empty())
+    {
+        mCommandState.flushImagesTransitionToForeign(std::move(mImagesToTransitionToForeign));
+    }
+
+    if (!mImagesWithTileMemory.empty())
+    {
+        ANGLE_TRY(finalizeImagesWithTileMemory());
+    }
+
+    ANGLE_TRY(mCommandState.insertSubmitDebugMarker(this, reason));
+
+    ANGLE_TRY(mRenderer->submitCommands(this, signalSemaphore, externalFence,
+                                        mLastFlushedQueueSerial, std::move(mCommandState)));
 
     mLastSubmittedQueueSerial = mLastFlushedQueueSerial;
     mSubmittedResourceUse.setQueueSerial(mLastSubmittedQueueSerial);
@@ -3754,11 +3764,6 @@ angle::Result ContextVk::submitCommands(const vk::Semaphore *signalSemaphore,
     mShareGroupVk->cleanupExcessiveRefCountedEventGarbage();
 
     mComputeDirtyBits |= mNewComputeCommandBufferDirtyBits;
-
-    if (mGpuEventsEnabled)
-    {
-        ANGLE_TRY(checkCompletedGpuEvents());
-    }
 
     mTotalBufferToImageCopySize       = 0;
     mEstimatedPendingImageGarbageSize = 0;
@@ -3780,10 +3785,13 @@ angle::Result ContextVk::onCopyUpdate(VkDeviceSize size, bool *commandBufferWasF
     *commandBufferWasFlushedOut = false;
 
     mTotalBufferToImageCopySize += size;
-    // If the copy size exceeds the specified threshold, submit the outside command buffer.
-    if (mTotalBufferToImageCopySize >= kMaxBufferToImageCopySize)
+    // If the copy size exceeds the specified threshold, submit the outside command buffer. When
+    // there are images with tile memory in use, avoid submission by trying to avoid triggering tile
+    // memory fallback.
+    if (mTotalBufferToImageCopySize >= kMaxBufferToImageCopySize && mImagesWithTileMemory.empty())
     {
-        ANGLE_TRY(flushAndSubmitOutsideRenderPassCommands());
+        ANGLE_TRY(flushAndSubmitOutsideRenderPassCommands(
+            QueueSubmitReason::BufferToImageUpdateLimitReached));
         *commandBufferWasFlushedOut = true;
     }
     return angle::Result::Continue;
@@ -3802,318 +3810,6 @@ bool ContextVk::hasExcessPendingGarbage() const
     VkDeviceSize trackedPendingGarbage =
         mRenderer->getPendingSuballocationGarbageSize() + mEstimatedPendingImageGarbageSize;
     return trackedPendingGarbage >= mRenderer->getPendingGarbageSizeLimit();
-}
-
-angle::Result ContextVk::synchronizeCpuGpuTime()
-{
-    ASSERT(mGpuEventsEnabled);
-
-    angle::PlatformMethods *platform = ANGLEPlatformCurrent();
-    ASSERT(platform);
-
-    // To synchronize CPU and GPU times, we need to get the CPU timestamp as close as possible
-    // to the GPU timestamp.  The process of getting the GPU timestamp is as follows:
-    //
-    //             CPU                            GPU
-    //
-    //     Record command buffer
-    //     with timestamp query
-    //
-    //     Submit command buffer
-    //
-    //     Post-submission work             Begin execution
-    //
-    //            ????                    Write timestamp Tgpu
-    //
-    //            ????                       End execution
-    //
-    //            ????                    Return query results
-    //
-    //            ????
-    //
-    //       Get query results
-    //
-    // The areas of unknown work (????) on the CPU indicate that the CPU may or may not have
-    // finished post-submission work while the GPU is executing in parallel. With no further
-    // work, querying CPU timestamps before submission and after getting query results give the
-    // bounds to Tgpu, which could be quite large.
-    //
-    // Using VkEvents, the GPU can be made to wait for the CPU and vice versa, in an effort to
-    // reduce this range. This function implements the following procedure:
-    //
-    //             CPU                            GPU
-    //
-    //     Record command buffer
-    //     with timestamp query
-    //
-    //     Submit command buffer
-    //
-    //     Post-submission work             Begin execution
-    //
-    //            ????                    Set Event GPUReady
-    //
-    //    Wait on Event GPUReady         Wait on Event CPUReady
-    //
-    //       Get CPU Time Ts             Wait on Event CPUReady
-    //
-    //      Set Event CPUReady           Wait on Event CPUReady
-    //
-    //      Get CPU Time Tcpu              Get GPU Time Tgpu
-    //
-    //    Wait on Event GPUDone            Set Event GPUDone
-    //
-    //       Get CPU Time Te                 End Execution
-    //
-    //            Idle                    Return query results
-    //
-    //      Get query results
-    //
-    // If Te-Ts > epsilon, a GPU or CPU interruption can be assumed and the operation can be
-    // retried.  Once Te-Ts < epsilon, Tcpu can be taken to presumably match Tgpu.  Finding an
-    // epsilon that's valid for all devices may be difficult, so the loop can be performed only
-    // a limited number of times and the Tcpu,Tgpu pair corresponding to smallest Te-Ts used for
-    // calibration.
-    //
-    // Note: Once VK_EXT_calibrated_timestamps is ubiquitous, this should be redone.
-
-    ANGLE_TRACE_EVENT0("gpu.angle", "ContextVk::synchronizeCpuGpuTime");
-
-    // Create a query used to receive the GPU timestamp
-    vk::QueryHelper timestampQuery;
-    ANGLE_TRY(mGpuEventQueryPool.allocateQuery(this, &timestampQuery, 1));
-
-    // Create the three events
-    VkEventCreateInfo eventCreateInfo = {};
-    eventCreateInfo.sType             = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO;
-    eventCreateInfo.flags             = 0;
-
-    VkDevice device = getDevice();
-    vk::DeviceScoped<vk::Event> cpuReady(device), gpuReady(device), gpuDone(device);
-    ANGLE_VK_TRY(this, cpuReady.get().init(device, eventCreateInfo));
-    ANGLE_VK_TRY(this, gpuReady.get().init(device, eventCreateInfo));
-    ANGLE_VK_TRY(this, gpuDone.get().init(device, eventCreateInfo));
-
-    constexpr uint32_t kRetries = 10;
-
-    // Time suffixes used are S for seconds and Cycles for cycles
-    double tightestRangeS = 1e6f;
-    double TcpuS          = 0;
-    uint64_t TgpuCycles   = 0;
-    for (uint32_t i = 0; i < kRetries; ++i)
-    {
-        // Reset the events
-        ANGLE_VK_TRY(this, cpuReady.get().reset(device));
-        ANGLE_VK_TRY(this, gpuReady.get().reset(device));
-        ANGLE_VK_TRY(this, gpuDone.get().reset(device));
-
-        // Record the command buffer
-        vk::ScopedPrimaryCommandBuffer scopedCommandBuffer(device);
-
-        ANGLE_TRY(
-            mRenderer->getCommandBufferOneOff(this, getProtectionType(), &scopedCommandBuffer));
-        vk::PrimaryCommandBuffer &commandBuffer = scopedCommandBuffer.get();
-
-        commandBuffer.setEvent(gpuReady.get().getHandle(), VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT);
-        commandBuffer.waitEvents(1, cpuReady.get().ptr(), VK_PIPELINE_STAGE_HOST_BIT,
-                                 VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT, 0, nullptr, 0, nullptr, 0,
-                                 nullptr);
-        timestampQuery.writeTimestampToPrimary(this, &commandBuffer);
-
-        commandBuffer.setEvent(gpuDone.get().getHandle(), VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT);
-
-        ANGLE_VK_TRY(this, commandBuffer.end());
-
-        QueueSerial submitSerial;
-        // vkEvent's are externally synchronized, therefore need work to be submitted before calling
-        // vkGetEventStatus
-        ANGLE_TRY(mRenderer->queueSubmitOneOff(this, std::move(scopedCommandBuffer),
-                                               getProtectionType(), mContextPriority,
-                                               VK_NULL_HANDLE, 0, &submitSerial));
-
-        // Track it with the submitSerial.
-        timestampQuery.setQueueSerial(submitSerial);
-
-        // Wait for GPU to be ready.  This is a short busy wait.
-        VkResult result = VK_EVENT_RESET;
-        do
-        {
-            result = gpuReady.get().getStatus(device);
-            if (result != VK_EVENT_SET && result != VK_EVENT_RESET)
-            {
-                ANGLE_VK_TRY(this, result);
-            }
-        } while (result == VK_EVENT_RESET);
-
-        double TsS = platform->monotonicallyIncreasingTime(platform);
-
-        // Tell the GPU to go ahead with the timestamp query.
-        ANGLE_VK_TRY(this, cpuReady.get().set(device));
-        double cpuTimestampS = platform->monotonicallyIncreasingTime(platform);
-
-        // Wait for GPU to be done.  Another short busy wait.
-        do
-        {
-            result = gpuDone.get().getStatus(device);
-            if (result != VK_EVENT_SET && result != VK_EVENT_RESET)
-            {
-                ANGLE_VK_TRY(this, result);
-            }
-        } while (result == VK_EVENT_RESET);
-
-        double TeS = platform->monotonicallyIncreasingTime(platform);
-
-        // Get the query results
-        ANGLE_TRY(mRenderer->finishQueueSerial(this, submitSerial));
-
-        vk::QueryResult gpuTimestampCycles(1);
-        ANGLE_TRY(timestampQuery.getUint64Result(this, &gpuTimestampCycles));
-
-        // Use the first timestamp queried as origin.
-        if (mGpuEventTimestampOrigin == 0)
-        {
-            mGpuEventTimestampOrigin =
-                gpuTimestampCycles.getResult(vk::QueryResult::kDefaultResultIndex);
-        }
-
-        // Take these CPU and GPU timestamps if there is better confidence.
-        double confidenceRangeS = TeS - TsS;
-        if (confidenceRangeS < tightestRangeS)
-        {
-            tightestRangeS = confidenceRangeS;
-            TcpuS          = cpuTimestampS;
-            TgpuCycles     = gpuTimestampCycles.getResult(vk::QueryResult::kDefaultResultIndex);
-        }
-    }
-
-    mGpuEventQueryPool.freeQuery(this, &timestampQuery);
-
-    // timestampPeriod gives nanoseconds/cycle.
-    double TgpuS =
-        (TgpuCycles - mGpuEventTimestampOrigin) *
-        static_cast<double>(getRenderer()->getPhysicalDeviceProperties().limits.timestampPeriod) /
-        1'000'000'000.0;
-
-    flushGpuEvents(TgpuS, TcpuS);
-
-    mGpuClockSync.gpuTimestampS = TgpuS;
-    mGpuClockSync.cpuTimestampS = TcpuS;
-
-    return angle::Result::Continue;
-}
-
-angle::Result ContextVk::traceGpuEventImpl(vk::OutsideRenderPassCommandBuffer *commandBuffer,
-                                           char phase,
-                                           const EventName &name)
-{
-    ASSERT(mGpuEventsEnabled);
-
-    GpuEventQuery gpuEvent;
-    gpuEvent.name  = name;
-    gpuEvent.phase = phase;
-    ANGLE_TRY(mGpuEventQueryPool.allocateQuery(this, &gpuEvent.queryHelper, 1));
-
-    gpuEvent.queryHelper.writeTimestamp(this, commandBuffer);
-
-    mInFlightGpuEventQueries.push_back(std::move(gpuEvent));
-    return angle::Result::Continue;
-}
-
-angle::Result ContextVk::checkCompletedGpuEvents()
-{
-    ASSERT(mGpuEventsEnabled);
-
-    angle::PlatformMethods *platform = ANGLEPlatformCurrent();
-    ASSERT(platform);
-
-    int finishedCount = 0;
-
-    for (GpuEventQuery &eventQuery : mInFlightGpuEventQueries)
-    {
-        ASSERT(mRenderer->hasResourceUseSubmitted(eventQuery.queryHelper.getResourceUse()));
-        // Only check the timestamp query if the submission has finished.
-        if (!mRenderer->hasResourceUseFinished(eventQuery.queryHelper.getResourceUse()))
-        {
-            break;
-        }
-
-        // See if the results are available.
-        vk::QueryResult gpuTimestampCycles(1);
-        bool available = false;
-        ANGLE_TRY(eventQuery.queryHelper.getUint64ResultNonBlocking(this, &gpuTimestampCycles,
-                                                                    &available));
-        if (!available)
-        {
-            break;
-        }
-
-        mGpuEventQueryPool.freeQuery(this, &eventQuery.queryHelper);
-
-        GpuEvent gpuEvent;
-        gpuEvent.gpuTimestampCycles =
-            gpuTimestampCycles.getResult(vk::QueryResult::kDefaultResultIndex);
-        gpuEvent.name  = eventQuery.name;
-        gpuEvent.phase = eventQuery.phase;
-
-        mGpuEvents.emplace_back(gpuEvent);
-
-        ++finishedCount;
-    }
-
-    mInFlightGpuEventQueries.erase(mInFlightGpuEventQueries.begin(),
-                                   mInFlightGpuEventQueries.begin() + finishedCount);
-
-    return angle::Result::Continue;
-}
-
-void ContextVk::flushGpuEvents(double nextSyncGpuTimestampS, double nextSyncCpuTimestampS)
-{
-    if (mGpuEvents.empty())
-    {
-        return;
-    }
-
-    angle::PlatformMethods *platform = ANGLEPlatformCurrent();
-    ASSERT(platform);
-
-    // Find the slope of the clock drift for adjustment
-    double lastGpuSyncTimeS  = mGpuClockSync.gpuTimestampS;
-    double lastGpuSyncDiffS  = mGpuClockSync.cpuTimestampS - mGpuClockSync.gpuTimestampS;
-    double gpuSyncDriftSlope = 0;
-
-    double nextGpuSyncTimeS = nextSyncGpuTimestampS;
-    double nextGpuSyncDiffS = nextSyncCpuTimestampS - nextSyncGpuTimestampS;
-
-    // No gpu trace events should have been generated before the clock sync, so if there is no
-    // "previous" clock sync, there should be no gpu events (i.e. the function early-outs
-    // above).
-    ASSERT(mGpuClockSync.gpuTimestampS != std::numeric_limits<double>::max() &&
-           mGpuClockSync.cpuTimestampS != std::numeric_limits<double>::max());
-
-    gpuSyncDriftSlope =
-        (nextGpuSyncDiffS - lastGpuSyncDiffS) / (nextGpuSyncTimeS - lastGpuSyncTimeS);
-
-    for (const GpuEvent &gpuEvent : mGpuEvents)
-    {
-        double gpuTimestampS =
-            (gpuEvent.gpuTimestampCycles - mGpuEventTimestampOrigin) *
-            static_cast<double>(
-                getRenderer()->getPhysicalDeviceProperties().limits.timestampPeriod) *
-            1e-9;
-
-        // Account for clock drift.
-        gpuTimestampS += lastGpuSyncDiffS + gpuSyncDriftSlope * (gpuTimestampS - lastGpuSyncTimeS);
-
-        // Generate the trace now that the GPU timestamp is available and clock drifts are
-        // accounted for.
-        static long long eventId = 1;
-        static const unsigned char *categoryEnabled =
-            TRACE_EVENT_API_GET_CATEGORY_ENABLED(platform, "gpu.angle.gpu");
-        platform->addTraceEvent(platform, gpuEvent.phase, categoryEnabled, gpuEvent.name.data(),
-                                eventId++, gpuTimestampS, 0, nullptr, nullptr, nullptr,
-                                TRACE_EVENT_FLAG_NONE);
-    }
-
-    mGpuEvents.clear();
 }
 
 void ContextVk::clearAllGarbage()
@@ -5148,6 +4844,39 @@ void ContextVk::updateFrontFace()
     }
 }
 
+ANGLE_INLINE void ContextVk::updateTopology(gl::PrimitiveMode mode)
+{
+    ASSERT(mode != mCurrentDrawMode);
+
+    gl::PrimitiveMode pipelineTopology  = mode;
+    const gl::PrimitiveMode currentMode = mCurrentDrawMode;
+    mCurrentDrawMode                    = mode;
+
+    // When VK_EXT_extended_dynamic_state is enabled, all that's needed in the graphics pipeline
+    // desc is the topology "class", and the exact topology is specified dynamically.
+    //
+    // Note: VK_EXT_extended_dynamic_state3's dynamicPrimitiveTopologyUnrestricted property
+    // indicates that the dynamically set primitive topology doesn't need to match even the topology
+    // class used to create the pipeline.  That property seems to only be set on Nvidia.
+    if (getFeatures().usePrimitiveTopologyDynamicState.enabled)
+    {
+        // Update the exact mode dynamically
+        mGraphicsDirtyBits.set(DIRTY_BIT_DYNAMIC_PRIMITIVE_TOPOLOGY);
+
+        // Only update the pipeline desc if the primitive class has changed
+        pipelineTopology = kPrimitiveTopologyClass[mode];
+        const bool isTopologyClassChanged =
+            pipelineTopology != kPrimitiveTopologyClass[currentMode];
+        if (!isTopologyClassChanged)
+        {
+            return;
+        }
+    }
+
+    invalidateCurrentGraphicsPipeline();
+    mGraphicsPipelineDesc->updateTopology(&mGraphicsPipelineTransition, pipelineTopology);
+}
+
 void ContextVk::updateDepthRange(float nearPlane, float farPlane)
 {
     // GLES2.0 Section 2.12.1: Each of n and f are clamped to lie within [0, 1], as are all
@@ -5840,7 +5569,7 @@ angle::Result ContextVk::syncState(const gl::Context *context,
 
                 // To reduce CPU overhead if submission at FBO boundary is preferred, the deferred
                 // flush is triggered after the currently accumulated command count for the render
-                // pass command buffer hits a threshold (Renderer::getMinCommandCountToSubmit()).
+                // pass command buffer hits a threshold kMinCommandCountToSubmit).
                 uint32_t currentRPCommandCount =
                     mRenderPassCommands->getCommandBuffer().getRenderPassWriteCommandCount() +
                     mCommandsPendingSubmissionCount;
@@ -5856,11 +5585,12 @@ angle::Result ContextVk::syncState(const gl::Context *context,
 
                 bool shouldSubmitAtFBOBoundary =
                     getFeatures().preferSubmitAtFBOBoundary.enabled &&
-                    (currentRPCommandCount >= mRenderer->getMinCommandCountToSubmit() ||
+                    (currentRPCommandCount >= kMinCommandCountToSubmit ||
                      allowExceptionForSubmitAtBoundary);
 
+                // If we are using tile memory, don't enable this optimization to prevent fallback.
                 if ((shouldSubmitAtFBOBoundary || mState.getDrawFramebuffer()->isDefault()) &&
-                    mRenderPassCommands->started())
+                    mRenderPassCommands->started() && mImagesWithTileMemory.empty())
                 {
                     // This will behave as if user called glFlush, but the actual flush will be
                     // triggered at endRenderPass time.
@@ -6231,7 +5961,7 @@ angle::Result ContextVk::onMakeCurrent(const gl::Context *context)
 
 angle::Result ContextVk::onUnMakeCurrent(const gl::Context *context)
 {
-    ANGLE_TRY(flushAndSubmitCommands(nullptr, nullptr, RenderPassClosureReason::ContextChange));
+    ANGLE_TRY(flushAndSubmitCommands(nullptr, nullptr, QueueSubmitReason::ContextChange));
     mCurrentWindowSurface = nullptr;
 
     if (mCurrentQueueSerialIndex != kInvalidQueueSerialIndex)
@@ -6258,8 +5988,8 @@ angle::Result ContextVk::onSurfaceUnMakeCurrent(WindowSurfaceVk *surface)
     {
         // May be nullptr if only used as a readSurface.
         ASSERT(mCurrentWindowSurface == surface || mCurrentWindowSurface == nullptr);
-        ANGLE_TRY(flushAndSubmitCommands(nullptr, nullptr,
-                                         RenderPassClosureReason::SurfaceUnMakeCurrent));
+        ANGLE_TRY(
+            flushAndSubmitCommands(nullptr, nullptr, QueueSubmitReason::SurfaceUnMakeCurrent));
         mCurrentWindowSurface = nullptr;
     }
     ASSERT(mCurrentWindowSurface == nullptr);
@@ -6267,8 +5997,7 @@ angle::Result ContextVk::onSurfaceUnMakeCurrent(WindowSurfaceVk *surface)
     // Everything must be flushed and submitted.
     ASSERT(mOutsideRenderPassCommands->empty());
     ASSERT(!mRenderPassCommands->started());
-    ASSERT(mWaitSemaphores.empty());
-    ASSERT(!mHasWaitSemaphoresPendingSubmission);
+    ASSERT(!mCommandState.hasWaitSemaphoresPendingSubmission());
     ASSERT(mLastSubmittedQueueSerial == mLastFlushedQueueSerial);
     return angle::Result::Continue;
 }
@@ -6295,7 +6024,7 @@ angle::Result ContextVk::onSurfaceUnMakeCurrent(OffscreenSurfaceVk *surface)
     // Everything must be flushed but may be pending submission.
     ASSERT(mOutsideRenderPassCommands->empty());
     ASSERT(!mRenderPassCommands->started());
-    ASSERT(mWaitSemaphores.empty());
+    ASSERT(!mCommandState.hasWaitSemaphoresPendingSubmission());
     return angle::Result::Continue;
 }
 
@@ -6989,7 +6718,7 @@ angle::Result ContextVk::releaseTextures(const gl::Context *context,
     }
 
     return flushAndSubmitCommands(nullptr, nullptr,
-                                  RenderPassClosureReason::ImageUseThenReleaseToExternal);
+                                  QueueSubmitReason::ImageUseThenReleaseToExternal);
 }
 
 vk::DynamicQueryPool *ContextVk::getQueryPool(gl::QueryType queryType)
@@ -7325,7 +7054,7 @@ angle::Result ContextVk::initBufferAllocation(vk::BufferHelper *bufferHelper,
     // the garbage.
     if (result != VK_SUCCESS)
     {
-        ANGLE_TRY(finishImpl(RenderPassClosureReason::OutOfMemory));
+        ANGLE_TRY(finishImpl(QueueSubmitReason::OutOfMemory));
         INFO() << "Context flushed due to out-of-memory error.";
         result = bufferHelper->initSuballocation(this, memoryTypeIndex, allocationSize, alignment,
                                                  bufferUsageType, pool);
@@ -7347,7 +7076,6 @@ angle::Result ContextVk::initBufferAllocation(vk::BufferHelper *bufferHelper,
 
 angle::Result ContextVk::initImageAllocation(vk::ImageHelper *imageHelper,
                                              bool hasProtectedContent,
-                                             const vk::MemoryProperties &memoryProperties,
                                              VkMemoryPropertyFlags flags,
                                              vk::MemoryAllocationType allocationType)
 {
@@ -7366,9 +7094,9 @@ angle::Result ContextVk::initImageAllocation(vk::ImageHelper *imageHelper,
     bool allocateDedicatedMemory =
         mRenderer->getImageMemorySuballocator().needsDedicatedMemory(memoryRequirements.size);
 
-    VkResult result = imageHelper->initMemory(this, memoryProperties, flags, oomExcludedFlags,
-                                              &memoryRequirements, allocateDedicatedMemory,
-                                              allocationType, &outputFlags, &outputSize);
+    VkResult result =
+        imageHelper->initMemory(this, flags, oomExcludedFlags, &memoryRequirements,
+                                allocateDedicatedMemory, allocationType, &outputFlags, &outputSize);
     if (ANGLE_LIKELY(result == VK_SUCCESS))
     {
         if (mRenderer->getFeatures().allocateNonZeroMemory.enabled)
@@ -7395,9 +7123,9 @@ angle::Result ContextVk::initImageAllocation(vk::ImageHelper *imageHelper,
         if (anyGarbageCleaned)
         {
             someGarbageCleaned = true;
-            result = imageHelper->initMemory(this, memoryProperties, flags, oomExcludedFlags,
-                                             &memoryRequirements, allocateDedicatedMemory,
-                                             allocationType, &outputFlags, &outputSize);
+            result = imageHelper->initMemory(this, flags, oomExcludedFlags, &memoryRequirements,
+                                             allocateDedicatedMemory, allocationType, &outputFlags,
+                                             &outputSize);
         }
     } while (result != VK_SUCCESS && anyGarbageCleaned);
 
@@ -7411,11 +7139,11 @@ angle::Result ContextVk::initImageAllocation(vk::ImageHelper *imageHelper,
     // the garbage.
     if (result != VK_SUCCESS)
     {
-        ANGLE_TRY(finishImpl(RenderPassClosureReason::OutOfMemory));
+        ANGLE_TRY(finishImpl(QueueSubmitReason::OutOfMemory));
         INFO() << "Context flushed due to out-of-memory error.";
-        result = imageHelper->initMemory(this, memoryProperties, flags, oomExcludedFlags,
-                                         &memoryRequirements, allocateDedicatedMemory,
-                                         allocationType, &outputFlags, &outputSize);
+        result = imageHelper->initMemory(this, flags, oomExcludedFlags, &memoryRequirements,
+                                         allocateDedicatedMemory, allocationType, &outputFlags,
+                                         &outputSize);
     }
 
     // If no fallback has worked so far, we should record the failed allocation information in case
@@ -7438,9 +7166,9 @@ angle::Result ContextVk::initImageAllocation(vk::ImageHelper *imageHelper,
     if (result != VK_SUCCESS)
     {
         oomExcludedFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-        result           = imageHelper->initMemory(this, memoryProperties, flags, oomExcludedFlags,
-                                                   &memoryRequirements, allocateDedicatedMemory,
-                                                   allocationType, &outputFlags, &outputSize);
+        result = imageHelper->initMemory(this, flags, oomExcludedFlags, &memoryRequirements,
+                                         allocateDedicatedMemory, allocationType, &outputFlags,
+                                         &outputSize);
         INFO()
             << "Allocation failed. Removed the DEVICE_LOCAL bit requirement | Allocation result: "
             << ((result == VK_SUCCESS) ? "SUCCESS" : "FAIL");
@@ -7477,8 +7205,8 @@ angle::Result ContextVk::releaseBufferAllocation(vk::BufferHelper *bufferHelper)
 
     if (ANGLE_UNLIKELY(hasExcessPendingGarbage()))
     {
-        ANGLE_TRY(flushAndSubmitCommands(nullptr, nullptr,
-                                         RenderPassClosureReason::ExcessivePendingGarbage));
+        ANGLE_TRY(
+            flushAndSubmitCommands(nullptr, nullptr, QueueSubmitReason::ExcessivePendingGarbage));
     }
     return angle::Result::Continue;
 }
@@ -7791,7 +7519,7 @@ void ContextVk::prepareToSubmitAllCommands()
 
 angle::Result ContextVk::flushAndSubmitCommands(const vk::Semaphore *signalSemaphore,
                                                 const vk::SharedExternalFence *externalFence,
-                                                RenderPassClosureReason renderPassClosureReason)
+                                                QueueSubmitReason queueSubmitReason)
 {
     // Even if render pass does not have any command, we may still need to submit it in case it has
     // CLEAR loadOp.
@@ -7800,7 +7528,7 @@ angle::Result ContextVk::flushAndSubmitCommands(const vk::Semaphore *signalSemap
     bool someCommandAlreadyFlushedNeedsSubmit =
         mLastFlushedQueueSerial != mLastSubmittedQueueSerial;
     bool someOtherReasonNeedsSubmit = signalSemaphore != nullptr || externalFence != nullptr ||
-                                      mHasWaitSemaphoresPendingSubmission ||
+                                      mCommandState.hasWaitSemaphoresPendingSubmission() ||
                                       hasForeignImagesToTransition();
 
     if (!someCommandsNeedFlush && !someCommandAlreadyFlushedNeedsSubmit &&
@@ -7815,7 +7543,8 @@ angle::Result ContextVk::flushAndSubmitCommands(const vk::Semaphore *signalSemap
     {
         // If any of secondary command buffer not empty, we need to do flush
         // Avoid calling vkQueueSubmit() twice, since submitCommands() below will do that.
-        ANGLE_TRY(flushCommandsAndEndRenderPassWithoutSubmit(renderPassClosureReason));
+        ANGLE_TRY(
+            flushCommandsAndEndRenderPassWithoutSubmit(RenderPassClosureReason::SubmitCommands));
     }
     else if (someCommandAlreadyFlushedNeedsSubmit)
     {
@@ -7847,13 +7576,6 @@ angle::Result ContextVk::flushAndSubmitCommands(const vk::Semaphore *signalSemap
         mIsAnyHostVisibleBufferWritten = false;
     }
 
-    if (mGpuEventsEnabled)
-    {
-        EventName eventName = GetTraceEventName("Primary", mPrimaryBufferEventCounter);
-        ANGLE_TRY(traceGpuEvent(&mOutsideRenderPassCommands->getCommandBuffer(),
-                                TRACE_EVENT_PHASE_END, eventName));
-    }
-
     // This will handle any commands that might be recorded above as well as flush any wait
     // semaphores.
     ANGLE_TRY(flushOutsideRenderPassCommands());
@@ -7883,37 +7605,25 @@ angle::Result ContextVk::flushAndSubmitCommands(const vk::Semaphore *signalSemap
         mHasInFlightStreamedVertexBuffers.reset();
     }
 
-    ASSERT(mWaitSemaphores.empty());
-    ASSERT(mWaitSemaphoreStageMasks.empty());
-
     prepareToSubmitAllCommands();
-    ANGLE_TRY(submitCommands(signalSemaphore, externalFence));
+    ANGLE_TRY(submitCommands(signalSemaphore, externalFence, queueSubmitReason));
     mCommandsPendingSubmissionCount = 0;
     mRenderPassCountSinceSubmit     = 0;
 
+    ASSERT(!mCommandState.hasWaitSemaphoresPendingSubmission());
     ASSERT(mOutsideRenderPassCommands->getQueueSerial() > mLastSubmittedQueueSerial);
 
     mHasAnyCommandsPendingSubmission    = false;
-    mHasWaitSemaphoresPendingSubmission = false;
     onRenderPassFinished(RenderPassClosureReason::AlreadySpecifiedElsewhere);
 
-    if (mGpuEventsEnabled)
-    {
-        EventName eventName = GetTraceEventName("Primary", ++mPrimaryBufferEventCounter);
-        ANGLE_TRY(traceGpuEvent(&mOutsideRenderPassCommands->getCommandBuffer(),
-                                TRACE_EVENT_PHASE_BEGIN, eventName));
-    }
-
-    // Since we just flushed, deferred flush is no longer deferred.
-    mHasDeferredFlush = false;
     return angle::Result::Continue;
 }
 
-angle::Result ContextVk::finishImpl(RenderPassClosureReason renderPassClosureReason)
+angle::Result ContextVk::finishImpl(QueueSubmitReason queueSubmitReason)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "ContextVk::finishImpl");
 
-    ANGLE_TRY(flushAndSubmitCommands(nullptr, nullptr, renderPassClosureReason));
+    ANGLE_TRY(flushAndSubmitCommands(nullptr, nullptr, queueSubmitReason));
 
     // You must have to wait for all queue indices ever used to finish. Just wait for
     // mLastSubmittedQueueSerial (which only contains current index) to finish is not enough, if it
@@ -7922,32 +7632,9 @@ angle::Result ContextVk::finishImpl(RenderPassClosureReason renderPassClosureRea
 
     clearAllGarbage();
 
-    if (mGpuEventsEnabled)
-    {
-        // This loop should in practice execute once since the queue is already idle.
-        while (mInFlightGpuEventQueries.size() > 0)
-        {
-            ANGLE_TRY(checkCompletedGpuEvents());
-        }
-        // Recalculate the CPU/GPU time difference to account for clock drifting.  Avoid
-        // unnecessary synchronization if there is no event to be adjusted (happens when
-        // finish() gets called multiple times towards the end of the application).
-        if (mGpuEvents.size() > 0)
-        {
-            ANGLE_TRY(synchronizeCpuGpuTime());
-        }
-    }
-
     syncObjectPerfCounters(mRenderer->getCommandQueuePerfCounters());
 
     return angle::Result::Continue;
-}
-
-void ContextVk::addWaitSemaphore(VkSemaphore semaphore, VkPipelineStageFlags stageMask)
-{
-    mWaitSemaphores.push_back(semaphore);
-    mWaitSemaphoreStageMasks.push_back(stageMask);
-    mHasWaitSemaphoresPendingSubmission = true;
 }
 
 angle::Result ContextVk::getCompatibleRenderPass(const vk::RenderPassDesc &desc,
@@ -8018,11 +7705,15 @@ angle::Result ContextVk::getTimestamp(uint64_t *timestampOut)
     vk::PrimaryCommandBuffer &commandBuffer = scopedCommandBuffer.get();
 
     timestampQuery.writeTimestampToPrimary(this, &commandBuffer);
+
+    mRenderer->insertSubmitDebugMarkerInCommandBuffer(commandBuffer,
+                                                      QueueSubmitReason::CopyBufferToSurfaceImage);
+
     ANGLE_VK_TRY(this, commandBuffer.end());
 
     QueueSerial submitQueueSerial;
     ANGLE_TRY(mRenderer->queueSubmitOneOff(this, std::move(scopedCommandBuffer),
-                                           getProtectionType(), mContextPriority, VK_NULL_HANDLE, 0,
+                                           getProtectionType(), getPriority(), VK_NULL_HANDLE, 0,
                                            &submitQueueSerial));
     // Track it with the submitSerial.
     timestampQuery.setQueueSerial(submitQueueSerial);
@@ -8094,8 +7785,7 @@ void ContextVk::finalizeImageLayout(vk::ImageHelper *image, UniqueSerial imageSi
         // to use the image while the barrier-to-foreign is cached in the context, it will attempt
         // to acquire the image from foreign while the release is still cached.  A submission is
         // made to finalize the queue family ownership transfer back to foreign.
-        (void)flushAndSubmitCommands(nullptr, nullptr,
-                                     RenderPassClosureReason::ForeignImageRelease);
+        (void)flushAndSubmitCommands(nullptr, nullptr, QueueSubmitReason::ForeignImageRelease);
         ASSERT(!hasForeignImagesToTransition());
     }
 }
@@ -8110,9 +7800,12 @@ angle::Result ContextVk::beginNewRenderPass(
     const vk::PackedClearValuesArray &clearValues,
     vk::RenderPassCommandBuffer **commandBufferOut)
 {
-    // End any currently outstanding render pass. The render pass is normally closed before reaching
-    // here for various reasons, except typically when UtilsVk needs to start one.
-    ANGLE_TRY(flushCommandsAndEndRenderPass(RenderPassClosureReason::NewRenderPass));
+    if (mRenderPassCommands->started())
+    {
+        // End any currently outstanding render pass. The render pass is normally closed before
+        // reaching here for various reasons, except typically when UtilsVk needs to start one.
+        ANGLE_TRY(flushCommandsAndEndRenderPass(RenderPassClosureReason::NewRenderPass));
+    }
 
     // Now generate queueSerial for the renderPass.
     QueueSerial renderPassQueueSerial;
@@ -8225,14 +7918,6 @@ angle::Result ContextVk::flushCommandsAndEndRenderPassWithoutSubmit(RenderPassCl
 
     onRenderPassFinished(reason);
 
-    if (mGpuEventsEnabled)
-    {
-        EventName eventName = GetTraceEventName("RP", mPerfCounters.renderPasses);
-        ANGLE_TRY(traceGpuEvent(&mOutsideRenderPassCommands->getCommandBuffer(),
-                                TRACE_EVENT_PHASE_BEGIN, eventName));
-        ANGLE_TRY(flushOutsideRenderPassCommands());
-    }
-
     addOverlayUsedBuffersCount(mRenderPassCommands);
 
     pauseTransformFeedbackIfActiveUnpaused();
@@ -8285,9 +7970,8 @@ angle::Result ContextVk::flushCommandsAndEndRenderPassWithoutSubmit(RenderPassCl
     mCommandsPendingSubmissionCount +=
         mRenderPassCommands->getCommandBuffer().getRenderPassWriteCommandCount();
 
-    ANGLE_TRY(mRenderer->flushRenderPassCommands(this, getProtectionType(), mContextPriority,
-                                                 *renderPass, framebufferOverride,
-                                                 &mRenderPassCommands));
+    ANGLE_TRY(mCommandState.flushRenderPassCommands(this, *renderPass, framebufferOverride,
+                                                    &mRenderPassCommands));
 
     // We just flushed outSideRenderPassCommands above, and any future use of
     // outsideRenderPassCommands must have a queueSerial bigger than renderPassCommands. To ensure
@@ -8296,14 +7980,6 @@ angle::Result ContextVk::flushCommandsAndEndRenderPassWithoutSubmit(RenderPassCl
 
     // Generate a new serial for outside commands.
     generateOutsideRenderPassCommandsQueueSerial();
-
-    if (mGpuEventsEnabled)
-    {
-        EventName eventName = GetTraceEventName("RP", mPerfCounters.renderPasses);
-        ANGLE_TRY(traceGpuEvent(&mOutsideRenderPassCommands->getCommandBuffer(),
-                                TRACE_EVENT_PHASE_END, eventName));
-        ANGLE_TRY(flushOutsideRenderPassCommands());
-    }
 
     mHasAnyCommandsPendingSubmission = true;
     return angle::Result::Continue;
@@ -8320,21 +7996,21 @@ angle::Result ContextVk::flushCommandsAndEndRenderPass(RenderPassClosureReason r
 
     // In some cases, it is recommended to flush and submit the command buffer to boost performance
     // or avoid too much memory allocation.
-    RenderPassClosureReason submitReason;
+    QueueSubmitReason submitReason;
     if (mHasDeferredFlush)
     {
         // If we have deferred glFlush call in the middle of render pass, perform a flush now.
-        submitReason = RenderPassClosureReason::AlreadySpecifiedElsewhere;
+        submitReason = QueueSubmitReason::DeferredFlush;
     }
     else if (hasExcessPendingGarbage())
     {
         // If there is too much pending garbage, perform a flush now.
-        submitReason = RenderPassClosureReason::ExcessivePendingGarbage;
+        submitReason = QueueSubmitReason::ExcessivePendingGarbage;
     }
     else if (mRenderPassCountSinceSubmit >= kMaxRenderPassCountPerCommandBuffer)
     {
         // If there are too many render passes in the command buffer, perform a flush now.
-        submitReason = RenderPassClosureReason::RenderPassCountLimitReached;
+        submitReason = QueueSubmitReason::RenderPassCountLimitReached;
     }
     else
     {
@@ -8397,8 +8073,7 @@ angle::Result ContextVk::onSyncObjectInit(vk::SyncHelper *syncHelper, SyncFenceS
     // pass).
     if (scope != SyncFenceScope::CurrentContextToShareGroup || !mRenderPassCommands->started())
     {
-        ANGLE_TRY(
-            flushAndSubmitCommands(nullptr, nullptr, RenderPassClosureReason::SyncObjectInit));
+        ANGLE_TRY(flushAndSubmitCommands(nullptr, nullptr, QueueSubmitReason::SyncObjectInit));
         // Even if no commands is generated, and flushAndSubmitCommands bails out, queueSerial is
         // valid since Context initialization. It will always test finished/signaled.
         ASSERT(mLastSubmittedQueueSerial.valid());
@@ -8529,28 +8204,18 @@ uint32_t GetDriverUniformSize(vk::ErrorContext *context, PipelineType pipelineTy
     }
 }
 
-angle::Result ContextVk::flushAndSubmitOutsideRenderPassCommands()
+angle::Result ContextVk::flushAndSubmitOutsideRenderPassCommands(QueueSubmitReason reason)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "ContextVk::flushAndSubmitOutsideRenderPassCommands");
     ANGLE_TRY(flushOutsideRenderPassCommands());
     ASSERT(mLastFlushedQueueSerial.valid());
     ASSERT(QueueSerialsHaveDifferentIndexOrSmaller(mLastSubmittedQueueSerial,
                                                    mLastFlushedQueueSerial));
-    return submitCommands(nullptr, nullptr);
+    return submitCommands(nullptr, nullptr, reason);
 }
 
 angle::Result ContextVk::flushOutsideRenderPassCommands()
 {
-    if (!mWaitSemaphores.empty())
-    {
-        ASSERT(mHasWaitSemaphoresPendingSubmission);
-        ANGLE_TRY(mRenderer->flushWaitSemaphores(getProtectionType(), mContextPriority,
-                                                 std::move(mWaitSemaphores),
-                                                 std::move(mWaitSemaphoreStageMasks)));
-    }
-    ASSERT(mWaitSemaphores.empty());
-    ASSERT(mWaitSemaphoreStageMasks.empty());
-
     if (mOutsideRenderPassCommands->empty())
     {
         return angle::Result::Continue;
@@ -8581,8 +8246,7 @@ angle::Result ContextVk::flushOutsideRenderPassCommands()
     {
         mIsAnyHostVisibleBufferWritten = true;
     }
-    ANGLE_TRY(mRenderer->flushOutsideRPCommands(this, getProtectionType(), mContextPriority,
-                                                &mOutsideRenderPassCommands));
+    ANGLE_TRY(mCommandState.flushOutsideRPCommands(this, &mOutsideRenderPassCommands));
 
     // Make sure appropriate dirty bits are set, in case another thread makes a submission before
     // the next dispatch call.
@@ -8642,6 +8306,7 @@ angle::Result ContextVk::beginRenderPassQuery(QueryVk *queryVk)
 
     ASSERT(mActiveRenderPassQueries[type] == nullptr);
     mActiveRenderPassQueries[type] = queryVk;
+    mActiveRenderPassQueryBitmask.set(type);
 
     return angle::Result::Continue;
 }
@@ -8678,6 +8343,7 @@ angle::Result ContextVk::endRenderPassQuery(QueryVk *queryVk)
 
     ASSERT(mActiveRenderPassQueries[type] == queryVk);
     mActiveRenderPassQueries[type] = nullptr;
+    mActiveRenderPassQueryBitmask.reset(type);
 
     return angle::Result::Continue;
 }
@@ -8762,6 +8428,8 @@ bool ContextVk::isEmulatingRasterizerDiscardDuringPrimitivesGeneratedQuery(
 
 QueryVk *ContextVk::getActiveRenderPassQuery(gl::QueryType queryType) const
 {
+    ASSERT(mActiveRenderPassQueryBitmask[queryType] ==
+           (mActiveRenderPassQueries[queryType] != nullptr));
     return mActiveRenderPassQueries[queryType];
 }
 
@@ -9118,7 +8786,7 @@ angle::Result ContextVk::endRenderPassIfComputeAccessAfterGraphicsImageAccess()
 
             // This is to handle the implicit layout transition in render pass of this image,
             // while it currently be bound and used by current compute program.
-            if (mRenderPassCommands->startedAndUsesImageWithBarrier(image))
+            if (isRenderPassStartedAndUsesImage(image))
             {
                 return flushCommandsAndEndRenderPass(
                     RenderPassClosureReason::GraphicsTextureImageAccessThenComputeAccess);
@@ -9154,7 +8822,7 @@ angle::Result ContextVk::endRenderPassIfComputeAccessAfterGraphicsImageAccess()
         }
 
         // Take care of the read image layout transition require implicit synchronization.
-        if (mRenderPassCommands->startedAndUsesImageWithBarrier(image))
+        if (isRenderPassStartedAndUsesImage(image))
         {
             return flushCommandsAndEndRenderPass(
                 RenderPassClosureReason::GraphicsTextureImageAccessThenComputeAccess);
@@ -9164,15 +8832,30 @@ angle::Result ContextVk::endRenderPassIfComputeAccessAfterGraphicsImageAccess()
     return angle::Result::Continue;
 }
 
+const angle::PerfMonitorCounterGroupsInfo &ContextVk::getPerfMonitorCountersInfo() const
+{
+    return mPerfMonitorCountersInfo;
+}
+
 const angle::PerfMonitorCounterGroups &ContextVk::getPerfMonitorCounters()
 {
     syncObjectPerfCounters(mRenderer->getCommandQueuePerfCounters());
 
-    angle::PerfMonitorCounters &counters =
-        angle::GetPerfMonitorCounterGroup(mPerfMonitorCounters, "vulkan").counters;
+    ASSERT(mPerfMonitorCountersInfo.size() == 1);
+    ASSERT(mPerfMonitorCounters.size() == 1);
 
-#define ANGLE_UPDATE_PERF_MAP(COUNTER) \
-    angle::GetPerfMonitorCounter(counters, #COUNTER).value = mPerfCounters.COUNTER;
+    const angle::PerfMonitorCounterGroupInfo &info = mPerfMonitorCountersInfo[0];
+    angle::PerfMonitorCounters &counters           = mPerfMonitorCounters[0].counters;
+
+    ASSERT(info.name == "vulkan");
+    ASSERT(info.counters.size() == counters.size());
+
+    uint32_t counterIndex = 0;
+
+#define ANGLE_UPDATE_PERF_MAP(COUNTER)                    \
+    ASSERT(info.counters.size() > counterIndex);          \
+    ASSERT(info.counters[counterIndex].name == #COUNTER); \
+    counters[counterIndex++].value = mPerfCounters.COUNTER;
 
     ANGLE_VK_PERF_COUNTERS_X(ANGLE_UPDATE_PERF_MAP)
 
@@ -9370,5 +9053,122 @@ angle::Result ContextVk::onVertexArrayChange(const gl::AttributesMask dirtyAttri
 
     mGraphicsDirtyBits.set(DIRTY_BIT_VERTEX_BUFFERS);
     return angle::Result::Continue;
+}
+
+void ContextVk::addImageWithTileMemory(vk::ImageHelper *imageToAdd)
+{
+    ASSERT(imageToAdd->useTileMemory());
+    if (std::find(mImagesWithTileMemory.begin(), mImagesWithTileMemory.end(), imageToAdd) !=
+        mImagesWithTileMemory.end())
+    {
+        // Already added.
+        return;
+    }
+
+    // If this is first time added, it must have no valid data
+    ASSERT(!imageToAdd->isVkImageContentDefined());
+
+    if (getFeatures().supportsTileMemoryHeap.enabled)
+    {
+        mOutsideRenderPassCommands->getCommandBuffer().bindTileMemory(
+            imageToAdd->getDeviceMemory());
+    }
+
+    mImagesWithTileMemory.emplace_back(imageToAdd);
+}
+
+void ContextVk::removeImageWithTileMemory(const vk::ImageHelper *imageToRemove)
+{
+    ASSERT(imageToRemove->useTileMemory());
+    auto iter =
+        std::find(mImagesWithTileMemory.begin(), mImagesWithTileMemory.end(), imageToRemove);
+    if (iter != mImagesWithTileMemory.end())
+    {
+        mImagesWithTileMemory.erase(iter);
+    }
+}
+
+bool ContextVk::isImageWithTileMemoryFinalized(const vk::ImageHelper *image) const
+{
+    ASSERT(image->useTileMemory());
+    return std::find(mImagesWithTileMemory.begin(), mImagesWithTileMemory.end(), image) ==
+           mImagesWithTileMemory.end();
+}
+
+angle::Result ContextVk::finalizeImagesWithTileMemory()
+{
+    ASSERT(!mImagesWithTileMemory.empty());
+
+    // Check all images with tile memory to see if they have valid content or not. tile memory are
+    // transient, we must reallocate to keep data valid across command buffer boundary.
+    for (auto iter = mImagesWithTileMemory.begin(); iter != mImagesWithTileMemory.end();)
+    {
+        vk::ImageHelper *image = *iter;
+        // Other context may have submitted command buffer and causes it fallback already, so check
+        // again.
+        if (image->isVkImageContentDefined() && image->useTileMemory())
+        {
+            ANGLE_TRY(image->fallbackFromTileMemory(this));
+            ASSERT(!image->useTileMemory());
+            iter = mImagesWithTileMemory.erase(iter);
+        }
+        else
+        {
+            ++iter;
+        }
+    }
+
+    if (getFeatures().supportsTileMemoryHeap.enabled)
+    {
+        // We dont explicitly unbind tileMemory here. They occur implicitly at endCommandBiuffer
+        // time
+    }
+    else
+    {
+        ASSERT(getFeatures().simulateTileMemoryForTesting.enabled);
+
+        // clear VkImage to simulate the transient nature of tile memory
+        UtilsVk::ClearTextureParameters params = {};
+        params.level                           = vk::LevelIndex(0);
+        params.layer                           = 0;
+        params.clearValue                      = {};
+        params.clearArea                       = gl::Box(0, 0, 0, 0, 0, 1);
+        for (vk::ImageHelper *image : mImagesWithTileMemory)
+        {
+            // Other context may have triggered fallback already, so check
+            // again.
+            if (image->useTileMemory() && !image->isVkImageContentDefined())
+            {
+                params.aspectFlags      = image->getAspectFlags();
+                params.clearArea.width  = image->getExtents().width;
+                params.clearArea.height = image->getExtents().height;
+                ANGLE_TRY(mUtils.clearTextureNoFlush(this, image, params));
+
+                // Since this may called from submitCommands, use no submit version to avoid
+                // recursion.
+                ANGLE_TRY(flushCommandsAndEndRenderPassWithoutSubmit(
+                    RenderPassClosureReason::TileMemorySimulatedClear));
+                ASSERT(mLastFlushedQueueSerial > mLastSubmittedQueueSerial);
+
+                // clearTextureNoFlush may have set content valid again, remove the bits to keep
+                // content as invalid.
+                image->invalidateEntireLevelContent(this, gl::LevelIndex(0));
+                image->invalidateEntireLevelStencilContent(this, gl::LevelIndex(0));
+            }
+        }
+    }
+
+    mImagesWithTileMemory.clear();
+
+    return angle::Result::Continue;
+}
+
+void ContextVk::restoreAllGraphicsState()
+{
+    // Recover states that may have been changed by UtilsVk::depthStencilBlitResolve. We dirty all
+    // states except DIRTY_BIT_RENDER_PASS so that render pass could still reused.
+    DirtyBits allDrawStateDirtyBits =
+        mNewGraphicsCommandBufferDirtyBits & ~DirtyBits{DIRTY_BIT_RENDER_PASS};
+    mGraphicsDirtyBits |= allDrawStateDirtyBits;
 }
 }  // namespace rx

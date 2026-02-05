@@ -1,9 +1,6 @@
 
 PASS initial position
-FAIL Scroll down to 0,10 assert_equals: expected 250 but got 0
-FAIL Scroll right to 10,10 assert_equals: expected 250 but got 0
-FAIL Scroll up to 10,0 assert_equals: expected 250 but got 0
-FAIL Scroll down to 10,20 assert_equals: expected 10 but got 0
-FAIL Scroll down to 101,20 assert_equals: expected 250 but got 0
-FAIL Scroll down to 101,30 assert_equals: expected 250 but got 0
+PASS Scroll down to 0,150
+PASS Scroll right to 50,150
+PASS Scroll up to 50,0
 

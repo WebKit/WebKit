@@ -67,11 +67,6 @@ WebPageInspectorController::WebPageInspectorController(WebPageProxy& inspectedPa
 
 WebPageInspectorController::~WebPageInspectorController() = default;
 
-Ref<WebPageProxy> WebPageInspectorController::protectedInspectedPage()
-{
-    return m_inspectedPage.get();
-}
-
 void WebPageInspectorController::init()
 {
     String pageTargetId = WebPageInspectorTarget::toTargetID(m_inspectedPage->webPageIDInMainFrameProcess());
@@ -170,7 +165,7 @@ void WebPageInspectorController::setIndicating(bool indicating)
 
 void WebPageInspectorController::createWebPageInspectorTarget(const String& targetId, Inspector::InspectorTargetType type)
 {
-    addTarget(WebPageInspectorTargetProxy::create(protectedInspectedPage(), targetId, type));
+    addTarget(WebPageInspectorTargetProxy::create(protect(m_inspectedPage), targetId, type));
 }
 
 void WebPageInspectorController::createWebFrameInspectorTarget(WebFrameProxy& frame, const String& targetId)

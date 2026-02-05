@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/BufferSource.h>
+#include <WebCore/CryptoAlgorithmAesCbcCfbParamsInit.h>
 #include <WebCore/CryptoAlgorithmParameters.h>
 #include <wtf/Vector.h>
 
@@ -34,23 +35,39 @@ namespace WebCore {
 class CryptoAlgorithmAesCbcCfbParams final : public CryptoAlgorithmParameters {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(CryptoAlgorithmAesCbcCfbParams, WEBCORE_EXPORT);
 public:
-    BufferSource iv;
+    std::optional<BufferSource> iv;
+
+    CryptoAlgorithmAesCbcCfbParams()
+        : CryptoAlgorithmParameters { }
+    {
+    }
+
+    CryptoAlgorithmAesCbcCfbParams(CryptoAlgorithmIdentifier identifier)
+        : CryptoAlgorithmParameters { WTF::move(identifier) }
+    {
+    }
+
+    CryptoAlgorithmAesCbcCfbParams(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmAesCbcCfbParamsInit init)
+        : CryptoAlgorithmParameters { WTF::move(identifier), WTF::move(init) }
+        , iv { WTF::move(init.iv) }
+    {
+    }
 
     Class parametersClass() const final { return Class::AesCbcCfbParams; }
 
     const Vector<uint8_t>& ivVector() const
     {
-        if (!m_ivVector.isEmpty() || !iv.length())
+        if (!m_ivVector.isEmpty() || !iv || !iv->length())
             return m_ivVector;
 
-        m_ivVector.append(iv.span());
+        if (iv)
+            m_ivVector.append(iv->span());
         return m_ivVector;
     }
 
     CryptoAlgorithmAesCbcCfbParams isolatedCopy() const
     {
-        CryptoAlgorithmAesCbcCfbParams result;
-        result.identifier = identifier;
+        CryptoAlgorithmAesCbcCfbParams result { identifier };
         result.m_ivVector = ivVector();
 
         return result;

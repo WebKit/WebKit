@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkLoadMetrics.h"
 
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -81,6 +82,11 @@ void NetworkLoadMetrics::updateFromFinalMetrics(const NetworkLoadMetrics& other)
     bool originalFromPrefetch = fromPrefetch;
     bool originalFromCache = fromCache;
 
+    auto originalWorkerRouterEvaluationStart = workerRouterEvaluationStart;
+    auto originalWorkerCacheLookupStart = workerCacheLookupStart;
+    auto originalWorkerMatchedRouterSource = workerMatchedRouterSource;
+    auto originalWorkerFinalRouterSource = workerFinalRouterSource;
+
     *this = other;
 
     if (!redirectStart)
@@ -111,6 +117,15 @@ void NetworkLoadMetrics::updateFromFinalMetrics(const NetworkLoadMetrics& other)
         fromPrefetch = originalFromPrefetch;
     if (!fromCache)
         fromCache = originalFromCache;
+
+    if (!workerRouterEvaluationStart)
+        workerRouterEvaluationStart = originalWorkerRouterEvaluationStart;
+    if (!workerCacheLookupStart)
+        workerCacheLookupStart = originalWorkerCacheLookupStart;
+    if (!workerMatchedRouterSource)
+        workerMatchedRouterSource = originalWorkerMatchedRouterSource;
+    if (!workerFinalRouterSource)
+        workerFinalRouterSource = originalWorkerFinalRouterSource;
 
     if (!responseEnd)
         responseEnd = MonotonicTime::now();
@@ -175,6 +190,11 @@ NetworkLoadMetrics NetworkLoadMetrics::isolatedCopy() const
 
     copy.responseBodyBytesReceived = responseBodyBytesReceived;
     copy.responseBodyDecodedSize = responseBodyDecodedSize;
+
+    copy.workerRouterEvaluationStart = workerRouterEvaluationStart.isolatedCopy();
+    copy.workerCacheLookupStart = workerCacheLookupStart.isolatedCopy();
+    copy.workerMatchedRouterSource = crossThreadCopy(workerMatchedRouterSource);
+    copy.workerFinalRouterSource = crossThreadCopy(workerFinalRouterSource);
 
     if (RefPtr metrics = additionalNetworkLoadMetricsForWebInspector)
         copy.additionalNetworkLoadMetricsForWebInspector = metrics->isolatedCopy();

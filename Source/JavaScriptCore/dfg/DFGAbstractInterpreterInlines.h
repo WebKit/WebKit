@@ -1656,6 +1656,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case MapSet:
         break;
 
+    case MapOrSetSize:
+        setTypeForNode(node, SpecInt32Only);
+        break;
+
     case MapGet:
         clearForNode(node);
         break;
@@ -2397,6 +2401,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 || value.isType(SpecBoolean)
                 || value.isType(SpecSymbol)
                 || value.isType(SpecOther)) {
+                bool didFold = false;
                 switch (node->op()) {
                 case CompareLess:
                 case CompareGreater:
@@ -2404,6 +2409,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     if (value.isType(SpecSymbol))
                         break;
                     setConstant(node, jsBoolean(false));
+                    didFold = true;
                     break;
                 case CompareLessEq:
                 case CompareGreaterEq: {
@@ -2417,12 +2423,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 }
                 case CompareEq:
                     setConstant(node, jsBoolean(true));
+                    didFold = true;
                     break;
                 default:
                     DFG_CRASH(m_graph, node, "Unexpected node type");
                     break;
                 }
-                break;
+                if (didFold)
+                    break;
             }
         }
 
@@ -2597,6 +2605,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case StringIndexOf:
         setNonCellTypeForNode(node, SpecInt32Only);
+        break;
+
+    case StringStartsWith:
+        setNonCellTypeForNode(node, SpecBoolean);
         break;
 
     case StringFromCharCode: {
@@ -3924,8 +3936,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case NewGenerator:
-    case NewAsyncGenerator:    
     case NewInternalFieldObject:
     case NewObject:
     case MaterializeNewInternalFieldObject:
@@ -4110,10 +4120,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case SetCallee:
     case SetArgumentCountIncludingThis:
-        break;
-        
-    case GetRestLength:
-        setNonCellTypeForNode(node, SpecInt32Only);
         break;
         
     case GetGetter: {
@@ -5233,6 +5239,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case DefineDataProperty:
     case DefineAccessorProperty:
+    case ObjectDefineProperty:
         clobberWorld();
         break;
         

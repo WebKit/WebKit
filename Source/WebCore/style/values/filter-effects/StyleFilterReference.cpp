@@ -38,7 +38,7 @@ void FilterReference::loadExternalDocumentIfNeeded(CachedResourceLoader& cachedR
 {
     if (cachedSVGDocumentReference)
         return;
-    if (!SVGURIReference::isExternalURIReference(url.resolved.string(), *cachedResourceLoader.protectedDocument()))
+    if (!SVGURIReference::isExternalURIReference(url.resolved.string(), *protect(cachedResourceLoader.document())))
         return;
     lazyInitialize(cachedSVGDocumentReference, CachedSVGDocumentReference::create(url));
     cachedSVGDocumentReference->load(cachedResourceLoader, options);

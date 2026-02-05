@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 383
+#define ANGLE_SH_VERSION 396
 
 enum ShShaderSpec
 {
@@ -37,7 +37,6 @@ enum ShShaderSpec
     SH_WEBGL2_SPEC,
 
     SH_GLES3_1_SPEC,
-    SH_WEBGL3_SPEC,
 
     SH_GLES3_2_SPEC,
 };
@@ -114,6 +113,7 @@ enum class ShPixelLocalStorageFormat : uint8_t
     RGBA8I,
     RGBA8UI,
     R32F,
+    R32I,
     R32UI,
 };
 
@@ -147,11 +147,6 @@ struct ShPixelLocalStorageOptions
     // ShPixelLocalStorageType::ImageLoadStore only: Can we use rgba8/rgba8i/rgba8ui image formats?
     // Or do we need to manually pack and unpack from r32i/r32ui?
     bool supportsNativeRGBA8ImageFormats = false;
-
-    // anglebug.com/42266263 -- Metal [[raster_order_group()]] does not work for read_write textures
-    // on AMD when the render pass doesn't have a color attachment on slot 0. To work around this we
-    // attach one of the PLS textures to GL_COLOR_ATTACHMENT0, if there isn't one already.
-    bool renderPassNeedsAMDRasterOrderGroupsWorkaround = false;
 };
 
 struct ShCompileOptions
@@ -230,7 +225,8 @@ struct ShCompileOptions
     uint64_t unfoldShortCircuit : 1;
 
     // This flag initializes output variables to 0 at the beginning of main().  It is to avoid
-    // undefined behaviors.
+    // undefined behaviors. Additionally, it is intended as a workaround for drivers which get
+    // context lost if gl_FragColor is not written.
     uint64_t initOutputVariables : 1;
 
     // This flag scalarizes vec/ivec/bvec/mat constructor args.  It is intended as a workaround for
@@ -340,12 +336,9 @@ struct ShCompileOptions
     // read undefined values that could be coming from another webpage/application.
     uint64_t initSharedVariables : 1;
 
-    // Forces the value returned from an atomic operations to be always be resolved. This is
-    // targeted to workaround a bug in NVIDIA D3D driver where the return value from
-    // RWByteAddressBuffer.InterlockedAdd does not get resolved when used in the .yzw components of
-    // a RWByteAddressBuffer.Store operation. Only has an effect on HLSL translation.
-    // http://anglebug.com/42261924
-    uint64_t forceAtomicValueResolution : 1;
+    // For MSL, non-const global variables cannot have an initializer, even if the initializer is
+    // constant.  Initialization of these variables is deferred to the beginning of main.
+    uint64_t forceDeferNonConstGlobalInitializers : 1;
 
     // Rewrite gl_BaseVertex and gl_BaseInstance as uniform int
     uint64_t emulateGLBaseVertexBaseInstance : 1;
@@ -386,7 +379,7 @@ struct ShCompileOptions
     // VK_EXT_depth_clip_control is supported, this code is not generated, saving a uniform look up.
     uint64_t addVulkanDepthCorrection : 1;
 
-    uint64_t forceShaderPrecisionHighpToMediump : 1;
+    uint64_t unused2 : 1;
 
     // Ask compiler to generate Vulkan transform feedback emulation support code.
     uint64_t addVulkanXfbEmulationSupportCode : 1;
@@ -395,13 +388,15 @@ struct ShCompileOptions
     // VK_EXT_transform_feedback extension.
     uint64_t addVulkanXfbExtensionSupportCode : 1;
 
-    // This flag initializes fragment shader's output variables to zero at the beginning of the
-    // fragment shader's main(). It is intended as a workaround for drivers which get context lost
-    // if gl_FragColor is not written.
-    uint64_t initFragmentOutputVariables : 1;
+    // Reject shaders with variables that go above set limits; 2GB for uniform buffer objects, 64KB
+    // for private variables and 16MB for the total size of private variables.
+    uint64_t rejectWebglShadersWithLargeVariables : 1;
 
     // Always write explicit location layout qualifiers for fragment outputs.
     uint64_t explicitFragmentLocations : 1;
+
+    // Dithering is emulated by injecting code in the fragment shader
+    uint64_t emulateDithering : 1;
 
     // Add round() after applying dither.  This works around a Qualcomm quirk where values can get
     // ceil()ed instead.
@@ -475,6 +470,9 @@ struct ShCompileOptions
 
     uint64_t transformFloatUniformTo16Bits : 1;
 
+    // Whether the ANGLE IR should be used.  Ineffective if ANGLE is built without IR support.
+    uint64_t useIR : 1;
+
     ShCompileOptionsMetal metal;
     ShPixelLocalStorageOptions pls;
 };
@@ -543,7 +541,7 @@ struct ShBuiltInResources
     int ANGLE_shader_pixel_local_storage;
     int ANGLE_texture_multisample;
     int ANGLE_multi_draw;
-    // TODO(angleproject:3402) remove after chromium side removal to pass compilation
+    // TODO(http://anglebug.com/40096583) remove after chromium side removal to pass compilation
     int ANGLE_base_vertex_base_instance;
     int WEBGL_video_texture;
     int APPLE_clip_distance;
@@ -574,10 +572,7 @@ struct ShBuiltInResources
     // function. This applies to Tegra K1 devices.
     int NV_draw_buffers;
 
-    // Set to 1 if highp precision is supported in the ESSL 1.00 version of the
-    // fragment language. Does not affect versions of the language where highp
-    // support is mandatory.
-    // Default is 0.
+    // Unused, highp support is always assumed.
     int FragmentPrecisionHigh;
 
     // GLSL ES 3.0 constants.
@@ -705,7 +700,6 @@ struct ShBuiltInResources
 
     // EXT_geometry_shader constants
     int MaxGeometryUniformComponents;
-    int MaxGeometryUniformBlocks;
     int MaxGeometryInputComponents;
     int MaxGeometryOutputComponents;
     int MaxGeometryOutputVertices;
@@ -713,7 +707,6 @@ struct ShBuiltInResources
     int MaxGeometryTextureImageUnits;
     int MaxGeometryAtomicCounterBuffers;
     int MaxGeometryAtomicCounters;
-    int MaxGeometryShaderStorageBlocks;
     int MaxGeometryShaderInvocations;
     int MaxGeometryImageUniforms;
 
@@ -738,9 +731,6 @@ struct ShBuiltInResources
     int MaxTessEvaluationImageUniforms;
     int MaxTessEvaluationAtomicCounters;
     int MaxTessEvaluationAtomicCounterBuffers;
-
-    // Subpixel bits used in rasterization.
-    int SubPixelBits;
 
     // APPLE_clip_distance / EXT_clip_cull_distance / ANGLE_clip_cull_distance constants
     int MaxClipDistances;
@@ -904,17 +894,6 @@ uint32_t GetShaderSpecConstUsageBits(const ShHandle handle);
 bool CheckVariablesWithinPackingLimits(int maxVectors,
                                        const std::vector<sh::ShaderVariable> &variables);
 
-// Gives the compiler-assigned register for a shader storage block.
-// The method writes the value to the output variable "indexOut".
-// Returns true if it found a valid shader storage block, false otherwise.
-// Parameters:
-// handle: Specifies the compiler
-// shaderStorageBlockName: Specifies the shader storage block
-// indexOut: output variable that stores the assigned register
-bool GetShaderStorageBlockRegister(const ShHandle handle,
-                                   const std::string &shaderStorageBlockName,
-                                   unsigned int *indexOut);
-
 // Gives the compiler-assigned register for a uniform block.
 // The method writes the value to the output variable "indexOut".
 // Returns true if it found a valid uniform block, false otherwise.
@@ -972,7 +951,7 @@ uint32_t GetAdvancedBlendEquations(const ShHandle handle);
 //
 inline bool IsWebGLBasedSpec(ShShaderSpec spec)
 {
-    return (spec == SH_WEBGL_SPEC || spec == SH_WEBGL2_SPEC || spec == SH_WEBGL3_SPEC);
+    return (spec == SH_WEBGL_SPEC || spec == SH_WEBGL2_SPEC);
 }
 
 // Can't prefix with just _ because then we might introduce a double underscore, which is not safe

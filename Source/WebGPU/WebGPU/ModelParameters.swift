@@ -21,32 +21,29 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if canImport(RealityCoreRenderer, _version: 9999)
+#if canImport(RealityCoreRenderer, _version: 6) && canImport(USDStageKit, _version: 34)
 
-@_spi(RealityCoreRendererAPI) import RealityCoreRenderer
+@_spi(RealityCoreRendererAPI) import RealityKit
 
 nonisolated func makeParameters(
     for function: _Proto_LowLevelMaterialResource_v1.Function,
-    resourceContext: _Proto_LowLevelResourceContext_v1,
-    renderer: _Proto_LowLevelRenderer_v1,
+    renderContext: _Proto_LowLevelRenderContext_v1,
     buffers: [_Proto_LowLevelBufferSpan_v1] = [],
     textures: [_Proto_LowLevelTextureResource_v1] = []
-) throws -> _Proto_LowLevelArgumentBuffer_v1? {
-    guard let argumentTableDescriptor = function.argumentBufferDescriptor?.table else {
+) throws -> _Proto_LowLevelArgumentTable_v1? {
+    guard let argumentTableDescriptor = function.argumentTableDescriptor else {
         return nil
     }
-    let parametersTable = try resourceContext.makeArgumentTable(
+    return try renderContext.makeArgumentTable(
         descriptor: argumentTableDescriptor,
         buffers: buffers,
         textures: textures
     )
-    return try renderer.makeArgumentBuffer(for: parametersTable, function: function)
 }
 
 nonisolated func makeParameters(
     for material: _Proto_LowLevelMaterialResource_v1,
-    resourceContext: _Proto_LowLevelResourceContext_v1,
-    renderer: _Proto_LowLevelRenderer_v1,
+    renderContext: _Proto_LowLevelRenderContext_v1,
     geometryBuffers: [_Proto_LowLevelBufferSpan_v1] = [],
     geometryTextures: [_Proto_LowLevelTextureResource_v1] = [],
     surfaceBuffers: [_Proto_LowLevelBufferSpan_v1] = [],
@@ -55,29 +52,26 @@ nonisolated func makeParameters(
     lightingTextures: [_Proto_LowLevelTextureResource_v1] = []
 ) throws
     -> (
-        geometryArguments: _Proto_LowLevelArgumentBuffer_v1?,
-        surfaceArguments: _Proto_LowLevelArgumentBuffer_v1?,
-        lightingArguments: _Proto_LowLevelArgumentBuffer_v1?
+        geometryArguments: _Proto_LowLevelArgumentTable_v1?,
+        surfaceArguments: _Proto_LowLevelArgumentTable_v1?,
+        lightingArguments: _Proto_LowLevelArgumentTable_v1?
     )
 {
     let geometryArguments = try makeParameters(
         for: material.geometry,
-        resourceContext: resourceContext,
-        renderer: renderer,
+        renderContext: renderContext,
         buffers: geometryBuffers,
         textures: geometryTextures
     )
     let surfaceArguments = try makeParameters(
         for: material.surface,
-        resourceContext: resourceContext,
-        renderer: renderer,
+        renderContext: renderContext,
         buffers: surfaceBuffers,
         textures: surfaceTextures
     )
     let lightingArguments = try makeParameters(
         for: material.lighting,
-        resourceContext: resourceContext,
-        renderer: renderer,
+        renderContext: renderContext,
         buffers: lightingBuffers,
         textures: lightingTextures
     )

@@ -964,7 +964,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
                 let sourceCodeLocation = callFrame ? callFrame.sourceCodeLocation : record.sourceCodeLocation;
                 let functionName = callFrame ? callFrame.functionName : "";
                 let key = keyForSourceCodeLocation(sourceCodeLocation);
-                let entry = timerMap.getOrInitialize(key, {sourceCodeLocation, functionName, count: 0, repeating: false});
+                let entry = timerMap.getOrInsert(key, {sourceCodeLocation, functionName, count: 0, repeating: false});
                 if (record.details) {
                     let timerIdentifier = record.details.timerId;
                     let repeatingEntry = statistics.repeatingTimers.get(timerIdentifier);
@@ -988,7 +988,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
                     // so that we can provide a function name for these repeating timers lacking an installation point.
                     let sourceCodeLocation = repeatingEntry.record.sourceCodeLocation;
                     let key = keyForSourceCodeLocation(sourceCodeLocation);
-                    let entry = timerMap.getOrInitialize(key, {sourceCodeLocation, count: 0, repeating: false});
+                    let entry = timerMap.getOrInsert(key, {sourceCodeLocation, count: 0, repeating: false});
                     entry.count += repeatingEntry.count;
                     entry.repeating = true;
                 }
@@ -1001,7 +1001,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
                     continue;
                 let sourceCodeLocation = record.sourceCodeLocation;
                 let key = keyForSourceCodeLocation(sourceCodeLocation);
-                let entry = eventHandlerMap.getOrInitialize(key, {sourceCodeLocation, count: 0});
+                let entry = eventHandlerMap.getOrInsert(key, {sourceCodeLocation, count: 0});
                 entry.count += 1;
             }
         }
@@ -1012,7 +1012,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
                     continue;
                 let sourceCodeLocation = record.sourceCodeLocation;
                 let key = keyForSourceCodeLocation(record.sourceCodeLocation);
-                let entry = observerCallbackMap.getOrInitialize(key, {sourceCodeLocation, count: 0});
+                let entry = observerCallbackMap.getOrInsert(key, {sourceCodeLocation, count: 0});
                 entry.count += 1;
             }
         }

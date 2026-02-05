@@ -739,12 +739,8 @@ public:
     void dequeueScrollableAreaForScrollAnchoringUpdate(ScrollableArea&);
     void queueScrollableAreaForScrollAnchoringUpdate(ScrollableArea&);
     void updateScrollAnchoringElementsForScrollableAreas();
-    void updateScrollAnchoringPositionForScrollableAreas();
-
-    void updateScrollAnchoringElement() final;
-    void updateScrollPositionForScrollAnchoringController() final;
-    void invalidateScrollAnchoringElement() final;
-    ScrollAnchoringController* scrollAnchoringController() { return m_scrollAnchoringController.get(); }
+    void adjustScrollAnchoringPositionForScrollableAreas();
+    ScrollAnchoringController* scrollAnchoringController() const final { return m_scrollAnchoringController.get(); }
 
     void updateAnchorPositionedAfterScroll() final;
 

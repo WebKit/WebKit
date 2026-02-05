@@ -34,6 +34,7 @@
 #import "GlobalFindInPageState.h"
 #import "Logging.h"
 #import "MessageSenderInlines.h"
+#import "WKAPICast.h"
 #import "WKInspectorPrivateMac.h"
 #import "WKInspectorViewController.h"
 #import "WKObject.h"
@@ -337,7 +338,7 @@ using namespace WebCore;
 
 void WebInspectorUIProxy::didBecomeActive()
 {
-    protectedInspectorPage()->protectedLegacyMainFrameProcess()->send(Messages::WebInspectorUI::UpdateFindString(WebKit::stringForFind()), m_inspectorPage->webPageIDInMainFrameProcess());
+    protect(protect(inspectorPage())->legacyMainFrameProcess())->send(Messages::WebInspectorUI::UpdateFindString(WebKit::stringForFind()), m_inspectorPage->webPageIDInMainFrameProcess());
 }
 
 void WebInspectorUIProxy::attachmentViewDidChange(NSView *oldView, NSView *newView)
@@ -497,7 +498,7 @@ void WebInspectorUIProxy::platformCreateFrontendWindow()
         savedWindowFrame = NSRectFromString(savedWindowFrameString.get());
     }
 
-    m_inspectorWindow = WebInspectorUIProxy::createFrontendWindow(savedWindowFrame, InspectionTargetType::Local, protectedInspectedPage().get());
+    m_inspectorWindow = WebInspectorUIProxy::createFrontendWindow(savedWindowFrame, InspectionTargetType::Local, protect(inspectedPage()).get());
     [m_inspectorWindow setDelegate:m_objCAdapter.get()];
 
     RetainPtr<WKWebView> inspectorView = [m_inspectorViewController webView];
@@ -605,7 +606,7 @@ void WebInspectorUIProxy::platformBringToFront()
 void WebInspectorUIProxy::platformBringInspectedPageToFront()
 {
     if (RefPtr inspectedPage = m_inspectedPage.get())
-        [inspectedPage->protectedPlatformWindow() makeKeyAndOrderFront:nil];
+        [protect(inspectedPage->platformWindow()) makeKeyAndOrderFront:nil];
 }
 
 bool WebInspectorUIProxy::platformIsFront()
@@ -854,8 +855,8 @@ void WebInspectorUIProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
 
 void WebInspectorUIProxy::platformAttach()
 {
-    ASSERT(protectedInspectedPage());
-    RetainPtr inspectedView = protectedInspectedPage()->inspectorAttachmentView();
+    ASSERT(protect(inspectedPage()));
+    RetainPtr inspectedView = protect(inspectedPage())->inspectorAttachmentView();
     RetainPtr<WKWebView> inspectorView = [m_inspectorViewController webView];
 
     if (m_inspectorWindow) {
@@ -870,15 +871,15 @@ void WebInspectorUIProxy::platformAttach()
     switch (m_attachmentSide) {
     case AttachmentSide::Bottom:
         [inspectorView setAutoresizingMask:NSViewWidthSizable | NSViewMaxYMargin];
-        currentDimension = protectedInspectorPagePreferences()->inspectorAttachedHeight();
+        currentDimension = protect(inspectorPagePreferences())->inspectorAttachedHeight();
         break;
     case AttachmentSide::Right:
         [inspectorView setAutoresizingMask:NSViewHeightSizable | NSViewMinXMargin];
-        currentDimension = protectedInspectorPagePreferences()->inspectorAttachedWidth();
+        currentDimension = protect(inspectorPagePreferences())->inspectorAttachedWidth();
         break;
     case AttachmentSide::Left:
         [inspectorView setAutoresizingMask:NSViewHeightSizable | NSViewMaxXMargin];
-        currentDimension = protectedInspectorPagePreferences()->inspectorAttachedWidth();
+        currentDimension = protect(inspectorPagePreferences())->inspectorAttachedWidth();
         break;
     }
 

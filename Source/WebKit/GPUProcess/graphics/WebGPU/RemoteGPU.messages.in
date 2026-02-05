@@ -35,7 +35,7 @@ messages -> RemoteGPU Stream {
 
     void IsValid(WebKit::WebGPUIdentifier identifier) -> (bool isValid, bool exists) Synchronous
 #if ENABLE(GPU_PROCESS_MODEL)
-    void CreateModelBacking(unsigned width, unsigned height, WebCore::DDModel::DDImageAsset diffuseAsset, WebCore::DDModel::DDImageAsset specularAsset, WebKit::DDModelIdentifier identifier) -> (Vector<MachSendRight> renderBuffers) Synchronous NotStreamEncodableReply
+    void CreateModelBacking(unsigned width, unsigned height, struct WebModel::ImageAsset diffuseAsset, struct WebModel::ImageAsset specularAsset, WebKit::WebModelIdentifier identifier) -> (Vector<MachSendRight> renderBuffers) Synchronous NotStreamEncodableReply
 #endif
 }
 

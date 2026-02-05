@@ -83,7 +83,6 @@ TEST_P(EGLReadinessCheckTest, DISABLED_AllowlistMatchesSupport)
     check(ES1_D3D11());
     check(ES2_D3D11());
     check(ES3_D3D11());
-    check(ES31_D3D11());
 
     check(ES1_VULKAN());
     check(ES2_VULKAN());

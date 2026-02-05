@@ -42,7 +42,7 @@ using ConstantResult = Expected<ConstantValue, String>;
 using ConstantFunction = ConstantResult(*)(const Type*, const FixedVector<ConstantValue>&);
 
 #define CONSTANT_FUNCTION(name) \
-    static Expected<ConstantValue, String>(constant ## name)(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+    [[maybe_unused]] static Expected<ConstantValue, String>(constant ## name)(const Type* resultType, const FixedVector<ConstantValue>& arguments)
 
 #define CALL_(__tmp, __variable, __fnName, ...) \
     auto __tmp = constant##__fnName(__VA_ARGS__); \
@@ -65,7 +65,7 @@ using ConstantFunction = ConstantResult(*)(const Type*, const FixedVector<Consta
     CALL_MOVE_(tmp ## __COUNTER__, __target, __fnName, __VA_ARGS__)
 
 
-static ConstantValue zeroValue(const Type* type)
+[[maybe_unused]] static ConstantValue zeroValue(const Type* type)
 {
     return WTF::switchOn(*type,
         [&](const Types::Primitive& primitive) -> ConstantValue {
@@ -156,7 +156,7 @@ static ConstantValue zeroValue(const Type* type)
 // Helpers
 
 template<Constraint constraint, typename Functor>
-static ConstantResult constantUnaryOperation(const FixedVector<ConstantValue>& arguments, const Functor& fn)
+[[maybe_unused]] static ConstantResult constantUnaryOperation(const FixedVector<ConstantValue>& arguments, const Functor& fn)
 {
     ASSERT(arguments.size() == 1);
     return scalarOrVector([&](auto& arg) -> ConstantResult {
@@ -193,7 +193,7 @@ static ConstantResult constantUnaryOperation(const FixedVector<ConstantValue>& a
 }
 
 template<Constraint constraint, typename Functor>
-static ConstantResult constantBinaryOperation(const FixedVector<ConstantValue>& arguments, const Functor& fn)
+[[maybe_unused]] static ConstantResult constantBinaryOperation(const FixedVector<ConstantValue>& arguments, const Functor& fn)
 {
     ASSERT(arguments.size() == 2);
     return scalarOrVector([&](auto& left, auto& right) -> ConstantResult {
@@ -230,7 +230,7 @@ static ConstantResult constantBinaryOperation(const FixedVector<ConstantValue>& 
 }
 
 template<Constraint constraint, typename Functor>
-static ConstantResult constantTernaryOperation(const FixedVector<ConstantValue>& arguments, const Functor& fn)
+[[maybe_unused]] static ConstantResult constantTernaryOperation(const FixedVector<ConstantValue>& arguments, const Functor& fn)
 {
     ASSERT(arguments.size() == 3);
     return scalarOrVector([&](auto& first, auto& second, auto& third) -> ConstantResult {
@@ -279,7 +279,7 @@ struct BitwiseCast {
 };
 
 template<typename DestinationType, template <typename U> typename Cast = StaticCast>
-static ConstantValue convertValue(ConstantValue value)
+[[maybe_unused]] static ConstantValue convertValue(ConstantValue value)
 {
     if constexpr (std::is_same_v<Cast<DestinationType>, StaticCast<DestinationType>> || sizeof(DestinationType) == 4) {
         if (auto* i32 = std::get_if<int32_t>(&value))
@@ -307,7 +307,7 @@ static ConstantValue convertValue(ConstantValue value)
 }
 
 template<template <typename U> typename Cast = StaticCast>
-static ConstantValue convertValue(const Type* targetType, ConstantValue value)
+[[maybe_unused]] static ConstantValue convertValue(const Type* targetType, ConstantValue value)
 {
     ASSERT(std::holds_alternative<Types::Primitive>(*targetType));
     auto& primitive = std::get<Types::Primitive>(*targetType);
@@ -332,7 +332,7 @@ static ConstantValue convertValue(const Type* targetType, ConstantValue value)
 }
 
 template<typename DestinationType>
-static ConstantValue constantConstructor(const Type* resultType, const FixedVector<ConstantValue>& arguments)
+[[maybe_unused]] static ConstantValue constantConstructor(const Type* resultType, const FixedVector<ConstantValue>& arguments)
 {
     if (arguments.isEmpty())
         return zeroValue(resultType);
@@ -343,7 +343,7 @@ static ConstantValue constantConstructor(const Type* resultType, const FixedVect
 
 
 template<typename Functor, typename... Arguments>
-static ConstantResult scalarOrVector(const Functor& functor, Arguments&&... unpackedArguments)
+[[maybe_unused]] static ConstantResult scalarOrVector(const Functor& functor, Arguments&&... unpackedArguments)
 {
     unsigned vectorSize = 0;
     std::initializer_list<ConstantValue> arguments { unpackedArguments... };
@@ -375,7 +375,7 @@ static ConstantResult scalarOrVector(const Functor& functor, Arguments&&... unpa
     return { { result } };
 }
 
-static ConstantValue constantVector(const Type* resultType, const FixedVector<ConstantValue>& arguments, unsigned size)
+[[maybe_unused]] static ConstantValue constantVector(const Type* resultType, const FixedVector<ConstantValue>& arguments, unsigned size)
 {
     ConstantVector result(size);
     auto argumentCount = arguments.size();
@@ -414,7 +414,7 @@ static ConstantValue constantVector(const Type* resultType, const FixedVector<Co
     return { result };
 }
 
-static ConstantValue constantMatrix(const Type* resultType, const FixedVector<ConstantValue>& arguments, unsigned columns, unsigned rows)
+[[maybe_unused]] static ConstantValue constantMatrix(const Type* resultType, const FixedVector<ConstantValue>& arguments, unsigned columns, unsigned rows)
 {
     if (arguments.isEmpty())
         return zeroValue(resultType);
@@ -1754,7 +1754,7 @@ CONSTANT_FUNCTION(Bitcast)
 
 // Type checker helpers
 
-static bool containsZero(ConstantValue value, const Type* valueType)
+[[maybe_unused]] static bool containsZero(ConstantValue value, const Type* valueType)
 {
     auto wrapped = [&]() -> Expected<bool, String> {
         auto zero = zeroValue(valueType);

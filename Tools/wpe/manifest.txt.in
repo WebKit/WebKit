@@ -81,6 +81,7 @@ directory Source/ThirdParty/xdgmime
 directory Source/ThirdParty/libsysprof-capture
 
 exclude Source/WebKit/Resources
+directory Source/WebKit/Resources/wpe
 
 # We do want to include the NEWS, but we want it to be in the root of the archive.
 file Source/WebKit/wpe/NEWS NEWS
@@ -90,6 +91,7 @@ file Source/WebInspectorUI/Localizations/en.lproj/localizedStrings.js Source/Web
 # Include only the resources we actually build
 file Source/WebCore/Resources/missingImage.png
 file Source/WebCore/Resources/missingImage@2x.png
+file Source/WebCore/Resources/missingImage@3x.png
 file Source/WebCore/Resources/panIcon.png
 file Source/WebCore/Resources/textAreaResizeCorner.png
 file Source/WebCore/Resources/textAreaResizeCorner@2x.png

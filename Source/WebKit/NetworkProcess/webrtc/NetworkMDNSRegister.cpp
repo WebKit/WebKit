@@ -111,7 +111,7 @@ static void registerMDNSNameCallback(DNSServiceRef service, DNSRecordRef record,
     MDNS_RELEASE_LOG_IN_CALLBACK(request->sessionID, "registerMDNSNameCallback with error %d", errorCode);
 
     if (errorCode) {
-        request->connection->protectedMDNSRegister()->closeAndForgetService(service);
+        protect(request->connection->mdnsRegister())->closeAndForgetService(service);
         request->completionHandler(request->name, WebCore::MDNSRegisterError::DNSSD);
         return;
     }

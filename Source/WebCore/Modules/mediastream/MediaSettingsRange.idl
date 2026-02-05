@@ -27,7 +27,6 @@
 [
     Conditional=MEDIA_STREAM,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary MediaSettingsRange {
     double max;
     double min;

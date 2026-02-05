@@ -440,7 +440,7 @@ Result<void> Parser<Lexer>::parseRequireDirective()
         CONSUME_TYPE_NAMED(identifier, Identifier);
         auto* languageFeature = parseLanguageFeature(identifier.ident);
         if (!languageFeature)
-            FAIL("Expected 'readonly_and_readwrite_storage_textures', 'packed_4x8_integer_dot_product', 'unrestricted_pointer_parameters' or 'pointer_composite_access'"_s);
+            FAIL("Expected 'readonly_and_readwrite_storage_textures', 'packed_4x8_integer_dot_product', 'unrestricted_pointer_parameters', 'texture_formats_tier1', or 'pointer_composite_access'"_s);
         m_shaderModule.requiredFeatures().add(*languageFeature);
 
         if (current().type != TokenType::Comma)

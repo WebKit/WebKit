@@ -156,7 +156,7 @@ static bool isEmptyOrUnstyledAppleStyleSpan(const Node* node)
     if (!node->hasChildNodes())
         return true;
 
-    const StyleProperties* inlineStyleDecl = element->inlineStyle();
+    SUPPRESS_UNCOUNTED_LOCAL const StyleProperties* inlineStyleDecl = element->inlineStyle();
     return (!inlineStyleDecl || inlineStyleDecl->isEmpty());
 }
 
@@ -390,7 +390,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
 void writeDebugInfo(TextStream& ts, const RenderObject& object, OptionSet<RenderAsTextFlag> behavior)
 {
     if (behavior.contains(RenderAsTextFlag::ShowIDAndClass)) {
-        if (auto* element = dynamicDowncast<Element>(object.node())) {
+        if (RefPtr element = dynamicDowncast<Element>(object.node())) {
             if (element->hasID())
                 ts << " id=\"" << element->getIdAttribute() << '"';
 
@@ -690,7 +690,7 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
             ts.increaseIndent();
         }
         
-        for (auto* currLayer : negativeZOrderLayers)
+        for (CheckedPtr currLayer : negativeZOrderLayers)
             writeLayers(ts, rootLayer, *currLayer, paintDirtyRect, behavior);
 
         if (behavior.contains(RenderAsTextFlag::ShowLayerNesting))
@@ -723,7 +723,7 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
             ts.increaseIndent();
         }
         
-        for (auto* currLayer : normalFlowLayers)
+        for (CheckedPtr currLayer : normalFlowLayers)
             writeLayers(ts, rootLayer, *currLayer, paintDirtyRect, behavior);
 
         if (behavior.contains(RenderAsTextFlag::ShowLayerNesting))
@@ -740,7 +740,7 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
                 ts.increaseIndent();
             }
 
-            for (auto* currLayer : positiveZOrderLayers)
+            for (CheckedPtr currLayer : positiveZOrderLayers)
                 writeLayers(ts, rootLayer, *currLayer, paintDirtyRect, behavior);
 
             if (behavior.contains(RenderAsTextFlag::ShowLayerNesting))
@@ -753,9 +753,9 @@ static String nodePosition(Node* node)
 {
     StringBuilder result;
 
-    auto* body = node->document().bodyOrFrameset();
-    Node* parent;
-    for (Node* n = node; n; n = parent) {
+    RefPtr body = node->document().bodyOrFrameset();
+    RefPtr<Node> parent;
+    for (RefPtr n = node; n; n = parent) {
         parent = n->parentOrShadowHostNode();
         if (n != node)
             result.append(" of "_s);
@@ -781,7 +781,7 @@ static void writeSelection(TextStream& ts, const RenderBox& renderer)
     if (!renderer.isRenderView())
         return;
 
-    auto* frame = renderer.document().frame();
+    RefPtr frame = renderer.document().frame();
     if (!frame)
         return;
 
@@ -821,8 +821,8 @@ static String externalRepresentation(RenderBox& renderer, OptionSet<RenderAsText
     LOG(Layout, "externalRepresentation: dumping layer tree");
 
     ScriptDisallowedScope scriptDisallowedScope;
-    RenderLayer& layer = *renderer.layer();
-    writeLayers(ts, layer, layer, layer.rect(), behavior);
+    CheckedRef layer = *renderer.layer();
+    writeLayers(ts, layer, layer, layer->rect(), behavior);
     writeSelection(ts, renderer);
     return ts.release();
 }
@@ -894,9 +894,9 @@ String counterValueForElement(Element* element)
     auto stream = createTextStream(element->document());
     bool isFirstCounter = true;
     // The counter renderers should be children of :before or :after pseudo-elements.
-    if (PseudoElement* before = element->beforePseudoElement())
+    if (RefPtr before = element->beforePseudoElement())
         writeCounterValuesFromChildren(stream, before->renderer(), isFirstCounter);
-    if (PseudoElement* after = element->afterPseudoElement())
+    if (RefPtr after = element->afterPseudoElement())
         writeCounterValuesFromChildren(stream, after->renderer(), isFirstCounter);
     return stream.release();
 }

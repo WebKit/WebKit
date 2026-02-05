@@ -23,18 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/mediasession/#dictdef-mediasessionactiondetails
 [
     Conditional=MEDIA_SESSION,
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary MediaSessionActionDetails {
     required MediaSessionAction action;
-    double? seekOffset;
-    double? seekTime;
-    boolean? fastSeek;
-    boolean? isActivating;
+    double seekOffset;
+    double seekTime;
+    boolean fastSeek;
+    boolean isActivating;
 
-    [Conditional=MEDIA_SESSION_PLAYLIST, EnabledBySetting=MediaSessionPlaylistEnabled] DOMString? trackIdentifier;
+    // FIXME: Add support for `enterPictureInPictureReason`.
+    // MediaSessionEnterPictureInPictureReason enterPictureInPictureReason;
+
+    [Conditional=MEDIA_SESSION_PLAYLIST, EnabledBySetting=MediaSessionPlaylistEnabled] DOMString trackIdentifier;
 };

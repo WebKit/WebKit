@@ -162,6 +162,7 @@ public:
     bool hasKeyframeNotUsingRangeOffset() const { return m_hasKeyframeNotUsingRangeOffset; }
 
     void updatedComputedOffsets(NOESCAPE const Function<double(const BlendingKeyframe::Offset&)>&);
+    bool hasKeyframeWithUnresolvedComputedOffset() const;
 
 private:
     void analyzeKeyframe(const BlendingKeyframe&);

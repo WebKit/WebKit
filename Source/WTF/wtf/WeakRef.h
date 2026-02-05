@@ -25,6 +25,27 @@
 
 #pragma once
 
+// WeakRef is a non-nullable weak pointer that does not prevent the referenced
+// object from being destroyed. Unlike WeakPtr, WeakRef is expected to always
+// point to a valid object and will safely crash (via RELEASE_ASSERT) if you
+// dereference it or call get() after the referenced object has been destroyed.
+// This makes it useful for hardening code where a raw reference (e.g., Foo& m_foo)
+// was previously used, and where the reference is expected to remain valid for
+// the lifetime of the WeakRef.
+//
+// WeakRef can only be used with classes that inherit from CanMakeWeakPtr or
+// CanMakeWeakPtrWithBitField (which provide the weak pointer implementation).
+//
+// WeakRef is essentially a convenience wrapper around WeakPtr for cases where
+// you expect the pointer to never become null during its usage. If there is a
+// possibility that the referenced object may be destroyed while the pointer is
+// held, use WeakPtr instead.
+//
+// Performance note: WeakRef is often less efficient than Ref or CheckedRef
+// because it involves an extra level of indirection when dereferencing (it is
+// a pointer to a pointer). This can hurt compiler optimizations. Prefer Ref or
+// CheckedRef in performance sensitive code.
+
 #include <wtf/GetPtr.h>
 #include <wtf/HashTraits.h>
 #include <wtf/SingleThreadIntegralWrapper.h>
@@ -215,6 +236,20 @@ inline WeakPtr<match_constness_t<Source, Target>, WeakPtrImpl> dynamicDowncast(W
     if (!is<Target>(source))
         return nullptr;
     return WeakPtr<match_constness_t<Source, Target>, WeakPtrImpl> { unsafeRefDowncast<match_constness_t<Source, Target>>(source.releaseImpl()), source.enableWeakPtrThreadingAssertions() };
+}
+
+template<typename T, typename WeakPtrImpl, typename PtrTraits = RawPtrTraits<T>>
+    requires HasRefPtrMemberFunctions<T>::value
+ALWAYS_INLINE CLANG_POINTER_CONVERSION Ref<T, PtrTraits> protect(const WeakRef<T, WeakPtrImpl>& weakRef)
+{
+    return Ref<T, PtrTraits>(weakRef.get());
+}
+
+template<typename T, typename WeakPtrImpl, typename CheckedPtrTraits = RawPtrTraits<T>>
+    requires (HasCheckedPtrMemberFunctions<T>::value && !HasRefPtrMemberFunctions<T>::value)
+ALWAYS_INLINE CLANG_POINTER_CONVERSION CheckedRef<T, CheckedPtrTraits> protect(const WeakRef<T, WeakPtrImpl>& weakRef)
+{
+    return CheckedRef<T, CheckedPtrTraits>(weakRef.get());
 }
 
 } // namespace WTF

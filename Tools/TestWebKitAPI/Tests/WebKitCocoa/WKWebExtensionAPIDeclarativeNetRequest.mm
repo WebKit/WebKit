@@ -30,6 +30,8 @@
 #import "HTTPServer.h"
 #import "TestNavigationDelegate.h"
 #import "WebExtensionUtilities.h"
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKWebExtensionDeclarativeNetRequestRule.h>
 #import <WebKit/_WKWebExtensionDeclarativeNetRequestTranslator.h>
 
@@ -776,7 +778,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RemoveDynamicRules)
     Util::loadAndRunExtension(declarativeNetRequestManifest, @{ @"background.js": backgroundScript  });
 }
 
-TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRule)
+static void runRedirectRule(bool useEnhancedSecurity)
 {
     auto *pageScript = Util::constructScript(@[
         @"<script>",
@@ -840,7 +842,18 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRule)
         @"rules.json": rules
     };
 
-    auto manager = Util::loadExtension(manifest, resources);
+    auto extensionConfiguration = WKWebExtensionControllerConfiguration.nonPersistentConfiguration;
+
+    if (useEnhancedSecurity) {
+        auto preferences = [extensionConfiguration.webViewConfiguration preferences];
+        for (_WKFeature *feature in [WKPreferences _features]) {
+            if ([feature.key isEqualToString:@"EnhancedSecurityHeuristicsEnabled"])
+                [preferences _setEnabled:YES forFeature:feature];
+        }
+    }
+
+    auto manager = Util::loadExtension(manifest, resources, extensionConfiguration, useEnhancedSecurity);
+
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
     navigationDelegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *navigationAction, void (^decisionHandler)(WKNavigationActionPolicy)) {
         decisionHandler(WKNavigationActionPolicyAllow);
@@ -858,6 +871,16 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRule)
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRule)
+{
+    runRedirectRule(false);
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRuleWithEnhancedSecurity)
+{
+    runRedirectRule(true);
 }
 
 TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRuleWithoutHostAccessPermission)

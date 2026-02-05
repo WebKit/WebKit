@@ -150,7 +150,7 @@ WKArrayRef WKContextMenuCopySubmenuItems(WKContextMenuItemRef itemRef)
 WKTypeRef WKContextMenuItemGetUserData(WKContextMenuItemRef itemRef)
 {
 #if ENABLE(CONTEXT_MENUS)
-    return WebKit::toAPI(WebKit::toProtectedImpl(itemRef)->protectedUserData().get());
+    return WebKit::toAPI(protect(WebKit::toProtectedImpl(itemRef)->userData()).get());
 #else
     UNUSED_PARAM(itemRef);
     return 0;

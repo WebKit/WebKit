@@ -169,9 +169,11 @@ bool ContentVisibilityDocumentState::checkRelevancyOfContentVisibilityElement(El
     updateAnimations(target, wasSkippedContent, isSkippedContent);
     target.queueTaskKeepingThisNodeAlive(TaskSource::DOMManipulation, [&, isSkippedContent] {
         if (target.isConnected()) {
-            ContentVisibilityAutoStateChangeEvent::Init init;
-            init.skipped = isSkippedContent == IsSkippedContent::Yes;
-            target.dispatchEvent(ContentVisibilityAutoStateChangeEvent::create(eventNames().contentvisibilityautostatechangeEvent, init));
+            ContentVisibilityAutoStateChangeEvent::Init init {
+                { false, false, false },
+                isSkippedContent == IsSkippedContent::Yes
+            };
+            target.dispatchEvent(ContentVisibilityAutoStateChangeEvent::create(eventNames().contentvisibilityautostatechangeEvent, WTF::move(init)));
         }
     });
     return true;
@@ -203,7 +205,7 @@ HadInitialVisibleContentVisibilityDetermination ContentVisibilityDocumentState::
     }
     auto hadInitialVisibleContentVisibilityDetermination = HadInitialVisibleContentVisibilityDetermination::No;
     if (!elementsToCheck.isEmpty()) {
-        elementsToCheck.first()->protectedDocument()->updateIntersectionObservations({ m_observer });
+        protect(elementsToCheck.first()->document())->updateIntersectionObservations({ m_observer });
         for (auto& element : elementsToCheck) {
             checkRelevancyOfContentVisibilityElement(element, { ContentRelevancy::OnScreen });
             if (element->isRelevantToUser())
@@ -234,8 +236,8 @@ void ContentVisibilityDocumentState::updateContentRelevancyForScrollIfNeeded(con
     if (RefPtr scrollAnchorRoot = findSkippedContentRoot(scrollAnchor)) {
         updateViewportProximity(*scrollAnchorRoot, ViewportProximity::Near);
         // Since we may not have determined initial visibility yet, force scheduling the content relevancy update.
-        scrollAnchorRoot->protectedDocument()->scheduleContentRelevancyUpdate(ContentRelevancy::OnScreen);
-        scrollAnchorRoot->protectedDocument()->updateRelevancyOfContentVisibilityElements();
+        protect(scrollAnchorRoot->document())->scheduleContentRelevancyUpdate(ContentRelevancy::OnScreen);
+        protect(scrollAnchorRoot->document())->updateRelevancyOfContentVisibilityElements();
     }
 }
 
@@ -244,7 +246,7 @@ void ContentVisibilityDocumentState::updateViewportProximity(const Element& elem
     // No need to schedule content relevancy update for first time call, since
     // that will be handled by determineInitialVisibleContentVisibility.
     if (m_elementViewportProximities.contains(element))
-        element.protectedDocument()->scheduleContentRelevancyUpdate(ContentRelevancy::OnScreen);
+        protect(element.document())->scheduleContentRelevancyUpdate(ContentRelevancy::OnScreen);
     m_elementViewportProximities.ensure(element, [] {
         return ViewportProximity::Far;
     }).iterator->value = viewportProximity;

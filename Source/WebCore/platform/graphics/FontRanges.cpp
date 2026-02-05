@@ -81,7 +81,7 @@ FontRanges::~FontRanges() = default;
 
 GlyphData FontRanges::glyphDataForCharacter(char32_t character, ExternalResourceDownloadPolicy policy) const
 {
-    const Font* resultFont = nullptr;
+    RefPtr<const Font> resultFont;
     if (isGenericFontFamily() && isPrivateUseAreaCharacter(character))
         return GlyphData();
 
@@ -91,7 +91,7 @@ GlyphData FontRanges::glyphDataForCharacter(char32_t character, ExternalResource
                 if (font->isInterstitial()) {
                     policy = ExternalResourceDownloadPolicy::Forbid;
                     if (!resultFont)
-                        resultFont = font.get();
+                        resultFont = WTF::move(font);
                 } else {
                     auto glyphData = font->glyphDataForCharacter(character);
                     if (glyphData.isValid()) {

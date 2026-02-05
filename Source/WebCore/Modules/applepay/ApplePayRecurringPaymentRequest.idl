@@ -28,7 +28,6 @@
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ApplePayRecurringPaymentRequest {
     required DOMString paymentDescription;
     required ApplePayLineItem regularBilling; // must be `paymentTiming: "recurring"

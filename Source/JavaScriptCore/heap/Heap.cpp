@@ -89,18 +89,16 @@
 #include "WeakMapImplInlines.h"
 #include "WeakSetInlines.h"
 #include <algorithm>
+#include <wtf/AvailableMemory.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/ListDump.h>
+#include <wtf/MemoryFootprint.h>
 #include <wtf/RAMSize.h>
 #include <wtf/Scope.h>
 #include <wtf/SimpleStats.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
-
-#if USE(BMALLOC_MEMORY_FOOTPRINT_API)
-#include <bmalloc/bmalloc.h>
-#endif
 
 #if USE(FOUNDATION)
 #include <wtf/spi/cocoa/objcSPI.h>
@@ -181,8 +179,8 @@ static size_t proportionalHeapSize(size_t heapSize, GrowthMode growthMode, size_
         return ratio * heapSize;
     }
 
-#if USE(BMALLOC_MEMORY_FOOTPRINT_API)
-    size_t memoryFootprint = bmalloc::api::memoryFootprint();
+#if USE(MEMORY_FOOTPRINT_API)
+    size_t memoryFootprint = WTF::memoryFootprint();
     if (memoryFootprint < ramSize * Options::smallHeapRAMFraction())
         return Options::smallHeapGrowthFactor() * heapSize;
     if (memoryFootprint < ramSize * Options::mediumHeapRAMFraction())
@@ -697,9 +695,9 @@ void Heap::deprecatedReportExtraMemorySlowCase(size_t size)
 
 bool Heap::overCriticalMemoryThreshold(MemoryThresholdCallType memoryThresholdCallType)
 {
-#if USE(BMALLOC_MEMORY_FOOTPRINT_API)
+#if USE(MEMORY_FOOTPRINT_API)
     if (memoryThresholdCallType == MemoryThresholdCallType::Direct || ++m_percentAvailableMemoryCachedCallCount >= 100) {
-        m_overCriticalMemoryThreshold = bmalloc::api::percentAvailableMemoryInUse() > Options::criticalGCMemoryThreshold();
+        m_overCriticalMemoryThreshold = WTF::percentAvailableMemoryInUse() > Options::criticalGCMemoryThreshold();
         m_percentAvailableMemoryCachedCallCount = 0;
     }
 

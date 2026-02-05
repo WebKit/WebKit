@@ -88,10 +88,15 @@ void MediaResourceLoader::sendH2Ping(const URL& url, CompletionHandler<void(Expe
 {
     assertIsMainThread();
 
-    if (!m_document || !m_document->frame())
+    RefPtr document = this->document();
+    if (!document)
         return completionHandler(makeUnexpected(internalError(url)));
 
-    m_document->protectedFrame()->loader().client().sendH2Ping(url, WTF::move(completionHandler));
+    RefPtr frame = document->frame();
+    if (!frame)
+        return completionHandler(makeUnexpected(internalError(url)));
+
+    frame->loader().client().sendH2Ping(url, WTF::move(completionHandler));
 }
 
 static LoadedFromOpaqueSource computeLoadedFromOpaqueSource(const Document& document, const HashSet<URL>& nonOpaqueLoadURLs, const URL& url, const std::optional<LoadedFromOpaqueSource> loadedFromOpaqueSource)
@@ -149,12 +154,12 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceReque
         cachingPolicy };
     loaderOptions.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
     loaderOptions.destination = m_destination;
-    loaderOptions.loadedFromOpaqueSource = computeLoadedFromOpaqueSource(*m_document, m_nonOpaqueLoadURLs, request.url(), m_loadedFromOpaqueSource);
+    loaderOptions.loadedFromOpaqueSource = computeLoadedFromOpaqueSource(*document, m_nonOpaqueLoadURLs, request.url(), m_loadedFromOpaqueSource);
     auto cachedRequest = createPotentialAccessControlRequest(WTF::move(request), WTF::move(loaderOptions), *document, m_crossOriginMode);
     if (RefPtr element = m_element.get())
         cachedRequest.setInitiator(*element);
 
-    auto resource = m_document->protectedCachedResourceLoader()->requestMedia(WTF::move(cachedRequest)).value_or(nullptr);
+    auto resource = protect(document->cachedResourceLoader())->requestMedia(WTF::move(cachedRequest)).value_or(nullptr);
     if (!resource)
         return nullptr;
 
@@ -187,11 +192,6 @@ Document* MediaResourceLoader::document()
     assertIsMainThread();
 
     return m_document.get();
-}
-
-RefPtr<Document> MediaResourceLoader::protectedDocument()
-{
-    return document();
 }
 
 const String& MediaResourceLoader::crossOriginMode() const
@@ -282,12 +282,7 @@ MediaResource::MediaResource(MediaResourceLoader& loader, CachedResourceHandle<C
     assertIsMainThread();
 
     ASSERT(resource);
-    protectedResource()->addClient(*this);
-}
-
-CachedResourceHandle<CachedRawResource> MediaResource::protectedResource() const
-{
-    return m_resource;
+    protect(m_resource)->addClient(*this);
 }
 
 MediaResource::~MediaResource()
@@ -295,7 +290,7 @@ MediaResource::~MediaResource()
     assertIsMainThread();
 
     if (m_resource)
-        protectedResource()->removeClient(*this);
+        protect(m_resource)->removeClient(*this);
     m_loader->removeResource(*this);
 }
 
@@ -322,7 +317,7 @@ void MediaResource::responseReceived(const CachedResource& resource, const Resou
     Ref protectedThis { *this };
     if (m_resource->resourceError().isAccessControl()) {
         static NeverDestroyed<const String> consoleMessage("Cross-origin media resource load denied by Cross-Origin Resource Sharing policy."_s);
-        m_loader->protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage.get());
+        protect(m_loader->document())->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage.get());
         m_didPassAccessControlCheck.store(false);
         if (RefPtr client = this->client())
             client->accessControlCheckFailed(*this, ResourceError(errorDomainWebKitInternal, 0, response.url(), consoleMessage.get()));
@@ -330,9 +325,9 @@ void MediaResource::responseReceived(const CachedResource& resource, const Resou
         return;
     }
 
-    if (!m_loader->verifyMediaResponse(resource.url(), response, resource.protectedOrigin().get())) {
+    if (!m_loader->verifyMediaResponse(resource.url(), response, protect(resource.origin()).get())) {
         static NeverDestroyed<const String> consoleMessage("Media response origin validation failed."_s);
-        m_loader->protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage.get());
+        protect(m_loader->document())->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage.get());
         if (RefPtr client = this->client())
             client->loadFailed(*this, ResourceError(errorDomainWebKitInternal, 0, response.url(), consoleMessage.get()));
         ensureShutdown();

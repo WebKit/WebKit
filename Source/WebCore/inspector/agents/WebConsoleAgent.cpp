@@ -39,6 +39,7 @@
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptArguments.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -70,7 +71,7 @@ void WebConsoleAgent::frameWindowDiscarded(LocalDOMWindow& window)
                 message->clear();
         }
     }
-    Ref { static_cast<WebInjectedScriptManager&>(m_injectedScriptManager) }->discardInjectedScriptsFor(window);
+    downcast<WebInjectedScriptManager>(m_injectedScriptManager).discardInjectedScriptsFor(window);
 }
 
 void WebConsoleAgent::didReceiveResponse(ResourceLoaderIdentifier requestIdentifier, const ResourceResponse& response)

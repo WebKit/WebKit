@@ -80,7 +80,7 @@ void InspectorNodeFinder::performSearch(Node* parentNode)
 void InspectorNodeFinder::searchUsingDOMTreeTraversal(Node& parentNode)
 {
     // Manual plain text search.
-    for (auto* node = &parentNode; node; node = NodeTraversal::next(*node, &parentNode)) {
+    for (RefPtr node = &parentNode; node; node = NodeTraversal::next(*node, &parentNode)) {
         switch (node->nodeType()) {
         case Node::TEXT_NODE:
         case Node::COMMENT_NODE:
@@ -91,7 +91,7 @@ void InspectorNodeFinder::searchUsingDOMTreeTraversal(Node& parentNode)
         case Node::ELEMENT_NODE:
             if (matchesElement(downcast<Element>(*node)))
                 m_results.add(node);
-            if (auto* frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(*node))
+            if (RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(*node))
                 performSearch(frameOwner->protectedContentDocument().get());
             break;
         default:
@@ -173,7 +173,7 @@ void InspectorNodeFinder::searchUsingXPath(Node& parentNode)
         auto snapshotItemResult = result->snapshotItem(i);
         if (snapshotItemResult.hasException())
             return;
-        Node* node = snapshotItemResult.releaseReturnValue();
+        RefPtr node = snapshotItemResult.releaseReturnValue();
 
         if (auto* attr = dynamicDowncast<Attr>(*node))
             node = attr->ownerElement();

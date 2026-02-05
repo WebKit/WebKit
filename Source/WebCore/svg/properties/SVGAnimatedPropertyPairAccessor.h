@@ -74,7 +74,7 @@ protected:
         propertyProperty2(owner)->detach();
     }
 
-    bool matches(const OwnerType& owner, const SVGAnimatedProperty& animatedProperty) const override
+    bool matches(const OwnerType& owner, const SVGAnimatedPropertyBase& animatedProperty) const override
     {
         return m_accessor1.matches(owner, animatedProperty) || m_accessor2.matches(owner, animatedProperty);
     }

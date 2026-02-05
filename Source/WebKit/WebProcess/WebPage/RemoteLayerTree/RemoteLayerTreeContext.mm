@@ -81,7 +81,7 @@ void RemoteLayerTreeContext::adoptLayersFromContext(RemoteLayerTreeContext& oldC
 
 float RemoteLayerTreeContext::deviceScaleFactor() const
 {
-    return protectedWebPage()->deviceScaleFactor();
+    return protect(webPage())->deviceScaleFactor();
 }
 
 std::optional<DrawingAreaIdentifier> RemoteLayerTreeContext::drawingAreaIdentifier() const
@@ -95,19 +95,19 @@ std::optional<WebCore::DestinationColorSpace> RemoteLayerTreeContext::displayCol
 {
     if (RefPtr drawingArea = m_webPage->drawingArea())
         return drawingArea->displayColorSpace();
-    
+
     return { };
 }
 
 UseLosslessCompression RemoteLayerTreeContext::useIOSurfaceLosslessCompression() const
 {
-    return protectedWebPage()->isIOSurfaceLosslessCompressionEnabled() ? UseLosslessCompression::Yes : UseLosslessCompression::No;
+    return protect(webPage())->isIOSurfaceLosslessCompressionEnabled() ? UseLosslessCompression::Yes : UseLosslessCompression::No;
 }
 
 #if PLATFORM(IOS_FAMILY)
 bool RemoteLayerTreeContext::canShowWhileLocked() const
 {
-    return m_webPage->canShowWhileLocked();
+    return protect(m_webPage)->canShowWhileLocked();
 }
 #endif
 
@@ -140,7 +140,7 @@ void RemoteLayerTreeContext::layerDidEnterContext(PlatformCALayerRemote& layer, 
         videoElement.naturalSize()
     };
 
-    protectedWebPage()->protectedVideoPresentationManager()->setupRemoteLayerHosting(videoElement);
+    protect(protect(webPage())->videoPresentationManager())->setupRemoteLayerHosting(videoElement);
     m_videoLayers.add(layerID, videoElement.identifier());
 
     m_createdLayers.add(layerID, WTF::move(creationProperties));
@@ -148,17 +148,7 @@ void RemoteLayerTreeContext::layerDidEnterContext(PlatformCALayerRemote& layer, 
 }
 #endif
 
-WebPage& RemoteLayerTreeContext::webPage()
-{
-    return m_webPage.get();
-}
-
-Ref<WebPage> RemoteLayerTreeContext::protectedWebPage()
-{
-    return m_webPage.get();
-}
-
-Ref<const WebPage> RemoteLayerTreeContext::protectedWebPage() const
+WebPage& RemoteLayerTreeContext::webPage() const
 {
     return m_webPage.get();
 }
@@ -170,7 +160,7 @@ void RemoteLayerTreeContext::layerWillLeaveContext(PlatformCALayerRemote& layer)
 #if HAVE(AVKIT)
     auto videoLayerIter = m_videoLayers.find(layerID);
     if (videoLayerIter != m_videoLayers.end()) {
-        protectedWebPage()->protectedVideoPresentationManager()->willRemoveLayerForID(videoLayerIter->value);
+        protect(protect(webPage())->videoPresentationManager())->willRemoveLayerForID(videoLayerIter->value);
         m_videoLayers.remove(videoLayerIter);
     }
 #endif
@@ -246,7 +236,7 @@ void RemoteLayerTreeContext::animationDidEnd(WebCore::PlatformLayerIdentifier la
 
 RemoteRenderingBackendProxy& RemoteLayerTreeContext::ensureRemoteRenderingBackendProxy()
 {
-    return protectedWebPage()->ensureRemoteRenderingBackendProxy();
+    return protect(webPage())->ensureRemoteRenderingBackendProxy();
 }
 
 Ref<RemoteRenderingBackendProxy> RemoteLayerTreeContext::ensureProtectedRemoteRenderingBackendProxy()

@@ -41,6 +41,7 @@
 #import <pal/system/ios/UserInterfaceIdiom.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SetForScope.h>
+#import <wtf/WeakObjCPtr.h>
 
 #if HAVE(UI_CALENDAR_SELECTION_WEEK_OF_YEAR)
 @interface WKDateTimePicker : NSObject<WKFormControl, WKDatePickerPopoverControllerDelegate, UICalendarSelectionWeekOfYearDelegate>
@@ -48,9 +49,9 @@
 @interface WKDateTimePicker : NSObject<WKFormControl, WKDatePickerPopoverControllerDelegate>
 #endif
 {
-    NSString *_formatString;
+    RetainPtr<NSString> _formatString;
     RetainPtr<NSString> _initialValue;
-    WKContentView *_view;
+    WeakObjCPtr<WKContentView> _view;
     CGPoint _interactionPoint;
     RetainPtr<UIDatePicker> _datePicker;
     RetainPtr<NSDateInterval> _dateInterval;
@@ -94,7 +95,7 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
     _dateInterval = adoptNS([[NSDateInterval alloc] initWithStartDate:[NSDate distantPast] endDate:maximumDate.get()]);
 
     _view = view;
-    _interactionPoint = [_view lastInteractionLocation];
+    _interactionPoint = [view lastInteractionLocation];
 
     UIDatePickerMode mode;
 
@@ -169,7 +170,8 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
 - (void)datePickerPopoverControllerDidReset:(WKDatePickerPopoverController *)controller
 {
     [self setDateTimePickerToInitialValue];
-    [_view page]->setFocusedElementValue([_view focusedElementInformation].elementContext, { });
+    RetainPtr view = _view.get();
+    protect(*[view page])->setFocusedElementValue([view focusedElementInformation].elementContext, { });
 }
 
 - (void)handleDatePickerPresentationDismissal
@@ -178,7 +180,7 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
         return;
 
     SetForScope isDismissingDatePicker { _isDismissingDatePicker, YES };
-    [_view accessoryDone];
+    [_view.get() accessoryDone];
 }
 
 - (void)removeDatePickerPresentation
@@ -190,7 +192,7 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
         }
 
         _datePickerController = nil;
-        [_view.webView _didDismissContextMenu];
+        [[_view.get() webView] _didDismissContextMenu];
     }
 }
 
@@ -201,20 +203,21 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
 
 - (void)showDateTimePicker
 {
+    RetainPtr view = _view.get();
 #if HAVE(UI_CALENDAR_SELECTION_WEEK_OF_YEAR)
-    if (_view.focusedElementInformation.elementType == WebKit::InputType::Week)
+    if (view.get().focusedElementInformation.elementType == WebKit::InputType::Week)
         _datePickerController = adoptNS([[WKDatePickerPopoverController alloc] initWithCalendarView:_calendarView.get() selectionWeekOfYear:_selectionWeekOfYear.get() delegate:self]);
     else
 #endif
         _datePickerController = adoptNS([[WKDatePickerPopoverController alloc] initWithDatePicker:_datePicker.get() delegate:self]);
-    [_datePickerController presentInView:_view sourceRect:_view.focusedElementInformation.interactionRect completion:[strongSelf = retainPtr(self)] {
-        [strongSelf->_view.webView _didShowContextMenu];
+    [_datePickerController presentInView:view.get() sourceRect:[view focusedElementInformation].interactionRect completion:[strongSelf = retainPtr(self)] {
+        [[strongSelf->_view.get() webView] _didShowContextMenu];
     }];
 }
 
 - (BOOL)shouldForceGregorianCalendar
 {
-    auto autofillFieldName = _view.focusedElementInformation.autofillFieldName;
+    auto autofillFieldName = [_view.get() focusedElementInformation].autofillFieldName;
     return autofillFieldName == WebCore::AutofillFieldName::CcExpMonth
         || autofillFieldName == WebCore::AutofillFieldName::CcExp
         || autofillFieldName == WebCore::AutofillFieldName::CcExpYear;
@@ -233,10 +236,11 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
     // Times may have seconds and milliseconds information which we just
     // ignore. For example: "01:56:20.391" is shortened to just "01:56".
 
-    if (_view.focusedElementInformation.elementType == WebKit::InputType::Time)
+    RetainPtr view = _view.get();
+    if (view.get().focusedElementInformation.elementType == WebKit::InputType::Time)
         return [value substringToIndex:[kTimeFormatString length]];
 
-    if (_view.focusedElementInformation.elementType == WebKit::InputType::DateTimeLocal) {
+    if (view.get().focusedElementInformation.elementType == WebKit::InputType::DateTimeLocal) {
         NSString *timeString = [[value componentsSeparatedByString:@"T"] objectAtIndex:1];
         NSString *sanitizedTimeString = [timeString substringToIndex:[kTimeFormatString length]];
         return [value stringByReplacingOccurrencesOfString:timeString withString:sanitizedTimeString];
@@ -258,7 +262,7 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
     auto englishLocale = adoptNS([[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]);
     auto dateFormatter = adoptNS([[NSDateFormatter alloc] init]);
     [dateFormatter setTimeZone:[_datePicker timeZone]];
-    [dateFormatter setDateFormat:_formatString];
+    [dateFormatter setDateFormat:_formatString.get()];
     // Force English locale because that is what HTML5 value parsing expects.
     [dateFormatter setLocale:englishLocale.get()];
     return dateFormatter;
@@ -266,16 +270,17 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
 
 - (void)_dateChanged
 {
+    RetainPtr view = _view.get();
 #if HAVE(UI_CALENDAR_SELECTION_WEEK_OF_YEAR)
-    if (_view.focusedElementInformation.elementType == WebKit::InputType::Week) {
+    if (view.get().focusedElementInformation.elementType == WebKit::InputType::Week) {
         RetainPtr dateFormatter = [self iso8601DateFormatterForCalendarView];
-        [_view updateFocusedElementValue:[dateFormatter stringFromDate:[[NSCalendar calendarWithIdentifier:NSCalendarIdentifierISO8601] dateFromComponents:[_selectionWeekOfYear selectedWeekOfYear]]]];
+        [view updateFocusedElementValue:[dateFormatter stringFromDate:[[NSCalendar calendarWithIdentifier:NSCalendarIdentifierISO8601] dateFromComponents:[_selectionWeekOfYear selectedWeekOfYear]]]];
         return;
     }
 #endif
 
     RetainPtr dateFormatter = [self dateFormatterForPicker];
-    [_view updateFocusedElementValue:[dateFormatter stringFromDate:[_datePicker date]]];
+    [view updateFocusedElementValue:[dateFormatter stringFromDate:[_datePicker date]]];
 }
 
 #if HAVE(UI_CALENDAR_SELECTION_WEEK_OF_YEAR)
@@ -306,7 +311,7 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
 - (void)setDateTimePickerToInitialValue
 {
 #if HAVE(UI_CALENDAR_SELECTION_WEEK_OF_YEAR)
-    if (_view.focusedElementInformation.elementType == WebKit::InputType::Week)
+    if ([_view.get() focusedElementInformation].elementType == WebKit::InputType::Week)
         return [self setWeekPickerToInitialValue];
 #endif
 
@@ -333,24 +338,25 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
 
 - (void)controlBeginEditing
 {
+    RetainPtr view = _view.get();
 #if PLATFORM(MACCATALYST) || !USE(POPOVER_PRESENTATION_FOR_DATE_PICKER)
     // The date/time input popover always attempts to steal first responder from the web view upon
     // presentation due to the Catalyst-specific `_UIPopoverHostManagerMac`, so we need to relinquish
     // first responder to the focused element to avoid immediately blurring the focused element.
     bool shouldRelinquishFirstResponder = true;
 #else
-    auto elementType = _view.focusedElementInformation.elementType;
+    auto elementType = view.get().focusedElementInformation.elementType;
     bool shouldRelinquishFirstResponder = elementType == WebKit::InputType::Time || elementType == WebKit::InputType::DateTimeLocal;
 #endif
     if (shouldRelinquishFirstResponder)
-        [_view startRelinquishingFirstResponderToFocusedElement];
+        [view startRelinquishingFirstResponderToFocusedElement];
 
     // Set the time zone in case it changed.
     [_datePicker setTimeZone:NSTimeZone.localTimeZone];
 
     // Currently no value for the <input>. Start the picker with the current time.
     // Also, update the actual <input> value.
-    _initialValue = _view.focusedElementInformation.value.createNSString().get();
+    _initialValue = view.get().focusedElementInformation.value.createNSString().get();
     [self setDateTimePickerToInitialValue];
     [self showDateTimePicker];
 }
@@ -361,7 +367,7 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
 
 - (void)controlEndEditing
 {
-    [_view stopRelinquishingFirstResponderToFocusedElement];
+    [_view.get() stopRelinquishingFirstResponderToFocusedElement];
     [self removeDatePickerPresentation];
 }
 

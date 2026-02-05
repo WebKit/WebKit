@@ -29,7 +29,7 @@
     EnabledBySetting=WebAudioEnabled,
     Exposed=Window
 ] interface ConvolverNode : AudioNode {
-    [EnabledBySetting=WebAudioEnabled] constructor (BaseAudioContext context, optional ConvolverOptions options);
+    [EnabledBySetting=WebAudioEnabled] constructor (BaseAudioContext context, optional ConvolverOptions options = {});
 
     [ImplementedAs=bufferForBindings] attribute AudioBuffer? buffer;
     [ImplementedAs=normalizeForBindings] attribute boolean normalize;

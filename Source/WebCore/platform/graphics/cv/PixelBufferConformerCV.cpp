@@ -53,10 +53,12 @@ static void logStackTrace(WTFLogChannel* channel)
     int frameCount = kDefaultFramesToShow + kDefaultFramesToSkip;
     WTFGetBacktrace(stack.data(), &frameCount);
     StackTraceSymbolResolver { std::span { stack }.first(frameCount) }.forEach([&](int frameNumber, void* stackFrame, const char* name) {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         if (name)
             os_log(channel->osLogChannel, "%-3d %p %{public}s", frameNumber, stackFrame, name);
         else
             os_log(channel->osLogChannel, "%-3d %p", frameNumber, stackFrame);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     });
 }
 #define RELEASE_LOG_STACKTRACE(channel) logStackTrace(&LOG_CHANNEL(channel))

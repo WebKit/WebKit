@@ -27,7 +27,6 @@
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUBlendState {
     required GPUBlendComponent color;
     required GPUBlendComponent alpha;

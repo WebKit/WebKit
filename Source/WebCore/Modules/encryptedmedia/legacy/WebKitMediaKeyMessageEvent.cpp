@@ -42,11 +42,10 @@ WebKitMediaKeyMessageEvent::WebKitMediaKeyMessageEvent(const AtomString& type, U
 {
 }
 
-
-WebKitMediaKeyMessageEvent::WebKitMediaKeyMessageEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::WebKitMediaKeyMessageEvent, type, initializer, isTrusted)
-    , m_message(initializer.message)
-    , m_destinationURL(initializer.destinationURL)
+WebKitMediaKeyMessageEvent::WebKitMediaKeyMessageEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+    : Event(EventInterfaceType::WebKitMediaKeyMessageEvent, type, WTF::move(initializer), isTrusted)
+    , m_message(WTF::move(initializer.message))
+    , m_destinationURL(WTF::move(initializer.destinationURL))
 {
 }
 

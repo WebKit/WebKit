@@ -87,6 +87,7 @@
 42264540 VULKAN NVIDIA LINUX :  KHR-GLES32.core.framebuffer_completeness.cube_map_layered_attachment_valid_size_and_format = SKIP
 
 // New failures when upgrading to Ubuntu 22/newer driver.
+362486580 VULKAN LINUX NVIDIA : KHR-GLES32.core.draw_buffers_indexed.blending = FAIL
 362486580 VULKAN LINUX NVIDIA : KHR-GLES32.core.draw_buffers_indexed.color_masks = SKIP
 362486580 VULKAN LINUX NVIDIA : KHR-GLES32.core.texture_cube_map_array.image_op_compute_sh = FAIL
 

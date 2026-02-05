@@ -702,6 +702,7 @@ bool ValidateGetPlatformDisplayCommon(const ValidationContext *val,
         Optional<EGLAttrib> deviceType;
         Optional<EGLAttrib> eglHandle;
         Optional<EGLAttrib> dawnProcTable;
+        Optional<EGLAttrib> webgpuInstance;
         Optional<EGLAttrib> webgpuDevice;
 
         for (const auto &curAttrib : attribMap)
@@ -910,6 +911,20 @@ bool ValidateGetPlatformDisplayCommon(const ValidationContext *val,
                     }
                     break;
 
+                case EGL_PLATFORM_ANGLE_WEBGPU_INSTANCE_ANGLE:
+                    if (!clientExtensions.platformANGLEWebgpu)
+                    {
+                        val->setError(EGL_BAD_ATTRIBUTE,
+                                      "EGL_ANGLE_platform_angle_webgpu is not supported");
+                        return false;
+                    }
+
+                    if (value != 0)
+                    {
+                        webgpuInstance = value;
+                    }
+                    break;
+
                 case EGL_PLATFORM_ANGLE_WEBGPU_DEVICE_ANGLE:
                     if (!clientExtensions.platformANGLEWebgpu)
                     {
@@ -1091,6 +1106,14 @@ bool ValidateGetPlatformDisplayCommon(const ValidationContext *val,
         {
             val->setError(EGL_BAD_ATTRIBUTE,
                           "EGL_PLATFORM_ANGLE_DAWN_PROC_TABLE_ANGLE requires a "
+                          "platform type of EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE.");
+            return false;
+        }
+
+        if (webgpuInstance.valid() && platformType != EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE)
+        {
+            val->setError(EGL_BAD_ATTRIBUTE,
+                          "EGL_PLATFORM_ANGLE_WEBGPU_INSTANCE_ANGLE requires a "
                           "platform type of EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE.");
             return false;
         }
@@ -1833,6 +1856,17 @@ bool ValidateCreateContextAttribute(const ValidationContext *val,
             }
             break;
 
+        case EGL_CONTEXT_HARDENED_ANGLE:
+            if (!display->getExtensions().createContextWebGLCompatibility)
+            {
+                val->setError(EGL_BAD_ATTRIBUTE,
+                              "Attribute "
+                              "EGL_CONTEXT_HARDENED_ANGLE requires "
+                              "EGL_ANGLE_create_context_webgl_compatibility.");
+                return false;
+            }
+            break;
+
         case EGL_CONTEXT_BIND_GENERATES_RESOURCE_CHROMIUM:
             if (!display->getExtensions().createContextBindGeneratesResource)
             {
@@ -2068,6 +2102,16 @@ bool ValidateCreateContextAttributeValue(const ValidationContext *val,
             {
                 val->setError(EGL_BAD_ATTRIBUTE,
                               "EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE must be "
+                              "EGL_TRUE or EGL_FALSE.");
+                return false;
+            }
+            break;
+
+        case EGL_CONTEXT_HARDENED_ANGLE:
+            if (value != EGL_TRUE && value != EGL_FALSE)
+            {
+                val->setError(EGL_BAD_ATTRIBUTE,
+                              "EGL_CONTEXT_HARDENED_ANGLE must be "
                               "EGL_TRUE or EGL_FALSE.");
                 return false;
             }

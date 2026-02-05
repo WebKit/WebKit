@@ -110,15 +110,12 @@ EGLPlatformParameters METAL();
 
 EGLPlatformParameters OPENGL();
 EGLPlatformParameters OPENGL(EGLint major, EGLint minor);
-EGLPlatformParameters OPENGL_NULL();
 
 EGLPlatformParameters OPENGLES();
 EGLPlatformParameters OPENGLES(EGLint major, EGLint minor);
-EGLPlatformParameters OPENGLES_NULL();
 
 EGLPlatformParameters OPENGL_OR_GLES();
 EGLPlatformParameters OPENGL_OR_GLES(EGLint major, EGLint minor);
-EGLPlatformParameters OPENGL_OR_GLES_NULL();
 
 EGLPlatformParameters VULKAN();
 EGLPlatformParameters VULKAN_NULL();
@@ -153,9 +150,6 @@ PlatformParameters ES3_D3D11();
 PlatformParameters ES3_D3D11_FL11_1();
 PlatformParameters ES3_D3D11_FL11_0();
 PlatformParameters ES3_D3D11_FL10_1();
-PlatformParameters ES31_D3D11();
-PlatformParameters ES31_D3D11_FL11_1();
-PlatformParameters ES31_D3D11_FL11_0();
 
 PlatformParameters ES3_D3D11_WARP();
 PlatformParameters ES3_D3D11_FL11_1_WARP();

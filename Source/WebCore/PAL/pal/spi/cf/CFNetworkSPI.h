@@ -28,9 +28,6 @@
 #include <wtf/Compiler.h>
 #include <wtf/Platform.h>
 
-// FIXME: Remove when support for macOS 14 is no longer required.
-#if !__has_feature(modules) || !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
-
 DECLARE_SYSTEM_HEADER
 
 #include <CFNetwork/CFNetwork.h>
@@ -618,5 +615,3 @@ WTF_EXTERN_C_END
 @end
 
 #endif // defined(__OBJC__)
-
-#endif // !__has_feature(modules) || !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000

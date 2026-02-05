@@ -130,10 +130,11 @@ void WebXRInputSource::pollEvents(Vector<Ref<XRInputSourceEvent>>& events)
         return;
 
     auto createEvent = [this, session](const AtomString& name) -> Ref<XRInputSourceEvent> {
-        XRInputSourceEvent::Init init;
-        init.frame = WebXRFrame::create(*session, WebXRFrame::IsAnimationFrame::No);
-        init.inputSource = RefPtr { this };
-
+        auto init = XRInputSourceEvent::Init {
+            { false, false, false },
+            WebXRFrame::create(*session, WebXRFrame::IsAnimationFrame::No),
+            Ref { *this }
+        };
         return XRInputSourceEvent::create(name, WTF::move(init));
     };
 

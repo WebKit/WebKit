@@ -272,6 +272,8 @@ public:
     LazyProperty<JSGlobalObject, Structure> m_segmentIteratorStructure;
     LazyProperty<JSGlobalObject, Structure> m_segmenterStructure;
     LazyProperty<JSGlobalObject, Structure> m_segmentsStructure;
+    LazyProperty<JSGlobalObject, Structure> m_segmentDataObjectStructure;
+    LazyProperty<JSGlobalObject, Structure> m_segmentDataObjectWithIsWordLikeStructure;
     LazyClassStructure m_dateTimeFormatStructure;
     LazyClassStructure m_numberFormatStructure;
 
@@ -966,6 +968,8 @@ public:
     Structure* segmentIteratorStructure() { return m_segmentIteratorStructure.get(this); }
     Structure* segmenterStructure() { return m_segmenterStructure.get(this); }
     Structure* segmentsStructure() { return m_segmentsStructure.get(this); }
+    Structure* segmentDataObjectStructure() { return m_segmentDataObjectStructure.get(this); }
+    Structure* segmentDataObjectWithIsWordLikeStructure() { return m_segmentDataObjectWithIsWordLikeStructure.get(this); }
     Structure* trustedScriptStructure() { return m_trustedScriptStructure.get(); }
 
     JSObject* dateTimeFormatConstructor() { return m_dateTimeFormatStructure.constructor(this); }

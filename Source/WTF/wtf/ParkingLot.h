@@ -161,7 +161,9 @@ public:
     template<typename Func>
     static void forEach(const Func& func)
     {
-        forEachImpl(scopedLambdaRef<void(uintptr_t, const void*)>(func));
+        // FIXME: Static analysis is complaining about `const ScopedLambda<void (uintptr_t, const void *)> &`
+        // being forward-declared but ScopedLambda.h is included at the top of this file.
+        SUPPRESS_FORWARD_DECL_ARG forEachImpl(scopedLambdaRef<void(uintptr_t, const void*)>(func));
     }
 
 private:

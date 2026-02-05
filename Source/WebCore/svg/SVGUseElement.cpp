@@ -117,7 +117,7 @@ Node::InsertedIntoAncestorResult SVGUseElement::insertedIntoAncestor(InsertionTy
     auto result = SVGGraphicsElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument) {
         if (m_shadowTreeNeedsUpdate)
-            protectedDocument()->addElementWithPendingUserAgentShadowTreeUpdate(*this);
+            protect(document())->addElementWithPendingUserAgentShadowTreeUpdate(*this);
         invalidateShadowTree();
         // FIXME: Move back the call to updateExternalDocument() here once notifyFinished is made always async.
         return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
@@ -286,7 +286,7 @@ void SVGUseElement::updateUserAgentShadowTree()
 
     if (!isConnected())
         return;
-    protectedDocument()->removeElementWithPendingUserAgentShadowTreeUpdate(*this);
+    protect(document())->removeElementWithPendingUserAgentShadowTreeUpdate(*this);
 
     AtomString targetID;
     RefPtr target = findTarget(&targetID);
@@ -345,7 +345,7 @@ static bool isDirectReference(const SVGElement& element)
 SVGGraphicsElement* SVGUseElement::visibleTargetGraphicsElement() const
 {
     RefPtr clone = this->targetClone();
-    auto* targetElement = dynamicDowncast<SVGGraphicsElement>(clone.get());
+    SUPPRESS_UNCOUNTED_LOCAL auto* targetElement = dynamicDowncast<SVGGraphicsElement>(clone.get());
     if (!targetElement)
         return nullptr;
 
@@ -498,7 +498,7 @@ RefPtr<SVGElement> SVGUseElement::findTarget(AtomString* targetID) const
         // The caller would use the target ID to wait for a pending resource on the wrong document.
         // If we ever want the change that and let the caller to wait on the external document,
         // we should change this function so it returns the appropriate document to go with the ID.
-        if (!targetID->isNull() && isExternalURIReference(original->href(), original->protectedDocument()))
+        if (!targetID->isNull() && isExternalURIReference(original->href(), protect(original->document())))
             *targetID = nullAtom();
     }
     RefPtr target = dynamicDowncast<SVGElement>(targetResult.element.get());
@@ -525,7 +525,7 @@ RefPtr<SVGElement> SVGUseElement::findTarget(AtomString* targetID) const
 
 void SVGUseElement::cloneTarget(ContainerNode& container, SVGElement& target) const
 {
-    Ref targetClone = downcast<SVGElement>(target.cloneElementWithChildren(protectedDocument(), nullptr));
+    Ref targetClone = downcast<SVGElement>(target.cloneElementWithChildren(protect(document()), nullptr));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { targetClone };
     associateClonesWithOriginals(targetClone.get(), target);
     removeDisallowedElementsFromSubtree(targetClone.get());
@@ -548,7 +548,7 @@ static void cloneDataAndChildren(SVGElement& replacementClone, SVGElement& origi
 
 void SVGUseElement::expandUseElementsInShadowTree() const
 {
-    auto descendants = descendantsOfType<SVGUseElement>(*protectedUserAgentShadowRoot());
+    auto descendants = descendantsOfType<SVGUseElement>(*protect(userAgentShadowRoot()));
     for (auto it = descendants.begin(); it; ) {
         Ref originalClone = *it;
         it.dropAssertions();
@@ -558,7 +558,7 @@ void SVGUseElement::expandUseElementsInShadowTree() const
         // Spec: In the generated content, the 'use' will be replaced by 'g', where all attributes from the
         // 'use' element except for x, y, width, height and xlink:href are transferred to the generated 'g' element.
 
-        Ref replacementClone = SVGGElement::create(protectedDocument());
+        Ref replacementClone = SVGGElement::create(protect(document()));
         ScriptDisallowedScope::EventAllowedScope eventAllowedScope { replacementClone };
 
         cloneDataAndChildren(replacementClone.get(), originalClone);
@@ -573,7 +573,7 @@ void SVGUseElement::expandUseElementsInShadowTree() const
         if (target)
             originalClone->cloneTarget(replacementClone.get(), *target);
 
-        originalClone->protectedParentNode()->replaceChild(replacementClone, originalClone);
+        protect(originalClone->parentNode())->replaceChild(replacementClone, originalClone);
 
         // Resume iterating, starting just inside the replacement clone.
         it = descendants.from(replacementClone.get());
@@ -582,7 +582,7 @@ void SVGUseElement::expandUseElementsInShadowTree() const
 
 void SVGUseElement::expandSymbolElementsInShadowTree() const
 {
-    auto descendants = descendantsOfType<SVGSymbolElement>(*protectedUserAgentShadowRoot());
+    auto descendants = descendantsOfType<SVGSymbolElement>(*protect(userAgentShadowRoot()));
     for (auto it = descendants.begin(); it; ) {
         Ref originalClone = *it;
         it.dropAssertions();
@@ -594,12 +594,12 @@ void SVGUseElement::expandSymbolElementsInShadowTree() const
         // the generated 'svg'. If attributes width and/or height are not specified, the generated
         // 'svg' element will use values of 100% for these attributes.
 
-        Ref replacementClone = SVGSVGElement::create(protectedDocument());
+        Ref replacementClone = SVGSVGElement::create(protect(document()));
         ScriptDisallowedScope::EventAllowedScope eventAllowedScope { replacementClone };
 
         cloneDataAndChildren(replacementClone.get(), originalClone);
 
-        originalClone->protectedParentNode()->replaceChild(replacementClone, originalClone);
+        protect(originalClone->parentNode())->replaceChild(replacementClone, originalClone);
 
         // Resume iterating, starting just inside the replacement clone.
         it = descendants.from(replacementClone.get());
@@ -609,7 +609,7 @@ void SVGUseElement::expandSymbolElementsInShadowTree() const
 void SVGUseElement::transferEventListenersToShadowTree() const
 {
     // FIXME: Don't directly add event listeners on each descendant. Copy event listeners on the use element instead.
-    for (Ref descendant : descendantsOfType<SVGElement>(*protectedUserAgentShadowRoot())) {
+    for (Ref descendant : descendantsOfType<SVGElement>(*protect(userAgentShadowRoot()))) {
         if (EventTargetData* data = descendant->correspondingElement()->eventTargetData())
             data->eventListenerMap.copyEventListenersNotCreatedFromMarkupToTarget(descendant.ptr());
     }
@@ -685,7 +685,7 @@ void SVGUseElement::updateExternalDocument()
         options.sniffContent = ContentSniffingPolicy::DoNotSniffContent;
         CachedResourceRequest request { ResourceRequest { WTF::move(externalDocumentURL) }, options };
         request.setInitiator(*this);
-        m_externalDocument = document->protectedCachedResourceLoader()->requestSVGDocument(WTF::move(request)).value_or(nullptr);
+        m_externalDocument = protect(document->cachedResourceLoader())->requestSVGDocument(WTF::move(request)).value_or(nullptr);
         if (CachedResourceHandle externalDocument = m_externalDocument)
             externalDocument->addClient(*this);
     }

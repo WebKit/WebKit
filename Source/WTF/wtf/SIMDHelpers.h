@@ -594,7 +594,7 @@ ALWAYS_INLINE const CharacterType* find(std::span<const CharacterType> span, con
     using UnsignedType = SameSizeUnsignedInteger<CharacterType>;
     static_assert(threshold >= stride);
     const auto* cursor = span.data();
-    const auto* end = span.data() + span.size();
+    const auto* end = std::to_address(span.end());
     if (span.size() >= threshold) {
         for (; cursor + stride <= end; cursor += stride) {
             if (auto index = vectorMatch(SIMD::load(std::bit_cast<const UnsignedType*>(cursor))))
@@ -622,7 +622,7 @@ ALWAYS_INLINE const CharacterType* findInterleaved(std::span<const CharacterType
     constexpr size_t stride = SIMD::stride<CharacterType> * 2;
     static_assert(threshold >= stride);
     const auto* cursor = span.data();
-    const auto* end = span.data() + span.size();
+    const auto* end = std::to_address(span.end());
     if (span.size() >= threshold) {
         for (; cursor + stride <= end; cursor += stride) {
             if (auto index = vectorMatch(simde_vld2q_u8(std::bit_cast<const uint8_t*>(cursor))))
@@ -651,7 +651,7 @@ ALWAYS_INLINE size_t count(std::span<const CharacterType> span, const auto& vect
     using UnsignedType = SameSizeUnsignedInteger<CharacterType>;
     static_assert(threshold >= stride);
     const auto* cursor = span.data();
-    const auto* end = span.data() + span.size();
+    const auto* end = std::to_address(span.end());
     size_t result = 0;
 
     // Per max * 4 * stride iteration (If CharacterType is uint8_t, it is 16320 (255 * 64)).

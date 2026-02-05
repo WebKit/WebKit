@@ -61,16 +61,16 @@ class NavigateEvent final : public Event {
 public:
     struct Init : EventInit {
         NavigationNavigationType navigationType { NavigationNavigationType::Push };
-        RefPtr<NavigationDestination> destination;
-        RefPtr<AbortSignal> signal;
-        RefPtr<DOMFormData> formData;
-        String downloadRequest;
-        JSC::JSValue info;
-        RefPtr<Element> sourceElement;
+        Ref<NavigationDestination> destination;
         bool canIntercept { false };
         bool userInitiated { false };
         bool hashChange { false };
+        Ref<AbortSignal> signal;
+        RefPtr<DOMFormData> formData;
+        String downloadRequest;
+        JSC::JSValue info;
         bool hasUAVisualTransition { false };
+        RefPtr<Element> sourceElement;
     };
 
     enum class NavigationFocusReset : bool {
@@ -109,7 +109,6 @@ public:
     ExceptionOr<void> scroll(Document&);
 
     bool wasIntercepted() const { return m_interceptionState.has_value(); }
-    void setCanIntercept(bool canIntercept) { m_canIntercept = canIntercept; }
     void setInterceptionState(InterceptionState interceptionState) { m_interceptionState = interceptionState; }
 
     void finish(Document&, InterceptionHandlersDidFulfill, FocusDidChange);

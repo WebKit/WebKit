@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -136,7 +136,9 @@
 .table .cell {
     position: relative;
     display: inline-block;
-    padding: 0 6px;
+    padding: 0;
+    padding-inline-start: var(--table-cell-padding-inline-start, 6px);
+    padding-inline-end: var(--table-cell-padding-inline-end, 6px);
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;

@@ -61,7 +61,7 @@ private:
     T peek(unsigned = 0);
     void newLine();
     bool skipBlockComments();
-    void skipLineComment();
+    bool skipLineComment();
     bool skipWhitespaceAndComments();
 
     StringParsingBuffer<T> m_code;

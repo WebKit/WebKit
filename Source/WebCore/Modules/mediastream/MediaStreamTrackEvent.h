@@ -41,7 +41,7 @@ public:
     static Ref<MediaStreamTrackEvent> create(const AtomString& type, CanBubble, IsCancelable, Ref<MediaStreamTrack>&&);
 
     struct Init : EventInit {
-        RefPtr<MediaStreamTrack> track;
+        Ref<MediaStreamTrack> track;
     };
     static Ref<MediaStreamTrackEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
 

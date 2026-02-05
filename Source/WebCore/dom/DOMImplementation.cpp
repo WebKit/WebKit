@@ -147,7 +147,7 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(String&& title)
         auto titleElement = HTMLTitleElement::create(titleTag, document);
         titleElement->appendChild(document->createTextNode(WTF::move(title)));
         ASSERT(document->head());
-        document->protectedHead()->appendChild(titleElement);
+        protect(document->head())->appendChild(titleElement);
     }
     document->setContextDocument(thisDocument->contextDocument());
     document->setSecurityOriginPolicy(thisDocument->securityOriginPolicy());
@@ -201,7 +201,7 @@ Ref<Document> DOMImplementation::createDocument(const String& contentType, Local
 
     // The following is the relatively costly lookup that requires initializing the plug-in database.
     if (frame && frame->page()) {
-        if (frame->protectedPage()->protectedPluginData()->supportsWebVisibleMimeType(contentType, PluginData::OnlyApplicationPlugins))
+        if (protect(frame->page())->protectedPluginData()->supportsWebVisibleMimeType(contentType, PluginData::OnlyApplicationPlugins))
             return PluginDocument::create(*frame, url);
     }
 

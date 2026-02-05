@@ -95,6 +95,7 @@ class WPEPortTest(port_testcase.PortTestCase):
         self.assertEqual(configuration['platform'], 'WPE')
         self.assertEqual(configuration['style'], 'release')
         self.assertEqual(configuration['version'], '2.51')
+        self.assertNotIn('version_name', configuration)
 
     def test_browser_name_default_wihout_cog_built(self):
         port = self.make_port()

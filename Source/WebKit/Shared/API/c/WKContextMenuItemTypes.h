@@ -139,6 +139,8 @@ enum {
     kWKContextMenuItemTagRewrite,
     kWKContextMenuItemTagSummarize,
     kWKContextMenuItemCaptionDisplayStyleSubmenu,
+    kWKContextMenuItemTagConvertToTraditionalChinese,
+    kWKContextMenuItemTagConvertToSimplifiedChinese,
     kWKContextMenuItemBaseApplicationTag = 10000
 };
 typedef uint32_t WKContextMenuItemTag;

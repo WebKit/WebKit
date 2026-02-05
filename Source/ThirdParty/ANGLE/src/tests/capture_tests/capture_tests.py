@@ -12,6 +12,7 @@ import json
 import logging
 import os
 import pathlib
+import re
 import shutil
 import subprocess
 import sys
@@ -76,7 +77,7 @@ def diff_files(path, expected_path):
     return True
 
 
-def run_test(test_name, overwrite_expected):
+def run_test(args, test_name, overwrite_expected):
     with temporary_dir() as temp_dir:
         cmd = [angle_test_util.ExecutablePathInCurrentDir('angle_end2end_tests')]
         if angle_test_util.IsAndroid():
@@ -97,13 +98,20 @@ def run_test(test_name, overwrite_expected):
         expected_dir = os.path.join(SCRIPT_DIR, 'expected')
         expected_files = sorted(fn for fn in os.listdir(expected_dir) if not fn.startswith('.'))
 
+        if args.skip_cl:
+            filtered_files = [
+                file for file in expected_files if not re.search('CapturedTestCL', file)
+            ]
+        else:
+            filtered_files = expected_files
+
         if overwrite_expected:
-            for f in expected_files:
+            for f in filtered_files:
                 os.remove(os.path.join(expected_dir, f))
             shutil.copytree(temp_dir, expected_dir, dirs_exist_ok=True)
             return True
 
-        if files != expected_files:
+        if files != filtered_files:
             logging.error(
                 'Checks failed. Capture produced a different set of files: %s\nDiff:\n%s\n', files,
                 '\n'.join(difflib.unified_diff(expected_files, files)))
@@ -123,6 +131,7 @@ def main():
     parser.add_argument('--log', help='Logging level.', default='info')
     parser.add_argument(
         '--overwrite-expected', help='Overwrite contents of expected/', action='store_true')
+    parser.add_argument('--skip-cl', help='Skip CL tests', action='store_true')
     args, extra_flags = parser.parse_known_args()
 
     logging.basicConfig(level=args.log.upper())
@@ -132,7 +141,7 @@ def main():
     test_name = 'CapturedTest*/ES3_Vulkan'
     had_error = False
     try:
-        if not run_test(test_name, args.overwrite_expected):
+        if not run_test(args, test_name, args.overwrite_expected):
             had_error = True
             logging.error(
                 'Found capture diffs. If diffs are expected, build angle_end2end_tests and run '

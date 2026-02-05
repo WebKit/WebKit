@@ -80,6 +80,7 @@ messages -> RemoteAudioVideoRendererProxyManager {
     SetResourceOwner(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::ProcessIdentity resourceOwner)
     FlushAndRemoveImage(WebKit::RemoteAudioVideoRendererIdentifier identifier)
     CurrentVideoFrame(WebKit::RemoteAudioVideoRendererIdentifier identifier) -> (struct std::optional<WebKit::RemoteVideoFrameProxyProperties> videoFrame) Synchronous
+    CurrentBitmapImage(WebKit::RemoteAudioVideoRendererIdentifier identifier) -> (std::optional<WebCore::ShareableBitmapHandle> image)
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     SetVideoFullscreenFrame(WebKit::RemoteAudioVideoRendererIdentifier identifier, WebCore::FloatRect frame)

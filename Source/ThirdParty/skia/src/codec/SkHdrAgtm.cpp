@@ -15,6 +15,7 @@ namespace {
 
 // AGTM tone mapping shader.
 static constexpr char gAgtmSKSL[] =
+    "uniform half scale_factor;"       // The scale to apply in linear space
     "uniform shader curve_xym;"        // The texture containing control points.
     "uniform half weight_i;"           // The weight of gain curve "i"
     "uniform half4 mix_rgbx_i;"        // The red,green,blue mixing coefficients.
@@ -27,7 +28,7 @@ static constexpr char gAgtmSKSL[] =
     "uniform half curve_texcoord_y_j;"
     "uniform half curve_N_cp_j;"
 
-     // Shader equivalent of AgtmImpl::ComponentMixingFunction::evaluate.
+     // Shader equivalent of AgtmHelpers::EvaluateComponentMixingFunction.
     "half3 EvalComponentMixing(half3 color, half4 rgbx, half4 Mmcx) {"
       "half common = dot(rgbx.rgb, color) +"
                     "Mmcx[0] * max(max(color.r, color.g), color.b) +"
@@ -35,7 +36,7 @@ static constexpr char gAgtmSKSL[] =
       "return Mmcx[2] * color + half3(common);"
     "}"
 
-     // Shader equivalent of AgtmImpl::PiecewiseCubicFunction::evaluate.
+     // Shader equivalent of AgtmHelpers::EvaluateGainCurve.
     "half EvalGainCurve(half x, half curve_texcoord_y, half curve_N_cp) {"
        // Handle points to the left of the first control point.
       "half c_min = 0.0;"
@@ -82,7 +83,7 @@ static constexpr char gAgtmSKSL[] =
       "return ((c3*t + c2)*t + c1)*t + c0;"
     "}"
 
-     // Shader equivalent of AgtmImpl::GainFunction::evaluate.
+     // Shader equivalent of AgtmHelpers::EvaluateColorGainFunction.
     "half3 EvalColorGainFunction(half3 color,"
                                 "half4 mix_rgbx, half4 mix_Mmcx,"
                                 "float curve_texcoord_y, float curve_N_cp) {"
@@ -96,8 +97,9 @@ static constexpr char gAgtmSKSL[] =
                    "EvalGainCurve(M.b, curve_texcoord_y, curve_N_cp));"
     "}"
 
-     // Shader equivalent of AgtmImpl::applyGain.
+     // Shader equivalent of AgtmHelpers::ApplyGain.
     "half4 main(half4 color) {"
+      "color.rgb *= scale_factor;"
       "if (weight_i > 0.0) {"
          // Unpremultiply alpha is needed.
         "float a_inv = (color.a == 0.0) ? 1.0 : 1.0 / color.a;"
@@ -129,51 +131,60 @@ static sk_sp<SkRuntimeEffect> agtm_runtime_effect() {
 
 namespace skhdr {
 
-SkColor4f AgtmImpl::ComponentMixingFunction::evaluate(const SkColor4f& c) const {
+SkColor4f AgtmHelpers::EvaluateComponentMixingFunction(
+        const AdaptiveGlobalToneMap::ComponentMixingFunction& mix, const SkColor4f& c) {
     // Assert that the parameters satisfy the constraints in clause 5.2.2.
-    SkASSERT(0.f <= fRed        && fRed       <= 1.f);
-    SkASSERT(0.f <= fGreen      && fGreen     <= 1.f);
-    SkASSERT(0.f <= fBlue       && fBlue      <= 1.f);
-    SkASSERT(0.f <= fMax        && fMax       <= 1.f);
-    SkASSERT(0.f <= fMin        && fMin       <= 1.f);
-    SkASSERT(0.f <= fComponent  && fComponent <= 1.f);
-    SkASSERT(0.99999f <= fRed + fGreen + fBlue + fMax + fMin + fComponent);
-    SkASSERT(1.00001f >= fRed + fGreen + fBlue + fMax + fMin + fComponent);
+    SkASSERT(0.f <= mix.fRed        && mix.fRed       <= 1.f);
+    SkASSERT(0.f <= mix.fGreen      && mix.fGreen     <= 1.f);
+    SkASSERT(0.f <= mix.fBlue       && mix.fBlue      <= 1.f);
+    SkASSERT(0.f <= mix.fMax        && mix.fMax       <= 1.f);
+    SkASSERT(0.f <= mix.fMin        && mix.fMin       <= 1.f);
+    SkASSERT(0.f <= mix.fComponent  && mix.fComponent <= 1.f);
+    SkASSERT(0.99999f <= mix.fRed + mix.fGreen + mix.fBlue + mix.fMax + mix.fMin + mix.fComponent);
+    SkASSERT(1.00001f >= mix.fRed + mix.fGreen + mix.fBlue + mix.fMax + mix.fMin + mix.fComponent);
 
     // This implements that math in Formula 3 of SMPTE ST 2094-50.
-    float common = fRed * c.fR + fGreen * c.fG + fBlue * c.fB  +
-                   fMax * std::max(std::max(c.fR, c.fG), c.fB) +
-                   fMin * std::min(std::max(c.fR, c.fG), c.fB);
+    float common = mix.fRed * c.fR + mix.fGreen * c.fG + mix.fBlue * c.fB  +
+                   mix.fMax * std::max(std::max(c.fR, c.fG), c.fB) +
+                   mix.fMin * std::min(std::max(c.fR, c.fG), c.fB);
 
     // Optimization for when all components are the same.
-    if (fComponent == 0.f) {
+    if (mix.fComponent == 0.f) {
         return {common, common, common, c.fA};
     }
 
     // Formula 4 of SMPTE ST 2094-50.
-    return {fComponent * c.fR + common, fComponent * c.fG + common, fComponent * c.fB + common, c.fA};
+    return {mix.fComponent * c.fR + common,
+            mix.fComponent * c.fG + common,
+            mix.fComponent * c.fB + common,
+            c.fA};
 }
 
-float AgtmImpl::PiecewiseCubicFunction::evaluate(float x) const {
+namespace AgtmHelpers {
+
+float EvaluateGainCurve(const AdaptiveGlobalToneMap::GainCurve& gainCurve, float x) {
+    auto& cp = gainCurve.fControlPoints;
+    size_t N = cp.size();
+
     // This implements that math in Formula 1 of SMPTE ST 2094-50.
-    SkASSERT(fNumControlPoints > 0 && fNumControlPoints <= 32);
+    SkASSERT(N > 0 && N <= 32);
 
     // Handle points off of the left endpoint.
     size_t i = 0;
-    if (x <= fX[i]) {
-        return fY[i];
+    if (x <= cp[i].fX) {
+        return cp[i].fY;
     }
 
     // Handle points off of the right endpoint.
-    size_t j = fNumControlPoints - 1;
-    if (x >= fX[j]) {
-        return fY[j] + std::log2(fX[j] / x);
+    size_t j = N - 1;
+    if (x >= cp[j].fX) {
+        return cp[j].fY + std::log2(cp[j].fX / x);
     }
 
     // Binary search for i, j bracket in which we find x.
     while (j - i > 1) {
         size_t m = (i + j) / 2;
-        if (x < fX[m]) {
+        if (x < cp[m].fX) {
             j = m;
         } else {
             i = m;
@@ -181,13 +192,13 @@ float AgtmImpl::PiecewiseCubicFunction::evaluate(float x) const {
     }
 
     // Cache short names for the parameters for computing the cubic coefficients.
-    const float x_i = fX[i];
-    const float y_i = fY[i];
-    const float x_j = fX[j];
-    const float y_j = fY[j];
+    const float x_i = cp[i].fX;
+    const float y_i = cp[i].fY;
+    const float x_j = cp[j].fX;
+    const float y_j = cp[j].fY;
     const float h_i = x_j - x_i;
-    const float mHat_i = fM[i] * h_i;
-    const float mHat_j = fM[j] * h_i;
+    const float mHat_i = cp[i].fM * h_i;
+    const float mHat_j = cp[j].fM * h_i;
 
     // Handle intervals that are a point.
     if (h_i == 0.f) {
@@ -204,111 +215,115 @@ float AgtmImpl::PiecewiseCubicFunction::evaluate(float x) const {
     return ((c3*t + c2)*t + c1)*t + c0;
 }
 
-SkColor4f AgtmImpl::GainFunction::evaluate(const SkColor4f& c) const {
-    SkColor4f m = fComponentMixing.evaluate(c);
+SkColor4f EvaluateColorGainFunction(
+        const AdaptiveGlobalToneMap::ColorGainFunction& gain, const SkColor4f& c) {
+    SkColor4f m = EvaluateComponentMixingFunction(gain.fComponentMixing, c);
     SkColor4f result = {0.f, 0.f, 0.f, c.fA};
-    result.fR = fPiecewiseCubic.evaluate(m.fR);
+    result.fR = EvaluateGainCurve(gain.fGainCurve, m.fR);
     if (m.fR == m.fG && m.fG == m.fB) {
       result.fG = result.fR;
       result.fB = result.fR;
     } else {
-      result.fG = fPiecewiseCubic.evaluate(m.fG);
-      result.fB = fPiecewiseCubic.evaluate(m.fB);
+      result.fG = EvaluateGainCurve(gain.fGainCurve, m.fG);
+      result.fB = EvaluateGainCurve(gain.fGainCurve, m.fB);
     }
     return result;
 }
 
-void AgtmImpl::PiecewiseCubicFunction::populateSlopeFromPCHIP() {
-    size_t N = fNumControlPoints;
+void PopulateSlopeFromPCHIP(AdaptiveGlobalToneMap::GainCurve& gainCurve) {
+    auto& cp = gainCurve.fControlPoints;
+    size_t N = cp.size();
 
     // Compute the interval width (h) and piecewise linear slope (s).
-    float s[AgtmImpl::PiecewiseCubicFunction::kMaxNumControlPoints];
-    float h[AgtmImpl::PiecewiseCubicFunction::kMaxNumControlPoints];
+    float s[AdaptiveGlobalToneMap::GainCurve::kMaxNumControlPoints];
+    float h[AdaptiveGlobalToneMap::GainCurve::kMaxNumControlPoints];
     for (size_t i = 0; i < N - 1; ++i) {
-        h[i] = fX[i+1] - fX[i];
+        h[i] = cp[i+1].fX - cp[i].fX;
     }
     for (size_t i = 0; i < N - 1; ++i) {
-        s[i] = (fY[i+1] - fY[i]) / h[i];
+        s[i] = (cp[i+1].fY - cp[i].fY) / h[i];
     }
 
     // Handle the left and right control points.
     if (N >= 3) {
         // From Formulas 3 and 4 of ST 2094-50 candidate draft 2.
-        fM[0]   = ((2 * h[0]   + h[1]  ) * s[0]   - h[0]   * s[1]  ) / (h[0]   + h[1]  );
-        fM[N-1] = ((2 * h[N-2] + h[N-3]) * s[N-2] - h[N-2] * s[N-3]) / (h[N-2] + h[N-3]);
+        cp[0].fM   = ((2 * h[0]   + h[1]  ) * s[0]   - h[0]   * s[1]  ) / (h[0]   + h[1]  );
+        cp[N-1].fM = ((2 * h[N-2] + h[N-3]) * s[N-2] - h[N-2] * s[N-3]) / (h[N-2] + h[N-3]);
     } else if (N == 2) {
-        fM[0]   = s[0];
-        fM[N-1] = s[0];
+        cp[0].fM   = s[0];
+        cp[N-1].fM = s[0];
     } else {
-        fM[0]   = 0.f;
-        fM[N-1] = 0.f;
+        cp[0].fM   = 0.f;
+        cp[N-1].fM = 0.f;
     }
 
     // Populate internal control points.
     for (size_t i = 1; i <= N - 2; ++i) {
         // From Formula 5 of ST 2094-50 candidate draft 2.
         if (s[i-1] * s[i] < 0.f) {
-            fM[i] = 0.f;
+            cp[i].fM = 0.f;
         } else {
             float num = 3 * (h[i-1] + h[i]) * s[i-1] * s[i];
             float den = (2 * h[i-1] + h[i]) * s[i-1] + (h[i-1] + 2 * h[i]) * s[i];
-            fM[i] = num / den;
+            cp[i].fM = num / den;
         }
     }
 }
 
-void AgtmImpl::populateGainCurvesXYM() {
+sk_sp<SkImage>
+MakeGainCurveXYMImage(const AdaptiveGlobalToneMap::HeadroomAdaptiveToneMap& hatm) {
     SkBitmap curve_xym_bm;
     curve_xym_bm.allocPixels(SkImageInfo::Make(
-            PiecewiseCubicFunction::kMaxNumControlPoints, kMaxNumAlternateImages,
+            AdaptiveGlobalToneMap::GainCurve::kMaxNumControlPoints,
+            AdaptiveGlobalToneMap::HeadroomAdaptiveToneMap::kMaxNumAlternateImages,
             kRGBA_F32_SkColorType, kUnpremul_SkAlphaType));
-    for (uint8_t a = 0; a < fNumAlternateImages; ++a) {
-        auto& cubic = fGainFunction[a].fPiecewiseCubic;
-        for (uint8_t c = 0; c < cubic.fNumControlPoints; ++c) {
+    for (size_t a = 0; a < hatm.fAlternateImages.size(); ++a) {
+        auto& cubic = hatm.fAlternateImages[a].fColorGainFunction.fGainCurve;
+        for (size_t c = 0; c < cubic.fControlPoints.size(); ++c) {
             float* xymX = reinterpret_cast<float*>(curve_xym_bm.getAddr(c, a));
-            xymX[0] = cubic.fX[c];
-            xymX[1] = cubic.fY[c];
-            xymX[2] = cubic.fM[c];
+            xymX[0] = cubic.fControlPoints[c].fX;
+            xymX[1] = cubic.fControlPoints[c].fY;
+            xymX[2] = cubic.fControlPoints[c].fM;
             xymX[3] = 1.f;
         }
     }
     curve_xym_bm.setImmutable();
-    fGainCurvesXYM = SkImages::RasterFromBitmap(curve_xym_bm);
+    return SkImages::RasterFromBitmap(curve_xym_bm);
 }
 
-void AgtmImpl::populateUsingRwtmo() {
-   fType = Type::kReferenceWhite;
-   fGainApplicationSpacePrimaries = SkNamedPrimaries::kRec2020;
+void PopulateUsingRwtmo(AdaptiveGlobalToneMap::HeadroomAdaptiveToneMap& hatm) {
+    hatm.fGainApplicationSpacePrimaries = SkNamedPrimaries::kRec2020;
 
-    if (fBaselineHdrHeadroom == 0.f) {
-        fNumAlternateImages = 0;
+    if (hatm.fBaselineHdrHeadroom == 0.f) {
+        hatm.fAlternateImages.clear();
         return;
     }
 
     // Set the two alternate image headrooms using Formula D.1 from ST 2094-50 candidate draft 2.
-    fNumAlternateImages = 2;
-    fAlternateHdrHeadroom[0] = 0.f;
-    fAlternateHdrHeadroom[1] =
-        std::log2(8.f / 3.f) * std::min(fBaselineHdrHeadroom / std::log2(1000/203.f), 1.f);
+    hatm.fAlternateImages.resize(2);
+    hatm.fAlternateImages[0].fHdrHeadroom = 0.f;
+    hatm.fAlternateImages[1].fHdrHeadroom =
+        std::log2(8.f / 3.f) * std::min(hatm.fBaselineHdrHeadroom / std::log2(1000/203.f), 1.f);
 
-    for (size_t a = 0; a <fNumAlternateImages; ++a) {
-        fGainFunction[a] = GainFunction();
+    for (size_t a = 0; a < hatm.fAlternateImages.size(); ++a) {
+        auto& gain = hatm.fAlternateImages[a].fColorGainFunction;
+        gain = AdaptiveGlobalToneMap::ColorGainFunction();
 
         // Use maxRGB for applying the curve.
-        fGainFunction[a].fComponentMixing.fMax = 1.f;
+        gain.fComponentMixing.fMax = 1.f;
 
         // Compute the image of white under the tone mapping from Formula D.2 from ST 2094-50
         // candidate draft 2.
         const float yWhite =
             (a == 1) ? 1.f
-                     : 1.f - 0.5f * std::min(fBaselineHdrHeadroom / std::log2(1000/203.f), 1.f);
+                     : 1.f - 0.5f * std::min(hatm.fBaselineHdrHeadroom / std::log2(1000/203.f), 1.f);
 
         // Compute the Bezier control points using Formula D.5 from ST 2094-50 candidate draft 2.
         const float kappa = 0.65f;
         const float xKnee = 1.f;
         const float yKnee = yWhite;
-        const float xMax = std::exp2(fBaselineHdrHeadroom);
-        const float yMax = std::exp2(fAlternateHdrHeadroom[a]);
+        const float xMax = std::exp2(hatm.fBaselineHdrHeadroom);
+        const float yMax = std::exp2(hatm.fAlternateImages[a].fHdrHeadroom);
         const float xMid = (1.f - kappa) * xKnee + kappa * (xKnee * yMax / yKnee);
         const float yMid = (1.f - kappa) * yKnee + kappa * yMax;
 
@@ -320,26 +335,27 @@ void AgtmImpl::populateUsingRwtmo() {
         const float xC = xKnee;
         const float yC = yKnee;
 
-        auto& cubic = fGainFunction[a].fPiecewiseCubic;
-        cubic.fNumControlPoints = 8;
-        for (size_t c = 0; c < cubic.fNumControlPoints; ++c) {
+        auto& cubic = gain.fGainCurve;
+        cubic.fControlPoints.resize(8);
+        for (size_t c = 0; c < cubic.fControlPoints.size(); ++c) {
             // Compute the linear domain curve values using Formula D.4 from ST 2094-50 candidate
             // draft 2.
-            const float t = c / (cubic.fNumControlPoints - 1.f);
+            const float t = c / (cubic.fControlPoints.size() - 1.f);
             const float x = xC + t * (xB + t * xA);
             const float y = yC + t * (yB + t * yA);
             const float m = (2.f * yA * t + yB) / (2.f * xA * t + xB);
 
             // Compute the log domain curve values using Formula D.3 from ST 2094-50 candidate
             // draft 2.
-            cubic.fX[c] = x;
-            cubic.fY[c] = std::log2(y / x);
-            cubic.fM[c] = (x * m - y) / (std::log(2.f) * x * y);
+            cubic.fControlPoints[c].fX = x;
+            cubic.fControlPoints[c].fY = std::log2(y / x);
+            cubic.fControlPoints[c].fM = (x * m - y) / (std::log(2.f) * x * y);
         }
     }
 }
 
-AgtmImpl::Weighting AgtmImpl::computeWeighting(float targetedHdrHeadroom) const {
+Weighting ComputeWeighting(const AdaptiveGlobalToneMap::HeadroomAdaptiveToneMap& hatm,
+                           float targetedHdrHeadroom) {
     Weighting result;
 
     // Create the list of HDR headrooms including the baseline image and all alternate images, as
@@ -349,24 +365,24 @@ AgtmImpl::Weighting AgtmImpl::computeWeighting(float targetedHdrHeadroom) const 
     size_t N = 0;
 
     // Let H be the sorted list of HDR headrooms.
-    float H[kMaxNumAlternateImages + 1];
+    float H[AdaptiveGlobalToneMap::HeadroomAdaptiveToneMap::kMaxNumAlternateImages + 1];
 
     // Let indices list the index of each entry of H in fAlternateHdrHeadroom. The index for
     // fBaselineHdrHeadroom is Weighting::kInvalidIndex.
-    size_t indices[kMaxNumAlternateImages + 1];
-    for (size_t i = 0; i < fNumAlternateImages; ++i) {
-        if (N == i && fBaselineHdrHeadroom < fAlternateHdrHeadroom[i]) {
+    size_t indices[AdaptiveGlobalToneMap::HeadroomAdaptiveToneMap::kMaxNumAlternateImages + 1];
+    for (size_t i = 0; i < hatm.fAlternateImages.size(); ++i) {
+        if (N == i && hatm.fBaselineHdrHeadroom < hatm.fAlternateImages[i].fHdrHeadroom) {
             // Insert the baseline HDR headroom before the indices as they are visited.
             indices[N] = Weighting::kInvalidIndex;
-            H[N++] = fBaselineHdrHeadroom;
+            H[N++] = hatm.fBaselineHdrHeadroom;
         }
         indices[N] = i;
-        H[N++] = fAlternateHdrHeadroom[i];
+        H[N++] = hatm.fAlternateImages[i].fHdrHeadroom;
     }
-    if (N == fNumAlternateImages) {
+    if (N == hatm.fAlternateImages.size()) {
         // Insert the baseline HDR headroom at the end if it has not yet been inserted.
         indices[N] = Weighting::kInvalidIndex;
-        H[N++] = fBaselineHdrHeadroom;
+        H[N++] = hatm.fBaselineHdrHeadroom;
     }
 
     // Find the indices for the contributing images.
@@ -410,17 +426,20 @@ AgtmImpl::Weighting AgtmImpl::computeWeighting(float targetedHdrHeadroom) const 
     return result;
 }
 
-void AgtmImpl::applyGain(SkSpan<SkColor4f> colors, float targetedHdrHeadroom) const {
-    const auto weighting = computeWeighting(targetedHdrHeadroom);
+void ApplyGain(const AdaptiveGlobalToneMap::HeadroomAdaptiveToneMap& hatm,
+               SkSpan<SkColor4f> colors,
+               float targetedHdrHeadroom) {
+    const auto weighting = AgtmHelpers::ComputeWeighting(hatm, targetedHdrHeadroom);
     if (weighting.fWeight[0] == 0.f) {
         // If no weight is non-zero, then no gain will be applied. Leave the points unchanged.
         return;
     } else if (weighting.fWeight[1] == 0.f) {
         // Special case the case of there being only one weighted gain function.
-        const auto& gain = fGainFunction[weighting.fAlternateImageIndex[0]];
+        const auto& gain =
+            hatm.fAlternateImages[weighting.fAlternateImageIndex[0]].fColorGainFunction;
         const float w = weighting.fWeight[0];
         for (auto& C : colors) {
-            SkColor4f G = gain.evaluate(C);
+            SkColor4f G = AgtmHelpers::EvaluateColorGainFunction(gain, C);
             C = {
                 C.fR * std::exp2(w * G.fR),
                 C.fG * std::exp2(w * G.fG),
@@ -430,13 +449,15 @@ void AgtmImpl::applyGain(SkSpan<SkColor4f> colors, float targetedHdrHeadroom) co
         }
     } else {
         // The general case of two weighted gain functions.
-        const auto& gain0 = fGainFunction[weighting.fAlternateImageIndex[0]];
+        const auto& gain0 =
+            hatm.fAlternateImages[weighting.fAlternateImageIndex[0]].fColorGainFunction;
         const float w0 = weighting.fWeight[0];
-        const auto& gain1 = fGainFunction[weighting.fAlternateImageIndex[1]];
+        const auto& gain1 =
+            hatm.fAlternateImages[weighting.fAlternateImageIndex[1]].fColorGainFunction;
         const float w1 = weighting.fWeight[1];
         for (auto& C : colors) {
-            SkColor4f G0 = gain0.evaluate(C);
-            SkColor4f G1 = gain1.evaluate(C);
+            SkColor4f G0 = AgtmHelpers::EvaluateColorGainFunction(gain0, C);
+            SkColor4f G1 = AgtmHelpers::EvaluateColorGainFunction(gain1, C);
             C = {
                 C.fR * std::exp2(w0 * G0.fR + w1 * G1.fR),
                 C.fG * std::exp2(w0 * G0.fG + w1 * G1.fG),
@@ -447,50 +468,70 @@ void AgtmImpl::applyGain(SkSpan<SkColor4f> colors, float targetedHdrHeadroom) co
     }
 }
 
-sk_sp<SkColorSpace> AgtmImpl::getGainApplicationSpace() const {
+sk_sp<SkColorSpace> GetGainApplicationSpace(
+        const AdaptiveGlobalToneMap::HeadroomAdaptiveToneMap& hatm) {
     skcms_Matrix3x3 toXYZD50;
-    if (!fGainApplicationSpacePrimaries.toXYZD50(&toXYZD50)) {
+    if (!hatm.fGainApplicationSpacePrimaries.toXYZD50(&toXYZD50)) {
         return nullptr;
     }
     return SkColorSpace::MakeRGB(SkNamedTransferFn::kLinear, toXYZD50);
 }
 
+}  // namespace AgtmHelpers
+
 float AgtmImpl::getHdrReferenceWhite() const {
-    return fHdrReferenceWhite;
+    return fMetadata.fHdrReferenceWhite;
 }
 
 bool AgtmImpl::hasBaselineHdrHeadroom() const {
-    return fType != Type::kNone;
+    return fMetadata.fHeadroomAdaptiveToneMap.has_value();
 }
 
 float AgtmImpl::getBaselineHdrHeadroom() const {
-    SkASSERT(fType != Type::kNone);
-    return fBaselineHdrHeadroom;
+    SkASSERT(fMetadata.fHeadroomAdaptiveToneMap.has_value());
+    auto& hatm = fMetadata.fHeadroomAdaptiveToneMap.value();
+    return hatm.fBaselineHdrHeadroom;
 }
 
 bool AgtmImpl::isClamp() const {
-    if (fType == Type::kNone) {
+    const auto& hatm = fMetadata.fHeadroomAdaptiveToneMap;
+    if (!hatm.has_value()) {
         return false;
     }
-    return fNumAlternateImages == 0;
+    return hatm->fAlternateImages.size() == 0;
 }
 
 sk_sp<SkColorFilter> AgtmImpl::makeColorFilter(float targetedHdrHeadroom) const {
+    const auto& hatm = fMetadata.fHeadroomAdaptiveToneMap;
+    if (!hatm.has_value()) {
+        return nullptr;
+    }
+    return AgtmHelpers::MakeColorFilter(hatm.value(), targetedHdrHeadroom, 1.f);
+}
+
+namespace AgtmHelpers {
+
+sk_sp<SkColorFilter> MakeColorFilter(
+        const AdaptiveGlobalToneMap::HeadroomAdaptiveToneMap& hatm,
+        float targetedHdrHeadroom,
+        float scaleFactor) {
+    const auto weighting = ComputeWeighting(hatm, targetedHdrHeadroom);
+
     auto effect = agtm_runtime_effect();
     if (!effect) {
         return nullptr;
     }
-    const auto weighting = computeWeighting(targetedHdrHeadroom);
-
     SkRuntimeShaderBuilder builder(effect);
-    for (uint8_t a = 0; a < 2; ++a) {
+    builder.uniform("scale_factor") = scaleFactor;
+    for (size_t a = 0; a < 2; ++a) {
         const char* weight_str[2] = {"weight_i", "weight_j"};
         builder.uniform(weight_str[a]) = weighting.fWeight[a];
 
         if (weighting.fWeight[a] == 0.f) {
             continue;
         }
-        const auto& gain = fGainFunction[weighting.fAlternateImageIndex[a]];
+        const auto& gain = hatm.fAlternateImages[
+            weighting.fAlternateImageIndex[a]].fColorGainFunction;
 
         const char* mix_rgbx_str[2] = {"mix_rgbx_i", "mix_rgbx_j"};
         builder.uniform(mix_rgbx_str[a]) = SkColor4f({
@@ -513,36 +554,134 @@ sk_sp<SkColorFilter> AgtmImpl::makeColorFilter(float targetedHdrHeadroom) const 
 
         const char* curve_N_cp_str[2] = {"curve_N_cp_i", "curve_N_cp_j"};
         builder.uniform(curve_N_cp_str[a]) = static_cast<float>(
-            gain.fPiecewiseCubic.fNumControlPoints);
+            gain.fGainCurve.fControlPoints.size());
     }
-    builder.child("curve_xym") = fGainCurvesXYM->makeRawShader(
-        SkSamplingOptions(SkFilterMode::kNearest));
+
+    if (auto gainCurvesXYM = MakeGainCurveXYMImage(hatm)) {
+        builder.child("curve_xym") = gainCurvesXYM->makeRawShader(
+            SkSamplingOptions(SkFilterMode::kNearest));
+    }
+
+    auto gainApplicationColorSpace = GetGainApplicationSpace(hatm);
+    if (!gainApplicationColorSpace) {
+        return nullptr;
+    }
 
     auto filter = builder.makeColorFilter();
     SkASSERT(filter);
-    return filter->makeWithWorkingColorSpace(getGainApplicationSpace());
+    return filter->makeWithWorkingColorSpace(gainApplicationColorSpace);
 }
 
-SkString AgtmImpl::toString() const {
+// Return the maximum luminance from CLLI, MDCV, or a default.
+static float get_max_luminance(const Metadata& metadata) {
+    if (metadata.getContentLightLevelInformation(nullptr)) {
+        ContentLightLevelInformation clli;
+        if (metadata.getContentLightLevelInformation(&clli) && clli.fMaxCLL > 0.f) {
+            return clli.fMaxCLL;
+        }
+    }
+    if (metadata.getMasteringDisplayColorVolume(nullptr)) {
+        MasteringDisplayColorVolume mdcv;
+        if (metadata.getMasteringDisplayColorVolume(&mdcv) &&
+            mdcv.fMaximumDisplayMasteringLuminance > 0.f) {
+            return mdcv.fMaximumDisplayMasteringLuminance;
+        }
+    }
+    return 1000.f;
+}
+
+bool PopulateToneMapAgtmParams(const Metadata& metadata,
+                               const SkColorSpace* inputColorSpace,
+                               AdaptiveGlobalToneMap* outAgtm,
+                               float* outScaleFactor) {
+    // If `inputColorSpace` is HLG or PQ, find the HDR reference white value. When the shader
+    // starts, this is the luminance that will have been mapped to 1.0. We will populate
+    // `outScaleFactor` with a scale such that the AGTM HDR reference white luminance (if specified
+    // will be mapped to 1.0).
+    bool inputIsPqOrHlg = false;
+    float inputPqOrHlgWhite = AdaptiveGlobalToneMap::kDefaultHdrReferenceWhite;
+    if (inputColorSpace) {
+        skcms_TransferFunction trfn;
+        inputColorSpace->transferFn(&trfn);
+        switch (skcms_TransferFunction_getType(&trfn)) {
+            case skcms_TFType_PQ:
+            case skcms_TFType_HLG:
+                inputIsPqOrHlg = true;
+                inputPqOrHlgWhite = trfn.a;
+                break;
+            default:
+                break;
+        }
+    }
+
+    AdaptiveGlobalToneMap agtm;
+    auto& hatm = agtm.fHeadroomAdaptiveToneMap;
+    bool hadAgtmMetadata = metadata.getAdaptiveGlobalToneMap(&agtm);
+
+    // SDR content that does not specify an inverse tone mapping will not have a default tone
+    // mapping added.
+    if (!inputIsPqOrHlg) {
+        if (!hadAgtmMetadata || !hatm.has_value()) {
+            return false;
+        }
+    }
+
+    // If no AGTM was specified, populate the HDR reference white from the input color space.
+    if (!hadAgtmMetadata) {
+        agtm.fHdrReferenceWhite = inputPqOrHlgWhite;
+    }
+
+    // If no tone mapping was specified, then use RWTMO with the baseline HDR headroom computed
+    // from the CLLI and MDCV metadata.
+    if (!hatm.has_value()) {
+        hatm = {{
+            .fBaselineHdrHeadroom = std::log2(
+                std::max(get_max_luminance(metadata) / agtm.fHdrReferenceWhite, 1.f))
+        }};
+        AgtmHelpers::PopulateUsingRwtmo(hatm.value());
+    }
+
+    if (outAgtm) {
+        *outAgtm = agtm;
+    }
+    if (outScaleFactor) {
+        *outScaleFactor = inputIsPqOrHlg ? inputPqOrHlgWhite / agtm.fHdrReferenceWhite : 1.f;
+    }
+    return true;
+}
+
+}  // namespace AgtmHelpers
+
+SkString AdaptiveGlobalToneMap::toString() const {
     SkString result = SkStringPrintf("{hdrReferenceWhite:%f", fHdrReferenceWhite);
-    if (fType == Type::kNone) {
+    if (!fHeadroomAdaptiveToneMap.has_value()) {
         result += "}";
         return result;
     }
-    result += SkStringPrintf(", baselineHdrHeadroom:%f", fBaselineHdrHeadroom);
-    if (fType == Type::kReferenceWhite) {
-        result += ", RWTMO}";
-        return result;
-    }
+    auto& hatm = fHeadroomAdaptiveToneMap.value();
+
+    result += SkStringPrintf(", baselineHdrHeadroom:%f", hatm.fBaselineHdrHeadroom);
     result += ", alternateHdrHeadrooms:[";
-    for (uint8_t a = 0; a < fNumAlternateImages; ++a) {
-        result += SkStringPrintf("%f", fAlternateHdrHeadroom[a]);
-        if (a != fNumAlternateImages - 1) {
+    for (size_t a = 0; a < hatm.fAlternateImages.size(); ++a) {
+        result += SkStringPrintf("%f", hatm.fAlternateImages[a].fHdrHeadroom);
+        if (a != hatm.fAlternateImages.size() - 1) {
             result += ", ";
         }
     }
     result += "]}";
     return result;
+}
+
+bool AgtmImpl::parse(const SkData* data) {
+    return fMetadata.parse(data);
+}
+
+sk_sp<SkData> AgtmImpl::serialize() const {
+    return fMetadata.serialize();
+}
+
+SkString AgtmImpl::toString() const {
+    return fMetadata.toString();
 }
 
 // static
@@ -551,7 +690,6 @@ std::unique_ptr<Agtm> Agtm::Make(const SkData* data) {
     if (!result->parse(data)) {
         return nullptr;
     }
-    result->populateGainCurvesXYM();
     return result;
 }
 
@@ -559,10 +697,13 @@ std::unique_ptr<Agtm> Agtm::Make(const SkData* data) {
 std::unique_ptr<Agtm> Agtm::MakeReferenceWhite(float hdrReferenceWhite, float baselineHdrHeadroom) {
     SkASSERT(baselineHdrHeadroom >= 0.f);
     auto result = std::make_unique<AgtmImpl>();
-    result->fHdrReferenceWhite = hdrReferenceWhite;
-    result->fBaselineHdrHeadroom = baselineHdrHeadroom;
-    result->populateUsingRwtmo();
-    result->populateGainCurvesXYM();
+    result->fMetadata = {
+        .fHdrReferenceWhite = hdrReferenceWhite,
+        .fHeadroomAdaptiveToneMap = {{
+            .fBaselineHdrHeadroom = baselineHdrHeadroom,
+        }},
+    };
+    AgtmHelpers::PopulateUsingRwtmo(result->fMetadata.fHeadroomAdaptiveToneMap.value());
     return result;
 }
 
@@ -570,10 +711,14 @@ std::unique_ptr<Agtm> Agtm::MakeReferenceWhite(float hdrReferenceWhite, float ba
 std::unique_ptr<Agtm> Agtm::MakeClamp(float hdrReferenceWhite, float baselineHdrHeadroom) {
     SkASSERT(baselineHdrHeadroom >= 0.f);
     auto result = std::make_unique<AgtmImpl>();
-    result->fHdrReferenceWhite = hdrReferenceWhite;
-    result->fBaselineHdrHeadroom = baselineHdrHeadroom;
-    result->fGainApplicationSpacePrimaries = SkNamedPrimaries::kRec2020;
-    result->populateGainCurvesXYM();
+    result->fMetadata = {
+        .fHdrReferenceWhite = hdrReferenceWhite,
+        .fHeadroomAdaptiveToneMap = {{
+            .fBaselineHdrHeadroom = baselineHdrHeadroom,
+            .fGainApplicationSpacePrimaries = SkNamedPrimaries::kRec2020,
+            .fAlternateImages = {},
+        }},
+    };
     return result;
 }
 

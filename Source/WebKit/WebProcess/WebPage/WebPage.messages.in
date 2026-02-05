@@ -51,6 +51,10 @@ messages -> WebPage WantsAsyncDispatchMessage {
     SetUnderlayColor(WebCore::Color color)
     SetUnderPageBackgroundColorOverride(WebCore::Color underPageBackgroundColorOverride)
 
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+    SetScrollbarAvoidanceCornerRadii(WebCore::CornerRadii cornerRadii)
+#endif
+
     SetNeedsFixedContainerEdgesUpdate()
 
     ViewWillStartLiveResize()
@@ -60,6 +64,10 @@ messages -> WebPage WantsAsyncDispatchMessage {
     KeyEvent(WebCore::FrameIdentifier frameID, WebKit::WebKeyboardEvent event)
     MouseEvent(WebCore::FrameIdentifier frameID, WebKit::WebMouseEvent event, std::optional<Vector<WebKit::SandboxExtensionHandle>> sandboxExtensions)
     SetLastKnownMousePosition(WebCore::FrameIdentifier frameID, WebCore::DoublePoint eventPoint, WebCore::DoublePoint globalPoint, enum:uint8_t std::optional<WebCore::LastKnownMousePositionSource> source);
+
+#if PLATFORM(COCOA)
+    SelectWithGesture(WebCore::IntPoint point, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState, bool isInteractingWithFocusedElement) -> (WebCore::IntPoint point, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> flags)
+#endif
 
 #if PLATFORM(IOS_FAMILY)
     SetSceneIdentifier(String sceneIdentifier)
@@ -82,7 +90,6 @@ messages -> WebPage WantsAsyncDispatchMessage {
     InspectorNodeSearchMovedToPosition(WebCore::FloatPoint point)
     InspectorNodeSearchEndedAtPosition(WebCore::FloatPoint point)
     BlurFocusedElement()
-    SelectWithGesture(WebCore::IntPoint point, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState, bool isInteractingWithFocusedElement) -> (WebCore::IntPoint point, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> flags)
     UpdateSelectionWithTouches(WebCore::IntPoint point, enum:uint8_t WebKit::SelectionTouch touches, bool baseIsStart) -> (WebCore::IntPoint point, enum:uint8_t WebKit::SelectionTouch touch, OptionSet<WebKit::SelectionFlags> selectionFlags)
     SelectWithTwoTouches(WebCore::IntPoint from, WebCore::IntPoint to, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState) -> (WebCore::IntPoint point, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> selectionFlags)
     ExtendSelection(enum:uint8_t WebCore::TextGranularity granularity) -> ()
@@ -173,6 +180,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     CancelPointer(WebCore::PointerID pointerId, WebCore::IntPoint documentPoint)
     TouchWithIdentifierWasRemoved(WebCore::PointerID pointerId)
+    ResetPointerCapture()
 
     DidEndColorPicker()
     DidChooseColor(WebCore::Color color)
@@ -218,7 +226,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     SetCurrentHistoryItemForReattach(Ref<WebKit::FrameState> frameState)
 
-    DidRemoveBackForwardItem(WebCore::BackForwardItemIdentifier backForwardItemID)
+    DidRemoveBackForwardItem(WebCore::BackForwardFrameItemIdentifier backForwardFrameItemID)
 
     UpdateWebsitePolicies(struct WebKit::WebsitePoliciesData websitePolicies)
 
@@ -361,7 +369,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 #endif
 #if !PLATFORM(GTK) && ENABLE(DRAG_SUPPORT)
     PerformDragControllerAction(std::optional<WebCore::FrameIdentifier> frameID, enum:uint8_t WebKit::DragControllerAction action, WebCore::DragData dragData) -> (enum:uint8_t std::optional<WebCore::DragOperation> dragOperation, enum:uint8_t WebCore::DragHandlingMethod dragHandlingMethod, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted, WebCore::IntRect insertionRect, WebCore::IntRect editableElementRect, struct std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData)
-    PerformDragOperation(WebCore::DragData dragData, WebKit::SandboxExtensionHandle sandboxExtensionHandle, Vector<WebKit::SandboxExtensionHandle> sandboxExtensionsForUpload) -> (bool handled)
+    PerformDragOperation(std::optional<WebCore::FrameIdentifier> frameID, WebCore::DragData dragData, WebKit::SandboxExtensionHandle sandboxExtensionHandle, Vector<WebKit::SandboxExtensionHandle> sandboxExtensionsForUpload) -> (WebKit::DragOperationResult dragOperationResult)
 #endif
 #if ENABLE(DRAG_SUPPORT)
     DidStartDrag()
@@ -393,8 +401,12 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
 
     # Popup menu.
+#if !PLATFORM(IOS_FAMILY)
     DidChangeSelectedIndexForActivePopupMenu(int32_t newIndex)
+#endif
+#if !PLATFORM(COCOA)
     SetTextForActivePopupMenu(int32_t index)
+#endif
 #if PLATFORM(GTK)
     FailedToShowPopupMenu()
 #endif
@@ -425,6 +437,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
     UppercaseWord(WebCore::FrameIdentifier frameID)
     LowercaseWord(WebCore::FrameIdentifier frameID)
     CapitalizeWord(WebCore::FrameIdentifier frameID)
+    ConvertToTraditionalChinese(WebCore::FrameIdentifier frameID)
+    ConvertToSimplifiedChinese(WebCore::FrameIdentifier frameID)
 #endif
 #if PLATFORM(COCOA)
     SetSmartInsertDeleteEnabled(bool isSmartInsertDeleteEnabled)
@@ -518,6 +532,9 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     BindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, struct WebCore::AccessibilityRemoteToken dataToken) -> (struct WebCore::AccessibilityRemoteToken token, int processIdentifier) Synchronous
     UpdateRemotePageAccessibilityOffset(WebCore::FrameIdentifier frameID, WebCore::IntPoint offset);
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+    UpdateRemotePageAccessibilityInheritedState(WebCore::FrameIdentifier frameID, struct WebCore::InheritedFrameState state);
+#endif
     ResolveAccessibilityHitTestForTesting(WebCore::FrameIdentifier frameID, WebCore::IntPoint point) -> (String result)
     EnableAccessibility()
 
@@ -634,10 +651,6 @@ messages -> WebPage WantsAsyncDispatchMessage {
     FlushDeferredDidReceiveMouseEvent()
 
     PerformHitTestForMouseEvent(WebKit::WebMouseEvent event) -> (struct WebKit::WebHitTestResultData hitTestResult, OptionSet<WebKit::WebEventModifier> modifiers)
-
-    SetStatusBarIsVisible(bool visible)
-    SetMenuBarIsVisible(bool visible)
-    SetToolbarsAreVisible(bool visible)
 
     SetUseColorAppearance(bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
 

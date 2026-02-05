@@ -239,7 +239,7 @@ void HTMLSlotElement::dispatchSlotChangeEvent()
 
 void HTMLSlotElement::updateAccessibilityOnSlotChange() const
 {
-    if (CheckedPtr cache = protectedDocument()->existingAXObjectCache())
+    if (CheckedPtr cache = protect(document())->existingAXObjectCache())
         cache->onSlottedContentChange(*this);
 }
 

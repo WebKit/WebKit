@@ -27,13 +27,14 @@
 
 #include "CookieListItem.h"
 #include "ExtendableEventInit.h"
+#include <optional>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct ExtendableCookieChangeEventInit : ExtendableEventInit {
-    Vector<CookieListItem> changed;
-    Vector<CookieListItem> deleted;
+    std::optional<Vector<CookieListItem>> changed;
+    std::optional<Vector<CookieListItem>> deleted;
 };
 
 } // namespace WebCore

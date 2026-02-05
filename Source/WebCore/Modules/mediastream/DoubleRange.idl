@@ -22,10 +22,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/mediacapture-main/#dom-doublerange
 [
     Conditional=MEDIA_STREAM,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary DoubleRange {
     double max;
     double min;

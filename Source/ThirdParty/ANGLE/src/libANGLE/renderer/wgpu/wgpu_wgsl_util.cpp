@@ -166,7 +166,7 @@ std::string WgslAssignLocationsAndSamplerBindings(const gl::ProgramExecutable &e
             continue;
         }
         int loc = shaderVar.getLocation();
-        AddShaderVarLocation(varNameToLocation, shaderVar.name, loc, shaderVar.getType(),
+        AddShaderVarLocation(varNameToLocation, shaderVar.mappedName, loc, shaderVar.getType(),
                              shaderVar.isArray() ? shaderVar.getBasicTypeElementCount() : 0u);
     }
 
@@ -192,7 +192,8 @@ std::string WgslAssignLocationsAndSamplerBindings(const gl::ProgramExecutable &e
             {
                 continue;
             }
-            AddShaderVarLocation(varNameToLocation, shaderVar->name, currLocMarker, shaderVar->type,
+            AddShaderVarLocation(varNameToLocation, shaderVar->mappedName, currLocMarker,
+                                 shaderVar->type,
                                  shaderVar->isArray() ? shaderVar->getBasicTypeElementCount() : 0u);
         }
         else

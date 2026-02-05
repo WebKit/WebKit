@@ -648,8 +648,6 @@ RefPtr<AXIsolatedObject> AXIsolatedObject::approximateHitTest(const IntPoint& po
             // Returning columns via hit testing is typically not what ATs expect as they are mock objects
             // and thus not backed by any real DOM node. Returning nullptr allows us to return the table
             // cell (or cell contents) instead, which is typically more useful for ATs like Hover Text.
-            //
-            // FIXME: This has been manually tested to behave correctly, but needs a layout test.
             continue;
         }
 

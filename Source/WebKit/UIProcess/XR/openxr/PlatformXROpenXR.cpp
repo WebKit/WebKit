@@ -87,7 +87,7 @@ void OpenXRCoordinator::getPrimaryDeviceInfo(WebPageProxy& page, DeviceInfoCallb
 {
     ASSERT(RunLoop::isMain());
 
-    initializeDevice(page.protectedPreferences()->openXRDMABufRelaxedForTesting());
+    initializeDevice(protect(page.preferences())->openXRDMABufRelaxedForTesting());
     if (m_instance == XR_NULL_HANDLE || m_systemId == XR_NULL_SYSTEM_ID) {
         LOG(XR, "Failed to initialize OpenXR system");
         callback(std::nullopt);
@@ -249,7 +249,7 @@ void OpenXRCoordinator::startSession(WebPageProxy& page, WeakPtr<PlatformXRCoord
     ASSERT(RunLoop::isMain());
     LOG(XR, "OpenXRCoordinator::startSession");
 
-    initializeDevice(page.protectedPreferences()->openXRDMABufRelaxedForTesting());
+    initializeDevice(protect(page.preferences())->openXRDMABufRelaxedForTesting());
 
     WTF::switchOn(m_state,
         [&](Idle&) {
@@ -790,12 +790,10 @@ void OpenXRCoordinator::cleanupSessionAndAssociatedResources()
 {
     ASSERT(!RunLoop::isMain());
 
-#if ENABLE(WEBXR_HIT_TEST)
     if (m_viewerSpace != XR_NULL_HANDLE) {
         CHECK_XRCMD(xrDestroySpace(m_viewerSpace));
         m_viewerSpace = XR_NULL_HANDLE;
     }
-#endif
 
     if (m_localSpace != XR_NULL_HANDLE) {
         CHECK_XRCMD(xrDestroySpace(m_localSpace));
@@ -1075,9 +1073,7 @@ void OpenXRCoordinator::createReferenceSpacesIfNeeded(Box<RenderState> renderSta
         return referenceSpace;
     };
 
-#if ENABLE(WEBXR_HIT_TEST)
     m_viewerSpace = createReferenceSpace(XR_REFERENCE_SPACE_TYPE_VIEW);
-#endif
     m_localSpace = createReferenceSpace(XR_REFERENCE_SPACE_TYPE_LOCAL);
 
 #if defined(XR_EXT_local_floor)

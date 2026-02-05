@@ -18,8 +18,8 @@
  */
 
 [
- Conditional=WEB_CODECS
- ] enum OpusBitstreamFormat {
+    Conditional=WEB_CODECS
+] enum OpusBitstreamFormat {
     "opus",
     "ogg",
 };
@@ -31,11 +31,10 @@ typedef [EnforceRange] unsigned long long WebCodecsAudioOpusEncoderConfigFrameDu
     Conditional=WEB_CODECS,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary OpusEncoderConfig {
     OpusBitstreamFormat format = "opus";
     WebCodecsAudioOpusEncoderConfigFrameDuration frameDuration = 20000;
-    WebCodecsAudioOpusEncoderConfigParameter complexity;
+    WebCodecsAudioOpusEncoderConfigParameter complexity = 9;
     WebCodecsAudioOpusEncoderConfigParameter packetlossperc = 0;
     boolean useinbandfec = false;
     boolean usedtx = false;

@@ -47,6 +47,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
+    virtual bool isJSCSSPaintCallback() const { return false; }
+
     virtual CallbackResult<void> invoke(JSC::JSValue, PaintRenderingContext2D&, CSSPaintSize&, StylePropertyMapReadOnly&, const Vector<String>&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(JSC::JSValue, PaintRenderingContext2D&, CSSPaintSize&, StylePropertyMapReadOnly&, const Vector<String>&) = 0;
 

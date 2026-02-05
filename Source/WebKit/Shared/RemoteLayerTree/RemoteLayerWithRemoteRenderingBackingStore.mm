@@ -50,7 +50,7 @@ RemoteLayerWithRemoteRenderingBackingStore::RemoteLayerWithRemoteRenderingBackin
         return;
     }
 
-    lazyInitialize(m_bufferSet, collection->protectedLayerTreeContext()->ensureProtectedRemoteRenderingBackendProxy()->createImageBufferSet(*CheckedPtr { this }));
+    lazyInitialize(m_bufferSet, protect(collection->layerTreeContext())->ensureProtectedRemoteRenderingBackendProxy()->createImageBufferSet(*CheckedPtr { this }));
 }
 
 RemoteLayerWithRemoteRenderingBackingStore::~RemoteLayerWithRemoteRenderingBackingStore()

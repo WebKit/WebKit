@@ -27,7 +27,6 @@
 #include "AtomicsObject.h"
 #include "BigIntConstructor.h"
 #include "BytecodeCacheError.h"
-#include "CatchScope.h"
 #include "CodeBlock.h"
 #include "CodeCache.h"
 #include "CompilerTimingScope.h"
@@ -78,6 +77,7 @@
 #include "StructureInlines.h"
 #include "SuperSampler.h"
 #include "TestRunnerUtils.h"
+#include "TopExceptionScope.h"
 #include "TypedArrayInlines.h"
 #include "VMInlines.h"
 #include "VMManager.h"
@@ -150,8 +150,8 @@
 #endif
 
 #if OS(DARWIN) && CPU(ARM_THUMB2)
-#include <fenv.h>
 #include <arm/arch.h>
+#include <fenv.h>
 #endif
 
 #if OS(DARWIN)
@@ -3678,7 +3678,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 static void dumpException(GlobalObject* globalObject, JSValue exception)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
 #define CHECK_EXCEPTION() do { \
         if (scope.exception()) { \
@@ -3741,7 +3741,7 @@ static void dumpException(GlobalObject* globalObject, JSValue exception)
 static bool checkUncaughtException(VM& vm, GlobalObject* globalObject, JSValue exception, const CommandLine& options)
 {
     const String& expectedExceptionName = options.m_uncaughtExceptionName;
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     scope.clearException();
     if (!exception) {
         printf("Expected uncaught exception with name '%s' but none was thrown\n", expectedExceptionName.utf8().data());
@@ -3822,7 +3822,7 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
     Vector<char> scriptBuffer;
 
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
 #if ENABLE(SAMPLING_FLAGS)
     SamplingFlags::start();
@@ -3912,7 +3912,7 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
 static void runInteractive(GlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     URL directoryName = currentWorkingDirectory();
     if (!directoryName.isValid())
@@ -4307,14 +4307,11 @@ void CommandLine::parseArguments(int argc, char** argv, int start)
             continue;
         }
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
         auto argView = StringView::fromLatin1(arg);
         constexpr auto wasmDebugOption = "--wasm-debugger"_s;
         bool isBareOption = argView.length() == wasmDebugOption.length();
         if (argView.startsWith(wasmDebugOption) && (isBareOption || argView[wasmDebugOption.length()] == '=')) {
-#if !CPU(ARM64)
-            dataLogLn("ERROR: --wasm-debugger only supported on ARM64");
-#else
             JSC::Options::enableWasmDebugger() = true;
             JSC::Options::useBBQJIT() = false;
             JSC::Options::useOMGJIT() = false;
@@ -4325,7 +4322,6 @@ void CommandLine::parseArguments(int argc, char** argv, int start)
                 else
                     dataLogLn("ERROR: invalid port number for --wasm-debugger=", suffix);
             }
-#endif
             continue;
         }
 #endif
@@ -4405,7 +4401,7 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
             globalObject = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), options.m_arguments);
             globalObject->setInspectable(options.m_inspectable);
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
             if (Options::enableWasmDebugger()) [[unlikely]]
                 Wasm::DebugServer::singleton().start();
 #endif
@@ -4516,7 +4512,7 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
         vm.derefSuppressingSaferCPPChecking();
     }
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
     if (Options::enableWasmDebugger()) [[unlikely]]
         Wasm::DebugServer::singleton().stop();
 #endif

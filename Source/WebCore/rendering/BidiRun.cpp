@@ -32,7 +32,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BidiRun);
 
 BidiRun::BidiRun(unsigned start, unsigned stop, RenderObject& renderer, BidiContext* context, UCharDirection dir)
-    : BidiCharacterRun(start, stop, context, dir)
+    : BidiCharacterRun<BidiRun>(start, stop, context, dir)
     , m_renderer(renderer)
     , m_box(nullptr)
 {
@@ -41,14 +41,6 @@ BidiRun::BidiRun(unsigned start, unsigned stop, RenderObject& renderer, BidiCont
 
 BidiRun::~BidiRun()
 {
-}
-
-std::unique_ptr<BidiRun> BidiRun::takeNext()
-{
-    std::unique_ptr<BidiCharacterRun> next = BidiCharacterRun::takeNext();
-    BidiCharacterRun* raw = next.release();
-    std::unique_ptr<BidiRun> result = std::unique_ptr<BidiRun>(static_cast<BidiRun*>(raw));
-    return result;
 }
 
 }

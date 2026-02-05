@@ -19,10 +19,10 @@ layer at (173,32) size 454x454
       RenderInline {SPAN} at (0,0) size 0x0
     RenderBlock {DIV} at (0,0) size 454x0
       RenderInline {SPAN} at (0,0) size 0x0
-layer at (173,47) size 454x190
+layer at (173,47) size 454x191
   RenderBlock (positioned) {H1} at (0,15) size 454x191 [color=#DD9955]
-    RenderInline {SPAN} at (62,3) size 330x183
-      RenderText {#text} at (62,3) size 330x183
+    RenderInline {SPAN} at (62,3) size 330x184
+      RenderText {#text} at (62,3) size 330x184
         text run at (83,3) width 142: "CSS"
         text run at (196,3) width 174: " ZEN"
         text run at (62,98) width 330: "GARDEN"
@@ -37,53 +37,53 @@ layer at (173,119) size 454x21
       RenderText {#text} at (262,1) size 42x19
         text run at (262,1) width 42: " Design"
 layer at (173,379) size 454x107
-  RenderBlock (positioned) {DIV} at (0,347) size 454x107
-    RenderInline {P} at (11,0) size 431x27
-      RenderInline {SPAN} at (11,0) size 431x27
-        RenderText {#text} at (11,0) size 431x27
+  RenderBlock (positioned) {DIV} at (0,346) size 454x108
+    RenderInline {P} at (11,0) size 431x28
+      RenderInline {SPAN} at (11,0) size 431x28
+        RenderText {#text} at (11,0) size 431x28
           text run at (11,0) width 431: "Littering a dark and dreary road lay the past relics of browser-specific tags,"
           text run at (11,14) width 72: "incompatible "
-        RenderInline {ACRONYM} at (82,14) size 29x13
-          RenderText {#text} at (82,14) size 29x13
+        RenderInline {ACRONYM} at (82,14) size 29x14
+          RenderText {#text} at (82,14) size 29x14
             text run at (82,14) width 29: "DOM"
-        RenderText {#text} at (110,14) size 79x13
+        RenderText {#text} at (110,14) size 79x14
           text run at (110,14) width 79: "s, and broken "
-        RenderInline {ACRONYM} at (188,14) size 23x13
-          RenderText {#text} at (188,14) size 23x13
+        RenderInline {ACRONYM} at (188,14) size 23x14
+          RenderText {#text} at (188,14) size 23x14
             text run at (188,14) width 23: "CSS"
-        RenderText {#text} at (210,14) size 50x13
+        RenderText {#text} at (210,14) size 50x14
           text run at (210,14) width 50: " support."
-    RenderText {#text} at (259,14) size 6x13
+    RenderText {#text} at (259,14) size 6x14
       text run at (259,14) width 6: " "
-    RenderInline {P} at (11,14) size 431x41
-      RenderInline {SPAN} at (11,14) size 431x41
-        RenderText {#text} at (11,14) size 431x41
+    RenderInline {P} at (11,14) size 431x42
+      RenderInline {SPAN} at (11,14) size 431x42
+        RenderText {#text} at (11,14) size 431x42
           text run at (264,14) width 178: "Today, we must clear the mind of"
           text run at (11,28) width 431: "past practices. Web enlightenment has been achieved thanks to the tireless efforts of"
           text run at (11,42) width 71: "folk like the "
-        RenderInline {ACRONYM} at (81,42) size 27x13
-          RenderText {#text} at (81,42) size 27x13
+        RenderInline {ACRONYM} at (81,42) size 27x14
+          RenderText {#text} at (81,42) size 27x14
             text run at (81,42) width 27: "W3C"
-        RenderText {#text} at (107,42) size 10x13
+        RenderText {#text} at (107,42) size 10x14
           text run at (107,42) width 10: ", "
-        RenderInline {ACRONYM} at (116,42) size 32x13
-          RenderText {#text} at (116,42) size 32x13
+        RenderInline {ACRONYM} at (116,42) size 32x14
+          RenderText {#text} at (116,42) size 32x14
             text run at (116,42) width 32: "WaSP"
-        RenderText {#text} at (147,42) size 180x13
+        RenderText {#text} at (147,42) size 180x14
           text run at (147,42) width 180: " and the major browser creators."
-    RenderText {#text} at (326,42) size 6x13
+    RenderText {#text} at (326,42) size 6x14
       text run at (326,42) width 6: " "
-    RenderInline {P} at (11,42) size 431x55
-      RenderInline {SPAN} at (11,42) size 431x55
-        RenderText {#text} at (11,42) size 431x55
+    RenderInline {P} at (11,42) size 431x56
+      RenderInline {SPAN} at (11,42) size 431x56
+        RenderText {#text} at (11,42) size 431x56
           text run at (331,42) width 111: "The css Zen Garden"
           text run at (11,56) width 431: "invites you to relax and meditate on the important lessons of the masters. Begin to"
           text run at (11,70) width 431: "see with clarity. Learn to use the (yet to be) time-honored techniques in new and"
           text run at (11,84) width 240: "invigorating fashion. Become one with the web."
     RenderText {#text} at (0,0) size 0x0
-layer at (321,235) size 306x80
-  RenderBlock (positioned) {H3} at (148,-144) size 306x81 [color=#CCCC77] [bgcolor=#888811] [border: (3px solid #888811) none (3px solid #888811)]
-    RenderInline {SPAN} at (56,0) size 220x79
-      RenderText {#text} at (56,0) size 220x79
+layer at (321,234) size 306x82
+  RenderBlock (positioned) {H3} at (148,-146) size 306x83 [color=#CCCC77] [bgcolor=#888811] [border: (3px solid #888811) none (3px solid #888811)]
+    RenderInline {SPAN} at (56,0) size 220x81
+      RenderText {#text} at (56,0) size 220x81
         text run at (91,0) width 185: "The Road to"
-        text run at (56,37) width 220: "Enlightenment"
+        text run at (56,38) width 220: "Enlightenment"

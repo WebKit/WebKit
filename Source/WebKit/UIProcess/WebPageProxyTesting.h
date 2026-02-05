@@ -92,7 +92,7 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
-    Ref<WebPageProxy> protectedPage() const;
+    WebPageProxy& page() const { return m_page; }
 
     WeakRef<WebPageProxy> m_page;
 };

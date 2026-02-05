@@ -99,6 +99,8 @@ private:
 private:
     bool isLocalDescriptionSet() const final { return m_isLocalDescriptionSet; }
 
+    bool shouldEnableServiceClass() const final;
+
     void startGatheringStatLogs(Function<void(String&&)>&&) final;
     void stopGatheringStatLogs() final;
     void provideStatLogs(String&&);

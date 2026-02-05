@@ -235,6 +235,7 @@ private:
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
     RefPtr<VideoFrame> videoFrameForCurrentTime() final;
+    Ref<BitmapImagePromise> bitmapImageForCurrentTime() final;
     DestinationColorSpace colorSpace() final;
 
     bool supportsAcceleratedRendering() const override;

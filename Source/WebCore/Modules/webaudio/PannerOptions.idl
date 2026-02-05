@@ -24,7 +24,6 @@
  */
 [
     Conditional=WEB_AUDIO,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary PannerOptions : AudioNodeOptions {
     PanningModelType panningModel = "equalpower";
     DistanceModelType distanceModel = "inverse";

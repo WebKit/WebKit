@@ -223,14 +223,14 @@ static inline ChildElementPosition findChild(const Element& element, const Eleme
     RefPtr<const Element> lastOfType;
     size_t index = notFound;
     size_t currentChildIndex = 0;
-    for (auto& child : childrenOfType<Element>(parent)) {
-        if (&child == &element)
+    for (Ref child : childrenOfType<Element>(parent)) {
+        if (child.ptr() == &element)
             index = currentChildIndex;
 
-        if (child.tagName() == elementTagName) {
+        if (child->tagName() == elementTagName) {
             if (!firstOfType)
-                firstOfType = child;
-            lastOfType = child;
+                firstOfType = child.ptr();
+            lastOfType = child.ptr();
         }
         currentChildIndex++;
     }
@@ -269,10 +269,10 @@ static inline String computeTagAndAttributeSelector(const Element& element, cons
     static constexpr auto maximumValueLengthForExactMatch = 60;
 
     Vector<std::pair<String, String>> attributesToCheck;
-    auto& attributes = element.attributesMap();
-    attributesToCheck.reserveInitialCapacity(attributes.length());
-    for (unsigned i = 0; i < attributes.length(); ++i) {
-        RefPtr attribute = attributes.item(i);
+    Ref attributes = element.attributesMap();
+    attributesToCheck.reserveInitialCapacity(attributes->length());
+    for (unsigned i = 0; i < attributes->length(); ++i) {
+        RefPtr attribute = attributes->item(i);
         auto qualifiedName = attribute->qualifiedName();
         if (attributesToExclude->contains(qualifiedName))
             continue;
@@ -317,11 +317,11 @@ static inline String computeTagAndClassSelector(Element& element)
     if (!element.hasClass())
         return emptyString();
 
-    auto& classList = element.classList();
+    Ref classList = element.classList();
     Vector<String> classes;
-    classes.reserveInitialCapacity(classList.length());
-    for (unsigned i = 0; i < std::min<unsigned>(maximumNumberOfClasses, classList.length()); ++i)
-        classes.append(classList.item(i));
+    classes.reserveInitialCapacity(classList->length());
+    for (unsigned i = 0; i < std::min<unsigned>(maximumNumberOfClasses, classList->length()); ++i)
+        classes.append(classList->item(i));
 
     auto selector = makeString(element.tagName(), '.', makeStringByJoining(classes, "."_s));
     if (querySelectorMatchesOneElement(element, selector))
@@ -446,8 +446,8 @@ static String computeHasChildSelector(Element& element)
     } };
 
     String selectorSuffix;
-    for (auto& child : descendantsOfType<HTMLElement>(element)) {
-        if (!tagsToCheckForUniqueAttributes->contains(child.tagQName()))
+    for (Ref child : descendantsOfType<HTMLElement>(element)) {
+        if (!tagsToCheckForUniqueAttributes->contains(child->tagQName()))
             continue;
 
         auto selector = computeTagAndAttributeSelector(child);
@@ -461,8 +461,8 @@ static String computeHasChildSelector(Element& element)
     if (selectorSuffix.isEmpty())
         return emptyString();
 
-    for (auto& ancestor : lineageOfType<HTMLElement>(element)) {
-        auto selectorWithTag = makeString(ancestor.tagName(), selectorSuffix);
+    for (Ref ancestor : lineageOfType<HTMLElement>(element)) {
+        auto selectorWithTag = makeString(ancestor->tagName(), selectorSuffix);
         if (querySelectorMatchesOneElement(element, selectorWithTag))
             return selectorWithTag;
 
@@ -580,8 +580,8 @@ static inline RectEdges<bool> computeOffsetEdges(const RenderStyle& style)
 static inline Vector<FrameIdentifier> collectChildFrameIdentifiers(const Element& element)
 {
     Vector<FrameIdentifier> identifiers;
-    for (auto& owner : descendantsOfType<HTMLFrameOwnerElement>(element)) {
-        if (RefPtr frame = owner.contentFrame())
+    for (Ref owner : descendantsOfType<HTMLFrameOwnerElement>(element)) {
+        if (RefPtr frame = owner->contentFrame())
             identifiers.append(frame->frameID());
     }
     return identifiers;
@@ -607,7 +607,7 @@ static Vector<Ref<Element>> collectDocumentElementsFromChildFrames(const Contain
     if (RefPtr containerAsFrameOwner = dynamicDowncast<HTMLFrameOwnerElement>(container))
         appendElement(*containerAsFrameOwner);
 
-    for (auto& descendant : descendantsOfType<HTMLFrameOwnerElement>(container))
+    for (Ref descendant : descendantsOfType<HTMLFrameOwnerElement>(container))
         appendElement(descendant);
 
     return documentElements;
@@ -695,10 +695,10 @@ static void collectMediaAndLinkURLsRecursive(const Element& element, HashSet<URL
 
     addURLForElement(element);
 
-    for (auto& descendant : descendantsOfType<Element>(element)) {
+    for (Ref descendant : descendantsOfType<Element>(element)) {
         addURLForElement(descendant);
 
-        auto frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(descendant);
+        RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(descendant.ptr());
         if (!frameOwner)
             continue;
 
@@ -724,7 +724,7 @@ static HashSet<URL> collectMediaAndLinkURLs(const Element& element)
 enum class IsNearbyTarget : bool { No, Yes };
 static std::optional<TargetedElementInfo> targetedElementInfo(Element& element, IsNearbyTarget isNearbyTarget, ElementSelectorCache& cache, const WeakHashSet<Element, WeakPtrImplWithEventTargetData>& adjustedElements)
 {
-    element.protectedDocument()->updateLayoutIgnorePendingStylesheets();
+    protect(element.document())->updateLayoutIgnorePendingStylesheets();
 
     FloatRect boundsInClientCoordinates;
     RectEdges<bool> offsetEdges;
@@ -773,8 +773,8 @@ static std::optional<TargetedElementInfo> targetedElementInfo(Element& element, 
 static RefPtr<const HTMLElement> findOnlyMainElement(const HTMLBodyElement& bodyElement)
 {
     RefPtr<const HTMLElement> onlyMainElement;
-    for (auto& descendant : descendantsOfType<HTMLElement>(bodyElement)) {
-        if (!descendant.hasTagName(HTMLNames::mainTag))
+    for (Ref descendant : descendantsOfType<HTMLElement>(bodyElement)) {
+        if (!descendant->hasTagName(HTMLNames::mainTag))
             continue;
 
         if (onlyMainElement) {
@@ -782,7 +782,7 @@ static RefPtr<const HTMLElement> findOnlyMainElement(const HTMLBodyElement& body
             break;
         }
 
-        onlyMainElement = descendant;
+        onlyMainElement = descendant.ptr();
     }
     return onlyMainElement;
 }
@@ -801,7 +801,7 @@ static bool containsNavigationalElement(const Element& element)
     if (isNavigationalElement(element))
         return true;
 
-    for (auto& descendant : descendantsOfType<HTMLElement>(element)) {
+    for (Ref descendant : descendantsOfType<HTMLElement>(element)) {
         if (isNavigationalElement(descendant))
             return true;
     }
@@ -869,7 +869,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
 {
     Vector<ClearVisibilityAdjustmentForScope> clearVisibilityAdjustmentScopes;
     if (shouldIgnoreExistingVisibilityAdjustments(request) && m_adjustedElements.computeSize()) {
-        for (auto& element : m_adjustedElements)
+        for (Ref element : m_adjustedElements)
             clearVisibilityAdjustmentScopes.append({ element });
 
         if (RefPtr document = mainDocument())
@@ -1095,7 +1095,7 @@ std::pair<Vector<Ref<Node>>, RefPtr<Element>> ElementTargetingController::findNo
 
     Vector<Ref<Node>> potentialCandidates;
     potentialCandidates.append(*foundElement);
-    for (auto& ancestor : ancestorsOfType<Element>(*foundElement))
+    for (Ref ancestor : ancestorsOfType<Element>(*foundElement))
         potentialCandidates.append(ancestor);
     return { WTF::move(potentialCandidates), WTF::move(foundElement) };
 }
@@ -1117,13 +1117,13 @@ static Vector<Ref<Element>> filterRedundantNearbyTargets(HashSet<Ref<Element>>&&
     for (auto& originalTarget : unfilteredNearbyTargets) {
         Vector<Ref<Element>> ancestorsOfTarget;
         bool shouldKeep = true;
-        for (auto& ancestor : ancestorsOfType<Element>(originalTarget)) {
+        for (Ref ancestor : ancestorsOfType<Element>(originalTarget)) {
             if (unfilteredNearbyTargets.contains(ancestor)) {
                 shouldKeep = false;
                 break;
             }
 
-            if (auto entry = shouldKeepCache.find(ancestor); entry != shouldKeepCache.end()) {
+            if (auto entry = shouldKeepCache.find(ancestor.ptr()); entry != shouldKeepCache.end()) {
                 shouldKeep = entry->value;
                 break;
             }
@@ -1860,7 +1860,7 @@ bool ElementTargetingController::resetVisibilityAdjustments(const Vector<Targete
     HashSet<Ref<Element>> elementsToReset;
     if (identifiers.isEmpty()) {
         elementsToReset.reserveInitialCapacity(m_adjustedElements.computeSize());
-        for (auto& element : m_adjustedElements)
+        for (Ref element : m_adjustedElements)
             elementsToReset.add(element);
         m_adjustedElements.clear();
     } else {
@@ -1922,7 +1922,7 @@ bool ElementTargetingController::resetVisibilityAdjustments(const Vector<Targete
     if (changed && !m_adjustedElements.isEmptyIgnoringNullReferences()) {
         document->updateLayoutIgnorePendingStylesheets();
         auto viewportArea = m_viewportSizeForVisibilityAdjustment.area();
-        for (auto& element : m_adjustedElements) {
+        for (Ref element : m_adjustedElements) {
             if (auto rect = inflatedClientRectForAdjustmentRegionTracking(element, viewportArea))
                 m_adjustmentClientRegion.unite(*rect);
         }
@@ -1959,11 +1959,11 @@ uint64_t ElementTargetingController::numberOfVisibilityAdjustmentRects()
     clientRects.reserveInitialCapacity(m_adjustedElements.computeSize());
 
     unsigned numberOfParentedEmptyOrNonRenderedElements = 0;
-    for (auto& element : m_adjustedElements) {
-        if (!element.isConnected())
+    for (Ref element : m_adjustedElements) {
+        if (!element->isConnected())
             continue;
 
-        CheckedPtr renderer = element.renderer();
+        CheckedPtr renderer = element->renderer();
         if (!renderer) {
             numberOfParentedEmptyOrNonRenderedElements++;
             continue;
@@ -2087,7 +2087,7 @@ RefPtr<Image> ElementTargetingController::snapshotIgnoringVisibilityAdjustment(N
         return { };
 
     ClearVisibilityAdjustmentForScope clearAdjustmentScope { *element };
-    element->protectedDocument()->updateLayoutIgnorePendingStylesheets();
+    protect(element->document())->updateLayoutIgnorePendingStylesheets();
 
     CheckedPtr renderer = element->renderer();
     if (!renderer)

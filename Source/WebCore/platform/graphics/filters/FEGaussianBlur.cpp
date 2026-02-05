@@ -167,9 +167,8 @@ OptionSet<FilterRenderingMode> FEGaussianBlur::supportedFilterRenderingModes(Opt
     if (m_edgeMode == EdgeModeType::None)
         modes.add(FilterRenderingMode::Accelerated);
 #endif
-    // FIXME: Ensure the correctness of the CG GaussianBlur filter (http://webkit.org/b/243816).
-#if HAVE(CGSTYLE_COLORMATRIX_BLUR) && HAVE(FIX_FOR_RADAR_163968203) && HAVE(FIX_FOR_RADAR_160309842)
-    if (m_stdX == m_stdY && preferredFilterRenderingModes.contains(FilterRenderingMode::GraphicsContext))
+#if HAVE(CGSTYLE_COLORMATRIX_BLUR) && HAVE(CGSTYLE_FIXES_DROP_SHADOW_BLUR)
+    if (m_stdX == m_stdY)
         modes.add(FilterRenderingMode::GraphicsContext);
 #endif
     return modes & preferredFilterRenderingModes;

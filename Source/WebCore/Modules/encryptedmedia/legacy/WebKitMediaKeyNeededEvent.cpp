@@ -41,9 +41,9 @@ WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent(const AtomString& type, Uin
 {
 }
 
-WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::WebKitMediaKeyNeededEvent, type, initializer, isTrusted)
-    , m_initData(initializer.initData)
+WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+    : Event(EventInterfaceType::WebKitMediaKeyNeededEvent, type, WTF::move(initializer), isTrusted)
+    , m_initData(WTF::move(initializer.initData))
 {
 }
 

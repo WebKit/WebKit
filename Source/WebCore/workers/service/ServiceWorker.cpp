@@ -105,11 +105,6 @@ SWClientConnection& ServiceWorker::swConnection()
     return ServiceWorkerProvider::singleton().serviceWorkerConnection();
 }
 
-Ref<SWClientConnection> ServiceWorker::protectedSWConnection()
-{
-    return swConnection();
-}
-
 ExceptionOr<void> ServiceWorker::postMessage(JSC::JSGlobalObject& globalObject, JSC::JSValue messageValue, StructuredSerializeOptions&& options)
 {
     if (m_isStopped)
@@ -134,8 +129,13 @@ ExceptionOr<void> ServiceWorker::postMessage(JSC::JSGlobalObject& globalObject, 
     }();
 
     MessageWithMessagePorts message { messageData.releaseReturnValue(), portsOrException.releaseReturnValue() };
-    protectedSWConnection()->postMessageToServiceWorker(identifier(), WTF::move(message), sourceIdentifier);
+    protect(swConnection())->postMessageToServiceWorker(identifier(), WTF::move(message), sourceIdentifier);
     return { };
+}
+
+ExceptionOr<void> ServiceWorker::postMessage(JSC::JSGlobalObject& globalObject, JSC::JSValue messageValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
+{
+    return postMessage(globalObject, messageValue, StructuredSerializeOptions { WTF::move(transfer) });
 }
 
 enum EventTargetInterfaceType ServiceWorker::eventTargetInterface() const

@@ -57,7 +57,7 @@ struct RouterCondition {
     std::optional<RunningStatus> runningStatus;
 
     using Condition = RouterCondition;
-    Vector<Condition> orConditions;
+    std::optional<Vector<Condition>> orConditions;
     std::optional<RouterNotCondition> notCondition;
 };
 

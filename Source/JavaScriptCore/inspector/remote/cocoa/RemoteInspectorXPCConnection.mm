@@ -105,7 +105,7 @@ RetainPtr<NSDictionary> RemoteInspectorXPCConnection::deserializeMessage(xpc_obj
     if (xpc_get_type(object) != XPC_TYPE_DICTIONARY)
         return nil;
 
-    XPCObjectPtr<xpc_object_t> xpcDictionary = xpc_dictionary_get_value(object, RemoteInspectorXPCConnectionSerializedMessageKey);
+    OSObjectPtr<xpc_object_t> xpcDictionary = xpc_dictionary_get_value(object, RemoteInspectorXPCConnectionSerializedMessageKey);
     if (!xpcDictionary || xpc_get_type(xpcDictionary.get()) != XPC_TYPE_DICTIONARY) {
         Locker locker { m_mutex };
         if (m_client)
@@ -187,7 +187,7 @@ void RemoteInspectorXPCConnection::sendMessage(NSString *messageName, NSDictiona
         return;
 
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto msg = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto msg = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_value(msg.get(), RemoteInspectorXPCConnectionSerializedMessageKey, xpcDictionary.get());
     xpc_connection_send_message(m_connection.get(), msg.get());
 }

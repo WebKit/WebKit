@@ -142,9 +142,17 @@ void AVTrackPrivateAVFObjCImpl::setEnabled(bool enabled)
 AudioTrackPrivate::Kind AVTrackPrivateAVFObjCImpl::audioKind() const
 {
     if (m_assetTrack) {
+        // Check if accessibility characteristics are missing from AVAssetTrack but might be preserved in MediaSelectionOption
+        bool hasDescribes = [m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility];
+        if (!hasDescribes && m_mediaSelectionOption) {
+            RetainPtr option = m_mediaSelectionOption->avMediaSelectionOption();
+            if ([option hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
+                return AudioTrackPrivate::Kind::Description;
+        }
+
         if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
             return AudioTrackPrivate::Kind::Alternative;
-        if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
+        if (hasDescribes)
             return AudioTrackPrivate::Kind::Description;
         if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
             return AudioTrackPrivate::Kind::Main;

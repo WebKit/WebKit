@@ -83,7 +83,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     for (auto pair : _configuration->urlSchemeHandlers()) {
         Ref handler = downcast<WebKit::WebURLSchemeHandlerCocoa>(pair.first.get());
-        [configuration setURLSchemeHandler:handler->protectedAPIHandler().get() forURLScheme:pair.second.createNSString().get()];
+        [configuration setURLSchemeHandler:protect(handler->apiHandler()).get() forURLScheme:pair.second.createNSString().get()];
     }
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -101,7 +101,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     for (auto pair : _configuration->urlSchemeHandlers()) {
         Ref handler = downcast<WebKit::WebURLSchemeHandlerCocoa>(pair.first.get());
-        [configuration setURLSchemeHandler:handler->protectedAPIHandler().get() forURLScheme:pair.second.createNSString().get()];
+        [configuration setURLSchemeHandler:protect(handler->apiHandler()).get() forURLScheme:pair.second.createNSString().get()];
     }
 
     if (auto* processPool = self.processPool)

@@ -565,7 +565,7 @@ XFrameOptionsDisposition parseXFrameOptionsHeader(StringView header)
         return result;
 
     for (auto currentHeader : header.splitAllowingEmptyEntries(',')) {
-        currentHeader = currentHeader.trim(isUnicodeCompatibleASCIIWhitespace<char16_t>);
+        currentHeader = currentHeader.trim(isTabOrSpace<char16_t>);
         XFrameOptionsDisposition currentValue = XFrameOptionsDisposition::None;
         if (equalLettersIgnoringASCIICase(currentHeader, "deny"_s))
             currentValue = XFrameOptionsDisposition::Deny;

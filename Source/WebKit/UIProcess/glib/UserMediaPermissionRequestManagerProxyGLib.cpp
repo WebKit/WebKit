@@ -39,12 +39,12 @@ using namespace WebCore;
 
 void UserMediaPermissionRequestManagerProxy::validateUserMediaRequestConstraints(RealtimeMediaSourceCenter::ValidateHandler&& validateHandler, WebCore::MediaDeviceHashSalts&& deviceIDHashSalts)
 {
-    m_page->legacyMainFrameProcess().protectedConnection()->sendWithAsyncReply(Messages::UserMediaCaptureManager::ValidateUserMediaRequestConstraints(m_currentUserMediaRequest->userRequest(), WTF::move(deviceIDHashSalts)), WTF::move(validateHandler));
+    protect(m_page->legacyMainFrameProcess().connection())->sendWithAsyncReply(Messages::UserMediaCaptureManager::ValidateUserMediaRequestConstraints(m_currentUserMediaRequest->userRequest(), WTF::move(deviceIDHashSalts)), WTF::move(validateHandler));
 }
 
 void UserMediaPermissionRequestManagerProxy::platformGetMediaStreamDevices(bool revealIdsAndLabels, CompletionHandler<void(Vector<CaptureDeviceWithCapabilities>&&)>&& completionHandler)
 {
-    m_page->legacyMainFrameProcess().protectedConnection()->sendWithAsyncReply(Messages::UserMediaCaptureManager::GetMediaStreamDevices(revealIdsAndLabels), WTF::move(completionHandler));
+    protect(m_page->legacyMainFrameProcess().connection())->sendWithAsyncReply(Messages::UserMediaCaptureManager::GetMediaStreamDevices(revealIdsAndLabels), WTF::move(completionHandler));
 }
 
 } // namespace WebKit

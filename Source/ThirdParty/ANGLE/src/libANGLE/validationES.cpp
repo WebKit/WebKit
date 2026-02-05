@@ -652,10 +652,12 @@ ANGLE_INLINE GLenum ShPixelLocalStorageFormatToGLenum(ShPixelLocalStorageFormat 
             return GL_RGBA8I;
         case ShPixelLocalStorageFormat::RGBA8UI:
             return GL_RGBA8UI;
-        case ShPixelLocalStorageFormat::R32UI:
-            return GL_R32UI;
         case ShPixelLocalStorageFormat::R32F:
             return GL_R32F;
+        case ShPixelLocalStorageFormat::R32I:
+            return GL_R32I;
+        case ShPixelLocalStorageFormat::R32UI:
+            return GL_R32UI;
     }
     UNREACHABLE();
     return GL_NONE;
@@ -1286,11 +1288,6 @@ bool ValidCompressedImageSize(const Context *context,
     {
         // TODO(http://anglebug.com/42266155): multi-level paletted images
         if (level != 0)
-        {
-            return false;
-        }
-
-        if (!isPow2(width) || !isPow2(height))
         {
             return false;
         }
@@ -2249,8 +2246,8 @@ bool ValidateGenerateMipmapBase(const Context *context,
                                    ? TextureTarget::CubeMapPositiveX
                                    : NonCubeTextureTypeToTarget(target);
     const auto &format       = *(texture->getFormat(baseTarget, effectiveBaseLevel).info);
-    if (format.sizedInternalFormat == GL_NONE || format.compressed || format.depthBits > 0 ||
-        format.stencilBits > 0)
+    if (format.sizedInternalFormat == GL_NONE || format.compressed || format.paletted ||
+        format.depthBits > 0 || format.stencilBits > 0)
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kGenerateMipmapNotAllowed);
         return false;
@@ -3142,12 +3139,6 @@ bool ValidateStateQuery(const Context *context,
 
         default:
             break;
-    }
-
-    // pname is valid, but there are no parameters to return
-    if (*numParams == 0)
-    {
-        return false;
     }
 
     return true;
@@ -5022,6 +5013,14 @@ bool ValidatePushGroupMarkerEXT(const Context *context,
                                 GLsizei length,
                                 const char *marker)
 {
+    // This is to prevent the stack from getting too large. The limit used here is also used for
+    // pushing debug groups.
+    if (context->getState().getGroupMarkerCount() >= context->getCaps().maxDebugGroupStackDepth)
+    {
+        ANGLE_VALIDATION_ERROR(GL_STACK_OVERFLOW, kExceedsMaxGroupMarkerStackDepth);
+        return false;
+    }
+
     return true;
 }
 
@@ -7450,7 +7449,8 @@ bool ValidatePixelPack(const Context *context,
 {
     // Check for pixel pack buffer related API errors
     Buffer *pixelPackBuffer = context->getState().getTargetBuffer(BufferBinding::PixelPack);
-    if (pixelPackBuffer != nullptr && pixelPackBuffer->isMapped())
+    if (pixelPackBuffer != nullptr && pixelPackBuffer->isMapped() &&
+        !pixelPackBuffer->isPersistentlyMapped())
     {
         // ...the buffer object's data store is currently mapped.
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBufferMapped);
@@ -7478,7 +7478,7 @@ bool ValidatePixelPack(const Context *context,
 
     if (bufSize >= 0)
     {
-        if (pixelPackBuffer == nullptr && static_cast<size_t>(bufSize) < endByte)
+        if (static_cast<size_t>(bufSize) < endByte)
         {
             ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInsufficientBufferSize);
             return false;
@@ -8491,7 +8491,7 @@ bool ValidateGetInternalFormativBase(const Context *context,
                                      GLenum target,
                                      GLenum internalformat,
                                      GLenum pname,
-                                     GLsizei bufSize,
+                                     GLsizei count,
                                      GLsizei *numParams)
 {
     if (numParams)
@@ -8549,9 +8549,9 @@ bool ValidateGetInternalFormativBase(const Context *context,
             return false;
     }
 
-    if (bufSize < 0)
+    if (count < 0)
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kInsufficientBufferSize);
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeCount);
         return false;
     }
 
@@ -8583,8 +8583,8 @@ bool ValidateGetInternalFormativBase(const Context *context,
 
     if (numParams)
     {
-        // glGetInternalFormativ will not overflow bufSize
-        *numParams = std::min(bufSize, maxWriteParams);
+        // glGetInternalFormativ will not overflow count
+        *numParams = std::min(count, maxWriteParams);
     }
 
     return true;
@@ -8656,7 +8656,7 @@ bool ValidateTexStorageMultisample(const Context *context,
         return false;
     }
 
-    if (static_cast<GLuint>(samples) > formatCaps.getMaxSamples())
+    if (static_cast<GLuint>(samples) > formatCaps.sampleCounts.getMaxSamples())
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kSamplesOutOfRange);
         return false;

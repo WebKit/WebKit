@@ -163,8 +163,12 @@ WI.Canvas = class Canvas extends WI.Object
         switch(colorSpace) {
         case WI.Canvas.ColorSpace.SRGB:
             return WI.UIString("sRGB", "sRGB @ Color Space", "Label for a canvas that uses the sRGB color space.");
+        case WI.Canvas.ColorSpace.SRGBLinear:
+            return WI.UIString("Linear sRGB", "Linear sRGB @ Color Space", "Label for a canvas that uses the linear sRGB color space.");
         case WI.Canvas.ColorSpace.DisplayP3:
             return WI.UIString("Display P3", "Display P3 @ Color Space", "Label for a canvas that uses the Display P3 color space.");
+        case WI.Canvas.ColorSpace.DisplayP3Linear:
+            return WI.UIString("Linear Display P3", "Linear Display P3 @ Color Space", "Label for a canvas that uses the linear Display P3 color space.");
         }
 
         console.assert(false, "Unknown canvas color space", colorSpace);

@@ -53,12 +53,8 @@ void WeakMapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->get, protoFuncWeakMapGet, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, JSWeakMapGetIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->has, protoFuncWeakMapHas, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, JSWeakMapHasIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->set, protoFuncWeakMapSet, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, JSWeakMapSetIntrinsic);
-
-    if (Options::useMapGetOrInsert()) {
-        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("getOrInsert"_s, protoFuncWeakMapGetOrInsert, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
-        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("getOrInsertComputed"_s, protoFuncWeakMapGetOrInsertComputed, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
-    }
-
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("getOrInsert"_s, protoFuncWeakMapGetOrInsert, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("getOrInsertComputed"_s, protoFuncWeakMapGetOrInsertComputed, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 

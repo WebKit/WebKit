@@ -1,15 +1,19 @@
 <html>
 <body>
+<script src="../../resources/js-test-pre.js"></script>
 <script>
 if (window.testRunner) {
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
-    testRunner.dumpFrameLoadCallbacks();
 }
 
+window.data = null;
 window.addEventListener("message", function (e) {
-  if (window.testRunner)
-      testRunner.notifyDone();
+    window.data = e.data;
+    shouldBe("window.data", "'blocked'");
+
+    if (window.testRunner)
+        testRunner.notifyDone();
 }, false);
 
 </script>

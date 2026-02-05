@@ -1,56 +1,56 @@
-layer at (0,0) size 785x814
+layer at (0,0) size 785x821
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x814
-  RenderBlock {HTML} at (0,0) size 785x814
-    RenderBody {BODY} at (8,8) size 769x785
-layer at (8,8) size 512x784
-  RenderBlock (relative positioned) {DIV} at (0,0) size 512x785
-    RenderBlock {H2} at (0,0) size 512x29
-      RenderText {#text} at (0,-4) size 79x36
-        text run at (0,-4) width 79: "Bug 1"
-    RenderBlock {P} at (0,55) size 512x204
-      RenderText {#text} at (0,2) size 494x140
+layer at (0,0) size 785x821
+  RenderBlock {HTML} at (0,0) size 785x821
+    RenderBody {BODY} at (8,8) size 769x792
+layer at (8,8) size 512x791
+  RenderBlock (relative positioned) {DIV} at (0,0) size 512x792
+    RenderBlock {H2} at (0,0) size 512x30
+      RenderText {#text} at (0,-4) size 79x37
+        text run at (0,-3) width 79: "Bug 1"
+    RenderBlock {P} at (0,55) size 512x207
+      RenderText {#text} at (0,2) size 494x143
         text run at (0,2) width 415: "Safari public beta does not support CSS absolute"
-        text run at (0,31) width 494: "positioning correctly (if at all). Immediately following the"
-        text run at (0,60) width 450: "text position marked by the dagger, there is a <span>"
-        text run at (0,89) width 481: "element that is positioned to the right of the <div> block"
-        text run at (0,118) width 245: "that contains this paragraph\x{2020}"
-      RenderText {#text} at (0,118) size 492x82
-        text run at (245,118) width 234: ". In IE 5.x, Mozilla 1.2, and"
-        text run at (0,147) width 492: "Chimera 0.6+, the contents of the <span> element appears"
-        text run at (0,176) width 404: "in the margin directly to the right of the dagger."
-    RenderBlock {P} at (0,279) size 512x88
-      RenderText {#text} at (0,2) size 503x82
+        text run at (0,32) width 494: "positioning correctly (if at all). Immediately following the"
+        text run at (0,61) width 450: "text position marked by the dagger, there is a <span>"
+        text run at (0,90) width 481: "element that is positioned to the right of the <div> block"
+        text run at (0,120) width 245: "that contains this paragraph\x{2020}"
+      RenderText {#text} at (0,120) size 492x83
+        text run at (245,120) width 234: ". In IE 5.x, Mozilla 1.2, and"
+        text run at (0,149) width 492: "Chimera 0.6+, the contents of the <span> element appears"
+        text run at (0,178) width 404: "in the margin directly to the right of the dagger."
+    RenderBlock {P} at (0,282) size 512x89
+      RenderText {#text} at (0,2) size 503x84
         text run at (0,2) width 482: "I should note that Chimera 0.6 rendered this test with the"
-        text run at (0,31) width 503: "marginal note shifted down by one line; this has been fixed"
-        text run at (0,60) width 180: "in subsequent builds."
-    RenderBlock {H2} at (0,393) size 512x30
-      RenderText {#text} at (0,-4) size 79x36
-        text run at (0,-4) width 79: "Bug 2"
-    RenderBlock {P} at (0,448) size 512x59
-      RenderText {#text} at (0,7) size 494x44
+        text run at (0,32) width 503: "marginal note shifted down by one line; this has been fixed"
+        text run at (0,61) width 180: "in subsequent builds."
+    RenderBlock {H2} at (0,397) size 512x30
+      RenderText {#text} at (0,-4) size 79x37
+        text run at (0,-3) width 79: "Bug 2"
+    RenderBlock {P} at (0,452) size 512x60
+      RenderText {#text} at (0,7) size 494x45
         text run at (0,7) width 494: "Fonts also render substantially smaller than other browsers, which is not a good thing when"
         text run at (0,36) width 411: "you consider that most sites specify fonts that are too small in the first place."
-    RenderBlock {P} at (0,528) size 512x59
-      RenderText {#text} at (0,2) size 501x53
+    RenderBlock {P} at (0,532) size 512x60
+      RenderText {#text} at (0,2) size 501x55
         text run at (0,2) width 501: "At the very least, the preferences panel needs a default text-"
-        text run at (0,31) width 490: "zoom setting to enable compatibility with other browsers."
-    RenderBlock {H2} at (0,612) size 512x30
-      RenderText {#text} at (0,-4) size 79x36
-        text run at (0,-4) width 79: "Bug 3"
-    RenderBlock {P} at (0,668) size 512x117
-      RenderText {#text} at (0,2) size 64x24
+        text run at (0,32) width 490: "zoom setting to enable compatibility with other browsers."
+    RenderBlock {H2} at (0,618) size 512x30
+      RenderText {#text} at (0,-4) size 79x37
+        text run at (0,-3) width 79: "Bug 3"
+    RenderBlock {P} at (0,674) size 512x118
+      RenderText {#text} at (0,2) size 64x25
         text run at (0,2) width 64: "Worse, "
-      RenderInline {I} at (0,2) size 483x53
-        RenderText {#text} at (0,2) size 483x53
+      RenderInline {I} at (0,2) size 483x54
+        RenderText {#text} at (0,2) size 483x55
           text run at (63,2) width 420: "the \"make text bigger\" button does not scale line-"
-          text run at (0,31) width 254: "height when it scales font-size"
-      RenderText {#text} at (0,31) size 470x82
-        text run at (254,31) width 216: " (hit it a few times on this"
-        text run at (0,60) width 454: "page). This is a crippling flaw for people who need to"
-        text run at (0,89) width 318: "enlarge the fonts to read comfortably."
-layer at (547,180) size 200x32
-  RenderBlock (positioned) {SPAN} at (538,171) size 201x33
-    RenderText {#text} at (0,0) size 198x31
+          text run at (0,32) width 254: "height when it scales font-size"
+      RenderText {#text} at (0,32) size 470x83
+        text run at (254,32) width 216: " (hit it a few times on this"
+        text run at (0,61) width 454: "page). This is a crippling flaw for people who need to"
+        text run at (0,90) width 318: "enlarge the fonts to read comfortably."
+layer at (547,181) size 200x32
+  RenderBlock (positioned) {SPAN} at (538,173) size 201x33
+    RenderText {#text} at (0,0) size 198x32
       text run at (0,0) width 189: "\x{2190} this should be to the right of the"
       text run at (0,16) width 198: "paragraph, lining up with the dagger"

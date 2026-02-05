@@ -62,15 +62,15 @@ public:
 
     void setPipeline(const GPURenderPipeline&);
 
-    void setIndexBuffer(const GPUBuffer&, GPUIndexFormat, std::optional<GPUSize64> offset, std::optional<GPUSize64>);
-    void setVertexBuffer(GPUIndex32 slot, const GPUBuffer*, std::optional<GPUSize64> offset, std::optional<GPUSize64>);
+    void setIndexBuffer(const GPUBuffer&, GPUIndexFormat, GPUSize64 offset, std::optional<GPUSize64>);
+    void setVertexBuffer(GPUIndex32 slot, const GPUBuffer*, GPUSize64 offset, std::optional<GPUSize64>);
 
-    void draw(GPUSize32 vertexCount, std::optional<GPUSize32> instanceCount,
-        std::optional<GPUSize32> firstVertex, std::optional<GPUSize32> firstInstance);
-    void drawIndexed(GPUSize32 indexCount, std::optional<GPUSize32> instanceCount,
-        std::optional<GPUSize32> firstIndex,
-        std::optional<GPUSignedOffset32> baseVertex,
-        std::optional<GPUSize32> firstInstance);
+    void draw(GPUSize32 vertexCount, GPUSize32 instanceCount,
+        GPUSize32 firstVertex, GPUSize32 firstInstance);
+    void drawIndexed(GPUSize32 indexCount, GPUSize32 instanceCount,
+        GPUSize32 firstIndex,
+        GPUSignedOffset32 baseVertex,
+        GPUSize32 firstInstance);
 
     void drawIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset);
     void drawIndexedIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset);
@@ -108,8 +108,6 @@ public:
 
 private:
     GPURenderPassEncoder(Ref<WebGPU::RenderPassEncoder>&& backing, WebGPU::Device&);
-
-    Ref<WebGPU::RenderPassEncoder> protectedBacking() { return m_backing; }
 
     Ref<WebGPU::RenderPassEncoder> m_backing;
     WeakPtr<WebGPU::Device> m_device;

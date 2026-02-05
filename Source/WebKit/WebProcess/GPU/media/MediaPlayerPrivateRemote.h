@@ -33,6 +33,7 @@
 #include "RemoteMediaPlayerManager.h"
 #include "RemoteMediaPlayerState.h"
 #include "RemoteMediaResourceIdentifier.h"
+#include "RemoteMediaResourceLoaderIdentifier.h"
 #include "RemoteMediaResourceProxy.h"
 #include "RemoteVideoFrameObjectHeapProxy.h"
 #include "RemoteVideoFrameProxy.h"
@@ -76,6 +77,7 @@ class PixelBufferConformerCV;
 namespace WebKit {
 
 class RemoteAudioSourceProvider;
+class RemoteMediaResourceLoaderProxy;
 class UserData;
 struct AudioTrackPrivateRemoteConfiguration;
 struct TextTrackPrivateRemoteConfiguration;
@@ -113,7 +115,6 @@ public:
     WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier() const { return m_remoteEngineIdentifier; }
     std::optional<WebCore::MediaPlayerIdentifier> identifier() const final { return m_id; }
     IPC::Connection& connection() const { return manager()->gpuProcessConnection().connection(); }
-    Ref<IPC::Connection> protectedConnection() const { return manager()->gpuProcessConnection().connection(); }
     RefPtr<WebCore::MediaPlayer> player() const { return m_player.get(); }
 
     WebCore::MediaPlayer::ReadyState readyState() const final { return m_readyState; }
@@ -172,9 +173,6 @@ public:
     void updateGenericCue(WebCore::TrackID, WebCore::GenericCueData&&);
     void removeGenericCue(WebCore::TrackID, WebCore::GenericCueData&&);
 
-    void requestResource(RemoteMediaResourceIdentifier, WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions);
-    void removeResource(RemoteMediaResourceIdentifier);
-    void sendH2Ping(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
     void resourceNotSupported();
 
     void activeSourceBuffersChanged();
@@ -362,6 +360,7 @@ private:
     RefPtr<WebCore::VideoFrame> videoFrameForCurrentTime() final;
     RefPtr<WebCore::NativeImage> nativeImageForCurrentTime() final;
     WebCore::DestinationColorSpace colorSpace() final;
+    Ref<BitmapImagePromise> bitmapImageForCurrentTime() final;
 #if PLATFORM(COCOA)
     bool shouldGetNativeImageForCanvasDrawing() const final { return false; }
 #endif
@@ -497,8 +496,7 @@ private:
 #if PLATFORM(COCOA)
     void pushVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RemoteVideoFrameProxy::Properties&&);
 #endif
-    RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy() const { return manager()->protectedGPUProcessConnection()->videoFrameObjectHeapProxy(); }
-    Ref<RemoteVideoFrameObjectHeapProxy> protectedVideoFrameObjectHeapProxy() const { return videoFrameObjectHeapProxy(); }
+    RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy() const { return protect(manager()->gpuProcessConnection())->videoFrameObjectHeapProxy(); }
 
     Ref<RemoteMediaPlayerManager> manager() const;
 
@@ -508,6 +506,9 @@ private:
 
     void setMessageClientForTesting(WeakPtr<WebCore::MessageClientForTesting>) final;
     void sendInternalMessage(const WebCore::MessageForTesting&);
+
+    void createResourceLoader(RemoteMediaResourceLoaderIdentifier);
+    void destroyResourceLoader(RemoteMediaResourceLoaderIdentifier);
 
     ThreadSafeWeakPtr<WebCore::MediaPlayer> m_player;
 #if PLATFORM(COCOA)
@@ -565,6 +566,7 @@ private:
     String m_defaultSpatialTrackingLabel;
     String m_spatialTrackingLabel;
     WeakPtr<WebCore::MessageClientForTesting> m_internalMessageClient;
+    HashMap<RemoteMediaResourceLoaderIdentifier, RefPtr<RemoteMediaResourceLoaderProxy>> m_mediaResourceLoaders;
 };
 
 } // namespace WebKit

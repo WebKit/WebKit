@@ -479,271 +479,55 @@ PASS :workgroup_size:wgx=256;wgy=256;wgz=11
 PASS :workgroup_size:wgx=256;wgy=256;wgz=16
 PASS :workgroup_size:wgx=256;wgy=256;wgz=128
 PASS :workgroup_size:wgx=256;wgy=256;wgz=256
-FAIL :workgroup_size_override_exp:override1=1;override2=1;override3=1 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      3
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :workgroup_size_override_exp:override1=1;override2=1;override3=2 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      4
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :workgroup_size_override_exp:override1=1;override2=1;override3=4 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      6
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
+PASS :workgroup_size_override_exp:override1=1;override2=1;override3=1
+PASS :workgroup_size_override_exp:override1=1;override2=1;override3=2
+PASS :workgroup_size_override_exp:override1=1;override2=1;override3=4
 PASS :workgroup_size_override_exp:override1=1;override2=1;override3=8
-FAIL :workgroup_size_override_exp:override1=1;override2=2;override3=1 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      4
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :workgroup_size_override_exp:override1=1;override2=2;override3=2 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      5
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :workgroup_size_override_exp:override1=1;override2=2;override3=4 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      7
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
+PASS :workgroup_size_override_exp:override1=1;override2=2;override3=1
+PASS :workgroup_size_override_exp:override1=1;override2=2;override3=2
+PASS :workgroup_size_override_exp:override1=1;override2=2;override3=4
 PASS :workgroup_size_override_exp:override1=1;override2=2;override3=8
-FAIL :workgroup_size_override_exp:override1=1;override2=3;override3=1 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      5
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :workgroup_size_override_exp:override1=1;override2=3;override3=2 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      6
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
+PASS :workgroup_size_override_exp:override1=1;override2=3;override3=1
+PASS :workgroup_size_override_exp:override1=1;override2=3;override3=2
 PASS :workgroup_size_override_exp:override1=1;override2=3;override3=4
 PASS :workgroup_size_override_exp:override1=1;override2=3;override3=8
-FAIL :workgroup_size_override_exp:override1=1;override2=4;override3=1 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      6
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :workgroup_size_override_exp:override1=1;override2=4;override3=2 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      7
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
+PASS :workgroup_size_override_exp:override1=1;override2=4;override3=1
+PASS :workgroup_size_override_exp:override1=1;override2=4;override3=2
 PASS :workgroup_size_override_exp:override1=1;override2=4;override3=4
 PASS :workgroup_size_override_exp:override1=1;override2=4;override3=8
-FAIL :workgroup_size_override_exp:override1=3;override2=1;override3=1 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      5
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :workgroup_size_override_exp:override1=3;override2=1;override3=2 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      6
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :workgroup_size_override_exp:override1=3;override2=1;override3=4 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      8
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
+PASS :workgroup_size_override_exp:override1=3;override2=1;override3=1
+PASS :workgroup_size_override_exp:override1=3;override2=1;override3=2
+PASS :workgroup_size_override_exp:override1=3;override2=1;override3=4
 PASS :workgroup_size_override_exp:override1=3;override2=1;override3=8
-FAIL :workgroup_size_override_exp:override1=3;override2=2;override3=1 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      6
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :workgroup_size_override_exp:override1=3;override2=2;override3=2 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      7
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
+PASS :workgroup_size_override_exp:override1=3;override2=2;override3=1
+PASS :workgroup_size_override_exp:override1=3;override2=2;override3=2
 PASS :workgroup_size_override_exp:override1=3;override2=2;override3=4
 PASS :workgroup_size_override_exp:override1=3;override2=2;override3=8
-FAIL :workgroup_size_override_exp:override1=3;override2=3;override3=1 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      7
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :workgroup_size_override_exp:override1=3;override2=3;override3=2 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      8
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
+PASS :workgroup_size_override_exp:override1=3;override2=3;override3=1
+PASS :workgroup_size_override_exp:override1=3;override2=3;override3=2
 PASS :workgroup_size_override_exp:override1=3;override2=3;override3=4
 PASS :workgroup_size_override_exp:override1=3;override2=3;override3=8
-FAIL :workgroup_size_override_exp:override1=3;override2=4;override3=1 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      8
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
+PASS :workgroup_size_override_exp:override1=3;override2=4;override3=1
 PASS :workgroup_size_override_exp:override1=3;override2=4;override3=2
 PASS :workgroup_size_override_exp:override1=3;override2=4;override3=4
 PASS :workgroup_size_override_exp:override1=3;override2=4;override3=8
-FAIL :workgroup_size_override_exp:override1=4;override2=1;override3=1 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      6
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :workgroup_size_override_exp:override1=4;override2=1;override3=2 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      7
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :workgroup_size_override_exp:override1=4;override2=1;override3=4 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      9
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
+PASS :workgroup_size_override_exp:override1=4;override2=1;override3=1
+PASS :workgroup_size_override_exp:override1=4;override2=1;override3=2
+PASS :workgroup_size_override_exp:override1=4;override2=1;override3=4
 PASS :workgroup_size_override_exp:override1=4;override2=1;override3=8
-FAIL :workgroup_size_override_exp:override1=4;override2=2;override3=1 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      7
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :workgroup_size_override_exp:override1=4;override2=2;override3=2 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      8
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
+PASS :workgroup_size_override_exp:override1=4;override2=2;override3=1
+PASS :workgroup_size_override_exp:override1=4;override2=2;override3=2
 PASS :workgroup_size_override_exp:override1=4;override2=2;override3=4
 PASS :workgroup_size_override_exp:override1=4;override2=2;override3=8
-FAIL :workgroup_size_override_exp:override1=4;override2=3;override3=1 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      8
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :workgroup_size_override_exp:override1=4;override2=3;override3=2 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      9
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
+PASS :workgroup_size_override_exp:override1=4;override2=3;override3=1
+PASS :workgroup_size_override_exp:override1=4;override2=3;override3=2
 PASS :workgroup_size_override_exp:override1=4;override2=3;override3=4
 PASS :workgroup_size_override_exp:override1=4;override2=3;override3=8
-FAIL :workgroup_size_override_exp:override1=4;override2=4;override3=1 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      9
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
+PASS :workgroup_size_override_exp:override1=4;override2=4;override3=1
 PASS :workgroup_size_override_exp:override1=4;override2=4;override3=2
 PASS :workgroup_size_override_exp:override1=4;override2=4;override3=4
 PASS :workgroup_size_override_exp:override1=4;override2=4;override3=8
-FAIL :workgroup_size_override_exp:override1=8;override2=1;override3=1 assert_unreached:
-  - (in subcase: ) EXPECTATION FAILED: Incorrect workgroup size x dimension for wg 0:
-    - expected: 0
-    - got:      10
-      at (elided: below max severity)
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate overrides
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
+PASS :workgroup_size_override_exp:override1=8;override2=1;override3=1
 PASS :workgroup_size_override_exp:override1=8;override2=1;override3=2
 PASS :workgroup_size_override_exp:override1=8;override2=1;override3=4
 PASS :workgroup_size_override_exp:override1=8;override2=1;override3=8

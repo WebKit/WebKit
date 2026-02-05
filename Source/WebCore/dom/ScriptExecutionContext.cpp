@@ -39,6 +39,7 @@
 #include "DatabaseContext.h"
 #include "Document.h"
 #include "DocumentPage.h"
+#include "DocumentQuirks.h"
 #include "EmptyScriptExecutionContext.h"
 #include "ErrorEvent.h"
 #include "FontLoadRequest.h"
@@ -55,6 +56,7 @@
 #include "Page.h"
 #include "Performance.h"
 #include "PublicURLManager.h"
+#include "Quirks.h"
 #include "RTCDataChannelRemoteHandlerConnection.h"
 #include "RejectedPromiseTracker.h"
 #include "ResourceRequest.h"
@@ -80,7 +82,6 @@
 #include "WorkerThread.h"
 #include "WorkletGlobalScope.h"
 #include <JavaScriptCore/CallFrame.h>
-#include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/DeferredWorkTimer.h>
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSPromise.h>
@@ -88,6 +89,7 @@
 #include <JavaScriptCore/SourceTaintedOrigin.h>
 #include <JavaScriptCore/StackVisitor.h>
 #include <JavaScriptCore/StrongInlines.h>
+#include <JavaScriptCore/TopExceptionScope.h>
 #include <JavaScriptCore/VM.h>
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
@@ -468,7 +470,7 @@ bool ScriptExecutionContext::canIncludeErrorDetails(CachedScript* script, const 
         ASSERT(securityOrigin()->toString() == script->origin()->toString());
         return script->isCORSSameOrigin();
     }
-    return protectedSecurityOrigin()->canRequest(completeSourceURL, OriginAccessPatternsForWebProcess::singleton());
+    return protect(securityOrigin())->canRequest(completeSourceURL, OriginAccessPatternsForWebProcess::singleton());
 }
 
 void ScriptExecutionContext::reportException(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception* exception, RefPtr<ScriptCallStack>&& callStack, CachedScript* cachedScript, bool fromModule)
@@ -503,7 +505,7 @@ void ScriptExecutionContext::reportUnhandledPromiseRejection(JSC::JSGlobalObject
         return;
 
     Ref vm = state.vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSC::JSValue result = promise.result();
     String resultMessage = retrieveErrorMessage(state, vm, result, scope);
     String errorMessage;
@@ -537,11 +539,6 @@ void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageLeve
     addMessage(source, level, message, sourceURL, lineNumber, columnNumber, nullptr, state, requestIdentifier);
 }
 
-Ref<SecurityOrigin> ScriptExecutionContext::protectedTopOrigin() const
-{
-    return topOrigin();
-}
-
 bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception* exception, CachedScript* cachedScript, bool fromModule)
 {
     RefPtr target = errorEventTarget();
@@ -569,21 +566,11 @@ int ScriptExecutionContext::circularSequentialID()
     return m_circularSequentialID;
 }
 
-Ref<JSC::VM> ScriptExecutionContext::protectedVM()
-{
-    return vm();
-}
-
 PublicURLManager& ScriptExecutionContext::publicURLManager()
 {
     if (!m_publicURLManager)
         m_publicURLManager = PublicURLManager::create(this);
     return *m_publicURLManager;
-}
-
-Ref<PublicURLManager> ScriptExecutionContext::protectedPublicURLManager()
-{
-    return publicURLManager();
 }
 
 void ScriptExecutionContext::adjustMinimumDOMTimerInterval(Seconds oldMinimumTimerInterval)
@@ -628,7 +615,7 @@ RejectedPromiseTracker* ScriptExecutionContext::ensureRejectedPromiseTrackerSlow
         if (!scriptController || scriptController->isTerminatingExecution())
             return nullptr;
     }
-    m_rejectedPromiseTracker = makeUnique<RejectedPromiseTracker>(*this, protectedVM());
+    m_rejectedPromiseTracker = makeUnique<RejectedPromiseTracker>(*this, protect(vm()));
     return m_rejectedPromiseTracker.get();
 }
 
@@ -679,7 +666,7 @@ String ScriptExecutionContext::domainForCachePartition() const
     if (m_storageBlockingPolicy != StorageBlockingPolicy::BlockThirdParty)
         return emptyString();
 
-    return protectedTopOrigin()->domainForCachePartition();
+    return protect(topOrigin())->domainForCachePartition();
 }
 
 bool ScriptExecutionContext::allowsMediaDevices() const
@@ -706,7 +693,7 @@ void ScriptExecutionContext::registerServiceWorker(ServiceWorker& serviceWorker)
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
     ensureOnMainThread([identifier = serviceWorker.identifier()] {
-        ServiceWorkerProvider::singleton().protectedServiceWorkerConnection()->registerServiceWorkerInServer(identifier);
+        protect(ServiceWorkerProvider::singleton().serviceWorkerConnection())->registerServiceWorkerInServer(identifier);
     });
 }
 
@@ -715,7 +702,7 @@ void ScriptExecutionContext::unregisterServiceWorker(ServiceWorker& serviceWorke
     m_serviceWorkers.remove(serviceWorker.identifier());
 
     ensureOnMainThread([identifier = serviceWorker.identifier()] {
-        ServiceWorkerProvider::singleton().protectedServiceWorkerConnection()->unregisterServiceWorkerInServer(identifier);
+        protect(ServiceWorkerProvider::singleton().serviceWorkerConnection())->unregisterServiceWorkerInServer(identifier);
     });
 }
 
@@ -882,7 +869,7 @@ ScriptExecutionContext::HasResourceAccess ScriptExecutionContext::canAccessResou
     case ResourceType::SessionStorage:
         if (m_storageBlockingPolicy == StorageBlockingPolicy::BlockAll)
             return HasResourceAccess::No;
-        if ((m_storageBlockingPolicy == StorageBlockingPolicy::BlockThirdParty) && !protectedTopOrigin()->isSameOriginAs(*origin) && !origin->hasUniversalAccess())
+        if ((m_storageBlockingPolicy == StorageBlockingPolicy::BlockThirdParty) && !protect(topOrigin())->isSameOriginAs(*origin) && !origin->hasUniversalAccess())
             return HasResourceAccess::DefaultForThirdParty;
         return HasResourceAccess::Yes;
     }
@@ -968,11 +955,6 @@ GuaranteedSerialFunctionDispatcher& ScriptExecutionContext::nativePromiseDispatc
     return *m_nativePromiseDispatcher;
 }
 
-Ref<GuaranteedSerialFunctionDispatcher> ScriptExecutionContext::protectedNativePromiseDispatcher()
-{
-    return nativePromiseDispatcher();
-}
-
 bool ScriptExecutionContext::requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory category, IncludeConsoleLog includeConsoleLog)
 {
     RefPtr vm = vmIfExists();
@@ -1006,13 +988,14 @@ bool ScriptExecutionContext::requiresScriptTrackingPrivacyProtection(ScriptTrack
     if (category == ScriptTrackingPrivacyCategory::NetworkRequests && !page->settings().scriptTrackingPrivacyNetworkRequestBlockingEnabled())
         return false;
 
-    if (page->shouldAllowScriptAccess(taintedURL, protectedTopOrigin(), category))
+    bool shouldApplyConsistently = category == ScriptTrackingPrivacyCategory::QueryParameters && document->quirks().needsConsistentQueryParameterFilteringQuirk(taintedURL);
+    if (page->shouldAllowScriptAccess(taintedURL, protect(topOrigin()), category) && !shouldApplyConsistently)
         return false;
 
     if (!page->settings().scriptTrackingPrivacyLoggingEnabled())
         return true;
 
-    if (includeConsoleLog == IncludeConsoleLog::No || !page->reportScriptTrackingPrivacy(taintedURL, category))
+    if ((includeConsoleLog == IncludeConsoleLog::No || !page->reportScriptTrackingPrivacy(taintedURL, category)) && !shouldApplyConsistently)
         return true;
 
     addConsoleMessage(MessageSource::JS, MessageLevel::Info, makeLogMessage(taintedURL, category));
@@ -1031,11 +1014,6 @@ bool ScriptExecutionContext::isAlwaysOnLoggingAllowed() const
 WebCoreOpaqueRoot root(ScriptExecutionContext* context)
 {
     return WebCoreOpaqueRoot { context };
-}
-
-RefPtr<SocketProvider> ScriptExecutionContext::protectedSocketProvider()
-{
-    return socketProvider();
 }
 
 } // namespace WebCore

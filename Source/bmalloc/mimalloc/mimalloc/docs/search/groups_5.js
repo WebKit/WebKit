@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['heap_20allocation_0',['Heap Allocation',['../group__heap.html',1,'']]],
-  ['heap_20introspection_1',['Heap Introspection',['../group__analysis.html',1,'']]]
+  ['heap_20introspection_0',['Heap Introspection',['../group__analysis.html',1,'']]],
+  ['heaps_1',['Heaps',['../group__heap.html',1,'']]],
+  ['heaps_2',['Thread-local heaps',['../group__theap.html',1,'']]]
 ];

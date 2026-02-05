@@ -126,11 +126,11 @@ LegacyRenderSVGResourceContainer* StyleCachedImage::uncheckedRenderSVGResource(c
     }
 
     if (!m_cachedImage) {
-        auto fragmentIdentifier = SVGURIReference::fragmentIdentifierFromIRIString(m_url, renderer->protectedDocument());
+        auto fragmentIdentifier = SVGURIReference::fragmentIdentifierFromIRIString(m_url, protect(renderer->document()));
         return uncheckedRenderSVGResource(renderer->treeScopeForSVGReferences(), fragmentIdentifier);
     }
 
-    auto image = dynamicDowncast<SVGImage>(m_cachedImage->image());
+    RefPtr image = dynamicDowncast<SVGImage>(m_cachedImage->image());
     if (!image)
         return nullptr;
 
@@ -167,7 +167,7 @@ RenderSVGResourceContainer* StyleCachedImage::renderSVGResource(const RenderElem
         return nullptr;
     }
 
-    auto image = dynamicDowncast<SVGImage>(m_cachedImage->image());
+    RefPtr image = dynamicDowncast<SVGImage>(m_cachedImage->image());
     if (!image)
         return nullptr;
 

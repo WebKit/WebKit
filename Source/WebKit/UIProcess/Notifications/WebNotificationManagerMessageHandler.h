@@ -51,7 +51,7 @@ private:
     void getPermissionState(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&) final;
     void getPermissionStateSync(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&) final;
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const final;
-    Ref<WebPageProxy> protectedPage() const;
+    WebPageProxy& page() const { return m_webPageProxy; }
 
     WeakRef<WebPageProxy> m_webPageProxy;
 };

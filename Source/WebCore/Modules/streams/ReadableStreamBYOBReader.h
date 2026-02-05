@@ -51,7 +51,7 @@ public:
     ~ReadableStreamBYOBReader();
 
     struct ReadOptions {
-        size_t min { 1 };
+        uint64_t min { 1 };
     };
 
     void readForBindings(JSDOMGlobalObject&, JSC::ArrayBufferView&, ReadOptions, Ref<DeferredPromise>&&);
@@ -72,7 +72,7 @@ public:
     using ClosedCallback = Function<void(JSDOMGlobalObject&, JSC::JSValue)>;
     void onClosedPromiseRejection(ClosedCallback&&);
 
-    void read(JSDOMGlobalObject&, JSC::ArrayBufferView&, size_t, Ref<ReadableStreamReadIntoRequest>&&);
+    void read(JSDOMGlobalObject&, JSC::ArrayBufferView&, uint64_t, Ref<ReadableStreamReadIntoRequest>&&);
 
     bool isReachableFromOpaqueRoots() const;
     template<typename Visitor> void visitAdditionalChildren(Visitor&);

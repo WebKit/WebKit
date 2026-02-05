@@ -51,13 +51,10 @@ public:
     bool isX11() const;
     bool isWayland() const;
 
-    String accessibilityBusAddress() const;
-
 private:
     Display();
 #if PLATFORM(X11)
     bool initializeGLDisplayX11() const;
-    String accessibilityBusAddressX11() const;
 #endif
 #if PLATFORM(WAYLAND)
     bool initializeGLDisplayWayland() const;

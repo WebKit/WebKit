@@ -37,5 +37,6 @@ list(APPEND WTF_PUBLIC_HEADERS
 list(APPEND WTF_LIBRARIES
     DbgHelp
     shlwapi
+    synchronization
     winmm
 )

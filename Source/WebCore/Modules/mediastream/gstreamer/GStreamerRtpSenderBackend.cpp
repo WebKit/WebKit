@@ -275,6 +275,11 @@ void GStreamerRtpSenderBackend::setParameters(const RTCRtpSendParameters& parame
     }, [](const std::nullptr_t&) {
     });
 
+    if (!parameters.encodings.isEmpty()) {
+        const auto& encoding = parameters.encodings.first();
+        auto priorityType = fromRTCPriorityType(encoding.priority);
+        g_object_set(m_rtcSender.get(), "priority", priorityType, nullptr);
+    }
     promise.resolve();
 }
 

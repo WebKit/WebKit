@@ -50,19 +50,13 @@
 #include <WebCore/RenderView.h>
 #include <WebCore/ScrollingThread.h>
 #include <WebCore/Settings.h>
+#include <WebCore/SkiaPaintingEngine.h>
 #include <WebCore/ThreadedScrollingTree.h>
 #include <WebCore/WindowEventLoop.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
-
-#if USE(CAIRO)
-#include <WebCore/CairoPaintingEngine.h>
-#elif USE(SKIA)
-#include <WebCore/SkiaPaintingEngine.h>
-#endif
-
 
 namespace WebKit {
 using namespace WebCore;
@@ -72,11 +66,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(LayerTreeHost);
 LayerTreeHost::LayerTreeHost(WebPage& webPage)
     : m_webPage(webPage)
     , m_sceneState(CoordinatedSceneState::create())
-#if USE(CAIRO)
-    , m_paintingEngine(Cairo::PaintingEngine::create())
-#elif USE(SKIA)
     , m_skiaPaintingEngine(SkiaPaintingEngine::create())
-#endif
 {
     {
         auto& rootLayer = m_sceneState->rootLayer();
@@ -121,9 +111,7 @@ LayerTreeHost::~LayerTreeHost()
 
     m_sceneState->invalidate();
 
-#if USE(SKIA)
     m_skiaPaintingEngine = nullptr;
-#endif
 
     m_compositor->invalidate();
 }
@@ -162,6 +150,9 @@ void LayerTreeHost::scheduleRenderingUpdate()
 void LayerTreeHost::scheduleRenderingUpdateRunLoopObserver()
 {
     if (m_renderingUpdateRunLoopObserver->isScheduled())
+        return;
+
+    if (m_isUpdatingRendering)
         return;
 
     tracePoint(RenderingUpdateRunLoopObserverStart);
@@ -433,13 +424,6 @@ void LayerTreeHost::didPaintTile()
     m_compositor->pendingTilesDidChange();
 }
 
-#if USE(CAIRO)
-Cairo::PaintingEngine& LayerTreeHost::paintingEngine()
-{
-    return *m_paintingEngine;
-}
-#endif
-
 Ref<CoordinatedImageBackingStore> LayerTreeHost::imageBackingStore(Ref<NativeImage>&& nativeImage)
 {
     auto nativeImageID = nativeImage->uniqueID();
@@ -612,12 +596,10 @@ void LayerTreeHost::foreachRegionInDamageHistoryForTesting(Function<void(const R
 
 void LayerTreeHost::fillGLInformation(RenderProcessInfo&& info, CompletionHandler<void(RenderProcessInfo&&)>&& completionHandler)
 {
-#if USE(SKIA)
     if (ProcessCapabilities::canUseAcceleratedBuffers() && PlatformDisplay::sharedDisplay().skiaGLContext())
         info.gpuPaintingThreadsCount = SkiaPaintingEngine::numberOfGPUPaintingThreads();
     else
         info.cpuPaintingThreadsCount = SkiaPaintingEngine::numberOfCPUPaintingThreads();
-#endif
     m_compositor->fillGLInformation(WTF::move(info), WTF::move(completionHandler));
 }
 

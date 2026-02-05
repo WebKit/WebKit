@@ -128,7 +128,7 @@ public:
     RTCSessionDescription* currentRemoteDescription() const { return m_currentRemoteDescription.get(); }
     RTCSessionDescription* pendingRemoteDescription() const { return m_pendingRemoteDescription.get(); }
 
-    using Candidate = std::optional<Variant<RTCIceCandidateInit, RefPtr<RTCIceCandidate>>>;
+    using Candidate = Variant<RTCIceCandidateInit, RefPtr<RTCIceCandidate>>;
     void addIceCandidate(Candidate&&, Ref<DeferredPromise>&&);
 
     RTCSignalingState signalingState() const { return m_signalingState; }

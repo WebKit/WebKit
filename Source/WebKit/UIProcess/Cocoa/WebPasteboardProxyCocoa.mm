@@ -94,7 +94,7 @@ std::optional<IPC::AsyncReplyID> WebPasteboardProxy::grantAccessToCurrentData(We
         return std::nullopt;
     }
     auto processIdentifier = process.coreProcessIdentifier();
-    return process.protectedWebsiteDataStore()->protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(processIdentifier, paths), WTF::move(completionHandler));
+    return protect(protect(process.websiteDataStore())->networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(processIdentifier, paths), WTF::move(completionHandler));
 }
 
 void WebPasteboardProxy::grantAccess(WebProcessProxy& process, const String& pasteboardName, PasteboardAccessType type)
@@ -813,7 +813,7 @@ void WebPasteboardProxy::createOneWebArchiveFromFrames(WebProcessProxy& requeste
             continue;
         }
 
-        frameByProcess.ensure(currentFrame->protectedProcess(), [&] {
+        frameByProcess.ensure(protect(currentFrame->process()), [&] {
             return Vector<WebCore::FrameIdentifier> { };
         }).iterator->value.append(frameIdentifier);
     }

@@ -270,11 +270,6 @@ RetainPtr<NSMutableDictionary> WebProcessPool::ensureProtectedBundleParameters()
     return ensureBundleParameters();
 }
 
-RetainPtr<NSMutableDictionary> WebProcessPool::protectedBundleParameters()
-{
-    return bundleParameters();
-}
-
 static AccessibilityPreferences accessibilityPreferences()
 {
     AccessibilityPreferences preferences;
@@ -404,6 +399,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     parameters.shouldEnableFTLJIT = [defaults boolForKey:WebKitJSCFTLJITEnabledDefaultsKey];
     parameters.shouldEnableMemoryPressureReliefLogging = [defaults boolForKey:@"LogMemoryJetsamDetails"];
     parameters.shouldSuppressMemoryPressureHandler = [defaults boolForKey:WebKitSuppressMemoryPressureHandlerDefaultsKey];
+
+#if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
+    parameters.shouldEnableWebAssemblyDebugger = process.createWasmDebuggerDebuggable();
+#endif
 
     // FIXME: This should really be configurable; we shouldn't just blindly allow read access to the UI process bundle.
     parameters.uiProcessBundleResourcePath = m_resolvedPaths.uiProcessBundleResourcePath;
@@ -1257,7 +1256,7 @@ void WebProcessPool::setProcessesShouldSuspend(bool shouldSuspend)
 
     m_processesShouldSuspend = shouldSuspend;
     for (auto& process : m_processes) {
-        process->protectedThrottler()->setAllowsActivities(!m_processesShouldSuspend);
+        protect(process->throttler())->setAllowsActivities(!m_processesShouldSuspend);
 
 #if ENABLE(WEBXR) && !USE(OPENXR)
         if (!m_processesShouldSuspend) {

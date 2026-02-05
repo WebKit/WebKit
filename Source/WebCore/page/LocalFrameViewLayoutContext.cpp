@@ -215,7 +215,7 @@ void LocalFrameViewLayoutContext::performLayout(bool canDeferUpdateLayerPosition
         LOG_WITH_STREAM(Layout, stream << "LocalFrameView " << &view() << " elapsed time before first layout: " << document()->timeSinceDocumentCreation());
 #endif
 #if PLATFORM(IOS_FAMILY)
-    if (protectedView()->updateFixedPositionLayoutRect() && subtreeLayoutRoot())
+    if (protect(view())->updateFixedPositionLayoutRect() && subtreeLayoutRoot())
         convertSubtreeLayoutToFullLayout();
 #endif
     {
@@ -232,7 +232,7 @@ void LocalFrameViewLayoutContext::performLayout(bool canDeferUpdateLayerPosition
         if (view().hasOneRef())
             return;
 
-        protectedView()->autoSizeIfEnabled();
+        protect(view())->autoSizeIfEnabled();
         if (!renderView())
             return;
 
@@ -241,7 +241,7 @@ void LocalFrameViewLayoutContext::performLayout(bool canDeferUpdateLayerPosition
 
         LOG_WITH_STREAM(Layout, stream << "LocalFrameView " << &view() << " layout " << m_layoutUpdateCount << " - subtree root " << subtreeLayoutRoot() << ", needsFullRepaint " << m_needsFullRepaint);
 
-        protectedView()->willDoLayout(layoutRoot);
+        protect(view())->willDoLayout(layoutRoot);
         m_firstLayout = false;
     }
 
@@ -278,7 +278,7 @@ void LocalFrameViewLayoutContext::performLayout(bool canDeferUpdateLayerPosition
         if (is<RenderView>(layoutRoot) && !renderView()->printing()) {
             // This is to protect m_needsFullRepaint's value when layout() is getting re-entered through adjustViewSize().
             SetForScope needsFullRepaint(m_needsFullRepaint);
-            protectedView()->adjustViewSize();
+            protect(view())->adjustViewSize();
             // FIXME: Firing media query callbacks synchronously on nested frames could produced a detached FrameView here by
             // navigating away from the current document (see webkit.org/b/173329).
             if (view().hasOneRef())
@@ -290,7 +290,7 @@ void LocalFrameViewLayoutContext::performLayout(bool canDeferUpdateLayerPosition
         if (m_needsFullRepaint)
             renderView()->repaintRootContents();
         ASSERT(!layoutRoot->needsLayout());
-        protectedView()->didLayout(layoutRoot, canDeferUpdateLayerPositions);
+        protect(view())->didLayout(layoutRoot, canDeferUpdateLayerPositions);
         runOrScheduleAsynchronousTasks(canDeferUpdateLayerPositions);
     }
     InspectorInstrumentation::didLayout(frame, layoutAreas);
@@ -329,7 +329,7 @@ void LocalFrameViewLayoutContext::runPostLayoutTasks()
     if (m_inAsynchronousTasks)
         return;
     SetForScope inAsynchronousTasks(m_inAsynchronousTasks, true);
-    protectedView()->performPostLayoutTasks();
+    protect(view())->performPostLayoutTasks();
 }
 
 void LocalFrameViewLayoutContext::flushPostLayoutTasks()
@@ -343,16 +343,21 @@ void LocalFrameViewLayoutContext::didLayout(bool canDeferUpdateLayerPositions)
 {
     m_layoutUpdateCount++;
 
-    auto updateLayerPositions = UpdateLayerPositions { needsFullRepaint() };
-    if (m_pendingUpdateLayerPositions)
-        m_pendingUpdateLayerPositions->merge(updateLayerPositions);
-    else
-        m_pendingUpdateLayerPositions = updateLayerPositions;
+    requestUpdateLayerPositions(needsFullRepaint());
 
     if (!canDeferUpdateLayerPositions)
         flushUpdateLayerPositions();
 
     m_updateCompositingLayersIsPending = true;
+}
+
+void LocalFrameViewLayoutContext::requestUpdateLayerPositions(bool needsFullRepaint)
+{
+    auto updateLayerPositions = UpdateLayerPositions { needsFullRepaint };
+    if (m_pendingUpdateLayerPositions)
+        m_pendingUpdateLayerPositions->merge(updateLayerPositions);
+    else
+        m_pendingUpdateLayerPositions = updateLayerPositions;
 }
 
 void LocalFrameViewLayoutContext::flushUpdateLayerPositions()
@@ -364,7 +369,7 @@ void LocalFrameViewLayoutContext::flushUpdateLayerPositions()
     if (!view)
         return;
 
-    auto repaintRectEnvironment = RepaintRectEnvironment { view->page().deviceScaleFactor(), protectedDocument()->printing(), protectedView()->useFixedLayout() };
+    auto repaintRectEnvironment = RepaintRectEnvironment { view->page().deviceScaleFactor(), protectedDocument()->printing(), protect(this->view())->useFixedLayout() };
     bool environmentChanged = repaintRectEnvironment != m_lastRepaintRectEnvironment;
 
     auto updateLayerPositions = *std::exchange(m_pendingUpdateLayerPositions, std::nullopt);
@@ -384,7 +389,7 @@ bool LocalFrameViewLayoutContext::updateCompositingLayersAfterStyleChange()
     if (needsLayout() || isInLayout())
         return false;
 
-    auto repaintRectEnvironment = RepaintRectEnvironment { view->page().deviceScaleFactor(), protectedDocument()->printing(), protectedView()->useFixedLayout() };
+    auto repaintRectEnvironment = RepaintRectEnvironment { view->page().deviceScaleFactor(), protectedDocument()->printing(), protect(this->view())->useFixedLayout() };
     bool environmentChanged = repaintRectEnvironment != m_lastRepaintRectEnvironment;
 
     view->layer()->updateLayerPositionsAfterStyleChange(environmentChanged);
@@ -392,6 +397,19 @@ bool LocalFrameViewLayoutContext::updateCompositingLayersAfterStyleChange()
     m_lastRepaintRectEnvironment = WTF::move(repaintRectEnvironment);
 
     return view->compositor().didRecalcStyleWithNoPendingLayout();
+}
+
+void LocalFrameViewLayoutContext::markForUpdateLayerPositionsAfterSVGTransformChange()
+{
+    CheckedPtr view = renderView();
+    if (!view)
+        return;
+
+    if (needsLayout() || isInLayout())
+        return;
+
+    requestUpdateLayerPositions();
+    view->page().scheduleRenderingUpdate({ RenderingUpdateStep::LayerFlush });
 }
 
 void LocalFrameViewLayoutContext::updateCompositingLayersAfterLayout()
@@ -654,7 +672,7 @@ void LocalFrameViewLayoutContext::updateStyleForLayout()
     document->updateElementsAffectedByMediaQueries();
     // If there is any pagination to apply, it will affect the RenderView's style, so we should
     // take care of that now.
-    protectedView()->applyPaginationToViewport();
+    protect(view())->applyPaginationToViewport();
     // Always ensure our style info is up-to-date. This can happen in situations where
     // the layout beats any sort of style recalc update that needs to occur.
     document->updateStyleIfNeeded();
@@ -895,7 +913,7 @@ Ref<LocalFrameView> LocalFrameViewLayoutContext::protectedView() const
 
 RenderView* LocalFrameViewLayoutContext::renderView() const
 {
-    return protectedView()->renderView();
+    return protect(view())->renderView();
 }
 
 Document* LocalFrameViewLayoutContext::document() const

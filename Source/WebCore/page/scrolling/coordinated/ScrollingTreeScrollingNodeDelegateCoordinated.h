@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+class ScrollerPairCoordinated;
+
 class ScrollingTreeScrollingNodeDelegateCoordinated final : public ThreadedScrollingTreeScrollingNodeDelegate {
 public:
     explicit ScrollingTreeScrollingNodeDelegateCoordinated(ScrollingTreeScrollingNode&, bool scrollAnimatorEnabled);
@@ -42,10 +44,18 @@ public:
     bool handleWheelEvent(const PlatformWheelEvent&);
 
 private:
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    // ThreadedScrollingTreeScrollingNodeDelegate
+    void updateFromStateNode(const ScrollingStateScrollingNode&) final;
+#endif
+
     // ScrollingEffectsControllerClient.
     bool scrollAnimationEnabled() const final { return m_scrollAnimatorEnabled; }
 
     bool m_scrollAnimatorEnabled { false };
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    const Ref<ScrollerPairCoordinated> m_scrollerPair;
+#endif
 };
 
 } // namespace WebCore

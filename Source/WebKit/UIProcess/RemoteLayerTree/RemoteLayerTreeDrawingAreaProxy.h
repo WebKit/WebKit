@@ -169,6 +169,7 @@ protected:
     void forEachProcessState(NOESCAPE Function<void(ProcessState&, WebProcessProxy&)>&&);
 
     std::unique_ptr<RemoteLayerTreeHost> m_remoteLayerTreeHost;
+    bool m_needsDisplayRefreshCallbacksForDrawing { false };
 private:
 #if ENABLE(TILED_CA_DRAWING_AREA)
     DrawingAreaType type() const final { return DrawingAreaType::RemoteLayerTree; }

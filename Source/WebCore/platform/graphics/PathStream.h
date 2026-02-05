@@ -36,6 +36,7 @@ namespace WebCore {
 
 class PathStream final : public PathImpl {
     WTF_MAKE_TZONE_ALLOCATED(PathStream);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PathStream);
 public:
     static Ref<PathStream> create();
     static Ref<PathStream> create(PathSegment&&);
@@ -59,7 +60,8 @@ public:
     void add(PathContinuousRoundedRect) final;
     void add(PathCloseSubpath) final;
 
-    const Vector<PathSegment>& segments() const { return m_segments; }
+    const Vector<PathSegment>* segmentsIfExists() const final { return &m_segments; }
+    Vector<PathSegment> segments() const final { return m_segments; }
 
     void applySegments(const PathSegmentApplier&) const final;
     bool applyElements(const PathElementApplier&) const final;
@@ -74,6 +76,9 @@ public:
     static FloatRect computeFastBoundingRect(std::span<const PathSegment>);
     static FloatRect computeBoundingRect(std::span<const PathSegment>);
     static bool computeHasSubpaths(std::span<const PathSegment>);
+
+    bool isTransient() const final { return m_isTransient; }
+    void setNotTransient() final { m_isTransient = false; }
 
 private:
     PathStream() = default;
@@ -95,6 +100,7 @@ private:
     Vector<PathSegment>& segments() { return m_segments; }
 
     Vector<PathSegment> m_segments;
+    bool m_isTransient { true };
 };
 
 } // namespace WebCore

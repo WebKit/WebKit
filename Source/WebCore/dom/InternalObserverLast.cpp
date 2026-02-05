@@ -89,7 +89,7 @@ private:
     const Ref<DeferredPromise> m_promise;
 };
 
-void createInternalObserverOperatorLast(ScriptExecutionContext& context, Observable& observable, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+void createInternalObserverOperatorLast(ScriptExecutionContext& context, Observable& observable, SubscribeOptions&& options, Ref<DeferredPromise>&& promise)
 {
     if (RefPtr signal = options.signal) {
         if (signal->aborted())
@@ -102,7 +102,7 @@ void createInternalObserverOperatorLast(ScriptExecutionContext& context, Observa
 
     Ref observer = InternalObserverLast::create(context, WTF::move(promise));
 
-    observable.subscribeInternal(context, WTF::move(observer), options);
+    observable.subscribeInternal(context, WTF::move(observer), WTF::move(options));
 }
 
 } // namespace WebCore

@@ -104,7 +104,7 @@ SharedWorkerThreadProxy::SharedWorkerThreadProxy(Ref<Page>&& page, SharedWorkerI
     : m_page(WTF::move(page))
     , m_document(*m_page->localTopDocument())
     , m_contextIdentifier(*initializationData.clientIdentifier)
-    , m_workerThread(SharedWorkerThread::create(sharedWorkerIdentifier, generateWorkerParameters(workerFetchResult, WTF::move(workerOptions), WTF::move(initializationData), m_document), WTF::move(workerFetchResult.script), *this, *this, *this, *this, WorkerThreadStartMode::Normal, clientOrigin.topOrigin.securityOrigin(), m_document->protectedIDBConnectionProxy().get(), m_document->protectedSocketProvider().get(), JSC::RuntimeFlags::createAllEnabled()))
+    , m_workerThread(SharedWorkerThread::create(sharedWorkerIdentifier, generateWorkerParameters(workerFetchResult, WTF::move(workerOptions), WTF::move(initializationData), m_document), WTF::move(workerFetchResult.script), *this, *this, *this, *this, WorkerThreadStartMode::Normal, clientOrigin.topOrigin.securityOrigin(), protect(m_document->idbConnectionProxy()).get(), protect(m_document->socketProvider()).get(), JSC::RuntimeFlags::createAllEnabled()))
     , m_cacheStorageProvider(cacheStorageProvider)
     , m_clientOrigin(clientOrigin)
 {

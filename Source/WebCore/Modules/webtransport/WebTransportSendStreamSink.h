@@ -49,8 +49,8 @@ private:
     WEBCORE_EXPORT WebTransportSendStreamSink(WebTransport&, WebTransportStreamIdentifier);
 
     void write(ScriptExecutionContext&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
-    void close() final;
-    void abort(JSC::JSValue) final;
+    void close(JSDOMGlobalObject&) final;
+    void abort(JSDOMGlobalObject&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
 
     const ThreadSafeWeakPtr<WebTransport> m_transport;
     const WebTransportStreamIdentifier m_identifier;

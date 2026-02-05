@@ -42,7 +42,6 @@ public:
     bool contains(WebCore::SharedStringHash) const;
 
     WebCore::SharedMemory* sharedMemory() const { return m_sharedMemory.get(); }
-    RefPtr<WebCore::SharedMemory> protectedSharedMemory() const;
     void setSharedMemory(RefPtr<WebCore::SharedMemory>&&);
 
 protected:

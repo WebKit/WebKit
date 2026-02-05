@@ -85,16 +85,21 @@ TEST(WKWebView, EvaluateJavaScriptErrorCases)
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
-    [webView evaluateJavaScript:@"document.body" completionHandler:^(id result, NSError *error) {
-        EXPECT_NULL(result);
-        EXPECT_WK_STREQ(@"WKErrorDomain", [error domain]);
-        EXPECT_EQ(WKErrorJavaScriptResultTypeIsUnsupported, [error code]);
-
-        isDone = true;
-    }];
-
-    isDone = false;
-    TestWebKitAPI::Util::run(&isDone);
+    NSArray<NSString *> *unsupportedTypes = @[
+        @"document.body",
+        @"[ document.body ]",
+        @"{ a : document.body }",
+    ];
+    for (NSString *unsupported in unsupportedTypes) {
+        isDone = false;
+        [webView evaluateJavaScript:unsupported completionHandler:^(id result, NSError *error) {
+            EXPECT_NULL(result);
+            EXPECT_WK_STREQ(@"WKErrorDomain", [error domain]);
+            EXPECT_EQ(WKErrorJavaScriptResultTypeIsUnsupported, [error code]);
+            isDone = true;
+        }];
+        TestWebKitAPI::Util::run(&isDone);
+    }
 
     auto handler = adoptNS([TestScriptMessageHandler new]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1317,17 +1322,12 @@ TEST(EvaluateJavaScript, Serialization)
 
     // One of the array members is not serializable, so it should be missing from the result.
     result = [webView objectByCallingAsyncFunction:@"return window.arrayObject" withArguments:nil error:&error];
-    EXPECT_NULL(error);
-    NSArray *expectedArray = @[ @2, @3, @4, @5, @6 ];
-    EXPECT_TRUE([result isEqual:expectedArray]);
+    EXPECT_NOT_NULL(error);
+    EXPECT_NULL(result);
 
     // One of the object values is not serializable, so it should be missing from the result.
     result = [webView objectByCallingAsyncFunction:@"return window.objectObject" withArguments:nil error:&error];
-    EXPECT_NULL(error);
-    NSDictionary *expectedDictionary = @{
-        @"bar" : @17,
-        @"foo" : @"bar"
-    };
-    EXPECT_TRUE([result isEqual:expectedDictionary]);
+    EXPECT_NOT_NULL(error);
+    EXPECT_NULL(result);
 }
 

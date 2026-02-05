@@ -64,6 +64,7 @@ private:
     HashMap<WebCore::RiceBackend::Socket, String> gatherSocketAddresses(WebCore::ScriptExecutionContextIdentifier, unsigned) final;
 
     void finalizeStream(unsigned) final;
+    void setSocketTypeOfService(unsigned, unsigned) final;
 
     void refRiceBackend() final { ref(); }
     void derefRiceBackend() final { deref(); }

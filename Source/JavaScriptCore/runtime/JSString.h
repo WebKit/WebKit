@@ -312,7 +312,7 @@ private:
     friend JSString* jsNontrivialString(VM&, const String&);
     friend JSString* jsNontrivialString(VM&, String&&);
     friend JSString* jsSubstring(VM&, const String&, unsigned, unsigned);
-    friend JSString* jsSubstring(VM&, JSGlobalObject*, JSString*, unsigned, unsigned);
+    friend JSString* jsSubstring(JSGlobalObject*, VM&, JSString*, unsigned, unsigned);
     friend JSString* tryJSSubstringImpl(VM&, JSGlobalObject*, JSString*, unsigned, unsigned);
     friend JSString* jsSubstringOfResolved(VM&, GCDeferralContext*, JSString*, unsigned, unsigned);
     friend JSString* jsOwnedString(VM&, const String&);
@@ -743,7 +743,7 @@ private:
     friend JSString* jsString(JSGlobalObject*, JSString*, JSString*, JSString*);
     friend JSString* jsString(JSGlobalObject*, const String&, const String&, const String&);
     friend JSString* jsSubstringOfResolved(VM&, GCDeferralContext*, JSString*, unsigned, unsigned);
-    friend JSString* jsSubstring(VM&, JSGlobalObject*, JSString*, unsigned, unsigned);
+    friend JSString* jsSubstring(JSGlobalObject*, VM&, JSString*, unsigned, unsigned);
     friend JSString* tryJSSubstringImpl(VM&, JSGlobalObject*, JSString*, unsigned, unsigned);
     friend JSString* jsAtomString(JSGlobalObject*, VM&, JSString*);
     friend JSString* jsAtomString(JSGlobalObject*, VM&, JSString*, JSString*);
@@ -1046,7 +1046,7 @@ inline JSString* tryJSSubstringImpl(VM& vm, JSGlobalObject* globalObject, JSStri
     return nullptr;
 }
 
-inline JSString* jsSubstring(VM& vm, JSGlobalObject* globalObject, JSString* base, unsigned offset, unsigned length)
+inline JSString* jsSubstring(JSGlobalObject* globalObject, VM& vm, JSString* base, unsigned offset, unsigned length)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSString* result = tryJSSubstringImpl(vm, globalObject, base, offset, length);
@@ -1068,7 +1068,7 @@ inline JSString* jsSubstringOfResolved(VM& vm, JSString* s, unsigned offset, uns
 
 inline JSString* jsSubstring(JSGlobalObject* globalObject, JSString* s, unsigned offset, unsigned length)
 {
-    return jsSubstring(getVM(globalObject), globalObject, s, offset, length);
+    return jsSubstring(globalObject, getVM(globalObject), s, offset, length);
 }
 
 inline JSString* jsSubstring(VM& vm, const String& s, unsigned offset, unsigned length)

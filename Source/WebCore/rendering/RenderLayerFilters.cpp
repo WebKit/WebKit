@@ -87,7 +87,7 @@ void RenderLayerFilters::notifyFinished(CachedResource&, const NetworkLoadMetric
 
     // FIXME: This really shouldn't have to invalidate layer composition,
     // but tests like css3/filters/effect-reference-delete.html fail if that doesn't happen.
-    if (auto* enclosingElement = layer->enclosingElement())
+    if (RefPtr enclosingElement = layer->enclosingElement())
         enclosingElement->invalidateStyleAndLayerComposition();
     layer->renderer().repaint();
 }

@@ -25,7 +25,8 @@
 
 #pragma once
 
-#include "CryptoAlgorithmParameters.h"
+#include <WebCore/CryptoAlgorithmEcdhKeyDeriveParamsInit.h>
+#include <WebCore/CryptoAlgorithmParameters.h>
 
 namespace WebCore {
 
@@ -35,6 +36,12 @@ class CryptoAlgorithmEcdhKeyDeriveParams final : public CryptoAlgorithmParameter
     WTF_MAKE_TZONE_ALLOCATED(CryptoAlgorithmEcdhKeyDeriveParams);
 public:
     RefPtr<CryptoKey> publicKey;
+
+    CryptoAlgorithmEcdhKeyDeriveParams(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmEcdhKeyDeriveParamsInit init)
+        : CryptoAlgorithmParameters { WTF::move(identifier), WTF::move(init) }
+        , publicKey { WTF::move(init.publicKey) }
+    {
+    }
 
     Class parametersClass() const final { return Class::EcdhKeyDeriveParams; }
 };

@@ -776,29 +776,29 @@ void MockRealtimeVideoSource::monitorOrientation(OrientationNotifier& notifier)
 
 void MockRealtimeVideoSource::setIsInterrupted(bool isInterrupted)
 {
-    for (auto& source : allMockRealtimeVideoSource()) {
-        if (!source.isProducingData())
+    for (Ref source : allMockRealtimeVideoSource()) {
+        if (!source->isProducingData())
             continue;
         if (isInterrupted)
-            source.m_emitFrameTimer.stop();
+            source->m_emitFrameTimer.stop();
         else
-            source.startCaptureTimer();
-        source.notifyMutedChange(isInterrupted);
+            source->startCaptureTimer();
+        source->notifyMutedChange(isInterrupted);
     }
 }
 
 void MockRealtimeVideoSource::triggerCameraConfigurationChange()
 {
-    for (auto& source : allMockRealtimeVideoSource()) {
-        if (!source.isProducingData() || source.deviceType() != CaptureDevice::DeviceType::Camera)
+    for (Ref source : allMockRealtimeVideoSource()) {
+        if (!source->isProducingData() || source->deviceType() != CaptureDevice::DeviceType::Camera)
             continue;
 
-        std::get<MockCameraProperties>(source.m_device.properties).hasBackgroundBlur = !std::get<MockCameraProperties>(source.m_device.properties).hasBackgroundBlur;
+        std::get<MockCameraProperties>(source->m_device.properties).hasBackgroundBlur = !std::get<MockCameraProperties>(source->m_device.properties).hasBackgroundBlur;
 
-        source.m_currentSettings = { };
-        source.m_capabilities = { };
+        source->m_currentSettings = { };
+        source->m_capabilities = { };
 
-        source.forEachObserver([](auto& observer) {
+        source->forEachObserver([](auto& observer) {
             observer.sourceConfigurationChanged();
         });
     }

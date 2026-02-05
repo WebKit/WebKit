@@ -258,7 +258,7 @@ void ThreadedCompositor::flushCompositingState(const OptionSet<CompositionReason
         layer->flushCompositingState(reasons, *m_textureMapper);
 }
 
-void ThreadedCompositor::paintToCurrentGLContext(const TransformationMatrix& matrix, const IntSize& size)
+void ThreadedCompositor::paintToCurrentGLContext(const TransformationMatrix& matrix, const IntSize& size, const OptionSet<CompositionReason>& reasons)
 {
     FloatRect clipRect(FloatPoint { }, size);
     TextureMapperLayer& currentRootLayer = m_sceneState->rootLayer().ensureTarget();
@@ -298,7 +298,7 @@ void ThreadedCompositor::paintToCurrentGLContext(const TransformationMatrix& mat
         m_textureMapper->beginClip(TransformationMatrix(), *rectContainingRegionThatActuallyChanged);
 #endif
 
-    m_surface->clear();
+    m_surface->clear(reasons);
 
     WTFBeginSignpost(this, PaintTextureMapperLayerTree);
     currentRootLayer.paint(*m_textureMapper);
@@ -402,7 +402,7 @@ void ThreadedCompositor::renderLayerTree()
     WTFEndSignpost(this, FlushCompositingState);
 
     WTFBeginSignpost(this, PaintToGLContext);
-    paintToCurrentGLContext(viewportTransform, viewportSize);
+    paintToCurrentGLContext(viewportTransform, viewportSize, reasons);
     WTFEndSignpost(this, PaintToGLContext);
 
     updateFPSCounter();

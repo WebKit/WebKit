@@ -452,7 +452,7 @@ void SpeculativeJIT::emitAllocateRawObject(GPRReg resultGPR, RegisteredStructure
     mutatorFence(vm);
 }
 
-void SpeculativeJIT::emitGetLength(InlineCallFrame* inlineCallFrame, GPRReg lengthGPR, bool includeThis)
+void SpeculativeJIT::emitGetArgumentCount(InlineCallFrame* inlineCallFrame, GPRReg lengthGPR, bool includeThis)
 {
     if (inlineCallFrame && !inlineCallFrame->isVarargs())
         move(TrustedImm32(inlineCallFrame->argumentCountIncludingThis - !includeThis), lengthGPR);
@@ -464,9 +464,9 @@ void SpeculativeJIT::emitGetLength(InlineCallFrame* inlineCallFrame, GPRReg leng
     }
 }
 
-void SpeculativeJIT::emitGetLength(CodeOrigin origin, GPRReg lengthGPR, bool includeThis)
+void SpeculativeJIT::emitGetArgumentCount(CodeOrigin origin, GPRReg lengthGPR, bool includeThis)
 {
-    emitGetLength(origin.inlineCallFrame(), lengthGPR, includeThis);
+    emitGetArgumentCount(origin.inlineCallFrame(), lengthGPR, includeThis);
 }
 
 void SpeculativeJIT::emitGetCallee(CodeOrigin origin, GPRReg calleeGPR)
@@ -8870,7 +8870,7 @@ void SpeculativeJIT::compileCreateScopedArguments(Node* node)
     
     // These other things could be done in any order.
     setupArgument(4, [&] (GPRReg destGPR) { emitGetCallee(node->origin.semantic, destGPR); });
-    setupArgument(3, [&] (GPRReg destGPR) { emitGetLength(node->origin.semantic, destGPR); });
+    setupArgument(3, [&] (GPRReg destGPR) { emitGetArgumentCount(node->origin.semantic, destGPR); });
     setupArgument(2, [&] (GPRReg destGPR) { emitGetArgumentStart(node->origin.semantic, destGPR); });
     setupArgument(
         1, [&] (GPRReg destGPR) {
@@ -8892,12 +8892,37 @@ void SpeculativeJIT::compileCreateRest(Node* node)
 {
     ASSERT(node->op() == CreateRest);
 
-    if (m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
-        SpeculateStrictInt32Operand arrayLength(this, node->child1());
-        GPRTemporary arrayResult(this);
+    InlineCallFrame* inlineCallFrame = node->origin.semantic.inlineCallFrame();
 
-        GPRReg arrayLengthGPR = arrayLength.gpr();
+    GPRTemporary arrayLength(this);
+    GPRReg arrayLengthGPR = arrayLength.gpr();
+
+    std::optional<unsigned> staticRestLength;
+    auto emitGetArrayLength = [&] {
+        unsigned numberOfArgumentsToSkip = node->numberOfArgumentsToSkip();
+        if (inlineCallFrame && !inlineCallFrame->isVarargs()) {
+            staticRestLength = std::max<int32_t>(inlineCallFrame->argumentCountIncludingThis - 1 - numberOfArgumentsToSkip, 0);
+            JIT_COMMENT(*this, "Getting static rest length from inline non-varargs frame");
+            move(TrustedImm32(staticRestLength.value()), arrayLengthGPR);
+            return;
+        }
+
+        JIT_COMMENT(*this, "Getting rest length from ", inlineCallFrame ? "varargs" : "real", " frame");
+        constexpr bool includeThis = true;
+        emitGetArgumentCount(node->origin.semantic, arrayLengthGPR, includeThis);
+        Jump hasNonZeroLength = branch32(Above, arrayLengthGPR, TrustedImm32(numberOfArgumentsToSkip + includeThis));
+        move(TrustedImm32(0), arrayLengthGPR);
+        Jump done = jump();
+        hasNonZeroLength.link(this);
+        sub32(TrustedImm32(numberOfArgumentsToSkip + includeThis), arrayLengthGPR);
+        done.link(this);
+    };
+
+    if (m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
+        GPRTemporary arrayResult(this);
         GPRReg arrayResultGPR = arrayResult.gpr();
+
+        emitGetArrayLength();
 
         // We can tell compileAllocateNewArrayWithSize() that it does not need to check
         // for large arrays and use ArrayStorage structure because arrayLength here will
@@ -8906,43 +8931,47 @@ void SpeculativeJIT::compileCreateRest(Node* node)
         bool shouldAllowForArrayStorageStructureForLargeArrays = false;
         compileAllocateNewArrayWithSize(node, arrayResultGPR, arrayLengthGPR, ArrayWithContiguous, shouldAllowForArrayStorageStructureForLargeArrays);
 
+        // Allocating registers after emitting code after is normally poor practice but we don't
+        // want/need these to conflict with the registers allocated for compileAllocateNewArrayWithSize
         GPRTemporary argumentsStart(this);
-        GPRReg argumentsStartGPR = argumentsStart.gpr();
-
-        emitGetArgumentStart(node->origin.semantic, argumentsStartGPR);
-
         GPRTemporary butterfly(this);
-        GPRTemporary currentLength(this);
-        JSValueRegsTemporary value(this);
 
-        JSValueRegs valueRegs = value.regs();
-        GPRReg currentLengthGPR = currentLength.gpr();
+        GPRReg argumentsStartGPR = argumentsStart.gpr();
         GPRReg butterflyGPR = butterfly.gpr();
 
+        emitGetArgumentStart(node->origin.semantic, argumentsStartGPR);
         loadPtr(Address(arrayResultGPR, JSObject::butterflyOffset()), butterflyGPR);
 
+        // The allocation slow path above could have clobbered our arrayLengthGPR temporary.
+        if (staticRestLength)
+            move(TrustedImm32(staticRestLength.value()), arrayLengthGPR);
+        else
+            load32(Address(butterflyGPR, Butterfly::offsetOfPublicLength()), arrayLengthGPR);
+
         Jump skipLoop = branch32(Equal, arrayLengthGPR, TrustedImm32(0));
-        zeroExtend32ToWord(arrayLengthGPR, currentLengthGPR);
+        zeroExtend32ToWord(arrayLengthGPR, arrayLengthGPR);
         addPtr(Imm32(sizeof(Register) * node->numberOfArgumentsToSkip()), argumentsStartGPR);
 
+        JIT_COMMENT(*this, "Start copy loop");
         auto loop = label();
-        sub32(TrustedImm32(1), currentLengthGPR);
-        loadValue(BaseIndex(argumentsStartGPR, currentLengthGPR, TimesEight), valueRegs);
-        storeValue(valueRegs, BaseIndex(butterflyGPR, currentLengthGPR, TimesEight));
-        branch32(NotEqual, currentLengthGPR, TrustedImm32(0)).linkTo(loop, this);
+        sub32(TrustedImm32(1), arrayLengthGPR);
+        transfer64(BaseIndex(argumentsStartGPR, arrayLengthGPR, TimesEight), BaseIndex(butterflyGPR, arrayLengthGPR, TimesEight));
+        branch32(NotEqual, arrayLengthGPR, TrustedImm32(0)).linkTo(loop, this);
+
+        // We don't need a mutator fence here since the array cannot have been exposed to the GC yet, hence cannot be old gen. If this array were stored in an old gen object
+        // any of the values above would fenced by the writeBarrier of that store.
 
         skipLoop.link(this);
         cellResult(arrayResultGPR, node);
         return;
     }
 
-    SpeculateStrictInt32Operand arrayLength(this, node->child1());
     GPRTemporary argumentsStart(this);
     GPRTemporary numberOfArgumentsToSkip(this);
 
-    GPRReg arrayLengthGPR = arrayLength.gpr();
     GPRReg argumentsStartGPR = argumentsStart.gpr();
 
+    emitGetArrayLength();
     emitGetArgumentStart(node->origin.semantic, argumentsStartGPR);
 
     flushRegisters();
@@ -9057,12 +9086,87 @@ void SpeculativeJIT::compileSpread(Node* node)
         cellResult(resultGPR, node);
 #endif // USE(JSVALUE64)
     } else if (node->child1().useKind() == SetObjectUse) {
+#if USE(JSVALUE64)
+        GPRTemporary result(this);
+        GPRTemporary scratch1(this);
+        GPRTemporary scratch2(this);
+        GPRTemporary length(this);
+
+        GPRReg resultGPR = result.gpr();
+        GPRReg scratch1GPR = scratch1.gpr();
+        GPRReg scratch2GPR = scratch2.gpr();
+        GPRReg lengthGPR = length.gpr();
+
+        JumpList slowPath;
+        JumpList done;
+
+        using Helper = JSSet::Helper;
+
+        // Load Set storage pointer.
+        loadPtr(Address(argument, JSSet::offsetOfStorage()), scratch1GPR);
+        slowPath.append(branchTestPtr(Zero, scratch1GPR));
+
+        // Get the data area of the storage JSCellButterfly.
+        addPtr(TrustedImm32(JSCellButterfly::offsetOfData()), scratch1GPR);
+
+        // Load aliveEntryCount and check storage is not obsolete (slot 0 must be Int32).
+        load64(Address(scratch1GPR, Helper::aliveEntryCountIndex() * sizeof(EncodedJSValue)), lengthGPR);
+        slowPath.append(branchIfNotInt32(JSValueRegs(lengthGPR)));
+        zeroExtend32ToWord(lengthGPR, lengthGPR);
+
+        // Load deletedEntryCount and check it's 0.
+        load32(Address(scratch1GPR, Helper::deletedEntryCountIndex() * sizeof(EncodedJSValue)), scratch2GPR);
+        slowPath.append(branchTest32(NonZero, scratch2GPR));
+
+        // Guard aliveEntryCount <= MAX_STORAGE_VECTOR_LENGTH.
+        slowPath.append(branch32(Above, lengthGPR, TrustedImm32(MAX_STORAGE_VECTOR_LENGTH)));
+
+        // Compute allocation size = aliveEntryCount * 8 + offsetOfData().
+        static_assert(sizeof(EncodedJSValue) == 8 && 1 << 3 == 8, "This is strongly assumed in the code below.");
+        lshift32(lengthGPR, TrustedImm32(3), scratch1GPR);
+        add32(TrustedImm32(JSCellButterfly::offsetOfData()), scratch1GPR);
+
+        // Inline allocate a JSCellButterfly (clobbers scratch1GPR and scratch2GPR).
+        emitAllocateVariableSizedCell<JSCellButterfly>(vm(), resultGPR, TrustedImmPtr(m_graph.registerStructure(vm().cellButterflyStructure(CopyOnWriteArrayWithContiguous))), scratch1GPR, scratch1GPR, scratch2GPR, slowPath, SlowAllocationResult::UndefinedBehavior);
+
+        // Store publicLength and vectorLength (both = aliveEntryCount).
+        static_assert(JSCellButterfly::offsetOfPublicLength() + static_cast<ptrdiff_t>(sizeof(uint32_t)) == JSCellButterfly::offsetOfVectorLength());
+        storePair32(lengthGPR, lengthGPR, resultGPR, TrustedImm32(JSCellButterfly::offsetOfPublicLength()));
+
+        // Reload storage and recompute source base pointer (scratches were clobbered by allocation).
+        loadPtr(Address(argument, JSSet::offsetOfStorage()), scratch1GPR);
+        addPtr(TrustedImm32(JSCellButterfly::offsetOfData()), scratch1GPR);
+        load32(Address(scratch1GPR, Helper::capacityIndex() * sizeof(EncodedJSValue)), scratch2GPR);
+        add32(TrustedImm32(Helper::hashTableStartIndex()), scratch2GPR);
+        // scratch1GPR += dataTableStartIndex * sizeof(EncodedJSValue)
+        lshiftPtr(TrustedImm32(3), scratch2GPR);
+        addPtr(scratch2GPR, scratch1GPR);
+        // Now scratch1GPR points to the first key in the data table.
+
+        // Copy loop: for i = length-1 down to 0, dest[i] = src[i * EntrySize].
+        static_assert(Helper::EntrySize == 2, "Set entries have stride 2 (key + chain).");
+        done.append(branchTest32(Zero, lengthGPR));
+        auto loopStart = label();
+        sub32(TrustedImm32(1), lengthGPR);
+        // Compute source index: lengthGPR * 2 (stride-2 access for Set entries).
+        add32(lengthGPR, lengthGPR, scratch2GPR);
+        load64(BaseIndex(scratch1GPR, scratch2GPR, TimesEight), scratch2GPR);
+        store64(scratch2GPR, BaseIndex(resultGPR, lengthGPR, TimesEight, JSCellButterfly::offsetOfData()));
+        branchTest32(NonZero, lengthGPR).linkTo(loopStart, this);
+
+        addSlowPathGenerator(slowPathCall(slowPath, this, operationSpreadSet, resultGPR, LinkableConstant::globalObject(*this, node), argument));
+
+        done.link(this);
+        mutatorFence(vm());
+        cellResult(resultGPR, node);
+#else
         flushRegisters();
 
         GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
         callOperation(operationSpreadSet, resultGPR, LinkableConstant::globalObject(*this, node), argument);
         cellResult(resultGPR, node);
+#endif // USE(JSVALUE64)
     } else {
         flushRegisters();
 
@@ -9367,24 +9471,6 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
     callOperation(operationNewArrayWithSpreadSlow, resultGPR, LinkableConstant::globalObject(*this, node), TrustedImmPtr(buffer), node->numChildren());
 
     cellResult(resultGPR, node);
-}
-
-void SpeculativeJIT::compileGetRestLength(Node* node)
-{
-    ASSERT(node->op() == GetRestLength);
-
-    GPRTemporary result(this);
-    GPRReg resultGPR = result.gpr();
-
-    emitGetLength(node->origin.semantic, resultGPR);
-    Jump hasNonZeroLength = branch32(Above, resultGPR, Imm32(node->numberOfArgumentsToSkip()));
-    move(TrustedImm32(0), resultGPR);
-    Jump done = jump();
-    hasNonZeroLength.link(this);
-    if (node->numberOfArgumentsToSkip())
-        sub32(TrustedImm32(node->numberOfArgumentsToSkip()), resultGPR);
-    done.link(this);
-    strictInt32Result(resultGPR, node);
 }
 
 void SpeculativeJIT::emitPopulateSliceIndex(Edge& target, std::optional<GPRReg> indexGPR, GPRReg lengthGPR, GPRReg resultGPR)
@@ -13982,6 +14068,24 @@ void SpeculativeJIT::compileDefineAccessorProperty(Node* node)
     noResult(node, UseChildrenCalledExplicitly);
 }
 
+void SpeculativeJIT::compileObjectDefineProperty(Node* node)
+{
+    SpeculateCellOperand target(this, node->child1());
+    JSValueOperand key(this, node->child2());
+    SpeculateCellOperand descriptor(this, node->child3());
+
+    GPRReg targetGPR = target.gpr();
+    JSValueRegs keyRegs = key.jsValueRegs();
+    GPRReg descriptorGPR = descriptor.gpr();
+
+    speculateObject(node->child1(), targetGPR);
+    speculateObject(node->child3(), descriptorGPR);
+
+    flushRegisters();
+    callOperation(operationObjectDefineProperty, LinkableConstant::globalObject(*this, node), targetGPR, keyRegs, descriptorGPR);
+    noResult(node);
+}
+
 void SpeculativeJIT::emitAllocateButterfly(GPRReg storageResultGPR, GPRReg sizeGPR, GPRReg scratch1, GPRReg scratch2, GPRReg scratch3, JumpList& slowCases)
 {
     RELEASE_ASSERT(RegisterSetBuilder(storageResultGPR, sizeGPR, scratch1, scratch2, scratch3).numberOfSetGPRs() == 5);
@@ -15553,16 +15657,6 @@ void SpeculativeJIT::compileNewInternalFieldObjectImpl(Node* node, Operation ope
     cellResult(resultGPR, node);
 }
 
-void SpeculativeJIT::compileNewGenerator(Node* node)
-{
-    compileNewInternalFieldObjectImpl<JSGenerator>(node, operationNewGenerator);
-}
-
-void SpeculativeJIT::compileNewAsyncGenerator(Node* node)
-{
-    compileNewInternalFieldObjectImpl<JSAsyncGenerator>(node, operationNewAsyncGenerator);
-}
-
 void SpeculativeJIT::compileNewInternalFieldObject(Node* node)
 {
     switch (node->structure()->typeInfo().type()) {
@@ -15586,6 +15680,12 @@ void SpeculativeJIT::compileNewInternalFieldObject(Node* node)
         break;
     case JSRegExpStringIteratorType:
         compileNewInternalFieldObjectImpl<JSRegExpStringIterator>(node, operationNewRegExpStringIterator);
+        break;
+    case JSGeneratorType:
+        compileNewInternalFieldObjectImpl<JSGenerator>(node, operationNewGenerator);
+        break;
+    case JSAsyncGeneratorType:
+        compileNewInternalFieldObjectImpl<JSAsyncGenerator>(node, operationNewAsyncGenerator);
         break;
     case JSPromiseType: {
         if (node->structure()->classInfoForCells() == JSInternalPromise::info())
@@ -15786,6 +15886,34 @@ void SpeculativeJIT::compileLogShadowChickenTail(Node* node)
     emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, scratch1Reg);
     logShadowChickenTailPacket(shadowPacketReg, thisRegs, scopeReg, scratch1Reg, callSiteIndex);
     noResult(node);
+}
+
+void SpeculativeJIT::compileMapOrSetSize(Node* node)
+{
+    SpeculateCellOperand mapOrSet(this, node->child1());
+    GPRTemporary storage(this);
+    GPRTemporary result(this);
+
+    GPRReg mapOrSetGPR = mapOrSet.gpr();
+    GPRReg storageGPR = storage.gpr();
+    GPRReg resultGPR = result.gpr();
+
+    if (node->child1().useKind() == MapObjectUse) {
+        speculateMapObject(node->child1(), mapOrSetGPR);
+        loadPtr(Address(mapOrSetGPR, JSMap::offsetOfStorage()), storageGPR);
+    } else {
+        ASSERT(node->child1().useKind() == SetObjectUse);
+        speculateSetObject(node->child1(), mapOrSetGPR);
+        loadPtr(Address(mapOrSetGPR, JSSet::offsetOfStorage()), storageGPR);
+    }
+
+    move(TrustedImm32(0), resultGPR);
+    auto nullCase = branchTestPtr(Zero, storageGPR);
+    // offsetOfAliveEntryCount() is the same for both JSSet::Helper and JSMap::Helper.
+    load32(Address(storageGPR, JSSet::Helper::offsetOfAliveEntryCount()), resultGPR);
+
+    nullCase.link(this);
+    strictInt32Result(resultGPR, node);
 }
 
 void SpeculativeJIT::compileSetAdd(Node* node)
@@ -17159,6 +17287,46 @@ void SpeculativeJIT::compileStringIndexOf(Node* node)
         callOperation(operationStringIndexOf, resultGPR, LinkableConstant::globalObject(*this, node), baseGPR, argumentGPR);
 
     strictInt32Result(resultGPR, node);
+}
+
+void SpeculativeJIT::compileStringStartsWith(Node* node)
+{
+    if (node->child3()) {
+        SpeculateCellOperand base(this, node->child1());
+        SpeculateCellOperand argument(this, node->child2());
+        SpeculateInt32Operand index(this, node->child3());
+
+        GPRReg baseGPR = base.gpr();
+        GPRReg argumentGPR = argument.gpr();
+        GPRReg indexGPR = index.gpr();
+
+        speculateString(node->child1(), baseGPR);
+        speculateString(node->child2(), argumentGPR);
+
+        flushRegisters();
+        GPRFlushedCallResult result(this);
+        GPRReg resultGPR = result.gpr();
+        callOperation(operationStringStartsWithWithIndex, resultGPR, LinkableConstant::globalObject(*this, node), baseGPR, argumentGPR, indexGPR);
+
+        unblessedBooleanResult(resultGPR, node);
+        return;
+    }
+
+    SpeculateCellOperand base(this, node->child1());
+    SpeculateCellOperand argument(this, node->child2());
+
+    GPRReg baseGPR = base.gpr();
+    GPRReg argumentGPR = argument.gpr();
+
+    speculateString(node->child1(), baseGPR);
+    speculateString(node->child2(), argumentGPR);
+
+    flushRegisters();
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+    callOperation(operationStringStartsWith, resultGPR, LinkableConstant::globalObject(*this, node), baseGPR, argumentGPR);
+
+    unblessedBooleanResult(resultGPR, node);
 }
 
 void SpeculativeJIT::compileGlobalIsNaN(Node* node)

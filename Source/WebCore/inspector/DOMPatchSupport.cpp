@@ -169,7 +169,7 @@ ExceptionOr<void> DOMPatchSupport::innerPatchNode(Digest& oldDigest, Digest& new
     Ref newNode = *newDigest.node;
 
     if (newNode->nodeType() != oldNode->nodeType() || newNode->nodeName() != oldNode->nodeName())
-        return m_domEditor.replaceChild(*oldNode->protectedParentNode(), newNode.get(), oldNode);
+        return m_domEditor.replaceChild(*protect(oldNode->parentNode()), newNode.get(), oldNode);
 
     if (oldNode->nodeValue() != newNode->nodeValue()) {
         auto result = m_domEditor.setNodeValue(oldNode, newNode->nodeValue());
@@ -461,7 +461,7 @@ ExceptionOr<void> DOMPatchSupport::removeChildAndMoveToNew(Digest& oldDigest)
 {
     Ref<Node> oldNode = *oldDigest.node;
     ASSERT(oldNode->parentNode());
-    auto result = m_domEditor.removeChild(*oldNode->protectedParentNode(), oldNode);
+    auto result = m_domEditor.removeChild(*protect(oldNode->parentNode()), oldNode);
     if (result.hasException())
         return result.releaseException();
 
@@ -474,7 +474,7 @@ ExceptionOr<void> DOMPatchSupport::removeChildAndMoveToNew(Digest& oldDigest)
     if (it != m_unusedNodesMap.end()) {
         auto& newDigest = *it->value;
         Ref newNode = *newDigest.node;
-        auto result = m_domEditor.replaceChild(*newNode->protectedParentNode(), oldNode.get(), newNode);
+        auto result = m_domEditor.replaceChild(*protect(newNode->parentNode()), oldNode.get(), newNode);
         if (result.hasException())
             return result.releaseException();
         newDigest.node = oldNode.ptr();

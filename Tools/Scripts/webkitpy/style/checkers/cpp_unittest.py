@@ -6152,6 +6152,91 @@ class WebKitStyleTest(CppStyleTestBase):
             "  [runtime/wtf_move] [4]",
             'foo.mm')
 
+    def test_protected_getter(self):
+        # Regular getter is fine.
+        self.assert_lint(
+            'Foo* foo();',
+            '',
+            'foo.h')
+
+        # protectedFoo() getter with RefPtr should trigger error.
+        self.assert_lint(
+            'RefPtr<Foo> protectedFoo();',
+            "Do not add new protected*() getter functions. Call the regular getter and use protect() at the call site instead."
+            "  [readability/protected_getter] [4]",
+            'foo.h')
+
+        # protectedDocument() with Ref should trigger error.
+        self.assert_lint(
+            'Ref<Document> protectedDocument();',
+            "Do not add new protected*() getter functions. Call the regular getter and use protect() at the call site instead."
+            "  [readability/protected_getter] [4]",
+            'foo.h')
+
+        # protectedOwner() should trigger error.
+        self.assert_lint(
+            'RefPtr<Owner> protectedOwner() const;',
+            "Do not add new protected*() getter functions. Call the regular getter and use protect() at the call site instead."
+            "  [readability/protected_getter] [4]",
+            'foo.h')
+
+        # Function implementation should not trigger (only declarations).
+        self.assert_lint(
+            'Ref<Document> protectedDocument() { return m_document.get(); }',
+            '',
+            'foo.cpp')
+
+        # Functions with parameters should not trigger (not getter-style).
+        self.assert_lint(
+            'RefPtr<Node> protectedThis(this);',
+            '',
+            'foo.h')
+
+        self.assert_lint(
+            'RefPtr<Foo> protectedFoo(int arg);',
+            '',
+            'foo.h')
+
+    def test_checked_getter(self):
+        # Regular getter is fine.
+        self.assert_lint(
+            'Foo* foo();',
+            '',
+            'foo.h')
+
+        # checkedFoo() getter with CheckedPtr should trigger error.
+        self.assert_lint(
+            'CheckedPtr<Foo> checkedFoo();',
+            "Do not add new checked*() getter functions. Call the regular getter and use protect() at the call site instead."
+            "  [readability/checked_getter] [4]",
+            'foo.h')
+
+        # checkedDocument() with CheckedRef should trigger error.
+        self.assert_lint(
+            'CheckedRef<Document> checkedDocument();',
+            "Do not add new checked*() getter functions. Call the regular getter and use protect() at the call site instead."
+            "  [readability/checked_getter] [4]",
+            'foo.h')
+
+        # checkedOwner() should trigger error.
+        self.assert_lint(
+            'CheckedPtr<Owner> checkedOwner() const;',
+            "Do not add new checked*() getter functions. Call the regular getter and use protect() at the call site instead."
+            "  [readability/checked_getter] [4]",
+            'foo.h')
+
+        # Function implementation should not trigger (only declarations).
+        self.assert_lint(
+            'CheckedRef<Document> checkedDocument() { return m_document.get(); }',
+            '',
+            'foo.cpp')
+
+        # Functions with parameters should not trigger (not getter-style).
+        self.assert_lint(
+            'CheckedPtr<Foo> checkedFoo(int arg);',
+            '',
+            'foo.h')
+
     def test_unsafe_get(self):
         self.assert_lint(
             'auto ptr = obj.get();',
@@ -6321,32 +6406,30 @@ class WebKitStyleTest(CppStyleTestBase):
 
     def test_wtf_xpc_object_ptr(self):
         self.assert_lint(
-            'XPCObjectPtr<xpc_connection_t> connection = adoptXPCObject(xpc_connection_create_from_endpoint(endpoint));',
+            'OSObjectPtr<xpc_connection_t> connection = adoptOSObject(xpc_connection_create_from_endpoint(endpoint));',
             '',
             'foo.cpp')
 
         self.assert_lint(
             'RetainPtr<xpc_connection_t> m_connection;',
-            "Use 'XPCObjectPtr' instead of 'RetainPtr' for XPC objects."
+            "Use 'OSObjectPtr' instead of 'RetainPtr' for XPC objects."
             "  [runtime/wtf_xpc_object_ptr] [4]",
             'foo.mm')
 
         self.assert_lint(
             'OSObjectPtr<xpc_connection_t> m_connection;',
-            "Use 'XPCObjectPtr' instead of 'OSObjectPtr' for XPC objects."
-            "  [runtime/wtf_xpc_object_ptr] [4]",
+            '',
             'foo.mm')
 
         self.assert_lint(
             'auto connection = adoptNS(xpc_connection_create_from_endpoint(endpoint));',
-            "Use 'adoptXPCObject()' instead of 'adoptNS()' for XPC objects."
+            "Use 'adoptOSObject()' instead of 'adoptNS()' for XPC objects."
             "  [runtime/wtf_xpc_object_ptr] [4]",
             'foo.mm')
 
         self.assert_lint(
             'auto connection = adoptOSObject(xpc_connection_create_from_endpoint(endpoint));',
-            "Use 'adoptXPCObject()' instead of 'adoptOSObject()' for XPC objects."
-            "  [runtime/wtf_xpc_object_ptr] [4]",
+            '',
             'foo.mm')
 
     def test_lock_guard(self):
@@ -6727,6 +6810,46 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_lint('postTask([foo = checkedFoo(), bar](ScriptExecutionContext& context) {', '')
         self.assert_lint('postTask([foo = bar().checkedFoo(), bar](ScriptExecutionContext& context) {', '')
 
+        # Tests for protect() free function used in variable initialization (should warn)
+        self.assert_lint(
+            'auto foo = protect(m_foo);',
+            'Do not use protect() for variable initialization. Use the declared type (not auto) and remove the call to protect().  [safercpp/protected_getter_for_init] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'Ref foo = protect(m_foo);',
+            'Do not use protect() for variable initialization. Use the declared type (not auto) and remove the call to protect().  [safercpp/protected_getter_for_init] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'RefPtr foo = protect(m_foo);',
+            'Do not use protect() for variable initialization. Use the declared type (not auto) and remove the call to protect().  [safercpp/protected_getter_for_init] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'CheckedRef foo = protect(m_foo);',
+            'Do not use protect() for variable initialization. Use the declared type (not auto) and remove the call to protect().  [safercpp/protected_getter_for_init] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'CheckedPtr foo = protect(m_foo);',
+            'Do not use protect() for variable initialization. Use the declared type (not auto) and remove the call to protect().  [safercpp/protected_getter_for_init] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'if (RefPtr bar = protect(m_bar)) {',
+            'Do not use protect() for variable initialization. Use the declared type (not auto) and remove the call to protect().  [safercpp/protected_getter_for_init] [4]',
+            'foo.cpp')
+
+        # Valid uses of protect() - should NOT warn
+        self.assert_lint('protect(foo)->doSomething();', '', 'foo.cpp')
+        self.assert_lint('protect(foo).doSomething();', '', 'foo.cpp')
+        self.assert_lint('RefPtr foo = protect(bar())->foo();', '', 'foo.cpp')
+        self.assert_lint('someFunction(protect(foo));', '', 'foo.cpp')
+        self.assert_lint('return protect(m_foo);', '', 'foo.cpp')
+        self.assert_lint('postTask([foo = protect(m_foo)] {', '', 'foo.cpp')
+        self.assert_lint('postTask([foo = protect(m_foo), bar] {', '', 'foo.cpp')
+
     def test_ctype_fucntion(self):
         self.assert_lint(
             'int i = isascii(8);',
@@ -7004,9 +7127,15 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_lint('RefPtr<Widget> create();', '')
         self.assert_lint('Ref<GeolocationPermissionRequestProxy> createRequest(GeolocationIdentifier);', '')
         self.assert_lint('Ref<TypeName> createSomething(OtherTypeName);', '')
-        self.assert_lint('Ref<Settings> protectedSettings() const;', '')
-        self.assert_lint('RefPtr<Settings> protectedSettings() const;', '')
-        self.assert_lint('RefPtr<Settings> protectedSettings();', '')
+        self.assert_lint('Ref<Settings> protectedSettings() const;',
+                         "Do not add new protected*() getter functions. Call the regular getter and use protect() at the call site instead."
+                         "  [readability/protected_getter] [4]")
+        self.assert_lint('RefPtr<Settings> protectedSettings() const;',
+                         "Do not add new protected*() getter functions. Call the regular getter and use protect() at the call site instead."
+                         "  [readability/protected_getter] [4]")
+        self.assert_lint('RefPtr<Settings> protectedSettings();',
+                         "Do not add new protected*() getter functions. Call the regular getter and use protect() at the call site instead."
+                         "  [readability/protected_getter] [4]")
         self.assert_lint('RefPtr<Settings> protectedSettings() { return m_settings.get(); }', '')
 
     def test_parameter_names(self):

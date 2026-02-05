@@ -87,9 +87,7 @@ public:
 #endif
 
     WEBCORE_EXPORT FrameLoader* frameLoader() const;
-    WEBCORE_EXPORT RefPtr<FrameLoader> protectedFrameLoader() const;
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
-    WEBCORE_EXPORT RefPtr<DocumentLoader> protectedDocumentLoader() const;
     const ResourceRequest& originalRequest() const { return m_originalRequest; }
 
     WEBCORE_EXPORT void start();
@@ -113,7 +111,6 @@ public:
     const ResourceResponse& response() const { return m_response; }
 
     const FragmentedSharedBuffer* resourceData() const;
-    RefPtr<const FragmentedSharedBuffer> protectedResourceData() const;
     void clearResourceData();
     
     virtual bool isSubresourceLoader() const;
@@ -147,9 +144,8 @@ public:
     ContentEncodingSniffingPolicy contentEncodingSniffingPolicy() const { return m_options.contentEncodingSniffingPolicy; }
     WEBCORE_EXPORT bool isAllowedToAskUserForCredentials() const;
     WEBCORE_EXPORT bool shouldIncludeCertificateInfo() const;
-    
+
     virtual CachedResource* cachedResource() const { return nullptr; }
-    CachedResourceHandle<CachedResource> protectedCachedResource() const { return cachedResource(); }
 
     bool reachedTerminalState() const { return m_reachedTerminalState; }
 
@@ -168,7 +164,6 @@ public:
 #endif
 
     WEBCORE_EXPORT LocalFrame* frame() const;
-    RefPtr<LocalFrame> protectedFrame() const;
 
     const ResourceLoaderOptions& options() const { return m_options; }
 
@@ -206,7 +201,6 @@ protected:
 #if USE(QUICK_LOOK)
     const RefPtr<LegacyPreviewLoader> m_previewLoader;
 #endif
-    bool m_canCrossOriginRequestsAskUserForCredentials { true };
 
 private:
     virtual void willCancel(const ResourceError&) = 0;

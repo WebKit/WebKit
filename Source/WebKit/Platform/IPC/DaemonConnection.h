@@ -45,7 +45,7 @@ using EncodedMessage = Vector<uint8_t>;
 class Connection : public RefCountedAndCanMakeWeakPtr<Connection> {
 public:
 #if PLATFORM(COCOA)
-    static Ref<Connection> create(XPCObjectPtr<xpc_connection_t>&& connection)
+    static Ref<Connection> create(OSObjectPtr<xpc_connection_t>&& connection)
     {
         return adoptRef(*new Connection(WTF::move(connection)));
     }
@@ -63,14 +63,14 @@ protected:
     Connection() = default;
 
 #if PLATFORM(COCOA)
-    explicit Connection(XPCObjectPtr<xpc_connection_t>&& connection)
+    explicit Connection(OSObjectPtr<xpc_connection_t>&& connection)
         : m_connection(WTF::move(connection)) { }
 #endif
 
     virtual void initializeConnectionIfNeeded() const { }
 
 #if PLATFORM(COCOA)
-    mutable XPCObjectPtr<xpc_connection_t> m_connection;
+    mutable OSObjectPtr<xpc_connection_t> m_connection;
 #endif
 };
 
@@ -85,7 +85,7 @@ public:
     virtual void newConnectionWasInitialized() const = 0;
 
 #if PLATFORM(COCOA)
-    virtual XPCObjectPtr<xpc_object_t> dictionaryFromMessage(typename Traits::MessageType, EncodedMessage&&) const = 0;
+    virtual OSObjectPtr<xpc_object_t> dictionaryFromMessage(typename Traits::MessageType, EncodedMessage&&) const = 0;
     virtual void connectionReceivedEvent(xpc_object_t) = 0;
 #endif
 

@@ -1,5 +1,3 @@
-//@ requireOptions("--useMapGetOrInsert=1")
-
 let map = new Map();
 for (let i = 0; i < 100; ++i) {
     map.set("a" + i, 1);

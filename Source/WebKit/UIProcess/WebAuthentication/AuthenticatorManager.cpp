@@ -289,7 +289,7 @@ void AuthenticatorManager::serviceStatusUpdated(WebAuthenticationStatus status)
     }
 
     dispatchPanelClientCall([status] (const API::WebAuthenticationPanel& panel) {
-        panel.protectedClient()->updatePanel(status);
+        protect(panel.client())->updatePanel(status);
     });
 }
 
@@ -346,7 +346,7 @@ void AuthenticatorManager::authenticatorStatusUpdated(WebAuthenticationStatus st
     }
 
     dispatchPanelClientCall([status] (const API::WebAuthenticationPanel& panel) {
-        panel.protectedClient()->updatePanel(status);
+        protect(panel.client())->updatePanel(status);
     });
 }
 
@@ -377,7 +377,7 @@ void AuthenticatorManager::requestPin(uint64_t retries, CompletionHandler<void(c
     }
 
     dispatchPanelClientCall([retries, callback = WTF::move(callback)] (const API::WebAuthenticationPanel& panel) mutable {
-        panel.protectedClient()->requestPin(retries, WTF::move(callback));
+        protect(panel.client())->requestPin(retries, WTF::move(callback));
     });
 }
 
@@ -399,7 +399,7 @@ void AuthenticatorManager::requestNewPin(uint64_t minLength, CompletionHandler<v
     }
 
     dispatchPanelClientCall([minLength, callback = WTF::move(callback)] (const API::WebAuthenticationPanel& panel) mutable {
-        panel.protectedClient()->requestNewPin(minLength, WTF::move(callback));
+        protect(panel.client())->requestNewPin(minLength, WTF::move(callback));
     });
 }
 
@@ -412,14 +412,14 @@ void AuthenticatorManager::selectAssertionResponse(Vector<Ref<WebCore::Authentic
     }
 
     dispatchPanelClientCall([responses = WTF::move(responses), source, completionHandler = WTF::move(completionHandler)] (const API::WebAuthenticationPanel& panel) mutable {
-        panel.protectedClient()->selectAssertionResponse(WTF::move(responses), source, WTF::move(completionHandler));
+        protect(panel.client())->selectAssertionResponse(WTF::move(responses), source, WTF::move(completionHandler));
     });
 }
 
 void AuthenticatorManager::decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&& completionHandler)
 {
     dispatchPanelClientCall([completionHandler = WTF::move(completionHandler)] (const API::WebAuthenticationPanel& panel) mutable {
-        panel.protectedClient()->decidePolicyForLocalAuthenticator(WTF::move(completionHandler));
+        protect(panel.client())->decidePolicyForLocalAuthenticator(WTF::move(completionHandler));
     });
 }
 
@@ -431,7 +431,7 @@ void AuthenticatorManager::requestLAContextForUserVerification(CompletionHandler
     }
 
     dispatchPanelClientCall([completionHandler = WTF::move(completionHandler)] (const API::WebAuthenticationPanel& panel) mutable {
-        panel.protectedClient()->requestLAContextForUserVerification(WTF::move(completionHandler));
+        protect(panel.client())->requestLAContextForUserVerification(WTF::move(completionHandler));
     });
 }
 
@@ -555,7 +555,7 @@ void AuthenticatorManager::invokePendingCompletionHandler(Respond&& respond)
         presenter->dimissPresenter(result);
     else {
         dispatchPanelClientCall([result] (const API::WebAuthenticationPanel& panel) {
-            panel.protectedClient()->dismissPanel(result);
+            protect(panel.client())->dismissPanel(result);
         });
     }
 

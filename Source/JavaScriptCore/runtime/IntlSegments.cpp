@@ -27,6 +27,7 @@
 #include "IntlSegments.h"
 
 #include "IntlObjectInlines.h"
+#include "IntlSegmentDataObject.h"
 #include "IntlSegmentIterator.h"
 #include "IntlWorkaround.h"
 #include "JSCInlines.h"
@@ -84,7 +85,7 @@ JSValue IntlSegments::containing(JSGlobalObject* globalObject, JSValue indexValu
         endIndex = m_buffer->size();
 
     scope.release();
-    return IntlSegmenter::createSegmentDataObject(globalObject, m_string.get(), startIndex, endIndex, *m_segmenter, m_granularity);
+    return createSegmentDataObject(globalObject, m_string.get(), startIndex, endIndex, *m_segmenter, m_granularity);
 }
 
 // https://tc39.es/proposal-intl-segmenter/#sec-%segmentsprototype%-@@iterator

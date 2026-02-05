@@ -158,7 +158,8 @@ static RetainPtr<TestWKWebView> setUpWebViewForFingerprintingTests(NSString *pag
     RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     for (_WKFeature *feature in WKPreferences._features) {
         if ([feature.key isEqualToString:@"ScriptTrackingPrivacyProtectionsEnabled"]
-            || [feature.key isEqualToString:@"ScriptTrackingPrivacyNetworkRequestBlockingEnabled"])
+            || [feature.key isEqualToString:@"ScriptTrackingPrivacyNetworkRequestBlockingEnabled"]
+            || [feature.key isEqualToString:@"ConsistentQueryParameterFilteringQuirkEnabled"])
             [[configuration preferences] _setEnabled:YES forFeature:feature];
     }
 
@@ -296,6 +297,23 @@ TEST(ScriptTrackingPrivacyTests, QueryParameters)
 
     EXPECT_WK_STREQ("test://top-domain.org/index.html?uid=Hv9U23Hfco08", [webView stringByEvaluatingJavaScript:@"window.urlForPureScript"]);
     EXPECT_WK_STREQ("test://top-domain.org/index.html", [webView stringByEvaluatingJavaScript:@"window.urlForTaintedScript"]);
+}
+
+TEST(ScriptTrackingPrivacyTests, ConsistentQueryParameters)
+{
+    if (!supportsFingerprintingScriptRequests())
+        return;
+
+    auto simpleConsistentIndexHTML = makeStringByReplacingAll(simpleIndexHTML, "tainted.net"_s, "consistentQueryParameterFiltering.internal"_s);
+
+    RetainPtr webView = setUpWebViewForFingerprintingTests(@"test://top-domain.org/index.html?uid=Hv9U23Hfco08", @{
+        @"test://top-domain.org/index.html?uid=Hv9U23Hfco08" : simpleConsistentIndexHTML.createNSString().autorelease(),
+        @"test://pure.com/script.js" : @"window.urlForPureScript = document.URL;",
+        @"test://consistentQueryParameterFiltering.internal/script.js" : @"window.urlFor3PScript = document.URL;"
+    });
+
+    EXPECT_WK_STREQ("test://top-domain.org/index.html?uid=Hv9U23Hfco08", [webView stringByEvaluatingJavaScript:@"window.urlForPureScript"]);
+    EXPECT_WK_STREQ("test://top-domain.org/index.html", [webView stringByEvaluatingJavaScript:@"window.urlFor3PScript"]);
 }
 
 TEST(ScriptTrackingPrivacyTests, Canvas2D)
@@ -692,7 +710,7 @@ TEST(ScriptTrackingPrivacyTests, ScriptAccessCategories)
         @"test://top-domain.org/script.js" : @"internals.enableMockSpeechSynthesizer()",
         @"test://pure.com/script.js" : makeTestScript(@"pure"),
         @"test://tainted.net/script.js" : makeTestScript(@"tainted"),
-    });
+    }, nil, _WKWebsiteNetworkConnectionIntegrityPolicyEnabled);
 
     RetainPtr pureTextFieldValue = [webView stringByEvaluatingJavaScript:@"window.pureTextFieldValue"];
     EXPECT_WK_STREQ(pureTextFieldValue.get(), @"textFieldValue");
@@ -705,6 +723,85 @@ TEST(ScriptTrackingPrivacyTests, ScriptAccessCategories)
 
     auto taintedNumberOfVoices = [[webView objectByEvaluatingJavaScript:@"window.taintedNumberOfVoices"] intValue];
     EXPECT_EQ(taintedNumberOfVoices, 0);
+}
+
+TEST(ScriptTrackingPrivacyTests, ScriptAccessCategoriesAppendTaintedInlineScript)
+{
+    if (!supportsFingerprintingScriptRequests())
+        return;
+
+    FingerprintingScriptsRequestSwizzler swizzler {
+        @[ @"tainted.net" ],
+        { WPScriptAccessCategoryFormControls | WPScriptAccessCategoryQueryParameters }
+    };
+
+    static constexpr auto testHTML = R"markup(
+        <!DOCTYPE html>
+        <html>
+            <head><script src="test://top-domain.org/script.js"></script></head>
+            <body>
+                <input type="text" id="textField" value="textFieldValue">
+                <script src="test://tainted.net/script.js"></script>
+            </body>
+        </html>
+    )markup"_s;
+
+    auto taintedAppendScript = @"(function() {"
+        "  var script = document.createElement('script');"
+        "  script.textContent = 'window.appendedNumberOfVoices = speechSynthesis.getVoices().length; window.appendedTextFieldValue = document.getElementById(\"textField\").value;';"
+        "  document.body.appendChild(script);"
+        "})()";
+
+    RetainPtr webView = setUpWebViewForFingerprintingTests(@"test://top-domain.org/index.html", @{
+        @"test://top-domain.org/index.html" : testHTML.createNSString().autorelease(),
+        @"test://top-domain.org/script.js" : @"internals.enableMockSpeechSynthesizer()",
+        @"test://tainted.net/script.js" : taintedAppendScript,
+    }, nil, _WKWebsiteNetworkConnectionIntegrityPolicyEnabled);
+
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"window.appendedNumberOfVoices"] intValue], 0);
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"window.appendedTextFieldValue"], @"textFieldValue");
+}
+
+TEST(ScriptTrackingPrivacyTests, ScriptAccessCategoriesWithTimeout)
+{
+    if (!supportsFingerprintingScriptRequests())
+        return;
+
+    FingerprintingScriptsRequestSwizzler swizzler {
+        @[ @"tainted.net" ],
+        { WPScriptAccessCategoryFormControls | WPScriptAccessCategoryQueryParameters }
+    };
+
+    static constexpr auto testHTML = R"markup(
+        <!DOCTYPE html>
+        <html>
+            <head><script src="test://top-domain.org/script.js"></script></head>
+            <body>
+                <input type="text" id="textField" value="textFieldValue">
+                <script src="test://tainted.net/script.js"></script>
+            </body>
+        </html>
+    )markup"_s;
+
+    auto taintedTimeoutScript = @"(function() {"
+        "  setTimeout(function() {"
+        "    window.taintedNumberOfVoices = speechSynthesis.getVoices().length;"
+        "    window.taintedTextFieldValue = document.getElementById('textField').value;"
+        "  }, 0);"
+        "})()";
+
+    RetainPtr webView = setUpWebViewForFingerprintingTests(@"test://top-domain.org/index.html", @{
+        @"test://top-domain.org/index.html" : testHTML.createNSString().autorelease(),
+        @"test://top-domain.org/script.js" : @"internals.enableMockSpeechSynthesizer()",
+        @"test://tainted.net/script.js" : taintedTimeoutScript,
+    }, nil, _WKWebsiteNetworkConnectionIntegrityPolicyEnabled);
+
+    Util::waitForConditionWithLogging([&] -> bool {
+        return ![[webView objectByEvaluatingJavaScript:@"window.taintedNumberOfVoices"] isEqual:[NSNull null]];
+    }, 5, @"Timed out waiting for setTimeout callback.");
+
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"window.taintedNumberOfVoices"] intValue], 0);
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"window.taintedTextFieldValue"], @"textFieldValue");
 }
 
 TEST(ScriptTrackingPrivacyTests, FetchBlocked)

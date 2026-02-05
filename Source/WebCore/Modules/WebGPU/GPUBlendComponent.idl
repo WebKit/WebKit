@@ -27,7 +27,6 @@
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUBlendComponent {
     GPUBlendOperation operation = "add";
     GPUBlendFactor srcFactor = "one";

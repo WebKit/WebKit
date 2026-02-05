@@ -27,7 +27,6 @@
 [
     Conditional=WEBXR,
     EnabledBySetting=WebXREnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary XRWebGLLayerInit {
     boolean antialias = true;
     boolean depth = true;

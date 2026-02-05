@@ -332,7 +332,7 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
 
     _addToPendingMessages(messageView)
     {
-        let pendingMessagesForSession = this._pendingMessagesForSessionOrGroup.getOrInitialize(this._currentSessionOrGroup, []);
+        let pendingMessagesForSession = this._pendingMessagesForSessionOrGroup.getOrInsert(this._currentSessionOrGroup, []);
         pendingMessagesForSession.push(messageView);
         this._pendingMessagesForSessionOrGroup.set(this._currentSessionOrGroup, pendingMessagesForSession);
     }

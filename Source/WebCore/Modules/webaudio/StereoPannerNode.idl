@@ -28,6 +28,6 @@
     EnabledBySetting=WebAudioEnabled,
     Exposed=Window
 ] interface StereoPannerNode : AudioNode {
-    constructor (BaseAudioContext context, optional StereoPannerOptions options);
+    constructor (BaseAudioContext context, optional StereoPannerOptions options = {});
     readonly attribute AudioParam pan;
 };

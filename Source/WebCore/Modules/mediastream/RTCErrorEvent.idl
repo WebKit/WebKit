@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/webrtc-pc/#dom-rtcerrorevent
 [
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
@@ -32,8 +33,7 @@
     [SameObject] readonly attribute RTCError error;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary RTCErrorEventInit : EventInit {
+// https://w3c.github.io/webrtc-pc/#dom-rtcerroreventinit
+dictionary RTCErrorEventInit : EventInit {
     required RTCError error;
 };

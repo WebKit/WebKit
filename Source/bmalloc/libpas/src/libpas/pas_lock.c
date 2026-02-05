@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "pas_config.h"
@@ -33,41 +33,78 @@
 #include <mach/thread_switch.h>
 #endif
 
-#if PAS_USE_SPINLOCKS
+#if !PAS_PLATFORM(PLAYSTATION) && (PAS_OS(LINUX) || PAS_OS(WINDOWS) || PAS_OS(FREEBSD))
 
-PAS_NEVER_INLINE void pas_lock_lock_slow(pas_lock* lock)
-{
-    static const size_t a_lot = 256;
-
-    if (pas_compare_and_swap_bool_strong(&lock->is_spinning, false, true)) {
-        size_t index;
-        bool did_acquire;
-
-        did_acquire = false;
-
-        for (index = a_lot; index--;) {
-            if (!pas_compare_and_swap_bool_strong(&lock->lock, false, true)) {
-                did_acquire = true;
-                break;
-            }
-        }
-
-        lock->is_spinning = false;
-
-        if (did_acquire)
-            return;
-    }
-
-    while (!pas_compare_and_swap_bool_weak(&lock->lock, false, true)) {
-#if PAS_OS(DARWIN)
-        const mach_msg_timeout_t timeoutInMS = 1;
-        thread_switch(MACH_PORT_NULL, SWITCH_OPTION_DEPRESS, timeoutInMS);
-#else
-        sched_yield();
+#if PAS_OS(LINUX)
+#include <linux/futex.h>
+#include <sys/syscall.h>
+#include <unistd.h>
+#elif PAS_OS(WINDOWS)
+#include <synchapi.h>
+#elif PAS_OS(FREEBSD)
+#include <sys/umtx.h>
 #endif
-    }
+
+#if PAS_OS(LINUX)
+static inline long pas_lock_futex_wait(unsigned* addr, unsigned val)
+{
+    return syscall(SYS_futex, addr, FUTEX_WAIT | FUTEX_PRIVATE_FLAG, val, NULL, NULL, 0);
 }
 
-#endif /* PAS_USE_SPINLOCKS */
+static inline long pas_lock_futex_wake(unsigned* addr)
+{
+    return syscall(SYS_futex, addr, FUTEX_WAKE | FUTEX_PRIVATE_FLAG, 1, NULL, NULL, 0);
+}
+#elif PAS_OS(WINDOWS)
+static inline void pas_lock_futex_wait(unsigned* addr, unsigned val)
+{
+    WaitOnAddress(addr, &val, sizeof(unsigned), INFINITE);
+}
+
+static inline void pas_lock_futex_wake(unsigned* addr)
+{
+    WakeByAddressSingle(addr);
+}
+#elif PAS_OS(FREEBSD)
+static inline long pas_lock_futex_wait(unsigned* addr, unsigned val)
+{
+    return _umtx_op(addr, UMTX_OP_WAIT_UINT_PRIVATE, val, NULL, NULL);
+}
+
+static inline long pas_lock_futex_wake(unsigned* addr)
+{
+    return _umtx_op(addr, UMTX_OP_WAKE_PRIVATE, 1, NULL, NULL);
+}
+#endif
+
+void pas_lock_lock_slow(pas_lock* lock, unsigned expected)
+{
+    /* Slow path: lock is contended */
+    do {
+        /* If lock is currently 1 (locked, no waiters), mark it as 2 (locked with waiters) */
+        if (expected == 1) {
+            expected = __atomic_exchange_n(&lock->futex, 2, __ATOMIC_ACQUIRE);
+            /* If we swapped 0 -> 2, we actually acquired the lock. */
+            if (expected == 0)
+                return;
+        }
+
+        /* If still not free, wait for wakeup */
+        if (expected != 0)
+            pas_lock_futex_wait(&lock->futex, 2);
+
+        /* Try to acquire the lock: 0 -> 2 (since we know there's contention) */
+        expected = 0;
+    } while (!__atomic_compare_exchange_n(&lock->futex, &expected, 2, false, __ATOMIC_ACQUIRE, __ATOMIC_RELAXED));
+}
+
+void pas_lock_unlock_slow(pas_lock* lock)
+{
+    /* We had waiters (state was 2), so we need to wake them up */
+    __atomic_store_n(&lock->futex, 0, __ATOMIC_RELEASE);
+    pas_lock_futex_wake(&lock->futex);
+}
+
+#endif /* !PAS_PLATFORM(PLAYSTATION) && (PAS_OS(LINUX) || PAS_OS(WINDOWS) || PAS_OS(FREEBSD)) */
 
 #endif /* LIBPAS_ENABLED */

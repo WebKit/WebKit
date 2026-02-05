@@ -25,7 +25,8 @@
 
 #pragma once
 
-#include "CryptoAlgorithmParameters.h"
+#include <WebCore/CryptoAlgorithmAesKeyParamsInit.h>
+#include <WebCore/CryptoAlgorithmParameters.h>
 
 namespace WebCore {
 
@@ -33,6 +34,12 @@ class CryptoAlgorithmAesKeyParams final : public CryptoAlgorithmParameters {
     WTF_MAKE_TZONE_ALLOCATED(CryptoAlgorithmAesKeyParams);
 public:
     unsigned short length;
+
+    CryptoAlgorithmAesKeyParams(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmAesKeyParamsInit init)
+        : CryptoAlgorithmParameters { WTF::move(identifier), WTF::move(init) }
+        , length { WTF::move(init.length) }
+    {
+    }
 
     Class parametersClass() const final { return Class::AesKeyParams; }
 };

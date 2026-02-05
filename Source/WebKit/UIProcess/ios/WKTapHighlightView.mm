@@ -167,25 +167,25 @@
         }
     }
 
-    auto context = UIGraphicsGetCurrentContext();
-    CGContextSaveGState(context);
+    RetainPtr context = UIGraphicsGetCurrentContext();
+    CGContextSaveGState(context.get());
 
     if (!_innerQuads.isEmpty())
-        CGContextSetLineWidth(context, 4 * _minimumCornerRadius);
+        CGContextSetLineWidth(context.get(), 4 * _minimumCornerRadius);
 
-    CGContextSetLineJoin(context, kCGLineJoinRound);
+    CGContextSetLineJoin(context.get(), kCGLineJoinRound);
 
     auto alpha = CGColorGetAlpha([_color CGColor]);
 
     [[_color colorWithAlphaComponent:1] set];
 
-    CGContextSetAlpha(context, alpha);
-    CGContextBeginTransparencyLayer(context, nil);
-    CGContextAddPath(context, path.CGPath);
-    CGContextDrawPath(context, kCGPathFillStroke);
-    CGContextEndTransparencyLayer(context);
+    CGContextSetAlpha(context.get(), alpha);
+    CGContextBeginTransparencyLayer(context.get(), nil);
+    CGContextAddPath(context.get(), path.CGPath);
+    CGContextDrawPath(context.get(), kCGPathFillStroke);
+    CGContextEndTransparencyLayer(context.get());
 
-    CGContextRestoreGState(context);
+    CGContextRestoreGState(context.get());
 }
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event

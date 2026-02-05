@@ -61,6 +61,7 @@ void DatagramDefaultSource::receiveDatagram(std::span<const uint8_t> datagram, b
 void DatagramDefaultSource::doCancel()
 {
     m_isCancelled = true;
+    cancelFinished();
 }
 
 void DatagramDefaultSource::error(JSC::JSGlobalObject& globalObject, JSC::JSValue value)

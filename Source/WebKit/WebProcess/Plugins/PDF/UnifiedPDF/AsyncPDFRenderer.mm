@@ -807,27 +807,8 @@ void AsyncPDFRenderer::paintPagePreview(GraphicsContext& context, const FloatRec
     context.drawNativeImage(image, pageBoundsInPaintingCoordinates, imageRect, { CompositeOperator::Copy });
 }
 
-void AsyncPDFRenderer::invalidateTilesForPaintingRect(float pageScaleFactor, const FloatRect& paintingRect)
-{
-    auto scaleTransform = tileToPaintingTransform(pageScaleFactor);
-
-    m_rendereredTiles.removeIf([&](auto& entry) {
-        auto& renderedTile = entry.value;
-
-        auto tileClipInPaintingCoordinates = scaleTransform.mapRect(renderedTile.tileInfo.tileRect);
-        bool result = paintingRect.intersects(tileClipInPaintingCoordinates);
-        if (result)
-            LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::invalidateTilesForPaintingRect " << paintingRect << " - removing tile " << entry.key);
-
-        return result;
-    });
-}
-
 void AsyncPDFRenderer::setNeedsRenderForRect(GraphicsLayer& layer, const FloatRect& bounds)
 {
-    // FIXME: If our platform does not support partial updates (supportsPartialRepaint() is false) then this should behave
-    // identically to invalidateTilesForPaintingRect().
-
     LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::setNeedsRenderForRect " << bounds);
 
     ASSERT(isMainRunLoop());

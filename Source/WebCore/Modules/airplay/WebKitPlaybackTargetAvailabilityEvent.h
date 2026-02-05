@@ -44,16 +44,16 @@ public:
         String availability;
     };
 
-    static Ref<WebKitPlaybackTargetAvailabilityEvent> create(const AtomString& eventType, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<WebKitPlaybackTargetAvailabilityEvent> create(const AtomString& eventType, Init&& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new WebKitPlaybackTargetAvailabilityEvent(eventType, initializer, isTrusted));
+        return adoptRef(*new WebKitPlaybackTargetAvailabilityEvent(eventType, WTF::move(initializer), isTrusted));
     }
 
     String availability() const { return m_availability; }
 
 private:
     explicit WebKitPlaybackTargetAvailabilityEvent(const AtomString& eventType, bool available);
-    WebKitPlaybackTargetAvailabilityEvent(const AtomString& eventType, const Init&, IsTrusted);
+    WebKitPlaybackTargetAvailabilityEvent(const AtomString& eventType, Init&&, IsTrusted);
 
     String m_availability;
 };

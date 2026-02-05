@@ -292,6 +292,10 @@ struct WebProcessCreationParameters {
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
     bool isDebugLoggingEnabled { false };
 #endif
+
+#if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
+    bool shouldEnableWebAssemblyDebugger { false };
+#endif
 };
 
 } // namespace WebKit

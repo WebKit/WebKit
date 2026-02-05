@@ -87,11 +87,6 @@ module WebGPU_Internal [system] {
         export *
     }
 
-    explicit module DDMesh {
-        header "../DDMesh.h"
-        export *
-    }
-
     explicit module ExternalTexture {
         header "../ExternalTexture.h"
         export *
@@ -109,6 +104,11 @@ module WebGPU_Internal [system] {
 
     explicit module IsValidToUseWith {
         header "../IsValidToUseWith.h"
+        export *
+    }
+
+    explicit module Mesh {
+        header "../Mesh.h"
         export *
     }
 

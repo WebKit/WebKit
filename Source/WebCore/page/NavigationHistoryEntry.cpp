@@ -127,7 +127,7 @@ uint64_t NavigationHistoryEntry::index() const
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
     if (!document || !document->isFullyActive())
         return -1;
-    return document->protectedWindow()->protectedNavigation()->entries().findIf([this] (auto& entry) {
+    return protect(protect(document->window())->navigation())->entries().findIf([this] (auto& entry) {
         return entry.ptr() == this;
     });
 }

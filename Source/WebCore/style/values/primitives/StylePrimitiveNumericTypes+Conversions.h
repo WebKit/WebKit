@@ -33,6 +33,7 @@
 #include "StyleBuilderState.h"
 #include "StyleCalculationValue.h"
 #include "StylePrimitiveNumericTypes.h"
+#include "StylePrimitiveNumericTypes+Rounding.h"
 
 namespace WebCore {
 namespace Style {

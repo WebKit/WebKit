@@ -29,7 +29,6 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "AuxiliaryBarrierInlines.h"
-#include "CatchScope.h"
 #include "DeferredWorkTimer.h"
 #include "Exception.h"
 #include "GlobalObjectMethodTable.h"
@@ -49,6 +48,7 @@
 #include "StrongInlines.h"
 #include "StructureInlines.h"
 #include "ThrowScope.h"
+#include "TopExceptionScope.h"
 #include "WebAssemblyCompileOptions.h"
 #include "WebAssemblyModuleRecord.h"
 

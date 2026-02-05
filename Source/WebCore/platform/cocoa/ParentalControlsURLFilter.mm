@@ -163,18 +163,18 @@ bool ParentalControlsURLFilter::isEnabled() const
     return *m_isEnabled;
 }
 
-void ParentalControlsURLFilter::isURLAllowed(const URL& url, ParentalControlsContentFilter& filter)
+void ParentalControlsURLFilter::isURLAllowed(const URL& mainDocumentURL, const URL& url, ParentalControlsContentFilter& filter)
 {
-    isURLAllowedImpl(url, { [protectedThis = Ref { *this }, weakFilter = ThreadSafeWeakPtr { filter }] (bool allowed, NSData *replacementData) mutable {
+    isURLAllowedImpl(mainDocumentURL, url, { [protectedThis = Ref { *this }, weakFilter = ThreadSafeWeakPtr { filter }] (bool allowed, NSData *replacementData) mutable {
         ASSERT(!isMainThread());
         if (RefPtr filter = weakFilter.get())
             filter->didReceiveAllowDecisionOnQueue(allowed, replacementData);
     }, CompletionHandlerCallThread::AnyThread });
 }
 
-void ParentalControlsURLFilter::isURLAllowed(const URL& url, CompletionHandler<void(bool, NSData *)>&& completionHandler)
+void ParentalControlsURLFilter::isURLAllowed(const URL& mainDocumentURL, const URL& url, CompletionHandler<void(bool, NSData *)>&& completionHandler)
 {
-    isURLAllowedImpl(url, { [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (bool allowed, NSData *replacementData) mutable {
+    isURLAllowedImpl(mainDocumentURL, url, { [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (bool allowed, NSData *replacementData) mutable {
         ASSERT(!isMainThread());
         callOnMainRunLoop([completionHandler = WTF::move(completionHandler), allowed, replacementData = RetainPtr { replacementData }]() mutable {
             completionHandler(allowed, replacementData.get());
@@ -182,8 +182,10 @@ void ParentalControlsURLFilter::isURLAllowed(const URL& url, CompletionHandler<v
     }, CompletionHandlerCallThread::AnyThread });
 }
 
-void ParentalControlsURLFilter::isURLAllowedImpl(const URL& url, CompletionHandler<void(bool, NSData *)>&& completionHandler)
+void ParentalControlsURLFilter::isURLAllowedImpl(const URL& mainDocumentURL, const URL& url, CompletionHandler<void(bool, NSData *)>&& completionHandler)
 {
+    // FIXME: rdar://168622817
+    UNUSED_PARAM(mainDocumentURL);
     ASSERT(isMainThread());
 
     RetainPtr wcrBrowserEngineClient = effectiveWCRBrowserEngineClient();

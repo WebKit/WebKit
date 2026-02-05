@@ -110,12 +110,12 @@ void RemoteLayerTreeNode::detachFromParent()
     removeInteractionRegionsContainer();
 #endif
 #if PLATFORM(IOS_FAMILY)
-    if (auto view = uiView()) {
+    if (RetainPtr view = uiView()) {
         [view removeFromSuperview];
         return;
     }
 #endif
-    [protectedLayer() removeFromSuperlayer];
+    [protect(layer()) removeFromSuperlayer];
 }
 
 void RemoteLayerTreeNode::setEventRegion(const WebCore::EventRegion& eventRegion)
@@ -138,12 +138,12 @@ void RemoteLayerTreeNode::applyBackingStore(RemoteLayerTreeHost* host, RemoteLay
     if (asyncContentsIdentifier() && properties.contentsRenderingResourceIdentifier() && *asyncContentsIdentifier() >= *properties.contentsRenderingResourceIdentifier())
         return;
 
-    UIView* hostingView = nil;
+    RetainPtr<UIView> hostingView;
 #if PLATFORM(IOS_FAMILY)
     hostingView = uiView();
 #endif
 
-    properties.applyBackingStoreToNode(*this, host->replayDynamicContentScalingDisplayListsIntoBackingStore(), hostingView);
+    properties.applyBackingStoreToNode(*this, host->replayDynamicContentScalingDisplayListsIntoBackingStore(), hostingView.get());
 
     if (auto identifier = properties.contentsRenderingResourceIdentifier())
         setAsyncContentsIdentifier(*identifier);
@@ -290,7 +290,7 @@ void RemoteLayerTreeNode::addToHostingNode(RemoteLayerTreeNode& hostingNode)
 #if PLATFORM(IOS_FAMILY)
     [hostingNode.uiView() addSubview:uiView()];
 #else
-    [hostingNode.protectedLayer() addSublayer:protectedLayer().get()];
+    [protect(hostingNode.layer()) addSublayer:protect(layer()).get()];
 #endif
 }
 
@@ -299,7 +299,7 @@ void RemoteLayerTreeNode::removeFromHostingNode()
 #if PLATFORM(IOS_FAMILY)
     [uiView() removeFromSuperview];
 #else
-    [protectedLayer() removeFromSuperlayer];
+    [protect(layer()) removeFromSuperlayer];
 #endif
 }
 
@@ -333,10 +333,5 @@ void RemoteLayerTreeNode::setAcceleratedEffectsAndBaseValues(const WebCore::Acce
     host.animationsWereAddedToNode(*this);
 }
 #endif
-
-RetainPtr<CALayer> RemoteLayerTreeNode::protectedLayer() const
-{
-    return layer();
-}
 
 }

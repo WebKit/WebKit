@@ -30,22 +30,22 @@
 #include "ModelConvertToBackingContext.h"
 #include <wtf/TZoneMalloc.h>
 
-namespace WebCore::DDModel {
+namespace WebCore {
 
-class DowncastConvertToBackingContext final : public ConvertToBackingContext {
-    WTF_MAKE_TZONE_ALLOCATED(DowncastConvertToBackingContext);
+class ModelDowncastConvertToBackingContext final : public ModelConvertToBackingContext {
+    WTF_MAKE_TZONE_ALLOCATED(ModelDowncastConvertToBackingContext);
 public:
-    static Ref<DowncastConvertToBackingContext> create()
+    static Ref<ModelDowncastConvertToBackingContext> create()
     {
-        return adoptRef(*new DowncastConvertToBackingContext());
+        return adoptRef(*new ModelDowncastConvertToBackingContext());
     }
 
-    virtual ~DowncastConvertToBackingContext() = default;
+    virtual ~ModelDowncastConvertToBackingContext() = default;
 
-    WGPUDDMesh convertToBacking(const DDMesh&) final;
+    WebMesh convertToBacking(const Mesh&) final;
 
 private:
-    DowncastConvertToBackingContext() = default;
+    ModelDowncastConvertToBackingContext() = default;
 };
 
 }

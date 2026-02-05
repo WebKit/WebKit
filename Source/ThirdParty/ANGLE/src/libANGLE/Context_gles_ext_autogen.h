@@ -233,6 +233,7 @@
     /* GL_EXT_shader_io_blocks */                                                                  \
     /* GL_EXT_shader_non_constant_global_initializers */                                           \
     /* GL_EXT_shader_texture_lod */                                                                \
+    /* GL_EXT_shader_texture_samples */                                                            \
     /* GL_EXT_shadow_samplers */                                                                   \
     /* GL_EXT_tessellation_shader */                                                               \
     /* GL_EXT_texture_border_clamp */                                                              \
@@ -367,6 +368,10 @@
     void framebufferTextureMultiview(GLenum target, GLenum attachment, TextureID texturePacked,    \
                                      GLint level, GLint baseViewIndex, GLsizei numViews);          \
     /* GL_OVR_multiview2 */                                                                        \
+    /* GL_OVR_multiview_multisampled_render_to_texture */                                          \
+    void framebufferTextureMultisampleMultiview(                                                   \
+        GLenum target, GLenum attachment, TextureID texturePacked, GLint level, GLsizei samples,   \
+        GLint baseViewIndex, GLsizei numViews);                                                    \
     /* GL_QCOM_framebuffer_foveated */                                                             \
     void framebufferFoveationConfig(FramebufferID framebufferPacked, GLuint numLayers,             \
                                     GLuint focalPointsPerLayer, GLuint requestedFeatures,          \

@@ -209,8 +209,8 @@ angle::Result CalculateMaxVertexCountForConversion(ContextVk *contextVk,
     // Initialize numVertices to 0
     *maxNumVerticesOut = 0;
 
-    unsigned srcFormatSize = srcFormat.pixelBytes;
-    unsigned dstFormatSize = dstFormat.pixelBytes;
+    uint32_t srcFormatSize = srcFormat.pixelBytes;
+    uint32_t dstFormatSize = dstFormat.pixelBytes;
 
     uint32_t srcStride = conversion->getCacheKey().stride;
     uint32_t dstStride = dstFormatSize;
@@ -218,16 +218,27 @@ angle::Result CalculateMaxVertexCountForConversion(ContextVk *contextVk,
     ASSERT(srcStride != 0);
     ASSERT(conversion->dirty());
 
-    // Start the range with the range from the the beginning of the buffer to the end of
-    // buffer. Then scissor it with the dirtyRange.
+    // Start the range from the beginning of the buffer to the end of the buffer. Then scissor it
+    // with the dirtyRange.
+    VkDeviceSize srcBufferSize = srcBuffer->getSize();
     size_t srcOffset  = conversion->getCacheKey().offset;
-    GLint64 srcLength = srcBuffer->getSize() - srcOffset;
+    GLint64 srcLength          = static_cast<GLint64>(srcBufferSize) - srcOffset;
 
     // The max number of vertices from binding to the end of the buffer
     size_t maxNumVertices = GetVertexCountForRange(srcLength, srcFormatSize, srcStride);
     if (maxNumVertices == 0)
     {
         return angle::Result::Continue;
+    }
+
+    // The intended data size does not include the entire stride from the last vertex, but only the
+    // format size. The data size must be within the source buffer's limit.
+    VkDeviceSize intendedSrcDataSize =
+        static_cast<VkDeviceSize>((maxNumVertices - 1) * srcStride) + srcFormatSize;
+    if (intendedSrcDataSize > srcBufferSize)
+    {
+        maxNumVertices = static_cast<size_t>(srcBufferSize / srcStride);
+        ASSERT(maxNumVertices != 0);
     }
 
     // Allocate buffer for results
@@ -238,7 +249,7 @@ angle::Result CalculateMaxVertexCountForConversion(ContextVk *contextVk,
                                                        hostVisible));
 
     // Calculate numVertices to convert
-    *maxNumVerticesOut = GetVertexCountForRange(srcLength, srcFormatSize, srcStride);
+    *maxNumVerticesOut = maxNumVertices;
 
     return angle::Result::Continue;
 }
@@ -1008,10 +1019,10 @@ ANGLE_INLINE angle::Result VertexArrayVk::syncDirtyEnabledNonStreamingAttrib(
         vk::BufferHelper &bufferHelper         = bufferVk->getBuffer();
         mCurrentArrayBuffers[attribIndex]      = &bufferHelper;
         mCurrentArrayBufferSerial[attribIndex] = bufferHelper.getBufferSerial();
-        VkDeviceSize bufferSize                = bufferHelper.getSize();
+        VkDeviceSize bufferSize = renderer->padVertexAttribBufferSizeIfNeeded(bufferVk->getSize());
 
         VkDeviceSize bufferOffset;
-        if (contextVk->getFeatures().useVertexInputBindingStrideDynamicState.enabled)
+        if (contextVk->getFeatures().supportsBindVertexBuffers2.enabled)
         {
             mCurrentArrayBufferHandles[attribIndex] = bufferHelper.getBuffer().getHandle();
             bufferOffset                            = bufferHelper.getOffset();
@@ -1202,7 +1213,7 @@ angle::Result VertexArrayVk::syncNeedsConversionAttrib(ContextVk *contextVk,
     VkDeviceSize bufferSize                = bufferHelper->getSize();
 
     VkDeviceSize bufferOffset;
-    if (contextVk->getFeatures().useVertexInputBindingStrideDynamicState.enabled)
+    if (contextVk->getFeatures().supportsBindVertexBuffers2.enabled)
     {
         mCurrentArrayBufferHandles[attribIndex] = bufferHelper->getBuffer().getHandle();
         bufferOffset                            = bufferHelper->getOffset();
@@ -1464,7 +1475,7 @@ angle::Result VertexArrayVk::updateStreamedAttribs(const gl::Context *context,
         VkDeviceSize bufferSize                = vertexDataBuffer->getSize();
 
         VkDeviceSize bufferOffset;
-        if (contextVk->getFeatures().useVertexInputBindingStrideDynamicState.enabled)
+        if (contextVk->getFeatures().supportsBindVertexBuffers2.enabled)
         {
             mCurrentArrayBufferHandles[attribIndex] = vertexDataBuffer->getBuffer().getHandle();
             bufferOffset                            = vertexDataBuffer->getOffset();
@@ -1564,7 +1575,7 @@ angle::Result VertexArrayVk::updateDefaultAttrib(ContextVk *contextVk, size_t at
     ANGLE_TRY(bufferHelper->flush(contextVk->getRenderer()));
 
     VkDeviceSize bufferOffset;
-    if (contextVk->getFeatures().useVertexInputBindingStrideDynamicState.enabled)
+    if (contextVk->getFeatures().supportsBindVertexBuffers2.enabled)
     {
         mCurrentArrayBufferHandles[attribIndex] = bufferHelper->getBuffer().getHandle();
         bufferOffset                            = bufferHelper->getOffset();

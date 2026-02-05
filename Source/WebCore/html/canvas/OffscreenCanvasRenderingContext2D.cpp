@@ -132,7 +132,7 @@ RefPtr<ImageBuffer> OffscreenCanvasRenderingContext2D::transferToImageBuffer()
 {
     if (!canvasBase().hasCreatedImageBuffer())
         return canvasBase().allocateImageBuffer();
-    auto* buffer = canvasBase().buffer();
+    RefPtr buffer = canvasBase().buffer();
     if (!buffer)
         return nullptr;
     // As the canvas context state is stored in GraphicsContext, which is owned

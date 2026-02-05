@@ -525,7 +525,7 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
     }
     if (propertyName == vm.propertyNames->underscoreProto)
         setHasUnderscoreProtoPropertyExcludingOriginalProto(true);
-    else if (propertyName == vm.propertyNames->then || propertyName == vm.propertyNames->iteratorSymbol || propertyName == vm.propertyNames->constructor)
+    else if (propertyName == vm.propertyNames->then)
         setHasSpecialProperties(true);
 
     auto rep = propertyName.uid();
@@ -685,7 +685,7 @@ ALWAYS_INLINE auto Structure::addOrReplacePropertyWithoutTransition(VM& vm, Prop
     }
     if (propertyName == vm.propertyNames->underscoreProto)
         setHasUnderscoreProtoPropertyExcludingOriginalProto(true);
-    else if (propertyName == vm.propertyNames->then || propertyName == vm.propertyNames->iteratorSymbol || propertyName == vm.propertyNames->constructor)
+    else if (propertyName == vm.propertyNames->then)
         setHasSpecialProperties(true);
 
     PropertyOffset newOffset = table->nextOffset(m_inlineCapacity);

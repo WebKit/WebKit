@@ -84,7 +84,7 @@ NetworkRTCProvider::NetworkRTCProvider(NetworkConnectionToWebProcess& connection
 
 void NetworkRTCProvider::startListeningForIPC()
 {
-    protectedConnection()->addMessageReceiver(*this, *this, Messages::NetworkRTCProvider::messageReceiverName());
+    protect(connection())->addMessageReceiver(*this, *this, Messages::NetworkRTCProvider::messageReceiverName());
 }
 
 NetworkRTCProvider::~NetworkRTCProvider()
@@ -98,7 +98,7 @@ void NetworkRTCProvider::close()
 {
     RTC_RELEASE_LOG("close");
 
-    protectedConnection()->removeMessageReceiver(Messages::NetworkRTCProvider::messageReceiverName());
+    protect(connection())->removeMessageReceiver(Messages::NetworkRTCProvider::messageReceiverName());
     m_connection = nullptr;
     protectedRTCMonitor()->stopUpdating();
 
@@ -185,14 +185,14 @@ void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, 
     }
 
     RefPtr connection = m_connection.get();
-    if (connection && connection->protectedMDNSRegister()->hasRegisteredName(address)) {
+    if (connection && protect(connection->mdnsRegister())->hasRegisteredName(address)) {
         Vector<WebKit::WebRTCNetwork::IPAddress> ipAddresses;
         Ref rtcMonitor = m_rtcMonitor;
         if (!rtcMonitor->ipv4().isUnspecified())
             ipAddresses.append(rtcMonitor->ipv4());
         if (!rtcMonitor->ipv6().isUnspecified())
             ipAddresses.append(rtcMonitor->ipv6());
-        protectedConnection()->send(Messages::WebRTCResolver::SetResolvedAddress(ipAddresses), identifier);
+        protect(this->connection())->send(Messages::WebRTCResolver::SetResolvedAddress(ipAddresses), identifier);
         return;
     }
 
@@ -386,7 +386,7 @@ void NetworkRTCProvider::assertIsRTCNetworkThread()
 
 void NetworkRTCProvider::signalSocketIsClosed(LibWebRTCSocketIdentifier identifier)
 {
-    protectedConnection()->send(Messages::LibWebRTCNetwork::SignalClose(identifier, 1), 0);
+    protect(connection())->send(Messages::LibWebRTCNetwork::SignalClose(identifier, 1), 0);
 }
 
 Ref<NetworkRTCMonitor> NetworkRTCProvider::protectedRTCMonitor()

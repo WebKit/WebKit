@@ -227,11 +227,6 @@ SocketProvider* WorkerGlobalScope::socketProvider()
     return m_socketProvider.get();
 }
 
-RefPtr<SocketProvider> WorkerGlobalScope::protectedSocketProvider()
-{
-    return socketProvider();
-}
-
 RefPtr<RTCDataChannelRemoteHandlerConnection> WorkerGlobalScope::createRTCDataChannelRemoteHandlerConnection()
 {
     RefPtr<RTCDataChannelRemoteHandlerConnection> connection;
@@ -332,11 +327,6 @@ WorkerNavigator& WorkerGlobalScope::navigator()
     if (!m_navigator)
         lazyInitialize(m_navigator, WorkerNavigator::create(*this, m_userAgent, m_isOnline));
     return *m_navigator;
-}
-
-Ref<WorkerNavigator> WorkerGlobalScope::protectedNavigator()
-{
-    return navigator();
 }
 
 void WorkerGlobalScope::setIsOnline(bool isOnline)
@@ -556,11 +546,6 @@ Crypto& WorkerGlobalScope::crypto()
 }
 
 Performance& WorkerGlobalScope::performance() const
-{
-    return *m_performance;
-}
-
-Ref<Performance> WorkerGlobalScope::protectedPerformance() const
 {
     return *m_performance;
 }

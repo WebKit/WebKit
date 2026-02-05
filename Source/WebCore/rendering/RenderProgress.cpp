@@ -51,7 +51,7 @@ void RenderProgress::willBeDestroyed()
 
 void RenderProgress::updateFromElement()
 {
-    HTMLProgressElement* element = progressElement();
+    RefPtr element = progressElement();
     if (m_position == element->position())
         return;
     m_position = element->position();

@@ -350,7 +350,7 @@ bool HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end,
             return cacheSelection(start, end, direction);
 
         // FIXME: Removing this synchronous layout requires fixing setSelectionWithoutUpdatingAppearance not needing up-to-date style.
-        protectedDocument()->updateLayoutIgnorePendingStylesheets();
+        protect(document())->updateLayoutIgnorePendingStylesheets();
 
         // Cache selection if renderer is invisible.
         if (CheckedPtr renderer = this->renderer()) {
@@ -719,7 +719,7 @@ void HTMLTextFormControlElement::setInnerTextValue(String&& value)
 
         {
             // Events dispatched on the inner text element cannot execute arbitrary author scripts.
-            ScriptDisallowedScope::EventAllowedScope allowedScope(*protectedUserAgentShadowRoot());
+            ScriptDisallowedScope::EventAllowedScope allowedScope(*protect(userAgentShadowRoot()));
 
             bool endsWithNewLine = value.endsWith('\n') || value.endsWith('\r');
             innerText->setInnerText(WTF::move(value));
@@ -966,7 +966,7 @@ void HTMLTextFormControlElement::adjustInnerTextStyle(const RenderStyle& parentS
 bool HTMLTextFormControlElement::shouldApplyScriptTrackingPrivacyProtection() const
 {
     return (wasEverChangedByUserEdit() || !wasCreatedByTaintedScript())
-        && protectedDocument()->requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::FormControls);
+        && protect(document())->requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::FormControls);
 }
 
 } // namespace WebCore

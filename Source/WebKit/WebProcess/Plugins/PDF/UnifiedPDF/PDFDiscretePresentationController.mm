@@ -96,12 +96,12 @@ void PDFDiscretePresentationController::teardown()
     m_rows.clear();
 }
 
-bool PDFDiscretePresentationController::supportsDisplayMode(PDFDocumentLayout::DisplayMode mode) const
+bool PDFDiscretePresentationController::supportsDisplayMode(PDFDisplayMode mode) const
 {
     return PDFDocumentLayout::isDiscreteDisplayMode(mode);
 }
 
-void PDFDiscretePresentationController::willChangeDisplayMode(PDFDocumentLayout::DisplayMode newMode)
+void PDFDiscretePresentationController::willChangeDisplayMode(PDFDisplayMode newMode)
 {
     ASSERT(supportsDisplayMode(newMode));
     m_visibleRowIndex = 0;

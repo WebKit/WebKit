@@ -100,7 +100,7 @@ std::optional<FloatRect> ScrollingTreeStickyNode::findConstrainingRect() const
 
     for (RefPtr ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
         if (auto* overflowProxyNode = dynamicDowncast<ScrollingTreeOverflowScrollProxyNode>(*ancestor)) {
-            auto overflowNode = scrollingTree()->nodeForID(overflowProxyNode->overflowScrollingNodeID());
+            RefPtr overflowNode = scrollingTree()->nodeForID(overflowProxyNode->overflowScrollingNodeID());
             if (!overflowNode)
                 break;
 

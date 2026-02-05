@@ -150,7 +150,6 @@ public:
     const String& cachePartition() const { return m_resourceRequest.cachePartition(); }
     PAL::SessionID sessionID() const { return m_sessionID; }
     const CookieJar* cookieJar() const { return m_cookieJar.get(); }
-    RefPtr<const CookieJar> protectedCookieJar() const;
     Type type() const { return m_type; }
     String mimeType() const { return response().mimeType(); }
     long long expectedContentLength() const { return response().expectedContentLength(); }
@@ -239,7 +238,6 @@ public:
     void clearLoader();
 
     FragmentedSharedBuffer* resourceBuffer() const { return m_data.get(); }
-    RefPtr<FragmentedSharedBuffer> protectedResourceBuffer() const;
 
     virtual void redirectReceived(ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&);
     virtual void responseReceived(ResourceResponse&&);
@@ -258,7 +256,6 @@ public:
 
     const SecurityOrigin* origin() const { return m_origin.get(); }
     SecurityOrigin* origin() { return m_origin.get(); }
-    RefPtr<SecurityOrigin> protectedOrigin() const;
     AtomString initiatorType() const { return m_initiatorType; }
 
     bool canDelete() const { return !hasClients() && !m_loader && !m_preloadCount && !m_handleCount && !m_resourceToRevalidate && !m_proxyResource; }
@@ -301,7 +298,6 @@ public:
 
     bool isCacheValidator() const { return !!m_resourceToRevalidate; }
     CachedResource* resourceToRevalidate() const { return m_resourceToRevalidate.get(); }
-    CachedResourceHandle<CachedResource> protectedResourceToRevalidate() const;
 
     // HTTP revalidation support methods for CachedResourceLoader.
     void setResourceToRevalidate(CachedResource*);

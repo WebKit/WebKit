@@ -37,6 +37,7 @@
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLBRElement.h"
 #include "HTMLElement.h"
+#include "HTMLHeadingElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
@@ -364,8 +365,7 @@ static bool isEnclosingItemBoundaryElement(const Element& element)
     if (element.hasTagName(HTMLNames::spanTag) && displayType == DisplayType::InlineBlock)
         return true;
 
-    if (displayType == DisplayType::Block && (element.hasTagName(HTMLNames::h1Tag) || element.hasTagName(HTMLNames::h2Tag) || element.hasTagName(HTMLNames::h3Tag)
-        || element.hasTagName(HTMLNames::h4Tag) || element.hasTagName(HTMLNames::h5Tag) || element.hasTagName(HTMLNames::h6Tag)))
+    if (displayType == DisplayType::Block && is<HTMLHeadingElement>(element))
         return true;
 
     return false;
@@ -950,7 +950,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
             for (RefPtr descendentNode = NodeTraversal::next(*originalNode, originalNode.get()); descendentNode; descendentNode = NodeTraversal::next(*descendentNode, originalNode.get()))
                 nodesToRemove.remove(*descendentNode);
         } else
-            replacementNode = Text::create(commonAncestor->protectedDocument(), WTF::move(replacementText));
+            replacementNode = Text::create(protect(commonAncestor->document()), WTF::move(replacementText));
 
         auto topDownPath = getPath(commonAncestor.get(), originalNode.get());
         updateInsertions(lastTopDownPath, topDownPath, replacementNode.get(), reusedOriginalNodes, insertions);

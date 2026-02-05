@@ -50,11 +50,6 @@ void WebNotificationManagerMessageHandler::deref() const
     m_webPageProxy->deref();
 }
 
-Ref<WebPageProxy> WebNotificationManagerMessageHandler::protectedPage() const
-{
-    return m_webPageProxy.get();
-}
-
 void WebNotificationManagerMessageHandler::showNotification(IPC::Connection& connection, const WebCore::NotificationData& data, RefPtr<WebCore::NotificationResources>&& resources, CompletionHandler<void()>&& callback)
 {
     RELEASE_LOG(Push, "WebNotificationManagerMessageHandler showNotification called");
@@ -63,7 +58,7 @@ void WebNotificationManagerMessageHandler::showNotification(IPC::Connection& con
         ServiceWorkerNotificationHandler::singleton().showNotification(connection, data, WTF::move(resources), WTF::move(callback));
         return;
     }
-    protectedPage()->showNotification(connection, data, WTF::move(resources));
+    protect(page())->showNotification(connection, data, WTF::move(resources));
     callback();
 }
 
@@ -74,7 +69,7 @@ void WebNotificationManagerMessageHandler::cancelNotification(WebCore::SecurityO
         serviceWorkerNotificationHandler->cancelNotification(WTF::move(origin), notificationID);
         return;
     }
-    protectedPage()->cancelNotification(notificationID);
+    protect(page())->cancelNotification(notificationID);
 }
 
 void WebNotificationManagerMessageHandler::clearNotifications(const Vector<WTF::UUID>& notificationIDs)
@@ -94,7 +89,7 @@ void WebNotificationManagerMessageHandler::clearNotifications(const Vector<WTF::
     if (!persistentNotifications.isEmpty())
         serviceWorkerNotificationHandler->clearNotifications(persistentNotifications);
     if (!pageNotifications.isEmpty())
-        protectedPage()->clearNotifications(pageNotifications);
+        protect(page())->clearNotifications(pageNotifications);
 }
 
 void WebNotificationManagerMessageHandler::didDestroyNotification(const WTF::UUID& notificationID)
@@ -104,12 +99,12 @@ void WebNotificationManagerMessageHandler::didDestroyNotification(const WTF::UUI
         serviceWorkerNotificationHandler->didDestroyNotification(notificationID);
         return;
     }
-    protectedPage()->didDestroyNotification(notificationID);
+    protect(page())->didDestroyNotification(notificationID);
 }
 
 void WebNotificationManagerMessageHandler::pageWasNotifiedOfNotificationPermission()
 {
-    protectedPage()->pageWillLikelyUseNotifications();
+    protect(page())->pageWillLikelyUseNotifications();
 }
 
 void WebNotificationManagerMessageHandler::requestPermission(WebCore::SecurityOriginData&&, CompletionHandler<void(bool)>&& completionHandler)
@@ -132,7 +127,7 @@ void WebNotificationManagerMessageHandler::getPermissionStateSync(WebCore::Secur
 
 std::optional<SharedPreferencesForWebProcess> WebNotificationManagerMessageHandler::sharedPreferencesForWebProcess(const IPC::Connection&) const
 {
-    return protectedPage()->protectedLegacyMainFrameProcess()->sharedPreferencesForWebProcess();
+    return protect(protect(page())->legacyMainFrameProcess())->sharedPreferencesForWebProcess();
 }
 
 } // namespace WebKit

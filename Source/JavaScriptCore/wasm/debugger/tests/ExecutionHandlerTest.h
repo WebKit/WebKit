@@ -25,13 +25,13 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 namespace ExecutionHandlerTest {
 extern bool doneTesting;
 }
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)
 
 /* Returns the number of failures encountered. If all tests passed,
    0 will be returned. */

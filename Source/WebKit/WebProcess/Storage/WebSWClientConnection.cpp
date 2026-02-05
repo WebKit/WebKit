@@ -337,7 +337,7 @@ void WebSWClientConnection::getNotifications(const URL& registrationURL, const S
     }
 #endif
 
-    WebProcess::singleton().protectedParentProcessConnection()->sendWithAsyncReply(Messages::WebProcessProxy::GetNotifications { registrationURL, tag }, WTF::move(callback));
+    protect(WebProcess::singleton().parentProcessConnection())->sendWithAsyncReply(Messages::WebProcessProxy::GetNotifications { registrationURL, tag }, WTF::move(callback));
 }
 #endif
 

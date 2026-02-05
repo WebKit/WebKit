@@ -19,7 +19,6 @@
  */
 
 // https://html.spec.whatwg.org/multipage/dom.html#htmlelement
-
 [
     CustomToJSObject,
     ExportMacro=WEBCORE_EXPORT,
@@ -72,15 +71,13 @@
     [Conditional=WRITING_SUGGESTIONS, CEReactions=Needed] attribute boolean writingsuggestions;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary ShowPopoverOptions {
+// https://html.spec.whatwg.org/multipage/dom.html#showpopoveroptions
+dictionary ShowPopoverOptions {
     HTMLElement source;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary TogglePopoverOptions : ShowPopoverOptions {
+// https://html.spec.whatwg.org/multipage/dom.html#togglepopoveroptions
+dictionary TogglePopoverOptions : ShowPopoverOptions {
     boolean force;
 };
 

@@ -356,7 +356,7 @@ TEST(CTAPResponseTest, TestReadMakeCredentialResponse)
 {
     auto makeCredentialResponse = readCTAPMakeCredentialResponse(std::span { TestData::kTestMakeCredentialResponse }, AuthenticatorAttachment::CrossPlatform, { });
     ASSERT_TRUE(makeCredentialResponse);
-    auto cborAttestationObject = cbor::CBORReader::read(makeCredentialResponse->attestationObject()->toVector());
+    auto cborAttestationObject = cbor::CBORReader::read(makeCredentialResponse->attestationObject().toVector());
     ASSERT_TRUE(cborAttestationObject);
     ASSERT_TRUE(cborAttestationObject->isMap());
 
@@ -394,8 +394,8 @@ TEST(CTAPResponseTest, TestReadMakeCredentialResponse)
     ASSERT_EQ(certificate.getArray().size(), 1u);
     ASSERT_TRUE(certificate.getArray()[0].isByteString());
     EXPECT_EQ(certificate.getArray()[0].getByteString(), Vector<uint8_t> { TestData::kCtap2MakeCredentialCertificate });
-    EXPECT_EQ(makeCredentialResponse->rawId()->byteLength(), sizeof(TestData::kCtap2MakeCredentialCredentialId));
-    EXPECT_TRUE(equalSpans(makeCredentialResponse->rawId()->span(), std::span { TestData::kCtap2MakeCredentialCredentialId }));
+    EXPECT_EQ(makeCredentialResponse->rawId().byteLength(), sizeof(TestData::kCtap2MakeCredentialCredentialId));
+    EXPECT_TRUE(equalSpans(makeCredentialResponse->rawId().span(), std::span { TestData::kCtap2MakeCredentialCredentialId }));
 }
 
 // Leveraging example 5 of section 6.1 of the CTAP spec.
@@ -445,11 +445,11 @@ TEST(CTAPResponseTest, TestParseRegisterResponseData)
 {
     auto response = readU2fRegisterResponse(TestData::kRelyingPartyId, std::span { TestData::kTestU2fRegisterResponse }, AuthenticatorAttachment::CrossPlatform);
     ASSERT_TRUE(response);
-    EXPECT_EQ(response->rawId()->byteLength(), sizeof(TestData::kU2fSignKeyHandle));
-    EXPECT_TRUE(equalSpans(response->rawId()->span(), std::span { TestData::kU2fSignKeyHandle }));
+    EXPECT_EQ(response->rawId().byteLength(), sizeof(TestData::kU2fSignKeyHandle));
+    EXPECT_TRUE(equalSpans(response->rawId().span(), std::span { TestData::kU2fSignKeyHandle }));
     auto expectedAttestationObject = getTestAttestationObjectBytes();
-    EXPECT_EQ(response->attestationObject()->byteLength(), expectedAttestationObject.size());
-    EXPECT_TRUE(equalSpans(response->attestationObject()->span(), expectedAttestationObject.span()));
+    EXPECT_EQ(response->attestationObject().byteLength(), expectedAttestationObject.size());
+    EXPECT_TRUE(equalSpans(response->attestationObject().span(), expectedAttestationObject.span()));
 }
 
 // Test malformed user public key.
@@ -547,8 +547,8 @@ TEST(CTAPResponseTest, TestParseSignResponseData)
 {
     auto response = readU2fSignResponse(TestData::kRelyingPartyId, getTestCredentialRawIdBytes(), getTestSignResponse(), AuthenticatorAttachment::CrossPlatform);
     ASSERT_TRUE(response);
-    EXPECT_EQ(response->rawId()->byteLength(), sizeof(TestData::kU2fSignKeyHandle));
-    EXPECT_TRUE(equalSpans(response->rawId()->span(), std::span { TestData::kU2fSignKeyHandle }));
+    EXPECT_EQ(response->rawId().byteLength(), sizeof(TestData::kU2fSignKeyHandle));
+    EXPECT_TRUE(equalSpans(response->rawId().span(), std::span { TestData::kU2fSignKeyHandle }));
     EXPECT_EQ(response->authenticatorData()->byteLength(), sizeof(TestData::kTestSignAuthenticatorData));
     EXPECT_TRUE(equalSpans(response->authenticatorData()->span(), std::span { TestData::kTestSignAuthenticatorData }));
     EXPECT_EQ(response->signature()->byteLength(), sizeof(TestData::kU2fSignature));

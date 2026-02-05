@@ -170,6 +170,9 @@ extern PFN_vkGetMemoryHostPointerPropertiesEXT vkGetMemoryHostPointerPropertiesE
 // VK_KHR_buffer_device_address
 extern PFN_vkGetBufferDeviceAddressKHR vkGetBufferDeviceAddressKHR;
 
+// VK_QCOM_tile_memory_heap
+extern PFN_vkCmdBindTileMemoryQCOM vkCmdBindTileMemoryQCOM;
+
 }  // namespace rx
 
 #endif  // ANGLE_SHARED_LIBVULKAN

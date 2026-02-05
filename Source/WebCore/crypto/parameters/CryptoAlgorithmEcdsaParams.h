@@ -25,9 +25,10 @@
 
 #pragma once
 
-#include "CryptoAlgorithmParameters.h"
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>
+#include <WebCore/CryptoAlgorithmEcdsaParamsInit.h>
+#include <WebCore/CryptoAlgorithmParameters.h>
 
 namespace WebCore {
 
@@ -38,12 +39,23 @@ public:
     Variant<JSC::Strong<JSC::JSObject>, String> hash;
     CryptoAlgorithmIdentifier hashIdentifier;
 
+    CryptoAlgorithmEcdsaParams(CryptoAlgorithmIdentifier identifier)
+        : CryptoAlgorithmParameters { WTF::move(identifier) }
+    {
+    }
+
+    CryptoAlgorithmEcdsaParams(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmEcdsaParamsInit init, CryptoAlgorithmIdentifier hashIdentifier)
+        : CryptoAlgorithmParameters { WTF::move(identifier), WTF::move(init) }
+        , hash { WTF::move(init.hash) }
+        , hashIdentifier { WTF::move(hashIdentifier) }
+    {
+    }
+
     Class parametersClass() const final { return Class::EcdsaParams; }
 
     CryptoAlgorithmEcdsaParams isolatedCopy() const
     {
-        CryptoAlgorithmEcdsaParams result;
-        result.identifier = identifier;
+        CryptoAlgorithmEcdsaParams result { identifier };
         result.hashIdentifier = hashIdentifier;
 
         return result;

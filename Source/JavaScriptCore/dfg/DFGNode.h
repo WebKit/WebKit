@@ -904,17 +904,8 @@ public:
 
     void convertToNewInternalFieldObject(RegisteredStructure structure)
     {
-        ASSERT(m_op == CreatePromise);
+        ASSERT(m_op == CreatePromise || m_op == CreateAsyncGenerator || m_op == CreateGenerator);
         setOpAndDefaultFlags(NewInternalFieldObject);
-        children.reset();
-        m_opInfo = structure;
-        m_opInfo2 = OpInfoWrapper();
-    }
-
-    void convertToNewInternalFieldObjectWithInlineFields(NodeType newOp, RegisteredStructure structure)
-    {
-        ASSERT(m_op == CreateAsyncGenerator || m_op == CreateGenerator);
-        setOpAndDefaultFlags(newOp);
         children.reset();
         m_opInfo = structure;
         m_opInfo2 = OpInfoWrapper();
@@ -2395,8 +2386,6 @@ public:
         case ArrayifyToStructure:
         case MaterializeNewInternalFieldObject:
         case NewObject:
-        case NewGenerator:
-        case NewAsyncGenerator:
         case NewInternalFieldObject:
         case NewStringObject:
         case NewRegExpUntyped:
@@ -2608,6 +2597,18 @@ public:
         case PhantomNewInternalFieldObject:
         case PhantomCreateActivation:
         case PhantomNewRegExp:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    bool isPhantomArgumentsAllocation()
+    {
+        switch (op()) {
+        case PhantomDirectArguments:
+        case PhantomCreateRest:
+        case PhantomClonedArguments:
             return true;
         default:
             return false;
@@ -3619,7 +3620,7 @@ public:
     
     bool hasNumberOfArgumentsToSkip()
     {
-        return op() == CreateRest || op() == PhantomCreateRest || op() == GetRestLength || op() == GetMyArgumentByVal || op() == GetMyArgumentByValOutOfBounds;
+        return op() == CreateRest || op() == PhantomCreateRest || op() == GetMyArgumentByVal || op() == GetMyArgumentByValOutOfBounds;
     }
 
     unsigned numberOfArgumentsToSkip()

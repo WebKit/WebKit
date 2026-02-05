@@ -28,8 +28,8 @@
 
 #include "WebCoreJSBuiltinInternals.h"
 #include "WebCoreJSClientData.h"
-#include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/JSMap.h>
+#include <JavaScriptCore/TopExceptionScope.h>
 #include <JavaScriptCore/VMTrapsInlines.h>
 
 namespace WebCore {

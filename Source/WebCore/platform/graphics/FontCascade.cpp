@@ -52,7 +52,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FontCascade);
 
 using namespace WTF::Unicode;
 
-FontCascade::CodePath FontCascade::s_codePath = CodePath::Auto;
+Markable<FontCascade::CodePath> FontCascade::s_forcedCodePath = std::nullopt;
 
 static std::atomic<unsigned> lastFontCascadeGeneration { 0 };
 
@@ -296,17 +296,28 @@ float FontCascade::width(const TextRun& run, SingleThreadWeakHashSet<const Font>
     }
 
     bool hasWordSpacingOrLetterSpacing = wordSpacing() || letterSpacing();
-    float* cacheEntry = fonts()->widthCache().add(run, std::numeric_limits<float>::quiet_NaN(), enableKerning() || requiresShaping(), hasWordSpacingOrLetterSpacing, !textAutospace().isNoAutospace(), glyphOverflow);
-    if (cacheEntry && !std::isnan(*cacheEntry))
-        return *cacheEntry;
+
+    auto* cacheEntry = fonts()->glyphGeometryCache().add(run, { }, enableKerning() || requiresShaping(), hasWordSpacingOrLetterSpacing, !textAutospace().isNoAutospace());
+
+    if (cacheEntry && cacheEntry->width) {
+        if (!glyphOverflow)
+            return *cacheEntry->width;
+        if (cacheEntry->glyphOverflow && cacheEntry->glyphOverflow->computeBounds == glyphOverflow->computeBounds) {
+            *glyphOverflow = *cacheEntry->glyphOverflow;
+            return *cacheEntry->width;
+        }
+    }
 
     SingleThreadWeakHashSet<const Font> localFallbackFonts;
     if (!fallbackFonts)
         fallbackFonts = &localFallbackFonts;
 
     float result = width(codePathToUse, run, fallbackFonts, glyphOverflow);
-    if (cacheEntry && fallbackFonts->isEmptyIgnoringNullReferences())
-        *cacheEntry = result;
+    if (cacheEntry && fallbackFonts->isEmptyIgnoringNullReferences()) {
+        cacheEntry->width = result;
+        if (glyphOverflow)
+            cacheEntry->glyphOverflow = *glyphOverflow;
+    }
     return result;
 }
 
@@ -336,7 +347,7 @@ float FontCascade::width(CodePath codePathToUse, const TextRun& run, SingleThrea
     return it.runWidthSoFar();
 }
 
-NEVER_INLINE float FontCascade::widthForSimpleTextSlow(StringView text, TextDirection textDirection, float* cacheEntry) const
+NEVER_INLINE float FontCascade::widthForSimpleTextSlow(StringView text, TextDirection textDirection, FontCascadeFonts::GlyphGeometryCacheEntry* cacheEntry) const
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
     TextRun run { text, 0, 0, ExpansionBehavior::defaultBehavior(), textDirection, false, false };
@@ -365,7 +376,7 @@ NEVER_INLINE float FontCascade::widthForSimpleTextSlow(StringView text, TextDire
     result += WebCore::width(initialAdvance);
 #endif
     if (cacheEntry)
-        *cacheEntry = result;
+        cacheEntry->width = result;
     return result;
 }
 
@@ -378,9 +389,9 @@ float FontCascade::widthForSimpleTextWithFixedPitch(StringView text, bool whites
     if (whitespaceIsCollapsed)
         return text.length() * monospaceCharacterWidth;
 
-    float* cacheEntry = fonts()->widthCache().add(text, std::numeric_limits<float>::quiet_NaN());
-    if (cacheEntry && !std::isnan(*cacheEntry))
-        return *cacheEntry;
+    auto* cacheEntry = fonts()->glyphGeometryCache().add(text, { });
+    if (cacheEntry && cacheEntry->width)
+        return *cacheEntry->width;
 
     auto width = 0.f;
     for (unsigned index = 0; index < text.length(); ++index) {
@@ -395,7 +406,7 @@ float FontCascade::widthForSimpleTextWithFixedPitch(StringView text, bool whites
     }
 
     if (cacheEntry)
-        *cacheEntry = width;
+        cacheEntry->width = width;
     return width;
 }
 
@@ -433,7 +444,7 @@ GlyphData FontCascade::glyphDataForCharacter(char32_t c, bool mirror, FontVarian
 
     auto emojiPolicy = resolvedEmojiPolicy.value_or(resolveEmojiPolicy(m_fontDescription.variantEmoji(), c));
 
-    return protectedFonts()->glyphDataForCharacter(c, m_fontDescription, protectedFontSelector().get(), variant, emojiPolicy);
+    return protectedFonts()->glyphDataForCharacter(c, m_fontDescription, protect(fontSelector()).get(), variant, emojiPolicy);
 }
 
 
@@ -653,20 +664,20 @@ bool FontCascade::shouldUseComplexTextControllerForSimpleText() const
 }
 #endif
 
-void FontCascade::setCodePath(CodePath p)
+void FontCascade::setForcedCodePath(Markable<CodePath> p)
 {
-    s_codePath = p;
+    s_forcedCodePath = p;
 }
 
-FontCascade::CodePath FontCascade::codePath()
+Markable<FontCascade::CodePath> FontCascade::forcedCodePath()
 {
-    return s_codePath;
+    return s_forcedCodePath;
 }
 
 FontCascade::CodePath FontCascade::codePath(const TextRun& run, std::optional<unsigned> from, std::optional<unsigned> to) const
 {
-    if (s_codePath != CodePath::Auto)
-        return s_codePath;
+    if (s_forcedCodePath)
+        return *s_forcedCodePath;
 
     if (!canHandleRunAsSimpleText(run, from.value_or(0), to.value_or(run.length())))
         return CodePath::Complex;

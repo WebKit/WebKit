@@ -38,7 +38,7 @@ namespace WebKit {
 
 using TimelineID = WebCore::ProcessQualified<WebCore::TimelineIdentifier>;
 
-class RemoteAnimationTimeline : public RefCounted<RemoteAnimationTimeline> {
+class RemoteAnimationTimeline : public ThreadSafeRefCounted<RemoteAnimationTimeline> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteAnimationTimeline);
 public:
     virtual ~RemoteAnimationTimeline() = default;

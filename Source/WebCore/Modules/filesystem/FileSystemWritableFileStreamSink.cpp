@@ -68,9 +68,12 @@ static ExceptionOr<FileSystemWritableFileStream::WriteParams> writeParamsFromChu
     });
 }
 
-static void fetchDataBytesForWrite(const FileSystemWritableFileStream::DataVariant& data, CompletionHandler<void(ExceptionOr<std::span<const uint8_t>>&&)>&& completionHandler)
+static void fetchDataBytesForWrite(const std::optional<FileSystemWritableFileStream::DataVariant>& data, CompletionHandler<void(ExceptionOr<std::span<const uint8_t>>&&)>&& completionHandler)
 {
-    WTF::switchOn(data, [&](const RefPtr<JSC::ArrayBufferView>& bufferView) {
+    if (!data)
+        return completionHandler(Exception { ExceptionCode::TypeError });
+
+    WTF::switchOn(*data, [&](const RefPtr<JSC::ArrayBufferView>& bufferView) {
         if (!bufferView || bufferView->isDetached())
             return completionHandler(Exception { ExceptionCode::TypeError });
 
@@ -170,7 +173,7 @@ void FileSystemWritableFileStreamSink::write(ScriptExecutionContext& context, JS
     }
 }
 
-void FileSystemWritableFileStreamSink::close()
+void FileSystemWritableFileStreamSink::close(JSDOMGlobalObject&)
 {
     ASSERT(!m_isClosed);
 
@@ -178,12 +181,13 @@ void FileSystemWritableFileStreamSink::close()
     protectedSource()->closeWritable(m_identifier, FileSystemWriteCloseReason::Completed);
 }
 
-void FileSystemWritableFileStreamSink::abort(JSC::JSValue)
+void FileSystemWritableFileStreamSink::abort(JSDOMGlobalObject&, JSC::JSValue, DOMPromiseDeferred<void>&& promise)
 {
     ASSERT(!m_isClosed);
 
     m_isClosed = true;
     protectedSource()->closeWritable(m_identifier, FileSystemWriteCloseReason::Aborted);
+    promise.resolve();
 }
 
 } // namespace WebCore

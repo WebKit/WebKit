@@ -24,7 +24,7 @@
  */
 
 [
-    LegacyNativeDictionaryRequiredInterfaceNullability,
+    ImplementedAs=CryptoAlgorithmParametersInit
 ] dictionary CryptoAlgorithmParameters {
     required DOMString name;
 };

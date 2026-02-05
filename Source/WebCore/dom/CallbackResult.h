@@ -41,6 +41,7 @@ public:
     CallbackResult(ReturnType&&);
 
     CallbackResultType type() const;
+    const ReturnType& returnValue() const LIFETIME_BOUND;
     ReturnType&& releaseReturnValue();
 
 private:
@@ -74,12 +75,17 @@ template<typename ReturnType> inline CallbackResultType CallbackResult<ReturnTyp
     return m_value.has_value() ? CallbackResultType::Success : m_value.error();
 }
 
+template<typename ReturnType> inline auto CallbackResult<ReturnType>::returnValue() const LIFETIME_BOUND -> const ReturnType&
+{
+    ASSERT(m_value.has_value());
+    return m_value.value();
+}
+
 template<typename ReturnType> inline auto CallbackResult<ReturnType>::releaseReturnValue() -> ReturnType&&
 {
     ASSERT(m_value.has_value());
     return WTF::move(m_value.value());
 }
-
 
 // Void specialization
 

@@ -139,19 +139,21 @@ auto LegacyRenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, 
     }
 
     // Only one visible shape/path was found. Directly continue clipping and transform the content to userspace if necessary.
+    std::optional<AffineTransform> transform;
     if (clipPathElement().clipPathUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
-        AffineTransform transform;
-        transform.translate(objectBoundingBox.location());
-        transform.scale(objectBoundingBox.size());
-        clipPath.transform(transform);
+        transform.emplace();
+        transform->translate(objectBoundingBox.location());
+        transform->scale(objectBoundingBox.size());
     } else if (usedZoom != 1) {
-        AffineTransform transform;
-        transform.scale(usedZoom);
-        clipPath.transform(transform);
+        transform.emplace();
+        transform->scale(usedZoom);
     }
 
     // Transform path by animatedLocalTransform.
-    clipPath.transform(animatedLocalTransform);
+    AffineTransform oldCTM = context.getCTM();
+    context.concatCTM(animatedLocalTransform);
+    if (transform)
+        context.concatCTM(*transform);
 
     // The SVG specification wants us to clip everything, if clip-path doesn't have a child.
     if (clipPath.isEmpty())
@@ -161,11 +163,14 @@ auto LegacyRenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, 
     if (auto* shapeRenderer = dynamicDowncast<LegacyRenderSVGShape>(renderer); shapeRenderer && shapeRenderer->shapeType() == LegacyRenderSVGShape::ShapeType::Rectangle) {
         // When clipping a rect with a path, if we know the path is entirely inside the rect, we can skip a clip when filling the rect.
         auto clipBounds = clipPath.fastBoundingRect();
+        if (transform)
+            clipBounds = transform->mapRect(clipBounds);
         if (objectBoundingBox.contains(clipBounds))
             result.add(ApplyResult::ClipContainsRendererContent);
     }
 
     context.clipPath(clipPath, clipRule);
+    context.setCTM(oldCTM);
     return result;
 }
 

@@ -25,12 +25,15 @@
 
 typedef unsigned long FramesPerSecond;
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary KeyframeAnimationOptions : KeyframeEffectOptions {
+// https://drafts.csswg.org/web-animations-1/#dictdef-keyframeanimationoptions
+//   and then modified by
+// https://drafts.csswg.org/web-animations-2/#the-animatable-interface-mixin
+dictionary KeyframeAnimationOptions : KeyframeEffectOptions {
     DOMString id = "";
     AnimationTimeline? timeline;
     [EnabledBySetting=WebAnimationsCustomFrameRateEnabled] (FramesPerSecond or AnimationFrameRatePreset) frameRate = "auto";
     (TimelineRangeOffset or CSSNumericValue or CSSKeywordValue or DOMString) rangeStart = "normal";
     (TimelineRangeOffset or CSSNumericValue or CSSKeywordValue or DOMString) rangeEnd = "normal";
+    // FIXME: Add support for `trigger`.
+    // AnimationTrigger? trigger;
 };

@@ -45,7 +45,7 @@ function test()
         name: "Console.Logging.BasicProperties",
         description: "Check initial properties.",
         test(resolve, reject) {
-            WI.mainFrameTarget.ConsoleAgent.getLoggingChannels((error, channels) => {
+            ConsoleAgent.getLoggingChannels((error, channels) => {
                 if (error) {
                     InspectorTest.fail(`ConsoleAgent.getLoggingChannels() failed with error ${error}`);
                     reject();
@@ -70,7 +70,7 @@ function test()
         name: "Console.Logging.InvalidLevel",
         description: "setLoggingChannelLevel should reject invalid log channel level.",
         test(resolve, reject) {
-            WI.mainFrameTarget.ConsoleAgent.setLoggingChannelLevel(WI.ConsoleMessage.MessageSource.Media, "DOES_NOT_EXIST", (error) => {
+            ConsoleAgent.setLoggingChannelLevel(WI.ConsoleMessage.MessageSource.Media, "DOES_NOT_EXIST", (error) => {
                 if (!error) {
                     InspectorTest.fail("Should have an error with invalid level.");
                     reject();
@@ -113,13 +113,13 @@ function test()
         name: "Console.Logging.MediaLogging",
         description: "<video> logging when enabled.",
         test(resolve, reject) {
-            WI.mainFrameTarget.ConsoleAgent.clearMessages();
+            ConsoleAgent.clearMessages();
 
             let channel = WI.consoleManager.customLoggingChannels.find(channel => channel.source === WI.ConsoleMessage.MessageSource.Media);
             InspectorTest.expectThat(channel.level === WI.LoggingChannel.Level.Off, "Media logging disabled.");
 
-            WI.mainFrameTarget.ConsoleAgent.setLoggingChannelLevel(channel.source, WI.LoggingChannel.Level.Basic)
-            WI.mainFrameTarget.ConsoleAgent.getLoggingChannels((error, channels) => {
+            ConsoleAgent.setLoggingChannelLevel(channel.source, WI.LoggingChannel.Level.Basic)
+            ConsoleAgent.getLoggingChannels((error, channels) => {
                 if (error) {
                     InspectorTest.fail(`ConsoleAgent.getLoggingChannels() failed with error ${error}`);
                     reject();
@@ -133,7 +133,7 @@ function test()
                     InspectorTest.assert(message instanceof WI.ConsoleMessage);
                     InspectorTest.expectThat(message.source === WI.ConsoleMessage.MessageSource.Media, "Media log message should have source 'media'.");
                     WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, logListener, null);
-                    WI.mainFrameTarget.ConsoleAgent.setLoggingChannelLevel(mediaChannel.source, WI.LoggingChannel.Level.Off)
+                    ConsoleAgent.setLoggingChannelLevel(mediaChannel.source, WI.LoggingChannel.Level.Off)
                     resolve();
                 });
 
@@ -147,13 +147,13 @@ function test()
         name: "Console.Logging.LogAsJSONWithoutRepeat",
         description: "JSON messages logged correctly.",
         test(resolve, reject) {
-            WI.mainFrameTarget.ConsoleAgent.clearMessages();
+            ConsoleAgent.clearMessages();
 
             let channel = WI.consoleManager.customLoggingChannels.find(channel => channel.source === WI.ConsoleMessage.MessageSource.Media);
             InspectorTest.expectThat(channel.level === WI.LoggingChannel.Level.Off, "Media logging disabled.");
 
-            WI.mainFrameTarget.ConsoleAgent.setLoggingChannelLevel(channel.source, WI.LoggingChannel.Level.Verbose)
-            WI.mainFrameTarget.ConsoleAgent.getLoggingChannels((error, channels) => {
+            ConsoleAgent.setLoggingChannelLevel(channel.source, WI.LoggingChannel.Level.Verbose)
+            ConsoleAgent.getLoggingChannels((error, channels) => {
                 if (error) {
                     InspectorTest.fail(`ConsoleAgent.getLoggingChannels() failed with error ${error}`);
                     reject();
@@ -174,7 +174,7 @@ function test()
                         if (++messageCount === 3) {
                             InspectorTest.log("Received three JSON messages.");
                             WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, logListener, null);
-                            WI.mainFrameTarget.ConsoleAgent.setLoggingChannelLevel(mediaChannel.source, WI.LoggingChannel.Level.Off)
+                            ConsoleAgent.setLoggingChannelLevel(mediaChannel.source, WI.LoggingChannel.Level.Off)
                             resolve();
                         }
                     }

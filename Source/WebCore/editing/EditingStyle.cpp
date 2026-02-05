@@ -466,7 +466,7 @@ EditingStyle::EditingStyle(Node* node, PropertiesToInclude propertiesToInclude)
 EditingStyle::EditingStyle(const Position& position, PropertiesToInclude propertiesToInclude)
     : EditingStyle()
 {
-    init(position.protectedDeprecatedNode().get(), propertiesToInclude);
+    init(protect(position.deprecatedNode()).get(), propertiesToInclude);
 }
 
 EditingStyle::EditingStyle(const CSSStyleProperties* style)
@@ -851,7 +851,7 @@ void EditingStyle::removeStyleAddedByNode(Node* node)
 {
     if (!node || !node->parentNode())
         return;
-    auto parentStyle = copyPropertiesFromComputedStyle(node->protectedParentNode().get(), PropertiesToInclude::EditingPropertiesInEffect);
+    auto parentStyle = copyPropertiesFromComputedStyle(protect(node->parentNode()).get(), PropertiesToInclude::EditingPropertiesInEffect);
     auto nodeStyle = copyPropertiesFromComputedStyle(node, PropertiesToInclude::EditingPropertiesInEffect);
     removeEquivalentProperties(parentStyle.get());
     removeEquivalentProperties(nodeStyle.get());
@@ -862,7 +862,7 @@ void EditingStyle::removeStyleConflictingWithStyleOfNode(Node& node)
     if (!node.parentNode() || !m_mutableStyle)
         return;
 
-    auto parentStyle = copyPropertiesFromComputedStyle(node.protectedParentNode().get(), PropertiesToInclude::EditingPropertiesInEffect);
+    auto parentStyle = copyPropertiesFromComputedStyle(protect(node.parentNode()).get(), PropertiesToInclude::EditingPropertiesInEffect);
     auto nodeStyle = EditingStyle::create(&node, PropertiesToInclude::EditingPropertiesInEffect);
     nodeStyle->removeEquivalentProperties(parentStyle.get());
 
@@ -1248,7 +1248,7 @@ void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWrit
         mutableStyle->removeProperty(CSSPropertyCaretColor);
 
     if (hasTransparentBackgroundColor(mutableStyle.get())
-        || cssValueToColor(mutableStyle->getPropertyCSSValue(CSSPropertyBackgroundColor).get()) == rgbaBackgroundColorInEffect(position.protectedContainerNode().get()))
+        || cssValueToColor(mutableStyle->getPropertyCSSValue(CSSPropertyBackgroundColor).get()) == rgbaBackgroundColorInEffect(protect(position.containerNode()).get()))
         mutableStyle->removeProperty(CSSPropertyBackgroundColor);
 
     if (unicodeBidi) {
@@ -1308,7 +1308,7 @@ static inline bool elementMatchesAndPropertyIsNotInInlineStyleDecl(const HTMLEle
     if (mode != EditingStyle::CSSPropertyOverrideMode::OverrideValues && equivalent.propertyExistsInStyle(style))
         return false;
 
-    return !element.inlineStyle() || !equivalent.propertyExistsInStyle(EditingStyle::create(element.protectedInlineStyle().get()).get());
+    return !element.inlineStyle() || !equivalent.propertyExistsInStyle(EditingStyle::create(protect(element.inlineStyle()).get()).get());
 }
 
 static RefPtr<MutableStyleProperties> extractEditingProperties(const StyleProperties* style, EditingStyle::PropertiesToInclude propertiesToInclude)
@@ -1334,7 +1334,7 @@ void EditingStyle::mergeInlineAndImplicitStyleOfElement(StyledElement& element, 
     styleFromRules->mergeStyleFromRulesForSerialization(element, standardFontFamilySerializationMode);
 
     if (element.inlineStyle())
-        styleFromRules->protectedStyle()->mergeAndOverrideOnConflict(*element.protectedInlineStyle());
+        styleFromRules->protectedStyle()->mergeAndOverrideOnConflict(*protect(element.inlineStyle()));
 
     styleFromRules->m_mutableStyle = extractEditingProperties(styleFromRules->m_mutableStyle.get(), propertiesToInclude);
     mergeStyle(styleFromRules->m_mutableStyle.get(), mode);
@@ -1768,7 +1768,7 @@ RefPtr<EditingStyle> EditingStyle::styleAtSelectionStart(const VisibleSelection&
         return nullptr;
 
     Ref style = EditingStyle::create(element.get(), propertiesToInclude);
-    style->mergeTypingStyle(element->protectedDocument());
+    style->mergeTypingStyle(protect(element->document()));
 
     // If background color is transparent, traverse parent nodes until we hit a different value or document root
     // Also, if the selection is a range, ignore the background color at the start of selection,
@@ -1852,7 +1852,7 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
             return WritingDirection::Natural;
 
         // In the range case, make sure that the embedding element persists until the end of the range.
-        if (selection.isRange() && !end.protectedDeprecatedNode()->isDescendantOf(*node))
+        if (selection.isRange() && !protect(end.deprecatedNode())->isDescendantOf(*node))
             return WritingDirection::Natural;
         
         foundDirection = directionValue == CSSValueLtr ? WritingDirection::LeftToRight : WritingDirection::RightToLeft;

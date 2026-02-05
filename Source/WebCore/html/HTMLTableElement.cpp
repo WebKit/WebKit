@@ -80,7 +80,7 @@ ExceptionOr<void> HTMLTableElement::setCaption(RefPtr<HTMLTableCaptionElement>&&
     deleteCaption();
     if (!newCaption)
         return { };
-    return insertBefore(*newCaption, protectedFirstChild());
+    return insertBefore(*newCaption, protect(firstChild()));
 }
 
 RefPtr<HTMLTableSectionElement> HTMLTableElement::tHead() const
@@ -133,7 +133,7 @@ Ref<HTMLTableSectionElement> HTMLTableElement::createTHead()
 {
     if (RefPtr existingHead = tHead())
         return existingHead.releaseNonNull();
-    Ref head = HTMLTableSectionElement::create(theadTag, protectedDocument());
+    Ref head = HTMLTableSectionElement::create(theadTag, protect(document()));
     setTHead(head.copyRef());
     return head;
 }
@@ -148,7 +148,7 @@ Ref<HTMLTableSectionElement> HTMLTableElement::createTFoot()
 {
     if (RefPtr existingFoot = tFoot())
         return existingFoot.releaseNonNull();
-    Ref foot = HTMLTableSectionElement::create(tfootTag, protectedDocument());
+    Ref foot = HTMLTableSectionElement::create(tfootTag, protect(document()));
     setTFoot(foot.copyRef());
     return foot;
 }
@@ -161,7 +161,7 @@ void HTMLTableElement::deleteTFoot()
 
 Ref<HTMLTableSectionElement> HTMLTableElement::createTBody()
 {
-    Ref body = HTMLTableSectionElement::create(tbodyTag, protectedDocument());
+    Ref body = HTMLTableSectionElement::create(tbodyTag, protect(document()));
     RefPtr referenceElement = lastBody() ? lastBody()->nextSibling() : nullptr;
     insertBefore(body, WTF::move(referenceElement));
     return body;
@@ -171,7 +171,7 @@ Ref<HTMLTableCaptionElement> HTMLTableElement::createCaption()
 {
     if (RefPtr existingCaption = caption())
         return existingCaption.releaseNonNull();
-    Ref caption = HTMLTableCaptionElement::create(captionTag, protectedDocument());
+    Ref caption = HTMLTableCaptionElement::create(captionTag, protect(document()));
     setCaption(caption.copyRef());
     return caption;
 }
@@ -331,7 +331,7 @@ void HTMLTableElement::collectPresentationalHintsForAttribute(const QualifiedNam
         break;
     case AttributeNames::backgroundAttr:
         if (auto url = value.string().trim(isASCIIWhitespace); !url.isEmpty())
-            style.setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(protectedDocument()->completeURL(url))));
+            style.setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(protect(document())->completeURL(url))));
         break;
     case AttributeNames::valignAttr:
         if (!value.isEmpty())
@@ -548,7 +548,7 @@ const MutableStyleProperties* HTMLTableElement::additionalCellStyle() const
     return m_sharedCellStyle.get();
 }
 
-static MutableStyleProperties* leakGroupBorderStyle(bool rows)
+static Ref<MutableStyleProperties> makeGroupBorderStyle(bool rows)
 {
     auto style = MutableStyleProperties::create();
     if (rows) {
@@ -562,7 +562,7 @@ static MutableStyleProperties* leakGroupBorderStyle(bool rows)
         style->setProperty(CSSPropertyBorderLeftStyle, CSSValueSolid);
         style->setProperty(CSSPropertyBorderRightStyle, CSSValueSolid);
     }
-    return &style.leakRef();
+    return style;
 }
 
 const MutableStyleProperties* HTMLTableElement::additionalGroupStyle(bool rows) const
@@ -570,11 +570,11 @@ const MutableStyleProperties* HTMLTableElement::additionalGroupStyle(bool rows) 
     if (m_rulesAttr != GroupsRules)
         return nullptr;
     if (rows) {
-        static auto* rowBorderStyle = leakGroupBorderStyle(true);
-        return rowBorderStyle;
+        static NeverDestroyed<Ref<MutableStyleProperties>> rowBorderStyle = makeGroupBorderStyle(true);
+        return rowBorderStyle->ptr();
     }
-    static auto* columnBorderStyle = leakGroupBorderStyle(false);
-    return columnBorderStyle;
+    static NeverDestroyed<Ref<MutableStyleProperties>> columnBorderStyle = makeGroupBorderStyle(false);
+    return columnBorderStyle->ptr();
 }
 
 bool HTMLTableElement::isURLAttribute(const Attribute& attribute) const
@@ -584,12 +584,12 @@ bool HTMLTableElement::isURLAttribute(const Attribute& attribute) const
 
 Ref<HTMLCollection> HTMLTableElement::rows()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLTableRowsCollection>(*this, CollectionType::TableRows);
+    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLTableRowsCollection>(*this);
 }
 
 Ref<HTMLCollection> HTMLTableElement::tBodies()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<CollectionType::TableTBodies>::traversalType>>(*this, CollectionType::TableTBodies);
+    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLTableTBodiesCollection>(*this);
 }
 
 const AtomString& HTMLTableElement::rules() const
@@ -606,7 +606,7 @@ void HTMLTableElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     HTMLElement::addSubresourceAttributeURLs(urls);
 
-    addSubresourceURL(urls, protectedDocument()->completeURL(attributeWithoutSynchronization(backgroundAttr)));
+    addSubresourceURL(urls, protect(document())->completeURL(attributeWithoutSynchronization(backgroundAttr)));
 }
 
 }

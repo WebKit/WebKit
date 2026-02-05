@@ -94,6 +94,7 @@ runtime/JSObject.cpp
 runtime/JSString.cpp
 runtime/JSSymbolTableObject.h
 runtime/KeyAtomStringCacheInlines.h
+runtime/LiteralParser.cpp
 runtime/Lookup.h
 runtime/ProgramExecutable.cpp
 runtime/ProxyObject.cpp

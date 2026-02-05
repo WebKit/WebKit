@@ -42,8 +42,8 @@ namespace WebKit {
 XPCEndpoint::XPCEndpoint()
 {
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT m_connection = adoptXPCObject(xpc_connection_create(nullptr, nullptr));
-    SUPPRESS_RETAINPTR_CTOR_ADOPT m_endpoint = adoptXPCObject(xpc_endpoint_create(m_connection.get()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT m_connection = adoptOSObject(xpc_connection_create(nullptr, nullptr));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT m_endpoint = adoptOSObject(xpc_endpoint_create(m_connection.get()));
 
     xpc_connection_set_target_queue(m_connection.get(), mainDispatchQueueSingleton());
     xpc_connection_set_event_handler(m_connection.get(), ^(xpc_object_t message) {
@@ -52,7 +52,7 @@ XPCEndpoint::XPCEndpoint()
         handleXPCExitMessage(message);
 #endif
         if (type == XPC_TYPE_CONNECTION) {
-            XPCObjectPtr<xpc_connection_t> connection = message;
+            OSObjectPtr<xpc_connection_t> connection = message;
 #if USE(APPLE_INTERNAL_SDK)
             auto pid = xpc_connection_get_pid(connection.get());
 
@@ -86,14 +86,14 @@ void XPCEndpoint::sendEndpointToConnection(xpc_connection_t connection)
         return;
 
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto message = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(message.get(), xpcEndpointMessageNameKey(), xpcEndpointMessageName());
     xpc_dictionary_set_value(message.get(), xpcEndpointNameKey(), m_endpoint.get());
 
     xpc_connection_send_message(connection, message.get());
 }
 
-XPCObjectPtr<xpc_endpoint_t> XPCEndpoint::endpoint() const
+OSObjectPtr<xpc_endpoint_t> XPCEndpoint::endpoint() const
 {
     return m_endpoint;
 }

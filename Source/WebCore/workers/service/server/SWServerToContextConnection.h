@@ -60,7 +60,6 @@ public:
     WEBCORE_EXPORT virtual ~SWServerToContextConnection();
 
     WEBCORE_EXPORT SWServer* server() const;
-    WEBCORE_EXPORT RefPtr<SWServer> protectedServer() const;
 
     // This flag gets set when the service worker process is no longer clean (because it has loaded several eTLD+1s).
     bool shouldTerminateWhenPossible() const { return m_shouldTerminateWhenPossible; }

@@ -39,7 +39,7 @@ namespace WebCore {
 struct FetchRequestInit {
     String method;
     std::optional<FetchHeaders::Init> headers;
-    std::optional<FetchBody::Init> body;
+    std::optional<std::optional<FetchBody::Init>> body;
     String referrer;
     std::optional<ReferrerPolicy> referrerPolicy;
     std::optional<FetchOptions::Mode> mode;

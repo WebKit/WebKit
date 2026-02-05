@@ -252,6 +252,7 @@ using WebCore::PlaybackSessionInterfaceMac;
 static AVTouchBarMediaSelectionOptionType toAVTouchBarMediaSelectionOptionType(MediaSelectionOption::LegibleType type)
 {
     switch (type) {
+    case MediaSelectionOption::LegibleType::LegibleOn:
     case MediaSelectionOption::LegibleType::Regular:
         return AVTouchBarMediaSelectionOptionTypeRegular;
     case MediaSelectionOption::LegibleType::LegibleOff:

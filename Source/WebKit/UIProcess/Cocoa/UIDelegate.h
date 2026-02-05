@@ -117,7 +117,6 @@ private:
         bool takeFocus(WebPageProxy*, WKFocusDirection) final;
         void handleAutoplayEvent(WebPageProxy&, WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
         void decidePolicyForNotificationPermissionRequest(WebPageProxy&, API::SecurityOrigin&, CompletionHandler<void(bool allowed)>&&) final;
-        void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&&) final;
         bool focusFromServiceWorker(WebKit::WebPageProxy&) final;
         bool runOpenPanel(WebPageProxy&, WebFrameProxy*, FrameInfoData&&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) final;
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
@@ -221,7 +220,6 @@ private:
 #endif
 
         id<WKUIDelegatePrivate> uiDelegatePrivate();
-        RetainPtr<id<WKUIDelegatePrivate>> protectedUIDelegatePrivate();
 
         WeakPtr<UIDelegate> m_uiDelegate;
     };
@@ -326,7 +324,6 @@ private:
         bool webViewSupportedXRSessionFeatures : 1;
 #endif
         bool webViewRequestNotificationPermissionForSecurityOriginDecisionHandler : 1;
-        bool webViewRequestCookieConsentWithMoreInfoHandlerDecisionHandler : 1;
         bool webViewUpdatedAppBadge : 1;
         bool webViewDidAdjustVisibilityWithSelectors : 1;
 

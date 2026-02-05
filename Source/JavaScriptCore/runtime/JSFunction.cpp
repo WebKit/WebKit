@@ -28,9 +28,8 @@
 
 #include "AsyncGeneratorPrototype.h"
 #include "BuiltinNames.h"
-#include "CatchScope.h"
-#include "CommonIdentifiers.h"
 #include "CallFrame.h"
+#include "CommonIdentifiers.h"
 #include "FunctionExecutableInlines.h"
 #include "GeneratorPrototype.h"
 #include "JSBoundFunction.h"
@@ -41,6 +40,7 @@
 #include "ObjectPrototype.h"
 #include "PropertyNameArray.h"
 #include "StackVisitor.h"
+#include "TopExceptionScope.h"
 #include "TypeError.h"
 #include "VMTrapsInlines.h"
 #if ENABLE(WEBASSEMBLY)
@@ -165,7 +165,7 @@ JSObject* JSFunction::prototypeForConstruction(VM& vm, JSGlobalObject* globalObj
     // true when we can use the allocation profile.
     ASSERT(canUseAllocationProfiles());
     DeferTermination deferScope(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSValue prototype = get(globalObject, vm.propertyNames->prototype);
     scope.releaseAssertNoException();
     if (prototype.isObject()) [[likely]]
@@ -368,7 +368,7 @@ void JSFunction::getOwnSpecialPropertyNames(JSObject* object, JSGlobalObject* gl
 {
     JSFunction* thisObject = jsCast<JSFunction*>(object);
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     if (mode == DontEnumPropertiesMode::Include) {
         bool hasLength = thisObject->hasOwnProperty(globalObject, vm.propertyNames->length);

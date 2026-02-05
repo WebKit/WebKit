@@ -95,4 +95,7 @@ struct CollectionTypeTraits<CollectionType::FormControls> {
     static const CollectionTraversalType traversalType = CollectionTraversalType::CustomForwardOnly;
 };
 
+template<typename CollectionClass>
+struct CollectionClassTraits;
+
 } // namespace WebCore

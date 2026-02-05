@@ -9,6 +9,10 @@ PASS: !body.childAtIndex(0) === true
 PASS: !accessibilityController.accessibleElementById('frame-button-1') === true
 PASS: !accessibilityController.accessibleElementById('frame-button-2') === true
 
+document.getElementById('iframe1').removeAttribute('inert');
+PASS: iframeButton1.isIgnored === false
+PASS: iframeButton2.isIgnored === false
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

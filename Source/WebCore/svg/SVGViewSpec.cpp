@@ -55,15 +55,10 @@ RefPtr<SVGElement> SVGViewSpec::viewTarget() const
     return dynamicDowncast<SVGElement>(contextElement->treeScope().getElementById(m_viewTargetString));
 }
 
-Ref<SVGTransformList> SVGViewSpec::protectedTransform()
-{
-    return m_transform;
-}
-
 void SVGViewSpec::reset()
 {
     m_viewTargetString = emptyString();
-    protectedTransform()->clearItems();
+    protect(transform())->clearItems();
     SVGFitToViewBox::reset();
     SVGZoomAndPan::reset();
 }
@@ -136,7 +131,7 @@ bool SVGViewSpec::parseViewSpec(StringView string)
                     return false;
                 if (!skipExactly(buffer, '('))
                     return false;
-                protectedTransform()->parse(buffer);
+                protect(transform())->parse(buffer);
                 if (!skipExactly(buffer, ')'))
                     return false;
             } else

@@ -397,11 +397,6 @@ bool MediaStream::virtualHasPendingActivity() const
     return m_isActive && m_allowEventTracks == AllowEventTracks::Yes && hasEventListeners();
 }
 
-Ref<MediaStreamPrivate> MediaStream::protectedPrivateStream()
-{
-    return m_private;
-}
-
 ScriptExecutionContext* MediaStream::scriptExecutionContext() const
 {
     return ContextDestructionObserver::scriptExecutionContext();

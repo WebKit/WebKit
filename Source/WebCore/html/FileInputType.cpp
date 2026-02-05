@@ -229,7 +229,7 @@ void FileInputType::createShadowSubtree()
     ASSERT(element()->shadowRoot());
 
     Ref element = *this->element();
-    Ref button = HTMLInputElement::create(inputTag, element->protectedDocument(), nullptr, false);
+    Ref button = HTMLInputElement::create(inputTag, protect(element->document()), nullptr, false);
     {
         ScriptDisallowedScope::EventAllowedScope eventAllowedScopeBeforeAppend { button };
         button->setAttributeWithoutSynchronization(typeAttr, InputTypeNames::button());
@@ -319,7 +319,7 @@ bool FileInputType::allowsDirectories() const
 {
     ASSERT(element());
     Ref element = *this->element();
-    if (!element->protectedDocument()->settings().directoryUploadEnabled())
+    if (!protect(element->document())->settings().directoryUploadEnabled())
         return false;
     return element->hasAttributeWithoutSynchronization(webkitdirectoryAttr);
 }

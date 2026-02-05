@@ -178,25 +178,8 @@ static int runWGSL(const CommandLine& options)
         return EXIT_FAILURE;
     }
 
-    HashMap<String, WGSL::ConstantValue> constantValues;
-    for (const auto& [entrypointName, _] : pipelineLayouts) {
-        const auto& entryPointInformation = result.entryPoints.get(entrypointName);
-        for (const auto& [originalName, constant] : entryPointInformation.specializationConstants) {
-            if (!constant.defaultValue) {
-                dataLogLn("Cannot use override without default value in wgslc: '", originalName, "'");
-                return EXIT_FAILURE;
-            }
-
-            auto defaultValue = WGSL::evaluate(*constant.defaultValue, constantValues);
-            if (!defaultValue) {
-                dataLogLn("Failed to evaluate override's default value: '", originalName, "'");
-                return EXIT_FAILURE;
-            }
-
-            constantValues.add(constant.mangledName, *defaultValue);
-        }
-    }
-    auto generationResult = WGSL::generate(shaderModule, result, constantValues, WGSL::DeviceState {
+    HashMap<String, WGSL::ConstantValue> userDefinedValues;
+    auto generationResult = WGSL::generate(shaderModule, result, userDefinedValues, WGSL::DeviceState {
         .appleGPUFamily = options.appleGPUFamily(),
         .shaderValidationEnabled = options.shaderValidationEnabled(),
     });

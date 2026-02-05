@@ -235,7 +235,7 @@ public:
 
     ALWAYS_INLINE static bool isValidVM(VM* vm)
     {
-        return vm == s_recentVM ? true : isValidVMSlow(vm);
+        return vm == s_recentVM || isValidVMSlow(vm);
     }
 
     // StopTheWorld APIs ======================================================
@@ -321,6 +321,9 @@ private:
     void resumeTheWorld() WTF_REQUIRES_LOCK(m_worldLock);
     void incrementActiveVMs(VM&) WTF_REQUIRES_LOCK(m_worldLock);
     void decrementActiveVMs(VM&) WTF_REQUIRES_LOCK(m_worldLock);
+
+    void dispatchStopHandler(VM&);
+    void handleStopViaDispatch(VM&);
 
     JS_EXPORT_PRIVATE static bool isValidVMSlow(VM*);
     JS_EXPORT_PRIVATE VM* findMatchingVMImpl(const ScopedLambda<TestCallback>&);

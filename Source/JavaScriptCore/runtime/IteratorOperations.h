@@ -48,9 +48,11 @@ struct IterationRecord {
 };
 
 JSValue iteratorNext(JSGlobalObject*, IterationRecord, JSValue argument = JSValue());
+JS_EXPORT_PRIVATE JSValue iteratorNextExported(JSGlobalObject*, IterationRecord, JSValue argument = JSValue());
 JSValue iteratorNextWithCachedCall(JSGlobalObject*, IterationRecord, CachedCall*, JSValue argument = JSValue());
 JS_EXPORT_PRIVATE JSValue iteratorValue(JSGlobalObject*, JSValue iterResult);
 bool iteratorComplete(JSGlobalObject*, JSValue iterResult);
+JS_EXPORT_PRIVATE bool iteratorCompleteExported(JSGlobalObject*, JSValue iterResult);
 JS_EXPORT_PRIVATE JSValue iteratorStep(JSGlobalObject*, IterationRecord);
 JS_EXPORT_PRIVATE JSValue iteratorStepWithCachedCall(JSGlobalObject*, IterationRecord, CachedCall*);
 JS_EXPORT_PRIVATE void iteratorClose(JSGlobalObject*, JSValue iterator);
@@ -62,6 +64,8 @@ JS_EXPORT_PRIVATE JSValue iteratorMethod(JSGlobalObject*, JSObject*);
 JS_EXPORT_PRIVATE IterationRecord iteratorForIterable(JSGlobalObject*, JSObject*, JSValue iteratorMethod);
 JS_EXPORT_PRIVATE IterationRecord iteratorForIterable(JSGlobalObject*, JSValue iterable);
 JS_EXPORT_PRIVATE IterationRecord iteratorDirect(JSGlobalObject*, JSValue);
+IterationRecord getAsyncIterator(JSGlobalObject&, JSValue);
+JS_EXPORT_PRIVATE IterationRecord getAsyncIteratorExported(JSGlobalObject&, JSValue);
 
 JS_EXPORT_PRIVATE JSValue iteratorMethod(JSGlobalObject*, JSObject*);
 JS_EXPORT_PRIVATE bool hasIteratorMethod(JSGlobalObject*, JSValue);

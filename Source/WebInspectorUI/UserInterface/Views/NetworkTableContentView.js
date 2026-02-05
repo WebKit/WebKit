@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -171,6 +171,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         WI.Frame.addEventListener(WI.Frame.Event.ChildFrameWasAdded, this._handleFrameWasAdded, this);
         WI.Resource.addEventListener(WI.Resource.Event.LoadingDidFinish, this._resourceLoadingDidFinish, this);
         WI.Resource.addEventListener(WI.Resource.Event.LoadingDidFail, this._resourceLoadingDidFail, this);
+        WI.Resource.addEventListener(WI.Resource.Event.RedirectsDidChange, this._resourceRedirectsDidChange, this);
         WI.Resource.addEventListener(WI.Resource.Event.SizeDidChange, this._handleResourceSizeDidChange, this);
         WI.Resource.addEventListener(WI.Resource.Event.TransferSizeDidChange, this._resourceTransferSizeDidChange, this);
         WI.networkManager.addEventListener(WI.NetworkManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
@@ -320,6 +321,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         WI.Frame.removeEventListener(WI.Frame.Event.ChildFrameWasAdded, this._handleFrameWasAdded, this);
         WI.Resource.removeEventListener(WI.Resource.Event.LoadingDidFinish, this._resourceLoadingDidFinish, this);
         WI.Resource.removeEventListener(WI.Resource.Event.LoadingDidFail, this._resourceLoadingDidFail, this);
+        WI.Resource.removeEventListener(WI.Resource.Event.RedirectsDidChange, this._resourceRedirectsDidChange, this);
         WI.Resource.removeEventListener(WI.Resource.Event.SizeDidChange, this._handleResourceSizeDidChange, this);
         WI.Resource.removeEventListener(WI.Resource.Event.TransferSizeDidChange, this._resourceTransferSizeDidChange, this);
         WI.networkManager.removeEventListener(WI.NetworkManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
@@ -358,7 +360,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     showRepresentedObject(representedObject, cookie)
     {
-        console.assert(representedObject instanceof WI.Resource);
+        console.assert(representedObject instanceof WI.Resource, representedObject);
 
         let rowIndex = this._rowIndexForRepresentedObject(representedObject);
         if (rowIndex === -1) {
@@ -368,9 +370,11 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             return;
         }
 
+        this._selectedObject = representedObject;
         this._showingRepresentedObjectCookie = cookie;
         this._table.selectRow(rowIndex);
         this._showingRepresentedObjectCookie = null;
+        this._showDetailView(representedObject);
     }
 
     get canFocusFilterBar()
@@ -390,6 +394,48 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._selectedObject = null;
         this._table.deselectAll();
         this._hideDetailView();
+    }
+
+    networkRedirectDetailViewShowParentResource(networkRedirectDetailView, parentResource)
+    {
+        this.showRepresentedObject(parentResource);
+    }
+
+    networkRedirectHeadersContentViewShowRedirect(networkRedirectHeadersContentView, redirect, parentResource, parentEntry)
+    {
+        this.showRedirect(redirect, parentResource, parentEntry);
+    }
+
+    networkRedirectHeadersContentViewShowParentResource(networkRedirectHeadersContentView, parentResource)
+    {
+        this.showRepresentedObject(parentResource);
+    }
+
+    showRedirect(redirect, parentResource, parentEntry)
+    {
+        console.assert(redirect instanceof WI.Redirect, redirect);
+        console.assert(parentResource instanceof WI.Resource, parentResource);
+
+        let entry = parentEntry || this._activeCollection.entries.find((activeEntry) => activeEntry.resource === parentResource);
+        if (!entry?.redirectEntries?.length)
+            return;
+
+        if (!entry.redirectsExpanded) {
+            entry.redirectsExpanded = true;
+            this._updateFilteredEntries();
+            this._reloadTable();
+        }
+
+        let redirectEntry = entry.redirectEntries.find((redirectEntryItem) => redirectEntryItem.redirect === redirect);
+        if (!redirectEntry)
+            return;
+
+        let rowIndex = this._activeCollection.filteredEntries.indexOf(redirectEntry);
+        if (rowIndex === -1)
+            return;
+
+        this._table.selectRow(rowIndex);
+        this._showDetailView(redirect);
     }
 
     // Table dataSource
@@ -438,7 +484,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         let entry = this._activeCollection.filteredEntries[rowIndex];
         let contextMenu = WI.ContextMenu.createFromEvent(event);
-        WI.appendContextMenuItemsForSourceCode(contextMenu, entry.resource);
+
+        let sourceCode = entry.redirect || entry.resource;
+        WI.appendContextMenuItemsForNetworkResource(contextMenu, sourceCode);
 
         contextMenu.appendSeparator();
         contextMenu.appendItem(WI.UIString("Export HAR"), () => { this._exportHAR(); }, !this._canExportHAR());
@@ -466,10 +514,12 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }
 
         let entry = this._activeCollection.filteredEntries[rowIndex];
-        if (entry.resource === this._selectedObject || entry.domNode === this._selectedObject)
+        let representedObject = entry.redirect || entry.domNode || entry.resource;
+
+        if (representedObject === this._selectedObject)
             return;
 
-        this._selectedObject = entry.resource || entry.domNode;
+        this._selectedObject = representedObject;
         if (this._selectedObject)
             this._showDetailView(this._selectedObject);
         else
@@ -488,7 +538,10 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         cell.classList.toggle("current-session", entry.currentSession);
 
-        if (entry.resource)
+        if (entry.redirect) {
+            let statusCode = entry.redirect.responseStatusCode;
+            cell.classList.toggle("error", statusCode >= 400);
+        } else if (entry.resource)
             cell.classList.toggle("error", entry.resource.hadLoadingError());
 
         let setTextContent = (accessor) => {
@@ -687,12 +740,39 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             return;
         }
 
+        let redirect = entry.redirect;
+        if (redirect) {
+            createIconElement();
+
+            cell.classList.add(WI.ResourceTreeElement.ResourceIconStyleClassName, entry.type, "child");
+
+            let nameElement = cell.appendChild(document.createElement("span"));
+            nameElement.textContent = entry.name;
+            cell.title = redirect.url;
+            return;
+        }
+
         let resource = entry.resource;
         if (resource.isLoading()) {
             let statusElement = cell.appendChild(document.createElement("div"));
             statusElement.className = "status";
             let spinner = new WI.IndeterminateProgressSpinner;
             statusElement.appendChild(spinner.element);
+        }
+
+        if (resource.redirects?.length) {
+            cell.classList.add("parent");
+            this._table.element.classList.add("grouped");
+
+            let disclosureElement = cell.appendChild(document.createElement("img"));
+            disclosureElement.classList.add("disclosure");
+            disclosureElement.classList.toggle("expanded", !!entry.redirectsExpanded);
+            disclosureElement.addEventListener("click", (event) => {
+                entry.redirectsExpanded = !entry.redirectsExpanded;
+                this._updateFilteredEntries();
+                this._reloadTable();
+                event.stopPropagation();
+            });
         }
 
         let resourceIconElement = createIconElement();
@@ -713,6 +793,13 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             let rangeElement = nameElement.appendChild(document.createElement("span"));
             rangeElement.classList.add("range");
             rangeElement.textContent = WI.UIString("Byte Range %s\u2013%s").format(range.start, range.end);
+        }
+
+        if (resource.redirects?.length) {
+            let redirectCountElement = cell.appendChild(document.createElement("span"));
+            redirectCountElement.className = "redirect-count";
+            let redirectCount = resource.redirects.length;
+            redirectCountElement.textContent = redirectCount === 1 ? WI.UIString("%d redirect").format(redirectCount) : WI.UIString("%d redirects").format(redirectCount);
         }
 
         cell.title = resource.url;
@@ -758,7 +845,60 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             return;
         }
 
-        let initiatorLocation = entry.resource.initiatorSourceCodeLocation;
+        // For redirect entries, show the previous redirect or parent resource as the initiator.
+        if (entry.redirect && entry.resource) {
+            let initiatorName;
+            let initiatorObject;
+
+            if (entry.previousRedirect) {
+                // Show the previous redirect in the chain
+                initiatorName = WI.displayNameForURL(entry.previousRedirect.url, entry.previousRedirect.urlComponents);
+                initiatorObject = entry.previousRedirect;
+            } else {
+                // First redirect - show the parent resource
+                initiatorName = entry.resource.displayName;
+                initiatorObject = entry.resource;
+            }
+
+            let linkElement = cell.appendChild(document.createElement("a"));
+            linkElement.className = "go-to-link dont-float";
+            linkElement.textContent = initiatorName;
+
+            if (entry.previousRedirect) {
+                linkElement.title = entry.previousRedirect.url;
+                linkElement.addEventListener("click", (event) => {
+                    event.stopPropagation();
+                    // Find the redirect entry for the previous redirect
+                    let parentEntry = this._activeCollection.entries.find(e => e.resource === entry.resource);
+                    if (parentEntry?.redirectEntries) {
+                        let previousEntry = parentEntry.redirectEntries.find(e => e.redirect === entry.previousRedirect);
+                        if (previousEntry) {
+                            let rowIndex = this._activeCollection.filteredEntries.indexOf(previousEntry);
+                            if (rowIndex !== -1) {
+                                this._table.selectRow(rowIndex);
+                                this._showDetailView(entry.previousRedirect);
+                            }
+                        }
+                    }
+                });
+            } else {
+                linkElement.title = entry.resource.url;
+                linkElement.addEventListener("click", (event) => {
+                    event.stopPropagation();
+                    let parentEntry = this._activeCollection.entries.find(e => e.resource === entry.resource);
+                    if (parentEntry) {
+                        let rowIndex = this._activeCollection.filteredEntries.indexOf(parentEntry);
+                        if (rowIndex !== -1) {
+                            this._table.selectRow(rowIndex);
+                            this._showDetailView(entry.resource);
+                        }
+                    }
+                });
+            }
+            return;
+        }
+
+        let initiatorLocation = entry.resource?.initiatorSourceCodeLocation;
         if (!initiatorLocation) {
             cell.textContent = emDash;
             return;
@@ -855,6 +995,25 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         function setWidthForDuration(element, startTimestamp, endTimestamp) {
             element.style.setProperty("width", ((endTimestamp - startTimestamp) / secondsPerPixel) + "px");
+        }
+
+        if (entry.redirect) {
+            let {redirect, time, startTime} = entry;
+
+            if (isNaN(time) || isNaN(startTime)) {
+                cell.textContent = zeroWidthSpace;
+                return;
+            }
+
+            let redirectStartTime = startTime - time;
+            let redirectEndTime = startTime;
+
+            let redirectBlock = container.appendChild(document.createElement("div"));
+            redirectBlock.classList.add("block", "redirect");
+            positionByStartOffset(redirectBlock, redirectStartTime);
+            setWidthForDuration(redirectBlock, redirectStartTime, redirectEndTime);
+
+            return;
         }
 
         let domNode = entry.domNode;
@@ -1472,7 +1631,12 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }
 
         for (let resource of collection.pendingInsertions) {
+            let existingEntry = collection.entries.find(entry => entry.resource === resource);
+            if (existingEntry)
+                continue;
+
             let resourceEntry = this._entryForResource(resource);
+            this._populateRedirectEntriesForResourceEntry(resourceEntry);
             this._tryLinkResourceToDOMNode(resourceEntry);
             collection.entries.push(resourceEntry);
         }
@@ -1545,6 +1709,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     _rowIndexForRepresentedObject(object)
     {
         return this._activeCollection.filteredEntries.findIndex((x) => {
+            if (x.redirect === object)
+                return true;
             if (x.resource === object)
                 return true;
             if (x.domNode === object)
@@ -1568,6 +1734,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }
 
         let entry = this._entryForResource(resource);
+        this._populateRedirectEntriesForResourceEntry(entry);
         updateExistingEntry(collection.entries[index], entry);
 
         let rowIndex = this._rowIndexForRepresentedObject(resource);
@@ -1577,6 +1744,14 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         updateExistingEntry(collection.filteredEntries[rowIndex], entry);
 
         this._updateStatistics();
+    }
+
+    _populateRedirectEntriesForResourceEntry(entry)
+    {
+        if (!entry.resource?.redirects?.length)
+            return;
+
+        entry.redirectEntries = entry.resource.redirects.map((redirect, i, redirects) => this._entryForRedirect(redirect, entry.resource, i ? redirects[i - 1] : null));
     }
 
     _highlightRelatedResourcesForHoveredResource()
@@ -1650,10 +1825,33 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         if (!this._detailView) {
             if (object instanceof WI.Resource) {
-                this._detailView = new WI.NetworkResourceDetailView(object, this);
+                let entry = this._activeCollection.entries.find(e => e.resource === object);
+                this._detailView = new WI.NetworkResourceDetailView(object, entry, this);
                 this._detailView.addEventListener(WI.ContentBrowser.Event.CurrentContentViewDidChange, this._handleCurrentResourceDetailViewDidChange, this);
             } else if (object instanceof WI.DOMNode) {
                 this._detailView = new WI.NetworkDOMNodeDetailView(object, this);
+            } else if (object instanceof WI.Redirect) {
+                let parentResource = null;
+                let parentEntry = null;
+                let redirectIndex = 0;
+
+                for (let entry of this._activeCollection.entries) {
+                    if (!entry.redirectEntries)
+                        continue;
+
+                    for (let i = 0; i < entry.redirectEntries.length; ++i) {
+                        let redirectEntry = entry.redirectEntries[i]
+                        if (redirectEntry.redirect === object) {
+                            parentResource = entry.resource;
+                            parentEntry = entry;
+                            redirectIndex = i;
+                            break;
+                        }
+                    }
+                    if (parentResource)
+                        break;
+                }
+                this._detailView = new WI.NetworkRedirectDetailView(object, parentResource, redirectIndex, parentEntry, this);
             }
 
             this._detailViewMap.set(object, this._detailView);
@@ -1817,6 +2015,17 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         });
     }
 
+    _resourceRedirectsDidChange(event)
+    {
+        this._runForMainCollection((collection, wasMain) => {
+            let resource = event.target;
+            collection.pendingUpdates.push(resource);
+
+            if (wasMain)
+                this.needsLayout();
+        });
+    }
+
     _handleResourceSizeDidChange(event)
     {
         if (!this._table)
@@ -1955,6 +2164,13 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             return;
         }
 
+        let existingEntry = collection.entries.find(entry => entry.resource === resource);
+        if (existingEntry) {
+            collection.pendingUpdates.push(resource);
+            this.needsLayout();
+            return;
+        }
+
         let resourceEntry = this._entryForResource(resource);
 
         this._tryLinkResourceToDOMNode(resourceEntry);
@@ -2028,7 +2244,74 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             connectionIdentifier: resource.connectionIdentifier,
             startTime: resource.firstTimestamp,
             currentSession: resource[WI.NetworkTableContentView._currentSessionSymbol] ?? true,
+            redirectEntries: [],
+            redirectsExpanded: false,
             rowClassNames,
+        };
+    }
+
+    _entryForRedirect(redirect, resource, previousRedirect)
+    {
+        let subpath = redirect.urlComponents.path;
+        if (subpath && redirect.urlComponents.lastPathComponent)
+            subpath = subpath.substring(0, subpath.length - redirect.urlComponents.lastPathComponent.length);
+
+        // Parse Content-Type from response headers
+        let mimeType = "";
+        let contentType = redirect.responseHeaders["content-type"] || redirect.responseHeaders["Content-Type"];
+        if (contentType) {
+            let match = contentType.match(/^([^;]+)/);
+            if (match)
+                mimeType = match[1].trim();
+        }
+
+        // Determine resource type from MIME type
+        let type = WI.Resource.Type.Document; // Default to Document for redirects
+        if (mimeType)
+            type = WI.Resource.typeFromMIMEType(mimeType);
+
+        // Calculate redirect duration
+        // If this is the first redirect, duration is from resource start to redirect completion
+        // Otherwise, duration is from previous redirect completion to this redirect completion
+        let redirectTime = NaN;
+        let redirectTimestamp = redirect.timestamp;
+        if (!isNaN(redirectTimestamp)) {
+            let startTimestamp = previousRedirect ? previousRedirect.timestamp : resource.firstTimestamp;
+            if (!isNaN(startTimestamp))
+                redirectTime = redirectTimestamp - startTimestamp;
+        }
+
+        // Estimate redirect sizes (headers only, no body)
+        let requestHeaderSize = this._estimateHeaderSize(redirect.requestHeaders, redirect.requestMethod, redirect.url);
+        let responseHeaderSize = this._estimateHeaderSize(redirect.responseHeaders, redirect.responseStatusCode, redirect.responseStatusText);
+        let totalSize = requestHeaderSize + responseHeaderSize;
+
+        return {
+            redirect,
+            resource,
+            previousRedirect,
+            isRedirect: true,
+            name: WI.displayNameForURL(redirect.url, redirect.urlComponents),
+            domain: WI.displayNameForHost(redirect.urlComponents.host),
+            path: subpath || "",
+            scheme: redirect.urlComponents.scheme ? redirect.urlComponents.scheme.toLowerCase() : "",
+            method: redirect.requestMethod,
+            type: type,
+            displayType: "redirect",
+            mimeType: mimeType,
+            status: redirect.responseStatusCode,
+            cached: false,
+            resourceSize: totalSize,
+            transferSize: totalSize,
+            time: redirectTime,
+            protocol: "",
+            initiator: "",
+            priority: "",
+            remoteAddress: "",
+            connectionIdentifier: "",
+            startTime: redirect.timestamp,
+            currentSession: resource[WI.NetworkTableContentView._currentSessionSymbol] ?? true,
+            rowClassNames: ["redirect"],
         };
     }
 
@@ -2041,6 +2324,29 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             expanded: true,
             rowClassNames: [],
         };
+    }
+
+    _estimateHeaderSize(headers, firstLine, secondLine)
+    {
+        // Estimates HTTP header size in bytes by summing:
+        // - Status/request line (e.g., "GET /path HTTP/1.1" or "HTTP/1.1 200 OK")
+        // - Each header as "name: value\r\n"
+        // - Final "\r\n" terminator
+        let size = 0;
+
+        if (typeof firstLine === "string")
+            size += firstLine.length + 20; // Request line + " HTTP/1.1\r\n" overhead
+        else if (typeof firstLine === "number")
+            size += 15 + (secondLine ? secondLine.length : 0); // "HTTP/1.1 " + status code + " " + status text + "\r\n"
+
+        for (let name in headers) {
+            let value = headers[name];
+            size += name.length + 2 + (value ? value.length : 0) + 2; // "name: value\r\n"
+        }
+
+        size += 2; // Final "\r\n"
+
+        return size;
     }
 
     _tryLinkResourceToDOMNode(resourceEntry)
@@ -2193,6 +2499,17 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             });
         }
 
+        let entriesToInsert = [];
+        for (let i = 0; i < collection.filteredEntries.length; ++i) {
+            let entry = collection.filteredEntries[i];
+            if (entry.redirectEntries?.length && entry.redirectsExpanded) {
+                for (let redirectEntry of entry.redirectEntries)
+                    entriesToInsert.push({entry: redirectEntry, index: i + 1 + entriesToInsert.length});
+            }
+        }
+        for (let item of entriesToInsert)
+            collection.filteredEntries.insertAtIndex(item.entry, item.index);
+
         this._updateStatistics();
 
         this._updateEmptyFilterResultsMessage();
@@ -2325,6 +2642,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _reloadTable()
     {
+        this._table.element.classList.remove("grouped");
         this._table.reloadData();
         this._restoreSelectedRow();
     }
@@ -2495,14 +2813,16 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _HARResources()
     {
-        let resources = this._activeCollection.filteredEntries.map((x) => x.resource);
-        const supportedHARSchemes = new Set(["http", "https", "ws", "wss"]);
-        return resources.filter((resource) => {
-            if (!resource) {
-                // DOM node entries are also added to `filteredEntries`.
-                return false;
-            }
+        let resourcesSet = new Set();
+        for (let entry of this._activeCollection.filteredEntries) {
+            if (entry.resource)
+                resourcesSet.add(entry.resource);
+        }
+        let resources = Array.from(resourcesSet);
 
+        const supportedHARSchemes = new Set(["http", "https", "ws", "wss"]);
+
+        let filteredResources = resources.filter((resource) => {
             if (!resource.finished)
                 return false;
             if (!resource.requestSentDate)
@@ -2511,6 +2831,22 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 return false;
             return true;
         });
+
+        let harEntries = [];
+        for (let resource of filteredResources) {
+            if (resource.redirects && resource.redirects.length) {
+                for (let redirect of resource.redirects) {
+                    harEntries.push({
+                        redirect: redirect,
+                        parentResource: resource,
+                    });
+                }
+            }
+
+            harEntries.push(resource);
+        }
+
+        return harEntries;
     }
 
     _exportHAR()

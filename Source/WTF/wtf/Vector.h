@@ -716,13 +716,13 @@ public:
     Vector(Vector&&);
     Vector& operator=(Vector&&);
 
-    size_t size() const { return m_size; }
-    size_t sizeInBytes() const { return static_cast<size_t>(m_size) * sizeof(T); }
+    [[nodiscard]] size_t size() const { return m_size; }
+    [[nodiscard]] size_t sizeInBytes() const { return static_cast<size_t>(m_size) * sizeof(T); }
     static constexpr ptrdiff_t sizeMemoryOffset() { return OBJECT_OFFSETOF(Vector, m_size); }
-    size_t capacity() const { return Base::capacity(); }
-    bool isEmpty() const { return !size(); }
-    std::span<const T> span() const LIFETIME_BOUND { return { data(), size() }; }
-    std::span<T> mutableSpan() LIFETIME_BOUND { return { data(), size() }; }
+    [[nodiscard]] size_t capacity() const { return Base::capacity(); }
+    [[nodiscard]] bool isEmpty() const { return !size(); }
+    [[nodiscard]] std::span<const T> span() const LIFETIME_BOUND { return { data(), size() }; }
+    [[nodiscard]] std::span<T> mutableSpan() LIFETIME_BOUND { return { data(), size() }; }
 
     Vector<T> subvector(size_t offset, size_t length = std::dynamic_extent) const
     {
@@ -734,38 +734,38 @@ public:
         return span().subspan(offset, length);
     }
 
-    T& at(size_t i) LIFETIME_BOUND
+    [[nodiscard]] T& at(size_t i) LIFETIME_BOUND
     {
         if (i >= size()) [[unlikely]]
             OverflowHandler::overflowed();
         return Base::buffer()[i];
     }
-    const T& at(size_t i) const LIFETIME_BOUND
+    [[nodiscard]] const T& at(size_t i) const LIFETIME_BOUND
     {
         if (i >= size()) [[unlikely]]
             OverflowHandler::overflowed();
         return Base::buffer()[i];
     }
 
-    T& operator[](size_t i) LIFETIME_BOUND { return at(i); }
-    const T& operator[](size_t i) const LIFETIME_BOUND { return at(i); }
+    [[nodiscard]] T& operator[](size_t i) LIFETIME_BOUND { return at(i); }
+    [[nodiscard]] const T& operator[](size_t i) const LIFETIME_BOUND { return at(i); }
 
     static constexpr ptrdiff_t dataMemoryOffset() { return Base::bufferMemoryOffset(); }
 
-    iterator begin() LIFETIME_BOUND { return data(); }
-    iterator end() LIFETIME_BOUND { return begin() + m_size; }
-    const_iterator begin() const LIFETIME_BOUND { return data(); }
-    const_iterator end() const LIFETIME_BOUND { return begin() + m_size; }
+    [[nodiscard]] iterator begin() LIFETIME_BOUND { return data(); }
+    [[nodiscard]] iterator end() LIFETIME_BOUND { return begin() + m_size; }
+    [[nodiscard]] const_iterator begin() const LIFETIME_BOUND { return data(); }
+    [[nodiscard]] const_iterator end() const LIFETIME_BOUND { return begin() + m_size; }
 
-    reverse_iterator rbegin() LIFETIME_BOUND { return reverse_iterator(end()); }
-    reverse_iterator rend() LIFETIME_BOUND { return reverse_iterator(begin()); }
-    const_reverse_iterator rbegin() const LIFETIME_BOUND { return const_reverse_iterator(end()); }
-    const_reverse_iterator rend() const LIFETIME_BOUND { return const_reverse_iterator(begin()); }
+    [[nodiscard]] reverse_iterator rbegin() LIFETIME_BOUND { return reverse_iterator(end()); }
+    [[nodiscard]] reverse_iterator rend() LIFETIME_BOUND { return reverse_iterator(begin()); }
+    [[nodiscard]] const_reverse_iterator rbegin() const LIFETIME_BOUND { return const_reverse_iterator(end()); }
+    [[nodiscard]] const_reverse_iterator rend() const LIFETIME_BOUND { return const_reverse_iterator(begin()); }
 
-    T& first() LIFETIME_BOUND { return at(0); }
-    const T& first() const LIFETIME_BOUND { return at(0); }
-    T& last() LIFETIME_BOUND { return at(size() - 1); }
-    const T& last() const LIFETIME_BOUND { return at(size() - 1); }
+    [[nodiscard]] T& first() LIFETIME_BOUND { return at(0); }
+    [[nodiscard]] const T& first() const LIFETIME_BOUND { return at(0); }
+    [[nodiscard]] T& last() LIFETIME_BOUND { return at(size() - 1); }
+    [[nodiscard]] const T& last() const LIFETIME_BOUND { return at(size() - 1); }
     
     T takeLast()
     {
@@ -930,8 +930,8 @@ private:
         new (NotNull, begin() + position) T(std::forward<U>(value));
     }
 
-    T* data() LIFETIME_BOUND { return Base::buffer(); }
-    const T* data() const LIFETIME_BOUND { return Base::buffer(); }
+    [[nodiscard]] T* data() LIFETIME_BOUND { return Base::buffer(); }
+    [[nodiscard]] const T* data() const LIFETIME_BOUND { return Base::buffer(); }
 
     void asanSetInitialBufferSizeTo(size_t);
     void asanSetBufferSizeToFullCapacity(size_t);

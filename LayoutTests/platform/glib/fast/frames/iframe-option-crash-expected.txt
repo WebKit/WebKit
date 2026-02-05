@@ -4,7 +4,7 @@ layer at (0,0) size 800x192
   RenderBlock {html} at (0,0) size 800x192
     RenderBody {body} at (8,8) size 784x176
       RenderBlock {div} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 426x17
+        RenderText {#text} at (0,0) size 426x18
           text run at (0,0) width 426: "If no crash while painting, the test passed (requires pixel test mode)."
       RenderBlock (anonymous) at (0,18) size 784x158
         RenderText {#text} at (0,0) size 0x0

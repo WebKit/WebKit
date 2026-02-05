@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// https://drafts.csswg.org/cssom/#the-cssstylesheet-interface
-
+// https://drafts.csswg.org/cssom/#cssstylesheet
 [
     Exposed=Window,
     JSGenerateToNativeObject
@@ -42,9 +41,8 @@
     undefined removeRule(optional unsigned long index = 0);
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary CSSStyleSheetInit {
+// https://drafts.csswg.org/cssom/#dictdef-cssstylesheetinit
+dictionary CSSStyleSheetInit {
     DOMString baseURL = null;
     (MediaList or DOMString) media = "";
     boolean disabled = false;

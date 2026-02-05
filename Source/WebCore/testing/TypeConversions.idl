@@ -89,7 +89,6 @@
 [
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary TypeConversionsOtherDictionary {
     long longValue = 0;
     DOMString stringValue = "";
@@ -98,13 +97,12 @@
 [
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary TypeConversionsDictionary {
     long longValue = 0;
     DOMString stringValue = "";
     [LegacyNullToEmptyString] DOMString treatNullAsEmptyStringValue = "";
     sequence<DOMString> sequenceValue = [];
-    (Node or sequence<DOMString> or TypeConversionsOtherDictionary) unionValue = null;
+    (Node or sequence<DOMString> or TypeConversionsOtherDictionary) unionValue = { };
     [Clamp] long clampLongValue = 0;
     [EnforceRange] long enforceRangeLongValue = 0;
 };

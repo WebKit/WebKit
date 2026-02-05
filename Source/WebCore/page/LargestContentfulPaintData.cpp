@@ -66,7 +66,7 @@ LargestContentfulPaintData::~LargestContentfulPaintData() = default;
 // https://w3c.github.io/paint-timing/#exposed-for-paint-timing
 bool LargestContentfulPaintData::isExposedForPaintTiming(const Element& element)
 {
-    if (!element.protectedDocument()->isFullyActive())
+    if (!protect(element.document())->isFullyActive())
         return false;
 
     if (!element.isInDocumentTree()) // Also checks isConnected().

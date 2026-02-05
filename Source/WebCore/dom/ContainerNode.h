@@ -41,10 +41,8 @@ public:
     virtual ~ContainerNode();
 
     Node* firstChild() const { return m_firstChild; }
-    RefPtr<Node> protectedFirstChild() const { return m_firstChild; }
     static constexpr ptrdiff_t firstChildMemoryOffset() { return OBJECT_OFFSETOF(ContainerNode, m_firstChild); }
     Node* lastChild() const { return m_lastChild; }
-    RefPtr<Node> protectedLastChild() const { return m_lastChild; }
     static constexpr ptrdiff_t lastChildMemoryOffset() { return OBJECT_OFFSETOF(ContainerNode, m_lastChild); }
     bool hasChildNodes() const { return m_firstChild; }
     bool hasOneChild() const { return m_firstChild && m_firstChild == m_lastChild; }
@@ -63,7 +61,6 @@ public:
     void replaceAll(Node*);
 
     inline ContainerNode& rootNode() const; // Defined in ContainerNodeInlines.h
-    inline Ref<ContainerNode> protectedRootNode() const; // Defined in ContainerNodeInlines.h
     ContainerNode& traverseToRootNode() const;
 
     // These methods are only used during parsing.

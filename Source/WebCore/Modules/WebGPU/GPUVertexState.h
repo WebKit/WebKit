@@ -36,7 +36,6 @@ namespace WebCore {
 struct GPUVertexState : public GPUProgrammableStage {
     WebGPU::VertexState convertToBacking() const
     {
-        ASSERT(module);
         return {
             {
                 module->backing(),

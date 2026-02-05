@@ -117,7 +117,7 @@ void AXIsolatedTree::createEmptyContent(AccessibilityObject& axRoot)
 {
     AX_ASSERT(isMainThread());
     AX_ASSERT(!axRoot.isDetached());
-    AX_ASSERT(axRoot.isScrollView() && !axRoot.parentObject());
+    AX_ASSERT(axRoot.isScrollArea() && !axRoot.parentObject());
 
     // An empty content tree consists only of the ScrollView and WebArea objects.
     m_isEmptyContentTree = true;
@@ -575,7 +575,6 @@ void AXIsolatedTree::updateNode(AccessibilityObject& axObject)
 
 void AXIsolatedTree::objectChangedIgnoredState(const AccessibilityObject& object)
 {
-#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     AX_ASSERT(isMainThread());
 
     if (RefPtr parentTable = object.parentTableIfTableCell()) {
@@ -593,9 +592,6 @@ void AXIsolatedTree::objectChangedIgnoredState(const AccessibilityObject& object
         if (RefPtr webArea = axObjectCache ? axObjectCache->rootWebArea() : nullptr)
             queueNodeUpdate(webArea->objectID(), { AXProperty::DocumentLinks });
     }
-#else
-    UNUSED_PARAM(object);
-#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
 }
 
 void AXIsolatedTree::updatePropertiesForSelfAndDescendants(AccessibilityObject& axObject, const AXPropertySet& propertySet)
@@ -955,10 +951,7 @@ void AXIsolatedTree::updateDependentProperties(AccessibilityObject& axObject)
     updateRelatedObjects(axObject);
 
     // When a row gains or loses cells, or a table changes rows in a row group, the column count of the table can change.
-    bool updateTableAncestorColumns = axObject.isExposedTableRow();
-#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
-    updateTableAncestorColumns = updateTableAncestorColumns || isRowGroup(axObject.node());
-#endif
+    bool updateTableAncestorColumns = axObject.isExposedTableRow() || isRowGroup(axObject.node());
     for (RefPtr ancestor = axObject.parentObject(); ancestor; ancestor = ancestor->parentObject()) {
         if (updateTableAncestorColumns && ancestor->isTable()) {
             // Only `updateChildren` if the table is unignored, because otherwise `updateChildren` will ascend and update the next highest unignored ancestor, which doesn't accomplish our goal of updating table columns.
@@ -999,13 +992,7 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
     // An example of this is when an empty element such as a <canvas> or <div>
     // has added a new child. So find the closest ancestor of axObject that has
     // an associated isolated object and update its children.
-#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     auto* axAncestor = &axObject;
-#else
-    auto* axAncestor = Accessibility::findAncestor(axObject, true, [this] (auto& ancestor) {
-        return m_nodeMap.contains(ancestor.objectID());
-    });
-#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
 
     if (!axAncestor || axAncestor->isDetached()) {
         // This update was triggered before the isolated tree has been repopulated.
@@ -1013,41 +1000,6 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
         AXLOG("Bailing because no ancestor could be found, or ancestor is detached");
         return;
     }
-
-#if !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
-    if (axAncestor != &axObject) {
-        AXLOG(makeString("Original object with ID "_s, axObject.objectID().loggingString(), " wasn't in the isolated tree, so instead updating the closest in-isolated-tree ancestor:"_s));
-        AXLOG(axAncestor);
-
-        // An explicit copy is necessary here because the nested calls to updateChildren
-        // can cause this objects children to be invalidated as we iterate.
-        auto childrenCopy = axObject.children();
-        for (auto& child : childrenCopy) {
-            Ref liveChild = downcast<AccessibilityObject>(child.get());
-            if (liveChild->childrenInitialized())
-                continue;
-
-            if (!m_nodeMap.contains(liveChild->objectID())) {
-                if (!shouldCreateNodeChange(liveChild))
-                    continue;
-
-                // This child should be added to the isolated tree but hasn't been yet.
-                // Add it to the nodemap so the recursive call to updateChildren below properly builds the subtree for this object.
-                RefPtr parent = axObject.parentInCoreTree();
-                m_nodeMap.set(liveChild->objectID(), ParentChildrenIDs { parent ? std::optional { parent->objectID() } : std::nullopt, liveChild->childrenIDs() });
-                m_unresolvedPendingAppends.add(liveChild->objectID());
-            }
-
-            AXLOG(makeString(
-                "Child ID "_s, liveChild->objectID().loggingString(), " of original object ID "_s, axObject.objectID().loggingString(), " was found in the isolated tree with uninitialized live children. Updating its isolated children."_s
-            ));
-            // Don't immediately resolve node changes in these recursive calls to updateChildren. This avoids duplicate node change creation in this scenario:
-            //   1. Some subtree is updated in the below call to updateChildren.
-            //   2. Later in this function, when updating axAncestor, we update some higher subtree that includes the updated subtree from step 1.
-            queueNodeUpdate(liveChild->objectID(), NodeUpdateOptions::childrenUpdate());
-        }
-    }
-#endif // !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
 
     // FIXME: This copy out of the hashmap seems unnecessary — can we use HashMap::find instead?
     auto oldIDs = m_nodeMap.get(axAncestor->objectID());
@@ -1947,25 +1899,17 @@ IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>& axOb
 #endif
     };
 
-    bool needsAllProperties = true;
-#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
-    bool isIgnored = true;
-    if (object.includeIgnoredInCoreTree()) {
-        isIgnored = object.isIgnored();
-        setProperty(AXProperty::IsIgnored, isIgnored);
+    bool isIgnored = object.isIgnored();
+    setProperty(AXProperty::IsIgnored, isIgnored);
 
-        // Do not set any properties in this block, as this is before we reserve capacity for the property vector.
+    // Do not set any properties in this block, as this is before we reserve capacity for the property vector.
 
-        // Maintain full properties for objects meeting this criteria:
-        //   - Unconnected objects, which are involved in relations or outgoing notifications
-        //   - Static text. We sometimes ignore static text (e.g. because it descends from a text field),
-        //     but need full properties for proper text marker behavior.
-        // FIXME: We shouldn't cache all properties for empty / non-rendered text?
-        needsAllProperties = !isIgnored || tree->isUnconnectedNode(object.objectID()) || is<RenderText>(object.renderer());
-    }
-#else
-    reserveCapacityAndCacheBaseProperties(unignoredSizeToReserve);
-#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    // Maintain full properties for objects meeting this criteria:
+    //   - Unconnected objects, which are involved in relations or outgoing notifications
+    //   - Static text. We sometimes ignore static text (e.g. because it descends from a text field),
+    //     but need full properties for proper text marker behavior.
+    // FIXME: We shouldn't cache all properties for empty / non-rendered text?
+    bool needsAllProperties = !isIgnored || tree->isUnconnectedNode(object.objectID()) || is<RenderText>(object.renderer());
 
     if (!needsAllProperties)
         reserveCapacityAndCacheBaseProperties(0);
@@ -2033,7 +1977,7 @@ IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>& axOb
             setProperty(AXProperty::InputType, *inputType);
 
         bool isWebArea = axObject->isWebArea();
-        bool isScrollArea = axObject->isScrollView();
+        bool isScrollArea = axObject->isScrollArea();
         if (isScrollArea && !axObject->parentObject()) {
             // Eagerly cache the screen relative position for the root. AXIsolatedObject::screenRelativePosition()
             // of non-root objects depend on the root object's screen relative position, so make sure it's there
@@ -2288,7 +2232,6 @@ IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>& axOb
     RefPtr axParent = object.parentInCoreTree();
     Markable<AXID> parentID = axParent ? std::optional(axParent->objectID()) : std::nullopt;
 
-#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     if (isIgnored) {
         if (String text = axObject->revealableText(); !text.isEmpty()) {
             // We only need to cache this for ignored objects, as unignored objects
@@ -2296,7 +2239,6 @@ IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>& axOb
             setProperty(AXProperty::RevealableText, WTF::move(text).isolatedCopy());
         }
     }
-#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
 
     properties.shrinkToFit();
     return {

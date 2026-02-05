@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary IdleRequestOptions {
-    unsigned long timeout;
+// https://w3c.github.io/requestidlecallback/#window_extensions
+
+dictionary IdleRequestOptions {
+    [ImplementationDefaultValue=0] unsigned long timeout;
 };

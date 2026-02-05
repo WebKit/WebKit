@@ -131,6 +131,22 @@ WGSLWrapperFunction WGSLProgramPrelude::postDecrement(const TType &decrementedTy
     }
 }
 
+WGSLWrapperFunction WGSLProgramPrelude::assign(const TType &dest, const TType &src, TOperator op)
+{
+    uint64_t uniqueId = InsertIntoMapWithUniqueId(mUniqueFuncId, mAssigned, {dest, src, op});
+
+    switch (GetWgslAddressSpaceForPointer(dest))
+    {
+        case WgslPointerAddressSpace::Function:
+            return {BuildConcatenatedImmutableString(ConcatId("assignFunc", uniqueId), "(&"),
+                    kEndParanthesis};
+        case WgslPointerAddressSpace::Private:
+            // EvqGlobal and various other shader outputs/builtins are all globals.
+            return {BuildConcatenatedImmutableString(ConcatId("assignPriv", uniqueId), "(&"),
+                    kEndParanthesis};
+    }
+}
+
 void WGSLProgramPrelude::outputPrelude(TInfoSinkBase &sink)
 {
     auto genPreIncOrDec = [&](ImmutableString addressSpace, const TType &type, ImmutableString op,
@@ -206,6 +222,24 @@ void WGSLProgramPrelude::outputPrelude(TInfoSinkBase &sink)
                         ConcatId("postDecPriv", elem.second));
         genPostIncOrDec(ImmutableString("function"), elem.first, ImmutableString("-="),
                         ConcatId("postDecFunc", elem.second));
+    }
+
+    for (const auto &assigned : mAssigned)
+    {
+        auto genAssignment = [&](ImmutableString addressSpace, ImmutableString funcName) {
+            TStringStream destTypeStr;
+            WriteWgslType(destTypeStr, assigned.first.dest, {});
+            TStringStream srcTypeStr;
+            WriteWgslType(srcTypeStr, assigned.first.src, {});
+
+            sink << "fn " << funcName << "(dest : ptr<" << addressSpace << ", " << destTypeStr.str()
+                 << ">, src : " << srcTypeStr.str() << ") -> " << destTypeStr.str() << "  {\n";
+            sink << "  *dest " << GetOperatorString(assigned.first.op) << " src;\n";
+            sink << "  return *dest;\n";
+            sink << "}\n";
+        };
+        genAssignment(ImmutableString("private"), ConcatId("assignPriv", assigned.second));
+        genAssignment(ImmutableString("function"), ConcatId("assignFunc", assigned.second));
     }
 }
 

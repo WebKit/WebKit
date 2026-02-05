@@ -160,11 +160,6 @@ SecurityOrigin* Geolocation::securityOrigin() const
     return scriptExecutionContext()->securityOrigin();
 }
 
-RefPtr<SecurityOrigin> Geolocation::protectedSecurityOrigin() const
-{
-    return securityOrigin();
-}
-
 Page* Geolocation::page() const
 {
     RefPtr document = this->document();
@@ -379,7 +374,7 @@ bool Geolocation::shouldBlockGeolocationRequests()
             return false;
     }
 
-    logError(protectedSecurityOrigin()->toString(), isSecure, document.get());
+    logError(protect(securityOrigin())->toString(), isSecure, document.get());
     return true;
 }
 

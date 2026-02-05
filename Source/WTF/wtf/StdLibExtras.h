@@ -92,6 +92,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 // The magic number 0x4000 is insignificant. We use it to avoid using NULL, since
 // NULL can cause compiler problems, especially in cases of multiple inheritance.
 #define CAST_OFFSET(from, to) (reinterpret_cast<uintptr_t>(static_cast<to>((reinterpret_cast<from>(0x4000)))) - 0x4000)
+#define RELEASE_ASSERT_NOT_CAST_OFFSET(from, to) SUPPRESS_MEMORY_UNSAFE_CAST RELEASE_ASSERT(!CAST_OFFSET(from, to))
 
 // STRINGIZE: Can convert any value to quoted string, even expandable macros
 #define STRINGIZE(exp) #exp
@@ -1288,6 +1289,10 @@ template<typename T> constexpr auto unsignedCast(T value) requires (std::is_inte
 // This is like std::invocable but it takes the expected signature rather than just the arguments.
 template<typename Functor, typename Signature> concept Invocable = requires(std::decay_t<Functor>&& f, std::function<Signature> expected) {
     { expected = std::move(f) };
+};
+
+template<typename Functor, typename Signature> concept ConstInvocable = requires(const std::decay_t<Functor>& f, std::function<Signature> expected) {
+    { expected = f };
 };
 
 // Concept for constraining to user-defined "Tuple-like" types.

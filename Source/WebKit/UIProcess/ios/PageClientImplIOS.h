@@ -36,10 +36,12 @@
 #import <wtf/WeakObjCPtr.h>
 
 OBJC_CLASS PlatformTextAlternatives;
+OBJC_CLASS UIScreen;
 OBJC_CLASS WKContentView;
 OBJC_CLASS WKEditorUndoTarget;
 
 namespace WebCore {
+class DestinationColorSpace;
 enum class DOMPasteAccessCategory : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
 struct PromisedAttachmentInfo;
@@ -80,6 +82,8 @@ private:
     bool isViewInWindow() override;
     bool isViewVisibleOrOccluded() override;
     bool isVisuallyIdle() override;
+    WebCore::DestinationColorSpace colorSpace() override;
+
     void processDidExit() override;
     void processWillSwap() override;
     void didRelaunchProcess() override;
@@ -144,6 +148,8 @@ private:
     void doneDeferringTouchMove(bool preventNativeGestures) override;
     void doneDeferringTouchEnd(bool preventNativeGestures) override;
 #endif
+
+    UIScreen *screen() override;
 
 #if ENABLE(IMAGE_ANALYSIS)
     void requestTextRecognition(const URL& imageURL, WebCore::ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&) final;
@@ -392,6 +398,7 @@ private:
 
     WeakObjCPtr<WKContentView> m_contentView;
     RetainPtr<WKEditorUndoTarget> m_undoTarget;
+    std::optional<WebCore::DestinationColorSpace> m_colorSpace;
 };
 } // namespace WebKit
 

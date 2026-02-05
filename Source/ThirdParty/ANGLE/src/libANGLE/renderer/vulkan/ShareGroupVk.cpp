@@ -315,8 +315,7 @@ vk::BufferPool *ShareGroupVk::getDefaultBufferPool(VkDeviceSize size,
 
         std::unique_ptr<vk::BufferPool> pool  = std::make_unique<vk::BufferPool>();
         vma::VirtualBlockCreateFlags vmaFlags = vma::VirtualBlockCreateFlagBits::GENERAL;
-        pool->initWithFlags(mRenderer, vmaFlags, usageFlags, 0, memoryTypeIndex,
-                            memoryPropertyFlags);
+        pool->initWithFlags(mRenderer, vmaFlags, usageFlags, memoryTypeIndex, memoryPropertyFlags);
         mDefaultBufferPools[memoryTypeIndex] = std::move(pool);
     }
 

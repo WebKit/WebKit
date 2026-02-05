@@ -135,20 +135,21 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 {
     auto directions = [self popoverArrowDirections];
     CGRect presentationRect;
+    RetainPtr view = retainPtr(_view);
     if (CGPointEqualToPoint(self.presentationPoint, CGPointZero))
-        presentationRect = _view.focusedElementInformation.interactionRect;
+        presentationRect = view.get().focusedElementInformation.interactionRect;
     else {
-        auto scale = _view.page->pageScaleFactor();
+        auto scale = view.get().page->pageScaleFactor();
         presentationRect = CGRectMake(self.presentationPoint.x * scale, self.presentationPoint.y * scale, 1, 1);
     }
 
-    if (!CGRectIntersectsRect(presentationRect, _view.bounds))
+    if (!CGRectIntersectsRect(presentationRect, view.get().bounds))
         return;
 
 #if PLATFORM(MACCATALYST)
     [_view startRelinquishingFirstResponderToFocusedElement];
 #endif
-    [_popoverController presentPopoverFromRect:CGRectIntegral(presentationRect) inView:_view permittedArrowDirections:directions animated:animated];
+    [_popoverController presentPopoverFromRect:CGRectIntegral(presentationRect) inView:view.get() permittedArrowDirections:directions animated:animated];
 }
 
 - (void)dismissPopoverAnimated:(BOOL)animated
@@ -179,7 +180,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (_isRotating)
         return;
 
-    [_dismissionDelegate popoverWasDismissed:self];
+    [protect(_dismissionDelegate) popoverWasDismissed:self];
 }
 
 @end

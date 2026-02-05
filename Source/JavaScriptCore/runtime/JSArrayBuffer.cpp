@@ -44,7 +44,7 @@ void JSArrayBuffer::finishCreation(VM& vm, JSGlobalObject* globalObject)
     Base::finishCreation(vm);
     // This probably causes GCs in the various VMs to overcount the impact of the array buffer.
     vm.heap.addReference(this, impl());
-    vm.m_typedArrayController->registerWrapper(globalObject, impl(), this);
+    vm.m_typedArrayController->registerWrapper(globalObject, *impl(), *this);
 }
 
 JSArrayBuffer* JSArrayBuffer::create(

@@ -146,12 +146,12 @@ static bool isCachedPrefixMatch(const CachedSetInnerHTML& cache, std::span<const
 template<typename CharacterType>
 static FragmentReuseResult tryAvoidParsingByCloningExistingSubtree(std::span<const CharacterType> source, ContainerNode& destinationParent, Element& contextElement)
 {
-    auto& cache = destinationParent.protectedDocument()->cachedSetInnerHTML();
+    auto& cache = protect(destinationParent.document())->cachedSetInnerHTML();
     RefPtr cachedContainer = cache.cachedContainer.get();
     if (!cachedContainer)
         return FragmentReuseResult::CannotReuse;
     if (!isCachedSubtreeValid(*cachedContainer)) {
-        destinationParent.protectedDocument()->invalidateCachedSetInnerHTML();
+        protect(destinationParent.document())->invalidateCachedSetInnerHTML();
         return FragmentReuseResult::CannotReuse;
     }
 
@@ -177,9 +177,9 @@ static FragmentReuseResult cloneCachedPrefixAndParseSuffix(std::span<const Chara
     ASSERT(cachedContainer->hasChildNodes());
 
     for (RefPtr nodeToClone = cachedContainer->firstChild(); nodeToClone; nodeToClone = nodeToClone->nextSibling()) {
-        Ref<Node> clonedChild = nodeToClone->cloneNodeInternal(destinationParent.protectedDocument(), Node::CloningOperation::SelfOnly, nullptr);
+        Ref<Node> clonedChild = nodeToClone->cloneNodeInternal(protect(destinationParent.document()), Node::CloningOperation::SelfOnly, nullptr);
         if (RefPtr nodeToCloneAsContainer = dynamicDowncast<ContainerNode>(*nodeToClone))
-            nodeToCloneAsContainer->cloneSubtreeForFastParser(destinationParent.protectedDocument(), nullptr, downcast<ContainerNode>(clonedChild.get()), 0);
+            nodeToCloneAsContainer->cloneSubtreeForFastParser(protect(destinationParent.document()), nullptr, downcast<ContainerNode>(clonedChild.get()), 0);
         destinationParent.parserAppendChildIntoIsolatedTree(clonedChild.get());
     }
 

@@ -112,7 +112,7 @@ void HTMLMetaElement::attributeChanged(const QualifiedName& name, const AtomStri
         process(oldValue);
         if (isInDocumentTree()) {
             if (equalLettersIgnoringASCIICase(oldValue, "theme-color"_s) && !equalLettersIgnoringASCIICase(newValue, "theme-color"_s))
-                protectedDocument()->metaElementThemeColorChanged(*this);
+                protect(document())->metaElementThemeColorChanged(*this);
         }
         break;
     case AttributeNames::contentAttr:
@@ -149,10 +149,10 @@ void HTMLMetaElement::removedFromAncestor(RemovalType removalType, ContainerNode
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 
     if (removalType.disconnectedFromDocument && equalLettersIgnoringASCIICase(name(), "theme-color"_s))
-        oldParentOfRemovedTree.protectedDocument()->metaElementThemeColorChanged(*this);
+        protect(oldParentOfRemovedTree.document())->metaElementThemeColorChanged(*this);
 #if ENABLE(DARK_MODE_CSS)
     else if (removalType.disconnectedFromDocument && isNameColorScheme(name()))
-        oldParentOfRemovedTree.protectedDocument()->metaElementColorSchemeChanged();
+        protect(oldParentOfRemovedTree.document())->metaElementColorSchemeChanged();
 #endif
 }
 
@@ -182,7 +182,7 @@ void HTMLMetaElement::process(const AtomString& oldValue)
     // tree (changing a meta tag while it's not in the tree shouldn't have any effect
     // on the document)
     if (!httpEquivValue.isNull())
-        document->processMetaHttpEquiv(httpEquivValue, contentValue, isDescendantOf(document->protectedHead().get()));
+        document->processMetaHttpEquiv(httpEquivValue, contentValue, isDescendantOf(protect(document->head()).get()));
     
     if (nameValue.isNull())
         return;

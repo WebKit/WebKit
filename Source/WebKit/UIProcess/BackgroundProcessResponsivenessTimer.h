@@ -49,7 +49,6 @@ public:
     void processTerminated();
 
 private:
-    Ref<WebProcessProxy> protectedWebProcessProxy() const;
     void responsivenessCheckTimerFired();
     void timeoutTimerFired();
     void setResponsive(bool);
@@ -58,7 +57,6 @@ private:
     bool isActive() const;
     void scheduleNextResponsivenessCheck();
     ResponsivenessTimer::Client& client() const;
-    Ref<ResponsivenessTimer::Client> protectedClient() const { return client(); }
 
     WeakRef<WebProcessProxy> m_webProcessProxy;
     Seconds m_checkingInterval;

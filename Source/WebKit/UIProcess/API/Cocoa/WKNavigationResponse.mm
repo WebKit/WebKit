@@ -64,6 +64,11 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     return _navigationResponse->canShowMIMEType();
 }
 
+- (WKNavigation *)mainFrameNavigation
+{
+    return wrapper(_navigationResponse->navigation());
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
@@ -78,7 +83,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 - (WKFrameInfo *)_frame
 {
     // FIXME: This RefPtr should not be necessary. Remove it once clang static analyzer is fixed.
-    return wrapper(RefPtr { _navigationResponse.get() }->protectedFrame().get());
+    return wrapper(protect(RefPtr { _navigationResponse.get() }->frame()).get());
 }
 
 - (WKFrameInfo *)_navigationInitiatingFrame
@@ -88,7 +93,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (WKNavigation *)_navigation
 {
-    return wrapper(_navigationResponse->navigation());
+    return [self mainFrameNavigation];
 }
 
 - (NSURLRequest *)_request

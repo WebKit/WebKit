@@ -344,6 +344,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     size -= GLSLDumpHeader::kHeaderSize;
     data += GLSLDumpHeader::kHeaderSize;
     const char *shaderStrings[] = {reinterpret_cast<const char *>(data)};
-    translator->compile(shaderStrings, 1, header.options);
+    translator->compile({shaderStrings, 1}, header.options);
     return 0;
 }

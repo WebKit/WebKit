@@ -1992,6 +1992,9 @@ imported/w3c/web-platform-tests/event-timing/interaction-count-tap.html [ Crash 
 imported/w3c/web-platform-tests/event-timing/interaction-count-click.html [ Skip ]
 imported/w3c/web-platform-tests/event-timing/interaction-count-press-key.html [ Skip ]
 
+# Incorrect whitespace stripping might happen at the network layer?
+imported/w3c/web-platform-tests/x-frame-options/get-decode-split.html [ Skip ]
+
 # Timeout:
 webkit.org/b/301110 imported/w3c/web-platform-tests/event-timing/gap-keydown-keyup.html [ Skip ]
 webkit.org/b/301110 imported/w3c/web-platform-tests/event-timing/gap-pointerdown-pointerup.html [ Skip ]
@@ -4503,6 +4506,9 @@ fast/css/highlight-text-repaint.html [ Skip ] # Failure
 fast/css/text-underline-offset-repaint.html [ Skip ] # Failure
 fast/flexbox/missing-repaint-when-flext-item-never-had-layout.html [ Skip ] # Failure
 
+fast/canvas/fillText-edge-clip-shadow.html [ ImageOnlyFailure ]
+fast/canvas/fillText-edge-shadow.html [ ImageOnlyFailure ]
+
 webkit.org/b/286284 fast/canvas/canvas-image-shadow.html [ Failure ]
 webkit.org/b/286284 webgl/2.0.y/conformance/canvas/to-data-url-test.html [ Failure ]
 
@@ -4625,6 +4631,11 @@ imported/w3c/web-platform-tests/css/CSS2/box-display/display-009.xht [ ImageOnly
 imported/w3c/web-platform-tests/css/CSS2/box-display/display-012.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/CSS2/box-display/display-013.xht [ ImageOnlyFailure ]
 
+fast/css-generated-content/initial-letter-first-line-wrapping.html [ ImageOnlyFailure ]
+fast/editing/selection-across-flex-grid-boundary.html [ ImageOnlyFailure ]
+fast/rendering/missing-selection-with-sibling-table.html [ ImageOnlyFailure ]
+fast/text/vertical-quotation-marks.html [ ImageOnlyFailure ]
+
 # webkit.org/b/304535 ui-serif, ui-sans-serif, ui-monospace, ui-rounded generic families not implemented on Windows
 imported/w3c/web-platform-tests/css/css-fonts/generic-family-lang-attr-cascade.html [ ImageOnlyFailure ]
 
@@ -4633,3 +4644,5 @@ http/tests/security/offscreen-canvas-remote-read-remote-image.html [ Skip ]
 imported/w3c/web-platform-tests/largest-contentful-paint/broken-image-icon.html [ Skip ] # Flake
 imported/w3c/web-platform-tests/largest-contentful-paint/transparent-text.html [ Skip ] # Flake or perhaps always fails
 imported/w3c/web-platform-tests/largest-contentful-paint/video-play-after-poster.html [ Failure ] # Harness Error The operation is not supported.
+
+webkit.org/b/306256 editing/selection/modify-up-on-rtl-wrapping-text.html [ Failure ]

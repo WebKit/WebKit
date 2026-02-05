@@ -55,7 +55,7 @@ Ref<SVGCircleElement> SVGCircleElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGCircleElement(tagName, document));
 }
 
-SVGAnimatedProperty* SVGCircleElement::propertyForAttribute(const QualifiedName& name) const
+SVGAnimatedPropertyBase* SVGCircleElement::propertyForAttribute(const QualifiedName& name) const
 {
     if (name == SVGNames::cxAttr)
         return m_cx.ptr();

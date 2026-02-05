@@ -95,7 +95,7 @@ AuxiliaryProcessProxy::~AuxiliaryProcessProxy()
     if (state() != State::Terminated)
         platformStartConnectionTerminationWatchdog();
 
-    protectedThrottler()->didDisconnectFromProcess();
+    protect(throttler())->didDisconnectFromProcess();
 
     if (RefPtr connection = m_connection)
         connection->invalidate();
@@ -261,7 +261,7 @@ bool AuxiliaryProcessProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, Optio
 
     if (asyncReplyHandler && canSendMessage() && shouldStartProcessThrottlerActivity == ShouldStartProcessThrottlerActivity::Yes) {
         auto completionHandler = WTF::move(asyncReplyHandler->completionHandler);
-        asyncReplyHandler->completionHandler = [activity = protectedThrottler()->quietBackgroundActivity(description(encoder->messageName())), completionHandler = WTF::move(completionHandler)](IPC::Connection* connection, IPC::Decoder* decoder) mutable {
+        asyncReplyHandler->completionHandler = [activity = protect(throttler())->quietBackgroundActivity(description(encoder->messageName())), completionHandler = WTF::move(completionHandler)](IPC::Connection* connection, IPC::Decoder* decoder) mutable {
             completionHandler(connection, decoder);
         };
     }
@@ -274,10 +274,10 @@ bool AuxiliaryProcessProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, Optio
 
     case State::Running:
         if (asyncReplyHandler) {
-            if (protectedConnection()->sendMessageWithAsyncReply(WTF::move(encoder), WTF::move(*asyncReplyHandler), sendOptions) == IPC::Error::NoError)
+            if (protect(connection())->sendMessageWithAsyncReply(WTF::move(encoder), WTF::move(*asyncReplyHandler), sendOptions) == IPC::Error::NoError)
                 return true;
         } else {
-            if (protectedConnection()->sendMessage(WTF::move(encoder), sendOptions) == IPC::Error::NoError)
+            if (protect(connection())->sendMessage(WTF::move(encoder), sendOptions) == IPC::Error::NoError)
                 return true;
         }
         break;
@@ -351,7 +351,7 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::C
         return;
 
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
-    m_lifetimeActivity = protectedThrottler()->foregroundActivity("Lifetime Activity"_s);
+    m_lifetimeActivity = protect(throttler())->foregroundActivity("Lifetime Activity"_s);
     m_boostedJetsamAssertion = ProcessAssertion::create(*this, "Jetsam Boost"_s, ProcessAssertionType::BoostedJetsam);
 #endif
 
@@ -379,7 +379,7 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::C
     }
 
 #if USE(RUNNINGBOARD)
-    protectedThrottler()->didConnectToProcess(*this);
+    protect(throttler())->didConnectToProcess(*this);
 #if USE(EXTENSIONKIT)
     ASSERT(launcher);
     if (launcher)
@@ -401,7 +401,7 @@ void AuxiliaryProcessProxy::wakeUpTemporarilyForIPC()
     // If we keep trying to send IPC to a suspended process, the outgoing message queue may grow large and result
     // in increased memory usage. To avoid this, we allow the process to stay alive for 1 second after draining
     // its message queue.
-    auto completionHandler = [activity = protectedThrottler()->backgroundActivity("IPC sending due to large outgoing queue"_s)]() mutable {
+    auto completionHandler = [activity = protect(throttler())->backgroundActivity("IPC sending due to large outgoing queue"_s)]() mutable {
         RunLoop::mainSingleton().dispatchAfter(1_s, [activity = WTF::move(activity)]() { });
     };
     sendWithAsyncReply(Messages::AuxiliaryProcess::MainThreadPing(), WTF::move(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
@@ -420,7 +420,7 @@ void AuxiliaryProcessProxy::replyToPendingMessages()
 void AuxiliaryProcessProxy::shutDownProcess()
 {
     auto scopeExit = WTF::makeScopeExit([protectedThis = Ref { *this }] {
-        protectedThis->protectedThrottler()->didDisconnectFromProcess();
+        protect(protectedThis->throttler())->didDisconnectFromProcess();
     });
 
     switch (state()) {
@@ -449,7 +449,7 @@ void AuxiliaryProcessProxy::shutDownProcess()
     ASSERT(connectionToProcessMap().get(connection->uniqueID()) == this);
     connectionToProcessMap().remove(connection->uniqueID());
     m_connection = nullptr;
-    protectedResponsivenessTimer()->invalidate();
+    protect(responsivenessTimer())->invalidate();
 }
 
 AuxiliaryProcessProxy* AuxiliaryProcessProxy::fromConnection(const IPC::Connection& connection)
@@ -463,7 +463,7 @@ void AuxiliaryProcessProxy::setProcessSuppressionEnabled(bool processSuppression
     if (state() != State::Running)
         return;
 
-    protectedConnection()->send(Messages::AuxiliaryProcess::SetProcessSuppressionEnabled(processSuppressionEnabled), 0);
+    protect(connection())->send(Messages::AuxiliaryProcess::SetProcessSuppressionEnabled(processSuppressionEnabled), 0);
 #else
     UNUSED_PARAM(processSuppressionEnabled);
 #endif
@@ -499,7 +499,7 @@ bool AuxiliaryProcessProxy::platformIsBeingDebugged() const
 
 void AuxiliaryProcessProxy::stopResponsivenessTimer()
 {
-    protectedResponsivenessTimer()->stop();
+    protect(responsivenessTimer())->stop();
 }
 
 void AuxiliaryProcessProxy::beginResponsivenessChecks()
@@ -518,9 +518,9 @@ void AuxiliaryProcessProxy::startResponsivenessTimer(UseLazyStop useLazyStop)
     }
 
     if (useLazyStop == UseLazyStop::Yes)
-        protectedResponsivenessTimer()->startWithLazyStop();
+        protect(responsivenessTimer())->startWithLazyStop();
     else
-        protectedResponsivenessTimer()->start();
+        protect(responsivenessTimer())->start();
 }
 
 bool AuxiliaryProcessProxy::mayBecomeUnresponsive()
@@ -647,7 +647,7 @@ void AuxiliaryProcessProxy::didChangeThrottleState(ProcessThrottleState state)
 AuxiliaryProcessProxy::InitializationActivityAndGrant AuxiliaryProcessProxy::initializationActivityAndGrant()
 {
     return {
-        protectedThrottler()->foregroundActivity("Process initialization"_s)
+        protect(throttler())->foregroundActivity("Process initialization"_s)
 #if USE(EXTENSIONKIT)
         , launchGrant()
 #endif

@@ -30,7 +30,6 @@
 namespace WebCore {
 
 struct WebTransportConnectionStats {
-
     uint64_t bytesSent { 0 };
     uint64_t packetsSent { 0 };
     uint64_t bytesLost { 0 };

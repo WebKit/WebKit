@@ -49,7 +49,7 @@ WKPageConfigurationRef WKPageConfigurationCreate()
 
 WKContextRef WKPageConfigurationGetContext(WKPageConfigurationRef configuration)
 {
-    return toAPI(toProtectedImpl(configuration)->protectedProcessPool().get());
+    return toAPI(protect(toProtectedImpl(configuration)->processPool()).get());
 }
 
 void WKPageConfigurationSetContext(WKPageConfigurationRef configuration, WKContextRef context)
@@ -68,7 +68,7 @@ void WKPageConfigurationSetPageGroup(WKPageConfigurationRef, WKPageGroupRef)
 
 WKUserContentControllerRef WKPageConfigurationGetUserContentController(WKPageConfigurationRef configuration)
 {
-    return toAPI(toProtectedImpl(configuration)->protectedUserContentController().get());
+    return toAPI(protect(toProtectedImpl(configuration)->userContentController()).get());
 }
 
 void WKPageConfigurationSetUserContentController(WKPageConfigurationRef configuration, WKUserContentControllerRef userContentController)
@@ -78,7 +78,7 @@ void WKPageConfigurationSetUserContentController(WKPageConfigurationRef configur
 
 WKPreferencesRef WKPageConfigurationGetPreferences(WKPageConfigurationRef configuration)
 {
-    return toAPI(toProtectedImpl(configuration)->protectedPreferences().get());
+    return toAPI(protect(toProtectedImpl(configuration)->preferences()).get());
 }
 
 void WKPageConfigurationSetPreferences(WKPageConfigurationRef configuration, WKPreferencesRef preferences)
@@ -88,7 +88,7 @@ void WKPageConfigurationSetPreferences(WKPageConfigurationRef configuration, WKP
 
 WKPageRef WKPageConfigurationGetRelatedPage(WKPageConfigurationRef configuration)
 {
-    return toAPI(toProtectedImpl(configuration)->protectedRelatedPage().get());
+    return toAPI(protect(toProtectedImpl(configuration)->relatedPage()).get());
 }
 
 void WKPageConfigurationSetRelatedPage(WKPageConfigurationRef configuration, WKPageRef relatedPage)
@@ -98,7 +98,7 @@ void WKPageConfigurationSetRelatedPage(WKPageConfigurationRef configuration, WKP
 
 WKWebsiteDataStoreRef WKPageConfigurationGetWebsiteDataStore(WKPageConfigurationRef configuration)
 {
-    return toAPI(toProtectedImpl(configuration)->protectedWebsiteDataStore().get());
+    return toAPI(protect(toProtectedImpl(configuration)->websiteDataStore()).get());
 }
 
 void WKPageConfigurationSetWebsiteDataStore(WKPageConfigurationRef configuration, WKWebsiteDataStoreRef websiteDataStore)
@@ -133,7 +133,7 @@ void WKPageConfigurationSetPortsForUpgradingInsecureSchemeForTesting(WKPageConfi
 
 WKWebsitePoliciesRef WKPageConfigurationGetDefaultWebsitePolicies(WKPageConfigurationRef configuration)
 {
-    return toAPI(toProtectedImpl(configuration)->protectedDefaultWebsitePolicies().get());
+    return toAPI(protect(toProtectedImpl(configuration)->defaultWebsitePolicies()).get());
 }
 
 void WKPageConfigurationSetDefaultWebsitePolicies(WKPageConfigurationRef configuration, WKWebsitePoliciesRef policies)

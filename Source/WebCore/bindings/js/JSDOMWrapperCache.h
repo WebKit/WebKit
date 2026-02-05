@@ -99,7 +99,7 @@ template<typename WrapperClass> inline JSC::JSObject* getDOMPrototype(JSC::VM& v
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld& world, JSC::ArrayBuffer*)
 {
-    return static_cast<WebCoreTypedArrayController*>(world.vm().m_typedArrayController.get())->wrapperOwner();
+    return downcast<WebCoreTypedArrayController>(*world.vm().m_typedArrayController).wrapperOwner();
 }
 
 inline void* wrapperKey(JSC::ArrayBuffer* domObject)

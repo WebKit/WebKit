@@ -67,7 +67,7 @@ static ExceptionOr<String> computeReferrer(ScriptExecutionContext& context, cons
     if (referrerURL.protocolIsAbout() && referrerURL.path() == "client"_s)
         return "client"_str;
 
-    if (!(context.securityOrigin() && context.protectedSecurityOrigin()->canRequest(referrerURL, OriginAccessPatternsForWebProcess::singleton())))
+    if (!(context.securityOrigin() && protect(context.securityOrigin())->canRequest(referrerURL, OriginAccessPatternsForWebProcess::singleton())))
         return "client"_str;
 
     return String { referrerURL.string() };
@@ -228,8 +228,8 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
             return fillResult.releaseException();
     }
 
-    if (init.body) {
-        auto setBodyResult = setBody(WTF::move(*init.body));
+    if (init.body && init.body.value()) {
+        auto setBodyResult = setBody(WTF::move(*init.body.value()));
         if (setBodyResult.hasException())
             return setBodyResult.releaseException();
     }
@@ -276,7 +276,7 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
     if (RefPtr document = dynamicDowncast<Document>(context); document && document->settings().localNetworkAccessEnabled())
         m_targetAddressSpace = updateTargetAddressSpaceIfNeeded(*init.targetAddressSpace, m_request.url());
 
-    auto setBodyResult = init.body ? setBody(WTF::move(*init.body)) : setBody(input);
+    auto setBodyResult = init.body && init.body.value() ? setBody(WTF::move(*init.body.value())) : setBody(input);
     if (setBodyResult.hasException())
         return setBodyResult;
 

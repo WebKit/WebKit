@@ -43,22 +43,20 @@ struct GPURenderPassDescriptor : public GPUObjectDescriptorBase {
         return {
             { label },
             colorAttachments.map([](auto& colorAttachment) -> std::optional<WebGPU::RenderPassColorAttachment> {
-                if (colorAttachment)
-                    return colorAttachment->convertToBacking();
-                return std::nullopt;
+                return colorAttachment ? std::optional { colorAttachment->convertToBacking() } : std::nullopt;
             }),
             depthStencilAttachment ? std::optional { depthStencilAttachment->convertToBacking() } : std::nullopt,
             occlusionQuerySet ? &occlusionQuerySet->backing() : nullptr,
-            timestampWrites.convertToBacking(),
+            timestampWrites ? std::optional { timestampWrites->convertToBacking() } : std::nullopt,
             maxDrawCount,
         };
     }
 
     Vector<std::optional<GPURenderPassColorAttachment>> colorAttachments;
     std::optional<GPURenderPassDepthStencilAttachment> depthStencilAttachment;
-    WeakPtr<GPUQuerySet> occlusionQuerySet;
-    GPURenderPassTimestampWrites timestampWrites;
-    std::optional<GPUSize64> maxDrawCount;
+    RefPtr<GPUQuerySet> occlusionQuerySet;
+    std::optional<GPURenderPassTimestampWrites> timestampWrites;
+    GPUSize64 maxDrawCount { 50000000 };
 };
 
 }

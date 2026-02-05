@@ -43,16 +43,16 @@ public:
         return adoptRef(*new ClipboardEvent(type, WTF::move(dataTransfer)));
     }
 
-    static Ref<ClipboardEvent> create(const AtomString& type, const Init& init)
+    static Ref<ClipboardEvent> create(const AtomString& type, Init&& initializer)
     {
-        return adoptRef(*new ClipboardEvent(type, init));
+        return adoptRef(*new ClipboardEvent(type, WTF::move(initializer)));
     }
 
     DataTransfer* clipboardData() const { return m_clipboardData.get(); }
 
 private:
     ClipboardEvent(const AtomString& type, Ref<DataTransfer>&&);
-    ClipboardEvent(const AtomString& type, const Init&);
+    ClipboardEvent(const AtomString& type, Init&&);
 
     const RefPtr<DataTransfer> m_clipboardData;
 };

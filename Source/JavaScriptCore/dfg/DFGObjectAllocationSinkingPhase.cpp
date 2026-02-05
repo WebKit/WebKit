@@ -42,6 +42,8 @@
 #include "DFGValidate.h"
 #include "JSArrayIterator.h"
 #include "JSAsyncFromSyncIterator.h"
+#include "JSAsyncGenerator.h"
+#include "JSGenerator.h"
 #include "JSInternalPromise.h"
 #include "JSIteratorHelper.h"
 #include "JSMapIterator.h"
@@ -292,7 +294,7 @@ public:
 
     bool isFunctionAllocation() const
     {
-        return m_kind == Kind::Function || m_kind == Kind::GeneratorFunction || m_kind == Kind::AsyncFunction;
+        return m_kind == Kind::Function || m_kind == Kind::GeneratorFunction || m_kind == Kind::AsyncFunction || m_kind == Kind::AsyncGeneratorFunction;
     }
 
     bool isInternalFieldObjectAllocation() const
@@ -1141,6 +1143,12 @@ private:
                 break;
             case JSRegExpStringIteratorType:
                 target = handleInternalFieldClass<JSRegExpStringIterator>(node, writes);
+                break;
+            case JSGeneratorType:
+                target = handleInternalFieldClass<JSGenerator>(node, writes);
+                break;
+            case JSAsyncGeneratorType:
+                target = handleInternalFieldClass<JSAsyncGenerator>(node, writes);
                 break;
             case JSPromiseType:
                 if (node->structure()->classInfoForCells() == JSInternalPromise::info())

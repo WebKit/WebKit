@@ -46,17 +46,7 @@ WebAuthenticationPanel::WebAuthenticationPanel()
     : m_manager(AuthenticatorManager::create())
     , m_client(WebAuthenticationPanelClient::create())
 {
-    protectedManager()->enableNativeSupport();
-}
-
-RefPtr<WebKit::AuthenticatorManager> WebAuthenticationPanel::protectedManager() const
-{
-    return m_manager;
-}
-
-Ref<WebAuthenticationPanelClient> WebAuthenticationPanel::protectedClient() const
-{
-    return m_client;
+    protect(m_manager)->enableNativeSupport();
 }
 
 WebAuthenticationPanel::WebAuthenticationPanel(const AuthenticatorManager& manager, const WTF::String& rpId, const TransportSet& transports, ClientDataType type, const WTF::String& userName)
@@ -81,7 +71,7 @@ void WebAuthenticationPanel::handleRequest(WebAuthenticationRequestData&& reques
 {
     ASSERT(m_manager);
     request.weakPanel = *this;
-    protectedManager()->handleRequest(WTF::move(request), WTF::move(callback));
+    protect(m_manager)->handleRequest(WTF::move(request), WTF::move(callback));
 }
 
 void WebAuthenticationPanel::cancel() const
@@ -91,7 +81,7 @@ void WebAuthenticationPanel::cancel() const
         return;
     }
 
-    protectedManager()->cancel();
+    protect(m_manager)->cancel();
 }
 
 void WebAuthenticationPanel::setMockConfiguration(WebCore::MockWebAuthenticationConfiguration&& configuration)

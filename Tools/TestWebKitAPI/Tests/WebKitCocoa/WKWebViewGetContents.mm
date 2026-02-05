@@ -696,7 +696,7 @@ TEST(WKWebView, RequestAllTextRunsWithSubframes)
 
     Vector<std::pair<const char*, CGRect>> expectedResults {
 #if PLATFORM(MAC)
-        { "Here's to the crazy", CGRectMake(0, 18, 298, 16) },
+        { "Here's to the crazy", CGRectMake(0, 18, 298, 17) },
         { "ones.", CGRectMake(0, 34, 80, 17) },
         { "The round", CGRectMake(9, 84, 144, 16) },
         { "pegs in", CGRectMake(9, 100, 112, 16) },
@@ -709,17 +709,17 @@ TEST(WKWebView, RequestAllTextRunsWithSubframes)
         { "things", CGRectMake(18, 221, 96, 16) },
         { "differently.", CGRectMake(18, 237, 192, 16) },
 #else
-        { "Here's to the crazy ones.", CGRectMake(0, 18, 394, 17) },
-        { "The round", CGRectMake(9, 68, 144, 17) },
-        { "pegs in the", CGRectMake(9, 85, 176, 17) },
-        { "square", CGRectMake(9, 102, 96, 17) },
-        { "holes.", CGRectMake(9, 119, 96, 17) },
-        { "The", CGRectMake(18, 145, 48, 17) },
-        { "ones", CGRectMake(18, 162, 64, 17) },
-        { "who", CGRectMake(18, 179, 48, 17) },
-        { "see", CGRectMake(18, 196, 48, 17) },
-        { "things", CGRectMake(18, 213, 96, 17) },
-        { "differently.", CGRectMake(18, 230, 192, 17) },
+        { "Here's to the crazy ones.", CGRectMake(0, 18, 394, 16) },
+        { "The round", CGRectMake(9, 68, 144, 16) },
+        { "pegs in the", CGRectMake(9, 84, 176, 16) },
+        { "square", CGRectMake(9, 100, 96, 16) },
+        { "holes.", CGRectMake(9, 116, 96, 16) },
+        { "The", CGRectMake(18, 141, 48, 16) },
+        { "ones", CGRectMake(18, 157, 64, 16) },
+        { "who", CGRectMake(18, 173, 48, 16) },
+        { "see", CGRectMake(18, 189, 48, 16) },
+        { "things", CGRectMake(18, 205, 96, 16) },
+        { "differently.", CGRectMake(18, 221, 192, 16) },
 #endif
     };
 

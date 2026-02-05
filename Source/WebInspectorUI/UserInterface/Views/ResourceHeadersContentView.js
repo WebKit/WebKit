@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 
 WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.ContentView
 {
-    constructor(resource, delegate)
+    constructor(resource, entry, delegate)
     {
         super(null);
 
@@ -37,6 +37,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         this._resource.addEventListener(WI.Resource.Event.RequestHeadersDidChange, this._resourceRequestHeadersDidChange, this);
         this._resource.addEventListener(WI.Resource.Event.ResponseReceived, this._resourceResponseReceived, this);
 
+        this._entry = entry;
         this._delegate = delegate;
 
         this._searchQuery = null;
@@ -252,8 +253,6 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         let detailsElement = this._summarySection.detailsElement;
         detailsElement.removeChildren();
 
-        this._summarySection.toggleError(this._resource.hadLoadingError());
-
         for (let redirect of this._resource.redirects)
             this._summarySection.appendKeyValuePair(WI.UIString("URL"), redirect.url.insertWordBreakCharacters(), "url");
         this._summarySection.appendKeyValuePair(WI.UIString("URL"), this._resource.displayURL.insertWordBreakCharacters(), "url");
@@ -325,6 +324,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
             let redirect = this._resource.redirects[i];
 
             let redirectRequestSection = new WI.ResourceDetailsSection(WI.UIString("Request"), "redirect");
+            redirectRequestSection.toggleError(redirect.responseStatusCode >= 400);
 
             // FIXME: <https://webkit.org/b/190214> Web Inspector: expose full load metrics for redirect requests
             redirectRequestSection.appendKeyValuePair(`${redirect.requestMethod} ${redirect.urlComponents.path}`, null, "h1-status");
@@ -336,8 +336,18 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
             this._redirectDetailsSections.push(redirectRequestSection);
 
             let redirectResponseSection = new WI.ResourceDetailsSection(WI.UIString("Redirect Response"), "redirect");
+            redirectResponseSection.toggleError(redirect.responseStatusCode >= 400);
 
-            // FIXME: <https://webkit.org/b/190214> Web Inspector: expose full load metrics for redirect requests
+            let navLink = WI.createGoToArrowButton();
+            navLink.classList.add("redirect-nav-link");
+            navLink.title = WI.UIString("View Redirect");
+            navLink.addEventListener("click", (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                this._delegate?.showRedirect?.(redirect, this._resource, this._entry);
+            });
+            redirectResponseSection._titleElement.appendChild(navLink);
+
             redirectResponseSection.appendKeyValuePair(`${redirect.responseStatusCode} ${redirect.responseStatusText}`, null, "h1-status");
 
             for (let [key, value] of this._createSortedArrayForHeaders(redirect.responseHeaders))
@@ -352,6 +362,8 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
     {
         let detailsElement = this._requestHeadersSection.detailsElement;
         detailsElement.removeChildren();
+
+        this._requestHeadersSection.toggleError(this._resource.hadLoadingError());
 
         // A revalidation request still sends a request even though we served from cache, so show the request.
         if (this._resource.statusCode !== 304) {
@@ -399,6 +411,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         }
 
         this._responseHeadersSection.toggleIncomplete(false);
+        this._responseHeadersSection.toggleError(this._resource.hadLoadingError());
 
         let protocol = this._resource.protocol || "";
         if (protocol.startsWith("http/1")) {

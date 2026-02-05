@@ -26,7 +26,6 @@
 [
     Conditional=WEB_AUDIO,
     EnabledBySetting=WebAudioEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ConstantSourceOptions {
     float offset = 1;
 };

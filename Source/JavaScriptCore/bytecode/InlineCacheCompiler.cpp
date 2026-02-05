@@ -46,8 +46,10 @@
 #include "JIT.h"
 #include "JITOperations.h"
 #include "JITThunks.h"
+#include "JSMap.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
+#include "JSSet.h"
 #include "JSTypedArrays.h"
 #include "JSWebAssemblyInstance.h"
 #include "LLIntThunks.h"
@@ -4282,6 +4284,10 @@ bool InlineCacheCompiler::canEmitIntrinsicGetter(StructureStubInfo& stubInfo, JS
     }
     case WebAssemblyInstanceExportsIntrinsic:
         return structure->typeInfo().type() == WebAssemblyInstanceType;
+    case JSSetSizeIntrinsic:
+        return structure->typeInfo().type() == JSSetType;
+    case JSMapSizeIntrinsic:
+        return structure->typeInfo().type() == JSMapType;
     default:
         return false;
     }
@@ -4450,6 +4456,21 @@ void InlineCacheCompiler::emitIntrinsicGetter(IntrinsicGetterAccessCase& accessC
         jit.boxCell(valueGPR, valueRegs);
         succeed();
 #endif
+        return;
+    }
+
+    case JSSetSizeIntrinsic:
+    case JSMapSizeIntrinsic: {
+        GPRReg scratchGPR = m_scratchGPR;
+        ptrdiff_t storageOffset = accessCase.intrinsic() == JSSetSizeIntrinsic ? JSSet::offsetOfStorage() : JSMap::offsetOfStorage();
+        jit.loadPtr(CCallHelpers::Address(baseGPR, storageOffset), scratchGPR);
+        jit.move(CCallHelpers::TrustedImm32(0), valueGPR);
+        auto nullCase = jit.branchTestPtr(CCallHelpers::Zero, scratchGPR);
+        // offsetOfAliveEntryCount() is the same for both JSSet::Helper and JSMap::Helper.
+        jit.load32(CCallHelpers::Address(scratchGPR, JSSet::Helper::offsetOfAliveEntryCount()), valueGPR);
+        nullCase.link(&jit);
+        jit.boxInt32(valueGPR, valueRegs);
+        succeed();
         return;
     }
 

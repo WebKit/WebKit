@@ -41,7 +41,7 @@ DOMHighResTimeStamp IdleDeadline::timeRemaining(Document& document) const
         return 0;
     Ref performance = window->performance();
     auto now = performance->now();
-    auto deadline = performance->relativeTimeFromTimeOriginInReducedResolution(document.protectedWindowEventLoop()->computeIdleDeadline() - performance->timeResolution());
+    auto deadline = performance->relativeTimeFromTimeOriginInReducedResolution(protect(document.windowEventLoop())->computeIdleDeadline() - performance->timeResolution());
     return deadline < now ? 0 : deadline - now;
 }
 

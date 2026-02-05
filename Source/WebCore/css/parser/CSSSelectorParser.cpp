@@ -339,6 +339,28 @@ static std::optional<FixedVector<AtomString>> consumeCommaSeparatedCustomIdentLi
     return FixedVector<AtomString> { WTF::move(customIdents) };
 }
 
+static std::optional<FixedVector<int>> consumeCommaSeparatedIntegerList(CSSParserTokenRange& range)
+{
+    Vector<int> integers;
+
+    do {
+        range.consumeWhitespace();
+        const auto& token = range.peek();
+        if (token.type() != NumberToken || token.numericValueType() != IntegerValueType)
+            return std::nullopt;
+
+        integers.append(static_cast<int>(token.numericValue()));
+        range.consumeIncludingWhitespace();
+    } while (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range));
+
+    if (!range.atEnd())
+        return std::nullopt;
+
+    ASSERT(!integers.isEmpty());
+
+    return FixedVector<int> { WTF::move(integers) };
+}
+
 enum class CompoundSelectorFlag {
     HasPseudoElementForRightmostCompound = 1 << 0,
 };
@@ -852,6 +874,13 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
             selector->setSelectorList(makeUnique<CSSSelectorList>(WTF::move(selectorList)));
             return selector;
         }
+        case CSSSelector::PseudoClass::Heading: {
+            auto integerList = consumeCommaSeparatedIntegerList(block);
+            if (!integerList)
+                return nullptr;
+            selector->setIntegerList(WTF::move(*integerList));
+            return selector;
+        }
         case CSSSelector::PseudoClass::NthChild:
         case CSSSelector::PseudoClass::NthLastChild:
         case CSSSelector::PseudoClass::NthOfType:
@@ -939,7 +968,7 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
             auto typeList = consumeCommaSeparatedCustomIdentList(block);
             if (!typeList)
                 return nullptr;
-            selector->setArgumentList(WTF::move(*typeList));
+            selector->setStringList(WTF::move(*typeList));
             return selector;
         }
         default:
@@ -962,7 +991,7 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
             auto& ident = block.consumeIncludingWhitespace();
             if (ident.type() != IdentToken || !block.atEnd())
                 return nullptr;
-            selector->setArgumentList({ { ident.value().toAtomString() } });
+            selector->setStringList({ { ident.value().toAtomString() } });
             return selector;
         }
 
@@ -975,7 +1004,7 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
             if (argument != "select"_s)
                 return nullptr;
 
-            selector->setArgumentList({ { argument } });
+            selector->setStringList({ { argument } });
             return selector;
         }
 
@@ -1015,7 +1044,7 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
             if (!block.atEnd())
                 return nullptr;
 
-            selector->setArgumentList(FixedVector<AtomString> { WTF::move(nameAndClasses) });
+            selector->setStringList(FixedVector<AtomString> { WTF::move(nameAndClasses) });
             return selector;
         }
 
@@ -1027,7 +1056,7 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
                     return nullptr;
                 argumentList.append(ident.value().toAtomString());
             } while (!block.atEnd());
-            selector->setArgumentList(FixedVector<AtomString> { WTF::move(argumentList) });
+            selector->setStringList(FixedVector<AtomString> { WTF::move(argumentList) });
             return selector;
         }
         case CSSSelector::PseudoElement::Slotted: {

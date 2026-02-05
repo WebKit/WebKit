@@ -30,11 +30,11 @@
 
 #include "GPUConnectionToWebProcess.h"
 #include "SharedPreferencesForWebProcess.h"
-#include <WebCore/MediaCapabilitiesDecodingInfo.h>
-#include <WebCore/MediaCapabilitiesEncodingInfo.h>
-#include <WebCore/MediaDecodingConfiguration.h>
-#include <WebCore/MediaEncodingConfiguration.h>
-#include <WebCore/MediaEngineConfigurationFactory.h>
+#include <WebCore/PlatformMediaCapabilitiesDecodingInfo.h>
+#include <WebCore/PlatformMediaCapabilitiesEncodingInfo.h>
+#include <WebCore/PlatformMediaDecodingConfiguration.h>
+#include <WebCore/PlatformMediaEncodingConfiguration.h>
+#include <WebCore/PlatformMediaEngineConfigurationFactory.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -50,16 +50,16 @@ RemoteMediaEngineConfigurationFactoryProxy::RemoteMediaEngineConfigurationFactor
 
 RemoteMediaEngineConfigurationFactoryProxy::~RemoteMediaEngineConfigurationFactoryProxy() = default;
 
-void RemoteMediaEngineConfigurationFactoryProxy:: createDecodingConfiguration(WebCore::MediaDecodingConfiguration&& configuration, CompletionHandler<void(WebCore::MediaCapabilitiesDecodingInfo&&)>&& completion)
+void RemoteMediaEngineConfigurationFactoryProxy:: createDecodingConfiguration(WebCore::PlatformMediaDecodingConfiguration&& configuration, CompletionHandler<void(WebCore::PlatformMediaCapabilitiesDecodingInfo&&)>&& completion)
 {
-    MediaEngineConfigurationFactory::createDecodingConfiguration(WTF::move(configuration), [completion = WTF::move(completion)] (auto info) mutable {
+    WebCore::PlatformMediaEngineConfigurationFactory::createDecodingConfiguration(WTF::move(configuration), [completion = WTF::move(completion)] (auto info) mutable {
         completion(WTF::move(info));
     });
 }
 
-void RemoteMediaEngineConfigurationFactoryProxy::createEncodingConfiguration(WebCore::MediaEncodingConfiguration&& configuration, CompletionHandler<void(WebCore::MediaCapabilitiesEncodingInfo&&)>&& completion)
+void RemoteMediaEngineConfigurationFactoryProxy::createEncodingConfiguration(WebCore::PlatformMediaEncodingConfiguration&& configuration, CompletionHandler<void(WebCore::PlatformMediaCapabilitiesEncodingInfo&&)>&& completion)
 {
-    MediaEngineConfigurationFactory::createEncodingConfiguration(WTF::move(configuration), [completion = WTF::move(completion)] (auto info) mutable {
+    WebCore::PlatformMediaEngineConfigurationFactory::createEncodingConfiguration(WTF::move(configuration), [completion = WTF::move(completion)] (auto info) mutable {
         completion(WTF::move(info));
     });
 }

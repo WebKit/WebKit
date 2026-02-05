@@ -75,7 +75,7 @@ void WidgetHierarchyUpdatesSuspensionScope::moveWidgets()
         auto map = std::exchange(widgetNewParentMap(), { });
         for (auto& entry : map) {
             Ref child = entry.key;
-            auto* currentParent = child->parent();
+            RefPtr currentParent = child->parent();
             CheckedPtr newParent = entry.value.get();
             if (newParent != currentParent) {
                 if (currentParent)
@@ -245,7 +245,7 @@ void RenderWidget::styleDidChange(Style::Difference diff, const RenderStyle* old
     // If this is an iframe and the zoom property changed, notify the iframe's content frame
     // to trigger a resize event since devicePixelRatio will have changed.
     if (oldStyle && oldStyle->zoom() != style().zoom()) {
-        if (auto* frameView = dynamicDowncast<LocalFrameView>(m_widget.get())) {
+        if (RefPtr frameView = dynamicDowncast<LocalFrameView>(m_widget.get())) {
             frameView->frame().deviceOrPageScaleFactorChanged();
             frameView->scheduleResizeEventIfNeeded();
         }
@@ -257,8 +257,8 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
     ASSERT(!isSkippedContentRoot(*this));
 
     if (paintInfo.requireSecurityOriginAccessForWidgets) {
-        if (auto contentDocument = frameOwnerElement().contentDocument()) {
-            if (!document().protectedSecurityOrigin()->isSameOriginDomain(contentDocument->securityOrigin()))
+        if (RefPtr contentDocument = frameOwnerElement().contentDocument()) {
+            if (!protect(document().securityOrigin())->isSameOriginDomain(contentDocument->securityOrigin()))
                 return;
         }
     }
@@ -337,7 +337,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     // FIXME: Shouldn't check if the frame view needs layout during event region painting. This is a workaround
     // for the fact that non-composited frames depend on their enclosing compositing layer to perform an event
     // region update on their behalf. See <https://webkit.org/b/210311> for more details.
-    auto* frameView = dynamicDowncast<LocalFrameView>(m_widget.get());
+    RefPtr frameView = dynamicDowncast<LocalFrameView>(m_widget.get());
     bool needsEventRegionContentPaint = paintInfo.phase == PaintPhase::EventRegion && frameView && !frameView->needsLayout();
     if (paintInfo.phase != PaintPhase::Foreground && !needsEventRegionContentPaint)
         return;
@@ -428,7 +428,7 @@ RenderWidget* RenderWidget::find(const Widget& widget)
 bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
     auto shouldHitTestChildFrameContent = request.allowsChildFrameContent() || (request.allowsVisibleChildFrameContent() && visibleToHitTesting(request));
-    auto* childFrameView = dynamicDowncast<LocalFrameView>(widget());
+    RefPtr childFrameView = dynamicDowncast<LocalFrameView>(widget());
     if (shouldHitTestChildFrameContent && childFrameView && childFrameView->renderView()) {
         LayoutPoint adjustedLocation = accumulatedOffset + location();
         LayoutPoint contentOffset = LayoutPoint(borderLeft() + paddingLeft(), borderTop() + paddingTop()) - toIntSize(childFrameView->scrollPosition());
@@ -436,7 +436,7 @@ bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
         HitTestRequest newHitTestRequest(request.type() | HitTestRequest::Type::ChildFrameHitTest);
         HitTestResult childFrameResult(newHitTestLocation);
 
-        auto* document = childFrameView->frame().document();
+        RefPtr document = childFrameView->frame().document();
         if (!document)
             return false;
         bool isInsideChildFrame = document->hitTest(newHitTestRequest, newHitTestLocation, childFrameResult);

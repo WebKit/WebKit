@@ -108,7 +108,7 @@ void MemoryProgramCache::ComputeHash(const Context *context,
     hashStream.writeBool(context->getShareGroup()->getFrameCaptureShared()->enabled());
 
     // Call the secure SHA hashing function.
-    const std::vector<uint8_t> &programKey = hashStream.getData();
+    std::vector<uint8_t> programKey = hashStream.takeData();
     angle::base::SHA1HashBytes(programKey.data(), programKey.size(), hashOut->data());
 }
 

@@ -66,12 +66,12 @@ void AudioSessionRoutingArbitrator::deref() const
 
 void AudioSessionRoutingArbitrator::beginRoutingArbitrationWithCategory(AudioSession::CategoryType category, CompletionHandler<void(RoutingArbitrationError, DefaultRouteChanged)>&& callback)
 {
-    WebProcess::singleton().protectedParentProcessConnection()->sendWithAsyncReply(Messages::AudioSessionRoutingArbitratorProxy::BeginRoutingArbitrationWithCategory(category), WTF::move(callback), AudioSessionRoutingArbitratorProxy::destinationId());
+    protect(WebProcess::singleton().parentProcessConnection())->sendWithAsyncReply(Messages::AudioSessionRoutingArbitratorProxy::BeginRoutingArbitrationWithCategory(category), WTF::move(callback), AudioSessionRoutingArbitratorProxy::destinationId());
 }
 
 void AudioSessionRoutingArbitrator::leaveRoutingArbitration()
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::AudioSessionRoutingArbitratorProxy::EndRoutingArbitration(), AudioSessionRoutingArbitratorProxy::destinationId());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::AudioSessionRoutingArbitratorProxy::EndRoutingArbitration(), AudioSessionRoutingArbitratorProxy::destinationId());
 }
 
 bool AudioSessionRoutingArbitrator::canLog() const

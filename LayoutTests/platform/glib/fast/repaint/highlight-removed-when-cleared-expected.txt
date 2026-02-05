@@ -1,6 +1,6 @@
 Highlight this first and then clear highlight.
 (repaint rects
-  (rect 8 8 556 36)
-  (rect 8 8 556 36)
+  (rect 8 8 556 37)
+  (rect 8 8 556 37)
 )
 When run, the first "this" should be highlighted, and then the highlight should be removed.

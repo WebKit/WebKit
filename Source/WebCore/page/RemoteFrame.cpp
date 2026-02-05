@@ -88,7 +88,7 @@ void RemoteFrame::didFinishLoadInAnotherProcess()
 {
     m_preventsParentFromBeingComplete = false;
 
-    if (auto* ownerElement = this->ownerElement())
+    if (RefPtr ownerElement = this->ownerElement())
         ownerElement->document().checkCompleted();
 }
 
@@ -111,6 +111,13 @@ void RemoteFrame::updateRemoteFrameAccessibilityOffset(IntPoint offset)
 {
     m_client->updateRemoteFrameAccessibilityOffset(frameID(), offset);
 }
+
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+void RemoteFrame::updateRemoteFrameAccessibilityInheritedState(const InheritedFrameState& state)
+{
+    m_client->updateRemoteFrameAccessibilityInheritedState(frameID(), state);
+}
+#endif
 
 void RemoteFrame::unbindRemoteAccessibilityFrames(int processIdentifier)
 {
@@ -187,6 +194,11 @@ void RemoteFrame::reportMixedContentViolation(bool blocked, const URL& target) c
 SecurityOrigin* RemoteFrame::frameDocumentSecurityOrigin() const
 {
     return frameTreeSyncData().frameDocumentSecurityOrigin.get();
+}
+
+std::optional<DocumentSecurityPolicy> RemoteFrame::frameDocumentSecurityPolicy() const
+{
+    return frameTreeSyncData().frameDocumentSecurityPolicy;
 }
 
 String RemoteFrame::frameURLProtocol() const

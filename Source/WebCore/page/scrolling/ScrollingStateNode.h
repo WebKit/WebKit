@@ -229,6 +229,9 @@ enum class ScrollingStateNodeProperty : uint64_t {
     ScrollbarLayoutDirection                    = ScrollbarColor << 1,
     ScrollbarWidth                              = ScrollbarLayoutDirection << 1,
     UseDarkAppearanceForScrollbars              = ScrollbarWidth << 1,
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    ScrollbarOpacity                            = 1LLU << 51, // Not serialized
+#endif
     // ScrollingStateFrameScrollingNode
     KeyboardScrollData                          = UseDarkAppearanceForScrollbars << 1,
     FrameScaleFactor                            = KeyboardScrollData << 1,

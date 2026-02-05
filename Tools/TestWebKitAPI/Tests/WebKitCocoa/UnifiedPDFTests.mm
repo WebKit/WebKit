@@ -269,7 +269,12 @@ UNIFIED_PDF_TEST(TabKeyOnPDFTextFieldShouldNotCrash)
     testTabKeysAtPoint(NSMakePoint(220, 300));
 }
 
+// FIXME when rdar://168769459 is resolved.
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 260000
+UNIFIED_PDF_TEST(DISABLED_PrintSize)
+#else
 UNIFIED_PDF_TEST(PrintSize)
+#endif
 {
     RetainPtr configuration = configurationForWebViewTestingUnifiedPDF();
     RetainPtr schemeHandler = adoptNS([TestURLSchemeHandler new]);
@@ -1298,6 +1303,58 @@ UNIFIED_PDF_TEST(WebViewIsDisplayingPDF)
     [webView _test_waitForDidFinishNavigationWithoutPresentationUpdate];
     EXPECT_FALSE([webView _isDisplayingPDF]);
 }
+
+#if HAVE(LIQUID_GLASS)
+UNIFIED_PDF_TEST(BackgroundAdaptsToColorScheme)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
+    [webView forceLightMode];
+
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]]];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr pluginRootLayer = [webView firstLayerWithNameContaining:@"UnifiedPDFPlugin root"];
+    RetainPtr initialBackgroundColor = [pluginRootLayer backgroundColor];
+
+    [webView forceDarkMode];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr backgroundColorAferAppearanceChange = [pluginRootLayer backgroundColor];
+    EXPECT_FALSE(CGColorEqualToColor(backgroundColorAferAppearanceChange.get(), initialBackgroundColor.get()));
+
+    [webView forceLightMode];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr finalBackgroundColor = [pluginRootLayer backgroundColor];
+    EXPECT_FALSE(CGColorEqualToColor(finalBackgroundColor.get(), backgroundColorAferAppearanceChange.get()));
+    EXPECT_TRUE(CGColorEqualToColor(finalBackgroundColor.get(), initialBackgroundColor.get()));
+}
+
+UNIFIED_PDF_TEST(BackgroundDoesNotAdaptToColorSchemeOnEmbeddedDocuments)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF().get()]);
+    [webView forceLightMode];
+
+    [webView synchronouslyLoadHTMLString:@"<embed src='test.pdf' width='600' height='600'>"];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr pluginRootLayer = [webView firstLayerWithNameContaining:@"UnifiedPDFPlugin root"];
+    RetainPtr initialBackgroundColor = [pluginRootLayer backgroundColor];
+
+    [webView forceDarkMode];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr backgroundColorAferAppearanceChange = [pluginRootLayer backgroundColor];
+    EXPECT_TRUE(CGColorEqualToColor(backgroundColorAferAppearanceChange.get(), initialBackgroundColor.get()));
+
+    [webView forceLightMode];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr finalBackgroundColor = [pluginRootLayer backgroundColor];
+    EXPECT_TRUE(CGColorEqualToColor(finalBackgroundColor.get(), backgroundColorAferAppearanceChange.get()));
+    EXPECT_TRUE(CGColorEqualToColor(finalBackgroundColor.get(), initialBackgroundColor.get()));
+}
+#endif
 
 } // namespace TestWebKitAPI
 

@@ -79,7 +79,7 @@ Navigation::Navigation(WebCore::ProcessIdentifier processID, WebCore::ResourceRe
 Navigation::Navigation(WebCore::ProcessIdentifier processID, Ref<WebBackForwardListFrameItem>&& targetFrameItem, RefPtr<WebBackForwardListItem>&& fromItem, FrameLoadType backForwardFrameLoadType)
     : m_navigationID(WebCore::NavigationIdentifier::generate())
     , m_processID(processID)
-    , m_originalRequest(WTF::URL { targetFrameItem->protectedMainFrame()->url() })
+    , m_originalRequest(WTF::URL { protect(targetFrameItem->mainFrame())->url() })
     , m_currentRequest(m_originalRequest)
     , m_targetFrameItem(WTF::move(targetFrameItem))
     , m_fromItem(WTF::move(fromItem))

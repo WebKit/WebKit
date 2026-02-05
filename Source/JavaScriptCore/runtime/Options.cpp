@@ -519,9 +519,9 @@ bool OptionRange::isInRange(unsigned count) const
         return true;
 
     if ((m_lowLimit <= count) && (count <= m_highLimit))
-        return m_state == Normal ? true : false;
+        return m_state == Normal;
 
-    return m_state == Normal ? false : true;
+    return m_state != Normal;
 }
 
 void OptionRange::dump(PrintStream& out) const
@@ -605,7 +605,7 @@ static void overrideDefaults()
     Options::maximumInliningRecursion() = 3;
 #endif
 
-#if USE(BMALLOC_MEMORY_FOOTPRINT_API)
+#if USE(MEMORY_FOOTPRINT_API)
     // On iOS and conditionally Linux, we control heap growth using process memory footprint. Therefore these values can be agressive.
     Options::smallHeapRAMFraction() = 0.8;
     Options::mediumHeapRAMFraction() = 0.9;
@@ -657,7 +657,10 @@ void Options::setAllJITCodeValidations(bool value)
 
 static inline void disableAllWasmJITOptions()
 {
+#if ENABLE(WEBASSEMBLY)
+    // This really only makes sense if could use wasm, otherwise we should not override this.
     Options::useLLInt() = true;
+#endif
     Options::useBBQJIT() = false;
     Options::useOMGJIT() = false;
 
@@ -688,7 +691,10 @@ static inline void disableAllWasmOptions()
 
 static inline void disableAllJITOptions()
 {
+#if ENABLE(WEBASSEMBLY)
+    // This really only makes sense if could use wasm, otherwise we should not override this.
     Options::useLLInt() = true;
+#endif
     Options::useJIT() = false;
     disableAllWasmJITOptions();
 
@@ -1523,8 +1529,6 @@ bool canUseHandlerIC()
 
 bool canUseWasm()
 {
-    if constexpr (useCompressedHeap)
-        return false;
 #if ENABLE(WEBASSEMBLY) && !PLATFORM(WATCHOS)
     return true;
 #else

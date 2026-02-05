@@ -36,8 +36,8 @@ class BlobEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(BlobEvent);
 public:
     struct Init : EventInit {
-        RefPtr<Blob> data;
-        double timecode;
+        Ref<Blob> data;
+        std::optional<double> timecode;
     };
     
     static Ref<BlobEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);

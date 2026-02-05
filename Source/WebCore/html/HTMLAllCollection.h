@@ -25,6 +25,25 @@
 
 #pragma once
 
+#include <WebCore/CollectionType.h>
+
+namespace WebCore {
+
+class HTMLAllCollection;
+class HTMLAllNamedSubCollection;
+
+template<>
+struct CollectionClassTraits<HTMLAllCollection> {
+    static constexpr CollectionType collectionType = CollectionType::DocAll;
+};
+
+template<>
+struct CollectionClassTraits<HTMLAllNamedSubCollection> {
+    static constexpr CollectionType collectionType = CollectionType::DocumentAllNamedItems;
+};
+
+} // namespace WebCore
+
 #include "AllDescendantsCollection.h"
 
 namespace WebCore {
@@ -41,7 +60,7 @@ private:
 };
 static_assert(sizeof(HTMLAllCollection) == sizeof(AllDescendantsCollection));
 
-class HTMLAllNamedSubCollection final : public CachedHTMLCollection<HTMLAllNamedSubCollection, CollectionTraversalType::Descendants> {
+class HTMLAllNamedSubCollection final : public CachedHTMLCollection<HTMLAllNamedSubCollection> {
     WTF_MAKE_TZONE_ALLOCATED(HTMLAllNamedSubCollection);
 public:
     static Ref<HTMLAllNamedSubCollection> create(Document& document, CollectionType type, const AtomString& name)
@@ -60,5 +79,5 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLAllCollection, CollectionType::DocAll)
-SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLAllNamedSubCollection, CollectionType::DocumentAllNamedItems)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLAllCollection)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLAllNamedSubCollection)

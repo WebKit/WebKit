@@ -3,6 +3,8 @@ list(APPEND WTF_SOURCES
     generic/WorkQueueGeneric.cpp
 
     haiku/CurrentProcessMemoryStatus.cpp
+    haiku/FileSystemHaiku.cpp
+    haiku/LanguageHaiku.cpp
     haiku/MemoryFootprintHaiku.cpp
 
     posix/CPUTimePOSIX.cpp

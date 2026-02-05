@@ -69,6 +69,7 @@ class AccessibilityRenderObject;
 class Document;
 class HTMLAreaElement;
 class HTMLDetailsElement;
+class HTMLSelectElement;
 class HTMLTableElement;
 class HTMLTextFormControlElement;
 class Node;
@@ -207,6 +208,15 @@ struct AXTextChangeContext {
 };
 #endif // PLATFORM(COCOA)
 
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+// When this is updated, WebCoreArgumentCoders.serialization.in must be updated as well.
+struct InheritedFrameState {
+    bool isAXHidden { false };
+    bool isInert { false };
+    bool isRenderHidden { false };
+};
+#endif
+
 struct AXNotificationWithData {
     using DataVariant = Variant<std::monostate, AriaNotifyData
 #if PLATFORM(COCOA)
@@ -286,6 +296,9 @@ public:
 
     // Returns the root object for a specific frame.
     WEBCORE_EXPORT AXCoreObject* rootObjectForFrame(LocalFrame&);
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+    WEBCORE_EXPORT void setFrameInheritedState(LocalFrame&, const InheritedFrameState&);
+#endif
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     WEBCORE_EXPORT void buildIsolatedTreeIfNeeded();
 #endif
@@ -411,7 +424,7 @@ public:
     void onRadioGroupMembershipChanged(HTMLElement&);
     void onScrollbarFrameRectChange(const Scrollbar&);
     void onSelectedOptionChanged(Element&);
-    void onSelectedOptionChanged(RenderObject&, int);
+    void onSelectedOptionChanged(HTMLSelectElement&, int optionIndex);
     void onSelectedTextChanged(const VisiblePositionRange&, AccessibilityObject* = nullptr);
     void onSlottedContentChange(const HTMLSlotElement&);
     void onStyleChange(Element&, OptionSet<Style::Change>, const RenderStyle* oldStyle, const RenderStyle* newStyle);
@@ -619,10 +632,6 @@ public:
     // Requests clients to announce to the user the given message in the way they deem appropriate.
     WEBCORE_EXPORT void announce(const String&);
 
-#ifndef NDEBUG
-    void showIntent(const AXTextStateChangeIntent&);
-#endif
-
     void setTextSelectionIntent(const AXTextStateChangeIntent&);
     void setIsSynchronizingSelection(bool);
 
@@ -649,10 +658,8 @@ public:
     RefPtr<Page> page() const;
     IntPoint mapScreenPointToPagePoint(const IntPoint&) const;
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    inline void objectBecameIgnored(const AccessibilityObject&);
-    inline void objectBecameUnignored(const AccessibilityObject&);
-#endif
+    void objectBecameIgnored(const AccessibilityObject&);
+    void objectBecameUnignored(const AccessibilityObject&);
 
 #if PLATFORM(COCOA)
     static void setShouldRepostNotificationsForTests(bool);

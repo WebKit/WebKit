@@ -23,20 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// https://drafts.csswg.org/css-animations/#animationevent
 [
     Exposed=Window,
     InterfaceName=AnimationEvent
 ] interface CSSAnimationEvent : Event {
-    constructor([AtomString] DOMString type, optional AnimationEventInit animationEventInitDict);
+    constructor([AtomString] DOMString type, optional AnimationEventInit animationEventInitDict = {});
 
     readonly attribute DOMString animationName;
     readonly attribute double elapsedTime;
     readonly attribute DOMString pseudoElement;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary AnimationEventInit : EventInit {
+// https://drafts.csswg.org/css-animations/#dictdef-animationeventinit
+dictionary AnimationEventInit : EventInit {
     DOMString animationName = "";
     double elapsedTime = 0.0;
     DOMString pseudoElement = "";

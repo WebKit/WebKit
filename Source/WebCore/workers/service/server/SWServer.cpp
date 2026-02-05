@@ -226,7 +226,7 @@ void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data, Complet
             registration->setLastUpdateTime(data.registration.lastUpdateTime);
             protectedThis->addRegistration(registration.copyRef());
 
-            Ref worker = SWServerWorker::create(*protectedThis, registration, data.scriptURL, data.script, data.certificateInfo, data.contentSecurityPolicy, data.crossOriginEmbedderPolicy, WTF::move(data.referrerPolicy), data.workerType, data.serviceWorkerIdentifier, WTF::move(data.scriptResourceMap));
+            Ref worker = SWServerWorker::create(*protectedThis, registration, data.scriptURL, data.script, data.certificateInfo, data.contentSecurityPolicy, data.crossOriginEmbedderPolicy, WTF::move(data.referrerPolicy), data.workerType, data.serviceWorkerIdentifier, WTF::move(data.scriptResourceMap), WTF::move(data.routes));
             registration->updateRegistrationState(ServiceWorkerRegistrationState::Active, worker.ptr());
             worker->setState(ServiceWorkerState::Activated);
         }
@@ -277,7 +277,7 @@ void SWServer::removeRegistration(ServiceWorkerRegistrationIdentifier registrati
     if (RefPtr store = m_registrationStore)
         store->removeRegistration(registration->key());
 
-    protectedBackgroundFetchEngine()->remove(*registration);
+    protect(backgroundFetchEngine())->remove(*registration);
 }
 
 Vector<ServiceWorkerRegistrationData> SWServer::getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL)
@@ -1939,7 +1939,7 @@ void SWServer::Connection::startBackgroundFetch(ServiceWorkerRegistrationIdentif
             return;
         }
 
-        server->protectedBackgroundFetchEngine()->startBackgroundFetch(*registration, backgroundFetchIdentifier, WTF::move(requests), WTF::move(options), WTF::move(callback));
+        protect(server->backgroundFetchEngine())->startBackgroundFetch(*registration, backgroundFetchIdentifier, WTF::move(requests), WTF::move(options), WTF::move(callback));
     });
 }
 
@@ -1948,11 +1948,6 @@ BackgroundFetchEngine& SWServer::backgroundFetchEngine()
     if (!m_backgroundFetchEngine)
         m_backgroundFetchEngine = BackgroundFetchEngine::create(*this);
     return *m_backgroundFetchEngine;
-}
-
-Ref<BackgroundFetchEngine> SWServer::protectedBackgroundFetchEngine()
-{
-    return backgroundFetchEngine();
 }
 
 bool SWServer::addHandlerIfHasControlledClients(CompletionHandler<void()>&& completionHandler)
@@ -1980,7 +1975,7 @@ void SWServer::Connection::backgroundFetchInformation(ServiceWorkerRegistrationI
         return;
     }
 
-    server->protectedBackgroundFetchEngine()->backgroundFetchInformation(*registration, backgroundFetchIdentifier, WTF::move(callback));
+    protect(server->backgroundFetchEngine())->backgroundFetchInformation(*registration, backgroundFetchIdentifier, WTF::move(callback));
 }
 
 void SWServer::Connection::backgroundFetchIdentifiers(ServiceWorkerRegistrationIdentifier registrationIdentifier, BackgroundFetchEngine::BackgroundFetchIdentifiersCallback&& callback)
@@ -1997,7 +1992,7 @@ void SWServer::Connection::backgroundFetchIdentifiers(ServiceWorkerRegistrationI
         return;
     }
 
-    server->protectedBackgroundFetchEngine()->backgroundFetchIdentifiers(*registration, WTF::move(callback));
+    protect(server->backgroundFetchEngine())->backgroundFetchIdentifiers(*registration, WTF::move(callback));
 }
 
 void SWServer::Connection::abortBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, BackgroundFetchEngine::AbortBackgroundFetchCallback&& callback)
@@ -2014,7 +2009,7 @@ void SWServer::Connection::abortBackgroundFetch(ServiceWorkerRegistrationIdentif
         return;
     }
 
-    server->protectedBackgroundFetchEngine()->abortBackgroundFetch(*registration, backgroundFetchIdentifier, WTF::move(callback));
+    protect(server->backgroundFetchEngine())->abortBackgroundFetch(*registration, backgroundFetchIdentifier, WTF::move(callback));
 }
 
 void SWServer::Connection::matchBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, RetrieveRecordsOptions&& options, BackgroundFetchEngine::MatchBackgroundFetchCallback&& callback)
@@ -2031,13 +2026,13 @@ void SWServer::Connection::matchBackgroundFetch(ServiceWorkerRegistrationIdentif
         return;
     }
 
-    server->protectedBackgroundFetchEngine()->matchBackgroundFetch(*registration, backgroundFetchIdentifier, WTF::move(options), WTF::move(callback));
+    protect(server->backgroundFetchEngine())->matchBackgroundFetch(*registration, backgroundFetchIdentifier, WTF::move(options), WTF::move(callback));
 }
 
 void SWServer::Connection::retrieveRecordResponse(BackgroundFetchRecordIdentifier recordIdentifier, BackgroundFetchEngine::RetrieveRecordResponseCallback&& callback)
 {
     if (RefPtr server = m_server.get())
-        server->protectedBackgroundFetchEngine()->retrieveRecordResponse(recordIdentifier, WTF::move(callback));
+        protect(server->backgroundFetchEngine())->retrieveRecordResponse(recordIdentifier, WTF::move(callback));
     else
         callback(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No server found"_s }));
 }
@@ -2045,7 +2040,7 @@ void SWServer::Connection::retrieveRecordResponse(BackgroundFetchRecordIdentifie
 void SWServer::Connection::retrieveRecordResponseBody(BackgroundFetchRecordIdentifier recordIdentifier, BackgroundFetchEngine::RetrieveRecordResponseBodyCallback&& callback)
 {
     if (RefPtr server = m_server.get())
-        server->protectedBackgroundFetchEngine()->retrieveRecordResponseBody(recordIdentifier, WTF::move(callback));
+        protect(server->backgroundFetchEngine())->retrieveRecordResponseBody(recordIdentifier, WTF::move(callback));
     else
         callback(makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, { }, "No server found"_s }));
 }

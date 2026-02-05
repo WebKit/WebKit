@@ -1187,7 +1187,7 @@ void WebMParser::VideoTrackData::consumeAdditionalBlockData(const webm::BlockAdd
         RefPtr hdrMetadata = SharedBuffer::create(std::span { blockMoreData });
         for (auto& sample : m_pendingMediaSamples) {
             sample.hdrMetadata = hdrMetadata;
-            sample.hdrMetadataType = HdrMetadataType::SmpteSt209440;
+            sample.hdrMetadataType = PlatformMediaCapabilitiesHdrMetadataType::SmpteSt209440;
         }
     }
 }

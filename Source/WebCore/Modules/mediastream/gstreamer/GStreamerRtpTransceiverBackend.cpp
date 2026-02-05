@@ -86,7 +86,8 @@ std::optional<RTCRtpTransceiverDirection> GStreamerRtpTransceiverBackend::curren
     GstWebRTCRTPTransceiverDirection gstDirection;
     g_object_get(m_rtcTransceiver.get(), "current-direction", &gstDirection, nullptr);
     if (!gstDirection)
-        return RTCRtpTransceiverDirection::Inactive;
+        return { };
+
     return toRTCRtpTransceiverDirection(gstDirection);
 }
 
@@ -139,7 +140,11 @@ bool GStreamerRtpTransceiverBackend::stopped() const
         // VP9 profile 2 requires a 10bit pixel input format, so a conversion might be needed just
         // before encoding. This is taken care of in the webkitvideoencoder itself.
         for (auto& attribute : codec.sdpFmtpLine.split(';')) {
+            if (!attribute.contains('='))
+                continue;
             auto components = attribute.split('=');
+            if (components.size() < 2) [[unlikely]]
+                continue;
             gst_caps_set_simple(caps.get(), components[0].ascii().data(), G_TYPE_STRING, components[1].ascii().data(), nullptr);
         }
     }

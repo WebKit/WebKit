@@ -543,7 +543,7 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
     BOOL _isNone;
     BOOL _isRange;
     BOOL _isEditable;
-    NSArray<WKTextSelectionRect *>*_selectionRects;
+    RetainPtr<NSArray<WKTextSelectionRect *>> _selectionRects;
     NSUInteger _selectedTextLength;
 }
 @property (nonatomic) CGRect startRect;
@@ -2273,6 +2273,11 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
 #endif // ENABLE(TOUCH_EVENTS)
 }
 
+- (void)_touchEventsGestureRecognizerReset
+{
+    _page->resetPointerCapture();
+}
+
 #if ENABLE(TOUCH_EVENTS)
 - (void)_handleTouchActionsForTouchEvent:(const WebKit::NativeWebTouchEvent&)touchEvent
 {
@@ -2713,22 +2718,22 @@ static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize bor
 
 - (void)_handleSmartMagnificationInformationForPotentialTap:(WebKit::TapIdentifier)requestID renderRect:(const WebCore::FloatRect&)renderRect fitEntireRect:(BOOL)fitEntireRect viewportMinimumScale:(double)viewportMinimumScale viewportMaximumScale:(double)viewportMaximumScale nodeIsRootLevel:(BOOL)nodeIsRootLevel nodeIsPluginElement:(BOOL)nodeIsPluginElement
 {
-    const auto& preferences = _page->preferences();
+    Ref preferences = _page->preferences();
 
-    ASSERT(preferences.fasterClicksEnabled());
+    ASSERT(preferences->fasterClicksEnabled());
     if (!_potentialTapInProgress)
         return;
 
     // We check both the system preference and the page preference, because we only want this
     // to apply in "desktop" mode.
-    if (preferences.preferFasterClickOverDoubleTap() && _page->preferFasterClickOverDoubleTap()) {
+    if (preferences->preferFasterClickOverDoubleTap() && _page->preferFasterClickOverDoubleTap()) {
         RELEASE_LOG(ViewGestures, "Potential tap found an element and fast taps are preferred. Trigger click. (%p, pageProxyID=%llu)", self, _page->identifier().toUInt64());
-        if (preferences.zoomOnDoubleTapWhenRoot() && nodeIsRootLevel) {
+        if (preferences->zoomOnDoubleTapWhenRoot() && nodeIsRootLevel) {
             RELEASE_LOG(ViewGestures, "The click handler was on a root-level element, so don't disable double-tap. (%p, pageProxyID=%llu)", self, _page->identifier().toUInt64());
             return;
         }
 
-        if (preferences.alwaysZoomOnDoubleTap()) {
+        if (preferences->alwaysZoomOnDoubleTap()) {
             RELEASE_LOG(ViewGestures, "DTTZ is forced on, so don't disable double-tap. (%p, pageProxyID=%llu)", self, _page->identifier().toUInt64());
             return;
         }
@@ -3300,7 +3305,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (![self _hasValidOutstandingPositionInformationRequest:request])
         [self requestAsynchronousPositionInformationUpdate:request];
 
-    bool receivedResponse = process->protectedConnection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DidReceivePositionInformation>(_page->webPageIDInMainFrameProcess(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives) == IPC::Error::NoError;
+    bool receivedResponse = protect(process->connection())->waitForAndDispatchImmediately<Messages::WebPageProxy::DidReceivePositionInformation>(_page->webPageIDInMainFrameProcess(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives) == IPC::Error::NoError;
     _hasValidPositionInformation = receivedResponse && _positionInformation.canBeValid;
     return _hasValidPositionInformation;
 }
@@ -3415,9 +3420,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)_hasEnclosingScrollView:(UIView *)firstView matchingCriteria:(Function<BOOL(UIScrollView *)>&&)matchFunction
 {
-    UIView *view = firstView ?: self.webView.scrollView;
-    for (; view; view = view.superview) {
-        if (auto scrollView = dynamic_objc_cast<UIScrollView>(view); scrollView && matchFunction(scrollView))
+    RetainPtr view = firstView ?: self.webView.scrollView;
+    for (; view; view = view.get().superview) {
+        if (RetainPtr scrollView = dynamic_objc_cast<UIScrollView>(view.get()); scrollView && matchFunction(scrollView.get()))
             return YES;
     }
     return NO;
@@ -4400,7 +4405,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
         return nil;
     auto& dictationContextsForSelection = _page->editorState().postLayoutData->dictationContextsForSelection;
     return createNSArray(dictationContextsForSelection, [&] (auto& dictationContext) -> NSObject * {
-        RetainPtr alternatives = _page->protectedPageClient()->platformDictationAlternatives(dictationContext);
+        RetainPtr alternatives = protect(_page->pageClient())->platformDictationAlternatives(dictationContext);
 #if USE(BROWSERENGINEKIT)
         if (!self.shouldUseAsyncInteractions)
             return [[alternatives _nsTextAlternative] autorelease];
@@ -5129,7 +5134,7 @@ static UIPasteboard *pasteboardForAccessCategory(WebCore::DOMPasteAccessCategory
     if (auto pasteAccessCategory = std::exchange(_domPasteRequestCategory, std::nullopt)) {
         if (response == WebCore::DOMPasteAccessResponse::GrantedForCommand || response == WebCore::DOMPasteAccessResponse::GrantedForGesture) {
             if (auto replyID = _page->grantAccessToCurrentPasteboardData(pasteboardNameForAccessCategory(*pasteAccessCategory), [] () { }))
-                _page->websiteDataStore().protectedNetworkProcess()->connection().waitForAsyncReplyAndDispatchImmediately<Messages::NetworkProcess::AllowFilesAccessFromWebProcess>(*replyID, 100_ms);
+                protect(_page->websiteDataStore().networkProcess())->connection().waitForAsyncReplyAndDispatchImmediately<Messages::NetworkProcess::AllowFilesAccessFromWebProcess>(*replyID, 100_ms);
         }
     }
 
@@ -7022,7 +7027,7 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
         RefPtr page = strongSelf->_page;
         Vector<WebCore::DictationContext> contextsToRemove;
         for (auto context : contexts) {
-            auto alternatives = page->protectedPageClient()->platformDictationAlternatives(context);
+            auto alternatives = protect(page->pageClient())->platformDictationAlternatives(context);
             if (!alternatives)
                 continue;
 
@@ -7837,12 +7842,12 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     if (_focusedElementInformation.elementType == WebKit::InputType::Select)
         return NO;
 
-    UIScrollView *scrollView = animator.scrollView ?: self.webView.scrollView;
-    if (!scrollView.scrollEnabled)
+    RetainPtr scrollView = animator.scrollView ?: self.webView.scrollView;
+    if (!scrollView.get().scrollEnabled)
         return NO;
 
 #if HAVE(UISCROLLVIEW_ALLOWS_KEYBOARD_SCROLLING)
-    if (!scrollView.allowsKeyboardScrolling)
+    if (!scrollView.get().allowsKeyboardScrolling)
         return NO;
 #endif
 
@@ -8755,13 +8760,13 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     if (originIdentifier.isEmpty())
         return NO;
 
-    auto *indices = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [pasteboard numberOfItems])];
-    auto *allCustomData = [pasteboard dataForPasteboardType:@(WebCore::PasteboardCustomData::cocoaType().characters()) inItemSet:indices];
-    if (!allCustomData.count)
+    RetainPtr indices = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [pasteboard numberOfItems])];
+    RetainPtr allCustomData = [pasteboard dataForPasteboardType:@(WebCore::PasteboardCustomData::cocoaType().characters()) inItemSet:indices.get()];
+    if (!allCustomData.get().count)
         return NO;
 
     BOOL foundAtLeastOneMatchingIdentifier = NO;
-    for (NSData *data in allCustomData) {
+    for (NSData *data in allCustomData.get()) {
         if (!data.length)
             continue;
 
@@ -10839,7 +10844,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     if (!textIndicator->contentImage())
         return;
 
-    auto snapshotWithoutSelection = textIndicator->contentImageWithoutSelection();
+    RefPtr snapshotWithoutSelection = textIndicator->contentImageWithoutSelection();
     if (!snapshotWithoutSelection)
         return;
 
@@ -10862,13 +10867,13 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 {
     RELEASE_LOG(DragAndDrop, "Finished performing drag controller operation (handled: %d)", handled);
     [[WebItemProviderPasteboard sharedInstance] decrementPendingOperationCount];
-    id <UIDropSession> dropSession = _dragDropInteractionState.dropSession();
+    RetainPtr dropSession = _dragDropInteractionState.dropSession();
     if ([self.webViewUIDelegate respondsToSelector:@selector(_webView:dataInteractionOperationWasHandled:forSession:itemProviders:)])
-        [self.webViewUIDelegate _webView:self.webView dataInteractionOperationWasHandled:handled forSession:dropSession itemProviders:[WebItemProviderPasteboard sharedInstance].itemProviders];
+        [self.webViewUIDelegate _webView:self.webView dataInteractionOperationWasHandled:handled forSession:dropSession.get() itemProviders:[WebItemProviderPasteboard sharedInstance].itemProviders];
 
     CGPoint global;
     CGPoint client;
-    [self computeClientAndGlobalPointsForDropSession:dropSession outClientPoint:&client outGlobalPoint:&global];
+    [self computeClientAndGlobalPointsForDropSession:dropSession.get() outClientPoint:&client outGlobalPoint:&global];
     [self cleanUpDragSourceSessionState];
     auto currentDragOperation = _page->currentDragOperation();
     _page->dragEnded(WebCore::roundedIntPoint(client), WebCore::roundedIntPoint(global), currentDragOperation ? *currentDragOperation : OptionSet<WebCore::DragOperation>({ }));
@@ -10931,22 +10936,22 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
             return;
         }
 
-        NSString *temporaryBlobDirectory = FileSystem::createTemporaryDirectory(@"blobs");
-        NSURL *destinationURL = [NSURL fileURLWithPath:[temporaryBlobDirectory stringByAppendingPathComponent:[NSUUID UUID].UUIDString] isDirectory:NO];
+        RetainPtr temporaryBlobDirectory = FileSystem::createTemporaryDirectory(@"blobs");
+        RetainPtr destinationURL = [NSURL fileURLWithPath:[temporaryBlobDirectory.get() stringByAppendingPathComponent:[NSUUID UUID].UUIDString] isDirectory:NO];
 
         if (auto attachment = strongSelf->_page->attachmentForIdentifier(info.attachmentIdentifier); attachment && !attachment->isEmpty()) {
             attachment->doWithFileWrapper([&](NSFileWrapper *fileWrapper) {
-                RELEASE_LOG(DragAndDrop, "Drag session: %p delivering promised attachment: %s at path: %@", session.get(), info.attachmentIdentifier.utf8().data(), destinationURL.path);
+                RELEASE_LOG(DragAndDrop, "Drag session: %p delivering promised attachment: %s at path: %@", session.get(), info.attachmentIdentifier.utf8().data(), destinationURL.get().path);
                 NSError *fileWrapperError = nil;
-                if ([fileWrapper writeToURL:destinationURL options:0 originalContentsURL:nil error:&fileWrapperError])
-                    callback(destinationURL, nil);
+                if ([fileWrapper writeToURL:destinationURL.get() options:0 originalContentsURL:nil error:&fileWrapperError])
+                    callback(destinationURL.get(), nil);
                 else
                     callback(nil, fileWrapperError);
             });
         } else
             callback(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorWebViewInvalidated userInfo:nil]);
 
-        [ensureLocalDragSessionContext(session.get()) addTemporaryDirectory:temporaryBlobDirectory];
+        [ensureLocalDragSessionContext(session.get()) addTemporaryDirectory:temporaryBlobDirectory.get()];
     }];
 
     WebItemProviderPasteboard *pasteboard = [WebItemProviderPasteboard sharedInstance];
@@ -11240,19 +11245,19 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
     auto positionForDragEnd = WebCore::roundedIntPoint(_dragDropInteractionState.adjustedPositionForDragEnd());
     RetainPtr<WKContentView> protectedSelf(self);
-    [animator addCompletion:[session, positionForDragEnd, protectedSelf, page = _page] (UIViewAnimatingPosition finalPosition) {
+    [animator addCompletion:[session = RetainPtr { session }, positionForDragEnd, protectedSelf, page = _page] (UIViewAnimatingPosition finalPosition) {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(session);
 #endif
         if (finalPosition == UIViewAnimatingPositionStart) {
-            RELEASE_LOG(DragAndDrop, "Drag session ended at start: %p", session);
+            RELEASE_LOG(DragAndDrop, "Drag session ended at start: %p", session.get());
             // The lift was canceled, so -dropInteraction:sessionDidEnd: will never be invoked. This is the last chance to clean up.
             [protectedSelf cleanUpDragSourceSessionState];
             page->dragEnded(positionForDragEnd, positionForDragEnd, { });
         }
 #if !RELEASE_LOG_DISABLED
         else
-            RELEASE_LOG(DragAndDrop, "Drag session did not end at start: %p", session);
+            RELEASE_LOG(DragAndDrop, "Drag session did not end at start: %p", session.get());
 #endif
     }];
 }
@@ -11422,27 +11427,27 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 - (void)dropInteraction:(UIDropInteraction *)interaction performDrop:(id<UIDropSession>)session
 {
-    NSArray <NSItemProvider *> *itemProviders = extractItemProvidersFromDropSession(session);
+    RetainPtr itemProviders = extractItemProvidersFromDropSession(session);
     id<WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
     if ([uiDelegate respondsToSelector:@selector(_webView:performDataInteractionOperationWithItemProviders:)]) {
-        if ([uiDelegate _webView:self.webView performDataInteractionOperationWithItemProviders:itemProviders])
+        if ([uiDelegate _webView:self.webView performDataInteractionOperationWithItemProviders:itemProviders.get()])
             return;
     }
 
     if ([uiDelegate respondsToSelector:@selector(_webView:willPerformDropWithSession:)]) {
         itemProviders = extractItemProvidersFromDragItems([uiDelegate _webView:self.webView willPerformDropWithSession:session]);
-        if (!itemProviders.count)
+        if (!itemProviders.get().count)
             return;
     }
 
     _dragDropInteractionState.dropSessionWillPerformDrop();
 
-    [[WebItemProviderPasteboard sharedInstance] setItemProviders:itemProviders dropSession:session];
+    [[WebItemProviderPasteboard sharedInstance] setItemProviders:itemProviders.get() dropSession:session];
     [[WebItemProviderPasteboard sharedInstance] incrementPendingOperationCount];
     auto dragData = [self dragDataForDropSession:session dragDestinationAction:WKDragDestinationActionAny];
-    BOOL shouldSnapshotView = ![self _handleDropByInsertingImagePlaceholders:itemProviders session:session];
+    BOOL shouldSnapshotView = ![self _handleDropByInsertingImagePlaceholders:itemProviders.get() session:session];
 
-    RELEASE_LOG(DragAndDrop, "Loading data from %tu item providers for session: %p", itemProviders.count, session);
+    RELEASE_LOG(DragAndDrop, "Loading data from %tu item providers for session: %p", itemProviders.get().count, session);
     // Always loading content from the item provider ensures that the web process will be allowed to call back in to the UI
     // process to access pasteboard contents at a later time. Ideally, we only need to do this work if we're over a file input
     // or the page prevented default on `dragover`, but without this, dropping into a normal editable areas will fail due to
@@ -12130,11 +12135,11 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
 
 - (UIMenu *)menuWithInlineAction:(NSString *)title image:(UIImage *)image identifier:(NSString *)identifier handler:(Function<void(WKContentView *)>&&)handler
 {
-    auto action = [UIAction actionWithTitle:title image:image identifier:identifier handler:makeBlockPtr([handler = WTF::move(handler), weakSelf = WeakObjCPtr<WKContentView>(self)](UIAction *) mutable {
+    RetainPtr action = [UIAction actionWithTitle:title image:image identifier:identifier handler:makeBlockPtr([handler = WTF::move(handler), weakSelf = WeakObjCPtr<WKContentView>(self)](UIAction *) mutable {
         if (auto strongSelf = weakSelf.get())
             handler(strongSelf.get());
     }).get()];
-    return [UIMenu menuWithTitle:@"" image:nil identifier:nil options:UIMenuOptionsDisplayInline children:@[ action ]];
+    return [UIMenu menuWithTitle:@"" image:nil identifier:nil options:UIMenuOptionsDisplayInline children:@[ action.get() ]];
 }
 
 #if ENABLE(APP_HIGHLIGHTS)
@@ -12189,7 +12194,9 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
 
         if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SendsNativeMouseEvents)
             && WTF::IOSApplication::isEssentialSkeleton()) { // <rdar://problem/62694519>
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             os_log_error(OS_LOG_DEFAULT, "WARNING: This application has been observed to ignore mouse events in web content; touch events will be sent until it is built against the iOS 13.4 SDK, but after that, the web content must respect mouse or pointer events in addition to touch events in order to behave correctly when a trackpad or mouse is used.");
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             return NO;
         }
 
@@ -12724,8 +12731,8 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     constexpr auto maxMatches = 1000;
     _page->findTextRangesForStringMatches(string, findOptions, maxMatches, [string = retainPtr(string), aggregator = retainPtr(aggregator)](const Vector<WebKit::WebFoundTextRange> ranges) {
         for (auto& range : ranges) {
-            WKFoundTextRange *textRange = [WKFoundTextRange foundTextRangeWithWebFoundTextRange:range];
-            [aggregator foundRange:textRange forSearchString:string.get() inDocument:nil];
+            RetainPtr textRange = [WKFoundTextRange foundTextRangeWithWebFoundTextRange:range];
+            [aggregator foundRange:textRange.get() forSearchString:string.get() inDocument:nil];
         }
 
         [aggregator finishedSearching];
@@ -12835,7 +12842,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     return valueOrDefault(_imageAnalysisContextMenuActionData).hasVisualSearchResults;
 }
 
-- (CGImageRef)copySubjectResultForImageContextMenu
+- (CGImageRef)subjectResultForImageContextMenu
 {
     return valueOrDefault(_imageAnalysisContextMenuActionData).copySubjectResult.getAutoreleased();
 }
@@ -13275,7 +13282,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 - (void)_insertDynamicImageAnalysisContextMenuItemsIfPossible
 {
     bool updated = false;
-    [self.contextMenuInteraction updateVisibleMenuWithBlock:makeBlockPtr([&](UIMenu *menu) -> UIMenu * {
+    [self.contextMenuInteraction updateVisibleMenuWithBlock:makeBlockPtr([&, strongSelf = RetainPtr { self }](UIMenu *menu) -> UIMenu * {
         updated = true;
         __block BOOL foundRevealImageItem = NO;
         __block BOOL foundShowTextItem = NO;
@@ -13298,7 +13305,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
                 continue;
 
             if ([action.identifier isEqual:elementActionTypeToUIActionIdentifier(_WKElementActionTypeCopyCroppedImage)]) {
-                if (self.copySubjectResultForImageContextMenu)
+                if (self.subjectResultForImageContextMenu)
                     action.attributes &= ~UIMenuElementAttributesDisabled;
 
                 continue;
@@ -13352,15 +13359,15 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 
 - (BOOL)actionSheetAssistantShouldIncludeCopySubjectAction:(WKActionSheetAssistant *)assistant
 {
-    return !!self.copySubjectResultForImageContextMenu;
+    return !!self.subjectResultForImageContextMenu;
 }
 
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant copySubject:(UIImage *)image sourceMIMEType:(NSString *)sourceMIMEType
 {
-    if (!self.copySubjectResultForImageContextMenu)
+    if (!self.subjectResultForImageContextMenu)
         return;
 
-    auto [data, type] = WebKit::imageDataForRemoveBackground(self.copySubjectResultForImageContextMenu, (__bridge CFStringRef)sourceMIMEType);
+    auto [data, type] = WebKit::imageDataForRemoveBackground(self.subjectResultForImageContextMenu, (__bridge CFStringRef)sourceMIMEType);
     if (!data)
         return;
 
@@ -14078,13 +14085,13 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
     // Store this completion handler so that it can be called after the execution of the next
     // call to replace the text and eventually use this completion handler to pass the
     // text indicator to UIKit.
-    _page->storeDestinationCompletionHandlerForAnimationID(*animationUUID, [protectedSelf = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)] (auto&& textIndicatorData) {
-        if (!textIndicatorData) {
+    _page->storeDestinationCompletionHandlerForAnimationID(*animationUUID, [protectedSelf = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)](RefPtr<WebCore::TextIndicator>&& textIndicator) {
+        if (!textIndicator) {
             completionHandler(nil);
             return;
         }
 
-        RetainPtr targetedPreview = [protectedSelf _createTargetedPreviewFromTextIndicator:WebCore::TextIndicator::create(*textIndicatorData) previewContainer:[protectedSelf containerForContextMenuHintPreviews]];
+        RetainPtr targetedPreview = [protectedSelf _createTargetedPreviewFromTextIndicator:WTF::move(textIndicator) previewContainer:[protectedSelf containerForContextMenuHintPreviews]];
         completionHandler(targetedPreview.get());
     });
 
@@ -15863,8 +15870,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)dealloc
 {
-    [_selectionRects release];
     [super dealloc];
+}
+
+- (NSArray<WKTextSelectionRect *> *)selectionRects
+{
+    return _selectionRects.get();
+}
+
+- (void)setSelectionRects:(NSArray<WKTextSelectionRect *> *)selectionRects
+{
+    _selectionRects = adoptNS([selectionRects copy]);
 }
 
 - (NSString *)description

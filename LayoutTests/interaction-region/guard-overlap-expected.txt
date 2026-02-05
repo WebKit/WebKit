@@ -20,7 +20,7 @@ line link.
         (interaction (0,40) width=100 height=25),
         (guard (-10,55) width=30 height=30),
         (interaction (0,65) width=10 height=10),
-        (interaction (-4,91) width=129.32 height=47)
+        (interaction (-4,91.50) width=129.32 height=47)
         (clipPath move to (0,8), add line to (0,8), add curve to (0,3.58) (3.58,0) (8,0), add line to (121.32,0), add line to (121.32,0), add curve to (125.74,0) (129.32,3.58) (129.32,8), add line to (129.32,19), add line to (129.32,19), add curve to (129.32,23.42) (125.74,27) (121.32,27), add line to (72.88,27), add line to (72.88,27), add curve to (68.46,27) (64.88,30.58) (64.88,35), add line to (64.88,39), add line to (64.88,39), add curve to (64.88,43.42) (61.30,47) (56.88,47), add line to (8,47), add line to (8,47), add curve to (3.58,47) (0,43.42) (0,39), add line to (0,30.50), add line to (0,27), add line to (0,23.50), add line to (0,20), close subpath),
         (interaction (0,135) width=50 height=10)])
       )

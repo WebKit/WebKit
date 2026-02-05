@@ -165,11 +165,11 @@ static Node* moveOutOfUserAgentShadowTree(Node& node)
 
 void HitTestResult::setToNonUserAgentShadowAncestor()
 {
-    if (Node* node = innerNode()) {
+    if (RefPtr node = innerNode()) {
         node = moveOutOfUserAgentShadowTree(*node);
         setInnerNode(node);
     }
-    if (Node *node = innerNonSharedNode()) {
+    if (RefPtr node = innerNonSharedNode()) {
         node = moveOutOfUserAgentShadowTree(*node);
         setInnerNonSharedNode(node);
     }
@@ -246,7 +246,7 @@ bool HitTestResult::isSelected() const
     if (!m_innerNonSharedNode)
         return false;
 
-    auto* frame = m_innerNonSharedNode->document().frame();
+    RefPtr frame = m_innerNonSharedNode->document().frame();
     if (!frame)
         return false;
 
@@ -267,7 +267,7 @@ bool HitTestResult::allowsFollowingLink() const
     if (!document)
         return false;
 
-    return document->protectedSecurityOrigin()->canDisplay(linkURL, OriginAccessPatternsForWebProcess::singleton());
+    return protect(document->securityOrigin())->canDisplay(linkURL, OriginAccessPatternsForWebProcess::singleton());
 }
 
 bool HitTestResult::allowsFollowingImageURL() const
@@ -284,7 +284,7 @@ bool HitTestResult::allowsFollowingImageURL() const
     if (!document)
         return false;
 
-    return document->protectedSecurityOrigin()->canDisplay(linkURL, OriginAccessPatternsForWebProcess::singleton());
+    return protect(document->securityOrigin())->canDisplay(linkURL, OriginAccessPatternsForWebProcess::singleton());
 }
 
 String HitTestResult::selectedText() const
@@ -292,7 +292,7 @@ String HitTestResult::selectedText() const
     if (!m_innerNonSharedNode)
         return emptyString();
 
-    auto* frame = m_innerNonSharedNode->document().frame();
+    RefPtr frame = m_innerNonSharedNode->document().frame();
     if (!frame)
         return emptyString();
 
@@ -353,7 +353,7 @@ String HitTestResult::title(TextDirection& dir) const
     dir = TextDirection::LTR;
     // Find the title in the nearest enclosing DOM node.
     // For <area> tags in image maps, walk the tree for the <area>, not the <img> using it.
-    for (Node* titleNode = m_innerNode.get(); titleNode; titleNode = titleNode->parentInComposedTree()) {
+    for (RefPtr titleNode = m_innerNode.get(); titleNode; titleNode = titleNode->parentInComposedTree()) {
         if (RefPtr titleElement = dynamicDowncast<Element>(*titleNode)) {
             auto title = titleElement->title();
             if (!title.isNull()) {
@@ -368,8 +368,8 @@ String HitTestResult::title(TextDirection& dir) const
 
 String HitTestResult::innerTextIfTruncated(TextDirection& dir) const
 {
-    for (auto* truncatedNode = m_innerNode.get(); truncatedNode; truncatedNode = truncatedNode->parentInComposedTree()) {
-        auto* element = dynamicDowncast<Element>(*truncatedNode);
+    for (RefPtr truncatedNode = m_innerNode.get(); truncatedNode; truncatedNode = truncatedNode->parentInComposedTree()) {
+        RefPtr element = dynamicDowncast<Element>(*truncatedNode);
         if (!element)
             continue;
 
@@ -459,7 +459,7 @@ bool HitTestResult::hasEntireImage() const
     if (imageURL.isEmpty() || imageRect().isEmpty())
         return false;
 
-    auto* innerFrame = innerNodeFrame();
+    RefPtr innerFrame = innerNodeFrame();
     if (!innerFrame)
         return false;
 
@@ -733,7 +733,7 @@ bool HitTestResult::isOverTextInsideFormControlElement() const
     if (!element || !element->isTextField())
         return false;
 
-    auto* frame = element->document().frame();
+    RefPtr frame = element->document().frame();
     if (!frame)
         return false;
 
@@ -812,7 +812,7 @@ bool HitTestResult::isContentEditable() const
 }
 
 template<typename RectType>
-inline HitTestProgress HitTestResult::addNodeToListBasedTestResultCommon(Node* node, const HitTestRequest& request, const HitTestLocation& locationInContainer, const RectType& rect)
+inline HitTestProgress HitTestResult::addNodeToListBasedTestResultCommon(Node* nodeArg, const HitTestRequest& request, const HitTestLocation& locationInContainer, const RectType& rect)
 {
     // If it is not a list-based hit test, this method has to be no-op.
     if (!request.resultIsElementList()) {
@@ -820,8 +820,10 @@ inline HitTestProgress HitTestResult::addNodeToListBasedTestResultCommon(Node* n
         return HitTestProgress::Stop;
     }
 
-    if (!node)
+    if (!nodeArg)
         return HitTestProgress::Continue;
+
+    RefPtr node = nodeArg;
 
     if ((request.disallowsUserAgentShadowContent() && node->isInUserAgentShadowTree())
         || (request.disallowsUserAgentShadowContentExceptForImageOverlays() && !ImageOverlay::isInsideOverlay(*node) && node->isInUserAgentShadowTree()))
@@ -906,7 +908,7 @@ RefPtr<Node> HitTestResult::protectedTargetNode() const
 
 Element* HitTestResult::targetElement() const
 {
-    for (Node* node = m_innerNode.get(); node; node = node->parentInComposedTree()) {
+    for (RefPtr node = m_innerNode.get(); node; node = node->parentInComposedTree()) {
         if (auto* element = dynamicDowncast<Element>(*node))
             return element;
     }
@@ -930,7 +932,7 @@ Element* HitTestResult::innerNonSharedElement() const
 
 String HitTestResult::linkSuggestedFilename() const
 {
-    auto* urlElement = URLElement();
+    RefPtr urlElement = URLElement();
     if (!is<HTMLAnchorElement>(urlElement))
         return nullAtom();
     return ResourceResponse::sanitizeSuggestedFilename(urlElement->attributeWithoutSynchronization(HTMLNames::downloadAttr));
@@ -990,7 +992,7 @@ HTMLImageElement* HitTestResult::imageElement() const
 
 bool HitTestResult::isAnimating() const
 {
-    if (auto* imageElement = this->imageElement())
+    if (RefPtr imageElement = this->imageElement())
         return imageElement->allowsAnimation();
     return false;
 }
@@ -1007,7 +1009,7 @@ void HitTestResult::pauseAnimation() const
 
 void HitTestResult::setAllowsAnimation(bool allowAnimation) const
 {
-    if (auto* imageElement = this->imageElement()) {
+    if (RefPtr imageElement = this->imageElement()) {
         imageElement->setAllowsAnimation(allowAnimation);
         if (auto* renderer = m_innerNonSharedNode->renderer())
             renderer->repaint();

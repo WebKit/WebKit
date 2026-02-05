@@ -27,6 +27,9 @@ FBUNDLE="$(readlink -f ${2})"
 MYDIR="$(dirname $(readlink -f ${0}))"
 
 TESTINITSCRIPT="install_deps_docker_start_test.sh"
+[[ -n "${DISPLAY}" ]] && DOCKER_DISPLAY_BIND+="-v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=${DISPLAY} "
+[[ -n "${XAUTHORITY}" ]] && DOCKER_DISPLAY_BIND+="-v ${XAUTHORITY}:${XAUTHORITY} -e XAUTHORITY=${XAUTHORITY} "
+[[ -n "${WAYLAND_DISPLAY}" ]] && DOCKER_DISPLAY_BIND+="-v ${XDG_RUNTIME_DIR}/${WAYLAND_DISPLAY}:/tmp/${WAYLAND_DISPLAY} -e XDG_RUNTIME_DIR=/tmp -e WAYLAND_DISPLAY=${WAYLAND_DISPLAY} "
 
 set -eux
 
@@ -58,10 +61,7 @@ for DISTRO in ${DISTROS_TO_TEST[@]}; do
     docker run --init --rm \
                 -v "${MYDIR}:/testdata:ro" \
                 -v "${FBUNDLE}:/testbundle.tar.xz:ro" \
-                -v "/tmp/.X11-unix:/tmp/.X11-unix" \
-                -v "${XAUTHORITY}:${XAUTHORITY}" \
-                -e "XAUTHORITY=${XAUTHORITY}" \
-                -e "DISPLAY=${DISPLAY}" \
+                ${DOCKER_DISPLAY_BIND} \
                 -h "${HOSTNAME}" \
                 "${DISTRO}" \
                 "/testdata/${TESTINITSCRIPT}" "${PORT}"

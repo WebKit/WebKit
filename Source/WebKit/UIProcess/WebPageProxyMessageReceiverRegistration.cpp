@@ -48,8 +48,8 @@ void WebPageProxyMessageReceiverRegistration::startReceivingMessages(WebProcessP
 void WebPageProxyMessageReceiverRegistration::stopReceivingMessages()
 {
     if (auto data = std::exchange(m_data, std::nullopt)) {
-        data->protectedProcess()->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), data->webPageID);
-        data->protectedProcess()->removeMessageReceiver(Messages::WebBackForwardList::messageReceiverName(), data->webPageID);
+        protect(data->process)->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), data->webPageID);
+        protect(data->process)->removeMessageReceiver(Messages::WebBackForwardList::messageReceiverName(), data->webPageID);
     }
 }
 
@@ -57,18 +57,13 @@ void WebPageProxyMessageReceiverRegistration::transferMessageReceivingFrom(WebPa
 {
     ASSERT(!m_data);
     if (auto data = std::exchange(oldRegistration.m_data, std::nullopt)) {
-        data->protectedProcess()->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), data->webPageID);
-        data->protectedProcess()->removeMessageReceiver(Messages::WebBackForwardList::messageReceiverName(), data->webPageID);
+        protect(data->process)->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), data->webPageID);
+        protect(data->process)->removeMessageReceiver(Messages::WebBackForwardList::messageReceiverName(), data->webPageID);
         startReceivingMessages(data->process, data->webPageID, newWebPageProxyReceiver, newBackForwardListReceiver);
     } else {
         stopReceivingMessages();
         ASSERT_NOT_REACHED();
     }
-}
-
-Ref<WebProcessProxy> WebPageProxyMessageReceiverRegistration::Data::protectedProcess()
-{
-    return process;
 }
 
 } // namespace WebKit

@@ -166,7 +166,7 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toLocaleLowerCase"_s, stringProtoFuncToLocaleLowerCase, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toLocaleUpperCase"_s, stringProtoFuncToLocaleUpperCase, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("trim"_s, stringProtoFuncTrim, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("startsWith"_s, stringProtoFuncStartsWith, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("startsWith"_s, stringProtoFuncStartsWith, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, StringPrototypeStartsWithIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("endsWith"_s, stringProtoFuncEndsWith, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("includes"_s, stringProtoFuncIncludes, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, StringPrototypeIncludesIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("normalize"_s, stringProtoFuncNormalize, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
@@ -217,17 +217,17 @@ NEVER_INLINE void substituteBackreferencesSlow(StringBuilder& result, StringView
         }
 
         int backrefStart;
-        int backrefLength;
+        int backrefEnd;
         int advance = 0;
         if (ref == '&') {
             backrefStart = ovector[0];
-            backrefLength = ovector[1] - backrefStart;
+            backrefEnd = ovector[1];
         } else if (ref == '`') {
             backrefStart = 0;
-            backrefLength = ovector[0];
+            backrefEnd = ovector[0];
         } else if (ref == '\'') {
             backrefStart = ovector[1];
-            backrefLength = source.length() - backrefStart;
+            backrefEnd = source.length();
         } else if (reg && ref == '<') {
             // Named back reference
             if (!hasNamedCaptures)
@@ -242,10 +242,10 @@ NEVER_INLINE void substituteBackreferencesSlow(StringBuilder& result, StringView
 
             if (!backrefIndex || backrefIndex > reg->numSubpatterns()) {
                 backrefStart = 0;
-                backrefLength = 0;
+                backrefEnd = 0;
             } else {
                 backrefStart = ovector[2 * backrefIndex];
-                backrefLength = ovector[2 * backrefIndex + 1] - backrefStart;
+                backrefEnd = ovector[2 * backrefIndex + 1];
             }
             advance = nameLength + 1;
         } else if (reg && isASCIIDigit(ref)) {
@@ -266,7 +266,7 @@ NEVER_INLINE void substituteBackreferencesSlow(StringBuilder& result, StringView
             if (!backrefIndex)
                 continue;
             backrefStart = ovector[2 * backrefIndex];
-            backrefLength = ovector[2 * backrefIndex + 1] - backrefStart;
+            backrefEnd = ovector[2 * backrefIndex + 1];
         } else
             continue;
 
@@ -274,8 +274,8 @@ NEVER_INLINE void substituteBackreferencesSlow(StringBuilder& result, StringView
             result.append(replacement.substring(offset, i - offset));
         i += 1 + advance;
         offset = i + 1;
-        if (backrefStart >= 0)
-            result.append(source.substring(backrefStart, backrefLength));
+        if (backrefStart >= 0 && backrefEnd >= backrefStart)
+            result.append(source.substring(backrefStart, backrefEnd - backrefStart));
     } while ((i = replacement.find('$', i + 1)) != notFound);
 
     if (replacement.length() - offset)
@@ -1257,19 +1257,40 @@ static inline JSValue trimString(JSGlobalObject* globalObject, JSValue thisValue
     String str = thisValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    unsigned left = 0;
-    if constexpr (static_cast<uint8_t>(trimKind) & static_cast<uint8_t>(TrimKind::TrimStart)) {
-        while (left < str.length() && isStrWhiteSpace(str[left]))
-            left++;
+    unsigned length = str.length();
+    if (!length) [[unlikely]] {
+        if (thisValue.isString())
+            return thisValue;
+        RELEASE_AND_RETURN(scope, jsEmptyString(vm));
     }
-    unsigned right = str.length();
-    if constexpr (static_cast<uint8_t>(trimKind) & static_cast<uint8_t>(TrimKind::TrimEnd)) {
-        while (right > left && isStrWhiteSpace(str[right - 1]))
-            right--;
+
+    unsigned left = 0;
+    unsigned right = length;
+
+    if (str.is8Bit()) {
+        auto characters = str.span8();
+        if constexpr (static_cast<uint8_t>(trimKind) & static_cast<uint8_t>(TrimKind::TrimStart)) {
+            while (left < length && isStrWhiteSpace(characters[left]))
+                left++;
+        }
+        if constexpr (static_cast<uint8_t>(trimKind) & static_cast<uint8_t>(TrimKind::TrimEnd)) {
+            while (right > left && isStrWhiteSpace(characters[right - 1]))
+                right--;
+        }
+    } else {
+        auto characters = str.span16();
+        if constexpr (static_cast<uint8_t>(trimKind) & static_cast<uint8_t>(TrimKind::TrimStart)) {
+            while (left < length && isStrWhiteSpace(characters[left]))
+                left++;
+        }
+        if constexpr (static_cast<uint8_t>(trimKind) & static_cast<uint8_t>(TrimKind::TrimEnd)) {
+            while (right > left && isStrWhiteSpace(characters[right - 1]))
+                right--;
+        }
     }
 
     // Don't gc allocate a new string if we don't have to.
-    if (left == 0 && right == str.length() && thisValue.isString())
+    if (!left && right == length && thisValue.isString())
         return thisValue;
 
     RELEASE_AND_RETURN(scope, jsString(vm, str.substringSharingImpl(left, right - left)));

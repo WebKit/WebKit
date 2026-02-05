@@ -188,7 +188,7 @@ private:
         bool m_shouldStartStreaming { false };
     };
 
-    RefPtr<Loader> protectedLoader() { return m_loader.get(); }
+    Loader* loader() const { return m_loader.get(); }
 
     mutable std::optional<ResourceResponse> m_filteredResponse;
     ResourceResponse m_internalResponse;

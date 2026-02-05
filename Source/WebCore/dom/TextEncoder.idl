@@ -23,6 +23,7 @@
 * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// https://encoding.spec.whatwg.org/#dictdef-textencoderencodeintoresult
 [
     JSGenerateToJSObject,
     LegacyNativeDictionaryRequiredInterfaceNullability,
@@ -31,6 +32,7 @@
     unsigned long long written;
 };
 
+// https://encoding.spec.whatwg.org/#textencoder
 [
     Exposed=*,
 ] interface TextEncoder {
@@ -38,6 +40,7 @@
 
     readonly attribute DOMString encoding;
 
-    [NewObject] Uint8Array encode(optional USVString input = "");
+    // FIXME: `encode` should not return a nullable type.
+    [NewObject] Uint8Array? encode(optional USVString input = "");
     TextEncoderEncodeIntoResult encodeInto(USVString source, [AllowShared] Uint8Array destination);
 };

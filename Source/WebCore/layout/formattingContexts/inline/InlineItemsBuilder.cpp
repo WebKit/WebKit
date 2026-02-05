@@ -1040,7 +1040,7 @@ void InlineItemsBuilder::populateBreakingPositionCache(const InlineItemList& inl
     };
 
     // Preserve breaking positions across content mutation.
-    auto& securityOrigin = document.securityOrigin();
+    Ref securityOrigin = document.securityOrigin();
     auto& breakingPositionCache = TextBreakingPositionCache::singleton();
     size_t index = 0;
     while (index < inlineItemList.size()) {
@@ -1065,7 +1065,7 @@ void InlineItemsBuilder::populateBreakingPositionCache(const InlineItemList& inl
         }
 
         TextBreakingPositionContext context { inlineTextBox->style() };
-        if (breakingPositionCache.get({ inlineTextBox->content(), context, securityOrigin.data() })) {
+        if (breakingPositionCache.get({ inlineTextBox->content(), context, securityOrigin->data() })) {
             // Cache is already populated.
             index += span.size();
             continue;
@@ -1087,7 +1087,7 @@ void InlineItemsBuilder::populateBreakingPositionCache(const InlineItemList& inl
 
         ASSERT(!breakingPositionList.isEmpty());
         if (breakingPositionList.size() >= TextBreakingPositionCache::minimumRequiredContentBreaks)
-            breakingPositionCache.set({ inlineTextBox->content(), context, securityOrigin.data() }, WTF::move(breakingPositionList));
+            breakingPositionCache.set({ inlineTextBox->content(), context, securityOrigin->data() }, WTF::move(breakingPositionList));
         index += span.size();
     }
 }

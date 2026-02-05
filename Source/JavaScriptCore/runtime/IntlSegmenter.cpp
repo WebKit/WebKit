@@ -27,6 +27,7 @@
 #include "IntlSegmenter.h"
 
 #include "IntlObjectInlines.h"
+#include "IntlSegmentDataObject.h"
 #include "IntlSegments.h"
 #include "IntlWorkaround.h"
 #include "JSCInlines.h"
@@ -162,23 +163,6 @@ ASCIILiteral IntlSegmenter::granularityString(Granularity granularity)
     }
     ASSERT_NOT_REACHED();
     return { };
-}
-
-JSObject* IntlSegmenter::createSegmentDataObject(JSGlobalObject* globalObject, JSString* string, int32_t startIndex, int32_t endIndex, UBreakIterator& segmenter, Granularity granularity)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    JSObject* result = constructEmptyObject(globalObject);
-    JSString* substring = jsSubstring(globalObject, string, startIndex, endIndex - startIndex);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-    result->putDirect(vm, vm.propertyNames->segment, substring);
-    result->putDirect(vm, vm.propertyNames->index, jsNumber(startIndex));
-    result->putDirect(vm, vm.propertyNames->input, string);
-    if (granularity == IntlSegmenter::Granularity::Word) {
-        int32_t ruleStatus = ubrk_getRuleStatus(&segmenter);
-        result->putDirect(vm, vm.propertyNames->isWordLike, jsBoolean(!(ruleStatus >= UBRK_WORD_NONE && ruleStatus <= UBRK_WORD_NONE_LIMIT)));
-    }
-    return result;
 }
 
 } // namespace JSC

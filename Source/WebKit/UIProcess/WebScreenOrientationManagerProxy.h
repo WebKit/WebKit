@@ -73,7 +73,6 @@ private:
 
     std::optional<WebCore::Exception> platformShouldRejectLockRequest() const;
 
-    Ref<WebPageProxy> protectedPage() const;
 
     WeakRef<WebPageProxy> m_page;
     WebCore::ScreenOrientationType m_currentOrientation;

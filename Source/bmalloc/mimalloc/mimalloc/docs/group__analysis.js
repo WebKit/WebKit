@@ -11,8 +11,5 @@ var group__analysis =
     ] ],
     [ "mi_block_visit_fun", "group__analysis.html#ga8255dc9371e6b299d9802a610c4e34ec", null ],
     [ "mi_abandoned_visit_blocks", "group__analysis.html#ga6a4865a887b2ec5247854af61562503c", null ],
-    [ "mi_check_owned", "group__analysis.html#ga628c237489c2679af84a4d0d143b3dd5", null ],
-    [ "mi_heap_check_owned", "group__analysis.html#ga0d67c1789faaa15ff366c024fcaf6377", null ],
-    [ "mi_heap_contains_block", "group__analysis.html#gaa862aa8ed8d57d84cae41fc1022d71af", null ],
-    [ "mi_heap_visit_blocks", "group__analysis.html#ga70c46687dc6e9dc98b232b02646f8bed", null ]
+    [ "mi_heap_visit_blocks", "group__analysis.html#gae69fcff3324f8e419af850e34cf54c46", null ]
 ];

@@ -83,11 +83,6 @@ void PageLoadState::endTransaction()
         commitChanges();
 }
 
-Ref<WebPageProxy> PageLoadState::protectedPage() const
-{
-    return m_webPageProxy.get();
-}
-
 void PageLoadState::ref() const
 {
     m_webPageProxy->ref();
@@ -143,7 +138,7 @@ void PageLoadState::commitChanges()
 
     m_committedState = m_uncommittedState;
 
-    protectedPage()->isLoadingChanged();
+    protect(page())->isLoadingChanged();
 
     // The "did" ordering is the reverse of the "will". This is a requirement of Cocoa Key-Value Observing.
     if (certificateInfoChanged)

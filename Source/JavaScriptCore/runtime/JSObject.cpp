@@ -25,7 +25,6 @@
 #include "JSObject.h"
 
 #include "AllocationFailureMode.h"
-#include "CatchScope.h"
 #include "CustomGetterSetter.h"
 #include "Exception.h"
 #include "GCDeferralContextInlines.h"
@@ -42,6 +41,7 @@
 #include "PropertyNameArray.h"
 #include "ProxyObject.h"
 #include "ResourceExhaustion.h"
+#include "TopExceptionScope.h"
 #include "TypeError.h"
 #include "VMInlines.h"
 #include "VMTrapsInlines.h"
@@ -490,7 +490,7 @@ String JSObject::calculatedClassName(JSObject* object)
     auto* structure = object->structure();
     auto* globalObject = structure->globalObject();
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     // Check for a display name of obj.constructor.
     // This is useful to get `Foo` for the `(class Foo).prototype` object.

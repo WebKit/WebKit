@@ -64,11 +64,11 @@ public:
     using Rects = Vector<WebCore::IntRect, 1>;
 
     static OptionSet<RendererBufferTransportMode> rendererBufferTransportMode();
-    static bool checkRequirements();
+    static bool canUseHardwareAcceleration();
 #if USE(GBM)
     static Vector<RendererBufferFormat> preferredBufferFormats();
 #endif
-    static RefPtr<AcceleratedBackingStore> create(WebPageProxy&);
+    static Ref<AcceleratedBackingStore> create(WebPageProxy&);
     ~AcceleratedBackingStore();
 
     void ref() const final { RefCounted::ref(); }

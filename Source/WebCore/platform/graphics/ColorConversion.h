@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/ColorTypes.h>
+#include <WebCore/PlatformExportMacros.h>
 #include <numeric>
 #include <wtf/MathExtras.h>
 
@@ -45,7 +46,6 @@ template<typename Output, typename Input> Output convertColorCarryingForwardMiss
 // Conversion functions for raw color components with associated color spaces.
 ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, ColorSpace outputColorSpace);
 ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, const DestinationColorSpace& outputColorSpace);
-
 
 // All color types, other than XYZA or those inheriting from RGBType, must implement
 // the following conversions to and from their "Reference" color.

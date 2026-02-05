@@ -42,8 +42,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FetchEvent);
 
 Ref<FetchEvent> FetchEvent::createForTesting(ScriptExecutionContext& context)
 {
-    FetchEvent::Init init;
-    init.request = FetchRequest::create(context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable, { }), { }, { }, { });
+    auto init = FetchEvent::Init {
+        ExtendableEventInit { EventInit { false, false, false } },
+        FetchRequest::create(context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable, { }), { }, { }, { }),
+        nullString(),
+        nullString(),
+        nullptr,
+    };
     return FetchEvent::create(*context.globalObject(), eventNames().fetchEvent, WTF::move(init), Event::IsTrusted::Yes);
 }
 
@@ -61,7 +66,7 @@ static inline Ref<DOMPromise> retrieveHandledPromise(JSC::JSGlobalObject& global
 
 FetchEvent::FetchEvent(JSC::JSGlobalObject& globalObject, const AtomString& type, Init&& initializer, IsTrusted isTrusted)
     : ExtendableEvent(EventInterfaceType::FetchEvent, type, initializer, isTrusted)
-    , m_request(initializer.request.releaseNonNull())
+    , m_request(WTF::move(initializer.request))
     , m_clientId(WTF::move(initializer.clientId))
     , m_resultingClientId(WTF::move(initializer.resultingClientId))
     , m_handled(retrieveHandledPromise(globalObject, WTF::move(initializer.handled)))

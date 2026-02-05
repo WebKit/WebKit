@@ -280,41 +280,4 @@ String TemporalPlainYearMonth::monthCode() const
     return ISO8601::monthCode(m_plainYearMonth.month());
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-adddurationtoyearmonth
-template<AddOrSubtract op>
-ISO8601::PlainYearMonth TemporalPlainYearMonth::addDurationToYearMonth(JSGlobalObject* globalObject, ISO8601::PlainYearMonth yearMonth, ISO8601::Duration duration, TemporalOverflow overflow)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if constexpr (op == AddOrSubtract::Subtract)
-        duration = -duration;
-    auto sign = TemporalDuration::sign(duration);
-    auto year = yearMonth.year();
-    auto month = yearMonth.month();
-    auto constexpr day = 1;
-    auto intermediateDate = ISO8601::PlainDate(year, month, day);
-    if (!ISO8601::isDateTimeWithinLimits(year, month, day, 0, 0, 0, 0, 0, 0)) [[unlikely]] {
-        throwRangeError(globalObject, scope, "date out of range in add or subtract"_s);
-        return { };
-    }
-    ISO8601::PlainDate date;
-    if (sign < 0) {
-        auto oneMonthDuration = ISO8601::Duration { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
-        auto nextMonth = TemporalCalendar::isoDateAdd(globalObject,
-            intermediateDate, oneMonthDuration, TemporalOverflow::Constrain);
-        RETURN_IF_EXCEPTION(scope, { });
-        int32_t y = nextMonth.year();
-        uint8_t m = nextMonth.month();
-        uint8_t d = nextMonth.day() - 1;
-        date = TemporalCalendar::balanceISODate(globalObject, y, m, d);
-    } else
-        date = intermediateDate;
-    auto durationToAdd = TemporalDuration::toDateDurationRecordWithoutTime(globalObject, duration);
-    RETURN_IF_EXCEPTION(scope, { });
-    auto addedDate = TemporalCalendar::isoDateAdd(globalObject, date, durationToAdd, overflow);
-    RETURN_IF_EXCEPTION(scope, { });
-    return ISO8601::PlainYearMonth(addedDate.year(), addedDate.month());
-}
-
 } // namespace JSC

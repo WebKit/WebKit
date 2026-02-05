@@ -41,6 +41,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
+    virtual bool isJSIdleRequestCallback() const { return false; }
+
     virtual CallbackResult<void> invoke(IdleDeadline&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(IdleDeadline&) = 0;
 

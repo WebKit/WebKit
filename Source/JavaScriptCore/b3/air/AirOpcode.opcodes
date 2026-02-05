@@ -866,13 +866,13 @@ MoveZeroToFloat D:F:32
 64: Move64ToDouble U:G:64, D:F:64
     Tmp, Tmp
     x86: Addr, Tmp as loadDouble
-    arm64: FPImm64, Tmp
+    FPImm64, Tmp
     Index, Tmp as loadDouble
 
 32: Move64ToDouble U:G:32, U:G:32, D:F:64
     Tmp, Tmp, Tmp
 
-arm64: Move128ToVector U:G:128, D:F:128
+64: Move128ToVector U:G:128, D:F:128
     FPImm128, Tmp
 
 32: Move32ToDoubleHi U:G:32, UD:F:64
@@ -881,7 +881,7 @@ arm64: Move128ToVector U:G:128, D:F:128
 Move32ToFloat U:G:32, D:F:32
     Tmp, Tmp
     x86: Addr, Tmp as loadFloat
-    arm64: FPImm32, Tmp
+    64: FPImm32, Tmp
     Index, Tmp as loadFloat
 
 64: MoveDoubleTo64 U:F:64, D:G:64

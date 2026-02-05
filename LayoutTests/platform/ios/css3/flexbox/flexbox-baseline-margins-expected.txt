@@ -1,17 +1,17 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x569
-  RenderBlock {HTML} at (0,0) size 800x569
-    RenderBody {BODY} at (8,8) size 784x553
+layer at (0,0) size 800x568
+  RenderBlock {HTML} at (0,0) size 800x568
+    RenderBody {BODY} at (8,8) size 784x552
       RenderBlock {DIV} at (0,0) size 784x69
-        RenderText {#text} at (0,28) size 73x19
+        RenderText {#text} at (0,28) size 73x20
           text run at (0,28) width 73: "before text "
         RenderBlock {DIV} at (72,0) size 76x69 [bgcolor=#D3D3D3] [border: (11px solid #FFC0CB)]
           RenderFlexibleBox {DIV} at (11,18) size 53x40
             RenderBlock (anonymous) at (0,10) size 53x30
-              RenderText {#text} at (0,0) size 53x19
+              RenderText {#text} at (0,0) size 53x20
                 text run at (0,0) width 53: "baseline"
-        RenderText {#text} at (147,28) size 62x19
+        RenderText {#text} at (147,28) size 62x20
           text run at (147,28) width 62: " after text"
       RenderBlock {DIV} at (0,69) size 784x114
         RenderText {#text} at (0,67) size 86x19
@@ -48,14 +48,14 @@ layer at (0,0) size 800x569
         RenderFlexibleBox {DIV} at (285,12) size 49x48 [bgcolor=#D3D3D3] [border: (11px solid #FFC0CB)]
         RenderText {#text} at (333,53) size 106x19
           text run at (333,53) width 106: " of the pink box."
-      RenderBlock {DIV} at (0,320) size 784x178
+      RenderBlock {DIV} at (0,319) size 784x179
         RenderText {#text} at (0,99) size 191x19
           text run at (0,99) width 191: "Should align with the bottom "
         RenderBlock {DIV} at (190,8) size 147x162 [bgcolor=#FFC0CB] [border: (11px solid #FFC0CB)]
           RenderFlexibleBox {DIV} at (24,32) size 98x98 [border: (11px solid #FFC0CB)]
         RenderText {#text} at (336,99) size 174x19
           text run at (336,99) width 174: " of the horizontal scrollbar."
-      RenderBlock {DIV} at (0,498) size 784x55
+      RenderBlock {DIV} at (0,497) size 784x55
         RenderText {#text} at (0,35) size 188x19
           text run at (0,35) width 188: "Should align 10px below the "
         RenderBlock {DIV} at (187,0) size 51x50 [bgcolor=#FFC0CB]

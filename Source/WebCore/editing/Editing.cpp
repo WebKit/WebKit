@@ -116,10 +116,10 @@ RefPtr<ContainerNode> highestEditableRoot(const Position& position, EditableType
 
 Element* lowestEditableAncestor(Node* node)
 {
-    for (; node; node = node->parentNode()) {
-        if (node->hasEditableStyle())
-            return node->rootEditableElement();
-        if (is<HTMLBodyElement>(*node))
+    for (RefPtr currentNode = node; currentNode; currentNode = currentNode->parentNode()) {
+        if (currentNode->hasEditableStyle())
+            return currentNode->rootEditableElement();
+        if (is<HTMLBodyElement>(*currentNode))
             break;
     }
     return nullptr;
@@ -169,7 +169,7 @@ bool isEditablePosition(const Position& position, EditableType editableType)
 
 bool isAtUnsplittableElement(const Position& position)
 {
-    Node* node = position.containerNode();
+    RefPtr node = position.containerNode();
     return node == editableRootForPosition(position) || node == enclosingNodeOfType(position, isTableCell);
 }
 
@@ -280,17 +280,17 @@ Position firstEditablePositionAfterPositionInRoot(const Position& position, Cont
     Position candidate = position;
 
     if (&position.deprecatedNode()->treeScope() != &highestRoot->treeScope()) {
-        RefPtr shadowAncestor = highestRoot->treeScope().ancestorNodeInThisScope(position.protectedDeprecatedNode().get());
+        RefPtr shadowAncestor = highestRoot->treeScope().ancestorNodeInThisScope(protect(position.deprecatedNode()).get());
         if (!shadowAncestor)
             return { };
 
         candidate = positionAfterNode(shadowAncestor.get());
     }
 
-    while (candidate.deprecatedNode() && !isEditablePosition(candidate) && candidate.protectedDeprecatedNode()->isDescendantOf(*highestRoot))
-        candidate = isAtomicNode(candidate.deprecatedNode()) ? positionInParentAfterNode(candidate.protectedDeprecatedNode().get()) : nextVisuallyDistinctCandidate(candidate);
+    while (candidate.deprecatedNode() && !isEditablePosition(candidate) && protect(candidate.deprecatedNode())->isDescendantOf(*highestRoot))
+        candidate = isAtomicNode(candidate.deprecatedNode()) ? positionInParentAfterNode(protect(candidate.deprecatedNode()).get()) : nextVisuallyDistinctCandidate(candidate);
 
-    if (candidate.deprecatedNode() && !candidate.protectedDeprecatedNode()->isInclusiveDescendantOf(*highestRoot))
+    if (candidate.deprecatedNode() && !protect(candidate.deprecatedNode())->isInclusiveDescendantOf(*highestRoot))
         return { };
 
     return candidate;
@@ -308,17 +308,17 @@ Position lastEditablePositionBeforePositionInRoot(const Position& position, Cont
     Position candidate = position;
 
     if (&position.deprecatedNode()->treeScope() != &highestRoot->treeScope()) {
-        RefPtr shadowAncestor = highestRoot->treeScope().ancestorNodeInThisScope(position.protectedDeprecatedNode().get());
+        RefPtr shadowAncestor = highestRoot->treeScope().ancestorNodeInThisScope(protect(position.deprecatedNode()).get());
         if (!shadowAncestor)
             return { };
 
         candidate = firstPositionInOrBeforeNode(shadowAncestor.get());
     }
 
-    while (candidate.deprecatedNode() && !isEditablePosition(candidate) && candidate.protectedDeprecatedNode()->isDescendantOf(*highestRoot))
-        candidate = isAtomicNode(candidate.deprecatedNode()) ? positionInParentBeforeNode(candidate.protectedDeprecatedNode().get()) : previousVisuallyDistinctCandidate(candidate);
-    
-    if (candidate.deprecatedNode() && !candidate.protectedDeprecatedNode()->isInclusiveDescendantOf(*highestRoot))
+    while (candidate.deprecatedNode() && !isEditablePosition(candidate) && protect(candidate.deprecatedNode())->isDescendantOf(*highestRoot))
+        candidate = isAtomicNode(candidate.deprecatedNode()) ? positionInParentBeforeNode(protect(candidate.deprecatedNode()).get()) : previousVisuallyDistinctCandidate(candidate);
+
+    if (candidate.deprecatedNode() && !protect(candidate.deprecatedNode())->isInclusiveDescendantOf(*highestRoot))
         return { };
     
     return candidate;
@@ -347,7 +347,7 @@ RefPtr<Element> enclosingBlock(RefPtr<Node> node, EditingBoundaryCrossingRule ru
 
 TextDirection directionOfEnclosingBlock(const Position& position)
 {
-    auto block = enclosingBlock(position.protectedContainerNode());
+    auto block = enclosingBlock(protect(position.containerNode()));
     if (!block)
         return TextDirection::LTR;
     auto renderer = block->renderer();
@@ -475,7 +475,7 @@ VisiblePosition closestEditablePositionInElementForAbsolutePoint(const Element& 
         return { };
 
     Ref<const Element> protectedElement { element };
-    element.protectedDocument()->updateLayoutIgnorePendingStylesheets();
+    protect(element.document())->updateLayoutIgnorePendingStylesheets();
 
     CheckedPtr renderer = element.renderer();
     // Look at the inner element of a form control, not the control itself, as it is the editable part.
@@ -638,7 +638,7 @@ RefPtr<Node> enclosingListChild(Node* node)
 RefPtr<Node> enclosingEmptyListItem(const VisiblePosition& position)
 {
     // Check that position is on a line by itself inside a list item
-    RefPtr listChildNode = enclosingListChild(position.deepEquivalent().protectedDeprecatedNode().get());
+    RefPtr listChildNode = enclosingListChild(protect(position.deepEquivalent().deprecatedNode()).get());
     if (!listChildNode || !isStartOfParagraph(position) || !isEndOfParagraph(position))
         return nullptr;
 
@@ -683,12 +683,12 @@ bool canMergeLists(Element* firstList, Element* secondList)
 static Node* previousNodeConsideringAtomicNodes(const Node* node)
 {
     if (node->previousSibling()) {
-        Node* n = node->previousSibling();
+        SUPPRESS_UNCOUNTED_LOCAL auto* n = node->previousSibling();
         while (!isAtomicNode(n) && n->lastChild())
             n = n->lastChild();
         return n;
     }
-    
+
     return node->parentNode();
 }
 
@@ -706,8 +706,9 @@ static Node* nextNodeConsideringAtomicNodes(const Node* node)
     return nullptr;
 }
 
-Node* previousLeafNode(const Node* node)
+Node* previousLeafNode(const Node* nodeArg)
 {
+    SUPPRESS_UNCOUNTED_LOCAL auto* node = nodeArg;
     while ((node = previousNodeConsideringAtomicNodes(node))) {
         if (isAtomicNode(node))
             return const_cast<Node*>(node);
@@ -715,8 +716,9 @@ Node* previousLeafNode(const Node* node)
     return nullptr;
 }
 
-Node* nextLeafNode(const Node* node)
+Node* nextLeafNode(const Node* nodeArg)
 {
+    SUPPRESS_UNCOUNTED_LOCAL auto* node = nodeArg;
     while ((node = nextNodeConsideringAtomicNodes(node))) {
         if (isAtomicNode(node))
             return const_cast<Node*>(node);

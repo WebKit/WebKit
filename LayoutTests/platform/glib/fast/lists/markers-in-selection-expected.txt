@@ -4,60 +4,60 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 52x17
+        RenderText {#text} at (0,0) size 52x18
           text run at (0,0) width 52: "Test for "
-        RenderInline {I} at (51,0) size 649x17
-          RenderInline {A} at (51,0) size 349x17 [color=#0000EE]
-            RenderText {#text} at (51,0) size 349x17
+        RenderInline {I} at (51,0) size 649x18
+          RenderInline {A} at (51,0) size 349x18 [color=#0000EE]
+            RenderText {#text} at (51,0) size 349x18
               text run at (51,0) width 349: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8408"
-          RenderText {#text} at (399,0) size 301x17
+          RenderText {#text} at (399,0) size 301x18
             text run at (399,0) width 5: " "
             text run at (403,0) width 297: "Paint the highlight behind selected list markers"
-        RenderText {#text} at (699,0) size 5x17
+        RenderText {#text} at (699,0) size 5x18
           text run at (699,0) width 5: "."
       RenderBlock {P} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 366x17
+        RenderText {#text} at (0,0) size 366x18
           text run at (0,0) width 366: "This tests the rendering of list markers inside the selection."
       RenderBlock (anonymous) at (0,68) size 784x0
         RenderInline {A} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {UL} at (0,86) size 784x18
         RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (-17,0) size 7x17: bullet
-          RenderText {#text} at (0,0) size 157x17
+          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderText {#text} at (0,0) size 157x18
             text run at (0,0) width 157: "Item with outside marker"
       RenderBlock {UL} at (0,120) size 784x18
         RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (-1,0) size 7x17: bullet
-          RenderText {#text} at (14,0) size 149x17
+          RenderListMarker at (-1,0) size 7x18: bullet
+          RenderText {#text} at (14,0) size 149x18
             text run at (14,0) width 149: "Item with inside marker"
       RenderBlock {UL} at (0,154) size 784x18
         RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (-17,4) size 10x10
-          RenderText {#text} at (0,0) size 199x17
+          RenderListMarker at (-17,4) size 10x11
+          RenderText {#text} at (0,0) size 199x18
             text run at (0,0) width 199: "Item with outside image marker"
       RenderBlock {UL} at (0,188) size 784x18
         RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (0,4) size 10x10
-          RenderText {#text} at (17,0) size 191x17
+          RenderListMarker at (0,4) size 10x11
+          RenderText {#text} at (17,0) size 191x18
             text run at (17,0) width 191: "Item with inside image marker"
       RenderBlock {OL} at (0,222) size 784x36
         RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (-20,0) size 16x17: "1"
-          RenderText {#text} at (0,0) size 157x17
+          RenderListMarker at (-20,0) size 16x18: "1"
+          RenderText {#text} at (0,0) size 157x18
             text run at (0,0) width 157: "Item with outside ordinal"
         RenderListItem {LI} at (40,18) size 744x18
-          RenderListMarker at (-20,0) size 16x17: "2"
-          RenderText {#text} at (0,0) size 101x17
+          RenderListMarker at (-20,0) size 16x18: "2"
+          RenderText {#text} at (0,0) size 101x18
             text run at (0,0) width 101: "and another one"
       RenderBlock {OL} at (0,274) size 784x36
         RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (0,0) size 16x17: "1"
-          RenderText {#text} at (16,0) size 149x17
+          RenderListMarker at (0,0) size 16x18: "1"
+          RenderText {#text} at (16,0) size 149x18
             text run at (16,0) width 149: "Item with inside ordinal"
         RenderListItem {LI} at (40,18) size 744x18
-          RenderListMarker at (0,0) size 16x17: "2"
-          RenderText {#text} at (16,0) size 101x17
+          RenderListMarker at (0,0) size 16x18: "2"
+          RenderText {#text} at (16,0) size 101x18
             text run at (16,0) width 101: "and another one"
       RenderBlock (anonymous) at (0,336) size 784x0
         RenderInline {A} at (0,0) size 0x0

@@ -159,7 +159,12 @@ TEST_F(WebCoreNSURLSessionTest, BasicOperation)
     TestWebKitAPI::Util::run(&didInvalidate);
 }
 
+// FIXME when webkit.org/b/306646 is resolved.
+#if PLATFORM(MAC) && !defined(NDEBUG)
+TEST_F(WebCoreNSURLSessionTest, DISABLED_InvalidateEmpty)
+#else
 TEST_F(WebCoreNSURLSessionTest, InvalidateEmpty)
+#endif
 {
     auto session = adoptNS([[WebCoreNSURLSession alloc] initWithResourceLoader:*loader delegate:delegate.get() delegateQueue:[NSOperationQueue mainQueue]]);
     didInvalidate = false;

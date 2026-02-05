@@ -24,7 +24,6 @@
  */
 [
     Conditional=WEB_AUDIO,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary OfflineAudioContextOptions {
     unsigned long numberOfChannels = 1;
     required unsigned long length;

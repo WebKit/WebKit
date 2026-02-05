@@ -45,6 +45,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
+    virtual bool isJSWebCodecsAudioDataOutputCallback() const { return false; }
+
     virtual CallbackResult<void> invoke(WebCodecsAudioData&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(WebCodecsAudioData&) = 0;
 

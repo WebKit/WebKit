@@ -3152,6 +3152,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case StringStartsWith: {
+        compileStringStartsWith(node);
+        break;
+    }
+
     case FunctionToString:
         compileFunctionToString(node);
         break;
@@ -3297,16 +3302,6 @@ void SpeculativeJIT::compile(Node* node)
 
     case NewObject: {
         compileNewObject(node);
-        break;
-    }
-
-    case NewGenerator: {
-        compileNewGenerator(node);
-        break;
-    }
-
-    case NewAsyncGenerator: {
-        compileNewAsyncGenerator(node);
         break;
     }
 
@@ -3648,6 +3643,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ObjectDefineProperty: {
+        compileObjectDefineProperty(node);
+        break;
+    }
+
     case DefineAccessorProperty: {
         compileDefineAccessorProperty(node);
         break;
@@ -3958,6 +3958,10 @@ void SpeculativeJIT::compile(Node* node)
         compileExtractValueFromWeakMapGet(node);
         break;
 
+    case MapOrSetSize:
+        compileMapOrSetSize(node);
+        break;
+
     case SetAdd:
         compileSetAdd(node);
         break;
@@ -4062,11 +4066,6 @@ void SpeculativeJIT::compile(Node* node)
 
     case CreateRest: {
         compileCreateRest(node);
-        break;
-    }
-
-    case GetRestLength: {
-        compileGetRestLength(node);
         break;
     }
 
@@ -4547,7 +4546,7 @@ void SpeculativeJIT::compileCreateClonedArguments(Node* node)
     // Arguments: 0:JSGlobalObject*, 1:structure, 2:start, 3:length, 4:callee, 5: butterfly
     setupArgument(5, [&] (GPRReg destGPR) { move(TrustedImm32(0), destGPR); });
     setupArgument(4, [&] (GPRReg destGPR) { emitGetCallee(node->origin.semantic, destGPR); });
-    setupArgument(3, [&] (GPRReg destGPR) { emitGetLength(node->origin.semantic, destGPR); });
+    setupArgument(3, [&] (GPRReg destGPR) { emitGetArgumentCount(node->origin.semantic, destGPR); });
     setupArgument(2, [&] (GPRReg destGPR) { emitGetArgumentStart(node->origin.semantic, destGPR); });
     setupArgument(
         1, [&] (GPRReg destGPR) {

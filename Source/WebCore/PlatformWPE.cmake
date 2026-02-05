@@ -1,15 +1,8 @@
 include(platform/Adwaita.cmake)
-
-if (USE_CAIRO)
-    include(platform/Cairo.cmake)
-    include(platform/FreeType.cmake)
-elseif (USE_SKIA)
-    include(platform/Skia.cmake)
-endif ()
-
 include(platform/GCrypt.cmake)
 include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
+include(platform/Skia.cmake)
 include(platform/Soup.cmake)
 include(platform/TextureMapper.cmake)
 
@@ -93,7 +86,7 @@ if (USE_OPENXR)
     list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES ${OPENXR_INCLUDE_DIRS})
 endif ()
 
-if (USE_SKIA AND ENABLE_DRAG_SUPPORT)
+if (ENABLE_DRAG_SUPPORT)
     list(APPEND WebCore_SOURCES
         platform/skia/DragImageSkia.cpp
     )

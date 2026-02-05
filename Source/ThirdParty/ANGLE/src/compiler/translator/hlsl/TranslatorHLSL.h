@@ -18,9 +18,6 @@ class TranslatorHLSL : public TCompiler
     TranslatorHLSL(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output);
     TranslatorHLSL *getAsTranslatorHLSL() override { return this; }
 
-    bool hasShaderStorageBlock(const std::string &interfaceBlockName) const;
-    unsigned int getShaderStorageBlockRegister(const std::string &interfaceBlockName) const;
-
     bool hasUniformBlock(const std::string &interfaceBlockName) const;
     unsigned int getUniformBlockRegister(const std::string &interfaceBlockName) const;
     bool shouldUniformBlockUseStructuredBuffer(const std::string &uniformBlockName) const;
@@ -37,7 +34,6 @@ class TranslatorHLSL : public TCompiler
                                  PerformanceDiagnostics *perfDiagnostics) override;
     bool shouldFlattenPragmaStdglInvariantAll() override;
 
-    std::map<std::string, unsigned int> mShaderStorageBlockRegisterMap;
     std::map<std::string, unsigned int> mUniformBlockRegisterMap;
     std::map<std::string, bool> mUniformBlockUseStructuredBufferMap;
     std::map<std::string, unsigned int> mUniformRegisterMap;

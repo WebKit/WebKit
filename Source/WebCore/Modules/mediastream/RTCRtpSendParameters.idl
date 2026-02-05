@@ -28,7 +28,6 @@
     EnabledBySetting=PeerConnectionEnabled,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCRtpSendParameters : RTCRtpParameters {
     required DOMString transactionId;
     required sequence<RTCRtpEncodingParameters> encodings;

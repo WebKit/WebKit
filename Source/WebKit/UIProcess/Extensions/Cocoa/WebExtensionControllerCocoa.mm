@@ -501,7 +501,7 @@ void WebExtensionController::addWebsiteDataStore(WebsiteDataStore& dataStore)
     if (!m_cookieStoreObserver)
         m_cookieStoreObserver = HTTPCookieStoreObserver::create(*this);
 
-    dataStore.protectedCookieStore()->registerObserver(*protectedCookieStoreObserver());
+    protect(dataStore.cookieStore())->registerObserver(*protect(m_cookieStoreObserver));
 }
 
 void WebExtensionController::removeWebsiteDataStore(WebsiteDataStore& dataStore)
@@ -515,7 +515,7 @@ void WebExtensionController::removeWebsiteDataStore(WebsiteDataStore& dataStore)
     m_websiteDataStores.remove(dataStore);
 
     if (RefPtr observer = m_cookieStoreObserver)
-        dataStore.protectedCookieStore()->unregisterObserver(*observer);
+        protect(dataStore.cookieStore())->unregisterObserver(*observer);
 
     if (m_websiteDataStores.isEmptyIgnoringNullReferences())
         m_cookieStoreObserver = nullptr;
@@ -531,7 +531,7 @@ void WebExtensionController::cookiesDidChange(API::HTTPCookieStore& cookieStore)
 
 bool WebExtensionController::isFeatureEnabled(const String& featureName) const
 {
-    WKPreferences *preferences = protectedConfiguration()->webViewConfiguration().preferences;
+    WKPreferences *preferences = protect(configuration())->webViewConfiguration().preferences;
 
     auto *cocoaFeatureName = featureName.createNSString().get();
     for (_WKFeature *feature in WKPreferences._features) {

@@ -111,19 +111,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!view)
         return NO;
 
-    UIViewController *presentedViewController = _presentedViewControllerWhileRotating.get() ? _presentedViewControllerWhileRotating.get() : self;
-    presentedViewController.modalPresentationStyle = UIModalPresentationPopover;
+    RetainPtr presentedViewController = _presentedViewControllerWhileRotating.get() ? _presentedViewControllerWhileRotating.get() : self;
+    presentedViewController.get().modalPresentationStyle = UIModalPresentationPopover;
 
-    UIPopoverPresentationController *presentationController = presentedViewController.popoverPresentationController;
-    presentationController.sourceView = view;
-    presentationController.sourceRect = presentationRect;
-    presentationController.permittedArrowDirections = _arrowDirections;
+    RetainPtr<UIPopoverPresentationController> presentationController = presentedViewController.get().popoverPresentationController;
+    presentationController.get().sourceView = view;
+    presentationController.get().sourceRect = presentationRect;
+    presentationController.get().permittedArrowDirections = _arrowDirections;
 
     if (_popoverPresentationControllerDelegateWhileRotating)
-        presentationController.delegate = _popoverPresentationControllerDelegateWhileRotating.get();
+        presentationController.get().delegate = _popoverPresentationControllerDelegateWhileRotating.get();
 
     _currentPresentingViewController = view._wk_viewControllerForFullScreenPresentation;
-    [_currentPresentingViewController presentViewController:presentedViewController animated:YES completion:nil];
+    [_currentPresentingViewController presentViewController:presentedViewController.get() animated:YES completion:nil];
 
     return YES;
 }
@@ -210,7 +210,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)updateSheetPosition
 {
-    UIViewController *presentedViewController = _presentedViewControllerWhileRotating.get() ? _presentedViewControllerWhileRotating.get() : self;
+    RetainPtr presentedViewController = _presentedViewControllerWhileRotating.get() ? _presentedViewControllerWhileRotating.get() : self;
 
     // There are two asynchronous events which might trigger this call, and we have to wait for both of them before doing something.
     // - One runloop iteration after rotation (to let the Web content re-layout, see below)

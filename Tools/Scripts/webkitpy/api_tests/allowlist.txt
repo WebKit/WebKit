@@ -255,7 +255,6 @@ TestWebKitAPI.ContentSecurityPolicy
 TestWebKitAPI.ContentWorld
 TestWebKitAPI.ContextMenuElementInfoWithQRCodeDetectionCrash
 TestWebKitAPI.ContextMenuMouseEvents
-TestWebKitAPI.CookieConsent
 TestWebKitAPI.Copying
 TestWebKitAPI.CtapPinTest
 TestWebKitAPI.CustomContentViewGestures

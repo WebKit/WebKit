@@ -326,7 +326,7 @@ void RemoteLayerTreeEventDispatcher::wheelEventHandlingCompleted(const PlatformW
         auto result = scrollingTree->handleWheelEventAfterDefaultHandling(wheelEvent, scrollingNodeID, gestureState);
         RunLoop::mainSingleton().dispatch([protectedThis, wasHandled, result]() {
             if (CheckedPtr scrollingCoordinator = protectedThis->m_scrollingCoordinator.get())
-                scrollingCoordinator->protectedWebPageProxy()->wheelEventHandlingCompleted(wasHandled || result.wasHandled);
+                protect(scrollingCoordinator->webPageProxy())->wheelEventHandlingCompleted(wasHandled || result.wasHandled);
         });
 
     });
@@ -350,11 +350,6 @@ RemoteLayerTreeDrawingAreaProxyMac& RemoteLayerTreeEventDispatcher::drawingAreaM
     return *downcast<RemoteLayerTreeDrawingAreaProxyMac>(CheckedRef { *m_scrollingCoordinator }->webPageProxy().drawingArea());
 }
 
-Ref<RemoteLayerTreeDrawingAreaProxyMac> RemoteLayerTreeEventDispatcher::protectedDrawingAreaMac() const
-{
-    return drawingAreaMac();
-}
-
 DisplayLink* RemoteLayerTreeEventDispatcher::displayLink() const
 {
     ASSERT(isMainRunLoop());
@@ -362,7 +357,7 @@ DisplayLink* RemoteLayerTreeEventDispatcher::displayLink() const
     if (!m_scrollingCoordinator)
         return nullptr;
 
-    return &protectedDrawingAreaMac()->displayLink();
+    return &protect(drawingAreaMac())->displayLink();
 }
 
 DisplayLink* RemoteLayerTreeEventDispatcher::existingDisplayLink() const
@@ -372,7 +367,7 @@ DisplayLink* RemoteLayerTreeEventDispatcher::existingDisplayLink() const
     if (!m_scrollingCoordinator)
         return nullptr;
 
-    return protectedDrawingAreaMac()->existingDisplayLink();
+    return protect(drawingAreaMac())->existingDisplayLink();
 }
 
 void RemoteLayerTreeEventDispatcher::startOrStopDisplayLink()
@@ -657,7 +652,7 @@ void RemoteLayerTreeEventDispatcher::animationsWereRemovedFromNode(RemoteLayerTr
     ASSERT(isMainRunLoop());
     assertIsHeld(m_animationLock);
     if (auto animationStack = m_animationStacks.take(node.layerID()))
-        animationStack->clear(node.protectedLayer().get());
+        animationStack->clear(protect(node.layer()).get());
 }
 
 void RemoteLayerTreeEventDispatcher::updateTimelinesRegistration(WebCore::ProcessIdentifier processIdentifier, const WebCore::AcceleratedTimelinesUpdate& timelinesUpdate, MonotonicTime now)

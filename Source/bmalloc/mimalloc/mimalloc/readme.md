@@ -12,7 +12,7 @@ is a general purpose allocator with excellent [performance](#performance) charac
 Initially developed by Daan Leijen for the runtime systems of the
 [Koka](https://koka-lang.github.io) and [Lean](https://github.com/leanprover/lean) languages.
 
-Latest release   : `v3.2.7` (2026-01-15) release candidate 2, please report any issues.  
+Latest release   : `v3.2.8` (2026-02-03) release candidate 3, please report any issues.  
 Latest v2 release: `v2.2.7` (2026-01-15).  
 Latest v1 release: `v1.9.7` (2026-01-15).
 
@@ -67,27 +67,31 @@ Notable aspects of the design include:
   of benchmarks. There is also good huge OS page support for larger server programs.
 
 The [documentation](https://microsoft.github.io/mimalloc) gives a full overview of the API.
-You can read more on the design of _mimalloc_ in the [technical report](https://www.microsoft.com/en-us/research/publication/mimalloc-free-list-sharding-in-action) which also has detailed benchmark results.
+You can read more on the design of mimalloc in the [technical report](https://www.microsoft.com/en-us/research/publication/mimalloc-free-list-sharding-in-action) which also has detailed benchmark results.
 
 Enjoy!
 
-### Branches
+### Versions
 
-* `main`: latest stable release (still based on `dev2`).
-* `dev`:  development branch for mimalloc v1. Use this branch for submitting PR's.
-* `dev2`: development branch for mimalloc v2. This branch is downstream of `dev` 
-          (and is essentially equal to `dev` except for `src/segment.c`). Uses larger sliced segments to manage
-          mimalloc pages that can reduce fragmentation.
-* `dev3`: development branch for mimalloc v3 rc1. This branch is downstream of `dev`. This version 
-          simplifies the lock-free ownership of previous versions, and improves sharing of memory between 
-          threads. On certain large workloads this version may use (much) less memory.
-          Also support true first-class heaps and more efficient heap-walking.
+There are three maintained versions of mimalloc. These are mostly equal except for how the OS memory is handled. 
+New development is mostly on v3, while v1 and v2 are maintained with security and bug fixes. 
+
+- __v1__: initial design of mimalloc (release tags: `v1.9.x`, development branch `dev`). Send PR's against this version if possible.
+- __v2__: main mimalloc version. Uses thread-local segments to reduce fragmentation. (release tags: `v2.2.x`, development branch `dev2` and `main`)
+- __v3__: simplifies the lock-free design of previous versions and improves sharing of 
+        memory between threads. On certain large workloads this version may use 
+        (much) less memory. Also supports true first-class heaps (that can allocate from any thread) 
+        and has more efficient heap-walking (for the CPython GC for example).
+        (release tags: `v3.2.x`, development branch `dev3`).
 
 ### Releases
 
-* 2026-01-15, `v1.9.7`, `v2.2.7`, `v3.2.7` (rc2) : Fix zero initializing blocks that were OS allocated.  
+* 2026-02-03, `v3.2.8` (rc3): Fix thread reinitialize issue on macOS. Fix SIMD codegen bug on older
+  GCC versions. Extend Windows TLS slot limit from 64 to 1088. Report commit statistics more precise.
+  Fixes issue in free-page search in arenas.
+* 2026-01-15, `v1.9.7`, `v2.2.7`, `v3.2.7` (rc2): Fix zero initializing blocks that were OS allocated.  
   For v3 various bug and performance fixes. Fix Debian 32-bit compilation.
-* 2026-01-08, `v1.9.6`, `v2.2.6`, `v3.2.6` (rc1) : Important bug fixes. Many improvements to v3 including 
+* 2026-01-08, `v1.9.6`, `v2.2.6`, `v3.2.6` (rc1): Important bug fixes. Many improvements to v3 including 
   true first-class heaps where one can allocate in heap from any thread, and track statistics per heap as well.
   Added `MIMALLOC_ALLOW_THP` option. This is by default enabled except on Android. When THP is detected on v3,
   mimalloc will set the `MIMALLOC_MINIMAL_PURGE_SIZE` to 2MiB to avoid breaking up potential THP huge pages.
@@ -265,33 +269,52 @@ and statistics (`MIMALLOC_SHOW_STATS=1`) (in the debug version):
 
 175451865205073170563711388363 = 374456281610909315237213 * 468551
 
-heap stats:     peak      total      freed       unit
-normal   2:    16.4 kb    17.5 mb    17.5 mb      16 b   ok
-normal   3:    16.3 kb    15.2 mb    15.2 mb      24 b   ok
-normal   4:      64 b      4.6 kb     4.6 kb      32 b   ok
-normal   5:      80 b    118.4 kb   118.4 kb      40 b   ok
-normal   6:      48 b       48 b       48 b       48 b   ok
-normal  17:     960 b      960 b      960 b      320 b   ok
+subproc 0
+ blocks          peak       total     current       block      total#
+  bin S    4:    75.3 KiB    55.2 MiB     0          32   B       1.8 M    ok
+  bin S    6:    31.0 KiB   180.4 KiB     0          48   B       3.8 K    ok
+  bin S    8:    64   B      64   B       0          64   B       1        ok
+  bin S    9:   160   B     160   B       0          80   B       2        ok
+  bin S   17:     1.2 KiB     1.2 KiB     0         320   B       4        ok
+  bin S   21:   640   B       3.1 KiB     0         640   B       5        ok
+  bin S   33:     5.0 KiB     5.0 KiB     0           5.0 KiB     1        ok
 
-heap stats:     peak      total      freed       unit
-    normal:    33.9 kb    32.8 mb    32.8 mb       1 b   ok
-      huge:       0 b        0 b        0 b        1 b   ok
-     total:    33.9 kb    32.8 mb    32.8 mb       1 b   ok
-malloc requested:         32.8 mb
+  binned    :    84.2 Ki     41.5 Mi      0                                ok
+  huge      :     0           0           0                                ok
+  total     :    84.2 KiB    41.5 MiB     0
+  malloc req:                29.7 MiB
 
- committed:    58.2 kb    58.2 kb    58.2 kb       1 b   ok
-  reserved:     2.0 mb     2.0 mb     2.0 mb       1 b   ok
-     reset:       0 b        0 b        0 b        1 b   ok
-  segments:       1          1          1
--abandoned:       0
-     pages:       6          6          6
--abandoned:       0
-     mmaps:       3
- mmap fast:       0
- mmap slow:       1
-   threads:       0
-   elapsed:     2.022s
-   process: user: 1.781s, system: 0.016s, faults: 756, reclaims: 0, rss: 2.7 mb
+ pages           peak       total     current       block      total#
+  touched   :   152.8 KiB   152.8 KiB   152.8 KiB
+  pages     :     8          14           0                                ok
+  abandoned :     1         249           0                                ok
+  reclaima  :     0
+  reclaimf  :   249
+  reabandon :     0
+  waits     :     0
+  extended  :    38
+  retire    :    35
+  searches  :     0.7 avg
+
+ arenas          peak       total     current       block      total#
+  reserved  :     1.0 GiB     1.0 GiB     1.0 GiB
+  committed :     4.8 MiB     4.8 MiB     4.4 MiB
+  reset     :     0
+  purged    :   385.5 Ki
+  arenas    :     1
+  rollback  :     0
+  mmaps     :     3
+  commits   :     0
+  resets    :     1
+  purges    :     2
+  guarded   :     0
+  heaps     :     1           1           1
+
+ process         peak       total     current       block      total#
+  threads   :     1           1           1
+  numa nodes:     1
+  elapsed   :     0.553 s
+  process   : user: 0.557 s, system: 0.013 s, faults: 29, peak rss: 2.1 MiB, peak commit: 4.8 MiB
 ```
 
 The above model of using the `mi_` prefixed API is not always possible
@@ -648,7 +671,7 @@ as [mimalloc-bench](https://github.com/daanx/mimalloc-bench).
 ## Benchmark Results on a 16-core AMD 5950x (Zen3)
 
 Testing on the 16-core AMD 5950x processor at 3.4Ghz (4.9Ghz boost), with
-with 32GiB memory at 3600Mhz, running	Ubuntu 20.04 with glibc 2.31 and GCC 9.3.0.
+32GiB memory at 3600Mhz, running	Ubuntu 20.04 with glibc 2.31 and GCC 9.3.0.
 
 We measure three versions of _mimalloc_: the main version `mi` (tag:v1.7.0),
 the new v2.0 beta version as `xmi` (tag:v2.0.0), and the main version in secure mode as `smi` (tag:v1.7.0).

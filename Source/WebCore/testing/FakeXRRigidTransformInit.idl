@@ -27,7 +27,6 @@
 [
     Conditional=WEBXR,
     EnabledBySetting=WebXREnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary FakeXRRigidTransformInit {
     // must have three elements
     required sequence<float> position;

@@ -29,11 +29,13 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "CAFrameRateRangeUtilities.h"
+#import "PageClient.h"
 #import "RemoteScrollingCoordinatorProxyIOS.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
 #import "WebProcessProxy.h"
 #import <QuartzCore/CADisplayLink.h>
+#import <UIKit/UIScreen.h>
 #import <WebCore/DisplayUpdate.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/ScrollView.h>
@@ -43,8 +45,9 @@
 constexpr WebCore::FramesPerSecond DisplayLinkFramesPerSecond = 60;
 
 @interface WKDisplayLinkHandler : NSObject {
-    WebKit::RemoteLayerTreeDrawingAreaProxy* _drawingAreaProxy;
-    CADisplayLink *_displayLink;
+    WeakPtr<WebKit::RemoteLayerTreeDrawingAreaProxy> _drawingAreaProxy;
+    RetainPtr<CADisplayLink> _displayLink;
+    __weak UIScreen *_screenForDisplayLink;
     WebCore::FramesPerSecond _preferredFramesPerSecond;
     BOOL _wantsHighFrameRate;
     WebCore::DisplayUpdate _currentUpdate;
@@ -55,6 +58,7 @@ constexpr WebCore::FramesPerSecond DisplayLinkFramesPerSecond = 60;
 }
 
 - (id)initWithDrawingAreaProxy:(WebKit::RemoteLayerTreeDrawingAreaProxy*)drawingAreaProxy;
+- (void)windowScreenDidChange;
 - (void)displayLinkFired:(CADisplayLink *)sender;
 - (void)invalidate;
 - (void)schedule;
@@ -92,17 +96,32 @@ static void* displayRefreshRateObservationContext = &displayRefreshRateObservati
             createDisplayLink = false;
         }
 #endif
-        if (createDisplayLink) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            // FIXME: CoreAnimation version deprecated rdar://164090713
-            _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkFired:)];
-        ALLOW_DEPRECATED_DECLARATIONS_END
-            [_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
-            [_displayLink.display addObserver:self forKeyPath:@"refreshRate" options:NSKeyValueObservingOptionNew context:displayRefreshRateObservationContext];
-            _displayLink.paused = YES;
-        }
+        if (createDisplayLink)
+            [self _createDisplayLink];
     }
     return self;
+}
+
+- (void)windowScreenDidChange
+{
+    if (!_displayLink)
+        return;
+
+    RetainPtr screen = [self _screenForDisplayLink];
+    if (_screenForDisplayLink == screen.get())
+        return;
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    if (!_screenForDisplayLink && screen == [UIScreen mainScreen])
+        return;
+ALLOW_DEPRECATED_DECLARATIONS_END
+
+    BOOL wasPaused = [_displayLink isPaused];
+
+    [self invalidate];
+
+    [self _createDisplayLink];
+    [_displayLink setPaused:wasPaused];
 }
 
 - (void)dealloc
@@ -114,7 +133,8 @@ static void* displayRefreshRateObservationContext = &displayRefreshRateObservati
 - (void)displayLinkFired:(CADisplayLink *)sender
 {
     ASSERT(isUIThread());
-    _drawingAreaProxy->didRefreshDisplay();
+    if (RefPtr drawingArea = _drawingAreaProxy)
+        drawingArea->didRefreshDisplay();
     _currentUpdate = _currentUpdate.nextUpdate();
 }
 
@@ -122,14 +142,15 @@ static void* displayRefreshRateObservationContext = &displayRefreshRateObservati
 - (void)timerFired
 {
     ASSERT(isUIThread());
-    _drawingAreaProxy->didRefreshDisplay();
+    if (RefPtr drawingArea = _drawingAreaProxy)
+        drawingArea->didRefreshDisplay();
     _currentUpdate = _currentUpdate.nextUpdate();
 }
 #endif // ENABLE(TIMER_DRIVEN_DISPLAY_REFRESH_FOR_TESTING)
 
 - (void)invalidate
 {
-    [_displayLink.display removeObserver:self forKeyPath:@"refreshRate" context:displayRefreshRateObservationContext];
+    [_displayLink.get().display removeObserver:self forKeyPath:@"refreshRate" context:displayRefreshRateObservationContext];
     [_displayLink invalidate];
     _displayLink = nullptr;
 
@@ -141,7 +162,7 @@ static void* displayRefreshRateObservationContext = &displayRefreshRateObservati
 
 - (void)schedule
 {
-    _displayLink.paused = NO;
+    _displayLink.get().paused = NO;
 #if ENABLE(TIMER_DRIVEN_DISPLAY_REFRESH_FOR_TESTING)
     if (!_updateTimer && _overrideFrameRate.has_value())
         _updateTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 / _overrideFrameRate.value() target:self selector:@selector(timerFired) userInfo:nil repeats:YES];
@@ -150,7 +171,7 @@ static void* displayRefreshRateObservationContext = &displayRefreshRateObservati
 
 - (void)pause
 {
-    _displayLink.paused = YES;
+    _displayLink.get().paused = YES;
 #if ENABLE(TIMER_DRIVEN_DISPLAY_REFRESH_FOR_TESTING)
     [_updateTimer invalidate];
     _updateTimer = nil;
@@ -166,9 +187,9 @@ static void* displayRefreshRateObservationContext = &displayRefreshRateObservati
 
 - (WebCore::FramesPerSecond)nominalFramesPerSecond
 {
-    RefPtr page = _drawingAreaProxy->page();
+    RefPtr page = _drawingAreaProxy ? protect(*_drawingAreaProxy)->page() : nullptr;
     if (page && (page->preferences().webAnimationsCustomFrameRateEnabled() || !page->preferences().preferPageRenderingUpdatesNear60FPSEnabled())) {
-        auto minimumRefreshInterval = _displayLink.maximumRefreshRate;
+        auto minimumRefreshInterval = _displayLink.get().maximumRefreshRate;
         if (minimumRefreshInterval > 0)
             return std::round(1.0 / minimumRefreshInterval);
     }
@@ -178,7 +199,7 @@ static void* displayRefreshRateObservationContext = &displayRefreshRateObservati
 
 - (void)didChangeNominalFramesPerSecond
 {
-    RefPtr page = _drawingAreaProxy->page();
+    RefPtr page = _drawingAreaProxy ? protect(*_drawingAreaProxy)->page() : nullptr;
     if (!page)
         return;
     if (auto displayID = page->displayID())
@@ -214,17 +235,17 @@ static void* displayRefreshRateObservationContext = &displayRefreshRateObservati
         effectiveFramesPerSecond = frameRateRange.maximum;
         [_displayLink setPreferredFrameRateRange:frameRateRange];
 
-        RefPtr page = _drawingAreaProxy->page();
+        RefPtr page = _drawingAreaProxy ? protect(*_drawingAreaProxy)->page() : nullptr;
         auto preferPageRenderingUpdatesNear60FPSEnabled = !page || page->preferences().preferPageRenderingUpdatesNear60FPSEnabled();
         auto highFrameRateReason = preferPageRenderingUpdatesNear60FPSEnabled ? WebKit::webAnimationHighFrameRateReason :
             WebKit::preferPageRenderingUpdatesNear60FPSDisabledHighFrameRateReason;
         [_displayLink setHighFrameRateReason:highFrameRateReason];
 #else
-        effectiveFramesPerSecond = 1.0 / _displayLink.maximumRefreshRate;
-        _displayLink.preferredFramesPerSecond = effectiveFramesPerSecond;
+        effectiveFramesPerSecond = 1.0 / _displayLink.get().maximumRefreshRate;
+        _displayLink.get().preferredFramesPerSecond = effectiveFramesPerSecond;
 #endif
     } else
-        _displayLink.preferredFramesPerSecond = effectiveFramesPerSecond;
+        _displayLink.get().preferredFramesPerSecond = effectiveFramesPerSecond;
 
     if (_currentUpdate.updatesPerSecond != effectiveFramesPerSecond)
         _currentUpdate = { 0, effectiveFramesPerSecond };
@@ -233,6 +254,39 @@ static void* displayRefreshRateObservationContext = &displayRefreshRateObservati
 - (BOOL)isDisplayRefreshRelevantForPreferredUpdateFrequency
 {
     return _currentUpdate.relevantForUpdateFrequency(_preferredFramesPerSecond);
+}
+
+- (UIScreen *)_screenForDisplayLink
+{
+    RefPtr page = _drawingAreaProxy->page();
+    if (!page)
+        return nil;
+
+    RefPtr pageClient = page->pageClient();
+    if (!pageClient)
+        return nil;
+
+    return pageClient->screen();
+}
+
+- (void)_createDisplayLink
+{
+    ASSERT(!_displayLink);
+
+    _screenForDisplayLink = [self _screenForDisplayLink];
+
+    if (_screenForDisplayLink)
+        _displayLink = [_screenForDisplayLink displayLinkWithTarget:self selector:@selector(displayLinkFired:)];
+    else {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        // FIXME: CoreAnimation version deprecated rdar://164090713
+        _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkFired:)];
+ALLOW_DEPRECATED_DECLARATIONS_END
+    }
+
+    [_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
+    [[_displayLink display] addObserver:self forKeyPath:@"refreshRate" options:NSKeyValueObservingOptionNew context:displayRefreshRateObservationContext];
+    [_displayLink setPaused:YES];
 }
 
 @end
@@ -345,6 +399,11 @@ void RemoteLayerTreeDrawingAreaProxyIOS::pauseDisplayLinkIfNeeded()
 std::optional<WebCore::FramesPerSecond> RemoteLayerTreeDrawingAreaProxyIOS::displayNominalFramesPerSecond()
 {
     return [displayLinkHandler() nominalFramesPerSecond];
+}
+
+void RemoteLayerTreeDrawingAreaProxyIOS::windowScreenDidChange(WebCore::PlatformDisplayID)
+{
+    [m_displayLinkHandler windowScreenDidChange];
 }
 
 UIView *RemoteLayerTreeDrawingAreaProxyIOS::viewWithLayerIDForTesting(WebCore::PlatformLayerIdentifier layerID) const

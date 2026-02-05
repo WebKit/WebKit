@@ -94,7 +94,8 @@ public:
 
     ExceptionOr<DOMException*> error() const;
 
-    RefPtr<IDBTransaction> transaction() const;
+    IDBTransaction* transaction() const;
+    IDBTransaction* transactionForBindings() const;
     
     enum class ReadyState { Pending, Done };
     ReadyState readyState() const { return m_readyState; }
@@ -178,8 +179,6 @@ private:
     void clearWrappers();
 
 protected:
-    RefPtr<IDBTransaction> protectedTransaction() const;
-
     // FIXME: Protected data members aren't great for maintainability.
     // Consider adding protected helper functions and making these private.
     RefPtr<IDBTransaction> m_transaction;

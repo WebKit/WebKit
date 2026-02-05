@@ -145,7 +145,7 @@ void PluginView::Stream::start()
     RefPtr frame = m_pluginView->frame();
     ASSERT(frame);
 
-    WebProcess::singleton().protectedWebLoaderStrategy()->schedulePluginStreamLoad(*frame, *this, ResourceRequest { m_request }, [this, protectedThis = Ref { *this }](RefPtr<NetscapePlugInStreamLoader>&& loader) {
+    protect(WebProcess::singleton().webLoaderStrategy())->schedulePluginStreamLoad(*frame, *this, ResourceRequest { m_request }, [this, protectedThis = Ref { *this }](RefPtr<NetscapePlugInStreamLoader>&& loader) {
         m_loader = WTF::move(loader);
     });
 }
@@ -270,11 +270,6 @@ RefPtr<WebPage> PluginView::protectedWebPage() const
 LocalFrame* PluginView::frame() const
 {
     return m_pluginElement->document().frame();
-}
-
-RefPtr<LocalFrame> PluginView::protectedFrame() const
-{
-    return frame();
 }
 
 void PluginView::manualLoadDidReceiveResponse(const ResourceResponse& response)
@@ -444,7 +439,7 @@ void PluginView::initializePlugin()
         if (RefPtr frameView = frame->view())
             frameView->setNeedsLayoutAfterViewConfigurationChange();
         if (frame->isMainFrame() && plugin->isFullFramePlugin())
-            WebFrame::fromCoreFrame(*frame)->protectedPage()->send(Messages::WebPageProxy::MainFramePluginHandlesPageScaleGestureDidChange(plugin->handlesPageScaleFactor(), plugin->minScaleFactor(), plugin->maxScaleFactor()));
+            protect(WebFrame::fromCoreFrame(*frame)->page())->send(Messages::WebPageProxy::MainFramePluginHandlesPageScaleGestureDidChange(plugin->handlesPageScaleFactor(), plugin->minScaleFactor(), plugin->maxScaleFactor()));
     }
 }
 
@@ -1228,7 +1223,7 @@ void PluginView::updateDocumentForPluginSizingBehavior()
     if (!m_plugin->shouldSizeToFitContent())
         return;
     // The styles in PluginDocumentParser are constructed to respond to this class.
-    if (RefPtr documentElement = m_pluginElement->protectedDocument()->documentElement())
+    if (RefPtr documentElement = protect(m_pluginElement->document())->documentElement())
         documentElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, "plugin-fits-content"_s);
 }
 
@@ -1251,6 +1246,13 @@ bool PluginView::pluginDelegatesScrollingToMainFrame() const
 bool PluginView::isPresentingLockedContent() const
 {
     return m_isInitialized && m_plugin->isLocked();
+}
+
+void PluginView::effectiveAppearanceDidChange()
+{
+    if (!m_isInitialized)
+        return;
+    m_plugin->effectiveAppearanceDidChange();
 }
 
 } // namespace WebKit

@@ -42,6 +42,7 @@
 
 #if PLATFORM(COCOA)
 #include <wtf/BlockPtr.h>
+#include <wtf/WeakObjCPtr.h>
 #endif
 
 #if PLATFORM(GTK)
@@ -97,6 +98,11 @@ namespace WebKit {
 
 class ViewSnapshot;
 class WebBackForwardList;
+#if ENABLE(BACK_FORWARD_LIST_SWIFT)
+class WebBackForwardListWrapper;
+#else
+using WebBackForwardListWrapper = WebBackForwardList;
+#endif
 class WebBackForwardListItem;
 class WebPageProxy;
 class WebProcessProxy;
@@ -232,7 +238,11 @@ private:
     void didStartProvisionalOrSameDocumentLoadForMainFrame();
 
 #if PLATFORM(COCOA)
+#if ENABLE(BACK_FORWARD_LIST_SWIFT)
+    std::optional<WebBackForwardList> backForwardListForNavigation() const;
+#else
     WebBackForwardList* backForwardListForNavigation() const;
+#endif
 #endif
 
     class SnapshotRemovalTracker : public CanMakeCheckedPtr<SnapshotRemovalTracker> {
@@ -337,7 +347,6 @@ private:
         void setShouldIgnorePinnedState(bool ignore) { m_shouldIgnorePinnedState = ignore; }
 
     private:
-        Ref<ViewGestureController> protectedViewGestureController() const;
 
         bool tryToStartSwipe(PlatformScrollEvent);
         bool scrollEventCanBecomeSwipe(PlatformScrollEvent, SwipeDirection&);
@@ -432,7 +441,7 @@ private:
 
     BlockPtr<void (CGRect)> m_didMoveSwipeSnapshotCallback;
 #elif PLATFORM(IOS_FAMILY)
-    UIView* m_liveSwipeView { nullptr };
+    WeakObjCPtr<UIView> m_liveSwipeView;
     RetainPtr<UIView> m_liveSwipeViewClippingView;
     RetainPtr<UIView> m_snapshotView;
     RetainPtr<UIView> m_transitionContainerView;

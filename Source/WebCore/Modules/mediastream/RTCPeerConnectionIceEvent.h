@@ -38,8 +38,8 @@ public:
     virtual ~RTCPeerConnectionIceEvent();
 
     struct Init : EventInit {
-        RefPtr<RTCIceCandidate> candidate;
-        String url;
+        std::optional<RefPtr<RTCIceCandidate>> candidate;
+        std::optional<String> url;
     };
 
     static Ref<RTCPeerConnectionIceEvent> create(const AtomString& type, Init&&);

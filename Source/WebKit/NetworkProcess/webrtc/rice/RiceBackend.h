@@ -80,6 +80,7 @@ public:
 
     void sendData(unsigned, WebCore::RTCIceProtocol, String, String, WebCore::SharedMemory::Handle&&);
     void finalizeStream(unsigned);
+    void setSocketTypeOfService(unsigned, unsigned);
 
     using GatherSocketAddressesCallback = CompletionHandler<void(HashMap<std::pair<String, WebCore::RTCIceProtocol>, String>&&)>;
     void gatherSocketAddresses(WebCore::ScriptExecutionContextIdentifier, unsigned, GatherSocketAddressesCallback&&);

@@ -90,6 +90,7 @@ TextExtractionTestOptions* toTextExtractionTestOptions(JSContextRef context, JSV
     }();
     options.nodeIdentifierInclusion = stringProperty(context, (JSObjectRef)argument, "nodeIdentifierInclusion");
     options.outputFormat = stringProperty(context, (JSObjectRef)argument, "outputFormat");
+    options.wordLimitPolicy = stringProperty(context, (JSObjectRef)argument, "wordLimitPolicy");
     return &options;
 }
 

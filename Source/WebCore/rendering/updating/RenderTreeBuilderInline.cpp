@@ -258,7 +258,7 @@ void RenderTreeBuilder::Inline::splitFlow(RenderInline& parent, RenderObject* be
         block = block->containingBlock();
     } else {
         // No anonymous block available for use. Make one.
-        createdPre = Block::createAnonymousBlockWithStyle(block->protectedDocument(), block->style());
+        createdPre = Block::createAnonymousBlockWithStyle(protect(block->document()), block->style());
         pre = createdPre.get();
         madeNewBeforeBlock = true;
     }
@@ -426,7 +426,7 @@ void RenderTreeBuilder::Inline::childBecameNonInline(RenderInline& parent, Rende
         return;
 
     // We have to split the parent flow.
-    auto newBox = Block::createAnonymousBlockWithStyle(parent.containingBlock()->protectedDocument(), parent.containingBlock()->style());
+    auto newBox = Block::createAnonymousBlockWithStyle(protect(parent.containingBlock()->document()), parent.containingBlock()->style());
     newBox->setIsContinuation();
     auto* oldContinuation = parent.continuation();
     if (oldContinuation)

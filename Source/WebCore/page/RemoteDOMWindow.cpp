@@ -128,7 +128,7 @@ ExceptionOr<void> RemoteDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGloba
     auto sourceOrigin = sourceDocument->securityOrigin().data();
 
     MessageWithMessagePorts messageWithPorts { messageData.releaseReturnValue(), disentangledPorts.releaseReturnValue() };
-    if (auto* remoteFrame = frame())
+    if (RefPtr remoteFrame = frame())
         remoteFrame->client().postMessageToRemote(sourceFrame->frameID(), sourceOrigin, remoteFrame->frameID(), target, messageWithPorts);
     return { };
 }

@@ -103,7 +103,7 @@ void SplitTextNodeCommand::doReapply()
 void SplitTextNodeCommand::insertText1AndTrimText2()
 {
     Ref text2 = m_text2;
-    if (text2->protectedParentNode()->insertBefore(*protectedText1(), text2.copyRef()).hasException())
+    if (protect(text2->parentNode())->insertBefore(*protectedText1(), text2.copyRef()).hasException())
         return;
     text2->deleteData(0, m_offset);
 }

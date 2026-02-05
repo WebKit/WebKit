@@ -75,7 +75,7 @@ private:
     }
 
     Ref<const Wasm::RTT> m_rtt;
-    const Wasm::StructType* m_structType;
+    SUPPRESS_UNCOUNTED_MEMBER const Wasm::StructType* m_structType;
     uint32_t m_typeIndex;
     int32_t m_allocatorsBaseOffset;
 };

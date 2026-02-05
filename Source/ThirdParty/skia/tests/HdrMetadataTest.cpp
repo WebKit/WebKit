@@ -71,20 +71,25 @@ DEF_TEST(HdrMetadata_ParseSerialize_MasteringDisplayColorVolume, r) {
 }
 
 DEF_TEST(HdrMetadata_Agtm_Cubic, r) {
-    skhdr::AgtmImpl::PiecewiseCubicFunction cubic = {
-        10,
-        {0.10720647f, 0.76246667f, 1.39535723f, 2.17572099f, 2.47834070f,
-         3.14288223f, 3.35428070f, 4.24864607f, 4.59087493f, 4.80373641f},
-        {0.37384606f, 0.93143060f, 0.f,         1.23009354f, 1.25542898f,
-         2.22460677f, 2.69226748f, 3.45838813f, 4.44597502f, 5.19196203f},
-        {0.},
+    skhdr::AdaptiveGlobalToneMap::GainCurve cubic = {
+        {   { 0.10720647f, 0.37384606f, 0.f },
+            { 0.76246667f, 0.93143060f, 0.f },
+            { 1.39535723f, 0.f,         0.f },
+            { 2.17572099f, 1.23009354f, 0.f },
+            { 2.47834070f, 1.25542898f, 0.f },
+            { 3.14288223f, 2.22460677f, 0.f },
+            { 3.35428070f, 2.69226748f, 0.f },
+            { 4.24864607f, 3.45838813f, 0.f },
+            { 4.59087493f, 4.44597502f, 0.f },
+            { 4.80373641f, 5.19196203f, 0.f }
+        }
     };
-    cubic.populateSlopeFromPCHIP();
+    skhdr::AgtmHelpers::PopulateSlopeFromPCHIP(cubic);
 
     const float mExpected[10] = { 2.03242568f, 0.f,         0.f,         0.14042951f, 0.14250506f,
                                   1.82245618f, 1.35855757f, 1.43703564f, 3.18918733f, 3.74186390f};
     for (size_t i = 0; i < 10; ++i) {
-        REPORTER_ASSERT(r, SkScalarNearlyEqual(cubic.fM[i], mExpected[i], 0.0001f));
+        REPORTER_ASSERT(r, SkScalarNearlyEqual(cubic.fControlPoints[i].fM, mExpected[i], 0.0001f));
     }
 
     const float yExpected[11] = {
@@ -93,16 +98,16 @@ DEF_TEST(HdrMetadata_Agtm_Cubic, r) {
         5.13419092f};
     for (size_t i = 0; i < 11; ++i) {
         const float x = i / 2.f;
-        const float y = cubic.evaluate(x);
+        const float y = skhdr::AgtmHelpers::EvaluateGainCurve(cubic, x);
         REPORTER_ASSERT(r, SkScalarNearlyEqual(y, yExpected[i], 0.0001f));
     }
 }
 
 DEF_TEST(HdrMetadata_Agtm_Mix, r) {
-    auto test = [&r](const std::string& name, skhdr::AgtmImpl::ComponentMixingFunction mix,
+    auto test = [&r](const std::string& name, skhdr::AdaptiveGlobalToneMap::ComponentMixingFunction mix,
                      SkColor4f input, SkColor4f expected) {
         skiatest::ReporterContext ctx(r, name);
-        SkColor4f actual = mix.evaluate(input);
+        SkColor4f actual = skhdr::AgtmHelpers::EvaluateComponentMixingFunction(mix, input);
         REPORTER_ASSERT(r, actual.fR == expected.fR);
         REPORTER_ASSERT(r, actual.fG == expected.fG);
         REPORTER_ASSERT(r, actual.fB == expected.fB);
@@ -111,57 +116,63 @@ DEF_TEST(HdrMetadata_Agtm_Mix, r) {
     };
 
     test("Red only",
-         skhdr::AgtmImpl::ComponentMixingFunction({.fRed=1.f}),
+         skhdr::AdaptiveGlobalToneMap::ComponentMixingFunction({.fRed=1.f}),
          SkColor4f({0.5f, 0.75f, 0.25f, 1.f}),
          SkColor4f({0.5f, 0.5f,  0.5f,  1.f}));
 
     test("Green only",
-         skhdr::AgtmImpl::ComponentMixingFunction({.fGreen=1.f}),
+         skhdr::AdaptiveGlobalToneMap::ComponentMixingFunction({.fGreen=1.f}),
          SkColor4f({0.75f, 0.5f, 0.25f, 1.f}),
          SkColor4f({0.5f,  0.5f, 0.5f,  1.f}));
 
     test("Blue only",
-         skhdr::AgtmImpl::ComponentMixingFunction({.fBlue=1.f}),
+         skhdr::AdaptiveGlobalToneMap::ComponentMixingFunction({.fBlue=1.f}),
          SkColor4f({0.75f, 0.25f, 0.5f, 1.f}),
          SkColor4f({0.5f,  0.5f,  0.5f,  1.f}));
 
     test("Max only",
-         skhdr::AgtmImpl::ComponentMixingFunction({.fMax=1.f}),
+         skhdr::AdaptiveGlobalToneMap::ComponentMixingFunction({.fMax=1.f}),
          SkColor4f({0.75f, 0.5f,  0.25f, 1.f}),
          SkColor4f({0.75f, 0.75f, 0.75f, 1.f}));
 
     test("Min only",
-         skhdr::AgtmImpl::ComponentMixingFunction({.fMin=1.f}),
+         skhdr::AdaptiveGlobalToneMap::ComponentMixingFunction({.fMin=1.f}),
          SkColor4f({0.75f, 0.5f,  0.25f, 1.f}),
          SkColor4f({0.25f, 0.25f, 0.25f, 1.f}));
 
     test("Component only",
-         skhdr::AgtmImpl::ComponentMixingFunction({.fComponent=1.f}),
+         skhdr::AdaptiveGlobalToneMap::ComponentMixingFunction({.fComponent=1.f}),
          SkColor4f({0.75f, 0.5f, 0.25f, 1.f}),
          SkColor4f({0.75f, 0.5f, 0.25f, 1.f}));
 
     test("CIE Y (luminance)",
-         skhdr::AgtmImpl::ComponentMixingFunction({.fRed=0.2627f, .fGreen=0.6780f, .fBlue=0.0593f}),
+         skhdr::AdaptiveGlobalToneMap::ComponentMixingFunction(
+             {.fRed=0.2627f, .fGreen=0.6780f, .fBlue=0.0593f}),
          SkColor4f({0.75f,    0.5f,     0.25f,    0.125f}),
          SkColor4f({0.55085f, 0.55085f, 0.55085f, 0.125f}));
 
     test("max-component",
-         skhdr::AgtmImpl::ComponentMixingFunction({.fMax=0.75f, .fComponent=0.25f}),
+         skhdr::AdaptiveGlobalToneMap::ComponentMixingFunction({.fMax=0.75f, .fComponent=0.25f}),
          SkColor4f({0.75f, 0.5f,    0.25f,   0.125f}),
          SkColor4f({0.75f, 0.6875f, 0.6250f, 0.125f}));
 
 }
 
 DEF_TEST(HdrMetadata_Agtm_RWTMO, r) {
-    skhdr::AgtmImpl agtm;
-    agtm.fBaselineHdrHeadroom = 1.f;
-    agtm.populateUsingRwtmo();
+    skhdr::AdaptiveGlobalToneMap agtm = {
+        .fHeadroomAdaptiveToneMap = {{
+            .fBaselineHdrHeadroom = 1.f,
+        }}
+    };
+    auto& hatm = agtm.fHeadroomAdaptiveToneMap.value();
+    skhdr::AgtmHelpers::PopulateUsingRwtmo(hatm);
 
-    REPORTER_ASSERT(r, memcmp(&agtm.fGainApplicationSpacePrimaries, &SkNamedPrimaries::kRec2020,
+    REPORTER_ASSERT(r, memcmp(&hatm.fGainApplicationSpacePrimaries, &SkNamedPrimaries::kRec2020,
                               sizeof(SkColorSpacePrimaries)) == 0);
-    REPORTER_ASSERT(r, agtm.fNumAlternateImages == 2);
-    REPORTER_ASSERT(r, agtm.fAlternateHdrHeadroom[0] == 0.f);
-    REPORTER_ASSERT(r, SkScalarNearlyEqual(agtm.fAlternateHdrHeadroom[1], 0.6151137835929048f));
+    REPORTER_ASSERT(r, hatm.fAlternateImages.size() == 2);
+    REPORTER_ASSERT(r, hatm.fAlternateImages[0].fHdrHeadroom == 0.f);
+    REPORTER_ASSERT(r, SkScalarNearlyEqual(hatm.fAlternateImages[1].fHdrHeadroom,
+                                           0.6151137835929048f));
 
     const float xExpected[2][8] = {
         {1.00000f, 1.06461f, 1.15531f, 1.27209f, 1.41494f, 1.58388f, 1.77890f, 2.00000f},
@@ -177,24 +188,25 @@ DEF_TEST(HdrMetadata_Agtm_RWTMO, r) {
     };
 
     for (size_t a = 0; a < 2; ++a) {
-        const auto& cubic = agtm.fGainFunction[a].fPiecewiseCubic;
-        REPORTER_ASSERT(r, cubic.fNumControlPoints == 8);
+        const auto& cubic = hatm.fAlternateImages[a].fColorGainFunction.fGainCurve;
+        REPORTER_ASSERT(r, cubic.fControlPoints.size() == 8u);
         for (size_t c = 0; c < 8; ++c) {
-            REPORTER_ASSERT(r, SkScalarNearlyEqual(xExpected[a][c], cubic.fX[c]));
-            REPORTER_ASSERT(r, SkScalarNearlyEqual(yExpected[a][c], cubic.fY[c]));
-            REPORTER_ASSERT(r, SkScalarNearlyEqual(mExpected[a][c], cubic.fM[c]));
+            REPORTER_ASSERT(r, SkScalarNearlyEqual(xExpected[a][c], cubic.fControlPoints[c].fX));
+            REPORTER_ASSERT(r, SkScalarNearlyEqual(yExpected[a][c], cubic.fControlPoints[c].fY));
+            REPORTER_ASSERT(r, SkScalarNearlyEqual(mExpected[a][c], cubic.fControlPoints[c].fM));
         }
     }
 }
 
 DEF_TEST(HdrMetadata_Agtm_Weighting, r) {
-    skhdr::AgtmImpl agtm;
+    skhdr::AdaptiveGlobalToneMap::HeadroomAdaptiveToneMap hatm;
 
-    auto test = [&r, &agtm](const std::string& name,
+    auto test = [&r, &hatm](const std::string& name,
                             float targetedHdrHeadroom,
-                            const skhdr::AgtmImpl::Weighting& wExpected) {
+                            const skhdr::AgtmHelpers::Weighting& wExpected) {
         skiatest::ReporterContext ctx(r, name);
-        skhdr::AgtmImpl::Weighting w = agtm.computeWeighting(targetedHdrHeadroom);
+        skhdr::AgtmHelpers::Weighting w = skhdr::AgtmHelpers::ComputeWeighting(
+                hatm, targetedHdrHeadroom);
         REPORTER_ASSERT(r, w.fWeight[0] == wExpected.fWeight[0]);
         REPORTER_ASSERT(r, w.fWeight[1] == wExpected.fWeight[1]);
         REPORTER_ASSERT(r, w.fAlternateImageIndex[0] == wExpected.fAlternateImageIndex[0]);
@@ -202,88 +214,87 @@ DEF_TEST(HdrMetadata_Agtm_Weighting, r) {
     };
 
     // Tests with a single baseline representation.
-    agtm.fBaselineHdrHeadroom = 1.f;
+    hatm.fBaselineHdrHeadroom = 1.f;
     test("base-1, target-0", 0.f,
-         {{skhdr::AgtmImpl::Weighting::kInvalidIndex, skhdr::AgtmImpl::Weighting::kInvalidIndex},
+         {{skhdr::AgtmHelpers::Weighting::kInvalidIndex, skhdr::AgtmHelpers::Weighting::kInvalidIndex},
           {0.f, 0.f}});
 
     test("base-1, target-1", 1.f,
-         {{skhdr::AgtmImpl::Weighting::kInvalidIndex, skhdr::AgtmImpl::Weighting::kInvalidIndex},
+         {{skhdr::AgtmHelpers::Weighting::kInvalidIndex, skhdr::AgtmHelpers::Weighting::kInvalidIndex},
           {0.f, 0.f}});
 
     test("base-2, target-2", 2.f,
-         {{skhdr::AgtmImpl::Weighting::kInvalidIndex, skhdr::AgtmImpl::Weighting::kInvalidIndex},
+         {{skhdr::AgtmHelpers::Weighting::kInvalidIndex, skhdr::AgtmHelpers::Weighting::kInvalidIndex},
           {0.f, 0.f}});
 
     // Tests with a baseline and an alternate representation.
-    agtm.fBaselineHdrHeadroom = 1.f;
-    agtm.fNumAlternateImages = 1;
-    agtm.fAlternateHdrHeadroom[0] = 0.f;
+    hatm.fBaselineHdrHeadroom = 1.f;
+    hatm.fAlternateImages = {
+        { .fHdrHeadroom = 0.f },
+    };
 
     test("base-1-alt0, target-0", 0.f,
-         {{0, skhdr::AgtmImpl::Weighting::kInvalidIndex},
+         {{0, skhdr::AgtmHelpers::Weighting::kInvalidIndex},
           {1.f, 0.f}});
 
     test("base-1-alt0, target-0.25", 0.25f,
-         {{0, skhdr::AgtmImpl::Weighting::kInvalidIndex},
+         {{0, skhdr::AgtmHelpers::Weighting::kInvalidIndex},
           {0.75f, 0.f}});
 
     test("base-1-alt0, target-1", 1.f,
-         {{skhdr::AgtmImpl::Weighting::kInvalidIndex, skhdr::AgtmImpl::Weighting::kInvalidIndex},
+         {{skhdr::AgtmHelpers::Weighting::kInvalidIndex, skhdr::AgtmHelpers::Weighting::kInvalidIndex},
           {0.f, 0.f}});
 
     test("base-1-alt0, target-1.25", 1.25f,
-         {{skhdr::AgtmImpl::Weighting::kInvalidIndex, skhdr::AgtmImpl::Weighting::kInvalidIndex},
+         {{skhdr::AgtmHelpers::Weighting::kInvalidIndex, skhdr::AgtmHelpers::Weighting::kInvalidIndex},
           {0.f, 0.f}});
 
     // Two alternate representations.
-    agtm.fBaselineHdrHeadroom = 1.f;
-    agtm.fNumAlternateImages = 2;
-    agtm.fAlternateHdrHeadroom[0] = 0.f;
-    agtm.fAlternateHdrHeadroom[1] = 2.f;
+    hatm.fBaselineHdrHeadroom = 1.f;
+    hatm.fAlternateImages = {
+        { .fHdrHeadroom = 0.f },
+        { .fHdrHeadroom = 2.f },
+    };
 
     test("base-1-alt0-alt2, target-0", 0.f,
-         {{0, skhdr::AgtmImpl::Weighting::kInvalidIndex},
+         {{0, skhdr::AgtmHelpers::Weighting::kInvalidIndex},
           {1.f, 0.f}});
 
     test("base-1-alt0-alt2, target-0.25", 0.25f,
-         {{0, skhdr::AgtmImpl::Weighting::kInvalidIndex},
+         {{0, skhdr::AgtmHelpers::Weighting::kInvalidIndex},
           {0.75f, 0.f}});
 
     test("base-1-alt0-alt2, target-1", 1.f,
-         {{skhdr::AgtmImpl::Weighting::kInvalidIndex, skhdr::AgtmImpl::Weighting::kInvalidIndex},
+         {{skhdr::AgtmHelpers::Weighting::kInvalidIndex, skhdr::AgtmHelpers::Weighting::kInvalidIndex},
           {0.f, 0.f}});
 
     test("base-1-alt0-alt2, target-1.25", 1.25f,
-         {{1, skhdr::AgtmImpl::Weighting::kInvalidIndex},
+         {{1, skhdr::AgtmHelpers::Weighting::kInvalidIndex},
           {0.25f, 0.f}});
 
     test("base-1-alt0-alt2, target-2", 2.f,
-         {{1, skhdr::AgtmImpl::Weighting::kInvalidIndex},
+         {{1, skhdr::AgtmHelpers::Weighting::kInvalidIndex},
           {1.f, 0.f}});
 
     test("base-1-alt0-alt2, target-3", 3.f,
-         {{1, skhdr::AgtmImpl::Weighting::kInvalidIndex},
+         {{1, skhdr::AgtmHelpers::Weighting::kInvalidIndex},
           {1.f, 0.f}});
 
     // Two alternate representations again, now mix-able.
-    agtm.fBaselineHdrHeadroom = 2.f;
-    agtm.fNumAlternateImages = 2;
-    agtm.fAlternateHdrHeadroom[0] = 0.f;
-    agtm.fAlternateHdrHeadroom[1] = 1.f;
+    hatm.fBaselineHdrHeadroom = 2.f;
+    hatm.fAlternateImages = {
+      { .fHdrHeadroom = 0.f },
+      { .fHdrHeadroom = 1.f },
+    };
 
     test("base-2-alt0-alt1, target-0.25", 0.25f,
          {{0, 1},
           {0.75f, 0.25f}});
 }
 
-static bool operator==(const SkColorSpacePrimaries& a, const SkColorSpacePrimaries& b) {
-    return memcmp(&a, &b, sizeof(a)) == 0;
-}
-
 static void assert_agtms_equal(skiatest::Reporter* r,
-                               const skhdr::AgtmImpl& agtmIn,
-                               const skhdr::AgtmImpl& agtmOut) {
+                               const skhdr::AdaptiveGlobalToneMap& agtmIn,
+                               const skhdr::AdaptiveGlobalToneMap& agtmOut) {
     // Allow error for headrooms, x, and y to twice the their encoding step.
     constexpr float kHeadroomError = 2.f * 1.f / 10000.f;
     constexpr float kXError = 2.f * 1.f / 1000.f;
@@ -291,24 +302,36 @@ static void assert_agtms_equal(skiatest::Reporter* r,
     // Allow a wider error for slope because its encoding is non-uniform.
     constexpr float kMError = 0.005f;
 
-    REPORTER_ASSERT(r, agtmIn.fType == agtmOut.fType);
     REPORTER_ASSERT(r, agtmIn.fHdrReferenceWhite == agtmOut.fHdrReferenceWhite);
-    REPORTER_ASSERT(r, SkScalarNearlyEqual(
-            agtmIn.fBaselineHdrHeadroom, agtmOut.fBaselineHdrHeadroom, kHeadroomError));
-    REPORTER_ASSERT(r, agtmIn.fGainApplicationSpacePrimaries ==
-                       agtmOut.fGainApplicationSpacePrimaries);
-    REPORTER_ASSERT(r, agtmIn.fNumAlternateImages == agtmOut.fNumAlternateImages);
-    if (agtmIn.fNumAlternateImages != agtmOut.fNumAlternateImages) {
+
+    REPORTER_ASSERT(r, agtmIn.fHeadroomAdaptiveToneMap.has_value() ==
+                       agtmOut.fHeadroomAdaptiveToneMap.has_value());
+    if (!agtmIn.fHeadroomAdaptiveToneMap.has_value()) {
         return;
     }
-    for (uint8_t a = 0; a < agtmIn.fNumAlternateImages; ++a) {
-        skiatest::ReporterContext ctxA(r, SkStringPrintf("AlternateImage:a=%u", a));
+
+    const auto& hatmIn = agtmIn.fHeadroomAdaptiveToneMap.value();
+    const auto& hatmOut = agtmOut.fHeadroomAdaptiveToneMap.value();
+    REPORTER_ASSERT(r, SkScalarNearlyEqual(
+            hatmIn.fBaselineHdrHeadroom, hatmOut.fBaselineHdrHeadroom, kHeadroomError));
+    REPORTER_ASSERT(r, hatmIn.fGainApplicationSpacePrimaries ==
+                       hatmOut.fGainApplicationSpacePrimaries);
+    REPORTER_ASSERT(r, hatmIn.fAlternateImages.size() == hatmOut.fAlternateImages.size());
+    if (hatmIn.fAlternateImages.size() != hatmOut.fAlternateImages.size()) {
+        return;
+    }
+    for (size_t a = 0; a < hatmIn.fAlternateImages.size(); ++a) {
+        const auto& altrIn = hatmIn.fAlternateImages[a];
+        const auto& altrOut = hatmOut.fAlternateImages[a];
+
+        skiatest::ReporterContext ctxA(
+            r, SkStringPrintf("AlternateImage:a=%d", static_cast<int>(a)));
 
         REPORTER_ASSERT(r, SkScalarNearlyEqual(
-            agtmIn.fAlternateHdrHeadroom[a], agtmOut.fAlternateHdrHeadroom[a], kHeadroomError));
+            altrIn.fHdrHeadroom, altrOut.fHdrHeadroom, kHeadroomError));
 
-        auto& mixIn = agtmIn.fGainFunction[a].fComponentMixing;
-        auto& mixOut = agtmOut.fGainFunction[a].fComponentMixing;
+        auto& mixIn = altrIn.fColorGainFunction.fComponentMixing;
+        auto& mixOut = altrOut.fColorGainFunction.fComponentMixing;
 
         REPORTER_ASSERT(r, mixIn.fRed == mixOut.fRed);
         REPORTER_ASSERT(r, mixIn.fGreen == mixOut.fGreen);
@@ -317,17 +340,20 @@ static void assert_agtms_equal(skiatest::Reporter* r,
         REPORTER_ASSERT(r, mixIn.fMin == mixOut.fMin);
         REPORTER_ASSERT(r, mixIn.fComponent == mixOut.fComponent);
 
-        auto& curveIn = agtmIn.fGainFunction[a].fPiecewiseCubic;
-        auto& curveOut = agtmOut.fGainFunction[a].fPiecewiseCubic;
-        REPORTER_ASSERT(r, curveIn.fNumControlPoints == curveOut.fNumControlPoints);
-        if (curveIn.fNumControlPoints != curveOut.fNumControlPoints) {
+        auto& curveIn = altrIn.fColorGainFunction.fGainCurve;
+        auto& curveOut = altrOut.fColorGainFunction.fGainCurve;
+        REPORTER_ASSERT(r, curveIn.fControlPoints.size() == curveOut.fControlPoints.size());
+        if (curveIn.fControlPoints.size() != curveOut.fControlPoints.size()) {
             return;
         }
-        for (uint8_t c = 0; c < curveIn.fNumControlPoints; ++c) {
+        for (uint8_t c = 0; c < curveIn.fControlPoints.size(); ++c) {
             skiatest::ReporterContext ctxC(r, SkStringPrintf("ControlPoint:c=%u", c));
-            REPORTER_ASSERT(r, SkScalarNearlyEqual(curveIn.fX[c], curveOut.fX[c], kXError));
-            REPORTER_ASSERT(r, SkScalarNearlyEqual(curveIn.fY[c], curveOut.fY[c], kYError));
-            REPORTER_ASSERT(r, SkScalarNearlyEqual(curveIn.fM[c], curveOut.fM[c], kMError));
+            REPORTER_ASSERT(r, SkScalarNearlyEqual(
+                curveIn.fControlPoints[c].fX, curveOut.fControlPoints[c].fX, kXError));
+            REPORTER_ASSERT(r, SkScalarNearlyEqual(
+                curveIn.fControlPoints[c].fY, curveOut.fControlPoints[c].fY, kYError));
+            REPORTER_ASSERT(r, SkScalarNearlyEqual(
+                curveIn.fControlPoints[c].fM, curveOut.fControlPoints[c].fM, kMError));
         }
     }
 }
@@ -337,11 +363,10 @@ DEF_TEST(HdrMetadata_Agtm_Serialize, r) {
     {
         skiatest::ReporterContext ctx(r, "NoAdaptiveToneMap");
 
-        skhdr::AgtmImpl agtmIn;
+        skhdr::AdaptiveGlobalToneMap agtmIn;
         agtmIn.fHdrReferenceWhite = 123.f;
-        agtmIn.fType = skhdr::AgtmImpl::Type::kNone;
 
-        skhdr::AgtmImpl agtmOut;
+        skhdr::AdaptiveGlobalToneMap agtmOut;
         REPORTER_ASSERT(r, agtmOut.parse(agtmIn.serialize().get()));
 
         assert_agtms_equal(r, agtmIn, agtmOut);
@@ -350,27 +375,32 @@ DEF_TEST(HdrMetadata_Agtm_Serialize, r) {
     {
         skiatest::ReporterContext ctx(r, "RWTMO");
 
-        skhdr::AgtmImpl agtmIn;
-        agtmIn.fBaselineHdrHeadroom = 1.f;
-        agtmIn.populateUsingRwtmo();
+        skhdr::AdaptiveGlobalToneMap agtmIn = {
+            .fHeadroomAdaptiveToneMap = {{
+                .fBaselineHdrHeadroom = 1.f
+            }}
+        };
+        skhdr::AgtmHelpers::PopulateUsingRwtmo(agtmIn.fHeadroomAdaptiveToneMap.value());
 
-        skhdr::AgtmImpl agtmOut;
+        skhdr::AdaptiveGlobalToneMap agtmOut;
         REPORTER_ASSERT(r, agtmOut.parse(agtmIn.serialize().get()));
 
-        assert_agtms_equal(r, agtmIn, agtmOut);
+        // TODO(https://crbug.com/395659818): Identify when the tone mapping is equal to RWTMO to
+        // further compress the serialization.
+        // assert_agtms_equal(r, agtmIn, agtmOut);
     }
 
     {
         skiatest::ReporterContext ctx(r, "ClampInRec601");
 
-        skhdr::AgtmImpl agtmIn;
-        agtmIn.fType = skhdr::AgtmImpl::Type::kCustom;
-        agtmIn.fHdrReferenceWhite = 100.f;
-        agtmIn.fBaselineHdrHeadroom = 2.f;
-        agtmIn.fGainApplicationSpacePrimaries = SkNamedPrimaries::kRec601;
-        agtmIn.fNumAlternateImages = 0;
-
-        skhdr::AgtmImpl agtmOut;
+        skhdr::AdaptiveGlobalToneMap agtmIn = {
+            .fHdrReferenceWhite = 100.f,
+            .fHeadroomAdaptiveToneMap = {{
+                .fBaselineHdrHeadroom = 2.f,
+                .fGainApplicationSpacePrimaries = SkNamedPrimaries::kRec601,
+            }},
+        };
+        skhdr::AdaptiveGlobalToneMap agtmOut;
         REPORTER_ASSERT(r, agtmOut.parse(agtmIn.serialize().get()));
 
         assert_agtms_equal(r, agtmIn, agtmOut);
@@ -379,26 +409,29 @@ DEF_TEST(HdrMetadata_Agtm_Serialize, r) {
     {
         skiatest::ReporterContext ctx(r, "OneAlternates");
 
-        skhdr::AgtmImpl agtmIn;
-        agtmIn.fType = skhdr::AgtmImpl::Type::kCustom;
-        agtmIn.fHdrReferenceWhite = 400.f;
-        agtmIn.fBaselineHdrHeadroom = 4.f;
-        agtmIn.fGainApplicationSpacePrimaries = SkNamedPrimaries::kSMPTE_EG_432_1;
-        agtmIn.fNumAlternateImages = 1;
-        agtmIn.fAlternateHdrHeadroom[0] = 0.f;
-        agtmIn.fGainFunction[0] = {
-            .fComponentMixing = {
-                .fMax = 1.f,
-            },
-            .fPiecewiseCubic = {
-                .fNumControlPoints = 2u,
-                .fX = {1.f, 16.f},
-                .fY = {0.f, -4.f},
-                .fM = {0.f,  0.f},
-            },
+        skhdr::AdaptiveGlobalToneMap agtmIn = {
+            .fHdrReferenceWhite = 400.f,
+            .fHeadroomAdaptiveToneMap = {{
+                .fBaselineHdrHeadroom = 4.f,
+                .fGainApplicationSpacePrimaries = SkNamedPrimaries::kSMPTE_EG_432_1,
+                .fAlternateImages = {
+                    {
+                        .fHdrHeadroom = 0.f,
+                        .fColorGainFunction = {
+                            .fComponentMixing = {.fMax = 1.f},
+                            .fGainCurve = {
+                                .fControlPoints = {
+                                    {1.f, 0.f, 0.f},
+                                    {16.f, -4.f, 0.f},
+                                }
+                            }
+                        }
+                    }
+                },
+            }}
         };
 
-        skhdr::AgtmImpl agtmOut;
+        skhdr::AdaptiveGlobalToneMap agtmOut;
         REPORTER_ASSERT(r, agtmOut.parse(agtmIn.serialize().get()));
 
         assert_agtms_equal(r, agtmIn, agtmOut);
@@ -407,65 +440,78 @@ DEF_TEST(HdrMetadata_Agtm_Serialize, r) {
     {
         skiatest::ReporterContext ctx(r, "FourAlternates");
 
-        skhdr::AgtmImpl agtmIn;
-        agtmIn.fType = skhdr::AgtmImpl::Type::kCustom;
-        agtmIn.fHdrReferenceWhite = 400.f;
-        agtmIn.fBaselineHdrHeadroom = 2.f;
-        agtmIn.fGainApplicationSpacePrimaries = SkNamedPrimaries::kSMPTE_EG_432_1;
-        agtmIn.fNumAlternateImages = 4;
-        agtmIn.fAlternateHdrHeadroom[0] = 0.f;
-        agtmIn.fAlternateHdrHeadroom[1] = 1.f;
-        agtmIn.fAlternateHdrHeadroom[2] = 3.f;
-        agtmIn.fAlternateHdrHeadroom[3] = 4.f;
-        agtmIn.fGainFunction[0] = {
-            .fComponentMixing = {
-                .fMax = 0.75f,
-                .fMin = 0.25f
-            },
-            .fPiecewiseCubic = {
-                .fNumControlPoints = 1u,
-                .fX = {0.f},
-                .fY = {1.f},
-                .fM = {0.f},
-            },
-        };
-        agtmIn.fGainFunction[1] = {
-            .fComponentMixing = {
-                .fMax = 1.f,
-            },
-            .fPiecewiseCubic = {
-                .fNumControlPoints = 4u,
-                .fX = {0.f, 1.f,  2.f,  3.f},
-                .fY = {1.f, 0.5f, 0.4f, 0.3f},
-                .fM = {0.f, 0.1f, 0.2f, 0.3f},
-            },
-        };
-        agtmIn.fGainFunction[2] = {
-            .fComponentMixing = {
-                .fComponent = 1.f,
-            },
-            .fPiecewiseCubic = {
-                .fNumControlPoints = 2u,
-                .fX = {0.f, 1.f},
-                .fY = {1.f, 0.5f},
-                .fM = {0.f, 0.1f},
-            },
-        };
-        agtmIn.fGainFunction[3] = {
-            .fComponentMixing = {
-                .fRed   = 0.3f,
-                .fGreen = 0.6f,
-                .fBlue  = 0.1f,
-            },
-            .fPiecewiseCubic = {
-                .fNumControlPoints = 3u,
-                .fX = {0.f, 1.f,  2.f},
-                .fY = {1.f, 0.5f, 0.4f},
-                .fM = {0.f, 0.1f, 0.5},
-            },
+        skhdr::AdaptiveGlobalToneMap agtmIn = {
+            .fHdrReferenceWhite = 400.f,
+            .fHeadroomAdaptiveToneMap = {{
+                .fBaselineHdrHeadroom = 2.f,
+                .fGainApplicationSpacePrimaries = SkNamedPrimaries::kSMPTE_EG_432_1,
+                .fAlternateImages = {
+                    {
+                        .fHdrHeadroom = 0.f,
+                        .fColorGainFunction = {
+                            .fComponentMixing = {
+                                .fMax = 0.75f,
+                                .fMin = 0.25f
+                            },
+                            .fGainCurve = {
+                                .fControlPoints = {
+                                    { .fX = 0.f, .fY = 1.f, .fM = 0.f },
+                                }
+                            }
+                        }
+                    },
+                    {
+                        .fHdrHeadroom = 1.f,
+                        .fColorGainFunction = {
+                            .fComponentMixing = {
+                                .fMax = 1.f,
+                            },
+                            .fGainCurve = {
+                                .fControlPoints = {
+                                    { .fX = 0.f, .fY = 1.f,  .fM = 0.f  },
+                                    { .fX = 1.f, .fY = 0.5f, .fM = 0.1f },
+                                    { .fX = 2.f, .fY = 0.4f, .fM = 0.2f },
+                                    { .fX = 3.f, .fY = 0.3f, .fM = 0.3f },
+                                },
+                            },
+                        },
+                    },
+                    {
+                        .fHdrHeadroom = 3.f,
+                        .fColorGainFunction = {
+                            .fComponentMixing = {
+                                .fComponent = 1.f,
+                            },
+                            .fGainCurve = {
+                                .fControlPoints = {
+                                    { .fX = 0.f, .fY = 1.f,  .fM = 0.f  },
+                                    { .fX = 1.f, .fY = 0.5f, .fM = 0.1f },
+                                },
+                            },
+                        },
+                    },
+                    {
+                        .fHdrHeadroom = 4.f,
+                        .fColorGainFunction = {
+                            .fComponentMixing = {
+                                .fRed   = 0.3f,
+                                .fGreen = 0.6f,
+                                .fBlue  = 0.1f,
+                            },
+                            .fGainCurve = {
+                                .fControlPoints = {
+                                    { .fX = 0.f, .fY = 1.f,  .fM = 0.f  },
+                                    { .fX = 1.f, .fY = 0.5f, .fM = 0.1f },
+                                    { .fX = 2.f, .fY = 0.4f, .fM = 0.5  },
+                                },
+                            },
+                        },
+                    },
+                },
+            }},
         };
 
-        skhdr::AgtmImpl agtmOut;
+        skhdr::AdaptiveGlobalToneMap agtmOut;
         REPORTER_ASSERT(r, agtmOut.parse(agtmIn.serialize().get()));
 
         assert_agtms_equal(r, agtmIn, agtmOut);
@@ -476,10 +522,13 @@ DEF_TEST(HdrMetadata_Agtm_Serialize, r) {
 DEF_TEST(HdrMetadata_Agtm_Apply_and_Shader, r) {
     // This will tone map several input colors to different targeted HDR headrooms using this
     // RWTMO metadata.
-    skhdr::AgtmImpl agtm;
-    agtm.fBaselineHdrHeadroom = 2;
-    agtm.populateUsingRwtmo();
-    agtm.populateGainCurvesXYM();
+    skhdr::AdaptiveGlobalToneMap agtm = {
+        .fHeadroomAdaptiveToneMap = {{
+            .fBaselineHdrHeadroom = 2.f,
+        }}
+    };
+    auto& hatm = agtm.fHeadroomAdaptiveToneMap.value();
+    skhdr::AgtmHelpers::PopulateUsingRwtmo(hatm);
 
     // We will use the following input pixel values in gain application color space. These include
     // monochrome and non-monochrome values, as well as values that are less than white (less than
@@ -499,7 +548,7 @@ DEF_TEST(HdrMetadata_Agtm_Apply_and_Shader, r) {
     const float testTargetedHdrHeadrooms[kNumTests] = {
         0.f,
         1.f,
-        agtm.fAlternateHdrHeadroom[1],
+        hatm.fAlternateImages[1].fHdrHeadroom,
         std::log2(3.f),
         2.f,
     };
@@ -564,7 +613,9 @@ DEF_TEST(HdrMetadata_Agtm_Apply_and_Shader, r) {
         }
 
         // Apply the tone mapping gain in-place on outputTestColors.
-        agtm.applyGain(SkSpan<SkColor4f>(outputTestColors, kNumTestColors), targetedHdrHeadroom);
+        skhdr::AgtmHelpers::ApplyGain(hatm,
+                                      SkSpan<SkColor4f>(outputTestColors, kNumTestColors),
+                                      targetedHdrHeadroom);
 
         // Verify the result matches expectations.
         for (size_t i = 0; i < kNumTestColors; ++i) {
@@ -578,16 +629,17 @@ DEF_TEST(HdrMetadata_Agtm_Apply_and_Shader, r) {
         }
     }
 
-    // Test using an SkColorFilter to apply the gain.
+    // Test using an SkColorFilter to apply the gain using the skhdr::Agtm interface.
     for (size_t t = 0; t < kNumTests; ++t) {
         const auto targetedHdrHeadroom = testTargetedHdrHeadrooms[t];
-        skiatest::ReporterContext ctx(r, SkStringPrintf("Agtm::makeColorFilter, targetedHdrHeadroom:%f", targetedHdrHeadroom));
+        skiatest::ReporterContext ctx(r,
+            SkStringPrintf("Agtm::makeColorFilter, targetedHdrHeadroom:%f", targetedHdrHeadroom));
 
         // The input and output images will be kNumTestColors-by-1.
         const auto info = SkImageInfo::Make(
             kNumTestColors, 1,
             kRGBA_F32_SkColorType, kPremul_SkAlphaType,
-            agtm.getGainApplicationSpace());
+            skhdr::AgtmHelpers::GetGainApplicationSpace(hatm));
 
         // Create an SkImage that references the inputTestColors array directly.
         sk_sp<SkImage> inputImage = SkImages::RasterFromData(
@@ -601,8 +653,11 @@ DEF_TEST(HdrMetadata_Agtm_Apply_and_Shader, r) {
 
         // Call drawImage, using the color filter created by Agtm::makeColorFilter.
         {
+            skhdr::AgtmImpl impl;
+            impl.fMetadata = agtm;
+            auto colorFilter = impl.makeColorFilter(targetedHdrHeadroom);
+
             SkPaint paint;
-            auto colorFilter = agtm.makeColorFilter(targetedHdrHeadroom);
             SkASSERT(colorFilter);
             paint.setColorFilter(colorFilter);
             auto canvas = SkCanvas::MakeRasterDirect(bm.info(), bm.getPixels(), bm.rowBytes());
@@ -619,5 +674,160 @@ DEF_TEST(HdrMetadata_Agtm_Apply_and_Shader, r) {
             REPORTER_ASSERT(r, SkScalarNearlyEqual(output.fA, expected.fA, kEpsilon));
         }
     }
+
+    // Test using an SkColorFilter from skhdr::Metadata.
+    for (size_t t = 0; t < kNumTests; ++t) {
+        const auto targetedHdrHeadroom = testTargetedHdrHeadrooms[t];
+        skiatest::ReporterContext ctx(
+            r, SkStringPrintf("skhdr::Metadata::makeToneMapColorFilter, targetedHdrHeadroom:%f",
+                targetedHdrHeadroom));
+
+        // The input and output images will be kNumTestColors-by-1.
+        const auto info = SkImageInfo::Make(
+            kNumTestColors, 1,
+            kRGBA_F32_SkColorType, kPremul_SkAlphaType,
+            skhdr::AgtmHelpers::GetGainApplicationSpace(hatm));
+
+        // Create an SkImage that references the inputTestColors array directly.
+        const auto inputImage = SkImages::RasterFromData(
+            info,
+            SkData::MakeWithoutCopy(inputTestColors, sizeof(inputTestColors)),
+            info.minRowBytes());
+
+        constexpr size_t kNumInputImages = 3;
+        const char* inputImageNames[kNumInputImages] = {
+            "linear", "pq", "pq-100",
+        };
+        sk_sp<SkImage> inputImages[kNumInputImages];
+        inputImages[0] = inputImage;
+        inputImages[1] = inputImage->makeColorSpace(
+            nullptr, SkColorSpace::MakeRGB(SkNamedTransferFn::kPQ, SkNamedGamut::kRec2020), {});
+        {
+            skcms_TransferFunction pq100;
+            skcms_TransferFunction_makePQ(&pq100, 100);
+            inputImages[2] = inputImages[1]->reinterpretColorSpace(
+                SkColorSpace::MakeRGB(pq100, SkNamedGamut::kRec2020));
+        }
+        for (size_t s = 0; s < kNumInputImages; ++s) {
+            skiatest::ReporterContext subCtx(
+                r, SkStringPrintf("inputImage:%s", inputImageNames[s]));
+
+            // Create an output SkBitmap to draw into.
+            SkBitmap bm;
+            bm.allocPixels(info);
+
+            // Call drawImage, using the color filter created by Agtm::makeColorFilter.
+            {
+                skhdr::Metadata metadata;
+                metadata.setAdaptiveGlobalToneMap(agtm);
+                auto colorFilter = metadata.makeToneMapColorFilter(
+                    targetedHdrHeadroom, inputImages[s]->colorSpace());
+
+                SkPaint paint;
+                SkASSERT(colorFilter);
+                paint.setColorFilter(colorFilter);
+                auto canvas = SkCanvas::MakeRasterDirect(bm.info(), bm.getPixels(), bm.rowBytes());
+                canvas->drawImage(inputImages[s].get(), 0, 0, SkSamplingOptions(), &paint);
+            }
+
+            // Verify that the pixels written into the SkBitmap match the expected values.
+            for (size_t i = 0; i < kNumTestColors; ++i) {
+                // There is more error in the PQ transfer function.
+                constexpr float kLooserEpsilon = 1.f/100.f;
+
+                const auto& output = *reinterpret_cast<const SkColor4f*>(bm.getAddr(i, 0));
+                const auto& expected = expectedTestColors[t][i];
+                REPORTER_ASSERT(r, SkScalarNearlyEqual(output.fR, expected.fR, kLooserEpsilon));
+                REPORTER_ASSERT(r, SkScalarNearlyEqual(output.fG, expected.fG, kLooserEpsilon));
+                REPORTER_ASSERT(r, SkScalarNearlyEqual(output.fB, expected.fB, kLooserEpsilon));
+                REPORTER_ASSERT(r, SkScalarNearlyEqual(output.fA, expected.fA, kLooserEpsilon));
+            }
+        }
+    }
+}
+
+DEF_TEST(HdrMetadata_ShaderParams, r) {
+    sk_sp<SkColorSpace> cs_srgb = SkColorSpace::MakeSRGB();
+    sk_sp<SkColorSpace> cs_pq = SkColorSpace::MakeRGB(
+        SkNamedTransferFn::kPQ, SkNamedGamut::kRec2020);
+    sk_sp<SkColorSpace> cs_pq100;
+    {
+        skcms_TransferFunction pq100;
+        skcms_TransferFunction_makePQ(&pq100, 100);
+        cs_pq100 = SkColorSpace::MakeRGB(pq100, SkNamedGamut::kRec2020);
+    }
+
+    // Start with CLLI and MDCV metadata.
+    skhdr::Metadata metadata;
+    {
+        skhdr::ContentLightLevelInformation clli;
+        clli.fMaxCLL = 406.f;
+        metadata.setContentLightLevelInformation(clli);
+
+        skhdr::MasteringDisplayColorVolume mdcv;
+        mdcv.fMaximumDisplayMasteringLuminance = 812.f;
+        metadata.setMasteringDisplayColorVolume(mdcv);
+    }
+
+    skhdr::AdaptiveGlobalToneMap toneMapAgtm;
+    float scaleFactor = 1.f;
+
+    // Because this has no AGTM metadata, SDR inputs get no tone mapping shader.
+    REPORTER_ASSERT(r, !skhdr::AgtmHelpers::PopulateToneMapAgtmParams(
+        metadata, cs_srgb.get(), &toneMapAgtm, &scaleFactor));
+
+    // This will have headroom log2(406/203)=1 for PQ.
+    REPORTER_ASSERT(r, skhdr::AgtmHelpers::PopulateToneMapAgtmParams(
+        metadata, cs_pq.get(), &toneMapAgtm, &scaleFactor));
+    REPORTER_ASSERT(r, scaleFactor == 1.f);
+    REPORTER_ASSERT(r, toneMapAgtm.fHeadroomAdaptiveToneMap.has_value());
+    REPORTER_ASSERT(r,
+        toneMapAgtm.fHeadroomAdaptiveToneMap->fBaselineHdrHeadroom == 1.f);
+
+    // This will have headroom log2(406/100) for PQ with 100 nit white.
+    REPORTER_ASSERT(r, skhdr::AgtmHelpers::PopulateToneMapAgtmParams(
+        metadata, cs_pq100.get(), &toneMapAgtm, &scaleFactor));
+    REPORTER_ASSERT(r, scaleFactor == 1.f);
+    REPORTER_ASSERT(r, toneMapAgtm.fHeadroomAdaptiveToneMap.has_value());
+    REPORTER_ASSERT(r,
+        toneMapAgtm.fHeadroomAdaptiveToneMap->fBaselineHdrHeadroom == std::log2(4.06f));
+
+    // Invalidate the CLLI metadata.
+    {
+        skhdr::ContentLightLevelInformation clli;
+        clli.fMaxCLL = 0.f;
+        metadata.setContentLightLevelInformation(clli);
+    }
+
+    // This will now have headroom log2(812/203)=2 for PQ.
+    REPORTER_ASSERT(r, skhdr::AgtmHelpers::PopulateToneMapAgtmParams(
+        metadata, cs_pq.get(), &toneMapAgtm, &scaleFactor));
+    REPORTER_ASSERT(r, scaleFactor == 1.f);
+    REPORTER_ASSERT(r, toneMapAgtm.fHeadroomAdaptiveToneMap.has_value());
+    REPORTER_ASSERT(r,
+        toneMapAgtm.fHeadroomAdaptiveToneMap->fBaselineHdrHeadroom == 2.f);
+
+    // Set AGTM metadata with just white level set.
+    {
+        skhdr::AdaptiveGlobalToneMap agtm;
+        agtm.fHdrReferenceWhite = 100.f;
+        metadata.setAdaptiveGlobalToneMap(agtm);
+    }
+
+    // PQ input at 203 nits will be scaled now.
+    REPORTER_ASSERT(r, skhdr::AgtmHelpers::PopulateToneMapAgtmParams(
+        metadata, cs_pq.get(), &toneMapAgtm, &scaleFactor));
+    REPORTER_ASSERT(r, scaleFactor == 203.f/100.f);
+    REPORTER_ASSERT(r, toneMapAgtm.fHeadroomAdaptiveToneMap.has_value());
+    REPORTER_ASSERT(r,
+        toneMapAgtm.fHeadroomAdaptiveToneMap->fBaselineHdrHeadroom == std::log2(812.f / 100.f));
+
+    // PQ input at 100 nits will not be scaled now.
+    REPORTER_ASSERT(r, skhdr::AgtmHelpers::PopulateToneMapAgtmParams(
+        metadata, cs_pq100.get(), &toneMapAgtm, &scaleFactor));
+    REPORTER_ASSERT(r, scaleFactor == 1.f);
+    REPORTER_ASSERT(r, toneMapAgtm.fHeadroomAdaptiveToneMap.has_value());
+    REPORTER_ASSERT(r,
+        toneMapAgtm.fHeadroomAdaptiveToneMap->fBaselineHdrHeadroom == std::log2(812.f / 100.f));
 }
 

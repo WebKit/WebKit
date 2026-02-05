@@ -119,7 +119,7 @@ RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& 
 
     VM& vm = m_isolatedWorld->vm();
     JSLockHolder lock(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     if (!m_constructor)
         return nullptr;

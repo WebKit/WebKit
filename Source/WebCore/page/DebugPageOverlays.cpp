@@ -137,7 +137,7 @@ bool MouseWheelRegionOverlay::updateRegion()
 
         Ref document = *localFrame->document();
         auto frameRegion = document->absoluteRegionForWheelEventTargets();
-        frameRegion.first.translate(toIntSize(localFrame->protectedView()->contentsToRootView(IntPoint())));
+        frameRegion.first.translate(toIntSize(protect(localFrame->view())->contentsToRootView(IntPoint())));
         region->unite(frameRegion.first);
     }
 

@@ -188,10 +188,6 @@ void ContextPrivateViewport(PrivateState *privateState,
                             GLint y,
                             GLsizei width,
                             GLsizei height);
-void ContextPrivateGenVertexArrays(PrivateState *privateState,
-                                   PrivateStateCache *privateStateCache,
-                                   GLsizei n,
-                                   VertexArrayID *arraysPacked);
 GLboolean ContextPrivateIsVertexArray(PrivateState *privateState,
                                       PrivateStateCache *privateStateCache,
                                       VertexArrayID arrayPacked);

@@ -47,13 +47,17 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaStreamTrackProcessor);
 
 ExceptionOr<Ref<MediaStreamTrackProcessor>> MediaStreamTrackProcessor::create(ScriptExecutionContext& context, Init&& init)
 {
-    if (!init.track->isVideo())
+    if (!std::holds_alternative<RefPtr<MediaStreamTrack>>(init.track))
+        return Exception { ExceptionCode::NotSupportedError };
+
+    RefPtr track = std::get<RefPtr<MediaStreamTrack>>(init.track);
+    if (!track->isVideo())
         return Exception { ExceptionCode::TypeError, "Track is not video"_s };
 
-    if (init.track->ended())
+    if (track->ended())
         return Exception { ExceptionCode::TypeError, "Track is ended"_s };
 
-    return adoptRef(*new MediaStreamTrackProcessor(context, *init.track, init.maxBufferSize));
+    return adoptRef(*new MediaStreamTrackProcessor(context, track.releaseNonNull(), init.maxBufferSize.value_or(1)));
 }
 
 MediaStreamTrackProcessor::MediaStreamTrackProcessor(ScriptExecutionContext& context, Ref<MediaStreamTrack>&& track, unsigned short maxVideoFramesCount)
@@ -262,6 +266,10 @@ void MediaStreamTrackProcessor::Source::doPull()
 
 void MediaStreamTrackProcessor::Source::doCancel(JSC::JSValue)
 {
+    auto scope = makeScopeExit([&] {
+        cancelFinished();
+    });
+
     m_isCancelled = true;
     Ref { m_processor.get() }->stopVideoFrameObserver();
 }

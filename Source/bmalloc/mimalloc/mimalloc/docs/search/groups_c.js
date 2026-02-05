@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['wrappers_0',['C++ wrappers',['../group__cpp.html',1,'']]]
+  ['statistics_0',['Statistics',['../group__stats.html',1,'']]],
+  ['subprocesses_1',['Subprocesses',['../group__subproc.html',1,'']]]
 ];

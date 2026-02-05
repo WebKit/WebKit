@@ -59,7 +59,7 @@ void WebEditCommandProxy::unapply()
 
     page->addPendingUndoRedo(m_commandID, UndoOrRedo::Undo);
     // FIXME: <rdar://168324268> Fix this for site isolation.
-    page->protectedLegacyMainFrameProcess()->sendWithAsyncReply(Messages::WebPage::UnapplyEditCommand(page->undoVersion(), m_commandID), [weakPage = WeakPtr { *page }, commandID = m_commandID]() {
+    protect(page->legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::UnapplyEditCommand(page->undoVersion(), m_commandID), [weakPage = WeakPtr { *page }, commandID = m_commandID]() {
         if (RefPtr page = weakPage.get())
             page->removePendingUndoRedo(commandID);
     }, page->webPageIDInMainFrameProcess());
@@ -74,7 +74,7 @@ void WebEditCommandProxy::reapply()
 
     page->addPendingUndoRedo(m_commandID, UndoOrRedo::Redo);
     // FIXME: <rdar://168324268> Fix this for site isolation.
-    page->protectedLegacyMainFrameProcess()->sendWithAsyncReply(Messages::WebPage::ReapplyEditCommand(page->undoVersion(), m_commandID), [weakPage = WeakPtr { *page }, commandID = m_commandID]() {
+    protect(page->legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::ReapplyEditCommand(page->undoVersion(), m_commandID), [weakPage = WeakPtr { *page }, commandID = m_commandID]() {
         if (RefPtr page = weakPage.get())
             page->removePendingUndoRedo(commandID);
     }, page->webPageIDInMainFrameProcess());

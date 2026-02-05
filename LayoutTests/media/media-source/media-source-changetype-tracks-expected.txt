@@ -1,0 +1,30 @@
+This tests that changeType() works when playing media with more than one track.
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer('video/mp4; codecs="mp4a.40.2,avc1.4d401e"'))
+RUN(sourceBuffer.appendBuffer(mp4Loader.initSegment()))
+EVENT(update)
+
+Append some MP4 media segments
+RUN(sourceBuffer.appendBuffer(mp4Loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(mp4Loader.mediaSegment(1)))
+EVENT(update)
+
+Change type to WebM
+RUN(sourceBuffer.changeType('video/webm; codecs="vp8,opus"'))
+RUN(sourceBuffer.timestampOffset = mp4Loader.mediaSegmentEndTime(1))
+RUN(sourceBuffer.appendBuffer(webmLoader.initSegment()))
+EVENT(update)
+
+Append WebM media segments and play
+RUN(sourceBuffer.appendBuffer(webmLoader.mediaSegment(0)))
+EVENT(update)
+RUN(source.endOfStream())
+EVENT(sourceended)
+RUN(video.play())
+EVENT(play)
+EVENT(ended)
+END OF TEST
+

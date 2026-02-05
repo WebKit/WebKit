@@ -160,6 +160,10 @@ public:
     void setContentsTilePhase(const FloatSize&);
     void setDirtyRegion(Damage&&);
 
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    void setContentsScrollbarImageForScrolling(NativeImage*);
+#endif
+
     void setFilters(const FilterOperations&);
     void setMask(CoordinatedPlatformLayer*);
     void setReplica(CoordinatedPlatformLayer*);

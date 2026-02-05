@@ -1785,13 +1785,11 @@ TEST_P(ColorMaskForDrawBuffersTest, StateChangeAffectsBlendState)
     EXPECT_GL_NO_ERROR();
 }
 
-ANGLE_INSTANTIATE_TEST(DrawBuffersTest,
-                       ANGLE_ALL_TEST_PLATFORMS_ES2,
-                       ANGLE_ALL_TEST_PLATFORMS_ES3,
-                       ES2_METAL().enable(Feature::LimitMaxDrawBuffersForTesting),
-                       ES2_VULKAN()
-                           .disable(Feature::SupportsTransformFeedbackExtension)
-                           .disable(Feature::EmulateTransformFeedback));
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(DrawBuffersTest,
+                                       ES2_METAL().enable(Feature::LimitMaxDrawBuffersForTesting),
+                                       ES2_VULKAN()
+                                           .disable(Feature::SupportsTransformFeedbackExtension)
+                                           .disable(Feature::EmulateTransformFeedback));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DrawBuffersWebGL2Test);
 ANGLE_INSTANTIATE_TEST_ES3(DrawBuffersWebGL2Test);

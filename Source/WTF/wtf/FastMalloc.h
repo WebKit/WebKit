@@ -103,7 +103,7 @@ namespace WTF {
 // - WTF_MAKE_COMPACT_TZONE_ALLOCATED(ClassName)
 // - WTF_MAKE_COMPACT_TZONE_ALLOCATED_EXPORT(ClassName, exportMacro)
 //     class / struct / template is allocated from a fixed set of shared libpas heaps with the same size and alignment. Each set of shared heaps is
-//     known as a TZoneTypeBuckets. The particular bucket is selected using SHA 256 hashing on a process startup value along with particulars of the
+//     known as a TZone Group. The particular bucket is selected using SHA 256 hashing on a process startup value along with particulars of the
 //     class / struct being allocated. This sharing provides protections from type confusion and use-after-free bugs, but with less memory overhead of
 //     IsoHeap allocated objects. This is the preferred allocation method.
 //     For example, if Event is annotated with WTF_MAKE_TZONE_ALLOCATED(Event), all derived classes of Event must be annotated with

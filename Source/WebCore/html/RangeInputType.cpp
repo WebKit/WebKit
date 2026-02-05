@@ -149,7 +149,7 @@ void RangeInputType::handleMouseDownEvent(MouseEvent& event)
         return;
 
     ASSERT(element->shadowRoot());
-    if (targetNode != element.ptr() && !targetNode->isDescendantOf(element->protectedUserAgentShadowRoot().get()))
+    if (targetNode != element.ptr() && !targetNode->isDescendantOf(protect(element->userAgentShadowRoot()).get()))
         return;
     Ref thumb = typedSliderThumbElement();
     if (targetNode == thumb.ptr())

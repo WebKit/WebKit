@@ -57,7 +57,7 @@
 
     auto page = [_webViewToTrack _page];
     RELEASE_LOG(ViewState, "%p - WKApplicationStateTrackingView: View with page [%p, pageProxyID=%" PRIu64 "] was removed from a window, _lastObservedStateWasBackground=%d", self, page.get(), page ? page->identifier().toUInt64() : 0, page ? page->lastObservedStateWasBackground() : false);
-    _applicationStateTracker->setWindow(nil);
+    protect(*_applicationStateTracker)->setWindow(nil);
 }
 
 - (void)didMoveToWindow
@@ -68,7 +68,7 @@
     auto page = [_webViewToTrack _page];
     bool lastObservedStateWasBackground = page ? page->lastObservedStateWasBackground() : false;
 
-    _applicationStateTracker->setWindow(self._contentView.window);
+    protect(*_applicationStateTracker)->setWindow(self._contentView.window);
     RELEASE_LOG(ViewState, "%p - WKApplicationStateTrackingView: View with page [%p, pageProxyID=%" PRIu64 "] was added to a window, _lastObservedStateWasBackground=%d, isNowBackground=%d", self, page.get(), page ? page->identifier().toUInt64() : 0, lastObservedStateWasBackground, [self isBackground]);
 
     if (lastObservedStateWasBackground && ![self isBackground])
@@ -79,7 +79,7 @@
 
 - (void)_applicationDidEnterBackground
 {
-    auto page = [_webViewToTrack _page];
+    RefPtr page = [_webViewToTrack _page].get();
     if (!page)
         return;
 
@@ -89,7 +89,7 @@
 
 - (void)_applicationDidFinishSnapshottingAfterEnteringBackground
 {
-    auto page = [_webViewToTrack _page];
+    RefPtr page = [_webViewToTrack _page].get();
     if (!page)
         return;
 
@@ -99,7 +99,7 @@
 
 - (void)_applicationWillEnterForeground
 {
-    auto page = [_webViewToTrack _page];
+    RefPtr page = [_webViewToTrack _page].get();
     if (!page)
         return;
 
@@ -109,7 +109,7 @@
 
 - (void)_willBeginSnapshotSequence
 {
-    auto page = [_webViewToTrack _page];
+    RefPtr page = [_webViewToTrack _page].get();
     if (!page)
         return;
 
@@ -122,7 +122,7 @@
 
 - (void)_didCompleteSnapshotSequence
 {
-    auto page = [_webViewToTrack _page];
+    RefPtr page = [_webViewToTrack _page].get();
     if (!page)
         return;
 

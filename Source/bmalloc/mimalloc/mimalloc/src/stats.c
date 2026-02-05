@@ -469,7 +469,7 @@ static bool mi_cdecl mi_heap_print_visitor(mi_heap_t* heap, void* arg) {
 
 
 // show each heap and then the subproc
-void mi_subproc_heap_stats_print_out(mi_subproc_id_t subproc_id, mi_output_fun* out, void* arg) mi_attr_noexcept {  
+void mi_subproc_heap_stats_print_out(mi_subproc_id_t subproc_id, mi_output_fun* out, void* arg) mi_attr_noexcept {
   mi_subproc_t* subproc = _mi_subproc_from_id(subproc_id);
   if (subproc==NULL) return;
   mi_heap_print_visit_info_t vinfo = { out, arg };
@@ -482,9 +482,10 @@ void mi_subproc_heap_stats_print_out(mi_subproc_id_t subproc_id, mi_output_fun* 
 void mi_subproc_stats_print_out(mi_subproc_id_t subproc_id, mi_output_fun* out, void* arg) mi_attr_noexcept {
   mi_subproc_t* subproc = _mi_subproc_from_id(subproc_id);
   if (subproc==NULL) return;
-  mi_stats_t stats; 
-  mi_stats_get(sizeof(stats), &stats);
-  _mi_stats_print("subproc", subproc->subproc_seq, &stats, out, arg);
+  mi_stats_t_decl(stats); 
+  if (mi_subproc_stats_get(subproc_id, &stats)) {
+    _mi_stats_print("subproc", subproc->subproc_seq, &stats, out, arg);
+  }
 }
 
 void mi_stats_print_out(mi_output_fun* out, void* arg) mi_attr_noexcept {
@@ -536,12 +537,12 @@ mi_msecs_t _mi_clock_end(mi_msecs_t start) {
 
 mi_decl_export void mi_process_info(size_t* elapsed_msecs, size_t* user_msecs, size_t* system_msecs, size_t* current_rss, size_t* peak_rss, size_t* current_commit, size_t* peak_commit, size_t* page_faults) mi_attr_noexcept
 {
-  mi_heap_t* const heap = mi_heap_main();
+  mi_subproc_t* subproc = _mi_subproc_main();
   mi_process_info_t pinfo;
   _mi_memzero_var(pinfo);
   pinfo.elapsed        = _mi_clock_end(mi_process_start);
-  pinfo.current_commit = (size_t)(mi_atomic_loadi64_relaxed((_Atomic(int64_t)*)(&heap->stats.committed.current)));
-  pinfo.peak_commit    = (size_t)(mi_atomic_loadi64_relaxed((_Atomic(int64_t)*)(&heap->stats.committed.peak)));
+  pinfo.current_commit = (size_t)(mi_atomic_loadi64_relaxed((_Atomic(int64_t)*)(&subproc->stats.committed.current)));
+  pinfo.peak_commit    = (size_t)(mi_atomic_loadi64_relaxed((_Atomic(int64_t)*)(&subproc->stats.committed.peak)));
   pinfo.current_rss    = pinfo.current_commit;
   pinfo.peak_rss       = pinfo.peak_commit;
   pinfo.utime          = 0;
@@ -574,21 +575,19 @@ size_t mi_stats_get_bin_size(size_t bin) mi_attr_noexcept {
   return _mi_bin_size(bin);
 }
 
-static void _mi_stats_get(mi_stats_t* stats_in, size_t stats_size, mi_stats_t* stats_out) mi_attr_noexcept {
-  if (stats_out == NULL || stats_size == 0) return;
-  _mi_memzero(stats_out, stats_size);
-  if (stats_in == NULL) return;
-  const size_t size = (stats_size > sizeof(mi_stats_t) ? sizeof(mi_stats_t) : stats_size);
-  _mi_memcpy(stats_out, stats_in, size);
-  stats_out->version = MI_STAT_VERSION;
+static bool _mi_stats_get(mi_stats_t* stats_in, mi_stats_t* stats_out) mi_attr_noexcept {
+  if (stats_out == NULL || stats_out->size != sizeof(mi_stats_t) || stats_out->version != MI_STAT_VERSION) return false;
+  if (stats_in == NULL || stats_in->size != stats_out->size) return false;
+  _mi_memcpy(stats_out, stats_in, stats_out->size);
+  return true;
 }
 
-void mi_subproc_stats_get(mi_subproc_id_t subproc_id, size_t stats_size, mi_stats_t* stats) mi_attr_noexcept {
-  _mi_stats_get(&_mi_subproc_from_id(subproc_id)->stats, stats_size, stats);
+bool mi_subproc_stats_get_exclusive(mi_subproc_id_t subproc_id, mi_stats_t* stats) mi_attr_noexcept {
+  return _mi_stats_get(&_mi_subproc_from_id(subproc_id)->stats, stats);
 }
 
-void mi_heap_stats_get(mi_heap_t* heap, size_t stats_size, mi_stats_t* stats) mi_attr_noexcept {
-  _mi_stats_get(mi_heap_get_stats(heap), stats_size, stats);
+bool mi_heap_stats_get(mi_heap_t* heap, mi_stats_t* stats) mi_attr_noexcept {
+  return _mi_stats_get(mi_heap_get_stats(heap), stats);
 }
 
 
@@ -598,17 +597,17 @@ static bool mi_cdecl mi_heap_aggregate_visitor(mi_heap_t* heap, void* arg) {
   return true;
 }
 
-static void mi_subproc_aggregate_stats(mi_subproc_id_t subproc_id, size_t stats_size, mi_stats_t* stats) {
+bool mi_subproc_stats_get(mi_subproc_id_t subproc_id, mi_stats_t* stats) mi_attr_noexcept {
   mi_subproc_t* subproc = _mi_subproc_from_id(subproc_id);
-  if (stats==NULL || stats_size==0) return;
-  _mi_memzero(stats, stats_size);
-  if (stats_size < sizeof(mi_stats_t)) return;
+  if (stats == NULL || stats->size != sizeof(mi_stats_t) || stats->version != MI_STAT_VERSION) return false;
+  _mi_memzero(stats,stats->size);  
   mi_subproc_visit_heaps(subproc, &mi_heap_aggregate_visitor, stats);
   mi_stats_add_into(stats, &subproc->stats);
+  return true;
 }
 
-void mi_stats_get(size_t stats_size, mi_stats_t* stats) mi_attr_noexcept {
-  mi_subproc_aggregate_stats(mi_subproc_current(), stats_size, stats);
+bool mi_stats_get(mi_stats_t* stats) mi_attr_noexcept {
+  return mi_subproc_stats_get(mi_subproc_current(), stats);
 }
 
 
@@ -716,6 +715,7 @@ static void mi_json_buf_print_counter_value(mi_json_buf_t* hbuf, const char* nam
 #define MI_STAT_COUNTER(stat)  mi_json_buf_print_counter_value(&hbuf, #stat, &stats->stat);
 
 static char* mi_stats_get_json_from(mi_stats_t* stats, size_t output_size, char* output_buf) mi_attr_noexcept {
+  if (stats==NULL || stats->size!=sizeof(mi_stats_t) || stats->version!=MI_STAT_VERSION) return NULL;
   mi_json_buf_t hbuf = { NULL, 0, 0, true };
   if (output_size > 0 && output_buf != NULL) {
     _mi_memzero(output_buf, output_size);
@@ -727,7 +727,7 @@ static char* mi_stats_get_json_from(mi_stats_t* stats, size_t output_size, char*
     if (!mi_json_buf_expand(&hbuf)) return NULL;
   }
   mi_json_buf_print(&hbuf, "{\n");
-  mi_json_buf_print_value(&hbuf, "version", MI_STAT_VERSION);
+  mi_json_buf_print_value(&hbuf, "stat_version", MI_STAT_VERSION);
   mi_json_buf_print_value(&hbuf, "mimalloc_version", MI_MALLOC_VERSION);
 
   // process info
@@ -769,13 +769,24 @@ static char* mi_stats_get_json_from(mi_stats_t* stats, size_t output_size, char*
   for (size_t i = 0; i < MI_CBIN_COUNT; i++) {
     mi_json_buf_print_count_cbin(&hbuf, "    ", &stats->chunk_bins[i], (mi_chunkbin_t)i, i!=MI_CBIN_COUNT-1);
   }
-  mi_json_buf_print(&hbuf, "  ]\n");
+  mi_json_buf_print(&hbuf, "  ]\n");  
   mi_json_buf_print(&hbuf, "}\n");
-  return hbuf.buf;
+  if (hbuf.used >= hbuf.size) {
+    // failed
+    if (hbuf.can_realloc) { mi_free(hbuf.buf); }
+    return NULL;
+  }
+  else {
+    return hbuf.buf;
+  }
 }
 
 char* mi_subproc_stats_get_json(mi_subproc_id_t subproc_id, size_t buf_size, char* buf) mi_attr_noexcept {
-  return mi_stats_get_json_from(&_mi_subproc_from_id(subproc_id)->stats, buf_size, buf);
+  mi_subproc_t* subproc = _mi_subproc_from_id(subproc_id);
+  if (subproc==NULL) return NULL;
+  mi_stats_t_decl(stats);
+  if (!mi_subproc_stats_get(subproc_id,&stats)) return NULL;
+  return mi_stats_get_json_from(&subproc->stats, buf_size, buf);  
 }
 
 char* mi_heap_stats_get_json(mi_heap_t* heap, size_t buf_size, char* buf) mi_attr_noexcept {
@@ -783,8 +794,9 @@ char* mi_heap_stats_get_json(mi_heap_t* heap, size_t buf_size, char* buf) mi_att
 }
 
 char* mi_stats_get_json(size_t buf_size, char* buf) mi_attr_noexcept {
-  mi_stats_t stats; 
-  mi_stats_get(sizeof(stats), &stats);
-  return mi_stats_get_json_from(&stats, buf_size, buf);
+  return mi_subproc_stats_get_json(mi_subproc_current(), buf_size, buf);
 }
 
+char* mi_stats_as_json(mi_stats_t* stats, size_t buf_size, char* buf) mi_attr_noexcept {
+  return mi_stats_get_json_from(stats, buf_size, buf);
+}

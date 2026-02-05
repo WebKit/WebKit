@@ -174,8 +174,6 @@ private:
 
     class ProcessAssertionCache;
 
-    Ref<AuxiliaryProcessProxy> protectedProcess() const;
-
     const UniqueRef<ProcessAssertionCache> m_assertionCache;
     WeakRef<AuxiliaryProcessProxy> m_process;
     RefPtr<ProcessAssertion> m_assertion;

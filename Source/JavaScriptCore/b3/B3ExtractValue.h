@@ -35,11 +35,6 @@ namespace JSC { namespace B3 {
 
 class JS_EXPORT_PRIVATE ExtractValue final : public Value {
 public:
-#if CPU(ARM_THUMB2)
-    // See LowerInt64 for details
-    static constexpr int s_int64HighBits = 1;
-    static constexpr int s_int64LowBits = 0;
-#endif
 
     static bool accepts(Kind kind) { return kind == Extract; }
 

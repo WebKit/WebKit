@@ -2380,6 +2380,14 @@ CallCapture ParseCallCapture(const Token &nameToken,
                 paramTokens, strings);
         return CallCapture(EntryPoint::GLFramebufferTextureLayer, std::move(params));
     }
+    if (strcmp(nameToken, "glFramebufferTextureMultisampleMultiviewOVR") == 0)
+    {
+        ParamBuffer params = ParseParameters<
+            std::remove_pointer<PFNGLFRAMEBUFFERTEXTUREMULTISAMPLEMULTIVIEWOVRPROC>::type>(
+            paramTokens, strings);
+        return CallCapture(EntryPoint::GLFramebufferTextureMultisampleMultiviewOVR,
+                           std::move(params));
+    }
     if (strcmp(nameToken, "glFramebufferTextureMultiviewOVR") == 0)
     {
         ParamBuffer params =

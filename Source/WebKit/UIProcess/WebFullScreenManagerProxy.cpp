@@ -75,13 +75,13 @@ WebFullScreenManagerProxy::WebFullScreenManagerProxy(WebPageProxy& page, WebFull
     , m_logIdentifier(page.logIdentifier())
 #endif
 {
-    page.protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::WebFullScreenManagerProxy::messageReceiverName(), page.webPageIDInMainFrameProcess(), *this);
+    protect(page.legacyMainFrameProcess())->addMessageReceiver(Messages::WebFullScreenManagerProxy::messageReceiverName(), page.webPageIDInMainFrameProcess(), *this);
 }
 
 WebFullScreenManagerProxy::~WebFullScreenManagerProxy()
 {
     if (RefPtr page = m_page.get())
-        page->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::WebFullScreenManagerProxy::messageReceiverName(), page->webPageIDInMainFrameProcess());
+        protect(page->legacyMainFrameProcess())->removeMessageReceiver(Messages::WebFullScreenManagerProxy::messageReceiverName(), page->webPageIDInMainFrameProcess());
     detachFromClient();
     callCloseCompletionHandlers();
 }
@@ -230,7 +230,7 @@ Awaitable<bool> WebFullScreenManagerProxy::enterFullScreen(IPC::Connection& conn
         enterFullScreenForOwnerElementsInOtherProcesses(frameID, WTF::move(completionHandler));
     } };
 
-    if (RefPtr page = m_page.get(); page && page->protectedPreferences()->siteIsolationEnabled())
+    if (RefPtr page = m_page.get(); page && protect(page->preferences())->siteIsolationEnabled())
         co_await page->nextPresentationUpdate();
 
     co_return true;

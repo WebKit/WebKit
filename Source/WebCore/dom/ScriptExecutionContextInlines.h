@@ -67,7 +67,7 @@ void ScriptExecutionContext::enqueueTaskWhenSettled(Ref<Promise>&& promise, Task
 {
     auto request = NativePromiseRequest::create();
     WeakPtr weakRequest { request.get() };
-    auto command = promise->whenSettled(protectedNativePromiseDispatcher(), [weakThis = WeakPtr { *this }, taskSource, task = WTF::move(task), request = WTF::move(request)] (auto&& result) mutable {
+    auto command = promise->whenSettled(protect(nativePromiseDispatcher()), [weakThis = WeakPtr { *this }, taskSource, task = WTF::move(task), request = WTF::move(request)] (auto&& result) mutable {
         request->complete();
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)

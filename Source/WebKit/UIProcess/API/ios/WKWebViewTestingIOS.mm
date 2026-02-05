@@ -316,7 +316,7 @@ static void dumpUIView(TextStream& ts, UIView *view, bool traverse)
 {
     if (!layerID)
         return nil;
-    RetainPtr view = downcast<WebKit::RemoteLayerTreeDrawingAreaProxyIOS>(_page->protectedDrawingArea())->viewWithLayerIDForTesting({ ObjectIdentifier<WebCore::PlatformLayerIdentifierType>(layerID), _page->legacyMainFrameProcess().coreProcessIdentifier() });
+    RetainPtr view = downcast<WebKit::RemoteLayerTreeDrawingAreaProxyIOS>(protect(_page->drawingArea()))->viewWithLayerIDForTesting({ ObjectIdentifier<WebCore::PlatformLayerIdentifierType>(layerID), _page->legacyMainFrameProcess().coreProcessIdentifier() });
     if (!view)
         return nil;
 
@@ -446,7 +446,7 @@ static void dumpUIView(TextStream& ts, UIView *view, bool traverse)
 {
 #if USE(SYSTEM_PREVIEW)
     if (_page) {
-        if (auto* previewController = _page->systemPreviewController())
+        if (RefPtr previewController = _page->systemPreviewController())
             previewController->triggerSystemPreviewActionWithTargetForTesting(elementID, documentID, pageID);
     }
 #endif

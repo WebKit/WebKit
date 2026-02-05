@@ -1,4 +1,4 @@
-# Copyright (C) 2025 Apple Inc. All rights reserved.
+# Copyright (C) 2025-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@ from buildbot.process import buildstep, logobserver, properties
 from buildbot.process.results import Results, SUCCESS, FAILURE, CANCELLED, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.steps import master, shell, transfer, trigger
 from buildbot.steps.source import git
-from twisted.internet import defer
+from twisted.internet import defer, reactor
 from shlex import quote
 
 import json
@@ -43,6 +43,7 @@ CURRENT_HOSTNAME = socket.gethostname().strip()
 GITHUB_URL = 'https://github.com/'
 SCAN_BUILD_OUTPUT_DIR = 'scan-build-output'
 LLVM_DIR = 'llvm-project'
+SWIFT_DIR = 'swift-project/swift'
 
 
 class ShellMixin(object):
@@ -221,6 +222,172 @@ class GetLLVMVersion(shell.ShellCommand, ShellMixin):
         return {u'step': self.summary}
 
 
+class PrintSwiftVersion(steps.ShellSequence, ShellMixin):
+    name = 'print-swift-version'
+    haltOnFailure = False
+    flunkOnFailure = False
+    warnOnFailure = False
+    summary = ''
+
+    def __init__(self, **kwargs):
+        super().__init__(logEnviron=False, workdir=SWIFT_DIR, **kwargs)
+        self.commands = []
+        self.summary = ''
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+
+        self.commands = [
+            util.ShellArg(command=self.shell_command('git describe --tags'), logname='stdio', haltOnFailure=True),
+            util.ShellArg(command=self.shell_command(f'../build/Ninja-ReleaseAssert/swift-macosx-arm64/bin/swift --version'), logname='stdio')
+        ]
+
+        rc = yield super().runShellSequence(self.commands)
+
+        # First, check for the swift checkout
+        log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
+        if 'not a git repository' in log_text:
+            self.summary = 'Swift repository does not exist'
+            rc = SUCCESS
+        else:
+            git_tag = log_text.split()[0]
+            self.setProperty('current_swift_tag', git_tag)
+            self.summary = f'Current Swift tag: {git_tag}'
+
+        # Then, check if the executable exists - if not, we want to build
+        if 'No such file or directory' in log_text:
+            self.summary = 'Swift executable does not exist'
+            rc = SUCCESS
+        else:
+            self.setProperty('has_swift_executable', True)
+        return defer.returnValue(rc)
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {'step': 'Failed to print Swift version'}
+        return {'step': self.summary}
+
+
+class GetSwiftTagName(shell.ShellCommand, ShellMixin):
+    name = 'get-swift-tag-name'
+    summary = 'Found Swift tag'
+
+    def __init__(self, **kwargs):
+        super().__init__(logEnviron=False, timeout=60, **kwargs)
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.command = self.shell_command('cat Tools/CISupport/safer-cpp-swift-version')
+
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
+
+        rc = yield super().run()
+        if rc != SUCCESS:
+            return defer.returnValue(rc)
+
+        log_text = self.log_observer.getStdout().strip()
+        if log_text:
+            self.setProperty('canonical_swift_tag', log_text)
+            self.summary = f"Canonical Swift tag name: {self.getProperty('canonical_swift_tag')}"
+            return defer.returnValue(SUCCESS)
+        return defer.returnValue(FAILURE)
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            self.summary = f'Failed to find canonical Swift tag'
+        return {u'step': self.summary}
+
+
+class CheckOutSwiftProject(git.Git, AddToLogMixin):
+    name = 'checkout-swift-project'
+    directory = 'swift-project/swift'
+    branch = 'main'
+    CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR = (0, 2)
+    GIT_HASH_LENGTH = 40
+    haltOnFailure = False
+
+    def __init__(self, **kwargs):
+        repourl = f'{GITHUB_URL}swiftlang/swift.git'
+        super().__init__(
+            repourl=repourl,
+            workdir=self.directory,
+            retry=self.CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR,
+            timeout=5 * 60,
+            branch=self.branch,
+            alwaysUseLatest=True,
+            logEnviron=False,
+            progress=True,
+            **kwargs
+        )
+
+    @defer.inlineCallbacks
+    def parseGotRevision(self, _=None):
+        stdout = yield self._dovccmd(['rev-parse', 'HEAD'], collectStdout=True)
+        revision = stdout.strip()
+        if len(revision) != self.GIT_HASH_LENGTH:
+            raise buildstep.BuildStepFailed()
+        return SUCCESS
+
+    def doStepIf(self, step):
+        return self.getProperty('canonical_swift_tag') and self.getProperty('current_swift_tag', '') != self.getProperty('canonical_swift_tag')
+
+    def getResultSummary(self):
+        if self.results == SKIPPED:
+            return {'step': 'swift-project is already up to date'}
+        elif self.results != SUCCESS:
+            return {'step': 'Failed to update swift-project directory'}
+        else:
+            return {'step': 'Cleaned and updated swift-project directory'}
+
+
+class UpdateSwiftCheckouts(steps.ShellSequence, ShellMixin):
+    name = 'update-swift-checkouts'
+    description = 'updating swift checkouts'
+    descriptionDone = 'Successfully updated swift checkouts'
+    flunkOnFailure = False
+    warnOnFailure = False
+
+    def __init__(self, **kwargs):
+        super().__init__(logEnviron=False, workdir=SWIFT_DIR, **kwargs)
+        self.commands = []
+        self.summary = ''
+
+    @defer.inlineCallbacks
+    def run(self):
+        if not self.getProperty('canonical_swift_tag'):
+            self.summary = 'Could not find canonical Swift version, using previous checkout'
+            return WARNINGS
+
+        swift_tag = self.getProperty('canonical_swift_tag')
+        self.commands = [
+            util.ShellArg(command=self.shell_command('utils/update-checkout --clone'), logname='stdio', haltOnFailure=True),
+            util.ShellArg(command=self.shell_command(f'utils/update-checkout --tag {swift_tag}'), logname='stdio')
+        ]
+
+        rc = yield super().runShellSequence(self.commands)
+        if rc != SUCCESS:
+            if self.getProperty('current_swift_tag', ''):
+                self.summary = 'Failed to update swift, using previous checkout'
+                return WARNINGS
+            self.summary = 'Failed to update swift checkout'
+            self.build.buildFinished(['Failed to set up swift, retrying update'], RETRY)
+            return defer.returnValue(rc)
+
+        self.summary = 'Successfully updated swift checkout'
+        defer.returnValue(rc)
+
+    def doStepIf(self, step):
+        return self.getProperty('canonical_swift_tag') and self.getProperty('current_swift_tag', '') != self.getProperty('canonical_swift_tag')
+
+    def getResultSummary(self):
+        if self.results == SKIPPED:
+            return {'step': 'Swift checkout is already up to date'}
+        return {'step': self.summary}
+
+
 class CheckOutLLVMProject(git.Git, AddToLogMixin):
     name = 'checkout-llvm-project'
     directory = 'llvm-project'
@@ -321,29 +488,6 @@ class PrintClangVersion(shell.ShellCommand):
     haltOnFailure = False
     flunkOnFailure = False
     warnOnFailure = False
-
-    @defer.inlineCallbacks
-    def run(self):
-        self.log_observer = logobserver.BufferLogObserver()
-        self.addLogObserver('stdio', self.log_observer)
-        self.command = ['../llvm-project/build/bin/clang', '--version']
-        rc = yield super().run()
-        return defer.returnValue(rc)
-
-    def getResultSummary(self):
-        if self.results != SUCCESS:
-            return {'step': 'Failed to print clang version'}
-        log_text = self.log_observer.getStdout()
-        match = re.search('(.*clang version.+) (\\(.+?\\))', log_text)
-        if match:
-            return {'step': match.group(0)}
-
-
-class PrintClangVersion(shell.ShellCommand):
-    name = 'print-clang-version'
-    haltOnFailure = False
-    flunkOnFailure = False
-    warnOnFailure = False
     CLANG_VERSION_RE = '(.*clang version.+) \\((.+?)\\)'
     summary = ''
 
@@ -404,3 +548,34 @@ class SetO3OptimizationLevel(shell.ShellCommand):
     name = "set-o3-optimization-level"
     description = ["set O3 optimization level"]
     descriptionDone = ["set O3 optimization level"]
+
+
+class WaitForDuration(buildstep.BuildStep):
+    name = 'wait'
+    DEFAULT_WAIT_DURATION = 60
+
+    def __init__(self, duration=DEFAULT_WAIT_DURATION, **kwargs):
+        self.duration = duration
+        self.delayedCall = None
+        self.deferred = None
+        super().__init__(**kwargs)
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.description = [f'Waiting for {self.duration}s']
+        self.descriptionDone = [f'Waited for {self.duration}s']
+
+        self.deferred = defer.Deferred()
+        self.delayedCall = reactor.callLater(self.duration, self.deferred.callback, None)
+        try:
+            yield self.deferred
+            return SUCCESS
+        except defer.CancelledError:
+            return CANCELLED
+
+    def interrupt(self, reason):
+        if self.delayedCall and self.delayedCall.active():
+            self.delayedCall.cancel()
+        if self.deferred and not self.deferred.called:
+            self.deferred.cancel()
+        return super().interrupt(reason)

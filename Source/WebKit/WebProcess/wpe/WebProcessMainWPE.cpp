@@ -30,6 +30,7 @@
 #include "AuxiliaryProcessMain.h"
 #include "WebProcess.h"
 #include <glib.h>
+#include <skia/core/SkGraphics.h>
 
 #if USE(GCRYPT)
 #include <pal/crypto/gcrypt/Initialization.h>
@@ -37,10 +38,6 @@
 
 #if USE(GSTREAMER)
 #include <WebCore/GStreamerCommon.h>
-#endif
-
-#if USE(SKIA)
-#include <skia/core/SkGraphics.h>
 #endif
 
 #if USE(SYSPROF_CAPTURE)
@@ -68,11 +65,9 @@ public:
         PAL::GCrypt::initialize();
 #endif
 
-#if USE(SKIA)
         SkGraphics::Init();
 #if USE(SKIA_OPENTYPE_SVG)
         SkGraphics::SetOpenTypeSVGDecoderFactory(SkSVGOpenTypeSVGDecoder::Make);
-#endif
 #endif
 
 #if ENABLE(DEVELOPER_MODE)

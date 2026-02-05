@@ -214,7 +214,7 @@ RefPtr<WebCore::VideoFrame> RemoteGraphicsContextGLProxy::surfaceBufferToVideoFr
     auto [result] = sendResult.takeReply();
     if (!result)
         return nullptr;
-    return RemoteVideoFrameProxy::create(WebProcess::singleton().ensureGPUProcessConnection().connection(), WebProcess::singleton().ensureProtectedGPUProcessConnection()->protectedVideoFrameObjectHeapProxy(), WTF::move(*result));
+    return RemoteVideoFrameProxy::create(WebProcess::singleton().ensureGPUProcessConnection().connection(), protect(WebProcess::singleton().ensureProtectedGPUProcessConnection()->videoFrameObjectHeapProxy()), WTF::move(*result));
 }
 #endif
 

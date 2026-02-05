@@ -26,10 +26,12 @@
 #import "config.h"
 
 #import "PlatformUtilities.h"
+#import "Test.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 @interface NowPlayingTestWebView : TestWKWebView
 @property (nonatomic, readonly) BOOL hasActiveNowPlayingSession;
@@ -309,6 +311,7 @@ TEST(NowPlayingControlsTests, DISABLED_NowPlayingUpdatesThrottled)
             uniqueIdentifier = [webView lastUniqueIdentifier];
             updateTime = [webView lastUpdateTime];
         }
+        NowPlayingState() = default;
 
         bool operator==(const NowPlayingState&) const = default;
 
@@ -325,44 +328,61 @@ TEST(NowPlayingControlsTests, DISABLED_NowPlayingUpdatesThrottled)
     [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
     auto webView = adoptNS([[NowPlayingTestWebView alloc] initWithFrame:NSMakeRect(0, 0, 480, 320) configuration:configuration.get()]);
 
-    constexpr double internalTestStepTimout = 20;
-    auto waitForEventOrTimeout = [&] (const char* eventName) -> bool {
+    constexpr double internalTestTimout = 20;
+    auto waitForMessageOrTimeout = [&] (const char* eventName) -> bool {
         __block bool receivedEvent = false;
         [webView performAfterReceivingMessage:[NSString stringWithUTF8String:eventName] action:^{ receivedEvent = true; }];
 
         NSDate *startTime = [NSDate date];
-        while (!receivedEvent && [[NSDate date] timeIntervalSinceDate:startTime] < internalTestStepTimout)
+        while (!receivedEvent && [[NSDate date] timeIntervalSinceDate:startTime] < internalTestTimout)
             TestWebKitAPI::Util::runFor(0.05_s);
 
         return receivedEvent;
     };
 
-    [webView loadTestPageNamed:@"large-video-test-now-playing"];
-    ASSERT_TRUE(waitForEventOrTimeout("playing"));
+    [webView loadTestPageNamed:@"small-video-test-now-playing"];
+    ASSERT_TRUE(waitForMessageOrTimeout("ready"));
 
-    [webView stringByEvaluatingJavaScript:@"pause()"];
-    ASSERT_TRUE(waitForEventOrTimeout("paused"));
+    auto videoError = [webView stringByEvaluatingJavaScript:@"videoError()"];
+    ASSERT_STREQ("null", videoError.UTF8String);
 
-    [webView stringByEvaluatingJavaScript:@"setLoop(true)"];
-    [webView stringByEvaluatingJavaScript:@"window.internals.setNowPlayingUpdateInterval(0.5)"];
+    constexpr double initialTime = 3;
+    NSError *error;
+    id result = [webView objectByCallingAsyncFunction:[NSString stringWithFormat:@"play(%f)", initialTime] withArguments:nil error:&error];
+    EXPECT_NULL(error);
+    EXPECT_EQ(result, nil);
+    ASSERT_TRUE(waitForMessageOrTimeout("playing"));
 
-    [webView stringByEvaluatingJavaScript:@"seekTo(8)"];
-    ASSERT_TRUE(waitForEventOrTimeout("seeked"));
+    videoError = [webView stringByEvaluatingJavaScript:@"videoError()"];
+    ASSERT_STREQ("null", videoError.UTF8String);
 
-    [webView stringByEvaluatingJavaScript:@"play()"];
-    ASSERT_TRUE(waitForEventOrTimeout("playing"));
+    constexpr double impossibleUpdateInterval = 10.;
+    [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"window.internals.nowPlayingUpdateInterval = %f", impossibleUpdateInterval]];
+    auto actualInterval = [[webView stringByEvaluatingJavaScript:@"window.internals.nowPlayingUpdateInterval"] doubleValue];
+    EXPECT_LT(actualInterval, impossibleUpdateInterval);
 
-    bool videoLooped = false;
+    constexpr double updateInterval = 0.5;
+    [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"window.internals.nowPlayingUpdateInterval = %f", updateInterval]];
+    actualInterval = [[webView stringByEvaluatingJavaScript:@"window.internals.nowPlayingUpdateInterval"] doubleValue];
+    EXPECT_EQ(updateInterval, actualInterval);
+
+    NowPlayingState initialState;
+    NowPlayingState previousState;
     NSDate *startTime = [NSDate date];
-    NowPlayingState initialState(webView.get());
-    NowPlayingState previousState = initialState;
+    bool videoLooped = false;
     while ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]) {
 
-        if ([[NSDate date] timeIntervalSinceDate:startTime] > internalTestStepTimout)
+        if ([[NSDate date] timeIntervalSinceDate:startTime] > internalTestTimout)
             break;
 
         NowPlayingState currentState(webView.get());
-        if (currentState.elapsedTime && currentState.elapsedTime < initialState.elapsedTime) {
+        if (!initialState.elapsedTime) {
+            initialState = currentState;
+            previousState = initialState;
+            continue;
+        }
+
+        if (currentState.elapsedTime && currentState.elapsedTime < initialTime) {
             videoLooped = true;
             break;
         }
@@ -394,7 +414,7 @@ TEST(NowPlayingControlsTests, DISABLED_NowPlayingUpdatesThrottled)
 
     ASSERT_TRUE(videoLooped);
 
-    [webView stringByEvaluatingJavaScript:@"removeVideoElement()"];
+    [webView stringByEvaluatingJavaScript:@"pause()"];
 }
 
 } // namespace TestWebKitAPI

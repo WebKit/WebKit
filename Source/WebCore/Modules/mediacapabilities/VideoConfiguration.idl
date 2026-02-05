@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/media-capabilities/#dictdef-videoconfiguration
 [
     EnabledBySetting=MediaCapabilitiesEnabled,
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary VideoConfiguration {
   required DOMString contentType;
   required unsigned long width;
@@ -39,4 +39,8 @@
   HdrMetadataType hdrMetadataType;
   ColorGamut colorGamut;
   TransferFunction transferFunction;
+  // FIXME: Add support for `scalabilityMode`.
+  // DOMString scalabilityMode;
+  // FIXME: Add support for `spatialScalability`.
+  // boolean spatialScalability;
 };

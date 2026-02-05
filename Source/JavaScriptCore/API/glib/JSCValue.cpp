@@ -1057,7 +1057,7 @@ void jsc_value_object_define_property_data(JSCValue* value, const char* property
     JSC::JSGlobalObject* globalObject = toJS(jsContext);
     Ref vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSC::JSValue jsValue = toJS(globalObject, priv->jsValue);
     JSC::JSObject* object = jsValue.toObject(globalObject);
@@ -1090,7 +1090,7 @@ static void jscValueObjectDefinePropertyAccessor(JSCValue* value, const char* pr
     JSC::JSGlobalObject* globalObject = toJS(jsContext);
     Ref vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSC::JSValue jsValue = toJS(globalObject, priv->jsValue);
     JSC::JSObject* object = jsValue.toObject(globalObject);

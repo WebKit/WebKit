@@ -27,9 +27,8 @@
 #include "AV1Utilities.h"
 
 #include "BitReader.h"
-#include "MediaCapabilitiesInfo.h"
+#include "PlatformMediaCapabilitiesVideoConfiguration.h"
 #include "TrackInfo.h"
-#include "VideoConfiguration.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
 #include <wtf/NeverDestroyed.h>
@@ -510,7 +509,7 @@ bool validateAV1ConfigurationRecord(const AV1CodecConfigurationRecord& record)
     return true;
 }
 
-bool validateAV1PerLevelConstraints(const AV1CodecConfigurationRecord& record, const VideoConfiguration& configuration)
+bool validateAV1PerLevelConstraints(const AV1CodecConfigurationRecord& record, const PlatformMediaCapabilitiesVideoConfiguration& configuration)
 {
     // Check that VideoConfiguration is within the specified profile and level from the configuration record:
     auto findIter = perLevelConstraints().find(record.level);

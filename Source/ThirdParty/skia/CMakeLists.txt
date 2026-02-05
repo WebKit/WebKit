@@ -1034,8 +1034,6 @@ target_compile_definitions(Skia PUBLIC
 
     SK_ENABLE_PRECOMPILE
 
-    SK_R32_SHIFT=16
-
     $<IF:$<BOOL:${SKIA_DEBUG}>,SK_DEBUG,SK_RELEASE>
 )
 
@@ -1074,6 +1072,21 @@ if (WIN32)
     target_compile_definitions(Skia PRIVATE SK_TYPEFACE_FACTORY_DIRECTWRITE)
 else ()
     target_compile_definitions(Skia PRIVATE SK_TYPEFACE_FACTORY_FREETYPE)
+endif ()
+
+if (CMAKE_CXX_BYTE_ORDER STREQUAL "BIG_ENDIAN")
+    target_compile_definitions(Skia PUBLIC
+        I_ACKNOWLEDGE_SKIA_DOES_NOT_SUPPORT_BIG_ENDIAN
+
+        SK_R32_SHIFT=24
+        SK_G32_SHIFT=16
+        SK_B32_SHIFT=8
+        SK_A32_SHIFT=0
+    )
+else ()
+    target_compile_definitions(Skia PUBLIC
+        SK_R32_SHIFT=16
+    )
 endif ()
 
 #

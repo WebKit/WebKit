@@ -71,10 +71,9 @@ void setNumberFormatDigitOptions(JSGlobalObject* globalObject, IntlType* intlIns
     static constexpr const unsigned roundingIncrementCandidates[] = {
         1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000
     };
-    if (std::none_of(roundingIncrementCandidates, roundingIncrementCandidates + std::size(roundingIncrementCandidates),
-        [&](unsigned candidate) {
-            return candidate == roundingIncrement;
-        })) {
+    if (std::ranges::none_of(roundingIncrementCandidates, [&](auto candidate) {
+        return candidate == roundingIncrement;
+    })) {
         throwRangeError(globalObject, scope, "roundingIncrement must be one of 1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000"_s);
         return;
     }

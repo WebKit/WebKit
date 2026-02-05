@@ -79,7 +79,6 @@ public:
     ~UserMediaPermissionRequestManagerProxy();
 
     WebPageProxy* page() const;
-    RefPtr<WebPageProxy> protectedPage() const;
 
     void disconnectFromPage();
 

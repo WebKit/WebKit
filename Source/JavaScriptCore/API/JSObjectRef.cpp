@@ -138,7 +138,7 @@ JSObjectRef JSObjectMakeFunction(JSContextRef ctx, JSStringRef name, unsigned pa
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     startingLineNumber = std::max(1, startingLineNumber);
     Identifier nameID = name ? name->identifier(&vm) : Identifier::fromString(vm, "anonymous"_s);
@@ -171,7 +171,7 @@ JSObjectRef JSObjectMakeArray(JSContextRef ctx, size_t argumentCount, const JSVa
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSObject* result;
     if (argumentCount) {
@@ -205,7 +205,7 @@ JSObjectRef JSObjectMakeDate(JSContextRef ctx, size_t argumentCount, const JSVal
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     MarkedArgumentBuffer argList;
     argList.ensureCapacity(argumentCount);
@@ -234,7 +234,7 @@ JSObjectRef JSObjectMakeError(JSContextRef ctx, size_t argumentCount, const JSVa
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSValue message = argumentCount ? toJS(globalObject, arguments[0]) : jsUndefined();
     JSValue options = argumentCount > 1 ? toJS(globalObject, arguments[1]) : jsUndefined();
@@ -256,7 +256,7 @@ JSObjectRef JSObjectMakeRegExp(JSContextRef ctx, size_t argumentCount, const JSV
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     MarkedArgumentBuffer argList;
     argList.ensureCapacity(argumentCount);
@@ -286,7 +286,7 @@ JSObjectRef JSObjectMakeDeferredPromise(JSContextRef ctx, JSObjectRef* resolve, 
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(globalObject);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSPromise::DeferredData data = JSPromise::createDeferredData(globalObject, globalObject->promiseConstructor());
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
@@ -321,7 +321,7 @@ void JSObjectSetPrototype(JSContextRef ctx, JSObjectRef object, JSValueRef value
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSObject* jsObject = toJS(object);
     JSValue jsValue = toJS(globalObject, value);
@@ -353,7 +353,7 @@ JSValueRef JSObjectGetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSObject* jsObject = toJS(object);
 
@@ -372,7 +372,7 @@ void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSObject* jsObject = toJS(object);
     Identifier name(propertyName->identifier(&vm));
@@ -400,7 +400,7 @@ bool JSObjectHasPropertyForKey(JSContextRef ctx, JSObjectRef object, JSValueRef 
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSObject* jsObject = toJS(object);
     Identifier ident = toJS(globalObject, key).toPropertyKey(globalObject);
@@ -422,7 +422,7 @@ JSValueRef JSObjectGetPropertyForKey(JSContextRef ctx, JSObjectRef object, JSVal
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSObject* jsObject = toJS(object);
     Identifier ident = toJS(globalObject, key).toPropertyKey(globalObject);
@@ -444,7 +444,7 @@ void JSObjectSetPropertyForKey(JSContextRef ctx, JSObjectRef object, JSValueRef 
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSObject* jsObject = toJS(object);
     JSValue jsValue = toJS(globalObject, value);
@@ -475,7 +475,7 @@ bool JSObjectDeletePropertyForKey(JSContextRef ctx, JSObjectRef object, JSValueR
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSObject* jsObject = toJS(object);
     Identifier ident = toJS(globalObject, key).toPropertyKey(globalObject);
@@ -497,7 +497,7 @@ JSValueRef JSObjectGetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsi
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSObject* jsObject = toJS(object);
 
@@ -517,7 +517,7 @@ void JSObjectSetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsigned p
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSObject* jsObject = toJS(object);
     JSValue jsValue = toJS(globalObject, value);
@@ -535,7 +535,7 @@ bool JSObjectDeleteProperty(JSContextRef ctx, JSObjectRef object, JSStringRef pr
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSObject* jsObject = toJS(object);
 
@@ -711,7 +711,7 @@ JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObject
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     if (!object)
         return nullptr;
@@ -758,7 +758,7 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef ctx, JSObjectRef object, size
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     if (!object)
         return nullptr;

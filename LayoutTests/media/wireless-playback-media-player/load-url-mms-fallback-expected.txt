@@ -1,0 +1,10 @@
+Test that the MMS fallback URL is loaded when a MediaDeviceRoute activates.
+
+
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(playing)
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+EXPECTED (actualURL == '/LayoutTests/media/content/test.mp4') OK
+END OF TEST
+

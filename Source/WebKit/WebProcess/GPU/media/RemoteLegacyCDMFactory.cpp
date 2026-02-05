@@ -118,7 +118,7 @@ std::unique_ptr<CDMPrivateInterface> RemoteLegacyCDMFactory::createCDM(WebCore::
     std::optional<MediaPlayerIdentifier> playerId;
     Ref gpuProcessConnection = this->gpuProcessConnection();
     if (auto player = cdm.mediaPlayer())
-        playerId = gpuProcessConnection->protectedMediaPlayerManager()->findRemotePlayerId(player->protectedPlayerPrivate().get());
+        playerId = protect(gpuProcessConnection->mediaPlayerManager())->findRemotePlayerId(player->protectedPlayerPrivate().get());
 
     auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteLegacyCDMFactoryProxy::CreateCDM(cdm.keySystem(), WTF::move(playerId)), { });
     auto [identifier] = sendResult.takeReplyOr(std::nullopt);

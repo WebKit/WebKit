@@ -153,7 +153,7 @@ void JSWorkerGlobalScopeBase::reportViolationForUnsafeEval(JSC::JSGlobalObject* 
 
 void JSWorkerGlobalScopeBase::queueMicrotaskToEventLoop(JSGlobalObject& object, JSC::QueuedTask&& task)
 {
-    JSWorkerGlobalScopeBase& thisObject = static_cast<JSWorkerGlobalScopeBase&>(object);
+    auto& thisObject = *jsCast<JSWorkerGlobalScopeBase*>(&object);
     CheckedRef context = thisObject.wrapped();
     task.setDispatcher(context->eventLoop().jsMicrotaskDispatcher(task));
     context->eventLoop().queueMicrotask(WTF::move(task));

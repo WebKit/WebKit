@@ -47,10 +47,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebBackForwardListProxy::removeItem(BackForwardItemIdentifier itemID)
+void WebBackForwardListProxy::removeItem(BackForwardFrameItemIdentifier frameItemID)
 {
-    BackForwardCache::singleton().remove(itemID);
-    WebCore::Page::clearPreviousItemFromAllPages(itemID);
+    WebCore::Page::clearPreviousItemFromAllPages(frameItemID);
 }
 
 WebBackForwardListProxy::WebBackForwardListProxy(WebPage& page)
@@ -142,7 +141,7 @@ const WebBackForwardListCounts& WebBackForwardListProxy::cacheListCountsIfNecess
     if (!m_cachedBackForwardListCounts) {
         WebBackForwardListCounts backForwardListCounts;
         if (m_page) {
-            auto sendResult = WebProcess::singleton().protectedParentProcessConnection()->sendSync(Messages::WebBackForwardList::BackForwardListCounts(), m_page->identifier());
+            auto sendResult = protect(WebProcess::singleton().parentProcessConnection())->sendSync(Messages::WebBackForwardList::BackForwardListCounts(), m_page->identifier());
             if (sendResult.succeeded())
                 std::tie(backForwardListCounts) = sendResult.takeReply();
         }

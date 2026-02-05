@@ -79,7 +79,7 @@ public:
         return blob;
     }
 
-    static Ref<Blob> create(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& propertyBag)
+    static Ref<Blob> create(ScriptExecutionContext& context, std::optional<Vector<BlobPartVariant>>&& blobPartVariants, const BlobPropertyBag& propertyBag)
     {
         Ref blob = adoptRef(*new Blob(context, WTF::move(blobPartVariants), propertyBag));
         blob->suspendIfNeeded();
@@ -144,7 +144,7 @@ public:
 
 protected:
     WEBCORE_EXPORT explicit Blob(ScriptExecutionContext*);
-    Blob(ScriptExecutionContext&, Vector<BlobPartVariant>&&, const BlobPropertyBag&);
+    Blob(ScriptExecutionContext&, std::optional<Vector<BlobPartVariant>>&&, const BlobPropertyBag&);
     Blob(ScriptExecutionContext*, Vector<uint8_t>&&, const String& contentType);
     Blob(ScriptExecutionContext*, Ref<FragmentedSharedBuffer>&&, const String& contentType);
 

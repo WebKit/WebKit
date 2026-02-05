@@ -9,7 +9,7 @@ layer at (0,0) size 800x214
             text run at (0,2) width 528: "Ahem_font_required_for_this_test."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 647x19
+        RenderText {#text} at (0,0) size 647x20
           text run at (0,0) width 647: "There should be three columns below, dark green, light green, and dark green, with no red anywhere."
       RenderTable {TABLE} at (0,72) size 66x126 [border: (3px solid #000000)]
         RenderTableSection {TBODY} at (3,3) size 60x120

@@ -89,7 +89,7 @@ void SVGFETurbulenceElement::attributeChanged(const QualifiedName& name, const A
             Ref { m_numOctaves }->setBaseValInternal(*result);
 
             if (*result <= 0)
-                protectedDocument()->checkedSVGExtensions()->reportWarning(makeString("feTurbulence: problem parsing numOctaves=\""_s, newValue, "\". numOctaves must be > 0. Filtered element will not be displayed."_s));
+                protect(document())->checkedSVGExtensions()->reportWarning(makeString("feTurbulence: problem parsing numOctaves=\""_s, newValue, "\". numOctaves must be > 0. Filtered element will not be displayed."_s));
         }
         break;
     }

@@ -39,7 +39,7 @@ static ExceptionOr<JSC::JSValue> invokeWritableStreamFunction(JSC::JSGlobalObjec
     JSC::VM& vm = globalObject.vm();
     JSC::JSLockHolder lock(vm);
 
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     auto function = globalObject.get(&globalObject, identifier);
     RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });

@@ -1405,7 +1405,7 @@ public:
         if (!value)
             return true;
 
-        if (!isARM64())
+        if (!isARM64() && !isX86_64())
             return false;
 
 #if CPU(ARM64)
@@ -1438,6 +1438,17 @@ public:
         uint16_t high16 = static_cast<uint16_t>(u32 >> 16);
         if (low16 == high16)
             return isValidFPImm16Form(static_cast<int16_t>(low16));
+#elif CPU(X86_64)
+        uint32_t u32 = static_cast<uint32_t>(value);
+
+        // All ones
+        if (u32 == 0xFFFFFFFFU)
+            return true;
+
+        // Contiguous bit pattern (pcmpeqd + shifts, no scratch needed)
+        auto pattern = X86ContiguousBitPattern32::create(u32);
+        if (pattern.isValid())
+            return true;
 #endif
 
         return false;
@@ -1448,7 +1459,7 @@ public:
         if (!value)
             return true;
 
-        if (!isARM64())
+        if (!isARM64() && !isX86_64())
             return false;
 
 #if CPU(ARM64)
@@ -1459,11 +1470,21 @@ public:
         if (ARM64FPImmediate::create64(u64).isValid())
             return true;
 
+#elif CPU(X86_64)
+        uint64_t u64 = static_cast<uint64_t>(value);
+
+        if (u64 == 0xFFFFFFFFFFFFFFFFULL)
+            return true;
+
+        auto pattern = X86ContiguousBitPattern64::create(u64);
+        if (pattern.isValid())
+            return true;
+#endif
+
         uint32_t low32 = static_cast<uint32_t>(u64);
         uint32_t high32 = static_cast<uint32_t>(u64 >> 32);
         if (low32 == high32)
             return isValidFPImm32Form(static_cast<int32_t>(low32));
-#endif
 
         return false;
     }
@@ -1473,16 +1494,13 @@ public:
         if (bitEquals(value, vectorAllZeros()))
             return true;
 
-        if (!isARM64())
+        if (!isARM64() && !isX86_64())
             return false;
 
-#if CPU(ARM64)
         WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         if (value.u64x2[0] == value.u64x2[1])
             return isValidFPImm64Form(value.u64x2[0]);
         WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-#endif
-
         return false;
     }
 

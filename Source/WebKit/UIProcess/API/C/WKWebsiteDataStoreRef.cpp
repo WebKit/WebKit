@@ -56,7 +56,7 @@ WKTypeID WKWebsiteDataStoreGetTypeID()
 
 WKWebsiteDataStoreRef WKWebsiteDataStoreGetDefaultDataStore()
 {
-    return WebKit::toAPI(WebKit::WebsiteDataStore::protectedDefaultDataStore().get());
+    return WebKit::toAPI(protect(WebKit::WebsiteDataStore::defaultDataStore()).get());
 }
 
 WKWebsiteDataStoreRef WKWebsiteDataStoreCreateNonPersistentDataStore()
@@ -142,7 +142,7 @@ void WKWebsiteDataStoreSyncLocalStorage(WKWebsiteDataStoreRef dataStore, void* c
 
 WKHTTPCookieStoreRef WKWebsiteDataStoreGetHTTPCookieStore(WKWebsiteDataStoreRef dataStoreRef)
 {
-    return WebKit::toAPI(WebKit::toProtectedImpl(dataStoreRef)->protectedCookieStore().get());
+    return WebKit::toAPI(protect(WebKit::toProtectedImpl(dataStoreRef)->cookieStore()).get());
 }
 
 void WKWebsiteDataStoreSetAllowsAnySSLCertificateForWebSocketTesting(WKWebsiteDataStoreRef, bool)
@@ -677,7 +677,7 @@ void WKWebsiteDataStoreSetPerOriginStorageQuota(WKWebsiteDataStoreRef, uint64_t)
 void WKWebsiteDataStoreClearAllDeviceOrientationPermissions(WKWebsiteDataStoreRef dataStoreRef)
 {
 #if ENABLE(DEVICE_ORIENTATION)
-    WebKit::toProtectedImpl(dataStoreRef)->protectedDeviceOrientationAndMotionAccessController()->clearPermissions();
+    protect(WebKit::toProtectedImpl(dataStoreRef)->deviceOrientationAndMotionAccessController())->clearPermissions();
 #endif
 }
 

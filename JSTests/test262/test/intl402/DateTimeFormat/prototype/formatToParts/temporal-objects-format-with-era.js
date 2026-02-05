@@ -22,7 +22,7 @@ function checkEra(parts) {
 
 assert(checkEra(formatter.formatToParts(new Temporal.PlainDate(2025, 11, 4))), "formatting a PlainDate should work");
 assert(checkEra(formatter.formatToParts(new Temporal.PlainYearMonth(2025, 11, "gregory"))), "formatting a PlainYearMonth should work");
-assert(checkEra(formatter.formatToParts(new Temporal.PlainMonthDay(11, 4, "gregory"))), "formatting a PlainMonthDay should work");
+assert(!checkEra(formatter.formatToParts(new Temporal.PlainMonthDay(11, 4, "gregory"))), "formatting a PlainMonthDay should work");
 assert(!checkEra(formatter.formatToParts(new Temporal.PlainTime(14, 46))), "formatting a PlainTime should work");
 assert(checkEra(formatter.formatToParts(new Temporal.PlainDateTime(2025, 11, 4, 14, 46))), "formatting a PlainDateTime should work");
 assert(checkEra(formatter.formatToParts(new Temporal.Instant(0n))), "formatting an Instant should work");

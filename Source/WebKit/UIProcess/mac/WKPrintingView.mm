@@ -374,7 +374,7 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
         std::unique_ptr<IPCCallbackContext> contextDeleter(context);
         pageDidComputePageRects(pageRects, totalScaleFactorForPrinting, computedPageMargin, context);
     };
-    _expectedComputedPagesCallback = webFrame->protectedPage()->computePagesForPrinting(webFrame->frameID(), WebKit::PrintInfo([_printOperation.get() printInfo]), WTF::move(callback));
+    _expectedComputedPagesCallback = protect(webFrame->page())->computePagesForPrinting(webFrame->frameID(), WebKit::PrintInfo([_printOperation.get() printInfo]), WTF::move(callback));
     context->view = self;
     context->callbackID = _expectedComputedPagesCallback;
 
@@ -570,7 +570,7 @@ static RetainPtr<NSString> linkDestinationName(PDFDocument *document, PDFDestina
     WebCore::GraphicsContextCG context([[NSGraphicsContext currentContext] CGContext]);
     WebCore::GraphicsContextStateSaver stateSaver(context);
 
-    bitmap->paint(context, protectedWebFrame(self)->protectedPage()->deviceScaleFactor(), WebCore::IntPoint(nsRect.origin), bitmap->bounds());
+    bitmap->paint(context, protect(protectedWebFrame(self)->page())->deviceScaleFactor(), WebCore::IntPoint(nsRect.origin), bitmap->bounds());
 }
 
 - (void)drawRect:(NSRect)nsRect

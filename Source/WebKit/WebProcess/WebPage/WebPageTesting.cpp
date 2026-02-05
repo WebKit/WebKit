@@ -178,7 +178,7 @@ void WebPageTesting::displayAndTrackRepaints(CompletionHandler<void()>&& complet
     if (!corePage)
         return completionHandler();
 
-    page->protectedDrawingArea()->updateRenderingWithForcedRepaint();
+    protect(page->drawingArea())->updateRenderingWithForcedRepaint();
     for (auto& rootFrame : corePage->rootFrames()) {
         if (RefPtr view = rootFrame->view()) {
             view->setTracksRepaints(true);

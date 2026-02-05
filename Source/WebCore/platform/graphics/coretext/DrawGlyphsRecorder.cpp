@@ -79,6 +79,12 @@ static CGError drawPath(CGContextDelegateRef delegate, CGRenderingStateRef rstat
     return kCGErrorSuccess;
 }
 
+static CGColorSpaceRef getColorSpace(CGContextDelegateRef delegate, CGRenderingStateRef, CGGStateRef)
+{
+    DrawGlyphsRecorder& recorder = *static_cast<DrawGlyphsRecorder*>(CGContextDelegateGetInfo(delegate));
+    return recorder.colorSpace();
+}
+
 UniqueRef<GraphicsContext> DrawGlyphsRecorder::createInternalContext()
 {
     auto contextDelegate = adoptCF(CGContextDelegateCreate(this));
@@ -87,6 +93,8 @@ UniqueRef<GraphicsContext> DrawGlyphsRecorder::createInternalContext()
     CGContextDelegateSetCallback(contextDelegate.get(), deDrawGlyphs, reinterpret_cast<CGContextDelegateCallback>(&WebCore::drawGlyphs));
     CGContextDelegateSetCallback(contextDelegate.get(), deDrawImage, reinterpret_cast<CGContextDelegateCallback>(&drawImage));
     CGContextDelegateSetCallback(contextDelegate.get(), deDrawPath, reinterpret_cast<CGContextDelegateCallback>(&drawPath));
+    CGContextDelegateSetCallback(contextDelegate.get(), deGetColorSpace, reinterpret_cast<CGContextDelegateCallback>(&getColorSpace));
+
     auto contextType = kCGContextTypeUnknown;
     auto context = adoptCF(CGContextCreateWithDelegate(contextDelegate.get(), contextType, nullptr, nullptr));
     return makeUniqueRef<GraphicsContextCG>(context.get());
@@ -418,6 +426,11 @@ void DrawGlyphsRecorder::recordDrawPath(CGRenderingStateRef, CGGStateRef gstate,
     }
 }
 
+CGColorSpaceRef DrawGlyphsRecorder::colorSpace() const
+{
+    return m_owner.colorSpace().platformColorSpace();
+}
+
 void DrawGlyphsRecorder::drawOTSVGRun(const Font& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
 {
     FloatPoint penPosition = startPoint;
@@ -434,7 +447,7 @@ void DrawGlyphsRecorder::drawOTSVGRun(const Font& font, std::span<const GlyphBuf
 #endif
 
         // Create a local ImageBuffer because decoding the SVG fonts has to happen in WebProcess.
-        if (auto imageBuffer = m_owner.createAlignedImageBuffer(bounds, DestinationColorSpace::SRGB(), RenderingMethod::Local)) {
+        if (auto imageBuffer = m_owner.createAlignedImageBuffer(bounds, m_owner.colorSpace(), RenderingMethod::Local)) {
             FontCascade::drawGlyphs(imageBuffer->context(), font, glyphs.subspan(i, 1), advances.subspan(i, 1), FloatPoint(), smoothingMode);
 
             FloatRect destinationRect = enclosingIntRect(bounds);

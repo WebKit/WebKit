@@ -53,6 +53,32 @@ enum class CalcMode : uint8_t {
     Spline
 };
 
+enum class SVGAnimatorType : uint8_t {
+    Angle,
+    AngleOrient,
+    Boolean,
+    Color,
+    CSSLength,
+    CSSLengthList,
+    CSSNumber,
+    CSSString,
+    Enumeration,
+    Integer,
+    IntegerPair,
+    Length,
+    LengthList,
+    Number,
+    NumberList,
+    NumberPair,
+    OrientType,
+    PathSegList,
+    PointList,
+    PreserveAspectRatio,
+    Rect,
+    String,
+    TransformList
+};
+
 class SVGAttributeAnimator : public RefCountedAndCanMakeWeakPtr<SVGAttributeAnimator> {
     WTF_MAKE_TZONE_ALLOCATED(SVGAttributeAnimator);
 public:
@@ -62,6 +88,8 @@ public:
     }
 
     virtual ~SVGAttributeAnimator() = default;
+
+    virtual SVGAnimatorType animatorType() const = 0;
 
     virtual bool isDiscrete() const { return false; }
 

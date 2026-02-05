@@ -165,7 +165,7 @@ GstElement* GStreamerCapturer::createSource()
         g_object_set(m_src.get(), "do-timestamp", TRUE, nullptr);
     }
 
-    GST_DEBUG_OBJECT(m_pipeline.get(), "Source element created: %" GST_PTR_FORMAT, m_src.get());
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Source element created: %" GST_PTR_FORMAT " (factory: %" GST_PTR_FORMAT ")", m_src.get(), gst_element_get_factory(m_src.get()));
 
     if (gstElementFactoryEquals(m_src.get(), "pipewiresrc"_s)) {
         auto data = createCapturerProbeData();

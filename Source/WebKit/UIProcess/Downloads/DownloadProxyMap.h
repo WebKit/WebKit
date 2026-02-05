@@ -70,7 +70,7 @@ public:
     void deref() const;
 
 private:
-    Ref<NetworkProcessProxy> protectedProcess();
+    NetworkProcessProxy& process() const { return m_process; }
 
     void platformCreate();
     void platformDestroy();

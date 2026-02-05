@@ -585,7 +585,6 @@ void PageClientImpl::callAfterNextPresentationUpdate(CompletionHandler<void()>&&
     m_view.callAfterNextPresentationUpdate(WTF::move(callback));
 }
 
-#if USE(SKIA)
 RefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot(std::optional<WebCore::IntRect>&& clipRect)
 {
 #if ENABLE(WPE_PLATFORM)
@@ -600,6 +599,5 @@ RefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot(std::optional<WebCore::Int
 #endif
     return nullptr;
 }
-#endif
 
 } // namespace WebKit

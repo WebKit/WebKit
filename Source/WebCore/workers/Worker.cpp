@@ -150,10 +150,10 @@ Worker::~Worker()
     m_contextProxy.workerObjectDestroyed();
 }
 
-ExceptionOr<void> Worker::postMessage(JSC::JSGlobalObject& state, JSC::JSValue messageValue, StructuredSerializeOptions&& options)
+ExceptionOr<void> Worker::postMessage(JSC::JSGlobalObject& globalObject, JSC::JSValue messageValue, StructuredSerializeOptions&& options)
 {
     Vector<Ref<MessagePort>> ports;
-    auto message = SerializedScriptValue::create(state, messageValue, WTF::move(options.transfer), ports, SerializationForStorage::No, SerializationContext::WorkerPostMessage);
+    auto message = SerializedScriptValue::create(globalObject, messageValue, WTF::move(options.transfer), ports, SerializationForStorage::No, SerializationContext::WorkerPostMessage);
     if (message.hasException())
         return message.releaseException();
 
@@ -164,6 +164,11 @@ ExceptionOr<void> Worker::postMessage(JSC::JSGlobalObject& state, JSC::JSValue m
 
     m_contextProxy.postMessageToWorkerGlobalScope({ message.releaseReturnValue(), channels.releaseReturnValue() });
     return { };
+}
+
+ExceptionOr<void> Worker::postMessage(JSC::JSGlobalObject& globalObject, JSC::JSValue messageValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
+{
+    return postMessage(globalObject, messageValue, StructuredSerializeOptions { WTF::move(transfer) });
 }
 
 void Worker::terminate()

@@ -79,7 +79,7 @@ WI.ScreenshotsTimelineView = class ScreenshotsTimelineView extends WI.TimelineVi
         let selectedElement = null;
 
         for (let record of this._visibleRecords()) {
-            this._scrollView.element.appendChild(this._imageElementForRecord.getOrInitialize(record, () => {
+            this._scrollView.element.appendChild(this._imageElementForRecord.getOrInsertComputed(record, () => {
                 let imageElement = document.createElement("img");
 
                 imageElement.hidden = true;

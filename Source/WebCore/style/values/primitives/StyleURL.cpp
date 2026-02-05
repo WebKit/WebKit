@@ -78,7 +78,7 @@ auto ToCSS<URL>::operator()(const URL& url, const RenderStyle&) -> CSS::URL
 
 auto ToStyle<CSS::URL>::operator()(const CSS::URL& url, const BuilderState& state) -> URL
 {
-    return toStyleWithScriptExecutionContext(url, state.protectedDocument());
+    return toStyleWithScriptExecutionContext(url, protect(state.document()));
 }
 
 Ref<CSSValue> CSSValueCreation<URL>::operator()(CSSValuePool&, const RenderStyle& style, const URL& value)

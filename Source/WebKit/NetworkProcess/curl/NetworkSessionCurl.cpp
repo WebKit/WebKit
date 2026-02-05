@@ -73,7 +73,7 @@ RefPtr<WebSocketTask> NetworkSessionCurl::createWebSocketTask(WebPageProxyIdenti
 
 void NetworkSessionCurl::didReceiveChallenge(WebSocketTask& webSocketTask, WebCore::AuthenticationChallenge&& challenge, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&& challengeCompletionHandler)
 {
-    networkProcess().protectedAuthenticationManager()->didReceiveAuthenticationChallenge(sessionID(), webSocketTask.webPageProxyID(), !webSocketTask.topOrigin().isNull() ? &webSocketTask.topOrigin() : nullptr, challenge, NegotiatedLegacyTLS::No, WTF::move(challengeCompletionHandler));
+    protect(networkProcess().authenticationManager())->didReceiveAuthenticationChallenge(sessionID(), webSocketTask.webPageProxyID(), !webSocketTask.topOrigin().isNull() ? &webSocketTask.topOrigin() : nullptr, challenge, NegotiatedLegacyTLS::No, WTF::move(challengeCompletionHandler));
 }
 
 } // namespace WebKit

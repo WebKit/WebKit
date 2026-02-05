@@ -65,7 +65,7 @@ void HTMLTablePartElement::collectPresentationalHintsForAttribute(const Qualifie
         break;
     case AttributeNames::backgroundAttr:
         if (!StringView(value).containsOnly<isASCIIWhitespace<char16_t>>())
-            style.setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(protectedDocument()->completeURL(value))));
+            style.setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(protect(document())->completeURL(value))));
         break;
     case AttributeNames::valignAttr:
         if (equalLettersIgnoringASCIICase(value, "top"_s))

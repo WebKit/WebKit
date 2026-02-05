@@ -26,9 +26,15 @@
 #import "config.h"
 #import "WKWebViewMac.h"
 
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=306415
+#if ENABLE(BACK_FORWARD_LIST_SWIFT)
+#include "WebKit-Swift.h"
+#endif
+
 #if PLATFORM(MAC)
 
 #import "AppKitSPI.h"
+#import "WKAPICast.h"
 #import "WKIntelligenceTextEffectCoordinator.h"
 #import "WKTextFinderClient.h"
 #import "WKWebViewConfigurationPrivate.h"
@@ -42,6 +48,7 @@
 #import "_WKHitTestResultInternal.h"
 #import "_WKWarningView.h"
 #import <WebCore/CGWindowUtilities.h>
+#import <WebCore/CornerRadii.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <pal/spi/mac/NSTextFinderSPI.h>
@@ -166,7 +173,7 @@ static WebCore::FloatBoxExtent coreBoxExtentsFromEdgeInsets(NSEdgeInsets insets)
     if (!page)
         return NO;
 
-    if (!page->protectedLegacyMainFrameProcess()->isResponsive())
+    if (!protect(page->legacyMainFrameProcess())->isResponsive())
         return NO;
 
     if (page->isSuspended())
@@ -737,6 +744,16 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
     _impl->removeTextPlaceholder(placeholder, willInsertText, completionHandler);
 }
 
+- (NSRect)unionRectInVisibleSelectedRange
+{
+    return _impl->unionRectInVisibleSelectedRange();
+}
+
+- (NSRect)documentVisibleRect
+{
+    return _impl->documentVisibleRect();
+}
+
 - (void)showContextMenuForSelection:(id)sender
 {
     _page->handleContextMenuKeyEvent();
@@ -838,6 +855,40 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     _impl->viewDidChangeBackingProperties();
 }
+
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+
+- (void)_viewDidChangeEffectiveCornerRadii
+{
+    if (!_impl)
+        return;
+
+    WebCore::CornerRadii newRadii;
+    if (RetainPtr<NSViewCornerRadii> radii = self._effectiveCornerRadii) {
+        newRadii = WebCore::CornerRadii {
+            static_cast<float>([radii topLeft]),
+            static_cast<float>([radii topRight]),
+            static_cast<float>([radii bottomLeft]),
+            static_cast<float>([radii bottomRight])
+        };
+    }
+
+    if (_lastViewCornerRadii == newRadii)
+        return;
+
+    _lastViewCornerRadii = newRadii;
+    _page->setScrollbarAvoidanceCornerRadii(WTF::move(newRadii));
+}
+
+- (NSViewCornerConfiguration *)_cornerConfiguration
+{
+    if (self.enclosingScrollView)
+        return [super _cornerConfiguration];
+
+    return [NSViewCornerConfiguration configurationWithRadius:_NSCornerRadius.containerConcentricRadius];
+}
+
+#endif
 
 - (void)_activeSpaceDidChange:(NSNotification *)notification
 {
@@ -1178,6 +1229,16 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 #endif // ENABLE(CONTENT_INSET_BACKGROUND_FILL)
 
+- (void)viewDidChangeEffectiveAppearance
+{
+    // This can be called during [super initWithCoder:] and [super initWithFrame:].
+    // That is before _impl is ready to be used, so check. <rdar://problem/39611236>
+    if (!_impl)
+        return;
+
+    _impl->effectiveAppearanceDidChange();
+}
+
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKWebViewMacAdditionsAfter.mm>)
 #import <WebKitAdditions/WKWebViewMacAdditionsAfter.mm>
 #endif
@@ -1424,19 +1485,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         _impl->resetSecureInputState();
 }
 
-- (void)_setContentOffsetX:(NSNumber *)x y:(NSNumber *)y animated:(BOOL)animated
-{
-    std::optional<int> optionalX = std::nullopt;
-    if (x)
-        optionalX = static_cast<int>([x doubleValue]);
-
-    std::optional<int> optionalY = std::nullopt;
-    if (y)
-        optionalY = static_cast<int>([y doubleValue]);
-
-    _page->setContentOffset(optionalX, optionalY, animated ? WebCore::ScrollIsAnimated::Yes : WebCore::ScrollIsAnimated::No);
-}
-
 #pragma mark - QLPreviewPanelController
 
 - (BOOL)acceptsPreviewPanelControl:(QLPreviewPanel *)panel
@@ -1556,26 +1604,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_setRubberBandingEnabled:(_WKRectEdge)state
 {
     _impl->setRubberBandingEnabled(state);
-}
-
-- (BOOL)_alwaysBounceVertical
-{
-    return _impl->alwaysBounceVertical();
-}
-
-- (void)_setAlwaysBounceVertical:(BOOL)value
-{
-    _impl->setAlwaysBounceVertical(value);
-}
-
-- (BOOL)_alwaysBounceHorizontal
-{
-    return _impl->alwaysBounceHorizontal();
-}
-
-- (void)_setAlwaysBounceHorizontal:(BOOL)value
-{
-    _impl->setAlwaysBounceHorizontal(value);
 }
 
 - (NSColor *)_backgroundColor

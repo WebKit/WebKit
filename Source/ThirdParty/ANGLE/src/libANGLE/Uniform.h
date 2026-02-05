@@ -152,6 +152,8 @@ struct LinkedUniform
 
         // maxUniformVectorsCount is 4K due to we clamp maxUniformBlockSize to 64KB. All of these
         // variable should be enough to pack into 16 bits to reduce the size of mUniforms.
+        static_assert(IMPLEMENTATION_MAX_UNIFORM_BLOCK_SIZE <=
+                      std::numeric_limits<uint16_t>::max() + 1);
         int16_t binding;
         int16_t bufferIndex;
 

@@ -125,11 +125,6 @@ CALayer *LayerHostingContext::rootLayer() const
     return [m_context layer];
 }
 
-RetainPtr<CALayer> LayerHostingContext::protectedRootLayer() const
-{
-    return rootLayer();
-}
-
 LayerHostingContextID LayerHostingContext::contextID() const
 {
 #if USE(EXTENSIONKIT)
@@ -196,7 +191,7 @@ RetainPtr<BELayerHierarchyHostingTransactionCoordinator> LayerHostingContext::cr
 {
     // We are leaking the send right here, since [BELayerHierarchyHostingTransactionCoordinator coordinatorWithPort] takes ownership of the send right, even in the error case.
     NSError *error = nil;
-    auto coordinator = [BELayerHierarchyHostingTransactionCoordinator coordinatorWithPort:sendRightAnnotated.sendRight.leakSendRight() data:toNSData(sendRightAnnotated.data.span()).get() error:&error];
+    RetainPtr coordinator = [BELayerHierarchyHostingTransactionCoordinator coordinatorWithPort:sendRightAnnotated.sendRight.leakSendRight() data:toNSData(sendRightAnnotated.data.span()).get() error:&error];
     if (error)
         RELEASE_LOG_ERROR(Process, "Could not create update coordinator, error = %@", error);
     return coordinator;
@@ -217,13 +212,13 @@ RetainPtr<BELayerHierarchyHandle> LayerHostingContext::createHostingHandle(WTF::
 {
     // We are leaking the send right here, since [BELayerHierarchyHandle handleWithPort] takes ownership of the send right, even in the error case.
     NSError *error = nil;
-    auto handle = [BELayerHierarchyHandle handleWithPort:sendRightAnnotated.sendRight.leakSendRight() data:toNSData(sendRightAnnotated.data.span()).get() error:&error];
+    RetainPtr handle = [BELayerHierarchyHandle handleWithPort:sendRightAnnotated.sendRight.leakSendRight() data:toNSData(sendRightAnnotated.data.span()).get() error:&error];
     if (error)
         RELEASE_LOG_ERROR(Process, "Could not create layer hierarchy handle, error = %@", error);
     return handle;
 }
 #else
-XPCObjectPtr<xpc_object_t> LayerHostingContext::xpcRepresentation() const
+OSObjectPtr<xpc_object_t> LayerHostingContext::xpcRepresentation() const
 {
     if (!m_hostable)
         return nullptr;
@@ -233,7 +228,7 @@ XPCObjectPtr<xpc_object_t> LayerHostingContext::xpcRepresentation() const
 RetainPtr<BELayerHierarchyHostingTransactionCoordinator> LayerHostingContext::createHostingUpdateCoordinator(mach_port_t sendRight)
 {
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto xpcRepresentation = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto xpcRepresentation = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_mach_send(xpcRepresentation.get(), machPortKey, sendRight);
     NSError* error = nil;
     auto coordinator = [BELayerHierarchyHostingTransactionCoordinator coordinatorWithXPCRepresentation:xpcRepresentation.get() error:&error];
@@ -245,7 +240,7 @@ RetainPtr<BELayerHierarchyHostingTransactionCoordinator> LayerHostingContext::cr
 RetainPtr<BELayerHierarchyHandle> LayerHostingContext::createHostingHandle(uint64_t pid, uint64_t contextID)
 {
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto xpcRepresentation = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto xpcRepresentation = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_uint64(xpcRepresentation.get(), processIDKey, pid);
     xpc_dictionary_set_uint64(xpcRepresentation.get(), contextIDKey, contextID);
     NSError* error = nil;

@@ -20,7 +20,6 @@
 #include "config.h"
 #include "MediaQueryList.h"
 
-#include "AddEventListenerOptionsInlines.h"
 #include "ContextDestructionObserverInlines.h"
 #include "DocumentQuirks.h"
 #include "EventNames.h"
@@ -80,7 +79,7 @@ void MediaQueryList::addListener(RefPtr<EventListener>&& listener)
     if (!listener)
         return;
 
-    addEventListener(eventNames().changeEvent, listener.releaseNonNull(), { });
+    addEventListener(eventNames().changeEvent, listener.releaseNonNull());
 }
 
 void MediaQueryList::removeListener(RefPtr<EventListener>&& listener)

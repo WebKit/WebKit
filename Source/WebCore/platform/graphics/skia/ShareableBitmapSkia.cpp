@@ -57,7 +57,7 @@ CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerRow(const IntSize& 
     return SkImageInfo::MakeN32Premul(size.width(), size.height(), colorSpace.platformColorSpace()).minRowBytes();
 }
 
-std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
+sk_sp<SkSurface> ShareableBitmap::createSurface()
 {
     ref();
     SkSurfaceProps properties = { 0, FontRenderOptions::singleton().subpixelOrder() };
@@ -69,6 +69,17 @@ std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
     if (!canvas)
         return nullptr;
 
+    return surface;
+}
+
+std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
+{
+    auto surface = createSurface();
+    if (!surface)
+        return nullptr;
+
+    auto* canvas = surface->getCanvas();
+    ASSERT(canvas);
     return makeUnique<GraphicsContextSkia>(*canvas, RenderingMode::Unaccelerated, RenderingPurpose::ShareableSnapshot, [surface = WTF::move(surface)] { });
 }
 

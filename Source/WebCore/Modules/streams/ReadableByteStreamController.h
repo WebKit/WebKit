@@ -69,7 +69,7 @@ public:
     ReadableStream& stream();
     Ref<ReadableStream> protectedStream();
 
-    void pullInto(JSDOMGlobalObject&, JSC::ArrayBufferView&, size_t, Ref<ReadableStreamReadIntoRequest>&&);
+    void pullInto(JSDOMGlobalObject&, JSC::ArrayBufferView&, uint64_t, Ref<ReadableStreamReadIntoRequest>&&);
 
     void runCancelSteps(JSDOMGlobalObject&, JSC::JSValue, Function<void(std::optional<JSC::JSValue>&&)>&&);
     void runPullSteps(JSDOMGlobalObject&, Ref<ReadableStreamReadRequest>&&);

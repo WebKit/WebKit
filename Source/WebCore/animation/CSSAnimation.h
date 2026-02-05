@@ -46,7 +46,7 @@ public:
     const String& animationName() const { return m_animationName.name; }
     const Style::ScopedName& scopedAnimationName() const { return m_animationName; }
 
-    void effectTimingWasUpdatedUsingBindings(OptionalEffectTiming);
+    void effectTimingWasUpdatedUsingBindings(const OptionalEffectTiming&);
     void effectKeyframesWereSetUsingBindings();
     void effectCompositeOperationWasSetUsingBindings();
     void keyframesRuleDidChange();

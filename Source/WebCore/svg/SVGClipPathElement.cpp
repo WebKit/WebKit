@@ -148,7 +148,7 @@ RefPtr<SVGGraphicsElement> SVGClipPathElement::shouldApplyPathClipping() const
             continue;
 
         // For <use> elements, check visibility of the target element and skip if no visible target.
-        if (auto* useElement = dynamicDowncast<SVGUseElement>(*graphicsElement)) {
+        if (RefPtr useElement = dynamicDowncast<SVGUseElement>(*graphicsElement)) {
             CheckedPtr clipChildRenderer = useElement->rendererClipChild();
             if (!clipChildRenderer)
                 continue;

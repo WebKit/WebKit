@@ -262,7 +262,7 @@ std::optional<audit_token_t> WebProcessProxy::auditToken() const
     if (!hasConnection())
         return std::nullopt;
     
-    return protectedConnection()->getAuditToken();
+    return protect(connection())->getAuditToken();
 }
 
 std::optional<Vector<SandboxExtension::Handle>> WebProcessProxy::fontdMachExtensionHandles()
@@ -292,7 +292,7 @@ void WebProcessProxy::createLogStream(IPC::StreamServerConnectionHandle&& server
 void WebProcessProxy::createLogStream(LogStreamIdentifier identifier, CompletionHandler<void()>&& completionHandler)
 {
     MESSAGE_CHECK(!m_logStream.get());
-    Ref logStream = LogStream::create(*this, protectedConnection(), identifier);
+    Ref logStream = LogStream::create(*this, protect(connection()), identifier);
     addMessageReceiver(Messages::LogStream::messageReceiverName(), logStream->identifier(), logStream);
     m_logStream = WTF::move(logStream);
     completionHandler();
@@ -371,14 +371,14 @@ void WebProcessProxy::platformResumeProcess()
 {
     if (m_platformSuspendDidReleaseNearSuspendedAssertion) {
         m_platformSuspendDidReleaseNearSuspendedAssertion = false;
-        protectedThrottler()->setShouldTakeNearSuspendedAssertion(true);
+        protect(throttler())->setShouldTakeNearSuspendedAssertion(true);
     }
 }
 
 void WebProcessProxy::platformSuspendProcess()
 {
     m_platformSuspendDidReleaseNearSuspendedAssertion = throttler().isHoldingNearSuspendedAssertion();
-    protectedThrottler()->setShouldTakeNearSuspendedAssertion(false);
+    protect(throttler())->setShouldTakeNearSuspendedAssertion(false);
 }
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
@@ -407,8 +407,9 @@ bool WebProcessProxy::WebProcessXPCEventHandler::handleXPCEvent(xpc_object_t eve
         if (!subsystem.isEmpty() && !category.isEmpty())
             osLog = adoptOSObject(os_log_create(subsystem.utf8().data(), category.utf8().data()));
 
-        auto osLogPointer = osLog ? osLog.get() : OS_LOG_DEFAULT;
-        os_log_with_type(osLogPointer, static_cast<os_log_type_t>(logType), "WebContent[%d] %{public}s", static_cast<int>(pid), messageString.utf8().data());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        os_log_with_type(osLog ? osLog.get() : OS_LOG_DEFAULT, static_cast<os_log_type_t>(logType), "WebContent[%d] %{public}s", static_cast<int>(pid), messageString.utf8().data());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         webProcess->m_didReceiveLogsDuringLaunchForTesting = true;
     } else if (messageName == disableLogMessageName) {
         RefPtr webProcess = m_webProcess.get();

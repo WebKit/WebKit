@@ -55,7 +55,7 @@ DragImageRef DataTransfer::createDragImage(const Document*, IntPoint& location) 
             location.setY(imageRect.height() - (elementRect.y() - imageRect.y() + m_dragLocation.y()));
         }
     } else if (m_dragImage) {
-        result = m_dragImage->protectedImage()->adapter().snapshotNSImage();
+        result = protect(m_dragImage->image())->adapter().snapshotNSImage();
         
         location = m_dragLocation;
         location.setY([result size].height - location.y());

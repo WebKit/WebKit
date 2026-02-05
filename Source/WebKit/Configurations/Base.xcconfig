@@ -123,9 +123,7 @@ OTHER_SWIFT_FLAGS = $(inherited) -Xfrontend -experimental-spi-only-imports $(OTH
 OTHER_SWIFT_FLAGS_XCODE_BEFORE_16 = -Xfrontend -enable-experimental-concurrency -Xfrontend -enable-upcoming-feature -Xfrontend IsolatedDefaultValues;
 
 WK_ENABLE_SWIFTUI = YES;
-WK_ENABLE_SWIFTUI[sdk=macosx14*] = NO;
 WK_ENABLE_SWIFTUI[sdk=macosx15*] = NO;
-WK_ENABLE_SWIFTUI[sdk=iphone*18.*] = NO;
 WK_ENABLE_SWIFTUI[sdk=watch*] = NO;
 WK_ENABLE_SWIFTUI[sdk=appletv*] = NO;
 WK_ENABLE_SWIFTUI[sdk=xros2.*] = NO;

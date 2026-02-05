@@ -126,7 +126,7 @@ private:
     void getAppBadgeForTesting(CompletionHandler<void(std::optional<uint64_t>)>&&);
     void setProtocolVersionForTesting(unsigned, CompletionHandler<void()>&&);
 
-    XPCObjectPtr<xpc_connection_t> m_xpcConnection;
+    OSObjectPtr<xpc_connection_t> m_xpcConnection;
     String m_hostAppCodeSigningIdentifier;
     bool m_hostAppHasPushInjectEntitlement { false };
     String m_pushPartitionString;

@@ -35,3 +35,6 @@ relativeTo = "2019-11-01T00:00Z";
 assert.throws(RangeError, () => instance.total({ unit: "days", relativeTo }), "date-time + Z throws without an IANA annotation");
 relativeTo = "2019-11-01T00:00+04:15[UTC]";
 assert.throws(RangeError, () => instance.total({ unit: "days", relativeTo }), "date-time + offset + IANA annotation throws if wall time and exact time mismatch");
+
+relativeTo = "2025-01-01T00:00:00+00:0000";
+assert.throws(RangeError, () => instance.total({ unit: "days", relativeTo }), "date-time with offset like 00:0000 shouldn't parse");

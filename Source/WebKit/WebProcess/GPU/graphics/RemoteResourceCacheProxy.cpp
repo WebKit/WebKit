@@ -111,6 +111,19 @@ RemoteGradientIdentifier RemoteResourceCacheProxy::recordGradientUse(Gradient& g
     return identifier;
 }
 
+RemotePathImplIdentifier RemoteResourceCacheProxy::recordPathImplUse(const PathImpl& path)
+{
+    auto result = m_paths.ensure(&path, [] {
+        return RemotePathImplIdentifier::generate();
+    });
+    auto identifier = result.iterator->value;
+    if (result.isNewEntry) {
+        path.addObserver(m_resourceObserverWeakFactory.createWeakPtr(static_cast<RenderingResourceObserver&>(*this)).releaseNonNull());
+        m_remoteRenderingBackendProxy->cachePathImpl(const_cast<PathImpl&>(path), identifier);
+    }
+    return identifier;
+}
+
 void RemoteResourceCacheProxy::recordFilterUse(Filter& filter)
 {
     if (m_filters.add(filter.renderingResourceIdentifier()).isNewEntry) {
@@ -253,6 +266,13 @@ void RemoteResourceCacheProxy::willDestroyGradient(const Gradient& gradient)
     m_remoteRenderingBackendProxy->releaseGradient(*identifier);
 }
 
+void RemoteResourceCacheProxy::willDestroyPathImpl(const PathImpl& path)
+{
+    auto identifier = m_paths.take(&path);
+    RELEASE_ASSERT(identifier);
+    m_remoteRenderingBackendProxy->releasePathImpl(*identifier);
+}
+
 void RemoteResourceCacheProxy::willDestroyFilter(RenderingResourceIdentifier identifier)
 {
     bool removed = m_filters.remove(identifier);
@@ -338,6 +358,7 @@ void RemoteResourceCacheProxy::releaseMemory()
     m_resourceObserverWeakFactory.revokeAll();
     m_filters.clear();
     m_gradients.clear();
+    m_paths.clear();
     m_displayLists.clear();
     releaseFonts();
     releaseFontCustomPlatformDatas();
@@ -348,6 +369,7 @@ void RemoteResourceCacheProxy::disconnect()
     m_resourceObserverWeakFactory.revokeAll();
     m_filters.clear();
     m_gradients.clear();
+    m_paths.clear();
     m_displayLists.clear();
     releaseFonts();
     releaseFontCustomPlatformDatas();

@@ -26,26 +26,23 @@
 #include "config.h"
 #include "CookieChangeEvent.h"
 
-#include "CookieChangeEventInit.h"
-#include "CookieListItem.h"
-#include <wtf/Ref.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CookieChangeEvent);
 
-Ref<CookieChangeEvent> CookieChangeEvent::create(const AtomString& type, CookieChangeEventInit&& eventInitDict, IsTrusted isTrusted)
+Ref<CookieChangeEvent> CookieChangeEvent::create(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
 {
-    return adoptRef(*new CookieChangeEvent(type, WTF::move(eventInitDict), isTrusted));
+    return adoptRef(*new CookieChangeEvent(type, WTF::move(initializer), isTrusted));
 }
 
-CookieChangeEvent::CookieChangeEvent(const AtomString& type, CookieChangeEventInit&& eventInitDict, IsTrusted isTrusted)
-    : Event(EventInterfaceType::CookieChangeEvent, type, eventInitDict, isTrusted)
-    , m_changed(WTF::move(eventInitDict.changed))
-    , m_deleted(WTF::move(eventInitDict.deleted))
-{ }
+CookieChangeEvent::CookieChangeEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+    : Event(EventInterfaceType::CookieChangeEvent, type, WTF::move(initializer), isTrusted)
+    , m_changed(WTF::move(initializer.changed).value_or(Vector<CookieListItem> { }))
+    , m_deleted(WTF::move(initializer.deleted).value_or(Vector<CookieListItem> { }))
+{
+}
 
 CookieChangeEvent::~CookieChangeEvent() = default;
 

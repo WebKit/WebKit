@@ -34,6 +34,7 @@
 #import <pal/spi/cocoa/IOKitSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/IndexedRange.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/SoftLinking.h>
@@ -100,8 +101,8 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 
 + (_WKTouchEventGenerator *)sharedTouchEventGenerator
 {
-    static _WKTouchEventGenerator *eventGenerator = [[_WKTouchEventGenerator alloc] init];
-    return eventGenerator;
+    static NeverDestroyed<RetainPtr<_WKTouchEventGenerator>> eventGenerator = adoptNS([[_WKTouchEventGenerator alloc] init]);
+    return eventGenerator.get().get();
 }
 
 + (CFIndex)nextEventCallbackID
@@ -196,7 +197,8 @@ static void delayBetweenMove(int eventIndex, double elapsed)
         IOHIDEventAppendEvent(eventRef.get(), subEvent.get(), 0);
     }
 
-    return eventRef.leakRef();
+    // We are in a "create" function so leaking is intentional here.
+    SUPPRESS_RETAINPTR_CTOR_ADOPT return eventRef.leakRef();
 }
 
 - (BOOL)_sendHIDEvent:(IOHIDEventRef)eventRef window:(UIWindow *)window
@@ -263,7 +265,8 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     for (auto [i, point] : indexedRange(points))
         _activePoints[i].point = point;
 
-    RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:handEventType]);
+    // This is the result of a "create" function so adopting here is correct.
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:handEventType]);
     [self _sendHIDEvent:eventRef.get() window:window];
 }
 
@@ -277,7 +280,8 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     for (auto [i, location] : indexedRange(locations))
         _activePoints[i].point = location;
 
-    RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:HandEventTouched]);
+    // This is the result of a "create" function so adopting here is correct.
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:HandEventTouched]);
     [self _sendHIDEvent:eventRef.get() window:window];
 }
 
@@ -298,7 +302,8 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     for (auto [i, location] : indexedRange(locations))
         _activePoints[newPointCount + i].point = location;
 
-    RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:HandEventLifted]);
+    // This is the result of a "create" function so adopting here is correct.
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:HandEventLifted]);
     [self _sendHIDEvent:eventRef.get() window:window];
 
     _activePointCount = newPointCount;
@@ -381,10 +386,10 @@ static void delayBetweenMove(int eventIndex, double elapsed)
         return;
 
     CFIndex callbackID = IOHIDEventGetIntegerValue(event, kIOHIDEventFieldVendorDefinedData);
-    NSNumber *key = @(callbackID);
-    void (^completionBlock)() = [_eventCallbacks objectForKey:key];
+    RetainPtr key = @(callbackID);
+    void (^completionBlock)() = [_eventCallbacks objectForKey:key.get()];
     if (completionBlock) {
-        [_eventCallbacks removeObjectForKey:key];
+        [_eventCallbacks removeObjectForKey:key.get()];
         completionBlock();
         Block_release(completionBlock);
     }

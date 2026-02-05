@@ -8,5 +8,5 @@ row 2
 row 3	
 
 PASS col visibility:collapse doesn't change table height
-FAIL col visibility:collapse changes table width assert_equals: col visibility:collapse changes table width expected 122 but got 232
+FAIL col visibility:collapse changes table width assert_equals: col visibility:collapse changes table width expected 122 but got 124
 

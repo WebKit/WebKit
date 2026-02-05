@@ -257,12 +257,11 @@ class Manager(object):
         successful = runner.result_map_by_status(runner.STATUS_PASSED)
         disabled = len(runner.result_map_by_status(runner.STATUS_DISABLED))
 
-        # Account for test-parallel-safety tasks in expected test count
-        test_parallel_safety_tasks = self._port.get_option('test_parallel_safety_with') or []
-        test_parallel_safety_count = len([test for arg in test_parallel_safety_tasks for test in arg.split()])
-        expected_test_count = len(set(test_names)) + test_parallel_safety_count
+        # Check if running in test-parallel-safety mode
+        test_parallel_safety_tests = self._port.get_option('test_parallel_safety') or []
+        is_parallel_safety_mode = bool(test_parallel_safety_tests)
 
-        _log.info(f'Ran {len(runner.results) - disabled} tests of {expected_test_count} with {len(successful)} successful')
+        _log.info(f'Ran {len(runner.results) - disabled} tests of {len(set(test_names))} with {len(successful)} successful')
 
         result_dictionary = {
             'Skipped': [],
@@ -273,12 +272,33 @@ class Manager(object):
 
         self._stream.writeln('-' * 30)
         result = Manager.SUCCESS
-        if len(successful) + disabled == expected_test_count:
+
+        # Count actual failures (not skipped)
+        failed_tests = runner.result_map_by_status(runner.STATUS_FAILED)
+        crashed_tests = runner.result_map_by_status(runner.STATUS_CRASHED)
+        timedout_tests = runner.result_map_by_status(runner.STATUS_TIMEOUT)
+        has_real_failures = bool(failed_tests or crashed_tests or timedout_tests)
+
+        if is_parallel_safety_mode:
+            # In parallel-safety mode, skipped tests are expected
+            # Only fail if there are actual failures, crashes, or timeouts
+            if has_real_failures:
+                self._stream.writeln('Test suite failed')
+                result = Manager.FAILED_TESTS
+            else:
+                self._stream.writeln('All parallel-safety tests passed!')
+                if json_output:
+                    self.host.filesystem.write_text_file(json_output, json.dumps(result_dictionary, indent=4))
+        elif len(successful) + disabled == len(set(test_names)):
             self._stream.writeln('All tests successfully passed!')
             if json_output:
                 self.host.filesystem.write_text_file(json_output, json.dumps(result_dictionary, indent=4))
         else:
             self._stream.writeln('Test suite failed')
+            result = Manager.FAILED_TESTS
+
+        # Always collect skipped/failed info for reporting
+        if result != Manager.SUCCESS or is_parallel_safety_mode:
             self._stream.writeln('')
 
             skipped = []
@@ -297,20 +317,18 @@ class Manager(object):
             self._print_tests_result_with_status(runner.STATUS_CRASHED, runner)
             self._print_tests_result_with_status(runner.STATUS_TIMEOUT, runner)
 
-            for test, result in iteritems(runner.results):
+            for test, test_result in iteritems(runner.results):
                 status_to_string = {
                     runner.STATUS_FAILED: 'Failed',
                     runner.STATUS_CRASHED: 'Crashed',
                     runner.STATUS_TIMEOUT: 'Timedout',
-                }.get(result[0])
+                }.get(test_result[0])
                 if not status_to_string:
                     continue
-                result_dictionary[status_to_string].append({'name': test, 'output': result[1]})
+                result_dictionary[status_to_string].append({'name': test, 'output': test_result[1]})
 
             if json_output:
                 self.host.filesystem.write_text_file(json_output, json.dumps(result_dictionary, indent=4))
-
-            result = Manager.FAILED_TESTS
 
         if self._options.report_urls:
             self._stream.writeln('\n')

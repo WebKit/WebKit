@@ -67,16 +67,13 @@ Clipboard::Type Clipboard::type() const
 
 void Clipboard::formats(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
     gsize mimeTypesCount;
-    const char* const* mimeTypes = gdk_content_formats_get_mime_types(gdk_clipboard_get_formats(m_clipboard), &mimeTypesCount);
+    const char* const* mimeTypesPointer = gdk_content_formats_get_mime_types(gdk_clipboard_get_formats(m_clipboard), &mimeTypesCount);
+    auto mimeTypes = unsafeMakeSpan(mimeTypesPointer, mimeTypesCount);
 
-    Vector<String> result(mimeTypesCount, [&](size_t i) {
+    completionHandler(Vector<String>(mimeTypes.size(), [&mimeTypes](size_t i) {
         return String::fromUTF8(mimeTypes[i]);
-    });
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-
-    completionHandler(WTF::move(result));
+    }));
 }
 
 class ClipboardTask final : public RefCounted<ClipboardTask> {

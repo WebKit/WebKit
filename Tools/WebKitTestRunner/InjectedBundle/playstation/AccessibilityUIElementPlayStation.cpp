@@ -24,1078 +24,1092 @@
  */
 
 #include "config.h"
-#include "AccessibilityUIElement.h"
+#include "AccessibilityUIElementPlayStation.h"
 
 #include <WebCore/NotImplemented.h>
 
 namespace WTR {
 
-AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement)
+Ref<AccessibilityUIElementPlayStation> AccessibilityUIElementPlayStation::create(PlatformUIElement element)
+{
+    return adoptRef(*new AccessibilityUIElementPlayStation(element));
+}
+
+Ref<AccessibilityUIElementPlayStation> AccessibilityUIElementPlayStation::create(const AccessibilityUIElementPlayStation& other)
+{
+    return adoptRef(*new AccessibilityUIElementPlayStation(other));
+}
+
+AccessibilityUIElementPlayStation::AccessibilityUIElementPlayStation(PlatformUIElement element)
+    : AccessibilityUIElement(element)
+    , m_element(element)
 {
     notImplemented();
 }
 
-AccessibilityUIElement::AccessibilityUIElement(const AccessibilityUIElement&)
+AccessibilityUIElementPlayStation::AccessibilityUIElementPlayStation(const AccessibilityUIElementPlayStation& other)
+    : AccessibilityUIElement(other)
+    , m_element(other.m_element)
 {
     notImplemented();
 }
 
-AccessibilityUIElement::~AccessibilityUIElement()
+AccessibilityUIElementPlayStation::~AccessibilityUIElementPlayStation()
 {
     notImplemented();
 }
 
-bool AccessibilityUIElement::isEqual(AccessibilityUIElement*)
+bool AccessibilityUIElementPlayStation::isEqual(AccessibilityUIElement*)
 {
     notImplemented();
     return false;
 }
 
-Vector<RefPtr<AccessibilityUIElement>> AccessibilityUIElement::getChildren() const
+Vector<RefPtr<AccessibilityUIElement>> AccessibilityUIElementPlayStation::getChildren() const
 {
     notImplemented();
     return { };
 }
 
-Vector<RefPtr<AccessibilityUIElement>> AccessibilityUIElement::getChildrenInRange(unsigned, unsigned) const
+Vector<RefPtr<AccessibilityUIElement>> AccessibilityUIElementPlayStation::getChildrenInRange(unsigned, unsigned) const
 {
     notImplemented();
     return { };
 }
 
-unsigned AccessibilityUIElement::childrenCount()
+unsigned AccessibilityUIElementPlayStation::childrenCount()
 {
     notImplemented();
     return 0;
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::elementAtPoint(int, int)
+RefPtr<AccessibilityUIElement> AccessibilityUIElementPlayStation::elementAtPoint(int, int)
 {
     notImplemented();
     return nullptr;
 }
 
-unsigned AccessibilityUIElement::indexOfChild(AccessibilityUIElement*)
-{
-    notImplemented();
-    return 0;
-}
-
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::childAtIndex(unsigned)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::linkedUIElementAtIndex(unsigned)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaOwnsElementAtIndex(unsigned)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaFlowToElementAtIndex(unsigned)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaControlsElementAtIndex(unsigned)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::disclosedRowAtIndex(unsigned)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::rowAtIndex(unsigned)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedChildAtIndex(unsigned) const
-{
-    notImplemented();
-    return nullptr;
-}
-
-unsigned AccessibilityUIElement::selectedChildrenCount() const
+unsigned AccessibilityUIElementPlayStation::indexOfChild(AccessibilityUIElement*)
 {
     notImplemented();
     return 0;
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedRowAtIndex(unsigned)
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElementPlayStation::childAtIndex(unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::titleUIElement()
+RefPtr<AccessibilityUIElement> AccessibilityUIElementPlayStation::linkedUIElementAtIndex(unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::parentElement()
+RefPtr<AccessibilityUIElement> AccessibilityUIElementPlayStation::ariaOwnsElementAtIndex(unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::disclosedByRow()
+RefPtr<AccessibilityUIElement> AccessibilityUIElementPlayStation::ariaFlowToElementAtIndex(unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfLinkedUIElements()
+RefPtr<AccessibilityUIElement> AccessibilityUIElementPlayStation::ariaControlsElementAtIndex(unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfDocumentLinks()
+RefPtr<AccessibilityUIElement> AccessibilityUIElementPlayStation::disclosedRowAtIndex(unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfChildren()
+RefPtr<AccessibilityUIElement> AccessibilityUIElementPlayStation::rowAtIndex(unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::allAttributes()
+RefPtr<AccessibilityUIElement> AccessibilityUIElementPlayStation::selectedChildAtIndex(unsigned) const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRef)
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::currentStateValue() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::sortDirection() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::stringDescriptionOfAttributeValue(JSStringRef)
-{
-    notImplemented();
-    return nullptr;
-}
-
-double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
+unsigned AccessibilityUIElementPlayStation::selectedChildrenCount() const
 {
     notImplemented();
     return 0;
 }
 
-JSValueRef AccessibilityUIElement::uiElementArrayAttributeValue(JSContextRef, JSStringRef attribute)
+RefPtr<AccessibilityUIElement> AccessibilityUIElementPlayStation::selectedRowAtIndex(unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-JSValueRef AccessibilityUIElement::rowHeaders(JSContextRef)
+RefPtr<AccessibilityUIElement> AccessibilityUIElementPlayStation::titleUIElement()
 {
     notImplemented();
     return nullptr;
 }
 
-JSValueRef AccessibilityUIElement::columnHeaders(JSContextRef)
+RefPtr<AccessibilityUIElement> AccessibilityUIElementPlayStation::parentElement()
 {
     notImplemented();
     return nullptr;
 }
 
-JSValueRef AccessibilityUIElement::selectedCells(JSContextRef)
+RefPtr<AccessibilityUIElement> AccessibilityUIElementPlayStation::disclosedByRow()
 {
     notImplemented();
     return nullptr;
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementAttributeValue(JSStringRef attribute) const
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributesOfLinkedUIElements()
 {
     notImplemented();
     return nullptr;
 }
 
-bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isAttributeSupported(JSStringRef attribute)
-{
-    notImplemented();
-    return false;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::parameterizedAttributeNames()
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributesOfDocumentLinks()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::role()
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributesOfChildren()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::subrole()
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::allAttributes()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::roleDescription()
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::stringAttributeValue(JSStringRef)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::computedRoleString()
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::currentStateValue() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::title()
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::sortDirection() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::description()
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::stringDescriptionOfAttributeValue(JSStringRef)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::orientation() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-bool AccessibilityUIElement::isAtomicLiveRegion() const
-{
-    notImplemented();
-    return false;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::liveRegionRelevant() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::liveRegionStatus() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::stringValue()
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::language()
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::helpText() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-double AccessibilityUIElement::pageX()
+double AccessibilityUIElementPlayStation::numberAttributeValue(JSStringRef attribute)
 {
     notImplemented();
     return 0;
 }
 
-double AccessibilityUIElement::pageY()
+JSValueRef AccessibilityUIElementPlayStation::uiElementArrayAttributeValue(JSContextRef, JSStringRef attribute)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSValueRef AccessibilityUIElementPlayStation::rowHeaders(JSContextRef)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSValueRef AccessibilityUIElementPlayStation::columnHeaders(JSContextRef)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSValueRef AccessibilityUIElementPlayStation::selectedCells(JSContextRef)
+{
+    notImplemented();
+    return nullptr;
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElementPlayStation::uiElementAttributeValue(JSStringRef attribute) const
+{
+    notImplemented();
+    return nullptr;
+}
+
+bool AccessibilityUIElementPlayStation::boolAttributeValue(JSStringRef attribute)
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::isAttributeSettable(JSStringRef attribute)
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::isAttributeSupported(JSStringRef attribute)
+{
+    notImplemented();
+    return false;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::parameterizedAttributeNames()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::role()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::subrole()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::roleDescription()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::computedRoleString()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::title()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::description()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::orientation() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+bool AccessibilityUIElementPlayStation::isAtomicLiveRegion() const
+{
+    notImplemented();
+    return false;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::liveRegionRelevant() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::liveRegionStatus() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::stringValue()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::language()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::helpText() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+double AccessibilityUIElementPlayStation::pageX()
 {
     notImplemented();
     return 0;
 }
 
-double AccessibilityUIElement::x()
+double AccessibilityUIElementPlayStation::pageY()
 {
     notImplemented();
     return 0;
 }
 
-double AccessibilityUIElement::y()
+double AccessibilityUIElementPlayStation::x()
 {
     notImplemented();
     return 0;
 }
 
-double AccessibilityUIElement::width()
+double AccessibilityUIElementPlayStation::y()
 {
     notImplemented();
     return 0;
 }
 
-double AccessibilityUIElement::height()
+double AccessibilityUIElementPlayStation::width()
 {
     notImplemented();
     return 0;
 }
 
-double AccessibilityUIElement::clickPointX()
+double AccessibilityUIElementPlayStation::height()
 {
     notImplemented();
     return 0;
 }
 
-double AccessibilityUIElement::clickPointY()
+double AccessibilityUIElementPlayStation::clickPointX()
 {
     notImplemented();
     return 0;
 }
 
-double AccessibilityUIElement::intValue() const
+double AccessibilityUIElementPlayStation::clickPointY()
 {
     notImplemented();
     return 0;
 }
 
-double AccessibilityUIElement::minValue()
+double AccessibilityUIElementPlayStation::intValue() const
 {
     notImplemented();
     return 0;
 }
 
-double AccessibilityUIElement::maxValue()
+double AccessibilityUIElementPlayStation::minValue()
 {
     notImplemented();
     return 0;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::valueDescription()
-{
-    notImplemented();
-    return nullptr;
-}
-
-int AccessibilityUIElement::insertionPointLineNumber()
+double AccessibilityUIElementPlayStation::maxValue()
 {
     notImplemented();
     return 0;
 }
 
-bool AccessibilityUIElement::isPressActionSupported()
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::valueDescription()
 {
     notImplemented();
-    return false;
+    return nullptr;
 }
 
-bool AccessibilityUIElement::isIncrementActionSupported()
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isDecrementActionSupported()
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isBusy() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isEnabled()
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isRequired() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isFocused() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isSelected() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isSelectedOptionActive() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isExpanded() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isChecked() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isIndeterminate() const
-{
-    notImplemented();
-    return false;
-}
-
-int AccessibilityUIElement::hierarchicalLevel() const
+int AccessibilityUIElementPlayStation::insertionPointLineNumber()
 {
     notImplemented();
     return 0;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::speakAs()
-{
-    notImplemented();
-    return nullptr;
-}
-
-bool AccessibilityUIElement::isGrabbed() const
+bool AccessibilityUIElementPlayStation::isPressActionSupported()
 {
     notImplemented();
     return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::ariaDropEffects() const
+bool AccessibilityUIElementPlayStation::isIncrementActionSupported()
 {
     notImplemented();
-    return nullptr;
+    return false;
 }
 
-int AccessibilityUIElement::lineForIndex(int)
+bool AccessibilityUIElementPlayStation::isDecrementActionSupported()
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::isBusy() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::isEnabled()
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::isRequired() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::isFocused() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::isSelected() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::isSelectedOptionActive() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::isExpanded() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::isChecked() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::isIndeterminate() const
+{
+    notImplemented();
+    return false;
+}
+
+int AccessibilityUIElementPlayStation::hierarchicalLevel() const
 {
     notImplemented();
     return 0;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::rangeForLine(int)
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::speakAs()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::rangeForPosition(int, int)
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::boundsForRange(unsigned, unsigned)
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForRange(unsigned, unsigned)
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForRange(unsigned, unsigned)
-{
-    notImplemented();
-    return nullptr;
-}
-
-bool AccessibilityUIElement::attributedStringRangeIsMisspelled(unsigned, unsigned)
+bool AccessibilityUIElementPlayStation::isGrabbed() const
 {
     notImplemented();
     return false;
 }
 
-unsigned AccessibilityUIElement::uiElementCountForSearchPredicate(JSContextRef, AccessibilityUIElement*, bool, JSValueRef, JSStringRef, bool, bool)
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::ariaDropEffects() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+int AccessibilityUIElementPlayStation::lineForIndex(int)
 {
     notImplemented();
     return 0;
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementForSearchPredicate(JSContextRef, AccessibilityUIElement*, bool, JSValueRef, JSStringRef, bool, bool)
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::rangeForLine(int)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::selectTextWithCriteria(JSContextRef, JSStringRef, JSValueRef, JSStringRef, JSStringRef)
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::rangeForPosition(int, int)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfColumnHeaders()
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::boundsForRange(unsigned, unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfRowHeaders()
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::stringForRange(unsigned, unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfColumns()
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributedStringForRange(unsigned, unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfRows()
+bool AccessibilityUIElementPlayStation::attributedStringRangeIsMisspelled(unsigned, unsigned)
 {
     notImplemented();
-    return nullptr;
+    return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfVisibleCells()
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfHeader()
-{
-    notImplemented();
-    return nullptr;
-}
-
-int AccessibilityUIElement::rowCount()
+unsigned AccessibilityUIElementPlayStation::uiElementCountForSearchPredicate(JSContextRef, AccessibilityUIElement*, bool, JSValueRef, JSStringRef, bool, bool)
 {
     notImplemented();
     return 0;
 }
 
-int AccessibilityUIElement::columnCount()
+RefPtr<AccessibilityUIElement> AccessibilityUIElementPlayStation::uiElementForSearchPredicate(JSContextRef, AccessibilityUIElement*, bool, JSValueRef, JSStringRef, bool, bool)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::selectTextWithCriteria(JSContextRef, JSStringRef, JSValueRef, JSStringRef, JSStringRef)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributesOfColumnHeaders()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributesOfRowHeaders()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributesOfColumns()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributesOfRows()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributesOfVisibleCells()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributesOfHeader()
+{
+    notImplemented();
+    return nullptr;
+}
+
+int AccessibilityUIElementPlayStation::rowCount()
 {
     notImplemented();
     return 0;
 }
 
-int AccessibilityUIElement::indexInTable()
+int AccessibilityUIElementPlayStation::columnCount()
 {
     notImplemented();
     return 0;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::rowIndexRange()
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::columnIndexRange()
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::cellForColumnAndRow(unsigned, unsigned)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::horizontalScrollbar() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::verticalScrollbar() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::selectedTextRange()
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::intersectionWithSelectionRange()
-{
-    notImplemented();
-    return nullptr;
-}
-
-bool AccessibilityUIElement::setSelectedTextRange(unsigned, unsigned)
-{
-    notImplemented();
-    return false;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::textInputMarkedRange() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-void AccessibilityUIElement::increment()
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::decrement()
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::showMenu()
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::press()
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::setSelectedChild(AccessibilityUIElement* element) const
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::setSelectedChildAtIndex(unsigned index) const
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::removeSelectionAtIndex(unsigned index) const
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::clearSelectedChildren() const
-{
-    notImplemented();
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::accessibilityValue() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::url()
-{
-    notImplemented();
-    return nullptr;
-}
-
-bool AccessibilityUIElement::addNotificationListener(JSContextRef, JSValueRef functionCallback)
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::removeNotificationListener()
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isFocusable() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isSelectable() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isMultiSelectable() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isVisible() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isOffScreen() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isCollapsed() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isIgnored() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isSingleLine() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isMultiLine() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::hasPopup() const
-{
-    notImplemented();
-    return false;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::popupValue() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-void AccessibilityUIElement::takeFocus()
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::takeSelection()
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::addSelection()
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::removeSelection()
-{
-    notImplemented();
-}
-
-RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::lineTextMarkerRangeForTextMarker(AccessibilityTextMarker*)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForElement(AccessibilityUIElement*)
-{
-    notImplemented();
-    return nullptr;
-}
-
-int AccessibilityUIElement::textMarkerRangeLength(AccessibilityTextMarkerRange*)
+int AccessibilityUIElementPlayStation::indexInTable()
 {
     notImplemented();
     return 0;
 }
 
-RefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousTextMarker(AccessibilityTextMarker*)
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::rowIndexRange()
 {
     notImplemented();
     return nullptr;
 }
 
-RefPtr<AccessibilityTextMarker> AccessibilityUIElement::nextTextMarker(AccessibilityTextMarker*)
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::columnIndexRange()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::rectsForTextMarkerRange(AccessibilityTextMarkerRange*, JSStringRef)
+RefPtr<AccessibilityUIElement> AccessibilityUIElementPlayStation::cellForColumnAndRow(unsigned, unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForTextMarkerRange(AccessibilityTextMarkerRange*)
+RefPtr<AccessibilityUIElement> AccessibilityUIElementPlayStation::horizontalScrollbar() const
 {
     notImplemented();
     return nullptr;
 }
 
-RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForMarkers(AccessibilityTextMarker*, AccessibilityTextMarker*)
+RefPtr<AccessibilityUIElement> AccessibilityUIElementPlayStation::verticalScrollbar() const
 {
     notImplemented();
     return nullptr;
 }
 
-RefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*)
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::selectedTextRange()
 {
     notImplemented();
     return nullptr;
 }
 
-RefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*)
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::intersectionWithSelectionRange()
 {
     notImplemented();
     return nullptr;
 }
 
-RefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarkerForBounds(int, int, int, int)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarkerForBounds(int, int, int, int)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForPoint(int, int)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::accessibilityElementForTextMarker(AccessibilityTextMarker*)
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*)
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForTextMarkerRangeWithDidSpellCheck(AccessibilityTextMarkerRange*)
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange*, bool)
-{
-    notImplemented();
-    return nullptr;
-}
-
-bool AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*)
+bool AccessibilityUIElementPlayStation::setSelectedTextRange(unsigned, unsigned)
 {
     notImplemented();
     return false;
 }
 
-int AccessibilityUIElement::indexForTextMarker(AccessibilityTextMarker*)
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::textInputMarkedRange() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+void AccessibilityUIElementPlayStation::increment()
+{
+    notImplemented();
+}
+
+void AccessibilityUIElementPlayStation::decrement()
+{
+    notImplemented();
+}
+
+void AccessibilityUIElementPlayStation::showMenu()
+{
+    notImplemented();
+}
+
+void AccessibilityUIElementPlayStation::press()
+{
+    notImplemented();
+}
+
+void AccessibilityUIElementPlayStation::setSelectedChild(AccessibilityUIElement* element) const
+{
+    notImplemented();
+}
+
+void AccessibilityUIElementPlayStation::setSelectedChildAtIndex(unsigned index) const
+{
+    notImplemented();
+}
+
+void AccessibilityUIElementPlayStation::removeSelectionAtIndex(unsigned index) const
+{
+    notImplemented();
+}
+
+void AccessibilityUIElementPlayStation::clearSelectedChildren() const
+{
+    notImplemented();
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::accessibilityValue() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::url()
+{
+    notImplemented();
+    return nullptr;
+}
+
+bool AccessibilityUIElementPlayStation::addNotificationListener(JSContextRef, JSValueRef functionCallback)
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::removeNotificationListener()
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::isFocusable() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::isSelectable() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::isMultiSelectable() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::isVisible() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::isOffScreen() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::isCollapsed() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::isIgnored() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::isSingleLine() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::isMultiLine() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::hasPopup() const
+{
+    notImplemented();
+    return false;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::popupValue() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+void AccessibilityUIElementPlayStation::takeFocus()
+{
+    notImplemented();
+}
+
+void AccessibilityUIElementPlayStation::takeSelection()
+{
+    notImplemented();
+}
+
+void AccessibilityUIElementPlayStation::addSelection()
+{
+    notImplemented();
+}
+
+void AccessibilityUIElementPlayStation::removeSelection()
+{
+    notImplemented();
+}
+
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElementPlayStation::lineTextMarkerRangeForTextMarker(AccessibilityTextMarker*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElementPlayStation::textMarkerRangeForElement(AccessibilityUIElement*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+int AccessibilityUIElementPlayStation::textMarkerRangeLength(AccessibilityTextMarkerRange*)
 {
     notImplemented();
     return 0;
 }
 
-bool AccessibilityUIElement::isTextMarkerValid(AccessibilityTextMarker*)
+RefPtr<AccessibilityTextMarker> AccessibilityUIElementPlayStation::previousTextMarker(AccessibilityTextMarker*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+RefPtr<AccessibilityTextMarker> AccessibilityUIElementPlayStation::nextTextMarker(AccessibilityTextMarker*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::rectsForTextMarkerRange(AccessibilityTextMarkerRange*, JSStringRef)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::stringForTextMarkerRange(AccessibilityTextMarkerRange*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElementPlayStation::textMarkerRangeForMarkers(AccessibilityTextMarker*, AccessibilityTextMarker*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+RefPtr<AccessibilityTextMarker> AccessibilityUIElementPlayStation::startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+RefPtr<AccessibilityTextMarker> AccessibilityUIElementPlayStation::endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+RefPtr<AccessibilityTextMarker> AccessibilityUIElementPlayStation::endTextMarkerForBounds(int, int, int, int)
+{
+    notImplemented();
+    return nullptr;
+}
+
+RefPtr<AccessibilityTextMarker> AccessibilityUIElementPlayStation::startTextMarkerForBounds(int, int, int, int)
+{
+    notImplemented();
+    return nullptr;
+}
+
+RefPtr<AccessibilityTextMarker> AccessibilityUIElementPlayStation::textMarkerForPoint(int, int)
+{
+    notImplemented();
+    return nullptr;
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElementPlayStation::accessibilityElementForTextMarker(AccessibilityTextMarker*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributedStringForTextMarkerRangeWithDidSpellCheck(AccessibilityTextMarkerRange*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange*, bool)
+{
+    notImplemented();
+    return nullptr;
+}
+
+bool AccessibilityUIElementPlayStation::attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*)
 {
     notImplemented();
     return false;
 }
 
-RefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForIndex(int)
+int AccessibilityUIElementPlayStation::indexForTextMarker(AccessibilityTextMarker*)
 {
     notImplemented();
-    return nullptr;
+    return 0;
 }
 
-RefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarker()
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarker()
-{
-    notImplemented();
-    return nullptr;
-}
-
-bool AccessibilityUIElement::setSelectedTextMarkerRange(AccessibilityTextMarkerRange*)
+bool AccessibilityUIElementPlayStation::isTextMarkerValid(AccessibilityTextMarker*)
 {
     notImplemented();
     return false;
 }
 
-void AccessibilityUIElement::scrollToMakeVisible()
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::scrollToGlobalPoint(int, int)
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::scrollToMakeVisibleWithSubFocus(int, int, int, int)
-{
-    notImplemented();
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::supportedActions() const
+RefPtr<AccessibilityTextMarker> AccessibilityUIElementPlayStation::textMarkerForIndex(int)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::pathDescription() const
+RefPtr<AccessibilityTextMarker> AccessibilityUIElementPlayStation::startTextMarker()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::mathPostscriptsDescription() const
+RefPtr<AccessibilityTextMarker> AccessibilityUIElementPlayStation::endTextMarker()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::mathPrescriptsDescription() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::classList() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::characterAtOffset(int)
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::wordAtOffset(int)
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::lineAtOffset(int)
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::sentenceAtOffset(int)
-{
-    notImplemented();
-    return nullptr;
-}
-
-bool AccessibilityUIElement::replaceTextInRange(JSStringRef, int, int)
+bool AccessibilityUIElementPlayStation::setSelectedTextMarkerRange(AccessibilityTextMarkerRange*)
 {
     notImplemented();
     return false;
 }
 
-bool AccessibilityUIElement::insertText(JSStringRef)
+void AccessibilityUIElementPlayStation::scrollToMakeVisible()
 {
     notImplemented();
-    return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::domIdentifier() const
+void AccessibilityUIElementPlayStation::scrollToGlobalPoint(int, int)
+{
+    notImplemented();
+}
+
+void AccessibilityUIElementPlayStation::scrollToMakeVisibleWithSubFocus(int, int, int, int)
+{
+    notImplemented();
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::supportedActions() const
 {
     notImplemented();
     return nullptr;
 }
 
-bool AccessibilityUIElement::isInsertion() const
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::pathDescription() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::mathPostscriptsDescription() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::mathPrescriptsDescription() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::classList() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::characterAtOffset(int)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::wordAtOffset(int)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::lineAtOffset(int)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::sentenceAtOffset(int)
+{
+    notImplemented();
+    return nullptr;
+}
+
+bool AccessibilityUIElementPlayStation::replaceTextInRange(JSStringRef, int, int)
 {
     notImplemented();
     return false;
 }
 
-bool AccessibilityUIElement::isDeletion() const
+bool AccessibilityUIElementPlayStation::insertText(JSStringRef)
+{
+    notImplemented();
+    return false;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementPlayStation::domIdentifier() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+bool AccessibilityUIElementPlayStation::isInsertion() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementPlayStation::isDeletion() const
 {
     notImplemented();
     return false;
 }
 
 
-bool AccessibilityUIElement::isFirstItemInSuggestion() const
+bool AccessibilityUIElementPlayStation::isFirstItemInSuggestion() const
 {
     notImplemented();
     return false;
 }
 
 
-bool AccessibilityUIElement::isLastItemInSuggestion() const
+bool AccessibilityUIElementPlayStation::isLastItemInSuggestion() const
 {
     notImplemented();
     return false;
 }
 
-bool AccessibilityUIElement::isInNonNativeTextControl() const
+bool AccessibilityUIElementPlayStation::isInNonNativeTextControl() const
 {
     notImplemented();
     return false;

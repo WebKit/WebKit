@@ -66,7 +66,7 @@ private:
     void doUnapply() override
     {
         if (!m_hasBeenUndone) {
-            document().protectedEditor()->unappliedSpellCorrection(startingSelection(), m_corrected, m_correction);
+            protect(document().editor())->unappliedSpellCorrection(startingSelection(), m_corrected, m_correction);
             m_hasBeenUndone = true;
         }
         

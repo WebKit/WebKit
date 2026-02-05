@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 349x19
+        RenderText {#text} at (0,0) size 349x20
           text run at (0,0) width 349: "Focus the field, focus away, then focus the field again."
       RenderBlock {DIV} at (0,36) size 784x20
         RenderTextControl {INPUT} at (0,0) size 154x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]

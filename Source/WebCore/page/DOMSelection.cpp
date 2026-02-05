@@ -51,7 +51,7 @@ static RefPtr<Node> selectionShadowAncestor(LocalFrame& frame)
     RefPtr node = frame.selection().selection().base().anchorNode();
     if (!node || !node->isInShadowTree())
         return nullptr;
-    return node->protectedDocument()->ancestorNodeInThisScope(node.get());
+    return protect(node->document())->ancestorNodeInThisScope(node.get());
 }
 
 DOMSelection::DOMSelection(LocalDOMWindow& window)
@@ -351,7 +351,7 @@ ExceptionOr<void> DOMSelection::removeRange(Range& liveRange)
     return { };
 }
 
-Vector<Ref<StaticRange>> DOMSelection::getComposedRanges(std::optional<Variant<RefPtr<ShadowRoot>, GetComposedRangesOptions>>&& firstShadowRootOrOptions, FixedVector<std::reference_wrapper<ShadowRoot>>&& remainingShadowRoots)
+Vector<Ref<StaticRange>> DOMSelection::getComposedRanges(Variant<RefPtr<ShadowRoot>, GetComposedRangesOptions>&& firstShadowRootOrOptions, FixedVector<std::reference_wrapper<ShadowRoot>>&& remainingShadowRoots)
 {
     RefPtr frame = this->frame();
     if (!frame)
@@ -360,24 +360,23 @@ Vector<Ref<StaticRange>> DOMSelection::getComposedRanges(std::optional<Variant<R
     if (!range)
         return { };
 
-    HashSet<Ref<ShadowRoot>> shadowRootSet;
-    if (firstShadowRootOrOptions) {
-        if (auto* firstShadowRoot = std::get_if<RefPtr<ShadowRoot>>(&*firstShadowRootOrOptions)) {
+    auto shadowRootSet = WTF::switchOn(WTF::move(firstShadowRootOrOptions),
+        [&](RefPtr<ShadowRoot>&& firstShadowRoot) {
+            HashSet<Ref<ShadowRoot>> shadowRootSet;
             shadowRootSet.reserveInitialCapacity(remainingShadowRoots.size() + 1);
-            shadowRootSet.add(firstShadowRoot->releaseNonNull());
+            shadowRootSet.add(firstShadowRoot.releaseNonNull());
             for (auto& root : remainingShadowRoots)
                 shadowRootSet.add(root.get());
-        } else {
-            auto* options = std::get_if<GetComposedRangesOptions>(&*firstShadowRootOrOptions);
-            RELEASE_ASSERT(options);
-            for (auto& shadowRoot : options->shadowRoots)
-                shadowRootSet.add(WTF::move(shadowRoot));
+            return shadowRootSet;
+        },
+        [](GetComposedRangesOptions&& options) {
+            return HashSet<Ref<ShadowRoot>> { WTF::move(options.shadowRoots) };
         }
-    }
+    );
 
     Ref startNode = range->startContainer();
     unsigned startOffset = range->startOffset();
-    while (startNode->isInShadowTree() && !shadowRootSet.contains(startNode->protectedContainingShadowRoot().get())) {
+    while (startNode->isInShadowTree() && !shadowRootSet.contains(protect(startNode->containingShadowRoot()).get())) {
         RefPtr host = startNode->shadowHost();
         ASSERT(host && host->parentNode());
         startNode = *host->parentNode();
@@ -386,7 +385,7 @@ Vector<Ref<StaticRange>> DOMSelection::getComposedRanges(std::optional<Variant<R
 
     Ref endNode = range->endContainer();
     unsigned endOffset = range->endOffset();
-    while (endNode->isInShadowTree() && !shadowRootSet.contains(endNode->protectedContainingShadowRoot().get())) {
+    while (endNode->isInShadowTree() && !shadowRootSet.contains(protect(endNode->containingShadowRoot()).get())) {
         RefPtr host = endNode->shadowHost();
         ASSERT(host && host->parentNode());
         endNode = *host->parentNode();
@@ -425,7 +424,7 @@ String DOMSelection::toString() const
         return String();
 
     OptionSet<TextIteratorBehavior> options;
-    if (!frame->protectedDocument()->quirks().needsToCopyUserSelectNoneQuirk())
+    if (!protect(frame->document())->quirks().needsToCopyUserSelectNoneQuirk())
         options.add(TextIteratorBehavior::IgnoresUserSelectNone);
 
     auto range = frame->selection().selection().range();
@@ -438,7 +437,7 @@ RefPtr<Node> DOMSelection::shadowAdjustedNode(const Position& position) const
         return nullptr;
 
     RefPtr containerNode = position.containerNode();
-    RefPtr adjustedNode = frame()->protectedDocument()->ancestorNodeInThisScope(containerNode.get());
+    RefPtr adjustedNode = protect(frame()->document())->ancestorNodeInThisScope(containerNode.get());
     if (!adjustedNode)
         return nullptr;
 
@@ -454,7 +453,7 @@ unsigned DOMSelection::shadowAdjustedOffset(const Position& position) const
         return 0;
 
     RefPtr containerNode = position.containerNode();
-    RefPtr adjustedNode = frame()->protectedDocument()->ancestorNodeInThisScope(containerNode.get());
+    RefPtr adjustedNode = protect(frame()->document())->ancestorNodeInThisScope(containerNode.get());
     if (!adjustedNode)
         return 0;
 

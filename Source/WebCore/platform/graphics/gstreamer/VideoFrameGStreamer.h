@@ -28,6 +28,10 @@
 #include <gst/video/video-info.h>
 #include <wtf/glib/GRefPtr.h>
 
+#if USE(GBM)
+#include "DMABufBuffer.h"
+#endif
+
 typedef struct _GstSample GstSample;
 
 namespace WebCore {
@@ -63,7 +67,7 @@ public:
 
     static Ref<VideoFrameGStreamer> create(GRefPtr<GstSample>&&, const CreateOptions&, PlatformVideoColorSpace&& = { });
 
-    static Ref<VideoFrameGStreamer> createWrappedSample(const GRefPtr<GstSample>&, const MediaTime& presentationTime = MediaTime::invalidTime(), Rotation videoRotation = Rotation::None);
+    static Ref<VideoFrameGStreamer> createWrappedSample(const GRefPtr<GstSample>&, std::optional<CreateOptions> = std::nullopt);
 
     static RefPtr<VideoFrameGStreamer> createFromPixelBuffer(Ref<PixelBuffer>&&, const IntSize& destinationSize, double frameRate, const CreateOptions&, PlatformVideoColorSpace&& = { });
 
@@ -98,6 +102,9 @@ public:
     };
     MemoryType memoryType() const { return m_memoryType; }
 
+#if USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
+    RefPtr<DMABufBuffer> getDMABuf();
+#endif
     const GstVideoInfo& info() const { return m_info.info; }
     std::optional<DMABufFormat> dmaBufFormat() const { return m_info.dmaBufFormat; }
 

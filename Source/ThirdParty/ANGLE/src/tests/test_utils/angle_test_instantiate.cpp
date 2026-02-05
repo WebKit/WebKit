@@ -346,6 +346,11 @@ bool IsAMD()
     return HasSystemVendorID(kVendorID_AMD);
 }
 
+bool IsSamsung()
+{
+    return HasSystemVendorID(kVendorID_Samsung);
+}
+
 bool IsAppleGPU()
 {
     return HasSystemVendorID(kVendorID_Apple);

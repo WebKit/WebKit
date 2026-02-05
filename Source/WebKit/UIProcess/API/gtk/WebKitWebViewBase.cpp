@@ -103,14 +103,12 @@
 #include <gtk/a11y/gtkatspi.h>
 #endif
 
-#if USE(SKIA)
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/core/SkColorSpace.h>
 #include <skia/core/SkPixmap.h>
 IGNORE_CLANG_WARNINGS_END
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
-#endif
 
 using namespace WebKit;
 using namespace WebCore;
@@ -893,17 +891,8 @@ static void webkitWebViewBaseSnapshot(GtkWidget* widget, GtkSnapshot* snapshot)
 
     bool notifyNextPresentationUpdate = false;
     auto* pageSnapshot = gtk_snapshot_new();
-    if (!webViewBase->priv->isBlank) {
-        if (drawingArea->isInAcceleratedCompositingMode())
-            notifyNextPresentationUpdate = webViewBase->priv->acceleratedBackingStore->snapshot(pageSnapshot);
-        else {
-            graphene_rect_t bounds = GRAPHENE_RECT_INIT(0, 0, widgetSize.width(), widgetSize.height());
-            RefPtr<cairo_t> cr = adoptRef(gtk_snapshot_append_cairo(pageSnapshot, &bounds));
-            WebCore::Region unpaintedRegion; // This is simply unused.
-            drawingArea->paint(cr.get(), IntRect { { 0, 0 }, drawingArea->size() }, unpaintedRegion);
-            notifyNextPresentationUpdate = true;
-        }
-    }
+    if (!webViewBase->priv->isBlank)
+        notifyNextPresentationUpdate = webViewBase->priv->acceleratedBackingStore->snapshot(pageSnapshot);
 
     if (auto* pageRenderNode = gtk_snapshot_free_to_node(pageSnapshot)) {
         bool showingNavigationSnapshot = webViewBase->priv->pageProxy->isShowingNavigationGestureSnapshot();
@@ -943,14 +932,8 @@ static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
         if (showingNavigationSnapshot)
             cairo_push_group(cr);
 
-        if (drawingArea->isInAcceleratedCompositingMode()) {
-            ASSERT(webViewBase->priv->acceleratedBackingStore);
-            notifyNextPresentationUpdate = webViewBase->priv->acceleratedBackingStore->paint(cr, clipRect);
-        } else {
-            WebCore::Region unpaintedRegion; // This is simply unused.
-            drawingArea->paint(cr, clipRect, unpaintedRegion);
-            notifyNextPresentationUpdate = true;
-        }
+        ASSERT(webViewBase->priv->acceleratedBackingStore);
+        notifyNextPresentationUpdate = webViewBase->priv->acceleratedBackingStore->paint(cr, clipRect);
 
         if (showingNavigationSnapshot) {
             RefPtr<cairo_pattern_t> group = adoptRef(cairo_pop_group(cr));
@@ -1733,7 +1716,7 @@ static gboolean webkitWebViewBaseCrossingNotifyEvent(GtkWidget* widget, GdkEvent
 #endif
 
 #if USE(GTK4)
-static void webkitWebViewBaseEnter(WebKitWebViewBase* webViewBase, double x, double y, GdkCrossingMode, GtkEventController*)
+static void webkitWebViewBaseEnter(WebKitWebViewBase* webViewBase, double x, double y, GtkEventController*)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (priv->dialog)
@@ -1773,7 +1756,7 @@ static gboolean webkitWebViewBaseMotion(WebKitWebViewBase* webViewBase, double x
     return GDK_EVENT_PROPAGATE;
 }
 
-static void webkitWebViewBaseLeave(WebKitWebViewBase* webViewBase, GdkCrossingMode, GtkEventController*)
+static void webkitWebViewBaseLeave(WebKitWebViewBase* webViewBase, GtkEventController*)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (priv->dialog)
@@ -3503,17 +3486,13 @@ void webkitWebViewBaseSetPlugID(WebKitWebViewBase* webViewBase, const String& pl
 RendererBufferDescription webkitWebViewBaseGetRendererBufferDescription(WebKitWebViewBase* webViewBase)
 {
     auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(webViewBase->priv->pageProxy->drawingArea());
-    if (!drawingArea || !drawingArea->isInAcceleratedCompositingMode())
+    if (!drawingArea)
         return { };
 
     return webViewBase->priv->acceleratedBackingStore->bufferDescription();
 }
 
-#if USE(CAIRO)
-static cairo_surface_t* webkitWebViewBaseSnapshotFromWidget(GtkWidget* view)
-#elif USE(SKIA)
 static SkImage* webkitWebViewBaseSnapshotFromWidget(GtkWidget* view)
-#endif
 {
 #if USE(GTK4)
     int width = gtk_widget_get_width(view);
@@ -3541,37 +3520,18 @@ static SkImage* webkitWebViewBaseSnapshotFromWidget(GtkWidget* view)
     gtk_widget_draw(view, cr.get());
 #endif
 
-#if USE(CAIRO)
-    return surface.leakRef();
-#elif USE(SKIA)
     cairo_surface_flush(surface.get());
     auto imageInfo = SkImageInfo::MakeN32Premul(cairo_image_surface_get_width(surface.get()), cairo_image_surface_get_height(surface.get()), SkColorSpace::MakeSRGB());
     SkPixmap pixmap(imageInfo, cairo_image_surface_get_data(surface.get()), cairo_image_surface_get_stride(surface.get()));
     return SkImages::RasterFromPixmap(pixmap, [](const void*, void* context) {
         cairo_surface_destroy(static_cast<cairo_surface_t*>(context));
     }, surface.leakRef()).release();
-#endif
 }
 
-#if USE(CAIRO)
-cairo_surface_t* webkitWebViewBaseSnapshotForTesting(WebKitWebViewBase* webViewBase)
-{
-    auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(webViewBase->priv->pageProxy->drawingArea());
-    if (!drawingArea || !drawingArea->isInAcceleratedCompositingMode())
-        return webkitWebViewBaseSnapshotFromWidget(GTK_WIDGET(webViewBase));
-
-    if (auto image = webViewBase->priv->acceleratedBackingStore->bufferAsNativeImageForTesting()) {
-        if (RefPtr<cairo_surface_t> surface = image->platformImage())
-            return surface.leakRef();
-    }
-
-    return webkitWebViewBaseSnapshotFromWidget(GTK_WIDGET(webViewBase));
-}
-#elif USE(SKIA)
 SkImage* webkitWebViewBaseSnapshotForTesting(WebKitWebViewBase* webViewBase)
 {
     auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(webViewBase->priv->pageProxy->drawingArea());
-    if (!drawingArea || !drawingArea->isInAcceleratedCompositingMode())
+    if (!drawingArea)
         return webkitWebViewBaseSnapshotFromWidget(GTK_WIDGET(webViewBase));
 
     if (auto image = webViewBase->priv->acceleratedBackingStore->bufferAsNativeImageForTesting()) {
@@ -3588,7 +3548,6 @@ SkImage* webkitWebViewBaseSnapshotForTesting(WebKitWebViewBase* webViewBase)
 
     return webkitWebViewBaseSnapshotFromWidget(GTK_WIDGET(webViewBase));
 }
-#endif
 
 #if USE(GTK4)
 static GRefPtr<GdkCursor> fallbackCursor()
@@ -3726,22 +3685,14 @@ void webkitWebViewBaseSetCursor(WebKitWebViewBase* webViewBase, const Cursor& cu
     auto& platformImage = nativeImage->platformImage();
 
 #if USE(GTK4)
-#if USE(CAIRO)
-    auto texture = cairoSurfaceToGdkTexture(platformImage.get());
-#elif USE(SKIA)
     auto texture = skiaImageToGdkTexture(*platformImage.get());
-#endif
     if (!texture)
         return;
 
     GRefPtr<GdkCursor> newCursor = adoptGRef(gdk_cursor_new_from_texture(texture.get(), effectiveHotSpot.x(), effectiveHotSpot.y(), fallbackCursor().get()));
     gtk_widget_set_cursor(GTK_WIDGET(webViewBase), newCursor.get());
 #else
-#if USE(CAIRO)
-    auto pixbuf = cairoSurfaceToGdkPixbuf(platformImage.get());
-#elif USE(SKIA)
     auto pixbuf = skiaImageToGdkPixbuf(*platformImage.get());
-#endif
     if (!pixbuf)
         return;
 

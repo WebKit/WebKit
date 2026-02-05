@@ -242,9 +242,9 @@ static bool takeSnapshots(TextIndicatorData& data, LocalFrame& frame, IntRect sn
             snapshotOptions.flags.add(SnapshotFlags::PaintWith3xBaseScale);
 
         float snapshotScaleFactor;
-        auto visibleContentRect = frame.protectedView()->visibleContentRect();
+        auto visibleContentRect = protect(frame.view())->visibleContentRect();
         data.contentImageWithoutSelection = takeSnapshot(frame, visibleContentRect, WTF::move(snapshotOptions), snapshotScaleFactor, { });
-        data.contentImageWithoutSelectionRectInRootViewCoordinates = frame.protectedView()->contentsToRootView(visibleContentRect);
+        data.contentImageWithoutSelectionRectInRootViewCoordinates = protect(frame.view())->contentsToRootView(visibleContentRect);
     }
     
     return true;
@@ -389,7 +389,7 @@ static bool initializeIndicator(TextIndicatorData& data, LocalFrame& frame, cons
         textRectInDocumentCoordinatesIncludingMargin.inflateY(margin.height());
         textBoundingRectInDocumentCoordinates.unite(textRectInDocumentCoordinatesIncludingMargin);
 
-        FloatRect textRectInRootViewCoordinates = frame.protectedView()->contentsToRootView(enclosingIntRect(textRectInDocumentCoordinatesIncludingMargin));
+        FloatRect textRectInRootViewCoordinates = protect(frame.view())->contentsToRootView(enclosingIntRect(textRectInDocumentCoordinatesIncludingMargin));
         textRectsInRootViewCoordinates.append(textRectInRootViewCoordinates);
         textBoundingRectInRootViewCoordinates.unite(textRectInRootViewCoordinates);
     }
@@ -403,7 +403,7 @@ static bool initializeIndicator(TextIndicatorData& data, LocalFrame& frame, cons
 
     // Store the selection rect in window coordinates, to be used subsequently
     // to determine if the indicator and selection still precisely overlap.
-    data.selectionRectInRootViewCoordinates = frame.protectedView()->contentsToRootView(enclosingIntRect(frame.checkedSelection()->selectionBounds(FrameSelection::ClipToVisibleContent::No)));
+    data.selectionRectInRootViewCoordinates = protect(frame.view())->contentsToRootView(enclosingIntRect(frame.checkedSelection()->selectionBounds(FrameSelection::ClipToVisibleContent::No)));
     data.textBoundingRectInRootViewCoordinates = textBoundingRectInRootViewCoordinates;
     data.textRectsInBoundingRectCoordinates = WTF::move(textRectsInBoundingRectCoordinates);
 

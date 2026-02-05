@@ -38,9 +38,9 @@ layer at (0,0) size 800x376
                   RenderSVGPath {path} at (241,233) size 17x11 [fill={[type=SOLID] [color=#4D4D4D] [fill rule=EVEN-ODD]}] [clip rule=EVEN-ODD] [data="M 82.495 85.034 C 81.004 85.229 80.005 85.999 79.415 86.704 C 78.842 87.358 78.202 88.311 78.498 88.604 C 78.772 88.879 79.025 88.653 79.279 88.317 C 79.302 88.29 79.324 88.26 79.348 88.231 C 79.438 88.131 79.526 88.012 79.615 87.887 C 79.638 87.86 79.663 87.83 79.685 87.799 C 79.728 87.748 79.771 87.695 79.816 87.639 C 79.842 87.61 79.865 87.578 79.891 87.545 C 79.931 87.502 79.969 87.455 80.01 87.404 C 80.536 86.97 81.37 86.082 83.033 86.082 C 84.721 86.082 84.59 86.031 84.524 85.377 C 84.475 84.772 83.969 84.821 82.495 85.034 Z"]
                   RenderSVGPath {path} at (259,233) size 24x18 [fill={[type=SOLID] [color=#4D4D4D] [fill rule=EVEN-ODD]}] [clip rule=EVEN-ODD] [data="M 90.503 85.853 C 89.061 85.314 88.014 85.066 86.751 85.017 C 85.064 84.935 85.213 85.361 85.213 85.361 C 85.213 86.148 86.834 86.429 88.358 86.656 C 89.881 86.867 91.091 87.164 91.157 88.752 C 91.241 90.326 90.848 91.438 91.536 91.309 C 93.023 91.028 93.565 89.424 93.549 88.688 C 93.548 87.933 92.451 86.608 90.503 85.853 Z"]
       RenderText {#text} at (0,0) size 0x0
-      RenderBR {BR} at (349,339) size 1x13
-      RenderText {#text} at (0,352) size 224x13
-        text run at (0,352) width 224: "The image of Tux should fill the entire red square."
+      RenderBR {BR} at (349,338) size 1x14
+      RenderText {#text} at (0,351) size 224x14
+        text run at (0,351) width 224: "The image of Tux should fill the entire red square."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

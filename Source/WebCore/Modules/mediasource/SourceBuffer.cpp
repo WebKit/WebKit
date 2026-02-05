@@ -261,21 +261,6 @@ RefPtr<MediaSource> SourceBuffer::protectedSource() const
     return m_source.get();
 }
 
-RefPtr<VideoTrackList> SourceBuffer::protectedVideoTracks() const
-{
-    return m_videoTracks;
-}
-
-RefPtr<AudioTrackList> SourceBuffer::protectedAudioTracks() const
-{
-    return m_audioTracks;
-}
-
-RefPtr<TextTrackList> SourceBuffer::protectedTextTracks() const
-{
-    return m_textTracks;
-}
-
 double SourceBuffer::appendWindowStart() const
 {
     return m_appendWindowStart.toDouble();
@@ -1099,9 +1084,9 @@ bool SourceBuffer::validateInitializationSegment(const SourceBufferPrivateClient
 
     // Note: those are checks from step 3.1
     //   * The number of audio, video, and text tracks match what was in the first initialization segment.
-    return segment.audioTracks.size() == protectedAudioTracks()->length()
-        && segment.videoTracks.size() == protectedVideoTracks()->length()
-        && segment.textTracks.size() == protectedTextTracks()->length();
+    return segment.audioTracks.size() == protect(audioTracksIfExists())->length()
+        && segment.videoTracks.size() == protect(videoTracksIfExists())->length()
+        && segment.textTracks.size() == protect(textTracksIfExists())->length();
 }
 
 void SourceBuffer::appendError(bool decodeError)
@@ -1129,12 +1114,12 @@ void SourceBuffer::appendError(bool decodeError)
 
 bool SourceBuffer::hasAudio() const
 {
-    return m_audioTracks && protectedAudioTracks()->length();
+    return m_audioTracks && protect(audioTracksIfExists())->length();
 }
 
 bool SourceBuffer::hasVideo() const
 {
-    return m_videoTracks && protectedVideoTracks()->length();
+    return m_videoTracks && protect(videoTracksIfExists())->length();
 }
 
 ScriptExecutionContext* SourceBuffer::scriptExecutionContext() const
@@ -1149,9 +1134,9 @@ void SourceBuffer::videoTrackSelectedChanged(VideoTrack& track)
     // 1. If the SourceBuffer associated with the previously selected video track is not associated with
     // any other enabled tracks, run the following steps:
     if (!track.selected()
-        && (!m_videoTracks || !protectedVideoTracks()->isAnyTrackEnabled())
-        && (!m_audioTracks || !protectedAudioTracks()->isAnyTrackEnabled())
-        && (!m_textTracks || !protectedTextTracks()->isAnyTrackEnabled())) {
+        && (!m_videoTracks || !protect(videoTracksIfExists())->isAnyTrackEnabled())
+        && (!m_audioTracks || !protect(audioTracksIfExists())->isAnyTrackEnabled())
+        && (!m_textTracks || !protect(textTracksIfExists())->isAnyTrackEnabled())) {
         // 1.1 Remove the SourceBuffer from activeSourceBuffers.
         // 1.2 Queue a task to fire a simple event named removesourcebuffer at activeSourceBuffers
         setActive(false);
@@ -1191,9 +1176,9 @@ void SourceBuffer::audioTrackEnabledChanged(AudioTrack& track)
     // If an audio track becomes disabled and the SourceBuffer associated with this track is not
     // associated with any other enabled or selected track, then run the following steps:
     if (!track.enabled()
-        && (!m_videoTracks || !protectedVideoTracks()->isAnyTrackEnabled())
-        && (!m_audioTracks || !protectedAudioTracks()->isAnyTrackEnabled())
-        && (!m_textTracks || !protectedTextTracks()->isAnyTrackEnabled())) {
+        && (!m_videoTracks || !protect(videoTracksIfExists())->isAnyTrackEnabled())
+        && (!m_audioTracks || !protect(audioTracksIfExists())->isAnyTrackEnabled())
+        && (!m_textTracks || !protect(textTracksIfExists())->isAnyTrackEnabled())) {
         // 1. Remove the SourceBuffer associated with the audio track from activeSourceBuffers
         // 2. Queue a task to fire a simple event named removesourcebuffer at activeSourceBuffers
         setActive(false);
@@ -1233,9 +1218,9 @@ void SourceBuffer::textTrackModeChanged(TextTrack& track)
     // If a text track mode becomes "disabled" and the SourceBuffer associated with this track is not
     // associated with any other enabled or selected track, then run the following steps:
     if (track.mode() == TextTrack::Mode::Disabled
-        && (!m_videoTracks || !protectedVideoTracks()->isAnyTrackEnabled())
-        && (!m_audioTracks || !protectedAudioTracks()->isAnyTrackEnabled())
-        && (!m_textTracks || !protectedTextTracks()->isAnyTrackEnabled())) {
+        && (!m_videoTracks || !protect(videoTracksIfExists())->isAnyTrackEnabled())
+        && (!m_audioTracks || !protect(audioTracksIfExists())->isAnyTrackEnabled())
+        && (!m_textTracks || !protect(textTracksIfExists())->isAnyTrackEnabled())) {
         // 1. Remove the SourceBuffer associated with the audio track from activeSourceBuffers
         // 2. Queue a task to fire a simple event named removesourcebuffer at activeSourceBuffers
         setActive(false);
@@ -1549,9 +1534,9 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidAttach(SourceBufferPrivate
 
     RefPtr source = m_source.get();
     // 3.2 Add the appropriate track descriptions from this initialization segment to each of the track buffers.
-    ASSERT(segment.audioTracks.size() == protectedAudioTracks()->length());
+    ASSERT(segment.audioTracks.size() == protect(audioTracksIfExists())->length());
     for (auto& audioTrackInfo : segment.audioTracks) {
-        auto audioTrack = protectedAudioTracks()->getTrackById(RefPtr { audioTrackInfo.track }->id());
+        auto audioTrack = protect(audioTracksIfExists())->getTrackById(RefPtr { audioTrackInfo.track }->id());
         ASSERT(audioTrack);
         audioTrack->setPrivate(Ref { *audioTrackInfo.track });
         if (isMainThread())

@@ -392,7 +392,7 @@ ExceptionOr<void> FetchBodyOwner::createReadableStream(JSC::JSGlobalObject& stat
         if (streamOrException.hasException()) [[unlikely]]
             return streamOrException.releaseException();
         m_body->setReadableStream(streamOrException.releaseReturnValue());
-        m_body->protectedReadableStream()->lock();
+        protect(m_body->readableStream())->lock();
         return { };
     }
 

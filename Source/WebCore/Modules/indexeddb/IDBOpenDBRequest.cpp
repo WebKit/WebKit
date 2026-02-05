@@ -102,7 +102,7 @@ void IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()
 
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
     ASSERT(hasPendingActivity());
-    protectedTransaction()->addRequest(*this);
+    protect(transaction())->addRequest(*this);
 
     Ref event = IDBRequestCompletionEvent::create(eventNames().successEvent, Event::CanBubble::No, Event::IsCancelable::No, *this);
     m_openDatabaseSuccessEvent = event.get();
@@ -121,7 +121,7 @@ void IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion()
     m_domError = DOMException::create(ExceptionCode::AbortError);
     setResultToUndefined();
 
-    protectedTransaction()->addRequest(*this);
+    protect(transaction())->addRequest(*this);
     enqueueEvent(IDBRequestCompletionEvent::create(eventNames().errorEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes, *this));
 }
 

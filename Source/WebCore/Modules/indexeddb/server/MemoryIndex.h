@@ -84,7 +84,6 @@ public:
     IndexValueStore* valueStore() { return m_records.get(); }
 
     MemoryObjectStore* objectStore();
-    RefPtr<MemoryObjectStore> protectedObjectStore();
 
     void cursorDidBecomeClean(MemoryIndexCursor&);
     void cursorDidBecomeDirty(MemoryIndexCursor&);

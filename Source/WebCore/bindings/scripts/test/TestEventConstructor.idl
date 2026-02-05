@@ -31,7 +31,7 @@
 [
     Exposed=TestGlobalObject
 ] interface TestEventConstructor : Event {
-    constructor(DOMString type, optional TestEventConstructorInit eventInitDict);
+    constructor(DOMString type, optional TestEventConstructorInit eventInitDict = {});
 
     // Attributes
     readonly attribute DOMString attr1;

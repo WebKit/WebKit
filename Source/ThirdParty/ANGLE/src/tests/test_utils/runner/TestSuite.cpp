@@ -1832,7 +1832,7 @@ int TestSuite::run()
 
         if (progress)
         {
-            messageTimer.start();
+            messageTimer.restart();
         }
         else if (messageTimer.getElapsedWallClockTime() > kIdleMessageTimeout)
         {
@@ -1840,7 +1840,7 @@ int TestSuite::run()
             double processTime             = processInfo.process->getElapsedTimeSeconds();
             printf("Running %d tests in %d processes, longest for %d seconds.\n", totalTestCount,
                    static_cast<int>(mCurrentProcesses.size()), static_cast<int>(processTime));
-            messageTimer.start();
+            messageTimer.restart();
         }
 
         // Early exit if we passed the maximum failure threshold. Still wait for current tests.

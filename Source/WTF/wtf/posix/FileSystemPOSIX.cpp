@@ -55,6 +55,11 @@
 #include <glib.h>
 #endif
 
+#if OS(HAIKU)
+#include "FindDirectory.h"
+#include "Path.h"
+#endif
+
 namespace WTF {
 
 namespace FileSystemImpl {
@@ -110,7 +115,7 @@ std::optional<WallTime> fileCreationTime(const String& path)
         return std::nullopt;
 
     return WallTime::fromRawSeconds(fileInfo.stx_btime.tv_sec);
-#elif OS(DARWIN) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD)
+#elif OS(DARWIN) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD) || OS(HAIKU)
     struct stat fileInfo;
 
     if (stat(fsRep.data(), &fileInfo) == -1)
@@ -158,6 +163,17 @@ static const char* temporaryFileDirectory()
 {
 #if USE(GLIB)
     return g_get_tmp_dir();
+#elif OS(HAIKU)
+    static char buffer[B_PATH_NAME_LENGTH];
+    static std::once_flag once;
+    std::call_once(once, [] {
+        BPath path;
+        if (find_directory(B_SYSTEM_TEMP_DIRECTORY, &path) == B_OK)
+            strlcpy(buffer, path.Path(), sizeof(buffer));
+        else
+            strlcpy(buffer, "/tmp", sizeof(buffer));
+    });
+    return buffer;
 #else
     if (auto* tmpDir = getenv("TMPDIR"))
         return tmpDir;

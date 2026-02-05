@@ -172,7 +172,9 @@ enum ContextMenuAction {
     ContextMenuItemCaptionDisplayStyleSubmenu,
 #if PLATFORM(COCOA)
     ContextMenuItemTagSmartLists,
-    ContextMenuItemLastNonCustomTag = ContextMenuItemTagSmartLists,
+    ContextMenuItemTagConvertToTraditionalChinese,
+    ContextMenuItemTagConvertToSimplifiedChinese,
+    ContextMenuItemLastNonCustomTag = ContextMenuItemTagConvertToSimplifiedChinese,
 #else
     ContextMenuItemLastNonCustomTag = ContextMenuItemCaptionDisplayStyleSubmenu,
 #endif

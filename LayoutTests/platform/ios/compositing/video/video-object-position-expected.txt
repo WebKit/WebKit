@@ -67,7 +67,7 @@
           )
         )
         (GraphicsLayer
-          (position 13.00 232.00)
+          (position 13.00 231.50)
           (bounds 124.00 204.00)
           (contentsOpaque 1)
           (drawsContent 1)
@@ -77,7 +77,7 @@
           )
         )
         (GraphicsLayer
-          (position 151.00 232.00)
+          (position 151.00 231.50)
           (bounds 124.00 204.00)
           (contentsOpaque 1)
           (drawsContent 1)
@@ -91,7 +91,7 @@
           )
         )
         (GraphicsLayer
-          (position 289.00 232.00)
+          (position 289.00 231.50)
           (bounds 124.00 204.00)
           (contentsOpaque 1)
           (drawsContent 1)
@@ -101,7 +101,7 @@
           )
         )
         (GraphicsLayer
-          (position 427.00 232.00)
+          (position 427.00 231.50)
           (bounds 124.00 204.00)
           (contentsOpaque 1)
           (drawsContent 1)
@@ -115,7 +115,7 @@
           )
         )
         (GraphicsLayer
-          (position 565.00 232.00)
+          (position 565.00 231.50)
           (bounds 124.00 204.00)
           (contentsOpaque 1)
           (drawsContent 1)

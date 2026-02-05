@@ -6,12 +6,16 @@ FAIL :iff_uncaptured:useOnuncapturederror=true;errorType="out-of-memory" assert_
     assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
     finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:119:11
     runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 FAIL :iff_uncaptured:useOnuncapturederror=true;errorType="validation" assert_unreached:
   - EXCEPTION: Error: there were outstanding immediateAsyncExpectations (e.g. expectUncapturedError) at the end of the test
     assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
     finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:119:11
     runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:534:28
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:682:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
  Reached unreachable code
 PASS :only_original_device_is_event_target:
 PASS :uncapturederror_from_non_originating_thread:

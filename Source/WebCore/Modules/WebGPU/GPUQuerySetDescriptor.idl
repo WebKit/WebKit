@@ -30,7 +30,6 @@ typedef [EnforceRange] unsigned long GPUSize32;
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUQuerySetDescriptor : GPUObjectDescriptorBase {
     required GPUQueryType type;
     required GPUSize32 count;

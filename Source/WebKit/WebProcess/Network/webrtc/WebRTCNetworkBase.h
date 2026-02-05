@@ -51,7 +51,6 @@ public:
     bool isActive() const { return m_isActive; }
 
     WebMDNSRegister& mdnsRegister() { return m_mdnsRegister; }
-    Ref<WebMDNSRegister> protectedMDNSRegister() { return m_mdnsRegister; }
 
 private:
     const CheckedRef<WebProcess> m_webProcess;

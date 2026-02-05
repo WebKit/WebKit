@@ -77,11 +77,11 @@ static void prepareConfiguration(webrtc::PeerConnectionInterface::RTCConfigurati
     configuration.crypto_options.srtp.enable_gcm_crypto_suites = true;
 }
 
-RefPtr<LibWebRTCMediaEndpoint> LibWebRTCMediaEndpoint::create(RTCPeerConnection& peerConnection, LibWebRTCProvider& client, Document& document, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
+RefPtr<LibWebRTCMediaEndpoint> LibWebRTCMediaEndpoint::create(RTCPeerConnection& peerConnection, LibWebRTCProvider& client, Document& document, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration, bool shouldEnableServiceClass)
 {
     prepareConfiguration(configuration);
 
-    Ref endpoint = adoptRef(*new LibWebRTCMediaEndpoint(peerConnection, client, document));
+    Ref endpoint = adoptRef(*new LibWebRTCMediaEndpoint(peerConnection, client, document, shouldEnableServiceClass));
     RefPtr backend = toRefPtr(client.createPeerConnection(document.identifier(), endpoint, endpoint->m_rtcSocketFactory.get(), WTF::move(configuration)));
     if (!backend)
         return { };
@@ -90,23 +90,23 @@ RefPtr<LibWebRTCMediaEndpoint> LibWebRTCMediaEndpoint::create(RTCPeerConnection&
     return endpoint;
 }
 
-static std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> createLibWebRTCMediaEndpointSocketFactory(LibWebRTCProvider& client, Document& document)
+static std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> createLibWebRTCMediaEndpointSocketFactory(LibWebRTCProvider& client, Document& document, bool shouldEnableServiceClass)
 {
     RegistrableDomain domain { document.url() };
     bool isFirstParty = domain == RegistrableDomain(document.firstPartyForCookies());
-    auto rtcSocketFactory = client.createSocketFactory(document.userAgent(document.url()), document.identifier(), isFirstParty, WTF::move(domain));
+    auto rtcSocketFactory = client.createSocketFactory(document.userAgent(document.url()), document.identifier(), isFirstParty, WTF::move(domain), shouldEnableServiceClass);
     if (!client.isSupportingMDNS() && rtcSocketFactory)
         rtcSocketFactory->disableRelay();
     return rtcSocketFactory;
 }
 
-LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint(RTCPeerConnection& peerConnection, LibWebRTCProvider& client, Document& document)
+LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint(RTCPeerConnection& peerConnection, LibWebRTCProvider& client, Document& document, bool shouldEnableServiceClass)
     : m_peerConnectionFactory(*client.factory())
     , m_createSessionDescriptionObserver(*this)
     , m_setLocalSessionDescriptionObserver(*this)
     , m_setRemoteSessionDescriptionObserver(*this)
     , m_statsLogTimer(*this, &LibWebRTCMediaEndpoint::gatherStatsForLogging)
-    , m_rtcSocketFactory(createLibWebRTCMediaEndpointSocketFactory(client, document))
+    , m_rtcSocketFactory(createLibWebRTCMediaEndpointSocketFactory(client, document, shouldEnableServiceClass))
 #if !RELEASE_LOG_DISABLED
     , m_logger(peerConnection.logger())
     , m_logIdentifier(peerConnection.logIdentifier())
@@ -142,26 +142,6 @@ void LibWebRTCMediaEndpoint::restartIce()
 {
     if (!m_isStopped)
         m_backend->RestartIce();
-}
-
-static std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> createLibWebRTCMediaEndpointSocketFactory(LibWebRTCProvider& client, LibWebRTCPeerConnectionBackend& peerConnectionBackend, Document& document)
-{
-    RegistrableDomain domain { document.url() };
-    bool isFirstParty = domain == RegistrableDomain(document.firstPartyForCookies());
-    auto rtcSocketFactory = client.createSocketFactory(document.userAgent(document.url()), document.identifier(), isFirstParty, WTF::move(domain));
-    if (!peerConnectionBackend.shouldFilterICECandidates() && rtcSocketFactory)
-        rtcSocketFactory->disableRelay();
-    return rtcSocketFactory;
-}
-
-RefPtr<webrtc::PeerConnectionInterface> LibWebRTCMediaEndpoint::createBackend(LibWebRTCProvider& client, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
-{
-    Ref peerConnectionBackend = *m_peerConnectionBackend;
-    Ref document = *downcast<Document>(peerConnectionBackend->protectedConnection()->scriptExecutionContext());
-    if (!m_rtcSocketFactory)
-        lazyInitialize(m_rtcSocketFactory, createLibWebRTCMediaEndpointSocketFactory(client, peerConnectionBackend, document));
-
-    return toRefPtr(client.createPeerConnection(document->identifier(), *this, m_rtcSocketFactory.get(), WTF::move(configuration)));
 }
 
 bool LibWebRTCMediaEndpoint::setConfiguration(webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)

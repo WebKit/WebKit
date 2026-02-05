@@ -18,7 +18,7 @@ PASS inputWithoutSystemKeyboard.value is 'None'
 TEST selection in input with inputmode=none
 PASS selectionRects.length is 1
 FAIL selectionRects[0].left should be 16. Was 14.
-PASS selectionRects[0].top is 33
+PASS selectionRects[0].top is 34
 PASS selectionRects[0].width is 28
 PASS selectionRects[0].height is 14
 PASS successfullyParsed is true

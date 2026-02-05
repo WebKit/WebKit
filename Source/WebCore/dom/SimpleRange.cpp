@@ -298,7 +298,7 @@ bool contains(TreeType type, const SimpleRange& range, const Node& node)
 
 template<TreeType treeType> bool contains(const Node& outer, const Node& inner)
 {
-    for (auto inclusiveAncestor = &inner; inclusiveAncestor; inclusiveAncestor = parent<treeType>(*inclusiveAncestor)) {
+    for (RefPtr inclusiveAncestor = &inner; inclusiveAncestor; inclusiveAncestor = parent<treeType>(*inclusiveAncestor)) {
         if (inclusiveAncestor == &outer)
             return true;
     }
@@ -340,7 +340,7 @@ bool intersectsForTesting(TreeType type, const SimpleRange& range, const Node& n
 
 bool containsCrossingDocumentBoundaries(const SimpleRange& range, Node& node)
 {
-    auto* ancestor = &node;
+    RefPtr ancestor = &node;
     while (&range.start.document() != &ancestor->document()) {
         ancestor = ancestor->document().ownerElement();
         if (!ancestor)

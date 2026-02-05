@@ -41,7 +41,6 @@ public:
     virtual void processPoolDestroyed() { }
 
     WebProcessPool* processPool() { return m_processPool.get(); }
-    RefPtr<WebProcessPool> protectedProcessPool() { return processPool(); }
     void clearProcessPool() { m_processPool = nullptr; }
 
 protected:

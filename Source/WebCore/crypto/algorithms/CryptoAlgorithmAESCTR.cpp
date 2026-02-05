@@ -113,7 +113,7 @@ void CryptoAlgorithmAESCTR::generateKey(const CryptoAlgorithmParameters& paramet
         return;
     }
 
-    callback(WTF::move(result));
+    callback(result.releaseNonNull());
 }
 
 void CryptoAlgorithmAESCTR::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)

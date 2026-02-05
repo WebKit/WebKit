@@ -42,7 +42,7 @@ namespace WebCore {
 
 static CSSParserContext parserContextForElement(const Element& element)
 {
-    auto* shadowRoot = element.containingShadowRoot();
+    RefPtr shadowRoot = element.containingShadowRoot();
     // User agent shadow trees can't contain document-relative URLs. Use blank URL as base allowing cross-document sharing.
     auto& baseURL = shadowRoot && shadowRoot->mode() == ShadowRootMode::UserAgent ? aboutBlankURL() : element.document().baseURL();
 

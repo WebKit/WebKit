@@ -4,10 +4,10 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
       RenderBlock {H4} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 156x19
+        RenderText {#text} at (0,0) size 156x20
           text run at (0,0) width 156: "Testcase distilled from "
-        RenderInline {A} at (155,0) size 168x19 [color=#0000EE]
-          RenderText {#text} at (155,0) size 168x19
+        RenderInline {A} at (155,0) size 168x20 [color=#0000EE]
+          RenderText {#text} at (155,0) size 168x20
             text run at (155,0) width 168: "http://www.weather.com"
       RenderTable {TABLE} at (0,41) size 450x215
         RenderTableSection {TBODY} at (0,0) size 450x214
@@ -21,31 +21,31 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (0,0) size 125x214 [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (0,0) size 125x34
                       RenderBR {BR} at (125,19) size 0x19
-                      RenderText {#text} at (0,34) size 122x39
+                      RenderText {#text} at (0,34) size 122x40
                         text run at (0,34) width 122: "Jose moving out to"
                         text run at (0,54) width 21: "sea"
-                      RenderBR {BR} at (20,54) size 1x19
-                      RenderBR {BR} at (0,74) size 0x19
-                      RenderBR {BR} at (0,94) size 0x19
-                      RenderBR {BR} at (0,114) size 0x19
-                      RenderBR {BR} at (0,134) size 0x19
-                      RenderBR {BR} at (0,154) size 0x19
-                      RenderBR {BR} at (0,174) size 0x19
-                      RenderBR {BR} at (0,194) size 0x19
+                      RenderBR {BR} at (20,54) size 1x20
+                      RenderBR {BR} at (0,74) size 0x20
+                      RenderBR {BR} at (0,94) size 0x20
+                      RenderBR {BR} at (0,114) size 0x20
+                      RenderBR {BR} at (0,134) size 0x20
+                      RenderBR {BR} at (0,154) size 0x20
+                      RenderBR {BR} at (0,174) size 0x20
+                      RenderBR {BR} at (0,194) size 0x20
           RenderTableRow {TR} at (0,17) size 450x197
             RenderTableCell {TD} at (0,17) size 167x105 [r=1 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 167x105
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (167,105) size 4x21 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,88) size 4x20
-                text run at (0,0) width 4: " "
+              RenderText {#text} at (0,89) size 4x19
+                text run at (0,1) width 4: " "
             RenderTableCell {TD} at (171,17) size 154x80 [r=1 c=2 rs=1 cs=1]
-              RenderInline {FONT} at (0,0) size 144x79
-                RenderInline {B} at (0,0) size 66x15
-                  RenderText {#text} at (0,0) size 66x15
+              RenderInline {FONT} at (0,0) size 144x80
+                RenderInline {B} at (0,0) size 66x16
+                  RenderText {#text} at (0,0) size 66x16
                     text run at (0,0) width 66: "Chilly time"
-                RenderBR {BR} at (65,0) size 1x15
-                RenderText {#text} at (0,16) size 144x63
+                RenderBR {BR} at (65,0) size 1x16
+                RenderText {#text} at (0,16) size 144x64
                   text run at (0,16) width 120: "Though the calendar"
                   text run at (0,32) width 121: "disagrees, the feel of"
                   text run at (0,48) width 144: "winter is in the air across"

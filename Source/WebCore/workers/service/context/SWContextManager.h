@@ -105,7 +105,6 @@ public:
 
     WEBCORE_EXPORT void setConnection(Ref<Connection>&&);
     WEBCORE_EXPORT Connection* connection() const;
-    RefPtr<Connection> protectedConnection() const { return m_connection; }
 
     WEBCORE_EXPORT void registerServiceWorkerThreadForInstall(Ref<ServiceWorkerThreadProxy>&&, Function<void()>&& debuggerTasksStartedCallback = { });
     WEBCORE_EXPORT ServiceWorkerThreadProxy* serviceWorkerThreadProxy(ServiceWorkerIdentifier) const;

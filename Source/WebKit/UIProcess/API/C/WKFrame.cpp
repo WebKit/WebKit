@@ -92,7 +92,7 @@ WKStringRef WKFrameCopyTitle(WKFrameRef frameRef)
 
 WKPageRef WKFrameGetPage(WKFrameRef frameRef)
 {
-    return toAPI(toProtectedImpl(frameRef)->protectedPage().get());
+    return toAPI(protect(toProtectedImpl(frameRef)->page()).get());
 }
 
 WKCertificateInfoRef WKFrameGetCertificateInfo(WKFrameRef frameRef)

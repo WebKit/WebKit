@@ -22,7 +22,7 @@
 #if USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
-#include "MediaConfiguration.h"
+#include "PlatformMediaConfiguration.h"
 #include "MediaPlayerEnums.h"
 #include "RTCRtpCapabilities.h"
 #include <wtf/Forward.h>
@@ -85,8 +85,8 @@ public:
             return lhs.isSupported == rhs.isSupported && lhs.isUsingHardware == rhs.isUsingHardware;
         }
     };
-    RegistryLookupResult isDecodingSupported(MediaConfiguration& mediaConfiguration) const { return isConfigurationSupported(Configuration::Decoding, mediaConfiguration); };
-    RegistryLookupResult isEncodingSupported(MediaConfiguration& mediaConfiguration) const { return isConfigurationSupported(Configuration::Encoding, mediaConfiguration); }
+    RegistryLookupResult isDecodingSupported(PlatformMediaConfiguration& mediaConfiguration) const { return isConfigurationSupported(Configuration::Decoding, mediaConfiguration); };
+    RegistryLookupResult isEncodingSupported(PlatformMediaConfiguration& mediaConfiguration) const { return isConfigurationSupported(Configuration::Encoding, mediaConfiguration); }
 
     struct CodecLookupResult {
         CodecLookupResult() = default;
@@ -165,7 +165,7 @@ protected:
     void initializeDecoders(const ElementFactories&);
     void initializeEncoders(const ElementFactories&);
 
-    RegistryLookupResult isConfigurationSupported(Configuration, const MediaConfiguration&) const;
+    RegistryLookupResult isConfigurationSupported(Configuration, const PlatformMediaConfiguration&) const;
 
     struct GstCapsWebKitMapping {
         ElementFactories::Type elementType;

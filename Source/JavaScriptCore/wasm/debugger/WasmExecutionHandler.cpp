@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmExecutionHandler.h"
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -947,4 +947,4 @@ String ExecutionHandler::callStackStringFor(uint64_t threadId)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

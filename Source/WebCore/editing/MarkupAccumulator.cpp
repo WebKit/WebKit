@@ -734,7 +734,7 @@ QualifiedName MarkupAccumulator::xmlAttributeSerialization(const Attribute& attr
             // Always use xml as prefix if the namespace is the XML namespace.
             prefixedName.setPrefix(xmlAtom());
         } else {
-            AtomStringImpl* foundNS = namespaces && attribute.prefix().impl() ? namespaces->get(attribute.prefix().impl()) : nullptr;
+            RefPtr foundNS = namespaces && attribute.prefix().impl() ? namespaces->get(attribute.prefix().impl()) : nullptr;
             bool prefixIsAlreadyMappedToOtherNS = foundNS && foundNS != attribute.namespaceURI().impl();
             if (attribute.prefix().isEmpty() || !foundNS || prefixIsAlreadyMappedToOtherNS) {
                 if (RefPtr prefix = namespaces ? namespaces->get(attribute.namespaceURI().impl()) : nullptr)

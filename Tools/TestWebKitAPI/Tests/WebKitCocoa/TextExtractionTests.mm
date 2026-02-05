@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2025-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,20 +25,32 @@
 
 #import "config.h"
 
+#import "HTTPServer.h"
 #import "InstanceMethodSwizzler.h"
+#import "JSHandlePlugInProtocol.h"
 #import "PlatformUtilities.h"
 #import "SafeBrowsingSPI.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKContentWorldPrivate.h>
+#import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKContentWorldConfiguration.h>
+#import <WebKit/_WKFrameTreeNode.h>
+#import <WebKit/_WKJSHandle.h>
+#import <WebKit/_WKRemoteObjectInterface.h>
+#import <WebKit/_WKRemoteObjectRegistry.h>
 #import <WebKit/_WKTextExtraction.h>
+#import <pal/spi/cocoa/NSKeyedUnarchiverSPI.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/WorkQueue.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/text/MakeString.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(SafariSafeBrowsing);
 SOFT_LINK_CLASS(SafariSafeBrowsing, SSBLookupContext);
@@ -154,6 +166,16 @@ SOFT_LINK_CLASS(SafariSafeBrowsing, SSBLookupContext);
     return result.autorelease();
 }
 
+@end
+
+@interface JSHandleReceiver : NSObject<JSHandlePlugInProtocol>
+@property (nonatomic, copy) void (^dictionaryReceiver)(NSDictionary *);
+@end
+@implementation JSHandleReceiver
+- (void)receiveDictionaryFromWebProcess:(NSDictionary *)dictionary
+{
+    _dictionaryReceiver(dictionary);
+}
 @end
 
 namespace TestWebKitAPI {
@@ -363,7 +385,8 @@ TEST(TextExtractionTests, VisibleTextOnly)
 
     EXPECT_TRUE([debugText containsString:@"Test"]);
     EXPECT_TRUE([debugText containsString:@"foo"]);
-    EXPECT_TRUE([debugText containsString:@"Subject “The quick brown fox jumped over the lazy dog”"]);
+    EXPECT_TRUE([debugText containsString:@"Subject"]);
+    EXPECT_TRUE([debugText containsString:@"“The quick brown fox jumped over the lazy dog”"]);
     EXPECT_TRUE([debugText containsString:@"0"]);
 #if ENABLE(TEXT_EXTRACTION_FILTER)
     EXPECT_FALSE([debugText containsString:@"Here’s to the crazy ones"]);
@@ -479,8 +502,9 @@ TEST(TextExtractionTests, NodesToSkip)
     }()];
 
     NSArray<NSString *> *lines = [debugText componentsSeparatedByString:@"\n"];
-    EXPECT_EQ([lines count], 1u);
-    EXPECT_WK_STREQ("Test 0", lines[0]);
+    EXPECT_EQ([lines count], 2u);
+    EXPECT_WK_STREQ("Test", lines[0]);
+    EXPECT_WK_STREQ("0", lines[1]);
 }
 
 TEST(TextExtractionTests, RequestJSHandleForNodeIdentifier)
@@ -681,7 +705,7 @@ TEST(TextExtractionTests, SubframeInteractions)
     __block RetainPtr subframes = adoptNS([NSMutableArray new]);
     RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate setDidCommitLoadWithRequestInFrame:^(WKWebView *, NSURLRequest *, WKFrameInfo *frame) {
-        if (!frame.mainFrame && ![frame.request.URL.scheme isEqualToString:@"about:blank"])
+        if (!frame.mainFrame && ![frame.request.URL.scheme isEqualToString:@"about"])
             [subframes addObject:frame];
     }];
     [webView setNavigationDelegate:navigationDelegate.get()];
@@ -697,7 +721,26 @@ TEST(TextExtractionTests, SubframeInteractions)
     [extractionConfiguration setIncludeURLs:NO];
     [extractionConfiguration setAdditionalFrames:subframes.get()];
 
+    RetainPtr world = [WKContentWorld _worldWithConfiguration:^{
+        RetainPtr configuration = adoptNS([_WKContentWorldConfiguration new]);
+        [configuration setAllowJSHandleCreation:YES];
+        return configuration.autorelease();
+    }()];
+
+    for (WKFrameInfo *subframe in subframes.get()) {
+        RetainPtr button = [webView querySelector:@"button" frame:subframe world:world.get()];
+        EXPECT_NOT_NULL(button);
+        [extractionConfiguration addClientAttribute:@"foo" value:@"bar" forNode:button.get()];
+    }
+
+    auto numberOfMatches = [](NSString *text, NSString *patternString) {
+        RetainPtr pattern = [NSRegularExpression regularExpressionWithPattern:patternString options:0 error:nil];
+        return [pattern numberOfMatchesInString:text options:0 range:NSMakeRange(0, text.length)];
+    };
+
     RetainPtr debugText = [webView synchronouslyGetDebugText:extractionConfiguration.get()];
+    EXPECT_EQ(numberOfMatches(debugText.get(), @"foo='bar'"), 2u);
+
     {
         RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
         [interaction setNodeIdentifier:extractNodeIdentifier(debugText.get(), @"Same origin: click here")];
@@ -722,9 +765,85 @@ TEST(TextExtractionTests, SubframeInteractions)
     }
 
     RetainPtr debugTextAfterClicks = [webView synchronouslyGetDebugText:extractionConfiguration.get()];
-    RetainPtr clickCountPattern = [NSRegularExpression regularExpressionWithPattern:@"Click count: 1" options:0 error:nil];
-    NSUInteger numberOfMatches = [clickCountPattern numberOfMatchesInString:debugTextAfterClicks.get() options:0 range:NSMakeRange(0, [debugTextAfterClicks length])];
-    EXPECT_EQ(numberOfMatches, 2u);
+    EXPECT_EQ(numberOfMatches(debugTextAfterClicks.get(), @"Click count: 1"), 2u);
+}
+
+TEST(TextExtractionTests, InjectedBundle)
+{
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"JSHandlePlugIn"];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    RetainPtr receiver = adoptNS([JSHandleReceiver new]);
+    __block RetainPtr<_WKJSHandle> handle;
+    __block RetainPtr<_WKJSHandle> decodedHandle;
+    receiver.get().dictionaryReceiver = ^(NSDictionary *dictionary) {
+        handle = dynamic_objc_cast<_WKJSHandle>(dictionary[@"testkey"]);
+        decodedHandle = [NSKeyedUnarchiver _strictlyUnarchivedObjectOfClasses:[NSSet setWithObject:_WKJSHandle.class] fromData:dynamic_objc_cast<NSData>(dictionary[@"testdatakey"]) error:nil];
+    };
+
+    _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(JSHandlePlugInProtocol)];
+    [interface setClasses:[NSSet setWithObjects:NSDictionary.class, NSString.class, _WKJSHandle.class, nil] forSelector:@selector(receiveDictionaryFromWebProcess:) argumentIndex:0 ofReply:NO];
+    [[webView _remoteObjectRegistry] registerExportedObject:receiver.get() interface:interface];
+
+    [webView loadHTMLString:@"text outside <div id='testelement'> text inside </div>" baseURL:nil];
+    while (!handle)
+        Util::spinRunLoop();
+    EXPECT_NOT_NULL(handle.get().frame._documentIdentifier);
+    EXPECT_TRUE([handle.get().frame._documentIdentifier isEqual:decodedHandle.get().frame._documentIdentifier]);
+    EXPECT_TRUE([handle.get().frame._documentIdentifier isEqual:[webView mainFrame].info._documentIdentifier]);
+    EXPECT_TRUE([handle.get().frame _isSameFrame:[webView mainFrame].info]);
+}
+
+TEST(TextExtractionTests, ClickInteractionWhileInBackground)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:^{
+        RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+        [configuration _setBackgroundTextExtractionEnabled:YES];
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@R"HTML(
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name='viewport' content='width=device-width, initial-scale=1'>
+        </head>
+        <body>
+            <button>Click Me</button>
+            <div id='result'>pending</div>
+            <script>
+                document.querySelector('button').addEventListener('click', async () => {
+                    for (let i = 0; i < 3; ++i) {
+                        await new Promise(resolve => setTimeout(resolve, 50));
+                        await new Promise(requestAnimationFrame);
+                    }
+                    document.getElementById('result').textContent = 'completed';
+                });
+            </script>
+        </body>
+        </html>
+    )HTML"];
+
+#if PLATFORM(IOS_FAMILY)
+    [NSNotificationCenter.defaultCenter postNotificationName:UIApplicationDidEnterBackgroundNotification object:UIApplication.sharedApplication userInfo:@{@"isSuspendedUnderLock": @NO }];
+    [NSNotificationCenter.defaultCenter postNotificationName:UISceneDidEnterBackgroundNotification object:[[webView window] windowScene] userInfo:nil];
+#else
+    [[webView window] orderOut:nil];
+#endif
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:nil];
+    RetainPtr buttonID = extractNodeIdentifier(debugText.get(), @"Click Me");
+    EXPECT_NOT_NULL(buttonID.get());
+
+    RetainPtr click = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+    [click setNodeIdentifier:buttonID.get()];
+
+    RetainPtr result = [webView synchronouslyPerformInteraction:click.get()];
+    EXPECT_NULL([result error]);
+
+    Util::waitForConditionWithLogging([webView] {
+        return [[webView stringByEvaluatingJavaScript:@"document.getElementById('result').textContent"] isEqualToString:@"completed"];
+    }, 5, @"Expected result text to become 'completed'.");
 }
 
 } // namespace TestWebKitAPI

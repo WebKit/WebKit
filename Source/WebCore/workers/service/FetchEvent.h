@@ -47,7 +47,7 @@ class FetchEvent final : public ExtendableEvent {
     WTF_MAKE_TZONE_ALLOCATED(FetchEvent);
 public:
     struct Init : ExtendableEventInit {
-        RefPtr<FetchRequest> request;
+        Ref<FetchRequest> request;
         String clientId;
         String resultingClientId;
         RefPtr<DOMPromise> handled;

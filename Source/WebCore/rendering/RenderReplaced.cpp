@@ -611,7 +611,22 @@ LayoutUnit RenderReplaced::computeConstrainedLogicalWidth() const
     // 'padding-right' + 'border-right-width' + 'margin-right' = width of
     // containing block
     // see https://www.w3.org/TR/CSS22/visudet.html#blockwidth
-    LayoutUnit logicalWidth = isOutOfFlowPositioned() ? containingBlock()->clientLogicalWidth() : containingBlock()->contentBoxLogicalWidth();
+    LayoutUnit logicalWidth;
+    if (isOutOfFlowPositioned()) {
+        // For absolutely positioned elements with both left and right set,
+        // the available width is constrained by those values.
+        auto& logicalLeft = style().logicalLeft();
+        auto& logicalRight = style().logicalRight();
+        auto containerWidth = containingBlock()->clientLogicalWidth();
+
+        if (!logicalLeft.isAuto() && !logicalRight.isAuto()) {
+            auto left = Style::evaluate<LayoutUnit>(logicalLeft, containerWidth, style().usedZoomForLength());
+            auto right = Style::evaluate<LayoutUnit>(logicalRight, containerWidth, style().usedZoomForLength());
+            logicalWidth = containerWidth - left - right;
+        } else
+            logicalWidth = containerWidth;
+    } else
+        logicalWidth = containingBlock()->contentBoxLogicalWidth();
 
     // This solves above equation for 'width' (== logicalWidth).
     auto marginStart = Style::evaluateMinimum<LayoutUnit>(style().marginStart(), logicalWidth, style().usedZoomForLength());
@@ -727,6 +742,17 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
                 auto [transferredMinLogicalWidth, transferredMaxLogicalWidth] = computeMinMaxLogicalWidthFromAspectRatio();
                 ASSERT(transferredMinLogicalWidth <= transferredMaxLogicalWidth);
                 constrainedLogicalWidth = std::clamp(constrainedLogicalWidth, transferredMinLogicalWidth, transferredMaxLogicalWidth);
+
+                // For absolutely positioned elements with both insets set, don't let max-width intrinsic
+                // keywords constrain the width.
+                auto& style = this->style();
+                if (isOutOfFlowPositioned() && !style.logicalLeft().isAuto() && !style.logicalRight().isAuto()) {
+                    // Still respect min-width, but ignore max-width if it's an intrinsic keyword.
+                    auto& logicalMinWidth = style.logicalMinWidth();
+                    auto minLogicalWidth = logicalMinWidth.isIntrinsic() ? 0_lu : computeReplacedLogicalWidthUsing(logicalMinWidth);
+                    return std::max(minLogicalWidth, constrainedLogicalWidth);
+                }
+
                 return computeReplacedLogicalWidthRespectingMinMaxWidth(constrainedLogicalWidth, ShouldComputePreferred::ComputeActual);
             }
         }

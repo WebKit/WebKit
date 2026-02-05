@@ -2,7 +2,7 @@
  * This file is part of the select element renderer in WebCore.
  *
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,14 +24,11 @@
 #pragma once
 
 #include "LayoutRect.h"
-#include "PopupMenu.h"
-#include "PopupMenuClient.h"
 #include "RenderFlexibleBox.h"
 
 namespace WebCore {
 
 class HTMLSelectElement;
-class RenderText;
 
 class RenderMenuList final : public RenderFlexibleBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderMenuList);
@@ -49,46 +46,23 @@ public:
     void decrementCheckedPtrCount() const { RenderFlexibleBox::decrementCheckedPtrCount(); }
     void setDidBeginCheckedPtrDeletion() { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
-#if !PLATFORM(IOS_FAMILY)
-    bool popupIsVisible() const { return m_popupIsVisible; }
-#endif
-    void showPopup();
-    void hidePopup();
-    void popupDidHide();
-
     void setOptionsChanged(bool changed) { m_needsOptionsWidthUpdate = changed; }
-
-    void didSetSelectedIndex(int listIndex);
-
-    String text() const;
 
 #if PLATFORM(IOS_FAMILY)
     void layout() override;
 #endif
 
-    RenderBlock* innerRenderer() const { return m_innerBlock.get(); }
-    void setInnerRenderer(RenderBlock&);
-
-    void didAttachChild(RenderObject& child, RenderObject* beforeChild);
-
     void getItemBackgroundColor(unsigned listIndex, Color&, bool& itemHasCustomBackgroundColor) const;
 
-    PopupMenuStyle::Size popupMenuSize(const RenderStyle&);
-
+#if PLATFORM(WIN)
     LayoutUnit clientPaddingLeft() const;
     LayoutUnit clientPaddingRight() const;
+#endif
 
-    HostWindow* hostWindow() const;
-    void setTextFromOption(int optionIndex);
+    void updateFromElement() final;
 
 private:
-    void willBeDestroyed() override;
-
     void element() const = delete;
-
-    bool createsAnonymousWrapper() const override { return true; }
-
-    void updateFromElement() override;
 
     LayoutRect controlClipRect(const LayoutPoint&) const override;
     bool hasControlClip() const override { return true; }
@@ -105,28 +79,12 @@ private:
 
     std::optional<LayoutUnit> firstLineBaseline() const override { return RenderBlock::firstLineBaseline(); }
 
-    void adjustInnerStyle();
-    void setText(const String&);
     void updateOptionsWidth();
-
-    void didUpdateActiveOption(int optionIndex);
 
     bool isFlexibleBoxImpl() const override { return true; }
 
-    SingleThreadWeakPtr<RenderText> m_buttonText;
-    SingleThreadWeakPtr<RenderBlock> m_innerBlock;
-
     bool m_needsOptionsWidthUpdate;
     int m_optionsWidth;
-
-    std::optional<int> m_lastActiveIndex;
-
-    std::unique_ptr<RenderStyle> m_optionStyle;
-
-#if !PLATFORM(IOS_FAMILY)
-    RefPtr<PopupMenu> m_popup;
-    bool m_popupIsVisible;
-#endif
 };
 
 } // namespace WebCore

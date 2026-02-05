@@ -27,7 +27,6 @@
 
 [
     EnabledBySetting=AccessHandleEnabled&FileSystemWritableStreamEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary FileSystemCreateWritableOptions {
     boolean keepExistingData = false;
 };

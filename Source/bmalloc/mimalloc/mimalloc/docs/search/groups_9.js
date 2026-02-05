@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['posix_0',['Posix',['../group__posix.html',1,'']]]
+  ['options_0',['Runtime Options',['../group__options.html',1,'']]]
 ];

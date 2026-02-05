@@ -106,7 +106,6 @@ public:
 #endif
 
     NetworkProcess& networkProcess() { return m_networkProcess; }
-    Ref<NetworkProcess> protectedNetworkProcess();
 
     const URL& url() const { return m_url; }
     WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const { return m_storedCredentialsPolicy; }
@@ -157,7 +156,6 @@ private:
 #endif
 
     RefPtr<NetworkCORSPreflightChecker> protectedCORSPreflightChecker() const;
-    RefPtr<WebCore::SecurityOrigin> protectedOrigin() const { return m_origin; }
     RefPtr<WebCore::SecurityOrigin> parentOrigin() const { return m_parentOrigin; }
 
     bool checkTAO(const WebCore::ResourceResponse&);

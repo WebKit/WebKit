@@ -62,8 +62,10 @@ public:
     Ref<ModuleInformation>&& takeModuleInformation()
     {
         RELEASE_ASSERT(!failed() && !hasWork());
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
         if (Options::enableWasmDebugger()) [[unlikely]]
             m_moduleInformation->debugInfo->takeSource(WTF::move(m_source));
+#endif
         return WTF::move(m_moduleInformation);
     }
 

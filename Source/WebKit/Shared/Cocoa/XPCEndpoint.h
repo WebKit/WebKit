@@ -41,7 +41,7 @@ public:
 
     WK_EXPORT void sendEndpointToConnection(xpc_connection_t);
 
-    WK_EXPORT XPCObjectPtr<xpc_endpoint_t> endpoint() const;
+    WK_EXPORT OSObjectPtr<xpc_endpoint_t> endpoint() const;
 
     static constexpr auto xpcMessageNameKey = "message-name"_s;
 
@@ -51,8 +51,8 @@ private:
     virtual ASCIILiteral xpcEndpointNameKey() const = 0;
     virtual void handleEvent(xpc_connection_t, xpc_object_t) = 0;
 
-    XPCObjectPtr<xpc_connection_t> m_connection;
-    XPCObjectPtr<xpc_endpoint_t> m_endpoint;
+    OSObjectPtr<xpc_connection_t> m_connection;
+    OSObjectPtr<xpc_endpoint_t> m_endpoint;
 };
 
 }

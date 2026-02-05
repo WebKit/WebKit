@@ -165,7 +165,7 @@ void CanvasRenderingContext2D::drawFocusIfNeededInternal(const Path& path, Eleme
     Ref canvas = this->canvas();
     if (!element.focused() || !hasInvertibleTransform() || path.isEmpty() || !element.isDescendantOf(canvas.get()) || !context)
         return;
-    context->drawFocusRing(path, 1, RenderTheme::singleton().focusRingColor(element.protectedDocument()->styleColorOptions(canvas->computedStyle())));
+    context->drawFocusRing(path, 1, RenderTheme::singleton().focusRingColor(protect(element.document())->styleColorOptions(canvas->computedStyle())));
     didDrawEntireCanvas();
 }
 
@@ -252,7 +252,7 @@ inline TextDirection CanvasRenderingContext2D::toTextDirection(Direction directi
 CanvasDirection CanvasRenderingContext2D::direction() const
 {
     if (state().direction == Direction::Inherit)
-        canvas().protectedDocument()->updateStyleIfNeeded();
+        protect(canvas().document())->updateStyleIfNeeded();
     return toTextDirection(state().direction) == TextDirection::RTL ? CanvasDirection::Rtl : CanvasDirection::Ltr;
 }
 

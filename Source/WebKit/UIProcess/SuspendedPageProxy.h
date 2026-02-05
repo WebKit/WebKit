@@ -34,6 +34,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/NavigationIdentifier.h>
 #include <wtf/RefCounted.h>
+#include <wtf/SwiftBridging.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
@@ -71,12 +72,10 @@ public:
     WebPageProxy* page() const;
     WebCore::PageIdentifier webPageID() const { return m_webPageID; }
     WebProcessProxy& process() const { return m_process.get(); }
-    Ref<WebProcessProxy> protectedProcess() const { return process(); }
     WebFrameProxy& mainFrame() { return m_mainFrame.get(); }
     const BrowsingContextGroup& browsingContextGroup() { return m_browsingContextGroup.get(); }
 
     WebBackForwardCache& backForwardCache() const;
-    Ref<WebBackForwardCache> protectedBackForwardCache() const;
 
     WebPageProxyMessageReceiverRegistration& messageReceiverRegistration() { return m_messageReceiverRegistration; }
 
@@ -138,6 +137,16 @@ private:
     LayerHostingContextID m_contextIDForVisibilityPropagationInGPUProcess { 0 };
 #endif
 #endif
-};
+} SWIFT_SHARED_REFERENCE(refSuspendedPageProxy, derefSuspendedPageProxy);
 
 } // namespace WebKit
+
+inline void refSuspendedPageProxy(WebKit::SuspendedPageProxy* WTF_NONNULL obj)
+{
+    WTF::ref(obj);
+}
+
+inline void derefSuspendedPageProxy(WebKit::SuspendedPageProxy* WTF_NONNULL obj)
+{
+    WTF::deref(obj);
+}

@@ -24,1072 +24,1091 @@
  */
 
 #include "config.h"
-#include "AccessibilityUIElement.h"
+#include "AccessibilityUIElementWin.h"
 
 #include <WebCore/NotImplemented.h>
 
 namespace WTR {
 
-AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement)
+Ref<AccessibilityUIElementWin> AccessibilityUIElementWin::create(PlatformUIElement element)
+{
+    return adoptRef(*new AccessibilityUIElementWin(element));
+}
+
+Ref<AccessibilityUIElementWin> AccessibilityUIElementWin::create(const AccessibilityUIElementWin& other)
+{
+    return adoptRef(*new AccessibilityUIElementWin(other));
+}
+
+AccessibilityUIElementWin::AccessibilityUIElementWin(PlatformUIElement element)
+    : AccessibilityUIElement(element)
+    , m_element(element)
 {
     notImplemented();
 }
 
-AccessibilityUIElement::AccessibilityUIElement(const AccessibilityUIElement&)
+AccessibilityUIElementWin::AccessibilityUIElementWin(const AccessibilityUIElementWin& other)
+    : AccessibilityUIElement(other)
+    , m_element(other.m_element)
 {
     notImplemented();
 }
 
-AccessibilityUIElement::~AccessibilityUIElement()
+AccessibilityUIElementWin::~AccessibilityUIElementWin()
 {
     notImplemented();
 }
 
-bool AccessibilityUIElement::isEqual(AccessibilityUIElement*)
+bool AccessibilityUIElementWin::isValid() const
+{
+    return m_element;
+}
+
+bool AccessibilityUIElementWin::isEqual(AccessibilityUIElement*)
 {
     notImplemented();
     return false;
 }
 
-Vector<RefPtr<AccessibilityUIElement>> AccessibilityUIElement::getChildren() const
+Vector<RefPtr<AccessibilityUIElement>> AccessibilityUIElementWin::getChildren() const
 {
     notImplemented();
     return { };
 }
 
-Vector<RefPtr<AccessibilityUIElement>> AccessibilityUIElement::getChildrenInRange(unsigned, unsigned) const
+Vector<RefPtr<AccessibilityUIElement>> AccessibilityUIElementWin::getChildrenInRange(unsigned, unsigned) const
 {
     notImplemented();
     return { };
 }
 
-unsigned AccessibilityUIElement::childrenCount()
+unsigned AccessibilityUIElementWin::childrenCount()
 {
     notImplemented();
     return 0;
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::elementAtPoint(int, int)
+RefPtr<AccessibilityUIElement> AccessibilityUIElementWin::elementAtPoint(int, int)
 {
     notImplemented();
     return nullptr;
 }
 
-unsigned AccessibilityUIElement::indexOfChild(AccessibilityUIElement*)
-{
-    notImplemented();
-    return 0;
-}
-
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::childAtIndex(unsigned)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::linkedUIElementAtIndex(unsigned)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaOwnsElementAtIndex(unsigned)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaFlowToElementAtIndex(unsigned)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaControlsElementAtIndex(unsigned)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::disclosedRowAtIndex(unsigned)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::rowAtIndex(unsigned)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedChildAtIndex(unsigned) const
-{
-    notImplemented();
-    return nullptr;
-}
-
-unsigned AccessibilityUIElement::selectedChildrenCount() const
+unsigned AccessibilityUIElementWin::indexOfChild(AccessibilityUIElement*)
 {
     notImplemented();
     return 0;
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedRowAtIndex(unsigned)
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElementWin::childAtIndex(unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::titleUIElement()
+RefPtr<AccessibilityUIElement> AccessibilityUIElementWin::linkedUIElementAtIndex(unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::parentElement()
+RefPtr<AccessibilityUIElement> AccessibilityUIElementWin::ariaOwnsElementAtIndex(unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::disclosedByRow()
+RefPtr<AccessibilityUIElement> AccessibilityUIElementWin::ariaFlowToElementAtIndex(unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfLinkedUIElements()
+RefPtr<AccessibilityUIElement> AccessibilityUIElementWin::ariaControlsElementAtIndex(unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfDocumentLinks()
+RefPtr<AccessibilityUIElement> AccessibilityUIElementWin::disclosedRowAtIndex(unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfChildren()
+RefPtr<AccessibilityUIElement> AccessibilityUIElementWin::rowAtIndex(unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::allAttributes()
+RefPtr<AccessibilityUIElement> AccessibilityUIElementWin::selectedChildAtIndex(unsigned) const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRef)
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::currentStateValue() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::sortDirection() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::stringDescriptionOfAttributeValue(JSStringRef)
-{
-    notImplemented();
-    return nullptr;
-}
-
-double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
+unsigned AccessibilityUIElementWin::selectedChildrenCount() const
 {
     notImplemented();
     return 0;
 }
 
-JSValueRef AccessibilityUIElement::uiElementArrayAttributeValue(JSContextRef, JSStringRef attribute)
+RefPtr<AccessibilityUIElement> AccessibilityUIElementWin::selectedRowAtIndex(unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-JSValueRef AccessibilityUIElement::rowHeaders(JSContextRef)
+RefPtr<AccessibilityUIElement> AccessibilityUIElementWin::titleUIElement()
 {
     notImplemented();
     return nullptr;
 }
 
-JSValueRef AccessibilityUIElement::columnHeaders(JSContextRef)
+RefPtr<AccessibilityUIElement> AccessibilityUIElementWin::parentElement()
 {
     notImplemented();
     return nullptr;
 }
 
-JSValueRef AccessibilityUIElement::selectedCells(JSContextRef)
+RefPtr<AccessibilityUIElement> AccessibilityUIElementWin::disclosedByRow()
 {
     notImplemented();
     return nullptr;
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementAttributeValue(JSStringRef attribute) const
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributesOfLinkedUIElements()
 {
     notImplemented();
     return nullptr;
 }
 
-bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isAttributeSupported(JSStringRef attribute)
-{
-    notImplemented();
-    return false;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::parameterizedAttributeNames()
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributesOfDocumentLinks()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::role()
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributesOfChildren()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::subrole()
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::allAttributes()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::roleDescription()
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::stringAttributeValue(JSStringRef)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::computedRoleString()
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::currentStateValue() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::title()
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::sortDirection() const
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::description()
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::stringDescriptionOfAttributeValue(JSStringRef)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::orientation() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-bool AccessibilityUIElement::isAtomicLiveRegion() const
-{
-    notImplemented();
-    return false;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::liveRegionRelevant() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::liveRegionStatus() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::stringValue()
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::language()
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::helpText() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-double AccessibilityUIElement::pageX()
+double AccessibilityUIElementWin::numberAttributeValue(JSStringRef attribute)
 {
     notImplemented();
     return 0;
 }
 
-double AccessibilityUIElement::pageY()
+JSValueRef AccessibilityUIElementWin::uiElementArrayAttributeValue(JSContextRef, JSStringRef attribute)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSValueRef AccessibilityUIElementWin::rowHeaders(JSContextRef)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSValueRef AccessibilityUIElementWin::columnHeaders(JSContextRef)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSValueRef AccessibilityUIElementWin::selectedCells(JSContextRef)
+{
+    notImplemented();
+    return nullptr;
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElementWin::uiElementAttributeValue(JSStringRef attribute) const
+{
+    notImplemented();
+    return nullptr;
+}
+
+bool AccessibilityUIElementWin::boolAttributeValue(JSStringRef attribute)
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::isAttributeSettable(JSStringRef attribute)
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::isAttributeSupported(JSStringRef attribute)
+{
+    notImplemented();
+    return false;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::parameterizedAttributeNames()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::role()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::subrole()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::roleDescription()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::computedRoleString()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::title()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::description()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::orientation() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+bool AccessibilityUIElementWin::isAtomicLiveRegion() const
+{
+    notImplemented();
+    return false;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::liveRegionRelevant() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::liveRegionStatus() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::stringValue()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::language()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::helpText() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+double AccessibilityUIElementWin::pageX()
 {
     notImplemented();
     return 0;
 }
 
-double AccessibilityUIElement::x()
+double AccessibilityUIElementWin::pageY()
 {
     notImplemented();
     return 0;
 }
 
-double AccessibilityUIElement::y()
+double AccessibilityUIElementWin::x()
 {
     notImplemented();
     return 0;
 }
 
-double AccessibilityUIElement::width()
+double AccessibilityUIElementWin::y()
 {
     notImplemented();
     return 0;
 }
 
-double AccessibilityUIElement::height()
+double AccessibilityUIElementWin::width()
 {
     notImplemented();
     return 0;
 }
 
-double AccessibilityUIElement::clickPointX()
+double AccessibilityUIElementWin::height()
 {
     notImplemented();
     return 0;
 }
 
-double AccessibilityUIElement::clickPointY()
+double AccessibilityUIElementWin::clickPointX()
 {
     notImplemented();
     return 0;
 }
 
-double AccessibilityUIElement::intValue() const
+double AccessibilityUIElementWin::clickPointY()
 {
     notImplemented();
     return 0;
 }
 
-double AccessibilityUIElement::minValue()
+double AccessibilityUIElementWin::intValue() const
 {
     notImplemented();
     return 0;
 }
 
-double AccessibilityUIElement::maxValue()
+double AccessibilityUIElementWin::minValue()
 {
     notImplemented();
     return 0;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::valueDescription()
-{
-    notImplemented();
-    return nullptr;
-}
-
-int AccessibilityUIElement::insertionPointLineNumber()
+double AccessibilityUIElementWin::maxValue()
 {
     notImplemented();
     return 0;
 }
 
-bool AccessibilityUIElement::isPressActionSupported()
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::valueDescription()
 {
     notImplemented();
-    return false;
+    return nullptr;
 }
 
-bool AccessibilityUIElement::isIncrementActionSupported()
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isDecrementActionSupported()
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isBusy() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isEnabled()
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isRequired() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isFocused() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isSelected() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isSelectedOptionActive() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isExpanded() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isChecked() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isIndeterminate() const
-{
-    notImplemented();
-    return false;
-}
-
-int AccessibilityUIElement::hierarchicalLevel() const
+int AccessibilityUIElementWin::insertionPointLineNumber()
 {
     notImplemented();
     return 0;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::speakAs()
-{
-    notImplemented();
-    return nullptr;
-}
-
-bool AccessibilityUIElement::isGrabbed() const
+bool AccessibilityUIElementWin::isPressActionSupported()
 {
     notImplemented();
     return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::ariaDropEffects() const
+bool AccessibilityUIElementWin::isIncrementActionSupported()
 {
     notImplemented();
-    return nullptr;
+    return false;
 }
 
-int AccessibilityUIElement::lineForIndex(int)
+bool AccessibilityUIElementWin::isDecrementActionSupported()
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::isBusy() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::isEnabled()
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::isRequired() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::isFocused() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::isSelected() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::isSelectedOptionActive() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::isExpanded() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::isChecked() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::isIndeterminate() const
+{
+    notImplemented();
+    return false;
+}
+
+int AccessibilityUIElementWin::hierarchicalLevel() const
 {
     notImplemented();
     return 0;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::rangeForLine(int)
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::speakAs()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::rangeForPosition(int, int)
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::boundsForRange(unsigned, unsigned)
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForRange(unsigned, unsigned)
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForRange(unsigned, unsigned)
-{
-    notImplemented();
-    return nullptr;
-}
-
-bool AccessibilityUIElement::attributedStringRangeIsMisspelled(unsigned, unsigned)
+bool AccessibilityUIElementWin::isGrabbed() const
 {
     notImplemented();
     return false;
 }
 
-unsigned AccessibilityUIElement::uiElementCountForSearchPredicate(JSContextRef, AccessibilityUIElement*, bool, JSValueRef, JSStringRef, bool, bool)
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::ariaDropEffects() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+int AccessibilityUIElementWin::lineForIndex(int)
 {
     notImplemented();
     return 0;
 }
 
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementForSearchPredicate(JSContextRef, AccessibilityUIElement*, bool, JSValueRef, JSStringRef, bool, bool)
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::rangeForLine(int)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::selectTextWithCriteria(JSContextRef, JSStringRef, JSValueRef, JSStringRef, JSStringRef)
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::rangeForPosition(int, int)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfColumnHeaders()
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::boundsForRange(unsigned, unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfRowHeaders()
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::stringForRange(unsigned, unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfColumns()
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributedStringForRange(unsigned, unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfRows()
+bool AccessibilityUIElementWin::attributedStringRangeIsMisspelled(unsigned, unsigned)
 {
     notImplemented();
-    return nullptr;
+    return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfVisibleCells()
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfHeader()
-{
-    notImplemented();
-    return nullptr;
-}
-
-int AccessibilityUIElement::rowCount()
+unsigned AccessibilityUIElementWin::uiElementCountForSearchPredicate(JSContextRef, AccessibilityUIElement*, bool, JSValueRef, JSStringRef, bool, bool)
 {
     notImplemented();
     return 0;
 }
 
-int AccessibilityUIElement::columnCount()
+RefPtr<AccessibilityUIElement> AccessibilityUIElementWin::uiElementForSearchPredicate(JSContextRef, AccessibilityUIElement*, bool, JSValueRef, JSStringRef, bool, bool)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::selectTextWithCriteria(JSContextRef, JSStringRef, JSValueRef, JSStringRef, JSStringRef)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributesOfColumnHeaders()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributesOfRowHeaders()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributesOfColumns()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributesOfRows()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributesOfVisibleCells()
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributesOfHeader()
+{
+    notImplemented();
+    return nullptr;
+}
+
+int AccessibilityUIElementWin::rowCount()
 {
     notImplemented();
     return 0;
 }
 
-int AccessibilityUIElement::indexInTable()
+int AccessibilityUIElementWin::columnCount()
 {
     notImplemented();
     return 0;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::rowIndexRange()
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::columnIndexRange()
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::cellForColumnAndRow(unsigned, unsigned)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::horizontalScrollbar() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::verticalScrollbar() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::selectedTextRange()
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::intersectionWithSelectionRange()
-{
-    notImplemented();
-    return nullptr;
-}
-
-bool AccessibilityUIElement::setSelectedTextRange(unsigned, unsigned)
-{
-    notImplemented();
-    return false;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::textInputMarkedRange() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-void AccessibilityUIElement::increment()
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::decrement()
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::showMenu()
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::press()
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::setSelectedChild(AccessibilityUIElement* element) const
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::setSelectedChildAtIndex(unsigned index) const
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::removeSelectionAtIndex(unsigned index) const
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::clearSelectedChildren() const
-{
-    notImplemented();
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::accessibilityValue() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::url()
-{
-    notImplemented();
-    return nullptr;
-}
-
-bool AccessibilityUIElement::addNotificationListener(JSContextRef, JSValueRef functionCallback)
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::removeNotificationListener()
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isFocusable() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isSelectable() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isMultiSelectable() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isVisible() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isOffScreen() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isCollapsed() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isIgnored() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isSingleLine() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isMultiLine() const
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::hasPopup() const
-{
-    notImplemented();
-    return false;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::popupValue() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-void AccessibilityUIElement::takeFocus()
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::takeSelection()
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::addSelection()
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::removeSelection()
-{
-    notImplemented();
-}
-
-RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::lineTextMarkerRangeForTextMarker(AccessibilityTextMarker*)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForElement(AccessibilityUIElement*)
-{
-    notImplemented();
-    return nullptr;
-}
-
-int AccessibilityUIElement::textMarkerRangeLength(AccessibilityTextMarkerRange*)
+int AccessibilityUIElementWin::indexInTable()
 {
     notImplemented();
     return 0;
 }
 
-RefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousTextMarker(AccessibilityTextMarker*)
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::rowIndexRange()
 {
     notImplemented();
     return nullptr;
 }
 
-RefPtr<AccessibilityTextMarker> AccessibilityUIElement::nextTextMarker(AccessibilityTextMarker*)
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::columnIndexRange()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::rectsForTextMarkerRange(AccessibilityTextMarkerRange*, JSStringRef)
+RefPtr<AccessibilityUIElement> AccessibilityUIElementWin::cellForColumnAndRow(unsigned, unsigned)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForTextMarkerRange(AccessibilityTextMarkerRange*)
+RefPtr<AccessibilityUIElement> AccessibilityUIElementWin::horizontalScrollbar() const
 {
     notImplemented();
     return nullptr;
 }
 
-RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForMarkers(AccessibilityTextMarker*, AccessibilityTextMarker*)
+RefPtr<AccessibilityUIElement> AccessibilityUIElementWin::verticalScrollbar() const
 {
     notImplemented();
     return nullptr;
 }
 
-RefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*)
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::selectedTextRange()
 {
     notImplemented();
     return nullptr;
 }
 
-RefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*)
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::intersectionWithSelectionRange()
 {
     notImplemented();
     return nullptr;
 }
 
-RefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarkerForBounds(int, int, int, int)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarkerForBounds(int, int, int, int)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForPoint(int, int)
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::accessibilityElementForTextMarker(AccessibilityTextMarker*)
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*)
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForTextMarkerRangeWithDidSpellCheck(AccessibilityTextMarkerRange*)
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange*, bool)
-{
-    notImplemented();
-    return nullptr;
-}
-
-bool AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*)
+bool AccessibilityUIElementWin::setSelectedTextRange(unsigned, unsigned)
 {
     notImplemented();
     return false;
 }
 
-int AccessibilityUIElement::indexForTextMarker(AccessibilityTextMarker*)
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::textInputMarkedRange() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+void AccessibilityUIElementWin::increment()
+{
+    notImplemented();
+}
+
+void AccessibilityUIElementWin::decrement()
+{
+    notImplemented();
+}
+
+void AccessibilityUIElementWin::showMenu()
+{
+    notImplemented();
+}
+
+void AccessibilityUIElementWin::press()
+{
+    notImplemented();
+}
+
+void AccessibilityUIElementWin::setSelectedChild(AccessibilityUIElement* element) const
+{
+    notImplemented();
+}
+
+void AccessibilityUIElementWin::setSelectedChildAtIndex(unsigned index) const
+{
+    notImplemented();
+}
+
+void AccessibilityUIElementWin::removeSelectionAtIndex(unsigned index) const
+{
+    notImplemented();
+}
+
+void AccessibilityUIElementWin::clearSelectedChildren() const
+{
+    notImplemented();
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::accessibilityValue() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::url()
+{
+    notImplemented();
+    return nullptr;
+}
+
+bool AccessibilityUIElementWin::addNotificationListener(JSContextRef, JSValueRef functionCallback)
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::removeNotificationListener()
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::isFocusable() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::isSelectable() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::isMultiSelectable() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::isVisible() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::isOffScreen() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::isCollapsed() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::isIgnored() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::isSingleLine() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::isMultiLine() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::hasPopup() const
+{
+    notImplemented();
+    return false;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::popupValue() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+void AccessibilityUIElementWin::takeFocus()
+{
+    notImplemented();
+}
+
+void AccessibilityUIElementWin::takeSelection()
+{
+    notImplemented();
+}
+
+void AccessibilityUIElementWin::addSelection()
+{
+    notImplemented();
+}
+
+void AccessibilityUIElementWin::removeSelection()
+{
+    notImplemented();
+}
+
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElementWin::lineTextMarkerRangeForTextMarker(AccessibilityTextMarker*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElementWin::textMarkerRangeForElement(AccessibilityUIElement*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+int AccessibilityUIElementWin::textMarkerRangeLength(AccessibilityTextMarkerRange*)
 {
     notImplemented();
     return 0;
 }
 
-bool AccessibilityUIElement::isTextMarkerValid(AccessibilityTextMarker*)
+RefPtr<AccessibilityTextMarker> AccessibilityUIElementWin::previousTextMarker(AccessibilityTextMarker*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+RefPtr<AccessibilityTextMarker> AccessibilityUIElementWin::nextTextMarker(AccessibilityTextMarker*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::rectsForTextMarkerRange(AccessibilityTextMarkerRange*, JSStringRef)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::stringForTextMarkerRange(AccessibilityTextMarkerRange*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElementWin::textMarkerRangeForMarkers(AccessibilityTextMarker*, AccessibilityTextMarker*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+RefPtr<AccessibilityTextMarker> AccessibilityUIElementWin::startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+RefPtr<AccessibilityTextMarker> AccessibilityUIElementWin::endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+RefPtr<AccessibilityTextMarker> AccessibilityUIElementWin::endTextMarkerForBounds(int, int, int, int)
+{
+    notImplemented();
+    return nullptr;
+}
+
+RefPtr<AccessibilityTextMarker> AccessibilityUIElementWin::startTextMarkerForBounds(int, int, int, int)
+{
+    notImplemented();
+    return nullptr;
+}
+
+RefPtr<AccessibilityTextMarker> AccessibilityUIElementWin::textMarkerForPoint(int, int)
+{
+    notImplemented();
+    return nullptr;
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElementWin::accessibilityElementForTextMarker(AccessibilityTextMarker*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributedStringForTextMarkerRangeWithDidSpellCheck(AccessibilityTextMarkerRange*)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::attributedStringForTextMarkerRangeWithOptions(AccessibilityTextMarkerRange*, bool)
+{
+    notImplemented();
+    return nullptr;
+}
+
+bool AccessibilityUIElementWin::attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*)
 {
     notImplemented();
     return false;
 }
 
-RefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForIndex(int)
+int AccessibilityUIElementWin::indexForTextMarker(AccessibilityTextMarker*)
 {
     notImplemented();
-    return nullptr;
+    return 0;
 }
 
-RefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarker()
-{
-    notImplemented();
-    return nullptr;
-}
-
-RefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarker()
-{
-    notImplemented();
-    return nullptr;
-}
-
-bool AccessibilityUIElement::setSelectedTextMarkerRange(AccessibilityTextMarkerRange*)
+bool AccessibilityUIElementWin::isTextMarkerValid(AccessibilityTextMarker*)
 {
     notImplemented();
     return false;
 }
 
-void AccessibilityUIElement::scrollToMakeVisible()
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::scrollToGlobalPoint(int, int)
-{
-    notImplemented();
-}
-
-void AccessibilityUIElement::scrollToMakeVisibleWithSubFocus(int, int, int, int)
-{
-    notImplemented();
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::supportedActions() const
+RefPtr<AccessibilityTextMarker> AccessibilityUIElementWin::textMarkerForIndex(int)
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::pathDescription() const
+RefPtr<AccessibilityTextMarker> AccessibilityUIElementWin::startTextMarker()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::mathPostscriptsDescription() const
+RefPtr<AccessibilityTextMarker> AccessibilityUIElementWin::endTextMarker()
 {
     notImplemented();
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::mathPrescriptsDescription() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::classList() const
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::characterAtOffset(int)
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::wordAtOffset(int)
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::lineAtOffset(int)
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::sentenceAtOffset(int)
-{
-    notImplemented();
-    return nullptr;
-}
-
-bool AccessibilityUIElement::replaceTextInRange(JSStringRef, int, int)
+bool AccessibilityUIElementWin::setSelectedTextMarkerRange(AccessibilityTextMarkerRange*)
 {
     notImplemented();
     return false;
 }
 
-bool AccessibilityUIElement::insertText(JSStringRef)
+void AccessibilityUIElementWin::scrollToMakeVisible()
 {
     notImplemented();
-    return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::domIdentifier() const
+void AccessibilityUIElementWin::scrollToGlobalPoint(int, int)
+{
+    notImplemented();
+}
+
+void AccessibilityUIElementWin::scrollToMakeVisibleWithSubFocus(int, int, int, int)
+{
+    notImplemented();
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::supportedActions() const
 {
     notImplemented();
     return nullptr;
 }
 
-bool AccessibilityUIElement::isInsertion() const
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::pathDescription() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::mathPostscriptsDescription() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::mathPrescriptsDescription() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::classList() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::characterAtOffset(int)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::wordAtOffset(int)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::lineAtOffset(int)
+{
+    notImplemented();
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::sentenceAtOffset(int)
+{
+    notImplemented();
+    return nullptr;
+}
+
+bool AccessibilityUIElementWin::replaceTextInRange(JSStringRef, int, int)
 {
     notImplemented();
     return false;
 }
 
-bool AccessibilityUIElement::isDeletion() const
+bool AccessibilityUIElementWin::insertText(JSStringRef)
+{
+    notImplemented();
+    return false;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElementWin::domIdentifier() const
+{
+    notImplemented();
+    return nullptr;
+}
+
+bool AccessibilityUIElementWin::isInsertion() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElementWin::isDeletion() const
 {
     notImplemented();
     return false;
 }
 
 
-bool AccessibilityUIElement::isFirstItemInSuggestion() const
+bool AccessibilityUIElementWin::isFirstItemInSuggestion() const
 {
     notImplemented();
     return false;
 }
 
 
-bool AccessibilityUIElement::isLastItemInSuggestion() const
+bool AccessibilityUIElementWin::isLastItemInSuggestion() const
 {
     notImplemented();
     return false;

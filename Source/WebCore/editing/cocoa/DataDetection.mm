@@ -116,7 +116,7 @@ static std::optional<DetectedItem> detectItem(const VisiblePosition& position, c
     if (!mainResult)
         return { };
 
-    auto view = mainResultRange->start.document().view();
+    RefPtr view = mainResultRange->start.document().view();
     if (!view)
         return { };
 
@@ -137,7 +137,7 @@ std::optional<DetectedItem> DataDetection::detectItemAroundHitTestResult(const H
     if (!PAL::isDataDetectorsFrameworkAvailable())
         return { };
 
-    Node* node = hitTestResult.innerNonSharedNode();
+    RefPtr<Node> node = hitTestResult.innerNonSharedNode();
     if (!node)
         return { };
     auto renderer = node->renderer();
@@ -150,11 +150,11 @@ std::optional<DetectedItem> DataDetection::detectItemAroundHitTestResult(const H
     if (!is<HTMLTextFormControlElement>(*node)) {
         position = renderer->visiblePositionForPoint(hitTestResult.localPoint(), HitTestSource::User);
         if (position.isNull())
-            position = firstPositionInOrBeforeNode(node);
+            position = firstPositionInOrBeforeNode(node.get());
 
         contextRange = rangeExpandedAroundPositionByCharacters(position, 250);
     } else {
-        auto* frame = node->document().frame();
+        RefPtr frame = node->document().frame();
         if (!frame)
             return { };
 
@@ -837,7 +837,7 @@ bool DataDetection::isDataDetectorElement(const Element& element)
 std::optional<std::pair<Ref<HTMLElement>, IntRect>> DataDetection::findDataDetectionResultElementInImageOverlay(const FloatPoint& location, const HTMLElement& imageOverlayHost)
 {
     Vector<Ref<HTMLElement>> dataDetectorElements;
-    for (auto& child : descendantsOfType<HTMLElement>(*imageOverlayHost.shadowRoot())) {
+    for (Ref child : descendantsOfType<HTMLElement>(*imageOverlayHost.shadowRoot())) {
         if (ImageOverlay::isDataDetectorResult(child))
             dataDetectorElements.append(child);
     }

@@ -160,7 +160,7 @@ ExceptionOr<bool> NavigatorBeacon::sendBeacon(Document& document, const String& 
         }
     }
 
-    auto cachedResource = document.protectedCachedResourceLoader()->requestBeaconResource({ WTF::move(request), options });
+    auto cachedResource = protect(document.cachedResourceLoader())->requestBeaconResource({ WTF::move(request), options });
     if (!cachedResource) {
         logError(cachedResource.error());
         return false;

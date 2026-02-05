@@ -45,11 +45,13 @@ class HLSLBlockEncoder : public BlockLayoutEncoder
 
   protected:
     void getBlockLayoutInfo(GLenum type,
+                            size_t bytesPerComponent,
                             const std::vector<unsigned int> &arraySizes,
                             bool isRowMajorMatrix,
                             int *arrayStrideOut,
                             int *matrixStrideOut) override;
     void advanceOffset(GLenum type,
+                       size_t bytesPerComponent,
                        const std::vector<unsigned int> &arraySizes,
                        bool isRowMajorMatrix,
                        int arrayStride,

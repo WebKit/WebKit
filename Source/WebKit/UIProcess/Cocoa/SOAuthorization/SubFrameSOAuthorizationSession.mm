@@ -183,7 +183,7 @@ bool SubFrameSOAuthorizationSession::shouldInterruptLoadForXFrameOptions(Vector<
 
 bool SubFrameSOAuthorizationSession::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(const WebCore::ResourceResponse& response)
 {
-    if (RefPtr page = this->page(); page && page->protectedPreferences()->ignoreIframeEmbeddingProtectionsEnabled())
+    if (RefPtr page = this->page(); page && protect(page->preferences())->ignoreIframeEmbeddingProtectionsEnabled())
         return false;
 
     Vector<Ref<SecurityOrigin>> frameAncestorOrigins;

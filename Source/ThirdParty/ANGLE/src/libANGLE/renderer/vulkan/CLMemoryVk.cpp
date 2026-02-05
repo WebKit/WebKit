@@ -580,8 +580,7 @@ CLImageVk *CLImageVk::getParent<CLImageVk>() const
 
 VkImageUsageFlags CLImageVk::getVkImageUsageFlags()
 {
-    VkImageUsageFlags usageFlags =
-        VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+    VkImageUsageFlags usageFlags = vk::kImageUsageTransferBits;
 
     if (mMemory.getFlags().intersects(CL_MEM_WRITE_ONLY))
     {
@@ -765,12 +764,11 @@ angle::Result CLImageVk::create(void *hostPtr)
         }
     }
 
-    ANGLE_CL_IMPL_TRY_ERROR(
-        mImage.initStaging(mContext, false, mRenderer->getMemoryProperties(),
-                           getVkImageType(getDescriptor()), cl_vk::GetExtent(mExtent), mAngleFormat,
-                           mAngleFormat, VK_SAMPLE_COUNT_1_BIT, getVkImageUsageFlags(), 1,
-                           (uint32_t)getArraySize()),
-        CL_OUT_OF_RESOURCES);
+    ANGLE_CL_IMPL_TRY_ERROR(mImage.initStaging(mContext, false, getVkImageType(getDescriptor()),
+                                               cl_vk::GetExtent(mExtent), mAngleFormat,
+                                               mAngleFormat, VK_SAMPLE_COUNT_1_BIT,
+                                               getVkImageUsageFlags(), 1, (uint32_t)getArraySize()),
+                            CL_OUT_OF_RESOURCES);
 
     if (mMemory.getFlags().intersects(CL_MEM_USE_HOST_PTR | CL_MEM_COPY_HOST_PTR))
     {

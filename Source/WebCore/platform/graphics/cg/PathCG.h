@@ -27,9 +27,9 @@
 
 #if USE(CG)
 
-#include "PathImpl.h"
-#include "PlatformPath.h"
-#include "WindRule.h"
+#include <WebCore/PathImpl.h>
+#include <WebCore/PlatformPath.h>
+#include <WebCore/WindRule.h>
 #include <wtf/Function.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -43,8 +43,9 @@ class PathStream;
 
 class PathCG final : public PathImpl {
     WTF_MAKE_TZONE_ALLOCATED(PathCG);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PathCG);
 public:
-    static Ref<PathCG> create(std::span<const PathSegment> = { });
+    WEBCORE_EXPORT static Ref<PathCG> create(std::span<const PathSegment> = { });
     static Ref<PathCG> create(RetainPtr<CGMutablePathRef>&&);
 
     static PlatformPathPtr emptyPlatformPath();

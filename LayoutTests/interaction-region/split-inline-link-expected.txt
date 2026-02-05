@@ -13,7 +13,7 @@ short second line.
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (interaction (-4,-4) width=233.27 height=47)
+        (interaction (-4,-3.50) width=233.27 height=47)
         (clipPath move to (201.27,8), add line to (201.27,8), add curve to (201.27,3.58) (204.86,0) (209.27,0), add line to (225.27,0), add line to (225.27,0), add curve to (229.68,0) (233.27,3.58) (233.27,8), add line to (233.27,19), add line to (233.27,19), add curve to (233.27,23.42) (229.68,27) (225.27,27), add line to (209.27,27), add line to (209.27,27), add curve to (204.86,27) (201.27,23.42) (201.27,19), close subpath, move to (0,28), add line to (0,28), add curve to (0,23.58) (3.58,20) (8,20), add line to (108.42,20), add line to (108.42,20), add curve to (112.84,20) (116.42,23.58) (116.42,28), add line to (116.42,39), add line to (116.42,39), add curve to (116.42,43.42) (112.84,47) (108.42,47), add line to (8,47), add line to (8,47), add curve to (3.58,47) (0,43.42) (0,39), close subpath)])
       )
     )

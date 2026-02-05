@@ -143,7 +143,7 @@ void WebPreferences::update()
         m_needUpdateAfterBatch = true;
         return;
     }
-        
+
     for (Ref page : m_pages)
         page->preferencesDidChange();
 }

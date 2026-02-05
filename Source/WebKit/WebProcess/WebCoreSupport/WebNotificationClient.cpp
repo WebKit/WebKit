@@ -115,7 +115,7 @@ void WebNotificationClient::requestPermission(ScriptExecutionContext& context, P
     }
 #endif
 
-    Ref { *m_page }->protectedNotificationPermissionRequestManager()->startRequest(securityOrigin->data(), WTF::move(permissionHandler));
+    protect(Ref { *m_page }->notificationPermissionRequestManager())->startRequest(securityOrigin->data(), WTF::move(permissionHandler));
 }
 
 NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExecutionContext* context)

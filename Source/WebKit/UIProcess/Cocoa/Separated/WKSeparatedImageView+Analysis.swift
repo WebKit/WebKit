@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if HAVE_CORE_ANIMATION_SEPARATED_LAYERS && compiler(>=6.0)
+#if HAVE_CORE_ANIMATION_SEPARATED_LAYERS && compiler(>=6.2)
 
 import os
 @_spi(Private) internal import Vision
@@ -30,7 +30,10 @@ internal import WebKit_Internal
 extension WKSeparatedImageView {
     func pickViewMode() async {
         pickViewModeTask?.cancel()
-        let task = startImageAnalysis()
+        let task = Task { [weak self] () -> ViewMode in
+            guard let self else { return .unknown }
+            return try await self.analyze()
+        }
         pickViewModeTask = task
 
         do {
@@ -48,83 +51,77 @@ extension WKSeparatedImageView {
         }
     }
 
-    func startImageAnalysis() -> Task<ViewMode, Error> {
-        Task.detached { [weak self] in
-            try await Task.sleep(for: SeparatedImageViewConstants.cancellationDelay)
+    @concurrent
+    func analyze() async throws -> ViewMode {
+        try await Task.sleep(for: SeparatedImageViewConstants.cancellationDelay)
 
-            guard let self else {
-                Logger.separatedImage.log("ImageAnalysis result: self is gone.")
-                return .unknown
-            }
+        let logPrefix = await self.logPrefix
 
-            let logPrefix = await self.logPrefix
-
-            guard let image = await self.cgImage else {
-                try Task.checkCancellation()
-                Logger.separatedImage.error("\(logPrefix) - ImageAnalysis result: bad CGImage.")
-                return .unknown
-            }
-
-            guard let imageData = await self.imageData else {
-                try Task.checkCancellation()
-                Logger.separatedImage.error("\(logPrefix) - ImageAnalysis result: bad imageData.")
-                return .failed
-            }
-
-            guard image.hasCompatibleDimensions else {
-                try Task.checkCancellation()
-                Logger.separatedImage.log("\(logPrefix) - ImageAnalysis result: incompatible dimension.")
-                return .small
-            }
-
-            guard let scores = await AnalysisActor.shared.scoreImage(imageData) else {
-                try Task.checkCancellation()
-                Logger.separatedImage.log("\(logPrefix) - ImageAnalysis result: unable to scoreImage.")
-                return .failed
-            }
-
-            let confidence = scores.confidence
+        guard let image = await self.cgImage else {
             try Task.checkCancellation()
-            guard confidence >= SeparatedImageViewConstants.confidenceThreshold else {
-                Logger.separatedImage.log(
-                    "\(logPrefix) - ImageAnalysis result: too low confidence [\(confidence) < \(SeparatedImageViewConstants.confidenceThreshold)]."
-                )
-                return .inaesthetic
-            }
-
-            #if USE_APPLE_INTERNAL_SDK
-            let screenShotScore = scores.screenShotScore
-            guard screenShotScore < SeparatedImageViewConstants.screenShotScoreThreshold else {
-                try Task.checkCancellation()
-                Logger.separatedImage.log(
-                    "\(logPrefix) - ImageAnalysis result: screenshot detected [\(screenShotScore) > \(SeparatedImageViewConstants.screenShotScoreThreshold)]."
-                )
-                return .inaesthetic
-            }
-
-            let documentScore = scores.textDocumentScore
-            guard documentScore < SeparatedImageViewConstants.documentScoreThreshold else {
-                try Task.checkCancellation()
-                Logger.separatedImage.log(
-                    "\(logPrefix) - ImageAnalysis result: document detected [\(documentScore) > \(SeparatedImageViewConstants.documentScoreThreshold)]."
-                )
-                return .inaesthetic
-            }
-            #endif
-
-            let overallScore = scores.overallScore
-            guard overallScore >= SeparatedImageViewConstants.overallScoreThreshold else {
-                try Task.checkCancellation()
-                Logger.separatedImage.log(
-                    "\(logPrefix) - ImageAnalysis result: too low overallScore [\(overallScore) < \(SeparatedImageViewConstants.overallScoreThreshold)]."
-                )
-                return .inaesthetic
-            }
-
-            try Task.checkCancellation()
-            Logger.separatedImage.log("\(logPrefix) - ImageAnalysis result: success.")
-            return .portal
+            Logger.separatedImage.error("\(logPrefix) - ImageAnalysis result: bad CGImage.")
+            return .unknown
         }
+
+        guard let imageData = await self.imageData else {
+            try Task.checkCancellation()
+            Logger.separatedImage.error("\(logPrefix) - ImageAnalysis result: bad imageData.")
+            return .failed
+        }
+
+        guard image.hasCompatibleDimensions else {
+            try Task.checkCancellation()
+            Logger.separatedImage.log("\(logPrefix) - ImageAnalysis result: incompatible dimension.")
+            return .small
+        }
+
+        guard let scores = await AnalysisActor.shared.scoreImage(imageData) else {
+            try Task.checkCancellation()
+            Logger.separatedImage.log("\(logPrefix) - ImageAnalysis result: unable to scoreImage.")
+            return .failed
+        }
+
+        let confidence = scores.confidence
+        try Task.checkCancellation()
+        guard confidence >= SeparatedImageViewConstants.confidenceThreshold else {
+            Logger.separatedImage.log(
+                "\(logPrefix) - ImageAnalysis result: too low confidence [\(confidence) < \(SeparatedImageViewConstants.confidenceThreshold)]."
+            )
+            return .inaesthetic
+        }
+
+        #if USE_APPLE_INTERNAL_SDK
+        let screenShotScore = scores.screenShotScore
+        guard screenShotScore < SeparatedImageViewConstants.screenShotScoreThreshold else {
+            try Task.checkCancellation()
+            Logger.separatedImage.log(
+                "\(logPrefix) - ImageAnalysis result: screenshot detected [\(screenShotScore) > \(SeparatedImageViewConstants.screenShotScoreThreshold)]."
+            )
+            return .inaesthetic
+        }
+
+        let documentScore = scores.textDocumentScore
+        guard documentScore < SeparatedImageViewConstants.documentScoreThreshold else {
+            try Task.checkCancellation()
+            Logger.separatedImage.log(
+                "\(logPrefix) - ImageAnalysis result: document detected [\(documentScore) > \(SeparatedImageViewConstants.documentScoreThreshold)]."
+            )
+            return .inaesthetic
+        }
+        #endif
+
+        let overallScore = scores.overallScore
+        guard overallScore >= SeparatedImageViewConstants.overallScoreThreshold else {
+            try Task.checkCancellation()
+            Logger.separatedImage.log(
+                "\(logPrefix) - ImageAnalysis result: too low overallScore [\(overallScore) < \(SeparatedImageViewConstants.overallScoreThreshold)]."
+            )
+            return .inaesthetic
+        }
+
+        try Task.checkCancellation()
+        Logger.separatedImage.log("\(logPrefix) - ImageAnalysis result: success.")
+        return .portal
     }
 }
 
@@ -146,15 +143,15 @@ actor AnalysisActor {
             var request = CalculateImageAestheticsScoresRequest()
             #if USE_APPLE_INTERNAL_SDK
             let supportedComputeStageDevices = request.supportedComputeStageDevices
-            guard
-                let gpuDevice = supportedComputeStageDevices[.main]?
-                    .first(where: {
-                        if case .gpu = $0 {
-                            return true
-                        }
-                        return false
-                    })
-            else { return nil }
+            let gpuDevice = supportedComputeStageDevices[.main]?
+                .first {
+                    if case .gpu = $0 {
+                        return true
+                    }
+                    return false
+                }
+
+            guard let gpuDevice else { return nil }
 
             // We don't want to add to the ANE contention.
             request.setComputeDevice(gpuDevice, for: .main)

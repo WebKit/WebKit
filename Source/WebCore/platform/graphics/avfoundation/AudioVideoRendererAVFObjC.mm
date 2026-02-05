@@ -36,6 +36,7 @@
 #import "GraphicsContext.h"
 #import "LayoutRect.h"
 #import "Logging.h"
+#import "MediaPlayerPrivate.h"
 #import "MediaSampleAVFObjC.h"
 #import "MediaSessionManagerCocoa.h"
 #import "NativeImage.h"
@@ -1793,6 +1794,16 @@ RefPtr<NativeImage> AudioVideoRendererAVFObjC::currentNativeImage() const
         return NativeImage::create(m_rgbConformer->createImageFromPixelBuffer(pixelBuffer.get()));
     }
     return nullptr;
+}
+
+Ref<AudioVideoRenderer::BitmapImagePromise> AudioVideoRendererAVFObjC::currentBitmapImage() const
+{
+    RefPtr nativeImage = currentNativeImage();
+    if (!nativeImage)
+        return BitmapImagePromise::createAndReject();
+    if (RefPtr bitmapImage = MediaPlayerPrivateInterface::bitmapFromImage(*nativeImage))
+        return BitmapImagePromise::createAndResolve(bitmapImage.releaseNonNull());
+    return BitmapImagePromise::createAndReject();
 }
 
 bool AudioVideoRendererAVFObjC::updateLastPixelBuffer()

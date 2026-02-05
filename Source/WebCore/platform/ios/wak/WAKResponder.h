@@ -47,7 +47,8 @@ WEBCORE_EXPORT @interface WAKResponder : NSObject
 - (void)mouseExited:(WebEvent *)theEvent;
 - (void)keyDown:(WebEvent *)event;
 - (void)keyUp:(WebEvent *)event;
-#if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
+// This is equivalent of `USE_APPLE_INTERNAL_SDK` but without needing to import `wtf/Platform.h` to support internal Apple clients.
+#if defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)
 - (void)touch:(WebEvent *)event;
 #endif
 

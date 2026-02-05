@@ -109,7 +109,7 @@ void UserMediaRequest::start()
     //    attribute name allowusermedia, return a promise rejected with a DOMException object whose name
     //    attribute has the value SecurityError.
     Ref document = downcast<Document>(*context);
-    auto* controller = UserMediaController::from(document->protectedPage().get());
+    auto* controller = UserMediaController::from(protect(document->page()).get());
     if (!controller) {
         deny(MediaAccessDenialReason::UserMediaDisabled);
         return;
@@ -287,7 +287,7 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& messag
 void UserMediaRequest::stop()
 {
     Ref document = downcast<Document>(*scriptExecutionContext());
-    if (auto* controller = UserMediaController::from(document->protectedPage().get()))
+    if (auto* controller = UserMediaController::from(protect(document->page()).get()))
         controller->cancelUserMediaAccessRequest(*this);
 }
 

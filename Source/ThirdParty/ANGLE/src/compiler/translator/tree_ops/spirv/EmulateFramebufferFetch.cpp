@@ -108,7 +108,7 @@ bool InputAttachmentUsageTraverser::visitDeclaration(Visit visit, TIntermDeclara
         }
     }
 
-    return false;
+    return true;
 }
 
 bool InputAttachmentUsageTraverser::visitBinary(Visit visit, TIntermBinary *node)

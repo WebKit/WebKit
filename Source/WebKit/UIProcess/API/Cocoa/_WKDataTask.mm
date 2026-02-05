@@ -78,7 +78,7 @@ private:
         if (!delegate || !m_respondsToWillPerformHTTPRedirection)
             return completionHandler(true);
         auto checker = WebKit::CompletionHandlerCallChecker::create(delegate.get(), @selector(dataTask:willPerformHTTPRedirection:newRequest:decisionHandler:));
-        [delegate dataTask:protectedWrapper(task).get() willPerformHTTPRedirection:RetainPtr { checked_objc_cast<NSHTTPURLResponse>(response.nsURLResponse()) }.get() newRequest:request.protectedNSURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody).get() decisionHandler:makeBlockPtr([checker = WTF::move(checker), completionHandler = WTF::move(completionHandler)] (_WKDataTaskRedirectPolicy policy) mutable {
+        [delegate dataTask:protectedWrapper(task).get() willPerformHTTPRedirection:RetainPtr { checked_objc_cast<NSHTTPURLResponse>(response.nsURLResponse()) }.get() newRequest:protect(request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody)).get() decisionHandler:makeBlockPtr([checker = WTF::move(checker), completionHandler = WTF::move(completionHandler)] (_WKDataTaskRedirectPolicy policy) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
@@ -92,7 +92,7 @@ private:
         if (!delegate || !m_respondsToDidReceiveResponse)
             return completionHandler(true);
         auto checker = WebKit::CompletionHandlerCallChecker::create(delegate.get(), @selector(dataTask:didReceiveResponse:decisionHandler:));
-        [delegate dataTask:protectedWrapper(task).get() didReceiveResponse:response.protectedNSURLResponse().get() decisionHandler:makeBlockPtr([checker = WTF::move(checker), completionHandler = WTF::move(completionHandler)] (_WKDataTaskResponsePolicy policy) mutable {
+        [delegate dataTask:protectedWrapper(task).get() didReceiveResponse:protect(response.nsURLResponse()).get() decisionHandler:makeBlockPtr([checker = WTF::move(checker), completionHandler = WTF::move(completionHandler)] (_WKDataTaskResponsePolicy policy) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
@@ -113,7 +113,7 @@ private:
         RetainPtr delegate = m_delegate.get();
         if (!delegate || !m_respondsToDidCompleteWithError)
             return;
-        [delegate dataTask:protectedWrapper(task).get() didCompleteWithError:error.protectedNSError().get()];
+        [delegate dataTask:protectedWrapper(task).get() didCompleteWithError:protect(error.nsError()).get()];
         wrapper(task)->_delegate = nil;
     }
 

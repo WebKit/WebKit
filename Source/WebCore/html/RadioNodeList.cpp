@@ -41,7 +41,7 @@ using namespace HTMLNames;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RadioNodeList);
 
 RadioNodeList::RadioNodeList(ContainerNode& rootNode, const AtomString& name)
-    : CachedLiveNodeList(rootNode, NodeListInvalidationType::InvalidateForFormControls)
+    : CachedLiveNodeList(rootNode, LiveNodeListType::RadioNodeList, NodeListInvalidationType::InvalidateForFormControls)
     , m_name(name)
     , m_isRootedAtTreeScope(is<HTMLFormElement>(rootNode))
 {

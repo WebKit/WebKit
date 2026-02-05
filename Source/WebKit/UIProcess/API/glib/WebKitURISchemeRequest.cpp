@@ -54,8 +54,6 @@ using namespace WebCore;
  * webkit_uri_scheme_request_finish().
  */
 
-static const unsigned int gReadBufferSize = 8192;
-
 struct _WebKitURISchemeRequestPrivate {
     WebKitWebContext* webContext;
     RefPtr<WebURLSchemeTask> task;
@@ -67,7 +65,7 @@ struct _WebKitURISchemeRequestPrivate {
 
     GRefPtr<WebKitURISchemeResponse> response;
     GRefPtr<GCancellable> cancellable;
-    char readBuffer[gReadBufferSize];
+    std::array<uint8_t, 8192> readBuffer;
     uint64_t bytesRead;
     const char* httpMethod;
     GUniquePtr<SoupMessageHeaders> headers;
@@ -268,11 +266,10 @@ static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsync
         return;
     }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
-    priv->task->didReceiveData(SharedBuffer::create(std::span(priv->readBuffer, bytesRead)));
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    std::span<const uint8_t> readBuffer { priv->readBuffer };
+    priv->task->didReceiveData(SharedBuffer::create(readBuffer.first(bytesRead)));
     priv->bytesRead += bytesRead;
-    g_input_stream_read_async(inputStream, priv->readBuffer, gReadBufferSize, RunLoopSourcePriority::AsyncIONetwork, priv->cancellable.get(),
+    g_input_stream_read_async(inputStream, priv->readBuffer.data(), priv->readBuffer.size(), RunLoopSourcePriority::AsyncIONetwork, priv->cancellable.get(),
         reinterpret_cast<GAsyncReadyCallback>(webkitURISchemeRequestReadCallback), g_object_ref(request.get()));
 }
 
@@ -315,8 +312,8 @@ void webkit_uri_scheme_request_finish_with_response(WebKitURISchemeRequest* requ
     request->priv->cancellable = adoptGRef(g_cancellable_new());
     request->priv->response = response;
 
-    g_input_stream_read_async(webKitURISchemeResponseGetStream(response), request->priv->readBuffer, gReadBufferSize, RunLoopSourcePriority::AsyncIONetwork, request->priv->cancellable.get(),
-        reinterpret_cast<GAsyncReadyCallback>(webkitURISchemeRequestReadCallback), g_object_ref(request));
+    g_input_stream_read_async(webKitURISchemeResponseGetStream(response), request->priv->readBuffer.data(), request->priv->readBuffer.size(),
+        RunLoopSourcePriority::AsyncIONetwork, request->priv->cancellable.get(), reinterpret_cast<GAsyncReadyCallback>(webkitURISchemeRequestReadCallback), g_object_ref(request));
 }
 
 /**

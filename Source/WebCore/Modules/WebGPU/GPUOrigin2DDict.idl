@@ -30,7 +30,6 @@ typedef [EnforceRange] unsigned long GPUIntegerCoordinate;
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUOrigin2DDict {
     GPUIntegerCoordinate x = 0;
     GPUIntegerCoordinate y = 0;

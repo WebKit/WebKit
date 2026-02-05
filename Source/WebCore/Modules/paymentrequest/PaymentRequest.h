@@ -127,7 +127,6 @@ private:
     void whenDetailsSettled(std::function<void()>&&);
     void abortWithException(Exception&&);
     PaymentHandler* activePaymentHandler() { return m_activePaymentHandler ? m_activePaymentHandler->paymentHandler.ptr() : nullptr; }
-    RefPtr<PaymentHandler> protectedActivePaymentHandler();
     void settleShowPromise(ExceptionOr<PaymentResponse&>&&);
     void closeActivePaymentHandler();
 

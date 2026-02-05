@@ -66,7 +66,7 @@ namespace WebKit {
 WKModelView * ModelElementController::modelViewForModelIdentifier(ModelIdentifier modelIdentifier)
 {
     RefPtr webPageProxy = m_webPageProxy.get();
-    if (!webPageProxy || !webPageProxy->protectedPreferences()->modelElementEnabled())
+    if (!webPageProxy || !protect(webPageProxy->preferences())->modelElementEnabled())
         return nil;
 
     auto* proxy = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(webPageProxy->drawingArea());
@@ -90,7 +90,7 @@ void ModelElementController::takeModelElementFullscreen(ModelIdentifier modelIde
     // FIXME: When in element fullscreen, UIClient::presentingViewController() may not return the
     // WKFullScreenViewController even though that is the presenting view controller of the WKWebView.
     // We should call PageClientImpl::presentingViewController() instead.
-    auto *presentingViewController = Ref { *m_webPageProxy }->uiClient().presentingViewController();
+    auto *presentingViewController = protect(*m_webPageProxy)->uiClient().presentingViewController();
     if (!presentingViewController)
         return;
 
@@ -156,7 +156,7 @@ void ModelElementController::setInteractionEnabledForModelElement(ModelIdentifie
 ASVInlinePreview * ModelElementController::previewForModelIdentifier(ModelIdentifier modelIdentifier)
 {
     RefPtr webPageProxy = m_webPageProxy.get();
-    if (!webPageProxy || !webPageProxy->protectedPreferences()->modelElementEnabled())
+    if (!webPageProxy || !protect(webPageProxy->preferences())->modelElementEnabled())
         return nullptr;
 
     return m_inlinePreviews.get(modelIdentifier.uuid);
@@ -165,7 +165,7 @@ ASVInlinePreview * ModelElementController::previewForModelIdentifier(ModelIdenti
 void ModelElementController::modelElementCreateRemotePreview(String uuid, WebCore::FloatSize size, CompletionHandler<void(Expected<std::pair<String, uint32_t>, WebCore::ResourceError>)>&& completionHandler)
 {
     RefPtr webPageProxy = m_webPageProxy.get();
-    if (!webPageProxy || !webPageProxy->protectedPreferences()->modelElementEnabled()) {
+    if (!webPageProxy || !protect(webPageProxy->preferences())->modelElementEnabled()) {
         completionHandler(makeUnexpected(WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, { }, "Model element disabled"_s }));
         return;
     }
@@ -214,7 +214,7 @@ void ModelElementController::modelElementCreateRemotePreview(String uuid, WebCor
 void ModelElementController::modelElementLoadRemotePreview(String uuid, URL fileURL, CompletionHandler<void(std::optional<WebCore::ResourceError>&&)>&& completionHandler)
 {
     RefPtr webPageProxy = m_webPageProxy.get();
-    if (!webPageProxy || !webPageProxy->protectedPreferences()->modelElementEnabled()) {
+    if (!webPageProxy || !protect(webPageProxy->preferences())->modelElementEnabled()) {
         completionHandler(WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, { }, "Model element disabled"_s });
         return;
     }

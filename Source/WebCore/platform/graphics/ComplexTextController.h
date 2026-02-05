@@ -108,7 +108,6 @@ public:
 
         unsigned glyphCount() const { return m_glyphCount; }
         const Font& font() const { return m_font; }
-        Ref<const Font> protectedFont() const { return m_font.get(); }
         std::span<const char16_t> characters() const { return m_characters; }
         unsigned stringLocation() const { return m_stringLocation; }
         size_t stringLength() const { return m_characters.size(); }

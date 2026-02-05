@@ -34,15 +34,16 @@ namespace WebCore {
 
 class MockPaymentContact final : public PaymentContact {
 public:
-    explicit MockPaymentContact(ApplePayPaymentContact&& applePayPaymentContact)
+    explicit MockPaymentContact(LocalizedApplePayPaymentContact&& applePayPaymentContact)
         : m_applePayPaymentContact { WTF::move(applePayPaymentContact) }
     {
     }
 
     ApplePayPaymentContact toApplePayPaymentContact(unsigned) const final { return m_applePayPaymentContact; }
+    LocalizedApplePayPaymentContact toLocalizedApplePayPaymentContact(unsigned) const final { return m_applePayPaymentContact; }
 
 private:
-    ApplePayPaymentContact m_applePayPaymentContact;
+    LocalizedApplePayPaymentContact m_applePayPaymentContact;
 };
 
 } // namespace WebCore

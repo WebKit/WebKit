@@ -50,7 +50,8 @@ public:
 
     enum class BufferFlag : uint8_t {
         ForceLinear = 1 << 0,
-        ForceVivanteSuperTiled = 1 << 1
+        ForceVivanteSuperTiled = 1 << 1,
+        UseBGRALayout = 1 << 2
     };
 
     // Will only return a MemoryMappedGPUBuffer, if gbm_bo allocation + mapping to userland + EGLImage creation succeeded.

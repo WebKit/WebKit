@@ -27,7 +27,6 @@
     Conditional=MEDIA_SESSION,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary MediaPositionState {
     required double duration;
     double playbackRate = 1;

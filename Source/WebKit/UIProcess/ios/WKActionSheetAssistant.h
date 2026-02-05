@@ -105,6 +105,10 @@ typedef NS_ENUM(NSInteger, _WKElementActionType);
 #endif
 @end
 
+#if ENABLE(DATA_DETECTION)
+@protocol DDDetectionControllerInteractionDelegate;
+#endif
+
 #if USE(UICONTEXTMENU)
 @interface WKActionSheetAssistant : NSObject <WKActionSheetDelegate,
 #if ENABLE(DATA_DETECTION)

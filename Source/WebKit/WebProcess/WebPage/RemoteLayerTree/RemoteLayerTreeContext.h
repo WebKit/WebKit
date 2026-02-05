@@ -109,9 +109,7 @@ public:
     bool canShowWhileLocked() const;
 #endif
 
-    WebPage& webPage();
-    Ref<WebPage> protectedWebPage();
-    Ref<const WebPage> protectedWebPage() const;
+    WebPage& webPage() const;
 
 private:
     explicit RemoteLayerTreeContext(WebPage&);

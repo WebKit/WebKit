@@ -172,7 +172,7 @@ void FetchBody::consume(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
         return;
     }
     if (isURLSearchParams()) {
-        consumeText(owner, WTF::move(promise), protectedURLSearchParamsBody()->toString());
+        consumeText(owner, WTF::move(promise), protect(urlSearchParamsBody())->toString());
         return;
     }
     if (isBlob()) {
@@ -191,19 +191,19 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchBodySource& source)
 {
     bool closeStream = false;
     if (isArrayBuffer())
-        closeStream = source.enqueue(ArrayBuffer::tryCreate(protectedArrayBufferBody()->span()));
+        closeStream = source.enqueue(ArrayBuffer::tryCreate(protect(arrayBufferBody())->span()));
     else if (isArrayBufferView())
-        closeStream = source.enqueue(ArrayBuffer::tryCreate(protectedArrayBufferViewBody()->span()));
+        closeStream = source.enqueue(ArrayBuffer::tryCreate(protect(arrayBufferViewBody())->span()));
     else if (isText()) {
         auto data = PAL::TextCodecUTF8::encodeUTF8(textBody());
         closeStream = source.enqueue(ArrayBuffer::tryCreate(data));
     } else if (isURLSearchParams()) {
-        auto data = PAL::TextCodecUTF8::encodeUTF8(protectedURLSearchParamsBody()->toString());
+        auto data = PAL::TextCodecUTF8::encodeUTF8(protect(urlSearchParamsBody())->toString());
         closeStream = source.enqueue(ArrayBuffer::tryCreate(data));
     } else if (isBlob())
-        owner.loadBlob(protectedBlobBody().get(), nullptr);
+        owner.loadBlob(protect(blobBody()).get(), nullptr);
     else if (isFormData())
-        checkedConsumer()->consumeFormDataAsStream(protectedFormDataBody().get(), source, owner.protectedScriptExecutionContext().get());
+        checkedConsumer()->consumeFormDataAsStream(protect(formDataBody()).get(), source, owner.protectedScriptExecutionContext().get());
     else if (CheckedRef consumer = this->consumer(); consumer->hasData())
         closeStream = source.enqueue(consumer->asArrayBuffer());
     else
@@ -215,13 +215,13 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchBodySource& source)
 
 void FetchBody::consumeArrayBuffer(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    checkedConsumer()->resolveWithData(WTF::move(promise), owner.contentType(), protectedArrayBufferBody()->span());
+    checkedConsumer()->resolveWithData(WTF::move(promise), owner.contentType(), protect(arrayBufferBody())->span());
     m_data = nullptr;
 }
 
 void FetchBody::consumeArrayBufferView(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    checkedConsumer()->resolveWithData(WTF::move(promise), owner.contentType(), protectedArrayBufferViewBody()->span());
+    checkedConsumer()->resolveWithData(WTF::move(promise), owner.contentType(), protect(arrayBufferViewBody())->span());
     m_data = nullptr;
 }
 
@@ -237,13 +237,13 @@ void FetchBody::consumeBlob(FetchBodyOwner& owner, Ref<DeferredPromise>&& promis
     CheckedPtr consumer = m_consumer.get();
     RELEASE_ASSERT(consumer);
     consumer->setConsumePromise(WTF::move(promise));
-    owner.loadBlob(protectedBlobBody().get(), consumer.get());
+    owner.loadBlob(protect(blobBody()).get(), consumer.get());
     m_data = nullptr;
 }
 
 void FetchBody::consumeFormData(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    checkedConsumer()->resolveWithFormData(WTF::move(promise), owner.contentType(), protectedFormDataBody().get(), owner.protectedScriptExecutionContext().get());
+    checkedConsumer()->resolveWithFormData(WTF::move(promise), owner.contentType(), protect(formDataBody()).get(), owner.protectedScriptExecutionContext().get());
     m_data = nullptr;
 }
 
@@ -262,16 +262,16 @@ RefPtr<FormData> FetchBody::bodyAsFormData() const
     if (isText())
         return FormData::create(PAL::TextCodecUTF8::encodeUTF8(textBody()));
     if (isURLSearchParams())
-        return FormData::create(PAL::TextCodecUTF8::encodeUTF8(protectedURLSearchParamsBody()->toString()));
+        return FormData::create(PAL::TextCodecUTF8::encodeUTF8(protect(urlSearchParamsBody())->toString()));
     if (isBlob()) {
         auto body = FormData::create();
         body->appendBlob(blobBody().url());
         return body;
     }
     if (isArrayBuffer())
-        return FormData::create(protectedArrayBufferBody()->span());
+        return FormData::create(protect(arrayBufferBody())->span());
     if (isArrayBufferView())
-        return FormData::create(protectedArrayBufferViewBody()->span());
+        return FormData::create(protect(arrayBufferViewBody())->span());
     if (isFormData())
         return &const_cast<FormData&>(formDataBody());
     if (RefPtr data = const_cast<FetchBody*>(this)->checkedConsumer()->data())
@@ -285,7 +285,7 @@ void FetchBody::convertReadableStreamToArrayBuffer(FetchBodyOwner& owner, Comple
 {
     ASSERT(hasReadableStream());
 
-    checkedConsumer()->extract(*protectedReadableStream(), [owner = Ref { owner }, data = SharedBufferBuilder(), completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
+    checkedConsumer()->extract(*protect(readableStream()), [owner = Ref { owner }, data = SharedBufferBuilder(), completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
         WTF::switchOn(WTF::move(result), [&](std::nullptr_t) {
             if (RefPtr arrayBuffer = data.takeBufferAsArrayBuffer())
                 owner->body().m_data = *arrayBuffer;
@@ -321,12 +321,12 @@ FetchBody::TakenData FetchBody::take()
     if (isText())
         return SharedBuffer::create(PAL::TextCodecUTF8::encodeUTF8(textBody()));
     if (isURLSearchParams())
-        return SharedBuffer::create(PAL::TextCodecUTF8::encodeUTF8(protectedURLSearchParamsBody()->toString()));
+        return SharedBuffer::create(PAL::TextCodecUTF8::encodeUTF8(protect(urlSearchParamsBody())->toString()));
 
     if (isArrayBuffer())
-        return SharedBuffer::create(protectedArrayBufferBody()->span());
+        return SharedBuffer::create(protect(arrayBufferBody())->span());
     if (isArrayBufferView())
-        return SharedBuffer::create(protectedArrayBufferViewBody()->span());
+        return SharedBuffer::create(protect(arrayBufferViewBody())->span());
 
     return nullptr;
 }
@@ -343,17 +343,17 @@ FetchBody FetchBody::clone(JSDOMGlobalObject& globalObject)
     FetchBody clone(checkedConsumer()->clone());
 
     if (isArrayBuffer())
-        clone.m_data = protectedArrayBufferBody();
+        clone.m_data = protect(arrayBufferBody());
     else if (isArrayBufferView())
-        clone.m_data = protectedArrayBufferViewBody();
+        clone.m_data = protect(arrayBufferViewBody());
     else if (isBlob())
-        clone.m_data = protectedBlobBody();
+        clone.m_data = protect(blobBody());
     else if (isFormData())
         clone.m_data = Ref { const_cast<FormData&>(formDataBody()) };
     else if (isText())
         clone.m_data = textBody();
     else if (isURLSearchParams())
-        clone.m_data = protectedURLSearchParamsBody();
+        clone.m_data = protect(urlSearchParamsBody());
     else if (RefPtr readableStream = m_readableStream) {
         auto clones = readableStream->tee(globalObject, true);
         ASSERT(!clones.hasException());
@@ -382,7 +382,7 @@ FetchBody FetchBody::createProxy(JSDOMGlobalObject& globalObject)
         return proxy;
 
     Ref identityTransform = identityTransformOrException.releaseReturnValue();
-    auto proxyStreamOrException = Ref { *m_readableStream }->pipeThrough(globalObject, { &identityTransform->readable(), &identityTransform->writable() }, { });
+    auto proxyStreamOrException = Ref { *m_readableStream }->pipeThrough(globalObject, { identityTransform->readable(), identityTransform->writable() }, { });
     ASSERT(!proxyStreamOrException.hasException());
     if (proxyStreamOrException.hasException())
         return proxy;

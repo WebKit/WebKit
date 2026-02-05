@@ -241,7 +241,7 @@ WI.CSSKeywordCompletions.addCustomCompletions = function(properties)
             WI.CSSKeywordCompletions.LonghandNamesForShorthandProperty.set(property.name, property.longhands);
 
             for (let longhand of property.longhands) {
-                let shorthands = WI.CSSKeywordCompletions.ShorthandNamesForLongHandProperty.getOrInitialize(longhand, []);
+                let shorthands = WI.CSSKeywordCompletions.ShorthandNamesForLongHandProperty.getOrInsert(longhand, []);
                 shorthands.push(property.name);
             }
         }

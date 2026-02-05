@@ -23,9 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary OptionalEffectTiming {
+// https://drafts.csswg.org/web-animations-1/#dictdef-optionaleffecttiming
+//   and then modified by
+// https://drafts.csswg.org/web-animations-2/#the-effecttiming-dictionaries
+dictionary OptionalEffectTiming {
     double delay;
     double endDelay;
     FillMode fill;
@@ -34,4 +35,6 @@
     (unrestricted double or DOMString) duration;
     PlaybackDirection direction;
     DOMString easing;
+    // FIXME: Add support for `playbackRate`
+    // double playbackRate;
 };

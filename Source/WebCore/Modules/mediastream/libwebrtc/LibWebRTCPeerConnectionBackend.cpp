@@ -70,7 +70,8 @@ static const std::unique_ptr<PeerConnectionBackend> createLibWebRTCPeerConnectio
     auto& webRTCProvider = downcast<LibWebRTCProvider>(page->webRTCProvider());
     webRTCProvider.setEnableWebRTCEncryption(page->settings().webRTCEncryptionEnabled());
 
-    RefPtr endpoint = LibWebRTCMediaEndpoint::create(peerConnection, webRTCProvider, document, configurationFromMediaEndpointConfiguration(WTF::move(configuration)));
+    bool shouldEnableServiceClass = configuration.shouldEnableServiceClass;
+    RefPtr endpoint = LibWebRTCMediaEndpoint::create(peerConnection, webRTCProvider, document, configurationFromMediaEndpointConfiguration(WTF::move(configuration)), shouldEnableServiceClass);
     if (!endpoint)
         return nullptr;
 
@@ -422,6 +423,11 @@ void LibWebRTCPeerConnectionBackend::applyRotationForOutgoingVideoSources()
 std::optional<bool> LibWebRTCPeerConnectionBackend::canTrickleIceCandidates() const
 {
     return m_endpoint->canTrickleIceCandidates();
+}
+
+bool LibWebRTCPeerConnectionBackend::shouldEnableServiceClass() const
+{
+    return m_endpoint->shouldEnableServiceClass();
 }
 
 void LibWebRTCPeerConnectionBackend::startGatheringStatLogs(Function<void(String&&)>&& callback)

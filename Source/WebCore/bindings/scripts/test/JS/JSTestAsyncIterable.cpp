@@ -228,9 +228,10 @@ const JSC::ClassInfo TestAsyncIterableIteratorPrototype::s_info = { "TestAsyncIt
 
 static inline EncodedJSValue jsTestAsyncIterablePrototypeFunction_valuesCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestAsyncIterable* thisObject)
 {
-    UNUSED_PARAM(callFrame);
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
     EnsureStillAliveScope argument0 = callFrame->argument(0);
     auto optionConversionResult = convert<IDLOptional<IDLInterface<TestNode>>>(*lexicalGlobalObject, argument0.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "option"_s, "TestAsyncIterable"_s, "jsTestAsyncIterablePrototypeFunction_values"_s, "TestNode"_s); });
     if (optionConversionResult.hasException(throwScope)) [[unlikely]]

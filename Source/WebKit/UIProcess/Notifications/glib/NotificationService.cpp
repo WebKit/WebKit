@@ -49,14 +49,9 @@
 #include <wtf/text/CString.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
-#if USE(CAIRO)
-#include <WebCore/RefPtrCairo.h>
-#include <cairo.h>
-#elif USE(SKIA)
 #include <skia/core/SkPixmap.h>
 #include <skia/core/SkStream.h>
 #include <skia/encode/SkPngEncoder.h>
-#endif
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 #if PLATFORM(GTK)
@@ -79,8 +74,6 @@ template<> struct IsDeprecatedTimerSmartPointerException<WebKit::IconCache> : st
 namespace WebKit {
 
 static const Seconds s_dbusCallTimeout = 20_ms;
-
-#if USE(SKIA)
 
 // Alias to avoid conflicting with write() below.
 ssize_t (*writeToFD)(int, const void*, size_t) = write;
@@ -120,7 +113,6 @@ private:
     UnixFileDescriptor m_fd;
     size_t m_bytesWritten { 0 };
 };
-#endif
 
 class IconCache {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(IconCache);
@@ -158,23 +150,6 @@ public:
                 return { };
             }
 
-#if USE(CAIRO)
-            auto status = cairo_surface_write_to_png_stream(surface.get(), [](void* userData, const unsigned char* data, unsigned length) -> cairo_status_t {
-                int fd = *static_cast<int*>(userData);
-                while (length) {
-                    auto written = write(fd, data, length);
-                    if (written == -1)
-                        return CAIRO_STATUS_WRITE_ERROR;
-
-                    length -= written;
-                    data += written;
-                }
-                return CAIRO_STATUS_SUCCESS;
-            }, &fd);
-
-            close(fd);
-            return status == CAIRO_STATUS_SUCCESS ? filename.get() : CString();
-#elif USE(SKIA)
             auto stream = FileDescriptorWriteStream(fd); // Transfers fd ownership.
             SkPixmap pixmap;
             if (!surface->peekPixels(&pixmap) || !SkPngEncoder::Encode(&stream, pixmap, { })) {
@@ -183,7 +158,6 @@ public:
             }
 
             return filename.get();
-#endif
         };
 
         auto addResult = m_iconCache.add(iconURL, std::pair<uint32_t, CString>({ 0, CString() }));
@@ -214,22 +188,8 @@ public:
             if (!surface)
                 return nullptr;
 
-#if USE(CAIRO)
-            GRefPtr<GByteArray> buffer = adoptGRef(g_byte_array_new());
-            auto status = cairo_surface_write_to_png_stream(surface.get(), [](void* userData, const unsigned char* data, unsigned length) -> cairo_status_t {
-                auto* buffer = static_cast<GByteArray*>(userData);
-                g_byte_array_append(buffer, data, length);
-                return CAIRO_STATUS_SUCCESS;
-            }, buffer.get());
-
-            if (status != CAIRO_STATUS_SUCCESS)
-                return nullptr;
-
-            return adoptGRef(g_byte_array_free_to_bytes(buffer.leakRef()));
-#elif USE(SKIA)
             // FIXME: Add Skia implementation
             return nullptr;
-#endif
         };
 
         auto addResult = m_iconCache.add(iconURL, std::pair<uint32_t, GRefPtr<GBytes>>({ 0, nullptr }));

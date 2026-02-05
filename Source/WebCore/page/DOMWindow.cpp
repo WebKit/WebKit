@@ -587,7 +587,7 @@ ExceptionOr<void> DOMWindow::postMessage(JSC::JSGlobalObject& globalObject, Loca
 
 ExceptionOr<void> DOMWindow::postMessage(JSC::JSGlobalObject& globalObject, LocalDOMWindow& incumbentWindow, JSC::JSValue message, String&& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
 {
-    return postMessage(globalObject, incumbentWindow, message, WindowPostMessageOptions { WTF::move(targetOrigin), WTF::move(transfer) });
+    return postMessage(globalObject, incumbentWindow, message, WindowPostMessageOptions { { WTF::move(transfer) }, WTF::move(targetOrigin) });
 }
 
 ExceptionOr<Ref<CSSStyleDeclaration>> DOMWindow::getComputedStyle(Element& element, const String& pseudoElt) const
@@ -966,7 +966,7 @@ String DOMWindow::crossDomainAccessErrorMessage(const LocalDOMWindow& activeWind
     // We can't figure anything out if we are operating on a RemoteDOMWindow and don't have a remote frame
     if (!localDocument && !remoteFrame)
         return String();
-    Ref activeOrigin = activeWindow.protectedDocument()->securityOrigin();
+    Ref activeOrigin = protect(activeWindow.document())->securityOrigin();
     const Ref targetOrigin = localDocument ? localDocument->securityOrigin() : remoteFrame->frameDocumentSecurityOriginOrOpaque();
     ASSERT(!activeOrigin->isSameOriginDomain(targetOrigin));
 
@@ -1033,7 +1033,7 @@ bool DOMWindow::isInsecureScriptAccess(const LocalDOMWindow& activeWindow, const
 
         // This check only makes sense with LocalDOMWindows as RemoteDOMWindows necessarily have different origins
         RefPtr localDocument = documentIfLocal();
-        if (localDocument && activeWindow.protectedDocument()->protectedSecurityOrigin()->isSameOriginDomain(localDocument->protectedSecurityOrigin()))
+        if (localDocument && protect(protect(activeWindow.document())->securityOrigin())->isSameOriginDomain(protect(localDocument->securityOrigin())))
             return false;
     }
 

@@ -84,7 +84,6 @@ public:
     void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess) { m_sharedPreferencesForWebProcess = WTF::move(sharedPreferencesForWebProcess); }
 
     IPC::Connection& connection() { return m_connection.get(); }
-    Ref<IPC::Connection> protectedConnection() { return m_connection; }
     IPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }
     ModelProcess& modelProcess() { return m_modelProcess.get(); }
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }

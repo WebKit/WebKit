@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/FloatSize.h>
+#include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -45,5 +46,6 @@ struct CreateShareableBitmapFromImageOptions {
 };
 
 RefPtr<WebCore::ShareableBitmap> createShareableBitmap(WebCore::RenderImage&, CreateShareableBitmapFromImageOptions&& = { });
+Ref<NativePromise<Ref<WebCore::ShareableBitmap>, void>> createShareableBitmapAsync(WebCore::RenderImage&, CreateShareableBitmapFromImageOptions&& = { });
 
 };

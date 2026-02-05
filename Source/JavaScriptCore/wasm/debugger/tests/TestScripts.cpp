@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TestScripts.h"
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 #include <mutex>
 #include <span>
@@ -262,4 +262,4 @@ std::span<const TestScript> getTestScripts()
 
 } // namespace TestScripts
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

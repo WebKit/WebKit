@@ -25,8 +25,9 @@
 
 #pragma once
 
-#include "BufferSource.h"
-#include "CryptoAlgorithmParameters.h"
+#include <WebCore/BufferSource.h>
+#include <WebCore/CryptoAlgorithmParameters.h>
+#include <WebCore/CryptoAlgorithmRsaOaepParamsInit.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -35,7 +36,18 @@ class CryptoAlgorithmRsaOaepParams final : public CryptoAlgorithmParameters {
     WTF_MAKE_TZONE_ALLOCATED(CryptoAlgorithmRsaOaepParams);
 public:
     // Use labelVector() instead of label. The label will be gone once labelVector() is called.
-    mutable std::optional<BufferSource::VariantType> label;
+    mutable std::optional<BufferSource> label;
+
+    CryptoAlgorithmRsaOaepParams(CryptoAlgorithmIdentifier identifier)
+        : CryptoAlgorithmParameters { WTF::move(identifier) }
+    {
+    }
+
+    CryptoAlgorithmRsaOaepParams(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmRsaOaepParamsInit init)
+        : CryptoAlgorithmParameters { WTF::move(identifier), WTF::move(init) }
+        , label { WTF::move(init.label) }
+    {
+    }
 
     Class parametersClass() const final { return Class::RsaOaepParams; }
 
@@ -54,8 +66,7 @@ public:
 
     CryptoAlgorithmRsaOaepParams isolatedCopy() const
     {
-        CryptoAlgorithmRsaOaepParams result;
-        result.identifier = identifier;
+        CryptoAlgorithmRsaOaepParams result { identifier };
         result.m_labelVector = labelVector();
 
         return result;

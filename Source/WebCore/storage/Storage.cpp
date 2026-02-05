@@ -150,7 +150,7 @@ Ref<StorageArea> Storage::protectedArea() const
 
 bool Storage::requiresScriptTrackingPrivacyProtection() const
 {
-    RefPtr document = window() ? protectedWindow()->document() : nullptr;
+    RefPtr document = window() ? protect(window())->document() : nullptr;
     return document && document->requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::LocalStorage);
 }
 

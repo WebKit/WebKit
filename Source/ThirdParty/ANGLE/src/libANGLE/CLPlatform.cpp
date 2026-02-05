@@ -295,7 +295,10 @@ Platform::Platform(const rx::CLPlatformImpl::CreateFunc &createFunc)
     : mImpl(createFunc(*this)),
       mDevices(mImpl ? createDevices(mImpl->createDevices()) : DevicePtrs{}),
       mInfo(mImpl ? mImpl->createInfo() : rx::CLPlatformImpl::Info{}),
-      mMultiThreadPool(mImpl ? angle::WorkerThreadPool::Create(0, ANGLEPlatformCurrent()) : nullptr)
+      mMultiThreadPool(mImpl ? angle::WorkerThreadPool::Create(angle::ThreadPoolType::Asynchronous,
+                                                               0,
+                                                               ANGLEPlatformCurrent())
+                             : nullptr)
 {}
 
 DevicePtrs Platform::createDevices(rx::CLDeviceImpl::CreateDatas &&createDatas)

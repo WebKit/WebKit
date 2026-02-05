@@ -2,14 +2,14 @@
 <head>
     <script>
     var i = 0;
-    function test() {
+    async function test() {
         if (window.testRunner) {
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
             var button = document.getElementById("button");
-            eventSender.mouseMoveTo(button.offsetParent.offsetLeft + button.offsetLeft + button.offsetWidth / 2, button.offsetParent.offsetTop +  button.offsetTop + button.offsetHeight / 2);
-            eventSender.mouseDown();
-            eventSender.mouseUp();
+            await eventSender.asyncMouseMoveTo(button.offsetParent.offsetLeft + button.offsetLeft + button.offsetWidth / 2, button.offsetParent.offsetTop +  button.offsetTop + button.offsetHeight / 2);
+            await eventSender.asyncMouseDown();
+            await eventSender.asyncMouseUp();
         }
     }
     function openWindow() {

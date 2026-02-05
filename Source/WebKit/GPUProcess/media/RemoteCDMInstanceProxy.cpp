@@ -121,7 +121,7 @@ void RemoteCDMInstanceProxy::createSession(uint64_t logIdentifier, CompletionHan
 
     auto identifier = RemoteCDMInstanceSessionIdentifier::generate();
     auto session = RemoteCDMInstanceSessionProxy::create(m_cdm.get(), privSession.releaseNonNull(), logIdentifier, identifier);
-    protectedCdm()->protectedFactory()->addSession(identifier, WTF::move(session));
+    protect(protectedCdm()->factory())->addSession(identifier, WTF::move(session));
     completion(identifier);
 }
 

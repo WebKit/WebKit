@@ -33,7 +33,7 @@
     JSCustomMarkFunction,
 ] interface MessagePort : EventTarget {
     [CallWith=CurrentGlobalObject] undefined postMessage(any message, sequence<object> transfer);
-    [CallWith=CurrentGlobalObject] undefined postMessage(any message, optional StructuredSerializeOptions options);
+    [CallWith=CurrentGlobalObject] undefined postMessage(any message, optional StructuredSerializeOptions options = {});
     undefined start();
     undefined close();
 

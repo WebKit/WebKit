@@ -34,7 +34,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mimalloc-logo.svg"/></td>
   <td id="projectalign">
-   <div id="projectname">mi-malloc<span id="projectnumber">&#160;3.2</span>
+   <div id="projectname">mi-malloc<span id="projectnumber">&#160;v1.9,  v2.2,  v3.2</span>
    </div>
   </td>
     <td>        <div id="MSearchBox" class="MSearchBoxInactive">
@@ -109,6 +109,9 @@ $(function(){initNavTree('group__typed.html',''); initResizable(true); });
   <div class="headertitle"><div class="title">Typed Macros</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Typed allocation macros.  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
@@ -127,28 +130,29 @@ Macros</h2></td></tr>
 <tr class="memitem:ga1158b49a55dfa81f58a4426a7578f523" id="r_ga1158b49a55dfa81f58a4426a7578f523"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga1158b49a55dfa81f58a4426a7578f523">mi_reallocn_tp</a>(p,  tp,  count)</td></tr>
 <tr class="memdesc:ga1158b49a55dfa81f58a4426a7578f523"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-allocate to <em>count</em> blocks of type <em>tp</em>.  <br /></td></tr>
 <tr class="separator:ga1158b49a55dfa81f58a4426a7578f523"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga653bcb24ac495bc19940ecd6898f9cd7" id="r_ga653bcb24ac495bc19940ecd6898f9cd7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga653bcb24ac495bc19940ecd6898f9cd7">mi_heap_malloc_tp</a>(hp,  tp)</td></tr>
-<tr class="memdesc:ga653bcb24ac495bc19940ecd6898f9cd7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate a block of type <em>tp</em> in a heap <em>hp</em>.  <br /></td></tr>
-<tr class="separator:ga653bcb24ac495bc19940ecd6898f9cd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad6e87e86e994aa14416ae9b5d4c188fe" id="r_gad6e87e86e994aa14416ae9b5d4c188fe"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gad6e87e86e994aa14416ae9b5d4c188fe">mi_heap_zalloc_tp</a>(hp,  tp)</td></tr>
-<tr class="memdesc:gad6e87e86e994aa14416ae9b5d4c188fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate a zero-initialized block of type <em>tp</em> in a heap <em>hp</em>.  <br /></td></tr>
-<tr class="separator:gad6e87e86e994aa14416ae9b5d4c188fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga4e5d1f1707c90e5f55e023ac5f45fe74" id="r_ga4e5d1f1707c90e5f55e023ac5f45fe74"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga4e5d1f1707c90e5f55e023ac5f45fe74">mi_heap_calloc_tp</a>(hp,  tp,  count)</td></tr>
-<tr class="memdesc:ga4e5d1f1707c90e5f55e023ac5f45fe74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate <em>count</em> zero-initialized blocks of type <em>tp</em> in a heap <em>hp</em>.  <br /></td></tr>
-<tr class="separator:ga4e5d1f1707c90e5f55e023ac5f45fe74"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga6b75cb9c4b9c647661d0924552dc6e83" id="r_ga6b75cb9c4b9c647661d0924552dc6e83"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga6b75cb9c4b9c647661d0924552dc6e83">mi_heap_mallocn_tp</a>(hp,  tp,  count)</td></tr>
-<tr class="memdesc:ga6b75cb9c4b9c647661d0924552dc6e83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate <em>count</em> blocks of type <em>tp</em> in a heap <em>hp</em>.  <br /></td></tr>
-<tr class="separator:ga6b75cb9c4b9c647661d0924552dc6e83"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf213d5422ec35e7f6caad827c79bc948" id="r_gaf213d5422ec35e7f6caad827c79bc948"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaf213d5422ec35e7f6caad827c79bc948">mi_heap_reallocn_tp</a>(hp,  p,  tp,  count)</td></tr>
-<tr class="memdesc:gaf213d5422ec35e7f6caad827c79bc948"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-allocate to <em>count</em> blocks of type <em>tp</em> in a heap <em>hp</em>.  <br /></td></tr>
-<tr class="separator:gaf213d5422ec35e7f6caad827c79bc948"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga3e50a1600958fcaf1a7f3560c9174f9e" id="r_ga3e50a1600958fcaf1a7f3560c9174f9e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga3e50a1600958fcaf1a7f3560c9174f9e">mi_heap_recalloc_tp</a>(hp,  p,  tp,  count)</td></tr>
-<tr class="memdesc:ga3e50a1600958fcaf1a7f3560c9174f9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-allocate to <em>count</em> zero initialized blocks of type <em>tp</em> in a heap <em>hp</em>.  <br /></td></tr>
-<tr class="separator:ga3e50a1600958fcaf1a7f3560c9174f9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga02d3e85bf26aa3120132f2552c408a88" id="r_ga02d3e85bf26aa3120132f2552c408a88"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga02d3e85bf26aa3120132f2552c408a88">mi_heap_malloc_tp</a>(tp,  hp)</td></tr>
+<tr class="memdesc:ga02d3e85bf26aa3120132f2552c408a88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate a block of type <em>tp</em> in a heap <em>hp</em>.  <br /></td></tr>
+<tr class="separator:ga02d3e85bf26aa3120132f2552c408a88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0aaa1aa747d8863e844c37e424ed096c" id="r_ga0aaa1aa747d8863e844c37e424ed096c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga0aaa1aa747d8863e844c37e424ed096c">mi_heap_zalloc_tp</a>(tp,  hp)</td></tr>
+<tr class="memdesc:ga0aaa1aa747d8863e844c37e424ed096c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate a zero-initialized block of type <em>tp</em> in a heap <em>hp</em>.  <br /></td></tr>
+<tr class="separator:ga0aaa1aa747d8863e844c37e424ed096c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga953f22101bb354a8b6de2a6d6fda9b98" id="r_ga953f22101bb354a8b6de2a6d6fda9b98"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga953f22101bb354a8b6de2a6d6fda9b98">mi_heap_calloc_tp</a>(tp,  hp,  count)</td></tr>
+<tr class="memdesc:ga953f22101bb354a8b6de2a6d6fda9b98"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate <em>count</em> zero-initialized blocks of type <em>tp</em> in a heap <em>hp</em>.  <br /></td></tr>
+<tr class="separator:ga953f22101bb354a8b6de2a6d6fda9b98"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa58690658cc6f5dd54c99a9971d4aa7d" id="r_gaa58690658cc6f5dd54c99a9971d4aa7d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaa58690658cc6f5dd54c99a9971d4aa7d">mi_heap_mallocn_tp</a>(tp,  hp,  count)</td></tr>
+<tr class="memdesc:gaa58690658cc6f5dd54c99a9971d4aa7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate <em>count</em> blocks of type <em>tp</em> in a heap <em>hp</em>.  <br /></td></tr>
+<tr class="separator:gaa58690658cc6f5dd54c99a9971d4aa7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga817e315c24133294caad4d50470ff313" id="r_ga817e315c24133294caad4d50470ff313"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga817e315c24133294caad4d50470ff313">mi_heap_reallocn_tp</a>(tp,  hp,  p,  count)</td></tr>
+<tr class="memdesc:ga817e315c24133294caad4d50470ff313"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-allocate to <em>count</em> blocks of type <em>tp</em> in a heap <em>hp</em>.  <br /></td></tr>
+<tr class="separator:ga817e315c24133294caad4d50470ff313"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7bf06ad296e20d1d74c90d64294eecec" id="r_ga7bf06ad296e20d1d74c90d64294eecec"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga7bf06ad296e20d1d74c90d64294eecec">mi_heap_recalloc_tp</a>(tp,  hp,  p,  count)</td></tr>
+<tr class="memdesc:ga7bf06ad296e20d1d74c90d64294eecec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-allocate to <em>count</em> zero initialized blocks of type <em>tp</em> in a heap <em>hp</em>.  <br /></td></tr>
+<tr class="separator:ga7bf06ad296e20d1d74c90d64294eecec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>Typed allocation macros. For example: </p><div class="fragment"><div class="line"><span class="keywordtype">int</span>* p = <a class="code hl_define" href="#ga0619a62c5fd886f1016030abe91f0557">mi_malloc_tp</a>(<span class="keywordtype">int</span>)</div>
-<div class="ttc" id="agroup__typed_html_ga0619a62c5fd886f1016030abe91f0557"><div class="ttname"><a href="#ga0619a62c5fd886f1016030abe91f0557">mi_malloc_tp</a></div><div class="ttdeci">#define mi_malloc_tp(tp)</div><div class="ttdoc">Allocate a block of type tp.</div><div class="ttdef"><b>Definition</b> mimalloc-doc.h:783</div></div>
+<p>Typed allocation macros. </p>
+<p>For example: </p><div class="fragment"><div class="line"><span class="keywordtype">int</span>* p = <a class="code hl_define" href="#ga0619a62c5fd886f1016030abe91f0557">mi_malloc_tp</a>(<span class="keywordtype">int</span>)</div>
+<div class="ttc" id="agroup__typed_html_ga0619a62c5fd886f1016030abe91f0557"><div class="ttname"><a href="#ga0619a62c5fd886f1016030abe91f0557">mi_malloc_tp</a></div><div class="ttdeci">#define mi_malloc_tp(tp)</div><div class="ttdoc">Allocate a block of type tp.</div><div class="ttdef"><b>Definition</b> mimalloc-doc.h:359</div></div>
 </div><!-- fragment --> <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="gae80c47c9d4cab10961fff1a8ac98fc07" name="gae80c47c9d4cab10961fff1a8ac98fc07"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gae80c47c9d4cab10961fff1a8ac98fc07">&#9670;&#160;</a></span>mi_calloc_tp</h2>
@@ -173,8 +177,8 @@ Macros</h2></td></tr>
 
 </div>
 </div>
-<a id="ga4e5d1f1707c90e5f55e023ac5f45fe74" name="ga4e5d1f1707c90e5f55e023ac5f45fe74"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga4e5d1f1707c90e5f55e023ac5f45fe74">&#9670;&#160;</a></span>mi_heap_calloc_tp</h2>
+<a id="ga953f22101bb354a8b6de2a6d6fda9b98" name="ga953f22101bb354a8b6de2a6d6fda9b98"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga953f22101bb354a8b6de2a6d6fda9b98">&#9670;&#160;</a></span>mi_heap_calloc_tp</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -182,12 +186,12 @@ Macros</h2></td></tr>
         <tr>
           <td class="memname">#define mi_heap_calloc_tp</td>
           <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>hp</em></span>, </td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>tp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>tp</em></span>, </td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>hp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -201,8 +205,8 @@ Macros</h2></td></tr>
 
 </div>
 </div>
-<a id="ga653bcb24ac495bc19940ecd6898f9cd7" name="ga653bcb24ac495bc19940ecd6898f9cd7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga653bcb24ac495bc19940ecd6898f9cd7">&#9670;&#160;</a></span>mi_heap_malloc_tp</h2>
+<a id="ga02d3e85bf26aa3120132f2552c408a88" name="ga02d3e85bf26aa3120132f2552c408a88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga02d3e85bf26aa3120132f2552c408a88">&#9670;&#160;</a></span>mi_heap_malloc_tp</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -210,12 +214,12 @@ Macros</h2></td></tr>
         <tr>
           <td class="memname">#define mi_heap_malloc_tp</td>
           <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>hp</em></span>, </td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>tp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>tp</em></span>&#160;)</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>hp</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -224,8 +228,8 @@ Macros</h2></td></tr>
 
 </div>
 </div>
-<a id="ga6b75cb9c4b9c647661d0924552dc6e83" name="ga6b75cb9c4b9c647661d0924552dc6e83"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga6b75cb9c4b9c647661d0924552dc6e83">&#9670;&#160;</a></span>mi_heap_mallocn_tp</h2>
+<a id="gaa58690658cc6f5dd54c99a9971d4aa7d" name="gaa58690658cc6f5dd54c99a9971d4aa7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa58690658cc6f5dd54c99a9971d4aa7d">&#9670;&#160;</a></span>mi_heap_mallocn_tp</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -233,12 +237,12 @@ Macros</h2></td></tr>
         <tr>
           <td class="memname">#define mi_heap_mallocn_tp</td>
           <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>hp</em></span>, </td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>tp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>tp</em></span>, </td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>hp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -252,8 +256,8 @@ Macros</h2></td></tr>
 
 </div>
 </div>
-<a id="gaf213d5422ec35e7f6caad827c79bc948" name="gaf213d5422ec35e7f6caad827c79bc948"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaf213d5422ec35e7f6caad827c79bc948">&#9670;&#160;</a></span>mi_heap_reallocn_tp</h2>
+<a id="ga817e315c24133294caad4d50470ff313" name="ga817e315c24133294caad4d50470ff313"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga817e315c24133294caad4d50470ff313">&#9670;&#160;</a></span>mi_heap_reallocn_tp</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -261,17 +265,17 @@ Macros</h2></td></tr>
         <tr>
           <td class="memname">#define mi_heap_reallocn_tp</td>
           <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>tp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>hp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>p</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>tp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -285,8 +289,8 @@ Macros</h2></td></tr>
 
 </div>
 </div>
-<a id="ga3e50a1600958fcaf1a7f3560c9174f9e" name="ga3e50a1600958fcaf1a7f3560c9174f9e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga3e50a1600958fcaf1a7f3560c9174f9e">&#9670;&#160;</a></span>mi_heap_recalloc_tp</h2>
+<a id="ga7bf06ad296e20d1d74c90d64294eecec" name="ga7bf06ad296e20d1d74c90d64294eecec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7bf06ad296e20d1d74c90d64294eecec">&#9670;&#160;</a></span>mi_heap_recalloc_tp</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -294,17 +298,17 @@ Macros</h2></td></tr>
         <tr>
           <td class="memname">#define mi_heap_recalloc_tp</td>
           <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>tp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>hp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>p</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>tp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -318,8 +322,8 @@ Macros</h2></td></tr>
 
 </div>
 </div>
-<a id="gad6e87e86e994aa14416ae9b5d4c188fe" name="gad6e87e86e994aa14416ae9b5d4c188fe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gad6e87e86e994aa14416ae9b5d4c188fe">&#9670;&#160;</a></span>mi_heap_zalloc_tp</h2>
+<a id="ga0aaa1aa747d8863e844c37e424ed096c" name="ga0aaa1aa747d8863e844c37e424ed096c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0aaa1aa747d8863e844c37e424ed096c">&#9670;&#160;</a></span>mi_heap_zalloc_tp</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -327,12 +331,12 @@ Macros</h2></td></tr>
         <tr>
           <td class="memname">#define mi_heap_zalloc_tp</td>
           <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>hp</em></span>, </td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>tp</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>tp</em></span>&#160;)</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>hp</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">

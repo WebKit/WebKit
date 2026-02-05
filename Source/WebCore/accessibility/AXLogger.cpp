@@ -34,6 +34,7 @@
 #endif
 #include "AXNotifications.h"
 #include "AXObjectCache.h"
+#include "AXRemoteFrame.h"
 #include "AXSearchManager.h"
 #include "AXTextRun.h"
 #include "AXUtilities.h"
@@ -1132,6 +1133,9 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
         stream << "RemoteFramePlatformElement";
         break;
 #if PLATFORM(COCOA)
+    case AXProperty::RemoteFrameProcessIdentifier:
+        stream << "RemoteFrameProcessIdentifier";
+        break;
     case AXProperty::RemoteParent:
         stream << "RemoteParent";
         break;
@@ -1305,7 +1309,7 @@ TextStream& operator<<(TextStream& stream, AXObjectCache& axObjectCache)
     RefPtr document = axObjectCache.document();
     if (!document)
         stream << "No document!";
-    else if (RefPtr root = axObjectCache.get(document->protectedView().get())) {
+    else if (RefPtr root = axObjectCache.get(protect(document->view()).get())) {
         constexpr OptionSet<AXStreamOptions> options = { AXStreamOptions::ObjectID, AXStreamOptions::Role, AXStreamOptions::ParentID, AXStreamOptions::IdentifierAttribute, AXStreamOptions::OuterHTML, AXStreamOptions::DisplayContents, AXStreamOptions::Address, AXStreamOptions::RendererOrNode };
         streamSubtree(stream, root.releaseNonNull(), options);
     } else
@@ -1328,6 +1332,13 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
 
     if (options & AXStreamOptions::Role)
         stream.dumpProperty("role"_s, object.role());
+
+#if PLATFORM(COCOA)
+    if (object.role() == AccessibilityRole::RemoteFrame) {
+        pid_t pid = object.remoteFrameProcessIdentifier();
+        stream.dumpProperty("remotePID"_s, pid);
+    }
+#endif
 
     auto* axObject = dynamicDowncast<AccessibilityObject>(object);
     if (axObject) {

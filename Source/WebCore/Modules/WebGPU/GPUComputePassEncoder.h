@@ -57,7 +57,7 @@ public:
     void setLabel(String&&);
 
     void setPipeline(const GPUComputePipeline&);
-    void dispatchWorkgroups(GPUSize32 workgroupCountX, std::optional<GPUSize32> workgroupCountY, std::optional<GPUSize32> workgroupCountZ);
+    void dispatchWorkgroups(GPUSize32 workgroupCountX, GPUSize32 workgroupCountY, GPUSize32 workgroupCountZ);
     void dispatchWorkgroupsIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset);
 
     void end();
@@ -79,8 +79,6 @@ public:
 
 private:
     GPUComputePassEncoder(Ref<WebGPU::ComputePassEncoder>&&, WebGPU::Device&);
-
-    Ref<WebGPU::ComputePassEncoder> protectedBacking() { return m_backing; }
 
     Ref<WebGPU::ComputePassEncoder> m_backing;
     WeakPtr<WebGPU::Device> m_device;

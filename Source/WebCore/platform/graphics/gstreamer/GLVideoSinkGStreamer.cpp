@@ -23,6 +23,7 @@
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
 
 #include "GStreamerCommon.h"
+#include "GStreamerQuirks.h"
 #include "GStreamerVideoSinkCommon.h"
 #include "GUniquePtrGStreamer.h"
 #include "PlatformDisplay.h"
@@ -95,50 +96,44 @@ static void webKitGLVideoSinkConstructed(GObject* object)
 
     ASSERT(sink->priv->appSink);
     g_object_set(sink->priv->appSink.get(), "enable-last-sample", FALSE, "emit-signals", TRUE, "max-buffers", 1, nullptr);
+    gst_bin_add(GST_BIN_CAST(sink), sink->priv->appSink.get());
 
-    auto* imxVideoConvertG2D =
-        []() -> GstElement*
-        {
-            auto elementFactor = adoptGRef(gst_element_factory_find("imxvideoconvert_g2d"));
-            if (elementFactor)
-                return gst_element_factory_create(elementFactor.get(), nullptr);
-            return nullptr;
-        }();
-    if (imxVideoConvertG2D)
-        gst_bin_add(GST_BIN_CAST(sink), imxVideoConvertG2D);
+    auto sinkPad = adoptGRef(gst_element_get_static_pad(sink->priv->appSink.get(), "sink"));
 
-    GstElement* upload = makeGStreamerElement("glupload"_s);
-    GstElement* colorconvert = makeGStreamerElement("glcolorconvert"_s);
+    auto& quirksManager = GStreamerQuirksManager::singleton();
+    auto glCaps = quirksManager.videoSinkGLCapsFormat();
+    if (!glCaps) {
+        glCaps = adoptGRef(gst_caps_from_string("video/x-raw, format = (string) " GST_GL_CAPS_FORMAT));
+        gst_caps_set_features(glCaps.get(), 0, gst_caps_features_new(GST_CAPS_FEATURE_MEMORY_GL_MEMORY, nullptr));
+    }
 
-    ASSERT(upload);
-    ASSERT(colorconvert);
-    gst_bin_add_many(GST_BIN_CAST(sink), upload, colorconvert, sink->priv->appSink.get(), nullptr);
+    if (gst_caps_features_contains(gst_caps_get_features(glCaps.get(), 0), GST_CAPS_FEATURE_MEMORY_GL_MEMORY)) {
+        GstElement* upload = makeGStreamerElement("glupload"_s);
+        GstElement* colorconvert = makeGStreamerElement("glcolorconvert"_s);
+
+        RELEASE_ASSERT(upload);
+        RELEASE_ASSERT(colorconvert);
+        gst_bin_add_many(GST_BIN_CAST(sink), upload, colorconvert, nullptr);
+        gst_element_link_many(upload, colorconvert, sink->priv->appSink.get(), nullptr);
+        sinkPad = adoptGRef(gst_element_get_static_pad(upload, "sink"));
+
+        if (auto imxVideoConvertFactory = adoptGRef(gst_element_factory_find("imxvideoconvert_g2d"))) {
+            auto imxVideoConvert = gst_element_factory_create(imxVideoConvertFactory.get(), nullptr);
+            gst_bin_add(GST_BIN_CAST(sink), imxVideoConvert);
+            gst_element_link(imxVideoConvert, upload);
+            sinkPad = adoptGRef(gst_element_get_static_pad(imxVideoConvert, "sink"));
+        }
+    }
 
     GRefPtr<GstCaps> caps = adoptGRef(gst_caps_new_empty());
 #if USE(GBM)
     if (!s_isDMABufDisabled)
         gst_caps_append(caps.get(), buildDMABufCaps().leakRef());
 #endif
-    GRefPtr<GstCaps> glCaps = adoptGRef(gst_caps_from_string("video/x-raw, format = (string) " GST_GL_CAPS_FORMAT));
-    gst_caps_set_features(glCaps.get(), 0, gst_caps_features_new(GST_CAPS_FEATURE_MEMORY_GL_MEMORY, nullptr));
     gst_caps_append(caps.get(), glCaps.leakRef());
 
     g_object_set(sink->priv->appSink.get(), "caps", caps.get(), nullptr);
-
-    if (imxVideoConvertG2D)
-        gst_element_link(imxVideoConvertG2D, upload);
-    gst_element_link(upload, colorconvert);
-
-    gst_element_link(colorconvert, sink->priv->appSink.get());
-
-    GstElement* sinkElement =
-        [&] {
-            if (imxVideoConvertG2D)
-                return imxVideoConvertG2D;
-            return upload;
-        }();
-    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(sinkElement, "sink"));
-    gst_element_add_pad(GST_ELEMENT_CAST(sink), gst_ghost_pad_new("sink", pad.get()));
+    gst_element_add_pad(GST_ELEMENT_CAST(sink), gst_ghost_pad_new("sink", sinkPad.get()));
 }
 
 void webKitGLVideoSinkFinalize(GObject* object)

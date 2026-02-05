@@ -611,6 +611,10 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagCapitalize;
     case WebCore::ContextMenuItemTagChangeBack:
         return kWKContextMenuItemTagChangeBack;
+    case WebCore::ContextMenuItemTagConvertToTraditionalChinese:
+        return kWKContextMenuItemTagConvertToTraditionalChinese;
+    case WebCore::ContextMenuItemTagConvertToSimplifiedChinese:
+        return kWKContextMenuItemTagConvertToSimplifiedChinese;
 #endif
     case WebCore::ContextMenuItemTagShareMenu:
         return kWKContextMenuItemTagShareMenu;
@@ -839,6 +843,10 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagChangeBack;
     case kWKContextMenuItemTagShareMenu:
         return WebCore::ContextMenuItemTagShareMenu;
+    case kWKContextMenuItemTagConvertToTraditionalChinese:
+        return WebCore::ContextMenuItemTagConvertToTraditionalChinese;
+    case kWKContextMenuItemTagConvertToSimplifiedChinese:
+        return WebCore::ContextMenuItemTagConvertToSimplifiedChinese;
 #endif
     case kWKContextMenuItemTagRevealImage:
         return WebCore::ContextMenuItemTagLookUpImage;

@@ -146,6 +146,8 @@ namespace WebCore {
     WEBCORE_EXPORT String contextMenuItemTagMakeUpperCase();
     WEBCORE_EXPORT String contextMenuItemTagMakeLowerCase();
     WEBCORE_EXPORT String contextMenuItemTagCapitalize();
+    WEBCORE_EXPORT String contextMenuItemTagConvertToTraditionalChinese();
+    WEBCORE_EXPORT String contextMenuItemTagConvertToSimplifiedChinese();
     String contextMenuItemTagChangeBack(const String& replacedString);
 #endif
     String contextMenuItemTagOpenVideoInNewWindow();

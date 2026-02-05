@@ -1474,6 +1474,35 @@ static void observeSelectors(CSSParserObserverWrapper& wrapper, CSSParserTokenRa
     wrapper.observer().endRuleHeader(wrapper.endOffset(originalRange));
 }
 
+#if ASSERT_ENABLED
+// Use this function for asserting that that the user-agent stylesheets don't contain rules that are inefficient or otherwise bad.
+static void validateUserAgentSheetSelector(const CSSSelectorList& selectorList)
+{
+    auto validateRightmostCompound = [](const CSSSelector& complexSelector) {
+        bool hasBucketedSelector = false;
+        bool hasLogicalCombination = false;
+        for (auto* simpleSelector = &complexSelector; simpleSelector; simpleSelector = simpleSelector->precedingInCompound()) {
+            if (simpleSelector->match() == CSSSelector::Match::Tag && simpleSelector->tagQName().localName() != starAtom())
+                hasBucketedSelector = true;
+            if (simpleSelector->match() == CSSSelector::Match::Id)
+                hasBucketedSelector = true;
+            if (simpleSelector->match() == CSSSelector::Match::Class)
+                hasBucketedSelector = true;
+            if (simpleSelector->match() == CSSSelector::Match::PseudoClass) {
+                if (isLogicalCombinationPseudoClass(simpleSelector->pseudoClass()) && simpleSelector->pseudoClass() != CSSSelector::PseudoClass::Not)
+                    hasLogicalCombination = true;
+            }
+        }
+        // Don't use subject position :is(foo, bar) and similar on UA sheet before we have good optimizations for them.
+        // Selectors like this should be expanded manually.
+        ASSERT_WITH_MESSAGE(hasBucketedSelector || !hasLogicalCombination, "Subject position selector list in '%s' not allowed in user-agent stylesheet", complexSelector.selectorText().utf8().data());
+    };
+
+    for (auto& complexSelector : selectorList)
+        validateRightmostCompound(complexSelector);
+}
+#endif
+
 RefPtr<StyleRuleBase> CSSParser::consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
 {
     auto preludeCopyForInspector = prelude;
@@ -1484,6 +1513,11 @@ RefPtr<StyleRuleBase> CSSParser::consumeStyleRule(CSSParserTokenRange prelude, C
 
     CSSSelectorList selectorList { WTF::move(mutableSelectorList) };
     ASSERT(!selectorList.isEmpty());
+
+#if ASSERT_ENABLED
+    if (isUASheetBehavior(m_context.mode))
+        validateUserAgentSheetSelector(selectorList);
+#endif
 
     if (RefPtr observerWrapper = m_observerWrapper.get())
         observeSelectors(*observerWrapper, preludeCopyForInspector);

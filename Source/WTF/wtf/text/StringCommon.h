@@ -1500,7 +1500,7 @@ inline NewlinePosition findNextNewline(std::span<const CharacterType> span, size
     constexpr size_t threshold = 32;
     auto* ptr = SIMD::find<CharacterType, threshold>(searchSpan, vectorMatch, scalarMatch);
 
-    if (ptr == searchSpan.data() + searchSpan.size())
+    if (ptr == std::to_address(searchSpan.end()))
         return { };
 
     CharacterType ch = *ptr;

@@ -55,8 +55,12 @@ public:
 
     bool scrollbarAnimationsUnsuspendedByUserInteraction() const { return m_scrollbarAnimationsUnsuspendedByUserInteraction; }
     void setScrollbarAnimationsUnsuspendedByUserInteraction(bool unsuspended) { m_scrollbarAnimationsUnsuspendedByUserInteraction = unsuspended; }
-    
+
+#if PLATFORM(MAC)
     WEBCORE_EXPORT virtual bool isRemoteScrollbarsController() const { return false; }
+#elif USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    virtual bool isScrollbarsControllerCoordinated() const { return false; }
+#endif
     WEBCORE_EXPORT virtual bool isScrollbarsControllerMac() const { return false; }
     WEBCORE_EXPORT virtual bool isScrollbarsControllerMock() const { return false; }
 
@@ -77,6 +81,10 @@ public:
     WEBCORE_EXPORT virtual void mouseEnteredScrollbar(Scrollbar*) const { }
     WEBCORE_EXPORT virtual void mouseExitedScrollbar(Scrollbar*) const { }
     WEBCORE_EXPORT virtual void mouseIsDownInScrollbar(Scrollbar*, bool) const { }
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    void virtual hoveredPartChanged(Scrollbar&) { }
+    void virtual pressedPartChanged(Scrollbar&) { }
+#endif
     WEBCORE_EXPORT virtual void willStartLiveResize() { }
     WEBCORE_EXPORT virtual void contentsSizeChanged() const { }
     WEBCORE_EXPORT virtual void willEndLiveResize() { }
@@ -111,6 +119,9 @@ public:
     WEBCORE_EXPORT virtual int minimumThumbLength(WebCore::ScrollbarOrientation) { return 0; }
     WEBCORE_EXPORT virtual void scrollbarLayoutDirectionChanged(UserInterfaceLayoutDirection) { }
     WEBCORE_EXPORT virtual void scrollbarColorChanged(std::optional<ScrollbarColor>);
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    virtual void scrollbarOpacityChanged() { }
+#endif
 
     WEBCORE_EXPORT virtual void updateScrollerStyle() { }
 

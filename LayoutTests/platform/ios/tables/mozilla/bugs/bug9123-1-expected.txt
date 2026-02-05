@@ -4,15 +4,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x584
       RenderBlock {P} at (0,0) size 800x60
-        RenderText {#text} at (20,0) size 635x19
+        RenderText {#text} at (20,0) size 635x20
           text run at (20,0) width 438: "Here's the structure of the problem table (which usually begins with "
           text run at (457,0) width 65: "'N E W S "
           text run at (521,0) width 134: "H E A D L I N E S')."
-        RenderBR {BR} at (654,0) size 1x19
-        RenderText {#text} at (20,20) size 331x19
+        RenderBR {BR} at (654,0) size 1x20
+        RenderText {#text} at (20,20) size 331x20
           text run at (20,20) width 331: "This table is width 100%; two rows; three columns;"
-        RenderBR {BR} at (350,20) size 1x19
-        RenderText {#text} at (20,40) size 474x19
+        RenderBR {BR} at (350,20) size 1x20
+        RenderText {#text} at (20,40) size 474x20
           text run at (20,40) width 474: "The first row: widths 15, 125, 15 ... The second row: widths 15, 100%, 15"
       RenderTable {TABLE} at (0,76) size 800x41 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 798x39
@@ -27,12 +27,12 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (0,26) size 17x4 [bgcolor=#666666] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,10) size 15x2
             RenderTableCell {TD} at (17,17) size 764x22 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 24x19
+              RenderText {#text} at (1,1) size 24x20
                 text run at (1,1) width 24: "that"
             RenderTableCell {TD} at (781,26) size 17x4 [bgcolor=#666666] [border: (1px inset #000000)] [r=1 c=2 rs=1 cs=1]
               RenderImage {IMG} at (1,10) size 15x2
       RenderBlock {P} at (0,133) size 800x40
-        RenderText {#text} at (20,0) size 730x39
+        RenderText {#text} at (20,0) size 730x40
           text run at (20,0) width 264: "Here's the first row in a table on its own. "
           text run at (283,0) width 467: "This table is width 100%; one rows; three columns; This row: widths 15,"
           text run at (20,20) width 48: "125, 15"
@@ -46,7 +46,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (713,7) size 86x3 [bgcolor=#666666] [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
               RenderImage {IMG} at (1,8) size 15x1
       RenderBlock {P} at (0,224) size 800x40
-        RenderText {#text} at (20,0) size 749x39
+        RenderText {#text} at (20,0) size 749x40
           text run at (20,0) width 283: "Here's the second row in a table on its own. "
           text run at (302,0) width 467: "This table is width 100%; one rows; three columns; This row: widths 15,"
           text run at (20,20) width 62: "100%, 15"
@@ -56,12 +56,12 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (0,9) size 17x4 [bgcolor=#666666] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,10) size 15x2
             RenderTableCell {TD} at (17,0) size 764x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 24x19
+              RenderText {#text} at (1,1) size 24x20
                 text run at (1,1) width 24: "that"
             RenderTableCell {TD} at (781,9) size 17x4 [bgcolor=#666666] [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
               RenderImage {IMG} at (1,10) size 15x2
       RenderBlock {P} at (0,320) size 800x40
-        RenderText {#text} at (20,0) size 742x39
+        RenderText {#text} at (20,0) size 742x40
           text run at (20,0) width 626: "Note that in Nav4.x, the middle column gets the width of the maximum width cell in the column; "
           text run at (645,0) width 117: "on 5.0, the middle"
           text run at (20,20) width 228: "column gets the opposite treatment."

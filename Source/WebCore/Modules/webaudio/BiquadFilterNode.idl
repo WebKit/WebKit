@@ -28,7 +28,7 @@
     EnabledBySetting=WebAudioEnabled,
     Exposed=Window
 ] interface BiquadFilterNode : AudioNode {
-    [EnabledBySetting=WebAudioEnabled] constructor (BaseAudioContext context, optional BiquadFilterOptions options);
+    [EnabledBySetting=WebAudioEnabled] constructor (BaseAudioContext context, optional BiquadFilterOptions options = {});
 
     attribute BiquadFilterType type;
     

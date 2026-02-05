@@ -44,14 +44,19 @@ fast/forms/time/time-editable-components [ Pass ]
 
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u06E9_no_strong_dir.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_font_shorthand.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_timestamp_future.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_transition_with_timestamp.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_font_shorthand.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_timestamp_future.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_transition_with_timestamp.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/italic_object/italic_font_shorthand.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/italic_object/italic_timestamp_future.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/italic_object/italic_transition_with_timestamp.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/underline_object/underline_font_shorthand.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/underline_object/underline_timestamp_future.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/underline_object/underline_transition_with_timestamp.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_font_shorthand.html [ Pass ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_timestamp_future.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_transition_with_timestamp.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -127,6 +132,7 @@ webrtc/vp8-then-h264-gpu-process-crash.html [ Skip ]
 
 webkit.org/b/303924 webrtc/peer-connection-audio-mute2.html [ Failure ]
 webkit.org/b/303925 webrtc/audio-replace-track.html [ Failure ]
+webkit.org/b/306021 webrtc/peer-connection-audio-unmute.html [ Pass Failure ]
 
 webkit.org/b/305553 fast/selectors/selection-window-inactive-stroke-color.html [ ImageOnlyFailure ]
 
@@ -740,6 +746,9 @@ webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-32-t.svg [ Failure Pas
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-81-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-85-t.svg [ Failure Pass ]
 
+webkit.org/b/306687 fast/dynamic/window-scrollbars-test.html [ Failure Pass ]
+webkit.org/b/306688 fast/events/monotonic-event-time.html [ Failure Pass ]
+
 webkit.org/b/114735 svg/filters/filter-hidden-content.svg [ Failure Pass ]
 
 webkit.org/b/116961 perf/show-hide-table-rows.html [ Failure Pass ]
@@ -780,8 +789,6 @@ webkit.org/b/194382 mathml/presentation/stretchy-depth-height-symmetric.html [ F
 imported/w3c/web-platform-tests/mathml/presentation-markup/tables/table-002.html [ Pass ]
 
 webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay.html [ Failure ]
-
-webkit.org/b/197713 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-image-cache.https.html [ Failure ]
 
 webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Timeout ]
 
@@ -1526,8 +1533,6 @@ webkit.org/b/264680 inspector/heap/getPreview.html [ Failure Pass ]
 webkit.org/b/264680 media/no-fullscreen-when-hidden.html [ Timeout Pass ]
 webkit.org/b/264680 media/video-background-tab-playback.html [ Timeout Pass ]
 webkit.org/b/264680 media/video-muted-holds-sleep-assertion.html [ Timeout Pass ]
-webkit.org/b/264680 media/video-seek-past-end-playing.html [ Timeout Pass ]
-webkit.org/b/264680 media/video-unmuted-after-play-holds-sleep-assertion.html [ Timeout Pass ]
 webkit.org/b/264680 scrollbars/scrollbar-selectors.html [ Pass Timeout ]
 
 fast/dom/no-scroll-when-command-click-fragment-URL.html [ Skip ]
@@ -1622,6 +1627,7 @@ webkit.org/b/304269 [ Debug ] fast/images/png-suite/test.html [ Crash Pass Timeo
 webkit.org/b/304271 [ Debug ] fullscreen/full-screen-enter-while-exiting-fully-mid-completion-handler.html [ Crash Pass ]
 
 # Flaky NetworkProcess related crash in allowsFirstPartyForCookies
+webkit.org/b/286063 [ Debug ] fast/forms/appearance-base/appearance-base-checkable-checkmark-dynamic.html [ Crash Pass ]
 webkit.org/b/286063 [ Debug ] fast/mediastream/RTCPeerConnection-page-cache.html [ Crash Pass ]
 webkit.org/b/286063 [ Debug ] media/audio-only-video-intrinsic-size.html [ Crash Pass ]
 webkit.org/b/286063 [ Debug ] storage/indexeddb/cursor-properties.html [ Crash Pass ]
@@ -1655,3 +1661,13 @@ webkit.org/b/305509 imported/w3c/web-platform-tests/css/css-pseudo/marker-animat
 webkit.org/b/305509 imported/w3c/web-platform-tests/css/css-view-transitions/start-view-transtion-skips-active.html [ Failure Pass ]
 webkit.org/b/305509 imported/w3c/web-platform-tests/event-timing/interactionid-orphan-pointerup.html [ Failure Pass ]
 webkit.org/b/305509 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-pause-on-exit.html [ Failure Pass ]
+
+# AVFoundation-specific audio description functionality not available on GStreamer platforms
+http/tests/media/hls/hls-audio-description-track-kind.html [ Skip ]
+
+webkit.org/b/306384 editing/pasteboard/copy-crash.html [ ImageOnlyFailure ]
+webkit.org/b/306384 fast/css/object-fit/object-fit-shrink.html [ ImageOnlyFailure ]
+webkit.org/b/306384 fast/css/object-position/object-position-img.html [ ImageOnlyFailure ]
+webkit.org/b/306384 fast/table/row-background-image.html [ ImageOnlyFailure ]
+webkit.org/b/306384 imported/w3c/web-platform-tests/quirks/line-height-in-list-item.html [ ImageOnlyFailure ]
+webkit.org/b/306384 scrollbars/corner-resizer-window-inactive.html [ ImageOnlyFailure ]

@@ -217,7 +217,7 @@ void HTMLFormElement::submitImplicitly(Event& event, bool fromImplicitSubmission
 bool HTMLFormElement::validateInteractively()
 {
     for (auto& listedElement : m_listedElements) {
-        if (auto* control = listedElement->asValidatedFormListedElement())
+        if (RefPtr control = listedElement->asValidatedFormListedElement())
             control->hideVisibleValidationMessage();
     }
 
@@ -262,7 +262,7 @@ void HTMLFormElement::submitIfPossible(Event* event, HTMLFormControlElement* sub
     m_shouldSubmit = false;
 
     for (auto& element : m_listedElements) {
-        if (auto* formControlElement = dynamicDowncast<HTMLFormControlElement>(*element))
+        if (RefPtr formControlElement = dynamicDowncast<HTMLFormControlElement>(*element))
             formControlElement->setInteractedWithSinceLastFormSubmitEvent(true);
     }
 
@@ -320,7 +320,7 @@ ExceptionOr<void> HTMLFormElement::requestSubmit(HTMLElement* submitter)
 {
     // Update layout before processing form actions in case the style changes
     // the form or button relationships.
-    protectedDocument()->updateLayoutIgnorePendingStylesheets();
+    protect(document())->updateLayoutIgnorePendingStylesheets();
 
     RefPtr<HTMLFormControlElement> control;
     if (submitter) {
@@ -392,8 +392,8 @@ void HTMLFormElement::submit(Event* event, bool processingUserGesture, FormSubmi
         // In a case of implicit submission without a submit button, 'submit' event handler might add a submit button. We search for a submit button again.
         auto listedElements = copyListedElementsVector();
         for (auto& element : listedElements) {
-            if (auto* control = dynamicDowncast<HTMLFormControlElement>(element.get()); control && control->isSuccessfulSubmitButton()) {
-                submitter = control;
+            if (RefPtr control = dynamicDowncast<HTMLFormControlElement>(element.get()); control && control->isSuccessfulSubmitButton()) {
+                submitter = control.get();
                 break;
             }
         }
@@ -661,7 +661,7 @@ Ref<HTMLFormControlsCollection> HTMLFormElement::elements()
     // Ordinarily JS wrapper keeps the collection alive but this function is used by HTMLFormElement::namedElements internally without creating one.
     // This cache is cleared whenever this element is disconnected from a document.
     if (!m_controlsCollection) {
-        Ref controlsCollection = ensureRareData().ensureNodeLists().addCachedCollection<HTMLFormControlsCollection>(*this, CollectionType::FormControls);
+        Ref controlsCollection = ensureRareData().ensureNodeLists().addCachedCollection<HTMLFormControlsCollection>(*this);
         if (!isConnected())
             return controlsCollection;
         m_controlsCollection = WTF::move(controlsCollection);
@@ -750,7 +750,7 @@ HTMLFormControlElement* HTMLFormElement::defaultButton() const
     if (m_defaultButton)
         return m_defaultButton.get();
     for (auto& listedElement : m_listedElements) {
-        if (auto* control = dynamicDowncast<HTMLFormControlElement>(*listedElement); control && control->isSuccessfulSubmitButton()) {
+        if (SUPPRESS_UNCOUNTED_LOCAL auto* control = dynamicDowncast<HTMLFormControlElement>(*listedElement); control && control->isSuccessfulSubmitButton()) {
             m_defaultButton = *control;
             return control;
         }
@@ -804,7 +804,7 @@ bool HTMLFormElement::reportValidity()
 
     // Update layout before processing form actions in case the style changes
     // the form or button relationships.
-    protectedDocument()->updateLayoutIgnorePendingStylesheets();
+    protect(document())->updateLayoutIgnorePendingStylesheets();
 
     return validateInteractively();
 }
@@ -853,8 +853,8 @@ void HTMLFormElement::removeFromPastNamesMap(FormAssociatedElement& item)
     if (m_pastNamesMap.isEmpty())
         return;
 
-    m_pastNamesMap.removeIf([&element = item.asHTMLElement()] (auto& iterator) {
-        return iterator.value == &element;
+    m_pastNamesMap.removeIf([element = Ref { item.asHTMLElement() }] (auto& iterator) {
+        return iterator.value == element.ptr();
     });
 }
 

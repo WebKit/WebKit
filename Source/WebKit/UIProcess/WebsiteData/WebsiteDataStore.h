@@ -129,7 +129,6 @@ using RemoveDataTaskCounter = RefCounter<RemoveDataTaskCounterType>;
 class WebsiteDataStore : public API::ObjectImpl<API::Object::Type::WebsiteDataStore>, public CanMakeWeakPtr<WebsiteDataStore> {
 public:
     static WebsiteDataStore& defaultDataStore();
-    static Ref<WebsiteDataStore> protectedDefaultDataStore();
     static bool defaultDataStoreExists();
     static void deleteDefaultDataStoreForTesting();
     static RefPtr<WebsiteDataStore> existingDataStoreForIdentifier(const WTF::UUID&);
@@ -147,7 +146,6 @@ public:
     
     NetworkProcessProxy& networkProcess() const;
     NetworkProcessProxy& networkProcess();
-    Ref<NetworkProcessProxy> protectedNetworkProcess() const;
     NetworkProcessProxy* networkProcessIfExists() { return m_networkProcess.get(); }
     void setNetworkProcess(NetworkProcessProxy&);
     
@@ -349,10 +347,8 @@ public:
 
 #if ENABLE(WEB_AUTHN)
     AuthenticatorManager& authenticatorManager() { return m_authenticatorManager.get(); }
-    Ref<AuthenticatorManager> protectedAuthenticatorManager();
     void setMockWebAuthenticationConfiguration(WebCore::MockWebAuthenticationConfiguration&&);
     VirtualAuthenticatorManager& virtualAuthenticatorManager();
-    Ref<VirtualAuthenticatorManager> protectedVirtualAuthenticatorManager();
 #endif
 
     const WebsiteDataStoreConfiguration& configuration() const { return m_configuration.get(); }
@@ -361,7 +357,6 @@ public:
     void setClient(UniqueRef<WebsiteDataStoreClient>&& client) { m_client = WTF::move(client); }
 
     API::HTTPCookieStore& cookieStore();
-    Ref<API::HTTPCookieStore> protectedCookieStore();
     WebCore::LocalWebLockRegistry& webLockRegistry() { return m_webLockRegistry.get(); }
 
     void renameOriginInWebsiteData(WebCore::SecurityOriginData&&, WebCore::SecurityOriginData&&, OptionSet<WebsiteDataType>, CompletionHandler<void()>&&);
@@ -371,7 +366,6 @@ public:
 
 #if ENABLE(DEVICE_ORIENTATION)
     WebDeviceOrientationAndMotionAccessController& deviceOrientationAndMotionAccessController() { return m_deviceOrientationAndMotionAccessController; }
-    Ref<WebDeviceOrientationAndMotionAccessController> protectedDeviceOrientationAndMotionAccessController() { return m_deviceOrientationAndMotionAccessController; }
 #endif
 
 #if HAVE(APP_SSO)

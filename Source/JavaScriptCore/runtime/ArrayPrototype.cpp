@@ -1587,7 +1587,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncConcat, (JSGlobalObject* globalObject, Ca
     if (!callFrame->argumentCount()) {
         if (isJSArray(thisValue)) [[likely]] {
             auto* array = jsCast<JSArray*>(thisValue);
-            if (arrayMissingIsConcatSpreadable(vm, array) && arraySpeciesWatchpointIsValid(array)) [[likely]] {
+            if (arrayMissingIsConcatSpreadable(vm, array) && arraySpeciesWatchpointIsValid(vm, array)) [[likely]] {
                 JSArray* result = tryCloneArrayFromFast<ArrayFillMode::Empty>(globalObject, array);
                 RETURN_IF_EXCEPTION(scope, { });
                 if (result) [[likely]]
@@ -1598,7 +1598,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncConcat, (JSGlobalObject* globalObject, Ca
         JSValue argumentValue = callFrame->uncheckedArgument(0);
         if (isJSArray(thisValue)) [[likely]] {
             auto* firstArray = jsCast<JSArray*>(thisValue);
-            if (arrayMissingIsConcatSpreadable(vm, firstArray) && arraySpeciesWatchpointIsValid(firstArray)) [[likely]] {
+            if (arrayMissingIsConcatSpreadable(vm, firstArray) && arraySpeciesWatchpointIsValid(vm, firstArray)) [[likely]] {
                 // This code assumes that neither array has set Symbol.isConcatSpreadable. If the first array
                 // has indexed accessors then one of those accessors might change the value of Symbol.isConcatSpreadable
                 // on the second argument.
@@ -2194,7 +2194,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncFlat, (JSGlobalObject* globalObject, Call
         }
     }
 
-    if (isJSArray(thisObject) && arraySpeciesWatchpointIsValid(thisObject)) [[likely]] {
+    if (isJSArray(thisObject) && arraySpeciesWatchpointIsValid(vm, thisObject)) [[likely]] {
         JSArray* thisArray = jsCast<JSArray*>(thisObject);
         auto fastResult = thisArray->fastFlat(globalObject, depthNum, length);
         RETURN_IF_EXCEPTION(scope, { });

@@ -80,7 +80,6 @@ public:
 
 private:
     WebProcessProxy& process() const;
-    Ref<WebProcessProxy> protectedProcess() const;
 
     Variant<WeakRef<WebPageProxy>, WeakRef<RemotePageProxy>> m_page;
 

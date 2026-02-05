@@ -55,7 +55,6 @@ public:
     virtual ~InjectedBundleNodeHandle();
 
     WebCore::Node* coreNode();
-    RefPtr<WebCore::Node> protectedCoreNode();
 
     // Convenience DOM Operations
     RefPtr<InjectedBundleNodeHandle> document();

@@ -232,9 +232,10 @@ const JSC::ClassInfo TestAsyncKeyValueIterableIteratorPrototype::s_info = { "Tes
 
 static inline EncodedJSValue jsTestAsyncKeyValueIterablePrototypeFunction_entriesCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestAsyncKeyValueIterable* thisObject)
 {
-    UNUSED_PARAM(callFrame);
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
     RELEASE_AND_RETURN(throwScope, JSValue::encode(iteratorCreate<TestAsyncKeyValueIterableIterator>(*thisObject, *lexicalGlobalObject, throwScope, IterationKind::Entries)));
 }
 
@@ -245,9 +246,10 @@ JSC_DEFINE_HOST_FUNCTION(jsTestAsyncKeyValueIterablePrototypeFunction_entries, (
 
 static inline EncodedJSValue jsTestAsyncKeyValueIterablePrototypeFunction_keysCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestAsyncKeyValueIterable* thisObject)
 {
-    UNUSED_PARAM(callFrame);
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
     RELEASE_AND_RETURN(throwScope, JSValue::encode(iteratorCreate<TestAsyncKeyValueIterableIterator>(*thisObject, *lexicalGlobalObject, throwScope, IterationKind::Keys)));
 }
 
@@ -258,9 +260,10 @@ JSC_DEFINE_HOST_FUNCTION(jsTestAsyncKeyValueIterablePrototypeFunction_keys, (JSC
 
 static inline EncodedJSValue jsTestAsyncKeyValueIterablePrototypeFunction_valuesCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestAsyncKeyValueIterable* thisObject)
 {
-    UNUSED_PARAM(callFrame);
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
     RELEASE_AND_RETURN(throwScope, JSValue::encode(iteratorCreate<TestAsyncKeyValueIterableIterator>(*thisObject, *lexicalGlobalObject, throwScope, IterationKind::Values)));
 }
 

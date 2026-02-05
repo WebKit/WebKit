@@ -36,38 +36,39 @@ using namespace JSC;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomEffect);
 
-ExceptionOr<Ref<CustomEffect>> CustomEffect::create(Document& document, Ref<CustomEffectCallback>&& callback, std::optional<Variant<double, EffectTiming>>&& options)
+ExceptionOr<Ref<CustomEffect>> CustomEffect::create(Document& document, Ref<CustomEffectCallback>&& callback, Variant<double, EffectTiming>&& options)
 {
     auto customEffect = adoptRef(*new CustomEffect(WTF::move(callback)));
 
-    if (options) {
-        OptionalEffectTiming timing;
-        auto optionsValue = options.value();
-        if (std::holds_alternative<double>(optionsValue)) {
-            Variant<double, String> duration = std::get<double>(optionsValue);
+    auto timing = WTF::switchOn(options,
+        [](double duration) -> ExceptionOr<OptionalEffectTiming> {
+            OptionalEffectTiming timing;
             timing.duration = duration;
-        } else {
-            auto effectTimingOptions = std::get<EffectTiming>(optionsValue);
-
+            return timing;
+        },
+        [&](const EffectTiming& effectTimingOptions) -> ExceptionOr<OptionalEffectTiming> {
             auto convertedDuration = effectTimingOptions.durationAsDoubleOrString();
             if (!convertedDuration)
                 return Exception { ExceptionCode::TypeError };
 
-            timing = {
-                *convertedDuration,
-                effectTimingOptions.iterations,
+            return OptionalEffectTiming {
                 effectTimingOptions.delay,
                 effectTimingOptions.endDelay,
-                effectTimingOptions.iterationStart,
-                effectTimingOptions.easing,
                 effectTimingOptions.fill,
-                effectTimingOptions.direction
+                effectTimingOptions.iterationStart,
+                effectTimingOptions.iterations,
+                *convertedDuration,
+                effectTimingOptions.direction,
+                effectTimingOptions.easing
             };
         }
-        auto updateTimingResult = customEffect->updateTiming(document, timing);
-        if (updateTimingResult.hasException())
-            return updateTimingResult.releaseException();
-    }
+    );
+    if (timing.hasException())
+        return timing.releaseException();
+
+    auto updateTimingResult = customEffect->updateTiming(document, timing.releaseReturnValue());
+    if (updateTimingResult.hasException())
+        return updateTimingResult.releaseException();
 
     return customEffect;
 }

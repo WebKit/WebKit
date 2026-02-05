@@ -8,7 +8,7 @@
 
 <!-- Test <ol>. -->
 <ol id="ol">
-    <li id="foo">Foo</li>
+    <li style="font-family: Monospace; font-size: 14px" id="foo">Foo</li>
     <li>Bar</li>
 </ol>
 
@@ -36,10 +36,10 @@ if (window.accessibilityController) {
     var fooListItem = accessibilityController.accessibleElementById("foo");
     var fooText = fooListItem.childAtIndex(0);
     // Verify that the bounding box includes all members of the stitch group, including the list marker.
-    output += expectNumber("fooText.pageX", 28, /* allowedVariance */ 1);
+    output += expectNumber("fooText.pageX", 19, /* allowedVariance */ 1);
     output += expectNumber("fooText.pageY", 8, /* allowedVariance */ 1);
-    output += expectNumber("fooText.width", 45, /* allowedVariance */ 1);
-    output += expectNumber("fooText.height", 18, /* allowedVariance */ 1);
+    output += expectNumber("fooText.width", 55, /* allowedVariance */ 1);
+    output += expectNumber("fooText.height", 15, /* allowedVariance */ 1);
 
     output += initialTraversalOutput;
     output += "\nSecond traversal:\n";

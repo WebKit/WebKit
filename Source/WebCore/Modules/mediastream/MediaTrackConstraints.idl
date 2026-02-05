@@ -22,30 +22,35 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/mediacapture-main/#dom-mediatrackconstraints
 [
     Conditional=MEDIA_STREAM,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary MediaTrackConstraints : MediaTrackConstraintSet {
     sequence<MediaTrackConstraintSet> advanced;
 };
 
+// https://w3c.github.io/mediacapture-main/#dom-mediatrackconstraintset
 [
     Conditional=MEDIA_STREAM,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
     ImplementedAs=MediaTrackConstraintSet,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary MediaTrackConstraintSet {
+    // FIXME: `width` should be of type `ConstrainULong`.
     ConstrainLong width;
+    // FIXME: `height` should be of type `ConstrainULong`.
     ConstrainLong height;
     ConstrainDouble aspectRatio;
     ConstrainDouble frameRate;
     ConstrainDOMString facingMode;
     ConstrainDouble volume;
+    // FIXME: `sampleRate` should be of type `ConstrainULong`.
     ConstrainLong sampleRate;
+    // FIXME: `sampleSize` should be of type `ConstrainULong`.
     ConstrainLong sampleSize;
+    // FIXME: `echoCancellation` should be of type `ConstrainBooleanOrDOMString`.
     ConstrainBoolean echoCancellation;
     // FIXME 169871: add latency
     // FIXME 169871: add channelCount
@@ -83,34 +88,34 @@ typedef (long or ConstrainLongRange) ConstrainLong;
 typedef (boolean or ConstrainBooleanParameters) ConstrainBoolean;
 typedef (DOMString or sequence<DOMString> or ConstrainDOMStringParameters) ConstrainDOMString;
 
+// https://w3c.github.io/mediacapture-main/#dom-constrainbooleanparameters
 [
     Conditional=MEDIA_STREAM,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
     ImplementedAs=ConstrainBooleanParameters,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ConstrainBooleanParameters {
     boolean exact;
     boolean ideal;
 };
 
+// https://w3c.github.io/mediacapture-main/#dom-constraindomstringparameters
 [
     Conditional=MEDIA_STREAM,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
     ImplementedAs=ConstrainDOMStringParameters,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ConstrainDOMStringParameters {
     (DOMString or sequence<DOMString>) exact;
     (DOMString or sequence<DOMString>) ideal;
 };
 
+// https://w3c.github.io/mediacapture-main/#dom-constraindoublerange
 [
     Conditional=MEDIA_STREAM,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
     ImplementedAs=ConstrainDoubleRange,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ConstrainDoubleRange : DoubleRange {
     double exact;
     double ideal;
@@ -121,7 +126,6 @@ typedef (DOMString or sequence<DOMString> or ConstrainDOMStringParameters) Const
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
     ImplementedAs=ConstrainLongRange,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ConstrainLongRange : LongRange {
     long exact;
     long ideal;

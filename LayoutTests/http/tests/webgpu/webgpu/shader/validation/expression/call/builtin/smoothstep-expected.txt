@@ -1096,8 +1096,6 @@ FAIL :values:stage="override";type="f32" assert_unreached:
   - (in subcase: value1=-10;value2=1000) INFO: subcase ran
   - (in subcase: value1=0;value2=-1000) INFO: subcase ran
   - (in subcase: value1=0;value2=-10) INFO: subcase ran
-  - (in subcase: value1=0;value2=0) EXPECTATION FAILED: Expected validation error
-      at (elided: only 2 shown)
   - (in subcase: value1=0;value2=0) INFO: subcase ran
   - (in subcase: value1=0;value2=10) INFO: subcase ran
   - (in subcase: value1=0;value2=1000) INFO: subcase ran
@@ -1141,8 +1139,6 @@ FAIL :values:stage="override";type="f16" assert_unreached:
   - (in subcase: value1=-10;value2=1000) INFO: subcase ran
   - (in subcase: value1=0;value2=-1000) INFO: subcase ran
   - (in subcase: value1=0;value2=-10) INFO: subcase ran
-  - (in subcase: value1=0;value2=0) EXPECTATION FAILED: Expected validation error
-      at (elided: only 2 shown)
   - (in subcase: value1=0;value2=0) INFO: subcase ran
   - (in subcase: value1=0;value2=10) INFO: subcase ran
   - (in subcase: value1=0;value2=1000) INFO: subcase ran
@@ -1186,8 +1182,6 @@ FAIL :values:stage="override";type="vec2%3Cf32%3E" assert_unreached:
   - (in subcase: value1=-10;value2=1000) INFO: subcase ran
   - (in subcase: value1=0;value2=-1000) INFO: subcase ran
   - (in subcase: value1=0;value2=-10) INFO: subcase ran
-  - (in subcase: value1=0;value2=0) EXPECTATION FAILED: Expected validation error
-      at (elided: only 2 shown)
   - (in subcase: value1=0;value2=0) INFO: subcase ran
   - (in subcase: value1=0;value2=10) INFO: subcase ran
   - (in subcase: value1=0;value2=1000) INFO: subcase ran
@@ -1231,8 +1225,6 @@ FAIL :values:stage="override";type="vec2%3Cf16%3E" assert_unreached:
   - (in subcase: value1=-10;value2=1000) INFO: subcase ran
   - (in subcase: value1=0;value2=-1000) INFO: subcase ran
   - (in subcase: value1=0;value2=-10) INFO: subcase ran
-  - (in subcase: value1=0;value2=0) EXPECTATION FAILED: Expected validation error
-      at (elided: only 2 shown)
   - (in subcase: value1=0;value2=0) INFO: subcase ran
   - (in subcase: value1=0;value2=10) INFO: subcase ran
   - (in subcase: value1=0;value2=1000) INFO: subcase ran
@@ -1276,8 +1268,6 @@ FAIL :values:stage="override";type="vec3%3Cf32%3E" assert_unreached:
   - (in subcase: value1=-10;value2=1000) INFO: subcase ran
   - (in subcase: value1=0;value2=-1000) INFO: subcase ran
   - (in subcase: value1=0;value2=-10) INFO: subcase ran
-  - (in subcase: value1=0;value2=0) EXPECTATION FAILED: Expected validation error
-      at (elided: only 2 shown)
   - (in subcase: value1=0;value2=0) INFO: subcase ran
   - (in subcase: value1=0;value2=10) INFO: subcase ran
   - (in subcase: value1=0;value2=1000) INFO: subcase ran
@@ -1321,8 +1311,6 @@ FAIL :values:stage="override";type="vec3%3Cf16%3E" assert_unreached:
   - (in subcase: value1=-10;value2=1000) INFO: subcase ran
   - (in subcase: value1=0;value2=-1000) INFO: subcase ran
   - (in subcase: value1=0;value2=-10) INFO: subcase ran
-  - (in subcase: value1=0;value2=0) EXPECTATION FAILED: Expected validation error
-      at (elided: only 2 shown)
   - (in subcase: value1=0;value2=0) INFO: subcase ran
   - (in subcase: value1=0;value2=10) INFO: subcase ran
   - (in subcase: value1=0;value2=1000) INFO: subcase ran
@@ -1366,8 +1354,6 @@ FAIL :values:stage="override";type="vec4%3Cf32%3E" assert_unreached:
   - (in subcase: value1=-10;value2=1000) INFO: subcase ran
   - (in subcase: value1=0;value2=-1000) INFO: subcase ran
   - (in subcase: value1=0;value2=-10) INFO: subcase ran
-  - (in subcase: value1=0;value2=0) EXPECTATION FAILED: Expected validation error
-      at (elided: only 2 shown)
   - (in subcase: value1=0;value2=0) INFO: subcase ran
   - (in subcase: value1=0;value2=10) INFO: subcase ran
   - (in subcase: value1=0;value2=1000) INFO: subcase ran
@@ -1411,8 +1397,6 @@ FAIL :values:stage="override";type="vec4%3Cf16%3E" assert_unreached:
   - (in subcase: value1=-10;value2=1000) INFO: subcase ran
   - (in subcase: value1=0;value2=-1000) INFO: subcase ran
   - (in subcase: value1=0;value2=-10) INFO: subcase ran
-  - (in subcase: value1=0;value2=0) EXPECTATION FAILED: Expected validation error
-      at (elided: only 2 shown)
   - (in subcase: value1=0;value2=0) INFO: subcase ran
   - (in subcase: value1=0;value2=10) INFO: subcase ran
   - (in subcase: value1=0;value2=1000) INFO: subcase ran

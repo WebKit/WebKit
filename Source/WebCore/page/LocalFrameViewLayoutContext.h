@@ -128,7 +128,9 @@ public:
     void flushPostLayoutTasks();
     void didLayout(bool canDeferUpdateLayerPositions);
 
+    void requestUpdateLayerPositions(bool needsFullRepaint = false);
     void flushUpdateLayerPositions();
+    void markForUpdateLayerPositionsAfterSVGTransformChange();
 
     bool updateCompositingLayersAfterStyleChange();
     void updateCompositingLayersAfterLayout();

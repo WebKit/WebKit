@@ -29,13 +29,14 @@
 
 #include "CachedCall.h"
 #include "InterpreterInlines.h"
+#include "JSAsyncFromSyncIterator.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 #include "VMEntryScopeInlines.h"
 
 namespace JSC {
 
-JSValue iteratorNext(JSGlobalObject* globalObject, IterationRecord iterationRecord, JSValue argument)
+static JSValue iteratorNextImpl(JSGlobalObject* globalObject, IterationRecord iterationRecord, JSValue argument)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -82,18 +83,38 @@ JSValue iteratorNextWithCachedCall(JSGlobalObject* globalObject, IterationRecord
     return result;
 }
 
+JSValue iteratorNext(JSGlobalObject* globalObject, IterationRecord iterationRecord, JSValue argument)
+{
+    return iteratorNextImpl(globalObject, iterationRecord, argument);
+}
+
+JSValue iteratorNextExported(JSGlobalObject* globalObject, IterationRecord iterationRecord, JSValue argument)
+{
+    return iteratorNextImpl(globalObject, iterationRecord, argument);
+}
+
 JSValue iteratorValue(JSGlobalObject* globalObject, JSValue iterResult)
 {
     return iterResult.get(globalObject, globalObject->vm().propertyNames->value);
 }
 
-bool iteratorComplete(JSGlobalObject* globalObject, JSValue iterResult)
+static bool iteratorCompleteImpl(JSGlobalObject* globalObject, JSValue iterResult)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue done = iterResult.get(globalObject, globalObject->vm().propertyNames->done);
     RETURN_IF_EXCEPTION(scope, true);
     RELEASE_AND_RETURN(scope, done.toBoolean(globalObject));
+}
+
+bool iteratorComplete(JSGlobalObject* globalObject, JSValue iterResult)
+{
+    return iteratorCompleteImpl(globalObject, iterResult);
+}
+
+bool iteratorCompleteExported(JSGlobalObject* globalObject, JSValue iterResult)
+{
+    return iteratorCompleteImpl(globalObject, iterResult);
 }
 
 JSValue iteratorStep(JSGlobalObject* globalObject, IterationRecord iterationRecord)
@@ -281,6 +302,80 @@ IterationRecord iteratorForIterable(JSGlobalObject* globalObject, JSValue iterab
 IterationRecord iteratorDirect(JSGlobalObject* globalObject, JSValue object)
 {
     return { object, object.get(globalObject, globalObject->vm().propertyNames->next) };
+}
+
+// https://tc39.es/ecma262/multipage/abstract-operations.html#sec-getiterator, ASYNC kind
+static IterationRecord getAsyncIteratorImpl(JSGlobalObject& globalObject, JSValue iterable)
+{
+    auto& vm = globalObject.vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    auto* iterableObject = iterable.getObject();
+    if (!iterableObject) [[unlikely]] {
+        throwTypeError(&globalObject, throwScope, "iterable should be an object"_s);
+        return { };
+    }
+
+    CallData callData;
+    auto method = iterableObject->getMethod(&globalObject, callData, vm.propertyNames->asyncIteratorSymbol, "asyncIteratorSymbol property should be callable"_s);
+    RETURN_IF_EXCEPTION(throwScope, { });
+
+    if (method.isUndefined()) {
+        auto syncMethod = iteratorMethod(&globalObject, iterableObject);
+        RETURN_IF_EXCEPTION(throwScope, { });
+
+        if (syncMethod.isUndefined()) [[unlikely]] {
+            throwTypeError(&globalObject, throwScope, "iterable should have an iterator symbol"_s);
+            return { };
+        }
+
+        callData = getCallData(syncMethod);
+        auto iterator = call(&globalObject, syncMethod, callData, iterableObject, { });
+        RETURN_IF_EXCEPTION(throwScope, { });
+
+        auto* iteratorObject = iterator.getObject();
+        if (!iteratorObject) [[unlikely]] {
+            throwTypeError(&globalObject, throwScope, "iterator method should return an object"_s);
+            return { };
+        }
+
+        auto syncIteratorRecord = iteratorDirect(&globalObject, iterator);
+        RETURN_IF_EXCEPTION(throwScope, { });
+
+        auto* asyncFromSyncIterator = JSAsyncFromSyncIterator::create(vm, globalObject.asyncFromSyncIteratorStructure(), syncIteratorRecord.iterator, syncIteratorRecord.nextMethod);
+        RETURN_IF_EXCEPTION(throwScope, { });
+
+        auto record = iteratorDirect(&globalObject, asyncFromSyncIterator);
+        RETURN_IF_EXCEPTION(throwScope, { });
+        return record;
+    }
+
+    if (method.isUndefined()) [[unlikely]] {
+        throwTypeError(&globalObject, throwScope, "iterable should have an iterator symbol"_s);
+        return { };
+    }
+
+    callData = getCallData(method);
+    auto iterator = call(&globalObject, method, callData, iterableObject, { });
+    RETURN_IF_EXCEPTION(throwScope, { });
+
+    auto* iteratorObject = iterator.getObject();
+    if (!iteratorObject) [[unlikely]] {
+        throwTypeError(&globalObject, throwScope, "iterator method should return an object"_s);
+        return { };
+    }
+
+    RELEASE_AND_RETURN(throwScope, iteratorDirect(&globalObject, iterator));
+}
+
+IterationRecord getAsyncIterator(JSGlobalObject& globalObject, JSValue iterable)
+{
+    return getAsyncIteratorImpl(globalObject, iterable);
+}
+
+IterationRecord getAsyncIteratorExported(JSGlobalObject& globalObject, JSValue iterable)
+{
+    return getAsyncIteratorImpl(globalObject, iterable);
 }
 
 IterableValidationResult validateIterable(VM&, JSValue iterable, JSValue symbolIterator)

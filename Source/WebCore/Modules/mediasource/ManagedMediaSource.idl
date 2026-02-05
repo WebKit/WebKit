@@ -37,7 +37,7 @@ enum PreferredQuality {
     EnabledForContext,
     Exposed=(Window,DedicatedWorker)
 ] interface ManagedMediaSource : MediaSource {
-    [CallWith=CurrentScriptExecutionContext] constructor(optional MediaSourceInit init);
+    [CallWith=CurrentScriptExecutionContext] constructor(optional MediaSourceInit init = {});
 
     readonly attribute PreferredQuality quality;
     attribute EventHandler onqualitychange;

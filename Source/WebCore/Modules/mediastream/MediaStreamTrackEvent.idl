@@ -31,8 +31,7 @@
     [SameObject] readonly attribute MediaStreamTrack track;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary MediaStreamTrackEventInit : EventInit {
+// https://w3c.github.io/mediacapture-main/#dom-mediastreamtrackeventinit
+dictionary MediaStreamTrackEventInit : EventInit {
     required MediaStreamTrack track;
 };

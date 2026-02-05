@@ -698,7 +698,7 @@ template<> struct DefaultHash<WebCore::LayoutUnit> {
 // good candidates to represent the deleted and empty values in HashMaps as well.
 template<> struct HashTraits<WebCore::LayoutUnit> : GenericHashTraits<WebCore::LayoutUnit> {
     static constexpr bool emptyValueIsZero = false;
-    static WebCore::LayoutUnit emptyValue()
+    static constexpr WebCore::LayoutUnit emptyValue()
     {
         return WebCore::LayoutUnit::fromRawValue(std::numeric_limits<int>::min());
     }
@@ -708,14 +708,14 @@ template<> struct HashTraits<WebCore::LayoutUnit> : GenericHashTraits<WebCore::L
 
 template<>
 struct MarkableTraits<WebCore::LayoutUnit> {
-    static bool isEmptyValue(WebCore::LayoutUnit value)
+    static constexpr bool isEmptyValue(WebCore::LayoutUnit value)
     {
-        return value == WebCore::LayoutUnit(-1);
+        return value == emptyValue();
     }
 
-    static WebCore::LayoutUnit emptyValue()
+    static constexpr WebCore::LayoutUnit emptyValue()
     {
-        return WebCore::LayoutUnit(-1);
+        return HashTraits<WebCore::LayoutUnit>::emptyValue();
     }
 };
 

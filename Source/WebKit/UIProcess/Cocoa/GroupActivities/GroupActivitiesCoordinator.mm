@@ -140,14 +140,14 @@ GroupActivitiesCoordinator::GroupActivitiesCoordinator(GroupActivitiesSession& s
             protectedThis->sessionStateChanged(session, state);
     }))
 {
-    [session.protectedGroupSession() coordinateWithCoordinator:m_playbackCoordinator.get()];
+    [protect(session.groupSession()) coordinateWithCoordinator:m_playbackCoordinator.get()];
     session.addStateChangeObserver(m_stateChangeObserver);
 }
 
 GroupActivitiesCoordinator::~GroupActivitiesCoordinator()
 {
-    m_session->protectedGroupSession().get().newActivityCallback = nil;
-    m_session->protectedGroupSession().get().stateChangedCallback = nil;
+    protect(m_session->groupSession()).get().newActivityCallback = nil;
+    protect(m_session->groupSession()).get().stateChangedCallback = nil;
 }
 
 void GroupActivitiesCoordinator::sessionStateChanged(const GroupActivitiesSession& session, GroupActivitiesSession::State state)

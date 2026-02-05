@@ -66,49 +66,51 @@ messages -> RemoteGraphicsContext Stream {
     SetLineDash(FixedVector<double> dashArray, float dashOffset) StreamBatched
     SetLineJoin(enum:uint8_t WebCore::LineJoin lineJoin) StreamBatched
     SetMiterLimit(float limit) StreamBatched
-    Clip(WebCore::FloatRect rect)
-    ClipRoundedRect(WebCore::FloatRoundedRect rect)
-    ClipOut(WebCore::FloatRect rect)
-    ClipOutRoundedRect(WebCore::FloatRoundedRect rect)
-    ClipToImageBuffer(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, WebCore::FloatRect destinationRect)
-    ClipOutToPath(WebCore::Path path)
-    ClipPath(WebCore::Path path, enum:bool WebCore::WindRule windRule)
-    ResetClip()
-    DrawGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, IPC::ArrayReferenceTuple<WebCore::GlyphBufferGlyph, WebCore::FloatSize> glyphsAdvances, WebCore::FloatPoint localAnchor, enum:uint8_t WebCore::FontSmoothingMode smoothingMode)
-    DrawDisplayList(WebKit::RemoteDisplayListIdentifier identifier)
-    DrawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, WebCore::FloatRect sourceImageRect, Ref<WebCore::Filter> filter)
-    DrawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::FloatRect destinationRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options)
-    DrawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatRect destRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options)
-    DrawSystemImage(Ref<WebCore::SystemImage> systemImage, WebCore::FloatRect destinationRect)
-    DrawPatternNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatRect destRect, WebCore::FloatRect tileRect, WebCore::AffineTransform transform, WebCore::FloatPoint phase, WebCore::FloatSize spacing, struct WebCore::ImagePaintingOptions options)
-    DrawPatternImageBuffer(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatRect destRect, WebCore::FloatRect tileRect, WebCore::AffineTransform transform, WebCore::FloatPoint phase, WebCore::FloatSize spacing, struct WebCore::ImagePaintingOptions options)
-    BeginTransparencyLayer(float opacity)
-    BeginTransparencyLayerWithCompositeMode(struct WebCore::CompositeMode compositeMode)
-    EndTransparencyLayer()
-    DrawRect(WebCore::FloatRect rect, float borderThickness)
-    DrawLine(WebCore::FloatPoint point1, WebCore::FloatPoint point2)
-    DrawLinesForText(WebCore::FloatPoint point, float thickness, std::span<const WebCore::FloatSegment> lineSegments, bool printing, bool doubleLines, enum:uint8_t WebCore::StrokeStyle strokeStyle)
-    DrawDotsForDocumentMarker(WebCore::FloatRect rect, struct WebCore::DocumentMarkerLineStyle style)
-    DrawEllipse(WebCore::FloatRect rect)
-    DrawPath(WebCore::Path path)
-    DrawFocusRingPath(WebCore::Path path, float outlineWidth, WebCore::Color color)
-    DrawFocusRingRects(Vector<WebCore::FloatRect> rects, float outlineOffset, float outlineWidth, WebCore::Color color)
-    FillRect(WebCore::FloatRect rect, enum:bool WebCore::RequiresClipToRect requiresClipToRect)
-    FillRectWithColor(WebCore::FloatRect rect, WebCore::Color color)
-    FillRectWithGradient(WebCore::FloatRect rect, Ref<WebCore::Gradient> gradient)
-    FillRectWithGradientAndSpaceTransform(WebCore::FloatRect rect, Ref<WebCore::Gradient> gradient, WebCore::AffineTransform transform, enum:bool WebCore::RequiresClipToRect requiresClipToRect)
-    FillCompositedRect(WebCore::FloatRect rect, WebCore::Color color, enum:uint8_t WebCore::CompositeOperator op, enum:uint8_t WebCore::BlendMode blendMode)
-    FillRoundedRect(WebCore::FloatRoundedRect rect, WebCore::Color color, enum:uint8_t WebCore::BlendMode blendMode)
-    FillRectWithRoundedHole(WebCore::FloatRect rect, WebCore::FloatRoundedRect roundedHoleRect, WebCore::Color color)
+    Clip(WebCore::FloatRect rect) StreamBatched
+    ClipRoundedRect(WebCore::FloatRoundedRect rect) StreamBatched
+    ClipOut(WebCore::FloatRect rect) StreamBatched
+    ClipOutRoundedRect(WebCore::FloatRoundedRect rect) StreamBatched
+    ClipToImageBuffer(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, WebCore::FloatRect destinationRect) StreamBatched
+    ClipOutToPath(WebCore::Path path) StreamBatched
+    ClipPath(WebCore::Path path, enum:bool WebCore::WindRule windRule) StreamBatched
+    ClipCachedPath(WebKit::RemotePathImplIdentifier identifier, enum:bool WebCore::WindRule windRule)
+    ResetClip() StreamBatched
+    DrawGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, IPC::ArrayReferenceTuple<WebCore::GlyphBufferGlyph, WebCore::FloatSize> glyphsAdvances, WebCore::FloatPoint localAnchor, enum:uint8_t WebCore::FontSmoothingMode smoothingMode) StreamBatched
+    DrawDisplayList(WebKit::RemoteDisplayListIdentifier identifier) StreamBatched
+    DrawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, WebCore::FloatRect sourceImageRect, Ref<WebCore::Filter> filter) StreamBatched
+    DrawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::FloatRect destinationRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options) StreamBatched
+    DrawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatRect destRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options) StreamBatched
+    DrawSystemImage(Ref<WebCore::SystemImage> systemImage, WebCore::FloatRect destinationRect) StreamBatched
+    DrawPatternNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatRect destRect, WebCore::FloatRect tileRect, WebCore::AffineTransform transform, WebCore::FloatPoint phase, WebCore::FloatSize spacing, struct WebCore::ImagePaintingOptions options) StreamBatched
+    DrawPatternImageBuffer(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatRect destRect, WebCore::FloatRect tileRect, WebCore::AffineTransform transform, WebCore::FloatPoint phase, WebCore::FloatSize spacing, struct WebCore::ImagePaintingOptions options) StreamBatched
+    BeginTransparencyLayer(float opacity) StreamBatched
+    BeginTransparencyLayerWithCompositeMode(struct WebCore::CompositeMode compositeMode) StreamBatched
+    EndTransparencyLayer() StreamBatched
+    DrawRect(WebCore::FloatRect rect, float borderThickness) StreamBatched
+    DrawLine(WebCore::FloatPoint point1, WebCore::FloatPoint point2) StreamBatched
+    DrawLinesForText(WebCore::FloatPoint point, float thickness, std::span<const WebCore::FloatSegment> lineSegments, bool printing, bool doubleLines, enum:uint8_t WebCore::StrokeStyle strokeStyle) StreamBatched
+    DrawDotsForDocumentMarker(WebCore::FloatRect rect, struct WebCore::DocumentMarkerLineStyle style) StreamBatched
+    DrawEllipse(WebCore::FloatRect rect) StreamBatched
+    DrawPath(WebCore::Path path) StreamBatched
+    DrawFocusRingPath(WebCore::Path path, float outlineWidth, WebCore::Color color) StreamBatched
+    DrawFocusRingRects(Vector<WebCore::FloatRect> rects, float outlineOffset, float outlineWidth, WebCore::Color color) StreamBatched
+    FillRect(WebCore::FloatRect rect, enum:bool WebCore::RequiresClipToRect requiresClipToRect) StreamBatched
+    FillRectWithColor(WebCore::FloatRect rect, WebCore::Color color) StreamBatched
+    FillRectWithGradient(WebCore::FloatRect rect, Ref<WebCore::Gradient> gradient) StreamBatched
+    FillRectWithGradientAndSpaceTransform(WebCore::FloatRect rect, Ref<WebCore::Gradient> gradient, WebCore::AffineTransform transform, enum:bool WebCore::RequiresClipToRect requiresClipToRect) StreamBatched
+    FillCompositedRect(WebCore::FloatRect rect, WebCore::Color color, enum:uint8_t WebCore::CompositeOperator op, enum:uint8_t WebCore::BlendMode blendMode) StreamBatched
+    FillRoundedRect(WebCore::FloatRoundedRect rect, WebCore::Color color, enum:uint8_t WebCore::BlendMode blendMode) StreamBatched
+    FillRectWithRoundedHole(WebCore::FloatRect rect, WebCore::FloatRoundedRect roundedHoleRect, WebCore::Color color) StreamBatched
 #if ENABLE(INLINE_PATH_DATA)
-    FillLine(struct WebCore::PathDataLine line)
-    FillArc(struct WebCore::PathArc arc)
-    FillClosedArc(struct WebCore::PathClosedArc closedArc)
-    FillQuadCurve(struct WebCore::PathDataQuadCurve curve)
-    FillBezierCurve(struct WebCore::PathDataBezierCurve curve)
+    FillLine(struct WebCore::PathDataLine line) StreamBatched
+    FillArc(struct WebCore::PathArc arc) StreamBatched
+    FillClosedArc(struct WebCore::PathClosedArc closedArc) StreamBatched
+    FillQuadCurve(struct WebCore::PathDataQuadCurve curve) StreamBatched
+    FillBezierCurve(struct WebCore::PathDataBezierCurve curve) StreamBatched
 #endif
     FillPathSegment(WebCore::PathSegment segment) StreamBatched
     FillPath(WebCore::Path path)
+    FillCachedPath(WebKit::RemotePathImplIdentifier identifier)
     FillEllipse(WebCore::FloatRect rect)
     StrokeRect(WebCore::FloatRect rect, float lineWidth)
 #if ENABLE(INLINE_PATH_DATA)
@@ -122,17 +124,17 @@ messages -> RemoteGraphicsContext Stream {
     StrokePathSegment(WebCore::PathSegment segment) StreamBatched
     StrokePath(WebCore::Path path) StreamBatched
     StrokeEllipse(WebCore::FloatRect rect) StreamBatched
-    ClearRect(WebCore::FloatRect rect)
-    DrawControlPart(Ref<WebCore::ControlPart> part, WebCore::FloatRoundedRect borderRect, float deviceScaleFactor, WebCore::ControlStyle style)
+    ClearRect(WebCore::FloatRect rect) StreamBatched
+    DrawControlPart(Ref<WebCore::ControlPart> part, WebCore::FloatRoundedRect borderRect, float deviceScaleFactor, WebCore::ControlStyle style) StreamBatched
 #if USE(CG)
-    ApplyStrokePattern()
-    ApplyFillPattern()
+    ApplyStrokePattern() StreamBatched
+    ApplyFillPattern() StreamBatched
 #endif
-    ApplyDeviceScaleFactor(float scaleFactor)
+    ApplyDeviceScaleFactor(float scaleFactor) StreamBatched
 
     BeginPage(WebCore::FloatRect pageRect)
     EndPage()
-    SetURLForRect(URL link, WebCore::FloatRect destRect)
+    SetURLForRect(URL link, WebCore::FloatRect destRect) StreamBatched
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     DrawVideoFrame(struct WebKit::SharedVideoFrame frame, WebCore::FloatRect rect, struct WebCore::ImageOrientation orientation, bool shouldDiscardAlpha) NotStreamEncodable

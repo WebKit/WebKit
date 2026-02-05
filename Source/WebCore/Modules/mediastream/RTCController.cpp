@@ -74,9 +74,9 @@ void RTCController::remove(RTCPeerConnection& connection)
 
 static inline bool matchDocumentOrigin(Document& document, SecurityOrigin& topOrigin, SecurityOrigin& clientOrigin)
 {
-    if (topOrigin.isSameOriginAs(document.protectedSecurityOrigin()))
+    if (topOrigin.isSameOriginAs(protect(document.securityOrigin())))
         return true;
-    return topOrigin.isSameOriginAs(document.protectedTopOrigin()) && clientOrigin.isSameOriginAs(document.protectedSecurityOrigin());
+    return topOrigin.isSameOriginAs(protect(document.topOrigin())) && clientOrigin.isSameOriginAs(protect(document.securityOrigin()));
 }
 
 bool RTCController::shouldDisableICECandidateFiltering(Document& document)

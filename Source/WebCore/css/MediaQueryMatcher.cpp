@@ -69,7 +69,7 @@ std::unique_ptr<RenderStyle> MediaQueryMatcher::documentElementUserAgentStyle() 
     if (!m_document || !m_document->frame())
         return nullptr;
 
-    auto* documentElement = m_document->documentElement();
+    CheckedPtr documentElement = m_document->documentElement();
     if (!documentElement)
         return nullptr;
 

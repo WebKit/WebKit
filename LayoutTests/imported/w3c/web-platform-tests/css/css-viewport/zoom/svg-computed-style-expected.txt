@@ -73,6 +73,10 @@ PASS Property -webkit-text-stroke-width value '4px' no zoom
 PASS Property -webkit-text-stroke-width value 'inherit' no zoom
 PASS Property -webkit-text-stroke-width value '4px' zoom: 2
 PASS Property -webkit-text-stroke-width value 'inherit' zoom: 2
+PASS Property stroke-width value '4px' no zoom
+PASS Property stroke-width value 'inherit' no zoom
+PASS Property stroke-width value '4px' zoom: 2
+PASS Property stroke-width value 'inherit' zoom: 2
 PASS Property width value '19px' no zoom
 PASS Property width value 'inherit' no zoom
 PASS Property width value '19px' zoom: 2

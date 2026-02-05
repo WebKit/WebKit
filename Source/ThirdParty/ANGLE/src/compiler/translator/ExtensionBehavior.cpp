@@ -21,6 +21,8 @@
 //
 // Note that OES_EGL_image_external and OES_texture_3D are ESSL 100 only extensions, but one app has
 // been found that uses them on GLSL 310.  http://issuetracker.google.com/285871779
+// Similarly, other applications have been found to use OES_EGL_image_external on GLSL 320. Refer to
+// http://issuetracker.google.com/452565020 for details.
 //
 // Note that OES_texture_storage_multisample_2d_array officially requires ESSL 310
 // but ANGLE is able to support it with ESSL 300 in most cases.

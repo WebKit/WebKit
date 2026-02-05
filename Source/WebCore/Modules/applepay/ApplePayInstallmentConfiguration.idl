@@ -28,17 +28,16 @@
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ApplePayInstallmentConfiguration {
     ApplePaySetupFeatureType featureType = "appleCard";
     DOMString merchandisingImageData;
     DOMString openToBuyThresholdAmount;
     DOMString bindingTotalAmount;
     DOMString currencyCode;
-    boolean isInStorePurchase;
+    boolean isInStorePurchase = false;
     DOMString merchantIdentifier;
     DOMString referrerIdentifier;
-    sequence<ApplePayInstallmentItem> items;
+    sequence<ApplePayInstallmentItem> items = [];
     JSON applicationMetadata;
     ApplePayInstallmentRetailChannel retailChannel = "unknown";
 };

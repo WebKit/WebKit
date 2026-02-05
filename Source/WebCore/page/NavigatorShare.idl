@@ -27,6 +27,6 @@
 [
     EnabledBySetting=WebShareEnabled
 ] interface mixin NavigatorShare {
-    [CallWith=CurrentDocument, SecureContext] boolean canShare(optional ShareData shareData);
-    [CallWith=CurrentDocument, SecureContext] Promise<undefined> share(optional ShareData shareData);
+    [CallWith=CurrentDocument, SecureContext] boolean canShare(optional ShareData shareData = {});
+    [CallWith=CurrentDocument, SecureContext] Promise<undefined> share(optional ShareData shareData = {});
 };

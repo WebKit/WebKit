@@ -49,16 +49,16 @@ std::ostream &operator<<(std::ostream &out, SamplerType samplerType)
     switch (samplerType)
     {
         case SamplerType::Float:
-            out << "Float";
+            out << "F";
             break;
         case SamplerType::SignedInteger:
-            out << "SignedInteger";
+            out << "SI";
             break;
         case SamplerType::UnsignedInteger:
-            out << "UnsignedInteger";
+            out << "UI";
             break;
         case SamplerType::Shadow:
-            out << "Shadow";
+            out << "SD";
             break;
     }
 
@@ -70,31 +70,31 @@ std::ostream &operator<<(std::ostream &out, TextureType textureType)
     switch (textureType)
     {
         case TextureType::UnsignedNormalized:
-            out << "UnsignedNormalized";
+            out << "Norm";
             break;
         case TextureType::SignedNormalized:
-            out << "SignedNormalized";
+            out << "SNorm";
             break;
         case TextureType::Float:
-            out << "Float";
+            out << "F";
             break;
         case TextureType::UnsignedInteger:
-            out << "UnsignedInteger";
+            out << "UI";
             break;
         case TextureType::SignedInteger:
-            out << "SignedInteger";
+            out << "SI";
             break;
         case TextureType::Depth:
-            out << "Depth";
+            out << "D";
             break;
         case TextureType::DepthStencilDepthMode:
-            out << "DepthStencilDepthMode";
+            out << "DSD";
             break;
         case TextureType::DepthStencilStencilMode:
-            out << "DepthStencilStencilMode";
+            out << "DSS";
             break;
         case TextureType::Stencil:
-            out << "Stencil";
+            out << "S";
             break;
     }
 
@@ -106,7 +106,7 @@ std::ostream &operator<<(std::ostream &out, TextureCompareMode textureCompareMod
     switch (textureCompareMode)
     {
         case TextureCompareMode::None:
-            out << "None";
+            out << "Non";
             break;
         case TextureCompareMode::Ref:
             out << "Ref";
@@ -139,8 +139,8 @@ std::string IncompatibleTextureVariationsTestPrint(
     TextureCompareMode textureCompareMode;
     ParseIncompatibleTextureTestParams(params, &samplerType, &textureType, &textureCompareMode);
 
-    out << "__" << "SamplerType" << samplerType << "_" << "TextureType" << textureType << "_"
-        << "TextureCompareMode" << textureCompareMode;
+    out << "__" << "Sampler" << samplerType << "_" << "Tex" << textureType << "_"
+        << "Comp" << textureCompareMode;
     return out.str();
 }
 
@@ -171,6 +171,8 @@ TEST_P(IncompatibleTextureTest, Test)
         case SamplerType::Shadow:
             fragmentSource << "uniform mediump sampler2DShadow tex;\n";
             break;
+        default:
+            UNREACHABLE();
     }
     fragmentSource << "void main()\n" << "{\n";
     fragmentSource << "    my_FragColor = vec4(texture(tex, "

@@ -32,6 +32,7 @@
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
+#import "UIKitSPIForTesting.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKContentWorld.h>
 #import <WebKit/WKContentWorldPrivate.h>
@@ -52,6 +53,10 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakObjCPtr.h>
+
+#if PLATFORM(IOS)
+#import <WebKitLegacy/WebEvent.h>
+#endif
 
 static bool isDoneWithNavigation;
 static bool isDoneWithFormSubmission;
@@ -1743,6 +1748,43 @@ TEST(WKUserContentController, AllowAccessToClosedShadowRoots)
     EXPECT_WK_STREQ(@"input,span,slot,ShadowRoot,div,body,html,HTMLDocument,Window", path);
 }
 
+#endif
+
+#if PLATFORM(IOS)
+TEST(WKUserContentController, FireUserTextInputEvent)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568)]);
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id<_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+
+    [webView _setInputDelegate:inputDelegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE Html><html><head><meta name='viewport' content='width=device-width, initial-scale=1'></head>"
+        "<body><div><input></div></body></html>"];
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.querySelector('input').focus()"];
+
+    RetainPtr configuration = adoptNS([_WKContentWorldConfiguration new]);
+    configuration.get().allowAutofill = YES;
+    RetainPtr autofillWorld = [WKContentWorld _worldWithConfiguration:configuration.get()];
+
+    [webView objectByEvaluatingJavaScript:@"window.didFire = false; document.querySelector('input').addEventListener('webkitusertextinput', () => didFire = true);" inFrame:nil inContentWorld:autofillWorld.get()];
+
+    bool doneWaiting = false;
+    auto firstWebEvent = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:CFAbsoluteTimeGetCurrent() characters:@"a" charactersIgnoringModifiers:@"a" modifiers:0 isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:0 isTabKey:NO]);
+    auto secondWebEvent = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyUp timeStamp:CFAbsoluteTimeGetCurrent() characters:@"a" charactersIgnoringModifiers:@"a" modifiers:0 isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:0 isTabKey:NO]);
+    [webView handleKeyEvent:firstWebEvent.get() completion:[&](WebEvent *event, BOOL) {
+        EXPECT_TRUE([event isEqual:firstWebEvent.get()]);
+        [webView handleKeyEvent:secondWebEvent.get() completion:[&] (WebEvent *event, BOOL) {
+            EXPECT_TRUE([event isEqual:secondWebEvent.get()]);
+            doneWaiting = true;
+        }];
+        [[webView textInputContentView] insertText:@"a"];
+    }];
+    TestWebKitAPI::Util::run(&doneWaiting);
+
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.didFire" inFrame:nil inContentWorld:autofillWorld.get()] boolValue]);
+}
 #endif
 
 TEST(WKUserContentController, DisableLegacyBuiltinOverrides)

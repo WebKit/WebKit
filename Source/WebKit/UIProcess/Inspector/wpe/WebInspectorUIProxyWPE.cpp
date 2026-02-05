@@ -125,7 +125,7 @@ RefPtr<WebPageProxy> WebInspectorUIProxy::platformCreateFrontendPage()
     if (m_underTest)
         preferences->setHiddenPageDOMTimerThrottlingEnabled(false);
 
-    auto pageGroup = WebPageGroup::create(WebKit::defaultInspectorPageGroupIdentifierForPage(protectedInspectedPage().get()));
+    auto pageGroup = WebPageGroup::create(WebKit::defaultInspectorPageGroupIdentifierForPage(protect(inspectedPage()).get()));
     auto websiteDataStore = inspectorWebsiteDataStore();
     auto& processPool = WebKit::defaultInspectorProcessPool(inspectionLevel());
 

@@ -35,27 +35,27 @@ using namespace WebKit;
 
 WKTypeID WKBackForwardListGetTypeID()
 {
-    return toAPI(WebBackForwardList::APIType);
+    return toAPI(WebBackForwardListWrapper::APIType);
 }
 
 WKBackForwardListItemRef WKBackForwardListGetCurrentItem(WKBackForwardListRef listRef)
 {
-    return toAPI(toProtectedImpl(listRef)->protectedCurrentItem().get());
+    return toAPI(protect(toProtectedImpl(listRef)->currentItem()).get());
 }
 
 WKBackForwardListItemRef WKBackForwardListGetBackItem(WKBackForwardListRef listRef)
 {
-    return toAPI(toProtectedImpl(listRef)->protectedBackItem().get());
+    return toAPI(protect(toProtectedImpl(listRef)->backItem()).get());
 }
 
 WKBackForwardListItemRef WKBackForwardListGetForwardItem(WKBackForwardListRef listRef)
 {
-    return toAPI(toProtectedImpl(listRef)->protectedForwardItem().get());
+    return toAPI(protect(toProtectedImpl(listRef)->forwardItem()).get());
 }
 
 WKBackForwardListItemRef WKBackForwardListGetItemAtIndex(WKBackForwardListRef listRef, int index)
 {
-    return toAPI(toProtectedImpl(listRef)->protectedItemAtIndex(index).get());
+    return toAPI(protect(toProtectedImpl(listRef)->itemAtIndex(index)).get());
 }
 
 void WKBackForwardListClear(WKBackForwardListRef listRef)

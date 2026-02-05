@@ -51,7 +51,7 @@ b:100
 non-empty tbody
 b:100
 non-empty thead
-h:0
+h:100
 THEAD TBODY
 
 empty thead, empty tbody
@@ -85,33 +85,33 @@ Multiple TBODY
 Legacy does not distribute any heights when tr is empty.
 Legacy always distributes everything to 1st tbody.
 2 tbody
-b:0
-b:0
+b:50
+b:50
 2 tbody, with non-empty tds
 Legacy distributes everything to 1st tbody
-b:82
-b:18
+b:50
+b:50
 x
 x
 2 tbody, 40%, auto, no td
 FF: distributes everything to auto when empty. Legacy does not distribute
-b:0
-b:0
+b:50
+b:50
 2 tbody, 40%, auto, non-empty td
-b:82
-b:18
+b:50
+b:50
 x
 x
 2 tbody, 40px, auto, non-empty td
 FF gets confused with 2nd body placement
-b:82
-b:18
+b:50
+b:50
 x
 x
 2 tbody, 40%, 40px, non-empty td
 FF splits evenly
-b:82
-b:18
+b:50
+b:50
 x
 x
 Sized THEAD/TBODY
@@ -160,53 +160,39 @@ PASS table 12
 PASS table 13
 PASS table 14
 PASS table 15
-FAIL table 16 assert_equals:
-<table data-expected-height="100">
-  <thead data-expected-height="100"><tr></tr></thead>
-</table>
-height expected 100 but got 0
+PASS table 16
 PASS table 17
 PASS table 18
 PASS table 19
 PASS table 20
 PASS table 21
 PASS table 22
-FAIL table 23 assert_equals:
-<table data-expected-height="100">
-  <tbody data-expected-height="50"><tr></tr></tbody>
-  <tbody data-expected-height="50"><tr></tr></tbody>
-</table>
-height expected 100 but got 0
-FAIL table 24 assert_equals:
-<table data-expected-height="100">
-  <tbody data-expected-height="50"><tr><td>x</td></tr></tbody>
-  <tbody data-expected-height="50"><tr><td>x</td></tr></tbody>
-</table>
-height expected 50 but got 82
+PASS table 23
+PASS table 24
 FAIL table 25 assert_equals:
 <table data-expected-height="100">
   <tbody style="height:40%" data-expected-height="40"><tr></tr></tbody>
   <tbody data-expected-height="60"><tr></tr></tbody>
 </table>
-height expected 100 but got 0
+height expected 40 but got 50
 FAIL table 26 assert_equals:
 <table data-expected-height="100">
   <tbody style="height:40%" data-expected-height="40"><tr><td>x</td></tr></tbody>
   <tbody data-expected-height="60"><tr><td>x</td></tr></tbody>
 </table>
-height expected 40 but got 82
+height expected 40 but got 50
 FAIL table 27 assert_equals:
 <table data-expected-height="100">
   <tbody style="height:40px" data-expected-height="40"><tr><td>x</td></tr></tbody>
   <tbody data-expected-height="60" data-offset-y="40"><tr><td>x</td></tr></tbody>
 </table>
-height expected 40 but got 82
+height expected 40 but got 50
 FAIL table 28 assert_equals:
 <table data-expected-height="100">
   <tbody style="height:40%" data-expected-height="40"><tr><td>x</td></tr></tbody>
   <tbody style="height:40px" data-expected-height="60" data-offset-y="40"><tr><td>x</td></tr></tbody>
 </table>
-height expected 40 but got 82
+height expected 40 but got 50
 FAIL table 29 assert_equals:
 <table data-expected-height="100">
   <thead data-expected-height="20" style="height:20px">

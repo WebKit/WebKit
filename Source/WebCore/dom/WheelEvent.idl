@@ -45,10 +45,7 @@
 };
 
 // https://w3c.github.io/uievents/#idl-wheeleventinit
-
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary WheelEventInit : MouseEventInit {
+dictionary WheelEventInit : MouseEventInit {
     double deltaX = 0.0;
     double deltaY = 0.0;
     double deltaZ = 0.0;

@@ -34,9 +34,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DragEvent);
 
-Ref<DragEvent> DragEvent::create(const AtomString& eventType, DragEventInit&& init)
+Ref<DragEvent> DragEvent::create(const AtomString& eventType, Init&& initializer)
 {
-    return adoptRef(*new DragEvent(eventType, WTF::move(init)));
+    return adoptRef(*new DragEvent(eventType, WTF::move(initializer)));
 }
 
 Ref<DragEvent> DragEvent::createForBindings()
@@ -52,9 +52,9 @@ Ref<DragEvent> DragEvent::create(const AtomString& type, CanBubble canBubble, Is
         screenLocation, windowLocation, movementX, movementY, modifiers, button, buttons, relatedTarget, force, syntheticClickType, dataTransfer, isSimulated, isTrusted));
 }
 
-DragEvent::DragEvent(const AtomString& eventType, DragEventInit&& init)
-    : MouseEvent(EventInterfaceType::DragEvent, eventType, init, IsTrusted::No)
-    , m_dataTransfer(WTF::move(init.dataTransfer))
+DragEvent::DragEvent(const AtomString& eventType, Init&& initializer)
+    : MouseEvent(EventInterfaceType::DragEvent, eventType, WTF::move(initializer), IsTrusted::No)
+    , m_dataTransfer(WTF::move(initializer.dataTransfer))
 {
 }
 

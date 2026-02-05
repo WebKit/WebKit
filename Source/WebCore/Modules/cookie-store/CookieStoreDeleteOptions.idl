@@ -23,11 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://wicg.github.io/cookie-store/#dictdef-cookiestoredeleteoptions
-
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary CookieStoreDeleteOptions {
+// https://cookiestore.spec.whatwg.org/#dictdef-cookiestoredeleteoptions
+dictionary CookieStoreDeleteOptions {
     required USVString name;
     USVString? domain = null;
     USVString path = "/";

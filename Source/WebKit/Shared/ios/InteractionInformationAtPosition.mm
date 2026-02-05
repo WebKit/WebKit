@@ -38,7 +38,7 @@ InteractionInformationAtPosition::InteractionInformationAtPosition(InteractionIn
 #if ENABLE(MODEL_PROCESS)
     bool isInteractiveModel,
 #endif
-    bool isAttachment, bool isAnimatedImage, bool isAnimating, bool canShowAnimationControls, bool isPausedVideo, bool isElement, bool isContentEditable, Markable<WebCore::ScrollingNodeID>&& containerScrollingNodeID,
+    bool isAttachment, bool isAnimatedImage, bool isAnimating, bool isPausedVideo, bool isElement, bool isContentEditable, Markable<WebCore::ScrollingNodeID>&& containerScrollingNodeID,
 #if ENABLE(DATA_DETECTION)
     bool isDataDetectorLink,
 #endif
@@ -74,7 +74,6 @@ InteractionInformationAtPosition::InteractionInformationAtPosition(InteractionIn
         , isAttachment(isAttachment)
         , isAnimatedImage(isAnimatedImage)
         , isAnimating(isAnimating)
-        , canShowAnimationControls(canShowAnimationControls)
         , isPausedVideo(isPausedVideo)
         , isElement(isElement)
         , isContentEditable(isContentEditable)

@@ -33,6 +33,7 @@
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
+#import <wtf/darwin/DispatchOSObject.h>
 
 namespace WebKit {
 namespace NetworkCache {
@@ -55,17 +56,12 @@ Data::Data(Vector<uint8_t>&& data)
 
 Data Data::copyData() const
 {
-    return { protectedDispatchData(), m_isMap ? Backing::Map : Backing::Buffer };
-}
-
-OSObjectPtr<dispatch_data_t> Data::protectedDispatchData() const
-{
-    return dispatchData();
+    return { protect(dispatchData()), m_isMap ? Backing::Map : Backing::Buffer };
 }
 
 Data Data::empty()
 {
-    return { OSObjectPtr<dispatch_data_t> { dispatch_data_empty } };
+    return { protect(dispatch_data_empty) };
 }
 
 std::span<const uint8_t> Data::span() const LIFETIME_BOUND
@@ -100,7 +96,7 @@ bool Data::apply(NOESCAPE const Function<bool(std::span<const uint8_t>)>& applie
 
 Data Data::subrange(size_t offset, size_t size) const
 {
-    return { adoptOSObject(dispatch_data_create_subrange(protectedDispatchData().get(), offset, size)) };
+    return { adoptOSObject(dispatch_data_create_subrange(protect(dispatchData()).get(), offset, size)) };
 }
 
 Data concatenate(const Data& a, const Data& b)
@@ -109,7 +105,7 @@ Data concatenate(const Data& a, const Data& b)
         return b;
     if (b.isNull())
         return a;
-    return { adoptOSObject(dispatch_data_create_concat(a.protectedDispatchData().get(), b.protectedDispatchData().get())) };
+    return { adoptOSObject(dispatch_data_create_concat(protect(a.dispatchData()).get(), protect(b.dispatchData()).get())) };
 }
 
 Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::FileHandle&& outputHandle)

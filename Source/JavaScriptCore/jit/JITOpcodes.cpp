@@ -67,16 +67,6 @@ void JIT::emit_op_mov(const JSInstruction* currentInstruction)
     storeValue(jsRegT10, addressFor(dst));
 }
 
-void JIT::emit_op_end(const JSInstruction* currentInstruction)
-{
-    auto bytecode = currentInstruction->as<OpEnd>();
-    static_assert(noOverlap(returnValueJSR, callFrameRegister));
-    emitGetVirtualRegister(bytecode.m_value, returnValueJSR);
-    emitRestoreCalleeSaves();
-    emitFunctionEpilogue();
-    ret();
-}
-
 void JIT::emit_op_jmp(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJmp>();
@@ -120,30 +110,6 @@ void JIT::emitSlow_op_new_object(const JSInstruction* currentInstruction, Vector
     callOperationNoExceptionCheck(operationNewObject, TrustedImmPtr(&vm()), structureReg);
     boxCell(returnValueGPR, returnValueJSR);
     emitPutVirtualRegister(dst, returnValueJSR);
-}
-
-
-void JIT::emit_op_overrides_has_instance(const JSInstruction* currentInstruction)
-{
-    auto bytecode = currentInstruction->as<OpOverridesHasInstance>();
-    VirtualRegister dst = bytecode.m_dst;
-    VirtualRegister constructor = bytecode.m_constructor;
-    VirtualRegister hasInstanceValue = bytecode.m_hasInstanceValue;
-
-    emitGetVirtualRegisterPayload(hasInstanceValue, regT2);
-
-    // We don't jump if we know what Symbol.hasInstance would do.
-    move(TrustedImm32(1), regT0);
-    loadGlobalObject(regT1);
-    Jump customHasInstanceValue = branchPtr(NotEqual, regT2, Address(regT1, JSGlobalObject::offsetOfFunctionProtoHasInstanceSymbolFunction()));
-    // We know that constructor is an object from the way bytecode is emitted for instanceof expressions.
-    emitGetVirtualRegisterPayload(constructor, regT2);
-    // Check that constructor 'ImplementsDefaultHasInstance' i.e. the object is not a C-API user nor a bound function.
-    test8(Zero, Address(regT2, JSCell::typeInfoFlagsOffset()), TrustedImm32(ImplementsDefaultHasInstance), regT0);
-    customHasInstanceValue.link(this);
-
-    boxBoolean(regT0, jsRegT10);
-    emitPutVirtualRegister(dst, jsRegT10);
 }
 
 void JIT::emit_op_is_empty(const JSInstruction* currentInstruction)
@@ -2153,26 +2119,6 @@ void JIT::emit_op_argument_count(const JSInstruction* currentInstruction)
     JSValueRegs result = JSValueRegs::withTwoAvailableRegs(regT0, regT1);
     boxInt32(regT0, result);
     emitPutVirtualRegister(dst, result);
-}
-
-void JIT::emit_op_get_rest_length(const JSInstruction* currentInstruction)
-{
-    auto bytecode = currentInstruction->as<OpGetRestLength>();
-    VirtualRegister dst = bytecode.m_dst;
-    unsigned numParamsToSkip = bytecode.m_numParametersToSkip;
-
-    load32(payloadFor(CallFrameSlot::argumentCountIncludingThis), regT0);
-    sub32(TrustedImm32(1), regT0);
-    Jump zeroLength = branch32(LessThanOrEqual, regT0, Imm32(numParamsToSkip));
-    sub32(Imm32(numParamsToSkip), regT0);
-    boxInt32(regT0, jsRegT10);
-    Jump done = jump();
-
-    zeroLength.link(this);
-    moveTrustedValue(jsNumber(0), jsRegT10);
-
-    done.link(this);
-    emitPutVirtualRegister(dst, jsRegT10);
 }
 
 void JIT::emit_op_get_argument(const JSInstruction* currentInstruction)

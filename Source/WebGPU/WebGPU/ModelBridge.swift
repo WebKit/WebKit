@@ -22,15 +22,13 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import Metal
-internal import WebGPU_Private.DDModelTypes
+internal import WebGPU_Private.ModelTypes
 
-#if canImport(RealityCoreRenderer, _version: 9999)
-@_spi(RealityCoreRendererAPI) @_spi(ShaderGraph) import RealityCoreRenderer
-@_spi(RealityCoreRendererAPI) @_spi(ShaderGraph) import RealityKit
-@_spi(UsdLoaderAPI) import _USDStageKit_SwiftUI
+#if canImport(RealityCoreRenderer, _version: 6) && canImport(USDStageKit, _version: 34)
+@_spi(RealityCoreRendererAPI) import RealityKit
+@_spi(UsdLoaderAPI) import _USDKit_RealityKit
 @_spi(SwiftAPI) import DirectResource
-import USDStageKit
-import _USDStageKit_SwiftUI
+import _USDKit_RealityKit
 import ShaderGraph
 #endif
 
@@ -38,7 +36,7 @@ typealias String = Swift.String
 
 @objc
 @implementation
-extension DDBridgeVertexAttributeFormat {
+extension WebBridgeVertexAttributeFormat {
     let semantic: Int
     let format: UInt
     let layoutIndex: Int
@@ -59,7 +57,7 @@ extension DDBridgeVertexAttributeFormat {
 
 @objc
 @implementation
-extension DDBridgeVertexLayout {
+extension WebBridgeVertexLayout {
     let bufferIndex: Int
     let bufferOffset: Int
     let bufferStride: Int
@@ -77,7 +75,7 @@ extension DDBridgeVertexLayout {
 
 @objc
 @implementation
-extension DDBridgeMeshPart {
+extension WebBridgeMeshPart {
     let indexOffset: Int
     let indexCount: Int
     let topology: MTLPrimitiveType
@@ -104,19 +102,19 @@ extension DDBridgeMeshPart {
 
 @objc
 @implementation
-extension DDBridgeMeshDescriptor {
+extension WebBridgeMeshDescriptor {
     let vertexBufferCount: Int
     let vertexCapacity: Int
-    let vertexAttributes: [DDBridgeVertexAttributeFormat]
-    let vertexLayouts: [DDBridgeVertexLayout]
+    let vertexAttributes: [WebBridgeVertexAttributeFormat]
+    let vertexLayouts: [WebBridgeVertexLayout]
     let indexCapacity: Int
     let indexType: MTLIndexType
 
     init(
         vertexBufferCount: Int,
         vertexCapacity: Int,
-        vertexAttributes: [DDBridgeVertexAttributeFormat],
-        vertexLayouts: [DDBridgeVertexLayout],
+        vertexAttributes: [WebBridgeVertexAttributeFormat],
+        vertexLayouts: [WebBridgeVertexLayout],
         indexCapacity: Int,
         indexType: MTLIndexType
     ) {
@@ -131,7 +129,7 @@ extension DDBridgeMeshDescriptor {
 
 @objc
 @implementation
-extension DDBridgeSkinningData {
+extension WebBridgeSkinningData {
     let influencePerVertexCount: UInt8
     let jointTransformsData: Data?
     let inverseBindPosesData: Data?
@@ -158,7 +156,7 @@ extension DDBridgeSkinningData {
 
 @objc
 @implementation
-extension DDBridgeBlendShapeData {
+extension WebBridgeBlendShapeData {
     let weights: Data
     let positionOffsets: [Data]
     let normalOffsets: [Data]
@@ -176,7 +174,7 @@ extension DDBridgeBlendShapeData {
 
 @objc
 @implementation
-extension DDBridgeRenormalizationData {
+extension WebBridgeRenormalizationData {
     let vertexIndicesPerTriangle: Data
     let vertexAdjacencies: Data
     let vertexAdjacencyEndIndices: Data
@@ -194,15 +192,15 @@ extension DDBridgeRenormalizationData {
 
 @objc
 @implementation
-extension DDBridgeDeformationData {
-    let skinningData: DDBridgeSkinningData?
-    let blendShapeData: DDBridgeBlendShapeData?
-    let renormalizationData: DDBridgeRenormalizationData?
+extension WebBridgeDeformationData {
+    let skinningData: WebBridgeSkinningData?
+    let blendShapeData: WebBridgeBlendShapeData?
+    let renormalizationData: WebBridgeRenormalizationData?
 
     init(
-        skinningData: DDBridgeSkinningData?,
-        blendShapeData: DDBridgeBlendShapeData?,
-        renormalizationData: DDBridgeRenormalizationData?
+        skinningData: WebBridgeSkinningData?,
+        blendShapeData: WebBridgeBlendShapeData?,
+        renormalizationData: WebBridgeRenormalizationData?
     ) {
         self.skinningData = skinningData
         self.blendShapeData = blendShapeData
@@ -212,29 +210,29 @@ extension DDBridgeDeformationData {
 
 @objc
 @implementation
-extension DDBridgeUpdateMesh {
+extension WebBridgeUpdateMesh {
     let identifier: String
-    let updateType: DDBridgeDataUpdateType
-    let descriptor: DDBridgeMeshDescriptor?
-    let parts: [DDBridgeMeshPart]
+    let updateType: WebBridgeDataUpdateType
+    let descriptor: WebBridgeMeshDescriptor?
+    let parts: [WebBridgeMeshPart]
     let indexData: Data?
     let vertexData: [Data]
     let instanceTransformsData: Data? // [float4x4]
     let instanceTransformsCount: Int
     let materialPrims: [String]
-    let deformationData: DDBridgeDeformationData?
+    let deformationData: WebBridgeDeformationData?
 
     init(
         identifier: String,
-        updateType: DDBridgeDataUpdateType,
-        descriptor: DDBridgeMeshDescriptor?,
-        parts: [DDBridgeMeshPart],
+        updateType: WebBridgeDataUpdateType,
+        descriptor: WebBridgeMeshDescriptor?,
+        parts: [WebBridgeMeshPart],
         indexData: Data?,
         vertexData: [Data],
         instanceTransforms: Data?,
         instanceTransformsCount: Int,
         materialPrims: [String],
-        deformationData: DDBridgeDeformationData?
+        deformationData: WebBridgeDeformationData?
     ) {
         self.identifier = identifier
         self.updateType = updateType
@@ -249,7 +247,7 @@ extension DDBridgeUpdateMesh {
     }
 }
 
-extension DDBridgeUpdateMesh {
+extension WebBridgeUpdateMesh {
     var instanceTransforms: [simd_float4x4] {
         guard let data = instanceTransformsData else {
             return []
@@ -280,7 +278,7 @@ extension DDBridgeUpdateMesh {
 
 @objc
 @implementation
-extension DDBridgeImageAsset {
+extension WebBridgeImageAsset {
     let data: Data?
     let width: Int
     let height: Int
@@ -322,13 +320,13 @@ extension DDBridgeImageAsset {
 
 @objc
 @implementation
-extension DDBridgeUpdateTexture {
-    let imageAsset: DDBridgeImageAsset?
+extension WebBridgeUpdateTexture {
+    let imageAsset: WebBridgeImageAsset?
     let identifier: String
     let hashString: String
 
     init(
-        imageAsset: DDBridgeImageAsset?,
+        imageAsset: WebBridgeImageAsset?,
         identifier: String,
         hashString: String
     ) {
@@ -340,45 +338,354 @@ extension DDBridgeUpdateTexture {
 
 @objc
 @implementation
-extension DDBridgeUpdateMaterial {
+extension WebBridgeTypeReference {
+    let moduleName: String
+    let name: String
+    let typeDefIndex: Int
+
+    init(module: String, name: String, typeDefIndex: Int) {
+        self.moduleName = module
+        self.name = name
+        self.typeDefIndex = typeDefIndex
+    }
+}
+
+@objc
+@implementation
+extension WebBridgeFunctionReference {
+    let moduleName: String
+    let functionIndex: Int
+
+    init(
+        moduleName: String,
+        functionIndex: Int
+    ) {
+        self.moduleName = moduleName
+        self.functionIndex = functionIndex
+    }
+}
+
+@objc
+@implementation
+extension WebBridgeModule {
+    let name: String
+    let imports: [WebBridgeModuleReference]
+    let typeDefinitions: [WebBridgeTypeDefinition]
+    let functions: [WebBridgeFunction]
+    let graphs: [WebBridgeModuleGraph]
+
+    init(
+        name: String,
+        imports: [WebBridgeModuleReference] = [],
+        typeDefinitions: [WebBridgeTypeDefinition] = [],
+        functions: [WebBridgeFunction] = [],
+        graphs: [WebBridgeModuleGraph] = []
+    ) {
+        self.name = name
+        self.imports = imports
+        self.typeDefinitions = typeDefinitions
+        self.functions = functions
+        self.graphs = graphs
+    }
+}
+
+@objc
+@implementation
+extension WebBridgeModuleReference {
+    let module: WebBridgeModule
+    let name: String
+    let imports: [WebBridgeModuleReference]
+    let typeDefinitions: [WebBridgeTypeDefinition]
+    let functions: [WebBridgeFunction]
+
+    init(module: WebBridgeModule) {
+        self.module = module
+        self.name = module.name
+        self.imports = module.imports
+        self.typeDefinitions = module.typeDefinitions
+        self.functions = module.functions
+    }
+}
+
+@objc
+@implementation
+extension WebBridgeStructMember {
+    let name: String
+    let type: WebBridgeTypeReference
+
+    init(name: String, type: WebBridgeTypeReference) {
+        self.name = name
+        self.type = type
+    }
+}
+
+@objc
+@implementation
+extension WebBridgeEnumCase {
+    let name: String
+    let value: Int
+
+    init(name: String, value: Int) {
+        self.name = name
+        self.value = value
+    }
+}
+
+@objc
+@implementation
+extension WebBridgeTypeDefinition {
+    let name: String
+    let typeReference: WebBridgeTypeReference
+    let structureType: WebBridgeTypeStructure
+    let structMembers: [WebBridgeStructMember]?
+    let enumCases: [WebBridgeEnumCase]?
+
+    init(
+        name: String,
+        typeReference: WebBridgeTypeReference,
+        structureType: WebBridgeTypeStructure,
+        structMembers: [WebBridgeStructMember]?,
+        enumCases: [WebBridgeEnumCase]?
+    ) {
+        self.name = name
+        self.typeReference = typeReference
+        self.structureType = structureType
+        self.structMembers = structMembers
+        self.enumCases = enumCases
+    }
+}
+
+@objc
+@implementation
+extension WebBridgeFunctionArgument {
+    let name: String
+    let type: WebBridgeTypeReference
+
+    init(name: String, type: WebBridgeTypeReference) {
+        self.name = name
+        self.type = type
+    }
+}
+
+@objc
+@implementation
+extension WebBridgeFunction {
+    let name: String
+    let arguments: [WebBridgeFunctionArgument]
+    let returnType: WebBridgeTypeReference
+    let functionReference: WebBridgeFunctionReference
+    let kind: WebBridgeFunctionKind
+    let kindName: String
+
+    init(
+        name: String,
+        arguments: [WebBridgeFunctionArgument],
+        returnType: WebBridgeTypeReference,
+        functionReference: WebBridgeFunctionReference,
+        kind: WebBridgeFunctionKind,
+        kindName: String
+    ) {
+        self.name = name
+        self.arguments = arguments
+        self.returnType = returnType
+        self.functionReference = functionReference
+        self.kind = kind
+        self.kindName = kindName
+    }
+}
+
+@objc
+@implementation
+extension WebBridgeNodeID {
+    let value: Int
+
+    init(value: Int) {
+        self.value = value
+    }
+}
+
+@objc
+@implementation
+extension WebBridgeFunctionCall {
+    let type: WebBridgeFunctionCallType
+    let name: String?
+    let reference: WebBridgeFunctionReference?
+
+    init(name: String) {
+        self.type = .name
+        self.name = name
+        self.reference = nil
+    }
+
+    init(reference: WebBridgeFunctionReference) {
+        self.type = .reference
+        self.name = nil
+        self.reference = reference
+    }
+}
+
+@objc
+@implementation
+extension WebBridgeNodeInstruction {
+    let type: WebBridgeNodeInstructionType
+    let functionCall: WebBridgeFunctionCall?
+    let constantName: String?
+    let literal: WebBridgeLiteral?
+    let argumentName: String?
+    let elementType: WebBridgeTypeReference?
+    let elementName: String?
+
+    init(functionCall: WebBridgeFunctionCall) {
+        self.functionCall = functionCall
+        self.type = .functionCall
+
+        self.constantName = nil
+        self.literal = nil
+        self.argumentName = nil
+        self.elementType = nil
+        self.elementName = nil
+    }
+    init(functionConstant: String, literal: WebBridgeLiteral) {
+        self.constantName = functionConstant
+        self.literal = literal
+        self.type = .functionConstant
+
+        self.functionCall = nil
+        self.argumentName = nil
+        self.elementType = nil
+        self.elementName = nil
+    }
+    init(literal: WebBridgeLiteral) {
+        self.literal = literal
+        self.type = .literal
+
+        self.functionCall = nil
+        self.constantName = nil
+        self.argumentName = nil
+        self.elementType = nil
+        self.elementName = nil
+    }
+    init(argument: String) {
+        self.argumentName = argument
+        self.type = .argument
+
+        self.functionCall = nil
+        self.constantName = nil
+        self.literal = nil
+        self.elementType = nil
+        self.elementName = nil
+    }
+    init(elementType: WebBridgeTypeReference, elementName: String) {
+        self.elementType = elementType
+        self.elementName = elementName
+        self.type = .element
+
+        self.functionCall = nil
+        self.constantName = nil
+        self.literal = nil
+        self.argumentName = nil
+    }
+}
+
+@objc
+@implementation
+extension WebBridgeArgumentError {
+    let message: String
+    let argument: WebBridgeFunctionArgument
+
+    init(message: String, argument: WebBridgeFunctionArgument) {
+        self.message = message
+        self.argument = argument
+    }
+}
+
+@objc
+@implementation
+extension WebBridgeNode {
+    let nodeID: WebBridgeNodeID
+    let instruction: WebBridgeNodeInstruction
+
+    init(
+        identifier: WebBridgeNodeID,
+        instruction: WebBridgeNodeInstruction
+    ) {
+        self.nodeID = identifier
+        self.instruction = instruction
+    }
+}
+
+@objc
+@implementation
+extension WebBridgeGraphEdge {
+    let source: WebBridgeNodeID
+    let destination: WebBridgeNodeID
+    let argument: String
+
+    init(
+        source: WebBridgeNodeID,
+        destination: WebBridgeNodeID,
+        argument: String
+    ) {
+        self.source = source
+        self.destination = destination
+        self.argument = argument
+    }
+}
+
+@objc
+@implementation
+extension WebBridgeModuleGraph {
+    let functionReference: WebBridgeFunctionReference
+    let name: String
+    let arguments: [WebBridgeFunctionArgument]
+    let returnType: WebBridgeTypeReference
+    let nodes: [WebBridgeNode]
+    let edges: [WebBridgeGraphEdge]
+    let index: Int
+
+    init(index: Int, function: WebBridgeFunction) {
+        self.index = index
+        self.functionReference = function.functionReference
+        self.name = function.name
+        self.arguments = function.arguments
+        self.returnType = function.returnType
+        self.nodes = []
+        self.edges = []
+    }
+}
+
+@objc
+@implementation
+extension WebBridgeUpdateMaterial {
     let materialGraph: Data?
     let identifier: String
+    let geometryModifierFunctionReference: WebBridgeFunctionReference?
+    let surfaceShaderFunctionReference: WebBridgeFunctionReference?
+    let shaderGraphModule: WebBridgeModule?
 
     init(
         materialGraph: Data?,
-        identifier: String
+        identifier: String,
+        geometryModifierFunctionReference: WebBridgeFunctionReference?,
+        surfaceShaderFunctionReference: WebBridgeFunctionReference?,
+        shaderGraphModule: WebBridgeModule?
     ) {
         self.materialGraph = materialGraph
         self.identifier = identifier
+        self.geometryModifierFunctionReference = geometryModifierFunctionReference
+        self.surfaceShaderFunctionReference = surfaceShaderFunctionReference
+        self.shaderGraphModule = shaderGraphModule
     }
 }
 
 @objc
 @implementation
-extension DDBridgeNode {
-    let bridgeNodeType: DDBridgeNodeType
-    let builtin: DDBridgeBuiltin
-    let constant: DDBridgeConstantContainer
-
-    init(
-        bridgeNodeType: DDBridgeNodeType,
-        builtin: DDBridgeBuiltin,
-        constant: DDBridgeConstantContainer
-    ) {
-        self.bridgeNodeType = bridgeNodeType
-        self.builtin = builtin
-        self.constant = constant
-    }
-}
-
-@objc
-@implementation
-extension DDBridgeInputOutput {
-    let type: DDBridgeDataType
+extension WebBridgeInputOutput {
+    let type: WebBridgeDataType
     let name: String
 
     init(
-        type: DDBridgeDataType,
+        type: WebBridgeDataType,
         name: String
     ) {
         self.type = type
@@ -388,14 +695,14 @@ extension DDBridgeInputOutput {
 
 @objc
 @implementation
-extension DDBridgeConstantContainer {
-    let constant: DDBridgeConstant
-    let constantValues: [DDValueString]
+extension WebBridgeConstantContainer {
+    let constant: WebBridgeConstant
+    let constantValues: [WebValueString]
     let name: String
 
     init(
-        constant: DDBridgeConstant,
-        constantValues: [DDValueString],
+        constant: WebBridgeConstant,
+        constantValues: [WebValueString],
         name: String
     ) {
         self.constant = constant
@@ -406,7 +713,7 @@ extension DDBridgeConstantContainer {
 
 @objc
 @implementation
-extension DDBridgeBuiltin {
+extension WebBridgeBuiltin {
     let definition: String
     let name: String
 
@@ -421,7 +728,7 @@ extension DDBridgeBuiltin {
 
 @objc
 @implementation
-extension DDBridgeEdge {
+extension WebBridgeEdge {
     let upstreamNodeIndex: Int
     let downstreamNodeIndex: Int
     let upstreamOutputName: String
@@ -442,7 +749,7 @@ extension DDBridgeEdge {
 
 @objc
 @implementation
-extension DDValueString {
+extension WebValueString {
     let number: NSNumber
     let string: String
 
@@ -461,7 +768,34 @@ extension DDValueString {
     }
 }
 
-#if canImport(RealityCoreRenderer, _version: 9999)
+@objc
+@implementation
+extension WebBridgeLiteralArchive {
+    let type: WebBridgeLiteralType
+    let data: [NSNumber]
+
+    init(
+        type: WebBridgeLiteralType,
+        data: [NSNumber]
+    ) {
+        self.type = type
+        self.data = data
+    }
+}
+
+@objc
+@implementation
+extension WebBridgeLiteral {
+    let type: WebBridgeLiteralType
+    let archive: WebBridgeLiteralArchive
+
+    init(type: WebBridgeLiteralType, data: [NSNumber]) {
+        self.type = type
+        self.archive = .init(type: type, data: data)
+    }
+}
+
+#if canImport(RealityCoreRenderer, _version: 6) && canImport(USDStageKit, _version: 34)
 
 internal func toData<T>(_ input: [T]) -> Data {
     unsafe input.withUnsafeBytes { bufferPointer in
@@ -492,9 +826,9 @@ private func convertSemantic(_ semantic: LowLevelMesh.VertexSemantic) -> Int {
     }
 }
 
-private func webAttributesFromAttributes(_ attributes: [LowLevelMesh.Attribute]) -> [DDBridgeVertexAttributeFormat] {
+private func webAttributesFromAttributes(_ attributes: [LowLevelMesh.Attribute]) -> [WebBridgeVertexAttributeFormat] {
     attributes.map({ a in
-        DDBridgeVertexAttributeFormat(
+        WebBridgeVertexAttributeFormat(
             semantic: convertSemantic(a.semantic),
             format: a.format.rawValue,
             layoutIndex: a.layoutIndex,
@@ -503,15 +837,15 @@ private func webAttributesFromAttributes(_ attributes: [LowLevelMesh.Attribute])
     })
 }
 
-private func webLayoutsFromLayouts(_ attributes: [LowLevelMesh.Layout]) -> [DDBridgeVertexLayout] {
+private func webLayoutsFromLayouts(_ attributes: [LowLevelMesh.Layout]) -> [WebBridgeVertexLayout] {
     attributes.map({ a in
-        DDBridgeVertexLayout(bufferIndex: a.bufferIndex, bufferOffset: a.bufferOffset, bufferStride: a.bufferStride)
+        WebBridgeVertexLayout(bufferIndex: a.bufferIndex, bufferOffset: a.bufferOffset, bufferStride: a.bufferStride)
     })
 }
 
-extension DDBridgeMeshDescriptor {
+extension WebBridgeMeshDescriptor {
     @nonobjc
-    convenience init(_ request: LowLevelMesh.Descriptor) {
+    convenience init(request: LowLevelMesh.Descriptor) {
         self.init(
             vertexBufferCount: request.vertexBufferCount,
             vertexCapacity: request.vertexCapacity,
@@ -522,7 +856,7 @@ extension DDBridgeMeshDescriptor {
         )
     }
 }
-extension DDBridgeSkinningData {
+extension WebBridgeSkinningData {
     var jointTransforms: [simd_float4x4] {
         guard let data = jointTransformsData else {
             return []
@@ -651,7 +985,7 @@ extension DDBridgeSkinningData {
         )
     }
 }
-extension DDBridgeBlendShapeData {
+extension WebBridgeBlendShapeData {
     @nonobjc
     convenience init?(_ request: _Proto_DeformationData_v1.BlendShapeData?) {
         guard let request else {
@@ -665,7 +999,7 @@ extension DDBridgeBlendShapeData {
         )
     }
 }
-extension DDBridgeRenormalizationData {
+extension WebBridgeRenormalizationData {
     @nonobjc
     convenience init?(_ request: _Proto_DeformationData_v1.RenormalizationData?) {
         guard let request else {
@@ -679,7 +1013,7 @@ extension DDBridgeRenormalizationData {
         )
     }
 }
-extension DDBridgeDeformationData {
+extension WebBridgeDeformationData {
     @nonobjc
     convenience init?(_ request: _Proto_DeformationData_v1?) {
         guard let request else {
@@ -693,7 +1027,7 @@ extension DDBridgeDeformationData {
         )
     }
 }
-extension DDBridgeImageAsset {
+extension WebBridgeImageAsset {
     @nonobjc
     convenience init(_ asset: LowLevelTexture.Descriptor, data: Data) {
         self.init(
@@ -711,4 +1045,5 @@ extension DDBridgeImageAsset {
         )
     }
 }
+
 #endif

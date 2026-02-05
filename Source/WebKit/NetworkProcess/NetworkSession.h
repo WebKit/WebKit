@@ -244,7 +244,6 @@ public:
     void clearCacheEngine();
 
     NetworkLoadScheduler& networkLoadScheduler();
-    Ref<NetworkLoadScheduler> protectedNetworkLoadScheduler();
 
     PCM::ManagerInterface& privateClickMeasurement() { return m_privateClickMeasurement.get(); }
     void setPrivateClickMeasurementDebugMode(bool);
@@ -302,7 +301,6 @@ public:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     WebCore::ResourceMonitorThrottlerHolder& resourceMonitorThrottler();
-    Ref<WebCore::ResourceMonitorThrottlerHolder> protectedResourceMonitorThrottler();
 
     void clearResourceMonitorThrottlerData(CompletionHandler<void()>&&);
 #endif

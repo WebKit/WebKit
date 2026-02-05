@@ -1,0 +1,10 @@
+Test that a video's first <source> element's URL is passed to a MediaDeviceRoute when the route activates.
+
+
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(playing)
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+EXPECTED (actualURL == '/LayoutTests/media/content/test.mp4') OK
+END OF TEST
+

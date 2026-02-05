@@ -35,18 +35,16 @@ typedef (sequence<GPUIntegerCoordinate> or GPUExtent3DDict) GPUExtent3D;
     EnabledBySetting=WebGPUEnabled,
     Exposed=(Window,Worker),
     SecureContext
-]
-interface GPUQueue {
+] interface GPUQueue {
     undefined submit(sequence<GPUCommandBuffer> commandBuffers);
 
     Promise<undefined> onSubmittedWorkDone();
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=240219, second last parameter should have default value of 0
     undefined writeBuffer(
         GPUBuffer buffer,
         GPUSize64 bufferOffset,
         [AllowShared](ArrayBufferView or ArrayBuffer) data,
-        optional GPUSize64 dataOffset,
+        optional GPUSize64 dataOffset = 0,
         optional GPUSize64 size);
 
     undefined writeTexture(

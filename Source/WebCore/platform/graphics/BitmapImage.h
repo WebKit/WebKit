@@ -103,6 +103,9 @@ private:
     EncodedDataStatus dataChanged(bool allDataReceived) final;
     void destroyDecodedData(bool destroyAll = true) final;
 
+    bool canReplaceData() const final { return m_source->canReplaceData(); }
+    void dataReplaced() final;
+
     // Current ImageFrame
     bool currentFrameKnownToBeOpaque() const final { return !currentFrameHasAlpha(); }
     bool currentFrameIsComplete() const final { return m_source->currentImageFrame().isComplete(); }

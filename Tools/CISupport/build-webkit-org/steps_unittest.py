@@ -41,7 +41,7 @@ from .steps import *
 
 CURRENT_HOSTNAME = socket.gethostname().strip()
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
-FakeBuild.addStepsAfterLastStep = lambda FakeBuild, step_factories: None
+FakeBuild.addStepsAfterCurrentStep = lambda FakeBuild, step_factories: None
 FakeBuild._builderid = 1
 
 
@@ -2643,4 +2643,81 @@ class TestRunBenchmarkTests(BuildStepMixinAdditions, unittest.TestCase):
             .exit(7),
         )
         self.expect_outcome(result=FAILURE, state_string='Benchmark Tests: 7 unexpected failures')
+        return self.run_step()
+
+
+class TestBuildSwift(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configureStep(self):
+        self.setup_step(BuildSwift())
+        self.setProperty('architecture', 'arm64')
+        self.setProperty('builddir', 'webkit')
+
+    def test_success(self):
+        self.configureStep()
+        self.setProperty('has_swift_executable', False)
+        self.expectRemoteCommands(
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'utils/build-script --skip-build-benchmarks --swift-darwin-supported-archs arm64 --release --no-assertions --swift-disable-dead-stripping --bootstrapping=hosttools 2>&1 | python3 webkit/build/Tools/Scripts/filter-test-logs swift --output webkit/build/swift-build-log.txt'])
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Successfully built Swift')
+        return self.run_step()
+
+    def test_skipped_executable_exists_same_tag(self):
+        self.configureStep()
+        self.setProperty('has_swift_executable', True)
+        self.setProperty('canonical_swift_tag', 'swift-6.0.3-RELEASE')
+        self.setProperty('current_swift_tag', 'swift-6.0.3-RELEASE')
+        self.expect_outcome(result=SKIPPED, state_string='Swift executable already exists')
+        return self.run_step()
+
+    def test_build_when_tag_changed(self):
+        self.configureStep()
+        self.setProperty('has_swift_executable', True)
+        self.setProperty('canonical_swift_tag', 'swift-6.0.3-RELEASE')
+        self.setProperty('current_swift_tag', 'swift-6.0.2-RELEASE')
+        self.expectRemoteCommands(
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'utils/build-script --skip-build-benchmarks --swift-darwin-supported-archs arm64 --release --no-assertions --swift-disable-dead-stripping --bootstrapping=hosttools 2>&1 | python3 webkit/build/Tools/Scripts/filter-test-logs swift --output webkit/build/swift-build-log.txt'])
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Successfully built Swift')
+        return self.run_step()
+
+    def test_failure_with_previous_checkout(self):
+        self.configureStep()
+        self.setProperty('has_swift_executable', False)
+        self.setProperty('current_swift_tag', 'swift-6.0.2-RELEASE')
+        self.expectRemoteCommands(
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'utils/build-script --skip-build-benchmarks --swift-darwin-supported-archs arm64 --release --no-assertions --swift-disable-dead-stripping --bootstrapping=hosttools 2>&1 | python3 webkit/build/Tools/Scripts/filter-test-logs swift --output webkit/build/swift-build-log.txt'])
+            .exit(1),
+        )
+        self.expect_outcome(result=WARNINGS, state_string='Failed to update swift, using previous checkout')
+        return self.run_step()
+
+    def test_failure_without_previous_checkout(self):
+        self.configureStep()
+        self.setProperty('has_swift_executable', False)
+        self.expectRemoteCommands(
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'utils/build-script --skip-build-benchmarks --swift-darwin-supported-archs arm64 --release --no-assertions --swift-disable-dead-stripping --bootstrapping=hosttools 2>&1 | python3 webkit/build/Tools/Scripts/filter-test-logs swift --output webkit/build/swift-build-log.txt'])
+            .exit(1),
+        )
+        self.expect_outcome(result=FAILURE, state_string='Failed to build Swift')
         return self.run_step()

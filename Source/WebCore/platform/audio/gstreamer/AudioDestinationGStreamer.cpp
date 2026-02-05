@@ -183,14 +183,16 @@ void AudioDestinationGStreamer::initializePipeline()
     GstElement* audioConvert = makeGStreamerElement("audioconvert"_s);
     GstElement* audioResample = makeGStreamerElement("audioresample"_s);
     auto clockSync = gst_element_factory_make("clocksync", nullptr);
+    auto queue = gst_element_factory_make("queue", nullptr);
 
-    gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), m_src.get(), audioConvert, audioResample, clockSync, audioSink.get(), nullptr);
+    gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), m_src.get(), audioConvert, audioResample, clockSync, queue, audioSink.get(), nullptr);
 
-    // Link src pads from webkitAudioSrc to clocksync ! audioConvert ! audioResample ! audiosink.
+    // Link src pads from webkitAudioSrc to clocksync ! audioConvert ! audioResample ! queue ! audiosink.
     gst_element_link_pads_full(m_src.get(), "src", clockSync, "sink", GST_PAD_LINK_CHECK_NOTHING);
     gst_element_link_pads_full(clockSync, "src", audioConvert, "sink", GST_PAD_LINK_CHECK_NOTHING);
     gst_element_link_pads_full(audioConvert, "src", audioResample, "sink", GST_PAD_LINK_CHECK_NOTHING);
-    gst_element_link_pads_full(audioResample, "src", audioSink.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
+    gst_element_link_pads_full(audioResample, "src", queue, "sink", GST_PAD_LINK_CHECK_NOTHING);
+    gst_element_link_pads_full(queue, "src", audioSink.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
 }
 
 unsigned AudioDestinationGStreamer::framesPerBuffer() const

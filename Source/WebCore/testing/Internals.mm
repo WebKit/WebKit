@@ -199,7 +199,7 @@ void Internals::setUsesOverlayScrollbars(bool enabled)
     if (!localFrame)
         return;
 
-    localFrame->protectedView()->scrollbarStyleDidChange();
+    protect(localFrame->view())->scrollbarStyleDidChange();
 }
 
 #endif

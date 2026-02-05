@@ -38,7 +38,6 @@ namespace WebCore {
 struct GPUImageCopyTexture {
     WebGPU::ImageCopyTexture convertToBacking() const
     {
-        ASSERT(texture);
         return {
             texture->backing(),
             mipLevel,
@@ -47,7 +46,7 @@ struct GPUImageCopyTexture {
         };
     }
 
-    WeakPtr<GPUTexture> texture;
+    Ref<GPUTexture> texture;
     GPUIntegerCoordinate mipLevel { 0 };
     std::optional<GPUOrigin3D> origin;
     GPUTextureAspect aspect { GPUTextureAspect::All };

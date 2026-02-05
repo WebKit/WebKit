@@ -62,7 +62,6 @@ public:
     const AudioSourceProviderClient* client() const { return m_client.get(); }
 
     void handleNewDeinterleavePad(GstPad*);
-    void deinterleavePadsConfigured();
     void handleRemovedDeinterleavePad(GstPad*);
 
     GstFlowReturn handleSample(GstAppSink*, bool isPreroll);
@@ -74,6 +73,8 @@ private:
 
     void initialize();
     void copyGStreamerBuffersToAudioChannel(GstAdapter*, AudioBus&, int, size_t);
+
+    void determineSampleRate(const GstCaps*);
 
 #if ENABLE(MEDIA_STREAM)
     WeakPtr<MediaStreamTrackPrivate> m_captureSource;
@@ -87,9 +88,9 @@ private:
     GRefPtr<GstElement> m_audioSinkBin;
     WeakPtr<AudioSourceProviderClient> m_client;
     int m_deinterleaveSourcePads { 0 };
+    int m_deinterleaveConfiguredSourcePads { 0 };
     HashMap<int, GRefPtr<GstAdapter>> m_adapters WTF_GUARDED_BY_LOCK(m_adapterLock);
     unsigned long m_deinterleavePadAddedHandlerId { 0 };
-    unsigned long m_deinterleaveNoMorePadsHandlerId { 0 };
     unsigned long m_deinterleavePadRemovedHandlerId { 0 };
     Lock m_adapterLock;
     CString m_providerId;

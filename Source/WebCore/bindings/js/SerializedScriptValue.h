@@ -38,6 +38,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 #include <WebCore/MediaStreamTrackDataHolder.h>
+#include <WebCore/MediaStreamTrackHandle.h>
 #endif
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
 #include <WebCore/MediaSourceHandle.h>
@@ -120,8 +121,8 @@ public:
     static Ref<SerializedScriptValue> nullValue();
 
     WEBCORE_EXPORT JSC::JSValue deserialize(JSC::JSGlobalObject&, JSC::JSGlobalObject*, SerializationErrorMode = SerializationErrorMode::Throwing, bool* didFail = nullptr);
-    WEBCORE_EXPORT JSC::JSValue deserialize(JSC::JSGlobalObject&, JSC::JSGlobalObject*, const Vector<Ref<MessagePort>>&, SerializationErrorMode = SerializationErrorMode::Throwing, bool* didFail = nullptr);
-    JSC::JSValue deserialize(JSC::JSGlobalObject&, JSC::JSGlobalObject*, const Vector<Ref<MessagePort>>&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths, SerializationErrorMode = SerializationErrorMode::Throwing, bool* didFail = nullptr);
+    WEBCORE_EXPORT JSC::JSValue deserialize(JSC::JSGlobalObject&, JSC::JSGlobalObject*, Vector<Ref<MessagePort>>&, SerializationErrorMode = SerializationErrorMode::Throwing, bool* didFail = nullptr);
+    JSC::JSValue deserialize(JSC::JSGlobalObject&, JSC::JSGlobalObject*, Vector<Ref<MessagePort>>&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths, SerializationErrorMode = SerializationErrorMode::Throwing, bool* didFail = nullptr);
 
     WEBCORE_EXPORT String toString() const;
 
@@ -136,10 +137,7 @@ public:
     Vector<URLKeepingBlobAlive> blobHandles() const { return crossThreadCopy(m_internals.blobHandles); }
     void writeBlobsToDiskForIndexedDB(bool isEphemeral, CompletionHandler<void(IDBValue&&)>&&);
     IDBValue writeBlobsToDiskForIndexedDBSynchronously(bool isEphemeral);
-    static Ref<SerializedScriptValue> createFromWireBytes(Vector<uint8_t>&& data)
-    {
-        return adoptRef(*new SerializedScriptValue(WTF::move(data)));
-    }
+    WEBCORE_EXPORT static Ref<SerializedScriptValue> createFromWireBytes(Vector<uint8_t>&&);
     const Vector<uint8_t>& wireBytes() const { return m_internals.data; }
 
     size_t memoryCost() const { return m_internals.memoryCost; }
@@ -153,7 +151,8 @@ private:
     friend struct IPC::ArgumentCoder<SerializedScriptValue>;
 
     static ExceptionOr<Ref<SerializedScriptValue>> create(JSC::JSGlobalObject&, JSC::JSValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer, Vector<Ref<MessagePort>>&, SerializationForStorage, SerializationErrorMode, SerializationContext);
-    WEBCORE_EXPORT SerializedScriptValue(Vector<unsigned char>&&, std::unique_ptr<ArrayBufferContentsArray>&& = nullptr
+    WEBCORE_EXPORT SerializedScriptValue(Vector<unsigned char>&&
+        , std::unique_ptr<ArrayBufferContentsArray>&& = nullptr
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& = { }
         , Vector<Ref<RTCRtpTransformableFrame>>&& = { }
@@ -170,10 +169,16 @@ private:
 #endif
 #if ENABLE(MEDIA_STREAM)
         , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& = { }
+        , Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>>&& = { }
 #endif
+        , uint64_t exposedMessagePortCount = 0
         );
 
-    SerializedScriptValue(Vector<unsigned char>&&, Vector<URLKeepingBlobAlive>&& blobHandles, std::unique_ptr<ArrayBufferContentsArray>, std::unique_ptr<ArrayBufferContentsArray> sharedBuffers, Vector<std::optional<DetachedImageBitmap>>&&
+    SerializedScriptValue(Vector<unsigned char>&&
+        , Vector<URLKeepingBlobAlive>&& blobHandles
+        , std::unique_ptr<ArrayBufferContentsArray>
+        , std::unique_ptr<ArrayBufferContentsArray> sharedBuffers
+        , Vector<std::optional<DetachedImageBitmap>>&&
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& = { }
         , Vector<Ref<OffscreenCanvas>>&& = { }
@@ -199,7 +204,9 @@ private:
 #endif
 #if ENABLE(MEDIA_STREAM)
         , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& = { }
+        , Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>>&& = { }
 #endif
+        , uint64_t exposedMessagePortCount = 0
         );
 
     size_t computeMemoryCost() const;
@@ -213,6 +220,9 @@ private:
 #if ENABLE(WEB_CODECS)
         Vector<Ref<WebCodecsEncodedVideoChunkStorage>> serializedVideoChunks;
         Vector<Ref<WebCodecsEncodedAudioChunkStorage>> serializedAudioChunks;
+#endif
+        uint64_t exposedMessagePortCount;
+#if ENABLE(WEB_CODECS)
         Vector<WebCodecsVideoFrameData> serializedVideoFrames { };
         Vector<WebCodecsAudioInternalData> serializedAudioData { };
 #endif
@@ -225,6 +235,7 @@ private:
 #endif
 #if ENABLE(MEDIA_STREAM)
         Vector<std::unique_ptr<MediaStreamTrackDataHolder>> serializedMediaStreamTracks { };
+        Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>> serializedMediaStreamTrackHandles { };
 #endif
         std::unique_ptr<ArrayBufferContentsArray> sharedBufferContentsArray { };
         Vector<std::optional<DetachedImageBitmap>> detachedImageBitmaps { };

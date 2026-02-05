@@ -72,7 +72,7 @@ private:
     bool shouldDirectlyCompositeImage(WebCore::Image*) const override { return false; }
 
     bool shouldDirectlyCompositeImageBuffer(WebCore::ImageBuffer*) const override;
-    void setLayerContentsToImageBuffer(WebCore::PlatformCALayer*, WebCore::ImageBuffer*) override;
+    void setLayerContentsToImageBuffer(WebCore::PlatformCALayer&, WebCore::ImageBuffer*) final;
 
     WebCore::Color pageTiledBackingBorderColor() const override;
 

@@ -193,8 +193,8 @@ Ref<CSSValueList> CSSValueList::create(char16_t separator, CSSValueListBuilder b
 
 bool CSSValueContainingVector::hasValue(CSSValue& otherValue) const
 {
-    for (auto& value : *this) {
-        if (value.equals(otherValue))
+    for (Ref value : *this) {
+        if (value->equals(otherValue))
             return true;
     }
     return false;
@@ -202,8 +202,8 @@ bool CSSValueContainingVector::hasValue(CSSValue& otherValue) const
 
 bool CSSValueContainingVector::hasValue(CSSValueID otherValue) const
 {
-    for (auto& value : *this) {
-        if (WebCore::isValueID(value, otherValue))
+    for (Ref value : *this) {
+        if (WebCore::isValueID(value.get(), otherValue))
             return true;
     }
     return false;
@@ -259,8 +259,8 @@ bool CSSValueContainingVector::addDerivedHash(Hasher& hasher) const
 {
     add(hasher, separator());
 
-    for (auto& item : *this) {
-        if (!item.addHash(hasher))
+    for (Ref item : *this) {
+        if (!item->addHash(hasher))
             return false;
     }
     return true;
@@ -268,8 +268,8 @@ bool CSSValueContainingVector::addDerivedHash(Hasher& hasher) const
 
 bool CSSValueContainingVector::customTraverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>& handler) const
 {
-    for (auto& value : *this) {
-        if (value.traverseSubresources(handler))
+    for (Ref value : *this) {
+        if (value->traverseSubresources(handler))
             return true;
     }
     return false;
@@ -277,8 +277,8 @@ bool CSSValueContainingVector::customTraverseSubresources(NOESCAPE const Functio
 
 IterationStatus CSSValueContainingVector::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
 {
-    for (auto& value : *this) {
-        if (func(const_cast<CSSValue&>(value)) == IterationStatus::Done)
+    for (Ref value : *this) {
+        if (func(const_cast<CSSValue&>(value.get())) == IterationStatus::Done)
             return IterationStatus::Done;
     }
     return IterationStatus::Continue;

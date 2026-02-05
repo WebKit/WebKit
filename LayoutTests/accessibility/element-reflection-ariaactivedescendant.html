@@ -19,34 +19,53 @@
     window.jsTestIsAsync = true
 
     var ax = accessibilityController;
-    var axTarget1, axTarget2, axDescendant2, axDescendantFirstChild, axTarget3, axDescendant3;
+    var axTarget1, axTarget2, axDescendant2, axDescendantFirstChild, axTarget3, axDescendant3, selectedChild;
     var output = "";
-    setTimeout(function() {
+
+    async function runTest() {
         target1.ariaActiveDescendantElement = descendant1;
         axTarget1 = accessibilityController.accessibleElementById("target1");
         axDescendant1 = accessibilityController.accessibleElementById("descendant1");
+        // Wait for the relation to be updated in the isolated tree.
+        await waitFor(() => {
+            var selectedChild = axTarget1.selectedChildAtIndex(0);
+            return selectedChild && selectedChild.isEqual(axDescendant1);
+        });
         output += expect("axTarget1.selectedChildrenCount", "1");
         output += expect("axTarget1.selectedChildAtIndex(0).isEqual(axDescendant1)", "true");
+
         target2.ariaActiveDescendantElement = descendant2;
         target2.setAttribute("aria-activedescendant", "descendant2");
         axTarget2 = accessibilityController.accessibleElementById("target2");
         axDescendant2 = accessibilityController.accessibleElementById("descendant2");
         axDescendantFirstChild = axTarget2.childAtIndex(0);
-        output += expect("axTarget2.selectedChildrenCount", "1");
-        output += expect("axTarget2.selectedChildAtIndex(0).isEqual(axDescendantFirstChild)", "true");
+        await waitFor(() => {
+            selectedChild = axTarget2.selectedChildAtIndex(0);
+            return selectedChild && selectedChild.isEqual(axDescendantFirstChild);
+        });
+        output += expect("selectedChild.isEqual(axDescendantFirstChild)", "true");
 
         target2.setAttribute("aria-activedescendant", "descendant2");
-        output += expect("axTarget2.selectedChildrenCount", "1");
-        output += expect("axTarget2.selectedChildAtIndex(0).isEqual(axDescendant2)", "true");
+        await waitFor(() => {
+            selectedChild = axTarget2.selectedChildAtIndex(0);
+            return selectedChild && selectedChild.isEqual(axDescendant2);
+        });
+        output += expect("selectedChild.isEqual(axDescendant2)", "true");
 
         target3.ariaActiveDescendantElement = descendant3;
         descendant3.id = "descendant3-new";
         axTarget3 = accessibilityController.accessibleElementById("target3");
         axDescendant3 = accessibilityController.accessibleElementById("descendant3-new");
-        output += expect("axTarget3.selectedChildrenCount", "1");
-        output += expect("axTarget3.selectedChildAtIndex(0).isEqual(axDescendant3)", "true");
+        await waitFor(() => {
+            selectedChild = axTarget3.selectedChildAtIndex(0);
+            return selectedChild && selectedChild.isEqual(axDescendant3);
+        });
+        output += expect("selectedChild.isEqual(axDescendant3)", "true");
+
         debug(output);
         finishJSTest();
-    }, 0);
+    }
+
+    setTimeout(runTest, 0);
   }
 </script>

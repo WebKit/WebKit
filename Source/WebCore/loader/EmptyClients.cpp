@@ -35,7 +35,6 @@
 #include "CacheStorageProvider.h"
 #include "ColorChooser.h"
 #include "ContextMenuClient.h"
-#include "CookieConsentDecisionResult.h"
 #include "CookieJar.h"
 #include "CredentialRequestCoordinatorClient.h"
 #include "DOMPasteAccess.h"
@@ -362,6 +361,11 @@ private:
     void uppercaseWord() final { }
     void lowercaseWord() final { }
     void capitalizeWord() final { }
+    bool canApplyCaseTransformations(const String&) final { return true; }
+    bool canConvertToTraditionalChinese(const String&) final { return false; }
+    bool canConvertToSimplifiedChinese(const String&) final { return false; }
+    void convertToTraditionalChinese() final { }
+    void convertToSimplifiedChinese() final { }
 #endif
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
@@ -656,11 +660,6 @@ void EmptyChromeClient::showShareSheet(ShareDataWithParsedURL&&, CompletionHandl
 {
 }
 
-void EmptyChromeClient::requestCookieConsent(CompletionHandler<void(CookieConsentDecisionResult)>&& completion)
-{
-    completion(CookieConsentDecisionResult::NotSupported);
-}
-
 RefPtr<Icon> EmptyChromeClient::createIconForFiles(const Vector<String>& /* filenames */)
 {
     return nullptr;
@@ -697,9 +696,14 @@ void EmptyFrameLoaderClient::dispatchWillSubmitForm(FormState&, URL&&, String&&,
     completionHandler();
 }
 
+Ref<DocumentLoader> EmptyFrameLoaderClient::createDocumentLoader(ResourceRequest&& request, SubstituteData&& substituteData, ResourceRequest&& originalRequest)
+{
+    return DocumentLoader::create(WTF::move(request), WTF::move(substituteData), WTF::move(originalRequest));
+}
+
 Ref<DocumentLoader> EmptyFrameLoaderClient::createDocumentLoader(ResourceRequest&& request, SubstituteData&& substituteData)
 {
-    return DocumentLoader::create(WTF::move(request), WTF::move(substituteData));
+    return DocumentLoader::create(WTF::move(request), WTF::move(substituteData), { });
 }
 
 RefPtr<LocalFrame> EmptyFrameLoaderClient::createFrame(const AtomString&, HTMLFrameOwnerElement&)

@@ -27,7 +27,6 @@
 [
     Conditional=WEBXR,
     EnabledBySetting=WebXREnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary XRInputSourcesChangeEventInit : EventInit {
     required WebXRSession session;
     required FrozenArray<WebXRInputSource> added;

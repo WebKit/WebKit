@@ -124,11 +124,13 @@ std::shared_ptr<ShaderTranslateTask> ShaderGL::compile(const gl::Context *contex
 {
     ContextGL *contextGL         = GetImplAs<ContextGL>(context);
     const FunctionsGL *functions = GetFunctionsGL(context);
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
 
     options->initGLPosition = true;
 
     bool isWebGL = context->isWebGL();
-    if (isWebGL && mState.getShaderType() != gl::ShaderType::Compute)
+    if (isWebGL || (features.initFragmentOutputVariables.enabled &&
+                    mState.getShaderType() == gl::ShaderType::Fragment))
     {
         options->initOutputVariables = true;
     }
@@ -136,13 +138,6 @@ std::shared_ptr<ShaderTranslateTask> ShaderGL::compile(const gl::Context *contex
     if (isWebGL && !context->getState().getEnableFeature(GL_TEXTURE_RECTANGLE_ANGLE))
     {
         options->disableARBTextureRectangle = true;
-    }
-
-    const angle::FeaturesGL &features = GetFeaturesGL(context);
-
-    if (features.initFragmentOutputVariables.enabled)
-    {
-        options->initFragmentOutputVariables = true;
     }
 
     if (features.emulateAbsIntFunction.enabled)

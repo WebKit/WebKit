@@ -92,7 +92,7 @@ list(APPEND WebKit_SOURCES
 
     WebProcess/InjectedBundle/playstation/InjectedBundlePlayStation.cpp
 
-    WebProcess/WebPage/CoordinatedGraphics/AcceleratedSurface.cpp
+    WebProcess/WebPage/CoordinatedGraphics/AcceleratedSurfacePlayStation.cpp
     WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
 
     WebProcess/WebPage/playstation/WebPagePlayStation.cpp

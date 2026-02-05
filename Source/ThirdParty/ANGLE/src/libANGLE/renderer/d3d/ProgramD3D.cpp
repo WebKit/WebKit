@@ -14,6 +14,7 @@
 
 #include "common/MemoryBuffer.h"
 #include "common/bitset_utils.h"
+#include "common/span_util.h"
 #include "common/string_utils.h"
 #include "common/utilities.h"
 #include "libANGLE/Context.h"
@@ -399,24 +400,6 @@ class ProgramD3D::GetGeometryExecutableTask : public GetExecutableTask
     gl::ProvokingVertexConvention mProvokingVertex;
 };
 
-class ProgramD3D::GetComputeExecutableTask : public GetExecutableTask
-{
-  public:
-    GetComputeExecutableTask(ProgramD3D *program, const SharedCompiledShaderStateD3D &shader)
-        : GetExecutableTask(program, shader)
-    {}
-    ~GetComputeExecutableTask() override = default;
-
-    void operator()() override
-    {
-        ANGLE_TRACE_EVENT0("gpu.angle", "GetComputeExecutableTask::run");
-
-        mExecutable->updateCachedImage2DBindLayoutFromShader(gl::ShaderType::Compute);
-        mResult = mExecutable->getComputeExecutableForImage2DBindLayout(
-            this, mProgram->mRenderer, &mShaderExecutable, &mInfoLog);
-    }
-};
-
 class ProgramD3D::LinkLoadTaskD3D : public d3d::Context, public LinkTask
 {
   public:
@@ -509,25 +492,15 @@ void ProgramD3D::LinkTaskD3D::link(const gl::ProgramLinkedResources &resources,
         return;
     }
 
-    // Create the subtasks
-    if (mExecutable->hasShaderStage(gl::ShaderType::Compute))
-    {
-        linkSubTasksOut->push_back(std::make_shared<GetComputeExecutableTask>(
-            mProgram, mProgram->getAttachedShader(gl::ShaderType::Compute)));
-    }
-    else
-    {
-        // Geometry shaders are currently only used internally, so there is no corresponding shader
-        // object at the interface level. For now the geometry shader debug info is prepended to the
-        // vertex shader.
-        linkSubTasksOut->push_back(std::make_shared<GetVertexExecutableTask>(
-            mProgram, mProgram->getAttachedShader(gl::ShaderType::Vertex)));
-        linkSubTasksOut->push_back(std::make_shared<GetPixelExecutableTask>(
-            mProgram, mProgram->getAttachedShader(gl::ShaderType::Fragment)));
-        linkSubTasksOut->push_back(std::make_shared<GetGeometryExecutableTask>(
-            mProgram, mProgram->getAttachedShader(gl::ShaderType::Vertex), mCaps,
-            mProvokingVertex));
-    }
+    // Geometry shaders are currently only used internally, so there is no corresponding shader
+    // object at the interface level. For now the geometry shader debug info is prepended to the
+    // vertex shader.
+    linkSubTasksOut->push_back(std::make_shared<GetVertexExecutableTask>(
+        mProgram, mProgram->getAttachedShader(gl::ShaderType::Vertex)));
+    linkSubTasksOut->push_back(std::make_shared<GetPixelExecutableTask>(
+        mProgram, mProgram->getAttachedShader(gl::ShaderType::Fragment)));
+    linkSubTasksOut->push_back(std::make_shared<GetGeometryExecutableTask>(
+        mProgram, mProgram->getAttachedShader(gl::ShaderType::Vertex), mCaps, mProvokingVertex));
 }
 
 class ProgramD3D::LoadTaskD3D final : public LinkLoadTaskD3D
@@ -546,7 +519,7 @@ class ProgramD3D::LoadTaskD3D final : public LinkLoadTaskD3D
         ASSERT(linkSubTasksOut && linkSubTasksOut->empty());
         ASSERT(postLinkSubTasksOut && postLinkSubTasksOut->empty());
 
-        gl::BinaryInputStream stream(mStreamData.data(), mStreamData.size());
+        gl::BinaryInputStream stream(mStreamData);
         mResult = mExecutable->loadBinaryShaderExecutables(this, mProgram->mRenderer, &stream);
 
         return;
@@ -589,14 +562,14 @@ angle::Result ProgramD3D::load(const gl::Context *context,
     // Copy the remaining data from the stream locally so that the client can't modify it when
     // loading off thread.
     angle::MemoryBuffer streamData;
-    const size_t dataSize = stream->remainingSize();
-    if (!streamData.resize(dataSize))
+    angle::Span<const uint8_t> remaining = stream->remainingSpan();
+    if (!streamData.resize(remaining.size()))
     {
         mState.getExecutable().getInfoLog()
             << "Failed to copy program binary data to local buffer.";
         return angle::Result::Stop;
     }
-    memcpy(streamData.data(), stream->data() + stream->offset(), dataSize);
+    angle::SpanMemcpy(angle::Span(streamData), remaining);
 
     // Note: pretty much all the above can also be moved to the task
     *loadTaskOut = std::shared_ptr<LinkTask>(new LoadTaskD3D(this, std::move(streamData)));
@@ -652,36 +625,6 @@ angle::Result ProgramD3D::linkJobImpl(d3d::Context *context,
                                       const gl::ProgramMergedVaryings &mergedVaryings)
 {
     ProgramExecutableD3D *executableD3D = getExecutable();
-
-    const gl::SharedCompiledShaderState &computeShader =
-        mState.getAttachedShader(gl::ShaderType::Compute);
-    if (computeShader)
-    {
-        const gl::SharedCompiledShaderState &shader =
-            mState.getAttachedShader(gl::ShaderType::Compute);
-        executableD3D->mShaderHLSL[gl::ShaderType::Compute] = *shader->translatedSource;
-
-        executableD3D->mShaderSamplers[gl::ShaderType::Compute].resize(
-            caps.maxShaderTextureImageUnits[gl::ShaderType::Compute]);
-        executableD3D->mImages[gl::ShaderType::Compute].resize(caps.maxImageUnits);
-        executableD3D->mReadonlyImages[gl::ShaderType::Compute].resize(caps.maxImageUnits);
-
-        executableD3D->mShaderUniformsDirty.set(gl::ShaderType::Compute);
-
-        linkResources(resources);
-
-        for (const sh::ShaderVariable &uniform : computeShader->uniforms)
-        {
-            if (gl::IsImageType(uniform.type) && gl::IsImage2DType(uniform.type))
-            {
-                executableD3D->mImage2DUniforms[gl::ShaderType::Compute].push_back(uniform);
-            }
-        }
-
-        executableD3D->defineUniformsAndAssignRegisters(mRenderer, mState.getAttachedShaders());
-
-        return angle::Result::Continue;
-    }
 
     for (gl::ShaderType shaderType : gl::kAllGraphicsShaderTypes)
     {
@@ -798,7 +741,6 @@ void ProgramD3D::linkResources(const gl::ProgramLinkedResources &resources)
     ProgramExecutableD3D *executableD3D = getExecutable();
 
     executableD3D->initializeUniformBlocks();
-    executableD3D->initializeShaderStorageBlocks(mState.getAttachedShaders());
 }
 
 }  // namespace rx

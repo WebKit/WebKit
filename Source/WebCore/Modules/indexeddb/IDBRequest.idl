@@ -38,7 +38,7 @@
     [CustomGetter] readonly attribute (IDBCursor or IDBDatabase or any) result;
     readonly attribute DOMException? error;
     readonly attribute (IDBObjectStore or IDBIndex or IDBCursor)? source;
-    readonly attribute IDBTransaction? transaction;
+    [ImplementedAs=transactionForBindings] readonly attribute IDBTransaction? transaction;
     readonly attribute IDBRequestReadyState readyState;
 
     // Event handlers:

@@ -11,15 +11,15 @@ layer at (0,0) size 800x96
                 RenderTableSection {TBODY} at (1,1) size 298x74
                   RenderTableRow {TR} at (0,0) size 298x74
                     RenderTableCell {TD} at (0,0) size 298x74 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 295x71
+                      RenderText {#text} at (1,1) size 295x72
                         text run at (1,1) width 280: "Presidential candidates George W. Bush and"
                         text run at (1,19) width 295: "Al Gore are expected to show a kinder, gentler"
                         text run at (1,37) width 241: "side Wednesday in the second of three"
                         text run at (1,55) width 176: "nationally televised debates."
-                      RenderBR {BR} at (177,55) size 0x17
+                      RenderBR {BR} at (177,55) size 0x18
             RenderTableCell {TD} at (302,2) size 96x74 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]
               RenderInline {FONT} at (1,3) size 83x72 [color=#CC3333]
-                RenderText {#text} at (1,3) size 83x71
+                RenderText {#text} at (1,3) size 83x72
                   text run at (1,1) width 70: "Avon.com:"
                   text run at (1,19) width 78: "Fall makeup"
                   text run at (1,37) width 83: "sale. Save up"

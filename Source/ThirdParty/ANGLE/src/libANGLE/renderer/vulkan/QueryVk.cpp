@@ -492,8 +492,8 @@ angle::Result QueryVk::getResult(const gl::Context *context, bool wait)
     // We only need to check mQueryHelper, not mStashedQueryHelper, since they are always in order.
     if (contextVk->hasUnsubmittedUse(mQueryHelper.get()))
     {
-        ANGLE_TRY(contextVk->flushAndSubmitCommands(nullptr, nullptr,
-                                                    RenderPassClosureReason::GetQueryResult));
+        ANGLE_TRY(
+            contextVk->flushAndSubmitCommands(nullptr, nullptr, QueueSubmitReason::GetQueryResult));
 
         ASSERT(contextVk->getRenderer()->hasResourceUseSubmitted(
             mQueryHelperTimeElapsedBegin.getResourceUse()));

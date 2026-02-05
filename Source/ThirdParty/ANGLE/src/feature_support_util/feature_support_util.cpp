@@ -12,6 +12,7 @@
 #include <json/json.h>
 #include <string.h>
 #include "common/platform.h"
+#include "common/unsafe_buffers.h"
 #if defined(ANGLE_PLATFORM_ANDROID)
 #    include <android/log.h>
 #    include <unistd.h>
@@ -37,7 +38,8 @@ namespace angle
 #    define INFO(...) __android_log_print(ANDROID_LOG_INFO, "ANGLE", __VA_ARGS__)
 #    define DEBUG(...) __android_log_print(ANDROID_LOG_DEBUG, "ANGLE", __VA_ARGS__)
 #    ifdef ANGLE_FEATURE_UTIL_LOG_VERBOSE
-#        define VERBOSE(...) __android_log_print(ANDROID_LOG_VERBOSE, "ANGLE", __VA_ARGS__)
+#        define VERBOSE(...) \
+            ANGLE_UNSAFE_TODO(__android_log_print(ANDROID_LOG_VERBOSE, "ANGLE", __VA_ARGS__))
 #    else
 #        define VERBOSE(...) ((void)0)
 #    endif

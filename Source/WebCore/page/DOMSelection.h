@@ -75,7 +75,7 @@ public:
     void addRange(Range&);
     ExceptionOr<void> removeRange(Range&);
 
-    Vector<Ref<StaticRange>> getComposedRanges(std::optional<Variant<RefPtr<ShadowRoot>, GetComposedRangesOptions>>&& options = std::nullopt, FixedVector<std::reference_wrapper<ShadowRoot>>&& = { });
+    Vector<Ref<StaticRange>> getComposedRanges(Variant<RefPtr<ShadowRoot>, GetComposedRangesOptions>&& options, FixedVector<std::reference_wrapper<ShadowRoot>>&& = { });
 
     void deleteFromDocument();
     bool containsNode(Node&, bool partlyContained) const;

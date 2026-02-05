@@ -40,14 +40,19 @@
 namespace WebCore {
 
 struct GPUImageCopyExternalImage {
-    using SourceType = Variant<RefPtr<ImageBitmap>,
+    using SourceType = Variant<
+        RefPtr<ImageBitmap>,
 #if ENABLE(VIDEO) && ENABLE(WEB_CODECS)
-    RefPtr<ImageData>, RefPtr<HTMLImageElement>, RefPtr<HTMLVideoElement>, RefPtr<WebCodecsVideoFrame>,
+        RefPtr<ImageData>,
+        RefPtr<HTMLImageElement>,
+        RefPtr<HTMLVideoElement>,
+        RefPtr<WebCodecsVideoFrame>,
 #endif
 #if ENABLE(OFFSCREEN_CANVAS)
-    RefPtr<OffscreenCanvas>,
+        RefPtr<OffscreenCanvas>,
 #endif
-    RefPtr<HTMLCanvasElement>>;
+        RefPtr<HTMLCanvasElement>
+    >;
 
     WebGPU::ImageCopyExternalImage convertToBacking() const
     {

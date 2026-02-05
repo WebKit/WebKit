@@ -243,6 +243,10 @@ class TInterfaceBlock : public TSymbol, public TFieldListCollection
     bool isDefaultUniformBlock() const { return mIsDefaultUniformBlock; }
     void setDefaultUniformBlock() { mIsDefaultUniformBlock = true; }
 
+    // For IR->AST translation only
+    void setBlockStorage(TLayoutBlockStorage blockStorage) { mBlockStorage = blockStorage; }
+    void setBlockBinding(int binding) { mBinding = binding; }
+
   private:
     friend class TSymbolTable;
     // For creating built-in interface blocks.

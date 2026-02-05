@@ -44,7 +44,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaStreamAudioSourceNode);
 
 ExceptionOr<Ref<MediaStreamAudioSourceNode>> MediaStreamAudioSourceNode::create(BaseAudioContext& context, MediaStreamAudioSourceOptions&& options)
 {
-    Ref mediaStream = options.mediaStream.releaseNonNull();
+    Ref mediaStream = WTF::move(options.mediaStream);
 
     auto audioTracks = mediaStream->getAudioTracks();
     if (audioTracks.isEmpty())

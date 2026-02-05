@@ -46,6 +46,8 @@ const char *GetCommandString(CommandID id)
             return "BindIndexBuffer";
         case CommandID::BindIndexBuffer2:
             return "BindIndexBuffer2";
+        case CommandID::BindTileMemory:
+            return "BindTileMemory";
         case CommandID::BindTransformFeedbackBuffers:
             return "BindTransformFeedbackBuffers";
         case CommandID::BindVertexBuffers:
@@ -154,6 +156,8 @@ const char *GetCommandString(CommandID id)
             return "SetLogicOp";
         case CommandID::SetPrimitiveRestartEnable:
             return "SetPrimitiveRestartEnable";
+        case CommandID::SetPrimitiveTopology:
+            return "SetPrimitiveTopology";
         case CommandID::SetRasterizerDiscardEnable:
             return "SetRasterizerDiscardEnable";
         case CommandID::SetScissor:
@@ -297,6 +301,15 @@ void SecondaryCommandBuffer::executeCommands(PrimaryCommandBuffer *primary)
                         getParamPtr<BindIndexBuffer2Params>(currentCommand);
                     vkCmdBindIndexBuffer2KHR(cmdBuffer, params->buffer, params->offset,
                                              params->size, params->indexType);
+                    break;
+                }
+                case CommandID::BindTileMemory:
+                {
+                    const BindTileMemoryParams *params =
+                        getParamPtr<BindTileMemoryParams>(currentCommand);
+                    const VkTileMemoryBindInfoQCOM tileMemoryBindInfo = {
+                        VK_STRUCTURE_TYPE_TILE_MEMORY_BIND_INFO_QCOM, nullptr, params->tileMemory};
+                    vkCmdBindTileMemoryQCOM(cmdBuffer, &tileMemoryBindInfo);
                     break;
                 }
                 case CommandID::BindTransformFeedbackBuffers:
@@ -830,6 +843,13 @@ void SecondaryCommandBuffer::executeCommands(PrimaryCommandBuffer *primary)
                     const SetPrimitiveRestartEnableParams *params =
                         getParamPtr<SetPrimitiveRestartEnableParams>(currentCommand);
                     vkCmdSetPrimitiveRestartEnableEXT(cmdBuffer, params->primitiveRestartEnable);
+                    break;
+                }
+                case CommandID::SetPrimitiveTopology:
+                {
+                    const SetPrimitiveTopologyParams *params =
+                        getParamPtr<SetPrimitiveTopologyParams>(currentCommand);
+                    vkCmdSetPrimitiveTopologyEXT(cmdBuffer, params->primitiveTopology);
                     break;
                 }
                 case CommandID::SetRasterizerDiscardEnable:

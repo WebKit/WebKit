@@ -58,9 +58,9 @@ bool shouldAllowAutoFillForCellularIdentifiers(const URL& topURL)
             return false;
 
         auto entitlementValue = adoptCF(SecTaskCopyValueForEntitlement(task.get(), CFSTR("com.apple.CommCenter.fine-grained"), nullptr));
-        auto entitlementValueAsArray = (__bridge NSArray *)dynamic_cf_cast<CFArrayRef>(entitlementValue.get());
-        for (id value in entitlementValueAsArray) {
-            if (auto string = dynamic_objc_cast<NSString>(value); [string isEqualToString:@"public-cellular-plan"])
+        RetainPtr entitlementValueAsArray = (__bridge NSArray *)dynamic_cf_cast<CFArrayRef>(entitlementValue.get());
+        for (id value in entitlementValueAsArray.get()) {
+            if (RetainPtr string = dynamic_objc_cast<NSString>(value); [string isEqualToString:@"public-cellular-plan"])
                 return true;
         }
         return false;
@@ -84,7 +84,7 @@ bool shouldAllowAutoFillForCellularIdentifiers(const URL& topURL)
 #else
     static NeverDestroyed cachedClient = adoptNS([PAL::allocCoreTelephonyClientInstance() initWithQueue:mainDispatchQueueSingleton()]);
 #endif
-    auto client = cachedClient->get();
+    RetainPtr client = cachedClient->get();
 
     static NeverDestroyed<String> lastQueriedHost;
     static bool lastQueriedHostResult = false;

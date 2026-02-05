@@ -63,6 +63,13 @@ default_args = {
 
   # TODO(439777063): llvm and Dawn need to fix includes
   use_clang_modules = false
+
+  # Enable Rust usage
+  enable_rust = true
+  enable_rust_cxx = true
+
+  # Angle must stay in C++20 for longer due to some downstream dependencies.
+  use_cxx23 = false
 }
 
 no_check_targets = [ "third_party/dawn/*" ]

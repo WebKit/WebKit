@@ -99,6 +99,8 @@ IcdDispatch CreateDispatch()
             reinterpret_cast<clEnqueueReleaseExternalMemObjectsKHR_fn>(
                 clIcdDispatch->clGetExtensionFunctionAddress(
                     "clEnqueueReleaseExternalMemObjectsKHR"));
+        dispatch.clImportMemoryARM = reinterpret_cast<clImportMemoryARM_fn>(
+            clIcdDispatch->clGetExtensionFunctionAddress("clImportMemoryARM"));
     }
     else if (error != nullptr)
     {

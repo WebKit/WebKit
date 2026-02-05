@@ -6045,6 +6045,230 @@ void testMoveDoubleConditionally64()
 #endif
 }
 
+#if CPU(X86_64) || CPU(ARM64)
+template<typename SelectionType>
+static SelectionType expectedResultForRelationalCondition(MacroAssembler::RelationalCondition cond, int32_t a, int32_t b, SelectionType thenValue, SelectionType elseValue)
+{
+    switch (cond) {
+    case MacroAssembler::Equal:
+        return a == b ? thenValue : elseValue;
+    case MacroAssembler::NotEqual:
+        return a != b ? thenValue : elseValue;
+    case MacroAssembler::Above:
+        return static_cast<uint32_t>(a) > static_cast<uint32_t>(b) ? thenValue : elseValue;
+    case MacroAssembler::AboveOrEqual:
+        return static_cast<uint32_t>(a) >= static_cast<uint32_t>(b) ? thenValue : elseValue;
+    case MacroAssembler::Below:
+        return static_cast<uint32_t>(a) < static_cast<uint32_t>(b) ? thenValue : elseValue;
+    case MacroAssembler::BelowOrEqual:
+        return static_cast<uint32_t>(a) <= static_cast<uint32_t>(b) ? thenValue : elseValue;
+    case MacroAssembler::GreaterThan:
+        return a > b ? thenValue : elseValue;
+    case MacroAssembler::GreaterThanOrEqual:
+        return a >= b ? thenValue : elseValue;
+    case MacroAssembler::LessThan:
+        return a < b ? thenValue : elseValue;
+    case MacroAssembler::LessThanOrEqual:
+        return a <= b ? thenValue : elseValue;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+template<typename SelectionType>
+static SelectionType expectedResultForResultCondition(MacroAssembler::ResultCondition cond, int32_t testValue, int32_t mask, SelectionType thenValue, SelectionType elseValue)
+{
+    int32_t result = testValue & mask;
+    switch (cond) {
+    case MacroAssembler::Zero:
+        return result == 0 ? thenValue : elseValue;
+    case MacroAssembler::NonZero:
+        return result != 0 ? thenValue : elseValue;
+    default:
+        break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+// Tests moveConditionally32(cond, left, immRight, immThenCase, regElseCase, dest)
+void testMoveConditionally32WithImmThenCase(MacroAssembler::RelationalCondition cond)
+{
+    const int32_t thenValue = 42;
+    const int32_t elseValue = 17;
+
+    for (auto left : int32Operands()) {
+        for (auto right : int32Operands()) {
+            int32_t expected = expectedResultForRelationalCondition(cond, left, right, thenValue, elseValue);
+
+            // Test with dest != elseCase
+            auto testCodeDestNotElse = compile([=] (CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+
+                GPRReg destGPR = GPRInfo::returnValueGPR;
+                GPRReg leftGPR = GPRInfo::regT2; // Use a different register for left
+                GPRReg elseGPR = GPRInfo::regT3;
+                RELEASE_ASSERT(destGPR != elseGPR);
+                RELEASE_ASSERT(leftGPR != destGPR);
+                RELEASE_ASSERT(leftGPR != elseGPR);
+
+                // Move argument to leftGPR before we touch destGPR (which may alias argumentGPR0)
+                jit.move(GPRInfo::argumentGPR0, leftGPR);
+                jit.move(CCallHelpers::TrustedImm32(elseValue), elseGPR);
+                jit.move(CCallHelpers::TrustedImm32(-1), destGPR);
+
+                jit.moveConditionally32(cond, leftGPR, CCallHelpers::TrustedImm32(right), CCallHelpers::TrustedImm32(thenValue), elseGPR, destGPR);
+
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+
+            // Test with dest == elseCase (special code path in x86)
+            auto testCodeDestEqualsElse = compile([=] (CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+
+                GPRReg destGPR = GPRInfo::returnValueGPR;
+                GPRReg leftGPR = GPRInfo::regT2; // Use a different register for left
+                GPRReg elseGPR = destGPR; // Same as dest
+                RELEASE_ASSERT(destGPR == elseGPR);
+                RELEASE_ASSERT(leftGPR != destGPR);
+
+                // Move argument to leftGPR before we touch destGPR (which may alias argumentGPR0)
+                jit.move(GPRInfo::argumentGPR0, leftGPR);
+                jit.move(CCallHelpers::TrustedImm32(elseValue), elseGPR);
+
+                jit.moveConditionally32(cond, leftGPR, CCallHelpers::TrustedImm32(right), CCallHelpers::TrustedImm32(thenValue), elseGPR, destGPR);
+
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+
+            CHECK_EQ(invoke<int32_t>(testCodeDestNotElse, left), expected);
+            CHECK_EQ(invoke<int32_t>(testCodeDestEqualsElse, left), expected);
+        }
+    }
+}
+
+// Tests moveConditionallyTest32(cond, left, regMask, immThenCase, regElseCase, dest)
+void testMoveConditionallyTest32WithImmThenCaseRegMask(MacroAssembler::ResultCondition cond)
+{
+    const int32_t thenValue = 42;
+    const int32_t elseValue = 17;
+
+    for (auto test : int32Operands()) {
+        for (auto mask : int32Operands()) {
+            int32_t expected = expectedResultForResultCondition(cond, test, mask, thenValue, elseValue);
+
+            // Test with dest != elseCase
+            auto testCodeDestNotElse = compile([=] (CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+
+                GPRReg destGPR = GPRInfo::returnValueGPR;
+                GPRReg testGPR = GPRInfo::regT2;
+                GPRReg maskGPR = GPRInfo::regT3;
+                GPRReg elseGPR = GPRInfo::regT4;
+                RELEASE_ASSERT(destGPR != elseGPR);
+                RELEASE_ASSERT(testGPR != destGPR);
+                RELEASE_ASSERT(maskGPR != destGPR);
+
+                // Move arguments to safe registers before touching destGPR
+                jit.move(GPRInfo::argumentGPR0, testGPR);
+                jit.move(GPRInfo::argumentGPR1, maskGPR);
+                jit.move(CCallHelpers::TrustedImm32(elseValue), elseGPR);
+                jit.move(CCallHelpers::TrustedImm32(-1), destGPR);
+
+                jit.moveConditionallyTest32(cond, testGPR, maskGPR, CCallHelpers::TrustedImm32(thenValue), elseGPR, destGPR);
+
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+
+            // Test with dest == elseCase
+            auto testCodeDestEqualsElse = compile([=] (CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+
+                GPRReg destGPR = GPRInfo::returnValueGPR;
+                GPRReg testGPR = GPRInfo::regT2;
+                GPRReg maskGPR = GPRInfo::regT3;
+                GPRReg elseGPR = destGPR;
+                RELEASE_ASSERT(destGPR == elseGPR);
+                RELEASE_ASSERT(testGPR != destGPR);
+                RELEASE_ASSERT(maskGPR != destGPR);
+
+                // Move arguments to safe registers before touching destGPR
+                jit.move(GPRInfo::argumentGPR0, testGPR);
+                jit.move(GPRInfo::argumentGPR1, maskGPR);
+                jit.move(CCallHelpers::TrustedImm32(elseValue), elseGPR);
+
+                jit.moveConditionallyTest32(cond, testGPR, maskGPR, CCallHelpers::TrustedImm32(thenValue), elseGPR, destGPR);
+
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+
+            CHECK_EQ(invoke<int32_t>(testCodeDestNotElse, test, mask), expected);
+            CHECK_EQ(invoke<int32_t>(testCodeDestEqualsElse, test, mask), expected);
+        }
+    }
+}
+
+// Tests moveConditionallyTest32(cond, testReg, immMask, immThenCase, regElseCase, dest)
+void testMoveConditionallyTest32WithImmThenCaseImmMask(MacroAssembler::ResultCondition cond)
+{
+    const int32_t thenValue = 42;
+    const int32_t elseValue = 17;
+
+    for (auto test : int32Operands()) {
+        for (auto mask : int32Operands()) {
+            int32_t expected = expectedResultForResultCondition(cond, test, mask, thenValue, elseValue);
+
+            // Test with dest != elseCase
+            auto testCodeDestNotElse = compile([=] (CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+
+                GPRReg destGPR = GPRInfo::returnValueGPR;
+                GPRReg testGPR = GPRInfo::regT2;
+                GPRReg elseGPR = GPRInfo::regT3;
+                RELEASE_ASSERT(destGPR != elseGPR);
+                RELEASE_ASSERT(testGPR != destGPR);
+
+                // Move argument to safe register before touching destGPR
+                jit.move(GPRInfo::argumentGPR0, testGPR);
+                jit.move(CCallHelpers::TrustedImm32(elseValue), elseGPR);
+                jit.move(CCallHelpers::TrustedImm32(-1), destGPR);
+
+                jit.moveConditionallyTest32(cond, testGPR, CCallHelpers::TrustedImm32(mask), CCallHelpers::TrustedImm32(thenValue), elseGPR, destGPR);
+
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+
+            // Test with dest == elseCase
+            auto testCodeDestEqualsElse = compile([=] (CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+
+                GPRReg destGPR = GPRInfo::returnValueGPR;
+                GPRReg testGPR = GPRInfo::regT2;
+                GPRReg elseGPR = destGPR;
+                RELEASE_ASSERT(destGPR == elseGPR);
+                RELEASE_ASSERT(testGPR != destGPR);
+
+                // Move argument to safe register before touching destGPR
+                jit.move(GPRInfo::argumentGPR0, testGPR);
+                jit.move(CCallHelpers::TrustedImm32(elseValue), elseGPR);
+
+                jit.moveConditionallyTest32(cond, testGPR, CCallHelpers::TrustedImm32(mask), CCallHelpers::TrustedImm32(thenValue), elseGPR, destGPR);
+
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+
+            CHECK_EQ(invoke<int32_t>(testCodeDestNotElse, test), expected);
+            CHECK_EQ(invoke<int32_t>(testCodeDestEqualsElse, test), expected);
+        }
+    }
+}
+
+#endif
+
 void testLoadBaseIndex()
 {
 #if CPU(ARM64) || CPU(X86_64) || CPU(RISCV64)
@@ -6776,7 +7000,7 @@ static void testAtomicAndEmitsCode()
 }
 #endif
 
-#if CPU(ARM64)
+#if CPU(ARM64) || CPU(X86_64)
 static void testMove32ToFloatMovi()
 {
     // Test movi-encodable patterns
@@ -6985,6 +7209,635 @@ static void testMove64ToDoubleRepeated32BitPatternBug()
     testPattern(0xfffffffefffffffeULL); // Repeated -2 (as uint32)
 }
 
+static void testMove128ToVectorMovi()
+{
+    auto testPattern = [&](v128_t pattern) {
+        // Create a simple function that moves the v128 immediate to a vector register
+        // then extracts both 64-bit lanes to verify correctness
+        auto compilation = compile([&](CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            // Move the v128 pattern to vector register v0
+            jit.move128ToVector(pattern, FPRInfo::argumentFPR0);
+
+            // Extract lower 64 bits to x0
+            jit.vectorExtractLaneInt64(CCallHelpers::TrustedImm32(0), FPRInfo::argumentFPR0, GPRInfo::returnValueGPR);
+
+            // Extract upper 64 bits to x1
+            jit.vectorExtractLaneInt64(CCallHelpers::TrustedImm32(1), FPRInfo::argumentFPR0, GPRInfo::returnValueGPR2);
+
+            // Return (results will be in x0 and x1)
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+
+        // Execute and verify
+        auto [low64, high64] = invoke<std::pair<uint64_t, uint64_t>>(compilation);
+        CHECK_EQ(low64, pattern.u64x2[0]);
+        CHECK_EQ(high64, pattern.u64x2[1]);
+    };
+
+    // Test all zeros (special case)
+    testPattern(v128_t { 0x0000000000000000ULL, 0x0000000000000000ULL });
+
+    // Test all ones (0xFFFFFFFF repeated 4 times, uses mvni<128>)
+    testPattern(v128_t { 0xffffffffffffffffULL, 0xffffffffffffffffULL });
+
+    // Test 32-bit LSL patterns repeated 4 times (uses movi<128>)
+    testPattern(v128_t { 0x1200000012000000ULL, 0x1200000012000000ULL }); // 0x12 << 24
+    testPattern(v128_t { 0x0012000000120000ULL, 0x0012000000120000ULL }); // 0x12 << 16
+    testPattern(v128_t { 0x0000120000001200ULL, 0x0000120000001200ULL }); // 0x12 << 8
+    testPattern(v128_t { 0x0000001200000012ULL, 0x0000001200000012ULL }); // 0x12 << 0
+
+    // Test inverted 32-bit LSL patterns repeated 4 times (uses mvni<128>)
+    testPattern(v128_t { 0xedffffffedffffffULL, 0xedffffffedffffffULL }); // ~(0x12 << 24)
+    testPattern(v128_t { 0xffedffffffedffffULL, 0xffedffffffedffffULL }); // ~(0x12 << 16)
+
+    // Test 32-bit MSL patterns repeated 4 times (uses movi<128> with MSL)
+    testPattern(v128_t { 0x000042ff000042ffULL, 0x000042ff000042ffULL }); // MSL #8
+    testPattern(v128_t { 0x0042ffff0042ffffULL, 0x0042ffff0042ffffULL }); // MSL #16
+
+    // Test inverted 32-bit MSL patterns repeated 4 times (uses mvni<128> with MSL)
+    testPattern(v128_t { 0xffffbd00ffffbd00ULL, 0xffffbd00ffffbd00ULL }); // ~MSL #8
+    testPattern(v128_t { 0xffbd0000ffbd0000ULL, 0xffbd0000ffbd0000ULL }); // ~MSL #16
+
+    // Test 32-bit byte-mask patterns repeated 4 times (uses movi<128>)
+    testPattern(v128_t { 0xff00ff00ff00ff00ULL, 0xff00ff00ff00ff00ULL }); // Byte mask
+
+    // Test 64-bit patterns repeated twice (uses movi/mvni<64> + dup)
+    testPattern(v128_t { 0xff00ff00ff00ff00ULL, 0xff00ff00ff00ff00ULL }); // 64-bit byte mask repeated
+
+    // Test non-repeating patterns (should use fallback)
+    testPattern(v128_t { 0x0000000000000000ULL, 0xffffffffffffffffULL }); // Half zeros, half ones
+    testPattern(v128_t { 0x123456789abcdef0ULL, 0xfedcba9876543210ULL }); // Arbitrary different values
+    testPattern(v128_t { 0x0000000000000042ULL, 0x0000000000000043ULL }); // Simple different values
+}
+
+#if CPU(ARM64)
+static void testMove16ToFloat16Comprehensive()
+{
+    auto testPattern = [] (uint16_t pattern) {
+        auto test = compile([=] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            jit.move16ToFloat16(CCallHelpers::TrustedImm32(pattern), FPRInfo::fpRegT0);
+            jit.moveFloat16To16(FPRInfo::fpRegT0, GPRInfo::returnValueGPR);
+
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+
+        uint16_t result = static_cast<uint16_t>(invoke<uint32_t>(test));
+        CHECK_EQ(result, pattern);
+    };
+
+    // Test zero (moveZeroToFloat path)
+    testPattern(0x0000);
+
+    // Test FP immediate encoding (fmov path)
+    testPattern(0x3C00); // Half-precision 1.0
+    testPattern(0x4000); // Half-precision 2.0
+    testPattern(0xBC00); // Half-precision -1.0
+    testPattern(0x3800); // Half-precision 0.5
+    testPattern(0x4200); // Half-precision 3.0
+    testPattern(0x4400); // Half-precision 4.0
+
+    // Test 16-bit LSL shifted immediate (movi path)
+    testPattern(0x1200); // 0x12 << 8
+    testPattern(0x0012); // 0x12 << 0
+    testPattern(0x8000); // Sign bit
+    testPattern(0xFF00); // Max byte at shift 8
+    testPattern(0x00FF); // Max byte at shift 0
+
+    // Test inverted 16-bit LSL shifted immediate (mvni path)
+    testPattern(0xEDFF); // ~0x1200
+    testPattern(0xFFED); // ~0x0012
+    testPattern(0x7FFF); // ~0x8000
+    testPattern(0x00FF); // ~0xFF00
+    testPattern(0xFF00); // ~0x00FF
+
+    // Test all bytes equal (movi 8-bit path)
+    testPattern(0x4242); // Same byte repeated
+    testPattern(0x8080); // Sign bit in both bytes
+    testPattern(0xFFFF); // All ones
+    testPattern(0x1111); // Low value repeated
+
+    // Test non-encodable patterns (fallback path)
+    testPattern(0x1234); // Arbitrary pattern
+    testPattern(0x3C01); // Near FP immediate but not encodable
+    testPattern(0xABCD); // Random pattern
+    testPattern(0x5A5A); // Alternating bits pattern
+}
+#endif
+
+static void testMove32ToFloatComprehensive()
+{
+    auto testPattern = [] (uint32_t pattern) {
+        auto test = compile([=] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            jit.move32ToFloat(CCallHelpers::TrustedImm32(pattern), FPRInfo::fpRegT0);
+            jit.moveFloatTo32(FPRInfo::fpRegT0, GPRInfo::returnValueGPR);
+
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+
+        CHECK_EQ(invoke<uint32_t>(test), pattern);
+    };
+
+    // Test zero (moveZeroToFloat path)
+    testPattern(0x00000000);
+
+    // Test FP immediate encoding (fmov path)
+    testPattern(0x3F800000); // Float 1.0
+    testPattern(0x40000000); // Float 2.0
+    testPattern(0xC0000000); // Float -2.0
+    testPattern(0x3F000000); // Float 0.5
+    testPattern(0xBF000000); // Float -0.5
+    testPattern(0x3E800000); // Float 0.25
+    testPattern(0x40400000); // Float 3.0
+    testPattern(0xC0A00000); // Float -5.0
+
+    // Test 32-bit LSL shifted immediate (movi path)
+    testPattern(0x00000012); // shift 0
+    testPattern(0x00001200); // shift 8
+    testPattern(0x00120000); // shift 16
+    testPattern(0x12000000); // shift 24
+    testPattern(0x00000042);
+    testPattern(0x00004200);
+    testPattern(0x00420000);
+    testPattern(0x42000000);
+    testPattern(0x80000000); // Sign bit (very common!)
+    testPattern(0x000000FF); // Max byte at shift 0
+    testPattern(0x0000FF00); // Max byte at shift 8
+    testPattern(0x00FF0000); // Max byte at shift 16
+    testPattern(0xFF000000); // Max byte at shift 24
+
+    // Test inverted 32-bit LSL shifted immediate (mvni path)
+    testPattern(0xFFFFFFED); // ~0x00000012
+    testPattern(0xFFFFEDFF); // ~0x00001200
+    testPattern(0xFFEDFFFF); // ~0x00120000
+    testPattern(0xEDFFFFFF); // ~0x12000000
+    testPattern(0xFFFFFFBD); // ~0x42
+    testPattern(0xFFFFBDFF);
+    testPattern(0xFFBDFFFF);
+    testPattern(0xBDFFFFFF);
+    testPattern(0x7FFFFFFF); // ~0x80000000 (INT32_MAX, common!)
+    testPattern(0xFFFFFF00); // ~0x000000FF
+    testPattern(0xFFFF00FF); // ~0x0000FF00
+    testPattern(0xFF00FFFF);
+    testPattern(0x00FFFFFF);
+
+    // Test MSL (Mask Shift Left) patterns (movi MSL path)
+    testPattern(0x000012FF); // movi #0x12, MSL #8
+    testPattern(0x0012FFFF); // movi #0x12, MSL #16
+    testPattern(0x000042FF); // movi #0x42, MSL #8
+    testPattern(0x0042FFFF); // movi #0x42, MSL #16
+    testPattern(0x0080FFFF); // movi #0x80, MSL #16
+    testPattern(0x000080FF);
+
+    // Test inverted MSL patterns (mvni MSL path)
+    testPattern(0xFFFFED00); // mvni #0x12, MSL #8
+    testPattern(0xFFED0000); // mvni #0x12, MSL #16
+    testPattern(0xFFFFBD00); // mvni #0x42, MSL #8
+    testPattern(0xFFBD0000); // mvni #0x42, MSL #16
+    testPattern(0xFF7FFFFF);
+    testPattern(0xFF7F0000);
+
+    // Test byte-mask patterns (movi<64> path)
+    testPattern(0xFF00FF00); // Bytes 1 and 3 are 0xFF
+    testPattern(0x00FF00FF); // Bytes 0 and 2 are 0xFF
+    testPattern(0xFFFF0000); // Bytes 2 and 3 are 0xFF
+    testPattern(0x0000FFFF); // Bytes 0 and 1 are 0xFF
+    testPattern(0xFF0000FF); // Bytes 0 and 3 are 0xFF
+    testPattern(0xFFFFFFFF); // All 0xFF
+    testPattern(0x00FFFF00);
+    testPattern(0xFF000000);
+    testPattern(0x000000FF);
+
+    // Test repeated 16-bit halves with FP immediate (fmov_v<16> path)
+    testPattern(0x3C003C00); // Repeated half-precision 1.0
+    testPattern(0x40004000); // Repeated half-precision 2.0
+    testPattern(0xBC00BC00); // Repeated half-precision -1.0
+
+    // Test repeated 16-bit halves with LSL (movi<16> path)
+    testPattern(0x12001200); // Repeated 0x1200
+    testPattern(0x00120012); // Repeated 0x0012
+    testPattern(0x80008000); // Repeated sign bit
+    testPattern(0x42004200);
+
+    // Test repeated 16-bit halves with inverted LSL (mvni<16> path)
+    testPattern(0xEDFFEDFF); // Repeated ~0x1200
+    testPattern(0xFFEDFFED); // Repeated ~0x0012
+    testPattern(0x7FFF7FFF);
+    testPattern(0xBDFFBDFF);
+
+    // Test all 4 bytes equal (movi 8-bit path)
+    testPattern(0x42424242); // Byte 0x42 repeated
+    testPattern(0x80808080); // Byte 0x80 repeated
+    testPattern(0x11111111); // Byte 0x11 repeated
+    testPattern(0xAAAAAAAA);
+    testPattern(0x55555555);
+
+    // Test non-encodable patterns (fallback path)
+    testPattern(0x12345678); // Multiple non-zero bytes
+    testPattern(0xABCDEF01); // Arbitrary pattern
+    testPattern(0x3F800001); // Near float 1.0 but not exact
+    testPattern(0x01020304);
+}
+
+// Comprehensive tests for move64ToDouble covering all code paths
+static void testMove64ToDoubleComprehensive()
+{
+    auto testPattern = [] (uint64_t pattern) {
+        auto test = compile([=] (CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            jit.move64ToDouble(CCallHelpers::TrustedImm64(pattern), FPRInfo::fpRegT0);
+            jit.moveDoubleTo64(FPRInfo::fpRegT0, GPRInfo::returnValueGPR);
+
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+
+        CHECK_EQ(invoke<uint64_t>(test), pattern);
+    };
+
+    // Test zero (moveZeroToDouble path)
+    testPattern(0x0000000000000000ULL);
+
+    // Test FP immediate encoding (fmov<64> path)
+    testPattern(0x3FF0000000000000ULL); // Double 1.0
+    testPattern(0x4000000000000000ULL); // Double 2.0
+    testPattern(0xC000000000000000ULL); // Double -2.0
+    testPattern(0xBFF0000000000000ULL); // Double -1.0
+    testPattern(0x3FE0000000000000ULL); // Double 0.5
+    testPattern(0x4008000000000000ULL); // Double 3.0
+
+    // Test byte-mask patterns (movi<64> path)
+    testPattern(0x00000000000000FFULL); // Byte 0 is 0xFF
+    testPattern(0x000000000000FF00ULL); // Byte 1 is 0xFF
+    testPattern(0x00000000FF000000ULL); // Byte 4 is 0xFF
+    testPattern(0xFF00000000000000ULL); // Byte 7 is 0xFF
+    testPattern(0xFF00FF00FF00FF00ULL); // Alternating pattern
+    testPattern(0x00FF00FF00FF00FFULL); // Alternating pattern
+    testPattern(0xFFFFFFFF00000000ULL); // Upper 4 bytes 0xFF
+    testPattern(0x00000000FFFFFFFFULL); // Lower 4 bytes 0xFF
+    testPattern(0xFFFFFFFFFFFFFFFFULL); // All 0xFF
+    testPattern(0x0000FFFFFFFF0000ULL);
+
+    // Test repeated 32-bit halves with FP immediate (fmov_v<32> path)
+    testPattern(0x3F8000003F800000ULL); // Repeated float 1.0
+    testPattern(0x4000000040000000ULL); // Repeated float 2.0
+    testPattern(0xC0000000C0000000ULL); // Repeated float -2.0
+
+    // Test repeated 32-bit halves with LSL (movi path)
+    testPattern(0x0012000000120000ULL); // Repeated movi #0x12, LSL #16
+    testPattern(0x1200000012000000ULL); // Repeated movi #0x12, LSL #24
+    testPattern(0x0000120000001200ULL); // Repeated movi #0x12, LSL #8
+    testPattern(0x0000001200000012ULL); // Repeated movi #0x12, LSL #0
+    testPattern(0x8000000080000000ULL); // Repeated sign bit
+    testPattern(0x7FFFFFFF7FFFFFFFULL); // Repeated INT32_MAX
+    testPattern(0x4200000042000000ULL);
+
+    // Test repeated 32-bit halves with inverted LSL (mvni path)
+    testPattern(0xFFFFEDFFFFFFEDFFULL); // Repeated ~0x00001200
+    testPattern(0xEDFFFFFFEDFFFFFFULL); // Repeated ~0x12000000
+    testPattern(0xBDFFFFFFBDFFFFFFULL);
+
+    // Test repeated 32-bit halves with MSL (movi MSL path)
+    testPattern(0x000042FF000042FFULL); // Repeated movi #0x42, MSL #8
+    testPattern(0x0042FFFF0042FFFFULL); // Repeated movi #0x42, MSL #16
+    testPattern(0x008000FF008000FFULL); // Repeated movi #0x80, MSL #8
+    testPattern(0x0080FFFF0080FFFFULL); // Repeated movi #0x80, MSL #16
+
+    // Test repeated 32-bit halves with inverted MSL (mvni MSL path)
+    testPattern(0xFFFFBD00FFFFBD00ULL); // Repeated mvni #0x42, MSL #8
+    testPattern(0xFFBD0000FFBD0000ULL); // Repeated mvni #0x42, MSL #16
+
+    // Test repeated 16-bit values (all four 16-bit lanes equal) with FP immediate
+    testPattern(0x3C003C003C003C00ULL); // Repeated half-precision 1.0
+    testPattern(0x4000400040004000ULL); // Repeated half-precision 2.0
+    testPattern(0xBC00BC00BC00BC00ULL);
+
+    // Test repeated 16-bit values with LSL (movi<16> path)
+    testPattern(0x0012001200120012ULL); // Repeated 0x0012
+    testPattern(0x1200120012001200ULL); // Repeated 0x1200
+    testPattern(0x8000800080008000ULL); // Repeated sign bit
+    testPattern(0x4200420042004200ULL);
+
+    // Test repeated 16-bit values with inverted LSL (mvni<16> path)
+    testPattern(0xFFEDFFEDFFEDFFEDULL); // Repeated ~0x0012
+    testPattern(0xEDFFEDFFEDFFEDFFULL); // Repeated ~0x1200
+    testPattern(0x7FFF7FFF7FFF7FFFULL);
+    testPattern(0xBDFFBDFFBDFFBDFFULL);
+
+    // Test all 8 bytes equal (movi 8-bit path)
+    testPattern(0x4242424242424242ULL); // Byte 0x42 repeated
+    testPattern(0x8080808080808080ULL); // Byte 0x80 repeated
+    testPattern(0x1111111111111111ULL); // Byte 0x11 repeated
+    testPattern(0xAAAAAAAAAAAAAAAAULL);
+    testPattern(0x5555555555555555ULL);
+
+    // Test non-encodable patterns (fallback path)
+    testPattern(0x123456789ABCDEF0ULL); // Arbitrary pattern
+    testPattern(0x7FFFFFFFFFFFFFFFULL); // Near all ones
+    testPattern(0x8000000000000000ULL); // Single sign bit
+    testPattern(0x3FF0000000000001ULL); // Near double 1.0
+    testPattern(0x0102030405060708ULL);
+}
+
+// Comprehensive tests for move128ToVector covering all code paths
+static void testMove128ToVectorComprehensive()
+{
+    auto testPattern = [&](v128_t pattern) {
+        auto compilation = compile([&](CCallHelpers& jit) {
+            emitFunctionPrologue(jit);
+
+            jit.move128ToVector(pattern, FPRInfo::argumentFPR0);
+
+            // Extract lower 64 bits to x0
+            jit.vectorExtractLaneInt64(CCallHelpers::TrustedImm32(0), FPRInfo::argumentFPR0, GPRInfo::returnValueGPR);
+
+            // Extract upper 64 bits to x1
+            jit.vectorExtractLaneInt64(CCallHelpers::TrustedImm32(1), FPRInfo::argumentFPR0, GPRInfo::returnValueGPR2);
+
+            emitFunctionEpilogue(jit);
+            jit.ret();
+        });
+
+        auto [low64, high64] = invoke<std::pair<uint64_t, uint64_t>>(compilation);
+        CHECK_EQ(low64, pattern.u64x2[0]);
+        CHECK_EQ(high64, pattern.u64x2[1]);
+    };
+
+    // Test all zeros (special case)
+    testPattern(v128_t { 0x0000000000000000ULL, 0x0000000000000000ULL });
+
+    // Test upper and lower 64-bit halves equal with FP immediate (fmov_v<128,64> path)
+    testPattern(v128_t { 0x3FF0000000000000ULL, 0x3FF0000000000000ULL }); // Double 1.0 repeated
+    testPattern(v128_t { 0x4000000000000000ULL, 0x4000000000000000ULL }); // Double 2.0 repeated
+    testPattern(v128_t { 0xBFF0000000000000ULL, 0xBFF0000000000000ULL });
+
+    // Test upper and lower 64-bit halves equal with byte mask (movi<128,64> path)
+    testPattern(v128_t { 0xFF00FF00FF00FF00ULL, 0xFF00FF00FF00FF00ULL });
+    testPattern(v128_t { 0x00FF00FF00FF00FFULL, 0x00FF00FF00FF00FFULL });
+    testPattern(v128_t { 0xFFFFFFFF00000000ULL, 0xFFFFFFFF00000000ULL });
+    testPattern(v128_t { 0x00000000FFFFFFFFULL, 0x00000000FFFFFFFFULL });
+
+    // Test all four 32-bit lanes equal with FP immediate (fmov_v<128,32> path)
+    testPattern(v128_t { 0x3F8000003F800000ULL, 0x3F8000003F800000ULL }); // Float 1.0 repeated 4 times
+    testPattern(v128_t { 0x4000000040000000ULL, 0x4000000040000000ULL }); // Float 2.0 repeated 4 times
+    testPattern(v128_t { 0xBF800000BF800000ULL, 0xBF800000BF800000ULL });
+
+    // Test all four 32-bit lanes equal with LSL (movi<128,32> path)
+    testPattern(v128_t { 0x1200000012000000ULL, 0x1200000012000000ULL }); // 0x12 << 24, repeated
+    testPattern(v128_t { 0x0012000000120000ULL, 0x0012000000120000ULL }); // 0x12 << 16, repeated
+    testPattern(v128_t { 0x0000120000001200ULL, 0x0000120000001200ULL }); // 0x12 << 8, repeated
+    testPattern(v128_t { 0x0000001200000012ULL, 0x0000001200000012ULL }); // 0x12 << 0, repeated
+    testPattern(v128_t { 0x8000000080000000ULL, 0x8000000080000000ULL }); // Sign bit repeated
+    testPattern(v128_t { 0x4200000042000000ULL, 0x4200000042000000ULL });
+
+    // Test all four 32-bit lanes equal with inverted LSL (mvni<128,32> path)
+    testPattern(v128_t { 0xEDFFFFFFEDFFFFFFULL, 0xEDFFFFFFEDFFFFFFULL }); // ~(0x12 << 24), repeated
+    testPattern(v128_t { 0xFFEDFFFFFFEDFFFFULL, 0xFFEDFFFFFFEDFFFFULL }); // ~(0x12 << 16), repeated
+    testPattern(v128_t { 0xFFFFEDFFFFFFEDFFULL, 0xFFFFEDFFFFFFEDFFULL }); // ~(0x12 << 8), repeated
+    testPattern(v128_t { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL }); // ~sign bit, repeated
+    testPattern(v128_t { 0xBDFFFFFFBDFFFFFFULL, 0xBDFFFFFFBDFFFFFFULL });
+
+    // Test all four 32-bit lanes equal with MSL (movi<128,32> MSL path)
+    testPattern(v128_t { 0x000042FF000042FFULL, 0x000042FF000042FFULL }); // MSL #8, repeated
+    testPattern(v128_t { 0x0042FFFF0042FFFFULL, 0x0042FFFF0042FFFFULL }); // MSL #16, repeated
+    testPattern(v128_t { 0x008000FF008000FFULL, 0x008000FF008000FFULL }); // MSL #8 with 0x80
+
+    // Test all four 32-bit lanes equal with inverted MSL (mvni<128,32> MSL path)
+    testPattern(v128_t { 0xFFFFBD00FFFFBD00ULL, 0xFFFFBD00FFFFBD00ULL }); // ~MSL #8, repeated
+    testPattern(v128_t { 0xFFBD0000FFBD0000ULL, 0xFFBD0000FFBD0000ULL }); // ~MSL #16, repeated
+
+    // Test all four 32-bit lanes equal with byte mask (movi<128,64> path for 32-bit)
+    testPattern(v128_t { 0xFF00FF00FF00FF00ULL, 0xFF00FF00FF00FF00ULL });
+    testPattern(v128_t { 0xFFFFFFFFFFFFFFFFULL, 0xFFFFFFFFFFFFFFFFULL }); // All ones
+
+    // Test all eight 16-bit lanes equal with FP immediate (fmov_v<128,16> path)
+    testPattern(v128_t { 0x3C003C003C003C00ULL, 0x3C003C003C003C00ULL }); // Half 1.0 repeated 8 times
+    testPattern(v128_t { 0x4000400040004000ULL, 0x4000400040004000ULL }); // Half 2.0 repeated 8 times
+    testPattern(v128_t { 0xBC00BC00BC00BC00ULL, 0xBC00BC00BC00BC00ULL });
+
+    // Test all eight 16-bit lanes equal with LSL (movi<128,16> path)
+    testPattern(v128_t { 0x1200120012001200ULL, 0x1200120012001200ULL }); // 0x1200 repeated
+    testPattern(v128_t { 0x0012001200120012ULL, 0x0012001200120012ULL }); // 0x0012 repeated
+    testPattern(v128_t { 0x8000800080008000ULL, 0x8000800080008000ULL }); // Sign bit repeated
+    testPattern(v128_t { 0x4200420042004200ULL, 0x4200420042004200ULL });
+
+    // Test all eight 16-bit lanes equal with inverted LSL (mvni<128,16> path)
+    testPattern(v128_t { 0xEDFFEDFFEDFFEDFFULL, 0xEDFFEDFFEDFFEDFFULL }); // ~0x1200 repeated
+    testPattern(v128_t { 0xFFEDFFEDFFEDFFEDULL, 0xFFEDFFEDFFEDFFEDULL }); // ~0x0012 repeated
+    testPattern(v128_t { 0x7FFF7FFF7FFF7FFFULL, 0x7FFF7FFF7FFF7FFFULL });
+
+    // Test all 16 bytes equal (movi<128,8> path)
+    testPattern(v128_t { 0x4242424242424242ULL, 0x4242424242424242ULL }); // 0x42 repeated 16 times
+    testPattern(v128_t { 0x8080808080808080ULL, 0x8080808080808080ULL }); // 0x80 repeated 16 times
+    testPattern(v128_t { 0x1111111111111111ULL, 0x1111111111111111ULL }); // 0x11 repeated 16 times
+    testPattern(v128_t { 0xAAAAAAAAAAAAAAAAULL, 0xAAAAAAAAAAAAAAAAULL });
+    testPattern(v128_t { 0x5555555555555555ULL, 0x5555555555555555ULL });
+
+    // Test non-repeating patterns (fallback path - GPR + vector lane insertion)
+    testPattern(v128_t { 0x0000000000000000ULL, 0xFFFFFFFFFFFFFFFFULL }); // Half zeros, half ones
+    testPattern(v128_t { 0x123456789ABCDEF0ULL, 0xFEDCBA9876543210ULL }); // Different arbitrary values
+    testPattern(v128_t { 0x0000000000000042ULL, 0x0000000000000043ULL }); // Simple different values
+    testPattern(v128_t { 0x3FF0000000000000ULL, 0x4000000000000000ULL }); // Different doubles
+    testPattern(v128_t { 0x123456789ABCDEF0ULL, 0x123456789ABCDEF1ULL }); // Nearly same but different
+    testPattern(v128_t { 0x0102030405060708ULL, 0x090A0B0C0D0E0F00ULL });
+
+    // Test all ones
+    testPattern(v128_t { 0xFFFFFFFFFFFFFFFFULL, 0xFFFFFFFFFFFFFFFFULL });
+
+    // Test upper and lower 64-bit halves identical
+    testPattern(v128_t { 0x8000000080000000ULL, 0x8000000080000000ULL });
+    testPattern(v128_t { 0x1234567812345678ULL, 0x1234567812345678ULL });
+    testPattern(v128_t { 0x00000000000000FFULL, 0x00000000000000FFULL });
+    testPattern(v128_t { 0xFF00000000000000ULL, 0xFF00000000000000ULL });
+
+    // Test all four 32-bit lanes identical
+    testPattern(v128_t { 0x8000000080000000ULL, 0x8000000080000000ULL });
+    testPattern(v128_t { 0x1234567812345678ULL, 0x1234567812345678ULL });
+    testPattern(v128_t { 0x000000FF000000FFULL, 0x000000FF000000FFULL });
+    testPattern(v128_t { 0xFF000000FF000000ULL, 0xFF000000FF000000ULL });
+
+    // Test upper 64 bits zero
+    testPattern(v128_t { 0x123456789ABCDEF0ULL, 0x0000000000000000ULL });
+    testPattern(v128_t { 0x80000000ULL, 0x0000000000000000ULL });
+    testPattern(v128_t { 0xFFFFFFFFFFFFFFFFULL, 0x0000000000000000ULL });
+    testPattern(v128_t { 0x0000000000000001ULL, 0x0000000000000000ULL }); // Minimal non-zero lower
+    testPattern(v128_t { 0x7FFFFFFFFFFFFFFFULL, 0x0000000000000000ULL }); // Max positive int64
+    testPattern(v128_t { 0x8000000000000000ULL, 0x0000000000000000ULL }); // Min negative int64 (as uint)
+
+    // Test lower 64 bits zero, upper non-zero (fallback path)
+    testPattern(v128_t { 0x0000000000000000ULL, 0x123456789ABCDEF0ULL });
+    testPattern(v128_t { 0x0000000000000000ULL, 0x0000000000000001ULL }); // Minimal upper
+    testPattern(v128_t { 0x0000000000000000ULL, 0xFFFFFFFFFFFFFFFFULL }); // Max upper
+    testPattern(v128_t { 0x0000000000000000ULL, 0x8000000000000000ULL }); // Single high bit
+
+    // Test all 16 bytes identical (requires AVX2 for vpbroadcastb)
+    testPattern(v128_t { 0x4242424242424242ULL, 0x4242424242424242ULL });
+    testPattern(v128_t { 0x8080808080808080ULL, 0x8080808080808080ULL });
+    testPattern(v128_t { 0xAAAAAAAAAAAAAAAAULL, 0xAAAAAAAAAAAAAAAAULL });
+    testPattern(v128_t { 0x0101010101010101ULL, 0x0101010101010101ULL }); // 0x01 repeated (minimal non-zero)
+    testPattern(v128_t { 0xFEFEFEFEFEFEFEFEULL, 0xFEFEFEFEFEFEFEFEULL }); // 0xFE repeated (near max)
+
+    // Test all eight 16-bit lanes identical (requires AVX2 for vpbroadcastw)
+    testPattern(v128_t { 0x00FF00FF00FF00FFULL, 0x00FF00FF00FF00FFULL }); // 0x00FF repeated
+    testPattern(v128_t { 0x1234123412341234ULL, 0x1234123412341234ULL }); // 0x1234 repeated
+    testPattern(v128_t { 0xFF00FF00FF00FF00ULL, 0xFF00FF00FF00FF00ULL }); // 0xFF00 repeated
+    testPattern(v128_t { 0x8000800080008000ULL, 0x8000800080008000ULL }); // 0x8000 repeated
+    testPattern(v128_t { 0xABCDABCDABCDABCDULL, 0xABCDABCDABCDABCDULL }); // 0xABCD repeated
+    testPattern(v128_t { 0x0001000100010001ULL, 0x0001000100010001ULL }); // 0x0001 repeated (minimal non-zero)
+    testPattern(v128_t { 0xFFFEFFFEFFFEFFFEULL, 0xFFFEFFFEFFFEFFFEULL }); // 0xFFFE repeated (near max)
+
+    // Test non-encodable patterns (fallback to GPR insertion path)
+    testPattern(v128_t { 0x123456789ABCDEF0ULL, 0xFEDCBA9876543210ULL });
+    testPattern(v128_t { 0x0000000000000042ULL, 0x0000000000000043ULL });
+    testPattern(v128_t { 0x3FF0000000000000ULL, 0x4000000000000000ULL });
+
+    // Additional coverage: Repeated 64-bit halves with move64ToDouble path 5 (upper 32 zero)
+    testPattern(v128_t { 0x0000000012345678ULL, 0x0000000012345678ULL });
+    testPattern(v128_t { 0x00000000FFFFFFFFULL, 0x00000000FFFFFFFFULL });
+    testPattern(v128_t { 0x0000000080000000ULL, 0x0000000080000000ULL });
+
+    // Additional coverage: All four 32-bit lanes identical with all move32ToFloat sub-paths
+    // Path 3 with only leftShift
+    testPattern(v128_t { 0xC0000000C0000000ULL, 0xC0000000C0000000ULL }); // Repeated 0xC0000000 (top 2 bits)
+    testPattern(v128_t { 0xE0000000E0000000ULL, 0xE0000000E0000000ULL }); // Repeated 0xE0000000 (top 3 bits)
+    testPattern(v128_t { 0xF0000000F0000000ULL, 0xF0000000F0000000ULL }); // Repeated 0xF0000000 (top 4 bits)
+
+    // Path 3 with only rightShift
+    testPattern(v128_t { 0x0000007F0000007FULL, 0x0000007F0000007FULL }); // Repeated 0x0000007F (bottom 7 bits)
+    testPattern(v128_t { 0x000001FF000001FFULL, 0x000001FF000001FFULL }); // Repeated 0x000001FF (bottom 9 bits)
+    testPattern(v128_t { 0x00000FFF00000FFFULL, 0x00000FFF00000FFFULL }); // Repeated 0x00000FFF (bottom 12 bits)
+
+    // Path 3 with both shifts
+    testPattern(v128_t { 0x3FFFFFFF3FFFFFFFULL, 0x3FFFFFFF3FFFFFFFULL }); // Repeated 0x3FFFFFFF (all but top 2)
+    testPattern(v128_t { 0x1FFFFFFF1FFFFFFFULL, 0x1FFFFFFF1FFFFFFFULL }); // Repeated 0x1FFFFFFF (all but top 3)
+    testPattern(v128_t { 0x0FFFFFFF0FFFFFFFULL, 0x0FFFFFFF0FFFFFFFULL }); // Repeated 0x0FFFFFFF (bottom 28 bits)
+
+    // Path 2 (all ones) - already covered by existing test
+    // Path 1 (zero) - already covered by existing test
+
+    // Additional coverage: Repeated 64-bit halves with 64-bit contiguous patterns
+    testPattern(v128_t { 0xC000000000000000ULL, 0xC000000000000000ULL }); // 64-bit contiguous (top 2 bits)
+    testPattern(v128_t { 0x000000000000007FULL, 0x000000000000007FULL }); // 64-bit contiguous (bottom 7 bits)
+    testPattern(v128_t { 0x3FFFFFFFFFFFFFFFULL, 0x3FFFFFFFFFFFFFFFULL }); // 64-bit contiguous (all but top 2)
+
+    // Additional coverage: 32-bit contiguous patterns with middle bits
+    testPattern(v128_t { 0x00FF000000FF0000ULL, 0x00FF000000FF0000ULL }); // Repeated 0x00FF0000 (middle 8 bits)
+    testPattern(v128_t { 0x0000FF000000FF00ULL, 0x0000FF000000FF00ULL }); // Repeated 0x0000FF00 (middle 8 bits)
+    testPattern(v128_t { 0x00FFFF0000FFFF00ULL, 0x00FFFF0000FFFF00ULL }); // Repeated 0x00FFFF00 (middle 16 bits)
+    testPattern(v128_t { 0x0FF000000FF00000ULL, 0x0FF000000FF00000ULL }); // Repeated 0x0FF00000 (middle 12 bits)
+
+    // Additional coverage: 64-bit contiguous patterns with middle bits
+    testPattern(v128_t { 0x0000FFFF00000000ULL, 0x0000FFFF00000000ULL }); // Middle 16 bits
+    testPattern(v128_t { 0x00000000FFFF0000ULL, 0x00000000FFFF0000ULL }); // Middle 16 bits (different position)
+    testPattern(v128_t { 0x000FFFFF00000000ULL, 0x000FFFFF00000000ULL }); // Middle 20 bits
+
+    // Additional coverage: Single-bit patterns (32-bit contiguous)
+    testPattern(v128_t { 0x0000000100000001ULL, 0x0000000100000001ULL }); // Repeated 0x00000001 (single low bit)
+    testPattern(v128_t { 0x8000000080000000ULL, 0x8000000080000000ULL }); // Repeated 0x80000000 (single high bit)
+    testPattern(v128_t { 0x0000800000008000ULL, 0x0000800000008000ULL }); // Repeated 0x00008000 (single middle bit)
+    testPattern(v128_t { 0x0010000000100000ULL, 0x0010000000100000ULL }); // Repeated 0x00100000 (single middle bit)
+
+    // Additional coverage: Single-bit patterns (64-bit contiguous)
+    testPattern(v128_t { 0x0000000000000001ULL, 0x0000000000000001ULL }); // Single low bit
+    testPattern(v128_t { 0x8000000000000000ULL, 0x8000000000000000ULL }); // Single high bit
+    testPattern(v128_t { 0x0000000100000000ULL, 0x0000000100000000ULL }); // Single middle bit
+    testPattern(v128_t { 0x0000800000000000ULL, 0x0000800000000000ULL }); // Single middle bit (different position)
+
+    // Additional coverage: IEEE float64 special values as 128-bit vectors
+    testPattern(v128_t { 0x7FF0000000000000ULL, 0x7FF0000000000000ULL }); // +Infinity repeated
+    testPattern(v128_t { 0xFFF0000000000000ULL, 0xFFF0000000000000ULL }); // -Infinity repeated
+    testPattern(v128_t { 0x7FF8000000000000ULL, 0x7FF8000000000000ULL }); // Quiet NaN repeated
+    testPattern(v128_t { 0x3FF0000000000000ULL, 0x3FF0000000000000ULL }); // 1.0 repeated
+    testPattern(v128_t { 0x4000000000000000ULL, 0x4000000000000000ULL }); // 2.0 repeated
+
+    // Additional coverage: IEEE float32 special values as 128-bit vectors (all 4 lanes)
+    testPattern(v128_t { 0x7F8000007F800000ULL, 0x7F8000007F800000ULL }); // +Infinity (float32) x4
+    testPattern(v128_t { 0xFF800000FF800000ULL, 0xFF800000FF800000ULL }); // -Infinity (float32) x4
+    testPattern(v128_t { 0x7FC000007FC00000ULL, 0x7FC000007FC00000ULL }); // Quiet NaN (float32) x4
+    testPattern(v128_t { 0x3F8000003F800000ULL, 0x3F8000003F800000ULL }); // 1.0f x4
+    testPattern(v128_t { 0x4000000040000000ULL, 0x4000000040000000ULL }); // 2.0f x4
+
+    // Additional coverage: Non-contiguous patterns (fallback path)
+    testPattern(v128_t { 0x5555555555555555ULL, 0x5555555555555555ULL }); // Alternating 01 pattern
+    testPattern(v128_t { 0x3333333333333333ULL, 0x3333333333333333ULL }); // Alternating 0011 pattern
+    testPattern(v128_t { 0x0F0F0F0F0F0F0F0FULL, 0x0F0F0F0F0F0F0F0FULL }); // Alternating nibbles
+    testPattern(v128_t { 0xCCCCCCCCCCCCCCCCULL, 0xCCCCCCCCCCCCCCCCULL }); // Alternating 1100 pattern
+
+    // Additional coverage: Different upper/lower 64-bit halves (fallback path)
+    testPattern(v128_t { 0x0000000000000001ULL, 0x0000000000000002ULL }); // Sequential low bits
+    testPattern(v128_t { 0xFFFFFFFFFFFFFFFFULL, 0x0000000000000001ULL }); // All-ones lower, minimal upper
+    testPattern(v128_t { 0x0000000000000001ULL, 0xFFFFFFFFFFFFFFFFULL }); // Minimal lower, all-ones upper
+    testPattern(v128_t { 0x8000000000000000ULL, 0x0000000000000001ULL }); // High bit lower, low bit upper
+    testPattern(v128_t { 0x7FFFFFFFFFFFFFFFULL, 0x8000000000000000ULL }); // Complementary patterns
+
+    // Additional coverage: Patterns that test check ordering
+    // all8Same=true but pattern uses vpbroadcastb path (value 0x42 repeated)
+    testPattern(v128_t { 0x4242424242424242ULL, 0x4242424242424242ULL }); // Already tested above
+    // all16Same=true but not all8Same (0x1234 has different bytes)
+    testPattern(v128_t { 0x5678567856785678ULL, 0x5678567856785678ULL }); // 0x5678 repeated
+    // all32Same=true but not all16Same (0x12345678 has different 16-bit halves)
+    testPattern(v128_t { 0xDEADBEEFDEADBEEFULL, 0xDEADBEEFDEADBEEFULL }); // 0xDEADBEEF repeated
+    // all64Same=true but not all32Same
+    testPattern(v128_t { 0x123456789ABCDEF0ULL, 0x123456789ABCDEF0ULL }); // Arbitrary 64-bit repeated
+
+    // Additional coverage: Boundary values
+    testPattern(v128_t { 0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL }); // INT64_MAX repeated
+    testPattern(v128_t { 0x8000000000000001ULL, 0x8000000000000001ULL }); // INT64_MIN+1 repeated (non-contiguous)
+    testPattern(v128_t { 0x0000000100000000ULL, 0x0000000100000000ULL }); // 2^32 repeated
+    testPattern(v128_t { 0x00000000FFFFFFFFULL, 0x00000000FFFFFFFFULL }); // UINT32_MAX repeated
+
+    // Additional coverage: 32-bit contiguous boundary cases (all32Same path)
+    testPattern(v128_t { 0xFFFFFFFEFFFFFFFEULL, 0xFFFFFFFEFFFFFFFEULL }); // Repeated 0xFFFFFFFE (31 contiguous high bits)
+    testPattern(v128_t { 0x7FFFFFFE7FFFFFFEULL, 0x7FFFFFFE7FFFFFFEULL }); // Repeated 0x7FFFFFFE (30 contiguous middle bits)
+    testPattern(v128_t { 0x0FFFFFF00FFFFFF0ULL, 0x0FFFFFF00FFFFFF0ULL }); // Repeated 0x0FFFFFF0 (24 contiguous middle bits)
+    testPattern(v128_t { 0xFFFFFFF8FFFFFFF8ULL, 0xFFFFFFF8FFFFFFF8ULL }); // Repeated 0xFFFFFFF8 (29 contiguous high bits)
+
+    // Additional coverage: 64-bit contiguous boundary cases (all64Same path)
+    testPattern(v128_t { 0xFFFFFFFFFFFFFFFEULL, 0xFFFFFFFFFFFFFFFEULL }); // 63 contiguous high bits
+    testPattern(v128_t { 0x7FFFFFFFFFFFFFFEULL, 0x7FFFFFFFFFFFFFFEULL }); // 62 contiguous middle bits
+    testPattern(v128_t { 0x0FFFFFFFFFFFFFF0ULL, 0x0FFFFFFFFFFFFFF0ULL }); // 56 contiguous middle bits
+    testPattern(v128_t { 0xFFFFFFFFFFFFFFF8ULL, 0xFFFFFFFFFFFFFFF8ULL }); // 61 contiguous high bits
+
+    // Additional coverage: Non-contiguous 32-bit patterns repeated (fallback to all32Same GPR path)
+    testPattern(v128_t { 0x8000000180000001ULL, 0x8000000180000001ULL }); // Repeated 0x80000001 (non-contiguous)
+    testPattern(v128_t { 0xF000000FF000000FULL, 0xF000000FF000000FULL }); // Repeated 0xF000000F (non-contiguous)
+    testPattern(v128_t { 0x5555555555555555ULL, 0x5555555555555555ULL }); // 0x55555555 repeated (alternating bits)
+
+    // Additional coverage: Non-contiguous 64-bit patterns repeated (fallback to all64Same GPR path)
+    testPattern(v128_t { 0x8000000000000001ULL, 0x8000000000000001ULL }); // High+low bits (non-contiguous 64-bit)
+    testPattern(v128_t { 0xF00000000000000FULL, 0xF00000000000000FULL }); // Top+bottom nibbles (non-contiguous 64-bit)
+
+    // Additional coverage: Patterns that match all8Same but should use vpbroadcastb
+    testPattern(v128_t { 0x7F7F7F7F7F7F7F7FULL, 0x7F7F7F7F7F7F7F7FULL }); // 0x7F repeated (127)
+    testPattern(v128_t { 0x8181818181818181ULL, 0x8181818181818181ULL }); // 0x81 repeated (129)
+    testPattern(v128_t { 0x5555555555555555ULL, 0x5555555555555555ULL }); // 0x55 repeated (alternating)
+
+    // Additional coverage: Patterns that match all16Same but not all8Same (vpbroadcastw)
+    testPattern(v128_t { 0x7FFF7FFF7FFF7FFFULL, 0x7FFF7FFF7FFF7FFFULL }); // 0x7FFF repeated
+    testPattern(v128_t { 0x8001800180018001ULL, 0x8001800180018001ULL }); // 0x8001 repeated
+    testPattern(v128_t { 0xFEFFFEFFFEFFFEFFULL, 0xFEFFFEFFFEFFFEFFULL }); // 0xFEFF repeated
+
+    // Additional coverage: Patterns that match all32Same but not all16Same (vbroadcastss)
+    testPattern(v128_t { 0x7FFF80007FFF8000ULL, 0x7FFF80007FFF8000ULL }); // 0x7FFF8000 repeated
+    testPattern(v128_t { 0x80017FFE80017FFEULL, 0x80017FFE80017FFEULL }); // 0x80017FFE repeated
+    testPattern(v128_t { 0xFEFF0100FEFF0100ULL, 0xFEFF0100FEFF0100ULL }); // 0xFEFF0100 repeated
+
+    // Additional coverage: Patterns that match all64Same but not all32Same (vmovddup)
+    testPattern(v128_t { 0x7FFF8000FEFF0100ULL, 0x7FFF8000FEFF0100ULL }); // Arbitrary non-repeated-32 repeated-64
+    testPattern(v128_t { 0x0001000200030004ULL, 0x0001000200030004ULL }); // Sequential 16-bit values repeated
+    testPattern(v128_t { 0xABCD1234EF005678ULL, 0xABCD1234EF005678ULL }); // Arbitrary pattern repeated
+}
+
+#if CPU(ARM64)
 // Test half-precision FMOV encoding (cmode=0b1110, op=1)
 // Verifies that 16-bit, 32-bit, and 64-bit FMOV use correct encodings
 static void testFMovHalfPrecisionEncoding()
@@ -7051,129 +7904,10 @@ static void testFMovHalfPrecisionEncoding()
 
     testHalfPrecisionValidation();
 }
+#endif
 
-static void testMove128ToVectorMovi()
-{
-    auto testPattern = [&](v128_t pattern) {
-        // Create a simple function that moves the v128 immediate to a vector register
-        // then extracts both 64-bit lanes to verify correctness
-        auto compilation = compile([&](CCallHelpers& jit) {
-            emitFunctionPrologue(jit);
-
-            // Move the v128 pattern to vector register v0
-            jit.move128ToVector(pattern, ARM64Registers::q0);
-
-            // Extract lower 64 bits to x0
-            jit.vectorExtractLaneInt64(CCallHelpers::TrustedImm32(0), ARM64Registers::q0, ARM64Registers::x0);
-
-            // Extract upper 64 bits to x1
-            jit.vectorExtractLaneInt64(CCallHelpers::TrustedImm32(1), ARM64Registers::q0, ARM64Registers::x1);
-
-            // Return (results will be in x0 and x1)
-            emitFunctionEpilogue(jit);
-            jit.ret();
-        });
-
-        // Execute and verify
-        auto [low64, high64] = invoke<std::pair<uint64_t, uint64_t>>(compilation);
-        CHECK_EQ(low64, pattern.u64x2[0]);
-        CHECK_EQ(high64, pattern.u64x2[1]);
-    };
-
-    // Test all zeros (special case)
-    testPattern(v128_t { 0x0000000000000000ULL, 0x0000000000000000ULL });
-
-    // Test all ones (0xFFFFFFFF repeated 4 times, uses mvni<128>)
-    testPattern(v128_t { 0xffffffffffffffffULL, 0xffffffffffffffffULL });
-
-    // Test 32-bit LSL patterns repeated 4 times (uses movi<128>)
-    testPattern(v128_t { 0x1200000012000000ULL, 0x1200000012000000ULL }); // 0x12 << 24
-    testPattern(v128_t { 0x0012000000120000ULL, 0x0012000000120000ULL }); // 0x12 << 16
-    testPattern(v128_t { 0x0000120000001200ULL, 0x0000120000001200ULL }); // 0x12 << 8
-    testPattern(v128_t { 0x0000001200000012ULL, 0x0000001200000012ULL }); // 0x12 << 0
-
-    // Test inverted 32-bit LSL patterns repeated 4 times (uses mvni<128>)
-    testPattern(v128_t { 0xedffffffedffffffULL, 0xedffffffedffffffULL }); // ~(0x12 << 24)
-    testPattern(v128_t { 0xffedffffffedffffULL, 0xffedffffffedffffULL }); // ~(0x12 << 16)
-
-    // Test 32-bit MSL patterns repeated 4 times (uses movi<128> with MSL)
-    testPattern(v128_t { 0x000042ff000042ffULL, 0x000042ff000042ffULL }); // MSL #8
-    testPattern(v128_t { 0x0042ffff0042ffffULL, 0x0042ffff0042ffffULL }); // MSL #16
-
-    // Test inverted 32-bit MSL patterns repeated 4 times (uses mvni<128> with MSL)
-    testPattern(v128_t { 0xffffbd00ffffbd00ULL, 0xffffbd00ffffbd00ULL }); // ~MSL #8
-    testPattern(v128_t { 0xffbd0000ffbd0000ULL, 0xffbd0000ffbd0000ULL }); // ~MSL #16
-
-    // Test 32-bit byte-mask patterns repeated 4 times (uses movi<128>)
-    testPattern(v128_t { 0xff00ff00ff00ff00ULL, 0xff00ff00ff00ff00ULL }); // Byte mask
-
-    // Test 64-bit patterns repeated twice (uses movi/mvni<64> + dup)
-    testPattern(v128_t { 0xff00ff00ff00ff00ULL, 0xff00ff00ff00ff00ULL }); // 64-bit byte mask repeated
-
-    // Test non-repeating patterns (should use fallback)
-    testPattern(v128_t { 0x0000000000000000ULL, 0xffffffffffffffffULL }); // Half zeros, half ones
-    testPattern(v128_t { 0x123456789abcdef0ULL, 0xfedcba9876543210ULL }); // Arbitrary different values
-    testPattern(v128_t { 0x0000000000000042ULL, 0x0000000000000043ULL }); // Simple different values
-}
-
-// Comprehensive tests for move16ToFloat16 covering all code paths
-static void testMove16ToFloat16Comprehensive()
-{
-    auto testPattern = [] (uint16_t pattern) {
-        auto test = compile([=] (CCallHelpers& jit) {
-            emitFunctionPrologue(jit);
-
-            jit.move16ToFloat16(CCallHelpers::TrustedImm32(pattern), FPRInfo::fpRegT0);
-            jit.moveFloat16To16(FPRInfo::fpRegT0, GPRInfo::returnValueGPR);
-
-            emitFunctionEpilogue(jit);
-            jit.ret();
-        });
-
-        uint16_t result = static_cast<uint16_t>(invoke<uint32_t>(test));
-        CHECK_EQ(result, pattern);
-    };
-
-    // Test zero (moveZeroToFloat path)
-    testPattern(0x0000);
-
-    // Test FP immediate encoding (fmov path)
-    testPattern(0x3C00); // Half-precision 1.0
-    testPattern(0x4000); // Half-precision 2.0
-    testPattern(0xBC00); // Half-precision -1.0
-    testPattern(0x3800); // Half-precision 0.5
-    testPattern(0x4200); // Half-precision 3.0
-    testPattern(0x4400); // Half-precision 4.0
-
-    // Test 16-bit LSL shifted immediate (movi path)
-    testPattern(0x1200); // 0x12 << 8
-    testPattern(0x0012); // 0x12 << 0
-    testPattern(0x8000); // Sign bit
-    testPattern(0xFF00); // Max byte at shift 8
-    testPattern(0x00FF); // Max byte at shift 0
-
-    // Test inverted 16-bit LSL shifted immediate (mvni path)
-    testPattern(0xEDFF); // ~0x1200
-    testPattern(0xFFED); // ~0x0012
-    testPattern(0x7FFF); // ~0x8000
-    testPattern(0x00FF); // ~0xFF00
-    testPattern(0xFF00); // ~0x00FF
-
-    // Test all bytes equal (movi 8-bit path)
-    testPattern(0x4242); // Same byte repeated
-    testPattern(0x8080); // Sign bit in both bytes
-    testPattern(0xFFFF); // All ones
-    testPattern(0x1111); // Low value repeated
-
-    // Test non-encodable patterns (fallback path)
-    testPattern(0x1234); // Arbitrary pattern
-    testPattern(0x3C01); // Near FP immediate but not encodable
-    testPattern(0xABCD); // Random pattern
-    testPattern(0x5A5A); // Alternating bits pattern
-}
-
-// Comprehensive tests for move32ToFloat covering all code paths
-static void testMove32ToFloatComprehensive()
+// Comprehensive tests for x64 constant materialization
+static void testMove32ToFloatX64()
 {
     auto testPattern = [] (uint32_t pattern) {
         auto test = compile([=] (CCallHelpers& jit) {
@@ -7186,85 +7920,119 @@ static void testMove32ToFloatComprehensive()
             jit.ret();
         });
 
-        CHECK_EQ(invoke<uint32_t>(test), pattern);
+        uint32_t result = invoke<uint32_t>(test);
+        CHECK_EQ(result, pattern);
     };
 
-    // Test zero (moveZeroToFloat path)
+    // Test zero
     testPattern(0x00000000);
 
-    // Test FP immediate encoding (fmov path)
-    testPattern(0x3F800000); // Float 1.0
-    testPattern(0x40000000); // Float 2.0
-    testPattern(0xC0000000); // Float -2.0
-    testPattern(0x3F000000); // Float 0.5
+    // Test all ones
+    testPattern(0xFFFFFFFF);
 
-    // Test 32-bit LSL shifted immediate (movi path)
-    testPattern(0x00000012); // shift 0
-    testPattern(0x00001200); // shift 8
-    testPattern(0x00120000); // shift 16
-    testPattern(0x12000000); // shift 24
-    testPattern(0x80000000); // Sign bit (very common!)
-    testPattern(0x000000FF); // Max byte at shift 0
-    testPattern(0x0000FF00); // Max byte at shift 8
-    testPattern(0x00FF0000); // Max byte at shift 16
-    testPattern(0xFF000000); // Max byte at shift 24
+    // Test contiguous bit patterns (pcmpeqd + shifts)
+    testPattern(0x80000000); // Sign bit (pcmpeqd + pslld #31)
+    testPattern(0xFF000000); // Top byte (pcmpeqd + pslld #24)
+    testPattern(0x00FFFFFF); // Bottom 3 bytes (pcmpeqd + psrld #8)
+    testPattern(0x7FFFFFFF); // INT32_MAX (pcmpeqd + pslld #31 + psrld #1)
+    testPattern(0x0000FFFF); // Bottom 2 bytes
+    testPattern(0xFFFF0000); // Top 2 bytes
+    testPattern(0x000000FF); // Bottom byte
+    testPattern(0xFF800000); // Sign bit + top byte
 
-    // Test inverted 32-bit LSL shifted immediate (mvni path)
-    testPattern(0xFFFFFFED); // ~0x00000012
-    testPattern(0xFFFFEDFF); // ~0x00001200
-    testPattern(0xFFEDFFFF); // ~0x00120000
-    testPattern(0xEDFFFFFF); // ~0x12000000
-    testPattern(0x7FFFFFFF); // ~0x80000000 (INT32_MAX, common!)
-    testPattern(0xFFFFFF00); // ~0x000000FF
-    testPattern(0xFFFF00FF); // ~0x0000FF00
-
-    // Test MSL (Mask Shift Left) patterns (movi MSL path)
-    testPattern(0x000012FF); // movi #0x12, MSL #8
-    testPattern(0x0012FFFF); // movi #0x12, MSL #16
-    testPattern(0x000042FF); // movi #0x42, MSL #8
-    testPattern(0x0042FFFF); // movi #0x42, MSL #16
-    testPattern(0x0080FFFF); // movi #0x80, MSL #16
-
-    // Test inverted MSL patterns (mvni MSL path)
-    testPattern(0xFFFFED00); // mvni #0x12, MSL #8
-    testPattern(0xFFED0000); // mvni #0x12, MSL #16
-    testPattern(0xFFFFBD00); // mvni #0x42, MSL #8
-    testPattern(0xFFBD0000); // mvni #0x42, MSL #16
-
-    // Test byte-mask patterns (movi<64> path)
-    testPattern(0xFF00FF00); // Bytes 1 and 3 are 0xFF
-    testPattern(0x00FF00FF); // Bytes 0 and 2 are 0xFF
-    testPattern(0xFFFF0000); // Bytes 2 and 3 are 0xFF
-    testPattern(0x0000FFFF); // Bytes 0 and 1 are 0xFF
-    testPattern(0xFF0000FF); // Bytes 0 and 3 are 0xFF
-    testPattern(0xFFFFFFFF); // All 0xFF
-
-    // Test repeated 16-bit halves with FP immediate (fmov_v<16> path)
-    testPattern(0x3C003C00); // Repeated half-precision 1.0
-    testPattern(0x40004000); // Repeated half-precision 2.0
-
-    // Test repeated 16-bit halves with LSL (movi<16> path)
+    // Test repeated 16-bit patterns
     testPattern(0x12001200); // Repeated 0x1200
-    testPattern(0x00120012); // Repeated 0x0012
+    testPattern(0x00420042); // Repeated 0x0042
     testPattern(0x80008000); // Repeated sign bit
+    testPattern(0xFFFFFFFF); // Repeated 0xFFFF (all ones)
 
-    // Test repeated 16-bit halves with inverted LSL (mvni<16> path)
-    testPattern(0xEDFFEDFF); // Repeated ~0x1200
-    testPattern(0xFFEDFFED); // Repeated ~0x0012
+    // Test repeated byte patterns
+    testPattern(0x42424242); // Repeated 0x42
+    testPattern(0x80808080); // Repeated sign bit
+    testPattern(0xAAAAAAAA); // Alternating bits
 
-    // Test all 4 bytes equal (movi 8-bit path)
-    testPattern(0x42424242); // Byte 0x42 repeated
-    testPattern(0x80808080); // Byte 0x80 repeated
-    testPattern(0x11111111); // Byte 0x11 repeated
+    // Test non-encodable patterns (fallback to GPR path)
+    testPattern(0x12345678); // Arbitrary pattern
+    testPattern(0xABCDEF01); // Random value
+    testPattern(0x01020304); // Sequential bytes
 
-    // Test non-encodable patterns (fallback path)
-    testPattern(0x12345678); // Multiple non-zero bytes
-    testPattern(0xABCDEF01); // Arbitrary pattern
-    testPattern(0x3F800001); // Near float 1.0 but not exact
+    // Additional coverage: Edge cases for contiguous patterns
+    // Test contiguous pattern with leftShift only (rightShift = 0)
+    testPattern(0xC0000000); // Two top bits set (pcmpeqd + pslld #30)
+    testPattern(0xE0000000); // Three top bits set (pcmpeqd + pslld #29)
+    testPattern(0xF0000000); // Four top bits set (pcmpeqd + pslld #28)
+
+    // Test contiguous pattern with rightShift only (leftShift = 0)
+    testPattern(0x0000007F); // Bottom 7 bits (pcmpeqd + psrld #25)
+    testPattern(0x000001FF); // Bottom 9 bits (pcmpeqd + psrld #23)
+    testPattern(0x00000FFF); // Bottom 12 bits (pcmpeqd + psrld #20)
+
+    // Test contiguous pattern with both shifts (different combinations)
+    testPattern(0x3FFFFFFF); // All but top 2 bits (pcmpeqd + pslld #30 + psrld #2)
+    testPattern(0x1FFFFFFF); // All but top 3 bits (pcmpeqd + pslld #29 + psrld #3)
+    testPattern(0x0FFFFFFF); // Bottom 28 bits (pcmpeqd + pslld #28 + psrld #4)
+
+    // Additional coverage: Middle-bit contiguous patterns
+    testPattern(0x00FF0000); // Middle 8 bits (byte 2)
+    testPattern(0x0000FF00); // Middle 8 bits (byte 1)
+    testPattern(0x00FFFF00); // Middle 16 bits
+    testPattern(0x0FF00000); // Middle 12 bits (upper half)
+    testPattern(0x000FFF00); // Middle 12 bits (lower half)
+    testPattern(0x3FFC0000); // 12 bits shifted up
+
+    // Additional coverage: Single-bit patterns
+    testPattern(0x00000001); // Single low bit
+    testPattern(0x00000002); // Second bit
+    testPattern(0x00008000); // Middle bit (bit 15)
+    testPattern(0x00010000); // Bit 16
+    testPattern(0x40000000); // Second highest bit
+
+    // Additional coverage: IEEE float32 special values (bit patterns)
+    testPattern(0x7F800000); // +Infinity
+    testPattern(0xFF800000); // -Infinity
+    testPattern(0x7FC00000); // Quiet NaN
+    testPattern(0x7F800001); // Signaling NaN
+    testPattern(0x00800000); // Smallest normal
+    testPattern(0x00000001); // Smallest denormal
+    testPattern(0x7F7FFFFF); // Largest finite
+    testPattern(0x3F800000); // 1.0f
+    testPattern(0xBF800000); // -1.0f
+    testPattern(0x40000000); // 2.0f
+    testPattern(0x3F000000); // 0.5f
+
+    // Additional coverage: Non-contiguous patterns (fallback path)
+    testPattern(0x55555555); // Alternating 01 pattern
+    testPattern(0x33333333); // Alternating 0011 pattern
+    testPattern(0x0F0F0F0F); // Alternating nibbles
+    testPattern(0xF0F0F0F0); // Alternating nibbles (inverted)
+    testPattern(0xCCCCCCCC); // Alternating 1100 pattern
+    testPattern(0x99999999); // Another non-contiguous pattern
+
+    // Additional coverage: Contiguous pattern boundary cases
+    // Patterns with exactly N contiguous bits at various positions
+    testPattern(0xFFFFFFFE); // All but lowest bit (31 contiguous high bits)
+    testPattern(0x7FFFFFFE); // 30 contiguous bits in middle
+    testPattern(0x3FFFFFFC); // 28 contiguous bits shifted
+    testPattern(0x1FFFFFF8); // 26 contiguous bits shifted
+    testPattern(0x0FFFFFF0); // 24 contiguous bits in middle
+    testPattern(0x07FFFFE0); // 22 contiguous bits shifted
+
+    // Patterns that are NOT contiguous (should use fallback)
+    testPattern(0x80000001); // High and low bits only
+    testPattern(0xC0000003); // Two high bits + two low bits
+    testPattern(0xF000000F); // Top and bottom nibbles
+    testPattern(0xFF0000FF); // Top and bottom bytes
+    testPattern(0xFFFF0001); // Top 16 bits + low bit
+
+    // Maximum and minimum shift combinations
+    testPattern(0xFFFFFFF0); // Right shift 4 only
+    testPattern(0x0FFFFFFF); // Left shift 4 only
+    testPattern(0x7FFFFFF8); // Left shift 3 + right shift 1
+    testPattern(0xFFFFFFF8); // Right shift 3 only
+    testPattern(0x1FFFFFFF); // Left shift 3 only
 }
 
-// Comprehensive tests for move64ToDouble covering all code paths
-static void testMove64ToDoubleComprehensive()
+static void testMove64ToDoubleX64()
 {
     auto testPattern = [] (uint64_t pattern) {
         auto test = compile([=] (CCallHelpers& jit) {
@@ -7277,170 +8045,167 @@ static void testMove64ToDoubleComprehensive()
             jit.ret();
         });
 
-        CHECK_EQ(invoke<uint64_t>(test), pattern);
+        uint64_t result = invoke<uint64_t>(test);
+        CHECK_EQ(result, pattern);
     };
 
-    // Test zero (moveZeroToDouble path)
+    // Test zero
     testPattern(0x0000000000000000ULL);
 
-    // Test FP immediate encoding (fmov<64> path)
-    testPattern(0x3FF0000000000000ULL); // Double 1.0
-    testPattern(0x4000000000000000ULL); // Double 2.0
-    testPattern(0xC000000000000000ULL); // Double -2.0
+    // Test all ones
+    testPattern(0xFFFFFFFFFFFFFFFFULL);
 
-    // Test byte-mask patterns (movi<64> path)
-    testPattern(0x00000000000000FFULL); // Byte 0 is 0xFF
-    testPattern(0x000000000000FF00ULL); // Byte 1 is 0xFF
-    testPattern(0x00000000FF000000ULL); // Byte 4 is 0xFF
-    testPattern(0xFF00000000000000ULL); // Byte 7 is 0xFF
-    testPattern(0xFF00FF00FF00FF00ULL); // Alternating pattern
-    testPattern(0x00FF00FF00FF00FFULL); // Alternating pattern
-    testPattern(0xFFFFFFFF00000000ULL); // Upper 4 bytes 0xFF
-    testPattern(0x00000000FFFFFFFFULL); // Lower 4 bytes 0xFF
-    testPattern(0xFFFFFFFFFFFFFFFFULL); // All 0xFF
+    // Test contiguous bit patterns (pcmpeqq + shifts) - requires SSE4.1
+    testPattern(0x8000000000000000ULL); // Sign bit (pcmpeqq + psllq #63)
+    testPattern(0xFF00000000000000ULL); // Top byte (pcmpeqq + psllq #56)
+    testPattern(0x00FFFFFFFFFFFFFFULL); // Bottom 7 bytes (pcmpeqq + psrlq #8)
+    testPattern(0x7FFFFFFFFFFFFFFFULL); // INT64_MAX (pcmpeqq + psllq #63 + psrlq #1)
+    testPattern(0x000000FFFFFFFFFFULL); // Bottom 5 bytes
+    testPattern(0xFFFFFFFF00000000ULL); // Top 4 bytes
+    testPattern(0x0000FFFFFFFFFFFFULL); // Bottom 6 bytes
 
-    // Test repeated 32-bit halves with FP immediate (fmov_v<32> path)
-    testPattern(0x3F8000003F800000ULL); // Repeated float 1.0
-    testPattern(0x4000000040000000ULL); // Repeated float 2.0
-    testPattern(0xC0000000C0000000ULL); // Repeated float -2.0
-
-    // Test repeated 32-bit halves with LSL (movi path)
-    testPattern(0x0012000000120000ULL); // Repeated movi #0x12, LSL #16
-    testPattern(0x1200000012000000ULL); // Repeated movi #0x12, LSL #24
-    testPattern(0x0000120000001200ULL); // Repeated movi #0x12, LSL #8
-    testPattern(0x0000001200000012ULL); // Repeated movi #0x12, LSL #0
+    // Test repeated 32-bit patterns (materialize 32-bit + duplicate)
     testPattern(0x8000000080000000ULL); // Repeated sign bit
-    testPattern(0x7FFFFFFF7FFFFFFFULL); // Repeated INT32_MAX
+    testPattern(0x1234567812345678ULL); // Repeated arbitrary pattern
+    testPattern(0x0000000000000000ULL); // Repeated zero (covered above)
+    testPattern(0xFFFFFFFFFFFFFFFFULL); // Repeated 0xFFFFFFFF (all ones, covered above)
+    testPattern(0x00FF00FF00FF00FFULL); // Repeated byte mask pattern
 
-    // Test repeated 32-bit halves with inverted LSL (mvni path)
-    testPattern(0xFFFFEDFFFFFFEDFFULL); // Repeated ~0x00001200
-    testPattern(0xEDFFFFFFEDFFFFFFULL); // Repeated ~0x12000000
+    // Test upper 32 bits zero (treat as 32-bit)
+    testPattern(0x0000000012345678ULL);
+    testPattern(0x00000000FFFFFFFFULL);
+    testPattern(0x0000000080000000ULL);
+    testPattern(0x00000000000000FFULL);
 
-    // Test repeated 32-bit halves with MSL (movi MSL path)
-    testPattern(0x000042FF000042FFULL); // Repeated movi #0x42, MSL #8
-    testPattern(0x0042FFFF0042FFFFULL); // Repeated movi #0x42, MSL #16
-    testPattern(0x008000FF008000FFULL); // Repeated movi #0x80, MSL #8
-    testPattern(0x0080FFFF0080FFFFULL); // Repeated movi #0x80, MSL #16
+    // Test repeated byte patterns
+    testPattern(0x4242424242424242ULL); // Repeated 0x42
+    testPattern(0x8080808080808080ULL); // Repeated sign bit byte
+    testPattern(0xAAAAAAAAAAAAAAAAULL); // Alternating bits
 
-    // Test repeated 32-bit halves with inverted MSL (mvni MSL path)
-    testPattern(0xFFFFBD00FFFFBD00ULL); // Repeated mvni #0x42, MSL #8
-    testPattern(0xFFBD0000FFBD0000ULL); // Repeated mvni #0x42, MSL #16
+    // Test non-encodable patterns (fallback to GPR path)
+    testPattern(0x123456789ABCDEF0ULL);
+    testPattern(0xFEDCBA9876543210ULL);
+    testPattern(0x0102030405060708ULL);
 
-    // Test repeated 16-bit values (all four 16-bit lanes equal) with FP immediate
-    testPattern(0x3C003C003C003C00ULL); // Repeated half-precision 1.0
-    testPattern(0x4000400040004000ULL); // Repeated half-precision 2.0
+    // Additional coverage: Edge cases for 64-bit contiguous patterns
+    // Test contiguous pattern with leftShift only (rightShift = 0)
+    testPattern(0xC000000000000000ULL); // Two top bits set (pcmpeqq + psllq #62)
+    testPattern(0xE000000000000000ULL); // Three top bits set (pcmpeqq + psllq #61)
+    testPattern(0xF000000000000000ULL); // Four top bits set (pcmpeqq + psllq #60)
 
-    // Test repeated 16-bit values with LSL (movi<16> path)
-    testPattern(0x0012001200120012ULL); // Repeated 0x0012
-    testPattern(0x1200120012001200ULL); // Repeated 0x1200
-    testPattern(0x8000800080008000ULL); // Repeated sign bit
+    // Test contiguous pattern with rightShift only (leftShift = 0)
+    testPattern(0x000000000000007FULL); // Bottom 7 bits (pcmpeqq + psrlq #57)
+    testPattern(0x00000000000001FFULL); // Bottom 9 bits (pcmpeqq + psrlq #55)
+    testPattern(0x0000000000000FFFULL); // Bottom 12 bits (pcmpeqq + psrlq #52)
 
-    // Test repeated 16-bit values with inverted LSL (mvni<16> path)
-    testPattern(0xFFEDFFEDFFEDFFEDULL); // Repeated ~0x0012
-    testPattern(0xEDFFEDFFEDFFEDFFULL); // Repeated ~0x1200
+    // Test contiguous pattern with both shifts (different combinations)
+    testPattern(0x3FFFFFFFFFFFFFFFULL); // All but top 2 bits (pcmpeqq + psllq #62 + psrlq #2)
+    testPattern(0x1FFFFFFFFFFFFFFFULL); // All but top 3 bits (pcmpeqq + psllq #61 + psrlq #3)
+    testPattern(0x0FFFFFFFFFFFFFFFULL); // Bottom 60 bits (pcmpeqq + psllq #60 + psrlq #4)
 
-    // Test all 8 bytes equal (movi 8-bit path)
-    testPattern(0x4242424242424242ULL); // Byte 0x42 repeated
-    testPattern(0x8080808080808080ULL); // Byte 0x80 repeated
-    testPattern(0x1111111111111111ULL); // Byte 0x11 repeated
+    // Additional coverage: Repeated 32-bit with specific move32ToFloat sub-paths
+    // Path 3 with only leftShift (e.g., 0xC0000000)
+    testPattern(0xC0000000C0000000ULL); // Repeated contiguous (top 2 bits)
+    testPattern(0xE0000000E0000000ULL); // Repeated contiguous (top 3 bits)
+    testPattern(0xF0000000F0000000ULL); // Repeated contiguous (top 4 bits)
 
-    // Test non-encodable patterns (fallback path)
-    testPattern(0x123456789ABCDEF0ULL); // Arbitrary pattern
-    testPattern(0x7FFFFFFFFFFFFFFFULL); // Near all ones
-    testPattern(0x8000000000000000ULL); // Single sign bit
-    testPattern(0x3FF0000000000001ULL); // Near double 1.0
-}
+    // Path 3 with only rightShift (e.g., 0x0000007F)
+    testPattern(0x0000007F0000007FULL); // Repeated contiguous (bottom 7 bits)
+    testPattern(0x000001FF000001FFULL); // Repeated contiguous (bottom 9 bits)
+    testPattern(0x00000FFF00000FFFULL); // Repeated contiguous (bottom 12 bits)
 
-// Comprehensive tests for move128ToVector covering all code paths
-static void testMove128ToVectorComprehensive()
-{
-    auto testPattern = [&](v128_t pattern) {
-        auto compilation = compile([&](CCallHelpers& jit) {
-            emitFunctionPrologue(jit);
+    // Path 3 with both shifts (e.g., 0x3FFFFFFF)
+    testPattern(0x3FFFFFFF3FFFFFFFULL); // Repeated contiguous (all but top 2)
+    testPattern(0x1FFFFFFF1FFFFFFFULL); // Repeated contiguous (all but top 3)
+    testPattern(0x0FFFFFFF0FFFFFFFULL); // Repeated contiguous (bottom 28 bits)
 
-            jit.move128ToVector(pattern, ARM64Registers::q0);
+    // Additional coverage: Middle-bit contiguous 64-bit patterns
+    testPattern(0x0000FFFF00000000ULL); // Middle 16 bits (bytes 4-5)
+    testPattern(0x00000000FFFF0000ULL); // Middle 16 bits (bytes 2-3)
+    testPattern(0x000000FFFFFF0000ULL); // Middle 24 bits
+    testPattern(0x00FFFF0000000000ULL); // Upper-middle 16 bits
+    testPattern(0x0000000000FFFF00ULL); // Lower-middle 16 bits
+    testPattern(0x003FFFFC00000000ULL); // Middle bits shifted up
 
-            // Extract lower 64 bits to x0
-            jit.vectorExtractLaneInt64(CCallHelpers::TrustedImm32(0), ARM64Registers::q0, ARM64Registers::x0);
+    // Additional coverage: Single-bit 64-bit patterns
+    testPattern(0x0000000000000001ULL); // Single low bit
+    testPattern(0x0000000000000002ULL); // Second bit
+    testPattern(0x0000000000008000ULL); // Bit 15
+    testPattern(0x0000000100000000ULL); // Bit 32
+    testPattern(0x0000800000000000ULL); // Bit 47
+    testPattern(0x4000000000000000ULL); // Second highest bit
 
-            // Extract upper 64 bits to x1
-            jit.vectorExtractLaneInt64(CCallHelpers::TrustedImm32(1), ARM64Registers::q0, ARM64Registers::x1);
+    // Additional coverage: Middle-bit contiguous 32-bit repeated patterns
+    testPattern(0x00FF000000FF0000ULL); // Repeated 0x00FF0000 (middle 8 bits)
+    testPattern(0x0000FF000000FF00ULL); // Repeated 0x0000FF00 (middle 8 bits)
+    testPattern(0x00FFFF0000FFFF00ULL); // Repeated 0x00FFFF00 (middle 16 bits)
+    testPattern(0x0FF000000FF00000ULL); // Repeated 0x0FF00000 (middle 12 bits)
 
-            emitFunctionEpilogue(jit);
-            jit.ret();
-        });
+    // Additional coverage: Single-bit 32-bit repeated patterns
+    testPattern(0x0000000100000001ULL); // Repeated 0x00000001 (single low bit)
+    testPattern(0x0000800000008000ULL); // Repeated 0x00008000 (middle bit)
+    testPattern(0x4000000040000000ULL); // Repeated 0x40000000 (second highest bit)
 
-        auto [low64, high64] = invoke<std::pair<uint64_t, uint64_t>>(compilation);
-        CHECK_EQ(low64, pattern.u64x2[0]);
-        CHECK_EQ(high64, pattern.u64x2[1]);
-    };
+    // Additional coverage: IEEE float64 special values (bit patterns)
+    testPattern(0x7FF0000000000000ULL); // +Infinity
+    testPattern(0xFFF0000000000000ULL); // -Infinity
+    testPattern(0x7FF8000000000000ULL); // Quiet NaN
+    testPattern(0x7FF0000000000001ULL); // Signaling NaN
+    testPattern(0x0010000000000000ULL); // Smallest normal
+    testPattern(0x0000000000000001ULL); // Smallest denormal
+    testPattern(0x7FEFFFFFFFFFFFFFULL); // Largest finite
+    testPattern(0x3FF0000000000000ULL); // 1.0
+    testPattern(0xBFF0000000000000ULL); // -1.0
+    testPattern(0x4000000000000000ULL); // 2.0
+    testPattern(0x3FE0000000000000ULL); // 0.5
 
-    // Test all zeros (special case)
-    testPattern(v128_t { 0x0000000000000000ULL, 0x0000000000000000ULL });
+    // Additional coverage: Non-contiguous 64-bit patterns (fallback path)
+    testPattern(0x5555555555555555ULL); // Alternating 01 pattern
+    testPattern(0x3333333333333333ULL); // Alternating 0011 pattern
+    testPattern(0x0F0F0F0F0F0F0F0FULL); // Alternating nibbles
+    testPattern(0xF0F0F0F0F0F0F0F0ULL); // Alternating nibbles (inverted)
+    testPattern(0xCCCCCCCCCCCCCCCCULL); // Alternating 1100 pattern
+    testPattern(0x9999999999999999ULL); // Another non-contiguous pattern
 
-    // Test upper and lower 64-bit halves equal with FP immediate (fmov_v<128,64> path)
-    testPattern(v128_t { 0x3FF0000000000000ULL, 0x3FF0000000000000ULL }); // Double 1.0 repeated
-    testPattern(v128_t { 0x4000000000000000ULL, 0x4000000000000000ULL }); // Double 2.0 repeated
+    // Additional coverage: Non-repeated 32-bit halves (fallback path)
+    testPattern(0x12345678ABCDEF00ULL); // Different halves
+    testPattern(0x00000001FFFFFFFEULL); // Near-boundary values
+    testPattern(0xFFFFFFFE00000001ULL); // Inverted near-boundary
+    testPattern(0x8000000000000001ULL); // High bit + low bit (non-contiguous)
+    testPattern(0x0000000180000000ULL); // Crossing 32-bit boundary
 
-    // Test upper and lower 64-bit halves equal with byte mask (movi<128,64> path)
-    testPattern(v128_t { 0xFF00FF00FF00FF00ULL, 0xFF00FF00FF00FF00ULL });
-    testPattern(v128_t { 0x00FF00FF00FF00FFULL, 0x00FF00FF00FF00FFULL });
-    testPattern(v128_t { 0xFFFFFFFF00000000ULL, 0xFFFFFFFF00000000ULL });
+    // Additional coverage: 64-bit contiguous pattern boundary cases
+    testPattern(0xFFFFFFFFFFFFFFFEULL); // All but lowest bit (63 contiguous high bits)
+    testPattern(0x7FFFFFFFFFFFFFFEULL); // 62 contiguous bits in middle
+    testPattern(0x3FFFFFFFFFFFFFFCULL); // 60 contiguous bits shifted
+    testPattern(0x1FFFFFFFFFFFFFF8ULL); // 58 contiguous bits shifted
+    testPattern(0x0FFFFFFFFFFFFFF0ULL); // 56 contiguous bits in middle
+    testPattern(0x07FFFFFFFFFFFFE0ULL); // 54 contiguous bits shifted
 
-    // Test all four 32-bit lanes equal with FP immediate (fmov_v<128,32> path)
-    testPattern(v128_t { 0x3F8000003F800000ULL, 0x3F8000003F800000ULL }); // Float 1.0 repeated 4 times
-    testPattern(v128_t { 0x4000000040000000ULL, 0x4000000040000000ULL }); // Float 2.0 repeated 4 times
+    // 64-bit patterns that are NOT contiguous (should use fallback)
+    testPattern(0x8000000000000001ULL); // High and low bits only
+    testPattern(0xC000000000000003ULL); // Two high bits + two low bits
+    testPattern(0xF00000000000000FULL); // Top and bottom nibbles
+    testPattern(0xFF000000000000FFULL); // Top and bottom bytes
+    testPattern(0xFFFF000000000001ULL); // Top 16 bits + low bit
+    testPattern(0xFFFFFFFF00000001ULL); // Top 32 bits + low bit
 
-    // Test all four 32-bit lanes equal with LSL (movi<128,32> path)
-    testPattern(v128_t { 0x1200000012000000ULL, 0x1200000012000000ULL }); // 0x12 << 24, repeated
-    testPattern(v128_t { 0x0012000000120000ULL, 0x0012000000120000ULL }); // 0x12 << 16, repeated
-    testPattern(v128_t { 0x0000120000001200ULL, 0x0000120000001200ULL }); // 0x12 << 8, repeated
-    testPattern(v128_t { 0x0000001200000012ULL, 0x0000001200000012ULL }); // 0x12 << 0, repeated
-    testPattern(v128_t { 0x8000000080000000ULL, 0x8000000080000000ULL }); // Sign bit repeated
+    // 64-bit maximum and minimum shift combinations
+    testPattern(0xFFFFFFFFFFFFFFF0ULL); // Right shift 4 only
+    testPattern(0x0FFFFFFFFFFFFFFFULL); // Left shift 4 only
+    testPattern(0x7FFFFFFFFFFFFFF8ULL); // Left shift 3 + right shift 1
+    testPattern(0xFFFFFFFFFFFFFFF8ULL); // Right shift 3 only
+    testPattern(0x1FFFFFFFFFFFFFFFULL); // Left shift 3 only
 
-    // Test all four 32-bit lanes equal with inverted LSL (mvni<128,32> path)
-    testPattern(v128_t { 0xEDFFFFFFEDFFFFFFULL, 0xEDFFFFFFEDFFFFFFULL }); // ~(0x12 << 24), repeated
-    testPattern(v128_t { 0xFFEDFFFFFFEDFFFFULL, 0xFFEDFFFFFFEDFFFFULL }); // ~(0x12 << 16), repeated
-    testPattern(v128_t { 0xFFFFEDFFFFFFEDFFULL, 0xFFFFEDFFFFFFEDFFULL }); // ~(0x12 << 8), repeated
-    testPattern(v128_t { 0x7FFFFFFF7FFFFFFFULL, 0x7FFFFFFF7FFFFFFFULL }); // ~sign bit, repeated
+    // Repeated 32-bit contiguous patterns - boundary cases
+    testPattern(0xFFFFFFFEFFFFFFFEULL); // Repeated all-but-lowest-bit
+    testPattern(0x7FFFFFFE7FFFFFFEULL); // Repeated 30 contiguous bits
+    testPattern(0x0FFFFFF00FFFFFF0ULL); // Repeated 24 contiguous middle bits
 
-    // Test all four 32-bit lanes equal with MSL (movi<128,32> MSL path)
-    testPattern(v128_t { 0x000042FF000042FFULL, 0x000042FF000042FFULL }); // MSL #8, repeated
-    testPattern(v128_t { 0x0042FFFF0042FFFFULL, 0x0042FFFF0042FFFFULL }); // MSL #16, repeated
-    testPattern(v128_t { 0x008000FF008000FFULL, 0x008000FF008000FFULL }); // MSL #8 with 0x80
-
-    // Test all four 32-bit lanes equal with inverted MSL (mvni<128,32> MSL path)
-    testPattern(v128_t { 0xFFFFBD00FFFFBD00ULL, 0xFFFFBD00FFFFBD00ULL }); // ~MSL #8, repeated
-    testPattern(v128_t { 0xFFBD0000FFBD0000ULL, 0xFFBD0000FFBD0000ULL }); // ~MSL #16, repeated
-
-    // Test all four 32-bit lanes equal with byte mask (movi<128,64> path for 32-bit)
-    testPattern(v128_t { 0xFF00FF00FF00FF00ULL, 0xFF00FF00FF00FF00ULL });
-    testPattern(v128_t { 0xFFFFFFFFFFFFFFFFULL, 0xFFFFFFFFFFFFFFFFULL }); // All ones
-
-    // Test all eight 16-bit lanes equal with FP immediate (fmov_v<128,16> path)
-    testPattern(v128_t { 0x3C003C003C003C00ULL, 0x3C003C003C003C00ULL }); // Half 1.0 repeated 8 times
-    testPattern(v128_t { 0x4000400040004000ULL, 0x4000400040004000ULL }); // Half 2.0 repeated 8 times
-
-    // Test all eight 16-bit lanes equal with LSL (movi<128,16> path)
-    testPattern(v128_t { 0x1200120012001200ULL, 0x1200120012001200ULL }); // 0x1200 repeated
-    testPattern(v128_t { 0x0012001200120012ULL, 0x0012001200120012ULL }); // 0x0012 repeated
-    testPattern(v128_t { 0x8000800080008000ULL, 0x8000800080008000ULL }); // Sign bit repeated
-
-    // Test all eight 16-bit lanes equal with inverted LSL (mvni<128,16> path)
-    testPattern(v128_t { 0xEDFFEDFFEDFFEDFFULL, 0xEDFFEDFFEDFFEDFFULL }); // ~0x1200 repeated
-    testPattern(v128_t { 0xFFEDFFEDFFEDFFEDULL, 0xFFEDFFEDFFEDFFEDULL }); // ~0x0012 repeated
-
-    // Test all 16 bytes equal (movi<128,8> path)
-    testPattern(v128_t { 0x4242424242424242ULL, 0x4242424242424242ULL }); // 0x42 repeated 16 times
-    testPattern(v128_t { 0x8080808080808080ULL, 0x8080808080808080ULL }); // 0x80 repeated 16 times
-    testPattern(v128_t { 0x1111111111111111ULL, 0x1111111111111111ULL }); // 0x11 repeated 16 times
-
-    // Test non-repeating patterns (fallback path - GPR + vector lane insertion)
-    testPattern(v128_t { 0x0000000000000000ULL, 0xFFFFFFFFFFFFFFFFULL }); // Half zeros, half ones
-    testPattern(v128_t { 0x123456789ABCDEF0ULL, 0xFEDCBA9876543210ULL }); // Different arbitrary values
-    testPattern(v128_t { 0x0000000000000042ULL, 0x0000000000000043ULL }); // Simple different values
-    testPattern(v128_t { 0x3FF0000000000000ULL, 0x4000000000000000ULL }); // Different doubles
-    testPattern(v128_t { 0x123456789ABCDEF0ULL, 0x123456789ABCDEF1ULL }); // Nearly same but different
+    // Repeated 32-bit NON-contiguous patterns (fallback for repeated, non-contiguous 32-bit)
+    testPattern(0x8000000180000001ULL); // Repeated high+low bits
+    testPattern(0xF000000FF000000FULL); // Repeated top+bottom nibbles
+    testPattern(0xFF0000FFFF0000FFULL); // Repeated top+bottom bytes
 }
 #endif
 
@@ -7521,6 +8286,20 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
         RUN(__test(MacroAssembler::DoubleGreaterThanOrEqualOrUnordered)); \
         RUN(__test(MacroAssembler::DoubleLessThanOrUnordered)); \
         RUN(__test(MacroAssembler::DoubleLessThanOrEqualOrUnordered)); \
+    } while (false)
+
+#define FOR_EACH_RELATIONAL_CONDITION_RUN(__test) \
+    do { \
+        RUN(__test(MacroAssembler::Equal)); \
+        RUN(__test(MacroAssembler::NotEqual)); \
+        RUN(__test(MacroAssembler::Above)); \
+        RUN(__test(MacroAssembler::AboveOrEqual)); \
+        RUN(__test(MacroAssembler::Below)); \
+        RUN(__test(MacroAssembler::BelowOrEqual)); \
+        RUN(__test(MacroAssembler::GreaterThan)); \
+        RUN(__test(MacroAssembler::GreaterThanOrEqual)); \
+        RUN(__test(MacroAssembler::LessThan)); \
+        RUN(__test(MacroAssembler::LessThanOrEqual)); \
     } while (false)
 
     FOR_EACH_DOUBLE_CONDITION_RUN(testCompareDouble);
@@ -7712,7 +8491,20 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     FOR_EACH_DOUBLE_CONDITION_RUN(testMoveConditionallyFloat3SameArg);
     FOR_EACH_DOUBLE_CONDITION_RUN(testMoveDoubleConditionallyDoubleSameArg);
     FOR_EACH_DOUBLE_CONDITION_RUN(testMoveDoubleConditionallyFloatSameArg);
+#endif
 
+#if CPU(X86_64) || CPU(ARM64)
+    // Tests for moveConditionally32 and moveConditionallyTest32 with immediate thenCase.
+    FOR_EACH_RELATIONAL_CONDITION_RUN(testMoveConditionally32WithImmThenCase);
+
+    // For test32 variants, only use Zero and NonZero (Overflow is not valid for TEST).
+    RUN(testMoveConditionallyTest32WithImmThenCaseRegMask(MacroAssembler::Zero));
+    RUN(testMoveConditionallyTest32WithImmThenCaseRegMask(MacroAssembler::NonZero));
+    RUN(testMoveConditionallyTest32WithImmThenCaseImmMask(MacroAssembler::Zero));
+    RUN(testMoveConditionallyTest32WithImmThenCaseImmMask(MacroAssembler::NonZero));
+#endif
+
+#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
     RUN(testSignExtend8To32());
     RUN(testSignExtend16To32());
     RUN(testSignExtend8To64());
@@ -7753,16 +8545,22 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 
     RUN(testNegateFloat());
 
-#if CPU(ARM64)
+#if CPU(ARM64) || CPU(X86_64)
     RUN(testMove32ToFloatMovi());
     RUN(testMove64ToDoubleMovi());
     RUN(testMove64ToDoubleRepeated32BitPatternBug());
-    RUN(testFMovHalfPrecisionEncoding());
     RUN(testMove128ToVectorMovi());
-    RUN(testMove16ToFloat16Comprehensive());
     RUN(testMove32ToFloatComprehensive());
     RUN(testMove64ToDoubleComprehensive());
     RUN(testMove128ToVectorComprehensive());
+
+    RUN(testMove32ToFloatX64());
+    RUN(testMove64ToDoubleX64());
+#endif
+
+#if CPU(ARM64)
+    RUN(testMove16ToFloat16Comprehensive());
+    RUN(testFMovHalfPrecisionEncoding());
 #endif
 
     RUN(testGPRInfoConsistency());

@@ -70,6 +70,7 @@ public:
     virtual ~Worker();
 
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, StructuredSerializeOptions&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
 
     void terminate();
     bool wasTerminated() const { return m_wasTerminated; }

@@ -116,7 +116,7 @@ void TextTrackLoader::deprecatedDidReceiveCachedResource(CachedResource& resourc
     if (!m_resource->resourceBuffer())
         return;
 
-    processNewCueData(*protectedResource());
+    processNewCueData(*protect(m_resource));
 }
 
 void TextTrackLoader::corsPolicyPreventedLoad()
@@ -173,7 +173,7 @@ bool TextTrackLoader::load(const URL& url, HTMLTrackElement& element)
         resourceRequest.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(*mediaElement));
 
     auto cueRequest = createPotentialAccessControlRequest(WTF::move(resourceRequest), WTF::move(options), *document, element.mediaElementCrossOriginAttribute());
-    m_resource = document->protectedCachedResourceLoader()->requestTextTrack(WTF::move(cueRequest)).value_or(nullptr);
+    m_resource = protect(document->cachedResourceLoader())->requestTextTrack(WTF::move(cueRequest)).value_or(nullptr);
     if (CachedResourceHandle resource = m_resource) {
         resource->addClient(*this);
         return true;
@@ -243,11 +243,6 @@ Vector<String> TextTrackLoader::getNewStyleSheets()
     if (!m_cueParser)
         return { };
     return m_cueParser->takeStyleSheets();
-}
-
-CachedResourceHandle<CachedTextTrack> TextTrackLoader::protectedResource() const
-{
-    return m_resource.get();
 }
 
 } // namespace WebCore

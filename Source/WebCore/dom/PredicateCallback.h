@@ -39,6 +39,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
+    virtual bool isJSPredicateCallback() const { return false; }
+
     virtual CallbackResult<bool> invoke(JSC::JSValue, uint64_t) = 0;
     virtual CallbackResult<bool> invokeRethrowingException(JSC::JSValue, uint64_t) = 0;
 

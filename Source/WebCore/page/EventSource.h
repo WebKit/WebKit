@@ -54,7 +54,7 @@ public:
     struct Init {
         bool withCredentials;
     };
-    static ExceptionOr<Ref<EventSource>> create(ScriptExecutionContext&, const String& url, const Init&);
+    static ExceptionOr<Ref<EventSource>> create(ScriptExecutionContext&, const String& url, Init&&);
     virtual ~EventSource();
 
     // EventTarget, ThreadableLoaderClient.
@@ -76,7 +76,7 @@ public:
     void close();
 
 private:
-    EventSource(ScriptExecutionContext&, const URL&, const Init&);
+    EventSource(ScriptExecutionContext&, const URL&, Init&&);
 
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::EventSource; }
     ScriptExecutionContext* scriptExecutionContext() const final;

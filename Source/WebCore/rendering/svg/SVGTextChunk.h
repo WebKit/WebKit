@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,6 +22,7 @@
 
 #include "InlineIteratorSVGTextBox.h"
 #include <wtf/HashMap.h>
+#include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -35,16 +36,6 @@ using SVGTextFragmentMap = HashMap<InlineIterator::SVGTextBox::Key, Vector<SVGTe
 // A SVGTextChunk describes a range of SVGTextFragments, see the SVG spec definition of a "text chunk".
 class SVGTextChunk {
 public:
-    enum ChunkStyle {
-        DefaultStyle = 1 << 0,
-        MiddleAnchor = 1 << 1,
-        EndAnchor = 1 << 2,
-        RightToLeftText = 1 << 3,
-        VerticalText = 1 << 4,
-        LengthAdjustSpacing = 1 << 5,
-        LengthAdjustSpacingAndGlyphs = 1 << 6
-    };
-
     SVGTextChunk(const Vector<InlineIterator::SVGTextBoxIterator>&, unsigned first, unsigned limit, SVGTextFragmentMap&);
 
     unsigned totalCharacters() const;
@@ -53,17 +44,26 @@ public:
     void layout(SVGChunkTransformMap&) const;
 
 private:
+    enum class ChunkStyle : uint8_t {
+        MiddleAnchor = 1 << 0,
+        EndAnchor = 1 << 1,
+        RightToLeftText = 1 << 2,
+        VerticalText = 1 << 3,
+        LengthAdjustSpacing = 1 << 4,
+        LengthAdjustSpacingAndGlyphs = 1 << 5
+    };
+
     void processTextAnchorCorrection() const;
     void buildBoxTransformations(SVGChunkTransformMap&) const;
     void processTextLengthSpacingCorrection() const;
 
-    bool isVerticalText() const { return m_chunkStyle & VerticalText; }
+    bool isVerticalText() const { return m_chunkStyle.contains(ChunkStyle::VerticalText); }
     float desiredTextLength() const { return m_desiredTextLength; }
 
-    bool hasDesiredTextLength() const { return m_desiredTextLength > 0 && ((m_chunkStyle & LengthAdjustSpacing) || (m_chunkStyle & LengthAdjustSpacingAndGlyphs)); }
-    bool hasTextAnchor() const {  return m_chunkStyle & RightToLeftText ? !(m_chunkStyle & EndAnchor) : (m_chunkStyle & (MiddleAnchor | EndAnchor)); }
-    bool hasLengthAdjustSpacing() const { return m_chunkStyle & LengthAdjustSpacing; }
-    bool hasLengthAdjustSpacingAndGlyphs() const { return m_chunkStyle & LengthAdjustSpacingAndGlyphs; }
+    bool hasDesiredTextLength() const { return m_desiredTextLength > 0 && m_chunkStyle.containsAny({ ChunkStyle::LengthAdjustSpacing, ChunkStyle::LengthAdjustSpacingAndGlyphs }); }
+    bool hasTextAnchor() const { return m_chunkStyle.contains(ChunkStyle::RightToLeftText) ? !m_chunkStyle.contains(ChunkStyle::EndAnchor) : m_chunkStyle.containsAny({ ChunkStyle::MiddleAnchor, ChunkStyle::EndAnchor }); }
+    bool hasLengthAdjustSpacing() const { return m_chunkStyle.contains(ChunkStyle::LengthAdjustSpacing); }
+    bool hasLengthAdjustSpacingAndGlyphs() const { return m_chunkStyle.contains(ChunkStyle::LengthAdjustSpacingAndGlyphs); }
 
     bool boxSpacingAndGlyphsTransform(const Vector<SVGTextFragment>&, AffineTransform&) const;
 
@@ -78,8 +78,8 @@ private:
     };
     Vector<BoxAndFragments> m_boxes;
 
-    unsigned m_chunkStyle { DefaultStyle };
     float m_desiredTextLength { 0 };
+    OptionSet<ChunkStyle> m_chunkStyle;
 };
 
 } // namespace WebCore

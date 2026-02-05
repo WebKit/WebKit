@@ -20,7 +20,7 @@
 #include "common/PackedEnums.h"
 #include "common/bitset_utils.h"
 #include "common/hash_utils.h"
-#include "common/vector_utils.h"
+#include "common/span.h"
 #include "libANGLE/Constants.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/RefCountObject.h"
@@ -544,6 +544,40 @@ struct PixelUnpackState : PixelStoreStateBase
 struct PixelPackState : PixelStoreStateBase
 {
     bool reverseRowOrder = false;
+};
+
+struct SupportedSampleSet
+{
+  public:
+    // Set a sample count as being supported. Must be a power of 2 and no greater than
+    // IMPLEMENTATION_MAX_SAMPLES
+    void insert(GLuint sampleCount);
+
+    // Reset supported sample counts.
+    void clear();
+
+    // Get the number of supported samples that is at least as many as requested.  Returns 0 if
+    // there are no sample counts available
+    GLuint getNearestSamples(GLuint requestedSamples) const;
+
+    // Get the maximum number of samples supported
+    GLuint getMaxSamples() const;
+
+    // The number of supported sample counts
+    size_t size() const;
+
+    // Generate a list of supported sample counts
+    std::vector<GLint> sampleCounts() const;
+
+    SupportedSampleSet operator&(const SupportedSampleSet &other) const;
+
+  private:
+    // Bitfield of supported sample counts, each bit is represents the next power of 2. An extra bit
+    // is added for the '0' sample count.
+    static constexpr size_t kRequiredBitCount =
+        log2(static_cast<int>(IMPLEMENTATION_MAX_SAMPLES)) + 1;
+    using SupportedSamplesBitSet = angle::BitSet<kRequiredBitCount>;
+    SupportedSamplesBitSet mSupportedSamples;
 };
 
 // Used in VertexArray. For ease of tracking, we add vertex array element buffer to the end of
@@ -1142,8 +1176,6 @@ using ActiveTextureTypeArray = ActiveTextureArray<TextureType>;
 
 using ImageUnitMask = angle::BitSet<IMPLEMENTATION_MAX_IMAGE_UNITS>;
 
-using SupportedSampleSet = std::set<GLuint>;
-
 template <typename T>
 using TransformFeedbackBuffersArray =
     std::array<T, gl::IMPLEMENTATION_MAX_TRANSFORM_FEEDBACK_BUFFERS>;
@@ -1152,6 +1184,7 @@ using ClipDistanceEnableBits = angle::BitSet32<IMPLEMENTATION_MAX_CLIP_DISTANCES
 
 template <typename T>
 using QueryTypeMap = angle::PackedEnumMap<QueryType, T>;
+using QueryTypeBitSet = angle::PackedEnumBitSet<QueryType, uint8_t>;
 
 constexpr size_t kBarrierVectorDefaultSize = 16;
 
@@ -1359,7 +1392,7 @@ struct hash<angle::BlobCacheKey>
     // Simple routine to hash four ints.
     size_t operator()(const angle::BlobCacheKey &key) const
     {
-        return angle::ComputeGenericHash(key.data(), key.size());
+        return angle::ComputeGenericHash(key);
     }
 };
 }  // namespace std

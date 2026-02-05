@@ -25,8 +25,9 @@
 
 #pragma once
 
-#include "CryptoAlgorithmParameters.h"
 #include <JavaScriptCore/Uint8Array.h>
+#include <WebCore/CryptoAlgorithmParameters.h>
+#include <WebCore/CryptoAlgorithmRsaKeyGenParamsInit.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -36,6 +37,13 @@ class CryptoAlgorithmRsaKeyGenParams : public CryptoAlgorithmParameters {
 public:
     size_t modulusLength;
     RefPtr<Uint8Array> publicExponent;
+
+    CryptoAlgorithmRsaKeyGenParams(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmRsaKeyGenParamsInit init)
+        : CryptoAlgorithmParameters { WTF::move(identifier), WTF::move(init) }
+        , modulusLength { WTF::move(init.modulusLength) }
+        , publicExponent { WTF::move(init.publicExponent) }
+    {
+    }
 
     Class parametersClass() const override { return Class::RsaKeyGenParams; }
 

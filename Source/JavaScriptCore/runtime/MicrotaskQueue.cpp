@@ -55,7 +55,7 @@ QueuedTaskResult DebuggableMicrotaskDispatcher::run(QueuedTask& task)
 {
     auto* globalObject = task.globalObject();
     VM& vm = globalObject->vm();
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     auto identifier = task.identifier();
 
     if (auto* debugger = globalObject->debugger(); debugger && identifier) [[unlikely]] {

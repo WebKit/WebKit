@@ -246,7 +246,6 @@ void UIDelegate::setDelegate(id<WKUIDelegate> delegate)
 #endif // ENABLE(WEBXR)
 
     m_delegateMethods.webViewRequestNotificationPermissionForSecurityOriginDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestNotificationPermissionForSecurityOrigin:decisionHandler:)];
-    m_delegateMethods.webViewRequestCookieConsentWithMoreInfoHandlerDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestCookieConsentWithMoreInfoHandler:decisionHandler:)];
 
     m_delegateMethods.webViewUpdatedAppBadge = [delegate respondsToSelector:@selector(_webView:updatedAppBadge:fromSecurityOrigin:)];
 
@@ -325,11 +324,6 @@ id<WKUIDelegatePrivate> UIDelegate::UIClient::uiDelegatePrivate()
     return m_uiDelegate ? (id<WKUIDelegatePrivate>)m_uiDelegate->m_delegate.getAutoreleased() : nil;
 }
 
-RetainPtr<id<WKUIDelegatePrivate>> UIDelegate::UIClient::protectedUIDelegatePrivate()
-{
-    return uiDelegatePrivate();
-}
-
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 void UIDelegate::UIClient::mouseDidMoveOverElement(WebPageProxy& page, const WebHitTestResultData& data, OptionSet<WebEventModifier> modifiers)
 {
@@ -376,7 +370,7 @@ void UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy&, Ref<API::PageCon
     // FIXME: Remove this once the cause of rdar://148942809 is found and fixed.
     RetainPtr relatedWebView = [protectedWrapper(configuration) _relatedWebView];
     ALLOW_DEPRECATED_DECLARATIONS_END
-    bool siteIsolationEnabled = configuration->protectedPreferences()->siteIsolationEnabled();
+    bool siteIsolationEnabled = protect(configuration->preferences())->siteIsolationEnabled();
 
     if (uiDelegate->m_delegateMethods.webViewCreateWebViewWithConfigurationForNavigationActionWindowFeaturesAsync) {
         auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:completionHandler:));
@@ -591,7 +585,7 @@ void UIDelegate::UIClient::decidePolicyForGeolocationPermissionRequest(WebKit::W
         return;
 
     if (uiDelegate->m_delegateMethods.webViewRequestGeolocationPermissionForOriginDecisionHandler) {
-        auto securityOrigin = WebCore::SecurityOrigin::createFromString(page.protectedPageLoadState()->activeURL());
+        auto securityOrigin = WebCore::SecurityOrigin::createFromString(protect(page.pageLoadState())->activeURL());
         auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestGeolocationPermissionForOrigin:initiatedByFrame:decisionHandler:));
         auto decisionHandler = makeBlockPtr([completionHandler = std::exchange(completionHandler, nullptr), securityOrigin = securityOrigin->data(), checker = WTF::move(checker), page = WeakPtr { page }] (WKPermissionDecision decision) mutable {
             if (checker->completionHandlerHasBeenCalled())
@@ -861,29 +855,6 @@ void UIDelegate::UIClient::decidePolicyForNotificationPermissionRequest(WebKit::
     }).get()];
 }
 
-void UIDelegate::UIClient::requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&& completion)
-{
-    RefPtr uiDelegate = m_uiDelegate.get();
-    if (!uiDelegate)
-        return completion(WebCore::CookieConsentDecisionResult::NotSupported);
-
-    if (!uiDelegate->m_delegateMethods.webViewRequestCookieConsentWithMoreInfoHandlerDecisionHandler)
-        return completion(WebCore::CookieConsentDecisionResult::NotSupported);
-
-    RetainPtr delegate = uiDelegatePrivate();
-    if (!delegate)
-        return completion(WebCore::CookieConsentDecisionResult::NotSupported);
-
-    // FIXME: Add support for the 'more info' handler.
-    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestCookieConsentWithMoreInfoHandler:decisionHandler:));
-    [delegate _webView:uiDelegate->m_webView.get().get() requestCookieConsentWithMoreInfoHandler:nil decisionHandler:makeBlockPtr([completion = WTF::move(completion), checker = WTF::move(checker)] (BOOL decision) mutable {
-        if (checker->completionHandlerHasBeenCalled())
-            return;
-        checker->didCallCompletionHandler();
-        completion(decision ? WebCore::CookieConsentDecisionResult::Consent : WebCore::CookieConsentDecisionResult::Dissent);
-    }).get()];
-}
-
 bool UIDelegate::UIClient::focusFromServiceWorker(WebKit::WebPageProxy& proxy)
 {
     RefPtr uiDelegate = m_uiDelegate.get();
@@ -901,7 +872,7 @@ bool UIDelegate::UIClient::focusFromServiceWorker(WebKit::WebPageProxy& proxy)
         return false;
 #endif
     }
-    return [protectedUIDelegatePrivate() _focusWebViewFromServiceWorker:uiDelegate->m_webView.get().get()];
+    return [protect(uiDelegatePrivate()) _focusWebViewFromServiceWorker:uiDelegate->m_webView.get().get()];
 }
 
 bool UIDelegate::UIClient::runOpenPanel(WebPageProxy& page, WebFrameProxy* webFrameProxy, FrameInfoData&& frameInfo, API::OpenPanelParameters* openPanelParameters, WebOpenPanelResultListenerProxy* listener)
@@ -1255,7 +1226,7 @@ void UIDelegate::UIClient::willCloseLocalInspector(WebPageProxy&, WebInspectorUI
 #if ENABLE(DEVICE_ORIENTATION)
 void UIDelegate::UIClient::shouldAllowDeviceOrientationAndMotionAccess(WebKit::WebPageProxy& page, WebFrameProxy& webFrameProxy, FrameInfoData&& frameInfo, CompletionHandler<void(bool)>&& completionHandler)
 {
-    Ref securityOrigin = WebCore::SecurityOrigin::createFromString(page.protectedPageLoadState()->activeURL());
+    Ref securityOrigin = WebCore::SecurityOrigin::createFromString(protect(page.pageLoadState())->activeURL());
     RefPtr uiDelegate = m_uiDelegate.get();
     if (!uiDelegate || !uiDelegate->m_delegate.get() || !uiDelegate->m_delegateMethods.webViewRequestDeviceOrientationAndMotionPermissionForOriginDecisionHandler) {
         alertForPermission(page, MediaPermissionReason::DeviceOrientation, securityOrigin->data(), WTF::move(completionHandler));

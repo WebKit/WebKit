@@ -25,7 +25,6 @@
  
 [
     Conditional=WEB_AUTHN,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary AuthenticationExtensionsLargeBlobInputsJSON {
     DOMString support;
     boolean read;
@@ -34,7 +33,6 @@
 
 [
     Conditional=WEB_AUTHN,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary AuthenticationExtensionsPRFValuesJSON {
     required DOMString first;
     DOMString second;
@@ -42,7 +40,6 @@
 
 [
     Conditional=WEB_AUTHN,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary AuthenticationExtensionsPRFInputsJSON {
     AuthenticationExtensionsPRFValuesJSON eval;
     record<USVString, AuthenticationExtensionsPRFValuesJSON> evalByCredential;
@@ -50,7 +47,6 @@
 
 [
     Conditional=WEB_AUTHN,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary AuthenticationExtensionsClientInputsJSON {
     DOMString appid;
     boolean credProps;

@@ -36,7 +36,7 @@ namespace WebKit {
 
 class ModelServiceInitializerDelegate : public XPCServiceInitializerDelegate {
 public:
-    ModelServiceInitializerDelegate(XPCObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
+    ModelServiceInitializerDelegate(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
         : XPCServiceInitializerDelegate(WTF::move(connection), initializerMessage)
     {
     }

@@ -31,7 +31,7 @@
     JSGenerateToNativeObject,
     Exposed=Window
 ] interface AudioContext : BaseAudioContext {
-    [CallWith=CurrentDocument] constructor(optional AudioContextOptions contextOptions);
+    [CallWith=CurrentDocument] constructor(optional AudioContextOptions contextOptions = {});
 
     readonly attribute double baseLatency;
     readonly attribute double outputLatency;

@@ -16,7 +16,10 @@ root
             input,'text',uid=…,placeholder='Enter text here'
             role='button',title='Test action','Clickable Div'
         section,aria-label='Content with Roles'
-            article,role='article','Article Title\n\nJanuary 1, 2024\nThis is some article content with highlighted text.'
+            article,role='article'
+                'Article Title'
+                'January 1, 2024'
+                'This is some article content with highlighted text.'
             role='complementary',aria-label='Related information'
                 'Related Links'
                 list
@@ -37,6 +40,14 @@ root
                 input,'text',uid=…,placeholder='Username',name='username',minlength=3,maxlength=20,required
                 input,'text',uid=…,placeholder='Email',pattern='[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$',name='email',required
                 input,'text',uid=…,placeholder='Zip Code',pattern='[0-9]{5}',name='zipcode',minlength=5,maxlength=5
+            select,uid=…
+                option,value='one','Number 1'
+                option,value='two','Number 2'
+                option,selected,value='three','Number 3'
+            select,uid=…,multiple
+                option,selected,value='banana'
+                option,selected,value='pear'
+                option,value='apple'
     role='contentinfo'
         'Footer content with'
         role='img',aria-label='copyright symbol','©'
@@ -66,7 +77,11 @@ root
             <div role='button' title='Test action'>Clickable Div</div>
         </section>
         <section aria-label='Content with Roles'>
-            <article role='article'>Article Title  January 1, 2024 This is some article content with highlighted text.</article>
+            <article role='article'>
+                Article Title
+                January 1, 2024
+                This is some article content with highlighted text.
+            </article>
             <aside role='complementary' aria-label='Related information'>
                 Related Links
                 <ul>
@@ -95,6 +110,16 @@ root
                 <input type='text' uid=… placeholder='Email' pattern='[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$' name='email' required>
                 <input type='text' uid=… placeholder='Zip Code' pattern='[0-9]{5}' name='zipcode' minlength=5 maxlength=5>
             </form>
+            <select uid=…>
+                <option value='one'>Number 1</option>
+                <option value='two'>Number 2</option>
+                <option value='three' selected>Number 3</option>
+            </select>
+            <select uid=…>
+                <option value='banana' selected>Banana</option>
+                <option value='pear' selected>Pear</option>
+                <option value='apple'>Apple</option>
+            </select>
         </section>
     </main>
     <footer role='contentinfo'>
@@ -238,7 +263,15 @@ root
               "children": [
                 {
                   "type": "text",
-                  "content": "Article Title January 1, 2024 This is some article content with highlighted text."
+                  "content": "Article Title"
+                },
+                {
+                  "type": "text",
+                  "content": "January 1, 2024"
+                },
+                {
+                  "type": "text",
+                  "content": "This is some article content with highlighted text."
                 }
               ]
             },
@@ -421,6 +454,51 @@ root
                   ]
                 }
               ]
+            },
+            {
+              "type": "select",
+              "nodeName": "select",
+              "uid": "…",
+              "options": [
+                {
+                  "value": "one",
+                  "label": "Number 1",
+                  "selected": false
+                },
+                {
+                  "value": "two",
+                  "label": "Number 2",
+                  "selected": false
+                },
+                {
+                  "value": "three",
+                  "label": "Number 3",
+                  "selected": true
+                }
+              ]
+            },
+            {
+              "type": "select",
+              "nodeName": "select",
+              "uid": "…",
+              "options": [
+                {
+                  "value": "banana",
+                  "label": "Banana",
+                  "selected": true
+                },
+                {
+                  "value": "pear",
+                  "label": "Pear",
+                  "selected": true
+                },
+                {
+                  "value": "apple",
+                  "label": "Apple",
+                  "selected": false
+                }
+              ],
+              "multiple": true
             }
           ]
         }

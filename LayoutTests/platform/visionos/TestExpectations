@@ -171,6 +171,12 @@ fast/forms/form-control-refresh/progress-window-inactive-state-light-mode.html [
 # webkit.org/b/300929 REGRESSION(297559@main): interaction-region/form-control-refresh/date-native-interaction-region.html does not pass on visionOS
 interaction-region/form-control-refresh/date-native-interaction-region.html [ Failure ]
 
+#webkit.org/b/306905 REGRESSION(306261@main): [VisionOS] interaction-region/interaction-layers-culling-layer-type-change.html is a constant text failure.
+interaction-region/interaction-layers-culling-layer-type-change.html [ Failure ]
+interaction-region/interaction-layers-culling.html [ Failure ]
+platform/visionos/transforms/separated-update.html [ Failure ]
+platform/visionos/transforms/separated-video.html [ Failure ]
+
 ### END OF Triaged failures
 ###################################################################################################
 

@@ -2590,18 +2590,15 @@ MultiviewRenderTestParams MultisampledVertexShaderVulkan(ExtensionName multiview
     return MultiviewRenderTestParams(2, VertexShaderVulkan(3, 1, multiviewExtension));
 }
 
-MultiviewRenderTestParams MultisampledVertexShaderD3D11(ExtensionName multiviewExtension)
-{
-    return MultiviewRenderTestParams(2, VertexShaderD3D11(3, 1, multiviewExtension));
-}
-
-#define ALL_VERTEX_SHADER_CONFIGS(minor)                         \
+#define ES31_CAPABLE_VERTEX_SHADER_CONFIGS(minor)                \
     VertexShaderOpenGL(3, minor, ExtensionName::multiview),      \
         VertexShaderVulkan(3, minor, ExtensionName::multiview),  \
-        VertexShaderD3D11(3, minor, ExtensionName::multiview),   \
         VertexShaderOpenGL(3, minor, ExtensionName::multiview2), \
-        VertexShaderVulkan(3, minor, ExtensionName::multiview2), \
-        VertexShaderD3D11(3, minor, ExtensionName::multiview2)
+        VertexShaderVulkan(3, minor, ExtensionName::multiview2)
+
+#define ES3_ONLY_VERTEX_SHADER_CONFIGS                                                        \
+    ES31_CAPABLE_VERTEX_SHADER_CONFIGS(0), VertexShaderD3D11(3, 0, ExtensionName::multiview), \
+        VertexShaderD3D11(3, 0, ExtensionName::multiview2)
 
 #define ALL_SINGLESAMPLE_CONFIGS()                                                              \
     VertexShaderOpenGL(ExtensionName::multiview), VertexShaderVulkan(ExtensionName::multiview), \
@@ -2613,15 +2610,13 @@ MultiviewRenderTestParams MultisampledVertexShaderD3D11(ExtensionName multiviewE
 #define ALL_MULTISAMPLE_CONFIGS()                                  \
     MultisampledVertexShaderOpenGL(ExtensionName::multiview),      \
         MultisampledVertexShaderVulkan(ExtensionName::multiview),  \
-        MultisampledVertexShaderD3D11(ExtensionName::multiview),   \
         MultisampledVertexShaderOpenGL(ExtensionName::multiview2), \
-        MultisampledVertexShaderVulkan(ExtensionName::multiview2), \
-        MultisampledVertexShaderD3D11(ExtensionName::multiview2)
+        MultisampledVertexShaderVulkan(ExtensionName::multiview2)
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(MultiviewDependencyTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultiviewDrawValidationTest);
-ANGLE_INSTANTIATE_TEST(MultiviewDrawValidationTest, ALL_VERTEX_SHADER_CONFIGS(1));
+ANGLE_INSTANTIATE_TEST(MultiviewDrawValidationTest, ES31_CAPABLE_VERTEX_SHADER_CONFIGS(1));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultiviewRenderDualViewTest);
 ANGLE_INSTANTIATE_TEST(MultiviewRenderDualViewTest,
@@ -2641,7 +2636,7 @@ ANGLE_INSTANTIATE_TEST(MultiviewOcclusionQueryTest, ALL_SINGLESAMPLE_CONFIGS());
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultiviewProgramGenerationTest);
 ANGLE_INSTANTIATE_TEST(MultiviewProgramGenerationTest,
-                       ALL_VERTEX_SHADER_CONFIGS(0),
+                       ES3_ONLY_VERTEX_SHADER_CONFIGS,
                        GeomShaderD3D11(3, 0, ExtensionName::multiview),
                        GeomShaderD3D11(3, 0, ExtensionName::multiview2));
 

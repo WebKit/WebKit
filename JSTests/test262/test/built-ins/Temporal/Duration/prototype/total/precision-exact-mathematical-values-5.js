@@ -56,3 +56,30 @@ const seconds = 8692288669465520;
     "BalanceTimeDuration should implement floating-point calculation correctly for largestUnit nanoseconds"
   );
 }
+
+{
+  const d = new Temporal.Duration(0, 0, 5, 5);
+
+  const result = d.total({ unit: "months", relativeTo: "1972-01-31" })
+
+/*
+Expected months checked using Decimals in Python:
+
+>>> from decimal import *
+>>> getcontext().prec = 18
+>>> dest_epoch_ns = Decimal(69120000000000000)
+>>> start_epoch_ns = Decimal(68169600000000000)
+>>> end_epoch_ns = 70848000000000000
+>>> progress = ((dest_epoch_ns - start_epoch_ns) / (end_epoch_ns - start_epoch_ns))
+>>> progress
+Decimal('0.354838709677419355')
+>>> Decimal(1) + progress
+Decimal('1.35483870967741936')
+
+The result should be truncated.
+*/
+  const expectedMonths = 1.3548387096774193;
+
+  assert.sameValue(result, expectedMonths,
+    "NudgeToCalendarUnit should implement floating-point calculation correctly for largestUnit months");
+}

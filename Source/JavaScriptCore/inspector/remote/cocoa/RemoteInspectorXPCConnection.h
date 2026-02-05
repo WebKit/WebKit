@@ -72,7 +72,7 @@ private:
     // We make sure that m_client is thread safe and immediately cleared in close().
     Lock m_mutex;
 
-    XPCObjectPtr<xpc_connection_t> m_connection;
+    OSObjectPtr<xpc_connection_t> m_connection;
     OSObjectPtr<dispatch_queue_t> m_queue;
     Client* m_client;
     bool m_closed { false };

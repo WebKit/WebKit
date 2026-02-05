@@ -121,12 +121,8 @@ void GStreamerVideoCapturer::setupPipeline()
 
 GstElement* GStreamerVideoCapturer::createConverter()
 {
-    if (isCapturingDisplay()) {
-#if USE(GBM)
-        m_caps = buildDMABufCaps();
-#endif
+    if (isCapturingDisplay())
         return nullptr;
-    }
 
     auto videoConvert = createVideoConvertScaleElement();
     if (!videoConvert) [[unlikely]]
@@ -150,10 +146,13 @@ GstElement* GStreamerVideoCapturer::createConverter()
     gst_element_link(m_videoSrcMIMETypeFilter.get(), decodebin);
 
     auto sinkPad = adoptGRef(gst_element_get_static_pad(videoConvert.get(), "sink"));
-    g_signal_connect_swapped(decodebin, "pad-added", G_CALLBACK(+[](GstPad* sinkPad, GstPad* srcPad) {
+
+    g_signal_connect_data(decodebin, "pad-added", G_CALLBACK(+[](GstElement*, GstPad* srcPad, GstPad* sinkPad) {
         RELEASE_ASSERT(!gst_pad_is_linked(sinkPad));
         gst_pad_link(srcPad, sinkPad);
-    }), sinkPad.get());
+    }), sinkPad.leakRef(), reinterpret_cast<GClosureNotify>(+[](gpointer data, GClosure*) {
+        gst_object_unref(GST_PAD_CAST(data));
+    }), static_cast<GConnectFlags>(0));
 
     gst_element_link(videoConvert.get(), videorate);
 

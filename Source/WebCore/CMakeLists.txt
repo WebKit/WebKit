@@ -30,7 +30,6 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/cache"
     "${WEBCORE_DIR}/Modules/compression"
     "${WEBCORE_DIR}/Modules/contact-picker"
-    "${WEBCORE_DIR}/Modules/cookie-consent"
     "${WEBCORE_DIR}/Modules/cookie-store"
     "${WEBCORE_DIR}/Modules/credentialmanagement"
     "${WEBCORE_DIR}/Modules/encryptedmedia"
@@ -132,7 +131,6 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/html/track"
     "${WEBCORE_DIR}/inspector"
     "${WEBCORE_DIR}/inspector/agents"
-    "${WEBCORE_DIR}/inspector/agents/frame"
     "${WEBCORE_DIR}/inspector/agents/page"
     "${WEBCORE_DIR}/inspector/agents/worker"
     "${WEBCORE_DIR}/layout"
@@ -368,9 +366,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/contact-picker/ContactsSelectOptions.idl
     Modules/contact-picker/Navigator+Contacts.idl
 
-    Modules/cookie-consent/Navigator+CookieConsent.idl
-    Modules/cookie-consent/RequestCookieConsentOptions.idl
-
     Modules/cookie-store/CookieChangeEvent.idl
     Modules/cookie-store/CookieChangeEventInit.idl
     Modules/cookie-store/CookieInit.idl
@@ -452,8 +447,8 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/identity/DigitalCredential.idl
     Modules/identity/DigitalCredentialGetRequest.idl
+    Modules/identity/DigitalCredentialPresentationProtocol.idl
     Modules/identity/DigitalCredentialRequestOptions.idl
-    Modules/identity/IdentityCredentialProtocol.idl
 
     Modules/identity/protocols/ISO18013/MobileDocumentRequest.idl
 
@@ -543,6 +538,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/MediaStream.idl
     Modules/mediastream/MediaStreamTrack.idl
     Modules/mediastream/MediaStreamTrackEvent.idl
+    Modules/mediastream/MediaStreamTrackHandle.idl
     Modules/mediastream/MediaStreamTrackProcessor.idl
     Modules/mediastream/MediaTrackCapabilities.idl
     Modules/mediastream/MediaTrackConstraints.idl
@@ -1086,8 +1082,6 @@ set(WebCore_NON_SVG_IDL_FILES
     css/ElementCSSInlineStyle.idl
     css/FontFace.idl
     css/FontFaceSet.idl
-    css/FontFaceSetLoadEvent.idl
-    css/FontFaceSetLoadEventInit.idl
     css/FontFaceSource.idl
     css/LinkStyle.idl
     css/MediaList.idl
@@ -2499,6 +2493,7 @@ set(WebCoreTestSupport_IDL_FILES
     testing/MockContentFilterSettings.idl
     testing/MockMediaDeviceRoute.idl
     testing/MockMediaDeviceRouteController.idl
+    testing/MockMediaDeviceRouteURLCallback.idl
     testing/MockPageOverlay.idl
     testing/MockWebAuthenticationConfiguration.idl
     testing/ServiceWorkerInternals.idl
@@ -2754,7 +2749,7 @@ add_custom_command(
     OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/DOMJITAbstractHeapRepository.h
     MAIN_DEPENDENCY domjit/DOMJITAbstractHeapRepository.yaml
     DEPENDS ${WEBCORE_DIR}/domjit/generate-abstract-heap.rb
-    COMMAND ${RUBY_EXECUTABLE} ${WEBCORE_DIR}/domjit/generate-abstract-heap.rb ${WEBCORE_DIR}/domjit/DOMJITAbstractHeapRepository.yaml ${WebCore_DERIVED_SOURCES_DIR}/DOMJITAbstractHeapRepository.h
+    COMMAND ${Ruby_EXECUTABLE} ${WEBCORE_DIR}/domjit/generate-abstract-heap.rb ${WEBCORE_DIR}/domjit/DOMJITAbstractHeapRepository.yaml ${WebCore_DERIVED_SOURCES_DIR}/DOMJITAbstractHeapRepository.h
     VERBATIM)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/DOMJITAbstractHeapRepository.h)
 
@@ -2894,7 +2889,7 @@ add_custom_command(
        ${WebCore_DERIVED_SOURCES_DIR}/InternalSettingsGenerated.idl
     MAIN_DEPENDENCY ${WEBCORE_DIR}/page/Settings.yaml
     DEPENDS ${WEBCORE_DIR}/Scripts/GenerateSettings.rb ${SETTINGS_TEMPLATES} WTF_CopyPreferences ${WTF_WEB_PREFERENCES}
-    COMMAND ${RUBY_EXECUTABLE} ${WEBCORE_DIR}/Scripts/GenerateSettings.rb --outputDir ${WebCore_DERIVED_SOURCES_DIR} --template "$<JOIN:${SETTINGS_TEMPLATES},;--template;>" ${WTF_WEB_PREFERENCES} ${WEBCORE_DIR}/page/Settings.yaml
+    COMMAND ${Ruby_EXECUTABLE} ${WEBCORE_DIR}/Scripts/GenerateSettings.rb --outputDir ${WebCore_DERIVED_SOURCES_DIR} --template "$<JOIN:${SETTINGS_TEMPLATES},;--template;>" ${WTF_WEB_PREFERENCES} ${WEBCORE_DIR}/page/Settings.yaml
     COMMAND_EXPAND_LISTS
     VERBATIM)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/Settings.h)
@@ -3072,7 +3067,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     ${WebCore_DERIVED_SOURCES_DIR}/DocumentSyncData.serialization.in
     ${WebCore_DERIVED_SOURCES_DIR}/FrameTreeSyncData.serialization.in
 
-    Modules/Model/InternalAPI/DDModel.serialization.in
+    Modules/Model/InternalAPI/WebModel.serialization.in
 
     Modules/WebGPU/InternalAPI/WebGPU.serialization.in
     Modules/indexeddb/IndexedDB.serialization.in

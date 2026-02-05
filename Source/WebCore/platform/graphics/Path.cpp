@@ -75,12 +75,12 @@ bool Path::definitelyEqual(const Path& other) const
             return otherSegment && segment == otherSegment.value();
         },
         [&](const DataRef<PathImpl>& impl) {
-            if (auto singleSegment = impl->singleSegment()) {
+        if (auto singleSegment = Ref { impl.get() }->singleSegment()) {
                 auto otherSegment = other.singleSegment();
                 return otherSegment && singleSegment == otherSegment.value();
             }
 
-            return impl.ptr() && other.asImpl() && impl->definitelyEqual(*other.asImpl());
+        return impl.ptr() && other.asImpl() && Ref { impl.get() }->definitelyEqual(*other.asProtectedImpl());
         });
 }
 
@@ -103,6 +103,11 @@ PlatformPathImpl& Path::ensurePlatformPathImpl()
     }
     // Generally platform path is never empty. This should only be called during Path::add() on an empty path.
     return downcast<PlatformPathImpl>(setImpl(PlatformPathImpl::create()));
+}
+
+Ref<PlatformPathImpl> Path::ensureProtectedPlatformPathImpl()
+{
+    return ensurePlatformPathImpl();
 }
 
 PathImpl& Path::ensureImpl()
@@ -150,6 +155,12 @@ RefPtr<PathImpl> Path::asProtectedImpl()
 RefPtr<const PathImpl> Path::asProtectedImpl() const
 {
     return asImpl();
+}
+
+void Path::setNotTransient()
+{
+    if (RefPtr impl = asImpl())
+        impl->setNotTransient();
 }
 
 static FloatRoundedRect calculateEvenRoundedRect(const FloatRect& rect, const FloatSize& roundingRadii)
@@ -240,7 +251,7 @@ void Path::addPath(const Path& path, const AffineTransform& transform)
         return;
 
     // FIXME: This should inspect the incoming path and add just the segments if possible.
-    ensurePlatformPathImpl().addPath(const_cast<Path&>(path).ensurePlatformPathImpl(), transform);
+    ensureProtectedPlatformPathImpl()->addPath(const_cast<Path&>(path).ensureProtectedPlatformPathImpl(), transform);
 }
 
 void Path::applySegments(const PathSegmentApplier& applier) const
@@ -264,7 +275,7 @@ void Path::applyElements(const PathElementApplier& applier) const
     if (impl && impl->applyElements(applier))
         return;
 
-    const_cast<Path&>(*this).ensurePlatformPathImpl().applyElements(applier);
+    const_cast<Path&>(*this).ensureProtectedPlatformPathImpl()->applyElements(applier);
 }
 
 void Path::clear()
@@ -290,7 +301,7 @@ void Path::transform(const AffineTransform& transform)
     if (impl && impl->transform(transform))
         return;
 
-    ensurePlatformPathImpl().transform(transform);
+    ensureProtectedPlatformPathImpl()->transform(transform);
 }
 
 std::optional<PathSegment> Path::singleSegment() const
@@ -323,7 +334,11 @@ PlatformPathPtr Path::platformPath() const
     if (isEmpty())
         return PlatformPathImpl::emptyPlatformPath();
 
+#if USE(CG)
+    return const_cast<Path&>(*this).ensureProtectedPlatformPathImpl()->platformPath();
+#else
     return const_cast<Path&>(*this).ensurePlatformPathImpl().platformPath();
+#endif
 }
 
 #if USE(CG)
@@ -335,10 +350,8 @@ RetainPtr<CGPathRef> Path::protectedPlatformPath() const
 
 const Vector<PathSegment>* Path::segmentsIfExists() const
 {
-    if (RefPtr impl = asImpl()) {
-        if (auto* stream = dynamicDowncast<PathStream>((*impl)))
-            return &stream->segments();
-    }
+    if (RefPtr impl = asImpl())
+        return impl->segmentsIfExists();
 
     return nullptr;
 }
@@ -399,7 +412,7 @@ bool Path::contains(const FloatPoint& point, WindRule rule) const
     if (isEmpty())
         return false;
 
-    return const_cast<Path&>(*this).ensurePlatformPathImpl().contains(point, rule);
+    return const_cast<Path&>(*this).ensureProtectedPlatformPathImpl()->contains(point, rule);
 }
 
 bool Path::strokeContains(const FloatPoint& point, NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier) const
@@ -409,7 +422,7 @@ bool Path::strokeContains(const FloatPoint& point, NOESCAPE const Function<void(
     if (isEmpty())
         return false;
 
-    return const_cast<Path&>(*this).ensurePlatformPathImpl().strokeContains(point, strokeStyleApplier);
+    return const_cast<Path&>(*this).ensureProtectedPlatformPathImpl()->strokeContains(point, strokeStyleApplier);
 }
 
 bool Path::hasSubpaths() const
@@ -447,7 +460,7 @@ FloatRect Path::boundingRect() const
 
 FloatRect Path::strokeBoundingRect(NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier) const
 {
-    return const_cast<Path&>(*this).ensurePlatformPathImpl().strokeBoundingRect(strokeStyleApplier);
+    return const_cast<Path&>(*this).ensureProtectedPlatformPathImpl()->strokeBoundingRect(strokeStyleApplier);
 }
 
 TextStream& operator<<(TextStream& ts, const Path& path)

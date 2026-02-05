@@ -458,11 +458,6 @@ void PaymentRequest::abortWithException(Exception&& exception)
         settleShowPromise(WTF::move(exception));
 }
 
-RefPtr<PaymentHandler> PaymentRequest::protectedActivePaymentHandler()
-{
-    return activePaymentHandler();
-}
-
 void PaymentRequest::settleShowPromise(ExceptionOr<PaymentResponse&>&& result)
 {
     if (auto showPromise = std::exchange(m_showPromise, nullptr))
@@ -523,7 +518,7 @@ void PaymentRequest::abort(AbortPromise&& promise)
         return;
     }
 
-    if (m_activePaymentHandler && !protectedActivePaymentHandler()->canAbortSession()) {
+    if (m_activePaymentHandler && !protect(activePaymentHandler())->canAbortSession()) {
         promise.reject(Exception { ExceptionCode::InvalidStateError });
         return;
     }

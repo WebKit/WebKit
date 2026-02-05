@@ -299,7 +299,7 @@ void Styleable::animationWasRemoved(WebAnimation& animation) const
 void Styleable::elementWasRemoved() const
 {
     cancelStyleOriginatedAnimations();
-    if (CheckedPtr styleOriginatedTimelinesController = element.protectedDocument()->styleOriginatedTimelinesController())
+    if (CheckedPtr styleOriginatedTimelinesController = protect(element.document())->styleOriginatedTimelinesController())
         styleOriginatedTimelinesController->styleableWasRemoved(*this);
 }
 
@@ -321,11 +321,11 @@ void Styleable::cancelStyleOriginatedAnimations() const
     // It is important we don't cancel style-originated animations when entering the page cache
     // since any JS wrapper that is kept alive in the page cache could be associated with an animation
     // that itself has not been kept alive (or rather canceled) when entering the page cache.
-    if (element.protectedDocument()->backForwardCacheState() != Document::NotInBackForwardCache)
+    if (protect(element.document())->backForwardCacheState() != Document::NotInBackForwardCache)
         return;
 
     cancelStyleOriginatedAnimations({ });
-    if (CheckedPtr styleOriginatedTimelinesController = element.protectedDocument()->styleOriginatedTimelinesController())
+    if (CheckedPtr styleOriginatedTimelinesController = protect(element.document())->styleOriginatedTimelinesController())
         styleOriginatedTimelinesController->unregisterNamedTimelinesAssociatedWithElement(*this);
 }
 
@@ -866,7 +866,7 @@ void Styleable::updateCSSScrollTimelines(const RenderStyle* currentStyle, const 
         if (currentStyle && currentStyle->scrollTimelineNames() == afterChangeStyle.scrollTimelineNames() && currentStyle->scrollTimelineAxes() == afterChangeStyle.scrollTimelineAxes())
             return;
 
-        CheckedRef styleOriginatedTimelinesController = element.protectedDocument()->ensureStyleOriginatedTimelinesController();
+        CheckedRef styleOriginatedTimelinesController = protect(element.document())->ensureStyleOriginatedTimelinesController();
 
         auto& currentTimelineNames = afterChangeStyle.scrollTimelineNames();
         auto& currentTimelineAxes = afterChangeStyle.scrollTimelineAxes();
@@ -910,7 +910,7 @@ void Styleable::updateCSSViewTimelines(const RenderStyle* currentStyle, const Re
         if ((currentStyle && currentStyle->viewTimelineNames() == afterChangeStyle.viewTimelineNames()) && (currentStyle && currentStyle->viewTimelineAxes() == afterChangeStyle.viewTimelineAxes()) && (currentStyle && currentStyle->viewTimelineInsets() == afterChangeStyle.viewTimelineInsets()))
             return;
 
-        CheckedRef styleOriginatedTimelinesController = element.protectedDocument()->ensureStyleOriginatedTimelinesController();
+        CheckedRef styleOriginatedTimelinesController = protect(element.document())->ensureStyleOriginatedTimelinesController();
 
         auto& currentTimelineNames = afterChangeStyle.viewTimelineNames();
         auto& currentTimelineAxes = afterChangeStyle.viewTimelineAxes();

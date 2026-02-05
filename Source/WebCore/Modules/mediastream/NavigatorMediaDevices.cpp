@@ -69,7 +69,7 @@ MediaDevices* NavigatorMediaDevices::mediaDevices(Navigator& navigator)
 MediaDevices* NavigatorMediaDevices::mediaDevices() const
 {
     if (!m_mediaDevices && frame())
-        m_mediaDevices = MediaDevices::create(*frame()->protectedDocument());
+        m_mediaDevices = MediaDevices::create(*protect(frame()->document()));
     return m_mediaDevices.get();
 }
 

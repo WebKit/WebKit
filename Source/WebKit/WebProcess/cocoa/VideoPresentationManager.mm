@@ -80,7 +80,7 @@ static FloatRect inlineVideoFrame(HTMLVideoElement& element)
     if (renderer->hasLayer() && renderer->checkedEnclosingLayer()->isComposited()) {
         FloatQuad contentsBox = static_cast<FloatRect>(renderer->enclosingLayer()->backing()->contentsBox());
         contentsBox = renderer->localToAbsoluteQuad(contentsBox);
-        return document->protectedView()->contentsToRootView(contentsBox.boundingBox());
+        return protect(document->view())->contentsToRootView(contentsBox.boundingBox());
     }
 
     return renderer->videoBoxInRootView();
@@ -288,13 +288,13 @@ bool VideoPresentationManager::canEnterVideoFullscreen(HTMLVideoElement& videoEl
     ASSERT(mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
 
 #if ENABLE(FULLSCREEN_API)
-    if (videoElement.protectedDocument()->protectedFullscreen()->isAnimatingFullscreen())
+    if (protect(protect(videoElement.document())->fullscreen())->isAnimatingFullscreen())
         return false;
 #endif
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
     if (m_currentVideoFullscreenMode == mode)
-        return videoElement.protectedDocument()->quirks().allowLayeredFullscreenVideos();
+        return protect(videoElement.document())->quirks().allowLayeredFullscreenVideos();
 #endif
     return true;
 }
@@ -472,7 +472,7 @@ void VideoPresentationManager::enterVideoFullscreenForVideoElement(HTMLVideoElem
     auto setupFullscreen = [protectedThis = Ref { *this }, page = WeakPtr { m_page }, contextId = contextId, initialSize = initialSize, videoRect = videoRect, videoElement = WeakPtr { videoElement }, allowsPictureInPicture = allowsPictureInPicture, standby = standby, fullscreenMode = interface->fullscreenMode()] (HostingContext hostingContext, const FloatSize& size) {
         if (!page || !videoElement)
             return;
-        page->send(Messages::VideoPresentationManagerProxy::SetupFullscreenWithID(processQualify(contextId), hostingContext, videoRect, initialSize, size, page->deviceScaleFactor(), fullscreenMode, allowsPictureInPicture, standby, videoElement->protectedDocument()->quirks().blocksReturnToFullscreenFromPictureInPictureQuirk()));
+        page->send(Messages::VideoPresentationManagerProxy::SetupFullscreenWithID(processQualify(contextId), hostingContext, videoRect, initialSize, size, page->deviceScaleFactor(), fullscreenMode, allowsPictureInPicture, standby, protect(videoElement->document())->quirks().blocksReturnToFullscreenFromPictureInPictureQuirk()));
 
         if (RefPtr player = videoElement->player()) {
             if (auto identifier = player->identifier())

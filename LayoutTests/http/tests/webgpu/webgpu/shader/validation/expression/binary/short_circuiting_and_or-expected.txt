@@ -1194,25 +1194,9 @@ PASS :invalid_array_count_on_rhs:op="%7C%7C";rhs="nested";control=false
 PASS :array_override:op="%26%26";a_val=0;b_val=0
 PASS :array_override:op="%26%26";a_val=0;b_val=1
 PASS :array_override:op="%26%26";a_val=1;b_val=0
-FAIL :array_override:op="%26%26";a_val=1;b_val=1 assert_unreached:
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
+PASS :array_override:op="%26%26";a_val=1;b_val=1
 PASS :array_override:op="%7C%7C";a_val=0;b_val=0
-FAIL :array_override:op="%7C%7C";a_val=0;b_val=1 assert_unreached:
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :array_override:op="%7C%7C";a_val=1;b_val=0 assert_unreached:
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
-FAIL :array_override:op="%7C%7C";a_val=1;b_val=1 assert_unreached:
-  - (in subcase: ) INFO: subcase ran
-  - EXCEPTION: Error: Unexpected validation error occurred: Failed to evaluate override value
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
+PASS :array_override:op="%7C%7C";a_val=0;b_val=1
+PASS :array_override:op="%7C%7C";a_val=1;b_val=0
+PASS :array_override:op="%7C%7C";a_val=1;b_val=1
 

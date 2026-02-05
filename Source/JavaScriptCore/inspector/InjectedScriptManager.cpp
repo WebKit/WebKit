@@ -32,11 +32,11 @@
 #include "InjectedScriptManager.h"
 
 #include "BuiltinNames.h"
-#include "CatchScope.h"
 #include "InjectedScriptHost.h"
 #include "JSLock.h"
 #include "JSObjectInlines.h"
 #include "SourceCode.h"
+#include "TopExceptionScope.h"
 #include <wtf/JSONValues.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -140,7 +140,7 @@ Expected<JSObject*, NakedPtr<Exception>> InjectedScriptManager::createInjectedSc
 {
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSValue globalThisValue = globalObject->globalThis();
 

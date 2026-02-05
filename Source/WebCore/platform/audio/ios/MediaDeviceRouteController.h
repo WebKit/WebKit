@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if HAVE(AVROUTING_FRAMEWORK)
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
 
 // FIXME: Properly support using WKA in modules.
 #pragma clang diagnostic push
@@ -71,14 +71,16 @@ private:
     MediaDeviceRouteController();
 
     RetainPtr<WebMediaDeviceRouteController> m_controller;
-    RetainPtr<WebMediaDevicePlatformRouteController> m_platformController;
     ThreadSafeWeakPtr<MediaDeviceRouteControllerClient> m_client;
     Vector<Ref<MediaDeviceRoute>> m_activeRoutes;
+#if HAVE(AVROUTING_FRAMEWORK)
+    RetainPtr<WebMediaDevicePlatformRouteController> m_platformController;
+#endif
 };
 
 } // namespace WebCore
 
-#endif // HAVE(AVROUTING_FRAMEWORK)
+#endif // ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
 
 namespace WebCore {
 WEBCORE_EXPORT void setMockMediaDeviceRouteControllerEnabled(bool);

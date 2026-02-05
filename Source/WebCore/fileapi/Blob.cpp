@@ -79,7 +79,7 @@ void BlobURLRegistry::registerURL(const ScriptExecutionContext& context, const U
         Locker locker { m_urlsPerContextLock };
         m_urlsPerContext.add(context.identifier(), HashSet<URL>()).iterator->value.add(publicURL.isolatedCopy());
     }
-    ThreadableBlobRegistry::registerBlobURL(context.protectedSecurityOrigin().get(), context.policyContainer(), publicURL, downcast<Blob>(blob).url(), context.topOrigin().data());
+    ThreadableBlobRegistry::registerBlobURL(protect(context.securityOrigin()).get(), context.policyContainer(), publicURL, downcast<Blob>(blob).url(), context.topOrigin().data());
 }
 
 void BlobURLRegistry::unregisterURL(const URL& url, const SecurityOriginData& topOrigin)
@@ -134,37 +134,41 @@ Blob::Blob(ScriptExecutionContext* context)
     ThreadableBlobRegistry::registerInternalBlobURL(m_internalURL, { }, { });
 }
 
-static size_t computeMemoryCost(const Vector<BlobPartVariant>& blobPartVariants)
+static size_t computeMemoryCost(const std::optional<Vector<BlobPartVariant>>& blobPartVariants)
 {
     size_t memoryCost = 0;
-    for (auto& blobPartVariant : blobPartVariants) {
-        WTF::switchOn(blobPartVariant, [&](const RefPtr<Blob>& blob) {
-            memoryCost += blob->memoryCost();
-        }, [&](const RefPtr<JSC::ArrayBufferView>& view) {
-            memoryCost += view->byteLength();
-        }, [&](const RefPtr<JSC::ArrayBuffer>& array) {
-            memoryCost += array->byteLength();
-        }, [&](const String& string) {
-            memoryCost += string.sizeInBytes();
-        });
+    if (blobPartVariants) {
+        for (auto& blobPartVariant : *blobPartVariants) {
+            WTF::switchOn(blobPartVariant, [&](const RefPtr<Blob>& blob) {
+                memoryCost += blob->memoryCost();
+            }, [&](const RefPtr<JSC::ArrayBufferView>& view) {
+                memoryCost += view->byteLength();
+            }, [&](const RefPtr<JSC::ArrayBuffer>& array) {
+                memoryCost += array->byteLength();
+            }, [&](const String& string) {
+                memoryCost += string.sizeInBytes();
+            });
+        }
     }
     return memoryCost;
 }
 
-static Vector<BlobPart> buildBlobData(Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& propertyBag)
+static Vector<BlobPart> buildBlobData(std::optional<Vector<BlobPartVariant>>&& blobPartVariants, const BlobPropertyBag& propertyBag)
 {
     BlobBuilder builder(propertyBag.endings);
-    for (auto& blobPartVariant : blobPartVariants) {
-        WTF::switchOn(blobPartVariant,
-            [&] (auto& part) {
-                builder.append(WTF::move(part));
-            }
-        );
+    if (blobPartVariants) {
+        for (auto& blobPartVariant : *blobPartVariants) {
+            WTF::switchOn(blobPartVariant,
+                [&](auto& part) {
+                    builder.append(WTF::move(part));
+                }
+            );
+        }
     }
     return builder.finalize();
 }
 
-Blob::Blob(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& propertyBag)
+Blob::Blob(ScriptExecutionContext& context, std::optional<Vector<BlobPartVariant>>&& blobPartVariants, const BlobPropertyBag& propertyBag)
     : ActiveDOMObject(&context)
     , m_type(normalizedContentType(propertyBag.type))
     , m_memoryCost(computeMemoryCost(blobPartVariants))

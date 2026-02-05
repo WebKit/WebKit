@@ -227,8 +227,8 @@ JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJ
     for (unsigned i = 0; i < functionSignature.returnCount(); ++i) {
         ValueLocation loc = wasmFrameConvention.results[i].location;
         Type type = functionSignature.returnType(i);
+        JSValue result;
         if (loc.isGPR() || loc.isFPR()) {
-            JSValue result;
             switch (type.kind) {
             case TypeKind::I32:
                 result = jsNumber(*access.operator()<int32_t>(registerSpace, GPRInfo::toArgumentIndex(loc.jsr().payloadGPR()) * sizeof(UCPURegister)));
@@ -247,9 +247,7 @@ JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJ
                 result = *access.operator()<JSValue>(registerSpace, GPRInfo::toArgumentIndex(loc.jsr().payloadGPR()) * sizeof(UCPURegister));
                 break;
             }
-            resultArray->putDirectIndex(globalObject, i, result);
         } else {
-            JSValue result;
             switch (type.kind) {
             case TypeKind::I32:
                 result = jsNumber(*access.operator()<int32_t>(callFrame, calleeSPOffsetFromFP + loc.offsetFromSP()));
@@ -268,8 +266,9 @@ JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJ
                 result = *access.operator()<JSValue>(callFrame, calleeSPOffsetFromFP + loc.offsetFromSP());
                 break;
             }
-            resultArray->putDirectIndex(globalObject, i, result);
         }
+        resultArray->putDirectIndex(globalObject, i, result);
+        OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
     OPERATION_RETURN(scope, JSValue::encode(resultArray));

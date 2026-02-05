@@ -121,7 +121,7 @@ void HTMLVideoElementPictureInPicture::requestPictureInPicture(HTMLVideoElement&
 
     Ref videoElementPictureInPicture = HTMLVideoElementPictureInPicture::from(videoElement);
     if (videoElement.document().pictureInPictureElement() == &videoElement) {
-        promise->resolve<IDLInterface<PictureInPictureWindow>>(*(videoElementPictureInPicture->m_pictureInPictureWindow));
+        promise->resolve<IDLInterface<PictureInPictureWindow>>(videoElementPictureInPicture->m_pictureInPictureWindow);
         return;
     }
 
@@ -180,13 +180,14 @@ void HTMLVideoElementPictureInPicture::didEnterPictureInPicture(const IntSize& w
     videoElement->document().setPictureInPictureElement(videoElement.get());
     m_pictureInPictureWindow->setSize(windowSize);
 
-    PictureInPictureEvent::Init initializer;
-    initializer.bubbles = true;
-    initializer.pictureInPictureWindow = m_pictureInPictureWindow;
+    auto initializer = PictureInPictureEvent::Init {
+        { true, false, false },
+        m_pictureInPictureWindow
+    };
     videoElement->scheduleEvent(PictureInPictureEvent::create(eventNames().enterpictureinpictureEvent, WTF::move(initializer)));
 
     if (m_enterPictureInPicturePromise) {
-        m_enterPictureInPicturePromise->resolve<IDLInterface<PictureInPictureWindow>>(*m_pictureInPictureWindow);
+        m_enterPictureInPicturePromise->resolve<IDLInterface<PictureInPictureWindow>>(m_pictureInPictureWindow);
         m_enterPictureInPicturePromise = nullptr;
     }
 }
@@ -201,9 +202,10 @@ void HTMLVideoElementPictureInPicture::didExitPictureInPicture()
     m_pictureInPictureWindow->close();
     videoElement->document().setPictureInPictureElement(nullptr);
 
-    PictureInPictureEvent::Init initializer;
-    initializer.bubbles = true;
-    initializer.pictureInPictureWindow = m_pictureInPictureWindow;
+    auto initializer = PictureInPictureEvent::Init {
+        { true, false, false },
+        m_pictureInPictureWindow
+    };
     videoElement->scheduleEvent(PictureInPictureEvent::create(eventNames().leavepictureinpictureEvent, WTF::move(initializer)));
 
     if (m_exitPictureInPicturePromise) {

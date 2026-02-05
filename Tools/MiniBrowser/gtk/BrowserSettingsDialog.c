@@ -73,13 +73,12 @@ static const char *hardwareAccelerationPolicyToString(WebKitHardwareAcceleration
         return "never";
 #if !GTK_CHECK_VERSION(3, 98, 0)
     case WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND:
-        return "ondemand";
+        break;
 #endif
-
     }
 
     g_assert_not_reached();
-    return "ondemand";
+    return "always";
 }
 
 static int stringToHardwareAccelerationPolicy(const char *policy)
@@ -88,10 +87,6 @@ static int stringToHardwareAccelerationPolicy(const char *policy)
         return WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS;
     if (!g_ascii_strcasecmp(policy, "never"))
         return WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER;
-#if !GTK_CHECK_VERSION(3, 98, 0)
-    if (!g_ascii_strcasecmp(policy, "ondemand"))
-        return WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND;
-#endif
 
     g_warning("Invalid value %s for hardware-acceleration-policy setting", policy);
     return -1;
@@ -342,7 +337,7 @@ static void browserSettingsDialogConstructed(GObject *object)
         if (!g_strcmp0(name, "hardware-acceleration-policy")) {
             g_value_init(&value, G_TYPE_STRING);
             g_value_set_string(&value, hardwareAccelerationPolicyToString(webkit_settings_get_hardware_acceleration_policy(settings)));
-            char *extendedBlutb = g_strdup_printf("%s (always, never or ondemand)", blurb);
+            char *extendedBlutb = g_strdup_printf("%s (always or never)", blurb);
             g_free(blurb);
             blurb = extendedBlutb;
         } else {

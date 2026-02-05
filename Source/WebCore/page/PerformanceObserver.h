@@ -44,7 +44,7 @@ class PerformanceObserver : public RefCounted<PerformanceObserver> {
 public:
     struct Init {
         std::optional<Vector<String>> entryTypes;
-        std::optional<String> type;
+        String type;
         bool buffered;
         std::optional<DOMHighResTimeStamp> durationThreshold;
     };

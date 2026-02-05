@@ -39,17 +39,9 @@ if (USE_ATK)
         atk/WebKitAccessibleApplication.cpp
     )
 
-    list(APPEND WPEToolingBackends_PRIVATE_INCLUDE_DIRECTORIES
-        ${TOOLS_DIR}/wpe/backends/atk
-    )
-
-    list(APPEND WPEToolingBackends_SYSTEM_INCLUDE_DIRECTORIES
-        ${ATK_INCLUDE_DIRS}
-    )
-
-    list(APPEND WPEToolingBackends_LIBRARIES
+    list(APPEND WPEToolingBackends_PRIVATE_LIBRARIES
+        ATK::ATK
         ATK::Bridge
-        ${ATK_LIBRARIES}
     )
 
     list(APPEND WPEToolingBackends_DEFINITIONS USE_ATK=1)

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+
+<head>
+  <title>iongraph</title>
+  <style>{{ include-dist "style.css" }}</style>
+  <style>{{ include-dist "standalone.css" }}</style>
+</head>
+
+<body>
+  <script>{{ include-dist "main.standalone.js" }}</script>
+  <script>
+    window.__standaloneTemplate = atob({{ standalone-template-json }});
+  </script>
+  <script>
+    const ui = new iongraph.WebUI();
+    document.body.appendChild(ui.root);
+  </script>
+</body>

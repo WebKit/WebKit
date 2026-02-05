@@ -52,8 +52,7 @@ public:
     void invalidateStyleAttribute();
 
     const StyleProperties* inlineStyle() const { return elementData() ? elementData()->m_inlineStyle.get() : nullptr; }
-    RefPtr<StyleProperties> protectedInlineStyle() const;
-    
+
     WEBCORE_EXPORT bool setInlineStyleProperty(CSSPropertyID, CSSValueID identifier, IsImportant = IsImportant::No);
     bool setInlineStyleProperty(CSSPropertyID, CSSPropertyID identifier, IsImportant = IsImportant::No);
     WEBCORE_EXPORT bool setInlineStyleProperty(CSSPropertyID, double value, CSSUnitType, IsImportant = IsImportant::No);

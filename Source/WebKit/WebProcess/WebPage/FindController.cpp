@@ -95,8 +95,8 @@ void FindController::countStringMatches(const String& string, OptionSet<FindOpti
 #endif
     {
         RefPtr webPage { m_webPage.get() };
-        matchCount = webPage->protectedCorePage()->countFindMatches(string, core(options), maxMatchCount + 1);
-        webPage->protectedCorePage()->unmarkAllTextMatches();
+        matchCount = protect(webPage->corePage())->countFindMatches(string, core(options), maxMatchCount + 1);
+        protect(webPage->corePage())->unmarkAllTextMatches();
     }
 
     if (matchCount > maxMatchCount)
@@ -109,7 +109,7 @@ uint32_t FindController::replaceMatches(const Vector<uint32_t>& matchIndices, co
 {
     RefPtr webPage { m_webPage.get() };
     if (matchIndices.isEmpty())
-        return webPage->protectedCorePage()->replaceSelectionWithText(replacementText);
+        return protect(webPage->corePage())->replaceSelectionWithText(replacementText);
 
     // FIXME: This is an arbitrary cap on the maximum number of matches to try and replace, to prevent the web process from
     // hanging while replacing an enormous amount of matches. In the future, we should handle replacement in batches, and
@@ -124,7 +124,7 @@ uint32_t FindController::replaceMatches(const Vector<uint32_t>& matchIndices, co
         if (rangesToReplace.size() >= maximumNumberOfMatchesToReplace)
             break;
     }
-    return webPage->protectedCorePage()->replaceRangesWithText(rangesToReplace, replacementText, selectionOnly);
+    return protect(webPage->corePage())->replaceRangesWithText(rangesToReplace, replacementText, selectionOnly);
 }
 
 RefPtr<LocalFrame> FindController::frameWithSelection(Page* page)
@@ -148,7 +148,7 @@ RefPtr<WebPage> FindController::protectedWebPage() const
 void FindController::updateFindUIAfterPageScroll(bool found, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, WebCore::DidWrap didWrap, std::optional<FrameIdentifier> idOfFrameContainingString, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<IntRect>&&, uint32_t, int32_t, bool)>&& completionHandler)
 {
     RefPtr webPage { m_webPage.get() };
-    RefPtr selectedFrame = frameWithSelection(webPage->protectedCorePage().get());
+    RefPtr selectedFrame = frameWithSelection(protect(webPage->corePage()).get());
 
 #if ENABLE(PDF_PLUGIN)
     RefPtr pluginView = mainFramePlugIn();
@@ -162,7 +162,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
 #if ENABLE(PDF_PLUGIN)
         if (!pluginView)
 #endif
-            webPage->protectedCorePage()->unmarkAllTextMatches();
+            protect(webPage->corePage())->unmarkAllTextMatches();
 
         if (selectedFrame && shouldSetSelection)
             selectedFrame->checkedSelection()->clear();
@@ -181,7 +181,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
                 matchCount = pluginView->countFindMatches(string, core(options), maxMatchCount + 1);
             else
 #endif
-                matchCount = webPage->protectedCorePage()->countFindMatches(string, core(options), maxMatchCount + 1);
+                matchCount = protect(webPage->corePage())->countFindMatches(string, core(options), maxMatchCount + 1);
         }
 
         if (shouldShowOverlay || shouldShowHighlight) {
@@ -195,8 +195,8 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
             } else
 #endif
             {
-                webPage->protectedCorePage()->unmarkAllTextMatches();
-                matchCount = webPage->protectedCorePage()->markAllMatchesForText(string, core(options), shouldShowHighlight, maxMatchCount + 1);
+                protect(webPage->corePage())->unmarkAllTextMatches();
+                matchCount = protect(webPage->corePage())->markAllMatchesForText(string, core(options), shouldShowHighlight, maxMatchCount + 1);
             }
 
             if (matchCount > maxMatchCount)
@@ -218,7 +218,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
         // FIXME: This whole class needs a much clearer division between these two paths.
         if (idOfFrameContainingString) {
             m_findMatches.clear();
-            if (auto range = webPage->protectedCorePage()->selection().firstRange()) {
+            if (auto range = protect(webPage->corePage())->selection().firstRange()) {
                 matchRects = RenderObject::absoluteTextRects(*range);
                 m_findMatches.append(*range);
             }
@@ -257,7 +257,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
 #if ENABLE(IMAGE_ANALYSIS)
 void FindController::findStringIncludingImages(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(std::optional<FrameIdentifier>, Vector<IntRect>&&, uint32_t, int32_t, bool)>&& completionHandler)
 {
-    protectedWebPage()->protectedCorePage()->analyzeImagesForFindInPage([weakPage = WeakPtr { m_webPage }, string, options, maxMatchCount, completionHandler = WTF::move(completionHandler)]() mutable {
+    protect(protectedWebPage()->corePage())->analyzeImagesForFindInPage([weakPage = WeakPtr { m_webPage }, string, options, maxMatchCount, completionHandler = WTF::move(completionHandler)]() mutable {
         if (weakPage)
             weakPage->findController().findString(string, options, maxMatchCount, WTF::move(completionHandler));
         else
@@ -290,9 +290,9 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
     if (!pluginView)
 #endif
     {
-        if (RefPtr selectedFrame = frameWithSelection(webPage->protectedCorePage().get())) {
+        if (RefPtr selectedFrame = frameWithSelection(protect(webPage->corePage()).get())) {
             if (selectedFrame->checkedSelection()->selectionBounds().isEmpty()) {
-                auto result = webPage->protectedCorePage()->findTextMatches(string, coreOptions, maxMatchCount);
+                auto result = protect(webPage->corePage())->findTextMatches(string, coreOptions, maxMatchCount);
                 m_foundStringMatchIndex = result.indexForSelection;
                 foundStringStartsAfterSelection = true;
             }
@@ -313,12 +313,12 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
     } else
 #endif
     {
-        auto [frameID, range] = webPage->protectedCorePage()->findString(string, coreOptions, &didWrap);
+        auto [frameID, range] = protect(webPage->corePage())->findString(string, coreOptions, &didWrap);
         idOfFrameContainingString = frameID;
         foundRange = range;
         found = idOfFrameContainingString.has_value();
 
-        RefPtr selectedFrame = frameWithSelection(webPage->protectedCorePage().get());
+        RefPtr selectedFrame = frameWithSelection(protect(webPage->corePage()).get());
         if (foundRange && selectedFrame) {
             m_lastFoundRange = foundRange;
             m_lastSelection = selectedFrame->checkedSelection()->selection().toNormalizedRange();
@@ -336,7 +336,7 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
         }
     }
 
-    webPage->protectedDrawingArea()->dispatchAfterEnsuringUpdatedScrollPosition([webPage, found, string, options, maxMatchCount, didWrap, idOfFrameContainingString, completionHandler = WTF::move(completionHandler)]() mutable {
+    protect(webPage->drawingArea())->dispatchAfterEnsuringUpdatedScrollPosition([webPage, found, string, options, maxMatchCount, didWrap, idOfFrameContainingString, completionHandler = WTF::move(completionHandler)]() mutable {
         webPage->findController().updateFindUIAfterPageScroll(found, string, options, maxMatchCount, didWrap, idOfFrameContainingString, WTF::move(completionHandler));
     });
 }
@@ -344,7 +344,7 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
 void FindController::findStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(Vector<Vector<WebCore::IntRect>>, int32_t)>&& completionHandler)
 {
     RefPtr webPage { m_webPage.get() };
-    auto result = webPage->protectedCorePage()->findTextMatches(string, core(options), maxMatchCount);
+    auto result = protect(webPage->corePage())->findTextMatches(string, core(options), maxMatchCount);
     m_findMatches = WTF::move(result.ranges);
 
     auto matchRects = m_findMatches.map([](auto& range) {
@@ -356,7 +356,7 @@ void FindController::findStringMatches(const String& string, OptionSet<FindOptio
         return;
 
     bool found = !m_findMatches.isEmpty();
-    webPage->protectedDrawingArea()->dispatchAfterEnsuringUpdatedScrollPosition([webPage, found, string, options, maxMatchCount]() {
+    protect(webPage->drawingArea())->dispatchAfterEnsuringUpdatedScrollPosition([webPage, found, string, options, maxMatchCount]() {
         webPage->findController().updateFindUIAfterPageScroll(found, string, options, maxMatchCount, WebCore::DidWrap::No, std::nullopt);
     });
 }
@@ -403,7 +403,7 @@ void FindController::indicateFindMatch(uint32_t matchIndex)
 
     selectFindMatch(matchIndex);
 
-    if (!frameWithSelection(protectedWebPage()->protectedCorePage().get()))
+    if (!frameWithSelection(protect(protectedWebPage()->corePage()).get()))
         return;
 
     didFindString();
@@ -422,7 +422,7 @@ void FindController::hideFindUI()
         pluginView->findString(emptyString(), { }, 0);
     else
 #endif
-    protectedWebPage()->protectedCorePage()->unmarkAllTextMatches();
+    protect(protectedWebPage()->corePage())->unmarkAllTextMatches();
 
     hideFindIndicator();
     resetMatchIndex();
@@ -449,7 +449,7 @@ bool FindController::updateFindIndicator(bool isShowingOverlay, bool shouldAnima
         if (RefPtr pluginView = mainFramePlugIn())
             return { webPage->mainFrame(), pluginView->textIndicatorForCurrentSelection(textIndicatorOptions, presentationTransition) };
 #endif
-        if (RefPtr selectedFrame = frameWithSelection(webPage->protectedCorePage().get())) {
+        if (RefPtr selectedFrame = frameWithSelection(protect(webPage->corePage()).get())) {
             auto selectedRange = selectedFrame->checkedSelection()->selection().toNormalizedRange();
             if (selectedRange && ImageOverlay::isInsideOverlay(*selectedRange))
                 textIndicatorOptions.add({ TextIndicatorOption::PaintAllContent, TextIndicatorOption::PaintBackgrounds });
@@ -496,13 +496,13 @@ void FindController::willFindString()
 
 void FindController::didFindString()
 {
-    RefPtr selectedFrame = frameWithSelection(protectedWebPage()->protectedCorePage().get());
+    RefPtr selectedFrame = frameWithSelection(protect(protectedWebPage()->corePage()).get());
     if (!selectedFrame)
         return;
 
     CheckedRef selection = selectedFrame->selection();
     selection->revealSelection();
-    revealClosedDetailsAndHiddenUntilFoundAncestors(*selection->selection().start().protectedAnchorNode());
+    revealClosedDetailsAndHiddenUntilFoundAncestors(*protect(selection->selection().start().anchorNode()));
 }
 
 void FindController::didHideFindIndicator()
@@ -549,7 +549,7 @@ Vector<FloatRect> FindController::rectsForTextMatchesInRect(IntRect clipRect)
 #endif
 
     Vector<FloatRect> rects;
-    RefPtr mainFrameView = protectedWebPage()->protectedCorePage()->protectedMainFrame()->virtualView();
+    RefPtr mainFrameView = protect(protectedWebPage()->corePage())->protectedMainFrame()->virtualView();
     for (RefPtr frame = m_webPage->corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame)
@@ -625,7 +625,7 @@ void FindController::drawRect(PageOverlay&, GraphicsContext& graphicsContext, co
     if (!m_isShowingFindIndicator)
         return;
 
-    if (RefPtr selectedFrame = frameWithSelection(protectedWebPage()->protectedCorePage().get())) {
+    if (RefPtr selectedFrame = frameWithSelection(protect(protectedWebPage()->corePage()).get())) {
         auto findIndicatorRect = selectedFrame->protectedView()->contentsToRootView(enclosingIntRect(selectedFrame->checkedSelection()->selectionBounds(FrameSelection::ClipToVisibleContent::No)));
 
         if (findIndicatorRect != m_findIndicatorRect) {

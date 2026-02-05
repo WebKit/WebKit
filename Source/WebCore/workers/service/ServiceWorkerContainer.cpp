@@ -36,7 +36,6 @@
 #include "Event.h"
 #include "EventLoop.h"
 #include "EventNames.h"
-#include "AddEventListenerOptionsInlines.h"
 #include "Exception.h"
 #include "FrameLoader.h"
 #include "IDLTypes.h"
@@ -486,7 +485,7 @@ void ServiceWorkerContainer::postMessage(MessageWithMessagePorts&& message, Serv
         return;
 
     auto& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     MessageEventSource source = RefPtr<ServiceWorker> { ServiceWorker::getOrCreate(context.get(), WTF::move(sourceData)) };
 

@@ -206,16 +206,16 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
             return constructArray(&globalObject, static_cast<JSC::ArrayAllocationProfile*>(nullptr), list);
         },
         [&](const RefPtr<Float32Array>& array) -> JSValue {
-            return toJS(&lexicalGlobalObject, &globalObject, array.get());
+            return array ? toJS(&lexicalGlobalObject, &globalObject, *array) : jsNull();
         },
         [&](const RefPtr<Int32Array>& array) -> JSValue {
-            return toJS(&lexicalGlobalObject, &globalObject, array.get());
+            return array ? toJS(&lexicalGlobalObject, &globalObject, *array) : jsNull();
         },
         [&](const RefPtr<Uint8Array>& array) -> JSValue {
-            return toJS(&lexicalGlobalObject, &globalObject, array.get());
+            return array ? toJS(&lexicalGlobalObject, &globalObject, *array) : jsNull();
         },
         [&](const RefPtr<Uint32Array>& array) -> JSValue {
-            return toJS(&lexicalGlobalObject, &globalObject, array.get());
+            return array ? toJS(&lexicalGlobalObject, &globalObject, *array) : jsNull();
         },
         [&](const RefPtr<WebGLBuffer>& buffer) -> JSValue {
             return buffer ? toJS(&lexicalGlobalObject, &globalObject, *buffer) : jsNull();

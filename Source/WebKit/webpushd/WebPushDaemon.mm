@@ -294,7 +294,7 @@ void WebPushDaemon::incomingPushTransactionTimerFired()
 
 static void tryCloseRequestConnection(xpc_object_t request)
 {
-    if (XPCObjectPtr<xpc_connection_t> connection = xpc_dictionary_get_remote_connection(request))
+    if (OSObjectPtr<xpc_connection_t> connection = xpc_dictionary_get_remote_connection(request))
         xpc_connection_cancel(connection.get());
 }
 
@@ -324,7 +324,7 @@ void WebPushDaemon::connectionEventHandler(xpc_object_t request)
         return;
     }
 
-    XPCObjectPtr<xpc_connection_t> xpcConnection = xpc_dictionary_get_remote_connection(request);
+    OSObjectPtr<xpc_connection_t> xpcConnection = xpc_dictionary_get_remote_connection(request);
     if (!xpcConnection)
         return;
 
@@ -361,7 +361,7 @@ void WebPushDaemon::connectionEventHandler(xpc_object_t request)
 #endif
 
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto reply = adoptXPCObject(xpc_dictionary_create_reply(request));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto reply = adoptOSObject(xpc_dictionary_create_reply(request));
     auto replyHandler = [xpcConnection = WTF::move(xpcConnection), reply = WTF::move(reply)] (UniqueRef<IPC::Encoder>&& encoder) {
         RELEASE_ASSERT(RunLoop::isMain());
         auto xpcData = WebKit::encoderToXPCData(WTF::move(encoder));
@@ -644,13 +644,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
 
-    NSDictionary *settingsInfo = @{
+    RetainPtr settingsInfo = @{
         pushActionVersionKeySingleton(): currentPushActionVersionSingleton(),
         pushActionPartitionKeySingleton(): subscriptionSetIdentifier.pushPartition.createNSString().get(),
         pushActionTypeKeySingleton(): _WKWebPushActionTypePushEvent
     };
     RetainPtr<BSMutableSettings> bsSettings = adoptNS([[BSMutableSettings alloc] init]);
-    [bsSettings setObject:settingsInfo forSetting:WebKit::WebPushD::pushActionSetting];
+    [bsSettings setObject:settingsInfo.get() forSetting:WebKit::WebPushD::pushActionSetting];
 
     RetainPtr bsResponder = [BSActionResponder responderWithHandler:^void (BSActionResponse *response) {
         if (response.error)

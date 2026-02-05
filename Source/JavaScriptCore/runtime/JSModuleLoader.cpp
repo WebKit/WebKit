@@ -28,7 +28,6 @@
 #include "JSModuleLoader.h"
 
 #include "BuiltinNames.h"
-#include "CatchScope.h"
 #include "GlobalObjectMethodTable.h"
 #include "JSCInlines.h"
 #include "JSInternalPromise.h"
@@ -44,6 +43,7 @@
 #include "Parser.h"
 #include "ParserError.h"
 #include "SyntheticModuleRecord.h"
+#include "TopExceptionScope.h"
 #include "VMTrapsInlines.h"
 #include <wtf/text/MakeString.h>
 
@@ -112,7 +112,7 @@ void JSModuleLoader::finishCreation(JSGlobalObject* globalObject, VM& vm)
 static String printableModuleKey(JSGlobalObject* globalObject, JSValue key)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     if (key.isString() || key.isSymbol()) {
         auto propertyName = key.toPropertyKey(globalObject);
         scope.assertNoExceptionExceptTermination(); // This is OK since this function is just for debugging purpose.

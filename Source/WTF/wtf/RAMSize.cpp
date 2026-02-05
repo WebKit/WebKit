@@ -26,8 +26,8 @@
 #include "config.h"
 #include <wtf/RAMSize.h>
 
-#include <bmalloc/bmalloc.h>
 #include <mutex>
+#include <wtf/AvailableMemory.h>
 
 #if OS(WINDOWS)
 #include <windows.h>
@@ -43,14 +43,9 @@
 
 namespace WTF {
 
-static size_t computeRAMSize()
-{
-    return bmalloc::api::availableMemory();
-}
-
 size_t ramSize()
 {
-    static size_t ramSize = computeRAMSize();
+    static size_t ramSize = availableMemory();
     return ramSize;
 }
 

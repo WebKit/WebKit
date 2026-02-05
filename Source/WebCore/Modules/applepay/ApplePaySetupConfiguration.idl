@@ -28,10 +28,9 @@
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ApplePaySetupConfiguration {
     DOMString merchantIdentifier;
     DOMString referrerIdentifier;
     DOMString signature;
-    sequence<DOMString> signedFields;
+    sequence<DOMString> signedFields = [];
 };

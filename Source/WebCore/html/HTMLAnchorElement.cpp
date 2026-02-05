@@ -163,7 +163,7 @@ static void appendServerMapMousePosition(StringBuilder& url, Event& event)
 void HTMLAnchorElement::defaultEventHandler(Event& event)
 {
     if (m_prefetchEagerness == PrefetchEagerness::Conservative && (event.type() == eventNames().keydownEvent || event.type() == eventNames().mousedownEvent || event.type() == eventNames().pointerdownEvent))
-        protectedDocument()->prefetch(href(), m_speculationRulesTags, m_prefetchReferrerPolicy);
+        protect(document())->prefetch(href(), m_speculationRulesTags, m_prefetchReferrerPolicy);
 
     if (isLink()) {
         if (focused() && isEnterKeyKeydownEvent(event) && treatLinkAsLiveForEventType(NonMouseEvent)) {
@@ -241,7 +241,7 @@ void HTMLAnchorElement::attributeChanged(const QualifiedName& name, const AtomSt
         if (m_relList)
             m_relList->associatedAttributeValueChanged();
     } else if (name == nameAttr)
-        protectedDocument()->processInternalResourceLinks(this);
+        protect(document())->processInternalResourceLinks(this);
 
     // Check speculation rules for any attribute change to catch either an href attribute change
     // or anything that can impact CSS selectors.
@@ -272,7 +272,7 @@ bool HTMLAnchorElement::draggable() const
 
 URL HTMLAnchorElement::href() const
 {
-    return protectedDocument()->completeURL(attributeWithoutSynchronization(hrefAttr));
+    return protect(document())->completeURL(attributeWithoutSynchronization(hrefAttr));
 }
 
 bool HTMLAnchorElement::hasRel(Relation relation) const
@@ -385,7 +385,7 @@ std::optional<URL> HTMLAnchorElement::attributionDestinationURLForPCM() const
     if (destinationURL.isValid() && destinationURL.protocolIsInHTTPFamily())
         return destinationURL;
 
-    protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination could not be converted to a valid HTTP-family URL."_s);
+    protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination could not be converted to a valid HTTP-family URL."_s);
     return std::nullopt;
 }
 
@@ -409,7 +409,7 @@ std::optional<PCM::EphemeralNonce> HTMLAnchorElement::attributionSourceNonceForP
 
     auto ephemeralNonce = PCM::EphemeralNonce { attributionSourceNonceAttr };
     if (!ephemeralNonce.isValid()) {
-        protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourcenonce was not valid."_s);
+        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourcenonce was not valid."_s);
         return std::nullopt;
     }
 
@@ -482,36 +482,36 @@ std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasu
     auto attributionDestinationAttr = attributeWithoutSynchronization(attributiondestinationAttr);
 
     if (!hasAttributionSourceIDAttr || !hasAttributionDestinationAttr || attributionSourceIDAttr.isEmpty() || attributionDestinationAttr.isEmpty()) {
-        protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Both attributionsourceid and attributiondestination need to be set for Private Click Measurement to work."_s);
+        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Both attributionsourceid and attributiondestination need to be set for Private Click Measurement to work."_s);
         return std::nullopt;
     }
 
     auto attributionSourceID = parseHTMLNonNegativeInteger(attributionSourceIDAttr);
     if (!attributionSourceID) {
-        protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourceid is not a non-negative integer which is required for Private Click Measurement."_s);
+        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourceid is not a non-negative integer which is required for Private Click Measurement."_s);
         return std::nullopt;
     }
     
     if (attributionSourceID.value() > std::numeric_limits<uint8_t>::max()) {
-        protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, makeString("attributionsourceid must have a non-negative value less than or equal to "_s, std::numeric_limits<uint8_t>::max(), " for Private Click Measurement."_s));
+        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, makeString("attributionsourceid must have a non-negative value less than or equal to "_s, std::numeric_limits<uint8_t>::max(), " for Private Click Measurement."_s));
         return std::nullopt;
     }
 
     URL destinationURL { attributionDestinationAttr };
     if (!destinationURL.isValid() || !destinationURL.protocolIsInHTTPFamily()) {
-        protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination could not be converted to a valid HTTP-family URL."_s);
+        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination could not be converted to a valid HTTP-family URL."_s);
         return std::nullopt;
     }
 
     auto& mainURL = page->mainFrameURL();
     if (mainURL.isEmpty()) {
-        protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Could not find a main document to use as source site for Private Click Measurement."_s);
+        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Could not find a main document to use as source site for Private Click Measurement."_s);
         return std::nullopt;
     }
 
     RegistrableDomain mainDocumentRegistrableDomain = RegistrableDomain { mainURL };
     if (mainDocumentRegistrableDomain.matches(destinationURL)) {
-        protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination can not be the same site as the current website."_s);
+        protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination can not be the same site as the current website."_s);
         return std::nullopt;
     }
 
@@ -565,11 +565,11 @@ void HTMLAnchorElement::handleClick(Event& event)
     AtomString downloadAttribute;
     if (document->settings().downloadAttributeEnabled()) {
         // Ignore the download attribute completely if the href URL is cross origin.
-        bool isSameOrigin = completedURL.protocolIsData() || document->protectedSecurityOrigin()->canRequest(completedURL, OriginAccessPatternsForWebProcess::singleton());
+        bool isSameOrigin = completedURL.protocolIsData() || protect(document->securityOrigin())->canRequest(completedURL, OriginAccessPatternsForWebProcess::singleton());
         if (isSameOrigin)
             downloadAttribute = AtomString { ResourceResponse::sanitizeSuggestedFilename(attributeWithoutSynchronization(downloadAttr)) };
         else if (hasAttributeWithoutSynchronization(downloadAttr))
-            protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "The download attribute on anchor was ignored because its href URL has a different security origin."_s);
+            document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "The download attribute on anchor was ignored because its href URL has a different security origin."_s);
     }
 
     SystemPreviewInfo systemPreviewInfo;
@@ -717,7 +717,7 @@ ReferrerPolicy HTMLAnchorElement::referrerPolicy() const
 Node::InsertedIntoAncestorResult HTMLAnchorElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
-    protectedDocument()->processInternalResourceLinks(this);
+    protect(document())->processInternalResourceLinks(this);
     if (document().settings().speculationRulesPrefetchEnabled())
         return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
     return InsertedIntoAncestorResult::Done;
@@ -743,14 +743,14 @@ void HTMLAnchorElement::setShouldBePrefetched(SpeculationRules::Eagerness eagern
     m_speculationRulesTags = WTF::move(tags);
     m_prefetchReferrerPolicy = WTF::move(referrerPolicy);
     if (m_prefetchEagerness == PrefetchEagerness::Immediate)
-        protectedDocument()->prefetch(href(), m_speculationRulesTags, m_prefetchReferrerPolicy, true);
+        protect(document())->prefetch(href(), m_speculationRulesTags, m_prefetchReferrerPolicy, true);
 }
 
 void HTMLAnchorElement::checkForSpeculationRules()
 {
     if (!document().settings().speculationRulesPrefetchEnabled())
         return;
-    if (auto prefetchRule = SpeculationRulesMatcher::hasMatchingRule(protectedDocument(), *this))
+    if (auto prefetchRule = SpeculationRulesMatcher::hasMatchingRule(protect(document()), *this))
         setShouldBePrefetched(prefetchRule->eagerness, WTF::move(prefetchRule->tags), WTF::move(prefetchRule->referrerPolicy));
     else {
         m_prefetchEagerness = PrefetchEagerness::None;

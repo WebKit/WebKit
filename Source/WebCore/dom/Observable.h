@@ -58,24 +58,24 @@ public:
 
     ~Observable();
 
-    void subscribe(ScriptExecutionContext&, std::optional<ObserverUnion>, SubscribeOptions);
-    void subscribeInternal(ScriptExecutionContext&, Ref<InternalObserver>&&, const SubscribeOptions&);
+    void subscribe(ScriptExecutionContext&, ObserverUnion&&, SubscribeOptions&&);
+    void subscribeInternal(ScriptExecutionContext&, Ref<InternalObserver>&&, SubscribeOptions&&);
 
     Ref<Observable> map(ScriptExecutionContext&, MapperCallback&);
     Ref<Observable> filter(ScriptExecutionContext&, PredicateCallback&);
     Ref<Observable> take(ScriptExecutionContext&, uint64_t);
     Ref<Observable> drop(ScriptExecutionContext&, uint64_t);
-    Ref<Observable> inspect(ScriptExecutionContext&, std::optional<InspectorUnion>&&);
+    Ref<Observable> inspect(ScriptExecutionContext&, InspectorUnion&&);
 
     // Promise-returning operators.
 
-    void first(ScriptExecutionContext&, const SubscribeOptions&, Ref<DeferredPromise>&&);
-    void forEach(ScriptExecutionContext&, Ref<VisitorCallback>&&, const SubscribeOptions&, Ref<DeferredPromise>&&);
-    void last(ScriptExecutionContext&, const SubscribeOptions&, Ref<DeferredPromise>&&);
-    void find(ScriptExecutionContext&, Ref<PredicateCallback>&&, const SubscribeOptions&, Ref<DeferredPromise>&&);
-    void every(ScriptExecutionContext&, Ref<PredicateCallback>&&, const SubscribeOptions&, Ref<DeferredPromise>&&);
-    void some(ScriptExecutionContext&, Ref<PredicateCallback>&&, const SubscribeOptions&, Ref<DeferredPromise>&&);
-    void reduce(ScriptExecutionContext&, Ref<ReducerCallback>&&, JSC::JSValue, const SubscribeOptions&, Ref<DeferredPromise>&&);
+    void first(ScriptExecutionContext&, SubscribeOptions&&, Ref<DeferredPromise>&&);
+    void forEach(ScriptExecutionContext&, Ref<VisitorCallback>&&, SubscribeOptions&&, Ref<DeferredPromise>&&);
+    void last(ScriptExecutionContext&, SubscribeOptions&&, Ref<DeferredPromise>&&);
+    void find(ScriptExecutionContext&, Ref<PredicateCallback>&&, SubscribeOptions&&, Ref<DeferredPromise>&&);
+    void every(ScriptExecutionContext&, Ref<PredicateCallback>&&, SubscribeOptions&&, Ref<DeferredPromise>&&);
+    void some(ScriptExecutionContext&, Ref<PredicateCallback>&&, SubscribeOptions&&, Ref<DeferredPromise>&&);
+    void reduce(ScriptExecutionContext&, Ref<ReducerCallback>&&, JSC::JSValue, SubscribeOptions&&, Ref<DeferredPromise>&&);
 
 private:
     const Ref<SubscriberCallback> m_subscriberCallback;

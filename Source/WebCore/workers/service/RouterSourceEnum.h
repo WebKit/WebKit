@@ -38,7 +38,8 @@ template<> struct EnumTraitsForPersistence<WebCore::RouterSourceEnum> {
         WebCore::RouterSourceEnum,
         WebCore::RouterSourceEnum::Cache,
         WebCore::RouterSourceEnum::FetchEvent,
-        WebCore::RouterSourceEnum::Network
+        WebCore::RouterSourceEnum::Network,
+        WebCore::RouterSourceEnum::RaceNetworkAndFetchHandler
     >;
 };
 

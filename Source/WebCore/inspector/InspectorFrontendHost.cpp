@@ -192,7 +192,7 @@ void InspectorFrontendHost::addSelfToGlobalObjectInWorld(DOMWrapperWorld& world)
     auto& globalObject = *localMainFrame->script().globalObject(world);
     auto& vm = globalObject.vm();
     JSC::JSLockHolder lock(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     globalObject.putDirect(vm, JSC::Identifier::fromString(vm, "InspectorFrontendHost"_s), toJS<IDLInterface<InspectorFrontendHost>>(globalObject, globalObject, *this));
     if (scope.exception()) [[unlikely]]
         reportException(&globalObject, scope.exception());
@@ -421,12 +421,8 @@ String InspectorFrontendHost::platform() const
 
 String InspectorFrontendHost::platformVersionName() const
 {
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-    return "monterey"_s;
-#elif PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-    return "big-sur"_s;
-#elif PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
-    return "catalina"_s;
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 260000
+    return "tahoe"_s;
 #else
     return emptyString();
 #endif
@@ -447,10 +443,10 @@ void InspectorFrontendHost::killText(const String& text, bool shouldPrependToKil
     if (!focusedOrMainFrame)
         return;
 
-    Editor& editor = focusedOrMainFrame->editor();
-    editor.setStartNewKillRingSequence(shouldStartNewSequence);
+    Ref editor = focusedOrMainFrame->editor();
+    editor->setStartNewKillRingSequence(shouldStartNewSequence);
     Editor::KillRingInsertionMode insertionMode = shouldPrependToKillRing ? Editor::KillRingInsertionMode::PrependText : Editor::KillRingInsertionMode::AppendText;
-    editor.addTextToKillRing(text, insertionMode);
+    editor->addTextToKillRing(text, insertionMode);
 }
 
 void InspectorFrontendHost::openURLExternally(const String& url)
@@ -611,9 +607,9 @@ void InspectorFrontendHost::dispatchEventAsContextMenuEvent(Event& event)
         return;
 
     auto& mouseEvent = downcast<MouseEvent>(event);
-    LocalFrame& frame = *downcast<Node>(mouseEvent.target())->document().frame();
+    Ref frame = *downcast<Node>(mouseEvent.target())->document().frame();
     auto location = LayoutPoint(mouseEvent.absoluteLocation());
-    if (RefPtr<LocalFrameView> view = frame.view()) {
+    if (RefPtr<LocalFrameView> view = frame->view()) {
         FloatBoxExtent insets = view->obscuredContentInsets();
         location.move(insets.left(), insets.top());
     }
@@ -788,7 +784,7 @@ void InspectorFrontendHost::didShowExtensionTab(const String& extensionID, const
     if (!m_client)
         return;
 
-    auto* frame = extensionFrameElement.contentFrame();
+    RefPtr frame = extensionFrameElement.contentFrame();
     if (!frame)
         return;
 
@@ -821,7 +817,7 @@ void InspectorFrontendHost::inspectedPageDidNavigate(const String& newURLString)
 
 ExceptionOr<JSC::JSValue> InspectorFrontendHost::evaluateScriptInExtensionTab(HTMLIFrameElement& extensionFrameElement, const String& scriptSource)
 {
-    auto* frame = dynamicDowncast<LocalFrame>(extensionFrameElement.contentFrame());
+    RefPtr frame = dynamicDowncast<LocalFrame>(extensionFrameElement.contentFrame());
     if (!frame)
         return Exception { ExceptionCode::InvalidStateError, "Unable to find global object for <iframe>"_s };
 

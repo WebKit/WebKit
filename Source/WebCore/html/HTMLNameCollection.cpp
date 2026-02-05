@@ -39,8 +39,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-template HTMLNameCollection<WindowNameCollection, CollectionTraversalType::Descendants>::~HTMLNameCollection();
-template HTMLNameCollection<DocumentNameCollection, CollectionTraversalType::Descendants>::~HTMLNameCollection();
+template HTMLNameCollection<WindowNameCollection>::~HTMLNameCollection();
+template HTMLNameCollection<DocumentNameCollection>::~HTMLNameCollection();
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WindowNameCollection);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DocumentNameCollection);

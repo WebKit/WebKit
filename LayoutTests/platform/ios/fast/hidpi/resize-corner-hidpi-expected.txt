@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 476x19
+        RenderText {#text} at (0,0) size 476x20
           text run at (0,0) width 476: "This test passes if the resize corner icon appears high-resolution in HiDPI."
       RenderBlock (anonymous) at (0,20) size 784x34
         RenderText {#text} at (0,0) size 0x0

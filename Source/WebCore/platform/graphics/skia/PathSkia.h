@@ -41,8 +41,10 @@ class GraphicsContext;
 class PathStream;
 
 class PathSkia final : public PathImpl {
+    WTF_MAKE_TZONE_ALLOCATED(PathSkia);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PathSkia);
 public:
-    static Ref<PathSkia> create(std::span<const PathSegment> = { });
+    WEBCORE_EXPORT static Ref<PathSkia> create(std::span<const PathSegment> = { });
     static Ref<PathSkia> create(SkPath&&);
     static PlatformPathPtr emptyPlatformPath();
 

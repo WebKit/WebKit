@@ -428,8 +428,6 @@ $(PROJECT_DIR)/Modules/contact-picker/ContactProperty.idl
 $(PROJECT_DIR)/Modules/contact-picker/ContactsManager.idl
 $(PROJECT_DIR)/Modules/contact-picker/ContactsSelectOptions.idl
 $(PROJECT_DIR)/Modules/contact-picker/Navigator+Contacts.idl
-$(PROJECT_DIR)/Modules/cookie-consent/Navigator+CookieConsent.idl
-$(PROJECT_DIR)/Modules/cookie-consent/RequestCookieConsentOptions.idl
 $(PROJECT_DIR)/Modules/cookie-store/CookieChangeEvent.idl
 $(PROJECT_DIR)/Modules/cookie-store/CookieChangeEventInit.idl
 $(PROJECT_DIR)/Modules/cookie-store/CookieInit.idl
@@ -518,8 +516,8 @@ $(PROJECT_DIR)/Modules/highlight/Highlight.idl
 $(PROJECT_DIR)/Modules/highlight/HighlightRegistry.idl
 $(PROJECT_DIR)/Modules/identity/DigitalCredential.idl
 $(PROJECT_DIR)/Modules/identity/DigitalCredentialGetRequest.idl
+$(PROJECT_DIR)/Modules/identity/DigitalCredentialPresentationProtocol.idl
 $(PROJECT_DIR)/Modules/identity/DigitalCredentialRequestOptions.idl
-$(PROJECT_DIR)/Modules/identity/IdentityCredentialProtocol.idl
 $(PROJECT_DIR)/Modules/identity/protocols/ISO18013/MobileDocumentRequest.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBCursor.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBCursorDirection.idl
@@ -600,6 +598,7 @@ $(PROJECT_DIR)/Modules/mediastream/MediaSettingsRange.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaStream.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaStreamTrack.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaStreamTrackEvent.idl
+$(PROJECT_DIR)/Modules/mediastream/MediaStreamTrackHandle.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaStreamTrackProcessor.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaTrackCapabilities.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaTrackConstraints.idl
@@ -1344,8 +1343,6 @@ $(PROJECT_DIR)/css/ElementCSSInlineStyle+Typedom.idl
 $(PROJECT_DIR)/css/ElementCSSInlineStyle.idl
 $(PROJECT_DIR)/css/FontFace.idl
 $(PROJECT_DIR)/css/FontFaceSet.idl
-$(PROJECT_DIR)/css/FontFaceSetLoadEvent.idl
-$(PROJECT_DIR)/css/FontFaceSetLoadEventInit.idl
 $(PROJECT_DIR)/css/FontFaceSource.idl
 $(PROJECT_DIR)/css/LinkStyle.idl
 $(PROJECT_DIR)/css/MediaList.idl
@@ -2156,6 +2153,7 @@ $(PROJECT_DIR)/testing/MockCaptionDisplaySettingsClientCallback.idl
 $(PROJECT_DIR)/testing/MockContentFilterSettings.idl
 $(PROJECT_DIR)/testing/MockMediaDeviceRoute.idl
 $(PROJECT_DIR)/testing/MockMediaDeviceRouteController.idl
+$(PROJECT_DIR)/testing/MockMediaDeviceRouteURLCallback.idl
 $(PROJECT_DIR)/testing/MockPageOverlay.idl
 $(PROJECT_DIR)/testing/MockPaymentAddress.idl
 $(PROJECT_DIR)/testing/MockPaymentContactFields.idl

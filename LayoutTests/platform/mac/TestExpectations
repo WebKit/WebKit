@@ -63,6 +63,9 @@ imported/w3c/web-platform-tests/pointerevents [ Pass ]
 
 imported/w3c/web-platform-tests/speech-api [ Pass ]
 
+# Uses caLayerTreeAsText
+compositing/background-color/background-color-clamping.html [ Pass ]
+
 media/media-webm-av1.html [ Skip ]
 media/track/track-description-cue.html [ Pass ]
 media/track/track-extended-descriptions.html [ Pass ]
@@ -114,6 +117,8 @@ webkit.org/b/21916 tables/mozilla_expected_failures/bugs/bug178855.xml [ Pass Im
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
+
+webkit.org/b/306558 accessibility/mac/style-range.html [ Failure ]
 
 # Skip glib-only combobox accessibility tests.
 accessibility/combobox/gtk [ Skip ]
@@ -469,7 +474,6 @@ webkit.org/b/112176 fast/canvas/webgl/read-pixels-test.html [ Failure Pass ]
 webkit.org/b/170293 fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
 
 # The following ref-test appears to fail on EWS bots as well.
-webkit.org/b/112176 fast/css/sticky/inline-sticky-abspos-child.html [ ImageOnlyFailure Pass ]
 webkit.org/b/112176 fast/css/sticky/inline-sticky.html [ ImageOnlyFailure Pass ]
 webkit.org/b/112176 fast/css/sticky/sticky-both-sides.html [ ImageOnlyFailure Pass ]
 # Once the bug 112176 is fixed, potentially restore the following test expectations.
@@ -552,8 +556,6 @@ webkit.org/b/130972 transitions/3d/interrupted-transition.html [ Pass Failure Ti
 webkit.org/b/118153 compositing/repaint/positioned-movement.html [ Pass Failure ]
 
 webkit.org/b/131715 transitions/cancel-transition.html [ Pass Failure ]
-
-webkit.org/b/89153 http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
 
 # <rdar://problem/16696298>
 webkit.org/b/131886 webgl/1.0.x/conformance/textures/misc/texture-size-limit.html [ Pass Failure ]
@@ -1700,8 +1702,6 @@ webkit.org/b/223259 [ arm64 ] webgl/2.0.0/conformance2/textures/misc/tex-mipmap-
 
 webkit.org/b/223271 [ Debug ] imported/w3c/web-platform-tests/xhr/event-upload-progress.any.worker.html [ Pass Failure ]
 
-webkit.org/b/221833 fast/text/image-alt-text-bidi-2.html [ ImageOnlyFailure ]
-
 webkit.org/b/223484 [ arm64 ] compositing/style-change/backface-visibility-change.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/223761 media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag.html [ Pass Timeout ]
@@ -2302,19 +2302,11 @@ webkit.org/b/274792 compositing/repaint/iframes/compositing-iframe-with-fixed-ba
 
 webkit.org/b/281267 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-summary-element/interactive-content.html [ Pass Failure ]
 
-# webkit.org/b/287997 [macOS] 4X imported/w3c/web-platform-tests/editing/other/insertparagraph-in-child-of-html.tentative.html?designMode=on&white-space= are flaky text failures 
-imported/w3c/web-platform-tests/editing/other/insertparagraph-in-child-of-html.tentative.html?designMode=on&white-space=normal [ Pass Failure ] 
-imported/w3c/web-platform-tests/editing/other/insertparagraph-in-child-of-html.tentative.html?designMode=on&white-space=pre [ Pass Failure ] 
-imported/w3c/web-platform-tests/editing/other/insertparagraph-in-child-of-html.tentative.html?designMode=on&white-space=pre-line [ Pass Failure ]
-imported/w3c/web-platform-tests/editing/other/insertparagraph-in-child-of-html.tentative.html?designMode=on&white-space=pre-wrap [ Pass Failure ] 
-
 webkit.org/b/288133 imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html [ Pass Failure ]
 
 webkit.org/b/287990 [ Sonoma+ ] fast/canvas/webgl/drawingbuffer-test.html [ Pass Failure ]
 
 webkit.org/b/288507 [ Debug x86_64 ] media/media-source/remoteplayback-availability-callback-does-not-leak.html [ Timeout ]
-
-webkit.org/b/288546 imported/w3c/web-platform-tests/fullscreen/api/element-ready-allowed.html [ Pass Failure ]
 
 webkit.org/b/260320 imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-in-shadow-root.html [ ImageOnlyFailure ]
 
@@ -2335,7 +2327,8 @@ imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-complex-001.s
 [ Debug ] accessibility/mac/line-boundary-at-br.html [ Skip ]
 
 # Timing is different in debug, thus skip.
-[ Debug ] accessibility/password-notifications-timing.html [ Skip ]
+# webkit.org/b/306573 test is also a flaky failure on release builds possinly due to same timing issue
+accessibility/password-notifications-timing.html [ Skip ]
 
 # The color input only has a swatch overlay on macOS
 fast/forms/color/input-color-swatch-overlay-appearance.html [ Pass ]
@@ -2464,7 +2457,6 @@ http/tests/inspector/network/xhr-response-body.html [ Pass Failure ]
 accessibility/checkbox-radio-element-rect.html [ Pass Failure ]
 fast/forms/select/mac-wk2/inactive-appearance.html [ Pass Failure ImageOnlyFailure ]
 workers/btoa-oom.html [ Pass Timeout ]
-fast/canvas/offscreen-giant.html [ Pass ImageOnlyFailure ]
 fast/images/pagewide-play-pause-offscreen-animations.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-in-scroller-horizontal-far.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-enter-exit.html [ Pass Failure ]
@@ -2476,7 +2468,6 @@ fast/forms/color/color-input-set-attribute-value.html [ Pass ImageOnlyFailure ]
 fast/css/accent-color/select.html [ Pass ImageOnlyFailure ]
 media/modern-media-controls/css/visibility-hidden.html [ Pass ImageOnlyFailure ]
 pdf/images/jpeg2000-embed-pdf.html [ Pass ImageOnlyFailure ]
-media/track/track-css-visible-stroke.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/transparent-accent-color-002.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-no-fallback-props-001.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-layout-suppress-baseline-002.html [ Pass ImageOnlyFailure ]

@@ -4,7 +4,7 @@ layer at (0,0) size 800x85
   RenderBlock {HTML} at (0,0) size 800x85
     RenderBody {BODY} at (8,16) size 784x53
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 471x17
+        RenderText {#text} at (0,0) size 471x18
           text run at (0,0) width 471: "The following should look like: Arabic characters 123.4 Arabic characters."
       RenderBlock {P} at (0,34) size 784x19
         RenderText {#text} at (0,1) size 88x17

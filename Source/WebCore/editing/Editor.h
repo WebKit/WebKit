@@ -66,6 +66,7 @@ class SharedBuffer;
 class CustomUndoStep;
 class DataTransfer;
 class DeleteButtonController;
+class DocumentFragment;
 class DocumentMarker;
 class EditCommand;
 class EditCommandComposition;
@@ -73,6 +74,7 @@ class EditorClient;
 class EditorInternalCommand;
 class File;
 class HTMLElement;
+class HTMLImageElement;
 class HitTestResult;
 class KeyboardEvent;
 class KillRing;
@@ -558,6 +560,11 @@ public:
     WEBCORE_EXPORT void uppercaseWord();
     WEBCORE_EXPORT void lowercaseWord();
     WEBCORE_EXPORT void capitalizeWord();
+    WEBCORE_EXPORT void convertToTraditionalChinese();
+    WEBCORE_EXPORT void convertToSimplifiedChinese();
+    WEBCORE_EXPORT bool canApplyCaseTransformations(const String&);
+    WEBCORE_EXPORT bool canConvertToSimplifiedChinese(const String&);
+    WEBCORE_EXPORT bool canConvertToTraditionalChinese(const String&);
 #endif
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)

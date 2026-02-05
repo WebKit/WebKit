@@ -23,9 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary ScrollTimelineOptions {
+// https://drafts.csswg.org/scroll-animations/#dictdef-scrolltimelineoptions
+dictionary ScrollTimelineOptions {
     Element? source;
     ScrollAxis axis = "block";
 };

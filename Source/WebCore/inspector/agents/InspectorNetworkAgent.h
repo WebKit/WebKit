@@ -40,6 +40,7 @@
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <JavaScriptCore/RegularExpression.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RobinHoodHashMap.h>
@@ -171,7 +172,7 @@ private:
 
     const UniqueRef<Inspector::NetworkFrontendDispatcher> m_frontendDispatcher;
     const Ref<Inspector::NetworkBackendDispatcher> m_backendDispatcher;
-    Inspector::InjectedScriptManager& m_injectedScriptManager;
+    const CheckedRef<Inspector::InjectedScriptManager> m_injectedScriptManager;
 
     const UniqueRef<NetworkResourcesData> m_resourcesData;
 

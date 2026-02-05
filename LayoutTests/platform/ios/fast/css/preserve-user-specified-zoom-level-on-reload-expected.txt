@@ -4,5 +4,5 @@ layer at (0,0) size 2389x1792
   RenderBlock {HTML} at (0,0) size 2389x1792
     RenderBody {BODY} at (23,23) size 2343x1722
       RenderBlock {P} at (0,0) size 2342x57
-        RenderText {#text} at (0,1) size 1643x54
+        RenderText {#text} at (0,1) size 1643x55
           text run at (0,1) width 1643: "This test ensures that we preserve the user-specified zoom level of the page on reload."

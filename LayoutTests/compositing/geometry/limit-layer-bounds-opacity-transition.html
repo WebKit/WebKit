@@ -22,11 +22,10 @@
       -webkit-transition: opacity 0.1s;
     }
   </style>
+  <script src="../../webanimations/threaded-animations/threaded-animations-utils.js"></script>
   <script type="text/javascript" charset="utf-8">
-    if (window.testRunner) {
-      testRunner.waitUntilDone();
-      testRunner.dumpAsText();
-    }
+    window.testRunner?.waitUntilDone();
+    window.testRunner?.dumpAsText();
 
     function startFade()
     {
@@ -37,14 +36,11 @@
       document.getElementById('fading').style.opacity = 1;
     }
     
-    function fadeDone()
+    async function fadeDone()
     {
-      if (window.testRunner) {
-          requestAnimationFrame(() => {
-              document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
-              testRunner.notifyDone();
-          })
-      }
+        await threadedAnimationsCommit();
+        document.getElementById('layers').innerText = window.internals?.layerTreeAsText(document);
+        testRunner?.notifyDone();
     }
   </script>
 <head>

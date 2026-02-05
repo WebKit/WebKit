@@ -39,6 +39,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PathCairo);
+
 Ref<PathCairo> PathCairo::create(std::span<const PathSegment> segments)
 {
     Ref pathCairo = adoptRef(*new PathCairo);

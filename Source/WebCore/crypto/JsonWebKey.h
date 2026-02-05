@@ -32,12 +32,12 @@
 namespace WebCore {
 
 struct JsonWebKey {
-    JsonWebKey isolatedCopy() && {
+    JsonWebKey isolatedCopy() &&
+    {
         return {
             crossThreadCopy(WTF::move(kty)),
             crossThreadCopy(WTF::move(use)),
             key_ops,
-            usages,
             crossThreadCopy(WTF::move(alg)),
             ext,
             crossThreadCopy(WTF::move(crv)),
@@ -52,15 +52,14 @@ struct JsonWebKey {
             crossThreadCopy(WTF::move(dq)),
             crossThreadCopy(WTF::move(qi)),
             crossThreadCopy(WTF::move(oth)),
-            crossThreadCopy(WTF::move(k))
+            crossThreadCopy(WTF::move(k)),
+            usages,
         };
     }
 
     String kty;
     String use;
-    // FIXME: Consider merging key_ops and usages.
     std::optional<Vector<CryptoKeyUsage>> key_ops;
-    CryptoKeyUsageBitmap usages;
     String alg;
 
     std::optional<bool> ext;
@@ -78,6 +77,9 @@ struct JsonWebKey {
     String qi;
     std::optional<Vector<RsaOtherPrimesInfo>> oth;
     String k;
+
+    // Not part of exposed dictionary.
+    CryptoKeyUsageBitmap usages = 0;
 };
 
 } // namespace WebCore

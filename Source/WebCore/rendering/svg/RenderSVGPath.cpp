@@ -90,9 +90,9 @@ FloatRect RenderSVGPath::adjustStrokeBoundingBoxForZeroLengthLinecaps(RepaintRec
 
 static void useStrokeStyleToFill(GraphicsContext& context)
 {
-    if (auto gradient = context.strokeGradient())
+    if (RefPtr gradient = context.strokeGradient())
         context.setFillGradient(*gradient, context.strokeGradientSpaceTransform());
-    else if (Pattern* pattern = context.strokePattern())
+    else if (RefPtr pattern = context.strokePattern())
         context.setFillPattern(*pattern);
     else
         context.setFillColor(context.strokeColor());

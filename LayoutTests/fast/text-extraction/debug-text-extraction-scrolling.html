@@ -1,0 +1,93 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true dumpJSConsoleLogInStdErr=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<style>
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.text-representation {
+    white-space: pre-wrap;
+}
+
+.scroller {
+    width: 150px;
+    height: 150px;
+    overflow: scroll;
+    white-space: nowrap;
+    border: 1px solid tomato;
+    display: inline-block;
+}
+
+.vspace {
+    width: 1px;
+    height: 5000px;
+}
+
+.hspace {
+    width: 5000px;
+    height: 10px;
+    background: #eee;
+    display: inline-block;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<main>
+    <div class="scroller top">
+        <span>1. Hello world</span>
+        <span class="hspace"></span>
+        <span><a href="https://webkit.org">WebKit</a></span>
+    </div>
+    <div class="scroller middle">
+        <span>2. Hello world</span>
+        <span class="hspace"></span>
+        <span><a href="https://webkit.org">WebKit</a></span>
+    </div>
+    <div class="vspace"></div>
+    <div class="scroller bottom">
+        <span>3. Hello world</span>
+        <span class="hspace"></span>
+        <span><a href="https://webkit.org">WebKit</a></span>
+    </div>
+</main>
+
+<script>
+document.querySelector(".top").scrollBy(5000, 0);
+document.querySelector(".middle").scrollBy(10, 0);
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    window.internals?.setUsesOverlayScrollbars(true);
+    window.testRunner?.dumpAsText();
+    window.testRunner?.waitUntilDone();
+
+    await UIHelper.ensurePresentationUpdate();
+
+    const extractionResult = await UIHelper.requestDebugText({
+        includeURLs: true,
+        includeRects: false,
+        clipToBounds: true,
+        normalize: true,
+    });
+
+    document.body.classList.add("text-representation");
+    document.body.textContent = extractionResult;
+
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

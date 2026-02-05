@@ -49,7 +49,7 @@ public:
 private:
     ApplePayShippingContactSelectedEvent(const AtomString& type, unsigned version, const PaymentContact&);
 
-    const ApplePayPaymentContact m_shippingContact;
+    const LocalizedApplePayPaymentContact m_shippingContact;
 };
 
 }

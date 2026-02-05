@@ -27,6 +27,7 @@
 #include "NonCompositedFrameRenderer.h"
 
 #if USE(COORDINATED_GRAPHICS)
+#include <WebCore/GraphicsContextSkia.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -47,7 +48,7 @@ NonCompositedFrameRenderer::NonCompositedFrameRenderer(WebPage& webPage)
             m_shouldRenderFollowupFrame = false;
             display();
         }
-    }))
+    }, AcceleratedSurface::RenderingPurpose::NonComposited))
 {
 #if ENABLE(DAMAGE_TRACKING)
     resetFrameDamage();
@@ -56,15 +57,14 @@ NonCompositedFrameRenderer::NonCompositedFrameRenderer(WebPage& webPage)
 
 bool NonCompositedFrameRenderer::initialize()
 {
-    static_assert(sizeof(GLNativeWindowType) <= sizeof(uint64_t), "GLNativeWindowType must not be longer than 64 bits.");
-    m_context = GLContext::create(PlatformDisplay::sharedDisplay(), m_surface->window());
-    if (!m_context || !m_context->makeContextCurrent())
-        return false;
+    if (m_surface->usesGL()) {
+        static_assert(sizeof(GLNativeWindowType) <= sizeof(uint64_t), "GLNativeWindowType must not be longer than 64 bits.");
+        m_context = GLContext::create(PlatformDisplay::sharedDisplay(), m_surface->window());
+        if (!m_context || !m_context->makeContextCurrent())
+            return false;
+    }
 
     m_surface->didCreateCompositingRunLoop(RunLoop::mainSingleton());
-    LayerTreeContext layerTreeContext;
-    layerTreeContext.contextID = m_surface->surfaceID();
-    m_webPage.get().send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(0, layerTreeContext), m_webPage.get().drawingArea()->identifier().toUInt64(), { });
     return true;
 }
 
@@ -105,10 +105,24 @@ void NonCompositedFrameRenderer::display()
     webPage->finalizeRenderingUpdate({ });
     webPage->flushPendingEditorStateUpdate();
 
-    m_surface->willRenderFrame(webPage->size());
-    auto* graphicsContext = m_surface->graphicsContext();
-    if (!graphicsContext || !m_context->makeContextCurrent())
+    IntSize scaledSize = webPage->size();
+    scaledSize.scale(webPage->deviceScaleFactor());
+
+    if (m_context)
+        m_context->makeContextCurrent();
+    m_surface->willRenderFrame(scaledSize);
+
+    auto* canvas = m_surface->canvas();
+    if (!canvas)
         return;
+
+    if (m_context)
+        PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent();
+
+    canvas->save();
+    GraphicsContextSkia graphicsContext(*canvas, m_surface->usesGL() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated, RenderingPurpose::Unspecified);
+    graphicsContext.applyDeviceScaleFactor(webPage->deviceScaleFactor());
+
 #if ENABLE(DAMAGE_TRACKING)
     if (m_frameDamage) {
         {
@@ -128,7 +142,11 @@ void NonCompositedFrameRenderer::display()
             rectToRepaint = renderTargetDamage->bounds();
     }
 #endif
-    webPage->drawRect(*graphicsContext, rectToRepaint);
+    webPage->drawRect(graphicsContext, rectToRepaint);
+    canvas->restore();
+
+    if (m_context)
+        m_context->makeContextCurrent();
 
     m_canRenderNextFrame = false;
     m_surface->didRenderFrame();

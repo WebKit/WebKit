@@ -28,18 +28,3 @@
 #import "../WebKitCocoa/SmartListsSupport.h"
 #import "TestWKWebView.h"
 #import "UIKitSPIForTesting.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-// FIXME: Remove these when support for macOS 14 is no longer needed and instead
-// use `private import pal.spi.cg.CoreGraphicsSPI`.
-
-typedef struct CGPDFAnnotation *CGPDFAnnotationRef;
-typedef bool (^CGPDFAnnotationDrawCallbackType)(CGContextRef context, CGPDFPageRef page, CGPDFAnnotationRef annotation);
-void CGContextDrawPDFPageWithAnnotations(CGContextRef, CGPDFPageRef, CGPDFAnnotationDrawCallbackType);
-
-#ifdef __cplusplus
-}
-#endif

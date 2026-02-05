@@ -128,6 +128,8 @@ public:
     virtual void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const = 0;
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox) const;
 
+    virtual void invalidateCachedVisualOverflowRect() { }
+
     inline bool shouldUsePositionedClipping() const;
 
 protected:

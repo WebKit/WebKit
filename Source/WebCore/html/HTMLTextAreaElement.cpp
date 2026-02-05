@@ -46,6 +46,7 @@
 #include "NodeName.h"
 #include "RenderObjectInlines.h"
 #include "RenderTextControlMultiLine.h"
+#include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
 #include "Text.h"
 #include "TextControlInnerElements.h"
@@ -93,7 +94,8 @@ Ref<HTMLTextAreaElement> HTMLTextAreaElement::create(Document& document)
 
 void HTMLTextAreaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 {
-    root.appendChild(TextControlInnerTextElement::create(protectedDocument(), isInnerTextElementEditable()));
+    ScriptDisallowedScope::EventAllowedScope rootScope { root };
+    root.appendChild(TextControlInnerTextElement::create(protect(document()), isInnerTextElementEditable()));
 }
 
 const AtomString& HTMLTextAreaElement::formControlType() const
@@ -212,7 +214,7 @@ bool HTMLTextAreaElement::appendFormData(DOMFormData& formData)
     if (name().isEmpty())
         return false;
 
-    protectedDocument()->updateLayout();
+    protect(document())->updateLayout();
 
     formData.append(name(), m_wrap == HardWrap ? valueWithHardLineBreaks() : value().get());
     if (auto& dirname = attributeWithoutSynchronization(dirnameAttr); !dirname.isNull())
@@ -262,7 +264,7 @@ void HTMLTextAreaElement::subtreeHasChanged()
     setChangedSinceLastFormControlChangeEvent(true);
 
     if (RefPtr frame = document().frame())
-        frame->protectedEditor()->textDidChangeInTextArea(*this);
+        protect(frame->editor())->textDidChangeInTextArea(*this);
     // When typing in a textarea, childrenChanged is not called, so we need to force the directionality check.
     if (selfOrPrecedingNodesAffectDirAuto())
         updateEffectiveTextDirection();
@@ -527,14 +529,14 @@ void HTMLTextAreaElement::updatePlaceholderText()
     auto& placeholderText = attributeWithoutSynchronization(placeholderAttr);
     if (placeholderText.isEmpty()) {
         if (RefPtr placeholder = m_placeholder) {
-            protectedUserAgentShadowRoot()->removeChild(*placeholder);
+            protect(userAgentShadowRoot())->removeChild(*placeholder);
             m_placeholder = nullptr;
         }
         return;
     }
     if (!m_placeholder) {
-        m_placeholder = TextControlPlaceholderElement::create(protectedDocument());
-        protectedUserAgentShadowRoot()->insertBefore(*protectedPlaceholderElement(), innerTextElement()->protectedNextSibling());
+        m_placeholder = TextControlPlaceholderElement::create(protect(document()));
+        protect(userAgentShadowRoot())->insertBefore(*protectedPlaceholderElement(), protect(innerTextElement()->nextSibling()));
     }
     protectedPlaceholderElement()->setInnerText(String { placeholderText });
 }

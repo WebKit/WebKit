@@ -24,7 +24,6 @@
 
 [
     Conditional=WEB_AUDIO,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary WaveShaperOptions : AudioNodeOptions {
     sequence<float> curve;
     OverSampleType oversample = "none";

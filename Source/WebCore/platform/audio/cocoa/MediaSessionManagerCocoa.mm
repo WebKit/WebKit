@@ -32,11 +32,11 @@
 #import "DeprecatedGlobalSettings.h"
 #import "ImageAdapter.h"
 #import "Logging.h"
-#import "MediaConfiguration.h"
 #import "MediaPlayer.h"
 #import "MediaStrategy.h"
 #import "NowPlayingInfo.h"
 #import "Page.h"
+#import "PlatformMediaConfiguration.h"
 #import "PlatformMediaSession.h"
 #import "PlatformStrategies.h"
 #import "Settings.h"
@@ -104,6 +104,7 @@ void MediaSessionManagerCocoa::updateSessionState()
     int audioCount = 0;
     int webAudioCount = 0;
     int audioMediaStreamTrackCount = 0;
+    int domMediaSessionCount = 0;
     int captureCount = countActiveAudioCaptureSources();
 
     bool hasAudibleAudioOrVideoMediaType = false;
@@ -113,6 +114,9 @@ void MediaSessionManagerCocoa::updateSessionState()
         auto type = session.mediaType();
         switch (type) {
         case PlatformMediaSession::MediaType::None:
+            break;
+        case PlatformMediaSession::MediaType::DOMMediaSession:
+            ++domMediaSessionCount;
             break;
         case PlatformMediaSession::MediaType::Video:
             ++videoCount;
@@ -148,7 +152,7 @@ void MediaSessionManagerCocoa::updateSessionState()
         }
     });
 
-    MEDIASESSIONMANAGER_RELEASE_LOG(UPDATESESSIONSTATE, captureCount, audioMediaStreamTrackCount, videoCount, audioCount, videoAudioCount, webAudioCount);
+    MEDIASESSIONMANAGER_RELEASE_LOG(UPDATESESSIONSTATE, captureCount, audioMediaStreamTrackCount, videoCount, audioCount, videoAudioCount, webAudioCount, domMediaSessionCount);
 
     Ref sharedSession = AudioSession::singleton();
     if (!m_defaultBufferSize)
@@ -500,6 +504,8 @@ void MediaSessionManagerCocoa::updateActiveNowPlayingSession(RefPtr<PlatformMedi
     if (activeSessionChanged) {
         if (RefPtr page = Page::fromPageIdentifier(pageIdentifier()))
             page->hasActiveNowPlayingSessionChanged();
+
+        adjustNowPlayingUpdateInterval();
     }
 }
 
@@ -580,10 +586,46 @@ bool MediaSessionManagerCocoa::shouldUpdateNowPlaying(const NowPlayingInfo& nowP
     return false;
 }
 
+void MediaSessionManagerCocoa::adjustNowPlayingUpdateInterval()
+{
+    RefPtr session = nowPlayingEligibleSession().get();
+    if (!session)
+        return;
+
+    auto interval = [&] {
+        constexpr Seconds defaultNowPlayingUpdateInterval = 5_s;
+
+        auto nowPlayingInfo = session->nowPlayingInfo();
+        if (!nowPlayingInfo)
+            return defaultNowPlayingUpdateInterval;
+
+        auto duration = nowPlayingInfo->duration;
+        if (!duration || !std::isfinite(duration) || std::isnan(duration))
+            return defaultNowPlayingUpdateInterval;
+
+        Seconds minNowPlayingUpdateInterval = Seconds(duration / 4);
+        if (m_nowPlayingUpdateInterval > minNowPlayingUpdateInterval)
+            return minNowPlayingUpdateInterval;
+
+        return defaultNowPlayingUpdateInterval;
+    }();
+
+    if (interval != m_nowPlayingUpdateInterval) {
+        m_nowPlayingUpdateInterval = interval;
+        ALWAYS_LOG(LOGIDENTIFIER, m_nowPlayingUpdateInterval.value());
+    }
+}
+
 void MediaSessionManagerCocoa::setNowPlayingUpdateInterval(double interval)
 {
     ALWAYS_LOG(LOGIDENTIFIER, interval);
     m_nowPlayingUpdateInterval = Seconds(interval);
+    adjustNowPlayingUpdateInterval();
+}
+
+double MediaSessionManagerCocoa::nowPlayingUpdateInterval()
+{
+    return m_nowPlayingUpdateInterval.value();
 }
 
 void MediaSessionManagerCocoa::updateNowPlayingInfo()
@@ -620,6 +662,9 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
         updateActiveNowPlayingSession(nullptr);
         return;
     }
+
+    if (!m_nowPlayingInfo)
+        adjustNowPlayingUpdateInterval();
 
     m_nowPlayingUpdateTimer.startOneShot(m_nowPlayingUpdateInterval);
 
@@ -677,7 +722,7 @@ void MediaSessionManagerCocoa::audioOutputDeviceChanged()
 }
 
 #if PLATFORM(MAC)
-std::optional<bool> MediaSessionManagerCocoa::supportsSpatialAudioPlaybackForConfiguration(const MediaConfiguration& configuration)
+std::optional<bool> MediaSessionManagerCocoa::supportsSpatialAudioPlaybackForConfiguration(const PlatformMediaConfiguration& configuration)
 {
     ASSERT(configuration.audio);
     if (!configuration.audio)
@@ -687,7 +732,7 @@ std::optional<bool> MediaSessionManagerCocoa::supportsSpatialAudioPlaybackForCon
     if (supportsSpatialAudioPlayback.has_value())
         return supportsSpatialAudioPlayback;
 
-    auto calculateSpatialAudioSupport = [] (const MediaConfiguration& configuration) {
+    auto calculateSpatialAudioSupport = [](const PlatformMediaConfiguration& configuration) {
         if (!PAL::canLoad_AudioToolbox_AudioGetDeviceSpatialPreferencesForContentType())
             return false;
 

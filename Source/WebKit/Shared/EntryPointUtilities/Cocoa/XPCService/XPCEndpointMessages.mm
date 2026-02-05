@@ -42,7 +42,7 @@ namespace WebKit {
 #if HAVE(LSDATABASECONTEXT)
 static void handleLaunchServiceDatabaseMessage(xpc_object_t message)
 {
-    XPCObjectPtr<xpc_object_t> xpcEndPoint = xpc_dictionary_get_value(message, LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointNameKey);
+    OSObjectPtr<xpc_object_t> xpcEndPoint = xpc_dictionary_get_value(message, LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointNameKey);
     if (!xpcEndPoint || xpc_get_type(xpcEndPoint.get()) != XPC_TYPE_ENDPOINT)
         return;
 

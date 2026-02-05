@@ -57,10 +57,8 @@ public:
     virtual ~AuthenticationChallengeProxy();
 
     WebCredential* proposedCredential() const;
-    RefPtr<WebCredential> protectedProposedCredential() const;
 
     WebProtectionSpace* protectionSpace() const;
-    RefPtr<WebProtectionSpace> protectedProtectionSpace() const;
 
     AuthenticationDecisionListener& listener() const { return m_listener.get(); }
     const WebCore::AuthenticationChallenge& core() { return m_coreAuthenticationChallenge; }

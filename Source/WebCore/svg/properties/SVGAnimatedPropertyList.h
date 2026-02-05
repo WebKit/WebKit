@@ -30,7 +30,8 @@
 namespace WebCore {
 
 template<typename ListType>
-class SVGAnimatedPropertyList : public SVGAnimatedProperty {
+class SVGAnimatedPropertyList : public SVGAnimatedProperty<SVGAnimatedPropertyList<ListType>> {
+    using Base = SVGAnimatedProperty<SVGAnimatedPropertyList<ListType>>;
 public:
     template<typename... Arguments>
     static Ref<SVGAnimatedPropertyList> create(SVGElement* contextElement, Arguments&&... arguments)
@@ -63,7 +64,7 @@ public:
     // Used to apply the SVGAnimator change to the target element.
     String animValAsString() const override
     {
-        ASSERT(isAnimating());
+        ASSERT(this->isAnimating());
         return m_animVal->valueAsString();
     }
 
@@ -75,8 +76,8 @@ public:
     // Used by RenderSVGElements and DumpRenderTree.
     const ListType& currentValue() const
     {
-        ASSERT_IMPLIES(isAnimating(), m_animVal);
-        return isAnimating() ? *m_animVal : m_baseVal.get();
+        ASSERT_IMPLIES(this->isAnimating(), m_animVal);
+        return this->isAnimating() ? *m_animVal : m_baseVal.get();
     }
 
     // Controlling the animation.
@@ -86,35 +87,35 @@ public:
             *m_animVal = m_baseVal;
         else
             ensureAnimVal();
-        SVGAnimatedProperty::startAnimation(animator);
+        Base::startAnimation(animator);
     }
 
     void stopAnimation(SVGAttributeAnimator& animator) override
     {
-        SVGAnimatedProperty::stopAnimation(animator);
+        Base::stopAnimation(animator);
         if (m_animVal)
             *m_animVal = m_baseVal;
     }
 
     // Controlling the instance animation.
-    void instanceStartAnimation(SVGAttributeAnimator& animator, SVGAnimatedProperty& animated) override
+    void instanceStartAnimationImpl(SVGAttributeAnimator& animator, SVGAnimatedPropertyList& animated) override
     {
-        if (!isAnimating())
-            m_animVal = static_cast<SVGAnimatedPropertyList&>(animated).animVal();
-        SVGAnimatedProperty::instanceStartAnimation(animator, animated);
+        if (!this->isAnimating())
+            m_animVal = animated.animVal();
+        Base::startAnimation(animator);
     }
 
-    void instanceStopAnimation(SVGAttributeAnimator& animator) override
+    void instanceStopAnimationImpl(SVGAttributeAnimator& animator) override
     {
-        SVGAnimatedProperty::instanceStopAnimation(animator);
-        if (!isAnimating())
+        Base::stopAnimation(animator);
+        if (!this->isAnimating())
             m_animVal = nullptr;
     }
 
 protected:
     template<typename... Arguments>
     SVGAnimatedPropertyList(SVGElement* contextElement, Arguments&&... arguments)
-        : SVGAnimatedProperty(contextElement)
+        : Base(contextElement)
         , m_baseVal(ListType::create(this, SVGPropertyAccess::ReadWrite, std::forward<Arguments>(arguments)...))
     {
     }
@@ -131,7 +132,7 @@ protected:
     {
         if (m_animVal)
             *m_animVal = m_baseVal;
-        SVGAnimatedProperty::commitPropertyChange(property);
+        Base::commitPropertyChange(property);
     }
 
     Ref<ListType> m_baseVal;

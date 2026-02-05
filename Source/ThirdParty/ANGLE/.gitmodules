@@ -53,7 +53,7 @@
 [submodule "third_party/clspv/src"]
 	path = third_party/clspv/src
 	url = https://chromium.googlesource.com/external/github.com/google/clspv
-	gclient-condition = not build_with_chromium
+	gclient-condition = checkout_angle_cl_deps and not build_with_chromium
 [submodule "third_party/cpu_features/src"]
 	path = third_party/cpu_features/src
 	url = https://chromium.googlesource.com/external/github.com/google/cpu_features
@@ -61,7 +61,7 @@
 [submodule "third_party/dawn"]
 	path = third_party/dawn
 	url = https://dawn.googlesource.com/dawn
-	gclient-condition = not build_with_chromium
+	gclient-condition = checkout_angle_dawn_deps and not build_with_chromium
 [submodule "third_party/depot_tools"]
 	path = third_party/depot_tools
 	url = https://chromium.googlesource.com/chromium/tools/depot_tools
@@ -104,7 +104,7 @@
 [submodule "third_party/llvm/src"]
 	path = third_party/llvm/src
 	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project
-	gclient-condition = not build_with_chromium
+	gclient-condition = checkout_angle_cl_deps and not build_with_chromium
 [submodule "third_party/jinja2"]
 	path = third_party/jinja2
 	url = https://chromium.googlesource.com/chromium/src/third_party/jinja2
@@ -148,7 +148,7 @@
 [submodule "third_party/OpenCL-CTS/src"]
 	path = third_party/OpenCL-CTS/src
 	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/OpenCL-CTS
-	gclient-condition = not build_with_chromium
+	gclient-condition = checkout_angle_cl_deps and not build_with_chromium
 [submodule "third_party/OpenCL-Docs/src"]
 	path = third_party/OpenCL-Docs/src
 	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/OpenCL-Docs
@@ -156,7 +156,7 @@
 [submodule "third_party/OpenCL-ICD-Loader/src"]
 	path = third_party/OpenCL-ICD-Loader/src
 	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/OpenCL-ICD-Loader
-	gclient-condition = not build_with_chromium
+	gclient-condition = checkout_angle_cl_deps and not build_with_chromium
 [submodule "third_party/OpenGL-Registry/src"]
 	path = third_party/OpenGL-Registry/src
 	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/OpenGL-Registry

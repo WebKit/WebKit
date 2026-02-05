@@ -42,9 +42,9 @@ public:
     void setReturnValue(String&& value) { m_returnValue = WTF::move(value); }
 
     ExceptionOr<void> show();
-    ExceptionOr<void> showModal();
-    void close(const String&);
-    void requestClose(const String&);
+    ExceptionOr<void> showModal(Element* = nullptr);
+    void close(const String&, Element* = nullptr);
+    void requestClose(const String&, Element* = nullptr);
 
     bool isModal() const { return m_isModal; };
 
@@ -55,7 +55,7 @@ public:
     bool isValidCommandType(const CommandType) final;
     bool handleCommandInternal(HTMLButtonElement& invoker, const CommandType&) final;
 
-    void queueDialogToggleEventTask(ToggleState oldState, ToggleState newState);
+    void queueDialogToggleEventTask(ToggleState oldState, ToggleState newState, Element* source);
 
 private:
     HTMLDialogElement(const QualifiedName&, Document&);

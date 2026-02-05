@@ -99,7 +99,6 @@ private:
 
     Page* page() const;
     SecurityOrigin* securityOrigin() const;
-    RefPtr<SecurityOrigin> protectedSecurityOrigin() const;
 
     typedef Vector<Ref<GeoNotifier>> GeoNotifierVector;
     typedef HashSet<Ref<GeoNotifier>> GeoNotifierSet;

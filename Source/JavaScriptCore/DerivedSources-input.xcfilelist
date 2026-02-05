@@ -254,5 +254,6 @@ $(PROJECT_DIR)/wasm/js/WebAssemblyTagPrototype.cpp
 $(PROJECT_DIR)/wasm/wasm.json
 $(PROJECT_DIR)/yarr/create_regex_tables
 $(PROJECT_DIR)/yarr/generateYarrCanonicalizeUnicode
+$(PROJECT_DIR)/parser/generateLexerUnicodePropertyTables.py
 $(PROJECT_DIR)/yarr/generateYarrUnicodePropertyTables.py
 $(PROJECT_DIR)/yarr/hasher.py

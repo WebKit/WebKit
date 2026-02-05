@@ -30,9 +30,9 @@
 #include "RejectedPromiseTracker.h"
 #include "ScriptExecutionContext.h"
 #include "WorkerGlobalScope.h"
-#include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/MicrotaskQueueInlines.h>
 #include <JavaScriptCore/ScriptProfilingScope.h>
+#include <JavaScriptCore/TopExceptionScope.h>
 #include <JavaScriptCore/VMEntryScopeInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
@@ -71,7 +71,7 @@ void MicrotaskQueue::append(JSC::QueuedTask&& task)
 
 void MicrotaskQueue::runJSMicrotaskWithDebugger(JSC::JSGlobalObject* globalObject, JSC::VM& vm, JSC::QueuedTask& task)
 {
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     auto identifier = task.identifier();
     if (auto* debugger = globalObject->debugger(); debugger && identifier) [[unlikely]] {
@@ -95,7 +95,7 @@ void MicrotaskQueue::runJSMicrotaskWithDebugger(JSC::JSGlobalObject* globalObjec
 
 void MicrotaskQueue::runJSMicrotask(JSC::JSGlobalObject* globalObject, JSC::VM& vm, JSC::QueuedTask& task)
 {
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSC::runInternalMicrotask(globalObject, task.job(), task.payload(), task.arguments());
     if (scope.exception()) [[unlikely]] {
         auto* exception = scope.exception();
@@ -115,7 +115,7 @@ void MicrotaskQueue::performMicrotaskCheckpoint()
     SetForScope change(m_performingMicrotaskCheckpoint, true);
     Ref vm = this->vm();
     JSC::JSLockHolder locker(vm);
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     {
         SUPPRESS_UNCOUNTED_ARG auto& data = threadGlobalDataSingleton();
         auto* previousState = data.currentState();
@@ -183,7 +183,7 @@ void MicrotaskQueue::performMicrotaskCheckpoint()
     Ref { *m_eventLoop }->forEachAssociatedContext([vm = vm.copyRef()](auto& context) {
         if (vm->executionForbidden()) [[unlikely]]
             return;
-        auto catchScope = DECLARE_CATCH_SCOPE(vm);
+        auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         if (CheckedPtr tracker = context.rejectedPromiseTracker())
             tracker->processQueueSoon();
         catchScope.clearExceptionExceptTermination();

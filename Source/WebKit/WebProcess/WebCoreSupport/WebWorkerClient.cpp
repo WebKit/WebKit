@@ -127,7 +127,7 @@ RefPtr<WebCore::WebGPU::GPU> GPUProcessWebWorkerClient::createGPUForWebGPU() con
     if (!dispatcher)
         return nullptr;
     assertIsCurrent(*dispatcher);
-    return RemoteGPUProxy::create(WebGPU::DowncastConvertToBackingContext::create(), DDModel::DowncastConvertToBackingContext::create(), ensureProtectedRenderingBackend(), *dispatcher);
+    return RemoteGPUProxy::create(WebGPU::DowncastConvertToBackingContext::create(), ModelDowncastConvertToBackingContext::create(), ensureProtectedRenderingBackend(), *dispatcher);
 }
 #endif
 

@@ -14,20 +14,6 @@ PASS: Map does not have `key`.
 PASS: Map has `key` => `undefined`.
 PASS: Map take `doesNotExistKey` => `undefined`.
 
--- Running test case: Map.prototype.getOrInitialize.Raw
-PASS: Map does not have `key`.
-PASS: Map should have initialized `key` with `value`.
-PASS: Map does have `key` => `value`.
-PASS: Map should get `key` with `value` without re-initializing.
-PASS: Map still has `key` => `value`.
-
--- Running test case: Map.prototype.getOrInitialize.Function
-PASS: Map does not have `key`.
-PASS: Map should have initialized `key` with `value`.
-PASS: Map does have `key` => `value`.
-PASS: Map should get `key` with `value` without re-initializing.
-PASS: Map still has `key` => `value`.
-
 -- Running test case: Map.prototype.firstKey
 PASS: Map should not start with a first key.
 PASS: Map should have first key.

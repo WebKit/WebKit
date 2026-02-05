@@ -26,6 +26,11 @@
 #import "config.h"
 #import "WebViewImpl.h"
 
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=306415
+#if ENABLE(BACK_FORWARD_LIST_SWIFT)
+#include "WebKit-Swift.h"
+#endif
+
 #if PLATFORM(MAC)
 
 #import "APIAttachment.h"
@@ -59,13 +64,13 @@
 #import "UIGamepadProvider.h"
 #import "UndoOrRedo.h"
 #import "ViewGestureController.h"
+#import "WKAppKitGestureController.h"
 #import "WKEditCommand.h"
 #import "WKErrorInternal.h"
 #import "WKFullScreenWindowController.h"
 #import "WKImmediateActionController.h"
 #import "WKNSURLExtras.h"
 #import "WKPDFHUDView.h"
-#import "WKPanGestureController.h"
 #import "WKPrintingView.h"
 #import "WKQuickLookPreviewController.h"
 #import "WKRevealItemPresenter.h"
@@ -1231,7 +1236,7 @@ static void* imageOverlayObservationContext = &imageOverlayObservationContext;
     if (!_impl)
         return NO;
 
-    for (RetainPtr view = dynamic_objc_cast<NSView>(CheckedPtr { _impl.get() }->protectedView().get().window.firstResponder); view; view = view.get().superview) {
+    for (RetainPtr view = dynamic_objc_cast<NSView>(protect(CheckedPtr { _impl.get() }->view()).get().window.firstResponder); view; view = view.get().superview) {
         if (view == _overlayView.get())
             return YES;
     }
@@ -1251,7 +1256,7 @@ static void* imageOverlayObservationContext = &imageOverlayObservationContext;
         return CGRectMake(0, 0, 1, 1);
 
     auto unitInteractionRect = _impl->imageAnalysisInteractionBounds();
-    WebCore::FloatRect unobscuredRect = CheckedPtr { _impl.get() }->protectedView().get().bounds;
+    WebCore::FloatRect unobscuredRect = protect(CheckedPtr { _impl.get() }->view()).get().bounds;
     unitInteractionRect.moveBy(-unobscuredRect.location());
     unitInteractionRect.scale(1 / unobscuredRect.size());
     return unitInteractionRect;
@@ -1287,6 +1292,8 @@ static RetainPtr<_WKWebViewTextInputNotifications> subscribeToTextInputNotificat
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebViewImpl);
 
+static constexpr auto viewStateHysteresis = 500_ms;
+
 WebViewImpl::WebViewImpl(WKWebView *view, WebProcessPool& processPool, Ref<API::PageConfiguration>&& configuration)
     : m_view(view)
     , m_pageClient(makeUniqueRefWithoutRefCountedCheck<PageClientImpl>(view, view))
@@ -1297,7 +1304,7 @@ WebViewImpl::WebViewImpl(WKWebView *view, WebProcessPool& processPool, Ref<API::
     , m_undoTarget(adoptNS([[WKEditorUndoTarget alloc] init]))
     , m_windowVisibilityObserver(adoptNS([[WKWindowVisibilityObserver alloc] initWithView:view impl:*this]))
     , m_accessibilitySettingsObserver(adoptNS([[WKAccessibilitySettingsObserver alloc] initWithImpl:*this]))
-    , m_contentRelativeViewsHysteresis(makeUniqueRef<PAL::HysteresisActivity>([this](auto state) { this->contentRelativeViewsHysteresisTimerFired(state); }, 500_ms))
+    , m_contentRelativeViewsHysteresis(makeUniqueRef<PAL::HysteresisActivity>([this](auto state) { this->contentRelativeViewsHysteresisTimerFired(state); }, viewStateHysteresis))
     , m_mouseTrackingObserver(adoptNS([[WKMouseTrackingObserver alloc] initWithViewImpl:*this]))
     , m_primaryTrackingArea(adoptNS([[NSTrackingArea alloc] initWithRect:view.frame options:trackingAreaOptions() owner:m_mouseTrackingObserver.get() userInfo:nil]))
     , m_flagsChangedEventMonitorTrackingArea(adoptNS([[NSTrackingArea alloc] initWithRect:view.frame options:flagsChangedEventMonitorTrackingAreaOptions() owner:m_mouseTrackingObserver.get() userInfo:nil]))
@@ -1316,7 +1323,7 @@ WebViewImpl::WebViewImpl(WKWebView *view, WebProcessPool& processPool, Ref<API::
         if (RetainPtr<id> useRemoteLayerTreeBoolean = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseRemoteLayerTreeDrawingArea"])
             result = [useRemoteLayerTreeBoolean boolValue];
 
-        if (m_page->protectedPreferences()->siteIsolationEnabled())
+        if (protect(m_page->preferences())->siteIsolationEnabled())
             result = true;
 
         return result;
@@ -1388,7 +1395,12 @@ WebViewImpl::WebViewImpl(WKWebView *view, WebProcessPool& processPool, Ref<API::
     m_textInputNotifications = subscribeToTextInputNotifications(this);
 #endif
 
-    m_panGestureController = adoptNS([[WKPanGestureController alloc] initWithPage:m_page viewImpl:*this]);
+    m_pageScrollingHysteresis = makeUnique<PAL::HysteresisActivity>([weakThis = WeakPtr { *this }](auto state) {
+        if (CheckedPtr checkedImpl = weakThis.get())
+            checkedImpl->pageScrollingHysteresisFired(state);
+    }, viewStateHysteresis);
+
+    m_appKitGestureController = adoptNS([[WKAppKitGestureController alloc] initWithPage:m_page viewImpl:*this]);
 
     WebProcessPool::statistics().wkViewCount++;
 }
@@ -1396,7 +1408,7 @@ WebViewImpl::WebViewImpl(WKWebView *view, WebProcessPool& processPool, Ref<API::
 WebViewImpl::~WebViewImpl()
 {
     if (m_remoteObjectRegistry) {
-        m_page->configuration().protectedProcessPool()->removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), m_page->identifier());
+        protect(m_page->configuration().processPool())->removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), m_page->identifier());
         [m_remoteObjectRegistry _invalidate];
         m_remoteObjectRegistry = nil;
     }
@@ -1430,9 +1442,9 @@ NSWindow *WebViewImpl::window()
     return [m_view.get() window];
 }
 
-RetainPtr<NSWindow> WebViewImpl::protectedWindow()
+NSInteger WebViewImpl::windowNumber()
 {
-    return window();
+    return [protect(window()) windowNumber];
 }
 
 void WebViewImpl::handleProcessSwapOrExit()
@@ -1567,7 +1579,7 @@ bool WebViewImpl::resignFirstResponder()
     // Predict the case where we are losing first responder status only to
     // gain it back again. We want resignFirstResponder to do nothing in that case.
     // FIXME: This is a safer cpp false-positive.
-    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr<id> nextResponder = [protectedWindow() _newFirstResponderAfterResigning];
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr<id> nextResponder = [protect(window()) _newFirstResponderAfterResigning];
 
     // FIXME: This will probably need to change once WKWebView doesn't contain a WKView.
     if ([nextResponder isKindOfClass:[WKWebView class]] && [m_view.get() superview] == nextResponder.get()) {
@@ -2119,7 +2131,7 @@ void WebViewImpl::windowDidOrderOnScreen()
 
 void WebViewImpl::windowDidBecomeKey(NSWindow *keyWindow)
 {
-    if (keyWindow == window() || keyWindow == [protectedWindow() attachedSheet]) {
+    if (keyWindow == window() || keyWindow == [protect(window()) attachedSheet]) {
 #if ENABLE(GAMEPAD)
         UIGamepadProvider::singleton().viewBecameActive(m_page.get());
 #endif
@@ -2130,7 +2142,7 @@ void WebViewImpl::windowDidBecomeKey(NSWindow *keyWindow)
 
 void WebViewImpl::windowDidResignKey(NSWindow *formerKeyWindow)
 {
-    if (formerKeyWindow == window() || formerKeyWindow == [protectedWindow() attachedSheet]) {
+    if (formerKeyWindow == window() || formerKeyWindow == [protect(window()) attachedSheet]) {
 #if ENABLE(GAMEPAD)
         UIGamepadProvider::singleton().viewBecameInactive(m_page.get());
 #endif
@@ -2197,7 +2209,7 @@ void WebViewImpl::windowWillClose()
 
 void WebViewImpl::screenDidChangeColorSpace()
 {
-    m_page->configuration().protectedProcessPool()->screenPropertiesChanged();
+    protect(m_page->configuration().processPool())->screenPropertiesChanged();
 }
 
 void WebViewImpl::applicationShouldSuppressHDR(bool suppress)
@@ -2263,7 +2275,7 @@ bool WebViewImpl::shouldDelayWindowOrderingForEvent(NSEvent *event)
     if (![m_view.get() hitTest:event.locationInWindow])
         return false;
 
-    if (!page().protectedLegacyMainFrameProcess()->isResponsive())
+    if (!protect(page().legacyMainFrameProcess())->isResponsive())
         return false;
 
     if (page().editorState().hasPostLayoutData()) {
@@ -2362,7 +2374,7 @@ void WebViewImpl::viewDidMoveToWindow()
 
 void WebViewImpl::viewDidChangeBackingProperties()
 {
-    RetainPtr<NSColorSpace> colorSpace = protectedWindow().get().colorSpace;
+    RetainPtr<NSColorSpace> colorSpace = protect(window()).get().colorSpace;
     if ([colorSpace isEqualTo:m_colorSpace.get()])
         return;
 
@@ -2393,20 +2405,23 @@ void WebViewImpl::activeSpaceDidChange()
 
 void WebViewImpl::pageDidScroll(const IntPoint& scrollPosition)
 {
-    bool pageIsScrolledToTop = scrollPosition.y() <= 0;
-    if (pageIsScrolledToTop == m_pageIsScrolledToTop)
+    if (scrollPosition == m_lastPageScrollPosition)
         return;
 
-    [m_view.get() willChangeValueForKey:@"hasScrolledContentsUnderTitlebar"];
+    bool pageIsScrolledToTopDidChange = (scrollPosition.y() <= 0) != pageIsScrolledToTop();
+    if (pageIsScrolledToTopDidChange)
+        [protect(view()) willChangeValueForKey:@"hasScrolledContentsUnderTitlebar"];
 
-    m_pageIsScrolledToTop = pageIsScrolledToTop;
+    m_lastPageScrollPosition = scrollPosition;
+    m_pageScrollingHysteresis->impulse();
 
+    if (pageIsScrolledToTopDidChange) {
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
-    updateScrollPocketVisibilityWhenScrolledToTop();
-    updatePrefersSolidColorHardPocket();
+        updateScrollPocketVisibilityWhenScrolledToTop();
+        updatePrefersSolidColorHardPocket();
 #endif
-
-    [m_view.get() didChangeValueForKey:@"hasScrolledContentsUnderTitlebar"];
+        [protect(view()) didChangeValueForKey:@"hasScrolledContentsUnderTitlebar"];
+    }
 }
 
 #if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
@@ -2414,7 +2429,7 @@ void WebViewImpl::pageDidScroll(const IntPoint& scrollPosition)
 void WebViewImpl::updateScrollPocketVisibilityWhenScrolledToTop()
 {
     RetainPtr view = m_view.get();
-    if ([view _usesAutomaticContentInsetBackgroundFill] && m_pageIsScrolledToTop)
+    if ([view _usesAutomaticContentInsetBackgroundFill] && pageIsScrolledToTop())
         [view _addReasonToHideTopScrollPocket:HideScrollPocketReason::ScrolledToTop];
     else
         [view _removeReasonToHideTopScrollPocket:HideScrollPocketReason::ScrolledToTop];
@@ -2457,7 +2472,7 @@ NSRect WebViewImpl::scrollViewFrame()
 
 bool WebViewImpl::hasScrolledContentsUnderTitlebar()
 {
-    return m_isRegisteredScrollViewSeparatorTrackingAdapter && !m_pageIsScrolledToTop;
+    return m_isRegisteredScrollViewSeparatorTrackingAdapter && !pageIsScrolledToTop();
 }
 
 void WebViewImpl::updateTitlebarAdjacencyState()
@@ -2629,7 +2644,7 @@ void WebViewImpl::setFontForWebView(NSFont *font, id sender)
 
 void WebViewImpl::updateSecureInputState()
 {
-    if (![protectedWindow() isKeyWindow] || !isFocused()) {
+    if (![protect(window()) isKeyWindow] || !isFocused()) {
         if (m_inSecureInputState) {
             DisableSecureEventInput();
             m_inSecureInputState = false;
@@ -2716,11 +2731,6 @@ WKFullScreenWindowController *WebViewImpl::fullScreenWindowController()
         m_fullScreenWindowController = adoptNS([[WKFullScreenWindowController alloc] initWithWindow:RetainPtr { fullScreenWindow() }.get() webView:m_view.get().get() page:m_page.get()]);
 
     return m_fullScreenWindowController.get();
-}
-
-RetainPtr<WKFullScreenWindowController> WebViewImpl::protectedFullScreenWindowController()
-{
-    return fullScreenWindowController();
 }
 
 void WebViewImpl::closeFullScreenWindowController()
@@ -2894,24 +2904,29 @@ void WebViewImpl::centerSelectionInVisibleArea()
 
 void WebViewImpl::selectionDidChange()
 {
+    Ref page = m_page.get();
+
     updateFontManagerIfNeeded();
     if (!m_isHandlingAcceptedCandidate)
         m_softSpaceRange = NSMakeRange(NSNotFound, 0);
 #if HAVE(TOUCH_BAR)
     updateTouchBar();
-    if (m_page->editorState().hasPostLayoutData())
+    if (page->editorState().hasPostLayoutData())
         requestCandidatesForSelectionIfNeeded();
 #endif
 
+    if (page->editorState().hasPostLayoutData()) {
 #if HAVE(REDESIGNED_TEXT_CURSOR)
-    if (m_page->editorState().hasPostLayoutData())
         updateCursorAccessoryPlacement();
 #endif
+        if (protect(page->preferences())->textInputClientSelectionUpdatesEnabled())
+            [protect(inputContext()) textInputClientDidUpdateSelection];
+    }
 
 #if ENABLE(WRITING_TOOLS)
-    if (isEditable() || m_page->configuration().writingToolsBehavior() == WebCore::WritingTools::Behavior::Complete) {
-        auto isRange = m_page->editorState().hasPostLayoutData() && m_page->editorState().selectionIsRange;
-        auto selectionRect = isRange ? m_page->editorState().postLayoutData->selectionBoundingRect : IntRect { };
+    if (isEditable() || page->configuration().writingToolsBehavior() == WebCore::WritingTools::Behavior::Complete) {
+        auto isRange = page->editorState().hasPostLayoutData() && page->editorState().selectionIsRange;
+        auto selectionRect = isRange ? page->editorState().postLayoutData->selectionBoundingRect : IntRect { };
 
         // The affordance will only show up if the selected range consists of >= 50 characters.
         [[PAL::getWTWritingToolsClassSingleton() sharedInstance] scheduleShowAffordanceForSelectionRect:selectionRect ofView:m_view.get().get() forDelegate:(NSObject<WTWritingToolsDelegate> *)m_view.get().get()];
@@ -3003,6 +3018,34 @@ void WebViewImpl::typingAttributesWithCompletionHandler(void(^completion)(NSDict
         auto attributesAsDictionary = attributes.createDictionary();
         completion(attributesAsDictionary.get());
     });
+}
+
+NSRect WebViewImpl::unionRectInVisibleSelectedRange() const
+{
+    RetainPtr view = m_view.get();
+    if (!view)
+        return NSZeroRect;
+
+    Ref page = m_page.get();
+    if (!page->editorState().selectionIsRange)
+        return NSZeroRect;
+
+    auto selectionRect = page->selectionBoundingRectInRootViewCoordinates();
+    if (selectionRect.isEmpty())
+        return NSZeroRect;
+
+    return selectionRect;
+}
+
+NSRect WebViewImpl::documentVisibleRect() const
+{
+    RetainPtr view = m_view.get();
+    if (!view)
+        return NSZeroRect;
+
+    FloatRect visibleRect = [view bounds];
+    visibleRect.contract(m_page->obscuredContentInsets());
+    return visibleRect;
 }
 
 void WebViewImpl::changeFontColorFromSender(id sender)
@@ -3237,7 +3280,7 @@ void WebViewImpl::setContinuousSpellCheckingEnabled(bool enabled)
         return;
 
     TextChecker::setContinuousSpellCheckingEnabled(enabled);
-    m_page->protectedLegacyMainFrameProcess()->updateTextCheckerState();
+    protect(m_page->legacyMainFrameProcess())->updateTextCheckerState();
 }
 
 void WebViewImpl::toggleContinuousSpellChecking()
@@ -3245,7 +3288,7 @@ void WebViewImpl::toggleContinuousSpellChecking()
     bool spellCheckingEnabled = !TextChecker::state().contains(TextCheckerState::ContinuousSpellCheckingEnabled);
     TextChecker::setContinuousSpellCheckingEnabled(spellCheckingEnabled);
 
-    m_page->protectedLegacyMainFrameProcess()->updateTextCheckerState();
+    protect(m_page->legacyMainFrameProcess())->updateTextCheckerState();
 }
 
 bool WebViewImpl::isGrammarCheckingEnabled()
@@ -3259,7 +3302,7 @@ void WebViewImpl::setGrammarCheckingEnabled(bool flag)
         return;
 
     TextChecker::setGrammarCheckingEnabled(flag);
-    m_page->protectedLegacyMainFrameProcess()->updateTextCheckerState();
+    protect(m_page->legacyMainFrameProcess())->updateTextCheckerState();
 }
 
 void WebViewImpl::toggleGrammarChecking()
@@ -3267,14 +3310,14 @@ void WebViewImpl::toggleGrammarChecking()
     bool grammarCheckingEnabled = !TextChecker::state().contains(TextCheckerState::GrammarCheckingEnabled);
     TextChecker::setGrammarCheckingEnabled(grammarCheckingEnabled);
 
-    m_page->protectedLegacyMainFrameProcess()->updateTextCheckerState();
+    protect(m_page->legacyMainFrameProcess())->updateTextCheckerState();
 }
 
 void WebViewImpl::toggleAutomaticSpellingCorrection()
 {
     TextChecker::setAutomaticSpellingCorrectionEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticSpellingCorrectionEnabled));
 
-    m_page->protectedLegacyMainFrameProcess()->updateTextCheckerState();
+    protect(m_page->legacyMainFrameProcess())->updateTextCheckerState();
 }
 
 void WebViewImpl::orderFrontSubstitutionsPanel(id sender)
@@ -3309,13 +3352,13 @@ void WebViewImpl::setAutomaticQuoteSubstitutionEnabled(bool flag)
         return;
 
     TextChecker::setAutomaticQuoteSubstitutionEnabled(flag);
-    m_page->protectedLegacyMainFrameProcess()->updateTextCheckerState();
+    protect(m_page->legacyMainFrameProcess())->updateTextCheckerState();
 }
 
 void WebViewImpl::toggleAutomaticQuoteSubstitution()
 {
     TextChecker::setAutomaticQuoteSubstitutionEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticQuoteSubstitutionEnabled));
-    m_page->protectedLegacyMainFrameProcess()->updateTextCheckerState();
+    protect(m_page->legacyMainFrameProcess())->updateTextCheckerState();
 }
 
 bool WebViewImpl::isAutomaticDashSubstitutionEnabled()
@@ -3329,13 +3372,13 @@ void WebViewImpl::setAutomaticDashSubstitutionEnabled(bool flag)
         return;
 
     TextChecker::setAutomaticDashSubstitutionEnabled(flag);
-    m_page->protectedLegacyMainFrameProcess()->updateTextCheckerState();
+    protect(m_page->legacyMainFrameProcess())->updateTextCheckerState();
 }
 
 void WebViewImpl::toggleAutomaticDashSubstitution()
 {
     TextChecker::setAutomaticDashSubstitutionEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticDashSubstitutionEnabled));
-    m_page->protectedLegacyMainFrameProcess()->updateTextCheckerState();
+    protect(m_page->legacyMainFrameProcess())->updateTextCheckerState();
 }
 
 bool WebViewImpl::isAutomaticLinkDetectionEnabled()
@@ -3349,13 +3392,13 @@ void WebViewImpl::setAutomaticLinkDetectionEnabled(bool flag)
         return;
 
     TextChecker::setAutomaticLinkDetectionEnabled(flag);
-    m_page->protectedLegacyMainFrameProcess()->updateTextCheckerState();
+    protect(m_page->legacyMainFrameProcess())->updateTextCheckerState();
 }
 
 void WebViewImpl::toggleAutomaticLinkDetection()
 {
     TextChecker::setAutomaticLinkDetectionEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticLinkDetectionEnabled));
-    m_page->protectedLegacyMainFrameProcess()->updateTextCheckerState();
+    protect(m_page->legacyMainFrameProcess())->updateTextCheckerState();
 }
 
 bool WebViewImpl::isAutomaticTextReplacementEnabled()
@@ -3369,18 +3412,18 @@ void WebViewImpl::setAutomaticTextReplacementEnabled(bool flag)
         return;
 
     TextChecker::setAutomaticTextReplacementEnabled(flag);
-    m_page->protectedLegacyMainFrameProcess()->updateTextCheckerState();
+    protect(m_page->legacyMainFrameProcess())->updateTextCheckerState();
 }
 
 void WebViewImpl::toggleAutomaticTextReplacement()
 {
     TextChecker::setAutomaticTextReplacementEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticTextReplacementEnabled));
-    m_page->protectedLegacyMainFrameProcess()->updateTextCheckerState();
+    protect(m_page->legacyMainFrameProcess())->updateTextCheckerState();
 }
 
 bool WebViewImpl::isSmartListsEnabled()
 {
-    if (!m_page->protectedPreferences()->smartListsAvailable())
+    if (!protect(m_page->preferences())->smartListsAvailable())
         return false;
 
     return TextChecker::state().contains(TextCheckerState::SmartListsEnabled);
@@ -3388,23 +3431,23 @@ bool WebViewImpl::isSmartListsEnabled()
 
 void WebViewImpl::setSmartListsEnabled(bool flag)
 {
-    if (!m_page->protectedPreferences()->smartListsAvailable())
+    if (!protect(m_page->preferences())->smartListsAvailable())
         return;
 
     if (flag == TextChecker::state().contains(TextCheckerState::SmartListsEnabled))
         return;
 
     TextChecker::setSmartListsEnabled(flag);
-    m_page->protectedLegacyMainFrameProcess()->updateTextCheckerState();
+    protect(m_page->legacyMainFrameProcess())->updateTextCheckerState();
 }
 
 void WebViewImpl::toggleSmartLists()
 {
-    if (!m_page->protectedPreferences()->smartListsAvailable())
+    if (!protect(m_page->preferences())->smartListsAvailable())
         return;
 
     TextChecker::setSmartListsEnabled(!TextChecker::state().contains(TextCheckerState::SmartListsEnabled));
-    m_page->protectedLegacyMainFrameProcess()->updateTextCheckerState();
+    protect(m_page->legacyMainFrameProcess())->updateTextCheckerState();
 }
 
 void WebViewImpl::uppercaseWord()
@@ -3573,8 +3616,8 @@ void WebViewImpl::preferencesDidChange()
 {
     updateNeedsViewFrameInWindowCoordinatesIfNeeded();
 
-    if (RetainPtr panGestureController = m_panGestureController)
-        [panGestureController enablePanGestureIfNeeded];
+    if (RetainPtr appKitGestureController = m_appKitGestureController)
+        [appKitGestureController enableGesturesIfNeeded];
 }
 
 CALayer* WebViewImpl::textIndicatorInstallationLayer()
@@ -3654,6 +3697,22 @@ void WebViewImpl::contentRelativeViewsHysteresisTimerFired(PAL::HysteresisState 
         suppressContentRelativeChildViews();
     else
         restoreContentRelativeChildViews();
+}
+
+void WebViewImpl::pageScrollingHysteresisFired(PAL::HysteresisState state)
+{
+    RetainPtr context = inputContext();
+    if (!context)
+        return;
+
+    switch (state) {
+    case PAL::HysteresisState::Started:
+        [context textInputClientWillStartScrollingOrZooming];
+        break;
+    case PAL::HysteresisState::Stopped:
+        [context textInputClientDidEndScrollingOrZooming];
+        break;
+    }
 }
 
 void WebViewImpl::suppressContentRelativeChildViews()
@@ -3747,7 +3806,7 @@ void WebViewImpl::videoControlsManagerDidChange()
 
 #if ENABLE(FULLSCREEN_API)
     if (hasFullScreenWindowController())
-        [protectedFullScreenWindowController() videoControlsManagerDidChange];
+        [protect(fullScreenWindowController()) videoControlsManagerDidChange];
 #endif
 }
 
@@ -3997,7 +4056,7 @@ RetainPtr<id> WebViewImpl::toolTipOwnerForSendingMouseEvents() const
     if (RetainPtr<id> owner = m_trackingRectOwner.get())
         return owner;
 
-    for (NSTrackingArea *trackingArea in protectedView().get().trackingAreas) {
+    for (NSTrackingArea *trackingArea in protect(view()).get().trackingAreas) {
         static Class managerClass = NSClassFromString(@"NSToolTipManager");
         RetainPtr<id> owner = trackingArea.owner;
         if ([owner class] == managerClass)
@@ -4013,7 +4072,7 @@ void WebViewImpl::sendToolTipMouseExited()
         location:NSZeroPoint
         modifierFlags:0
         timestamp:0
-        windowNumber:protectedWindow().get().windowNumber
+        windowNumber:protect(window()).get().windowNumber
         context:nil
         eventNumber:0
         trackingNumber:TRACKING_RECT_TAG
@@ -4028,7 +4087,7 @@ void WebViewImpl::sendToolTipMouseEntered()
         location:NSZeroPoint
         modifierFlags:0
         timestamp:0
-        windowNumber:protectedWindow().get().windowNumber
+        windowNumber:protect(window()).get().windowNumber
         context:nil
         eventNumber:0
         trackingNumber:TRACKING_RECT_TAG
@@ -4187,7 +4246,7 @@ _WKRemoteObjectRegistry *WebViewImpl::remoteObjectRegistry()
     if (!m_remoteObjectRegistry) {
         m_remoteObjectRegistry = adoptNS([[_WKRemoteObjectRegistry alloc] _initWithWebPageProxy:m_page.get()]);
         Ref webRemoteObjectRegistry = [m_remoteObjectRegistry remoteObjectRegistry];
-        m_page->configuration().protectedProcessPool()->addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), m_page->identifier(), webRemoteObjectRegistry);
+        protect(m_page->configuration().processPool())->addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), m_page->identifier(), webRemoteObjectRegistry);
     }
 
     return m_remoteObjectRegistry.get();
@@ -4201,13 +4260,13 @@ void WebViewImpl::draggedImage(NSImage *, CGPoint endPoint, NSDragOperation oper
 
 void WebViewImpl::sendDragEndToPage(CGPoint endPoint, NSDragOperation dragOperationMask)
 {
-    NSPoint windowImageLoc = [protectedWindow() convertPointFromScreen:NSPointFromCGPoint(endPoint)];
+    NSPoint windowImageLoc = [protect(window()) convertPointFromScreen:NSPointFromCGPoint(endPoint)];
     NSPoint windowMouseLoc = windowImageLoc;
 
     // Prevent queued mouseDragged events from coming after the drag and fake mouseUp event.
     m_ignoresMouseDraggedEvents = true;
 
-    m_page->dragEnded(WebCore::IntPoint(windowMouseLoc), WebCore::IntPoint(WebCore::globalPoint(windowMouseLoc, protectedWindow().get())), coreDragOperationMask(dragOperationMask));
+    m_page->dragEnded(WebCore::IntPoint(windowMouseLoc), WebCore::IntPoint(WebCore::globalPoint(windowMouseLoc, protect(window()).get())), coreDragOperationMask(dragOperationMask));
 }
 
 static OptionSet<WebCore::DragApplicationFlags> applicationFlagsForDrag(NSView *view, id<NSDraggingInfo> draggingInfo)
@@ -4314,7 +4373,7 @@ static void performDragWithLegacyFiles(WebPageProxy& page, Box<Vector<String>>&&
     RefPtr networkProcess = page.websiteDataStore().networkProcessIfExists();
     if (!networkProcess)
         return;
-    networkProcess->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(page.protectedLegacyMainFrameProcess()->coreProcessIdentifier(), *fileNames), [page = Ref { page }, fileNames, dragData, pasteboardName]() mutable {
+    networkProcess->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(protect(page.legacyMainFrameProcess())->coreProcessIdentifier(), *fileNames), [page = protect(page), fileNames, dragData, pasteboardName]() mutable {
         SandboxExtension::Handle sandboxExtensionHandle;
         Vector<SandboxExtension::Handle> sandboxExtensionForUpload;
 
@@ -4372,7 +4431,7 @@ static bool handleLegacyFilesPasteboard(id<NSDraggingInfo> draggingInfo, Box<Web
     for (NSString *file in files.get())
         [originalFileURLs addObject:adoptNS([[NSURL alloc] initFileURLWithPath:file]).get()];
 
-    auto task = makeBlockPtr([protectedPage = Ref { page }, originalFileURLs, dragData, pasteboardName = pasteboardName.isolatedCopy()] mutable {
+    auto task = makeBlockPtr([protectedPage = protect(page), originalFileURLs, dragData, pasteboardName = pasteboardName.isolatedCopy()] mutable {
         ASSERT(!RunLoop::isMain());
 
         RetainPtr coordinator = adoptNS([[NSFileCoordinator alloc] initWithFilePresenter:nil]);
@@ -4500,7 +4559,7 @@ void WebViewImpl::draggingSessionEnded(NSDraggingSession *, NSPoint endPoint, NS
 
 void WebViewImpl::startWindowDrag()
 {
-    [protectedWindow() performWindowDragWithEvent:m_lastMouseDownEvent.get()];
+    [protect(window()) performWindowDragWithEvent:m_lastMouseDownEvent.get()];
 }
 
 void WebViewImpl::startDrag(const WebCore::DragItem& item, ShareableBitmap::Handle&& dragImageHandle)
@@ -4564,7 +4623,7 @@ void WebViewImpl::startDrag(const WebCore::DragItem& item, ShareableBitmap::Hand
                 [view beginDraggingSessionWithItems:@[draggingItem.get()] event:lastMouseDownEvent.get() source:(id<NSDraggingSource>)view.get()];
 
                 for (size_t index = 0; index < promisedAttachmentInfo.additionalTypesAndData.size(); ++index) {
-                    RetainPtr nsData = Ref { *promisedAttachmentInfo.additionalTypesAndData[index].second }->createNSData();
+                    RetainPtr nsData = protect(*promisedAttachmentInfo.additionalTypesAndData[index].second)->createNSData();
                     [pasteboard setData:nsData.get() forType:promisedAttachmentInfo.additionalTypesAndData[index].first.createNSString().get()];
                 }
                 page->didStartDrag();
@@ -4659,7 +4718,7 @@ void WebViewImpl::provideDataForPasteboard(NSPasteboard *pasteboard, NSString *t
         return;
 
     if ([type isEqual:promisedImage->uti().createNSString().get()] && promisedImage->data()) {
-        if (auto platformData = promisedImage->protectedData()->makeContiguous()->createNSData())
+        if (auto platformData = protect(promisedImage->data())->makeContiguous()->createNSData())
             [pasteboard setData:(__bridge NSData *)platformData.get() forType:type];
     }
 
@@ -4712,7 +4771,7 @@ NSArray *WebViewImpl::namesOfPromisedFilesDroppedAtDestination(NSURL *dropDestin
     RetainPtr<NSData> data;
 
     if (RefPtr promisedImage = m_promisedImage) {
-        data = promisedImage->protectedData()->makeContiguous()->createNSData();
+        data = protect(promisedImage->data())->makeContiguous()->createNSData();
         wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data.get()]);
     } else
         wrapper = adoptNS([[NSFileWrapper alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:m_promisedURL.createNSString().get()]).get() options:NSFileWrapperReadingImmediate error:nil]);
@@ -4933,7 +4992,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 void WebViewImpl::addTextAnimationForAnimationID(WTF::UUID uuid, const WebCore::TextAnimationData& data)
 {
-    if (!m_page->protectedPreferences()->textAnimationsEnabled())
+    if (!protect(m_page->preferences())->textAnimationsEnabled())
         return;
 
     if (!m_textAnimationTypeManager)
@@ -4944,7 +5003,7 @@ void WebViewImpl::addTextAnimationForAnimationID(WTF::UUID uuid, const WebCore::
 
 void WebViewImpl::removeTextAnimationForAnimationID(WTF::UUID uuid)
 {
-    if (!m_page->protectedPreferences()->textAnimationsEnabled())
+    if (!protect(m_page->preferences())->textAnimationsEnabled())
         return;
 
     [m_textAnimationTypeManager removeTextAnimationForAnimationID:uuid.createNSUUID().get()];
@@ -5030,7 +5089,7 @@ FloatRect WebViewImpl::windowRelativeBoundsForCustomSwipeViews() const
     if (!m_gestureController)
         return { };
 
-    return protectedGestureController()->windowRelativeBoundsForCustomSwipeViews();
+    return protect(gestureController())->windowRelativeBoundsForCustomSwipeViews();
 }
 
 FloatBoxExtent WebViewImpl::customSwipeViewsObscuredContentInsets() const
@@ -5039,11 +5098,6 @@ FloatBoxExtent WebViewImpl::customSwipeViewsObscuredContentInsets() const
         return { };
 
     return m_gestureController->customSwipeViewsObscuredContentInsets();
-}
-
-RefPtr<ViewGestureController> WebViewImpl::protectedGestureController() const
-{
-    return m_gestureController;
 }
 
 void WebViewImpl::setCustomSwipeViewsObscuredContentInsets(FloatBoxExtent&& insets)
@@ -6386,7 +6440,7 @@ void WebViewImpl::updateTouchBar()
             touchBar = [m_mediaTouchBarProvider respondsToSelector:@selector(touchBar)] ? [(id)m_mediaTouchBarProvider.get() touchBar] : [(id)m_mediaTouchBarProvider.get() touchBar];
     } else if ([m_mediaTouchBarProvider playbackControlsController]) {
         if (m_clientWantsMediaPlaybackControlsView) {
-            if ([m_view.get() respondsToSelector:@selector(_web_didRemoveMediaControlsManager)] && m_view.getAutoreleased() == protectedWindow().get().firstResponder)
+            if ([m_view.get() respondsToSelector:@selector(_web_didRemoveMediaControlsManager)] && m_view.getAutoreleased() == protect(window()).get().firstResponder)
                 [m_view.get() _web_didRemoveMediaControlsManager];
         }
         [m_mediaTouchBarProvider setPlaybackControlsController:nil];
@@ -6669,7 +6723,7 @@ void WebViewImpl::updateMediaPlaybackControlsManager()
 
     if (!m_playbackControlsManager) {
         m_playbackControlsManager = adoptNS([[WebPlaybackControlsManager alloc] init]);
-        [m_playbackControlsManager setAllowsPictureInPicturePlayback:m_page->protectedPreferences()->allowsPictureInPictureMediaPlayback()];
+        [m_playbackControlsManager setAllowsPictureInPicturePlayback:protect(m_page->preferences())->allowsPictureInPictureMediaPlayback()];
         [m_playbackControlsManager setCanTogglePictureInPicture:NO];
     }
 
@@ -6742,7 +6796,7 @@ void WebViewImpl::updateMediaTouchBar()
         return;
     }
 
-    if (m_playbackControlsManager && m_view.getAutoreleased() == protectedWindow().get().firstResponder && [m_view.get() respondsToSelector:@selector(_web_didAddMediaControlsManager:)])
+    if (m_playbackControlsManager && m_view.getAutoreleased() == protect(window()).get().firstResponder && [m_view.get() respondsToSelector:@selector(_web_didAddMediaControlsManager:)])
         [m_view.get() _web_didAddMediaControlsManager:m_mediaPlaybackControlsView.get()];
 #endif
 }
@@ -6970,7 +7024,7 @@ CocoaImageAnalyzer* WebViewImpl::ensureImageAnalyzer()
     if (!m_imageAnalyzer) {
         lazyInitialize(m_imageAnalyzerQueue, WorkQueue::create("WebKit image analyzer queue"_s));
         lazyInitialize(m_imageAnalyzer, createImageAnalyzer());
-        [m_imageAnalyzer setCallbackQueue:m_imageAnalyzerQueue->protectedDispatchQueue().get()];
+        [m_imageAnalyzer setCallbackQueue:protect(m_imageAnalyzerQueue->dispatchQueue()).get()];
     }
     return m_imageAnalyzer.get();
 }
@@ -7184,7 +7238,7 @@ void WebViewImpl::updatePrefersSolidColorHardPocket()
         if ([view _hasVisibleColorExtensionView:BoxSide::Top])
             return YES;
 
-        if (m_pageIsScrolledToTop)
+        if (pageIsScrolledToTop())
             return YES;
 
         if (view->_preferSolidColorHardPocketReasons)

@@ -232,6 +232,12 @@ void MediaPlayerPrivateMediaStreamAVFObjC::getSupportedTypes(HashSet<String>& ty
 
 MediaPlayer::SupportsType MediaPlayerPrivateMediaStreamAVFObjC::supportsType(const MediaEngineSupportParameters& parameters)
 {
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    // This engine does not support wireless playback.
+    if (parameters.playbackTargetType != MediaPlaybackTargetType::None)
+        return MediaPlayer::SupportsType::IsNotSupported;
+#endif
+
     return (parameters.isMediaStream && !parameters.requiresRemotePlayback) ? MediaPlayer::SupportsType::IsSupported : MediaPlayer::SupportsType::IsNotSupported;
 }
 

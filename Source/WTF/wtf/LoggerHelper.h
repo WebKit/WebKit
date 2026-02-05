@@ -36,7 +36,6 @@ public:
     virtual ~LoggerHelper() = default;
 
     virtual const Logger& logger() const = 0;
-    Ref<const Logger> protectedLogger() const { return logger(); }
     virtual ASCIILiteral logClassName() const = 0;
     virtual WTFLogChannel& logChannel() const = 0;
     virtual uint64_t logIdentifier() const = 0;
@@ -93,7 +92,9 @@ public:
 #if defined(__OBJC__)
 #define OBJC_LOGIDENTIFIER WTF::Logger::LogSiteIdentifier(__PRETTY_FUNCTION__, self.logIdentifier)
 #define OBJC_ALWAYS_LOG(...)     if (RefPtr<const Logger> logger = self.loggerPtr; logger && self.logChannel) logger->logAlways(*self.logChannel, __VA_ARGS__)
+#define OBJC_ALWAYS_LOG_WITH_SELF(selfPtr, ...)     if (RefPtr<const Logger> logger = selfPtr.get().loggerPtr; logger && selfPtr.get().logChannel) logger->logAlways(*selfPtr.get().logChannel, __VA_ARGS__)
 #define OBJC_ERROR_LOG(...)      if (RefPtr<const Logger> logger = self.loggerPtr; logger && self.logChannel) logger->error(*self.logChannel, __VA_ARGS__)
+#define OBJC_ERROR_LOG_WITH_SELF(selfPtr, ...)      if (RefPtr<const Logger> logger = selfPtr.get().loggerPtr; logger && selfPtr.get().logChannel) logger->error(*selfPtr.get().logChannel, __VA_ARGS__)
 #define OBJC_WARNING_LOG(...)    if (RefPtr<const Logger> logger = self.loggerPtr; logger && self.logChannel) logger->warning(*self.logChannel, __VA_ARGS__)
 #define OBJC_INFO_LOG(...)       if (RefPtr<const Logger> logger = self.loggerPtr; logger && self.logChannel) logger->info(*self.logChannel, __VA_ARGS__)
 #define OBJC_DEBUG_LOG(...)      if (RefPtr<const Logger> logger = self.loggerPtr; logger && self.logChannel) logger->debug(*self.logChannel, __VA_ARGS__)

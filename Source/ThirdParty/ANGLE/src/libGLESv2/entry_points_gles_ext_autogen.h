@@ -1366,6 +1366,8 @@ ANGLE_EXPORT void GL_APIENTRY GL_FramebufferFetchBarrierEXT();
 
 // GL_EXT_shader_texture_lod
 
+// GL_EXT_shader_texture_samples
+
 // GL_EXT_shadow_samplers
 
 // GL_EXT_tessellation_shader
@@ -1962,6 +1964,15 @@ ANGLE_EXPORT void GL_APIENTRY GL_FramebufferTextureMultiviewOVR(GLenum target,
                                                                 GLsizei numViews);
 
 // GL_OVR_multiview2
+
+// GL_OVR_multiview_multisampled_render_to_texture
+ANGLE_EXPORT void GL_APIENTRY GL_FramebufferTextureMultisampleMultiviewOVR(GLenum target,
+                                                                           GLenum attachment,
+                                                                           GLuint texture,
+                                                                           GLint level,
+                                                                           GLsizei samples,
+                                                                           GLint baseViewIndex,
+                                                                           GLsizei numViews);
 
 // GL_QCOM_framebuffer_foveated
 ANGLE_EXPORT void GL_APIENTRY GL_FramebufferFoveationConfigQCOM(GLuint framebuffer,

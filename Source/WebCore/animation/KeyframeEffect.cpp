@@ -767,46 +767,47 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
     return { };
 }
 
-ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalGlobalObject, Document& document, Element* target, Strong<JSObject>&& keyframes, std::optional<Variant<double, KeyframeEffectOptions>>&& options)
+ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalGlobalObject, Document& document, Element* target, Strong<JSObject>&& keyframes, Variant<double, KeyframeEffectOptions>&& options)
 {
     auto keyframeEffect = adoptRef(*new KeyframeEffect(target, { }));
     keyframeEffect->m_document = document;
 
-    if (options) {
-        OptionalEffectTiming timing;
-        auto optionsValue = options.value();
-        if (std::holds_alternative<double>(optionsValue)) {
-            Variant<double, String> duration = std::get<double>(optionsValue);
+    auto timing = WTF::switchOn(WTF::move(options),
+        [&](double duration) -> ExceptionOr<OptionalEffectTiming> {
+            OptionalEffectTiming timing;
             timing.duration = duration;
-        } else {
-            auto keyframeEffectOptions = std::get<KeyframeEffectOptions>(optionsValue);
-
-            auto setPseudoElementResult = keyframeEffect->setPseudoElement(keyframeEffectOptions.pseudoElement);
+            return timing;
+        },
+        [&](KeyframeEffectOptions&& options) -> ExceptionOr<OptionalEffectTiming> {
+            auto setPseudoElementResult = keyframeEffect->setPseudoElement(WTF::move(options.pseudoElement));
             if (setPseudoElementResult.hasException())
                 return setPseudoElementResult.releaseException();
 
-            auto convertedDuration = keyframeEffectOptions.durationAsDoubleOrString();
+            auto convertedDuration = options.durationAsDoubleOrString();
             if (!convertedDuration)
                 return Exception { ExceptionCode::TypeError };
 
-            timing = {
-                *convertedDuration,
-                keyframeEffectOptions.iterations,
-                keyframeEffectOptions.delay,
-                keyframeEffectOptions.endDelay,
-                keyframeEffectOptions.iterationStart,
-                keyframeEffectOptions.easing,
-                keyframeEffectOptions.fill,
-                keyframeEffectOptions.direction
-            };
+            keyframeEffect->setComposite(options.composite);
+            keyframeEffect->setIterationComposite(options.iterationComposite);
 
-            keyframeEffect->setComposite(keyframeEffectOptions.composite);
-            keyframeEffect->setIterationComposite(keyframeEffectOptions.iterationComposite);
+            return OptionalEffectTiming {
+                options.delay,
+                options.endDelay,
+                options.fill,
+                options.iterationStart,
+                options.iterations,
+                *convertedDuration,
+                options.direction,
+                options.easing
+            };
         }
-        auto updateTimingResult = keyframeEffect->updateTiming(document, timing);
-        if (updateTimingResult.hasException())
-            return updateTimingResult.releaseException();
-    }
+    );
+    if (timing.hasException())
+        return timing.releaseException();
+
+    auto updateTimingResult = keyframeEffect->updateTiming(document, timing.releaseReturnValue());
+    if (updateTimingResult.hasException())
+        return updateTimingResult.releaseException();
 
     auto processKeyframesResult = keyframeEffect->processKeyframes(lexicalGlobalObject, document, WTF::move(keyframes));
     if (processKeyframesResult.hasException())
@@ -1303,8 +1304,7 @@ bool KeyframeEffect::forceLayoutIfNeeded()
     if (!m_needsForcedLayout || !m_target)
         return false;
 
-    CheckedPtr renderer = this->renderer();
-    if (!renderer || !renderer->parent())
+    if (CheckedPtr renderer = this->renderer(); !renderer || !renderer->parent())
         return false;
 
     ASSERT(document());
@@ -1521,10 +1521,6 @@ void KeyframeEffect::updateEffectStackMembership()
     auto target = targetStyleable();
     if (!target)
         return;
-
-#if ENABLE(THREADED_ANIMATIONS)
-    StackMembershipMutationScope stackMembershipMutationScope(*this);
-#endif
 
     bool isRelevant = animation() && animation()->isRelevant();
     if (isRelevant && !m_inTargetEffectStack)
@@ -1926,7 +1922,7 @@ const TimingFunction* KeyframeEffect::timingFunctionForKeyframeAtIndex(size_t in
 
 bool KeyframeEffect::canBeAccelerated() const
 {
-    if (!animation() || !animation()->timeline())
+    if (!animation() || !animation()->timeline() || animation()->isSkippedContentAnimation())
         return false;
 
     if (m_acceleratedPropertiesState == AcceleratedProperties::None)
@@ -1942,6 +1938,9 @@ bool KeyframeEffect::canBeAccelerated() const
         return false;
 
     if (m_blendingKeyframes.hasDiscreteTransformInterval())
+        return false;
+
+    if (!m_needsComputedKeyframeOffsetsUpdate && m_blendingKeyframes.hasKeyframeWithUnresolvedComputedOffset())
         return false;
 
     if (RefPtr document = this->document()) {
@@ -2291,6 +2290,11 @@ void KeyframeEffect::animationSuspensionStateDidChange(bool animationIsSuspended
 {
 #if ENABLE(THREADED_ANIMATIONS)
     if (canHaveAcceleratedRepresentation()) {
+        // Ensure we mark the target as dirty since suspension will affect the accelerated state
+        // and, as a result, the computed style, which may not have accounted for accelerated
+        // effects previously, may now need to.
+        invalidate();
+
         scheduleAssociatedAcceleratedEffectStackUpdate();
         return;
     }
@@ -3052,8 +3056,15 @@ static bool acceleratedPropertyDidChange(AnimatableCSSProperty property, const R
 void KeyframeEffect::lastStyleChangeEventStyleDidChange(const RenderStyle* previousStyle, const RenderStyle* currentStyle)
 {
 #if ENABLE(THREADED_ANIMATIONS)
+    auto wasRunningAccelerated = isRunningAccelerated();
+#endif
+
+    if (currentStyle)
+        computeHasReferenceFilter();
+
+#if ENABLE(THREADED_ANIMATIONS)
     if (canHaveAcceleratedRepresentation()) {
-        if (!isRunningAccelerated())
+        if (!wasRunningAccelerated)
             return;
 
         if ((previousStyle && !currentStyle) || (!previousStyle && currentStyle)) {

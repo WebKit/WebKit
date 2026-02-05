@@ -76,11 +76,12 @@ private:
     // ScrollingEffectsControllerClient.
     bool allowsHorizontalStretching(const PlatformWheelEvent&) const final;
     bool allowsVerticalStretching(const PlatformWheelEvent&) const final;
+    bool isScrollDeltaOpposingStretch(ScrollEventAxis, float) const final;
     IntSize stretchAmount() const final;
     bool isPinnedOnSide(BoxSide) const final;
     RectEdges<bool> edgePinnedState() const final;
 
-    bool shouldRubberBandOnSide(BoxSide) const final;
+    bool shouldRubberBandOnSide(BoxSide, FloatSize) const final;
     void didStopRubberBandAnimation() final;
     void rubberBandingStateChanged(bool) final;
     bool scrollPositionIsNotRubberbandingEdge(const FloatPoint&) const;

@@ -256,6 +256,7 @@ private:
         OP2_UNPCKLPD_VpdWpd             = 0x14,
         OP2_UNPCKHPD_VpdWpd             = 0x15,
         OP2_MOVSHDUP_VqWq               = 0x16,
+        OP2_MOVLHPS_VqUq                = 0x16,
         OP2_MOVAPD_VpdWpd               = 0x28,
         OP2_MOVAPS_VpsWps               = 0x28,
         OP2_MOVAPS_WpsVps               = 0x29,
@@ -425,6 +426,7 @@ private:
         OP3_PEXTRQ_EyVdqIb      = 0x16,
         OP3_EXTRACTPS_EdVdqIb   = 0x17,
         OP3_VBROADCASTSS_VxWd   = 0x18,
+        OP3_VBROADCASTSD_VxWd   = 0x19,
         OP3_PABSB_VdqWdq        = 0x1C,
         OP3_PABSW_VdqWdq        = 0x1D,
         OP3_PABSD_VdqWdq        = 0x1E,
@@ -441,6 +443,10 @@ private:
         OP3_VPMOVZXWD_VxUx      = 0x33,
         OP3_VPMOVZXDQ_VxUx      = 0x35,
         OP3_BLENDVPD_VpdWpdXMM0 = 0x4B,
+        OP3_VPBROADCASTD_VxUx   = 0x58,
+        OP3_VPBROADCASTQ_VxUx   = 0x59,
+        OP3_VPBROADCASTB_VxUx   = 0x78,
+        OP3_VPBROADCASTW_VxUx   = 0x79,
         OP3_LFENCE              = 0xE8,
         OP3_MFENCE              = 0xF0,
         OP3_SFENCE              = 0xF8,
@@ -2514,6 +2520,22 @@ public:
         m_formatter.immediate8((uint8_t)controlBits);
     }
 
+    void punpcklbw_rr(XMMRegisterID vn, XMMRegisterID vd)
+    {
+        // https://www.felixcloutier.com/x86/punpcklbw:punpcklwd:punpckldq:punpcklqdq
+        // 66 0F 60 /r PUNPCKLBW xmm1, xmm2/m128
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_PUNPCKLBW_VdqWdq, (RegisterID)vd, (RegisterID)vn);
+    }
+
+    void punpcklwd_rr(XMMRegisterID vn, XMMRegisterID vd)
+    {
+        // https://www.felixcloutier.com/x86/punpcklbw:punpcklwd:punpckldq:punpcklqdq
+        // 66 0F 61 /r PUNPCKLWD xmm1, xmm2/m128
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_PUNPCKLWD_VdqWdq, (RegisterID)vd, (RegisterID)vn);
+    }
+
     void punpcklqdq_rr(XMMRegisterID vn, XMMRegisterID vd)
     {
         // https://www.felixcloutier.com/x86/punpcklbw:punpcklwd:punpckldq:punpcklqdq
@@ -2745,6 +2767,22 @@ public:
         // 66 0F EF /r PXOR xmm1, xmm2/m128
         m_formatter.prefix(PRE_SSE_66);
         m_formatter.twoByteOp(OP2_PXOR_VdqWdq, (RegisterID)vd, (RegisterID)vn);
+    }
+
+    void pcmpeqd_rr(XMMRegisterID vn, XMMRegisterID vd)
+    {
+        // https://www.felixcloutier.com/x86/pcmpeqb:pcmpeqw:pcmpeqd
+        // 66 0F 76 /r PCMPEQD xmm1, xmm2/m128
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_PCMPEQD_VdqWdq, (RegisterID)vd, (RegisterID)vn);
+    }
+
+    void pcmpeqq_rr(XMMRegisterID vn, XMMRegisterID vd)
+    {
+        // https://www.felixcloutier.com/x86/pcmpeqq
+        // 66 0F 38 29 /r PCMPEQQ xmm1, xmm2/m128 | SSE4.1
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.threeByteOp(OP2_3BYTE_ESCAPE_38, OP3_PCMPEQQ_VdqWdq, (RegisterID)vd, (RegisterID)vn);
     }
 
     void pblendw_i8rr(uint8_t imm8, XMMRegisterID vn, XMMRegisterID vd)
@@ -3701,6 +3739,11 @@ public:
         m_formatter.twoByteOp(OP2_MOVHLPS_VqUq, (RegisterID)dst, (RegisterID)src);
     }
 
+    void movlhps_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        m_formatter.twoByteOp(OP2_MOVLHPS_VqUq, (RegisterID)dst, (RegisterID)src);
+    }
+
     void movsd_rr(XMMRegisterID src, XMMRegisterID dst)
     {
         m_formatter.prefix(PRE_SSE_F2);
@@ -4352,6 +4395,46 @@ public:
         // VEX.128.66.0F38.W0 18 /r VBROADCASTSS xmm1, m32
         // A    NA    ModRM:reg (w)    ModRM:r/m (r)    NA    NA
         m_formatter.vexNdsLigWigThreeByteOp(PRE_SSE_66, VexImpliedBytes::ThreeBytesOp38, OP3_VBROADCASTSS_VxWd, (RegisterID)dst, (RegisterID)0, base, offset);
+    }
+
+    void vbroadcastss_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        // https://www.felixcloutier.com/x86/vbroadcast
+        // VEX.128.66.0F38.W0 18 /r VBROADCASTSS xmm1, xmm2
+        // A    NA    ModRM:reg (w)    ModRM:r/m (r)    NA    NA
+        m_formatter.vexNdsLigWigThreeByteOp(PRE_SSE_66, VexImpliedBytes::ThreeBytesOp38, OP3_VBROADCASTSS_VxWd, (RegisterID)dst, (RegisterID)0, (RegisterID)src);
+    }
+
+    void vpbroadcastb_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        // https://www.felixcloutier.com/x86/vpbroadcastb:vpbroadcastw:vpbroadcastd:vpbroadcastq
+        // VEX.128.66.0F38.W0 78 /r VPBROADCASTB xmm1, xmm2/m8 | AVX2
+        // A    NA    ModRM:reg (w)    ModRM:r/m (r)    NA    NA
+        m_formatter.vexNdsLigWigThreeByteOp(PRE_SSE_66, VexImpliedBytes::ThreeBytesOp38, OP3_VPBROADCASTB_VxUx, (RegisterID)dst, (RegisterID)0, (RegisterID)src);
+    }
+
+    void vpbroadcastw_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        // https://www.felixcloutier.com/x86/vpbroadcastb:vpbroadcastw:vpbroadcastd:vpbroadcastq
+        // VEX.128.66.0F38.W0 79 /r VPBROADCASTW xmm1, xmm2/m16 | AVX2
+        // A    NA    ModRM:reg (w)    ModRM:r/m (r)    NA    NA
+        m_formatter.vexNdsLigWigThreeByteOp(PRE_SSE_66, VexImpliedBytes::ThreeBytesOp38, OP3_VPBROADCASTW_VxUx, (RegisterID)dst, (RegisterID)0, (RegisterID)src);
+    }
+
+    void vpbroadcastd_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        // https://www.felixcloutier.com/x86/vpbroadcastb:vpbroadcastw:vpbroadcastd:vpbroadcastq
+        // VEX.128.66.0F38.W0 58 /r VPBROADCASTD xmm1, xmm2/m32 | AVX2
+        // A    NA    ModRM:reg (w)    ModRM:r/m (r)    NA    NA
+        m_formatter.vexNdsLigWigThreeByteOp(PRE_SSE_66, VexImpliedBytes::ThreeBytesOp38, OP3_VPBROADCASTD_VxUx, (RegisterID)dst, (RegisterID)0, (RegisterID)src);
+    }
+
+    void vpbroadcastq_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        // https://www.felixcloutier.com/x86/vpbroadcastb:vpbroadcastw:vpbroadcastd:vpbroadcastq
+        // VEX.128.66.0F38.W0 59 /r VPBROADCASTQ xmm1, xmm2/m64 | AVX2
+        // A    NA    ModRM:reg (w)    ModRM:r/m (r)    NA    NA
+        m_formatter.vexNdsLigWigThreeByteOp(PRE_SSE_66, VexImpliedBytes::ThreeBytesOp38, OP3_VPBROADCASTQ_VxUx, (RegisterID)dst, (RegisterID)0, (RegisterID)src);
     }
 
     void vpunpcklbw_rrr(XMMRegisterID xmm3, XMMRegisterID xmm2, XMMRegisterID xmm1)

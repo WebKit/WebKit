@@ -29,7 +29,6 @@
     Conditional=WEB_RTC,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCEncodedAudioFrameMetadata {
     unsigned long synchronizationSource;
     octet payloadType;
@@ -45,7 +44,6 @@
 
 [
     Conditional=WEB_RTC,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCEncodedAudioFrameOptions {
     RTCEncodedAudioFrameMetadata metadata;
 };

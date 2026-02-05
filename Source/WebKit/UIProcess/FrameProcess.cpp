@@ -61,8 +61,15 @@ FrameProcess::FrameProcess(WebProcessProxy& process, BrowsingContextGroup& group
 
 FrameProcess::~FrameProcess()
 {
+    ASSERT(!m_frameCount);
+
     if (RefPtr group = m_browsingContextGroup.get())
         group->removeFrameProcess(*this);
+}
+
+BrowsingContextGroup* FrameProcess::browsingContextGroup() const
+{
+    return m_browsingContextGroup.get();
 }
 
 }

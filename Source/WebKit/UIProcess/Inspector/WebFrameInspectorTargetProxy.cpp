@@ -66,12 +66,12 @@ WebFrameInspectorTargetProxy::~WebFrameInspectorTargetProxy() = default;
 void WebFrameInspectorTargetProxy::connect(Inspector::FrontendChannel::ConnectionType connectionType)
 {
     if (RefPtr provisionalFrame = m_provisionalFrame.get()) {
-        provisionalFrame->protectedProcess()->send(Messages::WebFrame::ConnectInspector(connectionType), provisionalFrame->protectedFrame()->frameID());
+        protect(provisionalFrame->process())->send(Messages::WebFrame::ConnectInspector(connectionType), protect(provisionalFrame->frame())->frameID());
         return;
     }
 
     Ref frame = m_frame.get();
-    frame->protectedProcess()->send(Messages::WebFrame::ConnectInspector(connectionType), frame->frameID());
+    protect(frame->process())->send(Messages::WebFrame::ConnectInspector(connectionType), frame->frameID());
 }
 
 void WebFrameInspectorTargetProxy::disconnect()
@@ -80,23 +80,23 @@ void WebFrameInspectorTargetProxy::disconnect()
         resume();
 
     if (RefPtr provisionalFrame = m_provisionalFrame.get()) {
-        provisionalFrame->protectedProcess()->send(Messages::WebFrame::DisconnectInspector(), provisionalFrame->protectedFrame()->frameID());
+        protect(provisionalFrame->process())->send(Messages::WebFrame::DisconnectInspector(), protect(provisionalFrame->frame())->frameID());
         return;
     }
 
     Ref frame = m_frame.get();
-    frame->protectedProcess()->send(Messages::WebFrame::DisconnectInspector(), frame->frameID());
+    protect(frame->process())->send(Messages::WebFrame::DisconnectInspector(), frame->frameID());
 }
 
 void WebFrameInspectorTargetProxy::sendMessageToTargetBackend(const String& message)
 {
     if (RefPtr provisionalFrame = m_provisionalFrame.get()) {
-        provisionalFrame->protectedProcess()->send(Messages::WebFrame::SendMessageToInspectorTarget(message), provisionalFrame->protectedFrame()->frameID());
+        protect(provisionalFrame->process())->send(Messages::WebFrame::SendMessageToInspectorTarget(message), protect(provisionalFrame->frame())->frameID());
         return;
     }
 
     Ref frame = m_frame.get();
-    frame->protectedProcess()->send(Messages::WebFrame::SendMessageToInspectorTarget(message), frame->frameID());
+    protect(frame->process())->send(Messages::WebFrame::SendMessageToInspectorTarget(message), frame->frameID());
 }
 
 void WebFrameInspectorTargetProxy::didCommitProvisionalTarget()

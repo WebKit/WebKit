@@ -709,13 +709,13 @@ void HTMLConstructionSite::insertTextNode(const String& characters)
     if (task.nextChild)
         previousChild = task.nextChild->previousSibling();
     else {
-        if (auto templateParent = dynamicDowncast<HTMLTemplateElement>(task.parent.get()); templateParent) [[unlikely]] {
-            auto parentNode = templateParent->contentIfAvailable();
+        if (RefPtr templateParent = dynamicDowncast<HTMLTemplateElement>(task.parent.get()); templateParent) [[unlikely]] {
+            RefPtr parentNode = templateParent->contentIfAvailable();
             previousChild = parentNode ? parentNode->lastChild() : nullptr;
         } else
             previousChild = task.parent->lastChild();
     }
-    if (auto* previousTextChild = dynamicDowncast<Text>(previousChild.get()); previousTextChild && previousTextChild->length() < lengthLimit) {
+    if (RefPtr previousTextChild = dynamicDowncast<Text>(previousChild.get()); previousTextChild && previousTextChild->length() < lengthLimit) {
         // FIXME: We're only supposed to append to this text node if it was the last text node inserted by the parser.
         unsigned proposedBreakIndex = std::min(characters.length(), lengthLimit - previousTextChild->length());
         if (unsigned breakIndex = findBreakIndex(characters, 0, proposedBreakIndex)) {
@@ -797,14 +797,14 @@ Ref<Element> HTMLConstructionSite::createElement(AtomHTMLToken& token, const Ato
 
 inline TreeScope& HTMLConstructionSite::treeScopeForCurrentNode()
 {
-    if (auto* templateElement = dynamicDowncast<HTMLTemplateElement>(currentNode()))
+    if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(currentNode()))
         return templateElement->fragmentForInsertion().treeScope();
     return currentNode().treeScope();
 }
 
 inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
 {
-    if (auto* templateElement = dynamicDowncast<HTMLTemplateElement>(currentNode()))
+    if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(currentNode()))
         return templateElement->fragmentForInsertion().document();
     return currentNode().document();
 }
@@ -812,8 +812,8 @@ inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
 static CustomElementRegistry* registryForCurrentNode(Node& currentNode, TreeScope& treeScope)
 {
     if (auto* templateElement = dynamicDowncast<HTMLTemplateElement>(currentNode)) {
-        auto& templateFragmentTreeScope = templateElement->fragmentForInsertion().treeScope();
-        if (templateFragmentTreeScope.rootNode().usesNullCustomElementRegistry())
+        Ref templateFragmentTreeScope = templateElement->fragmentForInsertion().treeScope();
+        if (templateFragmentTreeScope->rootNode().usesNullCustomElementRegistry())
             return nullptr;
     }
     return CustomElementRegistry::registryForNodeOrTreeScope(currentNode, treeScope);
@@ -831,7 +831,7 @@ std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomE
     RefPtr element = HTMLElementFactory::createKnownElement(token.tagName(), ownerDocument, insideTemplateElement ? nullptr : form(), true);
     RefPtr<CustomElementRegistry> registry = m_openElements.stackDepth() > 1 ? RefPtr { registryForCurrentNode(currentNode(), treeScope) } : m_registry;
     if (!element) [[unlikely]] {
-        auto* elementInterface = registry ? registry->findInterface(token.name()) : nullptr;
+        RefPtr elementInterface = registry ? registry->findInterface(token.name()) : nullptr;
         if (elementInterface) [[unlikely]] {
             bool shouldUseNullCustomElementRegistry = false;
             for (auto& attribute : token.attributes()) {
@@ -869,9 +869,9 @@ std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomE
     // loading is working. When this hack is removed, the assertion just before
     // the setPictureElement() call in HTMLImageElement::insertedIntoAncestor
     // can be simplified.
-    if (auto* currentPictureElement = dynamicDowncast<HTMLPictureElement>(currentNode())) {
+    if (RefPtr currentPictureElement = dynamicDowncast<HTMLPictureElement>(currentNode())) {
         if (auto* imageElement = dynamicDowncast<HTMLImageElement>(*element))
-            imageElement->setPictureElement(currentPictureElement);
+            imageElement->setPictureElement(currentPictureElement.get());
     }
 
     setAttributes(*element, token, m_parserContentPolicy);
@@ -968,7 +968,7 @@ void HTMLConstructionSite::findFosterSite(HTMLConstructionSiteTask& task)
         return;
     }
 
-    if (auto* parent = lastTable->element().parentNode()) {
+    if (RefPtr parent = lastTable->element().parentNode()) {
         task.parent = parent;
         task.nextChild = lastTable->element();
         return;

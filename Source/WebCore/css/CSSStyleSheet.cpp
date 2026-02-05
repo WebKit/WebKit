@@ -126,7 +126,7 @@ CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, CSSImportRule* 
     , m_isOriginClean(isOriginClean)
     , m_ownerRule(ownerRule)
 {
-    if (auto* parent = parentStyleSheet())
+    if (RefPtr parent = parentStyleSheet())
         m_styleScope = parent->styleScope();
 
     m_contents->registerClient(this);
@@ -236,7 +236,7 @@ void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, ContentsCloned
     forEachStyleScope([&](Style::Scope& scope) {
         if ((mutationType == RuleInsertion || mutationType == RuleReplace) && contentsClonedForMutation == ContentsClonedForMutation::No && !scope.activeStyleSheetsContains(*this)) {
             if (insertedKeyframesRule) {
-                if (auto* resolver = scope.resolverIfExists())
+                if (RefPtr resolver = scope.resolverIfExists())
                     resolver->addKeyframeStyle(*insertedKeyframesRule);
                 return;
             }
@@ -245,7 +245,7 @@ void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, ContentsCloned
         }
 
         if (mutationType == KeyframesRuleMutation) {
-            if (auto* ownerDocument = this->ownerDocument())
+            if (RefPtr ownerDocument = this->ownerDocument())
                 ownerDocument->keyframesRuleDidChange(modifiedKeyframesRuleName);
         }
 
@@ -266,11 +266,11 @@ void CSSStyleSheet::didMutate()
 
 void CSSStyleSheet::forEachStyleScope(NOESCAPE const Function<void(Style::Scope&)>& apply)
 {
-    if (auto* scope = styleScope()) {
+    if (CheckedPtr scope = styleScope()) {
         apply(*scope);
         return;
     }
-    for (auto& treeScope : m_adoptingTreeScopes)
+    for (Ref treeScope : m_adoptingTreeScopes)
         apply(styleScopeFor(treeScope));
 }
 
@@ -339,11 +339,11 @@ bool CSSStyleSheet::canAccessRules() const
     if (baseURL.isEmpty())
         return true;
 
-    Document* document = ownerDocument();
+    RefPtr document = ownerDocument();
     if (!document)
         return false;
 
-    return document->protectedSecurityOrigin()->canRequest(baseURL, OriginAccessPatternsForWebProcess::singleton());
+    return protect(document->securityOrigin())->canRequest(baseURL, OriginAccessPatternsForWebProcess::singleton());
 }
 
 ExceptionOr<unsigned> CSSStyleSheet::insertRule(const String& ruleString, unsigned index)
@@ -512,7 +512,7 @@ String CSSStyleSheet::cssText(const CSS::SerializationContext& context)
 
     StringBuilder result;
     for (unsigned index = 0; index < ruleList->length(); ++index) {
-        auto rule = ruleList->item(index);
+        RefPtr rule = ruleList->item(index);
         if (!rule)
             continue;
 

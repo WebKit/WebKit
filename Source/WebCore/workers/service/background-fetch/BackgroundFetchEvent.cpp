@@ -34,7 +34,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(BackgroundFetchEvent);
 
 Ref<BackgroundFetchEvent> BackgroundFetchEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
 {
-    Ref registration = init.registration.releaseNonNull();
+    Ref registration = WTF::move(init.registration);
     return adoptRef(*new BackgroundFetchEvent(EventInterfaceType::BackgroundFetchEvent, type, WTF::move(init), WTF::move(registration), isTrusted));
 }
 

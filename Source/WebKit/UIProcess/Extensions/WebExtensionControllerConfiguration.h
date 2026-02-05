@@ -71,7 +71,6 @@ public:
 #endif
 
     WebsiteDataStore& defaultWebsiteDataStore() const;
-    Ref<WebsiteDataStore> protectedDefaultWebsiteDataStore() const { return defaultWebsiteDataStore(); }
     void setDefaultWebsiteDataStore(WebsiteDataStore* dataStore) { m_defaultWebsiteDataStore = dataStore; }
 
     bool operator==(const WebExtensionControllerConfiguration&) const;

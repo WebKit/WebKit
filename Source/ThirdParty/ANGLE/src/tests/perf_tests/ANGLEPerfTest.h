@@ -138,6 +138,8 @@ class ANGLEPerfTest : public testing::Test, angle::NonCopyable
     std::string mStory;
     Timer mTrialTimer;
     uint64_t mGPUTimeNs;
+    double mFrameWallTimeSec;
+    double mBusyWaitCpuTimeSec;
     bool mSkipTest;
     std::string mSkipTestReason;
     std::unique_ptr<perf_test::PerfResultReporter> mReporter;
@@ -222,7 +224,7 @@ class ANGLERenderTest : public ANGLEPerfTest
     void setRobustResourceInit(bool enabled);
 
     void startGpuTimer();
-    void stopGpuTimer();
+    void stopGpuTimer(bool mayNeedFlush = true);
 
     void beginInternalTraceEvent(const char *name);
     void endInternalTraceEvent(const char *name);
@@ -267,6 +269,13 @@ class ANGLERenderTest : public ANGLEPerfTest
     ConfigParameters mConfigParams;
     bool mSwapEnabled;
 
+    enum class EndQueryFlushPolicy
+    {
+        NoFlush,
+        Flush,
+        FenceSync
+    };
+
     struct TimestampSample
     {
         GLuint beginQuery;
@@ -275,6 +284,7 @@ class ANGLERenderTest : public ANGLEPerfTest
 
     GLuint mCurrentTimestampBeginQuery = 0;
     std::queue<TimestampSample> mTimestampQueries;
+    EndQueryFlushPolicy mEndQueryFlushPolicy = EndQueryFlushPolicy::NoFlush;
 
     // Trace event record that can be output.
     std::vector<TraceEvent> mTraceEventBuffer;

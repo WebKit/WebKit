@@ -373,7 +373,7 @@ void InsertListCommand::unlistifyParagraph(const VisiblePosition& originalStart,
 
 static RefPtr<HTMLElement> adjacentEnclosingList(const VisiblePosition& pos, const VisiblePosition& adjacentPos, const HTMLQualifiedName& listTag)
 {
-    RefPtr listNode = outermostEnclosingList(adjacentPos.deepEquivalent().protectedDeprecatedNode().get());
+    RefPtr listNode = outermostEnclosingList(protect(adjacentPos.deepEquivalent().deprecatedNode()).get());
 
     if (!listNode)
         return nullptr;
@@ -384,7 +384,7 @@ static RefPtr<HTMLElement> adjacentEnclosingList(const VisiblePosition& pos, con
     if (!listNode->hasTagName(listTag)
         || listNode->contains(pos.deepEquivalent().deprecatedNode())
         || previousCell != currentCell
-        || enclosingList(listNode.get()) != enclosingList(pos.deepEquivalent().protectedDeprecatedNode().get()))
+        || enclosingList(listNode.get()) != enclosingList(protect(pos.deepEquivalent().deprecatedNode()).get()))
         return nullptr;
 
     return listNode;

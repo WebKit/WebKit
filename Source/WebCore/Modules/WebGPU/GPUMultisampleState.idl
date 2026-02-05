@@ -31,7 +31,6 @@ typedef [EnforceRange] unsigned long GPUSampleMask;
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUMultisampleState {
     GPUSize32 count = 1;
     GPUSampleMask mask = 0xFFFFFFFF;

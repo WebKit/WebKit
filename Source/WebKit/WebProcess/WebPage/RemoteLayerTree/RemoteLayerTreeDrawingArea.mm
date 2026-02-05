@@ -248,7 +248,7 @@ void RemoteLayerTreeDrawingArea::updateRenderingWithForcedRepaint()
     if (m_isRenderingSuspended)
         return;
 
-    protectedWebPage()->protectedCorePage()->forceRepaintAllFrames();
+    protect(protectedWebPage()->corePage())->forceRepaintAllFrames();
     updateRendering();
 }
 
@@ -385,7 +385,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
         RemoteScrollingCoordinatorTransaction scrollingTransaction;
 #if ENABLE(ASYNC_SCROLLING)
         if (webPage->scrollingCoordinator())
-            scrollingTransaction = downcast<RemoteScrollingCoordinator>(*webPage->protectedScrollingCoordinator()).buildTransaction(rootLayer.frameID);
+            scrollingTransaction = downcast<RemoteScrollingCoordinator>(*protect(webPage->scrollingCoordinator())).buildTransaction(rootLayer.frameID);
         scrollingTransaction.setFrameIdentifier(rootLayer.frameID);
 #endif
 
@@ -395,7 +395,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     for (auto& transaction : transactions)
         backingStoreCollection->willCommitLayerTree(CheckedRef { transaction.first });
 
-    RemoteLayerTreeCommitBundle bundle { WTF::move(transactions), { WTF::move(m_pendingCallbackIDs), webPage->protectedCorePage()->renderTreeSize() }, std::nullopt, transactionID };
+    RemoteLayerTreeCommitBundle bundle { WTF::move(transactions), { WTF::move(m_pendingCallbackIDs), protect(webPage->corePage())->renderTreeSize() }, std::nullopt, transactionID };
 
     if (webPage->localMainFrame()) {
         bundle.mainFrameData = MainFrameData { };

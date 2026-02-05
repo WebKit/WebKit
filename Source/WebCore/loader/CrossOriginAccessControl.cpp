@@ -178,14 +178,14 @@ CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&& requ
         options.storedCredentialsPolicy = StoredCredentialsPolicy::Use;
         break;
     case FetchOptions::Credentials::SameOrigin:
-        options.storedCredentialsPolicy = document.protectedSecurityOrigin()->canRequest(request.url(), OriginAccessPatternsForWebProcess::singleton()) ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
+        options.storedCredentialsPolicy = protect(document.securityOrigin())->canRequest(request.url(), OriginAccessPatternsForWebProcess::singleton()) ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
         break;
     case FetchOptions::Credentials::Omit:
         options.storedCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
     }
 
     CachedResourceRequest cachedRequest { WTF::move(request), WTF::move(options) };
-    updateRequestForAccessControl(cachedRequest.resourceRequest(), document.protectedSecurityOrigin().get(), options.storedCredentialsPolicy);
+    updateRequestForAccessControl(cachedRequest.resourceRequest(), protect(document.securityOrigin()).get(), options.storedCredentialsPolicy);
     return cachedRequest;
 }
 

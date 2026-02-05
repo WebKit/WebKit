@@ -87,5 +87,3 @@ shouldBe(objectResult[1], obj2);
 // Edge case: deeply nested with undefined should flatten one level
 var deeplyNested = [[[[[[1]]]]]];
 shouldBeArray(deeplyNested.flat(undefined), [[[[[1]]]]]);
-
-print("PASSED");

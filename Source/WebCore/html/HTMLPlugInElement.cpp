@@ -85,8 +85,8 @@
 #include "UserGestureIndicator.h"
 #include "VoidCallback.h"
 #include "Widget.h"
-#include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
+#include <JavaScriptCore/TopExceptionScope.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
@@ -117,7 +117,7 @@ HTMLPlugInElement::~HTMLPlugInElement()
     ASSERT(!m_pendingPDFTestCallback);
 
     if (m_needsDocumentActivationCallbacks)
-        protectedDocument()->unregisterForDocumentSuspensionCallbacks(*this);
+        protect(document())->unregisterForDocumentSuspensionCallbacks(*this);
 }
 
 bool HTMLPlugInElement::willRespondToMouseClickEventsWithEditability(Editability) const
@@ -314,7 +314,7 @@ RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(RenderStyle&& 
     // inactive or reactivates so it can clear the renderer before going into the back/forward cache.
     if (!m_needsDocumentActivationCallbacks) {
         m_needsDocumentActivationCallbacks = true;
-        protectedDocument()->registerForDocumentSuspensionCallbacks(*this);
+        protect(document())->registerForDocumentSuspensionCallbacks(*this);
     }
 
     if (useFallbackContent())
@@ -537,7 +537,7 @@ RenderEmbeddedObject* HTMLPlugInElement::renderEmbeddedObject() const
 
 bool HTMLPlugInElement::canLoadURL(const String& relativeURL) const
 {
-    return canLoadURL(protectedDocument()->completeURL(relativeURL));
+    return canLoadURL(protect(document())->completeURL(relativeURL));
 }
 
 bool HTMLPlugInElement::canLoadURL(const URL& completeURL) const
@@ -546,7 +546,7 @@ bool HTMLPlugInElement::canLoadURL(const URL& completeURL) const
         if (is<RemoteFrame>(contentFrame()))
             return false;
         RefPtr contentDocument = this->contentDocument();
-        if (contentDocument && !protectedDocument()->protectedSecurityOrigin()->isSameOriginDomain(contentDocument->protectedSecurityOrigin().get()))
+        if (contentDocument && !protect(protect(document())->securityOrigin())->isSameOriginDomain(protect(contentDocument->securityOrigin()).get()))
             return false;
     }
 
@@ -603,7 +603,7 @@ void HTMLPlugInElement::updateAfterStyleResolution()
     // Either way, clear the flag now, since we don't need to remember to try again.
     m_needsImageReload = false;
 
-    protectedDocument()->decrementLoadEventDelayCount();
+    protect(document())->decrementLoadEventDelayCount();
 }
 
 void HTMLPlugInElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
@@ -659,7 +659,7 @@ void HTMLPlugInElement::didAttachRenderers()
         if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer())) {
             CheckedRef renderImageResource = renderImage->imageResource();
             if (!renderImageResource->cachedImage())
-                renderImageResource->setCachedImage(m_imageLoader->protectedImage());
+                renderImageResource->setCachedImage(protect(m_imageLoader->image()));
         }
     }
 

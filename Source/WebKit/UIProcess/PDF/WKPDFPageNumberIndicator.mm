@@ -49,8 +49,7 @@ static constexpr Seconds indicatorFadeOutDuration { 0.75_s };
 static constexpr Seconds indicatorMoveDuration { 0.3_s };
 
 @implementation WKPDFPageNumberIndicator {
-    RetainPtr<UILabel> _label;
-    RetainPtr<UIVisualEffectView> _backdropView;
+    RetainPtr<UIButton> _button;
     RetainPtr<NSTimer> _timer;
     WeakObjCPtr<WKWebView> _webView;
 }
@@ -72,32 +71,31 @@ static constexpr Seconds indicatorMoveDuration { 0.3_s };
     bool shouldUseBlurEffectForBackdrop = true;
 #endif
 
-    RetainPtr<UIVisualEffect> visualEffect;
-    if (shouldUseBlurEffectForBackdrop)
-        visualEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
-    else {
+    RetainPtr<UIButtonConfiguration> buttonConfiguration;
+    if (shouldUseBlurEffectForBackdrop) {
+        buttonConfiguration = [UIButtonConfiguration plainButtonConfiguration];
+        [[buttonConfiguration background] setVisualEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleLight]];
+    } else {
 #if HAVE(UI_GLASS_EFFECT)
-        visualEffect = adoptNS([[UIGlassEffect alloc] init]);
+        buttonConfiguration = [UIButtonConfiguration glassButtonConfiguration];
 #endif
     }
 
-    _backdropView =  adoptNS([[UIVisualEffectView alloc] initWithEffect:visualEffect.get()]);
-    [_backdropView setFrame:self.bounds];
-    [_backdropView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
-    [_backdropView setCornerConfiguration:[UICornerConfiguration capsuleConfiguration]];
-    [_backdropView setClipsToBounds:YES];
-    [self addSubview:_backdropView.get()];
+    [buttonConfiguration setCornerStyle:UIButtonConfigurationCornerStyleCapsule];
+    [buttonConfiguration setContentInsets:NSDirectionalEdgeInsetsMake(indicatorVerticalPadding, indicatorHorizontalPadding, indicatorVerticalPadding, indicatorHorizontalPadding)];
+    [buttonConfiguration setTitleTextAttributesTransformer:^(NSDictionary<NSAttributedStringKey, id> *incoming) {
+        RetainPtr<NSMutableDictionary<NSAttributedStringKey, id>> attributes = adoptNS([incoming mutableCopy]);
+        [attributes setObject:[UIFont boldSystemFontOfSize:indicatorFontSize] forKey:NSFontAttributeName];
+        if (shouldUseBlurEffectForBackdrop)
+            [attributes setObject:[UIColor blackColor] forKey:NSForegroundColorAttributeName];
+        return attributes.autorelease();
+    }];
 
-    _label = adoptNS([[UILabel alloc] initWithFrame:self.bounds]);
-    [_label setOpaque:NO];
-    [_label setBackgroundColor:nil];
-    [_label setTextAlignment:NSTextAlignmentCenter];
-    [_label setFont:[UIFont boldSystemFontOfSize:indicatorFontSize]];
-    if (shouldUseBlurEffectForBackdrop)
-        [_label setTextColor:[UIColor blackColor]];
-    [_label setAdjustsFontSizeToFitWidth:YES];
-    [_label setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
-    [[_backdropView contentView] addSubview:_label.get()];
+    _button = [UIButton buttonWithType:UIButtonTypeSystem];
+    [_button setConfiguration:buttonConfiguration.get()];
+    [_button setFrame:self.bounds];
+    [_button setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+    [self addSubview:_button.get()];
 
     [self updatePosition:self.frame];
     [self setPageCount:pageCount];
@@ -166,12 +164,7 @@ static constexpr Seconds indicatorMoveDuration { 0.3_s };
     auto completion = [view = retainPtr(self)](BOOL) {
         [view setAlpha:0];
     };
-#if HAVE(UI_VIEW_ANIMATION_OPTION_FLUSH_UPDATES)
-    static constexpr auto animationOptions = UIViewAnimationOptionFlushUpdates;
-#else
-    static constexpr auto animationOptions = 0;
-#endif
-    [UIView animateWithDuration:indicatorFadeOutDuration.seconds() delay:0 options:animationOptions animations:animations completion:completion];
+    [UIView animateWithDuration:indicatorFadeOutDuration.seconds() delay:0 options:UIViewAnimationOptionFlushUpdates animations:animations completion:completion];
 
     [std::exchange(_timer, nil) invalidate];
 }
@@ -204,16 +197,13 @@ static constexpr Seconds indicatorMoveDuration { 0.3_s };
 
 - (CGSize)sizeThatFits:(CGSize)size
 {
-    CGSize labelSize = [_label sizeThatFits:[_label bounds].size];
-    labelSize.width += 2 * indicatorHorizontalPadding;
-    labelSize.height += 2 * indicatorVerticalPadding;
-    return labelSize;
+    return [_button intrinsicContentSize];
 }
 
 - (void)_updateLabel:(bool)labelTextShouldChange
 {
     if (labelTextShouldChange)
-        [_label setText:[NSString localizedStringWithFormat:WEB_UI_NSSTRING(@"%1$d of %2$d", "Label for PDF page number indicator."), _currentPageNumber, _pageCount]];
+        [_button setTitle:[NSString localizedStringWithFormat:WEB_UI_NSSTRING(@"%1$d of %2$d", "Label for PDF page number indicator."), _currentPageNumber, _pageCount] forState:UIControlStateNormal];
     [self sizeToFit];
 
     if (!_pageCount || !_currentPageNumber)

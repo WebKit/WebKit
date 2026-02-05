@@ -83,6 +83,8 @@ void AuxiliaryProcess::didClose(IPC::Connection&)
 
 void AuxiliaryProcess::initialize(AuxiliaryProcessInitializationParameters&& parameters)
 {
+    TraceScope traceScope(ProcessInitializeStart, ProcessInitializeEnd);
+
     WTF::RefCountDebugger::enableThreadingChecksGlobally();
 
 #if PLATFORM(COCOA)
@@ -237,7 +239,7 @@ void AuxiliaryProcess::platformStopRunLoop()
 
 void AuxiliaryProcess::terminate()
 {
-    protectedParentProcessConnection()->invalidate();
+    protect(parentProcessConnection())->invalidate();
 
     stopRunLoop();
 }

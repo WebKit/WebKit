@@ -42,6 +42,7 @@
 #include "UserContentControllerIdentifier.h"
 #include "VisibleWebPageCounter.h"
 #include "WebPageProxyIdentifier.h"
+#include "WebPermissionControllerProxy.h"
 #include "WebProcessCreationParameters.h"
 #include <WebCore/CrossOriginMode.h>
 #include <WebCore/FrameIdentifier.h>
@@ -88,7 +89,7 @@
 #include "ServiceWorkerDebuggableProxy.h"
 #endif
 
-#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
 #include "WasmDebuggerDebuggable.h"
 #endif
 
@@ -137,7 +138,6 @@ class WebFrameProxy;
 class WebLockRegistryProxy;
 class WebPageGroup;
 class WebPageProxy;
-class WebPermissionControllerProxy;
 class WebPreferences;
 class WebProcessPool;
 class WebUserContentControllerProxy;
@@ -191,8 +191,17 @@ public:
 
     enum class ShouldLaunchProcess : bool { No, Yes };
     enum class LockdownMode : bool { Disabled, Enabled };
+    enum class EnableWebAssemblyDebugger : bool { No, Yes };
 
-    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, LockdownMode, EnhancedSecurity, IsPrewarmed, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
+    enum class IsolatedProcessType : uint8_t {
+        Unspecified,
+        MainFrame,
+        SubFrame,
+        Shared
+    };
+
+    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, LockdownMode, EnhancedSecurity, IsPrewarmed, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared, ShouldLaunchProcess = ShouldLaunchProcess::Yes, EnableWebAssemblyDebugger = EnableWebAssemblyDebugger::No);
+
     static Ref<WebProcessProxy> createForRemoteWorkers(RemoteWorkerType, WebProcessPool&, WebCore::Site&&, WebsiteDataStore&, LockdownMode, EnhancedSecurity);
 
     ~WebProcessProxy();
@@ -208,7 +217,6 @@ public:
 
     WebProcessPool* processPoolIfExists() const;
     inline WebProcessPool& processPool() const; // This function is implemented in WebProcessPool.h.
-    inline Ref<WebProcessPool> protectedProcessPool() const; // This function is implemented in WebProcessPool.h.
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
     const SharedPreferencesForWebProcess& sharedPreferencesForWebProcessValue() const { return m_sharedPreferencesForWebProcess; }
@@ -230,6 +238,9 @@ public:
     void addSharedProcessDomain(const WebCore::RegistrableDomain&);
     const HashSet<WebCore::RegistrableDomain>& sharedProcessDomains() const { return m_sharedProcessDomains; }
 
+    IsolatedProcessType isolatedProcessType() const { return m_isolatedProcessType; }
+    void setIsolatedProcessType(IsolatedProcessType isolatedProcessType) { m_isolatedProcessType = isolatedProcessType; }
+
     enum class WillShutDown : bool { No, Yes };
     void setIsInProcessCache(bool, WillShutDown = WillShutDown::No);
     bool isInProcessCache() const { return m_isInProcessCache; }
@@ -238,7 +249,6 @@ public:
     void disableRemoteWorkers(OptionSet<RemoteWorkerType>);
 
     WebsiteDataStore* websiteDataStore() const { ASSERT(m_websiteDataStore); return m_websiteDataStore.get(); }
-    RefPtr<WebsiteDataStore> protectedWebsiteDataStore() const;
     void setWebsiteDataStore(WebsiteDataStore&);
     
     PAL::SessionID sessionID() const;
@@ -500,7 +510,7 @@ public:
 #if ENABLE(MEDIA_STREAM)
     static void muteCaptureInPagesExcept(WebCore::PageIdentifier);
     SpeechRecognitionRemoteRealtimeMediaSourceManager& ensureSpeechRecognitionRemoteRealtimeMediaSourceManager();
-    RefPtr<SpeechRecognitionRemoteRealtimeMediaSourceManager> protectedSpeechRecognitionRemoteRealtimeMediaSourceManager();
+    SpeechRecognitionRemoteRealtimeMediaSourceManager* speechRecognitionRemoteRealtimeMediaSourceManager() const { return m_speechRecognitionRemoteRealtimeMediaSourceManager.get(); }
 #endif
     void pageMutedStateChanged(WebCore::PageIdentifier, WebCore::MediaProducerMutedStateFlags);
     void pageIsBecomingInvisible(WebCore::PageIdentifier);
@@ -584,8 +594,9 @@ public:
     bool receivedLogsDuringLaunchForTesting() const { return m_didReceiveLogsDuringLaunchForTesting; }
 #endif
 
-#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
     void createWasmDebuggerTarget();
+    bool createWasmDebuggerDebuggable() const { return m_createWasmDebuggerDebuggable; }
     void destroyWasmDebuggerTarget();
     void connectWasmDebuggerTarget(bool isAutomaticConnection, bool immediatelyPause);
     void disconnectWasmDebuggerTarget();
@@ -602,7 +613,7 @@ public:
 private:
     Type type() const final { return Type::WebContent; }
 
-    WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, LockdownMode, EnhancedSecurity);
+    WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, LockdownMode, EnhancedSecurity, [[maybe_unused]] EnableWebAssemblyDebugger = EnableWebAssemblyDebugger::No);
 
     // AuxiliaryProcessProxy
     ASCIILiteral processName() const final { return "WebContent"_s; }
@@ -810,6 +821,8 @@ private:
     HashSet<WebCore::RegistrableDomain> m_sharedProcessDomains;
     bool m_isInProcessCache { false };
 
+    IsolatedProcessType m_isolatedProcessType { IsolatedProcessType::Unspecified };
+
     enum class NoOrMaybe { No, Maybe } m_isResponsive;
     Vector<CompletionHandler<void(bool webProcessIsResponsive)>> m_isResponsiveCallbacks;
 
@@ -915,8 +928,9 @@ private:
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
     HashMap<WebCore::ServiceWorkerIdentifier, Ref<ServiceWorkerDebuggableProxy>> m_serviceWorkerDebuggableProxies;
 #endif
-#if ENABLE(REMOTE_INSPECTOR) && ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
     RefPtr<WasmDebuggerDebuggable> m_wasmDebuggerDebuggable;
+    bool m_createWasmDebuggerDebuggable { false };
 #endif
 
     HashMap<String, SandboxExtension::Handle> m_fileSandboxExtensions;
@@ -939,6 +953,14 @@ private:
 } SWIFT_SHARED_REFERENCE(refWebProcessProxy, derefWebProcessProxy);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const WebProcessProxy&);
+
+using RefWebProcessProxy = Ref<WebProcessProxy>;
+
+// Workaround for rdar://162519380
+inline RefPtr<WebProcessProxy> downcastToWebProcessProxy(AuxiliaryProcessProxy* WTF_NONNULL app)
+{
+    return downcast<WebProcessProxy>(app);
+}
 
 } // namespace WebKit
 

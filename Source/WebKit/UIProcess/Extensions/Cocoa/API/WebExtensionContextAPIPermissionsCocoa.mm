@@ -68,7 +68,7 @@ void WebExtensionContext::permissionsGetAll(CompletionHandler<void(Vector<String
     }
 
     if (hasGrantedAccessToAllURLsOrHosts) {
-        auto combinedPermissionMatchPatterns = protectedExtension()->combinedPermissionMatchPatterns();
+        auto combinedPermissionMatchPatterns = protect(extension())->combinedPermissionMatchPatterns();
         bool appendedMatchAllURLsOrHostsPattern = false;
 
         for (auto& matchPattern : combinedPermissionMatchPatterns) {

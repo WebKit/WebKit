@@ -1374,11 +1374,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-2d-canvas-acceleration",
             _("Enable 2D canvas acceleration"),
             _("Whether to enable 2D canvas acceleration"),
-#if USE(SKIA)
             FEATURE_DEFAULT(CanvasUsesAcceleratedDrawing),
-#else
-            FALSE,
-#endif
             readWriteConstructParamFlags);
 
     /**
@@ -3435,11 +3431,7 @@ gboolean webkit_settings_get_enable_2d_canvas_acceleration(WebKitSettings* setti
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
-#if USE(SKIA)
     return settings->priv->preferences->canvasUsesAcceleratedDrawing();
-#else
-    return FALSE;
-#endif
 }
 
 /**
@@ -3455,7 +3447,6 @@ void webkit_settings_set_enable_2d_canvas_acceleration(WebKitSettings* settings,
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
-#if USE(SKIA)
     WebKitSettingsPrivate* priv = settings->priv;
     bool currentValue = priv->preferences->canvasUsesAcceleratedDrawing();
     if (currentValue == enabled)
@@ -3463,10 +3454,6 @@ void webkit_settings_set_enable_2d_canvas_acceleration(WebKitSettings* settings,
 
     priv->preferences->setCanvasUsesAcceleratedDrawing(enabled);
     g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_ENABLE_2D_CANVAS_ACCELERATION]);
-#else
-    if (enabled)
-        g_warning("2D canvas acceleration not supported, webkit_settings_set_enable_2d_canvas_acceleration does nothing");
-#endif
 }
 
 /**
@@ -3922,17 +3909,7 @@ WebKitHardwareAccelerationPolicy webkit_settings_get_hardware_acceleration_polic
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS);
 
     WebKitSettingsPrivate* priv = settings->priv;
-#if USE(GTK4)
-    return priv->preferences->acceleratedCompositingEnabled() ? WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS : WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER;
-#else
-    if (!priv->preferences->acceleratedCompositingEnabled())
-        return WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER;
-
-    if (priv->preferences->forceCompositingMode())
-        return WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS;
-
-    return WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND;
-#endif
+    return priv->preferences->hardwareAccelerationEnabled() ? WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS : WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER;
 }
 
 /**
@@ -3951,45 +3928,39 @@ void webkit_settings_set_hardware_acceleration_policy(WebKitSettings* settings, 
     WebKitSettingsPrivate* priv = settings->priv;
     bool changed = false;
     switch (policy) {
+#if !USE(GTK4)
+    case WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND:
+        g_warning("WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND is deprecated and is equivalent to WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS now");
+        [[fallthrough]];
+#endif
     case WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS:
         if (!HardwareAccelerationManager::singleton().canUseHardwareAcceleration())
             return;
-        if (!priv->preferences->acceleratedCompositingEnabled()) {
-            priv->preferences->setAcceleratedCompositingEnabled(true);
+
+        if (!priv->preferences->hardwareAccelerationEnabled()) {
+            priv->preferences->setHardwareAccelerationEnabled(true);
             changed = true;
         }
-        if (!priv->preferences->forceCompositingMode()) {
+
+        if (!priv->preferences->acceleratedCompositingEnabled() && HardwareAccelerationManager::singleton().acceleratedCompositingModeEnabled()) {
+            priv->preferences->setAcceleratedCompositingEnabled(true);
             priv->preferences->setForceCompositingMode(true);
             priv->preferences->setThreadedScrollingEnabled(true);
-            changed = true;
+
         }
         break;
     case WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER:
+        if (priv->preferences->hardwareAccelerationEnabled()) {
+            priv->preferences->setHardwareAccelerationEnabled(false);
+            changed = true;
+        }
+
         if (priv->preferences->acceleratedCompositingEnabled()) {
             priv->preferences->setAcceleratedCompositingEnabled(false);
-            changed = true;
-        }
-
-        if (priv->preferences->forceCompositingMode()) {
             priv->preferences->setForceCompositingMode(false);
             priv->preferences->setThreadedScrollingEnabled(false);
-            changed = true;
         }
         break;
-#if !USE(GTK4)
-    case WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND:
-        if (!priv->preferences->acceleratedCompositingEnabled() && HardwareAccelerationManager::singleton().canUseHardwareAcceleration()) {
-            priv->preferences->setAcceleratedCompositingEnabled(true);
-            changed = true;
-        }
-
-        if (priv->preferences->forceCompositingMode() && !HardwareAccelerationManager::singleton().forceHardwareAcceleration()) {
-            priv->preferences->setForceCompositingMode(false);
-            priv->preferences->setThreadedScrollingEnabled(false);
-            changed = true;
-        }
-        break;
-#endif
     }
 
     if (changed)

@@ -39,9 +39,9 @@ CSSTransitionEvent::CSSTransitionEvent(const AtomString& type, WebAnimation* ani
 {
 }
 
-CSSTransitionEvent::CSSTransitionEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : StyleOriginatedAnimationEvent(EventInterfaceType::CSSTransitionEvent, type, initializer, isTrusted, initializer.elapsedTime, initializer.pseudoElement)
-    , m_propertyName(initializer.propertyName)
+CSSTransitionEvent::CSSTransitionEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+    : StyleOriginatedAnimationEvent(EventInterfaceType::CSSTransitionEvent, type, WTF::move(initializer), isTrusted, initializer.elapsedTime, WTF::move(initializer.pseudoElement))
+    , m_propertyName(WTF::move(initializer.propertyName))
 {
 }
 

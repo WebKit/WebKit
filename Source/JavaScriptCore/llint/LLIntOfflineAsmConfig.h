@@ -31,8 +31,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/Gigacage.h>
 
-#define OFFLINE_ASM_UseCompressedHeap USE_COMPRESSED_HEAP
-
 #if ENABLE(C_LOOP)
 #define OFFLINE_ASM_C_LOOP 1
 #define OFFLINE_ASM_ARMv7 0

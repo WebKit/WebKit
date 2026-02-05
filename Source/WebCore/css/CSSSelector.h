@@ -27,6 +27,7 @@
 #include <wtf/EnumTraits.h>
 #include <wtf/FixedVector.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/Variant.h>
 
 namespace WebCore {
 
@@ -155,8 +156,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     const QualifiedName& attribute() const;
     const AtomString& argument() const { return m_hasRareData ? m_data.rareData->argument : nullAtom(); }
     bool attributeValueMatchingIsCaseInsensitive() const;
-    const FixedVector<AtomString>* argumentList() const { return m_hasRareData ? &m_data.rareData->argumentList : nullptr; }
-    const FixedVector<PossiblyQuotedIdentifier>* langList() const { return m_hasRareData ? &m_data.rareData->langList : nullptr; }
+    const FixedVector<int>* integerList() const { return m_hasRareData ? std::get_if<FixedVector<int>>(&m_data.rareData->argumentList) : nullptr; }
+    const FixedVector<AtomString>* stringList() const { return m_hasRareData ? std::get_if<FixedVector<AtomString>>(&m_data.rareData->argumentList) : nullptr; }
+    const FixedVector<PossiblyQuotedIdentifier>* langList() const { return m_hasRareData ? std::get_if<FixedVector<PossiblyQuotedIdentifier>>(&m_data.rareData->argumentList) : nullptr; }
     const CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.rareData->selectorList.get() : nullptr; }
     CSSSelectorList* selectorList() { return m_hasRareData ? m_data.rareData->selectorList.get() : nullptr; }
 
@@ -203,7 +205,8 @@ private:
     void setAttribute(const QualifiedName&, AttributeMatchType);
     void setNth(int a, int b);
     void setArgument(const AtomString&);
-    void setArgumentList(FixedVector<AtomString>);
+    void setIntegerList(FixedVector<int>);
+    void setStringList(FixedVector<AtomString>);
     void setLangList(FixedVector<PossiblyQuotedIdentifier>);
     void setSelectorList(std::unique_ptr<CSSSelectorList>);
 
@@ -257,8 +260,7 @@ private:
         int b { 0 }; // Used for :nth-*
         QualifiedName attribute; // used for attribute selector
         AtomString argument; // Used for :contains and :nth-*
-        FixedVector<AtomString> argumentList; // Used for :active-view-transition-type, ::highlight, ::view-transition-{group, image-pair, new, old}, ::part arguments.
-        FixedVector<PossiblyQuotedIdentifier> langList; // Used for :lang arguments.
+        Variant<std::monostate, FixedVector<int>, FixedVector<AtomString>, FixedVector<PossiblyQuotedIdentifier>> argumentList; // Used for :heading (int), :active-view-transition-type/::highlight/::view-transition-*/::part (AtomString), :lang (PossiblyQuotedIdentifier)
         std::unique_ptr<CSSSelectorList> selectorList; // Used for :is(), :matches(), and :not().
 
         Ref<RareData> deepCopy() const;

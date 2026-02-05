@@ -199,7 +199,7 @@ static AppHighlightRangeData::NodePathComponent createNodePathComponent(const No
 static AppHighlightRangeData::NodePath makeNodePath(RefPtr<Node>&& node)
 {
     AppHighlightRangeData::NodePath components;
-    RefPtr body = node->protectedDocument()->body();
+    RefPtr body = protect(node->document())->body();
     for (RefPtr ancestor = node; ancestor && ancestor != body; ancestor = ancestor->parentNode())
         components.append(createNodePathComponent(*ancestor));
     components.reverse();
@@ -278,7 +278,7 @@ bool AppHighlightStorage::attemptToRestoreHighlightAndScroll(AppHighlightRangeDa
     if (!range)
         return false;
 
-    document->protectedAppHighlightRegistry()->addAnnotationHighlightWithRange(StaticRange::create(*range));
+    protect(document->appHighlightRegistry())->addAnnotationHighlightWithRange(StaticRange::create(*range));
 
     if (scroll == ScrollToHighlight::Yes) {
         auto textIndicator = TextIndicator::createWithRange(range.value(), { TextIndicatorOption::DoNotClipToVisibleRect }, WebCore::TextIndicatorPresentationTransition::Bounce);

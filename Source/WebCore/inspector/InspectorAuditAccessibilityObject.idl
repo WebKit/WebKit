@@ -41,28 +41,27 @@
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ComputedProperties {
-    boolean? busy;
-    DOMString? checked;
-    DOMString? currentState;
-    boolean? disabled;
-    boolean? expanded;
-    boolean? focused;
-    long? headingLevel;
-    boolean? hidden;
-    long? hierarchicalLevel;
-    boolean? ignored;
-    boolean? ignoredByDefault;
-    DOMString? invalidStatus;
-    boolean? isPopUpButton;
-    DOMString? label;
-    boolean? liveRegionAtomic;
-    sequence<DOMString>? liveRegionRelevant;
-    DOMString? liveRegionStatus;
-    boolean? pressed;
-    boolean? readonly;
-    boolean? required;
-    DOMString? role;
-    boolean? selected;
+    boolean busy;
+    DOMString checked;
+    DOMString currentState;
+    boolean disabled;
+    boolean expanded;
+    boolean focused;
+    long headingLevel;
+    boolean hidden;
+    long hierarchicalLevel;
+    boolean ignored;
+    boolean ignoredByDefault;
+    DOMString invalidStatus;
+    boolean isPopUpButton;
+    DOMString label;
+    boolean liveRegionAtomic;
+    sequence<DOMString> liveRegionRelevant;
+    DOMString liveRegionStatus;
+    boolean pressed;
+    boolean readonly;
+    boolean required;
+    DOMString role;
+    boolean selected;
 };

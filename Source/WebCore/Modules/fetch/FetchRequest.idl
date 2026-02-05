@@ -35,7 +35,7 @@ typedef (FetchRequest or USVString) RequestInfo;
     GenerateIsReachable=Impl,
     InterfaceName=Request,
 ] interface FetchRequest {
-    [CallWith=CurrentScriptExecutionContext] constructor(RequestInfo input, optional FetchRequestInit init);
+    [CallWith=CurrentScriptExecutionContext] constructor(RequestInfo input, optional FetchRequestInit init = {});
 
     readonly attribute ByteString method;
     [ImplementedAs=urlString] readonly attribute USVString url;

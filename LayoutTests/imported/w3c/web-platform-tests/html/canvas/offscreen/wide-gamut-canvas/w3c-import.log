@@ -14,7 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.display-p3-linear.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.display-p3-linear.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.p3.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.p3.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.srgb.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.p3.to.srgb.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.srgb-linear.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/2d.color.space.srgb-linear.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/WEB_FEATURES.yml

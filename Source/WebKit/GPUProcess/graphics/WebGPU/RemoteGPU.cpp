@@ -33,15 +33,15 @@
 #include "ModelObjectHeap.h"
 #include "RemoteAdapter.h"
 #include "RemoteCompositorIntegration.h"
-#include "RemoteDDMesh.h"
 #include "RemoteGPUMessages.h"
 #include "RemoteGPUProxyMessages.h"
+#include "RemoteMesh.h"
 #include "RemotePresentationContext.h"
 #include "RemoteRenderingBackend.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
-#include <WebCore/DDMesh.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/Mesh.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <WebCore/WebGPU.h>
@@ -67,7 +67,7 @@ RemoteGPU::RemoteGPU(WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpu
     , m_workQueue(IPC::StreamConnectionWorkQueue::create("WebGPU work queue"_s))
     , m_streamConnection(WTF::move(streamConnection))
     , m_objectHeap(WebGPU::ObjectHeap::create())
-    , m_modelObjectHeap(DDModel::ObjectHeap::create())
+    , m_modelObjectHeap(ModelObjectHeap::create())
     , m_identifier(identifier)
     , m_renderingBackend(renderingBackend)
 {
@@ -264,7 +264,7 @@ void RemoteGPU::paintNativeImageToImageBuffer(WebCore::NativeImage& nativeImage,
     semaphore.wait();
 }
 
-void RemoteGPU::createModelBacking(unsigned width, unsigned height, const WebCore::DDModel::DDImageAsset& diffuseTexture, const WebCore::DDModel::DDImageAsset& specularTexture, DDModelIdentifier identifier, CompletionHandler<void(Vector<MachSendRight>&&)>&& callback)
+void RemoteGPU::createModelBacking(unsigned width, unsigned height, const WebModel::ImageAsset& diffuseTexture, const WebModel::ImageAsset& specularTexture, WebModelIdentifier identifier, CompletionHandler<void(Vector<MachSendRight>&&)>&& callback)
 {
     assertIsCurrent(workQueue());
 
@@ -273,7 +273,7 @@ void RemoteGPU::createModelBacking(unsigned width, unsigned height, const WebCor
     RefPtr gpu = m_backing.get();
     auto mesh = gpu->createModelBacking(width, height, diffuseTexture, specularTexture, WTF::move(callback));
 #if ENABLE(GPU_PROCESS_MODEL)
-    auto remoteMesh = RemoteDDMesh::create(*m_gpuConnectionToWebProcess.get(), *this, *mesh, objectHeap, Ref { *m_streamConnection }, identifier);
+    auto remoteMesh = RemoteMesh::create(*m_gpuConnectionToWebProcess.get(), *this, *mesh, objectHeap, Ref { *m_streamConnection }, identifier);
     objectHeap->addObject(identifier, remoteMesh);
 #else
     UNUSED_PARAM(mesh);

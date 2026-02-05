@@ -83,11 +83,11 @@ void ScrollAnchoringController::invalidateAnchorElement()
         return;
     LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::invalidateAnchorElement() invalidating anchor for frame: " << frameView() << " for scroller: " << m_owningScrollableArea);
     if (!m_anchorElement) {
-        if (auto* element = elementForScrollableArea(m_owningScrollableArea)) {
+        if (RefPtr element = elementForScrollableArea(m_owningScrollableArea)) {
             if (auto* renderer = element->renderer()) {
-                auto* scrollAnchoringControllerForScrollableArea = RenderObject::searchParentChainForScrollAnchoringController(*renderer);
-                if (scrollAnchoringControllerForScrollableArea && scrollAnchoringControllerForScrollableArea->isInScrollAnchoringAncestorChain(*renderer))
-                    scrollAnchoringControllerForScrollableArea->invalidateAnchorElement();
+                CheckedPtr controller = RenderObject::searchParentChainForScrollAnchoringController(*renderer);
+                if (controller && controller->isInScrollAnchoringAncestorChain(*renderer))
+                    controller->invalidateAnchorElement();
             }
         }
     }
@@ -141,7 +141,7 @@ static RefPtr<Element> anchorElementForPriorityCandidate(Element* element)
             if (!renderer->isAnonymousBlock() && (!renderer->isInline() || renderer->isAtomicInlineLevelBox()))
                 return element;
         }
-        element = element->parentElement();
+        SUPPRESS_UNCOUNTED_LOCAL element = element->parentElement();
     }
     return nullptr;
 }
@@ -150,7 +150,7 @@ static ScrollAnchoringController* scrollAnchoringControllerForElement(Element& e
 {
     if (auto renderer = element.renderer()) {
         if (renderer->hasLayer()) {
-            if (auto layer = downcast<RenderLayerModelObject>(*renderer).layer()) {
+            if (CheckedPtr layer = downcast<RenderLayerModelObject>(*renderer).layer()) {
                 if (auto scrollableArea = layer->scrollableArea())
                     return scrollableArea->scrollAnchoringController();
             }
@@ -203,7 +203,7 @@ bool ScrollAnchoringController::didFindPriorityCandidate(Document& document)
 static bool absolutePositionedElementOutsideScroller(RenderElement& renderer, ScrollableArea& scroller)
 {
     if (auto* renderLayerScrollableArea = dynamicDowncast<RenderLayerScrollableArea>(scroller); renderLayerScrollableArea && renderer.hasLayer()) {
-        if (auto* layerForRenderer = downcast<RenderLayerModelObject>(renderer).layer())
+        if (CheckedPtr layerForRenderer = downcast<RenderLayerModelObject>(renderer).layer())
             return !layerForRenderer->ancestorLayerIsInContainingBlockChain(renderLayerScrollableArea->layer());
     }
     return false;
@@ -222,9 +222,9 @@ CandidateExaminationResult ScrollAnchoringController::examineAnchorCandidate(Ele
         return CandidateExaminationResult::Skip;
 
     auto containingRect = boundingRectForScrollableArea(m_owningScrollableArea);
-    auto* document = frameView().frame().document();
+    RefPtr document = frameView().frame().document();
 
-    if (auto* element = elementForScrollableArea(m_owningScrollableArea)) {
+    if (RefPtr element = elementForScrollableArea(m_owningScrollableArea)) {
         if (auto* box = element->renderBox()) {
             LayoutRect paddedLayerBounds(containingRect);
             paddedLayerBounds.contract(box->scrollPaddingForViewportRect(paddedLayerBounds));
@@ -244,17 +244,23 @@ CandidateExaminationResult ScrollAnchoringController::examineAnchorCandidate(Ele
 
         if (isExcludedSubtree(renderer, intersects))
             return CandidateExaminationResult::Exclude;
+
         if (&element == document->bodyOrFrameset() || is<HTMLHtmlElement>(&element) || (renderer->isInline() && !renderer->isAtomicInlineLevelBox()))
             return CandidateExaminationResult::Skip;
+
         if (!boxRect.width() || !boxRect.height())
             return CandidateExaminationResult::Skip;
+
         if (containingRect.contains(boxRect))
             return CandidateExaminationResult::Select;
+
         auto isScrollingNode = false;
         if (auto* renderBox = dynamicDowncast<RenderBox>(renderer))
             isScrollingNode = renderBox->hasPotentiallyScrollableOverflow();
+
         if (intersects)
             return !isScrollingNode || canDescendIntoElement(element) ? CandidateExaminationResult::Descend : CandidateExaminationResult::Select;
+
         if (isScrollingNode)
             return CandidateExaminationResult::Exclude;
     }
@@ -297,8 +303,8 @@ Element* ScrollAnchoringController::findAnchorElementRecursive(Element* element)
         return nullptr;
     case CandidateExaminationResult::Skip:
     case CandidateExaminationResult::Descend: {
-        for (auto& child : childrenOfType<Element>(*element)) {
-            if (auto* anchorElement = findAnchorElementRecursive(&child))
+        for (Ref child : childrenOfType<Element>(*element)) {
+            if (auto* anchorElement = findAnchorElementRecursive(child.ptr()))
                 return anchorElement;
         }
         break;
@@ -356,6 +362,7 @@ void ScrollAnchoringController::adjustScrollPositionForAnchoring()
     auto suppressed = std::exchange(m_shouldSuppressScrollPositionUpdate, false);
     if (!m_anchorElement || !queued)
         return;
+
     auto* renderer = m_anchorElement->renderer();
     if (!renderer || suppressed) {
         invalidateAnchorElement();

@@ -35,7 +35,7 @@
 namespace WebCore {
 
 struct NotificationEventInit : ExtendableEventInit {
-    RefPtr<Notification> notification;
+    Ref<Notification> notification;
     String action;
 };
 
@@ -53,7 +53,7 @@ public:
     const String& action() { return m_action; }
 
 private:
-    NotificationEvent(const AtomString&, NotificationEventInit&&, Ref<Notification>&&, const String& action, IsTrusted = IsTrusted::No);
+    NotificationEvent(const AtomString&, NotificationEventInit&&, IsTrusted = IsTrusted::No);
 
     const Ref<Notification> m_notification;
     String m_action;

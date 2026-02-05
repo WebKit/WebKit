@@ -27,7 +27,6 @@
 #include "config.h"
 #include "SVGSMILElement.h"
 
-#include "AddEventListenerOptionsInlines.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "Event.h"
@@ -154,7 +153,7 @@ SVGSMILElement::~SVGSMILElement()
     smilEventSender().cancelEvent(*this);
     disconnectConditions();
     if (RefPtr timeContainer = m_timeContainer; timeContainer && m_targetElement && hasValidAttributeName())
-        timeContainer->unschedule(this, protectedTargetElement().get(), m_attributeName);
+        timeContainer->unschedule(this, protect(targetElement()).get(), m_attributeName);
 }
 
 void SVGSMILElement::clearResourceReferences()
@@ -245,7 +244,7 @@ static inline void clearTimesWithDynamicOrigins(Vector<SMILTimeWithOrigin>& time
 
 void SVGSMILElement::reset()
 {
-    stopAnimation(protectedTargetElement().get());
+    stopAnimation(protect(targetElement()).get());
 
     m_activeState = Inactive;
     m_isWaitingForFirstInterval = true;
@@ -256,11 +255,6 @@ void SVGSMILElement::reset()
     m_lastRepeat = 0;
     m_nextProgressTime = 0;
     resolveFirstInterval();
-}
-
-RefPtr<SMILTimeContainer> SVGSMILElement::protectedTimeContainer() const
-{
-    return m_timeContainer;
 }
 
 Node::InsertedIntoAncestorResult SVGSMILElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
@@ -279,7 +273,7 @@ Node::InsertedIntoAncestorResult SVGSMILElement::insertedIntoAncestor(InsertionT
         return InsertedIntoAncestorResult::Done;
 
     m_timeContainer = owner->timeContainer();
-    protectedTimeContainer()->setDocumentOrderIndexesDirty();
+    protect(timeContainer())->setDocumentOrderIndexesDirty();
 
     // "If no attribute is present, the default begin value (an offset-value of 0) must be evaluated."
     if (!hasAttributeWithoutSynchronization(SVGNames::beginAttr))
@@ -580,7 +574,7 @@ void SVGSMILElement::connectConditions()
                 continue;
             ASSERT(!condition.m_eventListener);
             condition.m_eventListener = ConditionEventListener::create(this, &condition);
-            eventBase->addEventListener(condition.m_name, *condition.m_eventListener, false);
+            eventBase->addEventListener(condition.m_name, *condition.m_eventListener);
         } else if (condition.m_type == Condition::Syncbase) {
             ASSERT(!condition.m_baseID.isEmpty());
             condition.m_syncbase = treeScope().getElementById(condition.m_baseID);
@@ -613,7 +607,7 @@ void SVGSMILElement::disconnectConditions()
             // our condition event listener, in case it later fires.
             RefPtr eventBase = eventBaseFor(condition);
             if (eventBase)
-                eventBase->removeEventListener(condition.m_name, Ref { *condition.m_eventListener }, false);
+                eventBase->removeEventListener(condition.m_name, Ref { *condition.m_eventListener }, { .capture = false });
             condition.m_eventListener->disconnectAnimation();
             condition.m_eventListener = nullptr;
         } else if (condition.m_type == Condition::Syncbase) {
@@ -628,10 +622,10 @@ void SVGSMILElement::setAttributeName(const QualifiedName& attributeName)
 {
     if (RefPtr timeContainer = m_timeContainer; timeContainer && m_targetElement && m_attributeName != attributeName) {
         if (hasValidAttributeName())
-            timeContainer->unschedule(this, protectedTargetElement().get(), m_attributeName);
+            timeContainer->unschedule(this, protect(targetElement()).get(), m_attributeName);
         m_attributeName = attributeName;
         if (hasValidAttributeName())
-            timeContainer->schedule(this, protectedTargetElement().get(), m_attributeName);
+            timeContainer->schedule(this, protect(targetElement()).get(), m_attributeName);
     } else
         m_attributeName = attributeName;
 
@@ -1165,7 +1159,7 @@ bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement& firstAnimation, 
         smilEventSender().dispatchEventSoon(*this, eventNames().endEventEvent);
         endedActiveInterval();
         if (m_activeState != Frozen)
-            stopAnimation(protectedTargetElement().get());
+            stopAnimation(protect(targetElement()).get());
     } else if (oldActiveState != Active && m_activeState == Active)
         smilEventSender().dispatchEventSoon(*this, eventNames().beginEventEvent);
 

@@ -30,7 +30,7 @@
 #include "JSDOMGuardedObject.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSReadableStreamReadResult.h"
-#include <JavaScriptCore/CatchScope.h>
+#include <JavaScriptCore/TopExceptionScope.h>
 
 namespace WebCore {
 
@@ -122,7 +122,7 @@ void ReadableStreamReadRequestBase::runErrorSteps(Exception&& exception)
 
     Ref vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     auto jsException = createDOMException(*globalObject, WTF::move(exception));
     if (scope.exception()) [[unlikely]] {
         scope.clearException();

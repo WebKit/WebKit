@@ -26,9 +26,7 @@
 typedef double DOMHighResTimeStamp;
 
 // https://w3c.github.io/user-timing/#ref-for-dom-performancemeasureoptions-1
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary PerformanceMeasureOptions {
+dictionary PerformanceMeasureOptions {
     any detail;
     (DOMString or DOMHighResTimeStamp) start;
     DOMHighResTimeStamp duration;

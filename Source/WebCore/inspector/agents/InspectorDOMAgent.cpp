@@ -34,7 +34,6 @@
 #include "AXObjectCacheInlines.h"
 #include "AccessibilityNodeObject.h"
 #include "AccessibilityObjectInlines.h"
-#include "AddEventListenerOptionsInlines.h"
 #include "Attr.h"
 #include "AudioTrack.h"
 #include "AudioTrackConfiguration.h"
@@ -615,7 +614,7 @@ Inspector::Protocol::DOM::NodeId InspectorDOMAgent::pushNodeToFrontend(Node* nod
     // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
 
     Inspector::Protocol::ErrorString ignored;
-    return pushNodeToFrontend(ignored, boundNodeId(nodeToPush->protectedDocument().ptr()), nodeToPush);
+    return pushNodeToFrontend(ignored, boundNodeId(protect(nodeToPush->document()).ptr()), nodeToPush);
 }
 
 Inspector::Protocol::DOM::NodeId InspectorDOMAgent::pushNodeToFrontend(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId documentNodeId, Node* nodeToPush)
@@ -851,7 +850,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::setAttributesAsText(
     if (!element)
         return makeUnexpected(errorString);
 
-    Ref parsedElement = createHTMLElement(element->protectedDocument(), spanTag);
+    Ref parsedElement = createHTMLElement(protect(element->document()), spanTag);
     auto result = parsedElement.get().setInnerHTML(makeString("<span "_s, text, "></span>"_s));
     if (result.hasException())
         return makeUnexpected(InspectorDOMAgent::toErrorString(result.releaseException()));
@@ -924,7 +923,7 @@ Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> InspectorDO
     if (!oldNode)
         return makeUnexpected(errorString);
 
-    auto createElementResult = oldNode->protectedDocument()->createElementForBindings(AtomString { tagName });
+    auto createElementResult = protect(oldNode->document())->createElementForBindings(AtomString { tagName });
     if (createElementResult.hasException())
         return makeUnexpected(InspectorDOMAgent::toErrorString(createElementResult.releaseException()));
 
@@ -942,7 +941,7 @@ Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> InspectorDO
 
     // Replace the old node with the new node
     RefPtr<ContainerNode> parent = oldNode->parentNode();
-    if (!m_domEditor->insertBefore(*parent, newElement.copyRef(), oldNode->protectedNextSibling().get(), errorString))
+    if (!m_domEditor->insertBefore(*parent, newElement.copyRef(), protect(oldNode->nextSibling()).get(), errorString))
         return makeUnexpected(errorString);
     if (!m_domEditor->removeChild(*parent, *oldNode, errorString))
         return makeUnexpected(errorString);
@@ -1314,7 +1313,7 @@ void InspectorDOMAgent::focusNode()
         return;
 
     auto& globalObject = mainWorldGlobalObject(*frame);
-    auto injectedScript = m_injectedScriptManager.injectedScriptFor(&globalObject);
+    auto injectedScript = m_injectedScriptManager->injectedScriptFor(&globalObject);
     if (injectedScript.hasNoValue())
         return;
 
@@ -2173,7 +2172,7 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
             JSC::JSFunction* handlerFunction = JSC::jsDynamicCast<JSC::JSFunction*>(handlerObject);
 
             if (!handlerFunction) {
-                auto scope = DECLARE_CATCH_SCOPE(vm);
+                auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
                 // If the handler is not actually a function, see if it implements the EventListener interface and use that.
                 auto handleEventValue = handlerObject->get(globalObject, JSC::Identifier::fromString(vm, "handleEvent"_s));
@@ -2293,7 +2292,7 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildO
     unsigned hierarchicalLevel = 0;
     unsigned level = 0;
 
-    if (auto* axObjectCache = node.protectedDocument()->axObjectCache()) {
+    if (auto* axObjectCache = protect(node.document())->axObjectCache()) {
         if (RefPtr axObject = axObjectCache->getOrCreate(node)) {
 
             if (RefPtr activeDescendant = axObject->activeDescendant())
@@ -2665,8 +2664,8 @@ void InspectorDOMAgent::addEventListenersToNode(Node& node)
 #if ENABLE(VIDEO)
     auto callback = EventFiredCallback::create(*this);
 
-    auto createEventListener = [&] (const AtomString& eventName) {
-        node.addEventListener(eventName, callback.copyRef(), false);
+    auto createEventListener = [&](const AtomString& eventName) {
+        node.addEventListener(eventName, callback.copyRef());
     };
 
 #if ENABLE(FULLSCREEN_API)
@@ -3128,7 +3127,7 @@ RefPtr<Node> InspectorDOMAgent::nodeForPath(const String& path)
 
 Node* InspectorDOMAgent::nodeForObjectId(const Inspector::Protocol::Runtime::RemoteObjectId& objectId)
 {
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
+    auto injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue())
         return nullptr;
 
@@ -3158,7 +3157,7 @@ RefPtr<Inspector::Protocol::Runtime::RemoteObject> InspectorDOMAgent::resolveNod
         return nullptr;
 
     auto& globalObject = mainWorldGlobalObject(*frame);
-    auto injectedScript = m_injectedScriptManager.injectedScriptFor(&globalObject);
+    auto injectedScript = m_injectedScriptManager->injectedScriptFor(&globalObject);
     if (injectedScript.hasNoValue())
         return nullptr;
 

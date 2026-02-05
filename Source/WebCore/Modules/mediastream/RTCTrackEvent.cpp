@@ -62,11 +62,11 @@ RTCTrackEvent::RTCTrackEvent(const AtomString& type, CanBubble canBubble, IsCanc
 }
 
 RTCTrackEvent::RTCTrackEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::RTCTrackEvent, type, initializer, isTrusted)
-    , m_receiver(initializer.receiver.releaseNonNull())
-    , m_track(initializer.track.releaseNonNull())
-    , m_streams(initializer.streams)
-    , m_transceiver(initializer.transceiver.releaseNonNull())
+    : Event(EventInterfaceType::RTCTrackEvent, type, WTF::move(initializer), isTrusted)
+    , m_receiver(WTF::move(initializer.receiver))
+    , m_track(WTF::move(initializer.track))
+    , m_streams(WTF::move(initializer.streams))
+    , m_transceiver(WTF::move(initializer.transceiver))
 {
 }
 

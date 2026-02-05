@@ -110,6 +110,9 @@ angle_static_library("angle_test_expectations") {
     sources += test_expectation_sources_ios
     frameworks = [ "Foundation.framework" ]
   }
+  if (angle_ir) {
+    configs += [ "${angle_root}:angle_translator_ir" ]
+  }
 }
 
 config("angle_common_test_utils_config") {
@@ -253,6 +256,10 @@ angle_test("angle_unittests") {
 
   if (angle_has_rapidjson) {
     sources += [ "../common/serializer/JsonSerializer_unittest.cpp" ]
+  }
+
+  if (angle_ir) {
+    configs += [ "${angle_root}:angle_translator_ir" ]
   }
 }
 
@@ -546,6 +553,10 @@ if (is_win || is_linux || is_chromeos || is_android || is_fuchsia || is_apple) {
     if (angle_enable_vulkan) {
       sources += angle_white_box_tests_vulkan_sources
       deps += [ "$angle_root/src/common/vulkan:angle_vulkan_entry_points" ]
+    }
+
+    if (angle_ir) {
+      configs += [ "${angle_root}:angle_translator_ir" ]
     }
   }
 }
@@ -1542,7 +1553,7 @@ if (build_angle_deqp_tests && !is_fuchsia) {
     public_deps = [ ":angle_deqp_framework_debase" ]
   }
 
-  config("angle_deqp_framework_common_config") {
+  config("angle_deqp_framework_common_public_config") {
     include_dirs = [
       "$deqp_path/framework/common",
       "$deqp_path/framework/randomshaders",
@@ -1550,9 +1561,18 @@ if (build_angle_deqp_tests && !is_fuchsia) {
     ]
   }
 
+  config("angle_deqp_framework_common_private_config") {
+    cflags_cc = [
+      # Usage of deprecated std::float_denorm_style.
+      # https://github.com/KhronosGroup/VK-GL-CTS/blob/84f86d999680e3d8a416b578bfc6e86ce8910853/framework/common/tcuFloatFormat.cpp#L275C32-L279
+      "-Wno-deprecated-declarations",
+    ]
+  }
+
   angle_deqp_source_set("angle_deqp_framework_common") {
     sources = deqp_framework_common_sources
-    public_configs = [ ":angle_deqp_framework_common_config" ]
+    public_configs = [ ":angle_deqp_framework_common_public_config" ]
+    configs += [ ":angle_deqp_framework_common_private_config" ]
     public_deps = [
       ":angle_deqp_framework_decpp",
       ":angle_deqp_framework_qphelper",

@@ -10,6 +10,7 @@
 #define LIBANGLE_CLCONTEXT_H_
 
 #include "libANGLE/CLDevice.h"
+#include "libANGLE/CLMemory.h"
 #include "libANGLE/CLPlatform.h"
 #include "libANGLE/renderer/CLContextImpl.h"
 
@@ -115,10 +116,13 @@ class Context final : public _cl_context, public Object
     bool supportsBuiltInKernel(const std::string &name) const;
     bool supportsImage2DFromBuffer() const;
 
+  public:
     static void CL_CALLBACK ErrorCallback(const char *errinfo,
                                           const void *privateInfo,
                                           size_t cb,
                                           void *userData);
+    static Memory::PropArray ConvertArmMemPropToMemProp(const cl_import_properties_arm *properties,
+                                                        const void *handle);
 
   private:
     Context(Platform &platform,

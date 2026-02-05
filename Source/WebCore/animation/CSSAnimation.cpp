@@ -339,7 +339,7 @@ ExceptionOr<void> CSSAnimation::bindingsReverse()
     return retVal;
 }
 
-void CSSAnimation::effectTimingWasUpdatedUsingBindings(OptionalEffectTiming timing)
+void CSSAnimation::effectTimingWasUpdatedUsingBindings(const OptionalEffectTiming& timing)
 {
     // https://drafts.csswg.org/css-animations-2/#animations
 

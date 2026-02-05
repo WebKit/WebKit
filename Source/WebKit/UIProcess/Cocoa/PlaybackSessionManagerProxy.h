@@ -262,7 +262,6 @@ public:
 
     bool canEnterVideoFullscreen() const { return !!m_controlsManagerContextId && m_controlsManagerContextIsVideo; }
     WebCore::PlatformPlaybackSessionInterface* controlsManagerInterface();
-    RefPtr<WebCore::PlatformPlaybackSessionInterface> protectedControlsManagerInterface();
     void requestControlledElementID();
 
     bool isPaused(PlaybackSessionContextIdentifier) const;

@@ -94,8 +94,8 @@ PDFDocumentLayout::PageIndex PDFDocumentLayout::nearestPageIndexForDocumentPoint
     ASSERT(pageCount);
 
     switch (displayMode()) {
-    case PDFDocumentLayout::DisplayMode::SinglePageDiscrete:
-    case PDFDocumentLayout::DisplayMode::TwoUpDiscrete: {
+    case PDFDisplayMode::SinglePageDiscrete:
+    case PDFDisplayMode::TwoUpDiscrete: {
         using PairedPagesLayoutBounds = std::pair<FloatRect, std::optional<FloatRect>>;
 
         auto layoutBoundsForRow = [this](PDFLayoutRow row) -> PairedPagesLayoutBounds {
@@ -162,7 +162,7 @@ PDFDocumentLayout::PageIndex PDFDocumentLayout::nearestPageIndexForDocumentPoint
         return visibleRow->pages[0];
     }
 
-    case PDFDocumentLayout::DisplayMode::TwoUpContinuous: {
+    case PDFDisplayMode::TwoUpContinuous: {
         using PairedPagesLayoutBounds = std::pair<FloatRect, std::optional<FloatRect>>;
 
         auto layoutBoundsForPairedPages = [this](PageIndex pageIndex) -> PairedPagesLayoutBounds {
@@ -238,7 +238,7 @@ PDFDocumentLayout::PageIndex PDFDocumentLayout::nearestPageIndexForDocumentPoint
         return lastPageIndex;
     }
 
-    case PDFDocumentLayout::DisplayMode::SinglePageContinuous: {
+    case PDFDisplayMode::SinglePageContinuous: {
         for (PDFDocumentLayout::PageIndex index = 0; index < pageCount; ++index) {
             auto pageBounds = layoutBoundsForPageAtIndex(index);
 
@@ -263,8 +263,8 @@ auto PDFDocumentLayout::pageIndexAndPagePointForDocumentYOffset(float documentYO
     };
 
     switch (displayMode()) {
-    case DisplayMode::TwoUpDiscrete:
-    case DisplayMode::TwoUpContinuous:
+    case PDFDisplayMode::TwoUpDiscrete:
+    case PDFDisplayMode::TwoUpContinuous:
         for (PageIndex index = 0; index < pageCount; ++index) {
             if (index == pageCount - 1)
                 return resultWithPageHorizontalCenterPoint(index, documentYOffset);
@@ -297,8 +297,8 @@ auto PDFDocumentLayout::pageIndexAndPagePointForDocumentYOffset(float documentYO
             return resultWithPageHorizontalCenterPoint(*targetPageIndex, documentYOffset);
         }
         break;
-    case DisplayMode::SinglePageDiscrete:
-    case DisplayMode::SinglePageContinuous: {
+    case PDFDisplayMode::SinglePageDiscrete:
+    case PDFDisplayMode::SinglePageContinuous: {
         for (PageIndex index = 0; index < pageCount; ++index) {
             auto pageBounds = layoutBoundsForPageAtIndex(index);
             if (documentYOffset <= pageBounds.maxY() || index == pageCount - 1)
@@ -385,13 +385,13 @@ void PDFDocumentLayout::layoutPages(FloatSize availableSize, FloatSize maxRowSiz
 {
     // We always lay out in a continuous mode. We handle non-continuous mode via scroll snap.
     switch (m_displayMode) {
-    case DisplayMode::SinglePageDiscrete:
-    case DisplayMode::TwoUpDiscrete:
+    case PDFDisplayMode::SinglePageDiscrete:
+    case PDFDisplayMode::TwoUpDiscrete:
         layoutDiscreteRows(availableSize, maxRowSize, CenterRowVertically::Yes);
         break;
 
-    case DisplayMode::SinglePageContinuous:
-    case DisplayMode::TwoUpContinuous:
+    case PDFDisplayMode::SinglePageContinuous:
+    case PDFDisplayMode::TwoUpContinuous:
         layoutContinuousRows(availableSize, maxRowSize, CenterRowVertically::No);
         break;
     }

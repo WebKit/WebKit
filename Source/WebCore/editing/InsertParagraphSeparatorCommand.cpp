@@ -245,7 +245,7 @@ void InsertParagraphSeparatorCommand::doApply()
     
     Ref document = this->document();
     // FIXME: The parentAnchoredEquivalent conversion needs to be moved into enclosingBlock.
-    RefPtr<Element> startBlock = enclosingBlock(insertionPosition.parentAnchoredEquivalent().protectedContainerNode());
+    RefPtr<Element> startBlock = enclosingBlock(protect(insertionPosition.parentAnchoredEquivalent().containerNode()));
     Position canonicalPos = VisiblePosition(insertionPosition).deepEquivalent();
     if (!startBlock
         || !startBlock->nonShadowBoundaryParentNode()

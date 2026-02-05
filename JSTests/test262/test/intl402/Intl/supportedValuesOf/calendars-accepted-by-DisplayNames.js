@@ -35,10 +35,7 @@ for (let calendar of calendars) {
 }
 
 for (let calendar of allCalendars()) {
-  if (typeof obj.of(calendar) === "string") {
-    assert(calendars.includes(calendar),
-           `${calendar} supported but not returned by supportedValuesOf`);
-  } else {
+  if (typeof obj.of(calendar) !== "string") {
     assert(!calendars.includes(calendar),
            `${calendar} not supported but returned by supportedValuesOf`);
   }

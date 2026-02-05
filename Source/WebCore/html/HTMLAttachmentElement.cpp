@@ -28,7 +28,6 @@
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-#include "AddEventListenerOptionsInlines.h"
 #include "AttachmentAssociatedElement.h"
 #include "AttachmentElementClient.h"
 #include "ContainerNodeInlines.h"
@@ -286,8 +285,8 @@ public:
     static void addToImageForAttachment(HTMLImageElement& image, HTMLAttachmentElement& attachment)
     {
         auto listener = create(attachment);
-        image.addEventListener(eventNames().loadEvent, listener, { });
-        image.addEventListener(eventNames().errorEvent, listener, { });
+        image.addEventListener(eventNames().loadEvent, listener);
+        image.addEventListener(eventNames().errorEvent, listener);
     }
 
     void handleEvent(ScriptExecutionContext&, Event& event) final
@@ -314,7 +313,7 @@ private:
 template <typename ElementType>
 static Ref<ElementType> createContainedElement(HTMLElement& container, const AtomString& id, String&& textContent = { })
 {
-    Ref<ElementType> element = ElementType::create(container.protectedDocument());
+    Ref<ElementType> element = ElementType::create(protect(container.document()));
     element->setIdAttribute(id);
     if (!textContent.isEmpty())
         element->setTextContent(WTF::move(textContent));
@@ -490,8 +489,8 @@ void HTMLAttachmentElement::updateSaveButton(bool show)
 
         Ref saveButton = createContainedElement<HTMLButtonElement>(saveArea, attachmentSaveButtonIdentifier());
         m_saveButton = saveButton.copyRef();
-        saveButton->addEventListener(eventNames().clickEvent, AttachmentSaveEventListener::create(*this), { });
-        saveButton->addEventListener(eventNames().auxclickEvent, AttachmentSaveEventListener::create(*this), { });
+        saveButton->addEventListener(eventNames().clickEvent, AttachmentSaveEventListener::create(*this));
+        saveButton->addEventListener(eventNames().auxclickEvent, AttachmentSaveEventListener::create(*this));
     }
 }
 

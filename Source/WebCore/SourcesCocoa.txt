@@ -81,7 +81,7 @@ JSSpeechSynthesisErrorCode.cpp
 JSSpeechSynthesisErrorEvent.cpp
 JSSpeechSynthesisErrorEventInit.cpp
 JSSpeechSynthesisEventInit.cpp
-Modules/Model/Implementation/DDMeshImpl.mm
+Modules/Model/Implementation/MeshImpl.cpp
 Modules/ShapeDetection/Implementation/Cocoa/BarcodeDetectorImplementation.mm @nonARC
 Modules/ShapeDetection/Implementation/Cocoa/FaceDetectorImplementation.mm @nonARC
 Modules/ShapeDetection/Implementation/Cocoa/TextDetectorImplementation.mm @nonARC
@@ -122,7 +122,7 @@ Modules/async-clipboard/mac/ClipboardImageReaderMac.mm @nonARC
 Modules/compression/cocoa/CompressionStreamEncoderCocoa.mm @nonARC
 Modules/compression/cocoa/DecompressionStreamDecoderCocoa.mm @nonARC
 Modules/mediastream/RTCRtpSFrameTransformerCocoa.cpp
-Modules/model-element/DDModelPlayer.mm
+Modules/model-element/WebModelPlayer.mm
 Modules/model-element/scenekit/SceneKitModel.mm @nonARC
 Modules/model-element/scenekit/SceneKitModelLoader.mm @nonARC
 Modules/model-element/scenekit/SceneKitModelLoaderClient.mm @nonARC
@@ -466,9 +466,9 @@ platform/graphics/cocoa/IOSurfacePoolCocoa.mm @nonARC
 platform/graphics/cocoa/IconCocoa.mm @nonARC
 platform/graphics/cocoa/IntRectCocoa.mm @nonARC
 platform/graphics/cocoa/ImageAdapterCocoa.mm @nonARC
-platform/graphics/cocoa/MediaEngineConfigurationFactoryCocoa.cpp
 platform/graphics/cocoa/MediaPlayerCocoa.mm @nonARC
 platform/graphics/cocoa/MediaPlayerPrivateWebM.mm @nonARC @no-unify
+platform/graphics/cocoa/PlatformMediaEngineConfigurationFactoryCocoa.cpp
 platform/graphics/cocoa/PlatformTimeRangesCocoa.mm @nonARC @no-unify
 platform/graphics/cocoa/SourceBufferParser.cpp
 platform/graphics/cocoa/SourceBufferParserWebM.cpp
@@ -587,7 +587,6 @@ platform/ios/QuickLook.mm @nonARC
 platform/ios/ScrollAnimatorIOS.mm @nonARC
 platform/ios/ScrollViewIOS.mm @nonARC
 platform/ios/ScrollbarThemeIOS.mm @nonARC
-platform/ios/SelectionGeometry.cpp
 platform/ios/SystemMemoryIOS.cpp
 platform/ios/ThemeIOS.mm @nonARC
 platform/ios/TileControllerMemoryHandlerIOS.cpp

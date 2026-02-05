@@ -3,12 +3,12 @@ This test ensures we calculate the frame correctly for checkboxes (inclusive of 
 #test-checkbox-without-label: {width: 12, height: 12}
 #test-radio-without-label: {width: 12, height: 12}
 #test-switch-without-label: {width: 784, height: 10}
-#test-checkbox: {width: 784, height: 19}
-#test-checkbox: {width: 784, height: 19}
-#test-checkbox-switch: {width: 784, height: 18}
-#test-role-checkbox: {width: 784, height: 18}
-#test-role-radio: {width: 784, height: 18}
-#test-role-switch: {width: 784, height: 18}
+#test-checkbox: {width: 784, height: 20}
+#test-checkbox: {width: 784, height: 20}
+#test-checkbox-switch: {width: 784, height: 19}
+#test-role-checkbox: {width: 784, height: 19}
+#test-role-radio: {width: 784, height: 19}
+#test-role-switch: {width: 784, height: 19}
 
 PASS successfullyParsed is true
 

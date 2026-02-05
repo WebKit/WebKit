@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-static void finishConverting(PKPayment *payment, ApplePayPayment& result)
+static void finishConverting(PKPayment *payment, auto& result)
 {
 #if HAVE(PASSKIT_INSTALLMENTS)
     if (RetainPtr<NSString> installmentAuthorizationToken = payment.installmentAuthorizationToken)
@@ -80,7 +80,25 @@ static ApplePayPayment convert(unsigned version, PKPayment *payment)
 
     return result;
 }
-    
+
+static LocalizedApplePayPayment convertLocalized(unsigned version, PKPayment *payment)
+{
+    ASSERT(payment);
+
+    LocalizedApplePayPayment result;
+
+    result.token = convert(retainPtr(payment.token).get());
+
+    if (payment.billingContact)
+        result.billingContact = PaymentContact(payment.billingContact).toLocalizedApplePayPaymentContact(version);
+    if (payment.shippingContact)
+        result.shippingContact = PaymentContact(payment.shippingContact).toLocalizedApplePayPaymentContact(version);
+
+    finishConverting(payment, result);
+
+    return result;
+}
+
 Payment::Payment() = default;
 
 Payment::Payment(RetainPtr<PKPayment>&& pkPayment)
@@ -93,6 +111,11 @@ Payment::~Payment() = default;
 ApplePayPayment Payment::toApplePayPayment(unsigned version) const
 {
     return convert(version, m_pkPayment.get());
+}
+
+LocalizedApplePayPayment Payment::toLocalizedApplePayPayment(unsigned version) const
+{
+    return convertLocalized(version, m_pkPayment.get());
 }
 
 RetainPtr<PKPayment> Payment::pkPayment() const

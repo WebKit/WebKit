@@ -47,7 +47,7 @@ void LaunchServicesDatabaseManager::handleEvent(xpc_object_t message)
     String messageName = xpcDictionaryGetString(message, XPCEndpoint::xpcMessageNameKey);
     if (messageName == LaunchServicesDatabaseXPCConstants::xpcUpdateLaunchServicesDatabaseMessageName) {
 #if HAVE(LSDATABASECONTEXT)
-        XPCObjectPtr<xpc_object_t> database = xpc_dictionary_get_value(message, LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseKey);
+        OSObjectPtr<xpc_object_t> database = xpc_dictionary_get_value(message, LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseKey);
 
         RELEASE_LOG_FORWARDABLE(Loading, RECEIVED_LAUNCH_SERVICES_DATABASE);
 
@@ -62,7 +62,7 @@ void LaunchServicesDatabaseManager::handleEvent(xpc_object_t message)
 void LaunchServicesDatabaseManager::didConnect()
 {
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto message = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, LaunchServicesDatabaseXPCConstants::xpcRequestLaunchServicesDatabaseUpdateMessageName);
 
     auto connection = this->connection();

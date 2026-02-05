@@ -42,6 +42,16 @@ function runTest() {
         output += await expectAsync("!body.childAtIndex(0)", "true");
         output += await expectAsync("!accessibilityController.accessibleElementById('frame-button-1')", "true");
         output += await expectAsync("!accessibilityController.accessibleElementById('frame-button-2')", "true");
+        
+        // Add the inert tag back again, verify the buttons become available again.
+        output += `\n${evalAndReturn("document.getElementById('iframe1').removeAttribute('inert');")}`;
+        
+        await waitFor(() => {
+            iframeButton2 = accessibilityController.accessibleElementById("frame-button-2");
+            return !!iframeButton2;
+        });
+        output += await expectAsync("iframeButton1.isIgnored", "false");
+        output += await expectAsync("iframeButton2.isIgnored", "false");
 
         debug(output);
         finishJSTest();

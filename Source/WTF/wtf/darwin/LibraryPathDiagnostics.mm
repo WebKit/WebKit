@@ -97,7 +97,9 @@ LibraryPathDiagnosticsLogger::LibraryPathDiagnosticsLogger()
 void LibraryPathDiagnosticsLogger::logJSONPayload(const JSON::Object &object)
 {
     auto textRepresentation = object.toJSONString();
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     os_log(m_osLog, "%{public}s", textRepresentation.utf8().data());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 void LibraryPathDiagnosticsLogger::logString(std::span<const String> path, const String& string)
@@ -136,9 +138,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     va_start(argList, format);
     stream.vprintf(format, argList);
     va_end(argList);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     os_log_error(m_osLog, "%{public}s", stream.toCString().data());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 void LibraryPathDiagnosticsLogger::logExecutablePath(void)
@@ -173,20 +175,26 @@ void LibraryPathDiagnosticsLogger::logDynamicLibraryInfo(const String& installNa
 
     const struct mach_header *header = _dyld_get_dlopen_image_header(handle);
     if (!header) {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         logError("Unable to locate mach header for %s", installName.utf8().data());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         return;
     }
 
     Dl_info info = { };
     int dladdr_ret = dladdr(header, &info);
     if (!dladdr_ret) {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         logError("No info returned from dladdr() for %s", installName.utf8().data());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         return;
     }
 
     uuid_t uuid = { 0 };
     if (!_dyld_get_image_uuid(header, uuid)) {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         logError("No UUID found for %s", installName.utf8().data());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         return;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,9 @@
 #import "PlatformUtilities.h"
 #import "TestCocoa.h"
 #import "TestNavigationDelegate.h"
+#import "TestUIDelegate.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
@@ -904,8 +906,45 @@ TEST(EnhancedSecurity, EnhancedSecurityRequestedWhenLockdownModeActive)
     EXPECT_STREQ("lockdown", [webView _webContentProcessVariantForFrame:nil].UTF8String);
 }
 
-#if HAVE(ENHANCED_SECURITY_WEB_CONTENT_PROCESS)
-TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenAPIOptsOut)
+TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenLockdownOptsOut)
+{
+    [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
+
+    auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = NO;
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    [webView _test_waitForDidFinishNavigation];
+
+    EXPECT_EQ(true, isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_EQ(false, isJITEnabled(webView.get()));
+    EXPECT_STREQ("security", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+
+    [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
+}
+
+TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenSecurityRestrictionModeNone)
+{
+    [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
+
+    auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    webViewConfiguration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeNone;
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    [webView _test_waitForDidFinishNavigation];
+
+    EXPECT_EQ(true, isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_EQ(false, isJITEnabled(webView.get()));
+    EXPECT_STREQ("security", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+
+    [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
+}
+
+TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenBothAPIOptsOut)
 {
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
 
@@ -918,14 +957,31 @@ TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenAPIOptsOut)
     [webView loadRequest:[NSURLRequest requestWithURL:url]];
     [webView _test_waitForDidFinishNavigation];
 
+    EXPECT_EQ(true, isEnhancedSecurityEnabled(webView.get()));
     EXPECT_EQ(false, isJITEnabled(webView.get()));
-
-    NSString *processVariant = [webView _webContentProcessVariantForFrame:nil];
-    EXPECT_STREQ("security", processVariant.UTF8String);
+    EXPECT_STREQ("security", [webView _webContentProcessVariantForFrame:nil].UTF8String);
 
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }
-#endif
+
+TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenMaximizeCompatibilitySet)
+{
+    [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
+
+    auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    webViewConfiguration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeMaximizeCompatibility;
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    [webView _test_waitForDidFinishNavigation];
+
+    EXPECT_EQ(true, isEnhancedSecurityEnabled(webView.get()));
+    EXPECT_EQ(false, isJITEnabled(webView.get()));
+    EXPECT_STREQ("security", [webView _webContentProcessVariantForFrame:nil].UTF8String);
+
+    [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
+}
 
 #endif
 

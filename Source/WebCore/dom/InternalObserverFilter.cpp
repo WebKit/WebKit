@@ -65,7 +65,7 @@ public:
 
             SubscribeOptions options;
             options.signal = subscriber.signal();
-            m_sourceObservable->subscribeInternal(*context, InternalObserverFilter::create(*context, subscriber, m_predicate), options);
+            m_sourceObservable->subscribeInternal(*context, InternalObserverFilter::create(*context, subscriber, m_predicate), WTF::move(options));
 
             return { };
         }
@@ -104,7 +104,7 @@ private:
         // error handler.
         JSC::Exception* previousException = nullptr;
         {
-            auto catchScope = DECLARE_CATCH_SCOPE(vm);
+            auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
             auto result = protectedPredicate()->invokeRethrowingException(value, m_idx);
             previousException = catchScope.exception();
             if (previousException) {

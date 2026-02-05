@@ -30,7 +30,7 @@
 
 #import "FourCC.h"
 #import "HEVCUtilities.h"
-#import "MediaCapabilitiesInfo.h"
+#import "PlatformMediaCapabilitiesInfo.h"
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-std::optional<MediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters& parameters, bool hasAlphaChannel, bool hdrSupport)
+std::optional<PlatformMediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters& parameters, bool hasAlphaChannel, bool hdrSupport)
 {
     CMVideoCodecType codec = kCMVideoCodecType_HEVC;
     if (hasAlphaChannel) {
@@ -98,7 +98,7 @@ std::optional<MediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters
     if (!profileSupport)
         return std::nullopt;
 
-    MediaCapabilitiesInfo info;
+    PlatformMediaCapabilitiesInfo info;
 
     info.supported = true;
 
@@ -152,7 +152,7 @@ static std::optional<Vector<uint16_t>> parseStringArrayFromDictionaryToUInt16Vec
     return result;
 }
 
-std::optional<MediaCapabilitiesInfo> validateDoViParameters(const DoViParameters& parameters, bool hasAlphaChannel, bool hdrSupport)
+std::optional<PlatformMediaCapabilitiesInfo> validateDoViParameters(const DoViParameters& parameters, bool hasAlphaChannel, bool hdrSupport)
 {
     if (hasAlphaChannel)
         return std::nullopt;

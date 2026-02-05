@@ -136,7 +136,7 @@ static Ref<NetworkStorageManager> createNetworkStorageManager(NetworkProcess& ne
 static WebPushD::WebPushDaemonConnectionConfiguration configurationWithHostAuditToken(NetworkProcess& networkProcess, WebPushD::WebPushDaemonConnectionConfiguration configuration)
 {
 #if !USE(EXTENSIONKIT)
-    auto token = networkProcess.protectedParentProcessConnection()->getAuditToken();
+    auto token = protect(networkProcess.parentProcessConnection())->getAuditToken();
     if (token) {
         Vector<uint8_t> auditTokenData(sizeof(*token));
         memcpySpan(auditTokenData.mutableSpan(), asByteSpan(*token));
@@ -638,7 +638,7 @@ RefPtr<NetworkResourceLoader> NetworkSession::CachedNetworkResourceLoader::takeL
 void NetworkSession::CachedNetworkResourceLoader::expirationTimerFired()
 {
     RefPtr loader = m_loader;
-    CheckedPtr session = loader->protectedConnectionToWebProcess()->networkSession();
+    CheckedPtr session = protect(loader->connectionToWebProcess())->networkSession();
     ASSERT(session);
     if (!session)
         return;
@@ -689,11 +689,6 @@ NetworkLoadScheduler& NetworkSession::networkLoadScheduler()
     return *m_networkLoadScheduler;
 }
 
-Ref<NetworkLoadScheduler> NetworkSession::protectedNetworkLoadScheduler()
-{
-    return networkLoadScheduler();
-}
-
 String NetworkSession::attributedBundleIdentifierFromPageIdentifier(WebPageProxyIdentifier identifier) const
 {
     return m_attributedBundleIdentifierFromPageIdentifiers.get(identifier);
@@ -703,7 +698,7 @@ String NetworkSession::attributedBundleIdentifierFromPageIdentifier(WebPageProxy
 
 void NetworkSession::reportNetworkIssue(WebPageProxyIdentifier pageIdentifier, const URL& requestURL)
 {
-    m_networkProcess->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::ReportNetworkIssue(pageIdentifier, requestURL), 0);
+    protect(m_networkProcess->parentProcessConnection())->send(Messages::NetworkProcessProxy::ReportNetworkIssue(pageIdentifier, requestURL), 0);
 }
 
 #endif // ENABLE(NETWORK_ISSUE_REPORTING)
@@ -843,7 +838,7 @@ void NetworkSession::softUpdate(ServiceWorkerJobData&& jobData, bool shouldRefre
 void NetworkSession::createContextConnection(const WebCore::Site& site, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!site.isEmpty());
-    m_networkProcess->protectedParentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::EstablishRemoteWorkerContextConnectionToNetworkProcess { RemoteWorkerType::ServiceWorker, site, requestingProcessIdentifier, serviceWorkerPageIdentifier, m_sessionID }, [completionHandler = WTF::move(completionHandler)] (auto) mutable {
+    protect(m_networkProcess->parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::EstablishRemoteWorkerContextConnectionToNetworkProcess { RemoteWorkerType::ServiceWorker, site, requestingProcessIdentifier, serviceWorkerPageIdentifier, m_sessionID }, [completionHandler = WTF::move(completionHandler)] (auto) mutable {
         completionHandler();
     }, 0);
 }
@@ -851,7 +846,7 @@ void NetworkSession::createContextConnection(const WebCore::Site& site, std::opt
 void NetworkSession::appBoundDomains(CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&& completionHandler)
 {
 #if ENABLE(APP_BOUND_DOMAINS)
-    m_networkProcess->protectedParentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::GetAppBoundDomains { m_sessionID }, WTF::move(completionHandler), 0);
+    protect(m_networkProcess->parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::GetAppBoundDomains { m_sessionID }, WTF::move(completionHandler), 0);
 #else
     completionHandler({ });
 #endif
@@ -962,14 +957,9 @@ WebCore::ResourceMonitorThrottlerHolder& NetworkSession::resourceMonitorThrottle
     return *m_resourceMonitorThrottler;
 }
 
-Ref<WebCore::ResourceMonitorThrottlerHolder> NetworkSession::protectedResourceMonitorThrottler()
-{
-    return resourceMonitorThrottler();
-}
-
 void NetworkSession::clearResourceMonitorThrottlerData(CompletionHandler<void()>&& completionHandler)
 {
-    protectedResourceMonitorThrottler()->clearAllData(WTF::move(completionHandler));
+    protect(resourceMonitorThrottler())->clearAllData(WTF::move(completionHandler));
 }
 
 #endif

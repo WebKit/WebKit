@@ -78,6 +78,7 @@ class AutoscrollController;
 class ContainerNode;
 class DataTransfer;
 class Document;
+class DragData;
 class Element;
 class Event;
 class EventTarget;
@@ -120,6 +121,7 @@ class HTMLModelElement;
 
 struct DragState;
 struct FocusEventData;
+struct FrameIdentifierType;
 struct RemoteUserInputEventData;
 
 enum class WheelEventProcessingSteps : uint8_t;
@@ -141,6 +143,11 @@ extern const unsigned InvalidTouchIdentifier;
 enum AppendTrailingWhitespace { ShouldAppendTrailingWhitespace, DontAppendTrailingWhitespace };
 enum CheckDragHysteresis { ShouldCheckDragHysteresis, DontCheckDragHysteresis };
 enum class LastKnownMousePositionSource : uint8_t { Mouse, Wheel, Touch };
+
+enum class DragEventHandled : bool;
+
+using FrameIdentifier = ObjectIdentifier<FrameIdentifierType>;
+using DragEventTargetData = Variant<DragEventHandled, FrameIdentifier>;
 
 class EventHandler final : public CanMakeCheckedPtr<EventHandler> {
     WTF_MAKE_TZONE_ALLOCATED(EventHandler);
@@ -191,7 +198,7 @@ public:
     };
     DragTargetResponse updateDragAndDrop(const PlatformMouseEvent&, const std::function<std::unique_ptr<Pasteboard>()>&, OptionSet<DragOperation>, bool draggingFiles);
     void cancelDragAndDrop(const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&&, OptionSet<DragOperation>, bool draggingFiles);
-    bool performDragAndDrop(const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&&, OptionSet<DragOperation>, bool draggingFiles);
+    DragEventTargetData performDragAndDrop(const PlatformMouseEvent&, std::unique_ptr<Pasteboard>&&, OptionSet<DragOperation>, bool draggingFiles, const HitTestResult&, DragData&&);
     void updateDragStateAfterEditDragIfNeeded(Element& rootEditableElement);
     static Element* draggedElement();
     static RefPtr<Element> protectedDraggedElement();

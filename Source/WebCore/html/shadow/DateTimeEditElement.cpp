@@ -272,7 +272,7 @@ Ref<DateTimeEditElement> DateTimeEditElement::create(Document& document, DateTim
 void DateTimeEditElement::layout(const LayoutParameters& layoutParameters)
 {
     if (!firstChild()) {
-        Ref element = HTMLDivElement::create(protectedDocument().get());
+        Ref element = HTMLDivElement::create(protect(document()).get());
         appendChild(element);
         element->setUserAgentPart(UserAgentParts::webkitDatetimeEditFieldsWrapper());
     }

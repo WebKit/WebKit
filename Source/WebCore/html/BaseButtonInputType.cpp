@@ -73,7 +73,7 @@ void BaseButtonInputType::setValue(const String& sanitizedValue, bool, TextField
     ASSERT(element);
     element->setAttributeWithoutSynchronization(valueAttr, AtomString { sanitizedValue });
 
-    if (CheckedPtr cache = element->protectedDocument()->existingAXObjectCache())
+    if (CheckedPtr cache = protect(element->document())->existingAXObjectCache())
         cache->valueChanged(*element);
 }
 

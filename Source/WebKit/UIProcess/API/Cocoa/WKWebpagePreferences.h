@@ -128,4 +128,12 @@ WK_CLASS_AVAILABLE(macos(10.15), ios(13.0))
  */
 @property (nonatomic) WKSecurityRestrictionMode securityRestrictionMode WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
+/* @abstract Used to make changes to the network request that will be used for this navigation's main resource load.
+*/
+@property (nonatomic, copy, nullable) NSURLRequest *alternateRequest WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
+/* @abstract Used to apply a custom `referer` header to all resource loads in the frame for this navigation.
+*/
+@property (nonatomic, copy, nullable) NSString *overrideReferrer WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 @end

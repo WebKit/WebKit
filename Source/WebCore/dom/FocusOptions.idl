@@ -23,9 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary FocusOptions {
+// https://html.spec.whatwg.org/multipage/interaction.html#focusoptions
+dictionary FocusOptions {
    boolean preventScroll = false;
    boolean focusVisible;
 };

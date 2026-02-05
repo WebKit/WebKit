@@ -203,8 +203,7 @@ RegistrationResponseJSON::AuthenticatorAttestationResponseJSON AuthenticatorAtte
         value.authenticatorData = base64URLEncodeToString(authData->span());
     if (auto publicKey = getPublicKey())
         value.publicKey = base64URLEncodeToString(publicKey->span());
-    if (auto attestationObj = attestationObject())
-        value.attestationObject = base64URLEncodeToString(attestationObj->span());
+    value.attestationObject = base64URLEncodeToString(attestationObject().span());
     value.publicKeyAlgorithm = getPublicKeyAlgorithm();
 
     return value;

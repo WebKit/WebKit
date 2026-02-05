@@ -24,7 +24,6 @@
 
 [
     Conditional=WEB_AUDIO,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary IIRFilterOptions : AudioNodeOptions {
     required sequence<double> feedforward;
     required sequence<double> feedback;

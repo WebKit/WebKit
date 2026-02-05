@@ -726,7 +726,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
             && m_downstreamEnd.deprecatedEditingOffset() >= caretMinOffset(*m_downstreamEnd.deprecatedNode())) {
             if (m_downstreamEnd.atLastEditingPositionForNode() && !canHaveChildrenForEditing(*m_downstreamEnd.deprecatedNode())) {
                 // The node itself is fully selected, not just its contents.  Delete it.
-                removeNode(*m_downstreamEnd.protectedDeprecatedNode());
+                removeNode(*protect(m_downstreamEnd.deprecatedNode()));
             } else {
                 if (RefPtr text = dynamicDowncast<Text>(*m_downstreamEnd.deprecatedNode())) {
                     // in a text node that needs to be trimmed
@@ -747,8 +747,8 @@ void DeleteSelectionCommand::handleGeneralDelete()
                         if (n)
                             offset = n->computeNodeIndex() + 1;
                     }
-                    removeChildrenInRange(*m_downstreamEnd.protectedDeprecatedNode(), offset, m_downstreamEnd.deprecatedEditingOffset());
-                    m_downstreamEnd = makeDeprecatedLegacyPosition(m_downstreamEnd.protectedDeprecatedNode(), offset);
+                    removeChildrenInRange(*protect(m_downstreamEnd.deprecatedNode()), offset, m_downstreamEnd.deprecatedEditingOffset());
+                    m_downstreamEnd = makeDeprecatedLegacyPosition(protect(m_downstreamEnd.deprecatedNode()), offset);
                 }
             }
         }
@@ -803,7 +803,7 @@ void DeleteSelectionCommand::mergeParagraphs()
     
     // m_downstreamEnd's block has been emptied out by deletion.  There is no content inside of it to
     // move, so just remove it.
-    RefPtr endBlock { enclosingBlock(m_downstreamEnd.protectedDeprecatedNode()) };
+    RefPtr endBlock { enclosingBlock(protect(m_downstreamEnd.deprecatedNode())) };
     if (!endBlock)
         return;
 
@@ -813,7 +813,7 @@ void DeleteSelectionCommand::mergeParagraphs()
     }
     
     // We need to merge into m_upstreamStart's block, but it's been emptied out and collapsed by deletion.
-    if (!mergeDestination.deepEquivalent().deprecatedNode() || !mergeDestination.deepEquivalent().deprecatedNode()->isDescendantOf(enclosingBlock(m_upstreamStart.protectedContainerNode()).get()) || m_startsAtEmptyLine) {
+    if (!mergeDestination.deepEquivalent().deprecatedNode() || !mergeDestination.deepEquivalent().deprecatedNode()->isDescendantOf(enclosingBlock(protect(m_upstreamStart.containerNode())).get()) || m_startsAtEmptyLine) {
         insertNodeAt(HTMLBRElement::create(document()), m_upstreamStart);
         mergeDestination = VisiblePosition(m_upstreamStart);
     }
@@ -897,7 +897,7 @@ void DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows()
     if (endTableRow && endTableRow->isConnected() && endTableRow != m_startTableRow) {
         if (isTableRowEmpty(*endTableRow)) {
             // Don't remove m_endTableRow if it's where we're putting the ending selection.
-            if (!m_endingPosition.protectedDeprecatedNode()->isDescendantOf(*endTableRow)) {
+            if (!protect(m_endingPosition.deprecatedNode())->isDescendantOf(*endTableRow)) {
                 // FIXME: We probably shouldn't remove m_endTableRow unless it's fully selected, even if it is empty.
                 // We'll need to start adjusting the selection endpoints during deletion to know whether or not m_endTableRow
                 // was fully selected here.
@@ -1017,7 +1017,7 @@ void DeleteSelectionCommand::doApply()
         // and ends inside it (we do need placeholders to hold open empty cells, but that's
         // handled elsewhere).
         if (RefPtr table = isLastPositionBeforeTable(m_selectionToDelete.visibleStart())) {
-            if (m_selectionToDelete.end().protectedDeprecatedNode()->isDescendantOf(*table))
+            if (protect(m_selectionToDelete.end().deprecatedNode())->isDescendantOf(*table))
                 m_needPlaceholder = false;
         }
     }
@@ -1065,7 +1065,7 @@ void DeleteSelectionCommand::doApply()
 
     bool shouldRebalaceWhiteSpace = true;
     if (!document().editor().behavior().shouldRebalanceWhiteSpacesInSecureField()) {
-        if (RefPtr textNode = dynamicDowncast<Text>(m_endingPosition.protectedDeprecatedNode())) {
+        if (RefPtr textNode = dynamicDowncast<Text>(protect(m_endingPosition.deprecatedNode()))) {
             ScriptDisallowedScope::InMainThread scriptDisallowedScope;
             if (textNode->length() && textNode->renderer())
                 shouldRebalaceWhiteSpace = textNode->renderer()->style().textSecurity() == TextSecurity::None;

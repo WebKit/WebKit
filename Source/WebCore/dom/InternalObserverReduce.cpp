@@ -67,7 +67,7 @@ private:
         Ref vm = globalObject->vm();
 
         JSC::JSLockHolder lock(vm);
-        auto scope = DECLARE_CATCH_SCOPE(vm);
+        auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
         auto result = protectedCallback()->invokeRethrowingException(m_accumulator.getValue(), value, m_index++);
 
@@ -126,13 +126,13 @@ private:
     const Ref<DeferredPromise> m_promise;
 };
 
-void createInternalObserverOperatorReduce(ScriptExecutionContext& context, Observable& observable, Ref<ReducerCallback>&& callback, JSC::JSValue initialValue, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+void createInternalObserverOperatorReduce(ScriptExecutionContext& context, Observable& observable, Ref<ReducerCallback>&& callback, JSC::JSValue initialValue, SubscribeOptions&& options, Ref<DeferredPromise>&& promise)
 {
     Ref signal = AbortSignal::create(&context);
 
     Vector<Ref<AbortSignal>> dependentSignals = { signal };
     if (options.signal)
-        dependentSignals.append(Ref { *options.signal });
+        dependentSignals.append(options.signal.releaseNonNull());
     Ref dependentSignal = AbortSignal::any(context, dependentSignals);
 
     if (dependentSignal->aborted())

@@ -42,6 +42,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
+    virtual bool isJSRemotePlaybackAvailabilityCallback() const { return false; }
+
     virtual CallbackResult<bool> invoke(bool) = 0;
     virtual CallbackResult<bool> invokeRethrowingException(bool) = 0;
 

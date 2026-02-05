@@ -227,7 +227,7 @@ RTCRtpParameters toRTCRtpParameters(const webrtc::RtpParameters& rtcParameters)
 
 RTCRtpSendParameters toRTCRtpSendParameters(const webrtc::RtpParameters& rtcParameters)
 {
-    RTCRtpSendParameters parameters { toRTCRtpParameters(rtcParameters) };
+    RTCRtpSendParameters parameters { toRTCRtpParameters(rtcParameters), nullString(), { }, { } };
     parameters.rtcp.cname = fromStdString(rtcParameters.rtcp.cname);
 
     parameters.transactionId = fromStdString(rtcParameters.transaction_id);

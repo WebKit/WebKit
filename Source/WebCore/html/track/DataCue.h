@@ -54,7 +54,7 @@ public:
     virtual ~DataCue();
 
     RefPtr<JSC::ArrayBuffer> data() const;
-    void setData(JSC::ArrayBuffer&);
+    ExceptionOr<void> setData(JSC::ArrayBuffer*);
 
     const SerializedPlatformDataCue* platformValue() const { return m_platformValue.get(); }
     RefPtr<const SerializedPlatformDataCue> protectedPlatformValue() const { return m_platformValue.get(); }

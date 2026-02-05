@@ -1,4 +1,4 @@
 
-PASS FontFaceSetLoadEvent constructor without FontFaceSetLoadEventInit dictionary
-PASS FontFaceSetLoadEvent constructor with FontFaceSetLoadEventInit dictionary
+FAIL FontFaceSetLoadEvent constructor without FontFaceSetLoadEventInit dictionary Can't find variable: FontFaceSetLoadEvent
+FAIL FontFaceSetLoadEvent constructor with FontFaceSetLoadEventInit dictionary Can't find variable: FontFaceSetLoadEvent
 

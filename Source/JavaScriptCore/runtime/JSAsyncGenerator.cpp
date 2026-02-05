@@ -43,6 +43,13 @@ JSAsyncGenerator* JSAsyncGenerator::create(VM& vm, Structure* structure)
     return generator;
 }
 
+JSAsyncGenerator* JSAsyncGenerator::createWithInitialValues(VM& vm, Structure* structure)
+{
+    JSAsyncGenerator* generator = new (NotNull, allocateCell<JSAsyncGenerator>(vm)) JSAsyncGenerator(vm, structure);
+    generator->finishCreation(vm);
+    return generator;
+}
+
 Structure* JSAsyncGenerator::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
     return Structure::create(vm, globalObject, prototype, TypeInfo(JSAsyncGeneratorType, StructureFlags), info());

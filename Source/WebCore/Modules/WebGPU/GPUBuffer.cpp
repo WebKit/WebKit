@@ -56,7 +56,7 @@ void GPUBuffer::setLabel(String&& label)
     m_backing->setLabel(WTF::move(label));
 }
 
-void GPUBuffer::mapAsync(GPUMapModeFlags mode, std::optional<GPUSize64> offset, std::optional<GPUSize64> size, MapAsyncPromise&& promise)
+void GPUBuffer::mapAsync(GPUMapModeFlags mode, GPUSize64 offset, std::optional<GPUSize64> size, MapAsyncPromise&& promise)
 {
     if (m_pendingMapPromise) {
         promise.reject(Exception { ExceptionCode::OperationError, "pendingMapPromise"_s });
@@ -68,7 +68,7 @@ void GPUBuffer::mapAsync(GPUMapModeFlags mode, std::optional<GPUSize64> offset, 
 
     m_pendingMapPromise = promise;
     // FIXME: Should this capture a weak pointer to |this| instead?
-    m_backing->mapAsync(convertMapModeFlagsToBacking(mode), offset.value_or(0), size, [promise = WTF::move(promise), protectedThis = Ref { *this }, offset, size](bool success) mutable {
+    m_backing->mapAsync(convertMapModeFlagsToBacking(mode), offset, size, [promise = WTF::move(promise), protectedThis = Ref { *this }, offset, size](bool success) mutable {
         if (!protectedThis->m_pendingMapPromise) {
             if (protectedThis->m_destroyed)
                 promise.reject(Exception { ExceptionCode::OperationError, "buffer destroyed during mapAsync"_s });
@@ -80,7 +80,7 @@ void GPUBuffer::mapAsync(GPUMapModeFlags mode, std::optional<GPUSize64> offset, 
         protectedThis->m_pendingMapPromise = std::nullopt;
         if (success) {
             protectedThis->m_mapState = GPUBufferMapState::Mapped;
-            protectedThis->m_mappedRangeOffset = offset.value_or(0);
+            protectedThis->m_mappedRangeOffset = offset;
             protectedThis->m_mappedRangeSize = size.value_or(protectedThis->m_bufferSize - protectedThis->m_mappedRangeOffset);
             promise.resolve(nullptr);
         } else {
@@ -132,12 +132,11 @@ static bool containsRange(size_t offset, size_t endOffset, const auto& mappedRan
     return false;
 }
 
-ExceptionOr<Ref<JSC::ArrayBuffer>> GPUBuffer::getMappedRange(std::optional<GPUSize64> optionalOffset, std::optional<GPUSize64> optionalSize)
+ExceptionOr<Ref<JSC::ArrayBuffer>> GPUBuffer::getMappedRange(GPUSize64 offset, std::optional<GPUSize64> optionalSize)
 {
     if (m_mapState != GPUBufferMapState::Mapped || m_destroyed)
         return Exception { ExceptionCode::OperationError, "not mapped or destroyed"_s };
 
-    auto offset = optionalOffset.value_or(0);
     if (offset > m_bufferSize)
         return Exception { ExceptionCode::OperationError, "offset > bufferSize"_s };
 

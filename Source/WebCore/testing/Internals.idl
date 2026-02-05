@@ -145,22 +145,20 @@ enum AutoplayPolicy {
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     Conditional=VIDEO,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary NowPlayingState {
-    DOMString title;
-    unrestricted double duration;
-    unrestricted double elapsedTime;
-    unsigned long long uniqueIdentifier;
-    boolean hasActiveSession;
-    boolean registeredAsNowPlayingApplication;
-    boolean haveEverRegisteredAsNowPlayingApplication;
+    DOMString title = "";
+    unrestricted double duration = 0;
+    unrestricted double elapsedTime = 0;
+    unsigned long long uniqueIdentifier = 0;
+    boolean hasActiveSession = false;
+    boolean registeredAsNowPlayingApplication = false;
+    boolean haveEverRegisteredAsNowPlayingApplication = false;
 };
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     Conditional=VIDEO,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary NowPlayingInfoArtwork {
     DOMString src;
     DOMString mimeType;
@@ -170,20 +168,18 @@ enum AutoplayPolicy {
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     Conditional=VIDEO,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary NowPlayingMetadata {
     DOMString title;
     DOMString artist;
     DOMString album;
     DOMString sourceApplicationIdentifier;
-    NowPlayingInfoArtwork? artwork;
+    NowPlayingInfoArtwork artwork;
 };
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     Conditional=VIDEO,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary MediaUsageState {
     DOMString mediaURL;
     boolean isPlaying;
@@ -220,12 +216,11 @@ enum AutoplayPolicy {
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary FullscreenInsets {
-    double top;
-    double left;
-    double bottom;
-    double right;
+    float top = 0;
+    float left = 0;
+    float bottom = 0;
+    float right = 0;
 };
 
 enum HEVCParameterCodec {
@@ -239,13 +234,13 @@ enum HEVCParameterCodec {
     JSGenerateToNativeObject,
     LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary HEVCParameterSet {
-    HEVCParameterCodec codec;
-    unsigned short generalProfileSpace;
-    unsigned short generalProfileIDC;
-    unsigned long generalProfileCompatibilityFlags;
-    octet generalTierFlag;
+    HEVCParameterCodec codec = "hvc1";
+    unsigned short generalProfileSpace = 0;
+    unsigned short generalProfileIDC = 0;
+    unsigned long generalProfileCompatibilityFlags = 0;
+    octet generalTierFlag = 0;
     required FrozenArray<octet> generalConstraintIndicatorFlags;
-    unsigned short generalLevelIDC;
+    unsigned short generalLevelIDC = 0;
 };
 
 enum AV1ConfigurationProfile {
@@ -294,63 +289,60 @@ enum AV1ConfigurationRange {
 [
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary AV1CodecConfigurationRecord {
     DOMString codecName;
-    AV1ConfigurationProfile profile;
-    AV1ConfigurationLevel level;
-    AV1ConfigurationTier tier;
-    octet bitDepth;
-    octet monochrome;
-    octet chromaSubsampling;
-    octet colorPrimaries;
-    octet transferCharacteristics;
-    octet matrixCoefficients;
-    AV1ConfigurationRange videoFullRangeFlag;
+    AV1ConfigurationProfile profile = "Main";
+    AV1ConfigurationLevel level = "Level_2_0";
+    AV1ConfigurationTier tier = "Main";
+    octet bitDepth = 8;
+    octet monochrome = 0;
+    octet chromaSubsampling = 110;
+    octet colorPrimaries = 1;
+    octet transferCharacteristics = 1;
+    octet matrixCoefficients = 1;
+    AV1ConfigurationRange videoFullRangeFlag = "VideoRange";
+    unsigned long width = 0;
+    unsigned long height = 0;
 };
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary DoViParameterSet {
-    DOMString codecName;
-    unsigned short bitstreamProfileID;
-    unsigned short bitstreamLevelID;
+    required DOMString codecName;
+    required unsigned short bitstreamProfileID;
+    required unsigned short bitstreamLevelID;
 };
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary VPCodecConfigurationRecord {
     DOMString codecName;
-    octet profile;
-    octet level;
-    octet bitDepth;
-    octet chromaSubsampling;
-    octet videoFullRangeFlag;
-    octet colorPrimaries;
-    octet transferCharacteristics;
-    octet matrixCoefficients;
+    octet profile = 0;
+    octet level = 10;
+    octet bitDepth = 8;
+    octet chromaSubsampling = 1;
+    octet videoFullRangeFlag = 0;
+    octet colorPrimaries = 1;
+    octet transferCharacteristics = 1;
+    octet matrixCoefficients = 1;
 };
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary AcceleratedAnimation {
-    DOMString property;
-    double speed;
-    boolean isThreaded;
+    required DOMString property;
+    required double speed;
+    required boolean isThreaded;
 };
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary CookieData {
     DOMString name;
     DOMString value;
@@ -372,12 +364,12 @@ enum AV1ConfigurationRange {
 ] dictionary WebDriverCookieData {
     DOMString name;
     DOMString value;
-    DOMString path;
+    DOMString path = "/";
     DOMString domain;
-    boolean secure;
-    boolean httpOnly;
-    double? expiry;
-    DOMString sameSite;
+    boolean secure = false;
+    boolean httpOnly = false;
+    double expiry;
+    DOMString sameSite = "none";
 };
 
 [
@@ -391,7 +383,6 @@ enum AV1ConfigurationRange {
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary TextIndicatorOptions {
     boolean useBoundingRectAndPaintAllContentForComplexRanges = false;
     boolean computeEstimatedBackgroundColor = false;
@@ -402,7 +393,6 @@ enum AV1ConfigurationRange {
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary TextIteratorState {
     DOMString text;
     Range range;
@@ -410,7 +400,6 @@ enum AV1ConfigurationRange {
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ImageOverlayText {
     required DOMString text;
     required DOMPointReadOnly topLeft;
@@ -422,20 +411,18 @@ enum AV1ConfigurationRange {
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ImageOverlayLine {
     required DOMPointReadOnly topLeft;
     required DOMPointReadOnly topRight;
     required DOMPointReadOnly bottomRight;
     required DOMPointReadOnly bottomLeft;
-    sequence<ImageOverlayText> children;
+    sequence<ImageOverlayText> children = [];
     boolean hasTrailingNewline = true;
     boolean isVertical = false;
 };
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ImageOverlayBlock {
     required DOMString text;
     required DOMPointReadOnly topLeft;
@@ -446,7 +433,6 @@ enum AV1ConfigurationRange {
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ImageOverlayDataDetector {
     required DOMPointReadOnly topLeft;
     required DOMPointReadOnly topRight;
@@ -457,23 +443,21 @@ enum AV1ConfigurationRange {
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary SelectorFilterHashCounts {
-    unsigned long ids;
-    unsigned long classes;
-    unsigned long tags;
-    unsigned long attributes;
+    unsigned long ids = 0;
+    unsigned long classes = 0;
+    unsigned long tags = 0;
+    unsigned long attributes = 0;
 };
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary PDFAnnotationRect {
-    double x;
-    double y;
-    double width;
-    double height; 
+    float x = 0;
+    float y = 0;
+    float width = 0;
+    float height = 0;
 };
 
 typedef (FetchRequest or FetchResponse) FetchObject;
@@ -481,16 +465,15 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ImageBufferResourceLimits {
-    unsigned long long acceleratedImageBufferForCanvasCount;
-    unsigned long long acceleratedImageBufferForCanvasLimit;
-    unsigned long long globalAcceleratedImageBufferCount;
-    unsigned long long globalAcceleratedImageBufferLimit;
-    unsigned long long globalImageBufferForCanvasCount;
-    unsigned long long globalImageBufferForCanvasLimit;
-    unsigned long long imageBufferForCanvasCount;
-    unsigned long long imageBufferForCanvasLimit;
+    unsigned long long acceleratedImageBufferForCanvasCount = 0;
+    unsigned long long acceleratedImageBufferForCanvasLimit = 0;
+    unsigned long long globalAcceleratedImageBufferCount = 0;
+    unsigned long long globalAcceleratedImageBufferLimit = 0;
+    unsigned long long globalImageBufferForCanvasCount = 0;
+    unsigned long long globalImageBufferForCanvasLimit = 0;
+    unsigned long long imageBufferForCanvasCount = 0;
+    unsigned long long imageBufferForCanvasLimit = 0;
 };
 
 enum RenderingMode {
@@ -512,20 +495,18 @@ enum ContentsFormat {
     Conditional=DAMAGE_TRACKING,
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary FrameDamage {
-    unsigned long sequenceId;
+    unsigned long sequenceId = 0;
     DOMRectReadOnly bounds;
-    sequence<DOMRectReadOnly> rects;
+    sequence<DOMRectReadOnly> rects = [];
 };
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ScrollingNodeID {
-    unsigned long long nodeIdentifier;
-    unsigned long long processIdentifier;
+    required unsigned long long nodeIdentifier;
+    required unsigned long long processIdentifier;
 };
 
 [
@@ -823,7 +804,9 @@ enum ContentsFormat {
     unsigned long long layerIDForElement(Element element);
     unsigned long long horizontalScrollbarLayerID(optional Node? node = null);
     unsigned long long verticalScrollbarLayerID(optional Node? node = null);
-    
+    DOMRect horizontalScrollbarFrameRect(optional Node? node = null);
+    DOMRect verticalScrollbarFrameRect(optional Node? node = null);
+
     ScrollingNodeID scrollingNodeIDForNode(optional Node? node = null);
 
     // Flags for platformLayerTreeAsText.
@@ -979,6 +962,8 @@ enum ContentsFormat {
     undefined startTrackingRenderingUpdates();
     unsigned long renderingUpdateCount();
 
+    double? timeToNextRenderingUpdate();
+
     attribute CompositingPolicy? compositingPolicyOverride;
 
     undefined updateLayoutAndStyleForAllFrames();
@@ -1052,6 +1037,7 @@ enum ContentsFormat {
     [Conditional=VIDEO] DOMString captionsStyleSheetOverride();
     [Conditional=VIDEO] undefined setCaptionsStyleSheetOverride(DOMString override);
     [Conditional=VIDEO] undefined setPrimaryAudioTrackLanguageOverride(DOMString language);
+    [Conditional=VIDEO] undefined setPreferredAudioCharacteristicsForTesting(sequence<DOMString> characteristics);
     [Conditional=VIDEO] undefined setCaptionDisplayMode(DOMString mode);
     [Conditional=VIDEO] readonly attribute DOMString captionDisplayMode;
     [Conditional=VIDEO] TextTrackCueGeneric? createGenericCue(double startTime, double endTime, DOMString text);
@@ -1116,6 +1102,7 @@ enum ContentsFormat {
     [Conditional=WEB_RTC] undefined stopPeerConnection(RTCPeerConnection connection);
     [Conditional=WEB_RTC] undefined clearPeerConnectionFactory();
     [Conditional=WEB_RTC] undefined setEnableWebRTCEncryption(boolean enabled);
+    [Conditional=WEB_RTC] boolean hasPeerConnectionEnabledServiceClass(RTCPeerConnection connection);
 
     [Conditional=VIDEO] undefined simulateSystemSleep();
     [Conditional=VIDEO] undefined simulateSystemWake();
@@ -1331,7 +1318,7 @@ enum ContentsFormat {
     [Conditional=VIDEO] readonly attribute NowPlayingMetadata? nowPlayingMetadata;
     [Conditional=VIDEO] readonly attribute NowPlayingState nowPlayingState;
     [Conditional=VIDEO] boolean elementIsActiveNowPlayingSession(HTMLMediaElement element);
-    undefined setNowPlayingUpdateInterval(double interval);
+    [Conditional=VIDEO] attribute double nowPlayingUpdateInterval;
 
     [Conditional=VIDEO] HTMLMediaElement? bestMediaElementForRemoteControls(PlaybackControlsPurpose purpose);
     [Conditional=VIDEO] MediaSessionState mediaSessionState(HTMLMediaElement element);
@@ -1518,6 +1505,9 @@ enum ContentsFormat {
     attribute boolean shouldSkipResourceMonitorThrottling;
 #endif
 
+    [CallWith=CurrentGlobalObject] ReadableStream readableStreamFromMessagePort(MessagePort port);
+    [CallWith=CurrentGlobalObject] WritableStream writableStreamFromMessagePort(MessagePort port);
+
     [Conditional=MODEL_ELEMENT] undefined disableModelLoadDelaysForTesting();
     [Conditional=MODEL_ELEMENT] DOMString modelElementState(HTMLModelElement element);
     [Conditional=MODEL_ELEMENT] boolean isModelElementIntersectingViewport(HTMLModelElement element);
@@ -1525,6 +1515,8 @@ enum ContentsFormat {
     undefined copyImageAtLocation(long x, long y);
 
     unsigned long fileConnectionHandleCount(FileSystemHandle handle);
+
+    [CallWith=CurrentGlobalObject] Promise<sequence<any>> testAsyncIterator(any value);
 
     // Navigation API rate limiter testing
     undefined setNavigationRateLimiterParameters(DOMWindow window, unsigned long maxNavigations, double windowDurationSeconds);

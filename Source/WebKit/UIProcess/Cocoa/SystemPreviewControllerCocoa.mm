@@ -435,7 +435,7 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
         if (!success || !weakThis)
             return completionHandler();
 
-        auto protectedThis = weakThis.get();
+        RefPtr protectedThis = weakThis.get();
         RefPtr webPageProxy = protectedThis->m_webPageProxy.get();
         if (!webPageProxy)
             return completionHandler();
@@ -446,8 +446,8 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
             if (!weakThis)
                 return completionHandler();
 
-            auto protectedThis = weakThis.get();
-            _WKDataTask *dataTask = wrapper(task);
+            RefPtr protectedThis = weakThis.get();
+            RetainPtr dataTask = wrapper(task);
             protectedThis->m_wkSystemPreviewDataTaskDelegate = adoptNS([[_WKSystemPreviewDataTaskDelegate alloc] initWithSystemPreviewController:protectedThis]);
             [dataTask setDelegate:protectedThis->m_wkSystemPreviewDataTaskDelegate.get()];
             protectedThis->takeActivityToken();
@@ -477,22 +477,22 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
         successHandler(success);
     });
     auto alert = WebKit::createUIAlertController(WEB_UI_NSSTRING(@"View in AR?", "View in AR?"), WEB_UI_NSSTRING(@"You can view this object in 3D and place it in your surroundings using augmented reality.", "You can view this object in 3D and place it in your surroundings using augmented reality."));
-    UIAlertAction* allowAction = [UIAlertAction actionWithTitle:WEB_UI_NSSTRING_KEY(@"View in AR", @"View in AR (usdz QuickLook Preview)", "Allow displaying QuickLook Preview of 3D model") style:UIAlertActionStyleDefault handler:[weakThis = WeakPtr { *this }](UIAlertAction *) mutable {
+    RetainPtr allowAction = [UIAlertAction actionWithTitle:WEB_UI_NSSTRING_KEY(@"View in AR", @"View in AR (usdz QuickLook Preview)", "Allow displaying QuickLook Preview of 3D model") style:UIAlertActionStyleDefault handler:[weakThis = WeakPtr { *this }](UIAlertAction *) mutable {
         if (!weakThis)
             return;
 
         std::exchange(weakThis->m_allowPreviewCallback, nullptr)(true);
     }];
 
-    UIAlertAction* doNotAllowAction = [UIAlertAction actionWithTitle:WEB_UI_NSSTRING_KEY(@"Cancel", @"Cancel (usdz QuickLook Preview)", "Cancel displaying QuickLook Preview of 3D model") style:UIAlertActionStyleCancel handler:[weakThis = WeakPtr { *this }](UIAlertAction *) mutable {
+    RetainPtr doNotAllowAction = [UIAlertAction actionWithTitle:WEB_UI_NSSTRING_KEY(@"Cancel", @"Cancel (usdz QuickLook Preview)", "Cancel displaying QuickLook Preview of 3D model") style:UIAlertActionStyleCancel handler:[weakThis = WeakPtr { *this }](UIAlertAction *) mutable {
         if (!weakThis)
             return;
 
         std::exchange(weakThis->m_allowPreviewCallback, nullptr)(false);
     }];
 
-    [alert addAction:doNotAllowAction];
-    [alert addAction:allowAction];
+    [alert addAction:doNotAllowAction.get()];
+    [alert addAction:allowAction.get()];
 
     if (m_testingCallback)
         std::exchange(m_allowPreviewCallback, nullptr)(true);
@@ -603,7 +603,7 @@ void SystemPreviewController::takeActivityToken()
     if (!page)
         return;
 
-    m_activity = page->legacyMainFrameProcess().protectedThrottler()->backgroundActivity("System preview download"_s);
+    m_activity = protect(page->legacyMainFrameProcess().throttler())->backgroundActivity("System preview download"_s);
 #endif
 }
 

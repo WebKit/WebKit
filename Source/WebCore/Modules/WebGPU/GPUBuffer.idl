@@ -34,16 +34,14 @@ typedef [EnforceRange] unsigned long GPUBufferUsageFlags;
     EnabledBySetting=WebGPUEnabled,
     Exposed=(Window,Worker),
     SecureContext
-]
-interface GPUBuffer {
+] interface GPUBuffer {
     readonly attribute GPUSize64 size;
     readonly attribute GPUBufferUsageFlags usage;
 
     readonly attribute GPUBufferMapState mapState;
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=240219 The next two lines should be able to say "optional thingy = 0" instead of just "optional thingy".
-    Promise<undefined> mapAsync(GPUMapModeFlags mode, optional GPUSize64 offset, optional GPUSize64 size);
-    ArrayBuffer getMappedRange(optional GPUSize64 offset, optional GPUSize64 size);
+    Promise<undefined> mapAsync(GPUMapModeFlags mode, optional GPUSize64 offset = 0, optional GPUSize64 size);
+    ArrayBuffer getMappedRange(optional GPUSize64 offset = 0, optional GPUSize64 size);
     [CallWith=CurrentScriptExecutionContext] undefined unmap();
 
     [CallWith=CurrentScriptExecutionContext] undefined destroy();

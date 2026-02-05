@@ -246,7 +246,7 @@ void ViewGestureGeometryCollector::computeZoomInformationForNode(Node& node, Flo
 {
     absoluteBoundingRect = node.absoluteBoundingRect(&isReplaced);
     if (node.document().isImageDocument()) {
-        if (RefPtr imageElement = downcast<ImageDocument>(node.protectedDocument())->imageElement()) {
+        if (RefPtr imageElement = downcast<ImageDocument>(protect(node.document()))->imageElement()) {
             if (&node != imageElement.get()) {
                 absoluteBoundingRect = imageElement->absoluteBoundingRect(&isReplaced);
                 FloatPoint newOrigin = origin;

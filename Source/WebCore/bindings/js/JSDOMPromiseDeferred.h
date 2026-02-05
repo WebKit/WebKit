@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/JSPromise.h>
+#include <JavaScriptCore/TopExceptionScope.h>
 #include <WebCore/ExceptionOr.h>
 #include <WebCore/JSDOMConvert.h>
 #include <WebCore/JSDOMGuardedObject.h>
@@ -76,7 +76,7 @@ public:
         JSC::JSGlobalObject* lexicalGlobalObject = globalObject();
         auto& vm = lexicalGlobalObject->vm();
         JSC::JSLockHolder locker(vm);
-        auto scope = DECLARE_CATCH_SCOPE(vm);
+        auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         auto jsValue = toJS<IDLType>(*lexicalGlobalObject, *globalObject(), std::forward<typename IDLType::ParameterType>(value));
         DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, lexicalGlobalObject);
         resolve(*lexicalGlobalObject, jsValue);
@@ -118,7 +118,7 @@ public:
         JSC::JSGlobalObject* lexicalGlobalObject = globalObject();
         auto& vm = lexicalGlobalObject->vm();
         JSC::JSLockHolder locker(vm);
-        auto scope = DECLARE_CATCH_SCOPE(vm);
+        auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         auto jsValue = toJSNewlyCreated<IDLType>(*lexicalGlobalObject, *globalObject(), std::forward<typename IDLType::ParameterType>(value));
         DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, lexicalGlobalObject);
         resolve(*lexicalGlobalObject, jsValue);
@@ -135,7 +135,7 @@ public:
         auto* lexicalGlobalObject = globalObject();
         auto& vm = lexicalGlobalObject->vm();
         JSC::JSLockHolder locker(vm);
-        auto scope = DECLARE_CATCH_SCOPE(vm);
+        auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         auto jsValue = toJSNewlyCreated<IDLType>(*lexicalGlobalObject, *globalObject(), createValue(*globalObject()->protectedScriptExecutionContext()));
         DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, lexicalGlobalObject);
         resolve(*lexicalGlobalObject, jsValue);
@@ -152,7 +152,7 @@ public:
         JSC::JSGlobalObject* lexicalGlobalObject = globalObject();
         auto& vm = lexicalGlobalObject->vm();
         JSC::JSLockHolder locker(vm);
-        auto scope = DECLARE_CATCH_SCOPE(vm);
+        auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         auto jsValue = toJS<IDLType>(*lexicalGlobalObject, *globalObject(), std::forward<typename IDLType::ParameterType>(value));
         DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, lexicalGlobalObject);
         reject(*lexicalGlobalObject, jsValue, rejectAsHandled);
@@ -175,7 +175,7 @@ public:
         auto* lexicalGlobalObject = globalObject();
         auto& vm = lexicalGlobalObject->vm();
         JSC::JSLockHolder locker(vm);
-        auto scope = DECLARE_CATCH_SCOPE(vm);
+        auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         auto jsValue = callback(*globalObject());
         DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, lexicalGlobalObject);
         resolve(*lexicalGlobalObject, jsValue);
@@ -192,7 +192,7 @@ public:
         auto* lexicalGlobalObject = globalObject();
         JSC::VM& vm = lexicalGlobalObject->vm();
         JSC::JSLockHolder locker(vm);
-        auto scope = DECLARE_CATCH_SCOPE(vm);
+        auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         auto jsValue = callback(*globalObject());
         DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, lexicalGlobalObject);
         reject(*lexicalGlobalObject, jsValue, rejectAsHandled);
@@ -235,8 +235,8 @@ private:
         callFunction(lexicalGlobalObject, rejectAsHandled == RejectAsHandled::Yes ? ResolveMode::RejectAsHandled : ResolveMode::Reject, resolution);
     }
 
-    bool handleTerminationExceptionIfNeeded(JSC::CatchScope&, JSDOMGlobalObject& lexicalGlobalObject);
-    WEBCORE_EXPORT void handleUncaughtException(JSC::CatchScope&, JSDOMGlobalObject& lexicalGlobalObject);
+    bool handleTerminationExceptionIfNeeded(JSC::TopExceptionScope&, JSDOMGlobalObject& lexicalGlobalObject);
+    WEBCORE_EXPORT void handleUncaughtException(JSC::TopExceptionScope&, JSDOMGlobalObject& lexicalGlobalObject);
 
     Mode m_mode;
     bool m_needsAbort { false };
@@ -357,7 +357,7 @@ void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, ArrayBuffer*);
 void fulfillPromiseWithArrayBufferFromSpan(Ref<DeferredPromise>&&, std::span<const uint8_t>);
 void fulfillPromiseWithUint8Array(Ref<DeferredPromise>&&, Uint8Array*);
 void fulfillPromiseWithUint8ArrayFromSpan(Ref<DeferredPromise>&&, std::span<const uint8_t>);
-WEBCORE_EXPORT void rejectPromiseWithExceptionIfAny(JSC::JSGlobalObject&, JSDOMGlobalObject&, JSC::JSPromise&, JSC::CatchScope&);
+WEBCORE_EXPORT void rejectPromiseWithExceptionIfAny(JSC::JSGlobalObject&, JSDOMGlobalObject&, JSC::JSPromise&, JSC::TopExceptionScope&);
 
 enum class RejectedPromiseWithTypeErrorCause { NativeGetter, InvalidThis };
 JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::JSGlobalObject&, const String&, RejectedPromiseWithTypeErrorCause);
@@ -371,7 +371,7 @@ template<PromiseFunction promiseFunction>
 inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame)
 {
     JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     auto& globalObject = *JSC::jsSecureCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
     auto* promise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
@@ -390,7 +390,7 @@ template<typename PromiseFunctor>
 inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, PromiseFunctor functor)
 {
     JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     auto& globalObject = *JSC::jsSecureCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
     auto* promise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
@@ -411,7 +411,7 @@ template<typename PromisePairFunctor>
 inline JSC::EncodedJSValue callPromisePairFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, PromisePairFunctor functor)
 {
     JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     auto& globalObject = *JSC::jsSecureCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
     auto* promise = JSC::JSPromise::create(vm, globalObject.promiseStructure());

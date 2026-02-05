@@ -180,10 +180,10 @@ void InspectorInstrumentation::didAddOrRemoveScrollbarsImpl(InstrumentingAgents&
     auto* cssAgent = instrumentingAgents.enabledCSSAgent();
     if (!cssAgent)
         return;
-    auto* document = frameView.frame().document();
+    RefPtr document = frameView.frame().document();
     if (!document)
         return;
-    auto* documentElement = document->documentElement();
+    RefPtr documentElement = document->documentElement();
     if (!documentElement)
         return;
     cssAgent->didChangeRendererForDOMNode(*documentElement);
@@ -192,7 +192,7 @@ void InspectorInstrumentation::didAddOrRemoveScrollbarsImpl(InstrumentingAgents&
 void InspectorInstrumentation::didAddOrRemoveScrollbarsImpl(InstrumentingAgents& instrumentingAgents, RenderObject& renderer)
 {
     if (auto* cssAgent = instrumentingAgents.enabledCSSAgent()) {
-        if (auto* node = renderer.node())
+        if (RefPtr node = renderer.node())
             cssAgent->didChangeRendererForDOMNode(*node);
     }
 }
@@ -857,7 +857,7 @@ void InspectorInstrumentation::willDestroyCachedResourceImpl(CachedResource& cac
     if (!s_instrumentingAgentsSet)
         return;
 
-    for (auto* instrumentingAgent : *s_instrumentingAgentsSet) {
+    for (RefPtr instrumentingAgent : *s_instrumentingAgentsSet) {
         if (auto* inspectorNetworkAgent = instrumentingAgent->enabledNetworkAgent())
             inspectorNetworkAgent->willDestroyCachedResource(cachedResource);
     }
@@ -1228,7 +1228,7 @@ void InspectorInstrumentation::didHandleMemoryPressureImpl(InstrumentingAgents& 
 bool InspectorInstrumentation::consoleAgentEnabled(ScriptExecutionContext* scriptExecutionContext)
 {
     FAST_RETURN_IF_NO_FRONTENDS(false);
-    if (auto* agents = instrumentingAgents(scriptExecutionContext)) {
+    if (RefPtr agents = instrumentingAgents(scriptExecutionContext)) {
         if (auto* webConsoleAgent = agents->webConsoleAgent())
             return webConsoleAgent->enabled();
     }
@@ -1238,7 +1238,7 @@ bool InspectorInstrumentation::consoleAgentEnabled(ScriptExecutionContext* scrip
 bool InspectorInstrumentation::timelineAgentTracking(ScriptExecutionContext* scriptExecutionContext)
 {
     FAST_RETURN_IF_NO_FRONTENDS(false);
-    if (auto* agents = instrumentingAgents(scriptExecutionContext))
+    if (RefPtr agents = instrumentingAgents(scriptExecutionContext))
         return agents->trackingTimelineAgent();
     return false;
 }
@@ -1368,7 +1368,7 @@ InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(ScriptExecuti
 {
     // Using RefPtr makes us hit the m_inRemovedLastRefFunction assert.
     if (WeakPtr document = dynamicDowncast<Document>(context))
-        return instrumentingAgents(document->protectedPage().get());
+        return instrumentingAgents(protect(document->page()).get());
     if (RefPtr workerOrWorkletGlobal = dynamicDowncast<WorkerOrWorkletGlobalScope>(context))
         return &instrumentingAgents(*workerOrWorkletGlobal);
     return nullptr;

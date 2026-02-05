@@ -168,7 +168,7 @@ void CachedRawResource::didAddClient(CachedResourceClient& c)
         return std::pair<ResourceRequest, ResourceResponse> { pair.m_request, pair.m_redirectResponse };
     });
 
-    iterateRedirects(CachedResourceHandle { this }, client, WTF::move(redirectsInReverseOrder), [this, protectedThis = CachedResourceHandle { this }, client = WeakPtr { client }] (ResourceRequest&&) mutable {
+    iterateRedirects(protect(this), client, WTF::move(redirectsInReverseOrder), [this, protectedThis = CachedResourceHandle { this }, client = WeakPtr { client }] (ResourceRequest&&) mutable {
         if (!client || !hasClient(*client))
             return;
         auto responseProcessedHandler = [this, protectedThis = WTF::move(protectedThis), client] {
@@ -223,7 +223,7 @@ void CachedRawResource::redirectReceived(ResourceRequest&& request, const Resour
         CachedResource::redirectReceived(WTF::move(request), response, WTF::move(completionHandler));
     else {
         m_redirectChain.append(RedirectPair(request, response));
-        iterateClients(CachedResourceClientWalker<CachedRawResourceClient>(*this), CachedResourceHandle { this }, WTF::move(request), makeUnique<ResourceResponse>(response), [this, protectedThis = CachedResourceHandle { this }, completionHandler = WTF::move(completionHandler), response] (ResourceRequest&& request) mutable {
+        iterateClients(CachedResourceClientWalker<CachedRawResourceClient>(*this), protect(this), WTF::move(request), makeUnique<ResourceResponse>(response), [this, protectedThis = CachedResourceHandle { this }, completionHandler = WTF::move(completionHandler), response] (ResourceRequest&& request) mutable {
             CachedResource::redirectReceived(WTF::move(request), response, WTF::move(completionHandler));
         });
     }

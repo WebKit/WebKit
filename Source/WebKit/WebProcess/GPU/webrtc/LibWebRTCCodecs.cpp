@@ -146,39 +146,39 @@ std::optional<WebCore::VideoCodecType> LibWebRTCCodecs::videoEncoderTypeFromWebC
 
 static int32_t releaseVideoDecoder(webrtc::WebKitVideoDecoder::Value decoder)
 {
-    return WebProcess::singleton().protectedLibWebRTCCodecs()->releaseDecoder(*static_cast<LibWebRTCCodecs::Decoder*>(decoder));
+    return protect(WebProcess::singleton().libWebRTCCodecs())->releaseDecoder(*static_cast<LibWebRTCCodecs::Decoder*>(decoder));
 }
 
 static int32_t decodeVideoFrame(webrtc::WebKitVideoDecoder::Value decoder, uint32_t timeStamp, const uint8_t* data, size_t size, uint16_t width,  uint16_t height)
 {
-    return WebProcess::singleton().protectedLibWebRTCCodecs()->decodeWebRTCFrame(*static_cast<LibWebRTCCodecs::Decoder*>(decoder), timeStamp, unsafeMakeSpan(data, size), width, height);
+    return protect(WebProcess::singleton().libWebRTCCodecs())->decodeWebRTCFrame(*static_cast<LibWebRTCCodecs::Decoder*>(decoder), timeStamp, unsafeMakeSpan(data, size), width, height);
 }
 
 static int32_t registerDecodeCompleteCallback(webrtc::WebKitVideoDecoder::Value decoder, void* decodedImageCallback)
 {
-    WebProcess::singleton().protectedLibWebRTCCodecs()->registerDecodeFrameCallback(*static_cast<LibWebRTCCodecs::Decoder*>(decoder), decodedImageCallback);
+    protect(WebProcess::singleton().libWebRTCCodecs())->registerDecodeFrameCallback(*static_cast<LibWebRTCCodecs::Decoder*>(decoder), decodedImageCallback);
     return 0;
 }
 
 static webrtc::WebKitVideoEncoder createVideoEncoder(const webrtc::SdpVideoFormat& format)
 {
     if (format.name == "H264" || format.name == "h264")
-        return WebProcess::singleton().protectedLibWebRTCCodecs()->createEncoder(WebCore::VideoCodecType::H264, format.parameters);
+        return protect(WebProcess::singleton().libWebRTCCodecs())->createEncoder(WebCore::VideoCodecType::H264, format.parameters);
 
     if (format.name == "H265" || format.name == "h265")
-        return WebProcess::singleton().protectedLibWebRTCCodecs()->createEncoder(WebCore::VideoCodecType::H265, format.parameters);
+        return protect(WebProcess::singleton().libWebRTCCodecs())->createEncoder(WebCore::VideoCodecType::H265, format.parameters);
 
     return nullptr;
 }
 
 static int32_t releaseVideoEncoder(webrtc::WebKitVideoEncoder encoder)
 {
-    return WebProcess::singleton().protectedLibWebRTCCodecs()->releaseEncoder(*static_cast<LibWebRTCCodecs::Encoder*>(encoder));
+    return protect(WebProcess::singleton().libWebRTCCodecs())->releaseEncoder(*static_cast<LibWebRTCCodecs::Encoder*>(encoder));
 }
 
 static int32_t initializeVideoEncoder(webrtc::WebKitVideoEncoder encoder, const webrtc::VideoCodec& codec)
 {
-    return WebProcess::singleton().protectedLibWebRTCCodecs()->initializeEncoder(*static_cast<LibWebRTCCodecs::Encoder*>(encoder), codec.width, codec.height, codec.startBitrate, codec.maxBitrate, codec.minBitrate, codec.maxFramerate);
+    return protect(WebProcess::singleton().libWebRTCCodecs())->initializeEncoder(*static_cast<LibWebRTCCodecs::Encoder*>(encoder), codec.width, codec.height, codec.startBitrate, codec.maxBitrate, codec.minBitrate, codec.maxFramerate);
 }
 
 static inline VideoFrame::Rotation toVideoRotation(webrtc::VideoRotation rotation)
@@ -204,12 +204,12 @@ static void createRemoteDecoder(LibWebRTCCodecs::Decoder& decoder, IPC::Connecti
 
 static int32_t encodeVideoFrame(webrtc::WebKitVideoEncoder encoder, const webrtc::VideoFrame& frame, bool shouldEncodeAsKeyFrame)
 {
-    return WebProcess::singleton().protectedLibWebRTCCodecs()->encodeFrame(*static_cast<LibWebRTCCodecs::Encoder*>(encoder), frame, shouldEncodeAsKeyFrame);
+    return protect(WebProcess::singleton().libWebRTCCodecs())->encodeFrame(*static_cast<LibWebRTCCodecs::Encoder*>(encoder), frame, shouldEncodeAsKeyFrame);
 }
 
 static int32_t registerEncodeCompleteCallback(webrtc::WebKitVideoEncoder encoder, void* encodedImageCallback)
 {
-    WebProcess::singleton().protectedLibWebRTCCodecs()->registerEncodeFrameCallback(*static_cast<LibWebRTCCodecs::Encoder*>(encoder), encodedImageCallback);
+    protect(WebProcess::singleton().libWebRTCCodecs())->registerEncodeFrameCallback(*static_cast<LibWebRTCCodecs::Encoder*>(encoder), encodedImageCallback);
     return 0;
 }
 
@@ -217,7 +217,7 @@ static void setEncodeRatesCallback(webrtc::WebKitVideoEncoder encoder, const web
 {
     uint32_t bitRateInKbps = parameters.bitrate.get_sum_kbps();
     uint32_t frameRate = static_cast<uint32_t>(parameters.framerate_fps + 0.5);
-    WebProcess::singleton().protectedLibWebRTCCodecs()->setEncodeRates(*static_cast<LibWebRTCCodecs::Encoder*>(encoder), bitRateInKbps, frameRate);
+    protect(WebProcess::singleton().libWebRTCCodecs())->setEncodeRates(*static_cast<LibWebRTCCodecs::Encoder*>(encoder), bitRateInKbps, frameRate);
 }
 
 Ref<LibWebRTCCodecs> LibWebRTCCodecs::create()

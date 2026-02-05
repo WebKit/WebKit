@@ -860,6 +860,18 @@
              </dict>
              <dict>
                  <key>Name</key>
+                 <string>Process Initialize</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>12030</string>
+                 <key>CodeEnd</key>
+                 <string>12031</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
                  <string>Commit RemoteLayerTree transaction</string>
                  <key>Type</key>
                  <string>Interval</string>

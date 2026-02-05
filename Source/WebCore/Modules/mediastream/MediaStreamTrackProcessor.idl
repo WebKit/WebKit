@@ -22,6 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/mediacapture-transform/#mediastreamtrackprocessor
 [
     Conditional=MEDIA_STREAM&WEB_CODECS,
     PrivateIdentifier,
@@ -33,10 +34,12 @@
     [CallWith=CurrentGlobalObject] readonly attribute ReadableStream readable;
 };
 
+typedef (MediaStreamTrack or MediaStreamTrackHandle) MediaStreamTrackOrHandle;
+
+// https://w3c.github.io/mediacapture-transform/#dictdef-mediastreamtrackprocessorinit
 [
     Conditional=MEDIA_STREAM&WEB_CODECS,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary MediaStreamTrackProcessorInit {
-    required MediaStreamTrack track;
+    required MediaStreamTrackOrHandle track;
     [EnforceRange] unsigned short maxBufferSize;
 };

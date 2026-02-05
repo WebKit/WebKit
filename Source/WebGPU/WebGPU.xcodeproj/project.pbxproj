@@ -36,11 +36,13 @@
 		07D291812EC9CF2200A32120 /* Texture.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACA99273A426D0095F8D5 /* Texture.h */; };
 		07D291822EC9CF2A00A32120 /* TextureView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACADD273A4F3D0095F8D5 /* TextureView.h */; };
 		07D291832EC9CF3100A32120 /* WebGPUInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CA7CDB12A2B284A0094071F /* WebGPUInternal.h */; };
-		0D078E922E737C0500A9B266 /* DDMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D078E8F2E737C0500A9B266 /* DDMesh.h */; };
-		0D078E932E737C0500A9B266 /* DDMesh.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0D078E902E737C0500A9B266 /* DDMesh.mm */; };
+		0D078E922E737C0500A9B266 /* Mesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D078E8F2E737C0500A9B266 /* Mesh.h */; };
+		0D078E932E737C0500A9B266 /* Mesh.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0D078E902E737C0500A9B266 /* Mesh.mm */; };
 		0D078E942E737C0500A9B266 /* USDModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D078E912E737C0500A9B266 /* USDModel.swift */; };
 		0D164A3A2E8EE14700864EA1 /* TextureOrTextureView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D164A392E8EE14700864EA1 /* TextureOrTextureView.h */; };
 		0D212A652BC26336001160BF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D212A642BC26336001160BF /* CoreGraphics.framework */; };
+		0D26FD2B2F26D7CD00A7E99D /* Float4x4.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D26FD2A2F26D7CD00A7E99D /* Float4x4.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0D26FD2C2F26D7CD00A7E99D /* Float3.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D26FD292F26D7CD00A7E99D /* Float3.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0D30F93729F1F94A0055D9F1 /* ExternalTexture.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0D30F93629F1F94A0055D9F1 /* ExternalTexture.mm */; };
 		0D30F93929F1FAC50055D9F1 /* ExternalTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D30F93829F1FAC50055D9F1 /* ExternalTexture.h */; };
 		0D30F93B29F1FBE40055D9F1 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D30F93A29F1FBE40055D9F1 /* CoreVideo.framework */; };
@@ -56,7 +58,7 @@
 		0D943C102C6571BC00D33BA5 /* XRBinding.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0D943C0E2C6571BC00D33BA5 /* XRBinding.mm */; };
 		0D943C232C65E46400D33BA5 /* XRSubImage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0D943C222C65E46400D33BA5 /* XRSubImage.mm */; };
 		0D943C242C65E46400D33BA5 /* XRSubImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D943C212C65E46400D33BA5 /* XRSubImage.h */; };
-		0DACD85B2E79E66F00CDA0DC /* DDModelTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DACD85A2E79E66F00CDA0DC /* DDModelTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0DACD85B2E79E66F00CDA0DC /* ModelTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DACD85A2E79E66F00CDA0DC /* ModelTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0DD5FD352C66947B004AF552 /* XRProjectionLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DD5FD332C66947B004AF552 /* XRProjectionLayer.h */; };
 		0DD5FD362C66947B004AF552 /* XRProjectionLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0DD5FD342C66947B004AF552 /* XRProjectionLayer.mm */; };
 		0DE2BFAD2C150DF700D04AEB /* ShaderStage.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DE2BFAC2C150DF700D04AEB /* ShaderStage.h */; };
@@ -265,9 +267,10 @@
 			isEditable = 1;
 			outputFiles = (
 				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WGSL/TypeDeclarations.h",
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WGSL/TypeOverloads.h",
 			);
 			runOncePerArchitecture = 0;
-			script = "/usr/bin/env ruby \"${SCRIPT_INPUT_FILE_0}\" \"${INPUT_FILE_PATH}\" \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			script = "/usr/bin/env ruby \"${SCRIPT_INPUT_FILE_0}\" \"${INPUT_FILE_PATH}\" \"${SCRIPT_OUTPUT_FILE_0}\" \"${SCRIPT_OUTPUT_FILE_1}\"\n";
 		};
 /* End PBXBuildRule section */
 
@@ -335,11 +338,13 @@
 		07607E0D2EFC966700A2F311 /* WebGPU_Private.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = WebGPU_Private.modulemap; sourceTree = "<group>"; };
 		079861932EF13A1100659042 /* CxxBridgingPublic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CxxBridgingPublic.h; sourceTree = "<group>"; };
 		07D2916C2EC9C4D200A32120 /* CxxBridging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CxxBridging.h; sourceTree = "<group>"; };
-		0D078E8F2E737C0500A9B266 /* DDMesh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DDMesh.h; sourceTree = "<group>"; };
-		0D078E902E737C0500A9B266 /* DDMesh.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DDMesh.mm; sourceTree = "<group>"; };
+		0D078E8F2E737C0500A9B266 /* Mesh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Mesh.h; sourceTree = "<group>"; };
+		0D078E902E737C0500A9B266 /* Mesh.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Mesh.mm; sourceTree = "<group>"; };
 		0D078E912E737C0500A9B266 /* USDModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USDModel.swift; sourceTree = "<group>"; };
 		0D164A392E8EE14700864EA1 /* TextureOrTextureView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextureOrTextureView.h; sourceTree = "<group>"; };
 		0D212A642BC26336001160BF /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		0D26FD292F26D7CD00A7E99D /* Float3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Float3.h; sourceTree = "<group>"; };
+		0D26FD2A2F26D7CD00A7E99D /* Float4x4.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Float4x4.h; sourceTree = "<group>"; };
 		0D30F93629F1F94A0055D9F1 /* ExternalTexture.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ExternalTexture.mm; sourceTree = "<group>"; };
 		0D30F93829F1FAC50055D9F1 /* ExternalTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalTexture.h; sourceTree = "<group>"; };
 		0D30F93A29F1FBE40055D9F1 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
@@ -356,7 +361,7 @@
 		0D943C0E2C6571BC00D33BA5 /* XRBinding.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = XRBinding.mm; sourceTree = "<group>"; };
 		0D943C212C65E46400D33BA5 /* XRSubImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XRSubImage.h; sourceTree = "<group>"; };
 		0D943C222C65E46400D33BA5 /* XRSubImage.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = XRSubImage.mm; sourceTree = "<group>"; };
-		0DACD85A2E79E66F00CDA0DC /* DDModelTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DDModelTypes.h; sourceTree = "<group>"; };
+		0DACD85A2E79E66F00CDA0DC /* ModelTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelTypes.h; sourceTree = "<group>"; };
 		0DD5FD332C66947B004AF552 /* XRProjectionLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XRProjectionLayer.h; sourceTree = "<group>"; };
 		0DD5FD342C66947B004AF552 /* XRProjectionLayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = XRProjectionLayer.mm; sourceTree = "<group>"; };
 		0DE2BFAC2C150DF700D04AEB /* ShaderStage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderStage.h; sourceTree = "<group>"; };
@@ -696,24 +701,26 @@
 				1CEBD80A2716C36C00A5254D /* config.h */,
 				07D2916C2EC9C4D200A32120 /* CxxBridging.h */,
 				079861932EF13A1100659042 /* CxxBridgingPublic.h */,
-				0D078E8F2E737C0500A9B266 /* DDMesh.h */,
-				0D078E902E737C0500A9B266 /* DDMesh.mm */,
-				0DACD85A2E79E66F00CDA0DC /* DDModelTypes.h */,
 				1C5ACA9B273A426D0095F8D5 /* Device.h */,
 				1C5ACAA3273A426D0095F8D5 /* Device.mm */,
 				1CEBD80B2716C37900A5254D /* ExportMacros.h */,
 				0D30F93829F1FAC50055D9F1 /* ExternalTexture.h */,
 				0D30F93629F1F94A0055D9F1 /* ExternalTexture.mm */,
+				0D26FD292F26D7CD00A7E99D /* Float3.h */,
+				0D26FD2A2F26D7CD00A7E99D /* Float4x4.h */,
 				1C0F41ED280940650005886D /* HardwareCapabilities.h */,
 				1C0F41EC280940650005886D /* HardwareCapabilities.mm */,
 				1C5ACAA0273A426D0095F8D5 /* Instance.h */,
 				1C5ACA92273A41C20095F8D5 /* Instance.mm */,
 				1C33755D27FA23B8002F1644 /* IsValidToUseWith.h */,
+				0D078E8F2E737C0500A9B266 /* Mesh.h */,
+				0D078E902E737C0500A9B266 /* Mesh.mm */,
 				0D509DCC29CAB6EC00546D84 /* MetalSPI.h */,
 				0D3CAF912EF0DE63008C5E2D /* ModelBridge.swift */,
 				0D3CAF8F2EF0DDC9008C5E2D /* ModelIBLTextures.swift */,
 				0D3CAF932EF0E149008C5E2D /* ModelParameters.swift */,
 				0D3CAF8D2EF0DCDE008C5E2D /* ModelRenderer.swift */,
+				0DACD85A2E79E66F00CDA0DC /* ModelTypes.h */,
 				0D3CAF952EF0E6BA008C5E2D /* ModelUtils.swift */,
 				973F784529C8A78200166C66 /* Pipeline.h */,
 				973F784629C8A78200166C66 /* Pipeline.mm */,
@@ -1025,15 +1032,17 @@
 				07D291752EC9CEDF00A32120 /* ComputePipeline.h in Headers */,
 				07D2916D2EC9C4D200A32120 /* CxxBridging.h in Headers */,
 				079861942EF13A1100659042 /* CxxBridgingPublic.h in Headers */,
-				0D078E922E737C0500A9B266 /* DDMesh.h in Headers */,
-				0DACD85B2E79E66F00CDA0DC /* DDModelTypes.h in Headers */,
 				941C64B72CAB4A0700A63214 /* Device.h in Headers */,
 				07D291762EC9CEED00A32120 /* ExportMacros.h in Headers */,
 				0D30F93929F1FAC50055D9F1 /* ExternalTexture.h in Headers */,
+				0D26FD2C2F26D7CD00A7E99D /* Float3.h in Headers */,
+				0D26FD2B2F26D7CD00A7E99D /* Float4x4.h in Headers */,
 				07D291772EC9CEF200A32120 /* HardwareCapabilities.h in Headers */,
 				941C1EE72CA46829004D4220 /* Instance.h in Headers */,
 				07D2916F2EC9CE9F00A32120 /* IsValidToUseWith.h in Headers */,
+				0D078E922E737C0500A9B266 /* Mesh.h in Headers */,
 				0D509DCD29CAB6EC00546D84 /* MetalSPI.h in Headers */,
+				0DACD85B2E79E66F00CDA0DC /* ModelTypes.h in Headers */,
 				973F784729C8A78200166C66 /* Pipeline.h in Headers */,
 				07D291782EC9CEFC00A32120 /* PipelineLayout.h in Headers */,
 				07D291792EC9CEFF00A32120 /* PresentationContext.h in Headers */,
@@ -1400,11 +1409,11 @@
 				1C582FF927E04131009B40F0 /* CommandsMixin.mm in Sources */,
 				1C5ACAC6273A426D0095F8D5 /* ComputePassEncoder.mm in Sources */,
 				1C5ACAC0273A426D0095F8D5 /* ComputePipeline.mm in Sources */,
-				0D078E932E737C0500A9B266 /* DDMesh.mm in Sources */,
 				1C5ACAC1273A426D0095F8D5 /* Device.mm in Sources */,
 				0D30F93729F1F94A0055D9F1 /* ExternalTexture.mm in Sources */,
 				1C0F41EE280940650005886D /* HardwareCapabilities.mm in Sources */,
 				1C5ACA94273A41C20095F8D5 /* Instance.mm in Sources */,
+				0D078E932E737C0500A9B266 /* Mesh.mm in Sources */,
 				0D3CAF922EF0DE63008C5E2D /* ModelBridge.swift in Sources */,
 				0D3CAF902EF0DDC9008C5E2D /* ModelIBLTextures.swift in Sources */,
 				0D3CAF942EF0E149008C5E2D /* ModelParameters.swift in Sources */,

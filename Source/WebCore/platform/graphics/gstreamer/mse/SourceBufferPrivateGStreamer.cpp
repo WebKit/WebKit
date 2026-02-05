@@ -144,6 +144,29 @@ void SourceBufferPrivateGStreamer::removedFromMediaSource()
     SourceBufferPrivate::removedFromMediaSource();
 }
 
+bool SourceBufferPrivateGStreamer::canSwitchToType(const ContentType& type)
+{
+    RefPtr player = this->player();
+
+    if (isContentTypeSupported(type)) {
+        if (player)
+            GST_INFO_OBJECT(player->pipeline(), "type change %s -> %s", m_type.raw().utf8().data(), type.raw().utf8().data());
+        m_type = type;
+
+        return true;
+    }
+
+    return false;
+}
+
+void SourceBufferPrivateGStreamer::startChangingType()
+{
+    ASSERT(isMainThread());
+
+    m_appendPipeline->startChangingType();
+    m_pendingInitializationSegmentForChangeType = true;
+}
+
 void SourceBufferPrivateGStreamer::flush(TrackID trackId)
 {
     ASSERT(isMainThread());
@@ -276,8 +299,10 @@ bool SourceBufferPrivateGStreamer::precheckInitializationSegment(const Initializ
 
 void SourceBufferPrivateGStreamer::processInitializationSegment(std::optional<InitializationSegment>&& segment)
 {
-    if (RefPtr mediaSource = m_mediaSource.get(); mediaSource && segment)
+    if (RefPtr mediaSource = m_mediaSource.get(); mediaSource && segment) {
         downcast<MediaSourcePrivateGStreamer>(mediaSource)->startPlaybackIfHasAllTracks();
+        m_pendingInitializationSegmentForChangeType = false;
+    }
 }
 
 void SourceBufferPrivateGStreamer::didReceiveAllPendingSamples()

@@ -32,6 +32,10 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+#include "ScrollerImpAdwaita.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingStateScrollingNode);
@@ -115,9 +119,13 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_scrollPosition(stateNode.scrollPosition())
     , m_scrollOrigin(stateNode.scrollOrigin())
     , m_snapOffsetsInfo(stateNode.m_snapOffsetsInfo)
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
     , m_scrollbarHoverState(stateNode.scrollbarHoverState())
+#endif
+#if PLATFORM(MAC)
     , m_mouseLocationState(stateNode.mouseLocationState())
+#endif
+#if PLATFORM(MAC) || USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
     , m_scrollbarEnabledState(stateNode.scrollbarEnabledState())
     , m_verticalScrollerImp(stateNode.verticalScrollerImp())
     , m_horizontalScrollerImp(stateNode.horizontalScrollerImp())
@@ -136,6 +144,9 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_useDarkAppearanceForScrollbars(stateNode.useDarkAppearanceForScrollbars())
     , m_isMonitoringWheelEvents(stateNode.isMonitoringWheelEvents())
     , m_mouseIsOverContentArea(stateNode.mouseIsOverContentArea())
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    , m_scrollbarOpacity(stateNode.scrollbarOpacity())
+#endif
 {
     scrollingStateTree().scrollingNodeAdded();
 
@@ -347,7 +358,7 @@ void ScrollingStateScrollingNode::setVerticalScrollbarLayer(const LayerRepresent
     setPropertyChanged(Property::VerticalScrollbarLayer);
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(MAC) && !USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
 void ScrollingStateScrollingNode::setScrollerImpsFromScrollbars(Scrollbar*, Scrollbar*)
 {
 }
@@ -423,6 +434,16 @@ void ScrollingStateScrollingNode::setUseDarkAppearanceForScrollbars(bool useDark
     m_useDarkAppearanceForScrollbars = useDarkAppearanceForScrollbars;
     setPropertyChanged(Property::UseDarkAppearanceForScrollbars);
 }
+
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+void ScrollingStateScrollingNode::setScrollbarOpacity(float scrollbarOpacity)
+{
+    if (scrollbarOpacity == m_scrollbarOpacity)
+        return;
+    m_scrollbarOpacity = scrollbarOpacity;
+    setPropertyChanged(Property::ScrollbarOpacity);
+}
+#endif
 
 void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {

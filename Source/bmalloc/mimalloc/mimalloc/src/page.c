@@ -1022,7 +1022,7 @@ void* _mi_malloc_generic(mi_theap_t* theap, size_t size, size_t zero_huge_alignm
   mi_assert_internal(p != NULL);
 
   // move full pages to the full queue
-  if (mi_page_is_full(page)) {
+  if (mi_page_block_size(page) > MI_SMALL_MAX_OBJ_SIZE && mi_page_is_full(page)) {
     mi_page_to_full(page, mi_page_queue_of(page));
   }
   return p;

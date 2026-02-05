@@ -20,3 +20,7 @@ const args = [
 
 assert.throws(RangeError, () => new Temporal.PlainDateTime(...args));
 assert.compareArray(actual, expected, "order of operations");
+
+assert.throws(RangeError, () => new Temporal.PlainDateTime());
+assert.throws(RangeError, () => new Temporal.PlainDateTime(2021));
+assert.throws(RangeError, () => new Temporal.PlainDateTime(2021, 7));

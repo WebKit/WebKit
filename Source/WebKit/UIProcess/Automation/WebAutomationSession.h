@@ -159,7 +159,7 @@ public:
     void setSessionIdentifier(const String& sessionIdentifier) { m_sessionIdentifier = sessionIdentifier; }
     String sessionIdentifier() const { return m_sessionIdentifier; }
 
-    RefPtr<WebProcessPool> protectedProcessPool() const;
+    WebProcessPool* processPool() const;
     void setProcessPool(WebProcessPool*);
 
     void navigationOccurredForFrame(const WebFrameProxy&);
@@ -246,6 +246,7 @@ public:
     void reloadBrowsingContext(const String&, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&&, std::optional<double>&& pageLoadTimeout, Inspector::CommandCallback<void>&&) override;
     void waitForNavigationToComplete(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&&, std::optional<double>&& pageLoadTimeout, Inspector::CommandCallback<void>&&) override;
     void evaluateJavaScriptFunction(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& function, Ref<JSON::Array>&& arguments, std::optional<bool>&& expectsImplicitCallbackArgument, std::optional<bool>&& forceUserGesture, std::optional<double>&& callbackTimeout, Inspector::CommandCallback<String>&&) override;
+    void evaluateBidiScript(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& expression, bool awaitPromise, int maxObjectDepth, std::optional<double>&& callbackTimeout, Inspector::CommandCallback<String>&&);
     void performMouseInteraction(const Inspector::Protocol::Automation::BrowsingContextHandle&, Ref<JSON::Object>&& requestedPosition, Inspector::Protocol::Automation::MouseButton, Inspector::Protocol::Automation::MouseInteraction, Ref<JSON::Array>&& keyModifiers, Inspector::CommandCallback<Ref<Inspector::Protocol::Automation::Point>>&&) override;
     void performKeyboardInteractions(const Inspector::Protocol::Automation::BrowsingContextHandle&, Ref<JSON::Array>&& interactions, Inspector::CommandCallback<void>&&) override;
     void performInteractionSequence(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, Ref<JSON::Array>&& sources, Ref<JSON::Array>&& steps, Inspector::CommandCallback<void>&&) override;

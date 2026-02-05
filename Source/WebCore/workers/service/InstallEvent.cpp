@@ -76,11 +76,13 @@ static ExceptionOr<ServiceWorkerRouteCondition> toServiceWorkerRouteCondition(Ro
     }
 
     Vector<ServiceWorkerRouteCondition> orConditions;
-    for (auto& orCondition : condition.orConditions) {
-        auto orConditionOrException = toServiceWorkerRouteCondition(WTF::move(orCondition));
-        if (orConditionOrException.hasException())
-            return orConditionOrException.releaseException();
-        orConditions.append(orConditionOrException.releaseReturnValue());
+    if (condition.orConditions) {
+        for (auto& orCondition : *condition.orConditions) {
+            auto orConditionOrException = toServiceWorkerRouteCondition(WTF::move(orCondition));
+            if (orConditionOrException.hasException())
+                return orConditionOrException.releaseException();
+            orConditions.append(orConditionOrException.releaseReturnValue());
+        }
     }
 
     std::unique_ptr<ServiceWorkerRouteCondition> notCondition;
@@ -139,10 +141,10 @@ static std::optional<Exception> verifyRouterCondition(RouterCondition& condition
         hasCondition = true;
     if (condition.runningStatus)
         hasCondition = true;
-    if (!condition.orConditions.isEmpty()) {
+    if (condition.orConditions && !condition.orConditions->isEmpty()) {
         if (hasCondition)
             return Exception { ExceptionCode::TypeError, "Or condition should not be present"_s };
-        for (auto& orCondition : condition.orConditions) {
+        for (auto& orCondition : *condition.orConditions) {
             if (auto exception = verifyRouterCondition(orCondition, scope))
                 return *exception;
         }

@@ -28,6 +28,7 @@
 #include "SVGAnimatedPropertyImpl.h"
 #include "SVGAnimatedPropertyPairAnimator.h"
 #include "SVGMarkerTypes.h"
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -45,6 +46,8 @@ public:
     }
 
 private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::AngleOrient; }
+
     void setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) final
     {
         auto pairFrom = SVGPropertyTraits<std::pair<SVGAngleValue, SVGMarkerOrientType>>::fromString(targetElement, from);
@@ -119,6 +122,8 @@ public:
     }
 
 private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::IntegerPair; }
+
     void setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) final
     {
         auto pairFrom = SVGPropertyTraits<std::pair<int, int>>::fromString(targetElement, from);
@@ -163,6 +168,8 @@ public:
     }
 
 private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::NumberPair; }
+
     void setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) final
     {
         auto pairFrom = SVGPropertyTraits<std::pair<float, float>>::fromString(targetElement, from);
@@ -196,3 +203,15 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedAngleOrientAnimator)
+    static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::AngleOrient; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedIntegerPairAnimator)
+    static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::IntegerPair; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedNumberPairAnimator)
+    static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::NumberPair; }
+SPECIALIZE_TYPE_TRAITS_END()

@@ -204,12 +204,14 @@ struct TraversalContext {
     const FrameIdentifier frameIdentifier;
     Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>> enclosingBlocks;
     WeakHashMap<Node, unsigned, WeakPtrImplWithEventTargetData> enclosingBlockNumberMap;
+    Vector<bool, 1> hasOverflowItemsStack;
     unsigned onlyCollectTextAndLinksCount { 0 };
     bool mergeParagraphs { false };
     bool skipNearlyTransparentContent { false };
     NodeIdentifierInclusion nodeIdentifierInclusion { NodeIdentifierInclusion::None };
     bool includeEventListeners { false };
     bool includeAccessibilityAttributes { false };
+    unsigned visibleTextLength { 0 };
 
     inline bool shouldIncludeNodeWithRect(const FloatRect& rect) const
     {
@@ -304,9 +306,12 @@ static inline TextAndSelectedRangeMap collectText(Node& node, IncludeTextInAutoF
     return result;
 }
 
-static inline bool canMerge(const Item& destinationItem, const Item& sourceItem)
+static inline bool canMerge(const TraversalContext& context, const Item& destinationItem, const Item& sourceItem)
 {
     if (!destinationItem.children.isEmpty() || !sourceItem.children.isEmpty())
+        return false;
+
+    if (!context.mergeParagraphs && destinationItem.enclosingBlockNumber != sourceItem.enclosingBlockNumber)
         return false;
 
     if (!std::holds_alternative<TextItemData>(destinationItem.data) || !std::holds_alternative<TextItemData>(sourceItem.data))
@@ -320,8 +325,6 @@ static inline bool canMerge(const Item& destinationItem, const Item& sourceItem)
 
 static inline void merge(Item& destinationItem, Item&& sourceItem)
 {
-    ASSERT(canMerge(destinationItem, sourceItem));
-
     auto& destination = std::get<TextItemData>(destinationItem.data);
     auto& source = std::get<TextItemData>(sourceItem.data);
 
@@ -420,6 +423,7 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
 
         if (auto iterator = context.visibleText.find(*textNode); iterator != context.visibleText.end()) {
             auto& [textContent, selectedRange] = iterator->value;
+            context.visibleTextLength += textContent.length();
             return { TextItemData { { }, selectedRange, textContent, { } } };
         }
         return { SkipExtraction::Self };
@@ -430,7 +434,7 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
 
     if (element->isLink()) {
         if (auto href = element->attributeWithoutSynchronization(HTMLNames::hrefAttr); !href.isEmpty()) {
-            if (auto url = element->protectedDocument()->completeURL(href); !url.isEmpty()) {
+            if (auto url = protect(element->document())->completeURL(href); !url.isEmpty()) {
                 if (context.mergeParagraphs)
                     return { WTF::move(url) };
 
@@ -475,7 +479,7 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
 
         return { ContentEditableData {
             .isPlainTextOnly = !element->hasRichlyEditableStyle(),
-            .isFocused = element->protectedDocument()->activeElement() == element,
+            .isFocused = protect(element->document())->activeElement() == element,
         } };
     }
 
@@ -512,7 +516,7 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
             labelText(*control),
             input ? input->placeholder() : nullString(),
             shouldTreatAsPasswordField(element.get()),
-            element->protectedDocument()->activeElement() == control
+            protect(element->document())->activeElement() == control
         };
 
         if (context.mergeParagraphs && control->isTextField())
@@ -549,11 +553,11 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
                 continue;
 
             if (RefPtr option = dynamicDowncast<HTMLOptionElement>(*item)) {
-                if (!option->selected())
-                    continue;
-
-                if (auto optionValue = option->value(); !optionValue.isEmpty())
-                    selectData.selectedValues.append(WTF::move(optionValue));
+                selectData.options.append({
+                    .value = option->value(),
+                    .label = option->label(),
+                    .isSelected = option->selected(),
+                });
             }
         }
         selectData.isMultiple = select->multiple();
@@ -573,8 +577,14 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
 
     if (CheckedPtr box = dynamicDowncast<RenderBox>(node.renderer()); box && box->canBeScrolledAndHasScrollableArea()) {
         if (CheckedPtr layer = box->layer()) {
-            if (CheckedPtr scrollableArea = layer->scrollableArea())
-                return { ScrollableItemData { scrollableArea->totalContentsSize() } };
+            if (CheckedPtr scrollableArea = layer->scrollableArea()) {
+                return { ScrollableItemData {
+                    .contentSize = scrollableArea->totalContentsSize(),
+                    .scrollPosition = scrollableArea->scrollPosition(),
+                    .isRoot = false,
+                    .hasOverflowItems = false,
+                } };
+            }
         }
     }
 
@@ -636,8 +646,6 @@ static inline bool shouldIncludeNodeIdentifier(NodeIdentifierInclusion inclusion
                 return false;
 
             switch (type) {
-            case ContainerType::Root:
-                return false;
             case ContainerType::Article:
             case ContainerType::ViewportConstrained:
             case ContainerType::List:
@@ -669,6 +677,11 @@ static inline bool shouldIncludeNodeIdentifier(NodeIdentifierInclusion inclusion
         [](const SelectData&) {
             return true;
         },
+        [inclusion](const ScrollableItemData& scrollableData) {
+            if (scrollableData.isRoot)
+                return false;
+            return inclusion == Interactive;
+        },
         [inclusion](auto&) {
             return inclusion == Interactive;
         });
@@ -676,7 +689,7 @@ static inline bool shouldIncludeNodeIdentifier(NodeIdentifierInclusion inclusion
 
 static bool areSameOrigin(Document& document, Document& other)
 {
-    return document.protectedSecurityOrigin()->isSameOriginAs(other.protectedSecurityOrigin());
+    return protect(document.securityOrigin())->isSameOriginAs(protect(other.securityOrigin()));
 }
 
 static inline void extractRecursive(Node& node, Item& parentItem, TraversalContext& context)
@@ -788,6 +801,8 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
         return FallbackPolicy::Skip;
     }();
 
+    bool isScrollable = false;
+
     WTF::switchOn(extractItemData(node, policy, context),
         [&](SkipExtraction skipExtraction) {
             switch (skipExtraction) {
@@ -808,8 +823,17 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
         },
         [&](ItemData&& result) {
             auto bounds = rootViewBounds(node);
-            if (!context.shouldIncludeNodeWithRect(bounds))
+            if (!context.shouldIncludeNodeWithRect(bounds)) {
+                if (context.hasOverflowItemsStack.isEmpty()) {
+                    ASSERT_NOT_REACHED();
+                    return;
+                }
+
+                context.hasOverflowItemsStack.last() = true;
                 return;
+            }
+
+            isScrollable = std::holds_alternative<ScrollableItemData>(result);
 
             std::optional<NodeIdentifier> nodeIdentifier;
             if (shouldIncludeNodeIdentifier(context.nodeIdentifierInclusion, eventListeners, AccessibilityObject::ariaRoleToWebCoreRole(role), result))
@@ -855,17 +879,28 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
         context.onlyCollectTextAndLinksCount++;
     }
 
+    ASSERT_IMPLIES(isScrollable, item);
+
+    if (isScrollable)
+        context.hasOverflowItemsStack.append(false);
+
     if (RefPtr container = dynamicDowncast<ContainerNode>(node)) {
         for (Ref child : composedTreeChildren<0>(*container))
             extractRecursive(child.get(), item ? *item : parentItem, context);
 
         if (RefPtr iframe = dynamicDowncast<HTMLIFrameElement>(node); iframe && item) {
             if (RefPtr frame = dynamicDowncast<LocalFrame>(iframe->contentFrame())) {
-                if (RefPtr document = frame->document(); document && areSameOrigin(*document, node.protectedDocument()))
-                    item->children.appendVector(extractItem(Request { context.originalRequest }, *frame).children);
+                if (RefPtr document = frame->document(); document && areSameOrigin(*document, protect(node.document()))) {
+                    auto [rootItem, textLength] = extractItem(Request { context.originalRequest }, *frame);
+                    context.visibleTextLength += textLength;
+                    item->children.appendVector(WTF::move(rootItem.children));
+                }
             }
         }
     }
+
+    if (isScrollable)
+        std::get<ScrollableItemData>(item->data).hasOverflowItems = context.hasOverflowItemsStack.takeLast();
 
     if (onlyCollectTextAndLinks) {
         if (item) {
@@ -885,12 +920,12 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
         return;
 
     if (context.mergeParagraphs && parentItem.children.isEmpty()) {
-        if (canMerge(parentItem, *item))
+        if (canMerge(context, parentItem, *item))
             return merge(parentItem, WTF::move(*item));
     }
 
     if (!parentItem.children.isEmpty()) {
-        if (auto& lastChild = parentItem.children.last(); canMerge(lastChild, *item))
+        if (auto& lastChild = parentItem.children.last(); canMerge(context, lastChild, *item))
             return merge(lastChild, WTF::move(*item));
     }
 
@@ -1011,17 +1046,17 @@ static RefPtr<ContainerNode> findContainerNodeForDataDetectorResults(Node& rootN
 
 #endif // ENABLE(DATA_DETECTION)
 
-Item extractItem(Request&& request, LocalFrame& frame)
+Result extractItem(Request&& request, LocalFrame& frame)
 {
     auto frameID = frame.frameID();
-    Item root { ContainerType::Root, { }, { }, { }, { }, frameID, { }, { }, { }, { }, { }, 0 };
+    Item root { ScrollableItemData { }, { }, { }, { }, { }, frameID, { }, { }, { }, { }, { }, 0 };
     RefPtr document = frame.document();
     if (!document)
-        return root;
+        return { root, 0 };
 
     RefPtr bodyElement = document->body();
     if (!bodyElement)
-        return root;
+        return { root, 0 };
 
     document->updateLayoutIgnorePendingStylesheets();
 
@@ -1044,27 +1079,35 @@ Item extractItem(Request&& request, LocalFrame& frame)
     }
 
     if (!extractionRootNode)
-        return root;
+        return { root, 0 };
 
     RefPtr view = frame.view();
     if (!view)
-        return root;
+        return { root, 0 };
+
+    root.data = { ScrollableItemData {
+        .contentSize = view->contentsSize(),
+        .scrollPosition = view->scrollPosition(),
+        .isRoot = true,
+        .hasOverflowItems = false,
+    } };
 
     root.rectInRootView = view->contentsToRootView(IntRect { IntPoint::zero(), view->contentsSize() });
     if (root.rectInRootView.isEmpty())
-        return root;
+        return { root, 0 };
 
+    unsigned visibleTextLength = 0;
     {
         ClientNodeAttributesMap clientNodeAttributes;
-        for (auto&& [attribute, values] : request.clientNodeAttributes) {
-            for (auto&& [identifier, value] : WTF::move(values)) {
+        for (auto& [attribute, values] : request.clientNodeAttributes) {
+            for (auto& [identifier, value] : values) {
                 RefPtr node = nodeFromJSHandle(identifier);
                 if (!node)
                     continue;
 
                 clientNodeAttributes.ensure(*node, [] {
                     return HashMap<String, String> { };
-                }).iterator->value.set(attribute, WTF::move(value));
+                }).iterator->value.set(attribute, value);
             }
         }
 
@@ -1085,6 +1128,7 @@ Item extractItem(Request&& request, LocalFrame& frame)
             .frameIdentifier = WTF::move(frameID),
             .enclosingBlocks = { },
             .enclosingBlockNumberMap = { },
+            .hasOverflowItemsStack = { false },
             .onlyCollectTextAndLinksCount = 0,
             .mergeParagraphs = request.mergeParagraphs,
             .skipNearlyTransparentContent = request.skipNearlyTransparentContent,
@@ -1093,12 +1137,18 @@ Item extractItem(Request&& request, LocalFrame& frame)
             .includeAccessibilityAttributes = request.includeAccessibilityAttributes,
         };
         extractRecursive(*extractionRootNode, root, context);
+
+        ASSERT(context.hasOverflowItemsStack.size() == 1);
+        if (!context.hasOverflowItemsStack.isEmpty())
+            std::get<ScrollableItemData>(root.data).hasOverflowItems = context.hasOverflowItemsStack.takeLast();
+
+        visibleTextLength = context.visibleTextLength;
     }
 
     pruneWhitespaceRecursive(root);
     pruneEmptyContainersRecursive(root);
 
-    return root;
+    return { WTF::move(root), visibleTextLength };
 }
 
 using Token = Variant<String, IntSize>;
@@ -1445,7 +1495,7 @@ static void dispatchSimulatedClick(Node& targetNode, const String& searchText, C
         return dispatchSimulatedClick(*frame, centerInRootView, WTF::move(completion));
     }
 
-    UserGestureIndicator indicator { IsProcessingUserGesture::Yes, element->protectedDocument().ptr() };
+    UserGestureIndicator indicator { IsProcessingUserGesture::Yes, protect(element->document()).ptr() };
 
     // Fall back to dispatching a programmatic click.
     if (element->dispatchSimulatedClick(nullptr, SendMouseUpDownEvents))
@@ -1585,7 +1635,7 @@ static void simulateKeyPress(LocalFrame& targetFrame, std::optional<NodeIdentifi
         if (!focusTarget)
             return completion(false, makeString(identifier->loggingString()));
 
-        if (focusTarget != focusTarget->protectedDocument()->activeElement())
+        if (focusTarget != protect(focusTarget->document())->activeElement())
             focusTarget->focus();
     }
 
@@ -1653,7 +1703,7 @@ static void focusAndInsertText(NodeIdentifier identifier, String&& text, bool re
 
         UserTypingGestureIndicator indicator { *frame };
 
-        document->protectedEditor()->pasteAsPlainText(text, false);
+        protect(document->editor())->pasteAsPlainText(text, false);
         completion(true, "Inserted text by simulating paste with plain text"_s);
     });
 }

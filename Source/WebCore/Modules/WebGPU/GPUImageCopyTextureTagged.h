@@ -34,7 +34,6 @@ namespace WebCore {
 struct GPUImageCopyTextureTagged : public GPUImageCopyTexture {
     WebGPU::ImageCopyTextureTagged convertToBacking() const
     {
-        ASSERT(texture);
         return {
             {
                 texture->backing(),

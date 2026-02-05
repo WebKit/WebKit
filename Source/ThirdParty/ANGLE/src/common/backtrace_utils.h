@@ -12,8 +12,10 @@
 
 #include <string>
 #include <vector>
-#include "debug.h"
-#include "hash_utils.h"
+
+#include "common/debug.h"
+#include "common/hash_utils.h"
+#include "common/span.h"
 
 namespace angle
 {
@@ -59,7 +61,7 @@ class BacktraceInfo
         return mStackSymbols[index];
     }
 
-    size_t hash() const { return ComputeGenericHash(*this); }
+    size_t hash() const { return ComputeGenericHash(angle::byte_span_from_ref(*this)); }
 
     // Used to add the stack addresses and their corresponding symbols to the object, when
     // angle_enable_unwind_backtrace_support is enabled on Android.

@@ -81,10 +81,17 @@ public:
     bool hasExceptionHandlers() const { return !m_exceptionHandlers.isEmpty(); }
 
     void dump(PrintStream&) const;
+    void dumpSimpleName(PrintStream&) const;
+    String nameWithHash() const;
 
     static void destroy(Callee*);
 
     void reportToVMsForDestruction();
+
+    unsigned computeCodeHashImpl() const
+    {
+        return 0;
+    }
 
 protected:
     JS_EXPORT_PRIVATE Callee(Wasm::CompilationMode);
@@ -251,9 +258,12 @@ public:
 
     Box<PCToCodeOriginMap> materializePCToOriginMap(B3::PCToOriginMap&&, LinkBuffer&);
 
+    unsigned computeCodeHashImpl() const;
+
 protected:
-    OptimizingJITCallee(Wasm::CompilationMode mode, FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+    OptimizingJITCallee(Wasm::CompilationMode mode, FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name, Ref<IPIntCallee>&& profiledCallee)
         : JITCallee(mode, index, WTF::move(name))
+        , m_profiledCallee(WTF::move(profiledCallee))
     {
     }
 
@@ -273,6 +283,7 @@ private:
     Vector<WasmCodeOrigin, 0> codeOrigins;
     Vector<Ref<NameSection>, 0> nameSections;
     Box<PCToCodeOriginMap> m_callSiteIndexMap;
+    const Ref<IPIntCallee> m_profiledCallee;
 };
 
 constexpr int32_t stackCheckUnset = 0;
@@ -281,9 +292,9 @@ constexpr int32_t stackCheckNotNeeded = -1;
 class OMGOSREntryCallee final : public OptimizingJITCallee {
     WTF_MAKE_COMPACT_TZONE_ALLOCATED(OMGOSREntryCallee);
 public:
-    static Ref<OMGOSREntryCallee> create(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name, uint32_t loopIndex)
+    static Ref<OMGOSREntryCallee> create(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name, Ref<IPIntCallee>&& profiledCallee, uint32_t loopIndex)
     {
-        return adoptRef(*new OMGOSREntryCallee(index, WTF::move(name), loopIndex));
+        return adoptRef(*new OMGOSREntryCallee(index, WTF::move(name), WTF::move(profiledCallee), loopIndex));
     }
 
     unsigned osrEntryScratchBufferSize() const { return m_osrEntryScratchBufferSize; }
@@ -310,8 +321,8 @@ public:
     }
 
 private:
-    OMGOSREntryCallee(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name, uint32_t loopIndex)
-        : OptimizingJITCallee(CompilationMode::OMGForOSREntryMode, index, WTF::move(name))
+    OMGOSREntryCallee(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name, Ref<IPIntCallee>&& profiledCallee, uint32_t loopIndex)
+        : OptimizingJITCallee(CompilationMode::OMGForOSREntryMode, index, WTF::move(name), WTF::move(profiledCallee))
         , m_loopIndex(loopIndex)
     {
     }
@@ -328,16 +339,16 @@ private:
 class OMGCallee final : public OptimizingJITCallee {
     WTF_MAKE_COMPACT_TZONE_ALLOCATED(OMGCallee);
 public:
-    static Ref<OMGCallee> create(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+    static Ref<OMGCallee> create(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name, Ref<IPIntCallee>&& profiledCallee)
     {
-        return adoptRef(*new OMGCallee(index, WTF::move(name)));
+        return adoptRef(*new OMGCallee(index, WTF::move(name), WTF::move(profiledCallee)));
     }
 
     using OptimizingJITCallee::setEntrypoint;
 
 private:
-    OMGCallee(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name)
-        : OptimizingJITCallee(Wasm::CompilationMode::OMGMode, index, WTF::move(name))
+    OMGCallee(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name, Ref<IPIntCallee>&& profiledCallee)
+        : OptimizingJITCallee(Wasm::CompilationMode::OMGMode, index, WTF::move(name), WTF::move(profiledCallee))
     {
     }
 };
@@ -352,9 +363,9 @@ class BBQCallee final : public OptimizingJITCallee {
 public:
     static constexpr unsigned extraOSRValuesForLoopIndex = 1;
 
-    static Ref<BBQCallee> create(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+    static Ref<BBQCallee> create(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name, Ref<IPIntCallee>&& profiledCallee)
     {
-        return adoptRef(*new BBQCallee(index, WTF::move(name)));
+        return adoptRef(*new BBQCallee(index, WTF::move(name), WTF::move(profiledCallee)));
     }
     ~BBQCallee();
 
@@ -403,8 +414,8 @@ public:
     }
 
 private:
-    BBQCallee(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name)
-        : OptimizingJITCallee(Wasm::CompilationMode::BBQMode, index, WTF::move(name))
+    BBQCallee(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name, Ref<IPIntCallee>&& profiledCallee)
+        : OptimizingJITCallee(Wasm::CompilationMode::BBQMode, index, WTF::move(name), WTF::move(profiledCallee))
     {
     }
 
@@ -452,6 +463,8 @@ public:
 
     using OutOfLineJumpTargets = UncheckedKeyHashMap<unsigned, int>;
 
+    unsigned computeCodeHashImpl() const;
+
 private:
     IPIntCallee(FunctionIPIntMetadataGenerator&, FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&&);
 
@@ -476,6 +489,7 @@ private:
     unsigned m_numLocals;
     unsigned m_numArgumentsOnStack;
     unsigned m_maxFrameSizeInV128;
+    mutable unsigned m_codeHash { 0 };
 
     IPIntTierUpCounter m_tierUpCounter;
 };

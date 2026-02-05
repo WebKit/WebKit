@@ -152,6 +152,41 @@ void RenderSVGModelObject::styleDidChange(Style::Difference diff, const RenderSt
 {
     RenderLayerModelObject::styleDidChange(diff, oldStyle);
 
+    // Invalidate cached visual overflow rect when relevant styles change.
+    if (oldStyle && diff >= Style::DifferenceResult::Repaint) {
+        auto visualOverflowStyleChanged = [](const RenderStyle& newStyle, const RenderStyle& oldStyle) {
+            // Stroke properties affect stroke bounding box
+            if (newStyle.strokeWidth() != oldStyle.strokeWidth()
+                || newStyle.capStyle() != oldStyle.capStyle()
+                || newStyle.joinStyle() != oldStyle.joinStyle()
+                || newStyle.strokeMiterLimit() != oldStyle.strokeMiterLimit())
+                return true;
+
+            // Outline properties
+            if (newStyle.outlineStyle() != oldStyle.outlineStyle()
+                || newStyle.usedOutlineWidth() != oldStyle.usedOutlineWidth()
+                || newStyle.usedOutlineOffset() != oldStyle.usedOutlineOffset())
+                return true;
+
+            // Resource references (clip-path, mask, filter)
+            if (newStyle.clipPath() != oldStyle.clipPath()
+                || newStyle.maskLayers() != oldStyle.maskLayers()
+                || newStyle.filter() != oldStyle.filter())
+                return true;
+
+            // Marker references
+            if (newStyle.markerStart() != oldStyle.markerStart()
+                || newStyle.markerMid() != oldStyle.markerMid()
+                || newStyle.markerEnd() != oldStyle.markerEnd())
+                return true;
+
+            return false;
+        };
+
+        if (visualOverflowStyleChanged(style(), *oldStyle))
+            m_cachedVisualOverflowRect = std::nullopt;
+    }
+
     // SVG masks are painted independent of the target renderers visibility.
     // FIXME: [LBSE] Upstream RenderElement changes
     // bool hasSVGMask = hasSVGMask();

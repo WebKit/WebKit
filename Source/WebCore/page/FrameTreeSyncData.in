@@ -28,6 +28,7 @@
 
 FrameCanCreatePaymentSession : bool
 FrameDocumentSecurityOrigin : RefPtr<WebCore::SecurityOrigin> [Headers=<WebCore/SecurityOrigin.h>]
+FrameDocumentSecurityPolicy : std::optional<WebCore::DocumentSecurityPolicy> [Headers=<WebCore/DocumentSecurityPolicy.h>]
 FrameURLProtocol : String [Headers=<wtf/text/WTFString.h>]
 FrameRect : WebCore::IntRect [Headers=<WebCore/IntRect.h>]
 

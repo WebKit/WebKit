@@ -25,6 +25,7 @@
 
 typedef long COSEAlgorithmIdentifier;
 
+// https://w3c.github.io/webauthn/#authenticatorattestationresponse
 [
     Conditional=WEB_AUTHN,
     EnabledBySetting=WebAuthenticationEnabled,
@@ -33,7 +34,8 @@ typedef long COSEAlgorithmIdentifier;
 ] interface AuthenticatorAttestationResponse : AuthenticatorResponse {
     [SameObject] readonly attribute ArrayBuffer attestationObject;
     sequence<AuthenticatorTransport> getTransports();
-    ArrayBuffer getAuthenticatorData();
+    // FIXME: `getAuthenticatorData` should not return a nullable type.
+    ArrayBuffer? getAuthenticatorData();
     ArrayBuffer? getPublicKey();
     COSEAlgorithmIdentifier getPublicKeyAlgorithm();
 };

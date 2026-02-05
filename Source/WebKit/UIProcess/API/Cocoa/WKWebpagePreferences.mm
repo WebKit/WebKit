@@ -499,14 +499,24 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     }
 }
 
-- (void)_setOverrideReferrerForAllRequests:(NSString *)referrer
+- (void)setOverrideReferrer:(NSString *)referrer
 {
     _websitePolicies->setOverrideReferrerForAllRequests(referrer);
 }
 
+- (void)_setOverrideReferrerForAllRequests:(NSString *)referrer
+{
+    [self setOverrideReferrer:referrer];
+}
+
+- (NSString *)overrideReferrer
+{
+    return nsStringNilIfNull(_websitePolicies->overrideReferrerForAllRequests()).autorelease();
+}
+
 - (NSString *)_overrideReferrerForAllRequests
 {
-    return _websitePolicies->overrideReferrerForAllRequests().createNSString().autorelease();
+    return [self overrideReferrer];
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -819,16 +829,25 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     _websitePolicies->setPushAndNotificationsEnabledPolicy(enabled ? WebKit::WebsitePushAndNotificationsEnabledPolicy::Yes : WebKit::WebsitePushAndNotificationsEnabledPolicy::No);
 }
 
-- (void)_setAlternateRequest:(NSURLRequest *)request
+- (void)setAlternateRequest:(NSURLRequest *)request
 {
     protectedWebsitePolicies(self)->setAlternateRequest(request);
 }
 
-- (NSURLRequest *)_alternateRequest
+- (NSURLRequest *)alternateRequest
 {
     return protectedWebsitePolicies(self)->alternateRequest().protectedNSURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody).autorelease();
 }
 
+- (NSURLRequest *)_alternateRequest
+{
+    return [self alternateRequest];
+}
+
+- (void)_setAlternateRequest:(NSURLRequest *)request
+{
+    [self setAlternateRequest:request];
+}
 
 - (void)_setAllowsJSHandleCreationInPageWorld:(BOOL)allows
 {

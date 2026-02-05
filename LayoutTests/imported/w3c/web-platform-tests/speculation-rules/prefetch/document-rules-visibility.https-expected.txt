@@ -1,0 +1,8 @@
+
+PASS test that link with display:contents and text content is prefetched
+PASS test that link with display:contents and visible child element is prefetched
+PASS test that customized built-in anchor element with shadow DOM is prefetched
+PASS test that slotted anchor inside custom element is prefetched
+PASS test that empty link with display:contents is NOT prefetched
+PASS test that link with display:contents and only hidden children is NOT prefetched
+

@@ -49,22 +49,33 @@ static bool platformIsLiquidGlassEnabled()
 #endif
 
 namespace WebKit {
+
 #if ENABLE(VIDEO)
+
 bool defaultCaptionDisplaySettingsEnabled()
 {
     return false;
 }
+
 #endif
 
 #if PLATFORM(MAC)
+
 bool defaultUseAppKitGestures()
 {
     return false;
 }
-#endif
+
+bool defaultTextInputClientSelectionUpdatesEnabled()
+{
+    return false;
 }
 
-#endif
+#endif // PLATFORM(MAC)
+
+}
+
+#endif // namespace WebKit
 
 namespace WebKit {
 

@@ -123,7 +123,7 @@ RefPtr<Element> DocumentFragment::getElementById(const AtomString& id) const
 
     // Fast path for ShadowRoot, where we are both a DocumentFragment and a TreeScope.
     if (isTreeScope())
-        return protectedTreeScope()->getElementById(id);
+        return protect(treeScope())->getElementById(id);
 
     // Otherwise, fall back to iterating all of the element descendants.
     for (Ref element : descendantsOfType<Element>(*const_cast<DocumentFragment*>(this))) {

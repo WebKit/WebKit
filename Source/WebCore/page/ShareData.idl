@@ -23,11 +23,13 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// https://w3c.github.io/web-share/#sharedata-dictionary
 [
     LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ShareData {
+    // FIXME: `files` should be a `sequence<File>`.
+    FrozenArray<File> files;
     USVString title;
     USVString text;
     USVString url;
-    FrozenArray<File> files;
 };

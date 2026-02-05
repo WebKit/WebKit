@@ -144,7 +144,7 @@ static void setUserDirSuffix(ASCIILiteral suffix)
 
 void XPCServiceEventHandler(xpc_connection_t peer)
 {
-    XPCObjectPtr<xpc_connection_t> retainedPeerConnection(peer);
+    OSObjectPtr<xpc_connection_t> retainedPeerConnection(peer);
 
     xpc_connection_set_target_queue(peer, globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
     xpc_connection_set_event_handler(peer, ^(xpc_object_t event) {
@@ -182,7 +182,7 @@ void XPCServiceEventHandler(xpc_connection_t peer)
             bool disableLogging = xpc_dictionary_get_bool(event, "disable-logging");
             initializeLogd(disableLogging, retainedPeerConnection.get());
 
-            if (XPCObjectPtr<xpc_object_t> languages = xpc_dictionary_get_value(event, "OverrideLanguages")) {
+            if (OSObjectPtr<xpc_object_t> languages = xpc_dictionary_get_value(event, "OverrideLanguages")) {
                 Vector<String> newLanguages;
                 @autoreleasepool {
                     xpc_array_apply(languages.get(), makeBlockPtr([&newLanguages](size_t index, xpc_object_t value) {
@@ -200,8 +200,8 @@ void XPCServiceEventHandler(xpc_connection_t peer)
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-            if (auto containerEnvironmentVariables = xpc_dictionary_get_value(event, "ContainerEnvironmentVariables")) {
-                xpc_dictionary_apply(containerEnvironmentVariables, ^(const char *key, xpc_object_t value) {
+            if (RetainPtr containerEnvironmentVariables = xpc_dictionary_get_value(event, "ContainerEnvironmentVariables")) {
+                xpc_dictionary_apply(containerEnvironmentVariables.get(), ^(const char *key, xpc_object_t value) {
                     setenv(key, xpc_string_get_string_ptr(value), 1);  // NOLINT
                     return true;
                 });
@@ -245,9 +245,9 @@ void XPCServiceEventHandler(xpc_connection_t peer)
             }
 
             // FIXME: This is a false positive. <rdar://164843889>
-            SUPPRESS_RETAINPTR_CTOR_ADOPT auto reply = adoptXPCObject(xpc_dictionary_create_reply(event));
+            SUPPRESS_RETAINPTR_CTOR_ADOPT auto reply = adoptOSObject(xpc_dictionary_create_reply(event));
             xpc_dictionary_set_string(reply.get(), "message-name", "process-finished-launching");
-            xpc_connection_send_message(XPCObjectPtr<xpc_connection_t> { xpc_dictionary_get_remote_connection(event) }.get(), reply.get());
+            xpc_connection_send_message(OSObjectPtr<xpc_connection_t> { xpc_dictionary_get_remote_connection(event) }.get(), reply.get());
 
             int fd = xpc_dictionary_dup_fd(event, "stdout");
             if (fd != -1)
@@ -257,7 +257,7 @@ void XPCServiceEventHandler(xpc_connection_t peer)
             if (fd != -1)
                 dup2(fd, STDERR_FILENO);
 
-            WorkQueue::mainSingleton().dispatchSync([initializerFunctionPtr, event = XPCObjectPtr<xpc_object_t>(event), retainedPeerConnection] {
+            WorkQueue::mainSingleton().dispatchSync([initializerFunctionPtr, event = OSObjectPtr<xpc_object_t>(event), retainedPeerConnection] {
                 WTF::initializeMainThread();
 
                 initializeCFPrefs();
@@ -281,7 +281,7 @@ void XPCServiceEventHandler(xpc_connection_t peer)
 int XPCServiceMain(int, const char**)
 {
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto bootstrap = adoptXPCObject(xpc_copy_bootstrap());
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto bootstrap = adoptOSObject(xpc_copy_bootstrap());
 
     if (bootstrap) {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)

@@ -29,5 +29,5 @@
     Exposed=Window,
     ImplementedBy=HTMLVideoElementCaptionDisplaySettings,
 ] partial interface HTMLVideoElement {
-    Promise<undefined> showCaptionDisplaySettings(optional CaptionDisplaySettingsOptions options);
+    Promise<undefined> showCaptionDisplaySettings(optional CaptionDisplaySettingsOptions options = {});
 };

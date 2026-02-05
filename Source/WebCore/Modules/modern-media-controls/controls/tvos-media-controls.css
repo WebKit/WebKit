@@ -75,7 +75,8 @@
     bottom: calc(var(--tvos-controls-bottom-margin) + var(--tvos-controls-bar-height) + var(--tvos-metadata-container-bottom-margin));
 }
 
-.media-controls.fullscreen.tvos .slider.default.disabled > .appearance > .fill > :is(.primary, .secondary) {
+.media-controls.fullscreen.tvos .slider.default.disabled > .appearance > .fill > .primary,
+.media-controls.fullscreen.tvos .slider.default.disabled > .appearance > .fill > .secondary {
     display: initial;
 }
 

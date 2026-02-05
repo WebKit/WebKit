@@ -23,6 +23,8 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// https://w3c.github.io/webrtc-pc/#dom-rtcrtpcodecparameters
+// FIXME: `RTCRtpCodecParameters` should inherit from `RTCRtpCodec`.
 [
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,

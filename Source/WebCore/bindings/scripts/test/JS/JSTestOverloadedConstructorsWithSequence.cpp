@@ -97,7 +97,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence1(
     auto* castedThis = jsCast<JSTestOverloadedConstructorsWithSequenceDOMConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
     EnsureStillAliveScope argument0 = callFrame->argument(0);
-    auto sequenceOfStringsConversionResult = convertOptionalWithDefault<IDLSequence<IDLDOMString>>(*lexicalGlobalObject, argument0.value(), [&]() -> ConversionResult<IDLSequence<IDLDOMString>> { return Converter<IDLSequence<IDLDOMString>>::ReturnType { }; });
+    auto sequenceOfStringsConversionResult = convertOptionalWithDefault<IDLSequence<IDLDOMString>>(*lexicalGlobalObject, argument0.value(), [&] -> ConversionResult<IDLSequence<IDLDOMString>> { return Converter<IDLSequence<IDLDOMString>>::ReturnType { }; });
     if (sequenceOfStringsConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     auto object = TestOverloadedConstructorsWithSequence::create(sequenceOfStringsConversionResult.releaseReturnValue());

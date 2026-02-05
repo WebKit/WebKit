@@ -44,6 +44,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
+    virtual bool isJSQueuingStrategySize() const { return false; }
+
     virtual CallbackResult<double> invoke(JSC::JSValue) = 0;
     virtual CallbackResult<double> invokeRethrowingException(JSC::JSValue) = 0;
 

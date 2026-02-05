@@ -1,0 +1,4 @@
+Go to an anchor
+
+PASS Ignore scroll position adjustments during smooth scrolling to anchor
+

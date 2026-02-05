@@ -89,25 +89,25 @@ inline ComputedStyleBase::ComputedStyleBase(CreateDefaultStyleTag)
     m_nonInheritedFlags.pseudoBits = 0;
 
     static_assert((sizeof(InheritedFlags) <= 8), "InheritedFlags does not grow");
-    static_assert((sizeof(NonInheritedFlags) <= 8), "NonInheritedFlags does not grow");
+    static_assert((sizeof(NonInheritedFlags) <= 12), "NonInheritedFlags does not grow");
 }
 
 inline ComputedStyleBase::ComputedStyleBase(const ComputedStyleBase& other, CloneTag)
-    : m_nonInheritedData(other.m_nonInheritedData)
-    , m_nonInheritedFlags(other.m_nonInheritedFlags)
+    : m_nonInheritedFlags(other.m_nonInheritedFlags)
+    , m_inheritedFlags(other.m_inheritedFlags)
+    , m_nonInheritedData(other.m_nonInheritedData)
     , m_inheritedRareData(other.m_inheritedRareData)
     , m_inheritedData(other.m_inheritedData)
-    , m_inheritedFlags(other.m_inheritedFlags)
     , m_svgData(other.m_svgData)
 {
 }
 
 inline ComputedStyleBase::ComputedStyleBase(ComputedStyleBase& a, ComputedStyleBase&& b)
-    : m_nonInheritedData(a.m_nonInheritedData.replace(WTF::move(b.m_nonInheritedData)))
-    , m_nonInheritedFlags(std::exchange(a.m_nonInheritedFlags, b.m_nonInheritedFlags))
+    : m_nonInheritedFlags(std::exchange(a.m_nonInheritedFlags, b.m_nonInheritedFlags))
+    , m_inheritedFlags(std::exchange(a.m_inheritedFlags, b.m_inheritedFlags))
+    , m_nonInheritedData(a.m_nonInheritedData.replace(WTF::move(b.m_nonInheritedData)))
     , m_inheritedRareData(a.m_inheritedRareData.replace(WTF::move(b.m_inheritedRareData)))
     , m_inheritedData(a.m_inheritedData.replace(WTF::move(b.m_inheritedData)))
-    , m_inheritedFlags(std::exchange(a.m_inheritedFlags, b.m_inheritedFlags))
     , m_svgData(a.m_svgData.replace(WTF::move(b.m_svgData)))
     , m_cachedPseudoStyles(std::exchange(a.m_cachedPseudoStyles, WTF::move(b.m_cachedPseudoStyles)))
 {

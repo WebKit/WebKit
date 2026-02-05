@@ -1,18 +1,18 @@
 
-FAIL sending one chunk through a transferred stream should work promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL sending ten chunks through a transferred stream should work promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL sending ten chunks one at a time should work promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL sending ten chunks on demand should work promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL transferring a stream should relieve backpressure promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL transferring a stream should add one chunk to the queue size promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL the extra queue from transferring is counted in chunks promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL cancel should be propagated to the original promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL cancel should abort a pending read() promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL stream cancel should not wait for underlying source cancel promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL serialization should not happen until the value is read promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL transferring a non-serializable chunk should error both sides promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL errors should be passed through promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL race between cancel() and error() should leave sides in different states promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL race between cancel() and close() should be benign promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL race between cancel() and enqueue() should be benign promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+PASS sending one chunk through a transferred stream should work
+PASS sending ten chunks through a transferred stream should work
+PASS sending ten chunks one at a time should work
+PASS sending ten chunks on demand should work
+PASS transferring a stream should relieve backpressure
+PASS transferring a stream should add one chunk to the queue size
+PASS the extra queue from transferring is counted in chunks
+FAIL cancel should be propagated to the original assert_array_equals: cancel() should have been called lengths differ, expected array ["pull", "cancel", "message"] length 3, got ["pull", "pull", "cancel", "message"] length 4
+FAIL cancel should abort a pending read() assert_array_equals: events should match lengths differ, expected array ["pull", "cancel", "done"] length 3, got ["pull", "pull", "cancel", "done"] length 4
+PASS stream cancel should not wait for underlying source cancel
+PASS serialization should not happen until the value is read
+PASS transferring a non-serializable chunk should error both sides
+PASS errors should be passed through
+PASS race between cancel() and error() should leave sides in different states
+PASS race between cancel() and close() should be benign
+PASS race between cancel() and enqueue() should be benign
 

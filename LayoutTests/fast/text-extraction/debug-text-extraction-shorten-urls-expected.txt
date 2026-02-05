@@ -1,3 +1,5 @@
+-- texttree
+
 root
 	section
 		link,url='example.com/search','Multiple query parameters'
@@ -7,11 +9,15 @@ root
 		link,url='javascript:','JavaScript link'
 		link,url='data:','HTML data URL'
 		link,url='mailto:test@example.com','Email with params'
+		link,url='mailto:test@example.com'
 		link,url='tel:+1-555-123-4567','Phone number'
 		link,url='blob:','Blob URL'
 		link,url='example.com/docs/guide.html','Path, query, and fragment'
 		link,url='example.com/docs/guide2.html','Query parameter'
 		link,url='example.com/docs/guide2.html','Query parameter (duplicate)'
+		link,url='example.com','Plain link'
+		link,url='example.com/2','Plain link (2)'
+		link,url='example.com/3','Plain link (3)'
 	section
 		image,src='image',alt='SVG data URL'
 		image,src='image2',alt='PNG data URL'
@@ -21,3 +27,32 @@ root
 		image,src='image.gif',alt='Image with high entropy name'
 		image,src='image2.gif',alt='Image with high entropy name 2'
 		image,src='image2.gif',alt='Image with high entropy name (duplicate)'
+
+-- markdown
+
+[Multiple query parameters](example.com/search)
+[Multiple query parameter 2](example.com/search2)
+[Path components 1](example.com/path/to/file.html)
+[Path components 2](example.com/oiiai_cat)
+[JavaScript link](javascript:)
+[HTML data URL](data:)
+[Email with params](mailto:test@example.com)
+[](mailto:test@example.com)
+[Phone number](tel:+1-555-123-4567)
+[Blob URL](blob:)
+[Path, query, and fragment](example.com/docs/guide.html)
+[Query parameter](example.com/docs/guide2.html)
+[Query parameter \(duplicate\)](example.com/docs/guide2.html)
+[Plain link](example.com)
+[Plain link \(2\)](example.com/2)
+[Plain link \(3\)](example.com/3)
+![SVG data URL](image)
+![PNG data URL](image2)
+![Long image path](vacation-2024-summer-beach.jpg)
+![Image with path](thumbnail.png)
+![Image with query params](thumbnail2.png)
+![Image with high entropy name](image.gif)
+![Image with high entropy name 2](image2.gif)
+![Image with high entropy name \(duplicate\)](image2.gif)
+
+

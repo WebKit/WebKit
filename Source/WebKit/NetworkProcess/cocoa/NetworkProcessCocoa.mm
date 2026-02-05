@@ -116,7 +116,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     [NSURLCache setSharedURLCache:urlCache.get()];
 
 #if ENABLE(CONTENT_FILTERING)
-    auto auditToken = protectedParentProcessConnection()->getAuditToken();
+    auto auditToken = protect(parentProcessConnection())->getAuditToken();
     ASSERT(auditToken);
     if (auditToken && [NEFilterSource respondsToSelector:@selector(setDelegation:)])
         [NEFilterSource setDelegation:&auditToken.value()];
@@ -139,11 +139,11 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 #endif // ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
 
 #if ENABLE(INHERITANCE_OF_NETWORK_ACCESS_FROM_UI_PROCESS)
-    if (auto auditToken = protectedParentProcessConnection()->getAuditToken()) {
+    if (auto auditToken = protect(parentProcessConnection())->getAuditToken()) {
         bool isNetworkAccessBlockedInUIProcess = (1 == sandbox_check_by_audit_token(*auditToken, "network-outbound", SANDBOX_FILTER_PATH, "/private/var/run/mDNSResponder"));
 
-        auto xpcConnection = protectedParentProcessConnection()->xpcConnection();
-        auto [signingIdentifier, isPlatformBinary] = codeSigningIdentifierAndPlatformBinaryStatus(xpcConnection);
+        OSObjectPtr xpcConnection = protect(parentProcessConnection())->xpcConnection();
+        auto [signingIdentifier, isPlatformBinary] = codeSigningIdentifierAndPlatformBinaryStatus(xpcConnection.get());
         if (!isPlatformBinary && isNetworkAccessBlockedInUIProcess) {
             RELEASE_LOG(Process, "Setting sandbox state flag to block network access");
             if (auto auditTokenForSelf = WTF::auditTokenForSelf()) {
@@ -175,7 +175,7 @@ std::optional<audit_token_t> NetworkProcess::sourceApplicationAuditToken() const
     ASSERT(parentProcessConnection());
     if (!parentProcessConnection())
         return { };
-    return parentProcessConnection()->getAuditToken();
+    return protect(parentProcessConnection())->getAuditToken();
 #else
     return { };
 #endif
@@ -185,7 +185,7 @@ HashSet<String> NetworkProcess::hostNamesWithHSTSCache(PAL::SessionID sessionID)
 {
     HashSet<String> hostNames;
     if (CheckedPtr networkSession = downcast<NetworkSessionCocoa>(this->networkSession(sessionID))) {
-        for (NSString *host in networkSession->protectedHSTSStorage().get().nonPreloadedHosts)
+        for (NSString *host in protect(networkSession->hstsStorage()).get().nonPreloadedHosts)
             hostNames.add(host);
     }
     return hostNames;
@@ -195,7 +195,7 @@ void NetworkProcess::deleteHSTSCacheForHostNames(PAL::SessionID sessionID, const
 {
     if (CheckedPtr networkSession = downcast<NetworkSessionCocoa>(this->networkSession(sessionID))) {
         for (auto& hostName : hostNames)
-            [networkSession->protectedHSTSStorage() resetHSTSForHost:hostName.createNSString().get()];
+            [protect(networkSession->hstsStorage()).get() resetHSTSForHost:hostName.createNSString().get()];
     }
 }
 
@@ -204,7 +204,7 @@ void NetworkProcess::clearHSTSCache(PAL::SessionID sessionID, WallTime modifiedS
     NSTimeInterval timeInterval = modifiedSince.secondsSinceEpoch().seconds();
     RetainPtr date = [NSDate dateWithTimeIntervalSince1970:timeInterval];
     if (CheckedPtr networkSession = downcast<NetworkSessionCocoa>(this->networkSession(sessionID)))
-        [networkSession->protectedHSTSStorage() resetHSTSHostsSinceDate:date.get()];
+        [protect(networkSession->hstsStorage()).get() resetHSTSHostsSinceDate:date.get()];
 }
 
 void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<void()>&& completionHandler)

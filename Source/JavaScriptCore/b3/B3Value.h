@@ -453,6 +453,8 @@ protected:
         case WasmAddress:
         case WasmBoundsCheck:
         case WasmStructGet:
+        case WasmRefCast:
+        case WasmRefTest:
         case VectorExtractLane:
         case VectorSplat:
         case VectorNot:

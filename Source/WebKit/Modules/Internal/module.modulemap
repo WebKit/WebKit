@@ -1,10 +1,52 @@
-// FIXME: this modulemap needs work as discussed in https://github.com/WebKit/WebKit/pull/54322
 module WebKit_Internal {
+    module WKWebViewIOS {
+        header "../../UIProcess/API/ios/WKWebViewIOS.h"
+        export *
+    }
+
+    module FrameInfoData {
+        header "../../Shared/FrameInfoData.h"
+        export *
+    }
+
+    module FrameTreeNodeData {
+        header "../../Shared/FrameTreeNodeData.h"
+        export *
+    }
+
+    module JSHandleInfo {
+        header "../../Shared/JSHandleInfo.h"
+        export *
+    }
+
+    module WebFrameMetrics {
+        header "../../Shared/WebFrameMetrics.h"
+        export *
+    }
+
+    module WebViewImpl {
+        header "../../UIProcess/mac/WebViewImpl.h"
+        export *
+    }
+
+    module WebsiteData {
+        header "../../Shared/WebsiteData/WebsiteData.h"
+        export *
+    }
+
+    module WebPushMessage {
+        header "../../Shared/WebPushMessage.h"
+        export *
+    }
+
+    // FIXME: These parts of the module map needs work as discussed in https://github.com/WebKit/WebKit/pull/54322
+
     module WebKit_Internal_Objc {
         header "WebKitInternal.h"
         export *
         requires objc
     }
+
     module WebKit_Internal_Cxx {
         header "WebKitInternalCxx.h"
         export *

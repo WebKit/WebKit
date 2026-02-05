@@ -26,18 +26,18 @@
 #ifndef APIUtils_h
 #define APIUtils_h
 
-#include "CatchScope.h"
 #include "Exception.h"
 #include "JSCJSValue.h"
 #include "JSGlobalObjectInspectorController.h"
 #include "JSValueRef.h"
+#include "TopExceptionScope.h"
 
 enum class ExceptionStatus {
     DidThrow,
     DidNotThrow
 };
 
-inline ExceptionStatus handleExceptionIfNeeded(JSC::CatchScope& scope, JSContextRef ctx, JSValueRef* returnedExceptionRef)
+inline ExceptionStatus handleExceptionIfNeeded(JSC::TopExceptionScope& scope, JSContextRef ctx, JSValueRef* returnedExceptionRef)
 {
     JSC::JSGlobalObject* globalObject = toJS(ctx);
     if (scope.exception()) [[unlikely]] {

@@ -428,18 +428,18 @@ static _WKElementActionType uiActionIdentifierToElementActionType(UIActionIdenti
 - (UIAction *)uiActionForElementInfo:(_WKActivatedElementInfo *)elementInfo
 {
     UIImage *image = [_WKElementAction imageForElementActionType:self.type];
-    UIActionIdentifier identifier = elementActionTypeToUIActionIdentifier(self.type);
+    RetainPtr identifier = elementActionTypeToUIActionIdentifier(self.type);
 
-    UIAction *action = [UIAction actionWithTitle:self.title image:image identifier:identifier handler:[retainedSelf = retainPtr(self), retainedInfo = retainPtr(elementInfo)] (UIAction *) {
+    RetainPtr action = [UIAction actionWithTitle:self.title image:image identifier:identifier.get() handler:[retainedSelf = retainPtr(self), retainedInfo = retainPtr(elementInfo)] (UIAction *) {
         auto elementAction = retainedSelf.get();
         RELEASE_LOG(ContextMenu, "Executing action for type: %s", elementActionTypeToUIActionIdentifier([elementAction type]).UTF8String);
         [elementAction runActionWithElementInfo:retainedInfo.get()];
     }];
 
     if (self.disabled)
-        action.attributes |= UIMenuElementAttributesDisabled;
+        action.get().attributes |= UIMenuElementAttributesDisabled;
 
-    return action;
+    return action.autorelease();
 }
 #else
 + (UIImage *)imageForElementActionType:(_WKElementActionType)actionType

@@ -25,16 +25,16 @@
 
 #pragma once
 
-#include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/Debugger.h>
 #include <JavaScriptCore/MicrotaskQueue.h>
+#include <JavaScriptCore/TopExceptionScope.h>
 
 namespace JSC {
 
 template<bool useCallOnEachMicrotask>
 inline void MicrotaskQueue::performMicrotaskCheckpoint(VM& vm, NOESCAPE const Invocable<QueuedTask::Result(QueuedTask&)> auto& functor)
 {
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     if (vm.executionForbidden()) [[unlikely]]
         clear();
     else {

@@ -64,7 +64,6 @@ public:
     void attachAvailabilityChanged(bool);
 
 private:
-    Ref<WebInspectorUIProxy> protectedProxy() const { return m_proxy.get(); }
 
     const WeakRef<WebInspectorUIProxy> m_proxy;
 };

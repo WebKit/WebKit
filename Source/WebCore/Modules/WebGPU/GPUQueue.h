@@ -68,7 +68,7 @@ public:
         const GPUBuffer&,
         GPUSize64 bufferOffset,
         BufferSource&& data,
-        std::optional<GPUSize64> dataOffset,
+        GPUSize64 dataOffset,
         std::optional<GPUSize64>);
 
     void writeTexture(

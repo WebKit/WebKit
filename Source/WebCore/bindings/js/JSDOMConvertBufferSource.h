@@ -120,13 +120,6 @@ template<> struct JSConverter<IDLBufferSource> {
     }
 };
 
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, JSC::ArrayBuffer* buffer)
-{
-    if (!buffer)
-        return JSC::jsNull();
-    return toJS(lexicalGlobalObject, globalObject, *buffer);
-}
-
 inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, BufferSource* bufferSource)
 {
     JSC::JSValue jsValue;
@@ -136,21 +129,6 @@ inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalOb
         jsValue = toJS(lexicalGlobalObject, globalObject, *arrayBuffer);
     });
     return jsValue;
-}
-
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, const std::optional<BufferSource> bufferSource)
-{
-    if (!bufferSource)
-        return JSC::jsNull();
-
-    return toJS(lexicalGlobalObject, globalObject, *bufferSource);
-}
-
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSGlobalObject* globalObject, JSC::ArrayBufferView* view)
-{
-    if (!view)
-        return JSC::jsNull();
-    return toJS(lexicalGlobalObject, globalObject, *view);
 }
 
 inline RefPtr<JSC::ArrayBufferView> toPossiblySharedArrayBufferView(JSC::VM&, JSC::JSValue value)
@@ -198,7 +176,6 @@ struct BufferSourceConverter {
             }
             return Result { object.releaseNonNull() };
         }
-
     }
 };
 
@@ -218,16 +195,78 @@ struct JSTypedArrayConverter {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = true;
 
-    template <typename U>
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
+    using T = typename IDL::RawType;
+
+    template<std::derived_from<T> U>
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, U& value)
     {
-        return toJS(&lexicalGlobalObject, &globalObject, Detail::getPtrOrRef(value));
+        return toJS(&lexicalGlobalObject, &globalObject, value);
     }
 
-    template<typename U>
-    static JSC::JSValue convertNewlyCreated(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, U&& value)
+    template<std::derived_from<T> U>
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
     {
-        return convert(lexicalGlobalObject, globalObject, std::forward<U>(value));
+        return toJS(&lexicalGlobalObject, &globalObject, const_cast<U&>(value));
+    }
+
+    template<std::derived_from<T> U>
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, std::reference_wrapper<U> value)
+    {
+        return toJS(&lexicalGlobalObject, &globalObject, value.get());
+    }
+
+    template<std::derived_from<T> U>
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, Ref<U>& value)
+    {
+        return toJS(&lexicalGlobalObject, &globalObject, value.get());
+    }
+
+    template<std::derived_from<T> U>
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const Ref<U>& value)
+    {
+        return toJS(&lexicalGlobalObject, &globalObject, const_cast<Ref<U>&>(value).get());
+    }
+
+    template<std::derived_from<T> U>
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, Ref<U>&& value)
+    {
+        return toJS(&lexicalGlobalObject, &globalObject, value.get());
+    }
+
+    template<std::derived_from<T> U>
+    static JSC::JSValue convertNewlyCreated(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, U& value)
+    {
+        return toJS(&lexicalGlobalObject, &globalObject, value);
+    }
+
+    template<std::derived_from<T> U>
+    static JSC::JSValue convertNewlyCreated(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
+    {
+        return toJS(&lexicalGlobalObject, &globalObject, const_cast<U&>(value));
+    }
+
+    template<std::derived_from<T> U>
+    static JSC::JSValue convertNewlyCreated(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, std::reference_wrapper<U> value)
+    {
+        return toJS(&lexicalGlobalObject, &globalObject, value.get());
+    }
+
+    template<std::derived_from<T> U>
+    static JSC::JSValue convertNewlyCreated(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, Ref<U>& value)
+    {
+        return toJS(&lexicalGlobalObject, &globalObject, value.get());
+    }
+
+    template<std::derived_from<T> U>
+    static JSC::JSValue convertNewlyCreated(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const Ref<U>& value)
+    {
+        return toJS(&lexicalGlobalObject, &globalObject, const_cast<Ref<U>&>(value).get());
+    }
+
+    template<std::derived_from<T> U>
+    static JSC::JSValue convertNewlyCreated(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, Ref<U>&& value)
+    {
+        return toJS(&lexicalGlobalObject, &globalObject, value.get());
     }
 };
 
@@ -254,7 +293,7 @@ template<> struct JSConverter<IDLDataView> : Detail::JSTypedArrayConverter<IDLDa
 template<> struct JSConverter<IDLInt8Array> : Detail::JSTypedArrayConverter<IDLInt8Array> { };
 template<> struct JSConverter<IDLInt16Array> : Detail::JSTypedArrayConverter<IDLInt16Array> { };
 template<> struct JSConverter<IDLInt32Array> : Detail::JSTypedArrayConverter<IDLInt32Array> { };
-template<> struct JSConverter<IDLUint8Array> : Detail::JSTypedArrayConverter<IDLInt8Array> { };
+template<> struct JSConverter<IDLUint8Array> : Detail::JSTypedArrayConverter<IDLUint8Array> { };
 template<> struct JSConverter<IDLUint16Array> : Detail::JSTypedArrayConverter<IDLUint16Array> { };
 template<> struct JSConverter<IDLUint32Array> : Detail::JSTypedArrayConverter<IDLUint32Array> { };
 template<> struct JSConverter<IDLUint8ClampedArray> : Detail::JSTypedArrayConverter<IDLUint8ClampedArray> { };

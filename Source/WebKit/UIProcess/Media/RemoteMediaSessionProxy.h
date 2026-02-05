@@ -83,7 +83,6 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }
-    Ref<const Logger> protectedLogger() const { return logger(); }
     uint64_t logIdentifier() const { return m_sessionState.logIdentifier; }
 #endif
 

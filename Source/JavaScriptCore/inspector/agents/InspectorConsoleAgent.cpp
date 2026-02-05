@@ -109,7 +109,7 @@ Protocol::ErrorStringOr<void> InspectorConsoleAgent::setConsoleClearAPIEnabled(b
 
 bool InspectorConsoleAgent::developerExtrasEnabled() const
 {
-    return m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled();
+    return m_injectedScriptManager->inspectorEnvironment().developerExtrasEnabled();
 }
 
 void InspectorConsoleAgent::mainFrameNavigated()
@@ -128,7 +128,7 @@ void InspectorConsoleAgent::clearMessages(Inspector::Protocol::Console::ClearRea
     m_consoleMessages.clear();
     m_expiredConsoleMessageCount = 0;
 
-    m_injectedScriptManager.releaseObjectGroup("console"_s);
+    m_injectedScriptManager->releaseObjectGroup("console"_s);
 
     if (m_enabled)
         m_frontendDispatcher->messagesCleared(reason);

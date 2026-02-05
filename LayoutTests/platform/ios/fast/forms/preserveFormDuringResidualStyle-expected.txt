@@ -18,6 +18,6 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,25) size 784x40
-        RenderText {#text} at (0,0) size 775x39
+        RenderText {#text} at (0,0) size 775x40
           text run at (0,0) width 775: "Success! This test succeeds if the input named mover is not detached from its form when it is moved around in the DOM"
           text run at (0,20) width 159: "to come before the table."

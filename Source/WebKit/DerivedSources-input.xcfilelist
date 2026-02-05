@@ -7,6 +7,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/platform-enabled-swift-args.x86_64.r
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/AdditionalFeatureDefines.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/AdditionalPlatform.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/AdditionalPlatformHave.h
+$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WKWebView+SystemTextExtraction.swift.in
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Compiler.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Platform.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/PlatformCPU.h
@@ -49,7 +50,7 @@ $(PROJECT_DIR)/GPUProcess/RemoteSharedResourceCache.messages.in
 $(PROJECT_DIR)/GPUProcess/ShapeDetection/RemoteBarcodeDetector.messages.in
 $(PROJECT_DIR)/GPUProcess/ShapeDetection/RemoteFaceDetector.messages.in
 $(PROJECT_DIR)/GPUProcess/ShapeDetection/RemoteTextDetector.messages.in
-$(PROJECT_DIR)/GPUProcess/graphics/Model/RemoteDDMesh.messages.in
+$(PROJECT_DIR)/GPUProcess/graphics/Model/RemoteMesh.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/PathSegment.serialization.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteGraphicsContext.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteGraphicsContextGL.messages.in
@@ -110,7 +111,7 @@ $(PROJECT_DIR)/GPUProcess/media/RemoteMediaEngineConfigurationFactoryProxy.messa
 $(PROJECT_DIR)/GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteMediaPlayerProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteMediaPlayerProxyConfiguration.serialization.in
-$(PROJECT_DIR)/GPUProcess/media/RemoteMediaResourceManager.messages.in
+$(PROJECT_DIR)/GPUProcess/media/RemoteMediaResourceLoader.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteMediaSourceProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteRemoteCommandListenerProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteSourceBufferProxy.messages.in
@@ -268,6 +269,8 @@ $(PROJECT_DIR)/Shared/Cocoa/CoreIPCNSValue.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCNull.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCPKDateComponentsRange.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCPKPaymentMerchantSession.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCPKPaymentSetupFeature.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCPKPaymentToken.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCPassKit.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCPersonNameComponents.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCPlist.serialization.in
@@ -277,6 +280,7 @@ $(PROJECT_DIR)/Shared/Cocoa/CoreIPCString.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCStringSet.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCURL.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/DataDetectionResult.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/GestureTypes.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/InsertTextOptions.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/MachSendRightAnnotated.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/RemoteObjectInvocation.serialization.in
@@ -291,6 +295,7 @@ $(PROJECT_DIR)/Shared/Databases/IndexedDB/WebIDBResult.serialization.in
 $(PROJECT_DIR)/Shared/DebuggableInfoData.serialization.in
 $(PROJECT_DIR)/Shared/DocumentEditingContext.serialization.in
 $(PROJECT_DIR)/Shared/DragControllerAction.serialization.in
+$(PROJECT_DIR)/Shared/DragEventForwardingData.serialization.in
 $(PROJECT_DIR)/Shared/DrawingAreaInfo.serialization.in
 $(PROJECT_DIR)/Shared/EditingRange.serialization.in
 $(PROJECT_DIR)/Shared/EditorState.serialization.in
@@ -341,7 +346,6 @@ $(PROJECT_DIR)/Shared/LayerTreeContext.serialization.in
 $(PROJECT_DIR)/Shared/LoadParameters.serialization.in
 $(PROJECT_DIR)/Shared/MediaPlaybackState.serialization.in
 $(PROJECT_DIR)/Shared/Model.serialization.in
-$(PROJECT_DIR)/Shared/Model/ModelObjectDescriptorBase.serialization.in
 $(PROJECT_DIR)/Shared/ModelProcessConnectionParameters.serialization.in
 $(PROJECT_DIR)/Shared/MonotonicObjectIdentifier.serialization.in
 $(PROJECT_DIR)/Shared/NavigationActionData.serialization.in
@@ -374,6 +378,7 @@ $(PROJECT_DIR)/Shared/SandboxExtension.serialization.in
 $(PROJECT_DIR)/Shared/ScriptTrackingPrivacyFilter.serialization.in
 $(PROJECT_DIR)/Shared/ScrollingAccelerationCurve.serialization.in
 $(PROJECT_DIR)/Shared/SerializedNode.serialization.in
+$(PROJECT_DIR)/Shared/ServiceWorkerTimingInfo.serialization.in
 $(PROJECT_DIR)/Shared/SessionState.serialization.in
 $(PROJECT_DIR)/Shared/Shared/EditorState.serialization.in
 $(PROJECT_DIR)/Shared/SyntheticEditingCommandType.serialization.in
@@ -654,6 +659,7 @@ $(PROJECT_DIR)/WebProcess/GPU/media/RemoteImageDecoderAVFManager.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteLegacyCDMSession.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteMediaPlayerConfiguration.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in
+$(PROJECT_DIR)/WebProcess/GPU/media/RemoteMediaResourceLoaderProxy.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteRemoteCommandListener.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteVideoFrameProxyProperties.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/media/SourceBufferPrivateRemote.messages.in
@@ -733,7 +739,6 @@ $(PROJECT_DIR)/webpushd/mac/com.apple.WebKit.webpushd.mac.sb.in
 $(PROJECT_DIR)/webpushd/mac/com.apple.WebKit.webpushd.relocatable.mac.sb.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/ActivityState.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/CodeGenerator.pm
-$(WEBCORE_PRIVATE_HEADERS_DIR)/DDModel.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/DocumentSyncData.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/DragActions.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/FrameTreeSyncData.serialization.in
@@ -754,4 +759,5 @@ $(WEBCORE_PRIVATE_HEADERS_DIR)/PlaybackSessionModel.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/ProtectionSpaceBase.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/ScrollTypes.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/WebGPU.serialization.in
+$(WEBCORE_PRIVATE_HEADERS_DIR)/WebModel.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/generate-bindings.pl

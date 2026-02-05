@@ -51,7 +51,7 @@ inline WebGPU::BindingResource convertToBacking(const GPUBindingResource& bindin
         return textureView->backing();
     }, [](const RefPtr<GPUBuffer>& buffer) -> WebGPU::BindingResource {
         GPUBufferBinding bufferBinding {
-            .buffer = buffer,
+            .buffer = *buffer,
             .offset = 0,
             .size = std::nullopt
         };
@@ -138,9 +138,9 @@ struct GPUBindGroupEntry {
         }, [&](const RefPtr<GPUTextureView>&) -> bool {
             return false;
         }, [&](const RefPtr<GPUBuffer>& bufferBinding) -> bool {
-            return bufferBinding == entry.buffer.get() && !entry.offset && equalSizes(bufferBinding->size(), entry.size);
+            return bufferBinding == entry.buffer.ptr() && !entry.offset && equalSizes(bufferBinding->size(), entry.size);
         }, [&](const GPUBufferBinding& bufferBinding) -> bool {
-            return bufferBinding.buffer.get() == entry.buffer.get() && bufferBinding.offset == entry.offset && equalSizes(bufferBinding.size, entry.size);
+            return bufferBinding.buffer.ptr() == entry.buffer.ptr() && bufferBinding.offset == entry.offset && equalSizes(bufferBinding.size, entry.size);
         }, [&](const RefPtr<GPUExternalTexture>&) -> bool {
             return false;
         });

@@ -274,6 +274,11 @@
         "IgnoreSubclassesWhenGeneratingToJSObject": {
             "contextsAllowed": ["interface"]
         },
+        "ImplementationDefaultValue": {
+            "contextsAllowed": ["dictionary-member", "argument"],
+            "values": ["*"],
+            "notes" : "Allows specifying a default value to use for optional dictionary member and operation arguments when the specification doesn't specify one but using one is unobservable." 
+        },
         "ImplementedAs": {
             "contextsAllowed": ["interface", "dictionary", "dictionary-member", "enum", "attribute", "operation", "constant"],
             "values": ["*"]
@@ -281,6 +286,10 @@
         "ImplementedBy": {
             "contextsAllowed": ["interface", "namespace", "dictionary", "dictionary-member", "attribute", "operation", "constant"],
             "values": ["*"]
+        },
+        "ImplementationRequired": {
+            "contextsAllowed": ["dictionary-member"],
+            "notes": "Allows treating the dictionary member as required when the specification doesn't specify the required keyword but using it is unobservable."
         },
         "InterfaceName": {
             "contextsAllowed": ["interface", "namespace"],

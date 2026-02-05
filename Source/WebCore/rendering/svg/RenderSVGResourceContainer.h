@@ -42,6 +42,7 @@ protected:
     RenderSVGResourceContainer(Type, SVGElement&, RenderStyle&&);
 
 private:
+    void layout() override;
     void willBeDestroyed() final;
     void registerResource();
 

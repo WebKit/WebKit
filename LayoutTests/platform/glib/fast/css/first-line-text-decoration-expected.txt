@@ -4,50 +4,50 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {H2} at (0,0) size 784x27
-        RenderText {#text} at (0,0) size 446x26
+        RenderText {#text} at (0,0) size 446x27
           text run at (0,0) width 446: "Test case for First-line text-decoration style"
       RenderBlock {P} at (0,46) size 784x19
-        RenderText {#text} at (0,0) size 507x17
+        RenderText {#text} at (0,0) size 507x18
           text run at (0,0) width 507: "Text-decoration UNDERLINE : Only the first line must have an underline."
       RenderBlock {DIV} at (0,80) size 784x85 [color=#008000]
-        RenderText {#text} at (0,10) size 616x27
+        RenderText {#text} at (0,10) size 616x28
           text run at (0,10) width 616: "Underline Underline Underline Underline"
-        RenderBR {BR} at (616,10) size 0x27
-        RenderText {#text} at (0,48) size 264x17
+        RenderBR {BR} at (616,10) size 0x28
+        RenderText {#text} at (0,48) size 264x18
           text run at (0,48) width 264: "Underline Underline Underline Underline"
-        RenderBR {BR} at (264,48) size 0x17
-        RenderText {#text} at (0,66) size 264x17
+        RenderBR {BR} at (264,48) size 0x18
+        RenderText {#text} at (0,66) size 264x18
           text run at (0,66) width 264: "Underline Underline Underline Underline"
       RenderBlock (anonymous) at (0,164) size 784x19
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,198) size 784x0
       RenderBlock {P} at (0,198) size 784x19
-        RenderText {#text} at (0,0) size 484x17
+        RenderText {#text} at (0,0) size 484x18
           text run at (0,0) width 484: "Text-decoration OVERLINE : Only the first line must have an overline."
       RenderBlock {DIV} at (0,232) size 784x85 [color=#008000]
-        RenderText {#text} at (0,10) size 548x27
+        RenderText {#text} at (0,10) size 548x28
           text run at (0,10) width 548: "Overline Overline Overline Overline"
-        RenderBR {BR} at (548,10) size 0x27
-        RenderText {#text} at (0,48) size 232x17
+        RenderBR {BR} at (548,10) size 0x28
+        RenderText {#text} at (0,48) size 232x18
           text run at (0,48) width 232: "Overline Overline Overline Overline"
-        RenderBR {BR} at (232,48) size 0x17
-        RenderText {#text} at (0,66) size 232x17
+        RenderBR {BR} at (232,48) size 0x18
+        RenderText {#text} at (0,66) size 232x18
           text run at (0,66) width 232: "Overline Overline Overline Overline"
       RenderBlock (anonymous) at (0,316) size 784x19
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,350) size 784x0
       RenderBlock {P} at (0,350) size 784x19
-        RenderText {#text} at (0,0) size 558x17
+        RenderText {#text} at (0,0) size 558x18
           text run at (0,0) width 558: "Text-decoration LINE-THROUGH : Only the first line must have a line through it."
       RenderBlock {DIV} at (0,384) size 784x85 [color=#008000]
-        RenderText {#text} at (0,10) size 700x27
+        RenderText {#text} at (0,10) size 700x28
           text run at (0,10) width 700: "Line-Through Line-Through Line-Through Line"
-        RenderBR {BR} at (700,10) size 0x27
-        RenderText {#text} at (0,48) size 368x17
+        RenderBR {BR} at (700,10) size 0x28
+        RenderText {#text} at (0,48) size 368x18
           text run at (0,48) width 368: "Line-Through Line-Through Line-Through Line-Through"
-        RenderBR {BR} at (368,48) size 0x17
-        RenderText {#text} at (0,66) size 368x17
+        RenderBR {BR} at (368,48) size 0x18
+        RenderText {#text} at (0,66) size 368x18
           text run at (0,66) width 368: "Line-Through Line-Through Line-Through Line-Through"
       RenderBlock (anonymous) at (0,468) size 784x19
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,502) size 784x0

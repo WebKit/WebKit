@@ -4,23 +4,23 @@ layer at (0,0) size 785x767 backgroundClip at (0,0) size 785x766.84 clip at (0,0
   RenderBlock {html} at (0,0) size 785x766.84
     RenderBody {body} at (11.52,11.52) size 761.97x732.30
       RenderBlock (anonymous) at (0,0) size 761.97x52
-        RenderText {#text} at (0,0) size 749x52
+        RenderText {#text} at (0,-1) size 749x54
           text run at (0,0) width 353: "The two blocks should look identical. "
           text run at (352,0) width 397: "One uses an SVG, and the other just uses a"
-          text run at (0,26) width 175: "normal HTML div."
+          text run at (0,25) width 175: "normal HTML div."
       RenderBlock {p} at (0,75.03) size 761.97x26
-        RenderText {#text} at (0,0) size 518x26
+        RenderText {#text} at (0,-1) size 518x28
           text run at (0,0) width 518: "There should be a red, white and blue pattern below this"
       RenderBlock {p} at (0,353.63) size 761.97x26
-        RenderText {#text} at (0,0) size 517x26
+        RenderText {#text} at (0,-1) size 517x28
           text run at (0,0) width 517: "There should be a red, white and blue pattern above this"
       RenderBlock {p} at (0,427.69) size 761.97x26
-        RenderText {#text} at (0,0) size 518x26
+        RenderText {#text} at (0,-1) size 518x28
           text run at (0,0) width 518: "There should be a red, white and blue pattern below this"
       RenderBlock (floating) {div} at (14.39,491.11) size 200.80x200.80 [border: (14px solid #FF0000)]
         RenderBlock {div} at (28.39,28.39) size 144x144 [bgcolor=#0000FF]
       RenderBlock {p} at (0,706.30) size 761.97x26
-        RenderText {#text} at (0,0) size 517x26
+        RenderText {#text} at (0,-1) size 517x28
           text run at (0,0) width 517: "There should be a red, white and blue pattern above this"
 layer at (11.52,414.17) size 762x2 backgroundClip at (11.52,414.17) size 761.97x2 clip at (0,0) size 0x0
   RenderBlock {hr} at (0,402.66) size 761.97x2 [color=#808080] [border: (1px inset #808080)]

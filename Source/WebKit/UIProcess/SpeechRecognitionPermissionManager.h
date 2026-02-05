@@ -50,7 +50,6 @@ public:
 
 private:
     explicit SpeechRecognitionPermissionManager(WebPageProxy&);
-    RefPtr<WebPageProxy> protectedPage() const;
 
     void startNextRequest();
     void startProcessingRequest();

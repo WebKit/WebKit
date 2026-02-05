@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
+#include "ArgumentCoders.h"
 #include "GPUConnectionToWebProcess.h"
 #include "LayerHostingContext.h"
 #include "Logging.h"
@@ -42,7 +43,6 @@
 #include "RemoteMediaResource.h"
 #include "RemoteMediaResourceIdentifier.h"
 #include "RemoteMediaResourceLoader.h"
-#include "RemoteMediaResourceManager.h"
 #include "RemoteAudioSessionProxy.h"
 #include "RemoteTextTrackProxy.h"
 #include "RemoteVideoFrameObjectHeap.h"
@@ -75,6 +75,10 @@
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
 #include "VideoReceiverEndpointManager.h"
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+#include <WebCore/MediaSessionHelperIOS.h>
 #endif
 
 #include <wtf/NativePromise.h>
@@ -371,35 +375,6 @@ void RemoteMediaPlayerProxy::setPresentationSize(const WebCore::IntSize& size)
 
     m_configuration.presentationSize = size;
     protectedPlayer()->setPresentationSize(size);
-}
-
-RefPtr<PlatformMediaResource> RemoteMediaPlayerProxy::requestResource(ResourceRequest&& request, PlatformMediaResourceLoader::LoadOptions options)
-{
-    ASSERT(isMainRunLoop());
-
-    RefPtr manager = m_manager.get();
-    ASSERT(manager && manager->gpuConnectionToWebProcess());
-    if (!manager || !manager->gpuConnectionToWebProcess())
-        return nullptr;
-
-    Ref remoteMediaResourceManager = manager->gpuConnectionToWebProcess()->remoteMediaResourceManager();
-    auto remoteMediaResourceIdentifier = RemoteMediaResourceIdentifier::generate();
-    auto remoteMediaResource = RemoteMediaResource::create(remoteMediaResourceManager, *this, remoteMediaResourceIdentifier);
-    remoteMediaResourceManager->addMediaResource(remoteMediaResourceIdentifier, remoteMediaResource);
-
-    protectedConnection()->send(Messages::MediaPlayerPrivateRemote::RequestResource(remoteMediaResourceIdentifier, request, options), m_id);
-
-    return remoteMediaResource;
-}
-
-void RemoteMediaPlayerProxy::sendH2Ping(const URL& url, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
-{
-    protectedConnection()->sendWithAsyncReply(Messages::MediaPlayerPrivateRemote::SendH2Ping(url), WTF::move(completionHandler), m_id);
-}
-
-void RemoteMediaPlayerProxy::removeResource(RemoteMediaResourceIdentifier remoteMediaResourceIdentifier)
-{
-    protectedConnection()->send(Messages::MediaPlayerPrivateRemote::RemoveResource(remoteMediaResourceIdentifier), m_id);
 }
 
 // MediaPlayerClient
@@ -836,7 +811,7 @@ RefPtr<ArrayBuffer> RemoteMediaPlayerProxy::mediaPlayerCachedKeyForKeyId(const S
     if (!m_legacySession)
         return nullptr;
 
-    if (RefPtr cdmSession = manager->gpuConnectionToWebProcess()->protectedLegacyCdmFactoryProxy()->getSession(*m_legacySession))
+    if (RefPtr cdmSession = protect(manager->gpuConnectionToWebProcess()->legacyCdmFactoryProxy())->getSession(*m_legacySession))
         return cdmSession->getCachedKeyForKeyId(keyId);
     return nullptr;
 }
@@ -886,6 +861,15 @@ void RemoteMediaPlayerProxy::setWirelessPlaybackTarget(MediaPlaybackTargetContex
 {
     Ref { *m_player }->setWirelessPlaybackTarget(targetContext.playbackTarget());
 }
+
+MediaPlaybackTargetType RemoteMediaPlayerProxy::playbackTargetType() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (RefPtr playbackTarget = MediaSessionHelper::protectedSharedHelper()->playbackTarget())
+        return playbackTarget->type();
+#endif
+    return MediaPlaybackTargetType::None;
+}
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 bool RemoteMediaPlayerProxy::mediaPlayerIsFullscreen() const
@@ -918,7 +902,14 @@ CachedResourceLoader* RemoteMediaPlayerProxy::mediaPlayerCachedResourceLoader() 
 
 Ref<PlatformMediaResourceLoader> RemoteMediaPlayerProxy::mediaPlayerCreateResourceLoader()
 {
-    return RemoteMediaResourceLoader::create(*this);
+    auto loader = RemoteMediaResourceLoader::create(*this, protectedConnection());
+    protectedConnection()->send(Messages::MediaPlayerPrivateRemote::CreateResourceLoader(loader->identifier()), m_id);
+    return loader;
+}
+
+void RemoteMediaPlayerProxy::destroyResourceLoader(RemoteMediaResourceLoaderIdentifier loaderIdentifier)
+{
+    protectedConnection()->send(Messages::MediaPlayerPrivateRemote::DestroyResourceLoader(loaderIdentifier), m_id);
 }
 
 bool RemoteMediaPlayerProxy::doesHaveAttribute(const AtomString&, AtomString*) const
@@ -1015,6 +1006,23 @@ void RemoteMediaPlayerProxy::videoFrameForCurrentTimeIfChanged(CompletionHandler
     completionHandler(WTF::move(result), changed);
 }
 
+void RemoteMediaPlayerProxy::bitmapImageForCurrentTime(CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
+{
+    RefPtr player = m_player;
+    if (!player) {
+        completionHandler({ });
+        return;
+    }
+
+    player->bitmapImageForCurrentTime()->whenSettled(RunLoop::mainSingleton(), [completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
+        if (!result) {
+            completionHandler({ });
+            return;
+        }
+        completionHandler((*result)->createHandle());
+    });
+}
+
 void RemoteMediaPlayerProxy::setShouldDisableHDR(bool shouldDisable)
 {
     if (m_configuration.shouldDisableHDR == shouldDisable)
@@ -1064,15 +1072,15 @@ void RemoteMediaPlayerProxy::setLegacyCDMSession(std::optional<RemoteLegacyCDMSe
     RefPtr player = m_player;
 
     if (m_legacySession) {
-        if (RefPtr cdmSession = manager->gpuConnectionToWebProcess()->protectedLegacyCdmFactoryProxy()->getSession(*m_legacySession))
+        if (RefPtr cdmSession = protect(manager->gpuConnectionToWebProcess()->legacyCdmFactoryProxy())->getSession(*m_legacySession))
             player->setCDMSession(nullptr);
     }
 
     m_legacySession = instanceId;
 
     if (m_legacySession) {
-        if (RefPtr cdmSession = manager->gpuConnectionToWebProcess()->protectedLegacyCdmFactoryProxy()->getSession(*m_legacySession))
-            player->setCDMSession(cdmSession->protectedSession().get());
+        if (RefPtr cdmSession = protect(manager->gpuConnectionToWebProcess()->legacyCdmFactoryProxy())->getSession(*m_legacySession))
+            player->setCDMSession(protect(cdmSession->session()).get());
     }
 }
 
@@ -1090,7 +1098,7 @@ void RemoteMediaPlayerProxy::cdmInstanceAttached(RemoteCDMInstanceIdentifier&& i
     if (!manager || !manager->gpuConnectionToWebProcess())
         return;
 
-    if (RefPtr instanceProxy = manager->gpuConnectionToWebProcess()->protectedCdmFactoryProxy()->getInstance(instanceId))
+    if (RefPtr instanceProxy = protect(manager->gpuConnectionToWebProcess()->cdmFactoryProxy())->getInstance(instanceId))
         protectedPlayer()->cdmInstanceAttached(instanceProxy->instance());
 }
 
@@ -1101,7 +1109,7 @@ void RemoteMediaPlayerProxy::cdmInstanceDetached(RemoteCDMInstanceIdentifier&& i
     if (!manager || !manager->gpuConnectionToWebProcess())
         return;
 
-    if (RefPtr instanceProxy = manager->gpuConnectionToWebProcess()->protectedCdmFactoryProxy()->getInstance(instanceId))
+    if (RefPtr instanceProxy = protect(manager->gpuConnectionToWebProcess()->cdmFactoryProxy())->getInstance(instanceId))
         protectedPlayer()->cdmInstanceDetached(instanceProxy->instance());
 }
 
@@ -1112,7 +1120,7 @@ void RemoteMediaPlayerProxy::attemptToDecryptWithInstance(RemoteCDMInstanceIdent
     if (!manager || !manager->gpuConnectionToWebProcess())
         return;
 
-    if (RefPtr instanceProxy = manager->gpuConnectionToWebProcess()->protectedCdmFactoryProxy()->getInstance(instanceId))
+    if (RefPtr instanceProxy = protect(manager->gpuConnectionToWebProcess()->cdmFactoryProxy())->getInstance(instanceId))
         protectedPlayer()->attemptToDecryptWithInstance(instanceProxy->instance());
 }
 #endif

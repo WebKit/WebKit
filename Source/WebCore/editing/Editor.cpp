@@ -769,13 +769,13 @@ void Editor::replaceSelectionWithFragment(DocumentFragment& fragment, SelectRepl
 
     if (AXObjectCache::accessibilityEnabled() && editingAction == EditAction::Paste) {
         String text = AccessibilityObject::stringForVisiblePositionRange(command->visibleSelectionForInsertedText());
-        replacedText.postTextStateChangeNotification(document->existingAXObjectCache(), AXTextEditTypePaste, text, document->selection().selection());
+        replacedText.postTextStateChangeNotification(document->existingAXObjectCache(), AXTextEditType::Paste, text, document->selection().selection());
         command->composition()->setRangeDeletedByUnapply(replacedText.replacedRange());
     }
 
     if (AXObjectCache::accessibilityEnabled() && editingAction == EditAction::Insert) {
         String text = command->documentFragmentPlainText();
-        replacedText.postTextStateChangeNotification(document->existingAXObjectCache(), AXTextEditTypeInsert, text, document->selection().selection());
+        replacedText.postTextStateChangeNotification(document->existingAXObjectCache(), AXTextEditType::Insert, text, document->selection().selection());
         command->composition()->setRangeDeletedByUnapply(replacedText.replacedRange());
     }
 
@@ -1597,7 +1597,7 @@ void Editor::postTextStateChangeNotificationForCut(const String& text, const Vis
     CheckedPtr cache = document().existingAXObjectCache();
     if (!cache)
         return;
-    cache->postTextStateChangeNotification(selection.start().anchorNode(), AXTextEditTypeCut, text, selection.start());
+    cache->postTextStateChangeNotification(selection.start().anchorNode(), AXTextEditType::Cut, text, selection.start());
 }
 
 void Editor::performCutOrCopy(EditorActionSpecifier action)
@@ -1858,8 +1858,8 @@ void Editor::renderLayerDidScroll(const RenderLayer& layer)
         return;
 
     // FIXME: Ideally, this would also cancel deferred selection revealing if the selection is inside a subframe and a parent frame is scrolled.
-    for (auto* enclosingLayer = startContainerRenderer->enclosingLayer(); enclosingLayer; enclosingLayer = enclosingLayer->parent()) {
-        if (enclosingLayer == &layer) {
+    for (CheckedPtr enclosingLayer = startContainerRenderer->enclosingLayer(); enclosingLayer; enclosingLayer = enclosingLayer->parent()) {
+        if (enclosingLayer.get() == &layer) {
             m_imageElementsToLoadBeforeRevealingSelection.clear();
             break;
         }
@@ -1912,7 +1912,43 @@ void Editor::capitalizeWord()
     if (client())
         client()->capitalizeWord();
 }
-    
+
+bool Editor::canApplyCaseTransformations(const String& selection)
+{
+    if (client())
+        return client()->canApplyCaseTransformations(selection);
+
+    return true;
+}
+
+bool Editor::canConvertToSimplifiedChinese(const String& selection)
+{
+    if (client())
+        return client()->canConvertToSimplifiedChinese(selection);
+
+    return false;
+}
+
+bool Editor::canConvertToTraditionalChinese(const String& selection)
+{
+    if (client())
+        return client()->canConvertToTraditionalChinese(selection);
+
+    return false;
+}
+
+void Editor::convertToTraditionalChinese()
+{
+    if (client())
+        client()->convertToTraditionalChinese();
+}
+
+void Editor::convertToSimplifiedChinese()
+{
+    if (client())
+        client()->convertToSimplifiedChinese();
+}
+
 #endif
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
@@ -3895,7 +3931,7 @@ static inline void collapseCaretWidth(IntRect& rect)
 
 IntRect Editor::firstRectForRange(const SimpleRange& range) const
 {
-    range.start.protectedDocument()->updateLayout();
+    protect(range.start.document())->updateLayout();
 
     VisiblePosition start(makeDeprecatedLegacyPosition(range.start));
 
@@ -3934,7 +3970,7 @@ void Editor::computeAndSetTypingStyle(EditingStyle& style, EditAction editingAct
 
     // Calculate the current typing style.
     RefPtr<EditingStyle> typingStyle;
-    if (auto existingTypingStyle = document->selection().typingStyle())
+    if (RefPtr existingTypingStyle = document->selection().typingStyle())
         typingStyle = existingTypingStyle->copy();
     else
         typingStyle = EditingStyle::create();
@@ -4062,7 +4098,7 @@ std::optional<SimpleRange> Editor::rangeOfString(const String& target, const std
     // is used depends on whether we're searching forward or backward, and whether startInSelection is set.
 
     bool startInReferenceRange = referenceRange && options.contains(FindOption::StartInSelection);
-    auto shadowTreeRoot = referenceRange ? referenceRange->startContainer().containingShadowRoot() : nullptr;
+    RefPtr shadowTreeRoot = referenceRange ? referenceRange->startContainer().containingShadowRoot() : nullptr;
 
     Ref document = this->document();
     auto searchRange = makeRangeSelectingNodeContents(document);
@@ -4086,7 +4122,7 @@ std::optional<SimpleRange> Editor::rangeOfString(const String& target, const std
     // If nothing was found in the shadow tree, search in main content following the shadow tree.
     if (resultRange.collapsed() && shadowTreeRoot) {
         searchRange = makeRangeSelectingNodeContents(document);
-        if (auto host = shadowTreeRoot->shadowHost())
+        if (RefPtr host = shadowTreeRoot->shadowHost())
             start(searchRange, options) = *makeBoundaryPointAfterNode(*host, options);
         resultRange = collapseIfRootsDiffer(findPlainText(searchRange, target, options));
     }
@@ -4415,7 +4451,7 @@ static RefPtr<Node> findFirstMarkable(Node* startingNode)
 
 bool Editor::selectionStartHasMarkerFor(DocumentMarkerType markerType, int from, int length) const
 {
-    auto node = findFirstMarkable(document().selection().selection().start().protectedDeprecatedNode().get());
+    auto node = findFirstMarkable(protect(document().selection().selection().start().deprecatedNode()).get());
     if (!node)
         return false;
 
@@ -4435,7 +4471,7 @@ bool Editor::selectionStartHasMarkerFor(DocumentMarkerType markerType, int from,
 
 void Editor::selectionStartSetMarkerForTesting(DocumentMarkerType markerType, int from, int length, const String& data)
 {
-    RefPtr node = findFirstMarkable(document().selection().selection().start().protectedDeprecatedNode().get());
+    RefPtr node = findFirstMarkable(protect(document().selection().selection().start().deprecatedNode()).get());
     if (!node)
         return;
 
@@ -4584,25 +4620,25 @@ static Vector<TextList> editableTextListsAtPositionInDescendingOrder(const Posit
         return { };
 
     Vector<Ref<HTMLElement>> enclosingLists;
-    for (auto& ancestor : ancestorsOfType<HTMLElement>(*startContainer)) {
-        if (&ancestor == editableRoot.get())
+    for (Ref ancestor : ancestorsOfType<HTMLElement>(*startContainer)) {
+        if (ancestor.ptr() == editableRoot.get())
             break;
 
-        if (!ancestor.renderer())
+        if (!ancestor->renderer())
             continue;
 
         if (is<HTMLUListElement>(ancestor) || is<HTMLOListElement>(ancestor))
-            enclosingLists.append(ancestor);
+            enclosingLists.append(WTF::move(ancestor));
     }
 
     Vector<TextList> textLists;
     textLists.reserveInitialCapacity(enclosingLists.size());
     for (auto iterator = enclosingLists.rbegin(); iterator != enclosingLists.rend(); ++iterator) {
-        auto& list = iterator->get();
-        auto* orderedList = dynamicDowncast<HTMLOListElement>(list);
-        if (!list.renderer())
+        Ref list = *iterator;
+        RefPtr orderedList = dynamicDowncast<HTMLOListElement>(list);
+        if (!list->renderer())
             continue;
-        auto style = list.renderer()->style().listStyleType();
+        auto style = list->renderer()->style().listStyleType();
         textLists.append({ style, orderedList ? orderedList->start() : 1, !!orderedList });
     }
 
@@ -4779,7 +4815,7 @@ void Editor::registerAttachmentIdentifier(const String& identifier, const Attach
             return std::nullopt;
 
         String contentType;
-        if (auto* image = cachedImage->image())
+        if (RefPtr image = cachedImage->image())
             contentType = image->mimeType();
 
         if (contentType.isEmpty())
@@ -4911,7 +4947,7 @@ std::optional<SimpleRange> Editor::adjustedSelectionRange()
     // FIXME: Why do we need to adjust the selection to include the anchor tag it's in? Whoever wrote this code originally forgot to leave us a comment explaining the rationale.
     auto range = selectedRange();
     if (range) {
-        if (auto enclosingAnchor = enclosingElementWithTag(firstPositionInNode(commonInclusiveAncestor<ComposedTree>(*range)), HTMLNames::aTag)) {
+        if (RefPtr enclosingAnchor = enclosingElementWithTag(firstPositionInNode(commonInclusiveAncestor<ComposedTree>(*range)), HTMLNames::aTag)) {
             if (firstPositionInOrBeforeNode(range->start.container.ptr()) >= makeDeprecatedLegacyPosition(range->start))
                 range->start = makeBoundaryPointBeforeNodeContents(*enclosingAnchor);
         }
@@ -4990,8 +5026,8 @@ RefPtr<Font> Editor::fontForSelection(bool& hasMultipleFonts)
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
     RefPtr<Font> font;
-    for (auto& node : intersectingNodes(*range)) {
-        auto renderer = node.renderer();
+    for (Ref node : intersectingNodes(*range)) {
+        auto renderer = node->renderer();
         if (!renderer)
             continue;
         Ref primaryFont = renderer->style().fontCascade().primaryFont();

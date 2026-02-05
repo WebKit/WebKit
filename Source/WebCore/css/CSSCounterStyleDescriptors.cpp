@@ -51,17 +51,17 @@ CSSCounterStyleDescriptors::Ranges rangeFromCSSValue(Ref<CSSValue> value)
     if (!list)
         return { };
     CSSCounterStyleDescriptors::Ranges result;
-    for (auto& rangeValue : *list) {
-        if (!rangeValue.isPair())
+    for (Ref rangeValue : *list) {
+        if (!rangeValue->isPair())
             return { };
-        auto& low = downcast<CSSPrimitiveValue>(rangeValue.first());
-        auto& high = downcast<CSSPrimitiveValue>(rangeValue.second());
+        Ref low = downcast<CSSPrimitiveValue>(rangeValue->first());
+        Ref high = downcast<CSSPrimitiveValue>(rangeValue->second());
         int convertedLow { std::numeric_limits<int>::min() };
         int convertedHigh { std::numeric_limits<int>::max() };
-        if (low.isInteger())
-            convertedLow = low.resolveAsIntegerDeprecated();
-        if (high.isInteger())
-            convertedHigh = high.resolveAsIntegerDeprecated();
+        if (low->isInteger())
+            convertedLow = low->resolveAsIntegerDeprecated();
+        if (high->isInteger())
+            convertedHigh = high->resolveAsIntegerDeprecated();
         result.append({ convertedLow, convertedHigh });
     }
     return result;
@@ -102,10 +102,10 @@ static CSSCounterStyleDescriptors::AdditiveSymbols additiveSymbolsFromStylePrope
 CSSCounterStyleDescriptors::AdditiveSymbols additiveSymbolsFromCSSValue(Ref<CSSValue> value)
 {
     CSSCounterStyleDescriptors::AdditiveSymbols result;
-    for (auto& additiveSymbol : downcast<CSSValueList>(value.get())) {
-        auto& pair = downcast<CSSValuePair>(additiveSymbol);
-        auto weight = downcast<CSSPrimitiveValue>(pair.first()).resolveAsIntegerDeprecated<unsigned>();
-        auto symbol = symbolFromCSSValue(&pair.second());
+    for (Ref additiveSymbol : downcast<CSSValueList>(value.get())) {
+        Ref pair = downcast<CSSValuePair>(additiveSymbol);
+        auto weight = downcast<CSSPrimitiveValue>(pair->first()).resolveAsIntegerDeprecated<unsigned>();
+        auto symbol = symbolFromCSSValue(&pair->second());
         result.constructAndAppend(symbol, weight);
     }
     return result;
@@ -159,8 +159,8 @@ static Vector<CSSCounterStyleDescriptors::Symbol> symbolsFromStyleProperties(con
 Vector<CSSCounterStyleDescriptors::Symbol> symbolsFromCSSValue(Ref<CSSValue> value)
 {
     Vector<CSSCounterStyleDescriptors::Symbol> result;
-    for (auto& symbolValue : downcast<CSSValueList>(value.get())) {
-        auto symbol = symbolFromCSSValue(&symbolValue);
+    for (Ref symbolValue : downcast<CSSValueList>(value.get())) {
+        auto symbol = symbolFromCSSValue(symbolValue.ptr());
         if (!symbol.text.isNull())
             result.append(symbol);
     }
@@ -216,13 +216,13 @@ CSSCounterStyleDescriptors::SystemData extractSystemDataFromCSSValue(RefPtr<CSSV
     ASSERT(systemValue->isValueID() || systemValue->isPair());
     if (systemValue->isPair()) {
         // This value must be `fixed` or `extends`, both of which can or must have an additional component.
-        auto& secondValue = systemValue->second();
+        Ref secondValue = systemValue->second();
         if (system == CSSCounterStyleDescriptors::System::Extends) {
-            ASSERT(secondValue.isCustomIdent());
-            result.first = AtomString { secondValue.isCustomIdent() ? secondValue.customIdent() : "decimal"_s };
+            ASSERT(secondValue->isCustomIdent());
+            result.first = AtomString { secondValue->isCustomIdent() ? secondValue->customIdent() : "decimal"_s };
         } else if (system == CSSCounterStyleDescriptors::System::Fixed) {
-            ASSERT(secondValue.isInteger());
-            result.second = secondValue.isInteger() ? secondValue.integerDeprecated() : 1;
+            ASSERT(secondValue->isInteger());
+            result.second = secondValue->isInteger() ? secondValue->integerDeprecated() : 1;
         }
     }
     return result;

@@ -185,8 +185,8 @@ IntersectionObserver::IntersectionObserver(Document& document, Ref<IntersectionO
     } else if (root) {
         auto& observerData = downcast<Element>(*root).ensureIntersectionObserverData();
         observerData.observers.append(*this);
-    } else if (auto* frame = document.frame()) {
-        if (auto* localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame()))
+    } else if (RefPtr frame = document.frame()) {
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame()))
             m_implicitRootDocument = localFrame->document();
     }
 
@@ -351,7 +351,7 @@ static void expandRootBoundsWithRootMargin(FloatRect& rootBounds, const Intersec
 
 static std::optional<LayoutRect> computeClippedRectInRootContentsSpace(const LayoutRect& rect, const SecurityOrigin& targetSecurityOrigin, Variant<const RenderElement*, const Frame*> rendererOrFrame, std::optional<IntersectionObserverMarginBox> scrollMargin)
 {
-    auto rendererOrFrameSecurityOrigin = WTF::visit(WTF::makeVisitor(
+    RefPtr rendererOrFrameSecurityOrigin = WTF::visit(WTF::makeVisitor(
         [&] (const RenderElement* renderer) { return Ref<const Frame>(renderer->frame())->frameDocumentSecurityOrigin(); },
         [&] (const Frame* frame) { return frame->frameDocumentSecurityOrigin(); }
     ), rendererOrFrame);
@@ -455,7 +455,6 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
     bool isFirstObservation = !registration.previousThresholdIndex;
 
     float rootUsedZoom = 1.0;
-    // Only available in explicit root situation.
     RenderBlock* rootRenderer = nullptr;
     RenderElement* targetRenderer = nullptr;
     IntersectionObservationState intersectionState;
@@ -507,7 +506,8 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
             return;
 
         intersectionState.canComputeIntersection = true;
-        // FIXME: provide this information in some way if the host frame is remote.
+        // FIXME: provide these information in some way if the host frame is remote.
+        rootRenderer = downcast<LocalFrameView>(hostFrameView).renderView();
         rootUsedZoom = downcast<LocalFrameView>(hostFrameView).renderView()->style().usedZoom();
         intersectionState.rootBounds = layoutViewportRectForIntersection();
     };
@@ -575,10 +575,9 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
         intersectionState.absoluteTargetRect = targetRenderer->localToAbsoluteQuad(FloatRect(localTargetBounds)).boundingBox();
 
     if (intersectionState.isIntersecting) {
-        // If implicit root, rootLocalIntersectionRect is already in absolute coordinates.
-        auto rootAbsoluteIntersectionRect = root() ? rootRenderer->localToAbsoluteQuad(rootLocalIntersectionRect).boundingBox() : rootLocalIntersectionRect;
+        auto rootAbsoluteIntersectionRect = rootRenderer->localToAbsoluteQuad(rootLocalIntersectionRect).boundingBox();
 
-        if (rootRenderer && &targetRenderer->frame() == &rootRenderer->frame())
+        if (root() && &targetRenderer->frame() == &rootRenderer->frame())
             intersectionState.absoluteIntersectionRect = rootAbsoluteIntersectionRect;
         else {
             auto rootViewIntersectionRect = hostFrameView.contentsToView(rootAbsoluteIntersectionRect);
@@ -607,14 +606,7 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
 
     intersectionState.observationChanged = isFirstObservation || intersectionState.thresholdIndex != registration.previousThresholdIndex;
     if (intersectionState.observationChanged) {
-        if (root()) {
-            // Explicit root in the same process, localToAbsoluteQuad can be used.
-            intersectionState.absoluteRootBounds = rootRenderer->localToAbsoluteQuad(intersectionState.rootBounds).boundingBox();
-        } else {
-            // Implicit root (the main frame's document), might be out of process due to site isolation.
-            // Regardless, intersectionState.rootBounds is already in absolute coordinate.
-            intersectionState.absoluteRootBounds = intersectionState.rootBounds;
-        }
+        intersectionState.absoluteRootBounds = rootRenderer->localToAbsoluteQuad(intersectionState.rootBounds).boundingBox();
 
         if (!intersectionState.absoluteTargetRect)
             intersectionState.absoluteTargetRect = targetRenderer->localToAbsoluteQuad(FloatRect(localTargetBounds)).boundingBox();
@@ -645,7 +637,7 @@ auto IntersectionObserver::updateObservations(const Frame& hostFrame) -> NeedNot
 
         bool isSameOriginObservation = [&] () {
             if (RefPtr hostFrameSecurityOrigin = hostFrame.frameDocumentSecurityOrigin())
-                return target->document().protectedSecurityOrigin()->isSameOriginDomain(*hostFrameSecurityOrigin);
+                return protect(target->document().securityOrigin())->isSameOriginDomain(*hostFrameSecurityOrigin);
 
             return false;
         }();

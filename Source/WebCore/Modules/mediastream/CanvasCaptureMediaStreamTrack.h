@@ -35,6 +35,10 @@
 #include <wtf/TypeCasts.h>
 #include <wtf/WeakPtr.h>
 
+#if USE(GSTREAMER)
+#include "GRefPtrGStreamer.h"
+#endif
+
 namespace WebCore {
 
 class Document;
@@ -98,7 +102,7 @@ private:
         WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> m_canvas;
         RefPtr<Image> m_currentImage;
 #if USE(GSTREAMER)
-        MediaTime m_presentationTimeStamp { MediaTime::zeroTime() };
+        GRefPtr<GstClock> m_clock;
 #endif
     };
 

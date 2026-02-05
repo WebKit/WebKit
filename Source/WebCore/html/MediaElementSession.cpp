@@ -130,9 +130,9 @@ static String restrictionNames(MediaElementSession::BehaviorRestrictions restric
 
 static bool pageExplicitlyAllowsElementToAutoplayInline(const HTMLMediaElement& element)
 {
-    Document& document = element.document();
-    Page* page = document.page();
-    return document.isMediaDocument() && !document.ownerElement() && page && page->allowsMediaDocumentInlinePlayback();
+    Ref document = element.document();
+    RefPtr page = document->page();
+    return document->isMediaDocument() && !document->ownerElement() && page && page->allowsMediaDocumentInlinePlayback();
 }
 
 #if ENABLE(MEDIA_SESSION)
@@ -205,7 +205,7 @@ MediaElementSession::~MediaElementSession()
     if (!element)
         return;
 
-    auto page = element->document().page();
+    RefPtr page = element->document().page();
     if (page && m_haveAddedMediaUsageManagerSession)
         page->chrome().client().removeMediaUsageManagerSession(mediaSessionIdentifier());
 #endif
@@ -226,7 +226,7 @@ void MediaElementSession::addMediaUsageManagerSessionIfNecessary()
     if (m_haveAddedMediaUsageManagerSession)
         return;
 
-    auto page = element->document().page();
+    RefPtr page = element->document().page();
     if (!page)
         return;
 
@@ -280,7 +280,7 @@ void MediaElementSession::clientWillBeginPlayback(CompletionHandler<void(bool)>&
         protectedThis->updateClientDataBuffering();
 
 #if ENABLE(MEDIA_SESSION)
-        if (auto* session = protectedThis->mediaSession())
+        if (RefPtr session = protectedThis->mediaSession())
             session->willBeginPlayback();
 #endif
 
@@ -296,7 +296,7 @@ bool MediaElementSession::clientWillPausePlayback()
     updateClientDataBuffering();
 
 #if ENABLE(MEDIA_SESSION)
-    if (auto* session = mediaSession())
+    if (RefPtr session = mediaSession())
         session->willPausePlayback();
 #endif
 
@@ -637,7 +637,7 @@ bool MediaElementSession::pageAllowsDataLoading() const
     if (!element)
         return false;
 
-    Page* page = element->document().page();
+    RefPtr page = element->document().page();
     if (m_restrictions & RequirePageConsentToLoadMedia && page && !page->canStartMedia()) {
         INFO_LOG(LOGIDENTIFIER, "returning FALSE");
         return false;
@@ -652,7 +652,7 @@ bool MediaElementSession::pageAllowsPlaybackAfterResuming() const
     if (!element)
         return false;
 
-    Page* page = element->document().page();
+    RefPtr page = element->document().page();
     if (m_restrictions & RequirePageConsentToResumeMedia && page && !page->canStartMedia()) {
         INFO_LOG(LOGIDENTIFIER, "returning FALSE");
         return false;
@@ -676,7 +676,7 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
     if (purpose == MediaElementSession::PlaybackControlsPurpose::NowPlaying
         && hasBehaviorRestriction(RequirePageVisibilityForVideoToBeNowPlaying)
         && element->isVideo()
-        && !element->protectedDocument()->protectedPage()->isVisibleAndActive()) {
+        && !protect(protect(element->document())->page())->isVisibleAndActive()) {
         INFO_LOG(LOGIDENTIFIER, "returning FALSE: NowPlaying restricted for video in a page that is not visible");
         return false;
     }
@@ -1216,7 +1216,7 @@ static bool isElementMainContentForPurposesOfAutoplay(const HTMLMediaElement& el
     OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent, HitTestRequest::Type::IgnoreClipping, HitTestRequest::Type::DisallowUserAgentShadowContent };
     HitTestResult result(rectRelativeToTopDocument.center());
 
-    localMainFrame->protectedDocument()->hitTest(hitType, result);
+    protect(localMainFrame->document())->hitTest(hitType, result);
     result.setToNonUserAgentShadowAncestor();
     return result.targetElement() == &element;
 }
@@ -1652,7 +1652,7 @@ MediaSession* MediaElementSession::mediaSession() const
     if (!element)
         return nullptr;
 
-    auto* window = element->document().window();
+    RefPtr window = element->document().window();
     if (!window)
         return nullptr;
     return &NavigatorMediaSession::mediaSession(window->protectedNavigator());
@@ -1664,7 +1664,7 @@ MediaSession* MediaElementSession::mediaSession() const
 void MediaElementSession::ensureIsObservingMediaSession()
 {
 #if ENABLE(MEDIA_SESSION)
-    auto* session = mediaSession();
+    RefPtr session = mediaSession();
     if (!session || m_observer)
         return;
     m_observer = MediaElementSessionObserver::create(*this, *session);
@@ -1694,7 +1694,7 @@ void MediaElementSession::clientCharacteristicsChanged(bool positionChanged)
 {
 #if ENABLE(MEDIA_SESSION)
     RefPtr element = m_element.get();
-    auto* session = mediaSession();
+    RefPtr session = mediaSession();
     if (element && positionChanged && session) {
         auto positionState = session->positionState();
         if (positionState)

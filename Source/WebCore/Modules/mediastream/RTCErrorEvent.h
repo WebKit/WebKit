@@ -36,10 +36,11 @@ class RTCErrorEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(RTCErrorEvent);
 public:
     struct Init : EventInit {
-        RefPtr<RTCError> error;
+        Ref<RTCError> error;
     };
-    static Ref<RTCErrorEvent> create(const AtomString& type, Init&& init, IsTrusted isTrusted = IsTrusted::No) { return adoptRef(*new RTCErrorEvent(type, WTF::move(init), isTrusted)); }
-    static Ref<RTCErrorEvent> create(const AtomString& type, RefPtr<RTCError>&& error) { return create(type, Init { { }, WTF::move(error) }, IsTrusted::Yes); }
+
+    static Ref<RTCErrorEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<RTCErrorEvent> create(const AtomString& type, Ref<RTCError>&&);
 
     RTCError& error() const { return m_error.get(); }
 

@@ -68,11 +68,11 @@ static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> devi
     return computePipelineState;
 }
 
-static std::optional<MTLSize> metalSize(auto workgroupSize, const HashMap<String, WGSL::ConstantValue>& wgslConstantValues)
+static std::optional<MTLSize> metalSize(WGSL::ShaderModule& shaderModule, auto workgroupSize, const HashMap<String, WGSL::ConstantValue>& wgslConstantValues)
 {
-    auto width = WGSL::evaluate(*workgroupSize.width, wgslConstantValues);
-    auto height = workgroupSize.height ? WGSL::evaluate(*workgroupSize.height, wgslConstantValues) : 1;
-    auto depth = workgroupSize.depth ? WGSL::evaluate(*workgroupSize.depth, wgslConstantValues) : 1;
+    auto width = WGSL::evaluate(shaderModule, *workgroupSize.width, wgslConstantValues);
+    auto height = workgroupSize.height ? WGSL::evaluate(shaderModule, *workgroupSize.height, wgslConstantValues) : 1;
+    auto depth = workgroupSize.depth ? WGSL::evaluate(shaderModule, *workgroupSize.depth, wgslConstantValues) : 1;
     if (!width.has_value() || !height.has_value() || !depth.has_value())
         return std::nullopt;
 
@@ -118,7 +118,7 @@ std::pair<Ref<ComputePipeline>, NSString*> Device::createComputePipeline(const W
     if (!function || function.functionType != MTLFunctionTypeKernel || entryPointInformation.specializationConstants.size() != wgslConstantValues.size())
         return returnInvalidComputePipeline(*this, isAsync);
 
-    auto evaluatedSize = metalSize(computeInformation.workgroupSize, wgslConstantValues);
+    auto evaluatedSize = metalSize(*shaderModule->ast(), computeInformation.workgroupSize, wgslConstantValues);
     if (!evaluatedSize)
         return returnInvalidComputePipeline(*this, isAsync, @"Failed to evaluate overrides");
     auto size = *evaluatedSize;

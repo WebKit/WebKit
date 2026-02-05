@@ -25,51 +25,47 @@
 
 #pragma once
 
+#include "SVGAnimatedPropertyBase.h"
 #include "SVGAttributeAnimator.h"
-#include "SVGPropertyOwner.h"
-#include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/WeakHashSet.h>
-#include <wtf/WeakPtr.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
-    
-class SVGElement;
-class WeakPtrImplWithEventTargetData;
 
-class SVGAnimatedProperty : public ThreadSafeRefCounted<SVGAnimatedProperty>, public SVGPropertyOwner {
+class SVGElement;
+
+// CRTP (Curiously Recurring Template Pattern) template layer providing type-safe instance animation methods.
+// The ConcreteAnimatedPropertyType parameter should be the concrete animated property type (e.g., SVGAnimatedValueProperty<PropertyType>).
+// This eliminates the need for unsafe static_cast operations in instance animation methods.
+template<typename ConcreteAnimatedPropertyType>
+class SVGAnimatedProperty : public SVGAnimatedPropertyBase {
 public:
-    virtual ~SVGAnimatedProperty() = default;
-    
-    // Manage the relationship with the owner.
-    bool isAttached() const { return !!m_contextElement; }
-    void detach() { m_contextElement = nullptr; }
-    SVGElement* contextElement() const;
-    
-    virtual String baseValAsString() const { return emptyString(); }
-    virtual String animValAsString() const { return emptyString(); }
-    
-    // Control the synchronization between the attribute and its reflection in baseVal.
-    virtual bool isDirty() const { return false; }
-    virtual void setDirty() { }
-    virtual std::optional<String> synchronize() { return std::nullopt; }
-    
-    // Control the animation life cycle.
-    bool isAnimating() const { return !m_animators.isEmptyIgnoringNullReferences(); }
-    virtual void startAnimation(SVGAttributeAnimator& animator) { m_animators.add(animator); }
-    virtual void stopAnimation(SVGAttributeAnimator& animator) { m_animators.remove(animator); }
-    
-    // Attach/Detach the animVal of the target element's property by the instance element's property.
-    virtual void instanceStartAnimation(SVGAttributeAnimator& animator, SVGAnimatedProperty&) { startAnimation(animator); }
-    virtual void instanceStopAnimation(SVGAttributeAnimator& animator) { stopAnimation(animator); }
-    
+    // Type-safe instance animation methods that dispatch to derived class implementations.
+    // These methods take ConcreteAnimatedPropertyType& instead of SVGAnimatedPropertyBase& to ensure type safety.
+    void instanceStartAnimation(SVGAttributeAnimator& animator, ConcreteAnimatedPropertyType& animated)
+    {
+        // If this is hot on some benchmarks, we could easily devirtualize by casting
+        // `this` to `ConcreteAnimatedPropertyType` and calling `instanceStartAnimationImpl`
+        // directly on the subclass, in which case `instanceStartAnimationImpl` would not need
+        // to be virtual anymore.
+        instanceStartAnimationImpl(animator, animated);
+    }
+
+    void instanceStopAnimation(SVGAttributeAnimator& animator)
+    {
+        // If this is hot on some benchmarks, we could easily devirtualize by casting
+        // `this` to `ConcreteAnimatedPropertyType` and calling `instanceStopAnimationImpl`
+        // directly on the subclass, in which case `instanceStopAnimationImpl` would not need
+        // to be virtual anymore.
+        instanceStopAnimationImpl(animator);
+    }
+
 protected:
-    explicit SVGAnimatedProperty(SVGElement*);
-    SVGPropertyOwner* owner() const override;
-    void commitPropertyChange(SVGProperty*) override;
-    
-    WeakPtr<SVGElement, WeakPtrImplWithEventTargetData> m_contextElement;
-    WeakHashSet<SVGAttributeAnimator> m_animators;
+    explicit SVGAnimatedProperty(SVGElement* contextElement)
+        : SVGAnimatedPropertyBase(contextElement)
+    {
+    }
+
+    virtual void instanceStartAnimationImpl(SVGAttributeAnimator&, ConcreteAnimatedPropertyType&) = 0;
+    virtual void instanceStopAnimationImpl(SVGAttributeAnimator&) = 0;
 };
 
 } // namespace WebCore

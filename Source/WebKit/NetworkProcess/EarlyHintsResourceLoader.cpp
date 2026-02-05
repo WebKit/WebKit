@@ -130,7 +130,7 @@ void EarlyHintsResourceLoader::startPreconnectTask(const URL& baseURL, const Lin
     if (!contentSecurityPolicy.allowConnectToSource(url, ContentSecurityPolicy::RedirectResponseReceived::No, originalRequest.url()))
         return;
 
-    CheckedPtr networkSession = loader->protectedConnectionToWebProcess()->networkSession();
+    CheckedPtr networkSession = protect(loader->connectionToWebProcess())->networkSession();
     if (!networkSession)
         return;
 

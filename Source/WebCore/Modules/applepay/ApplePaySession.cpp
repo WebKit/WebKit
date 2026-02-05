@@ -495,7 +495,7 @@ ExceptionOr<Ref<ApplePaySession>> ApplePaySession::create(Document& document, un
     if (!document.page())
         return Exception { ExceptionCode::InvalidAccessError, "Frame is detached"_s };
 
-    auto convertedPaymentRequest = convertAndValidate(document, version, WTF::move(paymentRequest), document.protectedPage()->protectedPaymentCoordinator().get());
+    auto convertedPaymentRequest = convertAndValidate(document, version, WTF::move(paymentRequest), protect(document.page())->protectedPaymentCoordinator().get());
     if (convertedPaymentRequest.hasException())
         return convertedPaymentRequest.releaseException();
 

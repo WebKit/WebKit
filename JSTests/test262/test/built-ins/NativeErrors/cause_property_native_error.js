@@ -42,4 +42,5 @@ for (var i = 0; i < nativeErrors.length; ++i) {
 
   verifyProperty(new nativeError(message), "cause", undefined);
   verifyProperty(new nativeError(message, { cause: undefined }), "cause", { value: undefined });
+  verifyProperty(new nativeError(message, {}), "cause", undefined);
 }

@@ -24,21 +24,19 @@
 
 typedef double DOMHighResTimeStamp;
 
+// https://w3c.github.io/mediacapture-record/#blobevent
 [
     Conditional=MEDIA_RECORDER,
     EnabledBySetting=MediaRecorderEnabled,
     Exposed=Window
 ]  interface BlobEvent : Event {
     constructor([AtomString] DOMString type, BlobEventInit eventInitDict);
-
-    // FIXME: Implement these:
     [SameObject] readonly attribute Blob data;
     readonly attribute DOMHighResTimeStamp timecode;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary BlobEventInit : EventInit {
+// https://w3c.github.io/mediacapture-record/#dictdef-blobeventinit
+dictionary BlobEventInit : EventInit {
     required Blob data;
     DOMHighResTimeStamp timecode;
 };

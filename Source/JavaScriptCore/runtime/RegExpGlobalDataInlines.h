@@ -54,19 +54,20 @@ ALWAYS_INLINE MatchResult RegExpGlobalData::performMatch(JSGlobalObject* owner, 
     ASSERT(owner);
     VM& vm = owner->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    int position = regExp->match(owner, input, startOffset, m_ovector);
+    int position = regExp->match(owner, input, startOffset, regExp->ovectorSpan());
     RETURN_IF_EXCEPTION(scope, MatchResult::failed());
 
     if (ovector)
-        *ovector = m_ovector.mutableSpan().data();
+        *ovector = regExp->ovectorSpan().data();
 
     if (position == -1)
         return MatchResult::failed();
 
-    ASSERT(!m_ovector.isEmpty());
-    ASSERT(m_ovector[0] == position);
-    ASSERT(m_ovector[1] >= position);
-    size_t end = m_ovector[1];
+    auto ovectorSpan = regExp->ovectorSpan();
+    ASSERT(!ovectorSpan.empty());
+    ASSERT(ovectorSpan[0] == position);
+    ASSERT(ovectorSpan[1] >= position);
+    size_t end = ovectorSpan[1];
 
     m_cachedResult.record(vm, owner, regExp, string, MatchResult(position, end), /* oneCharacterMatch */ false);
 
@@ -96,9 +97,11 @@ inline MatchResult RegExpGlobalData::matchResult() const
     return m_cachedResult.result();
 }
 
-inline void RegExpGlobalData::resetResultFromCache(JSGlobalObject* owner, RegExp* regExp, JSString* string, MatchResult matchResult, Vector<int>&& vector)
+inline void RegExpGlobalData::resetResultFromCache(JSGlobalObject* owner, RegExp* regExp, JSString* string, MatchResult matchResult, std::span<const int> ovector)
 {
-    m_ovector = WTF::move(vector);
+    auto dest = regExp->ovectorSpan();
+    ASSERT(dest.size() >= ovector.size());
+    std::ranges::copy(ovector, dest.begin());
     m_cachedResult.record(getVM(owner), owner, regExp, string, matchResult, /* oneCharacterMatch */ false);
 }
 

@@ -84,7 +84,7 @@ def write_blueprint_key_value(output, name, value, indent=1):
     if isinstance(value, set) or isinstance(value, list):
         value = list(sorted(set(value)))
         if name == 'cflags':
-            fix_fortify_source_cflags(value)
+            fix_platform_default_defines(value)
 
     if isinstance(value, list):
         output.append(tabs(indent) + '%s: [' % name)
@@ -793,20 +793,30 @@ def handle_angle_non_conformant_extensions_and_versions(
             bp['defaults'].append(non_conform_defaults)
 
 
-def fix_fortify_source_cflags(cflags):
-    # search if there is any cflag starts with '-D_FORTIFY_SOURCE'
-    d_fortify_source_flag = [cflag for cflag in cflags if '-D_FORTIFY_SOURCE' in cflag]
-    # Insert -U_FORTIFY_SOURCE before the first -D_FORTIFY_SOURCE flag.
-    # In case a default mode for FORTIFY_SOURCE is predefined for a compiler,
-    # and the -D_FORTIFY_SOURCE mode we set is different from the default mode,
-    # the compiler will warn about "redefining FORTIFY_SOURCE macro".
-    # To fix this compiler warning, we unset the default mode with
-    # -U_FORTIFY_SOURCE before setting the desired FORTIFY_SOURCE mode in our
-    # cflags.
-    # reference:
-    # https://best.openssf.org/Compiler-Hardening-Guides/Compiler-Options-Hardening-Guide-for-C-and-C++#tldr-what-compiler-options-should-i-use
-    if d_fortify_source_flag:
-        cflags.insert(cflags.index(d_fortify_source_flag[0]), '-U_FORTIFY_SOURCE')
+def fix_platform_default_defines(cflags: list[str]) -> None:
+    """Avoids macro redefinition errors for flags specified by Android.
+
+    Android may specify platform defaults for macros like `_FORTIFY_SOURCE` and
+    `_LIBCPP_HARDENING_MODE`. If both Android and Angle provide different values
+    for these (e.g., `-D_FORTIFY_SOURCE=3 -D_FORTIFY_SOURCE=2`), Clang will emit
+    errors about macro redefinitions.
+
+    This inserts `-U${FLAG}` before Angle's definitions, to avoid those errors.
+    """
+    flags_to_check = (
+        '_FORTIFY_SOURCE',
+        '_LIBCPP_HARDENING_MODE',
+    )
+    for flag in flags_to_check:
+        d_flag = f'-D{flag}'
+
+        # It's _technically_ possible that we have multiple instances of these
+        # flags in a single command. If these flags _differ_ in value, they
+        # should already be a build error, so we only need to worry about adding
+        # the `-U` flag before the first.
+        flag_index = next((i for i, cflag in enumerate(cflags) if d_flag in cflag), None)
+        if flag_index is not None:
+            cflags.insert(flag_index, f'-U{flag}')
 
 
 def main():

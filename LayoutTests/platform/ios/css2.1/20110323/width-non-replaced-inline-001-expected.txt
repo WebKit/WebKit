@@ -4,10 +4,10 @@ layer at (0,0) size 800x80
   RenderBlock {HTML} at (0,0) size 800x80
     RenderBody {BODY} at (8,16) size 784x56
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 514x19
+        RenderText {#text} at (0,0) size 514x20
           text run at (0,0) width 514: "Test passes if the left and right borders start and end where the 'Filler Text' does."
       RenderBlock {DIV} at (0,36) size 784x20
-        RenderInline {SPAN} at (0,0) size 290x19 [border: none (5px solid #000000) none (5px solid #000000)]
-          RenderText {#text} at (5,0) size 280x19
+        RenderInline {SPAN} at (0,0) size 290x20 [border: none (5px solid #000000) none (5px solid #000000)]
+          RenderText {#text} at (5,0) size 280x20
             text run at (5,0) width 280: "Filler Text Filler Text Filler Text Filler Text"
         RenderText {#text} at (0,0) size 0x0

@@ -32,7 +32,6 @@
 BALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #include "AllocationCounts.h"
-#include "AvailableMemory.h"
 #include "CompactAllocationMode.h"
 #include "Gigacage.h"
 #include "HeapKind.h"
@@ -307,23 +306,6 @@ BEXPORT bool isEnabled(HeapKind kind = HeapKind::Primary);
 // by vmPageSizePhysical.
 BEXPORT void decommitAlignedPhysical(void* object, size_t, HeapKind = HeapKind::Primary);
 BEXPORT void commitAlignedPhysical(void* object, size_t, HeapKind = HeapKind::Primary);
-    
-inline size_t availableMemory()
-{
-    return bmalloc::availableMemory();
-}
-    
-#if BPLATFORM(IOS_FAMILY) || BOS(LINUX) || BOS(FREEBSD)
-inline size_t memoryFootprint()
-{
-    return bmalloc::memoryFootprint();
-}
-
-inline double percentAvailableMemoryInUse()
-{
-    return bmalloc::percentAvailableMemoryInUse();
-}
-#endif
 
 #if BOS(DARWIN)
 BEXPORT void setScavengerThreadQOSClass(qos_class_t overrideClass);

@@ -177,12 +177,6 @@ public:
     }
 
     template<typename T>
-    RefPtr<T> protectedSupplement()
-    {
-        return supplement<T>();
-    }
-
-    template<typename T>
     void addSupplement()
     {
         m_supplements.add(T::supplementName(), makeUnique<T>(*this));
@@ -201,7 +195,6 @@ public:
     void removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess&);
 
     AuthenticationManager& authenticationManager();
-    Ref<AuthenticationManager> protectedAuthenticationManager();
     DownloadManager& downloadManager();
     CheckedRef<DownloadManager> checkedDownloadManager();
 
@@ -350,7 +343,6 @@ public:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     NetworkContentRuleListManager& networkContentRuleListManager() { return m_networkContentRuleListManager; }
-    Ref<NetworkContentRuleListManager> protectedNetworkContentRuleListManager() { return m_networkContentRuleListManager; }
 #endif
 
     void syncLocalStorage(CompletionHandler<void()>&&);
@@ -438,7 +430,6 @@ public:
 
 #if ENABLE(WEB_RTC)
     RTCDataChannelRemoteManagerProxy& rtcDataChannelProxy();
-    Ref<RTCDataChannelRemoteManagerProxy> protectedRTCDataChannelProxy();
 #endif
 
     bool ftpEnabled() const { return m_ftpEnabled; }

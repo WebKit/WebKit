@@ -176,11 +176,24 @@ class TextureStorage11 : public TextureStorage
                                             DXGI_FORMAT format,
                                             const TextureHelper11 &texture,
                                             d3d11::SharedSRV *outSRV)   = 0;
+
+    struct ImageKey
+    {
+        ImageKey();
+        ImageKey(int level, bool layered, int layer, GLenum access, GLenum format);
+        bool operator<(const ImageKey &rhs) const;
+        int level;
+        bool layered;
+        int layer;
+        GLenum access;
+        GLenum format;
+    };
+
     virtual angle::Result createUAVForImage(const gl::Context *context,
-                                            int level,
+                                            const ImageKey &key,
                                             DXGI_FORMAT format,
                                             const TextureHelper11 &texture,
-                                            d3d11::SharedUAV *outUAV)   = 0;
+                                            d3d11::SharedUAV *outUAV) = 0;
 
     void verifySwizzleExists(const gl::SwizzleState &swizzleState);
 
@@ -227,18 +240,6 @@ class TextureStorage11 : public TextureStorage
 
     using SRVCacheForSampler = std::map<SamplerKey, d3d11::SharedSRV>;
     SRVCacheForSampler mSrvCacheForSampler;
-
-    struct ImageKey
-    {
-        ImageKey();
-        ImageKey(int level, bool layered, int layer, GLenum access, GLenum format);
-        bool operator<(const ImageKey &rhs) const;
-        int level;
-        bool layered;
-        int layer;
-        GLenum access;
-        GLenum format;
-    };
 
     angle::Result getCachedOrCreateSRVForImage(const gl::Context *context,
                                                const ImageKey &key,
@@ -321,7 +322,7 @@ class TextureStorage11_2D : public TextureStorage11
                                     const TextureHelper11 &texture,
                                     d3d11::SharedSRV *outSRV) override;
     angle::Result createUAVForImage(const gl::Context *context,
-                                    int level,
+                                    const ImageKey &key,
                                     DXGI_FORMAT format,
                                     const TextureHelper11 &texture,
                                     d3d11::SharedUAV *outUAV) override;
@@ -406,7 +407,7 @@ class TextureStorage11_External : public TextureStorage11
                                     const TextureHelper11 &texture,
                                     d3d11::SharedSRV *outSRV) override;
     angle::Result createUAVForImage(const gl::Context *context,
-                                    int level,
+                                    const ImageKey &key,
                                     DXGI_FORMAT format,
                                     const TextureHelper11 &texture,
                                     d3d11::SharedUAV *outUAV) override;
@@ -442,7 +443,7 @@ class TextureStorage11ImmutableBase : public TextureStorage11
                                     const TextureHelper11 &texture,
                                     d3d11::SharedSRV *outSRV) override;
     angle::Result createUAVForImage(const gl::Context *context,
-                                    int level,
+                                    const ImageKey &key,
                                     DXGI_FORMAT format,
                                     const TextureHelper11 &texture,
                                     d3d11::SharedUAV *outUAV) override;
@@ -592,7 +593,7 @@ class TextureStorage11_Cube : public TextureStorage11
                                     const TextureHelper11 &texture,
                                     d3d11::SharedSRV *outSRV) override;
     angle::Result createUAVForImage(const gl::Context *context,
-                                    int level,
+                                    const ImageKey &key,
                                     DXGI_FORMAT format,
                                     const TextureHelper11 &texture,
                                     d3d11::SharedUAV *outUAV) override;
@@ -673,7 +674,7 @@ class TextureStorage11_3D : public TextureStorage11
                                     const TextureHelper11 &texture,
                                     d3d11::SharedSRV *outSRV) override;
     angle::Result createUAVForImage(const gl::Context *context,
-                                    int level,
+                                    const ImageKey &key,
                                     DXGI_FORMAT format,
                                     const TextureHelper11 &texture,
                                     d3d11::SharedUAV *outUAV) override;
@@ -769,7 +770,7 @@ class TextureStorage11_2DArray : public TextureStorage11
                                     const TextureHelper11 &texture,
                                     d3d11::SharedSRV *outSRV) override;
     angle::Result createUAVForImage(const gl::Context *context,
-                                    int level,
+                                    const ImageKey &key,
                                     DXGI_FORMAT format,
                                     const TextureHelper11 &texture,
                                     d3d11::SharedUAV *outUAV) override;
@@ -961,7 +962,7 @@ class TextureStorage11_Buffer : public TextureStorage11
                                     const TextureHelper11 &texture,
                                     d3d11::SharedSRV *outSRV) override;
     angle::Result createUAVForImage(const gl::Context *context,
-                                    int level,
+                                    const ImageKey &key,
                                     DXGI_FORMAT format,
                                     const TextureHelper11 &texture,
                                     d3d11::SharedUAV *outUAV) override;

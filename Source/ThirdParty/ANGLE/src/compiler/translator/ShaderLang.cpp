@@ -16,6 +16,8 @@
 #include "GLSLANG/ShaderLang.h"
 
 #include "common/PackedEnums.h"
+#include "common/span.h"
+#include "common/unsafe_buffers.h"
 #include "compiler/translator/Compiler.h"
 #include "compiler/translator/InitializeGlobals.h"
 #include "compiler/translator/length_limits.h"
@@ -24,6 +26,10 @@
 #endif  // ANGLE_ENABLE_HLSL
 #include "angle_gl.h"
 #include "compiler/translator/VariablePacker.h"
+
+#ifdef ANGLE_IR
+#    include "compiler/translator/ir/src/compile.h"
+#endif
 
 namespace sh
 {
@@ -148,6 +154,9 @@ bool Initialize()
     if (!isInitialized)
     {
         isInitialized = InitializePoolIndex();
+#ifdef ANGLE_IR
+        ir::ffi::initialize_global_pool_index_workaround();
+#endif
     }
     return isInitialized;
 }
@@ -160,6 +169,9 @@ bool Finalize()
     if (isInitialized)
     {
         FreePoolIndex();
+#ifdef ANGLE_IR
+        ir::ffi::free_global_pool_index_workaround();
+#endif
         isInitialized = false;
     }
     return true;
@@ -245,9 +257,6 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->MaxCullDistances                = 8;
     resources->MaxCombinedClipAndCullDistances = 8;
 
-    // Disable highp precision in fragment shader by default.
-    resources->FragmentPrecisionHigh = 0;
-
     // GLSL ES 3.0 constants.
     resources->MaxVertexOutputVectors  = 16;
     resources->MaxFragmentInputVectors = 15;
@@ -314,7 +323,6 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->MaxShaderStorageBufferBindings = 4;
 
     resources->MaxGeometryUniformComponents     = 1024;
-    resources->MaxGeometryUniformBlocks         = 12;
     resources->MaxGeometryInputComponents       = 64;
     resources->MaxGeometryOutputComponents      = 64;
     resources->MaxGeometryOutputVertices        = 256;
@@ -322,7 +330,6 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->MaxGeometryTextureImageUnits     = 16;
     resources->MaxGeometryAtomicCounterBuffers  = 0;
     resources->MaxGeometryAtomicCounters        = 0;
-    resources->MaxGeometryShaderStorageBlocks   = 0;
     resources->MaxGeometryShaderInvocations     = 32;
     resources->MaxGeometryImageUniforms         = 0;
 
@@ -346,8 +353,6 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->MaxTessEvaluationImageUniforms        = 0;
     resources->MaxTessEvaluationAtomicCounters       = 0;
     resources->MaxTessEvaluationAtomicCounterBuffers = 0;
-
-    resources->SubPixelBits = 8;
 
     resources->MaxSamples = 4;
 }
@@ -422,7 +427,9 @@ bool Compile(const ShHandle handle,
     TCompiler *compiler = GetCompilerFromHandle(handle);
     ASSERT(compiler);
 
-    return compiler->compile(shaderStrings, numStrings, compileOptions);
+    // SAFETY: required from caller across this exposed API.
+    return compiler->compile(ANGLE_UNSAFE_BUFFERS(angle::Span(shaderStrings, numStrings)),
+                             compileOptions);
 }
 
 void ClearResults(const ShHandle handle)
@@ -491,7 +498,10 @@ bool GetShaderBinary(const ShHandle handle,
     TCompiler *compiler = GetCompilerFromHandle(handle);
     ASSERT(compiler);
 
-    return compiler->getShaderBinary(handle, shaderStrings, numStrings, compileOptions, binaryOut);
+    // SAFETY: required from caller across this exposed API.
+    return compiler->getShaderBinary(handle,
+                                     ANGLE_UNSAFE_BUFFERS(angle::Span(shaderStrings, numStrings)),
+                                     compileOptions, binaryOut);
 }
 
 const std::map<std::string, std::string> *GetNameHashingMap(const ShHandle handle)
@@ -626,7 +636,7 @@ const std::vector<ShPixelLocalStorageFormat> *GetPixelLocalStorageFormats(const 
     TCompiler *compiler = GetCompilerFromHandle(handle);
     ASSERT(compiler);
 
-    return &compiler->GetPixelLocalStorageFormats();
+    return &compiler->getPixelLocalStorageFormats();
 }
 
 uint32_t GetShaderSpecConstUsageBits(const ShHandle handle)
@@ -642,28 +652,6 @@ uint32_t GetShaderSpecConstUsageBits(const ShHandle handle)
 bool CheckVariablesWithinPackingLimits(int maxVectors, const std::vector<ShaderVariable> &variables)
 {
     return CheckVariablesInPackingLimits(maxVectors, variables);
-}
-
-bool GetShaderStorageBlockRegister(const ShHandle handle,
-                                   const std::string &shaderStorageBlockName,
-                                   unsigned int *indexOut)
-{
-#ifdef ANGLE_ENABLE_HLSL
-    ASSERT(indexOut);
-
-    TranslatorHLSL *translator = GetTranslatorHLSLFromHandle(handle);
-    ASSERT(translator);
-
-    if (!translator->hasShaderStorageBlock(shaderStorageBlockName))
-    {
-        return false;
-    }
-
-    *indexOut = translator->getShaderStorageBlockRegister(shaderStorageBlockName);
-    return true;
-#else
-    return false;
-#endif  // ANGLE_ENABLE_HLSL
 }
 
 bool GetUniformBlockRegister(const ShHandle handle,

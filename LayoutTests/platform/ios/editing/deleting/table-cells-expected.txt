@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 737x19
+        RenderText {#text} at (0,0) size 737x20
           text run at (0,0) width 372: "This tests deletion of a selection that spans multiple cells. "
           text run at (371,0) width 366: "Just table content should be removed, not table structure."
       RenderBlock {DIV} at (0,36) size 784x30
@@ -20,10 +20,10 @@ layer at (0,0) size 800x600
             RenderTableRow {TR} at (0,2) size 344x24
               RenderTableCell {TD} at (2,2) size 160x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                 RenderBlock {DIV} at (2,2) size 156x20
-                  RenderText {#text} at (0,0) size 156x19
+                  RenderText {#text} at (0,0) size 156x20
                     text run at (0,0) width 156: "These two pieces of text"
               RenderTableCell {TD} at (163,2) size 179x24 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
                 RenderBlock {DIV} at (2,2) size 175x20
-                  RenderText {#text} at (0,0) size 175x19
+                  RenderText {#text} at (0,0) size 175x20
                     text run at (0,0) width 175: "should be in different cells."
 caret: position 24 of child 0 {#text} of child 0 {DIV} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of body

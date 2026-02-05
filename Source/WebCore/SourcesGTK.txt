@@ -95,9 +95,6 @@ platform/gtk/LocalizedStringsGtk.cpp
 platform/gtk/PasteboardGtk.cpp
 platform/gtk/PlatformKeyboardEventGtk.cpp
 platform/gtk/PlatformScreenGtk.cpp
-platform/gtk/RenderThemeGadget.cpp
-platform/gtk/RenderThemeScrollbar.cpp
-platform/gtk/ScrollbarThemeGtk.cpp
 
 platform/text/Hyphenation.cpp
 platform/text/LocaleICU.cpp

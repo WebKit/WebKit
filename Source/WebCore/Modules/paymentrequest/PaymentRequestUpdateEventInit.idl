@@ -25,6 +25,5 @@
 
 [
     Conditional=PAYMENT_REQUEST,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary PaymentRequestUpdateEventInit : EventInit {
 };

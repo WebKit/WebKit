@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Yusuke Suzuki <utatane.tea@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1249,6 +1249,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClass::NthLastOfType:
     case CSSSelector::PseudoClass::WebKitDrag:
     case CSSSelector::PseudoClass::Has:
+    case CSSSelector::PseudoClass::Heading:
     case CSSSelector::PseudoClass::State:
     // FIXME: <webkit.org/b/278189> CSS JIT: add support for :active-view-transition-type pseudo class
     case CSSSelector::PseudoClass::ActiveViewTransitionType:
@@ -1500,11 +1501,13 @@ static FunctionType constructFragmentsInternal(const CSSSelector& rootSelector, 
             case CSSSelector::PseudoElement::After:
             case CSSSelector::PseudoElement::Backdrop:
             case CSSSelector::PseudoElement::Before:
+            case CSSSelector::PseudoElement::Checkmark:
             case CSSSelector::PseudoElement::FirstLetter:
             case CSSSelector::PseudoElement::FirstLine:
             case CSSSelector::PseudoElement::GrammarError:
             case CSSSelector::PseudoElement::InternalWritingSuggestions:
             case CSSSelector::PseudoElement::Marker:
+            case CSSSelector::PseudoElement::Picker:
             case CSSSelector::PseudoElement::WebKitResizer:
             case CSSSelector::PseudoElement::WebKitScrollbar:
             case CSSSelector::PseudoElement::WebKitScrollbarButton:
@@ -1529,7 +1532,6 @@ static FunctionType constructFragmentsInternal(const CSSSelector& rootSelector, 
 #endif
             case CSSSelector::PseudoElement::Highlight:
             case CSSSelector::PseudoElement::Part:
-            case CSSSelector::PseudoElement::Picker:
             case CSSSelector::PseudoElement::Slotted:
             case CSSSelector::PseudoElement::ViewTransitionGroup:
             case CSSSelector::PseudoElement::ViewTransitionImagePair:
@@ -3369,8 +3371,8 @@ void SelectorCodeGenerator::generateElementAttributeMatching(Assembler::JumpList
     // In general, canonicalLocalName and localName are the same. When they differ, we have to check if the node is HTML to know
     // which one to use.
     const CSSSelector& attributeSelector = attributeInfo.selector();
-    const AtomStringImpl* localNameLower = attributeSelector.attribute().localNameLowercase().impl();
-    const AtomStringImpl* localName = attributeSelector.attribute().localName().impl();
+    RefPtr localNameLower = attributeSelector.attribute().localNameLowercase().impl();
+    RefPtr localName = attributeSelector.attribute().localName().impl();
     if (localNameLower == localName)
         m_assembler.move(Assembler::TrustedImmPtr(localNameLower), localNameToMatch);
     else {
@@ -3397,7 +3399,7 @@ void SelectorCodeGenerator::generateElementAttributeMatching(Assembler::JumpList
         if (shouldCheckNamespace) {
             Assembler::Jump nameDoesNotMatch = m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), localNameToMatch);
 
-            const AtomStringImpl* namespaceURI = attributeSelector.attribute().namespaceURI().impl();
+            RefPtr namespaceURI = attributeSelector.attribute().namespaceURI().impl();
             if (namespaceURI) {
                 if (attributeSelector.attribute().nodeNamespace() != Namespace::Unknown) {
                     static_assert(sizeof(Namespace) == sizeof(uint8_t));
@@ -3442,19 +3444,19 @@ static bool attributeValueBeginsWith(const Attribute* attribute, AtomStringImpl*
 {
     ASSERT(expectedString);
 
-    AtomStringImpl& valueImpl = *attribute->value().impl();
+    Ref valueImpl = *attribute->value().impl();
     if (caseSensitivity == CaseSensitive)
-        return valueImpl.startsWith(*expectedString);
-    return valueImpl.startsWithIgnoringASCIICase(*expectedString);
+        return valueImpl->startsWith(*expectedString);
+    return valueImpl->startsWithIgnoringASCIICase(*expectedString);
 }
 
 template<CaseSensitivity caseSensitivity>
 static bool attributeValueContains(const Attribute* attribute, AtomStringImpl* expectedString)
 {
-    AtomStringImpl& valueImpl = *attribute->value().impl();
+    Ref valueImpl = *attribute->value().impl();
     if (caseSensitivity == CaseSensitive)
-        return valueImpl.find(expectedString) != notFound;
-    return valueImpl.findIgnoringASCIICase(expectedString) != notFound;
+        return valueImpl->find(expectedString) != notFound;
+    return valueImpl->findIgnoringASCIICase(expectedString) != notFound;
 }
 
 template<CaseSensitivity caseSensitivity>
@@ -3462,10 +3464,10 @@ static bool attributeValueEndsWith(const Attribute* attribute, AtomStringImpl* e
 {
     ASSERT(expectedString);
 
-    AtomStringImpl& valueImpl = *attribute->value().impl();
+    Ref valueImpl = *attribute->value().impl();
     if (caseSensitivity == CaseSensitive)
-        return valueImpl.endsWith(*expectedString);
-    return valueImpl.endsWithIgnoringASCIICase(*expectedString);
+        return valueImpl->endsWith(*expectedString);
+    return valueImpl->endsWithIgnoringASCIICase(*expectedString);
 }
 
 template<CaseSensitivity caseSensitivity>
@@ -3473,39 +3475,39 @@ static bool attributeValueMatchHyphenRule(const Attribute* attribute, AtomString
 {
     ASSERT(expectedString);
 
-    AtomStringImpl& valueImpl = *attribute->value().impl();
-    if (valueImpl.length() < expectedString->length())
+    Ref valueImpl = *attribute->value().impl();
+    if (valueImpl->length() < expectedString->length())
         return false;
 
     bool valueStartsWithExpectedString;
     if (caseSensitivity == CaseSensitive)
-        valueStartsWithExpectedString = valueImpl.startsWith(*expectedString);
+        valueStartsWithExpectedString = valueImpl->startsWith(*expectedString);
     else
-        valueStartsWithExpectedString = valueImpl.startsWithIgnoringASCIICase(*expectedString);
+        valueStartsWithExpectedString = valueImpl->startsWithIgnoringASCIICase(*expectedString);
 
     if (!valueStartsWithExpectedString)
         return false;
 
-    return valueImpl.length() == expectedString->length() || valueImpl[expectedString->length()] == '-';
+    return valueImpl->length() == expectedString->length() || valueImpl.get()[expectedString->length()] == '-';
 }
 
 template<CaseSensitivity caseSensitivity>
 static bool attributeValueSpaceSeparatedListContains(const Attribute* attribute, AtomStringImpl* expectedString)
 {
-    AtomStringImpl& value = *attribute->value().impl();
+    Ref value = *attribute->value().impl();
 
     unsigned startSearchAt = 0;
     while (true) {
         size_t foundPos;
         if (caseSensitivity == CaseSensitive)
-            foundPos = value.find(expectedString, startSearchAt);
+            foundPos = value->find(expectedString, startSearchAt);
         else
-            foundPos = value.findIgnoringASCIICase(expectedString, startSearchAt);
+            foundPos = value->findIgnoringASCIICase(expectedString, startSearchAt);
         if (foundPos == notFound)
             return false;
-        if (!foundPos || isASCIIWhitespace(value[foundPos - 1])) {
+        if (!foundPos || isASCIIWhitespace(value.get()[foundPos - 1])) {
             unsigned endStr = foundPos + expectedString->length();
-            if (endStr == value.length() || isASCIIWhitespace(value[endStr]))
+            if (endStr == value->length() || isASCIIWhitespace(value.get()[endStr]))
                 return true;
         }
         startSearchAt = foundPos + 1;

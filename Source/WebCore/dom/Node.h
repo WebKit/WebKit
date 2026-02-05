@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2020, 2026 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -123,6 +123,9 @@ class Node : public EventTarget, public CanMakeCheckedPtr<Node> {
     friend class Document;
     friend class TreeScope;
 public:
+    // This opts the entire Node family tree into being allocated in the BuiltinTypeDescriptor TZone category.
+    static constexpr bool usesBuiltinTypeDescriptorTZoneCategory = true;
+
     enum NodeType {
         ELEMENT_NODE = 1,
         ATTRIBUTE_NODE = 2,
@@ -165,21 +168,15 @@ public:
     NodeType nodeType() const { return nodeTypeFromBitFields(m_typeBitFields); }
     virtual size_t approximateMemoryCost() const { return sizeof(*this); }
     ContainerNode* parentNode() const;
-    inline RefPtr<ContainerNode> protectedParentNode() const;
     static constexpr ptrdiff_t parentNodeMemoryOffset() { return OBJECT_OFFSETOF(Node, m_parentNode); }
     inline Element* parentElement() const;
-    inline RefPtr<Element> protectedParentElement() const;
     Node* previousSibling() const { return m_previousSibling; }
-    RefPtr<Node> protectedPreviousSibling() const { return m_previousSibling; }
     static constexpr ptrdiff_t previousSiblingMemoryOffset() { return OBJECT_OFFSETOF(Node, m_previousSibling); }
     Node* nextSibling() const { return m_next; }
-    RefPtr<Node> protectedNextSibling() const { return m_next; }
     static constexpr ptrdiff_t nextSiblingMemoryOffset() { return OBJECT_OFFSETOF(Node, m_next); }
     WEBCORE_EXPORT Ref<NodeList> childNodes();
     inline Node* firstChild() const;
-    inline RefPtr<Node> protectedFirstChild() const;
     inline Node* lastChild() const;
-    inline RefPtr<Node> protectedLastChild() const;
     inline bool hasAttributes() const;
     inline NamedNodeMap* attributesMap() const;
     Node* pseudoAwareNextSibling() const;
@@ -286,11 +283,8 @@ public:
 
     // If this node is in a shadow tree, returns its shadow host. Otherwise, returns null.
     WEBCORE_EXPORT Element* shadowHost() const;
-    RefPtr<Element> protectedShadowHost() const;
     ShadowRoot* containingShadowRoot() const;
-    RefPtr<ShadowRoot> protectedContainingShadowRoot() const;
     inline ShadowRoot* shadowRoot() const; // Defined in ElementRareData.h
-    inline RefPtr<ShadowRoot> protectedShadowRoot() const; // Defined in ElementRareData.h
     bool isClosedShadowHidden(const Node&) const;
 
     HTMLSlotElement* assignedSlot() const;
@@ -326,13 +320,11 @@ public:
 
     // Node's parent or shadow tree host.
     inline ContainerNode* parentOrShadowHostNode() const; // Defined in NodeInlines.h
-    inline RefPtr<ContainerNode> protectedParentOrShadowHostNode() const; // Defined in NodeInlines.h
     ContainerNode* parentInComposedTree() const;
     WEBCORE_EXPORT Element* parentElementInComposedTree() const;
     Element* parentOrShadowHostElement() const;
     inline void setParentNode(ContainerNode*);
     inline Node& rootNode() const;
-    inline Ref<Node> protectedRootNode() const;
     WEBCORE_EXPORT Node& traverseToRootNode() const;
     Node& shadowIncludingRoot() const;
 
@@ -442,14 +434,12 @@ public:
 
     // Returns the document associated with this node. A document node returns itself.
     inline Document& document() const; // Defined in NodeDocument.h
-    inline Ref<Document> protectedDocument() const; // Defined in NodeDocument.h
 
     TreeScope& treeScope() const
     {
         ASSERT(m_treeScope);
         return *m_treeScope;
     }
-    inline Ref<TreeScope> protectedTreeScope() const; // Defined in NodeInlines.h
     inline void setTreeScopeRecursively(TreeScope&);
     static constexpr ptrdiff_t treeScopeMemoryOffset() { return OBJECT_OFFSETOF(Node, m_treeScope); }
 
@@ -568,9 +558,9 @@ public:
 
     enum EventTargetInterfaceType eventTargetInterface() const override;
     ScriptExecutionContext* scriptExecutionContext() const final;
-    inline RefPtr<ScriptExecutionContext> protectedScriptExecutionContext() const;
 
     WEBCORE_EXPORT bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
+    using EventTarget::addEventListener;
     bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) override;
     void removeAllEventListeners() override;
 

@@ -43,11 +43,11 @@ dictionary FetchResponseInit {
     Exposed=(Window,Worker),
     InterfaceName=Response,
 ] interface FetchResponse {
-    [CallWith=CurrentScriptExecutionContext] constructor(optional BodyInit? body = null, optional FetchResponseInit init);
+    [CallWith=CurrentScriptExecutionContext] constructor(optional BodyInit? body = null, optional FetchResponseInit init = {});
 
     [CallWith=CurrentScriptExecutionContext, NewObject] static FetchResponse error();
     [CallWith=CurrentScriptExecutionContext, NewObject] static FetchResponse redirect(USVString url, optional unsigned short status = 302);
-    [CallWith=CurrentScriptExecutionContext, NewObject, ImplementedAs=jsonForBindings] static FetchResponse json(any data, optional FetchResponseInit init);
+    [CallWith=CurrentScriptExecutionContext, NewObject, ImplementedAs=jsonForBindings] static FetchResponse json(any data, optional FetchResponseInit init = {});
 
     readonly attribute FetchResponseType type;
 

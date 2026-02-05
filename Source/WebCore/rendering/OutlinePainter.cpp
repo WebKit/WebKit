@@ -43,6 +43,7 @@
 #include "PathUtilities.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderInline.h"
 #include "RenderListBox.h"
 #include "RenderObjectDocument.h"
@@ -61,7 +62,7 @@ OutlinePainter::OutlinePainter(const PaintInfo& paintInfo)
 
 static float deviceScaleFactor(const RenderElement& renderer)
 {
-    return renderer.protectedDocument()->deviceScaleFactor();
+    return protect(renderer.document())->deviceScaleFactor();
 }
 
 void OutlinePainter::paintOutline(const RenderElement& renderer, const LayoutRect& paintRect) const
@@ -470,64 +471,64 @@ static std::pair<FloatPoint, FloatPoint> startAndEndPointsForCorner(const FloatP
     return std::make_pair(startPoint, endPoint);
 }
 
-enum class CornerType : uint8_t { TopLeft, TopRight, BottomRight, BottomLeft, Other };
+enum class PainterCornerType : uint8_t { TopLeft, TopRight, BottomRight, BottomLeft, Other };
 
-static CornerType cornerType(const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge)
+static PainterCornerType cornerType(const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge)
 {
     auto fromEdgeVector = *fromEdge.second - *fromEdge.first;
     auto toEdgeVector = *toEdge.second - *toEdge.first;
 
     if (fromEdgeVector.height() < 0 && toEdgeVector.width() > 0)
-        return CornerType::TopLeft;
+        return PainterCornerType::TopLeft;
     if (fromEdgeVector.width() > 0 && toEdgeVector.height() > 0)
-        return CornerType::TopRight;
+        return PainterCornerType::TopRight;
     if (fromEdgeVector.height() > 0 && toEdgeVector.width() < 0)
-        return CornerType::BottomRight;
+        return PainterCornerType::BottomRight;
     if (fromEdgeVector.width() < 0 && toEdgeVector.height() < 0)
-        return CornerType::BottomLeft;
-    return CornerType::Other;
+        return PainterCornerType::BottomLeft;
+    return PainterCornerType::Other;
 }
 
-static CornerType cornerTypeForMultiline(const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge, const Vector<FloatPoint>& corners)
+static PainterCornerType cornerTypeForMultiline(const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge, const Vector<FloatPoint>& corners)
 {
     auto corner = cornerType(fromEdge, toEdge);
-    if (corner == CornerType::TopLeft && corners.at(0) == *fromEdge.second)
+    if (corner == PainterCornerType::TopLeft && corners.at(0) == *fromEdge.second)
         return corner;
-    if (corner == CornerType::TopRight && corners.at(1) == *fromEdge.second)
+    if (corner == PainterCornerType::TopRight && corners.at(1) == *fromEdge.second)
         return corner;
-    if (corner == CornerType::BottomRight && corners.at(2) == *fromEdge.second)
+    if (corner == PainterCornerType::BottomRight && corners.at(2) == *fromEdge.second)
         return corner;
-    if (corner == CornerType::BottomLeft && corners.at(3) == *fromEdge.second)
+    if (corner == PainterCornerType::BottomLeft && corners.at(3) == *fromEdge.second)
         return corner;
-    return CornerType::Other;
+    return PainterCornerType::Other;
 }
 
-static std::pair<FloatPoint, FloatPoint> controlPointsForBezierCurve(CornerType cornerType, const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge, const FloatSize& radius)
+static std::pair<FloatPoint, FloatPoint> controlPointsForBezierCurve(PainterCornerType cornerType, const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge, const FloatSize& radius)
 {
     FloatPoint cp1;
     FloatPoint cp2;
     switch (cornerType) {
-    case CornerType::TopLeft: {
+    case PainterCornerType::TopLeft: {
         cp1 = FloatPoint(fromEdge.second->x(), fromEdge.second->y() + radius.height() * Path::circleControlPoint());
         cp2 = FloatPoint(toEdge.first->x() + radius.width() * Path::circleControlPoint(), toEdge.first->y());
         break;
     }
-    case CornerType::TopRight: {
+    case PainterCornerType::TopRight: {
         cp1 = FloatPoint(fromEdge.second->x() - radius.width() * Path::circleControlPoint(), fromEdge.second->y());
         cp2 = FloatPoint(toEdge.first->x(), toEdge.first->y() + radius.height() * Path::circleControlPoint());
         break;
     }
-    case CornerType::BottomRight: {
+    case PainterCornerType::BottomRight: {
         cp1 = FloatPoint(fromEdge.second->x(), fromEdge.second->y() - radius.height() * Path::circleControlPoint());
         cp2 = FloatPoint(toEdge.first->x() - radius.width() * Path::circleControlPoint(), toEdge.first->y());
         break;
     }
-    case CornerType::BottomLeft: {
+    case PainterCornerType::BottomLeft: {
         cp1 = FloatPoint(fromEdge.second->x() + radius.width() * Path::circleControlPoint(), fromEdge.second->y());
         cp2 = FloatPoint(toEdge.first->x(), toEdge.first->y() - radius.height() * Path::circleControlPoint());
         break;
     }
-    case CornerType::Other: {
+    case PainterCornerType::Other: {
         ASSERT_NOT_REACHED();
         break;
     }
@@ -569,10 +570,10 @@ static std::optional<FloatRect> rectFromPolygon(const FloatPointGraph::Polygon& 
         const auto& toEdge = poly[i];
         const auto& fromEdge = (i > 0) ? poly[i - 1] : poly[poly.size() - 1];
         auto corner = cornerType(fromEdge, toEdge);
-        if (corner == CornerType::TopLeft) {
+        if (corner == PainterCornerType::TopLeft) {
             ASSERT(!topLeft);
             topLeft = *fromEdge.second;
-        } else if (corner == CornerType::BottomRight) {
+        } else if (corner == PainterCornerType::BottomRight) {
             ASSERT(!bottomRight);
             bottomRight = *fromEdge.second;
         }
@@ -648,19 +649,19 @@ Path OutlinePainter::pathWithShrinkWrappedRects(const Vector<FloatRect>& rects, 
         FloatSize radius;
         auto corner = cornerTypeForMultiline(fromEdge, toEdge, corners);
         switch (corner) {
-        case CornerType::TopLeft:
+        case PainterCornerType::TopLeft:
             radius = firstLineRadii.topLeft();
             break;
-        case CornerType::TopRight:
+        case PainterCornerType::TopRight:
             radius = lastLineRadii.topRight();
             break;
-        case CornerType::BottomRight:
+        case PainterCornerType::BottomRight:
             radius = lastLineRadii.bottomRight();
             break;
-        case CornerType::BottomLeft:
+        case PainterCornerType::BottomLeft:
             radius = firstLineRadii.bottomLeft();
             break;
-        case CornerType::Other:
+        case PainterCornerType::Other:
             // Do not apply border radius on corners that normal border painting skips. (multiline content)
             moveOrAddLineTo(*fromEdge.second);
             continue;
@@ -699,7 +700,7 @@ void OutlinePainter::addPDFURLAnnotationForLink(const RenderElement& renderer, c
             return;
         }
     }
-    m_paintInfo.context().setURLForRect(element->protectedDocument()->completeURL(href), urlRect);
+    m_paintInfo.context().setURLForRect(protect(element->document())->completeURL(href), urlRect);
 }
 
 } // namespace WebCore

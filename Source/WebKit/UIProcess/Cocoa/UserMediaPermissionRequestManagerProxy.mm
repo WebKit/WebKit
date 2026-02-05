@@ -157,7 +157,7 @@ bool UserMediaPermissionRequestManagerProxy::permittedToCaptureVideo()
 #if ENABLE(MEDIA_STREAM)
 void UserMediaPermissionRequestManagerProxy::requestSystemValidation(const WebPageProxy& page, UserMediaPermissionRequestProxy& request, CompletionHandler<void(bool)>&& callback)
 {
-    if (page.protectedPreferences()->mockCaptureDevicesEnabled()) {
+    if (protect(page.preferences())->mockCaptureDevicesEnabled()) {
         callback(true);
         return;
     }

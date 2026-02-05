@@ -1,0 +1,23 @@
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+This test verifies that touchstart and touchend event listeners are passive by default on document, window, documentElement, and body. This test requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS touchstart on body - cancelable: false defaultPrevented: false
+PASS touchstart on documentElement - cancelable: false defaultPrevented: false
+PASS touchstart on document - cancelable: false defaultPrevented: false
+PASS touchstart on window - cancelable: false defaultPrevented: false
+PASS touchend on body - cancelable: false defaultPrevented: false
+PASS touchend on documentElement - cancelable: false defaultPrevented: false
+PASS touchend on document - cancelable: false defaultPrevented: false
+PASS touchend on window - cancelable: false defaultPrevented: false
+PASS touchEndEventCount became 4
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

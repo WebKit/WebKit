@@ -69,7 +69,6 @@ public:
     Ref<SuspendedPageProxy> takeSuspendedPage(WebBackForwardListItem&);
 
 private:
-    Ref<WebProcessPool> protectedProcessPool() const;
 
     void removeOldestEntry();
     void removeEntriesMatching(NOESCAPE const Function<bool(WebBackForwardListItem&)>&);

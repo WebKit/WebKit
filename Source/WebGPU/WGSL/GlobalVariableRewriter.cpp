@@ -107,6 +107,7 @@ private:
     Result<UsedGlobals> determineUsedGlobals(const AST::Function&);
     void collectDynamicOffsetGlobals(const PipelineLayout&);
     void usesOverride(AST::Variable&);
+    void validateUsedGlobals(const UsedGlobals&) const;
     Vector<unsigned> insertStructs(const UsedResources&);
     Result<Vector<unsigned>> insertStructs(PipelineLayout&, const UsedResources&);
     AST::StructureMember& createArgumentBufferEntry(unsigned binding, AST::Variable&);
@@ -1071,6 +1072,7 @@ std::optional<Error> RewriteGlobalVariables::visitEntryPoint(const CallGraph::En
     insertParameters(entryPoint.function, *maybeGroups);
     insertMaterializations(entryPoint.function, usedGlobals.resources);
     insertLocalDefinitions(entryPoint.function, usedGlobals.privateGlobals);
+    validateUsedGlobals(usedGlobals);
 
     for (auto* global : usedGlobals.privateGlobals) {
         if (!global || !global->declaration)
@@ -1080,6 +1082,31 @@ std::optional<Error> RewriteGlobalVariables::visitEntryPoint(const CallGraph::En
             m_entryPointInformation->sizeForWorkgroupVariables += getRoundedSize(*variable);
     }
     return std::nullopt;
+}
+
+void RewriteGlobalVariables::validateUsedGlobals(const UsedGlobals& usedGlobals) const
+{
+    const auto& validateGlobal = [&](const Global* global) {
+        auto* variable = global->declaration;
+        if (auto* initializer = variable->maybeInitializer()) {
+            if (initializer->constantValue())
+                return;
+            m_shaderModule.addOverrideValidation([&shaderModule = m_shaderModule, initializer](auto& overrideValues) -> std::optional<Error> {
+                auto maybeValue = shaderModule.ensureOverrideValue(*initializer, overrideValues);
+                if (!maybeValue)
+                    return maybeValue.error();
+                return std::nullopt;
+            });
+        }
+    };
+
+    for (const auto* global : usedGlobals.privateGlobals)
+        validateGlobal(global);
+
+    for (const auto& [_, bindings] : usedGlobals.resources) {
+        for (const auto& [_, global] : bindings)
+            validateGlobal(global);
+    }
 }
 
 void RewriteGlobalVariables::collectDynamicOffsetGlobals(const PipelineLayout& pipelineLayout)
@@ -1345,7 +1372,7 @@ auto RewriteGlobalVariables::determineUsedGlobals(const AST::Function& function)
             return makeUnexpected(Error(makeString("entry point '"_s, m_entryPointInformation->originalName, "' uses variables '"_s, bindingResult.iterator->value->declaration->originalName(), "' and '"_s, variable.originalName(), "', both which use the same resource binding: @group("_s, group, ") @binding("_s, binding, ')'), variable.span()));
     }
 
-    m_shaderModule.addOverrideValidation([span = function.span(), variables = WTF::move(workgroupVariables), maximumCombinedWorkgroupVariablesSize] -> std::optional<Error> {
+    m_shaderModule.addOverrideValidation([span = function.span(), variables = WTF::move(workgroupVariables), maximumCombinedWorkgroupVariablesSize](auto&) -> std::optional<Error> {
         CheckedUint32 combinedWorkgroupVariablesSize = 0;
         for (const Type* type : variables)
             combinedWorkgroupVariablesSize += type->size();
@@ -1353,7 +1380,7 @@ auto RewriteGlobalVariables::determineUsedGlobals(const AST::Function& function)
             return { Error(makeString("The combined byte size of all variables in the workgroup address space exceeds "_s, String::number(maximumCombinedWorkgroupVariablesSize), " bytes"_s), span) };
         return std::nullopt;
     });
-    m_shaderModule.addOverrideValidation([span = function.span(), variables = WTF::move(privateVariables)] -> std::optional<Error> {
+    m_shaderModule.addOverrideValidation([span = function.span(), variables = WTF::move(privateVariables)](auto&) -> std::optional<Error> {
         CheckedUint32 combinedPrivateVariablesSize = 0;
         for (const Type* type : variables)
             combinedPrivateVariablesSize += type->size();

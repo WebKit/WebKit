@@ -26,15 +26,9 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-#if USE(SKIA)
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkImage.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
-#endif
-
-#if USE(CAIRO) && USE(GTK4)
-typedef struct _GdkTexture GdkTexture;
-#endif
 
 namespace WebCore {
 class Color;
@@ -61,21 +55,11 @@ void monitorWorkArea(GdkMonitor*, GdkRectangle*);
 
 bool eventModifiersContainCapsLock(GdkEvent*);
 
-#if USE(CAIRO) && USE(GTK4)
-GRefPtr<GdkTexture> cairoSurfaceToGdkTexture(cairo_surface_t*);
-#endif
-
-#if USE(SKIA)
 GRefPtr<GdkPixbuf> skiaImageToGdkPixbuf(SkImage&);
 #if USE(GTK4)
 GRefPtr<GdkTexture> skiaImageToGdkTexture(SkImage&);
 #else
 RefPtr<cairo_surface_t> skiaImageToCairoSurface(SkImage&);
-#endif
-#endif
-
-#if USE(CAIRO)
-GRefPtr<GdkPixbuf> cairoSurfaceToGdkPixbuf(cairo_surface_t*);
 #endif
 
 WebCore::Color gdkRGBAToColor(const GdkRGBA&);

@@ -42,6 +42,8 @@ void ClearMultiviewGL::clearMultiviewFBO(const gl::FramebufferState &state,
     const gl::FramebufferAttachment *firstAttachment = state.getFirstNonNullAttachment();
     if (firstAttachment->isMultiview())
     {
+        // GL_OVR_multiview_multisampled_render_to_texture is not supported on GL backend
+        ASSERT(!firstAttachment->isRenderToTexture());
         clearLayeredFBO(state, clearCommandType, mask, buffer, drawbuffer, values, depth, stencil);
     }
 }
@@ -60,7 +62,7 @@ void ClearMultiviewGL::clearLayeredFBO(const gl::FramebufferState &state,
     mStateManager->bindFramebuffer(GL_DRAW_FRAMEBUFFER, mFramebuffer);
 
     const gl::FramebufferAttachment *firstAttachment = state.getFirstNonNullAttachment();
-    ASSERT(firstAttachment->isMultiview());
+    ASSERT(firstAttachment->isMultiview() && !firstAttachment->isRenderToTexture());
 
     const auto &drawBuffers = state.getDrawBufferStates();
     mFunctions->drawBuffers(static_cast<GLsizei>(drawBuffers.size()), drawBuffers.data());

@@ -119,7 +119,7 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
     , m_options(options)
     , m_origin(WTF::move(origin))
     , m_referrer(WTF::move(referrer))
-    , m_sameOriginRequest(protectedSecurityOrigin()->canRequest(request.url(), OriginAccessPatternsForWebProcess::singleton()))
+    , m_sameOriginRequest(protect(securityOrigin())->canRequest(request.url(), OriginAccessPatternsForWebProcess::singleton()))
     , m_simpleRequest(true)
     , m_async(blockingBehavior == LoadAsynchronously)
     , m_delayCallbacksForIntegrityCheck(!m_options.integrity.isEmpty())
@@ -231,7 +231,7 @@ void DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest(ResourceReques
     ASSERT(m_options.preflightPolicy != PreflightPolicy::Force || shouldPerformSecurityChecks());
     ASSERT(m_options.preflightPolicy == PreflightPolicy::Prevent || isSimpleCrossOriginAccessRequest(request.httpMethod(), request.httpHeaderFields()) || shouldPerformSecurityChecks());
 
-    updateRequestForAccessControl(request, protectedSecurityOrigin(), m_options.storedCredentialsPolicy);
+    updateRequestForAccessControl(request, protect(securityOrigin()), m_options.storedCredentialsPolicy);
     loadRequest(WTF::move(request), SecurityCheckPolicy::DoSecurityCheck);
 }
 
@@ -273,18 +273,13 @@ void DocumentThreadableLoader::computeIsDone()
             client->notifyIsDone(m_async && !m_preflightChecker && !m_resource);
         return;
     }
-    platformStrategies()->loaderStrategy()->isResourceLoadFinished(*protectedResource(), [weakThis = WeakPtr { *this }](bool isDone) {
+    platformStrategies()->loaderStrategy()->isResourceLoadFinished(*protect(m_resource), [weakThis = WeakPtr { *this }](bool isDone) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
         if (RefPtr client = protectedThis->m_client.get())
             client->notifyIsDone(isDone);
     });
-}
-
-CachedResourceHandle<CachedRawResource> DocumentThreadableLoader::protectedResource() const
-{
-    return m_resource;
 }
 
 void DocumentThreadableLoader::setDefersLoading(bool value)
@@ -351,7 +346,7 @@ void DocumentThreadableLoader::redirectReceived(CachedResource& resource, Resour
     // Use a unique for subsequent loads if needed.
     // https://fetch.spec.whatwg.org/#concept-http-redirect-fetch (Step 10).
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);
-    if (!protectedSecurityOrigin()->canRequest(redirectResponse.url(), OriginAccessPatternsForWebProcess::singleton()) && !protocolHostAndPortAreEqual(redirectResponse.url(), request.url()))
+    if (!protect(securityOrigin())->canRequest(redirectResponse.url(), OriginAccessPatternsForWebProcess::singleton()) && !protocolHostAndPortAreEqual(redirectResponse.url(), request.url()))
         m_origin = SecurityOrigin::createOpaque();
 
     // Except in case where preflight is needed, loading should be able to continue on its own.
@@ -422,7 +417,7 @@ void DocumentThreadableLoader::didReceiveResponse(ResourceLoaderIdentifier ident
         }
     }
 
-    InspectorInstrumentation::didReceiveThreadableLoaderResponse(protectedDocument().get(), *this, identifier);
+    InspectorInstrumentation::didReceiveThreadableLoaderResponse(protect(*m_document), *this, identifier);
 
     if (m_delayCallbacksForIntegrityCheck)
         return;
@@ -538,7 +533,7 @@ void DocumentThreadableLoader::didFail(std::optional<ResourceLoaderIdentifier>, 
     }
 
     if (m_shouldLogError == ShouldLogError::Yes)
-        logError(protectedDocument(), error, m_options.initiatorType);
+        logError(protect(*m_document), error, m_options.initiatorType);
 
     RefPtr document = m_document.get();
     if (!document)
@@ -547,20 +542,10 @@ void DocumentThreadableLoader::didFail(std::optional<ResourceLoaderIdentifier>, 
         client->didFail(document->identifier(), error); // May cause the client to get destroyed.
 }
 
-Ref<Document> DocumentThreadableLoader::protectedDocument()
-{
-    return *m_document;
-}
-
-Ref<const Document> DocumentThreadableLoader::protectedDocument() const
-{
-    return *m_document;
-}
-
 void DocumentThreadableLoader::preflightSuccess(ResourceRequest&& request)
 {
     ResourceRequest actualRequest(WTF::move(request));
-    updateRequestForAccessControl(actualRequest, protectedSecurityOrigin(), m_options.storedCredentialsPolicy);
+    updateRequestForAccessControl(actualRequest, protect(securityOrigin()), m_options.storedCredentialsPolicy);
 
     m_preflightChecker = nullptr;
 
@@ -574,10 +559,10 @@ void DocumentThreadableLoader::preflightFailure(std::optional<ResourceLoaderIden
 
     RefPtr frame = m_document->frame();
     if (identifier)
-        InspectorInstrumentation::didFailLoading(frame.get(), frame->loader().protectedDocumentLoader().get(), *identifier, error);
+        InspectorInstrumentation::didFailLoading(frame.get(), protect(frame->loader().documentLoader()), *identifier, error);
 
     if (m_shouldLogError == ShouldLogError::Yes)
-        logError(protectedDocument(), error, m_options.initiatorType);
+        logError(protect(*m_document), error, m_options.initiatorType);
 
     if (RefPtr client = m_client.get())
         client->didFail(m_document->identifier(), error);
@@ -610,13 +595,13 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
         request.setAllowCookies(m_options.storedCredentialsPolicy == StoredCredentialsPolicy::Use);
         CachedResourceRequest newRequest(WTF::move(request), options);
         newRequest.setInitiatorType(AtomString { m_options.initiatorType });
-        newRequest.setOrigin(protectedSecurityOrigin());
+        newRequest.setOrigin(protect(securityOrigin()));
 
         ASSERT(!m_resource);
         if (CachedResourceHandle resource = std::exchange(m_resource, nullptr))
             resource->removeClient(*this);
 
-        auto cachedResource = protectedDocument()->protectedCachedResourceLoader()->requestRawResource(WTF::move(newRequest));
+        auto cachedResource = protect(protect(*m_document)->cachedResourceLoader())->requestRawResource(WTF::move(newRequest));
         m_resource = cachedResource.value_or(nullptr);
         if (CachedResourceHandle resource = m_resource)
             resource->addClient(*this);
@@ -686,7 +671,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
             else {
                 ASSERT(m_options.mode == FetchOptions::Mode::Cors);
                 response.setTainting(ResourceResponse::Tainting::Cors);
-                auto accessControlCheckResult = passesAccessControlCheck(response, m_options.storedCredentialsPolicy, protectedSecurityOrigin(), &CrossOriginAccessControlCheckDisabler::singleton());
+                auto accessControlCheckResult = passesAccessControlCheck(response, m_options.storedCredentialsPolicy, protect(securityOrigin()), &CrossOriginAccessControlCheckDisabler::singleton());
                 if (!accessControlCheckResult) {
                     logErrorAndFail(ResourceError(errorDomainWebKitInternal, 0, response.url(), accessControlCheckResult.error(), ResourceError::Type::AccessControl));
                     return;
@@ -696,7 +681,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     }
 
     const auto* timing = response.deprecatedNetworkLoadMetricsOrNull();
-    auto resourceTiming = ResourceTiming::fromSynchronousLoad(requestURL, m_options.initiatorType, loadTiming, timing ? *timing : NetworkLoadMetrics::emptyMetrics(), response, protectedSecurityOrigin().get());
+    auto resourceTiming = ResourceTiming::fromSynchronousLoad(requestURL, m_options.initiatorType, loadTiming, timing ? *timing : NetworkLoadMetrics::emptyMetrics(), response, protect(securityOrigin()));
 
     didReceiveResponse(identifier, WTF::move(response));
 
@@ -739,22 +724,17 @@ bool DocumentThreadableLoader::isAllowedRedirect(const URL& url)
     if (m_options.mode == FetchOptions::Mode::NoCors)
         return true;
 
-    return m_sameOriginRequest && protectedSecurityOrigin()->canRequest(url, OriginAccessPatternsForWebProcess::singleton());
+    return m_sameOriginRequest && protect(securityOrigin())->canRequest(url, OriginAccessPatternsForWebProcess::singleton());
 }
 
 SecurityOrigin& DocumentThreadableLoader::securityOrigin() const
 {
-    return m_origin ? *m_origin : protectedDocument()->securityOrigin();
+    return m_origin ? *m_origin : protect(m_document)->securityOrigin();
 }
 
 Ref<SecurityOrigin> DocumentThreadableLoader::topOrigin() const
 {
-    return protectedDocument()->topOrigin();
-}
-
-Ref<SecurityOrigin> DocumentThreadableLoader::protectedSecurityOrigin() const
-{
-    return securityOrigin();
+    return protect(*m_document)->topOrigin();
 }
 
 const ContentSecurityPolicy& DocumentThreadableLoader::contentSecurityPolicy() const

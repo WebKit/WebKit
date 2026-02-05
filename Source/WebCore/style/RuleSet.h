@@ -101,7 +101,7 @@ public:
     const RuleDataVector* attributeRules(const AtomString& key, bool isHTMLName) const;
     const RuleDataVector* tagRules(const AtomString& key, bool isHTMLName) const;
     const RuleDataVector* userAgentPartRules(const AtomString& key) const { return m_userAgentPartRules.get(key); }
-    const RuleDataVector* linkPseudoClassRules() const { return &m_linkPseudoClassRules; }
+    const RuleDataVector& linkPseudoClassRules() const { return m_linkPseudoClassRules; }
     const RuleDataVector* namedPseudoElementRules(const AtomString& key) const { return m_namedPseudoElementRules.get(key); }
 #if ENABLE(VIDEO)
     const RuleDataVector& cuePseudoRules() const { return m_cuePseudoRules; }
@@ -109,10 +109,17 @@ public:
     const RuleDataVector& hostPseudoClassRules() const { return m_hostPseudoClassRules; }
     const RuleDataVector& slottedPseudoElementRules() const { return m_slottedPseudoElementRules; }
     const RuleDataVector& partPseudoElementRules() const { return m_partPseudoElementRules; }
-    const RuleDataVector* focusPseudoClassRules() const { return &m_focusPseudoClassRules; }
-    const RuleDataVector* focusVisiblePseudoClassRules() const { return &m_focusVisiblePseudoClassRules; }
-    const RuleDataVector* rootElementRules() const { return &m_rootElementRules; }
-    const RuleDataVector* universalRules() const { return &m_universalRules; }
+    const RuleDataVector& focusPseudoClassRules() const { return m_focusPseudoClassRules; }
+    const RuleDataVector& focusVisiblePseudoClassRules() const { return m_focusVisiblePseudoClassRules; }
+    const RuleDataVector& fullscreenPseudoClassRules() const { return m_fullscreenPseudoClassRules; }
+    const RuleDataVector& rootElementRules() const { return m_rootElementRules; }
+    const RuleDataVector& universalRules() const { return m_universalRules; }
+    // For pseudo-element rules that apply to all elements or all HTML elements like "::marker".
+    const RuleDataVector& universalPseudoElementRules() const { return m_universalPseudoElementRules; }
+    // Pseudo element types applying to all elements in HTML namespace.
+    EnumSet<PseudoElementType> universalHTMLPseudoElementTypes() const { return m_universalHTMLPseudoElementTypes; }
+    // Pseudo element types applying to all elements.
+    EnumSet<PseudoElementType> universalPseudoElementTypes() const { return m_universalPseudoElementTypes; }
 
     const Vector<StyleRulePage*>& pageRules() const { return m_pageRules; }
 
@@ -216,8 +223,12 @@ private:
     RuleDataVector m_partPseudoElementRules;
     RuleDataVector m_focusPseudoClassRules;
     RuleDataVector m_focusVisiblePseudoClassRules;
+    RuleDataVector m_fullscreenPseudoClassRules;
     RuleDataVector m_rootElementRules;
     RuleDataVector m_universalRules;
+    RuleDataVector m_universalPseudoElementRules;
+    EnumSet<PseudoElementType> m_universalHTMLPseudoElementTypes;
+    EnumSet<PseudoElementType> m_universalPseudoElementTypes;
     Vector<StyleRulePage*> m_pageRules;
     RefPtr<StyleRuleViewTransition> m_viewTransitionRule;
     RuleFeatureSet m_features;

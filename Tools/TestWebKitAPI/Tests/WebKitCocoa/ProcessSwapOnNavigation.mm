@@ -1730,7 +1730,11 @@ TEST(ProcessSwap, ServerRedirectFromNewWebView)
 
     EXPECT_FALSE(serverRedirected);
     EXPECT_EQ(2, numberOfDecidePolicyCalls);
-    EXPECT_EQ(1u, seenPIDs.size());
+
+    // Site Isolation currently swap process during cross-site redirect even though the process has not committed load.
+    // This might be changed if rdar://116203552 is fixed.
+    unsigned processCount = isSiteIsolationEnabled(webView.get()) ? 2u : 1u;
+    EXPECT_EQ(processCount, seenPIDs.size());
 }
 
 TEST(ProcessSwap, ServerRedirect)
@@ -8272,7 +8276,7 @@ TEST(ProcessSwap, CommittedURLAfterNavigatingBackToCOOP)
 
 enum class IsSameOrigin : bool { No, Yes };
 enum class DoServerSideRedirect : bool { No, Yes };
-static void runCOOPProcessSwapTest(ASCIILiteral sourceCOOP, ASCIILiteral sourceCOEP, ASCIILiteral destinationCOOP, ASCIILiteral destinationCOEP, IsSameOrigin isSameOrigin, DoServerSideRedirect doServerSideRedirect, ExpectSwap expectSwap)
+static void runCOOPProcessSwapTest(ASCIILiteral sourceCOOP, ASCIILiteral sourceCOEP, ASCIILiteral destinationCOOP, ASCIILiteral destinationCOEP, IsSameOrigin isSameOrigin, DoServerSideRedirect doServerSideRedirect, ExpectSwap expectSwapBrowsingContextGroup)
 {
     using namespace TestWebKitAPI;
 
@@ -8312,7 +8316,7 @@ static void runCOOPProcessSwapTest(ASCIILiteral sourceCOOP, ASCIILiteral sourceC
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
     bool sourceShouldBeCrossOriginIsolated = sourceCOOP == "same-origin"_s && sourceCOEP == "require-corp"_s;
     bool destinationShouldBeCrossOriginIsolated = destinationCOOP == "same-origin"_s && destinationCOEP == "require-corp"_s;
-    EXPECT_TRUE(sourceShouldBeCrossOriginIsolated == destinationShouldBeCrossOriginIsolated || expectSwap == ExpectSwap::Yes);
+    EXPECT_TRUE(sourceShouldBeCrossOriginIsolated == destinationShouldBeCrossOriginIsolated || expectSwapBrowsingContextGroup == ExpectSwap::Yes);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
@@ -8364,7 +8368,11 @@ static void runCOOPProcessSwapTest(ASCIILiteral sourceCOOP, ASCIILiteral sourceC
     auto pid2 = [createdWebView _webProcessIdentifier];
     EXPECT_TRUE(!!pid2);
 
-    if (expectSwap == ExpectSwap::Yes)
+    auto expectSwapProcess = expectSwapBrowsingContextGroup;
+    // Process swap will always happen for cross-origin popup even if it is in the same browsing context group.
+    if (isSiteIsolationEnabled(webView.get()) && isSameOrigin == IsSameOrigin::No)
+        expectSwapProcess = ExpectSwap::Yes;
+    if (expectSwapProcess == ExpectSwap::Yes)
         EXPECT_NE(pid1, pid2);
     else
         EXPECT_EQ(pid1, pid2);
@@ -8372,7 +8380,7 @@ static void runCOOPProcessSwapTest(ASCIILiteral sourceCOOP, ASCIILiteral sourceC
     bool finishedRunningScript = false;
     [webView evaluateJavaScript:@"w.closed ? 'true' : 'false'" completionHandler: [&] (id result, NSError *error) {
         NSString *isClosed = (NSString *)result;
-        if (expectSwap == ExpectSwap::Yes)
+        if (expectSwapBrowsingContextGroup == ExpectSwap::Yes)
             EXPECT_WK_STREQ(@"true", isClosed);
         else
             EXPECT_WK_STREQ(@"false", isClosed);
@@ -8382,7 +8390,7 @@ static void runCOOPProcessSwapTest(ASCIILiteral sourceCOOP, ASCIILiteral sourceC
     finishedRunningScript = false;
     [webView evaluateJavaScript:@"w.name" completionHandler: [&] (id result, NSError *error) {
         NSString *windowName = (NSString *)result;
-        if (expectSwap == ExpectSwap::No && isSameOrigin == IsSameOrigin::Yes)
+        if (expectSwapBrowsingContextGroup == ExpectSwap::No && isSameOrigin == IsSameOrigin::Yes)
             EXPECT_WK_STREQ(@"foo", windowName);
         else
             EXPECT_WK_STREQ(@"", windowName);
@@ -8414,7 +8422,7 @@ static void runCOOPProcessSwapTest(ASCIILiteral sourceCOOP, ASCIILiteral sourceC
     finishedRunningScript = false;
     [createdWebView evaluateJavaScript:@"window.opener ? 'true' : 'false'" completionHandler: [&] (id result, NSError *error) {
         NSString *hasOpener = (NSString *)result;
-        if (expectSwap == ExpectSwap::Yes)
+        if (expectSwapBrowsingContextGroup == ExpectSwap::Yes)
             EXPECT_WK_STREQ(@"false", hasOpener);
         else
             EXPECT_WK_STREQ(@"true", hasOpener);
@@ -8424,7 +8432,7 @@ static void runCOOPProcessSwapTest(ASCIILiteral sourceCOOP, ASCIILiteral sourceC
     finishedRunningScript = false;
     [createdWebView evaluateJavaScript:@"window.name" completionHandler: [&] (id result, NSError *error) {
         NSString *windowName = (NSString *)result;
-        if (expectSwap == ExpectSwap::Yes)
+        if (expectSwapBrowsingContextGroup == ExpectSwap::Yes)
             EXPECT_WK_STREQ(@"", windowName);
         else
             EXPECT_WK_STREQ(@"foo", windowName);
@@ -8776,7 +8784,8 @@ TEST(ProcessSwap, COEPProcessSwapOnSiteWhereLockdownModeIsDisabled)
     TestWebKitAPI::Util::run(&finishedNavigation);
     finishedNavigation = false;
 
-    EXPECT_TRUE(isJITEnabled(webView.get()));
+    EXPECT_WK_STREQ([webView _webContentProcessVariantForFrame:nil], @"security");
+    EXPECT_FALSE(isJITEnabled(webView.get()));
 }
 
 #endif // !PLATFORM(IOS_FAMILY)
@@ -8840,7 +8849,6 @@ static void checkSettingsControlledByLockdownMode(WKWebView *webView, ShouldBeEn
     EXPECT_EQ(runJSCheck("!!window.DeprecationReportBody"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
 
     // Confirm unstable settings are always off in Lockdown Mode.
-    EXPECT_EQ(runJSCheck("!!navigator.requestCookieConsent"_s), false);
     EXPECT_EQ(runJSCheck("!!document.undoManager"_s), false);
 }
 
@@ -9265,7 +9273,7 @@ TEST(ProcessSwap, LockdownModeSystemSettingChangeDoesNotReloadViewsWhenModeIsSet
     auto delegate = adoptNS([TestNavigationDelegate new]);
     [webView setNavigationDelegate:delegate.get()];
 
-    EXPECT_TRUE(isJITEnabled(webView.get()));
+    EXPECT_FALSE(isJITEnabled(webView.get()));
 
     __block bool finishedNavigation = false;
     delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
@@ -9279,7 +9287,8 @@ TEST(ProcessSwap, LockdownModeSystemSettingChangeDoesNotReloadViewsWhenModeIsSet
     pid_t pid1 = [webView _webProcessIdentifier];
     EXPECT_NE(pid1, 0);
 
-    EXPECT_TRUE(isJITEnabled(webView.get()));
+    EXPECT_WK_STREQ([webView _webContentProcessVariantForFrame:nil], @"security");
+    EXPECT_FALSE(isJITEnabled(webView.get()));
 
     finishedNavigation = false;
     // Now change the global setting.
@@ -9292,7 +9301,8 @@ TEST(ProcessSwap, LockdownModeSystemSettingChangeDoesNotReloadViewsWhenModeIsSet
     pid_t pid2 = [webView _webProcessIdentifier];
     EXPECT_EQ(pid1, pid2);
 
-    EXPECT_TRUE(isJITEnabled(webView.get()));
+    EXPECT_WK_STREQ([webView _webContentProcessVariantForFrame:nil], @"security");
+    EXPECT_FALSE(isJITEnabled(webView.get()));
 }
 
 TEST(ProcessSwap, LockdownModeSystemSettingChangeDoesNotReloadViewsWhenModeIsSetExplicitly3)
@@ -9376,7 +9386,8 @@ TEST(ProcessSwap, LockdownModeSystemSettingChangeDoesNotReloadViewsWhenModeIsSet
     pid_t pid1 = [webView _webProcessIdentifier];
     EXPECT_NE(pid1, 0);
 
-    EXPECT_TRUE(isJITEnabled(webView.get()));
+    EXPECT_WK_STREQ([webView _webContentProcessVariantForFrame:nil], @"security");
+    EXPECT_FALSE(isJITEnabled(webView.get()));
 
     finishedNavigation = false;
     // Now change the global setting.
@@ -9389,8 +9400,8 @@ TEST(ProcessSwap, LockdownModeSystemSettingChangeDoesNotReloadViewsWhenModeIsSet
     pid_t pid2 = [webView _webProcessIdentifier];
     EXPECT_EQ(pid1, pid2);
 
-    EXPECT_TRUE(isJITEnabled(webView.get()));
-
+    EXPECT_WK_STREQ([webView _webContentProcessVariantForFrame:nil], @"security");
+    EXPECT_FALSE(isJITEnabled(webView.get()));
 }
 
 #endif

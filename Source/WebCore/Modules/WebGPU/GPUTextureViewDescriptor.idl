@@ -33,7 +33,6 @@ typedef [EnforceRange] unsigned long GPUTextureUsageFlags;
     EnabledBySetting=WebGPUEnabled,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUTextureViewDescriptor : GPUObjectDescriptorBase {
     GPUTextureFormat format;
     GPUTextureViewDimension dimension;

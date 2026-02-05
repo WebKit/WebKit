@@ -39,6 +39,9 @@
 
 #if USE(SKIA)
 #include <skia/core/SkImageInfo.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkSurface.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif
 
 namespace WebCore {
@@ -47,12 +50,7 @@ class GraphicsContext;
 class Image;
 class NativeImage;
 
-#if OS(DARWIN)
-inline constexpr auto defaultCopyOnWrite = SharedMemory::CopyOnWrite::Yes;
-#else
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=305633
 inline constexpr auto defaultCopyOnWrite = SharedMemory::CopyOnWrite::No;
-#endif
 
 class ShareableBitmapConfiguration {
 public:
@@ -197,6 +195,10 @@ public:
     // This is only safe to use when we know that the contents of the shareable bitmap won't change.
     WEBCORE_EXPORT RefPtr<cairo_surface_t> createPersistentCairoSurface();
     WEBCORE_EXPORT RefPtr<cairo_surface_t> createCairoSurface();
+#endif
+
+#if USE(SKIA)
+    WEBCORE_EXPORT sk_sp<SkSurface> createSurface();
 #endif
 
 private:

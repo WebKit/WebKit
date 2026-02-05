@@ -17,7 +17,6 @@ if (USE_MIMALLOC)
 endif ()
 
 set(bmalloc_SOURCES
-    bmalloc/AvailableMemory.cpp
     bmalloc/CryptoRandom.cpp
     bmalloc/SystemHeap.cpp
     bmalloc/Environment.cpp
@@ -204,7 +203,6 @@ set(bmalloc_PUBLIC_HEADERS
     bmalloc/Algorithm.h
     bmalloc/AllocationCounts.h
     bmalloc/CompactAllocationMode.h
-    bmalloc/AvailableMemory.h
     bmalloc/BAssert.h
     bmalloc/BCompiler.h
     bmalloc/BExport.h

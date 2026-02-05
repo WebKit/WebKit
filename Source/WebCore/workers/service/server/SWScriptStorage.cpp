@@ -91,7 +91,7 @@ ScriptBuffer SWScriptStorage::store(const ServiceWorkerRegistrationKey& registra
     size_t size = script.size();
 
     auto iterateOverBufferAndWriteData = [&](NOESCAPE const Function<bool(std::span<const uint8_t>)>& writeData) {
-        script.protectedBuffer()->forEachSegment([&](std::span<const uint8_t> span) {
+        protect(script.buffer())->forEachSegment([&](std::span<const uint8_t> span) {
             writeData(span);
         });
     };

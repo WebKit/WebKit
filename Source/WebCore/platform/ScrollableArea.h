@@ -25,10 +25,10 @@
 
 #pragma once
 
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/KeyboardScroll.h>
 #include <WebCore/RectEdges.h>
 #include <WebCore/ScrollAlignment.h>
-#include <WebCore/ScrollAnchoringController.h>
 #include <WebCore/ScrollSnapOffsetsInfo.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/Scrollbar.h>
@@ -54,6 +54,7 @@ class PlatformWheelEvent;
 class ScrollAnimator;
 class ScrollbarsController;
 class GraphicsLayer;
+class ScrollAnchoringController;
 class TiledBacking;
 class Element;
 
@@ -370,6 +371,10 @@ public:
 
     virtual bool isInStableState() const { return true; }
 
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    float scrollbarOpacity() const;
+#endif
+
     // NOTE: Only called from Internals for testing.
     WEBCORE_EXPORT void setScrollOffsetFromInternals(const ScrollOffset&);
 
@@ -423,12 +428,23 @@ public:
     bool overscrollBehaviorAllowsRubberBand() const { return horizontalOverscrollBehavior() != OverscrollBehavior::None || verticalOverscrollBehavior() != OverscrollBehavior::None; }
     bool shouldBlockScrollPropagation(const FloatSize&) const;
     FloatSize deltaForPropagation(const FloatSize&) const;
+
     WEBCORE_EXPORT virtual float adjustVerticalPageScrollStepForFixedContent(float step);
+
     virtual bool needsAnimatedScroll() const { return false; }
-    virtual void updateScrollAnchoringElement() { }
-    virtual void updateScrollPositionForScrollAnchoringController() { }
-    virtual void invalidateScrollAnchoringElement() { }
+
+    // Anchor positioning
     virtual void updateAnchorPositionedAfterScroll() { }
+
+    // Scroll anchoring
+    enum class ComputeNewScrollAnchor : bool {
+        No,
+        Yes
+    };
+    void updateScrollAnchoringElement(ComputeNewScrollAnchor = ComputeNewScrollAnchor::Yes);
+    void adjustScrollAnchoringPosition();
+    virtual ScrollAnchoringController* scrollAnchoringController() const { return nullptr; }
+
     virtual std::optional<FrameIdentifier> rootFrameID() const { return std::nullopt; }
 
     WEBCORE_EXPORT void setScrollbarsController(std::unique_ptr<ScrollbarsController>&&);

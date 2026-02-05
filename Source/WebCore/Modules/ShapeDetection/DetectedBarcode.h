@@ -38,7 +38,6 @@ namespace WebCore {
 struct DetectedBarcode {
     ShapeDetection::DetectedBarcode convertToBacking() const
     {
-        ASSERT(boundingBox);
         return {
             {
                 static_cast<float>(boundingBox->x()),
@@ -54,7 +53,7 @@ struct DetectedBarcode {
         };
     }
 
-    RefPtr<DOMRectReadOnly> boundingBox;
+    Ref<DOMRectReadOnly> boundingBox;
     String rawValue;
     BarcodeFormat format { BarcodeFormat::Unknown };
     Vector<Point2D> cornerPoints;

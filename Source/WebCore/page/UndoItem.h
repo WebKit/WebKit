@@ -42,8 +42,8 @@ class UndoItem : public RefCountedAndCanMakeWeakPtr<UndoItem> {
 public:
     struct Init {
         String label;
-        RefPtr<VoidCallback> undo;
-        RefPtr<VoidCallback> redo;
+        Ref<VoidCallback> undo;
+        Ref<VoidCallback> redo;
     };
 
     static Ref<UndoItem> create(Init&& init)
@@ -67,8 +67,8 @@ public:
 private:
     explicit UndoItem(Init&& init)
         : m_label(WTF::move(init.label))
-        , m_undoHandler(init.undo.releaseNonNull())
-        , m_redoHandler(init.redo.releaseNonNull())
+        , m_undoHandler(WTF::move(init.undo))
+        , m_redoHandler(WTF::move(init.redo))
     {
     }
 

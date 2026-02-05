@@ -30,17 +30,23 @@ namespace
 {
 
 template <typename ResourceType, typename IDType>
-IDType AllocateEmptyObject(HandleAllocator *handleAllocator,
-                           ResourceMap<ResourceType, IDType> *objectMap)
+bool AllocateEmptyObject(HandleAllocator *handleAllocator,
+                         ResourceMap<ResourceType, IDType> *objectMap,
+                         IDType *outID)
 {
-    IDType handle = PackParam<IDType>(handleAllocator->allocate());
-    objectMap->assign(handle, nullptr);
-    return handle;
+    if (!handleAllocator->allocate(&outID->value))
+    {
+        return false;
+    }
+    objectMap->assign(*outID, nullptr);
+    return true;
 }
 
 }  // anonymous namespace
 
-ResourceManagerBase::ResourceManagerBase() : mRefCount(1) {}
+ResourceManagerBase::ResourceManagerBase()
+    : mHandleAllocator(IMPLEMENTATION_MAX_OBJECT_HANDLES), mRefCount(1)
+{}
 
 ResourceManagerBase::~ResourceManagerBase() = default;
 
@@ -125,9 +131,9 @@ void BufferManager::DeleteObject(const Context *context, Buffer *buffer)
     buffer->release(context);
 }
 
-BufferID BufferManager::createBuffer()
+bool BufferManager::createBuffer(BufferID *outBuffer)
 {
-    return AllocateEmptyObject(&mHandleAllocator, &mObjectMap);
+    return AllocateEmptyObject(&mHandleAllocator, &mObjectMap, outBuffer);
 }
 
 Buffer *BufferManager::getBuffer(BufferID handle) const
@@ -168,14 +174,18 @@ void ShaderProgramManager::reset(const Context *context)
     mShaders.clear();
 }
 
-ShaderProgramID ShaderProgramManager::createShader(rx::GLImplFactory *factory,
-                                                   const gl::Limitations &rendererLimitations,
-                                                   ShaderType type)
+bool ShaderProgramManager::createShader(rx::GLImplFactory *factory,
+                                        const gl::Limitations &rendererLimitations,
+                                        ShaderType type,
+                                        ShaderProgramID *outShader)
 {
     ASSERT(type != ShaderType::InvalidEnum);
-    ShaderProgramID handle = ShaderProgramID{mHandleAllocator.allocate()};
-    mShaders.assign(handle, new Shader(this, factory, rendererLimitations, type, handle));
-    return handle;
+    if (!mHandleAllocator.allocate(&outShader->value))
+    {
+        return false;
+    }
+    mShaders.assign(*outShader, new Shader(this, factory, rendererLimitations, type, *outShader));
+    return true;
 }
 
 void ShaderProgramManager::deleteShader(const Context *context, ShaderProgramID shader)
@@ -188,11 +198,14 @@ Shader *ShaderProgramManager::getShader(ShaderProgramID handle) const
     return mShaders.query(handle);
 }
 
-ShaderProgramID ShaderProgramManager::createProgram(rx::GLImplFactory *factory)
+bool ShaderProgramManager::createProgram(rx::GLImplFactory *factory, ShaderProgramID *outProgram)
 {
-    ShaderProgramID handle = ShaderProgramID{mHandleAllocator.allocate()};
-    mPrograms.assign(handle, new Program(factory, this, handle));
-    return handle;
+    if (!mHandleAllocator.allocate(&outProgram->value))
+    {
+        return false;
+    }
+    mPrograms.assign(*outProgram, new Program(factory, this, *outProgram));
+    return true;
 }
 
 void ShaderProgramManager::deleteProgram(const gl::Context *context, ShaderProgramID program)
@@ -243,9 +256,9 @@ void TextureManager::DeleteObject(const Context *context, Texture *texture)
     texture->release(context);
 }
 
-TextureID TextureManager::createTexture()
+bool TextureManager::createTexture(TextureID *outTexture)
 {
-    return AllocateEmptyObject(&mHandleAllocator, &mObjectMap);
+    return AllocateEmptyObject(&mHandleAllocator, &mObjectMap, outTexture);
 }
 
 void TextureManager::signalAllTexturesDirty() const
@@ -303,9 +316,9 @@ void RenderbufferManager::DeleteObject(const Context *context, Renderbuffer *ren
     renderbuffer->release(context);
 }
 
-RenderbufferID RenderbufferManager::createRenderbuffer()
+bool RenderbufferManager::createRenderbuffer(RenderbufferID *outRenderbuffer)
 {
-    return {AllocateEmptyObject(&mHandleAllocator, &mObjectMap)};
+    return AllocateEmptyObject(&mHandleAllocator, &mObjectMap, outRenderbuffer);
 }
 
 Renderbuffer *RenderbufferManager::getRenderbuffer(RenderbufferID handle) const
@@ -331,9 +344,9 @@ void SamplerManager::DeleteObject(const Context *context, Sampler *sampler)
     sampler->release(context);
 }
 
-SamplerID SamplerManager::createSampler()
+bool SamplerManager::createSampler(SamplerID *outSampler)
 {
-    return AllocateEmptyObject(&mHandleAllocator, &mObjectMap);
+    return AllocateEmptyObject(&mHandleAllocator, &mObjectMap, outSampler);
 }
 
 // SyncManager Implementation.
@@ -346,13 +359,16 @@ void SyncManager::DeleteObject(const Context *context, Sync *sync)
     sync->release(context);
 }
 
-SyncID SyncManager::createSync(rx::GLImplFactory *factory)
+bool SyncManager::createSync(rx::GLImplFactory *factory, SyncID *outSync)
 {
-    SyncID handle = {mHandleAllocator.allocate()};
-    Sync *sync    = new Sync(factory, handle);
+    if (!mHandleAllocator.allocate(&outSync->value))
+    {
+        return false;
+    }
+    Sync *sync = new Sync(factory, *outSync);
     sync->addRef();
-    mObjectMap.assign(handle, sync);
-    return handle;
+    mObjectMap.assign(*outSync, sync);
+    return true;
 }
 
 Sync *SyncManager::getSync(SyncID handle) const
@@ -381,9 +397,9 @@ void FramebufferManager::DeleteObject(const Context *context, Framebuffer *frame
     delete framebuffer;
 }
 
-FramebufferID FramebufferManager::createFramebuffer()
+bool FramebufferManager::createFramebuffer(FramebufferID *outFramebuffer)
 {
-    return AllocateEmptyObject(&mHandleAllocator, &mObjectMap);
+    return AllocateEmptyObject(&mHandleAllocator, &mObjectMap, outFramebuffer);
 }
 
 Framebuffer *FramebufferManager::getFramebuffer(FramebufferID handle) const
@@ -433,9 +449,9 @@ void ProgramPipelineManager::DeleteObject(const Context *context, ProgramPipelin
     pipeline->release(context);
 }
 
-ProgramPipelineID ProgramPipelineManager::createProgramPipeline()
+bool ProgramPipelineManager::createProgramPipeline(ProgramPipelineID *outProgramPipeline)
 {
-    return AllocateEmptyObject(&mHandleAllocator, &mObjectMap);
+    return AllocateEmptyObject(&mHandleAllocator, &mObjectMap, outProgramPipeline);
 }
 
 ProgramPipeline *ProgramPipelineManager::getProgramPipeline(ProgramPipelineID handle) const
@@ -467,13 +483,17 @@ void MemoryObjectManager::reset(const Context *context)
     mMemoryObjects.clear();
 }
 
-MemoryObjectID MemoryObjectManager::createMemoryObject(rx::GLImplFactory *factory)
+bool MemoryObjectManager::createMemoryObject(rx::GLImplFactory *factory,
+                                             MemoryObjectID *outMemoryObject)
 {
-    MemoryObjectID handle      = MemoryObjectID{mHandleAllocator.allocate()};
-    MemoryObject *memoryObject = new MemoryObject(factory, handle);
+    if (!mHandleAllocator.allocate(&outMemoryObject->value))
+    {
+        return false;
+    }
+    MemoryObject *memoryObject = new MemoryObject(factory, *outMemoryObject);
     memoryObject->addRef();
-    mMemoryObjects.assign(handle, memoryObject);
-    return handle;
+    mMemoryObjects.assign(*outMemoryObject, memoryObject);
+    return true;
 }
 
 void MemoryObjectManager::deleteMemoryObject(const Context *context, MemoryObjectID handle)
@@ -522,13 +542,16 @@ void SemaphoreManager::reset(const Context *context)
     mSemaphores.clear();
 }
 
-SemaphoreID SemaphoreManager::createSemaphore(rx::GLImplFactory *factory)
+bool SemaphoreManager::createSemaphore(rx::GLImplFactory *factory, SemaphoreID *outSemaphoreHandle)
 {
-    SemaphoreID handle   = SemaphoreID{mHandleAllocator.allocate()};
-    Semaphore *semaphore = new Semaphore(factory, handle);
+    if (!mHandleAllocator.allocate(&outSemaphoreHandle->value))
+    {
+        return false;
+    }
+    Semaphore *semaphore = new Semaphore(factory, *outSemaphoreHandle);
     semaphore->addRef();
-    mSemaphores.assign(handle, semaphore);
-    return handle;
+    mSemaphores.assign(*outSemaphoreHandle, semaphore);
+    return true;
 }
 
 void SemaphoreManager::deleteSemaphore(const Context *context, SemaphoreID handle)

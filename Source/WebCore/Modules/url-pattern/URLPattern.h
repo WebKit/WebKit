@@ -52,16 +52,16 @@ public:
     using URLPatternInput = Variant<String, URLPatternInit>;
 
     static ExceptionOr<Ref<URLPattern>> create(ScriptExecutionContext&, URLPatternInput&&, String&& baseURL, URLPatternOptions&&);
-    static ExceptionOr<Ref<URLPattern>> create(ScriptExecutionContext&, std::optional<URLPatternInput>&&, URLPatternOptions&&);
+    static ExceptionOr<Ref<URLPattern>> create(ScriptExecutionContext&, URLPatternInput&&, URLPatternOptions&&);
 
     using Compatible = Variant<String, URLPatternInit, RefPtr<URLPattern>>;
     static ExceptionOr<Ref<URLPattern>> create(ScriptExecutionContext&, Compatible&&, const String&);
 
     ~URLPattern();
 
-    ExceptionOr<bool> test(ScriptExecutionContext&, std::optional<URLPatternInput>&&, String&& baseURL) const;
+    ExceptionOr<bool> test(ScriptExecutionContext&, URLPatternInput&&, String&& baseURL) const;
 
-    ExceptionOr<std::optional<URLPatternResult>> exec(ScriptExecutionContext&, std::optional<URLPatternInput>&&, String&& baseURL) const;
+    ExceptionOr<std::optional<URLPatternResult>> exec(ScriptExecutionContext&, URLPatternInput&&, String&& baseURL) const;
 
     const String& protocol() const { return m_protocolComponent.patternString(); }
     const String& username() const { return m_usernameComponent.patternString(); }

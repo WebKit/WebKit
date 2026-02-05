@@ -5,16 +5,17 @@ of steps:
 
 1. **ANGLE Internal Translation**: The initial calls to `glCompileShader` are passed to the [ANGLE
 shader translator][translator]. The translator compiles application shaders into SPIR-V, after
-transforming GLSL to conform to the [GL_KHR_vulkan_glsl][GL_KHR_vulkan_glsl] extension spec with
-some additional workarounds and emulation. We emulate OpenGL's different depth range, viewport y
-flipping, default uniforms, and emulate a number of extensions among others. For more info see
+transforming it with SPIR-V's restrictions in mind (which are similar to those in the
+[GL_KHR_vulkan_glsl][GL_KHR_vulkan_glsl] extension spec) with some additional workarounds and
+emulation. We emulate OpenGL's different depth range, viewport y flipping, default uniforms, and
+emulate a number of extensions among others. For more info see
 [TranslatorVulkan.cpp][TranslatorVulkan.cpp]. After initial compilation, the SPIR-V blobs are not
 complete. The translator initially assigns resources and in/out variables arbitrary descriptor set,
 binding and location indices. The correct values are determined at link time. For the sake of
 transform feedback, some additional code is generated to be removed or modified during SPIR-V
 transformation.
 
-   The translator outputs some feature code conditional to Vulkan specialization constants, which are
+The translator outputs some feature code conditional to Vulkan specialization constants, which are
 resolved at draw-time. For example, for emulating Dithering and Android surface rotation.
 
 1. **Link Time**: During a call to `glLinkProgram` the Vulkan back-end can know the necessary
@@ -81,6 +82,6 @@ Note right of "Vulkan Back-end": We init VkShaderModules\nand VkPipeline then\nr
 [GL_KHR_vulkan_glsl]: https://github.com/KhronosGroup/GLSL/blob/main/extensions/khr/GL_KHR_vulkan_glsl.txt
 [SPIRV-Tools]: https://github.com/KhronosGroup/SPIRV-Tools
 [translator]: https://chromium.googlesource.com/angle/angle/+/refs/heads/main/src/compiler/translator/
-[TranslatorVulkan.cpp]: https://chromium.googlesource.com/angle/angle/+/refs/heads/main/src/compiler/translator/TranslatorVulkan.cpp
+[TranslatorVulkan.cpp]: https://chromium.googlesource.com/angle/angle/+/refs/heads/main/src/compiler/translator/spirv/TranslatorVulkan.cpp
 [VkShaderModule]: https://www.khronos.org/registry/vulkan/specs/1.1-extensions/man/html/VkShaderModule.html
 [PipelineCreation]: PipelineCreation.md

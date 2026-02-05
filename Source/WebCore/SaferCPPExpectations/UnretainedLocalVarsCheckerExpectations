@@ -21,8 +21,6 @@ loader/archive/cf/LegacyWebArchive.cpp
 [ Mac ] page/scrolling/mac/ScrollingStateScrollingNodeMac.mm
 [ Mac ] page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm
 [ Mac ] page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm
-platform/audio/cocoa/AudioEncoderCocoa.cpp
-platform/audio/cocoa/PlatformRawAudioDataCocoa.cpp
 [ iOS ] platform/audio/ios/AudioSessionIOS.mm
 platform/cf/KeyedDecoderCF.cpp
 [ iOS ] platform/cocoa/ContentFilterUnblockHandlerCocoa.mm

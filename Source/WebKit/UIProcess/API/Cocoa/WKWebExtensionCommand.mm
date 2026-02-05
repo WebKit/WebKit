@@ -126,7 +126,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionCommand, WebExtensionCommand
 #if PLATFORM(IOS_FAMILY)
 - (UIKeyCommand *)keyCommand
 {
-    return _webExtensionCommand->keyCommand();
+    return protect(*_webExtensionCommand)->keyCommand();
 }
 #endif
 

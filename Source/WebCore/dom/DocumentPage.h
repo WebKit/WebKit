@@ -53,9 +53,4 @@ inline Page* Document::page() const
     return m_frame ? m_frame->page() : nullptr;
 }
 
-inline RefPtr<Page> Document::protectedPage() const
-{
-    return page();
-}
-
 }

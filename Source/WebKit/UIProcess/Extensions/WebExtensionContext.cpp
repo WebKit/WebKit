@@ -111,7 +111,7 @@ Ref<API::Error> WebExtensionContext::createError(Error error, const String& cust
 
 Vector<Ref<API::Error>> WebExtensionContext::errors()
 {
-    auto array = protectedExtension()->errors();
+    auto array = protect(extension())->errors();
     array.appendVector(m_errors);
     return array;
 }
@@ -162,7 +162,7 @@ void WebExtensionContext::setUniqueIdentifier(String&& uniqueIdentifier)
 RefPtr<WebExtensionLocalization> WebExtensionContext::localization()
 {
     if (!m_localization)
-        m_localization = WebExtensionLocalization::create(protectedExtension()->localization()->localizationJSON(), baseURL().host().toString());
+        m_localization = WebExtensionLocalization::create(protect(extension())->localization()->localizationJSON(), baseURL().host().toString());
     return m_localization;
 }
 
@@ -936,7 +936,7 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     if (skipRequestedPermissions)
         return cacheResultAndReturn(PermissionState::Unknown);
 
-    auto requestedMatchPatterns = protectedExtension()->allRequestedMatchPatterns();
+    auto requestedMatchPatterns = protect(extension())->allRequestedMatchPatterns();
     for (auto& requestedMatchPattern : requestedMatchPatterns) {
         if (urlMatchesPatternIgnoringWildcardHostPatterns(requestedMatchPattern))
             return cacheResultAndReturn(PermissionState::RequestedExplicitly);
@@ -955,7 +955,7 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
         return PermissionState::RequestedImplicitly;
 
     if (options.contains(PermissionStateOptions::IncludeOptionalPermissions)) {
-        if (WebExtensionMatchPattern::patternsMatchURL(protectedExtension()->optionalPermissionMatchPatterns(), url))
+        if (WebExtensionMatchPattern::patternsMatchURL(protect(extension())->optionalPermissionMatchPatterns(), url))
             return cacheResultAndReturn(PermissionState::RequestedImplicitly);
     }
 
@@ -1028,7 +1028,7 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     if (options.contains(PermissionStateOptions::SkipRequestedPermissions))
         return PermissionState::Unknown;
 
-    auto requestedMatchPatterns = protectedExtension()->allRequestedMatchPatterns();
+    auto requestedMatchPatterns = protect(extension())->allRequestedMatchPatterns();
     for (auto& requestedMatchPattern : requestedMatchPatterns) {
         if (urlMatchesPatternIgnoringWildcardHostPatterns(requestedMatchPattern))
             return PermissionState::RequestedExplicitly;
@@ -1041,7 +1041,7 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
         return PermissionState::RequestedImplicitly;
 
     if (options.contains(PermissionStateOptions::IncludeOptionalPermissions)) {
-        if (WebExtensionMatchPattern::patternsMatchPattern(protectedExtension()->optionalPermissionMatchPatterns(), pattern))
+        if (WebExtensionMatchPattern::patternsMatchPattern(protect(extension())->optionalPermissionMatchPatterns(), pattern))
             return PermissionState::RequestedImplicitly;
     }
 
@@ -1136,7 +1136,7 @@ bool WebExtensionContext::hasContentModificationRules()
 
 WebExtensionContext::InjectedContentVector WebExtensionContext::injectedContents() const
 {
-    InjectedContentVector result = protectedExtension()->staticInjectedContents();
+    InjectedContentVector result = protect(extension())->staticInjectedContents();
 
     for (auto& entry : m_registeredScriptsMap)
         result.append(entry.value->injectedContent());
@@ -1704,7 +1704,7 @@ WebExtensionContext::WebProcessProxySet WebExtensionContext::processes(EventList
 
 String WebExtensionContext::processDisplayName()
 {
-    return WEB_UI_FORMAT_STRING("%s Web Extension", "Extension's process name that appears in Activity Monitor where the parameter is the name of the extension", protectedExtension()->displayShortName().utf8().data());
+    return WEB_UI_FORMAT_STRING("%s Web Extension", "Extension's process name that appears in Activity Monitor where the parameter is the name of the extension", protect(extension())->displayShortName().utf8().data());
 }
 
 Vector<String> WebExtensionContext::corsDisablingPatterns()
@@ -1732,7 +1732,7 @@ URL WebExtensionContext::backgroundContentURL()
 
 void WebExtensionContext::loadBackgroundContent(CompletionHandler<void(RefPtr<API::Error>)>&& completionHandler)
 {
-    if (!protectedExtension()->hasBackgroundContent()) {
+    if (!protect(extension())->hasBackgroundContent()) {
         if (completionHandler)
             completionHandler(createError(Error::NoBackgroundContent));
         return;
@@ -1782,17 +1782,17 @@ const String& WebExtensionContext::backgroundWebViewInspectionName()
     if (!m_backgroundWebViewInspectionName.isEmpty())
         return m_backgroundWebViewInspectionName;
 
-    if (protectedExtension()->backgroundContentIsServiceWorker())
-        m_backgroundWebViewInspectionName = WEB_UI_FORMAT_STRING("%s — Extension Service Worker", "Label for an inspectable Web Extension service worker", protectedExtension()->displayShortName().utf8().data());
+    if (protect(extension())->backgroundContentIsServiceWorker())
+        m_backgroundWebViewInspectionName = WEB_UI_FORMAT_STRING("%s — Extension Service Worker", "Label for an inspectable Web Extension service worker", protect(extension())->displayShortName().utf8().data());
     else
-        m_backgroundWebViewInspectionName = WEB_UI_FORMAT_STRING("%s — Extension Background Page", "Label for an inspectable Web Extension background page", protectedExtension()->displayShortName().utf8().data());
+        m_backgroundWebViewInspectionName = WEB_UI_FORMAT_STRING("%s — Extension Background Page", "Label for an inspectable Web Extension background page", protect(extension())->displayShortName().utf8().data());
 
     return m_backgroundWebViewInspectionName;
 }
 
 void WebExtensionContext::wakeUpBackgroundContentIfNecessary(Function<void()>&& completionHandler)
 {
-    if (!protectedExtension()->hasBackgroundContent()) {
+    if (!protect(extension())->hasBackgroundContent()) {
         completionHandler();
         return;
     }
@@ -1850,7 +1850,7 @@ URL WebExtensionContext::inspectorBackgroundPageURL() const
 RefPtr<WebInspectorUIProxy> WebExtensionContext::inspector(const API::InspectorExtension& inspectorExtension) const
 {
     ASSERT(isLoaded());
-    ASSERT(protectedExtension()->hasInspectorBackgroundPage());
+    ASSERT(protect(extension())->hasInspectorBackgroundPage());
 
     for (auto entry : m_inspectorContextMap) {
         if (entry.value.extension == &inspectorExtension)

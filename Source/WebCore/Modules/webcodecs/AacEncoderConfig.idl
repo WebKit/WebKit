@@ -18,8 +18,8 @@
  */
 
 [
- Conditional=WEB_CODECS
- ] enum AacBitstreamFormat {
+    Conditional=WEB_CODECS
+] enum AacBitstreamFormat {
     "aac",
     "adts",
 };
@@ -28,7 +28,6 @@
     Conditional=WEB_CODECS,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary AacEncoderConfig {
     AacBitstreamFormat format = "aac";
 };

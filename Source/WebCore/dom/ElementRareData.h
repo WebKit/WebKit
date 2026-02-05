@@ -380,11 +380,6 @@ inline ShadowRoot* Element::shadowRoot() const
     return hasRareData() ? elementRareData()->shadowRoot() : nullptr;
 }
 
-inline RefPtr<ShadowRoot> Node::protectedShadowRoot() const
-{
-    return shadowRoot();
-}
-
 inline void Element::removeShadowRoot()
 {
     RefPtr shadowRoot = this->shadowRoot();

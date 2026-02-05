@@ -44,7 +44,7 @@ public:
     static RefPtr<API::Object> transform(API::Object*, const Transformer&);
 
     API::Object* object() const { return m_object.get(); }
-    RefPtr<API::Object> protectedObject() const { return m_object; }
+    RefPtr<API::Object> objectForSerialization() const { return m_object; }
 
 private:
     RefPtr<API::Object> m_object;

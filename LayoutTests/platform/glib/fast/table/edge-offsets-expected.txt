@@ -4,25 +4,25 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 212x17
+        RenderText {#text} at (0,0) size 212x18
           text run at (0,0) width 212: "This tests for a regression against "
-        RenderInline {I} at (0,0) size 776x35
-          RenderInline {A} at (212,0) size 348x17 [color=#0000EE]
-            RenderText {#text} at (212,0) size 348x17
+        RenderInline {I} at (0,0) size 776x36
+          RenderInline {A} at (212,0) size 348x18 [color=#0000EE]
+            RenderText {#text} at (212,0) size 348x18
               text run at (212,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7054"
-          RenderText {#text} at (0,0) size 776x35
+          RenderText {#text} at (0,0) size 776x36
             text run at (559,0) width 5: " "
             text run at (563,0) width 213: "Vertical scroll bars do not appear"
             text run at (0,18) width 169: "or do not scroll completely"
-        RenderText {#text} at (168,18) size 5x17
+        RenderText {#text} at (168,18) size 5x18
           text run at (168,18) width 5: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 649x17
+        RenderText {#text} at (0,0) size 649x18
           text run at (0,0) width 649: "The top two boxes should have horizontal scroll bars. The bottom box should have a vertical scroll bar."
       RenderBlock (anonymous) at (0,198) size 784x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
       RenderBlock (anonymous) at (0,318) size 784x18
-        RenderBR {BR} at (0,0) size 0x17
+        RenderBR {BR} at (0,0) size 0x18
 layer at (8,94) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,86) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,104) size 102x102 clip at (9,105) size 100x85 scrollWidth 133

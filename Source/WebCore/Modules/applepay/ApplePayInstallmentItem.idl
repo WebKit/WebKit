@@ -27,7 +27,6 @@
     Conditional=APPLE_PAY_INSTALLMENTS,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ApplePayInstallmentItem {
     ApplePayInstallmentItemType type = "generic";
     DOMString amount;

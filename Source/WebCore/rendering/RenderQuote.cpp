@@ -434,14 +434,14 @@ static StringImpl* stringForQuoteCharacter(char16_t character)
 
 static inline StringImpl* quotationMarkString()
 {
-    static StringImpl* quotationMarkString = stringForQuoteCharacter(quotationMark);
-    return quotationMarkString;
+    static NeverDestroyed<Ref<StringImpl>> quotationMarkString { *stringForQuoteCharacter(quotationMark) };
+    return quotationMarkString->ptr();
 }
 
 static inline StringImpl* apostropheString()
 {
-    static StringImpl* apostropheString = stringForQuoteCharacter(apostrophe);
-    return apostropheString;
+    static NeverDestroyed<Ref<StringImpl>> apostropheString { *stringForQuoteCharacter(apostrophe) };
+    return apostropheString->ptr();
 }
 
 void RenderQuote::updateTextRenderer(RenderTreeBuilder& builder)

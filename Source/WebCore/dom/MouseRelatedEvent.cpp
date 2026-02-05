@@ -137,11 +137,11 @@ LocalFrameView* MouseRelatedEvent::frameViewFromWindowProxy(WindowProxy* windowP
     if (!windowProxy)
         return nullptr;
 
-    auto* window = dynamicDowncast<LocalDOMWindow>(windowProxy->window());
+    RefPtr window = dynamicDowncast<LocalDOMWindow>(windowProxy->window());
     if (!window)
         return nullptr;
 
-    auto* frame = window->localFrame();
+    RefPtr frame = window->localFrame();
     return frame ? frame->view() : nullptr;
 }
 
@@ -206,15 +206,34 @@ void MouseRelatedEvent::computeRelativePosition()
     if (!targetNode)
         return;
 
+    // Find the target renderer, adjusting for SVG elements.
+    auto findTargetRendererAndAdjustedNode = [](const RefPtr<Node>& node) {
+        CheckedPtr renderer = node->renderer();
+        if (!renderer || !renderer->isSVGRenderer())
+            return std::pair { renderer, node };
+
+        // If this is an SVG node, compute the offset to the padding box of the
+        // outermost SVG root (== the closest ancestor that has a CSS layout box.).
+        while (!renderer->isRenderOrLegacyRenderSVGRoot())
+            renderer = renderer->parent();
+
+        // Update the target node to point to the SVG root.
+        return std::pair { renderer, renderer->protectedNode() };
+    };
+
     // Compute coordinates that are based on the target.
     m_layerLocation = LayoutPoint(m_pageLocation);
     m_offsetLocation = m_pageLocation;
 
     // Must have an updated render tree for this math to work correctly.
-    targetNode->protectedDocument()->updateLayoutIgnorePendingStylesheets();
+    protect(targetNode->document())->updateLayoutIgnorePendingStylesheets();
 
     // Adjust offsetLocation to be relative to the target's padding box.
-    if (CheckedPtr renderer = targetNode->renderer()) {
+    auto [renderer, adjustedNode] = findTargetRendererAndAdjustedNode(targetNode);
+    if (targetNode != adjustedNode)
+        targetNode = WTF::move(adjustedNode);
+
+    if (renderer) {
         m_offsetLocation = renderer->absoluteToLocal(absoluteLocation(), UseTransforms);
 
         if (CheckedPtr boxModel = dynamicDowncast<RenderBoxModelObject>(renderer.get()))
@@ -233,16 +252,31 @@ void MouseRelatedEvent::computeRelativePosition()
     while (node && !node->renderer())
         node = node->parentNode();
 
-    RenderLayer* layer;
-    if (node && (layer = node->renderer()->enclosingLayer())) {
-        for (; layer; layer = layer->parent()) {
-            m_layerLocation -= toLayoutSize(layer->location());
+    if (node) {
+        CheckedPtr layer = node->renderer()->enclosingLayer();
+        while (layer && !layer->isSelfPaintingLayer())
+            layer = layer->parent();
+
+        if (layer) {
+            // Start with absoluteLocation which is already in absolute coordinates
+            // (has zoom factor applied via documentToAbsoluteScaleFactor).
+            auto layerLocationInAbsoluteCoords = absoluteLocation();
+
+            // Convert layer position to absolute coordinates accounting for transforms.
+            auto layerAbsolutePosition = layer->renderer().localToAbsolute(FloatPoint(), UseTransforms);
+
+            // Subtract the layer's absolute position from the mouse absolute position.
+            layerLocationInAbsoluteCoords.moveBy(-layerAbsolutePosition);
+
+            // Scale back to page coordinates (remove zoom factor).
+            auto inverseScaleFactor = 1 / documentToAbsoluteScaleFactor();
+            m_layerLocation = LayoutPoint(layerLocationInAbsoluteCoords.scaled(inverseScaleFactor));
         }
     }
 
     m_hasCachedRelativePosition = true;
 }
-    
+
 DoublePoint MouseRelatedEvent::locationInRootViewCoordinates() const
 {
     if (RefPtr frameView = frameViewFromWindowProxy(view()))

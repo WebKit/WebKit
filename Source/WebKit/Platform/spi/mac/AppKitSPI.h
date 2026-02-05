@@ -48,7 +48,12 @@ DECLARE_SYSTEM_HEADER
 #import <AppKit/NSScrollPocket_Private.h>
 #endif
 
+#import <AppKit/NSGestureRecognizer_Private.h>
 #import <AppKit/NSPanGestureRecognizer_Private.h>
+
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+#import <AppKit/NSViewCornerConfiguration_Private.h>
+#endif
 
 #else
 
@@ -132,6 +137,41 @@ typedef NS_ENUM(NSInteger, NSScrollPocketEdge) {
 @interface NSPanGestureRecognizer (SPI)
 @property (readonly) NSTimeInterval timestamp;
 @end
+
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+
+@interface _NSCornerRadius : NSObject
+@property (class, copy, readonly) _NSCornerRadius *containerConcentricRadius;
++ (_NSCornerRadius *)fixedRadius:(CGFloat)radius;
+@end
+
+@interface NSViewCornerRadii : NSObject
+@property CGFloat topLeft;
+@property CGFloat topRight;
+@property CGFloat bottomLeft;
+@property CGFloat bottomRight;
+@property (copy) CALayerCornerCurve cornerCurve;
+@end
+
+@interface NSViewCornerConfiguration : NSObject
++ (NSViewCornerConfiguration *)configurationWithRadius:(_NSCornerRadius *)radius;
++ (instancetype)configurationWithTopLeftRadius:(nullable _NSCornerRadius *)topLeftRadius topRightRadius:(nullable _NSCornerRadius *)topRightRadius bottomLeftRadius:(nullable _NSCornerRadius *)bottomLeftRadius bottomRightRadius:(nullable _NSCornerRadius *)bottomRightRadius;
+@end
+
+@interface NSView (NSViewCornerConfiguration)
+@property (nullable, readonly) NSViewCornerRadii *_effectiveCornerRadii;
+@property (readonly, nullable, copy) NSViewCornerConfiguration *_cornerConfiguration;
+- (void)_viewDidChangeEffectiveCornerRadii;
+- (void)_invalidateCornerConfiguration;
+@end
+
+#endif
+
+#if !HAVE(NSGESTURERECOGNIZER_MODIFIER_FLAGS)
+@interface NSGestureRecognizer (SPI)
+- (NSEventModifierFlags)modifierFlags;
+@end
+#endif
 
 #endif
 

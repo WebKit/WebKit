@@ -188,7 +188,7 @@ void RenderTreeUpdater::GeneratedContent::updateBeforeOrAfterPseudoElement(Eleme
 {
     ASSERT(pseudoElementType == PseudoElementType::Before || pseudoElementType == PseudoElementType::After);
 
-    PseudoElement* pseudoElement = pseudoElementType == PseudoElementType::Before ? current.beforePseudoElement() : current.afterPseudoElement();
+    RefPtr pseudoElement = pseudoElementType == PseudoElementType::Before ? current.beforePseudoElement() : current.afterPseudoElement();
 
     if (auto* renderer = pseudoElement ? pseudoElement->renderer() : nullptr)
         m_updater.renderTreePosition().invalidateNextSibling(*renderer);
@@ -307,7 +307,7 @@ bool RenderTreeUpdater::GeneratedContent::needsPseudoElement(const RenderStyle* 
 
 void RenderTreeUpdater::GeneratedContent::removeBeforePseudoElement(Element& element, RenderTreeBuilder& builder)
 {
-    auto* pseudoElement = element.beforePseudoElement();
+    RefPtr pseudoElement = element.beforePseudoElement();
     if (!pseudoElement)
         return;
     tearDownRenderers(*pseudoElement, TeardownType::Full, builder);
@@ -316,7 +316,7 @@ void RenderTreeUpdater::GeneratedContent::removeBeforePseudoElement(Element& ele
 
 void RenderTreeUpdater::GeneratedContent::removeAfterPseudoElement(Element& element, RenderTreeBuilder& builder)
 {
-    auto* pseudoElement = element.afterPseudoElement();
+    RefPtr pseudoElement = element.afterPseudoElement();
     if (!pseudoElement)
         return;
     tearDownRenderers(*pseudoElement, TeardownType::Full, builder);
@@ -329,9 +329,9 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
         if (!renderer.element())
             return;
 
-        auto& editor = renderer.element()->document().editor();
+        Ref editor = renderer.element()->document().editor();
 
-        if (WeakPtr writingSuggestionsRenderer = editor.writingSuggestionRenderer())
+        if (WeakPtr writingSuggestionsRenderer = editor->writingSuggestionRenderer())
             m_updater.m_builder.destroy(*writingSuggestionsRenderer);
     };
 
@@ -341,15 +341,15 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
     if (!renderer.element())
         return;
 
-    auto& editor = renderer.element()->document().editor();
-    RefPtr nodeBeforeWritingSuggestions = editor.nodeBeforeWritingSuggestions();
+    Ref editor = renderer.element()->document().editor();
+    RefPtr nodeBeforeWritingSuggestions = editor->nodeBeforeWritingSuggestions();
     if (!nodeBeforeWritingSuggestions)
         return;
 
     if (renderer.element() != nodeBeforeWritingSuggestions->parentElement())
         return;
 
-    auto* writingSuggestionData = editor.writingSuggestionData();
+    auto* writingSuggestionData = editor->writingSuggestionData();
     if (!writingSuggestionData) {
         destroyWritingSuggestionsIfNeeded();
         return;
@@ -388,7 +388,7 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
     auto newStyle = RenderStyle::clone(*style);
     newStyle.setDisplay(DisplayType::Inline);
 
-    if (auto writingSuggestionsRenderer = editor.writingSuggestionRenderer()) {
+    if (auto writingSuggestionsRenderer = editor->writingSuggestionRenderer()) {
         writingSuggestionsRenderer->setStyle(WTF::move(newStyle), minimalStyleDifference);
 
         auto* writingSuggestionsText = dynamicDowncast<RenderText>(writingSuggestionsRenderer->firstChild());
@@ -419,7 +419,7 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
         auto writingSuggestionsText = WebCore::createRenderer<RenderText>(RenderObject::Type::Text, renderer.document(), writingSuggestionData->content());
         m_updater.m_builder.attach(*newWritingSuggestionsRenderer, WTF::move(writingSuggestionsText));
 
-        editor.setWritingSuggestionRenderer(*newWritingSuggestionsRenderer.get());
+        editor->setWritingSuggestionRenderer(*newWritingSuggestionsRenderer.get());
         m_updater.m_builder.attach(*parentForWritingSuggestions, WTF::move(newWritingSuggestionsRenderer), rendererAfterWritingSuggestions.get());
 
         if (!parentForWritingSuggestions) {
@@ -427,7 +427,7 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
             return;
         }
 
-        auto* prefixNode = nodeBeforeWritingSuggestionsTextRenderer->textNode();
+        RefPtr prefixNode = nodeBeforeWritingSuggestionsTextRenderer->textNode();
         if (!prefixNode) {
             ASSERT_NOT_REACHED();
             destroyWritingSuggestionsIfNeeded();

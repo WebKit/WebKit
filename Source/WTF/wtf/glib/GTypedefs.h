@@ -76,11 +76,6 @@ typedef struct _GByteArray GByteArray;
 typedef struct _GBytes GBytes;
 typedef struct _GClosure GClosure;
 
-#if USE(CAIRO)
-typedef struct _cairo_surface cairo_surface_t;
-typedef struct _cairo_rectangle_int cairo_rectangle_int_t;
-#endif
-
 #if PLATFORM(GTK)
 typedef struct _GtkAction GtkAction;
 typedef struct _GtkAdjustment GtkAdjustment;

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="navigation-utils.js"></script>
+<script>
+
+const page = location.hostname === sameSiteHostname ? "samesite" : "crosssite";
+
+window.onload = () => sendMessageToTop("load");
+window.onpageshow = ()=> sendMessageToTop("pageshow", event.persisted ? "persisted" : "not-persisted");
+
+</script>
+</head>
+<body>
+<h1>Iframe Page</h1>
+<script>
+document.getElementById("host").textContent = location.hostname + ":" + location.port;
+</script>
+</body>
+</html>

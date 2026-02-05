@@ -10,15 +10,15 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,52) size 784x43
         RenderText {#text} at (0,4) size 730x39
           text run at (0,4) width 730: "If this test succeeds, you can see this Hindi word \"\x{935}\x{93F}\x{937}\x{92F}\x{94B}\x{902}\" repeated three times separated by a space in the first two"
-          text run at (0,25) width 503: "paragraphs. In the third paragraphs, it'll be shown three times in separate lines."
+          text run at (0,24) width 503: "paragraphs. In the third paragraphs, it'll be shown three times in separate lines."
       RenderBlock {P} at (0,111) size 784x25
-        RenderText {#text} at (0,4) size 127x18
+        RenderText {#text} at (0,4) size 127x19
           text run at (0,4) width 127: "1. \x{935}\x{93F}\x{937}\x{92F}\x{94B}\x{902} \x{935}\x{93F}\x{937}\x{92F}\x{94B}\x{902}\x{D}\x{935}\x{93F}\x{937}\x{92F}\x{94B}\x{902}"
-      RenderBlock {P} at (0,152) size 784x25
-        RenderText {#text} at (0,4) size 127x18
+      RenderBlock {P} at (0,151) size 784x26
+        RenderText {#text} at (0,4) size 127x19
           text run at (0,4) width 127: "2. \x{935}\x{93F}\x{937}\x{92F}\x{94B}\x{902} \x{935}\x{93F}\x{937}\x{92F}\x{94B}\x{902}\x{D}\x{935}\x{93F}\x{937}\x{92F}\x{94B}\x{902}"
-      RenderBlock {P} at (0,193) size 784x68
-        RenderText {#text} at (0,0) size 71x65
+      RenderBlock {P} at (0,192) size 784x69
+        RenderText {#text} at (0,0) size 71x66
           text run at (0,0) width 12: "3."
           text run at (12,0) width 0: " "
           text run at (0,22) width 36: "\x{935}\x{93F}\x{937}\x{92F}\x{94B}\x{902}"

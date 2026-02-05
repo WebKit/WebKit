@@ -23,16 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary RTCPeerConnectionIceErrorEventInit : EventInit {
-    DOMString? address;
-    unsigned short? port;
-    DOMString url;
-    required unsigned short errorCode;
-    USVString errorText;
-};
-
+// https://w3c.github.io/webrtc-pc/#dom-rtcpeerconnectioniceerrorevent
 [
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
@@ -45,4 +36,13 @@
     readonly attribute DOMString url;
     readonly attribute unsigned short errorCode;
     readonly attribute USVString errorText;
+};
+
+// https://w3c.github.io/webrtc-pc/#dom-rtcpeerconnectioniceerroreventinit
+dictionary RTCPeerConnectionIceErrorEventInit : EventInit {
+    [ImplementationDefaultValue=null] DOMString? address;
+    [ImplementationDefaultValue=null] unsigned short? port;
+    DOMString url;
+    required unsigned short errorCode;
+    USVString errorText;
 };

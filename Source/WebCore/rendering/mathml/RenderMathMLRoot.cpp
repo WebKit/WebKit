@@ -301,7 +301,7 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
         horizontalOffset += horizontal.kernBeforeDegree + indexWidth + horizontal.kernAfterDegree;
     }
     radicalOperatorTopLeft.move(mirrorIfNeeded(horizontalOffset, m_radicalOperator.width()), m_radicalOperatorTop);
-    m_radicalOperator.paint(style(), info, radicalOperatorTopLeft, protectedDocument()->deviceScaleFactor());
+    m_radicalOperator.paint(style(), info, radicalOperatorTopLeft, protect(document())->deviceScaleFactor());
 
     // We draw the radical line.
     LayoutUnit ruleThickness = verticalParameters().ruleThickness;

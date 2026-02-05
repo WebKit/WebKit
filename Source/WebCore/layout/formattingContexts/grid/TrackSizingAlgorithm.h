@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/FreeSpaceScenario.h>
 #include <WebCore/GridTypeAliases.h>
 #include <WebCore/LayoutUnit.h>
 
@@ -32,13 +33,34 @@ namespace WebCore {
 
 namespace Layout {
 
+class IntegrationUtils;
+
+struct GridItemSizingFunctions {
+    GridItemSizingFunctions(Function<LayoutUnit(const ElementBox& gridItem, const IntegrationUtils&)> minContentContributionFunction, Function<LayoutUnit(const ElementBox& gridItem, const IntegrationUtils&)> maxContentContributionFunction)
+        : minContentContribution(WTF::move(minContentContributionFunction))
+        , maxContentContribution(WTF::move(maxContentContributionFunction))
+    {
+    }
+
+    Function<LayoutUnit(const ElementBox& gridItem, const IntegrationUtils&)> minContentContribution;
+    Function<LayoutUnit(const ElementBox& gridItem, const IntegrationUtils&)> maxContentContribution;
+};
+
 class TrackSizingAlgorithm {
 public:
-    static TrackSizes sizeTracks(const PlacedGridItems&, const TrackSizingFunctionsList&);
+    static TrackSizes sizeTracks(const PlacedGridItems&, const ComputedSizesList&, const PlacedGridItemSpanList&,
+    const TrackSizingFunctionsList&, std::optional<LayoutUnit> availableSpace,
+    const GridItemSizingFunctions&, const IntegrationUtils&, const FreeSpaceScenario&, const LayoutUnit& gapSize);
 
 private:
 
     static UnsizedTracks initializeTrackSizes(const TrackSizingFunctionsList&);
+
+    // Flex track infrastructure
+    static FlexTracks collectFlexTracks(const UnsizedTracks&);
+    static bool hasFlexTracks(const UnsizedTracks&);
+    static double flexFactorSum(const FlexTracks&);
+    static LayoutUnit findSizeOfFr(const UnsizedTracks&, const LayoutUnit& availableSpace, const LayoutUnit& gapSize);
 };
 
 } // namespace WebCore

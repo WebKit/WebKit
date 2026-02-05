@@ -175,7 +175,7 @@ void VideoPresentationInterfaceIOS::ensurePipPlacardIsShowing()
         [pipLabel setText:@"This video is playing in picture in picture."];
         [pipLabel setTextAlignment:NSTextAlignmentCenter];
         [pipLabel setTextColor:greyUIColor()];
-        [pipLabel setFont:[PAL::getUIFontClassSingleton() systemFontOfSize:16]];
+        [pipLabel setFont:static_cast<UIFont *>([PAL::getUIFontClassSingleton() systemFontOfSize:16])];
         [pipLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
 
         [pipPlacard addSubview:pipLabel.get()];

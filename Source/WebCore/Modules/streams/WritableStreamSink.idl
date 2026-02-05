@@ -28,7 +28,11 @@
     LegacyNoInterfaceObject,
     SkipVTableValidation
 ] interface WritableStreamSink {
+    [Custom] undefined start(WritableStreamDefaultController controller);
     [CallWith=CurrentScriptExecutionContext] Promise<undefined> write(any value);
-    undefined close();
-    undefined abort(any reason);
+    [CallWith=CurrentGlobalObject] undefined close();
+    [CallWith=CurrentGlobalObject] Promise<undefined> abort(any reason);
+
+    // Place holder to keep the controller linked to the source.
+    [CachedAttribute, CustomGetter, PrivateIdentifier] readonly attribute any controller;
 };

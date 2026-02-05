@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://drafts.csswg.org/css-font-loading/#fontface-interface
-
 typedef (ArrayBuffer or ArrayBufferView) BinaryData;
 
+// https://drafts.csswg.org/css-font-loading/#enumdef-fontfaceloadstatus
 enum FontFaceLoadStatus {
     "unloaded",
     "loading",
@@ -34,18 +33,33 @@ enum FontFaceLoadStatus {
     "error"
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary FontFaceDescriptors {
+// https://drafts.csswg.org/css-font-loading/#dictdef-fontfacedescriptors
+dictionary FontFaceDescriptors {
+    // FIXME: `style` should be of type `CSSOMString`.
     DOMString style = "normal";
+    // FIXME: `weight` should be of type `CSSOMString`.
     DOMString weight = "normal";
+    // FIXME: `stretch` should be of type `CSSOMString`.
     [ImplementedAs=width] DOMString stretch = "normal";
+    // FIXME: `unicodeRange` should be of type `CSSOMString`.
     DOMString unicodeRange = "U+0-10FFFF";
+    // FIXME: `featureSettings` should be of type `CSSOMString`.
     DOMString featureSettings = "normal";
+    // FIXME: Add support for `variationSettings`.
+    // CSSOMString variationSettings = "normal";
+    // FIXME: `display` should be of type `CSSOMString`.
     DOMString display = "auto";
+    // FIXME: Add support for `ascentOverride`.
+    // CSSOMString ascentOverride = "normal";
+    // FIXME: Add support for `descentOverride`.
+    // CSSOMString descentOverride = "normal";
+    // FIXME: Add support for `lineGapOverride`.
+    // CSSOMString lineGapOverride = "normal";
+    // FIXME: `sizeAdjust` should be of type `CSSOMString`.
     DOMString sizeAdjust = "100%";
 };
 
+// https://drafts.csswg.org/css-font-loading/#fontface
 [
     ActiveDOMObject,
     Exposed=(Window,Worker)

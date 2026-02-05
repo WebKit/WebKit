@@ -78,6 +78,7 @@ private:
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
     std::optional<URL> m_evaluatedURL;
+    URL m_mainDocumentURL;
     Lock m_resultLock;
     Condition m_resultCondition;
     std::optional<bool> m_isAllowdByWebContentRestrictions WTF_GUARDED_BY_LOCK(m_resultLock);

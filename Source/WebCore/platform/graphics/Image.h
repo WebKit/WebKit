@@ -111,7 +111,11 @@ public:
     virtual ImageOrientation orientation() const { return ImageOrientation::Orientation::FromImage; }
 
     WEBCORE_EXPORT EncodedDataStatus setData(RefPtr<FragmentedSharedBuffer>&& data, bool allDataReceived);
-    virtual EncodedDataStatus dataChanged(bool /*allDataReceived*/) { return EncodedDataStatus::Unknown; }
+    virtual EncodedDataStatus dataChanged(bool /* allDataReceived */) { return EncodedDataStatus::Unknown; }
+
+    // Can be called after final setData() to replace encoded data with an identical copy of the
+    // data (e.g. to replace a dirty copy of the data with a clean copy of the data).
+    bool tryReplaceData(Ref<FragmentedSharedBuffer>&& data);
 
     virtual String uti() const { return String(); } // null string if unknown
     virtual String filenameExtension() const { return String(); } // null string if unknown
@@ -191,6 +195,9 @@ protected:
 
     // Supporting tiled drawing
     virtual std::optional<Color> singlePixelSolidColor() const;
+
+    virtual bool canReplaceData() const { return false; }
+    virtual void dataReplaced() { }
 
 private:
     RefPtr<FragmentedSharedBuffer> m_encodedImageData;

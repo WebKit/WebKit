@@ -28,13 +28,11 @@
     EnabledBySetting=LegacyEncryptedMediaAPIEnabled,
     Exposed=Window
 ] interface WebKitMediaKeyNeededEvent : Event {
-    constructor([AtomString] DOMString type, optional WebKitMediaKeyNeededEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional WebKitMediaKeyNeededEventInit eventInitDict = {});
 
-    readonly attribute Uint8Array initData;
+    readonly attribute Uint8Array? initData;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary WebKitMediaKeyNeededEventInit : EventInit {
+dictionary WebKitMediaKeyNeededEventInit : EventInit {
     Uint8Array? initData = null;
 };

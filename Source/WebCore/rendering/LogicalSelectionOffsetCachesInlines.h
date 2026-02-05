@@ -60,11 +60,6 @@ LayoutUnit LogicalSelectionOffsetCaches::ContainingBlockInfo::logicalRightSelect
 
 LogicalSelectionOffsetCaches::LogicalSelectionOffsetCaches(RenderBlock& rootBlock)
 {
-#if ENABLE(TEXT_SELECTION)
-    // FIXME: We should either move this assertion to the caller (if applicable) or structure the code
-    // such that we can remove this assertion.
-    ASSERT(rootBlock.isSelectionRoot());
-#endif
     // LogicalSelectionOffsetCaches should not be used on an orphaned tree.
     m_containingBlockForFixedPosition.setBlock(RenderObject::containingBlockForPositionType(PositionType::Fixed, rootBlock), nullptr);
     m_containingBlockForAbsolutePosition.setBlock(RenderObject::containingBlockForPositionType(PositionType::Absolute, rootBlock), nullptr);

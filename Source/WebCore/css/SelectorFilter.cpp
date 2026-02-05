@@ -81,8 +81,8 @@ bool SelectorFilter::parentStackIsConsistent(const ContainerNode* parentNode) co
 void SelectorFilter::initializeParentStack(Element& parent)
 {
     Vector<Element*, 20> ancestors;
-    for (auto* ancestor = &parent; ancestor; ancestor = ancestor->parentElement())
-        ancestors.append(ancestor);
+    for (CheckedPtr ancestor = &parent; ancestor; ancestor = ancestor->parentElement())
+        ancestors.append(ancestor.get());
     m_parentStack.reserveCapacity(m_parentStack.capacity() + ancestors.size());
     for (unsigned i = ancestors.size(); i--;)
         pushParent(ancestors[i]);

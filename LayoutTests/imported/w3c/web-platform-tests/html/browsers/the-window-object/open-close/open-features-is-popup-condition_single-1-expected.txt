@@ -1,23 +1,23 @@
 
 PASS undefined should set BarProp visibility to true
-FAIL "popup" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "popup=1" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "popup=true" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
+PASS "popup" should set BarProp visibility to false
+PASS "popup=1" should set BarProp visibility to false
+PASS "popup=true" should set BarProp visibility to false
 PASS "popup=0" should set BarProp visibility to true
-FAIL "location" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "location=yes" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "location=true" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "location=no" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "toolbar" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "toolbar=yes" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "toolbar=true" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "toolbar=no" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "menubar" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "menubar=yes" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "menubar=true" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "menubar=no" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "resizable" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "resizable=yes" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "resizable=true" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "resizable=no" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
+PASS "location" should set BarProp visibility to false
+PASS "location=yes" should set BarProp visibility to false
+PASS "location=true" should set BarProp visibility to false
+PASS "location=no" should set BarProp visibility to false
+PASS "toolbar" should set BarProp visibility to false
+PASS "toolbar=yes" should set BarProp visibility to false
+PASS "toolbar=true" should set BarProp visibility to false
+PASS "toolbar=no" should set BarProp visibility to false
+PASS "menubar" should set BarProp visibility to false
+PASS "menubar=yes" should set BarProp visibility to false
+PASS "menubar=true" should set BarProp visibility to false
+PASS "menubar=no" should set BarProp visibility to false
+PASS "resizable" should set BarProp visibility to false
+PASS "resizable=yes" should set BarProp visibility to false
+PASS "resizable=true" should set BarProp visibility to false
+PASS "resizable=no" should set BarProp visibility to false
 

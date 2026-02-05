@@ -198,7 +198,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case IdentityWithProfile:
     case GetCallee:
     case GetArgumentCountIncludingThis:
-    case GetRestLength:
     case GetLocal:
     case GetStack:
     case ExitOK:
@@ -323,6 +322,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ToLowerCase:
     case MapGet:
     case LoadMapValue:
+    case MapOrSetSize:
     case MapStorage:
     case MapStorageOrSentinel:
     case MapIterationNext:
@@ -345,6 +345,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case NumberIsFinite:
     case NumberIsSafeInteger:
     case StringIndexOf:
+    case StringStartsWith:
         return true;
 
     case GlobalIsFinite:
@@ -617,6 +618,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case SetPrivateBrand:
     case DefineDataProperty:
     case DefineAccessorProperty:
+    case ObjectDefineProperty:
     case Arrayify:
     case ArrayifyToStructure:
     case PutClosureVar:
@@ -649,8 +651,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case CallForwardVarargs:
     case ConstructForwardVarargs:
     case NewObject:
-    case NewGenerator:
-    case NewAsyncGenerator:
     case NewArray:
     case NewArrayWithSize:
     case NewArrayWithButterfly:

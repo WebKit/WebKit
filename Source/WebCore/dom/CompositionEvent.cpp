@@ -44,9 +44,9 @@ CompositionEvent::CompositionEvent(const AtomString& type, RefPtr<WindowProxy>&&
 {
 }
 
-CompositionEvent::CompositionEvent(const AtomString& type, const Init& initializer)
-    : UIEvent(EventInterfaceType::CompositionEvent, type, initializer)
-    , m_data(initializer.data)
+CompositionEvent::CompositionEvent(const AtomString& type, Init&& initializer)
+    : UIEvent(EventInterfaceType::CompositionEvent, type, WTF::move(initializer))
+    , m_data(WTF::move(initializer.data))
 {
 }
 

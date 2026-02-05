@@ -124,7 +124,6 @@ public:
 
     virtual ExceptionOr<void> importScripts(const FixedVector<Variant<RefPtr<TrustedScriptURL>, String>>& urls);
     WorkerNavigator& navigator();
-    Ref<WorkerNavigator> protectedNavigator();
 
     void setIsOnline(bool);
     bool isOnline() const { return m_isOnline; }
@@ -146,7 +145,6 @@ public:
 
     Crypto& crypto();
     Performance& performance() const;
-    Ref<Performance> protectedPerformance() const;
     ReportingScope& reportingScope() const { return m_reportingScope.get(); }
 
     void prepareForDestruction() override;
@@ -205,7 +203,6 @@ private:
     EventTarget* errorEventTarget() final;
     String resourceRequestIdentifier() const final { return m_inspectorIdentifier; }
     SocketProvider* socketProvider() final;
-    RefPtr<SocketProvider> protectedSocketProvider();
     RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
 
     bool shouldBypassMainWorldContentSecurityPolicy() const final { return m_shouldBypassMainWorldContentSecurityPolicy; }

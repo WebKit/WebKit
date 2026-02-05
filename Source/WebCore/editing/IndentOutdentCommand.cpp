@@ -100,7 +100,7 @@ void IndentOutdentCommand::indentIntoBlockquote(const Position& start, const Pos
         if (enclosingCell)
             return enclosingCell;
         if (enclosingList(start.containerNode()))
-            return enclosingBlock(start.protectedContainerNode());
+            return enclosingBlock(protect(start.containerNode()));
         return editableRootForPosition(start);
     }();
 

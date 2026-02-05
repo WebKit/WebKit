@@ -328,7 +328,7 @@ private:
     WEBCORE_EXPORT virtual Ref<PlatformCALayer> createPlatformVideoLayer(HTMLVideoElement&, PlatformCALayerClient* owner);
     virtual Ref<PlatformCAAnimation> createPlatformCAAnimation(PlatformCAAnimation::AnimationType, const String& keyPath);
 
-    virtual void setLayerContentsToImageBuffer(PlatformCALayer*, ImageBuffer*) { }
+    virtual void setLayerContentsToImageBuffer(PlatformCALayer&, ImageBuffer*) { }
 
     RefPtr<PlatformCALayer> protectedLayer() const { return m_layer; }
     RefPtr<PlatformCALayer> protectedBackdropLayer() const { return m_backdropLayer; }
@@ -345,7 +345,7 @@ private:
     using CloneID = String; // Identifier for a given clone, based on original/replica branching down the tree.
     static bool isReplicatedRootClone(const CloneID& cloneID) { return cloneID[0U] & 1; }
 
-    using LayerMap = HashMap<CloneID, RefPtr<PlatformCALayer>>;
+    using LayerMap = HashMap<CloneID, Ref<PlatformCALayer>>;
     LayerMap* primaryLayerClones() const;
     LayerMap* animatedLayerClones(AnimatedProperty) const;
     static void clearClones(LayerMap&);

@@ -248,7 +248,6 @@ bool ScrollAnimator::handleTouchEvent(const PlatformTouchEvent&)
 
 static void notifyScrollAnchoringControllerOfScroll(ScrollableArea& scrollableArea)
 {
-    scrollableArea.invalidateScrollAnchoringElement();
     scrollableArea.updateScrollAnchoringElement();
 }
 

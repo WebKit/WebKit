@@ -152,6 +152,10 @@ private:
 
     static bool getEGLConfig(EGLDisplay, EGLConfig*, int);
 
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+    bool enableDebugLogging();
+#endif
+
     // GLContextWrapper
     GLContextWrapper::Type type() const override { return GLContextWrapper::Type::Native; }
     bool makeCurrentImpl() override;

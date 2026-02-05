@@ -79,7 +79,7 @@ bool GPUConnectionToWebProcess::setCaptureAttributionString()
 void GPUConnectionToWebProcess::setTCCIdentity()
 {
 #if !PLATFORM(MACCATALYST)
-    auto auditToken = gpuProcess().parentProcessConnection()->getAuditToken();
+    auto auditToken = protect(gpuProcess().parentProcessConnection())->getAuditToken();
     if (!auditToken) {
         RELEASE_LOG_ERROR(WebRTC, "getAuditToken returned null");
         return;
@@ -98,7 +98,8 @@ void GPUConnectionToWebProcess::setTCCIdentity()
         return;
     }
 
-    auto identity = adoptOSObject(tcc_identity_create(TCC_IDENTITY_CODE_BUNDLE_ID, bundleIdentifier.utf8().data()));
+    // FIXME: Adopting is needed here but static analysis is not able to tell.
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto identity = adoptOSObject(tcc_identity_create(TCC_IDENTITY_CODE_BUNDLE_ID, bundleIdentifier.utf8().data()));
     if (!identity) {
         RELEASE_LOG_ERROR(WebRTC, "tcc_identity_create returned null");
         return;

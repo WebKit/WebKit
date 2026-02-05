@@ -1,27 +1,5 @@
-bindings/js/DOMGCOutputConstraint.cpp
-bindings/js/JSDOMGlobalObject.cpp
-bindings/js/JSDOMWindowBase.cpp
-bindings/js/JSDOMWindowCustom.h
-bindings/js/JSDOMWrapperCache.h
-bindings/js/JSWindowProxy.h
-bindings/js/JSWorkerGlobalScopeBase.cpp
-dom/NodeRareData.h
-domjit/DOMJITHelpers.h
-domjit/JSDocumentDOMJIT.cpp
-domjit/JSNodeDOMJIT.cpp
-html/InputType.cpp
 [ iOS ] platform/cocoa/WebAVPlayerLayerView.mm
 [ iOS ] platform/ios/VideoPresentationInterfaceAVKitLegacy.mm
 [ iOS ] platform/ios/VideoPresentationInterfaceIOS.mm
 [ iOS ] platform/ios/wak/WAKView.mm
 [ iOS ] platform/ios/wak/WAKWindow.mm
-rendering/BidiRun.cpp
-rendering/BidiRun.h
-rendering/cocoa/RenderThemeCocoa.mm
-rendering/svg/SVGRenderTreeAsText.cpp
-svg/properties/SVGAnimatedDecoratedProperty.h
-svg/properties/SVGAnimatedPrimitiveProperty.h
-svg/properties/SVGAnimatedPropertyAccessorImpl.h
-svg/properties/SVGAnimatedPropertyList.h
-svg/properties/SVGAnimatedPropertyPairAccessorImpl.h
-svg/properties/SVGAnimatedValueProperty.h

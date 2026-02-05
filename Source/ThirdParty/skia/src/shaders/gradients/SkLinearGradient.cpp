@@ -13,7 +13,7 @@
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkScalar.h"
 #include "include/core/SkShader.h"
-#include "include/effects/SkGradientShader.h"
+#include "include/effects/SkGradient.h"
 #include "include/private/base/SkFloatingPoint.h"
 #include "include/private/base/SkTArray.h"
 #include "src/core/SkReadBuffer.h"
@@ -109,32 +109,3 @@ sk_sp<SkShader> SkShaders::LinearGradient(const SkPoint pts[2], const SkGradient
 void SkRegisterLinearGradientShaderFlattenable() {
     SK_REGISTER_FLATTENABLE(SkLinearGradient);
 }
-
-#ifdef SK_SUPPORT_LEGACY_UNSPANNED_GRADIENTS
-sk_sp<SkShader> SkGradientShader::MakeLinear(const SkPoint pts[2],
-                                             const SkColor4f colorsPtr[],
-                                             sk_sp<SkColorSpace> colorSpace,
-                                             const SkScalar posPtr[],
-                                             int colorsCount,
-                                             SkTileMode mode,
-                                             const Interpolation& interp,
-                                             const SkMatrix* localMatrix) {
-    MAKE_COLORS_POS_SPANS(colorsPtr, posPtr, colorsCount);
-
-    return SkShaders::LinearGradient(pts, {{colors, pos, mode, std::move(colorSpace)}, interp},
-                                     localMatrix);
-}
-
-sk_sp<SkShader> SkGradientShader::MakeLinear(const SkPoint pts[2],
-                                             const SkColor colors[],
-                                             const SkScalar pos[],
-                                             int colorCount,
-                                             SkTileMode mode,
-                                             uint32_t flags,
-                                             const SkMatrix* localMatrix) {
-    SkColorConverter converter({colors, SkToSizeT(colorCount)});
-    return MakeLinear(pts, converter.colors4f().data(), nullptr, pos, colorCount, mode, flags,
-                      localMatrix);
-}
-#endif
-

@@ -38,9 +38,6 @@
 
 namespace WebCore {
 
-// For now the provider supports only files at a fixed sample bitrate.
-static const float gSampleBitRate = 44100;
-
 GST_DEBUG_CATEGORY(webkit_audio_provider_debug);
 #define GST_CAT_DEFAULT webkit_audio_provider_debug
 
@@ -69,11 +66,6 @@ static void initializeAudioSourceProviderDebugCategory()
 static void onGStreamerDeinterleavePadAddedCallback(GstElement*, GstPad* pad, AudioSourceProviderGStreamer* provider)
 {
     provider->handleNewDeinterleavePad(pad);
-}
-
-static void onGStreamerDeinterleaveReadyCallback(GstElement*, AudioSourceProviderGStreamer* provider)
-{
-    provider->deinterleavePadsConfigured();
 }
 
 static void onGStreamerDeinterleavePadRemovedCallback(GstElement*, GstPad* pad, AudioSourceProviderGStreamer* provider)
@@ -122,11 +114,11 @@ AudioSourceProviderGStreamer::AudioSourceProviderGStreamer(MediaStreamTrackPriva
 {
     initialize();
     registerWebKitGStreamerElements();
+
     auto pipelineNamePrefix = ""_s;
-#if USE(GSTREAMER_WEBRTC)
     if (m_captureSource->source().isIncomingAudioSource())
         pipelineNamePrefix = "incoming-"_s;
-#endif
+
     auto pipelineName = makeString(pipelineNamePrefix, "WebAudioProvider_MediaStreamTrack_"_s, source.id());
     m_pipeline = gst_element_factory_make("pipeline", pipelineName.utf8().data());
     registerActivePipeline(m_pipeline);
@@ -200,7 +192,6 @@ AudioSourceProviderGStreamer::~AudioSourceProviderGStreamer()
     auto deinterleave = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_audioSinkBin.get()), "deinterleave"));
     if (deinterleave && m_client) {
         g_signal_handler_disconnect(deinterleave.get(), m_deinterleavePadAddedHandlerId);
-        g_signal_handler_disconnect(deinterleave.get(), m_deinterleaveNoMorePadsHandlerId);
         g_signal_handler_disconnect(deinterleave.get(), m_deinterleavePadRemovedHandlerId);
     }
 
@@ -252,8 +243,8 @@ void AudioSourceProviderGStreamer::provideInput(AudioBus& bus, size_t framesToPr
         return;
 
     Locker locker { AdoptLock, m_adapterLock };
-    for (auto& it : m_adapters)
-        copyGStreamerBuffersToAudioChannel(it.value.get(), bus, it.key - 1, framesToProcess);
+    for (const auto& [channelId, adapter] : m_adapters)
+        copyGStreamerBuffersToAudioChannel(adapter.get(), bus, channelId - 1, framesToProcess);
 }
 
 GstFlowReturn AudioSourceProviderGStreamer::handleSample(GstAppSink* sink, bool isPreroll)
@@ -344,10 +335,9 @@ void AudioSourceProviderGStreamer::setClient(WeakPtr<AudioSourceProviderClient>&
         ASP_DEBUG("Setting up audio deinterleave chain");
         g_object_set(deInterleave, "keep-positions", TRUE, nullptr);
         m_deinterleavePadAddedHandlerId = g_signal_connect(deInterleave, "pad-added", G_CALLBACK(onGStreamerDeinterleavePadAddedCallback), this);
-        m_deinterleaveNoMorePadsHandlerId = g_signal_connect(deInterleave, "no-more-pads", G_CALLBACK(onGStreamerDeinterleaveReadyCallback), this);
         m_deinterleavePadRemovedHandlerId = g_signal_connect(deInterleave, "pad-removed", G_CALLBACK(onGStreamerDeinterleavePadRemovedCallback), this);
 
-        auto caps = adoptGRef(gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, static_cast<int>(gSampleBitRate),
+        auto caps = adoptGRef(gst_caps_new_simple("audio/x-raw",
             "format", G_TYPE_STRING, GST_AUDIO_NE(F32), "layout", G_TYPE_STRING, "interleaved", nullptr));
         g_object_set(capsFilter, "caps", caps.get(), nullptr);
 
@@ -422,7 +412,7 @@ void AudioSourceProviderGStreamer::handleNewDeinterleavePad(GstPad* pad)
             gst_bus_post(pipeline->bus, gst_message_new_eos(GST_OBJECT(appsink)));
     }), sink);
 
-    auto caps = adoptGRef(gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, static_cast<int>(gSampleBitRate),
+    auto caps = adoptGRef(gst_caps_new_simple("audio/x-raw",
         "channels", G_TYPE_INT, 1, "format", G_TYPE_STRING, GST_AUDIO_NE(F32), "layout", G_TYPE_STRING, "interleaved", nullptr));
     gst_app_sink_set_caps(GST_APP_SINK(sink), caps.get());
 
@@ -440,13 +430,18 @@ void AudioSourceProviderGStreamer::handleNewDeinterleavePad(GstPad* pad)
     g_object_set_qdata(G_OBJECT(sink), channelIdQuark, GINT_TO_POINTER(m_deinterleaveSourcePads));
 
     sinkPad = adoptGRef(gst_element_get_static_pad(sink, "sink"));
-    gst_pad_add_probe(sinkPad.get(), GST_PAD_PROBE_TYPE_EVENT_FLUSH, [](GstPad*, GstPadProbeInfo* info, gpointer userData) {
-        if (GST_PAD_PROBE_INFO_TYPE(info) & (GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM | GST_PAD_PROBE_TYPE_EVENT_FLUSH)) {
-            GstEvent* event = GST_PAD_PROBE_INFO_EVENT(info);
-            if (GST_EVENT_TYPE(event) == GST_EVENT_FLUSH_STOP) {
-                auto* provider = reinterpret_cast<AudioSourceProviderGStreamer*>(userData);
-                provider->clearAdapters();
-            }
+    gst_pad_add_probe(sinkPad.get(), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_EVENT_FLUSH | GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM), [](GstPad*, GstPadProbeInfo* info, gpointer userData) {
+        auto event = GST_PAD_PROBE_INFO_EVENT(info);
+        auto provider = reinterpret_cast<AudioSourceProviderGStreamer*>(userData);
+
+        if (GST_EVENT_TYPE(event) == GST_EVENT_FLUSH_STOP) {
+            provider->clearAdapters();
+            return GST_PAD_PROBE_OK;
+        }
+        if (GST_EVENT_TYPE(event) == GST_EVENT_CAPS) {
+            GstCaps* caps;
+            gst_event_parse_caps(event, &caps);
+            provider->determineSampleRate(caps);
         }
         return GST_PAD_PROBE_OK;
     }, this, nullptr);
@@ -462,6 +457,8 @@ void AudioSourceProviderGStreamer::handleRemovedDeinterleavePad(GstPad* pad)
 
     ASP_DEBUG("Pad %" GST_PTR_FORMAT " gone", pad);
     m_deinterleaveSourcePads--;
+    if (m_deinterleaveConfiguredSourcePads)
+        m_deinterleaveConfiguredSourcePads--;
 
     GQuark quark = g_quark_from_static_string("peer");
     GstPad* sinkPad = GST_PAD_CAST(g_object_get_qdata(G_OBJECT(pad), quark));
@@ -482,10 +479,23 @@ void AudioSourceProviderGStreamer::handleRemovedDeinterleavePad(GstPad* pad)
     gst_bin_remove_many(GST_BIN_CAST(m_audioSinkBin.get()), queue.get(), sink.get(), nullptr);
 }
 
-void AudioSourceProviderGStreamer::deinterleavePadsConfigured()
+void AudioSourceProviderGStreamer::determineSampleRate(const GstCaps* caps)
 {
+    ASP_DEBUG("Determining sample rate from %" GST_PTR_FORMAT, caps);
+    if (gst_caps_is_empty(caps) || gst_caps_is_any(caps)) [[unlikely]]
+        return;
+
+    m_deinterleaveConfiguredSourcePads++;
+    if (m_deinterleaveConfiguredSourcePads != m_deinterleaveSourcePads)
+        return;
+
+    const auto structure = gst_caps_get_structure(caps, 0);
+    auto sampleRate = gstStructureGet<int>(structure, "rate"_s);
+    if (!sampleRate) [[unlikely]]
+        return;
+
     ASP_DEBUG("Deinterleave configured with %d channels, notifying client", m_deinterleaveSourcePads);
-    m_notifier->notify(MainThreadNotification::DeinterleavePadsConfigured, [numberOfChannels = m_deinterleaveSourcePads, sampleRate = gSampleBitRate, client = m_client] {
+    m_notifier->notify(MainThreadNotification::DeinterleavePadsConfigured, [numberOfChannels = m_deinterleaveSourcePads, client = m_client, sampleRate = *sampleRate] {
         if (client)
             client->setFormat(numberOfChannels, sampleRate);
     });
@@ -500,6 +510,6 @@ void AudioSourceProviderGStreamer::clearAdapters()
 
 #undef GST_CAT_DEFAULT
 
-} // WebCore
+} // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO) && ENABLE(VIDEO) && USE(GSTREAMER)

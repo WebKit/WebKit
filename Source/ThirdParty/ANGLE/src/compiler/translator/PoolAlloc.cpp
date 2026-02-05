@@ -27,6 +27,11 @@ void FreePoolIndex()
     PoolIndex = TLS_INVALID_INDEX;
 }
 
+bool IsGlobalPoolAllocatorInitialized()
+{
+    return PoolIndex != TLS_INVALID_INDEX;
+}
+
 angle::PoolAllocator *GetGlobalPoolAllocator()
 {
     ASSERT(PoolIndex != TLS_INVALID_INDEX);

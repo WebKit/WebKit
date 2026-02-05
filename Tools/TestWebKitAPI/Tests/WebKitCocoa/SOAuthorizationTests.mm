@@ -2784,6 +2784,43 @@ TEST(SOAuthorizationSubFrame, InterceptionSuccess)
     Util::run(&allMessagesReceived);
 }
 
+TEST(SOAuthorizationSubFrame, InterceptionSuccessBackForwardList)
+{
+    resetState();
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClassSingleton());
+    SWIZZLE_AKAUTH();
+
+    URL exampleURL { "http://www.example.com"_str };
+    auto parentHtml = generateHTML(parentTemplate, exampleURL.string());
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { parentHtml } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+    RetainPtr delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
+    configureSOAuthorizationWebView(webView.get(), delegate.get());
+
+    [messageHandler resetExpectations:@[@"http://www.example.com", @"SOAuthorizationDidStart"]];
+    [webView _loadRequest:server.request() shouldOpenExternalURLs:NO];
+    Util::run(&allMessagesReceived);
+
+    checkAuthorizationOptions(false, makeString("http://127.0.0.1:"_s, server.port()), 2);
+    EXPECT_TRUE(policyForAppSSOPerformed);
+
+    [messageHandler extendExpectations:@[@"http://www.example.com", @"Hello."]];
+
+    RetainPtr response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:exampleURL.createNSURL().get() statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:nil]);
+    auto iframeHtmlCString = generateHTML(iframeTemplate, emptyString()).utf8();
+    [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:iframeHtmlCString.data() length:iframeHtmlCString.length()]).get()];
+    Util::run(&allMessagesReceived);
+
+    EXPECT_FALSE([webView canGoBack]);
+}
+
 TEST(SOAuthorizationSubFrame, InterceptionSucceedWithOtherHttpStatusCode)
 {
     resetState();

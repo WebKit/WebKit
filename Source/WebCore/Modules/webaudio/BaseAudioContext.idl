@@ -66,7 +66,7 @@
     AnalyserNode createAnalyser();
     ScriptProcessorNode createScriptProcessor(optional unsigned long bufferSize = 0, optional unsigned long numberOfInputChannels = 2, optional unsigned long numberOfOutputChannels = 2);
     OscillatorNode createOscillator();
-    PeriodicWave createPeriodicWave(sequence<float> real, sequence<float> imag, optional PeriodicWaveOptions options);
+    PeriodicWave createPeriodicWave(sequence<float> real, sequence<float> imag, optional PeriodicWaveOptions options = {});
     ConstantSourceNode createConstantSource();
     StereoPannerNode createStereoPanner();
     [CallWith=CurrentScriptExecutionContext] IIRFilterNode createIIRFilter(sequence<double> feedforward, sequence<double> feedback);

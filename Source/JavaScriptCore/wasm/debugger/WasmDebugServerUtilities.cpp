@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmDebugServerUtilities.h"
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -224,4 +224,4 @@ void StopData::dump(PrintStream& out) const
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

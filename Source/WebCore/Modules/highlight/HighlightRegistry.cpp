@@ -57,8 +57,13 @@ void HighlightRegistry::clear()
 
 bool HighlightRegistry::remove(const AtomString& key)
 {
+    auto highlight = m_map.take(key);
+    if (!highlight)
+        return false;
+
     m_highlightNames.removeFirst(key);
-    return m_map.remove(key);
+    highlight->repaint();
+    return true;
 }
 
 #if ENABLE(APP_HIGHLIGHTS)

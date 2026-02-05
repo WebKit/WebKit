@@ -88,7 +88,7 @@ void HTMLBodyElement::collectPresentationalHintsForAttribute(const QualifiedName
     case AttributeNames::backgroundAttr: {
         auto url = value.string().trim(isASCIIWhitespace);
         if (!url.isEmpty())
-            style.setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(protectedDocument()->completeURL(url), localName())));
+            style.setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(protect(document())->completeURL(url), localName())));
         break;
     }
     case AttributeNames::marginwidthAttr:
@@ -172,7 +172,7 @@ Node::InsertedIntoAncestorResult HTMLBodyElement::insertedIntoAncestor(Insertion
     HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (!insertionType.connectedToDocument)
         return InsertedIntoAncestorResult::Done;
-    if (!is<HTMLFrameElementBase>(protectedDocument()->ownerElement()))
+    if (!is<HTMLFrameElementBase>(protect(document())->ownerElement()))
         return InsertedIntoAncestorResult::Done;
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 }
@@ -214,7 +214,7 @@ void HTMLBodyElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     HTMLElement::addSubresourceAttributeURLs(urls);
 
-    addSubresourceURL(urls, protectedDocument()->completeURL(attributeWithoutSynchronization(backgroundAttr)));
+    addSubresourceURL(urls, protect(document())->completeURL(attributeWithoutSynchronization(backgroundAttr)));
 }
 
 } // namespace WebCore

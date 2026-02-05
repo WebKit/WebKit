@@ -116,14 +116,14 @@ void WorkerAnimationController::scheduleAnimation()
         return;
 
     Seconds animationInterval = RequestAnimationFrameCallback::fullSpeedAnimationInterval;
-    Seconds scheduleDelay = std::max(animationInterval - Seconds::fromMilliseconds(m_workerGlobalScope->protectedPerformance()->now() - m_lastAnimationFrameTimestamp), 0_s);
+    Seconds scheduleDelay = std::max(animationInterval - Seconds::fromMilliseconds(protect(m_workerGlobalScope->performance())->now() - m_lastAnimationFrameTimestamp), 0_s);
 
     m_animationTimer.startOneShot(scheduleDelay);
 }
 
 void WorkerAnimationController::animationTimerFired()
 {
-    m_lastAnimationFrameTimestamp = m_workerGlobalScope->protectedPerformance()->now();
+    m_lastAnimationFrameTimestamp = protect(m_workerGlobalScope->performance())->now();
     serviceRequestAnimationFrameCallbacks(m_lastAnimationFrameTimestamp);
 }
 

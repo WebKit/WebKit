@@ -234,7 +234,7 @@ void CharacterData::dispatchModifiedEvent(const String& oldData)
         dispatchSubtreeModifiedEvent();
     }
 
-    InspectorInstrumentation::characterDataModified(protectedDocument(), *this);
+    InspectorInstrumentation::characterDataModified(protect(document()), *this);
 }
 
 bool CharacterData::containsOnlyASCIIWhitespace() const

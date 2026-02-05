@@ -193,14 +193,9 @@ void SVGPatternElement::collectPatternAttributes(PatternAttributes& attributes) 
         attributes.setPatternContentElement(this);
 }
 
-Ref<const SVGTransformList> SVGPatternElement::protectedPatternTransform() const
-{
-    return m_patternTransform->currentValue();
-}
-
 AffineTransform SVGPatternElement::localCoordinateSpaceTransform(CTMScope) const
 {
-    return protectedPatternTransform()->concatenate();
+    return protect(patternTransform())->concatenate();
 }
 
 }

@@ -37,7 +37,7 @@ struct VideoReceiverEndpointIdentifierType;
 using VideoReceiverEndpointIdentifier = ObjectIdentifier<VideoReceiverEndpointIdentifierType>;
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-using VideoReceiverEndpoint = XPCObjectPtr<xpc_object_t>;
+using VideoReceiverEndpoint = OSObjectPtr<xpc_object_t>;
 #else
 using VideoReceiverEndpoint = void*;
 #endif

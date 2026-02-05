@@ -65,9 +65,9 @@ TEST(MonospaceFontsTest, EnsureMonospaceFontInvariants)
                     auto glyphData = fontCascade.glyphDataForCharacter(character, false);
                     if (!glyphData.isValid() || glyphData.font != fontCascade.primaryFont().ptr())
                         continue;
-                    fontCascade.fonts()->widthCache().clear();
+                    fontCascade.fonts()->glyphGeometryCache().clear();
                     float width = fontCascade.widthForSimpleTextWithFixedPitch(content, whitespaceIsCollapsed);
-                    fontCascade.fonts()->widthCache().clear();
+                    fontCascade.fonts()->glyphGeometryCache().clear();
                     float originalWidth = fontCascade.widthForTextUsingSimplifiedMeasuring(content);
                     EXPECT_EQ(originalWidth , width);
                 }
@@ -77,9 +77,9 @@ TEST(MonospaceFontsTest, EnsureMonospaceFontInvariants)
                     };
                     StringView content(characters);
                     constexpr bool whitespaceIsCollapsed = false;
-                    fontCascade.fonts()->widthCache().clear();
+                    fontCascade.fonts()->glyphGeometryCache().clear();
                     float width = fontCascade.widthForSimpleTextWithFixedPitch(content, whitespaceIsCollapsed);
-                    fontCascade.fonts()->widthCache().clear();
+                    fontCascade.fonts()->glyphGeometryCache().clear();
                     float originalWidth = fontCascade.widthForTextUsingSimplifiedMeasuring(content);
                     EXPECT_EQ(originalWidth , width);
                 }

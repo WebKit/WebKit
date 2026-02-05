@@ -423,7 +423,6 @@ static void playPauseAnimationTest(NSString *testFilename)
     auto observer = adoptNS([[ActionSheetObserver alloc] init]);
     [webView setUIDelegate:observer.get()];
     [webView synchronouslyLoadTestPageNamed:testFilename];
-    [webView stringByEvaluatingJavaScript:@"window.internals.settings.setImageAnimationControlEnabled(true)"];
     // Pause animations globally to establish a known state.
     [webView stringByEvaluatingJavaScript:@"window.internals.setImageAnimationEnabled(false)"];
 
@@ -457,7 +456,6 @@ TEST(ActionSheetTests, PlayPauseAnimationSheetActionsNotPresentByDefault)
     auto observer = adoptNS([[ActionSheetObserver alloc] init]);
     [webView setUIDelegate:observer.get()];
     [webView synchronouslyLoadTestPageNamed:@"img-animation-in-anchor"];
-    [webView stringByEvaluatingJavaScript:@"window.internals.settings.setImageAnimationControlEnabled(true)"];
 
     __block bool done = false;
     [observer setPresentationHandler:^(_WKActivatedElementInfo *element, NSArray *actions) {

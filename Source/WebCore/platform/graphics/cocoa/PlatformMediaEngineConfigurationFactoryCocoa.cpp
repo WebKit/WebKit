@@ -1,0 +1,192 @@
+/*
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "PlatformMediaEngineConfigurationFactoryCocoa.h"
+
+#if PLATFORM(COCOA)
+
+#include "AV1Utilities.h"
+#include "AV1UtilitiesCocoa.h"
+#include "HEVCUtilitiesCocoa.h"
+#include "MediaPlayer.h"
+#include "MediaSessionHelperIOS.h"
+#include "PlatformMediaCapabilitiesDecodingInfo.h"
+#include "PlatformMediaDecodingConfiguration.h"
+#include "PlatformMediaEngineConfigurationFactory.h"
+#include "PlatformMediaSessionManager.h"
+#include "VP9UtilitiesCocoa.h"
+#include <pal/avfoundation/OutputContext.h>
+#include <pal/avfoundation/OutputDevice.h>
+
+#include "VideoToolboxSoftLink.h"
+#include <pal/cf/AudioToolboxSoftLink.h>
+
+namespace WebCore {
+
+static CMVideoCodecType videoCodecTypeFromRFC4281Type(StringView type)
+{
+    if (type.startsWith("mp4v"_s))
+        return kCMVideoCodecType_MPEG4Video;
+    if (type.startsWith("avc1"_s) || type.startsWith("avc3"_s))
+        return kCMVideoCodecType_H264;
+    if (type.startsWith("hvc1"_s) || type.startsWith("hev1"_s))
+        return kCMVideoCodecType_HEVC;
+#if ENABLE(VP9)
+    if (type.startsWith("vp09"_s))
+        return kCMVideoCodecType_VP9;
+#endif
+    return 0;
+}
+
+static std::optional<PlatformMediaCapabilitiesInfo> computeMediaCapabilitiesInfo(const PlatformMediaDecodingConfiguration& configuration)
+{
+    PlatformMediaCapabilitiesInfo info;
+
+    if (configuration.video) {
+        auto& videoConfiguration = configuration.video.value();
+        MediaEngineSupportParameters parameters { };
+        parameters.allowedMediaContainerTypes = configuration.allowedMediaContainerTypes;
+        parameters.allowedMediaCodecTypes = configuration.allowedMediaCodecTypes;
+
+        switch (configuration.type) {
+        case PlatformMediaDecodingType::File:
+            parameters.isMediaSource = false;
+            break;
+        case PlatformMediaDecodingType::MediaSource:
+            parameters.isMediaSource = true;
+            break;
+        case PlatformMediaDecodingType::WebRTC:
+            ASSERT_NOT_REACHED();
+            return std::nullopt;
+        }
+
+        parameters.type = ContentType(videoConfiguration.contentType);
+        if (MediaPlayer::supportsType(parameters) != MediaPlayer::SupportsType::IsSupported)
+            return std::nullopt;
+
+        auto codecs = parameters.type.codecs();
+        if (codecs.size() != 1)
+            return std::nullopt;
+
+        info.supported = true;
+        auto& codec = codecs[0];
+        auto videoCodecType = videoCodecTypeFromRFC4281Type(codec);
+
+        bool hdrSupported = videoConfiguration.colorGamut || videoConfiguration.hdrMetadataType || videoConfiguration.transferFunction;
+        bool alphaChannel = videoConfiguration.alphaChannel && videoConfiguration.alphaChannel.value();
+
+        if (videoCodecType == kCMVideoCodecType_HEVC) {
+            auto parameters = parseHEVCCodecParameters(codec);
+            if (!parameters)
+                return std::nullopt;
+            auto parsedInfo = validateHEVCParameters(*parameters, alphaChannel, hdrSupported);
+            if (!parsedInfo)
+                return std::nullopt;
+            info = *parsedInfo;
+        } else if (codec.startsWith("dvh1"_s) || codec.startsWith("dvhe"_s)) {
+            auto parameters = parseDoViCodecParameters(codec);
+            if (!parameters)
+                return std::nullopt;
+            auto parsedInfo = validateDoViParameters(*parameters, alphaChannel, hdrSupported);
+            if (!parsedInfo)
+                return std::nullopt;
+            info = *parsedInfo;
+#if ENABLE(VP9)
+        } else if (videoCodecType == kCMVideoCodecType_VP9) {
+            if (!configuration.canExposeVP9)
+                return std::nullopt;
+            auto parameters = parseVPCodecParameters(codec);
+            if (!parameters)
+                return std::nullopt;
+            auto parsedInfo = validateVPParameters(*parameters, videoConfiguration);
+            if (!parsedInfo)
+                return std::nullopt;
+            info = *parsedInfo;
+#endif
+#if ENABLE(AV1)
+        } else if (codec.startsWith("av01"_s)) {
+            auto parameters = parseAV1CodecParameters(codec);
+            if (!parameters)
+                return std::nullopt;
+            auto parsedInfo = validateAV1Parameters(*parameters, videoConfiguration);
+            if (!parsedInfo)
+                return std::nullopt;
+            info = *parsedInfo;
+#endif
+        } else if (videoCodecType) {
+            if (alphaChannel || hdrSupported)
+                return std::nullopt;
+
+            if (canLoad_VideoToolbox_VTIsHardwareDecodeSupported()) {
+                info.powerEfficient = VTIsHardwareDecodeSupported(videoCodecType);
+                info.smooth = true;
+            }
+        } else
+            return std::nullopt;
+    }
+
+    if (!configuration.audio)
+        return info;
+
+    MediaEngineSupportParameters parameters { };
+    parameters.type = ContentType(configuration.audio.value().contentType);
+    parameters.isMediaSource = configuration.type == PlatformMediaDecodingType::MediaSource;
+    parameters.allowedMediaContainerTypes = configuration.allowedMediaContainerTypes;
+    parameters.allowedMediaCodecTypes = configuration.allowedMediaCodecTypes;
+
+    if (MediaPlayer::supportsType(parameters) != MediaPlayer::SupportsType::IsSupported)
+        return std::nullopt;
+
+    info.supported = true;
+    if (!configuration.audio->spatialRendering.value_or(false))
+        return info;
+
+    RefPtr manager = configuration.pageIdentifier ? PlatformMediaEngineConfigurationFactory::mediaSessionManagerForPageIdentifier(configuration.pageIdentifier.value()) : nullptr;
+    if (!manager)
+        return std::nullopt;
+
+    auto supportsSpatialPlayback = manager->supportsSpatialAudioPlaybackForConfiguration(configuration);
+    if (!supportsSpatialPlayback.has_value())
+        return std::nullopt;
+
+    info.supported = supportsSpatialPlayback.value();
+
+    return info;
+}
+
+void createMediaPlayerDecodingConfigurationCocoa(PlatformMediaDecodingConfiguration&& configuration, Function<void(PlatformMediaCapabilitiesDecodingInfo&&)>&& callback)
+{
+    auto info = computeMediaCapabilitiesInfo(configuration);
+    if (!info)
+        callback({ { }, WTF::move(configuration) });
+    else {
+        PlatformMediaCapabilitiesDecodingInfo infoWithConfiguration = { WTF::move(*info), WTF::move(configuration) };
+        callback(WTF::move(infoWithConfiguration));
+    }
+}
+
+}
+#endif

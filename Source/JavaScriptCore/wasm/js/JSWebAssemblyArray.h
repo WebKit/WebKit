@@ -127,20 +127,13 @@ private:
 
 #if ASSERT_ENABLED
     bool m_isUnpopulated { false };
-#else
-    // FIXME: We shouldn't need this padding but otherwise all the calculations about v128AlignmentShifts are wrong.
-    // (With ASSERT_ENABLED, the necessary padding is added implicitly after 'm_isUnpopulated').
-#if USE(JSVALUE32_64)
-    unsigned m_padding;
 #endif
-#endif
-
 };
 
 static_assert(std::is_final_v<JSWebAssemblyArray>, "JSWebAssemblyArray is a TrailingArray-like object so must know about all members");
 // We still have to check for PreciseAllocations since those are correctly aligned for v128 but this asserts our shifted offset will be correct.
 // FIXME: Fix this check for 32-bit.
-static_assert(isAddress32Bit() || !((JSWebAssemblyArray::offsetOfData() + JSWebAssemblyArray::v128AlignmentShift) % 16), "JSWebAssemblyArray storage needs to be aligned for v128_t");
+static_assert(isAddress32Bit() || !((JSWebAssemblyArray::offsetOfData()) % 16), "JSWebAssemblyArray storage needs to be aligned for v128_t");
 
 } // namespace JSC
 

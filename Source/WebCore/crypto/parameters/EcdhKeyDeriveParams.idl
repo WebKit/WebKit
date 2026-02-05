@@ -24,8 +24,7 @@
  */
 
 [
-    ImplementedAs=CryptoAlgorithmEcdhKeyDeriveParams,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
+    ImplementedAs=CryptoAlgorithmEcdhKeyDeriveParamsInit,
 ] dictionary EcdhKeyDeriveParams : CryptoAlgorithmParameters {
     // We should rename this to public once https://bugs.webkit.org/show_bug.cgi?id=169333 is fixed.
     // The peer's EC public key.

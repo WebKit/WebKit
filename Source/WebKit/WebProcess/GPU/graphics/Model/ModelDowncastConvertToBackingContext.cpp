@@ -28,16 +28,16 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "RemoteDDMeshProxy.h"
+#include "RemoteMeshProxy.h"
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebKit::DDModel {
+namespace WebKit {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(DowncastConvertToBackingContext);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ModelDowncastConvertToBackingContext);
 
-DDModelIdentifier DowncastConvertToBackingContext::convertToBacking(const WebCore::DDModel::DDMesh& mesh)
+WebModelIdentifier ModelDowncastConvertToBackingContext::convertToBacking(const WebCore::Mesh& mesh)
 {
-    return downcast<RemoteDDMeshProxy>(mesh).backing();
+    return downcast<RemoteMeshProxy>(mesh).backing();
 }
 
 }

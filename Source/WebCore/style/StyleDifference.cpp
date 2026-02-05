@@ -802,8 +802,8 @@ public:
             for (auto& watchPropertiesMap : { propertiesA, propertiesB }) {
                 for (auto& name : watchPropertiesMap) {
                     if (isCustomPropertyName(name)) {
-                        auto valueA = a.customPropertyValue(name);
-                        auto valueB = b.customPropertyValue(name);
+                        RefPtr valueA = a.customPropertyValue(name);
+                        RefPtr valueB = b.customPropertyValue(name);
 
                         if (valueA != valueB && (!valueA || !valueB || *valueA != *valueB))
                             return true;

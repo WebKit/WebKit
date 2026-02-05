@@ -53,7 +53,7 @@ InjectedScript JSGlobalObjectRuntimeAgent::injectedScriptForEval(Protocol::Error
         return InjectedScript();
     }
 
-    InjectedScript injectedScript = injectedScriptManager().injectedScriptFor(&m_globalObject);
+    auto injectedScript = injectedScriptManager().injectedScriptFor(&m_globalObject);
     if (injectedScript.hasNoValue())
         errorString = "Missing execution context for given executionContextId."_s;
 

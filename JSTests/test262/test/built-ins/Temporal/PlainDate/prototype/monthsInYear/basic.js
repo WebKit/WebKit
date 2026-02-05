@@ -9,3 +9,6 @@ features: [Temporal]
 
 const plainDate = new Temporal.PlainDate(1976, 11, 18);
 assert.sameValue(plainDate.monthsInYear, 12);
+assert.sameValue((new Temporal.PlainDate(1234, 7, 15)).monthsInYear, 12);
+assert.sameValue(Temporal.PlainDate.from('2019-03-18').monthsInYear, 12);
+assert.sameValue(Temporal.PlainDate.from('1234-03-18').monthsInYear, 12);

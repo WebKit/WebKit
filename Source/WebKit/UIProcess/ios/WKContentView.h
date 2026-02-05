@@ -45,6 +45,7 @@ class FloatRect;
 namespace WebKit {
 class DrawingAreaProxy;
 class RemoteLayerTreeTransaction;
+class VisibleContentRectUpdateInfo;
 class WebFrameProxy;
 class WebPageProxy;
 class WebProcessProxy;
@@ -74,22 +75,13 @@ enum class ViewStabilityFlag : uint8_t;
 
 - (instancetype)initWithFrame:(CGRect)frame processPool:(std::reference_wrapper<WebKit::WebProcessPool>)processPool configuration:(Ref<API::PageConfiguration>&&)configuration webView:(WKWebView *)webView;
 
-- (void)didUpdateVisibleRect:(CGRect)visibleRect
-    unobscuredRect:(CGRect)unobscuredRect
-    contentInsets:(UIEdgeInsets)contentInsets
-    unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
-    obscuredInsets:(UIEdgeInsets)obscuredInsets
-    unobscuredSafeAreaInsets:(UIEdgeInsets)unobscuredSafeAreaInsets
-    inputViewBounds:(CGRect)inputViewBounds
-    scale:(CGFloat)scale minimumScale:(CGFloat)minimumScale
-    viewStability:(OptionSet<WebKit::ViewStabilityFlag>)viewStability
-    enclosedInScrollableAncestorView:(BOOL)enclosedInScrollableAncestorView
-    sendEvenIfUnchanged:(BOOL)sendEvenIfUnchanged;
+- (void)didUpdateVisibleRect:(const WebKit::VisibleContentRectUpdateInfo &)visibleContentRectUpdateInfo sendEvenIfUnchanged:(BOOL)sendEvenIfUnchanged;
 
 - (void)didFinishScrolling;
-- (void)didInterruptScrolling;
 - (void)didZoomToScale:(CGFloat)scale;
 - (void)willStartZoomOrScroll;
+
+- (CGRect)_computeUnobscuredContentRectRespectingInputViewBounds:(CGRect)unobscuredContentRect inputViewBounds:(CGRect)inputViewBounds;
 
 - (CGFloat)intrinsicDeviceScaleFactor;
 - (BOOL)screenIsBeingCaptured;
@@ -98,6 +90,8 @@ enum class ViewStabilityFlag : uint8_t;
 
 - (WKWebView *)webView;
 - (UIView *)rootContentView;
+
+- (UIScreen *)_screen;
 
 - (Ref<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy:(WebKit::WebProcessProxy&)webProcessProxy;
 - (void)_processDidExit;

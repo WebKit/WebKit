@@ -72,6 +72,7 @@ void RemoteBufferProxy::getMappedRange(WebCore::WebGPU::Size64 offset, std::opti
     auto sendResult = sendSync(Messages::RemoteBuffer::GetMappedRange(offset, size));
     auto [data] = sendResult.takeReplyOr(std::nullopt);
 
+    offset = 0;
     if (!data || !data->span().data() || offsetOrSizeExceedsBounds(data->size(), offset, size)) {
         callback({ });
         return;

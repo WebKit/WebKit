@@ -27,11 +27,10 @@
     Conditional=MEDIA_CONTROLS_CONTEXT_MENUS,
     JSGenerateToJSObject,
     EnabledBySetting=MediaControlsContextMenusEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary MediaControlsContextMenuItem {
-    unsigned long long id;
+    unsigned long long id = 0;
     DOMString title;
     DOMString icon;
-    boolean checked;
-    sequence<MediaControlsContextMenuItem> children;
+    boolean checked = false;
+    sequence<MediaControlsContextMenuItem> children = [];
 };

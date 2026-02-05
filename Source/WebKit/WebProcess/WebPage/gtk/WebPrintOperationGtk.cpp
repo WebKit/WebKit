@@ -34,6 +34,7 @@
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/GraphicsContextSkia.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/NotImplemented.h>
@@ -45,25 +46,10 @@
 #include <wtf/URL.h>
 #include <wtf/glib/GUniquePtr.h>
 
-#if USE(CAIRO)
-#include <WebCore/GraphicsContextCairo.h>
-#include <cairo.h>
-#ifdef CAIRO_HAS_PDF_SURFACE
-#include <cairo-pdf.h>
-#endif
-#ifdef CAIRO_HAS_PS_SURFACE
-#include <cairo-ps.h>
-#endif
-#ifdef CAIRO_HAS_SVG_SURFACE
-#include <cairo-svg.h>
-#endif
-#elif USE(SKIA)
-#include <WebCore/GraphicsContextSkia.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/docs/SkPDFDocument.h>
 #include <skia/docs/SkPDFJpegHelpers.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
-#endif
 
 namespace WebKit {
 
@@ -216,45 +202,7 @@ void WebPrintOperationGtk::startPrint(WebCore::PrintContext* printContext, Compl
     m_completionHandler = WTF::move(completionHandler);
 
     const char* outputFormat = gtk_print_settings_get(m_printSettings.get(), GTK_PRINT_SETTINGS_OUTPUT_FILE_FORMAT);
-
-#if USE(CAIRO)
-    m_buffer.reset();
-
-    auto writeCairoStream = [](void* userData, const unsigned char* data, unsigned length) -> cairo_status_t {
-        auto& printOperation = *static_cast<WebPrintOperationGtk*>(userData);
-        printOperation.m_buffer.append(std::span { data, length });
-        return CAIRO_STATUS_SUCCESS;
-    };
-
-    auto* paperSize = gtk_page_setup_get_paper_size(m_pageSetup.get());
-    double width = gtk_paper_size_get_width(paperSize, GTK_UNIT_POINTS);
-    double height = gtk_paper_size_get_height(paperSize, GTK_UNIT_POINTS);
-    RefPtr<cairo_surface_t> surface;
-    if (!g_strcmp0(outputFormat, "pdf")) {
-#ifdef CAIRO_HAS_PDF_SURFACE
-        surface = adoptRef(cairo_pdf_surface_create_for_stream(writeCairoStream, this, width, height));
-#endif
-    } else if (!g_strcmp0(outputFormat, "ps")) {
-#ifdef CAIRO_HAS_PS_SURFACE
-        surface = adoptRef(cairo_ps_surface_create_for_stream(writeCairoStream, this, width, height));
-#endif
-    } else if (!g_strcmp0(outputFormat, "svg")) {
-#ifdef CAIRO_HAS_SVG_SURFACE
-        surface = adoptRef(cairo_svg_surface_create_for_stream(writeCairoStream, this, width, height));
-
-        const cairo_svg_version_t* versions;
-        int versionsCount;
-        cairo_svg_get_versions(&versions, &versionsCount);
-        if (versionsCount)
-            cairo_svg_surface_restrict_to_version(surface.get(), versions[versionsCount - 1]);
-#endif
-    }
-
-    auto lpi = gtk_print_settings_get_printer_lpi(m_printSettings.get());
-    cairo_surface_set_fallback_resolution(surface.get(), 2.0 * lpi, 2.0 * lpi);
-#elif USE(SKIA)
     RELEASE_ASSERT(!g_strcmp0(outputFormat, "pdf"));
-#endif
 
     {
         int rangesCount;
@@ -273,69 +221,9 @@ void WebPrintOperationGtk::startPrint(WebCore::PrintContext* printContext, Compl
     m_collateCopies = gtk_print_settings_get_collate(m_printSettings.get());
     m_scale = gtk_print_settings_get_scale(m_printSettings.get());
 
-#if USE(CAIRO)
-    print(surface.get(), 72, 72);
-#elif USE(SKIA)
     print(72, 72);
-#endif
 }
 
-#if USE(CAIRO)
-void WebPrintOperationGtk::startPage(cairo_t* cr)
-{
-    if (!currentPageIsFirstPageOfSheet())
-        return;
-
-    GtkPaperSize* paperSize = gtk_page_setup_get_paper_size(m_pageSetup.get());
-    double width = gtk_paper_size_get_width(paperSize, GTK_UNIT_POINTS);
-    double height = gtk_paper_size_get_height(paperSize, GTK_UNIT_POINTS);
-
-    cairo_surface_t* surface = cairo_get_target(cr);
-    cairo_surface_type_t surfaceType = cairo_surface_get_type(surface);
-    if (surfaceType == CAIRO_SURFACE_TYPE_PS) {
-#ifdef CAIRO_HAS_PS_SURFACE
-        cairo_ps_surface_set_size(surface, width, height);
-        cairo_ps_surface_dsc_begin_page_setup(surface);
-
-        switch (gtk_page_setup_get_orientation(m_pageSetup.get())) {
-        case GTK_PAGE_ORIENTATION_PORTRAIT:
-        case GTK_PAGE_ORIENTATION_REVERSE_PORTRAIT:
-            cairo_ps_surface_dsc_comment(surface, "%%PageOrientation: Portrait");
-            break;
-        case GTK_PAGE_ORIENTATION_LANDSCAPE:
-        case GTK_PAGE_ORIENTATION_REVERSE_LANDSCAPE:
-            cairo_ps_surface_dsc_comment(surface, "%%PageOrientation: Landscape");
-            break;
-        }
-#endif
-    } else if (surfaceType == CAIRO_SURFACE_TYPE_PDF) {
-#ifdef CAIRO_HAS_PDF_SURFACE
-        switch (gtk_page_setup_get_orientation(m_pageSetup.get())) {
-        case GTK_PAGE_ORIENTATION_PORTRAIT:
-        case GTK_PAGE_ORIENTATION_REVERSE_PORTRAIT:
-            cairo_pdf_surface_set_size(surface, width, height);
-            break;
-        case GTK_PAGE_ORIENTATION_LANDSCAPE:
-        case GTK_PAGE_ORIENTATION_REVERSE_LANDSCAPE:
-            cairo_pdf_surface_set_size(surface, height, width);
-            break;
-        }
-#endif
-    }
-}
-
-void WebPrintOperationGtk::endPage(cairo_t* cr)
-{
-    if (currentPageIsLastPageOfSheet())
-        cairo_show_page(cr);
-}
-
-void WebPrintOperationGtk::endPrint(cairo_t* cr)
-{
-    cairo_surface_finish(cairo_get_target(cr));
-    printDone(m_buffer.takeBuffer(), { });
-}
-#elif USE(SKIA)
 void WebPrintOperationGtk::startPage(SkPictureRecorder& recorder)
 {
     if (!currentPageIsFirstPageOfSheet()) {
@@ -417,7 +305,6 @@ void WebPrintOperationGtk::endPrint()
 
     m_pages.clear();
 }
-#endif
 
 int WebPrintOperationGtk::pageCount() const
 {
@@ -452,29 +339,6 @@ void WebPrintOperationGtk::rotatePageIfNeeded()
     double width = gtk_paper_size_get_width(paperSize, GTK_UNIT_INCH) * m_xDPI;
     double height = gtk_paper_size_get_height(paperSize, GTK_UNIT_INCH) * m_yDPI;
 
-#if USE(CAIRO)
-    cairo_matrix_t matrix;
-    switch (gtk_page_setup_get_orientation(m_pageSetup.get())) {
-    case GTK_PAGE_ORIENTATION_LANDSCAPE:
-        cairo_translate(m_cairoContext.get(), 0, height);
-        cairo_matrix_init(&matrix, 0, -1, 1, 0, 0, 0);
-        cairo_transform(m_cairoContext.get(), &matrix);
-        break;
-    case GTK_PAGE_ORIENTATION_REVERSE_PORTRAIT:
-        cairo_translate(m_cairoContext.get(), width, height);
-        cairo_matrix_init(&matrix, -1, 0, 0, -1, 0, 0);
-        cairo_transform(m_cairoContext.get(), &matrix);
-        break;
-    case GTK_PAGE_ORIENTATION_REVERSE_LANDSCAPE:
-        cairo_translate(m_cairoContext.get(), width, 0);
-        cairo_matrix_init(&matrix, 0, 1, -1, 0, 0, 0);
-        cairo_transform(m_cairoContext.get(), &matrix);
-        break;
-    case GTK_PAGE_ORIENTATION_PORTRAIT:
-    default:
-        break;
-    }
-#elif USE(SKIA)
     switch (gtk_page_setup_get_orientation(m_pageSetup.get())) {
     case GTK_PAGE_ORIENTATION_LANDSCAPE:
         m_pageCanvas->translate(0, height);
@@ -493,7 +357,6 @@ void WebPrintOperationGtk::rotatePageIfNeeded()
     default:
         break;
     }
-#endif
 }
 
 void WebPrintOperationGtk::getRowsAndColumnsOfPagesPerSheet(size_t& rows, size_t& columns)
@@ -569,17 +432,10 @@ void WebPrintOperationGtk::prepareContextToDraw()
     if (m_numberUp < 2) {
         double left = gtk_page_setup_get_left_margin(m_pageSetup.get(), GTK_UNIT_INCH);
         double top = gtk_page_setup_get_top_margin(m_pageSetup.get(), GTK_UNIT_INCH);
-#if USE(CAIRO)
-        if (m_scale != 1.0)
-            cairo_scale(m_cairoContext.get(), m_scale, m_scale);
-        rotatePageIfNeeded();
-        cairo_translate(m_cairoContext.get(), left * m_xDPI, top * m_yDPI);
-#elif USE(SKIA)
         if (m_scale != 1.0)
             m_pageCanvas->scale(m_scale, m_scale);
         rotatePageIfNeeded();
         m_pageCanvas->translate(left * m_xDPI, top * m_yDPI);
-#endif
         return;
     }
 
@@ -604,21 +460,13 @@ void WebPrintOperationGtk::prepareContextToDraw()
     case GTK_PAGE_ORIENTATION_REVERSE_PORTRAIT:
         pageWidth = paperWidth - (marginLeft + marginRight);
         pageHeight = paperHeight - (marginTop + marginBottom);
-#if USE(CAIRO)
-        cairo_translate(m_cairoContext.get(), marginLeft, marginTop);
-#elif USE(SKIA)
         m_pageCanvas->translate(marginLeft, marginTop);
-#endif
         break;
     case GTK_PAGE_ORIENTATION_LANDSCAPE:
     case GTK_PAGE_ORIENTATION_REVERSE_LANDSCAPE:
         pageWidth = paperWidth - (marginTop + marginBottom);
         pageHeight = paperHeight - (marginLeft + marginRight);
-#if USE(CAIRO)
-        cairo_translate(m_cairoContext.get(), marginTop, marginLeft);
-#elif USE(SKIA)
         m_pageCanvas->translate(marginTop, marginLeft);
-#endif
 
         size_t tmp = columns;
         columns = rows;
@@ -652,17 +500,10 @@ void WebPrintOperationGtk::prepareContextToDraw()
             offsetY = (stepY - height) / 2.0;
         }
 
-#if USE(CAIRO)
-        cairo_scale(m_cairoContext.get(), scale, scale);
-        cairo_translate(m_cairoContext.get(), x * stepX + offsetX, y * stepY + offsetY);
-        if (m_scale != 1.0)
-            cairo_scale(m_cairoContext.get(), m_scale, m_scale);
-#elif USE(SKIA)
         m_pageCanvas->scale(scale, scale);
         m_pageCanvas->translate(x * stepX + offsetX, y * stepY + offsetY);
         if (m_scale != 1.0)
             m_pageCanvas->scale(m_scale, m_scale);
-#endif
         break;
     }
     case 2:
@@ -677,19 +518,11 @@ void WebPrintOperationGtk::prepareContextToDraw()
         double offsetX = ((stepX - paperWidth) / 2.0 * columns) - marginRight;
         double offsetY = ((stepY - paperHeight) / 2.0 * rows) + marginTop;
 
-#if USE(CAIRO)
-        cairo_scale(m_cairoContext.get(), scale, scale);
-        cairo_translate(m_cairoContext.get(), y * paperHeight + offsetY, (columns - x) * paperWidth + offsetX);
-        if (m_scale != 1.0)
-            cairo_scale(m_cairoContext.get(), m_scale, m_scale);
-        cairo_rotate(m_cairoContext.get(), -G_PI / 2);
-#elif USE(SKIA)
         m_pageCanvas->scale(scale, scale);
         m_pageCanvas->translate(y * paperHeight + offsetY, (columns - x) * paperWidth + offsetX);
         if (m_scale != 1.0)
             m_pageCanvas->scale(m_scale, m_scale);
         m_pageCanvas->rotate(-90);
-#endif
         break;
     }
     default:
@@ -699,32 +532,17 @@ void WebPrintOperationGtk::prepareContextToDraw()
 
 void WebPrintOperationGtk::renderPage(int pageNumber)
 {
-#if USE(CAIRO)
-    startPage(m_cairoContext.get());
-    cairo_save(m_cairoContext.get());
-#elif USE(SKIA)
     SkPictureRecorder recorder;
     startPage(recorder);
     m_pageCanvas->save();
-#endif
 
     prepareContextToDraw();
 
     double pageWidth = gtk_page_setup_get_page_width(m_pageSetup.get(), GTK_UNIT_INCH) * m_xDPI;
-#if USE(CAIRO)
-    WebCore::GraphicsContextCairo graphicsContext(m_cairoContext.get());
-#elif USE(SKIA)
     WebCore::GraphicsContextSkia graphicsContext(*m_pageCanvas, WebCore::RenderingMode::Unaccelerated, WebCore::RenderingPurpose::Unspecified);
-#endif
     m_printContext->spoolPage(graphicsContext, pageNumber, pageWidth / m_scale);
-
-#if USE(CAIRO)
-    cairo_restore(m_cairoContext.get());
-    endPage(m_cairoContext.get());
-#elif USE(SKIA)
     m_pageCanvas->restore();
     endPage(recorder);
-#endif
 }
 
 gboolean WebPrintOperationGtk::printPagesIdle(gpointer userData)
@@ -750,12 +568,7 @@ void WebPrintOperationGtk::printPagesIdleDone(gpointer userData)
 void WebPrintOperationGtk::printPagesDone()
 {
     m_printPagesIdleId = 0;
-#if USE(CAIRO)
-    endPrint(m_cairoContext.get());
-    m_cairoContext = nullptr;
-#elif USE(SKIA)
     endPrint();
-#endif
 }
 
 void WebPrintOperationGtk::printDone(RefPtr<WebCore::FragmentedSharedBuffer>&& buffer, WebCore::ResourceError&& error)
@@ -769,28 +582,18 @@ void WebPrintOperationGtk::printDone(RefPtr<WebCore::FragmentedSharedBuffer>&& b
         m_completionHandler(WTF::move(buffer), WTF::move(error));
 }
 
-#if USE(CAIRO)
-void WebPrintOperationGtk::print(cairo_surface_t* surface, double xDPI, double yDPI)
-#elif USE(SKIA)
 void WebPrintOperationGtk::print(double xDPI, double yDPI)
-#endif
 {
     ASSERT(m_printContext);
 
     auto data = makeUnique<PrintPagesData>(this);
     if (!data->isValid) {
-#if USE(CAIRO)
-        cairo_surface_finish(surface);
-#endif
         printDone(nullptr, invalidPageRangeToPrint(frameURL()));
         return;
     }
 
     m_xDPI = xDPI;
     m_yDPI = yDPI;
-#if USE(CAIRO)
-    m_cairoContext = adoptRef(cairo_create(surface));
-#endif
 
     // Make sure the print pages idle has more priority than IPC messages comming from
     // the IO thread, so that the EndPrinting message is always handled once the print

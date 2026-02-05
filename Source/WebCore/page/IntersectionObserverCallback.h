@@ -44,6 +44,7 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     virtual bool hasCallback() const = 0;
+    virtual bool isJSIntersectionObserverCallback() const { return false; }
 
     virtual CallbackResult<void> invoke(IntersectionObserver&, const Vector<Ref<IntersectionObserverEntry>>&, IntersectionObserver&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(IntersectionObserver&, const Vector<Ref<IntersectionObserverEntry>>&, IntersectionObserver&) = 0;

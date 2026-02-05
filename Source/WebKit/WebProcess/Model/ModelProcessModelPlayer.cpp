@@ -95,7 +95,7 @@ void ModelProcessModelPlayer::didCreateLayer(WebCore::LayerHostingContextIdentif
     RELEASE_ASSERT(modelProcessEnabled());
 
     m_layerHostingContextIdentifier = identifier;
-    protectedClient()->didUpdate(*this);
+    protect(client())->didUpdate(*this);
 }
 
 void ModelProcessModelPlayer::didFinishLoading(const WebCore::FloatPoint3D& boundingBoxCenter, const WebCore::FloatPoint3D& boundingBoxExtents)
@@ -116,7 +116,7 @@ void ModelProcessModelPlayer::didFailLoading()
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer didFailLoading id=%" PRIu64, this, m_id.toUInt64());
     RELEASE_ASSERT(modelProcessEnabled());
 
-    protectedClient()->didFailLoading(*this, WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, { }, "Failed to load model data"_s });
+    protect(client())->didFailLoading(*this, WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, { }, "Failed to load model data"_s });
 }
 
 /// This comes from Model Process side, so that Web Process has the most up-to-date knowledge about the transform actually applied to the entity.
@@ -126,7 +126,7 @@ void ModelProcessModelPlayer::didUpdateEntityTransform(const WebCore::Transforma
     RELEASE_ASSERT(modelProcessEnabled());
 
     m_entityTransform = transform;
-    protectedClient()->didUpdateEntityTransform(*this, transform);
+    protect(client())->didUpdateEntityTransform(*this, transform);
 }
 
 void ModelProcessModelPlayer::didUpdateAnimationPlaybackState(bool isPaused, double playbackRate, Seconds duration, Seconds currentTime, MonotonicTime clockTimestamp)
@@ -143,7 +143,7 @@ void ModelProcessModelPlayer::didFinishEnvironmentMapLoading(bool succeeded)
 {
     RELEASE_ASSERT(modelProcessEnabled());
 
-    protectedClient()->didFinishEnvironmentMapLoading(*this, succeeded);
+    protect(client())->didFinishEnvironmentMapLoading(*this, succeeded);
 }
 
 // MARK: - WebCore::ModelPlayer

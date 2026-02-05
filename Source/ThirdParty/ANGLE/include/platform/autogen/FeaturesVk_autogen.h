@@ -260,14 +260,14 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
-    FeatureInfo forceD16TexFilter = {
-        "forceD16TexFilter",
-        FeatureCategory::VulkanWorkarounds,
+    FeatureInfo supportsMultiviewMultisampleRenderToTexture = {
+        "supportsMultiviewMultisampleRenderToTexture",
+        FeatureCategory::VulkanFeatures,
         &members,
     };
 
-    FeatureInfo disableFlippingBlitWithCommand = {
-        "disableFlippingBlitWithCommand",
+    FeatureInfo forceD16TexFilter = {
+        "forceD16TexFilter",
         FeatureCategory::VulkanWorkarounds,
         &members,
     };
@@ -446,12 +446,6 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
-    FeatureInfo waitIdleBeforeSwapchainRecreation = {
-        "waitIdleBeforeSwapchainRecreation",
-        FeatureCategory::VulkanWorkarounds,
-        &members,
-    };
-
     FeatureInfo destroyOldSwapchainInSharedPresentMode = {
         "destroyOldSwapchainInSharedPresentMode",
         FeatureCategory::VulkanWorkarounds,
@@ -532,12 +526,6 @@ struct FeaturesVk : FeatureSetBase
 
     FeatureInfo emulateR32fImageAtomicExchange = {
         "emulateR32fImageAtomicExchange",
-        FeatureCategory::VulkanWorkarounds,
-        &members,
-    };
-
-    FeatureInfo forceFragmentShaderPrecisionHighpToMediump = {
-        "forceFragmentShaderPrecisionHighpToMediump",
         FeatureCategory::VulkanWorkarounds,
         &members,
     };
@@ -742,6 +730,12 @@ struct FeaturesVk : FeatureSetBase
 
     FeatureInfo useFrontFaceDynamicState = {
         "useFrontFaceDynamicState",
+        FeatureCategory::VulkanWorkarounds,
+        &members,
+    };
+
+    FeatureInfo usePrimitiveTopologyDynamicState = {
+        "usePrimitiveTopologyDynamicState",
         FeatureCategory::VulkanWorkarounds,
         &members,
     };
@@ -992,6 +986,12 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
+    FeatureInfo syncPipelineCacheToBlobCacheEveryFrame = {
+        "syncPipelineCacheToBlobCacheEveryFrame",
+        FeatureCategory::VulkanWorkarounds,
+        &members,
+    };
+
     FeatureInfo enableExtraSubmitFence = {
         "enableExtraSubmitFence",
         FeatureCategory::VulkanWorkarounds,
@@ -1142,6 +1142,12 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
+    FeatureInfo allowHostImageCopyAfterInitialUpload = {
+        "allowHostImageCopyAfterInitialUpload",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
     FeatureInfo enableParallelCompileAndLink = {
         "enableParallelCompileAndLink",
         FeatureCategory::VulkanFeatures,
@@ -1270,6 +1276,12 @@ struct FeaturesVk : FeatureSetBase
 
     FeatureInfo useVkEventForBufferBarrier = {
         "useVkEventForBufferBarrier",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
+    FeatureInfo isVertexSyncDeferred = {
+        "isVertexSyncDeferred",
         FeatureCategory::VulkanFeatures,
         &members,
     };
@@ -1472,6 +1484,12 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
+    FeatureInfo supportsAstc3d = {
+        "supportsAstc3d",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
     FeatureInfo supportsImageCompressionControlSwapchain = {
         "supportsImageCompressionControlSwapchain",
         FeatureCategory::VulkanFeatures,
@@ -1592,8 +1610,38 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
+    FeatureInfo supportsBindVertexBuffers2 = {
+        "supportsBindVertexBuffers2",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
     FeatureInfo forceSizePointerForBoundVertexBuffers = {
         "forceSizePointerForBoundVertexBuffers",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
+    FeatureInfo supportFragmentShadingRateExtExtensions = {
+        "supportFragmentShadingRateExtExtensions",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
+    FeatureInfo dropDepthStencilClearOnInvalidate = {
+        "dropDepthStencilClearOnInvalidate",
+        FeatureCategory::VulkanWorkarounds,
+        &members,
+    };
+
+    FeatureInfo supportsTileMemoryHeap = {
+        "supportsTileMemoryHeap",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
+    FeatureInfo simulateTileMemoryForTesting = {
+        "simulateTileMemoryForTesting",
         FeatureCategory::VulkanFeatures,
         &members,
     };

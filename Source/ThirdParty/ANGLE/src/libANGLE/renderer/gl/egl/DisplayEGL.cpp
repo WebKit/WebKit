@@ -659,6 +659,8 @@ egl::ConfigSet DisplayEGL::generateConfigs()
         getConfigAttribIfExtension(configs[i], EGL_COLOR_COMPONENT_TYPE_EXT,
                                    &config.colorComponentType, "EGL_EXT_pixel_format_float",
                                    EGL_COLOR_COMPONENT_TYPE_FIXED_EXT);
+        getConfigAttribIfExtension(configs[i], EGL_RECORDABLE_ANDROID, &config.recordable,
+                                   "EGL_ANDROID_recordable", EGL_FALSE);
 
         config.surfaceType = fixSurfaceType(config.surfaceType);
 
@@ -848,6 +850,7 @@ void DisplayEGL::generateExtensions(egl::DisplayExtensions *outExtensions) const
 
     outExtensions->postSubBuffer    = false;  // Since SurfaceEGL::postSubBuffer is not implemented
     outExtensions->presentationTime = mEGL->hasExtension("EGL_ANDROID_presentation_time");
+    outExtensions->recordable       = mEGL->hasExtension("EGL_ANDROID_recordable");
 
     // Contexts are virtualized so textures and semaphores can be shared globally
     outExtensions->displayTextureShareGroup   = true;

@@ -147,7 +147,7 @@ const std::optional<ScrollGranularity> scrollGranularityForKeyboardEvent(const K
 float KeyboardScrollingAnimator::scrollDistance(ScrollDirection direction, ScrollGranularity granularity) const
 {
     CheckedRef scrollableArea = m_scrollableArea.get();
-    auto scrollbar = scrollableArea->scrollbarForDirection(direction);
+    RefPtr scrollbar = scrollableArea->scrollbarForDirection(direction);
     if (!scrollbar)
         return false;
 

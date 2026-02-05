@@ -50,14 +50,14 @@ struct SameSizeAsBorderValue {
 static_assert(sizeof(BorderValue) == sizeof(SameSizeAsBorderValue), "BorderValue should not grow");
 
 struct SameSizeAsComputedStyle : CanMakeCheckedPtr<SameSizeAsComputedStyle> {
-    void* nonInheritedDataRefs[1];
     struct NonInheritedFlags {
-        unsigned m_bitfields[2];
+        unsigned m_bitfields[3];
     } m_nonInheritedFlags;
-    void* inheritedDataRefs[2];
     struct InheritedFlags {
         unsigned m_bitfields[2];
     } m_inheritedFlags;
+    void* nonInheritedDataRefs[1];
+    void* inheritedDataRefs[2];
     HashMap<PseudoElementIdentifier, std::unique_ptr<RenderStyle>> pseudos;
     void* dataRefSvgStyle;
 

@@ -131,10 +131,24 @@ void TextPainter::paintTextOrEmphasisMarks(const FontCascade& font, const TextRu
     else if (startOffset || endOffset < textRun.length() || !glyphDisplayList)
         m_context.drawText(font, textRun, textOrigin, startOffset, endOffset);
     else {
-        // Replaying back a whole cached glyph run to the GraphicsContext.
-        GraphicsContextStateSaver stateSaver(m_context);
-        m_context.translate(textOrigin);
-        m_context.drawDisplayList(*glyphDisplayList);
+        bool needsStateSave = false;
+        for (auto& item : glyphDisplayList->items()) {
+            if (std::holds_alternative<DisplayList::SetInlineFillColor>(item)
+                || std::holds_alternative<DisplayList::SetInlineStroke>(item)) {
+                needsStateSave = true;
+                break;
+            }
+        }
+
+        if (needsStateSave) {
+            GraphicsContextStateSaver stateSaver(m_context);
+            m_context.translate(textOrigin);
+            m_context.drawDisplayList(*glyphDisplayList);
+        } else {
+            m_context.translate(textOrigin);
+            m_context.drawDisplayList(*glyphDisplayList);
+            m_context.translate(-textOrigin);
+        }
     }
 }
 

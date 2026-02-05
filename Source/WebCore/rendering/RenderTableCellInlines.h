@@ -22,6 +22,7 @@
 
 #include "RenderStyle+GettersInlines.h"
 #include "RenderTableCell.h"
+#include "RenderTableCol.h"
 #include "StyleContentAlignmentData.h"
 
 namespace WebCore {

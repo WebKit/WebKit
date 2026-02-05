@@ -30,26 +30,33 @@
 
 namespace WebCore::TextExtraction {
 
-WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Item);
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Result);
 
-static void collateItemsRecursive(Item& item, HashMap<FrameIdentifier, UniqueRef<Item>>& subFrameItems)
+static unsigned collateRecursive(Item& item, HashMap<FrameIdentifier, UniqueRef<Result>>& subFrameResults)
 {
-    if (subFrameItems.isEmpty())
-        return;
+    if (subFrameResults.isEmpty())
+        return 0;
+
+    unsigned additionalTextLength = 0;
 
     if (auto iframe = item.dataAs<IFrameData>(); iframe && item.children.isEmpty()) {
-        if (auto subFrameRoot = subFrameItems.take(iframe->identifier))
-            item.children = WTF::move(subFrameRoot->children);
+        if (auto subFrameResult = subFrameResults.take(iframe->identifier)) {
+            item.children = WTF::move(subFrameResult->rootItem.children);
+            additionalTextLength += subFrameResult->visibleTextLength;
+        }
     }
 
     for (auto& child : item.children)
-        collateItemsRecursive(child, subFrameItems);
+        additionalTextLength += collateRecursive(child, subFrameResults);
+
+    return additionalTextLength;
 }
 
-Item collatePageItems(PageItems&& items)
+Result collatePageResults(PageResults&& results)
 {
-    collateItemsRecursive(items.mainFrameItem, items.subFrameItems);
-    return WTF::move(items.mainFrameItem);
+    auto additionalLength = collateRecursive(results.mainFrameResult.rootItem, results.subFrameResults);
+    results.mainFrameResult.visibleTextLength += additionalLength;
+    return WTF::move(results.mainFrameResult);
 }
 
 } // namespace WebCore::TextExtraction

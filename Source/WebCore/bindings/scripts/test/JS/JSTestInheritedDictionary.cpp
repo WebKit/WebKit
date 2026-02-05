@@ -52,7 +52,7 @@ static_assert(IsIncreasing<
     , offsetof(TestInheritedDictionary, partialBooleanMember)
     , offsetof(TestInheritedDictionary, partialStringMember)
     , offsetof(TestInheritedDictionary, partialCallbackMember)
-    , offsetof(TestInheritedDictionary, partialUnsignedLongMemberWithImplementedAs)
+    , offsetof(TestInheritedDictionary, partialUnsignedLongMember)
 #if ENABLE(Conditional15)
     , offsetof(TestInheritedDictionary, partialBooleanMemberWithConditional)
 #endif

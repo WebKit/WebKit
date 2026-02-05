@@ -422,8 +422,7 @@ Node::~Node()
     ASSERT(!m_next);
 
     {
-        // Not refing document because it may be in the middle of destruction.
-        auto& document = this->document(); // Store document before clearing out m_treeScope.
+        SUPPRESS_UNCHECKED_LOCAL auto& document = this->document(); // Store document before clearing out m_treeScope.
 
         // The call to decrementReferencingNodeCount() below may destroy the document so we need to clear our
         // m_treeScope CheckedPtr beforehand.
@@ -630,8 +629,8 @@ ExceptionOr<NodeVector> Node::convertNodesOrStringsIntoNodeVector(FixedVector<No
         ASSERT(std::holds_alternative<RefPtr<Node>>(variant));
         RefPtr node = WTF::move(std::get<RefPtr<Node>>(variant));
         ASSERT(node);
-        if (auto* fragment = dynamicDowncast<DocumentFragment>(node.get()); fragment) [[unlikely]] {
-            for (auto* child = fragment->firstChild(); child; child = child->nextSibling())
+        if (RefPtr fragment = dynamicDowncast<DocumentFragment>(node.get()); fragment) [[unlikely]] {
+            for (RefPtr child = fragment->firstChild(); child; child = child->nextSibling())
                 nodeVector.append(*child);
         } else
             nodeVector.append(node.releaseNonNull());
@@ -732,7 +731,7 @@ ExceptionOr<void> Node::normalize()
     while (RefPtr firstChild = node->firstChild())
         node = WTF::move(firstChild);
     while (node) {
-        if (auto* element = dynamicDowncast<Element>(*node))
+        if (RefPtr element = dynamicDowncast<Element>(*node))
             element->normalizeAttributes();
 
         if (node == this)
@@ -885,7 +884,7 @@ Node::Editability Node::computeEditabilityWithStyle(const RenderStyle* incomingS
         document->updateStyleIfNeeded();
     }
 
-    auto* style = [&] {
+    CheckedPtr style = [&]() -> const RenderStyle* {
         if (incomingStyle)
             return incomingStyle;
         if (isDocumentNode())
@@ -909,14 +908,14 @@ Node::Editability Node::computeEditability(UserSelectAllTreatment treatment, Sho
 
 LayoutRect Node::absoluteBoundingRect(bool* isReplaced)
 {
-    RenderObject* hitRenderer = this->renderer();
+    CheckedPtr hitRenderer = this->renderer();
     if (!hitRenderer) {
         if (auto* area = dynamicDowncast<HTMLAreaElement>(*this)) {
             if (RefPtr imageElement = area->imageElement())
                 hitRenderer = imageElement->renderer();
         }
     }
-    RenderObject* renderer = hitRenderer;
+    CheckedPtr renderer = hitRenderer.get();
     while (renderer && !renderer->isBody() && !renderer->isDocumentElementRenderer()) {
         if (renderer->isRenderBlock() || renderer->isNonReplacedAtomicInlineLevelBox() || renderer->isBlockLevelReplacedOrAtomicInline()) {
             // FIXME: Is this really what callers want for the "isReplaced" flag?
@@ -964,7 +963,7 @@ void Node::updateAncestorsForStyleRecalc()
 {
     markAncestorsForInvalidatedStyle();
 
-    auto* documentElement = document().documentElement();
+    RefPtr documentElement = document().documentElement();
     if (!documentElement)
         return;
     if (!documentElement->childNeedsStyleRecalc() && !documentElement->needsStyleRecalc())
@@ -1051,10 +1050,10 @@ inline bool Document::shouldInvalidateNodeListAndCollectionCachesForAttribute(co
 template <typename InvalidationFunction>
 void Document::invalidateNodeListAndCollectionCaches(InvalidationFunction invalidate)
 {
-    for (auto* list : copyToVectorSpecialization<Vector<LiveNodeList*, 8>>(m_listsInvalidatedAtDocument))
+    for (RefPtr list : copyToVectorSpecialization<Vector<LiveNodeList*, 8>>(m_listsInvalidatedAtDocument))
         invalidate(*list);
 
-    for (auto* collection : copyToVectorSpecialization<Vector<HTMLCollection*, 8>>(m_collectionsInvalidatedAtDocument))
+    for (RefPtr collection : copyToVectorSpecialization<Vector<HTMLCollection*, 8>>(m_collectionsInvalidatedAtDocument))
         invalidate(*collection);
 }
 
@@ -1074,7 +1073,7 @@ void Node::invalidateNodeListAndCollectionCachesInAncestors()
         list.invalidateCache();
     });
 
-    for (auto* node = this; node; node = node->parentNode()) {
+    for (CheckedPtr node = this; node; node = node->parentNode()) {
         if (!node->hasRareData())
             continue;
 
@@ -1101,7 +1100,7 @@ void Node::invalidateNodeListCollectionAndInnerHTMLPrefixCachesInAncestorsForAtt
         });
     }
 
-    for (auto* node = this; node; node = node->parentNode()) {
+    for (CheckedPtr node = this; node; node = node->parentNode()) {
         if (shouldSetMutationBit && !node->hasDidMutateSubtreeAfterSetInnerHTML()) {
             node->setDidMutateSubtreeAfterSetInnerHTML();
             if (node == cachedContainer.get())
@@ -1201,7 +1200,7 @@ bool Node::isComposedTreeDescendantOf(const Node& node) const
 Node* Node::pseudoAwarePreviousSibling() const
 {
     auto* pseudoElement = dynamicDowncast<PseudoElement>(*this);
-    Element* parentOrHost = pseudoElement ? pseudoElement->hostElement() : parentElement();
+    RefPtr parentOrHost = pseudoElement ? pseudoElement->hostElement() : parentElement();
     if (parentOrHost && !previousSibling()) {
         if (isAfterPseudoElement() && parentOrHost->lastChild())
             return parentOrHost->lastChild();
@@ -1214,7 +1213,7 @@ Node* Node::pseudoAwarePreviousSibling() const
 Node* Node::pseudoAwareNextSibling() const
 {
     auto* pseudoElement = dynamicDowncast<PseudoElement>(*this);
-    Element* parentOrHost = pseudoElement ? pseudoElement->hostElement() : parentElement();
+    RefPtr parentOrHost = pseudoElement ? pseudoElement->hostElement() : parentElement();
     if (parentOrHost && !nextSibling()) {
         if (isBeforePseudoElement() && parentOrHost->firstChild())
             return parentOrHost->firstChild();
@@ -1227,7 +1226,7 @@ Node* Node::pseudoAwareNextSibling() const
 Node* Node::pseudoAwareFirstChild() const
 {
     if (auto* currentElement = dynamicDowncast<Element>(*this)) {
-        Node* first = currentElement->beforePseudoElement();
+        SUPPRESS_UNCHECKED_LOCAL Node* first = currentElement->beforePseudoElement();
         if (first)
             return first;
         first = currentElement->firstChild();
@@ -1241,7 +1240,7 @@ Node* Node::pseudoAwareFirstChild() const
 Node* Node::pseudoAwareLastChild() const
 {
     if (auto* currentElement = dynamicDowncast<Element>(*this)) {
-        Node* last = currentElement->afterPseudoElement();
+        SUPPRESS_UNCHECKED_LOCAL Node* last = currentElement->afterPseudoElement();
         if (last)
             return last;
         last = currentElement->lastChild();
@@ -1271,11 +1270,11 @@ bool Node::canStartSelection() const
         return true;
 
     if (renderer()) {
-        const RenderStyle& style = renderer()->style();
+        const CheckedRef style = renderer()->style();
 
         // We allow selections to begin within an element that has -webkit-user-select: none set,
         // but if the element is draggable then dragging should take priority over selection.
-        if (style.userDrag() == UserDrag::Element && style.usedUserSelect() == UserSelect::None)
+        if (style->userDrag() == UserDrag::Element && style->usedUserSelect() == UserSelect::None)
             return false;
     }
     return parentOrShadowHostNode() ? parentOrShadowHostNode()->canStartSelection() : true;
@@ -1288,19 +1287,9 @@ Element* Node::shadowHost() const
     return nullptr;
 }
 
-RefPtr<Element> Node::protectedShadowHost() const
-{
-    return shadowHost();
-}
-
 ShadowRoot* Node::containingShadowRoot() const
 {
     return dynamicDowncast<ShadowRoot>(treeScope().rootNode());
-}
-
-RefPtr<ShadowRoot> Node::protectedContainingShadowRoot() const
-{
-    return containingShadowRoot();
 }
 
 #if ASSERT_ENABLED
@@ -1319,7 +1308,7 @@ bool Node::isClosedShadowHidden(const Node& otherNode) const
     // Use Vector instead of HashSet since we expect the number of ancestor tree scopes to be small.
     Vector<TreeScope*, 8> ancestorScopesOfThisNode;
 
-    for (auto* scope = &treeScope(); scope; scope = scope->parentTreeScope())
+    for (RefPtr scope = &treeScope(); scope; scope = scope->parentTreeScope())
         ancestorScopesOfThisNode.append(scope);
 
     for (auto* treeScopeThatCanAccessOtherNode = &otherNode.treeScope(); treeScopeThatCanAccessOtherNode; treeScopeThatCanAccessOtherNode = treeScopeThatCanAccessOtherNode->parentTreeScope()) {
@@ -1347,14 +1336,14 @@ static inline ShadowRoot* parentShadowRoot(const Node& node)
 
 HTMLSlotElement* Node::assignedSlot() const
 {
-    if (auto* shadowRoot = parentShadowRoot(*this))
+    if (RefPtr shadowRoot = parentShadowRoot(*this))
         return shadowRoot->findAssignedSlot(*this);
     return nullptr;
 }
 
 HTMLSlotElement* Node::assignedSlotForBindings() const
 {
-    auto* shadowRoot = parentShadowRoot(*this);
+    RefPtr shadowRoot = parentShadowRoot(*this);
     if (shadowRoot && shadowRoot->mode() == ShadowRootMode::Open)
         return shadowRoot->findAssignedSlot(*this);
     return nullptr;
@@ -1534,7 +1523,7 @@ bool Node::isRootEditableElement() const
 Element* Node::rootEditableElement() const
 {
     Element* result = nullptr;
-    for (Node* node = const_cast<Node*>(this); node && node->hasEditableStyle(); node = node->parentNode()) {
+    for (SUPPRESS_UNCHECKED_LOCAL Node* node = const_cast<Node*>(this); node && node->hasEditableStyle(); node = node->parentNode()) {
         if (auto* element = dynamicDowncast<Element>(*node))
             result = element;
         if (document().body() == node)
@@ -1618,9 +1607,9 @@ bool Node::isEqualNode(Node* other) const
     case Node::DOCUMENT_FRAGMENT_NODE:
         break;
     }
-    
-    Node* child = firstChild();
-    Node* otherChild = other->firstChild();
+
+    SUPPRESS_UNCHECKED_LOCAL Node* child = firstChild();
+    SUPPRESS_UNCHECKED_LOCAL Node* otherChild = other->firstChild();
     
     while (child) {
         if (!child->isEqualNode(otherChild))
@@ -1662,22 +1651,22 @@ static const AtomString& locateDefaultNamespace(const Node& node, const AtomStri
                 }
             }
         }
-        auto* parent = node.parentElement();
+        SUPPRESS_UNCHECKED_LOCAL auto* parent = node.parentElement();
         return parent ? locateDefaultNamespace(*parent, prefix) : nullAtom();
     }
     case Node::DOCUMENT_NODE:
-        if (auto* documentElement = uncheckedDowncast<Document>(node).documentElement())
+        if (RefPtr documentElement = uncheckedDowncast<Document>(node).documentElement())
             return locateDefaultNamespace(*documentElement, prefix);
         return nullAtom();
     case Node::DOCUMENT_TYPE_NODE:
     case Node::DOCUMENT_FRAGMENT_NODE:
         return nullAtom();
     case Node::ATTRIBUTE_NODE:
-        if (auto* ownerElement = uncheckedDowncast<Attr>(node).ownerElement())
+        if (RefPtr ownerElement = uncheckedDowncast<Attr>(node).ownerElement())
             return locateDefaultNamespace(*ownerElement, prefix);
         return nullAtom();
     default:
-        if (auto* parent = node.parentElement())
+        if (RefPtr parent = node.parentElement())
             return locateDefaultNamespace(*parent, prefix);
         return nullAtom();
     }
@@ -1709,7 +1698,7 @@ static const AtomString& locateNamespacePrefix(const Element& element, const Ato
                 return attribute.localName();
         }
     }
-    auto* parent = element.parentElement();
+    SUPPRESS_UNCHECKED_LOCAL auto* parent = element.parentElement();
     return parent ? locateNamespacePrefix(*parent, namespaceURI) : nullAtom();
 }
 
@@ -1723,18 +1712,18 @@ const AtomString& Node::lookupPrefix(const AtomString& namespaceURI) const
     case ELEMENT_NODE:
         return locateNamespacePrefix(uncheckedDowncast<Element>(*this), namespaceURI);
     case DOCUMENT_NODE:
-        if (auto* documentElement = uncheckedDowncast<Document>(*this).documentElement())
+        if (RefPtr documentElement = uncheckedDowncast<Document>(*this).documentElement())
             return locateNamespacePrefix(*documentElement, namespaceURI);
         return nullAtom();
     case DOCUMENT_FRAGMENT_NODE:
     case DOCUMENT_TYPE_NODE:
         return nullAtom();
     case ATTRIBUTE_NODE:
-        if (auto* ownerElement = uncheckedDowncast<Attr>(*this).ownerElement())
+        if (RefPtr ownerElement = uncheckedDowncast<Attr>(*this).ownerElement())
             return locateNamespacePrefix(*ownerElement, namespaceURI);
         return nullAtom();
     default:
-        if (auto* parent = parentElement())
+        if (RefPtr parent = parentElement())
             return locateNamespacePrefix(*parent, namespaceURI);
         return nullAtom();
     }
@@ -1852,16 +1841,16 @@ unsigned short Node::compareDocumentPosition(Node& otherNode)
     auto* attr1 = dynamicDowncast<Attr>(*this);
     auto* attr2 = dynamicDowncast<Attr>(otherNode);
 
-    auto* start1 = attr1 ? attr1->ownerElement() : this;
-    auto* start2 = attr2 ? attr2->ownerElement() : &otherNode;
+    RefPtr start1 = attr1 ? attr1->ownerElement() : this;
+    RefPtr start2 = attr2 ? attr2->ownerElement() : &otherNode;
 
     if (!start1 || !start2)
         return compareDetachedElementsPosition(*this, otherNode);
 
     if (attr1 && attr2 && start1 == start2) {
-        auto& element = downcast<Element>(*start1);
-        element.synchronizeAllAttributes();
-        for (auto& attribute : element.attributes()) {
+        Ref element = downcast<Element>(*start1);
+        element->synchronizeAllAttributes();
+        for (auto& attribute : element->attributes()) {
             if (attr1->qualifiedName() == attribute.name())
                 return DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC | DOCUMENT_POSITION_FOLLOWING;
             if (attr2->qualifiedName() == attribute.name())
@@ -1902,9 +1891,9 @@ FloatPoint Node::convertToPage(const FloatPoint& p) const
     // If there is a renderer, just ask it to do the conversion
     if (renderer())
         return renderer()->localToAbsolute(p, UseTransforms);
-    
+
     // Otherwise go up the tree looking for a renderer
-    if (auto* parent = parentElement())
+    if (RefPtr parent = parentElement())
         return parent->convertToPage(p);
 
     // No parent - no conversion needed
@@ -1918,7 +1907,7 @@ FloatPoint Node::convertFromPage(const FloatPoint& p) const
         return renderer()->absoluteToLocal(p, UseTransforms);
 
     // Otherwise go up the tree looking for a renderer
-    if (auto* parent = parentElement())
+    if (RefPtr parent = parentElement())
         return parent->convertFromPage(p);
 
     // No parent - no conversion needed
@@ -2127,11 +2116,11 @@ void Node::getCandidateSubresourceURLs(ListHashSet<URL>& urls) const
 
 Element* Node::enclosingLinkEventParentOrSelf()
 {
-    for (Node* node = this; node; node = node->parentInComposedTree()) {
+    for (SUPPRESS_UNCOUNTED_LOCAL auto* node = this; node; node = node->parentInComposedTree()) {
         // For imagemaps, the enclosing link element is the associated area element not the image itself.
         // So we don't let images be the enclosing link element, even though isLink sometimes returns
         // true for them.
-        if (auto* element = dynamicDowncast<Element>(*node); element && element->isLink() && !is<HTMLImageElement>(*element))
+        if (SUPPRESS_UNCOUNTED_LOCAL auto* element = dynamicDowncast<Element>(*node); element && element->isLink() && !is<HTMLImageElement>(*element))
             return element;
     }
 
@@ -2147,11 +2136,11 @@ template <typename MoveNodeFunction, typename MoveShadowRootFunction>
 static unsigned traverseSubtreeToUpdateTreeScope(Node& root, NOESCAPE const MoveNodeFunction& moveNode, NOESCAPE const MoveShadowRootFunction& moveShadowRoot)
 {
     unsigned count = 0;
-    for (Node* node = &root; node; node = NodeTraversal::next(*node, &root)) {
+    for (CheckedPtr node = &root; node; node = NodeTraversal::next(*node, &root)) {
         moveNode(*node);
         ++count;
 
-        auto* element = dynamicDowncast<Element>(*node);
+        RefPtr element = dynamicDowncast<Element>(*node);
         if (!element)
             continue;
 
@@ -2162,7 +2151,7 @@ static unsigned traverseSubtreeToUpdateTreeScope(Node& root, NOESCAPE const Move
             }
         }
 
-        if (auto* shadow = element->shadowRoot())
+        if (RefPtr shadow = element->shadowRoot())
             count += moveShadowRoot(*shadow);
     }
     return count;
@@ -2220,11 +2209,11 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
 {
     ASSERT(&oldScope != &newScope);
 
-    Document& oldDocument = oldScope.documentScope();
-    Document& newDocument = newScope.documentScope();
+    Ref oldDocument = oldScope.documentScope();
+    Ref newDocument = newScope.documentScope();
     bool newScopeIsUAShadowTree = newScope.rootNode().hasBeenInUserAgentShadowTree();
-    if (&oldDocument != &newDocument) {
-        oldDocument.incrementReferencingNodeCount();
+    if (&oldDocument.get() != &newDocument.get()) {
+        oldDocument->incrementReferencingNodeCount();
         bool isFastCase = isDocumentEligibleForFastAdoption(oldDocument, newDocument) && !newScopeIsUAShadowTree;
         if (isFastCase) {
             unsigned nodeCount = traverseSubtreeToUpdateTreeScope(root, [&](Node& node) {
@@ -2233,13 +2222,12 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
                 node.setTreeScope(newScope);
                 node.moveNodeToNewDocumentFastCase(oldDocument, newDocument);
             }, [&](ShadowRoot& shadowRoot) {
-                ASSERT_WITH_SECURITY_IMPLICATION(&shadowRoot.document() == &oldDocument);
+                ASSERT_WITH_SECURITY_IMPLICATION(&shadowRoot.document() == oldDocument.ptr());
                 shadowRoot.moveShadowRootToNewParentScope(newScope, newDocument);
                 return moveShadowTreeToNewDocumentFastCase(shadowRoot, oldDocument, newDocument);
             });
-//            UNUSED_PARAM(nodeCount);
-            newDocument.incrementReferencingNodeCount(nodeCount);
-            oldDocument.decrementReferencingNodeCount(nodeCount);
+            newDocument->incrementReferencingNodeCount(nodeCount);
+            oldDocument->decrementReferencingNodeCount(nodeCount);
         } else {
             traverseSubtreeToUpdateTreeScope(root, [&](Node& node) {
                 ASSERT(!node.isTreeScope());
@@ -2249,14 +2237,14 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
                 node.setTreeScope(newScope);
                 node.moveNodeToNewDocumentSlowCase(oldDocument, newDocument);
             }, [&](ShadowRoot& shadowRoot) {
-                ASSERT_WITH_SECURITY_IMPLICATION(&shadowRoot.document() == &oldDocument);
+                ASSERT_WITH_SECURITY_IMPLICATION(&shadowRoot.document() == oldDocument.ptr());
                 shadowRoot.moveShadowRootToNewParentScope(newScope, newDocument);
                 moveShadowTreeToNewDocumentSlowCase(shadowRoot, oldDocument, newDocument);
                 return 0; // Unused
             });
         }
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&oldScope.documentScope() == &oldDocument && &newScope.documentScope() == &newDocument);
-        oldDocument.decrementReferencingNodeCount();
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&oldScope.documentScope() == oldDocument.ptr() && &newScope.documentScope() == newDocument.ptr());
+        oldDocument->decrementReferencingNodeCount();
     } else {
         traverseSubtreeToUpdateTreeScope(root, [&](Node& node) {
             ASSERT(!node.isTreeScope());
@@ -2333,7 +2321,7 @@ void Node::moveNodeToNewDocumentSlowCase(Document& oldDocument, Document& newDoc
             cache->remove(*this);
     }
 
-    auto* textManipulationController = oldDocument.textManipulationControllerIfExists();
+    CheckedPtr textManipulationController = oldDocument.textManipulationControllerIfExists();
     if (textManipulationController) [[unlikely]]
         textManipulationController->removeNode(*this);
 
@@ -2577,11 +2565,11 @@ HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> Node::registeredMu
 
     for (RefPtr node = this; node; node = node->parentNode()) {
         if (auto* registry = node->mutationObserverRegistry()) {
-            for (auto& registration : *registry)
+            for (Ref registration : *registry)
                 collectMatchingObserversForMutation(registration);
         }
         if (auto* registry = node->transientMutationObserverRegistry()) {
-            for (auto& registration : *registry)
+            for (Ref registration : *registry)
                 collectMatchingObserversForMutation(registration);
         }
     }
@@ -2642,14 +2630,14 @@ void Node::notifyMutationObserversNodeWillDetach()
     if (!document().hasMutationObservers())
         return;
 
-    for (Node* node = parentNode(); node; node = node->parentNode()) {
+    for (CheckedPtr node = parentNode(); node; node = node->parentNode()) {
         if (auto* registry = node->mutationObserverRegistry()) {
-            for (auto& registration : *registry)
+            for (Ref registration : *registry)
                 registration->observedSubtreeNodeWillDetach(*this);
         }
         if (auto* transientRegistry = node->transientMutationObserverRegistry()) {
-            for (auto& registration : *transientRegistry)
-                registration.observedSubtreeNodeWillDetach(*this);
+            for (Ref registration : *transientRegistry)
+                registration->observedSubtreeNodeWillDetach(*this);
         }
     }
 }
@@ -3016,7 +3004,7 @@ template<> ContainerNode* parent<ComposedTree>(const Node& node)
 template<TreeType treeType> size_t depth(const Node& node)
 {
     size_t depth = 0;
-    auto ancestor = &node;
+    SUPPRESS_UNCHECKED_LOCAL auto ancestor = &node;
     while ((ancestor = parent<treeType>(*ancestor)))
         ++depth;
     return depth;
@@ -3041,12 +3029,12 @@ template<TreeType treeType> AncestorAndChildren commonInclusiveAncestorAndChildr
     auto [x, y, difference] = depthA >= depthB
         ? std::make_tuple(&a, &b, depthA - depthB)
         : std::make_tuple(&b, &a, depthB - depthA);
-    decltype(x) distinctAncestorA = nullptr;
+    SUPPRESS_UNCHECKED_LOCAL decltype(x) distinctAncestorA = nullptr;
     for (decltype(difference) i = 0; i < difference; ++i) {
         distinctAncestorA = x;
         x = parent<treeType>(*x);
     }
-    decltype(y) distinctAncestorB = nullptr;
+    SUPPRESS_UNCHECKED_LOCAL decltype(y) distinctAncestorB = nullptr;
     while (x != y) {
         distinctAncestorA = x;
         distinctAncestorB = y;

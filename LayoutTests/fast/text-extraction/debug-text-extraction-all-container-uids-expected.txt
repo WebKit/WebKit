@@ -12,9 +12,11 @@ root
         input,'text',uid=…,placeholder='Enter text here'
         'Clickable Div'
     section,uid=…
-        'Name Field\n\n        \nDescription'
+        'Name Field'
+        'Description'
         input,'text',uid=…,placeholder='Your name'
         'This region is labeled by another element.'
         input,'text',uid=…,placeholder='Full name'
-        'User Profile\n\n        \n\n            Username:'
+        'User Profile'
+        'Username:'
         input,'text',uid=…,label='Username:'

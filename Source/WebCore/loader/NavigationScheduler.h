@@ -84,7 +84,6 @@ private:
 
     void timerFired();
     void schedule(std::unique_ptr<ScheduledNavigation>);
-    Ref<Frame> protectedFrame() const;
 
     static LockBackForwardList mustLockBackForwardList(Frame& targetFrame);
 

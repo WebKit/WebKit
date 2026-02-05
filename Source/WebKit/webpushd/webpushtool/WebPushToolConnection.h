@@ -78,7 +78,7 @@ private:
     String m_bundleIdentifier;
     String m_pushPartition;
 
-    XPCObjectPtr<xpc_connection_t> m_connection;
+    OSObjectPtr<xpc_connection_t> m_connection;
     ASCIILiteral m_serviceName;
 };
 

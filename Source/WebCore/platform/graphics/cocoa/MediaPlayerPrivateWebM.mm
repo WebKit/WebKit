@@ -50,6 +50,7 @@
 #import "ResourceResponse.h"
 #import "SampleMap.h"
 #import "SecurityOrigin.h"
+#import "ShareableBitmap.h"
 #import "TrackBuffer.h"
 #import "VP9UtilitiesCocoa.h"
 #import "VideoFrameCV.h"
@@ -150,6 +151,12 @@ MediaPlayer::SupportsType MediaPlayerPrivateWebM::supportsType(const MediaEngine
 {
     if (parameters.isMediaSource || parameters.isMediaStream || parameters.requiresRemotePlayback)
         return MediaPlayer::SupportsType::IsNotSupported;
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    // This engine does not support wireless playback.
+    if (parameters.playbackTargetType != MediaPlaybackTargetType::None)
+        return MediaPlayer::SupportsType::IsNotSupported;
+#endif
 
     return SourceBufferParserWebM::isContentTypeSupported(parameters.type, parameters.supportsLimitedMatroska);
 }
@@ -750,6 +757,11 @@ DestinationColorSpace MediaPlayerPrivateWebM::colorSpace()
     updateLastImage();
     RefPtr lastImage = m_lastImage;
     return lastImage ? lastImage->colorSpace() : DestinationColorSpace::SRGB();
+}
+
+Ref<MediaPlayer::BitmapImagePromise> MediaPlayerPrivateWebM::bitmapImageForCurrentTime()
+{
+    return m_renderer->currentBitmapImage();
 }
 
 void MediaPlayerPrivateWebM::setNaturalSize(FloatSize size)

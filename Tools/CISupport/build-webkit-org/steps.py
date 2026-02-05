@@ -63,6 +63,7 @@ MSG_FOR_EXCESSIVE_LOGS = f'Stopped due to excessive logging, limit: {THRESHOLD_F
 HASH_LENGTH_TO_DISPLAY = 8
 SCAN_BUILD_OUTPUT_DIR = 'scan-build-output'
 SAFER_CPP_ARCHIVE_DIR = 'smart-pointer-result-archive'
+SWIFT_DIR = 'swift-project/swift'
 
 DNS_NAME = CURRENT_HOSTNAME
 if DNS_NAME in BUILD_WEBKIT_HOSTNAMES:
@@ -2289,3 +2290,55 @@ class RebootWithUpdatedCrossTargetImage(shell.ShellCommand):
         if rc == SUCCESS:
             self.build.buildFinished(['Rebooting with updated image, retrying build'], RETRY)
         defer.returnValue(rc)
+
+
+class BuildSwift(shell.ShellCommand, ShellMixin):
+    name = 'build-swift'
+
+    def __init__(self, **kwargs):
+        super().__init__(logEnviron=False, workdir=SWIFT_DIR, **kwargs)
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.command = ['utils/build-script', '--skip-build-benchmarks', '--swift-darwin-supported-archs', self.getProperty('architecture'), '--release', '--no-assertions', '--swift-disable-dead-stripping', '--bootstrapping=hosttools']
+
+        filter_command = ' '.join(quote(str(c)) for c in self.command) + f" 2>&1 | python3 {self.getProperty('builddir')}/build/Tools/Scripts/filter-test-logs swift --output {self.getProperty('builddir')}/build/swift-build-log.txt"
+        self.command = self.shell_command(filter_command)
+
+        rc = yield super().run()
+
+        steps_to_add = [
+            GenerateS3URL(
+                f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}-{self.name}",
+                extension='txt',
+                content_type='text/plain',
+                additions=f'{self.build.number}',
+            ),
+            UploadFileToS3(
+                'swift-build-log.txt',
+                links={self.name: 'Swift build log'},
+                content_type='text/plain',
+            )
+        ]
+        self.build.addStepsAfterCurrentStep(steps_to_add)
+
+        if rc != SUCCESS:
+            if self.getProperty('current_swift_tag', ''):
+                return WARNINGS
+            self.build.buildFinished(['Failed to set up swift, retrying update'], RETRY)
+
+        return defer.returnValue(rc)
+
+    def getResultSummary(self):
+        if self.results == SKIPPED:
+            return {'step': 'Swift executable already exists'}
+        elif self.results == WARNINGS:
+            return {'step': 'Failed to update swift, using previous checkout'}
+        elif self.results != SUCCESS:
+            return {'step': 'Failed to build Swift'}
+        return {'step': 'Successfully built Swift'}
+
+    def doStepIf(self, step):
+        if not self.getProperty('has_swift_executable'):
+            return True
+        return self.getProperty('canonical_swift_tag') and self.getProperty('current_swift_tag', '') != self.getProperty('canonical_swift_tag')

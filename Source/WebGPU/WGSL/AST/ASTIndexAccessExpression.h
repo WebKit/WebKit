@@ -33,8 +33,12 @@ class IndexAccessExpression final : public Expression {
     WGSL_AST_BUILDER_NODE(IndexAccessExpression);
 public:
     NodeKind kind() const override;
+
     Expression& base() { return m_base.get(); }
+    const Expression& base() const { return m_base.get(); }
+
     Expression& index() { return m_index.get(); }
+    const Expression& index() const { return m_index.get(); }
 
 private:
     IndexAccessExpression(SourceSpan span, Expression::Ref&& base, Expression::Ref&& index)

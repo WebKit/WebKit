@@ -29,7 +29,6 @@ class TSymbolTable;
                                            TIntermBlock *root,
                                            bool initializeUninitializedGlobals,
                                            bool canUseLoopsToInitialize,
-                                           bool highPrecisionSupported,
                                            bool forceDeferNonConstGlobalInitializers,
                                            TSymbolTable *symbolTable);
 

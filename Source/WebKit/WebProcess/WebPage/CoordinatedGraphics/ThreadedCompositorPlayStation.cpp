@@ -27,7 +27,7 @@
 #include "ThreadedCompositorPlayStation.h"
 
 #if USE(COORDINATED_GRAPHICS)
-#include "AcceleratedSurface.h"
+#include "AcceleratedSurfacePlayStation.h"
 #include "CompositingRunLoop.h"
 #include "CoordinatedSceneState.h"
 #include "LayerTreeHostPlayStation.h"
@@ -278,7 +278,7 @@ void ThreadedCompositor::paintToCurrentGLContext(const TransformationMatrix& mat
         m_textureMapper->beginClip(TransformationMatrix(), *rectContainingRegionThatActuallyChanged);
 #endif
 
-    m_surface->clear();
+    m_surface->clear({ });
 
     WTFBeginSignpost(this, PaintTextureMapperLayerTree);
     currentRootLayer.paint(*m_textureMapper);

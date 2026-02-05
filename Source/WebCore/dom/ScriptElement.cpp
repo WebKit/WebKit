@@ -134,7 +134,7 @@ void ScriptElement::handleAsyncAttribute()
 
 void ScriptElement::dispatchErrorEvent()
 {
-    protectedElement()->dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    protect(element())->dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 static void reportSpeculationRulesError(LocalFrame& frame, const String& errorMessage)
@@ -297,7 +297,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
     case ScriptType::SpeculationRules: {
         // If the element has a source attribute, queue a task to fire an event named error at the element, and return.
         if (hasSourceAttribute()) {
-            element->protectedDocument()->checkedEventLoop()->queueTask(TaskSource::DOMManipulation, [protectedThis = Ref { *this }] {
+            protect(element->document())->checkedEventLoop()->queueTask(TaskSource::DOMManipulation, [protectedThis = Ref { *this }] {
                 protectedThis->dispatchErrorEvent();
             });
             return false;
@@ -323,11 +323,11 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
     } else if ((isClassicExternalScript || scriptType == ScriptType::Module) && !hasAsyncAttribute() && !m_forceAsync) {
         m_willExecuteInOrder = true;
         ASSERT(m_loadableScript);
-        document->protectedScriptRunner()->queueScriptForExecution(*this, *protectedLoadableScript(), ScriptRunner::IN_ORDER_EXECUTION);
+        protect(document->scriptRunner())->queueScriptForExecution(*this, *protect(loadableScript()), ScriptRunner::IN_ORDER_EXECUTION);
     } else if (hasSourceAttribute() || scriptType == ScriptType::Module) {
         ASSERT(m_loadableScript);
         ASSERT(hasAsyncAttribute() || m_forceAsync);
-        document->protectedScriptRunner()->queueScriptForExecution(*this, *protectedLoadableScript(), ScriptRunner::ASYNC_EXECUTION);
+        protect(document->scriptRunner())->queueScriptForExecution(*this, *protect(loadableScript()), ScriptRunner::ASYNC_EXECUTION);
     } else if (!hasSourceAttribute() && m_parserInserted == ParserInserted::Yes && !document->haveStylesheetsLoaded()) {
         ASSERT(scriptType == ScriptType::Classic || scriptType == ScriptType::ImportMap || scriptType == ScriptType::SpeculationRules);
         m_willBeParserExecuted = true;
@@ -567,7 +567,7 @@ void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript
             // When the script is "null" due to a fetch error, an error event
             // should be dispatched for the script element.
             if (std::optional<LoadableScript::ConsoleMessage> message = error->consoleMessage)
-                element().protectedDocument()->addConsoleMessage(message->source, message->level, message->message);
+                protect(element().document())->addConsoleMessage(message->source, message->level, message->message);
             dispatchErrorEvent();
             break;
         }
@@ -630,7 +630,7 @@ bool ScriptElement::ignoresLoadRequest() const
 
 String ScriptElement::scriptContent() const
 {
-    return TextNodeTraversal::childTextContent(protectedElement());
+    return TextNodeTraversal::childTextContent(protect(element()));
 }
 
 void ScriptElement::setTrustedScriptText(const String& text)

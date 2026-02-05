@@ -4,7 +4,7 @@ layer at (0,0) size 800x165
   RenderBlock {html} at (0,0) size 800x165
     RenderBody {body} at (8,16) size 784x141 [color=#008000]
       RenderBlock {p} at (0,0) size 784x20 [color=#000000]
-        RenderText {#text} at (0,0) size 240x19
+        RenderText {#text} at (0,0) size 240x20
           text run at (0,0) width 240: "There should be a green block below."
       RenderBlock (anonymous) at (0,36) size 784x105
         RenderSVGRoot {svg} at (8,52) size 300x100

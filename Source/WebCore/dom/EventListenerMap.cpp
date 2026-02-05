@@ -33,7 +33,7 @@
 #include "config.h"
 #include "EventListenerMap.h"
 
-#include "AddEventListenerOptionsInlines.h"
+#include "AbortSignal.h"
 #include "Event.h"
 #include "EventTarget.h"
 #include "JSEventListener.h"
@@ -203,7 +203,7 @@ static void copyListenersNotCreatedFromMarkupToTarget(const AtomString& eventTyp
         // Event listeners created from markup have already been transfered to the shadow tree during cloning.
         if (JSEventListener::wasCreatedFromMarkup(registeredListener->callback()))
             continue;
-        target->addEventListener(eventType, registeredListener->callback(), registeredListener->useCapture());
+        target->addEventListener(eventType, registeredListener->callback(), { { registeredListener->useCapture() }, std::nullopt, false, nullptr, false });
     }
 }
 

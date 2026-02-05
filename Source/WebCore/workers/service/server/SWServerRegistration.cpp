@@ -301,11 +301,11 @@ void SWServerRegistration::activate()
         updateWorkerState(*worker, ServiceWorkerState::Redundant);
     }
     // Run the Update Registration State algorithm passing registration, "active" and registration's waiting worker as the arguments.
-    updateRegistrationState(ServiceWorkerRegistrationState::Active, protectedWaitingWorker().get());
+    updateRegistrationState(ServiceWorkerRegistrationState::Active, protect(waitingWorker()).get());
     // Run the Update Registration State algorithm passing registration, "waiting" and null as the arguments.
     updateRegistrationState(ServiceWorkerRegistrationState::Waiting, nullptr);
     // Run the Update Worker State algorithm passing registration's active worker and activating as the arguments.
-    updateWorkerState(*protectedActiveWorker(), ServiceWorkerState::Activating);
+    updateWorkerState(*protect(activeWorker()), ServiceWorkerState::Activating);
     // FIXME: For each service worker client whose creation URL matches registration's scope url...
 
     // The registration now has an active worker so we need to check if there are any ready promises that were waiting for this.

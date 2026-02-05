@@ -217,13 +217,12 @@ void HTMLButtonElement::handleCommand()
     if (command != CommandType::Custom && !invokee->isValidCommandType(command))
         return;
 
-    CommandEvent::Init init;
-    init.bubbles = false;
-    init.cancelable = true;
-    init.source = this;
-    init.command = commandRaw.isNull() ? emptyAtom() : commandRaw;
-
-    Ref event = CommandEvent::create(eventNames().commandEvent, init,
+    CommandEvent::Init init {
+        { false, true, false },
+        this,
+        commandRaw.isNull() ? emptyAtom() : commandRaw,
+    };
+    Ref event = CommandEvent::create(eventNames().commandEvent, WTF::move(init),
         CommandEvent::IsTrusted::Yes);
     invokee->dispatchEvent(event);
 
@@ -271,7 +270,7 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
         if (form()) {
             // Update layout before processing form actions in case the style changes
             // the Form or button relationships.
-            protectedDocument()->updateLayoutIgnorePendingStylesheets();
+            protect(document())->updateLayoutIgnorePendingStylesheets();
 
             if (RefPtr currentForm = form()) {
                 if (m_type == Type::Submit)

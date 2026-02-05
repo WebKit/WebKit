@@ -398,8 +398,8 @@ public:
         if (m_highestNodeToBeSerialized && m_highestNodeToBeSerialized->hasTagName(bodyTag))
             return;
 
-        auto block = enclosingBlock(start.deepEquivalent().protectedContainerNode());
-        if (!block || block != enclosingBlock(end.deepEquivalent().protectedContainerNode()))
+        auto block = enclosingBlock(protect(start.deepEquivalent().containerNode()));
+        if (!block || block != enclosingBlock(protect(end.deepEquivalent().containerNode())))
             return;
 
         auto renderer = block->renderer();
@@ -815,13 +815,13 @@ RefPtr<Node> StyledMarkupAccumulator::serializeNodes(const Position& start, cons
         return nullptr;
     RefPtr pastEnd = end.computeNodeAfterPosition();
     if (!pastEnd && end.containerNode())
-        pastEnd = nextSkippingChildren(*end.protectedContainerNode());
+        pastEnd = nextSkippingChildren(*protect(end.containerNode()));
 
     if (!m_highestNodeToBeSerialized)
         m_highestNodeToBeSerialized = traverseNodesForSerialization(*startNode, pastEnd.get(), NodeTraversalMode::DoNotEmitString);
 
     if (m_highestNodeToBeSerialized && m_highestNodeToBeSerialized->parentNode())
-        m_wrappingStyle = EditingStyle::wrappingStyleForSerialization(*m_highestNodeToBeSerialized->protectedParentNode(), shouldAnnotate(), m_standardFontFamilySerializationMode);
+        m_wrappingStyle = EditingStyle::wrappingStyleForSerialization(*protect(m_highestNodeToBeSerialized->parentNode()), shouldAnnotate(), m_standardFontFamilySerializationMode);
 
     return traverseNodesForSerialization(*startNode, pastEnd.get(), NodeTraversalMode::EmitString);
 }
@@ -1377,8 +1377,8 @@ bool isPlainTextMarkup(Node* node)
     
     if (secondChild->nextSibling())
         return false;
-    
-    return parentTabSpanNode(firstChild->protectedFirstChild().get()) && is<Text>(secondChild);
+
+    return parentTabSpanNode(protect(firstChild->firstChild()).get()) && is<Text>(secondChild);
 }
 
 static bool contextPreservesNewline(const SimpleRange& context)
@@ -1595,7 +1595,7 @@ static inline bool hasMutationEventListeners(const Document& document)
 static inline bool canUseSetDataOptimization(const Text& containerChild, const ChildListMutationScope& mutationScope)
 {
     bool authorScriptMayHaveReference = containerChild.refCount();
-    return !authorScriptMayHaveReference && !mutationScope.canObserve() && !hasMutationEventListeners(containerChild.protectedDocument());
+    return !authorScriptMayHaveReference && !mutationScope.canObserve() && !hasMutationEventListeners(protect(containerChild.document()));
 }
 
 ExceptionOr<void> replaceChildrenWithFragment(ContainerNode& container, Ref<DocumentFragment>&& fragment)

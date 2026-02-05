@@ -52,7 +52,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingCoordinator);
 
-#if PLATFORM(IOS_FAMILY) || !ENABLE(ASYNC_SCROLLING)
+#if PLATFORM(IOS_FAMILY) || !ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
 Ref<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 {
     return adoptRef(*new ScrollingCoordinator(page));
@@ -121,7 +121,7 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
         return { };
     return document->eventTrackingRegions();
 #else
-    auto* frameView = frame.view();
+    RefPtr frameView = frame.view();
     if (!frameView)
         return EventTrackingRegions();
 
@@ -147,12 +147,12 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
     }
 
     for (auto& widget : frameView->widgetsInRenderTree()) {
-        auto* pluginViewBase = dynamicDowncast<PluginViewBase>(widget.get());
+        RefPtr pluginViewBase = dynamicDowncast<PluginViewBase>(widget.get());
         if (!pluginViewBase)
             continue;
         if (!pluginViewBase->wantsWheelEvents())
             continue;
-        auto* renderWidget = RenderWidget::find(widget);
+        RefPtr renderWidget = RenderWidget::find(widget);
         if (!renderWidget)
             continue;
         nonFastScrollableRegion.unite(renderWidget->absoluteBoundingBoxRect());
@@ -165,7 +165,7 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
         auto* localSubframe = dynamicDowncast<LocalFrame>(subframe.get());
         if (!localSubframe)
             continue;
-        auto* subframeView = localSubframe->view();
+        RefPtr subframeView = localSubframe->view();
         if (!subframeView)
             continue;
 
@@ -319,9 +319,9 @@ bool ScrollingCoordinator::hasVisibleSlowRepaintViewportConstrainedObjects(const
         auto* viewportConstrainedBoxModelObject = dynamicDowncast<RenderBoxModelObject>(viewportConstrainedObject);
         if (!viewportConstrainedBoxModelObject || !viewportConstrainedBoxModelObject->hasLayer())
             return true;
-        auto& layer = *viewportConstrainedBoxModelObject->layer();
+        CheckedRef layer = *viewportConstrainedBoxModelObject->layer();
         // Any explicit reason that a fixed position element is not composited shouldn't cause slow scrolling.
-        if (!layer.isComposited() && layer.viewportConstrainedNotCompositedReason() == RenderLayer::NoNotCompositedReason)
+        if (!layer->isComposited() && layer->viewportConstrainedNotCompositedReason() == RenderLayer::NoNotCompositedReason)
             return true;
     }
     return false;
@@ -437,7 +437,7 @@ String ScrollingCoordinator::synchronousScrollingReasonsAsText() const
 {
     RefPtr localMainFrame = m_page->localMainFrame();
     if (localMainFrame) {
-        if (auto* frameView = localMainFrame->view())
+        if (RefPtr frameView = localMainFrame->view())
             return synchronousScrollingReasonsAsText(synchronousScrollingReasons(frameView->scrollingNodeID()));
     }
 

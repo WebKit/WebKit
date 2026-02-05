@@ -26,6 +26,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-has-forgiving-selector.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-has-slotted.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-has.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-heading.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-id.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-is-where.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-is.html

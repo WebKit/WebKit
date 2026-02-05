@@ -91,6 +91,7 @@ void RenderSVGContainer::layoutChildren()
     SVGBoundingBoxComputation boundingBoxComputation(*this);
     m_objectBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::objectBoundingBoxDecoration, &m_objectBoundingBoxValid);
     m_strokeBoundingBox = std::nullopt;
+    m_cachedVisualOverflowRect = std::nullopt;
 
     if (auto objectBoundingBoxWithoutTransformations = overridenObjectBoundingBoxWithoutTransformations())
         m_objectBoundingBoxWithoutTransformations = objectBoundingBoxWithoutTransformations.value();

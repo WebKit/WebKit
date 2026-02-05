@@ -58,7 +58,7 @@ public:
     Document* document() const { return m_document.get(); }
 
     std::optional<WebAnimationTime> currentTime(UseCachedCurrentTime = UseCachedCurrentTime::Yes) override;
-    ExceptionOr<Ref<WebAnimation>> animate(Ref<CustomEffectCallback>&&, std::optional<Variant<double, CustomAnimationOptions>>&&);
+    ExceptionOr<Ref<WebAnimation>> animate(Ref<CustomEffectCallback>&&, Variant<double, CustomAnimationOptions>&&);
 
     void animationTimingDidChange(WebAnimation&) override;
     void removeAnimation(WebAnimation&) override;

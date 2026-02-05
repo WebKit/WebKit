@@ -3,9 +3,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// MonomorphizeUnsupportedFunctions: Monomorphize functions that are called with
-// parameters that are incompatible with both Vulkan GLSL and Metal.
-//
 
 #include "compiler/translator/tree_ops/MonomorphizeUnsupportedFunctions.h"
 
@@ -391,6 +388,8 @@ class MonomorphizeTraverser final : public TIntermTraverser
 
         mAnyMonomorphized = true;
 
+        // Note: this is not correct, as it will move side effects before a short-circuiting
+        // expression.
         insertStatementsInParentBlock(replacementIndices);
 
         // Create the arguments for the substitute function call.  Done before monomorphizing the

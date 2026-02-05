@@ -75,10 +75,10 @@ void FontCascadeCache::invalidate()
     m_entries.clear();
 }
 
-void FontCascadeCache::clearWidthCaches()
+void FontCascadeCache::clearMeasurementCaches()
 {
     for (auto& value : m_entries.values())
-        value->fonts.get().widthCache().clear();
+        value->fonts.get().glyphGeometryCache().clear();
 }
 
 void FontCascadeCache::pruneUnreferencedEntries()

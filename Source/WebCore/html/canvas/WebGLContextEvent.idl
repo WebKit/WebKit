@@ -28,13 +28,11 @@
     EnabledBySetting=WebGLEnabled,
     Exposed=(Window,Worker)
 ] interface WebGLContextEvent : Event {
-    constructor([AtomString] DOMString type, optional WebGLContextEventInit eventInit);
+    constructor([AtomString] DOMString type, optional WebGLContextEventInit eventInit = {});
 
     readonly attribute DOMString statusMessage;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary WebGLContextEventInit : EventInit {
+dictionary WebGLContextEventInit : EventInit {
     DOMString statusMessage = "";
 };

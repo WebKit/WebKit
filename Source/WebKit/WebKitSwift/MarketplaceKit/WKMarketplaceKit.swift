@@ -29,15 +29,22 @@ import OSLog
 // FIXME: (rdar://150642154) This cannot be used in WebKit.framework due to a dependency cycle.
 internal import MarketplaceKit
 
-@objc @implementation extension WKMarketplaceKit {
-    @nonobjc private static let logger = Logger(subsystem: "com.apple.WebKit", category: "Loading")
+@objc
+@implementation
+extension WKMarketplaceKit {
+    @nonobjc
+    private static let logger = Logger(subsystem: "com.apple.WebKit", category: "Loading")
 
     class func requestAppInstallation(withTopOrigin topOrigin: URL, url: URL) async throws {
         do {
             try await AppLibrary.current.requestAppInstallationFromBrowser(for: url, referrer: topOrigin)
-            logger.debug("WKMarketplaceKit.requestAppInstallation with top origin \(topOrigin, privacy: .sensitive) for \(url, privacy: .sensitive) succeeded")
+            logger.debug(
+                "WKMarketplaceKit.requestAppInstallation with top origin \(topOrigin, privacy: .sensitive) for \(url, privacy: .sensitive) succeeded"
+            )
         } catch {
-            logger.error("WKMarketplaceKit.requestAppInstallation with top origin \(topOrigin, privacy: .sensitive) for \(url, privacy: .sensitive) failed: \(error, privacy: .public)")
+            logger.error(
+                "WKMarketplaceKit.requestAppInstallation with top origin \(topOrigin, privacy: .sensitive) for \(url, privacy: .sensitive) failed: \(error, privacy: .public)"
+            )
             throw error
         }
     }

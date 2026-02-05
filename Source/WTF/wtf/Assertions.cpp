@@ -655,7 +655,7 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
 
 #if !ASAN_ENABLED && (OS(DARWIN) || PLATFORM(PLAYSTATION)) && (CPU(X86_64) || CPU(ARM64))
 
-void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3, uint64_t misc4, uint64_t misc5, uint64_t misc6)
+void WTFCrashWithInfoImpl(int, const char*, const char*, uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3, uint64_t misc4, uint64_t misc5, uint64_t misc6)
 {
     register uint64_t reasonGPR __asm__(CRASH_GPR0) = reason;
     register uint64_t misc1GPR __asm__(CRASH_GPR1) = misc1;
@@ -668,7 +668,7 @@ void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, u
     __builtin_unreachable();
 }
 
-void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3, uint64_t misc4, uint64_t misc5)
+void WTFCrashWithInfoImpl(int, const char*, const char*, uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3, uint64_t misc4, uint64_t misc5)
 {
     register uint64_t reasonGPR __asm__(CRASH_GPR0) = reason;
     register uint64_t misc1GPR __asm__(CRASH_GPR1) = misc1;
@@ -680,7 +680,7 @@ void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, u
     __builtin_unreachable();
 }
 
-void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3, uint64_t misc4)
+void WTFCrashWithInfoImpl(int, const char*, const char*, uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3, uint64_t misc4)
 {
     register uint64_t reasonGPR __asm__(CRASH_GPR0) = reason;
     register uint64_t misc1GPR __asm__(CRASH_GPR1) = misc1;
@@ -691,7 +691,7 @@ void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, u
     __builtin_unreachable();
 }
 
-void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3)
+void WTFCrashWithInfoImpl(int, const char*, const char*, uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3)
 {
     register uint64_t reasonGPR __asm__(CRASH_GPR0) = reason;
     register uint64_t misc1GPR __asm__(CRASH_GPR1) = misc1;
@@ -701,7 +701,7 @@ void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, u
     __builtin_unreachable();
 }
 
-void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, uint64_t misc1, uint64_t misc2)
+void WTFCrashWithInfoImpl(int, const char*, const char*, uint64_t reason, uint64_t misc1, uint64_t misc2)
 {
     register uint64_t reasonGPR __asm__(CRASH_GPR0) = reason;
     register uint64_t misc1GPR __asm__(CRASH_GPR1) = misc1;
@@ -710,7 +710,7 @@ void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, u
     __builtin_unreachable();
 }
 
-void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, uint64_t misc1)
+void WTFCrashWithInfoImpl(int, const char*, const char*, uint64_t reason, uint64_t misc1)
 {
     register uint64_t reasonGPR __asm__(CRASH_GPR0) = reason;
     register uint64_t misc1GPR __asm__(CRASH_GPR1) = misc1;
@@ -718,7 +718,7 @@ void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, u
     __builtin_unreachable();
 }
 
-void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason)
+void WTFCrashWithInfoImpl(int, const char*, const char*, uint64_t reason)
 {
     register uint64_t reasonGPR __asm__(CRASH_GPR0) = reason;
     __asm__ volatile (WTF_FATAL_CRASH_INST : : "r"(reasonGPR));
@@ -727,13 +727,13 @@ void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason)
 
 #else
 
-void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) { CRASH(); }
-void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) { CRASH(); }
-void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) { CRASH(); }
-void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t, uint64_t, uint64_t, uint64_t) { CRASH(); }
-void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t, uint64_t, uint64_t) { CRASH(); }
-void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t, uint64_t) { CRASH(); }
-void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t) { CRASH(); }
+void WTFCrashWithInfoImpl(int, const char*, const char*, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) { CRASH(); }
+void WTFCrashWithInfoImpl(int, const char*, const char*, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) { CRASH(); }
+void WTFCrashWithInfoImpl(int, const char*, const char*, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) { CRASH(); }
+void WTFCrashWithInfoImpl(int, const char*, const char*, uint64_t, uint64_t, uint64_t, uint64_t) { CRASH(); }
+void WTFCrashWithInfoImpl(int, const char*, const char*, uint64_t, uint64_t, uint64_t) { CRASH(); }
+void WTFCrashWithInfoImpl(int, const char*, const char*, uint64_t, uint64_t) { CRASH(); }
+void WTFCrashWithInfoImpl(int, const char*, const char*, uint64_t) { CRASH(); }
 
 #endif // (OS(DARWIN) || PLATFORM(PLAYSTATION)) && (CPU(X64_64) || CPU(ARM64))
 

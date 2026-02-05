@@ -26,6 +26,6 @@
 [
     Exposed=TestGlobalObject
 ] interface TestAsyncKeyValueIterable {
-    async iterable<USVString, TestNode>;
+    async_iterable<USVString, TestNode>;
 };
 

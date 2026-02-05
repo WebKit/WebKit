@@ -265,14 +265,14 @@ std::optional<LayoutUnit> RenderGrid::availableSpaceForGutters(Style::GridTrackS
     return direction == Style::GridTrackSizingDirection::Columns ? contentBoxLogicalWidth() : contentBoxLogicalHeight();
 }
 
-void RenderGrid::computeTrackSizesForDefiniteSize(Style::GridTrackSizingDirection direction, LayoutUnit availableSpace, GridLayoutState& gridLayoutState)
+void RenderGrid::computeTrackSizesForDefiniteSize(Style::GridTrackSizingDirection direction, LayoutUnit availableSpace, RenderGridLayoutState& gridLayoutState)
 {
     auto autoMarginResolutionScope = SetForScope(m_isComputingTrackSizes, true);
     m_trackSizingAlgorithm.run(direction, numTracks(direction), SizingOperation::TrackSizing, availableSpace, gridLayoutState);
     ASSERT(m_trackSizingAlgorithm.tracksAreWiderThanMinTrackBreadth());
 }
 
-void RenderGrid::repeatTracksSizingIfNeeded(LayoutUnit availableSpaceForColumns, LayoutUnit availableSpaceForRows, GridLayoutState& gridLayoutState)
+void RenderGrid::repeatTracksSizingIfNeeded(LayoutUnit availableSpaceForColumns, LayoutUnit availableSpaceForRows, RenderGridLayoutState& gridLayoutState)
 {
     // In orthogonal flow cases column track's size is determined by using the computed
     // row track's size, which it was estimated during the first cycle of the sizing
@@ -354,7 +354,7 @@ static void cacheBaselineAlignedGridItems(const RenderGrid& grid, GridTrackSizin
     }
 }
 
-Vector<RenderBox*> RenderGrid::computeAspectRatioDependentAndBaselineItems(GridLayoutState& gridLayoutState)
+Vector<RenderBox*> RenderGrid::computeAspectRatioDependentAndBaselineItems(RenderGridLayoutState& gridLayoutState)
 {
     Vector<RenderBox*> dependentGridItems;
 
@@ -379,7 +379,7 @@ bool RenderGrid::canSetColumnAxisStretchRequirementForItem(const RenderBox& grid
     return gridItemBlockFlowDirection == Style::GridTrackSizingDirection::Rows && willStretchItem(gridItem, LogicalBoxAxis::Block);
 }
 
-void RenderGrid::computeLayoutRequirementsForItemsBeforeLayout(GridLayoutState& gridLayoutState) const
+void RenderGrid::computeLayoutRequirementsForItemsBeforeLayout(RenderGridLayoutState& gridLayoutState) const
 {
     for (auto& gridItem : childrenOfType<RenderBox>(*this)) {
 
@@ -449,7 +449,7 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
     {
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || writingMode().isBlockFlipped());
 
-        GridLayoutState gridLayoutState;
+        RenderGridLayoutState gridLayoutState;
 
         updateIntrinsicLogicalHeightsForRowSizingFirstPassCacheAvailability();
         clearGridItemOverridingSizesBeforeLayout(*this);
@@ -587,7 +587,7 @@ void RenderGrid::layoutMasonry(RelayoutChildren relayoutChildren)
     LayoutRepainter repainter(*this);
     {
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || writingMode().isBlockFlipped());
-        GridLayoutState gridLayoutState;
+        RenderGridLayoutState gridLayoutState;
 
         clearGridItemOverridingSizesBeforeLayout(*this);
 
@@ -810,7 +810,7 @@ LayoutUnit RenderGrid::guttersSize(Style::GridTrackSizingDirection direction, un
 
 void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    GridLayoutState gridLayoutState;
+    RenderGridLayoutState gridLayoutState;
 
     LayoutUnit gridItemMinWidth;
     LayoutUnit gridItemMaxWidth;
@@ -861,7 +861,7 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
     maxLogicalWidth += scrollbarWidth;
 }
 
-void RenderGrid::computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm& algorithm, Style::GridTrackSizingDirection direction, GridLayoutState& gridLayoutState, LayoutUnit* minIntrinsicSize, LayoutUnit* maxIntrinsicSize) const
+void RenderGrid::computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm& algorithm, Style::GridTrackSizingDirection direction, RenderGridLayoutState& gridLayoutState, LayoutUnit* minIntrinsicSize, LayoutUnit* maxIntrinsicSize) const
 {
     auto autoMarginResolutionScope = SetForScope(m_isComputingTrackSizes, true);
     algorithm.run(direction, numTracks(direction), SizingOperation::IntrinsicSizeComputation, std::nullopt, gridLayoutState);
@@ -1578,7 +1578,7 @@ void RenderGrid::updateGridAreaLogicalSize(RenderBox& gridItem, std::optional<La
     gridItem.setGridAreaContentLogicalHeight(height);
 }
 
-void RenderGrid::updateGridAreaForAspectRatioItems(const Vector<RenderBox*>& autoGridItems, GridLayoutState& gridLayoutState)
+void RenderGrid::updateGridAreaForAspectRatioItems(const Vector<RenderBox*>& autoGridItems, RenderGridLayoutState& gridLayoutState)
 {
     populateGridPositionsForDirection(m_trackSizingAlgorithm, Style::GridTrackSizingDirection::Columns);
     populateGridPositionsForDirection(m_trackSizingAlgorithm, Style::GridTrackSizingDirection::Rows);
@@ -1591,7 +1591,7 @@ void RenderGrid::updateGridAreaForAspectRatioItems(const Vector<RenderBox*>& aut
     }
 }
 
-void RenderGrid::layoutGridItems(GridLayoutState& gridLayoutState)
+void RenderGrid::layoutGridItems(RenderGridLayoutState& gridLayoutState)
 {
     populateGridPositionsForDirection(m_trackSizingAlgorithm, Style::GridTrackSizingDirection::Columns);
     populateGridPositionsForDirection(m_trackSizingAlgorithm, Style::GridTrackSizingDirection::Rows);
@@ -1635,7 +1635,7 @@ void RenderGrid::layoutGridItems(GridLayoutState& gridLayoutState)
     }
 }
 
-void RenderGrid::layoutMasonryItems(GridLayoutState& gridLayoutState)
+void RenderGrid::layoutMasonryItems(RenderGridLayoutState& gridLayoutState)
 {
     layoutGridItems(gridLayoutState);
 }
@@ -1645,7 +1645,7 @@ void RenderGrid::prepareGridItemForPositionedLayout(RenderBox& gridItem)
     ASSERT(gridItem.isOutOfFlowPositioned());
     gridItem.containingBlock()->addOutOfFlowBox(gridItem);
 
-    RenderLayer* gridItemLayer = gridItem.layer();
+    CheckedPtr gridItemLayer = gridItem.layer();
     // Static position of a positioned grid item should use the content-box (https://drafts.csswg.org/css-grid/#static-position).
     gridItemLayer->setStaticInlinePosition(borderAndPaddingStart());
     gridItemLayer->setStaticBlockPosition(borderAndPaddingBefore());
@@ -1794,7 +1794,7 @@ bool RenderGrid::aspectRatioPrefersInline(const RenderBox& gridItem, bool blockF
 }
 
 // FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
-void RenderGrid::applyStretchAlignmentToGridItemIfNeeded(RenderBox& gridItem, GridLayoutState& gridLayoutState)
+void RenderGrid::applyStretchAlignmentToGridItemIfNeeded(RenderBox& gridItem, RenderGridLayoutState& gridLayoutState)
 {
     ASSERT(gridItem.gridAreaContentLogicalHeight());
     ASSERT(gridItem.gridAreaContentLogicalWidth());

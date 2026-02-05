@@ -40,6 +40,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/Application.h>
 #include <wtf/glib/Sandbox.h>
+#include <wtf/text/CStringView.h>
 
 #if USE(ATSPI)
 #include <wtf/UUID.h>
@@ -73,9 +74,9 @@
 #endif
 
 #if OS(LINUX)
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <bmalloc/valgrind.h>
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif
 
 namespace WebKit {
@@ -141,15 +142,14 @@ static void seatDevicesChangedCallback(GdkSeat* seat, GdkDevice*, WebProcessPool
 }
 #endif
 
-IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
 void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization)
 {
-    if (const char* forceComplexText = getenv("WEBKIT_FORCE_COMPLEX_TEXT"))
-        m_alwaysUsesComplexTextCodePath = !strcmp(forceComplexText, "1");
+    if (const auto forceComplexText = CStringView::unsafeFromUTF8(getenv("WEBKIT_FORCE_COMPLEX_TEXT")))
+        m_alwaysUsesComplexTextCodePath = forceComplexText == "1"_s;
 
 #if !ENABLE(2022_GLIB_API)
-    if (const char* forceSandbox = getenv("WEBKIT_FORCE_SANDBOX")) {
-        if (!strcmp(forceSandbox, "1"))
+    if (const auto forceSandbox = CStringView::unsafeFromUTF8(getenv("WEBKIT_FORCE_SANDBOX"))) {
+        if (forceSandbox == "1"_s)
             setSandboxEnabled(true);
         else {
             static bool once = false;
@@ -175,7 +175,6 @@ void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization)
     }
 #endif
 }
-IGNORE_CLANG_WARNINGS_END
 
 void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process, WebProcessCreationParameters& parameters)
 {
@@ -228,10 +227,6 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
 #if USE(GSTREAMER)
     parameters.gstreamerOptions = WebCore::extractGStreamerOptionsFromCommandLine();
-#endif
-
-#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
-    parameters.useSystemAppearanceForScrollbars = m_configuration->useSystemAppearanceForScrollbars();
 #endif
 
     parameters.memoryPressureHandlerConfiguration = m_configuration->memoryPressureHandlerConfiguration();
@@ -316,12 +311,10 @@ void WebProcessPool::setSandboxEnabled(bool enabled)
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
-IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
-    if (const char* disableSandbox = getenv("WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS")) {
-        if (strcmp(disableSandbox, "0"))
+    if (const auto disableSandbox = CStringView::unsafeFromUTF8(getenv("WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS"))) {
+        if (disableSandbox != "0"_s)
             return;
     }
-IGNORE_CLANG_WARNINGS_END
 
     m_sandboxEnabled = true;
 #if USE(ATSPI)
@@ -370,14 +363,6 @@ const String& WebProcessPool::accessibilityBusAddress() const
         m_accessibilityBusAddress = String::fromUTF8(addressEnv);
         return m_accessibilityBusAddress.value();
     }
-
-#if PLATFORM(GTK)
-    auto address = Display::singleton().accessibilityBusAddress();
-    if (!address.isEmpty()) {
-        m_accessibilityBusAddress = WTF::move(address);
-        return m_accessibilityBusAddress.value();
-    }
-#endif
 
     m_accessibilityBusAddress = queryAccessibilityBusAddress();
     return m_accessibilityBusAddress.value();

@@ -24,8 +24,7 @@
  */
 
 [
-    ImplementedAs=CryptoAlgorithmRsaPssParams,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
+    ImplementedAs=CryptoAlgorithmRsaPssParamsInit
 ] dictionary RsaPssParams : CryptoAlgorithmParameters {
     // The desired length of the random salt
     required [EnforceRange] unsigned long saltLength;

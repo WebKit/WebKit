@@ -113,8 +113,7 @@ public:
     {
         auto result = m_atomNameCaches.fastAdd(namedNodeListKey<T>(name), nullptr);
         if (!result.isNewEntry)
-            return static_cast<T&>(*result.iterator->value);
-
+            return downcast<T>(*result.iterator->value);
         Ref list = T::create(container, name);
         result.iterator->value = list.ptr();
         return list;
@@ -132,25 +131,25 @@ public:
     }
 
     template<typename T, typename ContainerType>
-    ALWAYS_INLINE Ref<T> addCachedCollection(ContainerType& container, CollectionType collectionType, const AtomString& name)
+    ALWAYS_INLINE Ref<T> addCachedCollection(ContainerType& container, const AtomString& name)
     {
-        auto result = m_cachedCollections.fastAdd(namedCollectionKey(collectionType, name), nullptr);
+        auto result = m_cachedCollections.fastAdd(namedCollectionKey(CollectionClassTraits<T>::collectionType, name), nullptr);
         if (!result.isNewEntry)
-            return static_cast<T&>(*result.iterator->value);
+            return downcast<T>(*result.iterator->value);
 
-        Ref list = T::create(container, collectionType, name);
+        Ref list = T::create(container, CollectionClassTraits<T>::collectionType, name);
         result.iterator->value = list.ptr();
         return list;
     }
 
     template<typename T, typename ContainerType>
-    ALWAYS_INLINE Ref<T> addCachedCollection(ContainerType& container, CollectionType collectionType)
+    ALWAYS_INLINE Ref<T> addCachedCollection(ContainerType& container)
     {
-        auto result = m_cachedCollections.fastAdd(namedCollectionKey(collectionType, starAtom()), nullptr);
+        auto result = m_cachedCollections.fastAdd(namedCollectionKey(CollectionClassTraits<T>::collectionType, starAtom()), nullptr);
         if (!result.isNewEntry)
-            return static_cast<T&>(*result.iterator->value);
+            return downcast<T>(*result.iterator->value);
 
-        Ref list = T::create(container, collectionType);
+        Ref list = T::create(container, CollectionClassTraits<T>::collectionType);
         result.iterator->value = list.ptr();
         return list;
     }
@@ -158,7 +157,10 @@ public:
     template<typename T>
     T* cachedCollection(CollectionType collectionType)
     {
-        return static_cast<T*>(m_cachedCollections.get(namedCollectionKey(collectionType, starAtom())));
+        if constexpr (std::same_as<T, HTMLCollection>)
+            return m_cachedCollections.get(namedCollectionKey(collectionType, starAtom()));
+        else
+            return downcast<T>(m_cachedCollections.get(namedCollectionKey(collectionType, starAtom())));
     }
 
     template<typename NodeListType>

@@ -26,7 +26,6 @@
 [
     Conditional=POINTER_LOCK,
     EnabledBySetting=PointerLockEnabled&PointerLockOptionsEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary PointerLockOptions {
     boolean unadjustedMovement = false;
 };

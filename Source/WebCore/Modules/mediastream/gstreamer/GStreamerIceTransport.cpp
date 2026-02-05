@@ -216,7 +216,7 @@ static void populateCandidateStats(const RiceCandidate* candidate, GstWebRTCICEC
     }
     gstStats->prio = candidate->priority;
 
-#if GST_CHECK_VERSION(1, 27, 0)
+#if GST_CHECK_VERSION(1, 28, 0)
     GST_WEBRTC_ICE_CANDIDATE_STATS_FOUNDATION(gstStats) = g_strdup(candidate->foundation);
     if (candidate->related_address) {
         auto relatedAddress = riceAddressToString(candidate->related_address, false);
@@ -246,7 +246,7 @@ static void populateCandidateStats(const RiceCandidate* candidate, GstWebRTCICEC
 #endif
 }
 
-#if GST_CHECK_VERSION(1, 27, 0)
+#if GST_CHECK_VERSION(1, 28, 0)
 static void fillCredentials(const GRefPtr<RiceStream>& stream, bool isLocal, GstWebRTCICECandidateStats* stats)
 {
     GUniquePtr<RiceCredentials> credentials(isLocal ? rice_stream_get_local_credentials(stream.get()) : rice_stream_get_remote_credentials(stream.get()));
@@ -278,14 +278,14 @@ bool webkitGstWebRTCIceTransportGetSelectedPair(WebKitGstIceTransport* transport
 
     *localStats = g_new0(GstWebRTCICECandidateStats, 1);
     populateCandidateStats(localCandidate.get(), *localStats);
-#if GST_CHECK_VERSION(1, 27, 0)
+#if GST_CHECK_VERSION(1, 28, 0)
     fillCredentials(riceStream, true, *localStats);
 #endif
     (*localStats)->stream_id = streamId;
 
     *remoteStats = g_new0(GstWebRTCICECandidateStats, 1);
     populateCandidateStats(remoteCandidate.get(), *remoteStats);
-#if GST_CHECK_VERSION(1, 27, 0)
+#if GST_CHECK_VERSION(1, 28, 0)
     fillCredentials(riceStream, false, *remoteStats);
 #endif
     (*remoteStats)->stream_id = streamId;
@@ -293,7 +293,7 @@ bool webkitGstWebRTCIceTransportGetSelectedPair(WebKitGstIceTransport* transport
     return true;
 }
 
-#if GST_CHECK_VERSION(1, 27, 0)
+#if GST_CHECK_VERSION(1, 28, 0)
 static GstWebRTCICECandidate* riceCandidateToGst(const RiceCandidate* candidate, const GRefPtr<RiceStream>& stream, bool isLocal)
 {
     RELEASE_ASSERT(candidate);
@@ -335,7 +335,7 @@ static void webkit_gst_webrtc_ice_transport_class_init(WebKitGstIceTransportClas
     auto gobjectClass = G_OBJECT_CLASS(klass);
     gobjectClass->constructed = webkitGstWebRTCIceTransportConstructed;
 
-#if GST_CHECK_VERSION(1, 27, 0)
+#if GST_CHECK_VERSION(1, 28, 0)
     auto transportClass = GST_WEBRTC_ICE_TRANSPORT_CLASS(klass);
     transportClass->get_selected_candidate_pair = webkitGstWebRTCIceTransportGetSelectedCandidatePair;
 #endif

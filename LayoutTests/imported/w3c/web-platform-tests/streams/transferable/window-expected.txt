@@ -1,6 +1,6 @@
 
-FAIL window.postMessage should be able to transfer a ReadableStream The object can not be cloned.
-FAIL port.postMessage should be able to transfer a ReadableStream The object can not be cloned.
-FAIL the same ReadableStream posted multiple times should arrive together The object can not be cloned.
-FAIL transfer to and from an iframe should work promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+PASS window.postMessage should be able to transfer a ReadableStream
+PASS port.postMessage should be able to transfer a ReadableStream
+PASS the same ReadableStream posted multiple times should arrive together
+PASS transfer to and from an iframe should work
 

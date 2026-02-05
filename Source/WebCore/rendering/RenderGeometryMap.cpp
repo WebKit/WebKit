@@ -166,13 +166,14 @@ static bool canMapBetweenRenderersViaLayers(const RenderLayerModelObject& render
     return true;
 }
 
-void RenderGeometryMap::pushMappingsToAncestor(const RenderLayer* layer, const RenderLayer* ancestorLayer, bool respectTransforms)
+void RenderGeometryMap::pushMappingsToAncestor(const RenderLayer* layerArg, const RenderLayer* ancestorLayer, bool respectTransforms)
 {
     if (!ancestorLayer) {
         ASSERT(!m_mapping.size());
-        pushMappingsToAncestor(&layer->renderer().view(), nullptr);
+        pushMappingsToAncestor(&layerArg->renderer().view(), nullptr);
 
         SetForScope positionChange(m_insertionPosition, m_mapping.size());
+        CheckedPtr layer = layerArg;
         while (layer->parent()) {
             pushMappingsToAncestor(layer, layer->parent(), respectTransforms);
             layer = layer->parent();
@@ -187,12 +188,12 @@ void RenderGeometryMap::pushMappingsToAncestor(const RenderLayer* layer, const R
 
     SetForScope flagsChange(m_mapCoordinatesFlags, newFlags);
 
-    const RenderLayerModelObject& renderer = layer->renderer();
+    const RenderLayerModelObject& renderer = layerArg->renderer();
 
     // We have to visit all the renderers to detect flipped blocks. This might defeat the gains
     // from mapping via layers.
     if (canMapBetweenRenderersViaLayers(renderer, ancestorLayer->renderer())) {
-        LayoutSize layerOffset = layer->offsetFromAncestor(ancestorLayer);
+        LayoutSize layerOffset = layerArg->offsetFromAncestor(ancestorLayer);
         
         // The RenderView must be pushed first.
         if (!m_mapping.size()) {

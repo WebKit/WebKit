@@ -716,6 +716,8 @@ WI.Resource = class Resource extends WI.SourceCode
         this._referrerPolicy = request.referrerPolicy ?? null;
         this._integrity = request.integrity ?? null;
 
+        this.dispatchEventToListeners(WI.Resource.Event.RedirectsDidChange);
+
         if (oldURL !== request.url) {
             // Delete the URL components so the URL is re-parsed the next time it is requested.
             this._urlComponents = null;
@@ -1137,157 +1139,22 @@ WI.Resource = class Resource extends WI.SourceCode
 
     generateFetchCode()
     {
-        let options = {};
-
-        if (this.requestData)
-            options.body = this.requestData;
-
-        options.cache = "default";
-        options.credentials = (this.requestCookies.length || this._requestHeaders.valueForCaseInsensitiveKey("Authorization")) ? "include" : "omit";
-
-        // https://fetch.spec.whatwg.org/#forbidden-header-name
-        const forbiddenHeaders = new Set([
-            "accept-charset",
-            "accept-encoding",
-            "access-control-request-headers",
-            "access-control-request-method",
-            "connection",
-            "content-length",
-            "cookie",
-            "cookie2",
-            "date",
-            "dnt",
-            "expect",
-            "host",
-            "keep-alive",
-            "origin",
-            "referer",
-            "te",
-            "trailer",
-            "transfer-encoding",
-            "upgrade",
-            "via",
-        ]);
-        let headers = Object.entries(this.requestHeaders)
-            .filter((header) => {
-                let key = header[0].toLowerCase();
-                if (forbiddenHeaders.has(key))
-                    return false;
-                if (key.startsWith("proxy-") || key.startsWith("sec-"))
-                    return false;
-                return true;
-            })
-            .sort((a, b) => a[0].extendedLocaleCompare(b[0]))
-            .reduce((accumulator, current) => {
-                accumulator[current[0]] = current[1];
-                return accumulator;
-            }, {});
-        if (!isEmptyObject(headers))
-            options.headers = headers;
-
-        if (this._integrity)
-            options.integrity = this._integrity;
-
-        if (this.requestMethod)
-            options.method = this.requestMethod;
-
-        options.mode = "cors";
-        options.redirect = "follow";
-
-        let referrer = this.requestHeaders.valueForCaseInsensitiveKey("Referer");
-        if (referrer)
-            options.referrer = referrer;
-
-        if (this._referrerPolicy)
-            options.referrerPolicy = this._referrerPolicy;
-
-        return `fetch(${JSON.stringify(this.url)}, ${JSON.stringify(options, null, WI.indentString())})`;
+        return WI.ResourceUtilities.generateFetchCode(this);
     }
 
     generateCURLCommand()
     {
-        function escapeStringPosix(str) {
-            function escapeCharacter(x) {
-                let code = x.charCodeAt(0);
-                let hex = code.toString(16);
-                if (code < 256)
-                    return "\\x" + hex.padStart(2, "0");
-                return "\\u" + hex.padStart(4, "0");
-            }
-
-            if (/[^\x20-\x7E]|'/.test(str)) {
-                // Use ANSI-C quoting syntax.
-                return "$'" + str.replace(/\\/g, "\\\\")
-                                 .replace(/'/g, "\\'")
-                                 .replace(/\n/g, "\\n")
-                                 .replace(/\r/g, "\\r")
-                                 .replace(/!/g, "\\041")
-                                 .replace(/[^\x20-\x7E]/g, escapeCharacter) + "'";
-            }
-
-            // Use single quote syntax.
-            return `'${str}'`;
-        }
-
-        let command = ["curl " + escapeStringPosix(this.url).replace(/[[{}\]]/g, "\\$&")];
-        command.push("-X " + escapeStringPosix(this.requestMethod));
-
-        for (let key in this.requestHeaders)
-            command.push("-H " + escapeStringPosix(`${key}: ${this.requestHeaders[key]}`));
-
-        if (this.requestDataContentType && this.requestMethod !== WI.HTTPUtilities.RequestMethod.GET && this.requestData) {
-            if (this.requestDataContentType.match(/^application\/x-www-form-urlencoded\s*(;.*)?$/i))
-                command.push("--data " + escapeStringPosix(this.requestData));
-            else
-                command.push("--data-raw " + escapeStringPosix(this.requestData));
-        }
-
-        return command.join(" \\\n");
+        return WI.ResourceUtilities.generateCURLCommand(this);
     }
 
     stringifyHTTPRequestHeaders()
     {
-        let lines = [];
-
-        let protocol = this.protocol || "";
-        if (protocol === "h2") {
-            // HTTP/2 Request pseudo headers:
-            // https://tools.ietf.org/html/rfc7540#section-8.1.2.3
-            lines.push(`:method: ${this.requestMethod}`);
-            lines.push(`:scheme: ${this.urlComponents.scheme}`);
-            lines.push(`:authority: ${WI.h2Authority(this.urlComponents)}`);
-            lines.push(`:path: ${WI.h2Path(this.urlComponents)}`);
-        } else {
-            // HTTP/1.1 request line:
-            // https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.1
-            lines.push(`${this.requestMethod} ${this.urlComponents.path}${protocol ? " " + protocol.toUpperCase() : ""}`);
-        }
-
-        for (let key in this.requestHeaders)
-            lines.push(`${key}: ${this.requestHeaders[key]}`);
-
-        return lines.join("\n") + "\n";
+        return WI.ResourceUtilities.stringifyHTTPRequestHeaders(this);
     }
 
     stringifyHTTPResponseHeaders()
     {
-        let lines = [];
-
-        let protocol = this.protocol || "";
-        if (protocol === "h2") {
-            // HTTP/2 Response pseudo headers:
-            // https://tools.ietf.org/html/rfc7540#section-8.1.2.4
-            lines.push(`:status: ${this.statusCode}`);
-        } else {
-            // HTTP/1.1 response status line:
-            // https://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1
-            lines.push(`${protocol ? protocol.toUpperCase() + " " : ""}${this.statusCode} ${this.statusText}`);
-        }
-
-        for (let key in this.responseHeaders)
-            lines.push(`${key}: ${this.responseHeaders[key]}`);
-
-        return lines.join("\n") + "\n";
+        return WI.ResourceUtilities.stringifyHTTPResponseHeaders(this);
     }
 
     async showCertificate()
@@ -1341,6 +1208,7 @@ WI.Resource.Event = {
     CacheStatusDidChange: "resource-cached-did-change",
     MetricsDidChange: "resource-metrics-did-change",
     InitiatedResourcesDidChange: "resource-initiated-resources-did-change",
+    RedirectsDidChange: "resource-redirects-did-change",
 };
 
 // Keep these in sync with the "ResourceType" enum defined by the "Page" domain.

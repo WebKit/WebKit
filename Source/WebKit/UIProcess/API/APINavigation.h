@@ -119,7 +119,6 @@ public:
     bool currentRequestIsCrossSiteRedirect() const;
 
     WebKit::WebBackForwardListItem* targetItem() const;
-    RefPtr<WebKit::WebBackForwardListItem> protectedTargetItem() const { return targetItem(); }
     WebKit::WebBackForwardListFrameItem* targetFrameItem() const { return m_targetFrameItem.get(); }
     WebKit::WebBackForwardListItem* fromItem() const { return m_fromItem.get(); }
     std::optional<WebCore::FrameLoadType> backForwardFrameLoadType() const { return m_backForwardFrameLoadType; }
@@ -180,7 +179,6 @@ public:
 
     void setWebsitePolicies(RefPtr<API::WebsitePolicies>&& policies) { m_websitePolicies = WTF::move(policies); }
     API::WebsitePolicies* websitePolicies() { return m_websitePolicies.get(); }
-    RefPtr<API::WebsitePolicies> protectedWebsitePolicies() const { return m_websitePolicies; }
 
     void setOriginatorAdvancedPrivacyProtections(OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections) { m_originatorAdvancedPrivacyProtections = advancedPrivacyProtections; }
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> originatorAdvancedPrivacyProtections() const { return m_originatorAdvancedPrivacyProtections; }

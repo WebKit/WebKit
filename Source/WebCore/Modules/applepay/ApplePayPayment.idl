@@ -26,7 +26,6 @@
 [
     Conditional=APPLE_PAY,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ApplePayPayment {
     required ApplePayPaymentToken token;
     ApplePayPaymentContact billingContact;
@@ -37,7 +36,6 @@
 [
     Conditional=APPLE_PAY,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ApplePayPaymentToken {
     required ApplePayPaymentMethod paymentMethod;
     DOMString transactionIdentifier;

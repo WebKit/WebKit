@@ -8,5 +8,5 @@ layer at (0,0) size 800x608
           RenderTableSection {TBODY} at (1,1) size 782x582
             RenderTableRow {TR} at (0,2) size 782x578
               RenderTableCell {TD} at (2,279) size 778x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (260,279) size 258x19
+                RenderText {#text} at (260,279) size 258x20
                   text run at (260,2) width 258: "This should be in the center of the page."

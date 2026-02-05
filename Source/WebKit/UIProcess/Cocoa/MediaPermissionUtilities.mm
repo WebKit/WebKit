@@ -218,17 +218,20 @@ void alertForPermission(WebPageProxy& page, MediaPermissionReason reason, const 
     }];
 #else
     auto alert = WebKit::createUIAlertController(alertTitle.get(), nil);
-    UIAlertAction* allowAction = [UIAlertAction actionWithTitle:allowButtonString.get() style:UIAlertActionStyleDefault handler:[completionBlock](UIAlertAction *action) {
+    RetainPtr allowAction = [UIAlertAction actionWithTitle:allowButtonString.get() style:UIAlertActionStyleDefault handler:[completionBlock](UIAlertAction *action) {
         completionBlock(true);
     }];
 
-    UIAlertAction* doNotAllowAction = [UIAlertAction actionWithTitle:doNotAllowButtonString.get() style:UIAlertActionStyleCancel handler:[completionBlock](UIAlertAction *action) {
+    RetainPtr doNotAllowAction = [UIAlertAction actionWithTitle:doNotAllowButtonString.get() style:UIAlertActionStyleCancel handler:[completionBlock](UIAlertAction *action) {
         completionBlock(false);
     }];
 
-    [alert addAction:doNotAllowAction];
-    [alert addAction:allowAction];
+    [alert addAction:doNotAllowAction.get()];
+    [alert addAction:allowAction.get()];
 
+#if PLATFORM(VISION)
+    page.dispatchWillPresentModalUI();
+#endif
     [[webView _wk_viewControllerForFullScreenPresentation] presentViewController:alert.get() animated:YES completion:nil];
 #endif
 }

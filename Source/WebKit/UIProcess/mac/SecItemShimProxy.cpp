@@ -92,8 +92,8 @@ void SecItemShimProxy::initializeConnection(IPC::Connection& connection)
 
 void SecItemShimProxy::secItemRequest(IPC::Connection& connection, const SecItemRequestData& request, CompletionHandler<void(std::optional<SecItemResponseData>&&)>&& response)
 {
-    MESSAGE_CHECK_COMPLETION(!dictionaryContainsInMemoryObject(request.protectedQuery().get()), connection, response(SecItemResponseData { errSecParam, nullptr }));
-    MESSAGE_CHECK_COMPLETION(!dictionaryContainsInMemoryObject(request.protectedAttributesToMatch().get()), connection, response(SecItemResponseData { errSecParam, nullptr }));
+    MESSAGE_CHECK_COMPLETION(!dictionaryContainsInMemoryObject(protect(request.query()).get()), connection, response(SecItemResponseData { errSecParam, nullptr }));
+    MESSAGE_CHECK_COMPLETION(!dictionaryContainsInMemoryObject(protect(request.attributesToMatch()).get()), connection, response(SecItemResponseData { errSecParam, nullptr }));
 
     switch (request.type()) {
     case SecItemRequestData::Type::Invalid:
@@ -103,7 +103,7 @@ void SecItemShimProxy::secItemRequest(IPC::Connection& connection, const SecItem
 
     case SecItemRequestData::Type::CopyMatching: {
         CFTypeRef resultRawObject = nullptr;
-        OSStatus resultCode = SecItemCopyMatching(request.protectedQuery().get(), &resultRawObject);
+        OSStatus resultCode = SecItemCopyMatching(protect(request.query()).get(), &resultRawObject);
         auto result = adoptCF(resultRawObject);
 
         SecItemResponseData::Result resultData;
@@ -136,19 +136,19 @@ void SecItemShimProxy::secItemRequest(IPC::Connection& connection, const SecItem
     case SecItemRequestData::Type::Add: {
         // Return value of SecItemAdd is often ignored. Even if it isn't, we don't have the ability to
         // serialize SecKeychainItemRef.
-        OSStatus resultCode = SecItemAdd(request.protectedQuery().get(), nullptr);
+        OSStatus resultCode = SecItemAdd(protect(request.query()).get(), nullptr);
         response(SecItemResponseData { resultCode, nullptr });
         break;
     }
 
     case SecItemRequestData::Type::Update: {
-        OSStatus resultCode = SecItemUpdate(request.protectedQuery().get(), request.protectedAttributesToMatch().get());
+        OSStatus resultCode = SecItemUpdate(protect(request.query()).get(), protect(request.attributesToMatch()).get());
         response(SecItemResponseData { resultCode, nullptr });
         break;
     }
 
     case SecItemRequestData::Type::Delete: {
-        OSStatus resultCode = SecItemDelete(request.protectedQuery().get());
+        OSStatus resultCode = SecItemDelete(protect(request.query()).get());
         response(SecItemResponseData { resultCode, nullptr });
         break;
     }

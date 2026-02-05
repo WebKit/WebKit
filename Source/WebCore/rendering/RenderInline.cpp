@@ -881,7 +881,7 @@ void RenderInline::imageChanged(WrappedImagePtr image, const IntRect*)
     RefPtr styleImage = Style::findLayerUsedImage(style().backgroundLayers(), image, isNonEmpty);
     if (styleImage && isNonEmpty) {
         if (auto styleable = Styleable::fromRenderer(*this))
-            protectedDocument()->didLoadImage(styleable->protectedElement().get(), styleImage->cachedImage());
+            protect(document())->didLoadImage(styleable->protectedElement().get(), styleImage->cachedImage());
     }
 
     // FIXME: We can do better.

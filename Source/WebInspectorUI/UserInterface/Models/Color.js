@@ -769,6 +769,43 @@ WI.Color = class Color
         return true;
     }
 
+    getNextValidHEXFormat()
+    {
+        const hexFormats = [
+            {format: WI.Color.Format.ShortHEX, title: WI.UIString("Format: Short Hex")},
+            {format: WI.Color.Format.ShortHEXAlpha, title: WI.UIString("Format: Short Hex with Alpha")},
+            {format: WI.Color.Format.HEX, title: WI.UIString("Format: Hex")},
+            {format: WI.Color.Format.HEXAlpha, title: WI.UIString("Format: Hex with Alpha")},
+        ];
+
+        let hexMatchesColor = (hexInfo) => {
+            let nextIsSimple = hexInfo.format === WI.Color.Format.ShortHEX || hexInfo.format === WI.Color.Format.HEX;
+            if (nextIsSimple && !this.simple)
+                return false;
+
+            let nextIsShort = hexInfo.format === WI.Color.Format.ShortHEX || hexInfo.format === WI.Color.Format.ShortHEXAlpha;
+            if (nextIsShort && !this.canBeSerializedAsShortHEX())
+                return false;
+
+            return true;
+        };
+
+        let currentColorIsHEX = hexFormats.some((info) => info.format === this.format);
+
+        for (let i = 0; i < hexFormats.length; ++i) {
+            if (currentColorIsHEX && this.format !== hexFormats[i].format)
+                continue;
+
+            for (let j = ~~currentColorIsHEX; j < hexFormats.length; ++j) {
+                let nextIndex = (i + j) % hexFormats.length;
+                if (hexMatchesColor(hexFormats[nextIndex]))
+                    return hexFormats[nextIndex];
+            }
+            return null;
+        }
+        return hexFormats[0];
+    }
+
     // Private
 
     _toOriginalString()

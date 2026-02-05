@@ -28,6 +28,7 @@
 #import "ArgumentCodersCocoa.h"
 #import "CoreIPCCFDictionary.h"
 #import "CoreIPCError.h"
+#import "CoreIPCPKPaymentSetupFeature.h"
 #import "CoreIPCPlistDictionary.h"
 #import "Encoder.h"
 #import "MessageSenderInlines.h"
@@ -465,6 +466,7 @@ struct ObjCHolderForTesting {
         RetainPtr<PKPaymentToken>,
         RetainPtr<PKShippingMethod>,
         RetainPtr<PKPayment>,
+        RetainPtr<PKPaymentSetupFeature>,
 #endif
         RetainPtr<NSShadow>,
         RetainPtr<NSValue>
@@ -1493,6 +1495,42 @@ TEST(IPCSerialization, SecTrustRef)
             @"ExtendedValidation" : @(YES),
             @"Organization" : @"Apple Inc.",
             @"Revocation" : @(YES),
+            @"RevocationInfo" : @[
+                @{
+                    @"ocsp" : @{
+                        @"isDefinitive" : @(YES),
+                        @"isRevoked" : @(NO),
+                        @"nextUpdate" : @(792270694),
+                        @"thisUpdate" : @(791669495)
+                    }
+                },
+                @{
+                    @"ocsp" : @{ },
+                    @"valid" : @{
+                        @"anchorHash" : [NSData dataWithBytes:"AAAA" length:strlen("AAAA")],
+                        @"certHash" : [NSData dataWithBytes:"BBBB" length:strlen("AAAA")],
+                        @"checkOCSP" : @(NO),
+                        @"complete" : @(YES),
+                        @"format" : @(1),
+                        @"hasDateConstraints" : @(NO),
+                        @"hasNameConstraints" : @(NO),
+                        @"hasPolicyConstraints" : @(YES),
+                        @"isDefinitive" : @(YES),
+                        @"isOnList" : @(NO),
+                        @"isRevoked" : @(NO),
+                        @"issuerHash" : [NSData dataWithBytes:"CCCC" length:strlen("AAAA")],
+                        @"knownOnly" : @(NO),
+                        @"noCACheck" : @(NO),
+                        @"overridable" : @(NO),
+                        @"policyConstraints" : [NSData dataWithBytes:"DDDD" length:strlen("AAAA")],
+                        @"requireCT" : @(NO),
+                        @"valid" : @(NO)
+                    }
+                },
+                @{
+                    @"ocsp" : @{ }
+                }
+            ],
             @"RevocationValidUntil" : [dateFormatter dateFromString:@"2024-12-20 15:15:45 +0000"],
             @"TrustExpirationDate" : [dateFormatter dateFromString:@"2024-12-20 15:15:45 +0000"],
             @"TrustExtendedValidation" : @(YES),
@@ -1666,6 +1704,44 @@ TEST(IPCSerialization, AVOutputContext)
 }
 #endif // USE(AVFOUNDATION) && PLATFORM(MAC)
 
+#if USE(PASSKIT) && HAVE(WK_SECURE_CODING_PKPAYMENTSETUPFEATURE)
+TEST(IPCSerialization, PKPaymentSetupFeature)
+{
+    WebKit::CoreIPCPKPaymentSetupFeatureData data;
+
+    Vector<RetainPtr<NSString>> identifiers;
+    identifiers.append(@"identifier1");
+    identifiers.append(@"identifier2");
+    identifiers.append(@"identifier3");
+    data.identifiers = WTF::move(identifiers);
+
+    data.localizedDisplayName = @"Test Payment Feature";
+    data.type = WebKit::PKPaymentSetupFeatureType::AppleCard;
+    data.state = WebKit::PKPaymentSetupFeatureState::Supported;
+    data.supportedOptions = WebKit::PKPaymentSetupFeatureSupportedOptions::Installments;
+    data.supportedDevices = OptionSet<WebKit::PKPaymentSetupFeatureSupportedDevices> {
+        WebKit::PKPaymentSetupFeatureSupportedDevices::Phone,
+        WebKit::PKPaymentSetupFeatureSupportedDevices::Watch
+    };
+    data.productIdentifier = @"product123";
+    data.partnerIdentifier = @"partner456";
+    data.featureIdentifier = @(789);
+    data.lastUpdated = [NSDate dateWithTimeIntervalSince1970:1000000];
+    data.expiry = [NSDate dateWithTimeIntervalSince1970:2000000];
+    data.productType = @(5);
+    data.productState = @(6);
+    data.notificationTitle = @"Setup Complete";
+    data.notificationMessage = @"Your payment feature is ready";
+    data.discoveryCardIdentifier = @"discovery999";
+
+    WebKit::CoreIPCPKPaymentSetupFeature PaymentSetupFeature { std::optional { WTF::move(data) } };
+    RetainPtr<PKPaymentSetupFeature> feature = PaymentSetupFeature.toID();
+
+    runTestNS({ feature.get() });
+}
+
+#endif
+
 #if PLATFORM(MAC)
 
 static RetainPtr<DDScannerResult> fakeDataDetectorResultForTesting()
@@ -1767,6 +1843,21 @@ TEST(IPCSerialization, DDScannerResultPlist)
                                displayName:(NSString *)displayName
             operationalAnalyticsIdentifier:(NSString *)operationalAnalyticsIdentifier
                                  signature:(NSData *)signature;
+
+#if HAVE(PASSKIT_DELEGATED_REQUEST)
+- (instancetype)initWithDelegateDisplayName:(NSString *)delegateDisplayName
+                         merchantIdentifier:(NSString *)merchantIdentifier
+                                displayName:(NSString *)displayName
+                                 initiative:(NSString *)initiative
+                          initiativeContext:(NSString *)initiativeContext
+                  merchantSessionIdentifier:(NSString *)merchantSessionIdentifier
+                                      nonce:(NSString *)nonce
+                             epochTimestamp:(NSUInteger)epochTimestamp
+                                  expiresAt:(NSUInteger)expiresAt
+             operationalAnalyticsIdentifier:(NSString *)operationalAnalyticsIdentifier
+                               signedFields:(NSArray<NSString *> *)signedFields
+                                  signature:(NSData *)signature;
+#endif
 @end
 
 TEST(IPCSerialization, DataDetectors)
@@ -1818,6 +1909,24 @@ TEST(IPCSerialization, SecureCoding)
         operationalAnalyticsIdentifier:@"WebKitOperations42"
         signature:[NSData new]]);
     runTestNS({ session.get() });
+
+#if HAVE(PASSKIT_DELEGATED_REQUEST)
+    // This initializer adopts delegate fields, but retryNonce and domain are unexercised
+    session = adoptNS([[PAL::getPKPaymentMerchantSessionClassSingleton() alloc]
+        initWithDelegateDisplayName:@"WebKit (Delegate)"
+        merchantIdentifier:@"WebKit Open Source Project"
+        displayName:@"WebKit"
+        initiative:@"WebKit Regression Test Suite"
+        initiativeContext:@"WebKit IPC Testing"
+        merchantSessionIdentifier:@"WebKitMerchantSession"
+        nonce:@"WebKitNonce"
+        epochTimestamp:1000000000
+        expiresAt:2000000000
+        operationalAnalyticsIdentifier:@"WebKitOperations42"
+        signedFields:@[ @"FirstField", @"AndTheSecond" ]
+        signature:[NSData new]]);
+    runTestNS({ session.get() });
+#endif
 
     RetainPtr<CNPostalAddress> address = postalAddressForTesting();
     RetainPtr<CNLabeledValue> labeledPostalAddress = adoptNS([[PAL::getCNLabeledValueClassSingleton() alloc] initWithLabel:@"Work" value:address.get()]);

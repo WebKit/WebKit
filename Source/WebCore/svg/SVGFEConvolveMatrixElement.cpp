@@ -79,7 +79,7 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
             Ref { m_orderY }->setBaseValInternal(result->second);
 
             if (result->first < 1 || result->second < 1)
-                protectedDocument()->checkedSVGExtensions()->reportWarning(makeString("feConvolveMatrix: problem parsing order=\""_s, newValue, "\". Filtered element will not be displayed."_s));
+                protect(document())->checkedSVGExtensions()->reportWarning(makeString("feConvolveMatrix: problem parsing order=\""_s, newValue, "\". Filtered element will not be displayed."_s));
         }
         break;
     }
@@ -88,7 +88,7 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
         if (propertyValue != EdgeModeType::Unknown)
             Ref { m_edgeMode }->setBaseValInternal<EdgeModeType>(propertyValue);
         else
-            protectedDocument()->checkedSVGExtensions()->reportWarning(makeString("feConvolveMatrix: problem parsing edgeMode=\""_s, newValue, "\". Filtered element will not be displayed."_s));
+            protect(document())->checkedSVGExtensions()->reportWarning(makeString("feConvolveMatrix: problem parsing edgeMode=\""_s, newValue, "\". Filtered element will not be displayed."_s));
         break;
     }
     case AttributeNames::kernelMatrixAttr:
@@ -102,7 +102,7 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
             Ref { m_divisor }->setBaseValInternal(*result);
 
             if (*result <= 0)
-                protectedDocument()->checkedSVGExtensions()->reportWarning(makeString("feConvolveMatrix: problem parsing divisor=\""_s, newValue, "\". Filtered element will not be displayed."_s));
+                protect(document())->checkedSVGExtensions()->reportWarning(makeString("feConvolveMatrix: problem parsing divisor=\""_s, newValue, "\". Filtered element will not be displayed."_s));
         }
         break;
     }
@@ -125,7 +125,7 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
             Ref { m_kernelUnitLengthY }->setBaseValInternal(result->second);
 
             if (result->first < 0 || result->second < 0)
-                protectedDocument()->checkedSVGExtensions()->reportWarning(makeString("feConvolveMatrix: problem parsing kernelUnitLength=\""_s, newValue, "\". Filtered element will not be displayed."_s));
+                protect(document())->checkedSVGExtensions()->reportWarning(makeString("feConvolveMatrix: problem parsing kernelUnitLength=\""_s, newValue, "\". Filtered element will not be displayed."_s));
         }
         break;
     }
@@ -135,7 +135,7 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
         else if (newValue == falseAtom())
             Ref { m_preserveAlpha }->setBaseValInternal(false);
         else
-            protectedDocument()->checkedSVGExtensions()->reportWarning(makeString("feConvolveMatrix: problem parsing preserveAlphaAttr=\""_s, newValue, "\". Filtered element will not be displayed."_s));
+            protect(document())->checkedSVGExtensions()->reportWarning(makeString("feConvolveMatrix: problem parsing preserveAlphaAttr=\""_s, newValue, "\". Filtered element will not be displayed."_s));
         break;
     default:
         break;

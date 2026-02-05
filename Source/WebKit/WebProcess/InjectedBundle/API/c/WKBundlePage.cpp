@@ -61,7 +61,6 @@
 #include "WebProcess.h"
 #include <WebCore/AXCoreObject.h>
 #include <WebCore/AXObjectCache.h>
-#include <WebCore/AddEventListenerOptionsInlines.h>
 #include <WebCore/CSSPropertyParserConsumer+Color.h>
 #include <WebCore/CaptionUserPreferences.h>
 #include <WebCore/CompositionHighlight.h>
@@ -135,7 +134,7 @@ WKFrameHandleRef WKBundleFrameCreateFrameHandle(WKBundleFrameRef bundleFrameRef)
 void WKBundlePageClickMenuItem(WKBundlePageRef pageRef, WKContextMenuItemRef item)
 {
 #if ENABLE(CONTEXT_MENUS)
-    WebKit::toProtectedImpl(pageRef)->protectedContextMenu()->itemSelected(WebKit::toImpl(item)->data());
+    protect(WebKit::toProtectedImpl(pageRef)->contextMenu())->itemSelected(WebKit::toImpl(item)->data());
 #else
     UNUSED_PARAM(pageRef);
     UNUSED_PARAM(item);
@@ -327,22 +326,22 @@ WKBundleBackForwardListRef WKBundlePageGetBackForwardList(WKBundlePageRef pageRe
 
 void WKBundlePageInstallPageOverlay(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
 {
-    WebKit::toImpl(pageRef)->corePage()->pageOverlayController().installPageOverlay(*WebKit::toImpl(pageOverlayRef)->protectedCoreOverlay(), WebCore::PageOverlay::FadeMode::DoNotFade);
+    WebKit::toImpl(pageRef)->corePage()->pageOverlayController().installPageOverlay(*protect(WebKit::toImpl(pageOverlayRef)->coreOverlay()), WebCore::PageOverlay::FadeMode::DoNotFade);
 }
 
 void WKBundlePageUninstallPageOverlay(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
 {
-    WebKit::toImpl(pageRef)->corePage()->pageOverlayController().uninstallPageOverlay(*WebKit::toImpl(pageOverlayRef)->protectedCoreOverlay(), WebCore::PageOverlay::FadeMode::DoNotFade);
+    WebKit::toImpl(pageRef)->corePage()->pageOverlayController().uninstallPageOverlay(*protect(WebKit::toImpl(pageOverlayRef)->coreOverlay()), WebCore::PageOverlay::FadeMode::DoNotFade);
 }
 
 void WKBundlePageInstallPageOverlayWithAnimation(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
 {
-    WebKit::toImpl(pageRef)->corePage()->pageOverlayController().installPageOverlay(*WebKit::toImpl(pageOverlayRef)->protectedCoreOverlay(), WebCore::PageOverlay::FadeMode::Fade);
+    WebKit::toImpl(pageRef)->corePage()->pageOverlayController().installPageOverlay(*protect(WebKit::toImpl(pageOverlayRef)->coreOverlay()), WebCore::PageOverlay::FadeMode::Fade);
 }
 
 void WKBundlePageUninstallPageOverlayWithAnimation(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
 {
-    WebKit::toImpl(pageRef)->corePage()->pageOverlayController().uninstallPageOverlay(*WebKit::toImpl(pageOverlayRef)->protectedCoreOverlay(), WebCore::PageOverlay::FadeMode::Fade);
+    WebKit::toImpl(pageRef)->corePage()->pageOverlayController().uninstallPageOverlay(*protect(WebKit::toImpl(pageOverlayRef)->coreOverlay()), WebCore::PageOverlay::FadeMode::Fade);
 }
 
 void WKBundlePageSetTopOverhangImage(WKBundlePageRef pageRef, WKImageRef imageRef)
@@ -379,7 +378,7 @@ void WKBundlePageSetFooterBanner(WKBundlePageRef pageRef, WKBundlePageBannerRef 
 
 bool WKBundlePageHasLocalDataForURL(WKBundlePageRef pageRef, WKURLRef urlRef)
 {
-    return WebKit::toProtectedImpl(pageRef)->protectedCorePage()->hasLocalDataForURL(URL { WebKit::toWTFString(urlRef) });
+    return protect(WebKit::toProtectedImpl(pageRef)->corePage())->hasLocalDataForURL(URL { WebKit::toWTFString(urlRef) });
 }
 
 bool WKBundlePageCanHandleRequest(WKURLRequestRef requestRef)
@@ -442,12 +441,12 @@ void WKBundlePageListenForLayoutMilestones(WKBundlePageRef pageRef, WKLayoutMile
 
 void WKBundlePageCloseInspectorForTest(WKBundlePageRef page)
 {
-    WebKit::toProtectedImpl(page)->protectedInspector()->close();
+    protect(WebKit::toProtectedImpl(page)->inspector())->close();
 }
 
 void WKBundlePageEvaluateScriptInInspectorForTest(WKBundlePageRef page, WKStringRef script)
 {
-    WebKit::toProtectedImpl(page)->protectedInspector()->evaluateScriptForTest(WebKit::toWTFString(script));
+    protect(WebKit::toProtectedImpl(page)->inspector())->evaluateScriptForTest(WebKit::toWTFString(script));
 }
 
 void WKBundlePageForceRepaint(WKBundlePageRef page)
@@ -710,7 +709,7 @@ WKStringRef WKBundlePageCopyGroupIdentifier(WKBundlePageRef pageRef)
 void WKBundlePageSetCaptionDisplayMode(WKBundlePageRef page, WKStringRef mode)
 {
 #if ENABLE(VIDEO)
-    Ref captionPreferences = WebKit::toProtectedImpl(page)->protectedCorePage()->checkedGroup()->ensureCaptionPreferences();
+    Ref captionPreferences = protect(WebKit::toProtectedImpl(page)->corePage())->checkedGroup()->ensureCaptionPreferences();
     auto displayMode = WTF::EnumTraits<WebCore::CaptionUserPreferences::CaptionDisplayMode>::fromString(WebKit::toWTFString(mode));
     if (displayMode.has_value())
         captionPreferences->setCaptionDisplayMode(displayMode.value());
@@ -723,7 +722,7 @@ void WKBundlePageSetCaptionDisplayMode(WKBundlePageRef page, WKStringRef mode)
 WKCaptionUserPreferencesTestingModeTokenRef WKBundlePageCreateCaptionUserPreferencesTestingModeToken(WKBundlePageRef page)
 {
 #if ENABLE(VIDEO)
-    Ref captionPreferences = WebKit::toProtectedImpl(page)->protectedCorePage()->checkedGroup()->ensureCaptionPreferences();
+    Ref captionPreferences = protect(WebKit::toProtectedImpl(page)->corePage())->checkedGroup()->ensureCaptionPreferences();
     return WebKit::toAPILeakingRef(API::CaptionUserPreferencesTestingModeToken::create(captionPreferences.get()));
 #else
     UNUSED_PARAM(page);

@@ -1,0 +1,4 @@
+
+
+FAIL Scroll anchoring works on textarea assert_equals: The scroll position should be adjusted expected 310 but got 312
+

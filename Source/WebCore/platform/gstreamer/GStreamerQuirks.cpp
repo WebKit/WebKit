@@ -20,7 +20,6 @@
 
 #include "config.h"
 #include "GStreamerQuirks.h"
-#include <optional>
 
 #if USE(GSTREAMER)
 
@@ -33,9 +32,11 @@
 #include "GStreamerQuirkBcmNexus.h"
 #include "GStreamerQuirkBroadcom.h"
 #include "GStreamerQuirkOpenMAX.h"
+#include "GStreamerQuirkQualcomm.h"
 #include "GStreamerQuirkRealtek.h"
 #include "GStreamerQuirkRialto.h"
 #include "GStreamerQuirkWesteros.h"
+#include <optional>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RuntimeApplicationChecks.h>
@@ -87,7 +88,7 @@ GStreamerQuirksManager::GStreamerQuirksManager(bool isForTesting, bool loadQuirk
     GST_DEBUG("Attempting to parse requested quirks: %s", GST_STR_NULL(quirksString.utf8()));
     if (quirksString) {
         if (WTF::equalLettersIgnoringASCIICase(quirksString.span(), "help"_s)) {
-            gst_printerrln("Supported quirks for WEBKIT_GST_QUIRKS are: amlogic, broadcom, bcmnexus, openmax, realtek, rialto, westeros");
+            gst_printerrln("Supported quirks for WEBKIT_GST_QUIRKS are: amlogic, broadcom, bcmnexus, openmax, qualcomm, realtek, rialto, westeros");
             return;
         }
 
@@ -101,6 +102,8 @@ GStreamerQuirksManager::GStreamerQuirksManager(bool isForTesting, bool loadQuirk
                 quirk = WTF::makeUnique<GStreamerQuirkBcmNexus>();
             else if (WTF::equalLettersIgnoringASCIICase(identifier, "openmax"_s))
                 quirk = WTF::makeUnique<GStreamerQuirkOpenMAX>();
+            else if (WTF::equalLettersIgnoringASCIICase(identifier, "qualcomm"_s))
+                quirk = WTF::makeUnique<GStreamerQuirkQualcomm>();
             else if (WTF::equalLettersIgnoringASCIICase(identifier, "realtek"_s))
                 quirk = WTF::makeUnique<GStreamerQuirkRealtek>();
             else if (WTF::equalLettersIgnoringASCIICase(identifier, "rialto"_s))
@@ -118,7 +121,28 @@ GStreamerQuirksManager::GStreamerQuirksManager(bool isForTesting, bool loadQuirk
             }
             m_quirks.append(WTF::move(quirk));
         }
+    } else {
+        GST_DEBUG("WEBKIT_GST_QUIRKS was not set, now performing automatic quirks detection.");
+#define ADD_QUIRK(name) m_quirks.append(WTF::makeUnique<GStreamerQuirk##name>())
+        ADD_QUIRK(AmLogic);
+        ADD_QUIRK(Broadcom);
+        ADD_QUIRK(BcmNexus);
+        ADD_QUIRK(OpenMAX);
+        ADD_QUIRK(Qualcomm);
+        ADD_QUIRK(Realtek);
+        ADD_QUIRK(Rialto);
+        ADD_QUIRK(Westeros);
+#undef ADD_QUIRK
+
+        m_quirks.removeAllMatching([](auto& quirk) -> bool {
+            bool isPlatformSupported = quirk->isPlatformSupported();
+            if (isPlatformSupported)
+                GST_INFO("Enabling quirk %s", quirk->identifier().characters());
+            return !isPlatformSupported;
+        });
     }
+
+    GST_DEBUG("%zu quirks enabled", m_quirks.size());
 
     auto identifierString = CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_HOLE_PUNCH_QUIRK"));
     GST_DEBUG("Attempting to parse requested hole-punch quirk: %s", GST_STR_NULL(identifierString.utf8()));
@@ -208,6 +232,8 @@ bool GStreamerQuirksManager::sinksRequireClockSynchronization() const
 
 void GStreamerQuirksManager::configureElement(GstElement* element, OptionSet<ElementRuntimeCharacteristics>&& characteristics)
 {
+    if (m_quirks.isEmpty())
+        return;
     GST_DEBUG("Configuring element %" GST_PTR_FORMAT, element);
     for (const auto& quirk : m_quirks)
         quirk->configureElement(element, characteristics);
@@ -288,6 +314,15 @@ bool GStreamerQuirksManager::shouldParseIncomingLibWebRTCBitStream() const
             return false;
     }
     return true;
+}
+
+GRefPtr<GstCaps> GStreamerQuirksManager::videoSinkGLCapsFormat() const
+{
+    for (auto& quirk : m_quirks) {
+        if (auto caps = quirk->videoSinkGLCapsFormat())
+            return caps;
+    }
+    return nullptr;
 }
 
 bool GStreamerQuirksManager::needsBufferingPercentageCorrection() const

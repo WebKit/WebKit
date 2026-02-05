@@ -186,7 +186,6 @@ private:
     
     template<typename U> static void sendToContextProcess(WebCore::SWServerToContextConnection&, U&& message);
     NetworkProcess& networkProcess();
-    Ref<NetworkProcess> protectedNetworkProcess();
 
     bool isWebSWServerConnection() const final { return true; }
 

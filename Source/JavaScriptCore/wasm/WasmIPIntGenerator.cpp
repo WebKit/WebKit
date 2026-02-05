@@ -95,6 +95,7 @@
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 #define RECORD_NEXT_INSTRUCTION(fromPC, toPC)                                                            \
     do {                                                                                                 \
         if (Options::enableWasmDebugger()) [[unlikely]] {                                                \
@@ -105,6 +106,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             }                                                                                            \
         }                                                                                                \
     } while (0)
+#else
+#define RECORD_NEXT_INSTRUCTION(fromPC, toPC) do { (void)(fromPC); (void)(toPC); } while (0)
+#endif
 
 namespace JSC { namespace Wasm {
 
@@ -977,6 +981,7 @@ IPIntGenerator::ExpressionType IPIntGenerator::addConstant(v128_t)
     }
     m_metadata->m_argumINTBytecode.append(static_cast<uint8_t>(IPInt::ArgumINTBytecode::End));
 
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
     if (Options::enableWasmDebugger()) [[unlikely]] {
         if (m_debugInfo) {
             auto* localTypes = &m_debugInfo->locals;
@@ -984,6 +989,7 @@ IPIntGenerator::ExpressionType IPIntGenerator::addConstant(v128_t)
                 localTypes->append(sig->argumentType(i));
         }
     }
+#endif
 
     m_metadata->addReturnData(*sig, callCC);
     return { };
@@ -1001,6 +1007,7 @@ IPIntGenerator::ExpressionType IPIntGenerator::addConstant(v128_t)
     }
     m_metadata->m_numLocals += count;
 
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
     if (Options::enableWasmDebugger()) [[unlikely]] {
         if (m_debugInfo) {
             auto* localTypes = &m_debugInfo->locals;
@@ -1008,6 +1015,7 @@ IPIntGenerator::ExpressionType IPIntGenerator::addConstant(v128_t)
                 localTypes->append(localType);
         }
     }
+#endif
 
     return { };
 }

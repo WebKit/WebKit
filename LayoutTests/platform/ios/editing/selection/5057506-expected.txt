@@ -1,12 +1,12 @@
 ALERT: 36
-ALERT: 117.5
+ALERT: 119
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x80
-        RenderText {#text} at (0,0) size 773x79
+        RenderText {#text} at (0,0) size 773x80
           text run at (0,0) width 515: "This tests double clicking after the last character in the last cell of a block table. "
           text run at (514,0) width 259: "The paragraph break (the space between"
           text run at (0,20) width 526: "the last character and the first character in the next paragraph) should be selected. "
@@ -20,9 +20,9 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (1,1) size 108x28
             RenderTableRow {TR} at (0,2) size 108x24
               RenderTableCell {TD} at (2,2) size 104x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {SPAN} at (2,2) size 22x19
-                  RenderText {#text} at (2,2) size 22x19
+                RenderInline {SPAN} at (2,2) size 22x20
+                  RenderText {#text} at (2,2) size 22x20
                     text run at (2,2) width 22: "foo"
         RenderBlock {DIV} at (0,30) size 784x20
-          RenderText {#text} at (0,0) size 21x19
+          RenderText {#text} at (0,0) size 21x20
             text run at (0,0) width 21: "bar"

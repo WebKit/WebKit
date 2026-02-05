@@ -155,7 +155,7 @@ static std::optional<Vector<uint8_t>> gcryptDecrypt(const Vector<uint8_t>& key, 
 
         // Bail if the last `paddingValue` bytes don't have the value of `paddingValue`.
         auto padding = output.subspan(size - paddingValue, paddingValue);
-        if (std::count(padding.begin(), padding.end(), paddingValue) != paddingValue)
+        if (std::ranges::count(padding, paddingValue) != paddingValue)
             return std::nullopt;
 
         // Shrink the output Vector object to drop the PKCS#7 padding.

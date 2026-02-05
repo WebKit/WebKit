@@ -60,13 +60,19 @@ void Connection::sendWithReply(xpc_object_t message, CompletionHandler<void(xpc_
     }).get());
 }
 
+// Workaround a bug in clang static analyer that [[clang::suppress]] doesn't work in some template function.
+static void logMachServiceInterrupted(const CString& machServiceName)
+{
+    RELEASE_LOG(IPC, "Connection to mach service %s is interrupted", machServiceName.data());
+}
+
 template<typename Traits>
 void ConnectionToMachService<Traits>::initializeConnectionIfNeeded() const
 {
     if (m_connection)
         return;
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT m_connection = adoptXPCObject(xpc_connection_create_mach_service(m_machServiceName.data(), mainDispatchQueueSingleton(), 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT m_connection = adoptOSObject(xpc_connection_create_mach_service(m_machServiceName.data(), mainDispatchQueueSingleton(), 0));
     xpc_connection_set_event_handler(m_connection.get(), [weakThis = WeakPtr { *this }](xpc_object_t event) {
         if (!weakThis)
             return;
@@ -79,7 +85,7 @@ void ConnectionToMachService<Traits>::initializeConnectionIfNeeded() const
 #endif
         }
         if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
-            RELEASE_LOG(IPC, "Connection to mach service %s is interrupted", weakThis->m_machServiceName.data());
+            logMachServiceInterrupted(weakThis->m_machServiceName);
             // Daemon crashed, we will need to make a new connection to a new instance of the daemon.
             weakThis->m_connection = nullptr;
         }

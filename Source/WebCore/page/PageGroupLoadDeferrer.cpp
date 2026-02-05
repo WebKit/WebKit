@@ -34,12 +34,12 @@ namespace WebCore {
 
 PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page& page, bool deferSelf)
 {
-    for (auto& otherPage : page.group().pages()) {
-        if (!deferSelf && &otherPage == &page)
+    for (Ref otherPage : page.group().pages()) {
+        if (!deferSelf && otherPage.ptr() == &page)
             continue;
-        if (otherPage.defersLoading())
+        if (otherPage->defersLoading())
             continue;
-        auto* localMainFrame = dynamicDowncast<LocalFrame>(otherPage.mainFrame());
+        RefPtr localMainFrame = dynamicDowncast<LocalFrame>(otherPage->mainFrame());
         if (!localMainFrame)
             continue;
         m_deferredFrames.append(*localMainFrame);
@@ -50,12 +50,12 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page& page, bool deferSelf)
             RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
             if (!localFrame)
                 continue;
-            localFrame->protectedDocument()->suspendScheduledTasks(ReasonForSuspension::WillDeferLoading);
+            protect(localFrame->document())->suspendScheduledTasks(ReasonForSuspension::WillDeferLoading);
         }
     }
 
     for (auto& deferredFrame : m_deferredFrames) {
-        if (Page* page = deferredFrame->page())
+        if (RefPtr page = deferredFrame->page())
             page->setDefersLoading(true);
     }
 }
@@ -63,7 +63,7 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page& page, bool deferSelf)
 PageGroupLoadDeferrer::~PageGroupLoadDeferrer()
 {
     for (auto& deferredFrame : m_deferredFrames) {
-        auto* page = deferredFrame->page();
+        RefPtr page = deferredFrame->page();
         if (!page)
             continue;
         page->setDefersLoading(false);
@@ -72,7 +72,7 @@ PageGroupLoadDeferrer::~PageGroupLoadDeferrer()
             RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
             if (!localFrame)
                 continue;
-            localFrame->protectedDocument()->resumeScheduledTasks(ReasonForSuspension::WillDeferLoading);
+            protect(localFrame->document())->resumeScheduledTasks(ReasonForSuspension::WillDeferLoading);
         }
     }
 }

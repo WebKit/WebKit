@@ -41,30 +41,6 @@ TextureCaps &TextureCaps::operator=(const TextureCaps &other) = default;
 
 TextureCaps::~TextureCaps() = default;
 
-GLuint TextureCaps::getMaxSamples() const
-{
-    return !sampleCounts.empty() ? *sampleCounts.rbegin() : 0;
-}
-
-GLuint TextureCaps::getNearestSamples(GLuint requestedSamples) const
-{
-    if (requestedSamples == 0)
-    {
-        return 0;
-    }
-
-    for (SupportedSampleSet::const_iterator i = sampleCounts.begin(); i != sampleCounts.end(); i++)
-    {
-        GLuint samples = *i;
-        if (samples >= requestedSamples)
-        {
-            return samples;
-        }
-    }
-
-    return 0;
-}
-
 TextureCaps GenerateMinimumTextureCaps(GLenum sizedInternalFormat,
                                        const Version &clientVersion,
                                        const Extensions &extensions)

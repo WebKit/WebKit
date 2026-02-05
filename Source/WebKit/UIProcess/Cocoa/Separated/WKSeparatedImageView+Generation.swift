@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if HAVE_CORE_ANIMATION_SEPARATED_LAYERS && compiler(>=6.0)
+#if HAVE_CORE_ANIMATION_SEPARATED_LAYERS && compiler(>=6.2)
 
 import os
 @_weakLinked internal import RealityKit
@@ -30,57 +30,62 @@ internal import WebKit_Internal
 extension WKSeparatedImageView {
     func startImage3DGeneration() -> Task<Void, Error> {
         #if canImport(RealityFoundation, _version: 387)
-        if let imageHash = self.imageHash, let cachedData = ImagePresentationCache.shared.get(for: imageHash) {
+        if let imageHash = self.imageHash, let cachedData = ImagePresentationCache.shared[imageHash] {
             Logger.separatedImage.log("\(self.logPrefix) - Cache Hit for Image Generation.")
             self.spatial3DImage = cachedData.spatial3DImage
             self.desiredViewingModeSpatial = cachedData.desiredViewingModeSpatial
-            return Task { [weak self] in
+            return Task { [weak self] () -> Void in
                 self?.preparePortalEntity()
             }
         }
 
-        return Task.detached { [weak self] () -> Void in
-            try await Task.sleep(for: SeparatedImageViewConstants.cancellationDelay)
-
-            let next = await GenerationScheduler.shared.getTurn()
-            defer {
-                next()
-            }
-
-            try Task.checkCancellation()
-
-            guard let self, let imageData = await self.imageData, let imgSource = CGImageSourceCreateWithData(imageData as CFData, nil),
-                let spatial3DImage = try? await ImagePresentationComponent.Spatial3DImage(imageSource: imgSource)
-            else { return }
-
-            try await Task.sleep(for: SeparatedImageViewConstants.cancellationDelay)
-
-            try await Task { @MainActor [weak self] in
-                // The compiler can't guarantee (yet) this closure won't be called multiple times.
-                nonisolated(unsafe) let captured = spatial3DImage
-                guard let self, let imageHash = self.imageHash else { return }
-
-                self.spatial3DImage = spatial3DImage
-                self.preparePortalEntity()
-
-                let start = Date()
-                try await captured.generate()
-                Logger.separatedImage.log("\(self.logPrefix) - Generation took \(Date().timeIntervalSince(start))")
-                ImagePresentationCache.shared.set(
-                    for: imageHash,
-                    spatial3DImage: spatial3DImage,
-                    desiredViewingModeSpatial: self.desiredViewingModeSpatial
-                )
-            }
-            .value
+        return Task { [weak self] () -> Void in
+            guard let self else { return }
+            return try await self.generate()
         }
         #else
         return Task {}
         #endif
     }
+
+    @concurrent
+    func generate() async throws {
+        try await Task.sleep(for: SeparatedImageViewConstants.cancellationDelay)
+
+        #if canImport(RealityFoundation, _version: 387)
+        let next = await GenerationScheduler.shared.getTurn()
+        defer {
+            next()
+        }
+
+        try Task.checkCancellation()
+
+        guard let imageData = await self.imageData, let imgSource = CGImageSourceCreateWithData(imageData as CFData, nil),
+            let spatial3DImage = try? await ImagePresentationComponent.Spatial3DImage(imageSource: imgSource)
+        else { return }
+
+        try await Task.sleep(for: SeparatedImageViewConstants.cancellationDelay)
+
+        try await Task { @MainActor [weak self] in
+            // The compiler can't guarantee (yet) this closure won't be called multiple times.
+            nonisolated(unsafe) let captured = spatial3DImage
+            guard let self, let imageHash = self.imageHash else { return }
+
+            self.spatial3DImage = spatial3DImage
+            self.preparePortalEntity()
+
+            let start = Date()
+            try await captured.generate()
+            Logger.separatedImage.log("\(self.logPrefix) - Generation took \(Date().timeIntervalSince(start))")
+            ImagePresentationCache.shared[imageHash] =
+                ImagePresentationCache.StoredData(spatial3DImage: spatial3DImage, desiredViewingModeSpatial: self.desiredViewingModeSpatial)
+        }
+        .value
+        #endif
+    }
 }
 
-// Protects access to the tail, used from detached Tasks.
+// Protects access to the tail, used from Tasks.
 private actor GenerationScheduler {
     private var tail: Task<Void, Never> = Task {}
 
@@ -105,25 +110,14 @@ private actor GenerationScheduler {
     }
 }
 
-private final class ContinuationBox: @unchecked Sendable {
-    var continuation: CheckedContinuation<Void, Never>?
-}
-
 private func makeVoidPromise() -> (promise: Task<Void, Never>, fulfill: @Sendable () -> Void) {
-    let box = ContinuationBox()
+    let (stream, continuation) = AsyncStream<Void>.makeStream()
+
     let promise = Task {
-        await withCheckedContinuation { (cont: CheckedContinuation<Void, Never>) in
-            box.continuation = cont
-        }
+        for await _ in stream {}
     }
 
-    let fulfill: @Sendable () -> Void = {
-        if let cont = box.continuation {
-            cont.resume(returning: ())
-        }
-        box.continuation = nil
-    }
-    return (promise, fulfill)
+    return (promise, fulfill: { continuation.finish() })
 }
 
 #if canImport(RealityFoundation, _version: 387)
@@ -149,21 +143,17 @@ final class ImagePresentationCache {
         self.cache = cache
     }
 
-    func set(for hash: NSString, spatial3DImage: ImagePresentationComponent.Spatial3DImage, desiredViewingModeSpatial: Bool) {
-        let data = StoredData(spatial3DImage: spatial3DImage, desiredViewingModeSpatial: desiredViewingModeSpatial)
-        cache.setObject(data, forKey: hash)
-    }
-
-    func updateDesiredViewingMode(for hash: NSString, _ desiredViewingModeSpatial: Bool) {
-        cache.object(forKey: hash)?.desiredViewingModeSpatial = desiredViewingModeSpatial
-    }
-
-    func get(for hash: NSString) -> StoredData? {
-        cache.object(forKey: hash)
-    }
-
-    func forget(hash: NSString) {
-        cache.removeObject(forKey: hash)
+    subscript(hash: NSString) -> StoredData? {
+        get {
+            cache.object(forKey: hash)
+        }
+        set {
+            guard let newValue else {
+                cache.removeObject(forKey: hash)
+                return
+            }
+            cache.setObject(newValue, forKey: hash)
+        }
     }
 }
 #endif

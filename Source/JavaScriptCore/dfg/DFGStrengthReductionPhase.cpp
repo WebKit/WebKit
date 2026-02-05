@@ -217,6 +217,7 @@ private:
                 case DoubleRepUse:
                     // It is always valuable to get rid of a double multiplication by 2.
                     // We won't have half-register dependencies issues on x86 and we won't have to load the constants.
+                    m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());
                     m_node->setOp(ArithAdd);
                     child2.setNode(m_node->child1().node());
                     m_changed = true;
@@ -228,6 +229,7 @@ private:
                     // For integers, we can only convert compatible modes.
                     // ArithAdd does handle do negative zero check for example.
                     if (m_node->arithMode() == Arith::CheckOverflow || m_node->arithMode() == Arith::Unchecked) {
+                        m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());
                         m_node->setOp(ArithAdd);
                         child2.setNode(m_node->child1().node());
                         m_changed = true;
@@ -267,9 +269,11 @@ private:
             if (m_node->child2()->isNumberConstant()) {
                 double yOperandValue = m_node->child2()->asNumber();
                 if (yOperandValue == 1) {
+                    m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());
                     convertToIdentityOverChild1();
                     m_changed = true;
                 } else if (yOperandValue == 2) {
+                    m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());
                     m_node->setOp(ArithMul);
                     m_node->child2() = m_node->child1();
                     m_changed = true;
@@ -917,12 +921,12 @@ private:
                     lastIndex = regExpObjectNode->child1()->asUInt32();
 
                 MatchResult result;
-                Vector<int> ovector;
+                Vector<int> ovector(regExp->offsetVectorSize());
                 // We have to call the kind of match function that the main thread would have called.
                 // Otherwise, we might not have the desired Yarr code compiled, and the match will fail.
                 if (m_node->op() == RegExpExec || m_node->op() == RegExpExecNonGlobalOrSticky) {
                     int position;
-                    if (!regExp->matchConcurrently(vm(), string, lastIndex, position, ovector)) {
+                    if (!regExp->matchConcurrently(vm(), string, lastIndex, position, ovector.mutableSpan())) {
                         dataLogLnIf(verbose, "Giving up because match failed.");
                         return false;
                     }
@@ -954,8 +958,9 @@ private:
                         resultArray.append(string.substring(result.start, result.end - result.start));
                         for (unsigned i = 1; i <= regExp->numSubpatterns(); ++i) {
                             int start = ovector[2 * i];
-                            if (start >= 0)
-                                resultArray.append(string.substring(start, ovector[2 * i + 1] - start));
+                            int end = ovector[2 * i + 1];
+                            if (start >= 0 && end >= start)
+                                resultArray.append(string.substring(start, end - start));
                             else
                                 resultArray.append(String());
                         }
@@ -1204,7 +1209,7 @@ private:
             bool ok = true;
             do {
                 MatchResult result;
-                Vector<int> ovector;
+                Vector<int> ovector(regExp->offsetVectorSize());
                 // Model which version of match() is called by the main thread.
                 if (replace.isEmpty() && regExp->global()) {
                     if (!regExp->matchConcurrently(vm(), string, startPosition, result)) {
@@ -1213,11 +1218,11 @@ private:
                     }
                 } else {
                     int position;
-                    if (!regExp->matchConcurrently(vm(), string, startPosition, position, ovector)) {
+                    if (!regExp->matchConcurrently(vm(), string, startPosition, position, ovector.mutableSpan())) {
                         ok = false;
                         break;
                     }
-                    
+
                     result.start = position;
                     result.end = ovector[1];
                 }
@@ -1383,6 +1388,39 @@ private:
             m_changed = true;
             m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());
             m_graph.convertToConstant(m_node, jsNumber(indexResult));
+            break;
+        }
+
+        case StringStartsWith: {
+            Node* stringNode = m_node->child1().node();
+            String string = stringNode->tryGetString(m_graph);
+            if (!string)
+                break;
+
+            String searchString = m_node->child2()->tryGetString(m_graph);
+            if (!searchString)
+                break;
+
+            unsigned startPosition = 0;
+            if (m_node->child3()) {
+                if (!m_node->child3()->isInt32Constant())
+                    break;
+                int32_t pos = m_node->child3()->asInt32();
+                if (pos < 0)
+                    startPosition = 0;
+                else
+                    startPosition = std::min<unsigned>(pos, string.length());
+            }
+
+            bool result;
+            if (!startPosition)
+                result = string.startsWith(searchString);
+            else
+                result = string.hasInfixStartingAt(searchString, startPosition);
+
+            m_changed = true;
+            m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());
+            m_graph.convertToConstant(m_node, jsBoolean(result));
             break;
         }
 
@@ -1886,4 +1924,3 @@ bool performStrengthReduction(Graph& graph)
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-

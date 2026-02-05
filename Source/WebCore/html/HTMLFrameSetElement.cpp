@@ -87,7 +87,7 @@ void HTMLFrameSetElement::collectPresentationalHintsForAttribute(const Qualified
 void HTMLFrameSetElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (auto& eventName = HTMLBodyElement::eventNameForWindowEventHandlerAttribute(name); !eventName.isNull())
-        protectedDocument()->setWindowAttributeEventListener(eventName, name, newValue, mainThreadNormalWorldSingleton());
+        protect(document())->setWindowAttributeEventListener(eventName, name, newValue, mainThreadNormalWorldSingleton());
     else
         HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 

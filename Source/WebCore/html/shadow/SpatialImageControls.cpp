@@ -116,7 +116,7 @@ void ensureSpatialControls(HTMLImageElement& imageElement)
     if (!shouldHaveSpatialControls(imageElement) || hasSpatialImageControls(imageElement))
         return;
 
-    imageElement.protectedDocument()->checkedEventLoop()->queueTask(TaskSource::InternalAsyncTask, [weakElement = WeakPtr { imageElement }] {
+    protect(imageElement.document())->checkedEventLoop()->queueTask(TaskSource::InternalAsyncTask, [weakElement = WeakPtr { imageElement }] {
         RefPtr element = weakElement.get();
         if (!element)
             return;
@@ -208,7 +208,7 @@ void ensureSpatialControls(HTMLImageElement& imageElement)
 #else
         glyphSpan->setIdAttribute("spatial-glyph"_s);
 #endif
-        bottomLabelText->insertBefore(glyphSpan, bottomLabelText->protectedFirstChild());
+        bottomLabelText->insertBefore(glyphSpan, protect(bottomLabelText->firstChild()));
 
         if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(element->renderer()))
             renderImage->setHasShadowControls(true);
@@ -248,7 +248,7 @@ bool handleEvent(HTMLElement& element, Event& event)
 
 void destroySpatialImageControls(HTMLElement& element)
 {
-    element.protectedDocument()->checkedEventLoop()->queueTask(TaskSource::InternalAsyncTask, [weakElement = WeakPtr { element }] {
+    protect(element.document())->checkedEventLoop()->queueTask(TaskSource::InternalAsyncTask, [weakElement = WeakPtr { element }] {
         RefPtr protectedElement = weakElement.get();
         if (!protectedElement)
             return;

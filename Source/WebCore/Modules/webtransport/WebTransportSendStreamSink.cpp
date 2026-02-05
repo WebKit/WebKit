@@ -106,7 +106,7 @@ void WebTransportSendStreamSink::write(ScriptExecutionContext& context, JSC::JSV
     });
 }
 
-void WebTransportSendStreamSink::close()
+void WebTransportSendStreamSink::close(JSDOMGlobalObject&)
 {
     if (m_isClosed)
         return;
@@ -119,8 +119,12 @@ void WebTransportSendStreamSink::close()
     }
 }
 
-void WebTransportSendStreamSink::abort(JSC::JSValue value)
+void WebTransportSendStreamSink::abort(JSDOMGlobalObject&, JSC::JSValue value, DOMPromiseDeferred<void>&& promise)
 {
+    auto scope = makeScopeExit([&promise] {
+        promise.resolve();
+    });
+
     if (m_isCancelled)
         return;
     m_isCancelled = true;

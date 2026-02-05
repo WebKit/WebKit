@@ -79,9 +79,9 @@ VkBufferImageCopy CalculateBufferImageCopyRegion(const size_t bufferOffset,
     return copyRegion;
 }
 
-static constexpr size_t kTimeoutInMS            = 10000;
-static constexpr size_t kSleepInMS              = 500;
-static constexpr size_t kTimeoutCheckIterations = kTimeoutInMS / kSleepInMS;
+constexpr size_t kTimeoutInMS            = 10000;
+constexpr size_t kSleepInMS              = 500;
+constexpr size_t kTimeoutCheckIterations = kTimeoutInMS / kSleepInMS;
 
 DispatchWorkThread::DispatchWorkThread(CLCommandQueueVk *commandQueue)
     : mCommandQueue(commandQueue),
@@ -255,6 +255,9 @@ CLCommandQueueVk::CLCommandQueueVk(const cl::CommandQueue &commandQueue)
       mDevice(&commandQueue.getDevice().getImpl<CLDeviceVk>()),
       mPrintfBuffer(nullptr),
       mComputePassCommands(nullptr),
+      mCommandState(mContext->getRenderer(),
+                    vk::ProtectionType::Unprotected,
+                    convertClToEglPriority(mCommandQueue.getPriority())),
       mQueueSerialIndex(kInvalidQueueSerialIndex),
       mNeedPrintfHandling(false),
       mFinishHandler(this)
@@ -293,6 +296,10 @@ angle::Result CLCommandQueueVk::init()
 
 CLCommandQueueVk::~CLCommandQueueVk()
 {
+    VkDevice vkDevice = mContext->getDevice();
+
+    mCommandState.destroy(vkDevice);
+
     mFinishHandler.terminate();
 
     ASSERT(mComputePassCommands->empty());
@@ -305,8 +312,6 @@ CLCommandQueueVk::~CLCommandQueueVk()
         ASSERT(wasLastUser);
         delete mPrintfBuffer;
     }
-
-    VkDevice vkDevice = mContext->getDevice();
 
     if (mQueueSerialIndex != kInvalidQueueSerialIndex)
     {
@@ -1612,30 +1617,16 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk)
         kernelVk.getProgram()->getDeviceProgramData(mCommandQueue.getDevice().getNative());
     ASSERT(devProgramData != nullptr);
 
-    // Set the descriptor set layouts and allocate descriptor sets
-    // The descriptor set layouts are setup in the order of their appearance, as Vulkan requires
-    // them to point to valid handles.
     angle::EnumIterator<DescriptorSetIndex> layoutIndex(DescriptorSetIndex::LiteralSampler);
     for (DescriptorSetIndex index : angle::AllEnums<DescriptorSetIndex>())
     {
         if (!kernelVk.getDescriptorSetLayoutDesc(index).empty())
         {
-            // Setup the descriptor layout
-            ANGLE_CL_IMPL_TRY_ERROR(mContext->getDescriptorSetLayoutCache()->getDescriptorSetLayout(
-                                        mContext, kernelVk.getDescriptorSetLayoutDesc(index),
-                                        &kernelVk.getDescriptorSetLayouts()[*layoutIndex]),
-                                    CL_INVALID_OPERATION);
-            ASSERT(kernelVk.getDescriptorSetLayouts()[*layoutIndex]->valid());
-
-            // Allocate descriptor set
             ANGLE_TRY(mContext->allocateDescriptorSet(&kernelVk, index, layoutIndex,
                                                       mComputePassCommands));
             ++layoutIndex;
         }
     }
-
-    // Setup the pipeline layout
-    ANGLE_CL_IMPL_TRY_ERROR(kernelVk.initPipelineLayout(), CL_INVALID_OPERATION);
 
     // Retain kernel object until we finish executing it later
     mCommandsStateMap.addKernel(mComputePassCommands->getQueueSerial(),
@@ -2142,9 +2133,7 @@ angle::Result CLCommandQueueVk::flushComputePassCommands()
     // get hold of the queue serial that is flushed, post the flush the command buffer will be reset
     mLastFlushedQueueSerial = mComputePassCommands->getQueueSerial();
     // Here, we flush our compute cmds to RendererVk's primary command buffer
-    ANGLE_TRY(mContext->getRenderer()->flushOutsideRPCommands(
-        mContext, getProtectionType(), convertClToEglPriority(mCommandQueue.getPriority()),
-        &mComputePassCommands));
+    ANGLE_TRY(mCommandState.flushOutsideRPCommands(mContext, &mComputePassCommands));
 
     mContext->getPerfCounters().flushedOutsideRenderPassCommandBuffers++;
 
@@ -2198,8 +2187,7 @@ angle::Result CLCommandQueueVk::submitCommands()
 
     // Kick off renderer submit
     ANGLE_TRY(mContext->getRenderer()->submitCommands(
-        mContext, getProtectionType(), convertClToEglPriority(mCommandQueue.getPriority()), nullptr,
-        nullptr, {}, mLastFlushedQueueSerial));
+        mContext, nullptr, nullptr, mLastFlushedQueueSerial, std::move(mCommandState)));
 
     mLastSubmittedQueueSerial = mLastFlushedQueueSerial;
 

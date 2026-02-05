@@ -380,6 +380,11 @@ angle::Result VertexArrayMtl::setupDraw(const gl::Context *glContext,
         std::array<uint8_t, mtl::kMaxVertexAttribs> currentAttribFormats{};
         for (auto &input : executable->getProgramInputs())
         {
+            if (input.isBuiltIn())
+            {
+                continue;
+            }
+
             ASSERT(input.getLocation() != -1);
             ASSERT(input.getLocation() < static_cast<int>(mtl::kMaxVertexAttribs));
             currentAttribFormats[input.getLocation()] = GetCurrentAttribFormat(input.getType());

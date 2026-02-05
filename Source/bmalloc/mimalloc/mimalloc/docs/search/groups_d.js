@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['zero_20initialized_20re_20allocation_0',['Zero initialized re-allocation',['../group__zeroinit.html',1,'']]]
+  ['thread_20local_20heaps_0',['Thread-local heaps',['../group__theap.html',1,'']]],
+  ['typed_20macros_1',['Typed Macros',['../group__typed.html',1,'']]]
 ];

@@ -191,6 +191,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, reportTotalPhaseTimes, false, Normal, "This prints phase times at the end of running script inside jsc.cpp"_s) \
     v(Bool, reportParseTimes, false, Normal, "dumps JS function signature and the time it took to parse"_s) \
     v(Bool, reportBytecodeCompileTimes, false, Normal, "dumps JS function signature and the time it took to bytecode compile"_s) \
+    v(Bool, reportBytecodeCacheDecodeTimes, false, Normal, "dumps the time it took to decode bytecode from the disk cache"_s) \
     v(Bool, countParseTimes, false, Normal, "counts parse times"_s) \
     v(Bool, verboseExitProfile, false, Normal, nullptr) \
     v(Bool, verboseCFA, false, Normal, nullptr) \
@@ -493,9 +494,6 @@ bool hasCapacityToUseLargeGigacage();
     \
     v(Bool, logPhaseTimes, false, Normal, nullptr) \
     v(Double, rareBlockPenalty, 0.001, Normal, nullptr) \
-    v(Unsigned, maximumTmpsForGraphColoring, 60000, Normal, "The maximum number of tmps an Air program can have before always register allocating with Linear Scan"_s) \
-    v(Bool, airLinearScanVerbose, false, Normal, nullptr) \
-    v(Bool, airLinearScanSpillsEverything, false, Normal, nullptr) \
     v(Bool, airForceBriggsAllocator, false, Normal, nullptr) \
     v(Bool, airForceIRCAllocator, false, Normal, nullptr) \
     v(Bool, airGreedyRegAllocVerbose, false, Normal, nullptr) \
@@ -648,15 +646,13 @@ bool hasCapacityToUseLargeGigacage();
     /* Feature Flags */\
     \
     /* Restricted so some app doesn't set this environment variable and start using it. */ \
-    v(Bool, useAsyncStackTrace, false, Normal, "Enable async stack traces") \
+    v(Bool, useAsyncStackTrace, true, Normal, "Enable async stack traces") \
     v(Bool, disallowMixedWasmExceptions, true, Restricted, "Disallow using both legacy and modern (try_table) wasm exception specs in the same module."_s) \
     v(Bool, useExplicitResourceManagement, false, Normal, "Enable explicit resource management builtins and syntax."_s) \
     v(Bool, useImportDefer, false, Normal, "Enable deferred module import."_s) \
     v(Bool, useIteratorChunking, false, Normal, "Expose the Iterator.prototype.chunks and Iterator.prototype.windows methods."_s) \
     v(Bool, useIteratorSequencing, true, Normal, "Expose the Iterator.concat method."_s) \
     v(Bool, useJSONSourceTextAccess, true, Normal, "Expose JSON source text access feature."_s) \
-    v(Bool, useMapGetOrInsert, true, Normal, "Expose the Map.prototype.getOrInsert family of methods."_s) \
-    v(Bool, useMathSumPreciseMethod, true, Normal, "Expose the Math.sumPrecise() method."_s) \
     v(Bool, useMoreCurrencyDisplayChoices, false, Normal, "Enable more currencyDisplay choices for Intl.NumberFormat"_s) \
     v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
     v(Bool, useShadowRealm, false, Normal, "Expose the ShadowRealm object."_s) \

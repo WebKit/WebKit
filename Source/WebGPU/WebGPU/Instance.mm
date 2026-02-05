@@ -28,8 +28,8 @@
 
 #import "APIConversions.h"
 #import "Adapter.h"
-#import "DDMesh.h"
 #import "HardwareCapabilities.h"
+#import "Mesh.h"
 #import "PresentationContext.h"
 #import <cstring>
 #import <dlfcn.h>
@@ -404,7 +404,7 @@ WGPUBool wgpuXRViewIsValid(WGPUXRView view)
     return WebGPU::protectedFromAPI(view)->isValid();
 }
 
-WGPUDDMesh wgpuDDMeshCreate(WGPUInstance instance, const WGPUDDCreateMeshDescriptor* descriptor)
+WebMesh webModelMeshCreate(WGPUInstance instance, const WebModelCreateMeshDescriptor* descriptor)
 {
     return WebGPU::releaseToAPI(WebGPU::protectedFromAPI(instance)->createModelBacking(*descriptor));
 }

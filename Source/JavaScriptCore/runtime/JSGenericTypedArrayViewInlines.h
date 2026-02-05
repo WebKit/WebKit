@@ -449,20 +449,16 @@ bool JSGenericTypedArrayView<Adaptor>::setFromArrayLike(JSGlobalObject* globalOb
         ASSERT(i + objectOffset <= MAX_ARRAY_INDEX);
         JSValue value = object->get(globalObject, static_cast<unsigned>(i + objectOffset));
         RETURN_IF_EXCEPTION(scope, false);
-        bool success = setIndex(globalObject, offset + i, value);
+        success &= setIndex(globalObject, offset + i, value);
         EXCEPTION_ASSERT(!scope.exception() || !success);
-        if (!success)
-            return false;
     }
     for (size_t i = safeLength; i < length; ++i) {
         JSValue value = object->get(globalObject, static_cast<uint64_t>(i + objectOffset));
         RETURN_IF_EXCEPTION(scope, false);
-        bool success = setIndex(globalObject, offset + i, value);
+        success &= setIndex(globalObject, offset + i, value);
         EXCEPTION_ASSERT(!scope.exception() || !success);
-        if (!success)
-            return false;
     }
-    return true;
+    return success;
 }
 
 template<typename Adaptor>
@@ -499,24 +495,21 @@ bool JSGenericTypedArrayView<Adaptor>::setFromArrayLike(JSGlobalObject* globalOb
     // It is not valid to ever call source->get() with an index of more than MAX_ARRAY_INDEX.
     // So we iterate in the optimized loop up to MAX_ARRAY_INDEX, then if there is anything to do beyond this, we rely on slower code.
     size_t safeLength = std::min(sourceLength, static_cast<size_t>(MAX_ARRAY_INDEX) + 1);
+    bool success = true;
     for (size_t i = 0; i < safeLength; ++i) {
         ASSERT(i <= MAX_ARRAY_INDEX);
         JSValue value = source->get(globalObject, static_cast<unsigned>(i));
         RETURN_IF_EXCEPTION(scope, false);
-        bool success = setIndex(globalObject, offset + i, value);
+        success &= setIndex(globalObject, offset + i, value);
         EXCEPTION_ASSERT(!scope.exception() || !success);
-        if (!success) [[unlikely]]
-            return false;
     }
     for (size_t i = safeLength; i < sourceLength; ++i) {
         JSValue value = source->get(globalObject, static_cast<uint64_t>(i));
         RETURN_IF_EXCEPTION(scope, false);
-        bool success = setIndex(globalObject, offset + i, value);
+        success &= setIndex(globalObject, offset + i, value);
         EXCEPTION_ASSERT(!scope.exception() || !success);
-        if (!success) [[unlikely]]
-            return false;
     }
-    return true;
+    return success;
 }
 
 template<typename Adaptor>

@@ -4,7 +4,7 @@ layer at (0,0) size 800x205
   RenderBlock {HTML} at (0,0) size 800x205
     RenderBody {BODY} at (8,16) size 784x181
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 388x19
+        RenderText {#text} at (0,0) size 388x20
           text run at (0,0) width 388: "You should not see any pixel artifacts around the reflections."
       RenderBlock (anonymous) at (0,36) size 784x145
         RenderText {#text} at (140,125) size 4x19

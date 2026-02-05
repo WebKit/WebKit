@@ -127,6 +127,8 @@ class RenderbufferVk : public RenderbufferImpl, public angle::ObserverInterface
     RenderTargetVk mRenderTarget;
 
     angle::ObserverBinding mImageObserverBinding;
+
+    vk::Renderer *mRenderer;
 };
 
 }  // namespace rx

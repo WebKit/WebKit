@@ -271,7 +271,7 @@ void VTTRegion::displayLastTextTrackCueBox()
 
     // If it's a scrolling region, add the scrolling class.
     if (scroll() == ScrollSetting::Up)
-        m_cueContainer->protectedClassList()->add(textTrackCueContainerScrollingClass());
+        protect(m_cueContainer->classList())->add(textTrackCueContainerScrollingClass());
 
     float regionBottom = m_regionDisplayTree->boundingClientRect().maxY();
 
@@ -301,7 +301,7 @@ void VTTRegion::willRemoveTextTrackCueBox(VTTCueBox* box)
 
     double boxHeight = box->boundingClientRect().height();
 
-    m_cueContainer->protectedClassList()->remove(textTrackCueContainerScrollingClass());
+    protect(m_cueContainer->classList())->remove(textTrackCueContainerScrollingClass());
 
     m_currentTop += boxHeight;
     m_cueContainer->setInlineStyleProperty(CSSPropertyTop, m_currentTop, CSSUnitType::CSS_PX);

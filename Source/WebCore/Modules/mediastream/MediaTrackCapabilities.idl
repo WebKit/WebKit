@@ -23,19 +23,22 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
+// https://w3c.github.io/mediacapture-main/#dom-mediatrackcapabilities
 [
     Conditional=MEDIA_STREAM,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary MediaTrackCapabilities {
+    // FIXME: `width` should be of type `ULongRange`.
     LongRange width;
+    // FIXME: `height` should be of type `ULongRange`.
     LongRange height;
     DoubleRange aspectRatio;
     DoubleRange frameRate;
     sequence<DOMString> facingMode;
     DoubleRange volume;
+    // FIXME: `sampleRate` should be of type `ULongRange`.
     LongRange sampleRate;
+    // FIXME: `sampleSize` should be of type `ULongRange`.
     LongRange sampleSize;
     sequence<boolean> echoCancellation;
     // FIXME 169871: add latency

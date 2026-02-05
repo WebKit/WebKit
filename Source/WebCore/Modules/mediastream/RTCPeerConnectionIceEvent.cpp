@@ -43,7 +43,7 @@ Ref<RTCPeerConnectionIceEvent> RTCPeerConnectionIceEvent::create(CanBubble canBu
 Ref<RTCPeerConnectionIceEvent> RTCPeerConnectionIceEvent::create(const AtomString& type, Init&& init)
 {
     return adoptRef(*new RTCPeerConnectionIceEvent(type, init.bubbles ? CanBubble::Yes : CanBubble::No,
-        init.cancelable ? IsCancelable::Yes : IsCancelable::No, WTF::move(init.candidate), WTF::move(init.url)));
+        init.cancelable ? IsCancelable::Yes : IsCancelable::No, WTF::move(init.candidate).value_or(RefPtr<RTCIceCandidate> { }), WTF::move(init.url).value_or(String { })));
 }
 
 RTCPeerConnectionIceEvent::RTCPeerConnectionIceEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, RefPtr<RTCIceCandidate>&& candidate, String&& serverURL)

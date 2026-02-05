@@ -34,7 +34,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mimalloc-logo.svg"/></td>
   <td id="projectalign">
-   <div id="projectname">mi-malloc<span id="projectnumber">&#160;3.2</span>
+   <div id="projectname">mi-malloc<span id="projectnumber">&#160;v1.9,  v2.2,  v3.2</span>
    </div>
   </td>
     <td>        <div id="MSearchBox" class="MSearchBoxInactive">
@@ -109,9 +109,9 @@ $(function(){initNavTree('build.html',''); initResizable(true); });
 <div class="contents">
 <div class="textblock"><p>Checkout the sources from GitHub: </p><div class="fragment"><div class="line">git clone https:<span class="comment">//github.com/microsoft/mimalloc</span></div>
 </div><!-- fragment --><h2>Windows</h2>
-<p>Open <code>ide/vs2019/mimalloc.sln</code> in Visual Studio 2019 and build (or <code>ide/vs2017/mimalloc.sln</code>). The <code>mimalloc</code> project builds a static library (in <code>out/msvc-x64</code>), while the <code>mimalloc-override</code> project builds a DLL for overriding malloc in the entire program.</p>
-<h2>macOS, Linux, BSD, etc.</h2>
-<p>We use <a href="https://cmake.org"><code>cmake</code></a><sup>1</sup> as the build system:</p>
+<p>Open <code>ide/vs2022/mimalloc.sln</code> in Visual Studio 2022 and build. The <code>mimalloc-lib</code> project builds a static library (in <code>out/msvc-x64</code>), while the <code>mimalloc-override-dll</code> project builds a DLL for overriding malloc in the entire program.</p>
+<h2>Linux, macOS, BSD, etc.</h2>
+<p>We use <a href="https://cmake.org"><code>cmake</code></a> as the build system:</p>
 <div class="fragment"><div class="line">&gt; mkdir -p out/release</div>
 <div class="line">&gt; cd out/release</div>
 <div class="line">&gt; cmake ../..</div>
@@ -123,16 +123,24 @@ $(function(){initNavTree('build.html',''); initResizable(true); });
 <div class="line">&gt; cd out/debug</div>
 <div class="line">&gt; cmake -DCMAKE_BUILD_TYPE=Debug ../..</div>
 <div class="line">&gt; make</div>
-</div><!-- fragment --><p> This will name the shared library as <code>libmimalloc-debug.so</code>.</p>
-<p>Finally, you can build a <em>secure</em> version that uses guard pages, encrypted free lists, etc, as: </p><div class="fragment"><div class="line">&gt; mkdir -p out/secure</div>
+</div><!-- fragment --><p>This will name the shared library as <code>libmimalloc-debug.so</code>.</p>
+<p>Finally, you can build a <em>secure</em> version that uses guard pages, encrypted free lists, etc., as:</p>
+<div class="fragment"><div class="line">&gt; mkdir -p out/secure</div>
 <div class="line">&gt; cd out/secure</div>
 <div class="line">&gt; cmake -DMI_SECURE=ON ../..</div>
 <div class="line">&gt; make</div>
-</div><!-- fragment --><p> This will name the shared library as <code>libmimalloc-secure.so</code>. Use <code>ccmake</code><sup>2</sup> instead of <code>cmake</code> to see and customize all the available build options.</p>
-<p>Notes:</p><ol type="1">
-<li>Install CMake: <code>sudo apt-get install cmake</code></li>
-<li>Install CCMake: <code>sudo apt-get install cmake-curses-gui</code> </li>
-</ol>
+</div><!-- fragment --><p>This will name the shared library as <code>libmimalloc-secure.so</code>. Use <code>cmake ../.. -LH</code> to see all the available build options.</p>
+<p>The examples use the default compiler. If you like to use another, use:</p>
+<div class="fragment"><div class="line">&gt; CC=clang CXX=clang++ cmake ../..</div>
+</div><!-- fragment --><h2>Cmake with Visual Studio</h2>
+<p>You can also use cmake on Windows. Open a Visual Studio 2022 development prompt and invoke <code>cmake</code> with the right <a href="https://cmake.org/cmake/help/latest/generator/Visual%20Studio%2017%202022.html">generator</a> and architecture, like:</p>
+<div class="fragment"><div class="line">&gt; cmake ..\.. -G <span class="stringliteral">&quot;Visual Studio 17 2022&quot;</span> -A x64 -DMI_OVERRIDE=ON</div>
+</div><!-- fragment --><p>The cmake build type is specified when actually building, for example:</p>
+<div class="fragment"><div class="line">&gt; cmake --build . --config=Release</div>
+</div><!-- fragment --><p>You can also install the <a href="https://learn.microsoft.com/en-us/cpp/build/clang-support-msbuild?view=msvc-170#install-1">LLVM toolset</a> on Windows to build with the <code>clang-cl</code> compiler directly:</p>
+<div class="fragment"><div class="line">&gt; cmake ../.. -G <span class="stringliteral">&quot;Visual Studio 17 2022&quot;</span> -T ClangCl</div>
+</div><!-- fragment --><h2>Single Source</h2>
+<p>You can also directly build the single <code>src/static.c</code> file as part of your project without needing <code>cmake</code> at all. Make sure to also add the mimalloc <code>include</code> directory to the include path. </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->

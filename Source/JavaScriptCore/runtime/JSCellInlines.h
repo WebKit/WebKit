@@ -375,12 +375,11 @@ inline bool JSCell::canUseFastGetOwnProperty(const Structure& structure)
 
 ALWAYS_INLINE const ClassInfo* JSCell::classInfo() const
 {
-    // What we really want to assert here is that we're not currently destructing this object (which makes its classInfo
-    // invalid). If mutatorState() == MutatorState::Running, then we're not currently sweeping, and therefore cannot be
-    // destructing the object. The GC thread or JIT threads, unlike the mutator thread, are able to access classInfo
-    // independent of whether the mutator thread is sweeping or not. Hence, we also check for !currentThreadIsHoldingAPILock()
-    // to allow the GC thread or JIT threads to pass this assertion.
-    ASSERT(vm().heap.mutatorState() != MutatorState::Sweeping || !vm().currentThreadIsHoldingAPILock());
+    // If the mutator is currently sweeping, then accessing the structure is not safe since the structure
+    // may have been swept already (and we're probably being called from this object's destructor).
+    // This can only be verified for the mutator thread since other threads might be querying JSCells
+    // that are not being swept by the mutator.
+    ASSERT_IMPLIES(vm().currentThreadIsHoldingAPILock(), vm().heap.mutatorState() != MutatorState::Sweeping);
     return structure()->classInfoForCells();
 }
 

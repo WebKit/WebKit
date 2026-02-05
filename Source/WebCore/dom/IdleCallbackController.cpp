@@ -68,7 +68,7 @@ int IdleCallbackController::queueIdleCallback(Ref<IdleRequestCallback>&& callbac
     }
 
     if (RefPtr document = m_document.get())
-        document->protectedWindowEventLoop()->scheduleIdlePeriod();
+        protect(document->windowEventLoop())->scheduleIdlePeriod();
 
     return handle;
 }

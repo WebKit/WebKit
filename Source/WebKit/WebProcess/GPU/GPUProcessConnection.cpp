@@ -201,11 +201,6 @@ SampleBufferDisplayLayerManager& GPUProcessConnection::sampleBufferDisplayLayerM
     return *m_sampleBufferDisplayLayerManager;
 }
 
-Ref<SampleBufferDisplayLayerManager> GPUProcessConnection::protectedSampleBufferDisplayLayerManager()
-{
-    return sampleBufferDisplayLayerManager();
-}
-
 void GPUProcessConnection::resetAudioMediaStreamTrackRendererInternalUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier)
 {
     WebProcess::singleton().audioMediaStreamTrackRendererInternalUnitManager().reset(identifier);
@@ -220,19 +215,9 @@ RemoteVideoFrameObjectHeapProxy& GPUProcessConnection::videoFrameObjectHeapProxy
     return *m_videoFrameObjectHeapProxy;
 }
 
-Ref<RemoteVideoFrameObjectHeapProxy> GPUProcessConnection::protectedVideoFrameObjectHeapProxy()
-{
-    return videoFrameObjectHeapProxy();
-}
-
 RemoteMediaPlayerManager& GPUProcessConnection::mediaPlayerManager()
 {
     return WebProcess::singleton().remoteMediaPlayerManager();
-}
-
-Ref<RemoteMediaPlayerManager> GPUProcessConnection::protectedMediaPlayerManager()
-{
-    return mediaPlayerManager();
 }
 #endif
 
@@ -243,18 +228,13 @@ RemoteAudioSourceProviderManager& GPUProcessConnection::audioSourceProviderManag
         m_audioSourceProviderManager = RemoteAudioSourceProviderManager::create();
     return *m_audioSourceProviderManager;
 }
-
-Ref<RemoteAudioSourceProviderManager> GPUProcessConnection::protectedAudioSourceProviderManager()
-{
-    return audioSourceProviderManager();
-}
 #endif
 
 bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
 #if ENABLE(VIDEO)
     if (decoder.messageReceiverName() == Messages::MediaPlayerPrivateRemote::messageReceiverName()) {
-        WebProcess::singleton().protectedRemoteMediaPlayerManager()->didReceivePlayerMessage(connection, decoder);
+        protect(WebProcess::singleton().remoteMediaPlayerManager())->didReceivePlayerMessage(connection, decoder);
         return true;
     }
 
@@ -273,14 +253,14 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
     }
 
     if (decoder.messageReceiverName() == Messages::SampleBufferDisplayLayer::messageReceiverName()) {
-        protectedSampleBufferDisplayLayerManager()->didReceiveLayerMessage(connection, decoder);
+        protect(sampleBufferDisplayLayerManager())->didReceiveLayerMessage(connection, decoder);
         return true;
     }
 #endif // PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
 #if ENABLE(ENCRYPTED_MEDIA)
     if (decoder.messageReceiverName() == Messages::RemoteCDMInstanceSession::messageReceiverName()) {
-        WebProcess::singleton().protectedCDMFactory()->didReceiveSessionMessage(connection, decoder);
+        protect(WebProcess::singleton().cdmFactory())->didReceiveSessionMessage(connection, decoder);
         return true;
     }
 #endif
@@ -341,7 +321,7 @@ void GPUProcessConnection::didInitialize(std::optional<GPUProcessConnectionInfo>
 #endif
 #if ENABLE(AV1)
     WebCore::setAV1HardwareDecoderAvailable(info->mediaCodecCapabilities.hasAV1HardwareDecoder);
-    WebProcess::singleton().protectedLibWebRTCCodecs()->setHasAV1HardwareDecoder(info->mediaCodecCapabilities.hasAV1HardwareDecoder);
+    protect(WebProcess::singleton().libWebRTCCodecs())->setHasAV1HardwareDecoder(info->mediaCodecCapabilities.hasAV1HardwareDecoder);
 #endif
 #endif
 #if ENABLE(VP9)

@@ -387,8 +387,6 @@ private:
             
             switch (m_node->op()) {
             case NewObject:
-            case NewGenerator:
-            case NewAsyncGenerator:
             case NewArray:
             case NewArrayWithSize:
             case NewArrayWithButterfly:

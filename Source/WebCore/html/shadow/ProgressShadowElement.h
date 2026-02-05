@@ -61,10 +61,10 @@ public:
     static Ref<ProgressInnerElement> create(Document&);
 
 private:
-    ProgressInnerElement(Document&);
+    explicit ProgressInnerElement(Document&);
 
-    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
-    bool rendererIsNeeded(const RenderStyle&) override;
+    RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    bool rendererIsNeeded(const RenderStyle&) final;
 };
 static_assert(sizeof(ProgressInnerElement) == sizeof(ProgressShadowElement));
 
@@ -75,7 +75,7 @@ public:
     static Ref<ProgressBarElement> create(Document&);
 
 private:
-    ProgressBarElement(Document&);
+    explicit ProgressBarElement(Document&);
 };
 static_assert(sizeof(ProgressBarElement) == sizeof(ProgressShadowElement));
 
@@ -87,7 +87,7 @@ public:
     void setInlineSizePercentage(double);
 
 private:
-    ProgressValueElement(Document&);
+    explicit ProgressValueElement(Document&);
 };
 static_assert(sizeof(ProgressValueElement) == sizeof(ProgressShadowElement));
 

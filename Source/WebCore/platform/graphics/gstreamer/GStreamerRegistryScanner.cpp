@@ -1015,7 +1015,7 @@ ASCIILiteral GStreamerRegistryScanner::configurationNameForLogging(Configuration
     return ""_s;
 }
 
-GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::isConfigurationSupported(Configuration configuration, const MediaConfiguration& mediaConfiguration) const
+GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::isConfigurationSupported(Configuration configuration, const PlatformMediaConfiguration& mediaConfiguration) const
 {
     bool isUsingHardware = false;
 #ifndef GST_DISABLE_GST_DEBUG
@@ -1041,7 +1041,7 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::isConfi
             if (videoConfiguration.transferFunction.has_value()) {
                 auto tf = videoConfiguration.transferFunction.value();
                 // compare to your enum values for PQ/HLG; adjust names if different
-                if (tf == TransferFunction::PQ || tf == TransferFunction::HLG)
+                if (tf == PlatformMediaCapabilitiesTransferFunction::PQ || tf == PlatformMediaCapabilitiesTransferFunction::HLG)
                     return { false, false, nullptr };
             }
         }

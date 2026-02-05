@@ -42,9 +42,12 @@ public:
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
     WEBCORE_EXPORT static const DestinationColorSpace& DisplayP3();
     WEBCORE_EXPORT static const DestinationColorSpace& ExtendedDisplayP3();
+    WEBCORE_EXPORT static const DestinationColorSpace& LinearDisplayP3();
+    WEBCORE_EXPORT static const DestinationColorSpace& ExtendedLinearDisplayP3();
 #endif
 #if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
     WEBCORE_EXPORT static const DestinationColorSpace& ExtendedSRGB();
+    WEBCORE_EXPORT static const DestinationColorSpace& ExtendedLinearSRGB();
 #endif
 #if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_REC_2020)
     WEBCORE_EXPORT static const DestinationColorSpace& ExtendedRec2020();

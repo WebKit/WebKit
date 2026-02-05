@@ -68,21 +68,7 @@ GUniquePtr<GstStructure> GStreamerDataChannelHandler::fromRTCDataChannelInit(con
     if (options.id)
         gst_structure_set(init.get(), "id", G_TYPE_INT, *options.id, nullptr);
 
-    GstWebRTCPriorityType priorityType;
-    switch (options.priority) {
-    case RTCPriorityType::VeryLow:
-        priorityType = GST_WEBRTC_PRIORITY_TYPE_VERY_LOW;
-        break;
-    case RTCPriorityType::Low:
-        priorityType = GST_WEBRTC_PRIORITY_TYPE_LOW;
-        break;
-    case RTCPriorityType::Medium:
-        priorityType = GST_WEBRTC_PRIORITY_TYPE_MEDIUM;
-        break;
-    case RTCPriorityType::High:
-        priorityType = GST_WEBRTC_PRIORITY_TYPE_HIGH;
-        break;
-    }
+    auto priorityType = fromRTCPriorityType(options.priority);
     gst_structure_set(init.get(), "priority", GST_TYPE_WEBRTC_PRIORITY_TYPE, priorityType, nullptr);
 
     return init;

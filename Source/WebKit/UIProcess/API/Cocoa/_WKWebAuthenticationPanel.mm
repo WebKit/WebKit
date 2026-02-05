@@ -1114,8 +1114,8 @@ static RetainPtr<NSArray<NSNumber *>> wkTransports(const Vector<WebCore::Authent
 static RetainPtr<_WKAuthenticationExtensionsClientOutputs> wkAuthenticationExtensionsClientOutputs(const WebCore::AuthenticationExtensionsClientOutputs& outputs)
 {
     RetainPtr<NSData> first;
-    if (outputs.prf && outputs.prf->results && outputs.prf->results->first)
-        first = WebCore::toNSData(WebCore::BufferSource { outputs.prf->results->first });
+    if (outputs.prf && outputs.prf->results)
+        first = WebCore::toNSData(WebCore::BufferSource { outputs.prf->results->first.ptr() });
     RetainPtr<NSData> second;
     if (outputs.prf && outputs.prf->results && outputs.prf->results->second)
         second = WebCore::toNSData(WebCore::BufferSource { outputs.prf->results->second });

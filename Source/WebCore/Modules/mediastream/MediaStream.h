@@ -94,7 +94,6 @@ public:
     template<typename Function> bool hasMatchingTrack(Function&& function) const { return std::ranges::any_of(m_trackMap.values(), std::forward<Function>(function)); }
 
     MediaStreamPrivate& privateStream() { return m_private.get(); }
-    Ref<MediaStreamPrivate> protectedPrivateStream();
 
     void startProducingData();
     void stopProducingData();

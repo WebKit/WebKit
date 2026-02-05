@@ -22,12 +22,14 @@
 
 import argparse
 from datetime import datetime
+import functools
 import json
 import logging
 import os
 import pathlib
 import sys
 import textwrap
+from typing import Optional
 from urllib.parse import urljoin, urlencode, parse_qs
 from urllib.request import urlopen
 from urllib.error import HTTPError
@@ -107,17 +109,10 @@ class Query:
 
 
 BOTS = {
-    "gtk-release-x11": Query(
-        platform="GTK", style="release", version_name="Xvfb", version="5.5.0"
-    ),
-    "gtk-release-gtk3": Query(
-        platform="GTK", style="release", version_name="Xvfb", version="4.19.0"
-    ),
-    "gtk-release-wayland": Query(
-        platform="GTK", style="release", version_name="Wayland"
-    ),
-    "wpe-release": Query(platform="WPE", style="release"),
-    "wpe-debug": Query(platform="WPE", style="release"),
+    "gtk-release": Query(platform="GTK", style="release", version_name="Xvfb"),
+    "gtk-debug": Query(platform="GTK", style="debug", version_name="Xvfb"),
+    "wpe-release": Query(platform="WPE", style="release", flavor="wk2"),
+    "wpe-debug": Query(platform="WPE", style="debug", flavor="wk2"),
 }
 
 
@@ -148,10 +143,10 @@ def load_commit_cache(force_reset=False):
 
 
 def reset_commit_cache():
-    """Fetches the last 5000 commits and store their info to be reused in later calls."""
+    """Fetches the last 1000 commits and store their info to be reused in later calls."""
     # TODO Append to existing instead of resetting
     logging.info("Resetting commit cache")
-    limit = 5000
+    limit = 1000
     command = "/api/commits"
 
     query = {"limit": limit, "branch": "main"}
@@ -214,6 +209,23 @@ def get_latest_commit(commits):
     return latest["identifier"], latest["timestamp"]
 
 
+@functools.cache
+def version_string(platform: str, version_number: int, version_name: Optional[str]) -> str:
+    """Translates the version number into a version string, following the resultsdb rules"""
+
+    if platform.lower() not in ('wpe', 'gtk') and version_name:
+        return version_name
+
+    if not version_number:
+        return "0.0.0"
+
+    micro = version_number % 1000
+    minor = (version_number // 1000) % 1000
+    major = version_number // 1000_000
+
+    return f"{major}.{minor}.{micro}"
+
+
 def report_test(args):
     """Reports the test history for a single testcase in a single configuration"""
     endpoint = "api/results/layout-tests"
@@ -225,14 +237,26 @@ def report_test(args):
     url = urljoin(BASE_URL, endpoint + "/" + args.test) + "?" + query
 
     logging.info("Loading test data from %s", url)
-    try:
-        with urlopen(url) as response:
-            data = json.load(response)[0]
-    except IndexError:
+    with urlopen(url) as response:
+        data = json.load(response)
+
+    if not data:
         logging.error("No results returned. Exiting.")
         return 1
 
-    results = sorted(data["results"], key=lambda result: result["uuid"])
+    # Until early 2026 the linux bots used the kernel x.y.z version as the test result version,
+    # resulting in multiple configurations in a short timeframe, so we need to flatten them.
+    all_results = []
+    for configuration_result in data:
+        config_data = configuration_result["configuration"]
+        for result in configuration_result["results"]:
+            result.update(config_data)
+            result["version"] = version_string(result['platform'], result.get("version", 0), result.get('version_name'))
+            all_results.append(result)
+    results = sorted(all_results, key=lambda result: result["uuid"])
+
+    if args.limit > 0:
+        results = results[-args.limit :]
 
     commits = load_commit_cache(force_reset=args.reset_cache)
     logging.info("Found %d cached commits", len(commits))
@@ -246,6 +270,10 @@ def report_test(args):
         expected = result["expected"]
         start_time = datetime.fromtimestamp(result["start_time"])
         uuid = result["uuid"]
+
+        config_str = (
+            "{platform} {version} {flavor} {style} with {architecture}".format(**result)
+        )
 
         try:
             commit = commits[str(uuid)]
@@ -261,8 +289,8 @@ def report_test(args):
             if actual == expected:
                 continue
 
-        msg = "commit {} expected {} actual {} time {}".format(
-            commit["identifier"], expected, actual, start_time
+        msg = "{} '{}' {}: expected {} actual {} ".format(
+            commit.get("identifier", 'UNKNOWN'), config_str, start_time, expected, actual
         )
 
         if args.color:
@@ -294,14 +322,14 @@ def parse_args():
                 test run registered, alongside commit information, expected and actual outcomes,
                 and timestamp of the run. For example:
 
-                $ wk-test-result --bot wpe-release ietestcenter/css3/text/textshadow-001.htm --limit=5
-                commit 244781@main expected PASS actual TEXT time 2021-12-02 18:02:13
-                commit 244787@main expected PASS actual TEXT time 2021-12-02 19:43:10
-                commit 244796@main expected PASS actual TEXT time 2021-12-02 20:41:52
-                commit 244797@main expected PASS actual TEXT time 2021-12-02 21:40:29
-                commit 244803@main expected PASS actual TEXT time 2021-12-02 23:13:19
+                ./Tools/Scripts/webkit-test-results --bot wpe-debug css3/filters/drop-shadow-current-color.html --limit=5
+                305904@main 'WPE 2.51.0 wk2 debug with x86' 2026-01-20 21:30:13: expected PASS actual CRASH
+                305907@main 'WPE 2.51.0 wk2 debug with x86' 2026-01-21 00:24:09: expected PASS actual CRASH
+                305913@main 'WPE 2.51.0 wk2 debug with x86' 2026-01-21 03:16:45: expected PASS actual CRASH
+                305923@main 'WPE 2.51.0 wk2 debug with x86' 2026-01-21 06:01:24: expected PASS actual CRASH
+                305928@main 'WPE 2.51.0 wk2 debug with x86' 2026-01-21 08:44:56: expected PASS actual CRASH
 
-                To avoid querying the commit data at each invocation, the last 5000 commits
+                To avoid querying the commit data at each invocation, the last 1000 commits
                 are cached (by default, to $XDG_CACHE_HOME/wk-gardening-tools/commits.json).
 
                 Currently, only GLIB-based bots and layout-test suite are supported.

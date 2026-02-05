@@ -67,7 +67,7 @@ static RetainPtr<NSString> getUTIForUSDMIMEType(const String& mimeType)
     RetainPtr<NSString> _mimeType;
     RetainPtr<QLItem> _item;
     RetainPtr<ASVThumbnailView> _thumbnailView;
-    WKWebView *_webView;
+    WeakObjCPtr<WKWebView> _webView;
 }
 
 - (instancetype)web_initWithFrame:(CGRect)frame webView:(WKWebView *)webView mimeType:(NSString *)mimeType
@@ -96,7 +96,7 @@ static RetainPtr<NSString> getUTIForUSDMIMEType(const String& mimeType)
 
     RetainPtr alert = WebKit::createUIAlertController(WEB_UI_NSSTRING(@"View 3D Object?", "View 3D Object?"), WEB_UI_NSSTRING(@"You can see a preview of this object before viewing in 3D.", "You can see a preview of this object before viewing in 3D."));
 
-    UIAlertAction* allowAction = [UIAlertAction actionWithTitle:WEB_UI_NSSTRING_KEY(@"View 3D Object", @"View 3D Object (QuickLook Preview)", "Allow displaying QuickLook Preview of 3D object") style:UIAlertActionStyleDefault handler:[weakSelf = WeakObjCPtr<WKUSDPreviewView>(self), completionHandler = makeBlockPtr(completionHandler)](UIAlertAction *) mutable {
+    RetainPtr allowAction = [UIAlertAction actionWithTitle:WEB_UI_NSSTRING_KEY(@"View 3D Object", @"View 3D Object (QuickLook Preview)", "Allow displaying QuickLook Preview of 3D object") style:UIAlertActionStyleDefault handler:[weakSelf = WeakObjCPtr<WKUSDPreviewView>(self), completionHandler = makeBlockPtr(completionHandler)](UIAlertAction *) mutable {
         RetainPtr strongSelf = weakSelf.get();
         if (!strongSelf) {
             completionHandler();
@@ -126,14 +126,14 @@ static RetainPtr<NSString> getUTIForUSDMIMEType(const String& mimeType)
         completionHandler();
     }];
 
-    UIAlertAction* doNotAllowAction = [UIAlertAction actionWithTitle:WEB_UI_NSSTRING_KEY(@"Cancel", @"Cancel (QuickLook Preview)", "Cancel displaying QuickLook Preview of 3D object") style:UIAlertActionStyleCancel handler:[completionHandler = makeBlockPtr(completionHandler)](UIAlertAction *) {
+    RetainPtr doNotAllowAction = [UIAlertAction actionWithTitle:WEB_UI_NSSTRING_KEY(@"Cancel", @"Cancel (QuickLook Preview)", "Cancel displaying QuickLook Preview of 3D object") style:UIAlertActionStyleCancel handler:[completionHandler = makeBlockPtr(completionHandler)](UIAlertAction *) {
         completionHandler();
     }];
 
-    [alert addAction:doNotAllowAction];
-    [alert addAction:allowAction];
+    [alert addAction:doNotAllowAction.get()];
+    [alert addAction:allowAction.get()];
 
-    RefPtr page = _webView->_page;
+    RefPtr page = _webView.get()->_page;
     UIViewController *presentingViewController = page->uiClient().presentingViewController();
     [presentingViewController presentViewController:alert.get() animated:YES completion:nil];
 }
@@ -141,8 +141,9 @@ static RetainPtr<NSString> getUTIForUSDMIMEType(const String& mimeType)
 - (void)_layoutThumbnailView
 {
     if (_thumbnailView) {
-        UIEdgeInsets safeAreaInsets = _webView._computedUnobscuredSafeAreaInset;
-        UIEdgeInsets obscuredAreaInsets = _webView._computedObscuredInset;
+        RetainPtr webView = _webView.get();
+        UIEdgeInsets safeAreaInsets = [webView _computedUnobscuredSafeAreaInset];
+        UIEdgeInsets obscuredAreaInsets = [webView _computedObscuredInset];
 
         CGRect layoutFrame = UIEdgeInsetsInsetRect(self.frame, safeAreaInsets);
 
@@ -158,7 +159,7 @@ static RetainPtr<NSString> getUTIForUSDMIMEType(const String& mimeType)
 
 - (void)thumbnailView:(ASVThumbnailView *)thumbnailView wantsToPresentPreviewController:(QLPreviewController *)previewController forItem:(QLItem *)item
 {
-    RefPtr<WebKit::WebPageProxy> page = _webView->_page;
+    RefPtr<WebKit::WebPageProxy> page = _webView.get()->_page;
 
     // FIXME: When in element fullscreen, UIClient::presentingViewController() may not return the
     // WKFullScreenViewController even though that is the presenting view controller of the WKWebView.
@@ -205,13 +206,13 @@ static RetainPtr<NSString> getUTIForUSDMIMEType(const String& mimeType)
 
 - (void)web_countStringMatches:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount
 {
-    RefPtr<WebKit::WebPageProxy> page = _webView->_page;
+    RefPtr<WebKit::WebPageProxy> page = _webView.get()->_page;
     page->findClient().didCountStringMatches(page.get(), string, 0);
 }
 
 - (void)web_findString:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount
 {
-    RefPtr<WebKit::WebPageProxy> page = _webView->_page;
+    RefPtr<WebKit::WebPageProxy> page = _webView.get()->_page;
     page->findClient().didFailToFindString(page.get(), string);
 }
 

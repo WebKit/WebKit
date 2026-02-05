@@ -164,11 +164,6 @@ WebProcessPool& PageConfiguration::processPool() const
     return m_data.processPool.get();
 }
 
-Ref<WebKit::WebProcessPool> PageConfiguration::protectedProcessPool() const
-{
-    return processPool();
-}
-
 void PageConfiguration::setProcessPool(RefPtr<WebProcessPool>&& processPool)
 {
     m_data.processPool = WTF::move(processPool);
@@ -177,11 +172,6 @@ void PageConfiguration::setProcessPool(RefPtr<WebProcessPool>&& processPool)
 WebUserContentControllerProxy& PageConfiguration::userContentController() const
 {
     return m_data.userContentController.get();
-}
-
-Ref<WebUserContentControllerProxy> PageConfiguration::protectedUserContentController() const
-{
-    return userContentController();
 }
 
 void PageConfiguration::setUserContentController(RefPtr<WebUserContentControllerProxy>&& userContentController)
@@ -205,11 +195,6 @@ WebExtensionController* PageConfiguration::webExtensionController() const
     return m_data.webExtensionController.get();
 }
 
-RefPtr<WebExtensionController> PageConfiguration::protectedWebExtensionController() const
-{
-    return webExtensionController();
-}
-
 void PageConfiguration::setWebExtensionController(RefPtr<WebExtensionController>&& webExtensionController)
 {
     m_data.webExtensionController = WTF::move(webExtensionController);
@@ -218,11 +203,6 @@ void PageConfiguration::setWebExtensionController(RefPtr<WebExtensionController>
 WebExtensionController* PageConfiguration::weakWebExtensionController() const
 {
     return m_data.weakWebExtensionController.get();
-}
-
-RefPtr<WebExtensionController> PageConfiguration::protectedWeakWebExtensionController() const
-{
-    return weakWebExtensionController();
 }
 
 void PageConfiguration::setWeakWebExtensionController(WebExtensionController* webExtensionController)
@@ -258,11 +238,6 @@ WebPreferences& PageConfiguration::preferences() const
     return m_data.preferences.get();
 }
 
-Ref<WebPreferences> PageConfiguration::protectedPreferences() const
-{
-    return preferences();
-}
-
 void PageConfiguration::setPreferences(RefPtr<WebPreferences>&& preferences)
 {
     m_data.preferences = WTF::move(preferences);
@@ -273,9 +248,17 @@ WebPageProxy* PageConfiguration::relatedPage() const
     return m_data.relatedPage.get();
 }
 
-RefPtr<WebPageProxy> PageConfiguration::protectedRelatedPage() const
+BrowsingContextGroup* PageConfiguration::preferredBrowsingContextGroup() const
 {
-    return relatedPage();
+    if (auto opener = openerInfo())
+        return opener->browsingContextGroup.ptr();
+
+    if (auto relatedPage = this->relatedPage()) {
+        if (!relatedPage->isClosed())
+            return &relatedPage->browsingContextGroup();
+    }
+
+    return nullptr;
 }
 
 WebPageProxy* PageConfiguration::pageToCloneSessionStorageFrom() const
@@ -303,11 +286,6 @@ WebKit::VisitedLinkStore& PageConfiguration::visitedLinkStore() const
     return m_data.visitedLinkStore.get();
 }
 
-Ref<WebKit::VisitedLinkStore> PageConfiguration::protectedVisitedLinkStore() const
-{
-    return visitedLinkStore();
-}
-
 void PageConfiguration::setVisitedLinkStore(RefPtr<WebKit::VisitedLinkStore>&& visitedLinkStore)
 {
     m_data.visitedLinkStore = WTF::move(visitedLinkStore);
@@ -325,16 +303,6 @@ WebKit::WebsiteDataStore* PageConfiguration::websiteDataStoreIfExists() const
     return m_data.websiteDataStore.get();
 }
 
-RefPtr<WebKit::WebsiteDataStore> PageConfiguration::protectedWebsiteDataStoreIfExists() const
-{
-    return websiteDataStoreIfExists();
-}
-
-Ref<WebsiteDataStore> PageConfiguration::protectedWebsiteDataStore() const
-{
-    return websiteDataStore();
-}
-
 void PageConfiguration::setWebsiteDataStore(RefPtr<WebsiteDataStore>&& websiteDataStore)
 {
     m_data.websiteDataStore = WTF::move(websiteDataStore);
@@ -343,11 +311,6 @@ void PageConfiguration::setWebsiteDataStore(RefPtr<WebsiteDataStore>&& websiteDa
 WebsitePolicies& PageConfiguration::defaultWebsitePolicies() const
 {
     return m_data.defaultWebsitePolicies.get();
-}
-
-Ref<WebsitePolicies> PageConfiguration::protectedDefaultWebsitePolicies() const
-{
-    return defaultWebsitePolicies();
 }
 
 void PageConfiguration::setDefaultWebsitePolicies(RefPtr<WebsitePolicies>&& policies)
@@ -397,7 +360,7 @@ void PageConfiguration::setDelaysWebProcessLaunchUntilFirstLoad(bool delaysWebPr
 
 bool PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() const
 {
-    if (protectedPreferences()->siteIsolationEnabled())
+    if (protect(preferences())->siteIsolationEnabled())
         return true;
     if (RefPtr processPool = m_data.processPool.getIfExists(); processPool && isInspectorProcessPool(*processPool)) {
         // Never delay process launch for inspector pages as inspector pages do not know how to transition from a terminated process.
@@ -430,11 +393,6 @@ ApplicationManifest* PageConfiguration::applicationManifest() const
     return m_data.applicationManifest.get();
 }
 
-RefPtr<ApplicationManifest> PageConfiguration::protectedApplicationManifest() const
-{
-    return applicationManifest();
-}
-
 void PageConfiguration::setApplicationManifest(RefPtr<ApplicationManifest>&& applicationManifest)
 {
     m_data.applicationManifest = WTF::move(applicationManifest);
@@ -448,7 +406,7 @@ bool PageConfiguration::applePayEnabled() const
     if (auto applePayEnabledOverride = m_data.applePayEnabledOverride)
         return *applePayEnabledOverride;
 
-    return protectedPreferences()->applePayEnabled();
+    return protect(preferences())->applePayEnabled();
 }
 
 void PageConfiguration::setApplePayEnabled(bool enabled)

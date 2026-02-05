@@ -65,7 +65,7 @@ private:
 
             // The exception is not reported, instead it is forwarded to the
             // abort signal and promise rejection.
-            auto scope = DECLARE_CATCH_SCOPE(vm);
+            auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
             auto result = m_callback->invokeRethrowingException(value, m_idx++);
 
@@ -118,13 +118,13 @@ private:
     const Ref<DeferredPromise> m_promise;
 };
 
-void createInternalObserverOperatorEvery(ScriptExecutionContext& context, Observable& observable, Ref<PredicateCallback>&& callback, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+void createInternalObserverOperatorEvery(ScriptExecutionContext& context, Observable& observable, Ref<PredicateCallback>&& callback, SubscribeOptions&& options, Ref<DeferredPromise>&& promise)
 {
     Ref signal = AbortSignal::create(&context);
 
     Vector<Ref<AbortSignal>> dependentSignals = { signal };
     if (options.signal)
-        dependentSignals.append(Ref { *options.signal });
+        dependentSignals.append(options.signal.releaseNonNull());
     Ref dependentSignal = AbortSignal::any(context, dependentSignals);
 
     if (dependentSignal->aborted())

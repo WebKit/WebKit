@@ -405,6 +405,8 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
     if (webView.get().traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomVision) {
         [_shareSheetViewController setAllowsCustomPresentationStyle:YES];
         [_shareSheetViewController setModalPresentationStyle:UIModalPresentationFormSheet];
+
+        [webView _page]->dispatchWillPresentModalUI();
     } else
 #endif // PLATFORM(VISION)
     {

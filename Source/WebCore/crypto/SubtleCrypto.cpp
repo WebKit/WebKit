@@ -28,7 +28,22 @@
 
 #include "ContextDestructionObserverInlines.h"
 #include "CryptoAlgorithm.h"
+#include "CryptoAlgorithmAesCbcCfbParams.h"
+#include "CryptoAlgorithmAesCtrParams.h"
+#include "CryptoAlgorithmAesGcmParams.h"
+#include "CryptoAlgorithmAesKeyParams.h"
+#include "CryptoAlgorithmEcKeyParams.h"
+#include "CryptoAlgorithmEcdhKeyDeriveParams.h"
+#include "CryptoAlgorithmEcdsaParams.h"
+#include "CryptoAlgorithmHkdfParams.h"
+#include "CryptoAlgorithmHmacKeyParams.h"
+#include "CryptoAlgorithmPbkdf2Params.h"
 #include "CryptoAlgorithmRegistry.h"
+#include "CryptoAlgorithmRsaHashedImportParams.h"
+#include "CryptoAlgorithmRsaHashedKeyGenParams.h"
+#include "CryptoAlgorithmRsaKeyGenParams.h"
+#include "CryptoAlgorithmRsaOaepParams.h"
+#include "CryptoAlgorithmRsaPssParams.h"
 #include "CryptoAlgorithmX25519Params.h"
 #include "JSAesCbcCfbParams.h"
 #include "JSAesCtrParams.h"
@@ -109,6 +124,12 @@ static bool isX25519Enabled(JSGlobalObject& state)
     return context && context->settingsValues().webCryptoX25519Enabled;
 }
 
+template<typename T, typename... Rest>
+static std::unique_ptr<CryptoAlgorithmParameters> makeParameters(Rest&&... rest)
+{
+    return makeUnique<T>(std::forward<Rest>(rest)...);
+}
+
 static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAlgorithmParameters(JSGlobalObject& state, SubtleCrypto::AlgorithmIdentifier algorithmIdentifier, Operations operation)
 {
     VM& vm = state.vm();
@@ -123,7 +144,7 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
 
     auto& value = std::get<JSC::Strong<JSC::JSObject>>(algorithmIdentifier);
 
-    auto params = convertDictionary<CryptoAlgorithmParameters>(state, value.get());
+    auto params = convertDictionary<CryptoAlgorithmParametersInit>(state, value.get());
     if (params.hasException(scope)) [[unlikely]]
         return Exception { ExceptionCode::ExistingExceptionError };
     if (equalIgnoringASCIICase(params.returnValue().name, "RSAES-PKCS1-v1_5"_s))
@@ -139,7 +160,6 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
     if (*identifier == CryptoAlgorithmIdentifier::X25519 && !isX25519Enabled(state))
         return Exception { ExceptionCode::NotSupportedError };
 
-    std::unique_ptr<CryptoAlgorithmParameters> result;
     switch (operation) {
     case Operations::Encrypt:
     case Operations::Decrypt:
@@ -147,84 +167,74 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
         case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
             return Exception { ExceptionCode::NotSupportedError, RSAESPKCS1Deprecation };
         case CryptoAlgorithmIdentifier::RSA_OAEP: {
-            auto params = convertDictionary<CryptoAlgorithmRsaOaepParams>(state, value.get());
+            auto params = convertDictionary<CryptoAlgorithmRsaOaepParamsInit>(state, value.get());
             if (params.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
-            result = makeUnique<CryptoAlgorithmRsaOaepParams>(params.releaseReturnValue());
-            break;
+            return makeParameters<CryptoAlgorithmRsaOaepParams>(*identifier, params.releaseReturnValue());
         }
         case CryptoAlgorithmIdentifier::AES_CFB:
             return Exception { ExceptionCode::NotSupportedError, AESCFBDeprecation };
         case CryptoAlgorithmIdentifier::AES_CBC: {
-            auto params = convertDictionary<CryptoAlgorithmAesCbcCfbParams>(state, value.get());
+            auto params = convertDictionary<CryptoAlgorithmAesCbcCfbParamsInit>(state, value.get());
             if (params.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
-            result = makeUnique<CryptoAlgorithmAesCbcCfbParams>(params.releaseReturnValue());
-            break;
+            return makeParameters<CryptoAlgorithmAesCbcCfbParams>(*identifier, params.releaseReturnValue());
         }
         case CryptoAlgorithmIdentifier::AES_CTR: {
-            auto params = convertDictionary<CryptoAlgorithmAesCtrParams>(state, value.get());
+            auto params = convertDictionary<CryptoAlgorithmAesCtrParamsInit>(state, value.get());
             if (params.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
-            result = makeUnique<CryptoAlgorithmAesCtrParams>(params.releaseReturnValue());
-            break;
+            return makeParameters<CryptoAlgorithmAesCtrParams>(*identifier, params.releaseReturnValue());
         }
         case CryptoAlgorithmIdentifier::AES_GCM: {
-            auto params = convertDictionary<CryptoAlgorithmAesGcmParams>(state, value.get());
+            auto params = convertDictionary<CryptoAlgorithmAesGcmParamsInit>(state, value.get());
             if (params.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
-            result = makeUnique<CryptoAlgorithmAesGcmParams>(params.releaseReturnValue());
-            break;
+            return makeParameters<CryptoAlgorithmAesGcmParams>(*identifier, params.releaseReturnValue());
         }
         default:
             return Exception { ExceptionCode::NotSupportedError };
         }
-        break;
+        RELEASE_ASSERT_NOT_REACHED();
     case Operations::Sign:
     case Operations::Verify:
         switch (*identifier) {
         case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5:
         case CryptoAlgorithmIdentifier::HMAC:
         case CryptoAlgorithmIdentifier::Ed25519:
-            result = makeUnique<CryptoAlgorithmParameters>(params.releaseReturnValue());
-            break;
+            return makeParameters<CryptoAlgorithmParameters>(*identifier, params.releaseReturnValue());
         case CryptoAlgorithmIdentifier::ECDSA: {
-            auto params = convertDictionary<CryptoAlgorithmEcdsaParams>(state, value.get());
+            auto params = convertDictionary<CryptoAlgorithmEcdsaParamsInit>(state, value.get());
             if (params.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
             auto hashIdentifier = toHashIdentifier(state, params.returnValue().hash);
             if (hashIdentifier.hasException()) [[unlikely]]
                 return hashIdentifier.releaseException();
-            auto paramsAndHash = params.releaseReturnValue();
-            paramsAndHash.hashIdentifier = hashIdentifier.releaseReturnValue();
-            result = makeUnique<CryptoAlgorithmEcdsaParams>(WTF::move(paramsAndHash));
-            break;
+            return makeParameters<CryptoAlgorithmEcdsaParams>(*identifier, params.releaseReturnValue(), hashIdentifier.releaseReturnValue());
         }
         case CryptoAlgorithmIdentifier::RSA_PSS: {
-            auto params = convertDictionary<CryptoAlgorithmRsaPssParams>(state, value.get());
+            auto params = convertDictionary<CryptoAlgorithmRsaPssParamsInit>(state, value.get());
             if (params.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
-            result = makeUnique<CryptoAlgorithmRsaPssParams>(params.releaseReturnValue());
-            break;
+            return makeParameters<CryptoAlgorithmRsaPssParams>(*identifier, params.releaseReturnValue());
         }
         default:
             return Exception { ExceptionCode::NotSupportedError };
         }
-        break;
+        RELEASE_ASSERT_NOT_REACHED();
     case Operations::Digest:
         switch (*identifier) {
         case CryptoAlgorithmIdentifier::SHA_1:
         case CryptoAlgorithmIdentifier::SHA_256:
         case CryptoAlgorithmIdentifier::SHA_384:
         case CryptoAlgorithmIdentifier::SHA_512:
-            result = makeUnique<CryptoAlgorithmParameters>(params.releaseReturnValue());
-            break;
+            return makeParameters<CryptoAlgorithmParameters>(*identifier, params.releaseReturnValue());
         case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
             RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(sha224DeprecationMessage);
         default:
             return Exception { ExceptionCode::NotSupportedError };
         }
-        break;
+        RELEASE_ASSERT_NOT_REACHED();
     case Operations::GenerateKey:
         switch (*identifier) {
         case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
@@ -232,16 +242,13 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
         case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5:
         case CryptoAlgorithmIdentifier::RSA_PSS:
         case CryptoAlgorithmIdentifier::RSA_OAEP: {
-            auto params = convertDictionary<CryptoAlgorithmRsaHashedKeyGenParams>(state, value.get());
+            auto params = convertDictionary<CryptoAlgorithmRsaHashedKeyGenParamsInit>(state, value.get());
             if (params.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
             auto hashIdentifier = toHashIdentifier(state, params.returnValue().hash);
             if (hashIdentifier.hasException()) [[unlikely]]
                 return hashIdentifier.releaseException();
-            auto paramsAndHash = params.releaseReturnValue();
-            paramsAndHash.hashIdentifier = hashIdentifier.releaseReturnValue();
-            result = makeUnique<CryptoAlgorithmRsaHashedKeyGenParams>(WTF::move(paramsAndHash));
-            break;
+            return makeParameters<CryptoAlgorithmRsaHashedKeyGenParams>(*identifier, params.releaseReturnValue(), hashIdentifier.releaseReturnValue());
         }
         case CryptoAlgorithmIdentifier::AES_CFB:
             return Exception { ExceptionCode::NotSupportedError, AESCFBDeprecation };
@@ -249,44 +256,35 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
         case CryptoAlgorithmIdentifier::AES_CBC:
         case CryptoAlgorithmIdentifier::AES_GCM:
         case CryptoAlgorithmIdentifier::AES_KW: {
-            auto params = convertDictionary<CryptoAlgorithmAesKeyParams>(state, value.get());
+            auto params = convertDictionary<CryptoAlgorithmAesKeyParamsInit>(state, value.get());
             if (params.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
-            result = makeUnique<CryptoAlgorithmAesKeyParams>(params.releaseReturnValue());
-            break;
+            return makeParameters<CryptoAlgorithmAesKeyParams>(*identifier, params.releaseReturnValue());
         }
         case CryptoAlgorithmIdentifier::HMAC: {
-            auto params = convertDictionary<CryptoAlgorithmHmacKeyParams>(state, value.get());
+            auto params = convertDictionary<CryptoAlgorithmHmacKeyParamsInit>(state, value.get());
             if (params.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
             auto hashIdentifier = toHashIdentifier(state, params.returnValue().hash);
             if (hashIdentifier.hasException()) [[unlikely]]
                 return hashIdentifier.releaseException();
-            auto paramsAndHash = params.releaseReturnValue();
-            paramsAndHash.hashIdentifier = hashIdentifier.releaseReturnValue();
-            result = makeUnique<CryptoAlgorithmHmacKeyParams>(WTF::move(paramsAndHash));
-            break;
+            return makeParameters<CryptoAlgorithmHmacKeyParams>(*identifier, params.releaseReturnValue(), hashIdentifier.releaseReturnValue());
         }
         case CryptoAlgorithmIdentifier::ECDSA:
         case CryptoAlgorithmIdentifier::ECDH: {
-            auto params = convertDictionary<CryptoAlgorithmEcKeyParams>(state, value.get());
+            auto params = convertDictionary<CryptoAlgorithmEcKeyParamsInit>(state, value.get());
             if (params.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
-            result = makeUnique<CryptoAlgorithmEcKeyParams>(params.releaseReturnValue());
-            break;
+            return makeParameters<CryptoAlgorithmEcKeyParams>(*identifier, params.releaseReturnValue());
         }
-        case CryptoAlgorithmIdentifier::X25519: {
-            auto result = makeUnique<CryptoAlgorithmParameters>();
-            result->identifier = identifier.value();
-            return result;
-        }
+        case CryptoAlgorithmIdentifier::X25519:
+            return makeParameters<CryptoAlgorithmParameters>(*identifier);
         case CryptoAlgorithmIdentifier::Ed25519:
-            result = makeUnique<CryptoAlgorithmParameters>(params.releaseReturnValue());
-            break;
+            return makeParameters<CryptoAlgorithmParameters>(*identifier, params.releaseReturnValue());
         default:
             return Exception { ExceptionCode::NotSupportedError };
         }
-        break;
+        RELEASE_ASSERT_NOT_REACHED();
     case Operations::DeriveBits:
         switch (*identifier) {
         case CryptoAlgorithmIdentifier::ECDH: {
@@ -297,11 +295,10 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
             newValue->putDirect(vm, Identifier::fromString(vm, "name"_s), nameValue);
             newValue->putDirect(vm, Identifier::fromString(vm, "publicKey"_s), publicValue);
 
-            auto params = convertDictionary<CryptoAlgorithmEcdhKeyDeriveParams>(state, newValue);
+            auto params = convertDictionary<CryptoAlgorithmEcdhKeyDeriveParamsInit>(state, newValue);
             if (params.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
-            result = makeUnique<CryptoAlgorithmEcdhKeyDeriveParams>(params.releaseReturnValue());
-            break;
+            return makeParameters<CryptoAlgorithmEcdhKeyDeriveParams>(*identifier, params.releaseReturnValue());
         }
         case CryptoAlgorithmIdentifier::X25519: {
             // Remove this hack once https://bugs.webkit.org/show_bug.cgi?id=169333 is fixed.
@@ -311,40 +308,33 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
             newValue->putDirect(vm, Identifier::fromString(vm, "name"_s), nameValue);
             newValue->putDirect(vm, Identifier::fromString(vm, "publicKey"_s), publicValue);
 
-            auto params = convertDictionary<CryptoAlgorithmX25519Params>(state, newValue);
+            auto params = convertDictionary<CryptoAlgorithmX25519ParamsInit>(state, newValue);
             if (params.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
-            result = makeUnique<CryptoAlgorithmX25519Params>(params.releaseReturnValue());
-            break;
+            return makeParameters<CryptoAlgorithmX25519Params>(*identifier, params.releaseReturnValue());
         }
         case CryptoAlgorithmIdentifier::HKDF: {
-            auto params = convertDictionary<CryptoAlgorithmHkdfParams>(state, value.get());
+            auto params = convertDictionary<CryptoAlgorithmHkdfParamsInit>(state, value.get());
             if (params.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
             auto hashIdentifier = toHashIdentifier(state, params.returnValue().hash);
             if (hashIdentifier.hasException()) [[unlikely]]
                 return hashIdentifier.releaseException();
-            auto paramsAndHash = params.releaseReturnValue();
-            paramsAndHash.hashIdentifier = hashIdentifier.releaseReturnValue();
-            result = makeUnique<CryptoAlgorithmHkdfParams>(WTF::move(paramsAndHash));
-            break;
+            return makeParameters<CryptoAlgorithmHkdfParams>(*identifier, params.releaseReturnValue(), hashIdentifier.releaseReturnValue());
         }
         case CryptoAlgorithmIdentifier::PBKDF2: {
-            auto params = convertDictionary<CryptoAlgorithmPbkdf2Params>(state, value.get());
+            auto params = convertDictionary<CryptoAlgorithmPbkdf2ParamsInit>(state, value.get());
             if (params.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
             auto hashIdentifier = toHashIdentifier(state, params.returnValue().hash);
             if (hashIdentifier.hasException()) [[unlikely]]
                 return hashIdentifier.releaseException();
-            auto paramsAndHash = params.releaseReturnValue();
-            paramsAndHash.hashIdentifier = hashIdentifier.releaseReturnValue();
-            result = makeUnique<CryptoAlgorithmPbkdf2Params>(WTF::move(paramsAndHash));
-            break;
+            return makeParameters<CryptoAlgorithmPbkdf2Params>(*identifier, params.releaseReturnValue(), hashIdentifier.releaseReturnValue());
         }
         default:
             return Exception { ExceptionCode::NotSupportedError };
         }
-        break;
+        RELEASE_ASSERT_NOT_REACHED();
     case Operations::ImportKey:
         switch (*identifier) {
         case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
@@ -352,16 +342,13 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
         case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5:
         case CryptoAlgorithmIdentifier::RSA_PSS:
         case CryptoAlgorithmIdentifier::RSA_OAEP: {
-            auto params = convertDictionary<CryptoAlgorithmRsaHashedImportParams>(state, value.get());
+            auto params = convertDictionary<CryptoAlgorithmRsaHashedImportParamsInit>(state, value.get());
             if (params.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
             auto hashIdentifier = toHashIdentifier(state, params.returnValue().hash);
             if (hashIdentifier.hasException()) [[unlikely]]
                 return hashIdentifier.releaseException();
-            auto paramsAndHash = params.releaseReturnValue();
-            paramsAndHash.hashIdentifier = hashIdentifier.releaseReturnValue();
-            result = makeUnique<CryptoAlgorithmRsaHashedImportParams>(WTF::move(paramsAndHash));
-            break;
+            return makeParameters<CryptoAlgorithmRsaHashedImportParams>(*identifier, params.releaseReturnValue(), hashIdentifier.releaseReturnValue());
         }
         case CryptoAlgorithmIdentifier::AES_CFB:
             return Exception { ExceptionCode::NotSupportedError, AESCFBDeprecation };
@@ -370,37 +357,28 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
         case CryptoAlgorithmIdentifier::AES_GCM:
         case CryptoAlgorithmIdentifier::AES_KW:
         case CryptoAlgorithmIdentifier::Ed25519:
-            result = makeUnique<CryptoAlgorithmParameters>(params.releaseReturnValue());
-            break;
+            return makeParameters<CryptoAlgorithmParameters>(*identifier, params.releaseReturnValue());
         case CryptoAlgorithmIdentifier::HMAC: {
-            auto params = convertDictionary<CryptoAlgorithmHmacKeyParams>(state, value.get());
+            auto params = convertDictionary<CryptoAlgorithmHmacKeyParamsInit>(state, value.get());
             if (params.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
             auto hashIdentifier = toHashIdentifier(state, params.returnValue().hash);
             if (hashIdentifier.hasException()) [[unlikely]]
                 return hashIdentifier.releaseException();
-            auto paramsAndHash = params.releaseReturnValue();
-            paramsAndHash.hashIdentifier = hashIdentifier.releaseReturnValue();
-            result = makeUnique<CryptoAlgorithmHmacKeyParams>(WTF::move(paramsAndHash));
-            break;
+            return makeParameters<CryptoAlgorithmHmacKeyParams>(*identifier, params.releaseReturnValue(), hashIdentifier.releaseReturnValue());
         }
         case CryptoAlgorithmIdentifier::ECDSA:
         case CryptoAlgorithmIdentifier::ECDH: {
-            auto params = convertDictionary<CryptoAlgorithmEcKeyParams>(state, value.get());
+            auto params = convertDictionary<CryptoAlgorithmEcKeyParamsInit>(state, value.get());
             if (params.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
-            result = makeUnique<CryptoAlgorithmEcKeyParams>(params.releaseReturnValue());
-            break;
+            return makeParameters<CryptoAlgorithmEcKeyParams>(*identifier, params.releaseReturnValue());
         }
-        case CryptoAlgorithmIdentifier::X25519: {
-            auto result = makeUnique<CryptoAlgorithmParameters>();
-            result->identifier = identifier.value();
-            return result;
-        }
+        case CryptoAlgorithmIdentifier::X25519:
+            return makeParameters<CryptoAlgorithmParameters>(*identifier);
         case CryptoAlgorithmIdentifier::HKDF:
         case CryptoAlgorithmIdentifier::PBKDF2:
-            result = makeUnique<CryptoAlgorithmParameters>(params.releaseReturnValue());
-            break;
+            return makeParameters<CryptoAlgorithmParameters>(*identifier, params.releaseReturnValue());
         case CryptoAlgorithmIdentifier::SHA_1:
         case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
         case CryptoAlgorithmIdentifier::SHA_256:
@@ -408,17 +386,16 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
         case CryptoAlgorithmIdentifier::SHA_512:
             return Exception { ExceptionCode::NotSupportedError };
         }
-        break;
+        RELEASE_ASSERT_NOT_REACHED();
     case Operations::WrapKey:
     case Operations::UnwrapKey:
         switch (*identifier) {
         case CryptoAlgorithmIdentifier::AES_KW:
-            result = makeUnique<CryptoAlgorithmParameters>(params.releaseReturnValue());
-            break;
+            return makeParameters<CryptoAlgorithmParameters>(*identifier, params.releaseReturnValue());
         default:
             return Exception { ExceptionCode::NotSupportedError };
         }
-        break;
+        RELEASE_ASSERT_NOT_REACHED();
     case Operations::GetKeyLength:
         switch (*identifier) {
         case CryptoAlgorithmIdentifier::AES_CFB:
@@ -427,36 +404,30 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
         case CryptoAlgorithmIdentifier::AES_CBC:
         case CryptoAlgorithmIdentifier::AES_GCM:
         case CryptoAlgorithmIdentifier::AES_KW: {
-            auto params = convertDictionary<CryptoAlgorithmAesKeyParams>(state, value.get());
+            auto params = convertDictionary<CryptoAlgorithmAesKeyParamsInit>(state, value.get());
             if (params.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
-            result = makeUnique<CryptoAlgorithmAesKeyParams>(params.releaseReturnValue());
-            break;
+            return makeParameters<CryptoAlgorithmAesKeyParams>(*identifier, params.releaseReturnValue());
         }
         case CryptoAlgorithmIdentifier::HMAC: {
-            auto params = convertDictionary<CryptoAlgorithmHmacKeyParams>(state, value.get());
+            auto params = convertDictionary<CryptoAlgorithmHmacKeyParamsInit>(state, value.get());
             if (params.hasException(scope)) [[unlikely]]
                 return Exception { ExceptionCode::ExistingExceptionError };
             auto hashIdentifier = toHashIdentifier(state, params.returnValue().hash);
             if (hashIdentifier.hasException()) [[unlikely]]
                 return hashIdentifier.releaseException();
-            auto paramsAndHash = params.releaseReturnValue();
-            paramsAndHash.hashIdentifier = hashIdentifier.releaseReturnValue();
-            result = makeUnique<CryptoAlgorithmHmacKeyParams>(WTF::move(paramsAndHash));
-            break;
+            return makeParameters<CryptoAlgorithmHmacKeyParams>(*identifier, params.releaseReturnValue(), hashIdentifier.releaseReturnValue());
         }
         case CryptoAlgorithmIdentifier::HKDF:
         case CryptoAlgorithmIdentifier::PBKDF2:
-            result = makeUnique<CryptoAlgorithmParameters>(params.releaseReturnValue());
-            break;
+            return makeParameters<CryptoAlgorithmParameters>(*identifier, params.releaseReturnValue());
         default:
             return Exception { ExceptionCode::NotSupportedError };
         }
-        break;
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
-    result->identifier = *identifier;
-    return result;
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static CryptoKeyUsageBitmap toCryptoKeyUsageBitmap(CryptoKeyUsage usage)
@@ -604,17 +575,14 @@ RefPtr<DeferredPromise> getPromise(DeferredPromise* index, WeakPtr<SubtleCrypto>
 static std::unique_ptr<CryptoAlgorithmParameters> crossThreadCopyImportParams(const CryptoAlgorithmParameters& importParams)
 {
     switch (importParams.parametersClass()) {
-    case CryptoAlgorithmParameters::Class::None: {
-        auto result = makeUnique<CryptoAlgorithmParameters>();
-        result->identifier = importParams.identifier;
-        return result;
-    }
+    case CryptoAlgorithmParameters::Class::None:
+        return makeParameters<CryptoAlgorithmParameters>(importParams.identifier);
     case CryptoAlgorithmParameters::Class::EcKeyParams:
-        return makeUnique<CryptoAlgorithmEcKeyParams>(crossThreadCopy(downcast<CryptoAlgorithmEcKeyParams>(importParams)));
+        return makeParameters<CryptoAlgorithmEcKeyParams>(crossThreadCopy(downcast<CryptoAlgorithmEcKeyParams>(importParams)));
     case CryptoAlgorithmParameters::Class::HmacKeyParams:
-        return makeUnique<CryptoAlgorithmHmacKeyParams>(crossThreadCopy(downcast<CryptoAlgorithmHmacKeyParams>(importParams)));
+        return makeParameters<CryptoAlgorithmHmacKeyParams>(crossThreadCopy(downcast<CryptoAlgorithmHmacKeyParams>(importParams)));
     case CryptoAlgorithmParameters::Class::RsaHashedImportParams:
-        return makeUnique<CryptoAlgorithmRsaHashedImportParams>(crossThreadCopy(downcast<CryptoAlgorithmRsaHashedImportParams>(importParams)));
+        return makeParameters<CryptoAlgorithmRsaHashedImportParams>(crossThreadCopy(downcast<CryptoAlgorithmRsaHashedImportParams>(importParams)));
     default:
         ASSERT_NOT_REACHED();
         return nullptr;

@@ -46,6 +46,13 @@ GStreamerQuirkBcmNexus::GStreamerQuirkBcmNexus()
     }
 }
 
+bool GStreamerQuirkBcmNexus::isPlatformSupported() const
+{
+    auto registry = gst_registry_get();
+    auto feature = adoptGRef(gst_registry_lookup_feature(registry, "brcmaudfilter"));
+    return feature;
+}
+
 std::optional<bool> GStreamerQuirkBcmNexus::isHardwareAccelerated(GstElementFactory* factory)
 {
     auto view = StringView::fromLatin1(GST_OBJECT_NAME(factory));

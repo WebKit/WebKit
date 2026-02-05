@@ -32,8 +32,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #if ENABLE(B3_JIT)
 
-static const char* const dmbIsh = "dmb      ish";
-static const char* const dmbIshst = "dmb      ishst";
+static const char* const dmbIsh = "dmb	ish";
+static const char* const dmbIshst = "dmb	ishst";
 
 void testBitAndSExt32(int32_t value, int64_t mask)
 {

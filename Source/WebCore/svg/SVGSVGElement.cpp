@@ -107,7 +107,7 @@ SVGSVGElement::~SVGSVGElement()
 void SVGSVGElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
     oldDocument.unregisterForDocumentSuspensionCallbacks(*this);
-    protectedDocument()->registerForDocumentSuspensionCallbacks(*this);
+    protect(document())->registerForDocumentSuspensionCallbacks(*this);
     SVGGraphicsElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
@@ -169,8 +169,6 @@ void SVGSVGElement::updateCurrentTranslate()
     }
 
     updateSVGRendererForElementChange();
-    if (parentNode() == &document() && document().renderView())
-        protectedDocument()->checkedRenderView()->repaint();
 }
 
 void SVGSVGElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
@@ -180,22 +178,22 @@ void SVGSVGElement::attributeChanged(const QualifiedName& name, const AtomString
         // setting certain event handlers directly on the window object.
         switch (name.nodeName()) {
         case AttributeNames::onunloadAttr:
-            protectedDocument()->setWindowAttributeEventListener(eventNames().unloadEvent, name, newValue, protectedMainThreadNormalWorld());
+            protect(document())->setWindowAttributeEventListener(eventNames().unloadEvent, name, newValue, protectedMainThreadNormalWorld());
             return;
         case AttributeNames::onresizeAttr:
-            protectedDocument()->setWindowAttributeEventListener(eventNames().resizeEvent, name, newValue, protectedMainThreadNormalWorld());
+            protect(document())->setWindowAttributeEventListener(eventNames().resizeEvent, name, newValue, protectedMainThreadNormalWorld());
             return;
         case AttributeNames::onscrollAttr:
-            protectedDocument()->setWindowAttributeEventListener(eventNames().scrollEvent, name, newValue, protectedMainThreadNormalWorld());
+            protect(document())->setWindowAttributeEventListener(eventNames().scrollEvent, name, newValue, protectedMainThreadNormalWorld());
             return;
         case AttributeNames::onzoomAttr:
-            protectedDocument()->setWindowAttributeEventListener(eventNames().zoomEvent, name, newValue, protectedMainThreadNormalWorld());
+            protect(document())->setWindowAttributeEventListener(eventNames().zoomEvent, name, newValue, protectedMainThreadNormalWorld());
             return;
         case AttributeNames::onabortAttr:
-            protectedDocument()->setWindowAttributeEventListener(eventNames().abortEvent, name, newValue, protectedMainThreadNormalWorld());
+            protect(document())->setWindowAttributeEventListener(eventNames().abortEvent, name, newValue, protectedMainThreadNormalWorld());
             return;
         case AttributeNames::onerrorAttr:
-            protectedDocument()->setWindowAttributeEventListener(eventNames().errorEvent, name, newValue, protectedMainThreadNormalWorld());
+            protect(document())->setWindowAttributeEventListener(eventNames().errorEvent, name, newValue, protectedMainThreadNormalWorld());
             return;
         default:
             break;
@@ -309,25 +307,25 @@ static bool checkEnclosureWithoutUpdatingLayout(SVGElement& element, SVGRect& re
 
 Ref<NodeList> SVGSVGElement::getIntersectionList(SVGRect& rect, SVGElement* referenceElement)
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
+    protect(document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
     return collectIntersectionOrEnclosureList(rect, referenceElement, checkIntersectionWithoutUpdatingLayout);
 }
 
 Ref<NodeList> SVGSVGElement::getEnclosureList(SVGRect& rect, SVGElement* referenceElement)
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
+    protect(document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
     return collectIntersectionOrEnclosureList(rect, referenceElement, checkEnclosureWithoutUpdatingLayout);
 }
 
 bool SVGSVGElement::checkIntersection(Ref<SVGElement>&& element, SVGRect& rect)
 {
-    element->protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, element.ptr());
+    protect(element->document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, element.ptr());
     return checkIntersectionWithoutUpdatingLayout(element, rect);
 }
 
 bool SVGSVGElement::checkEnclosure(Ref<SVGElement>&& element, SVGRect& rect)
 {
-    element->protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, element.ptr());
+    protect(element->document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, element.ptr());
     return checkEnclosureWithoutUpdatingLayout(element, rect);
 }
 
@@ -467,7 +465,7 @@ RenderPtr<RenderElement> SVGSVGElement::createElementRenderer(RenderStyle&& styl
 {
     if (isOutermostSVGSVGElement()) {
         if (document().settings().layerBasedSVGEngineEnabled()) {
-            protectedDocument()->setMayHaveRenderedSVGRootElements();
+            protect(document())->setMayHaveRenderedSVGRootElements();
             return createRenderer<RenderSVGRoot>(*this, WTF::move(style));
         }
         return createRenderer<LegacyRenderSVGRoot>(*this, WTF::move(style));
@@ -537,23 +535,23 @@ bool SVGSVGElement::resumePausedAnimationsIfNeeded(const IntRect& visibleRect)
 
 bool SVGSVGElement::animationsPaused() const
 {
-    return protectedTimeContainer()->isPaused();
+    return protect(timeContainer())->isPaused();
 }
 
 bool SVGSVGElement::hasActiveAnimation() const
 {
-    return protectedTimeContainer()->isActive();
+    return protect(timeContainer())->isActive();
 }
 
 float SVGSVGElement::getCurrentTime() const
 {
-    return narrowPrecisionToFloat(protectedTimeContainer()->elapsed().value());
+    return narrowPrecisionToFloat(protect(timeContainer())->elapsed().value());
 }
 
 void SVGSVGElement::setCurrentTime(float seconds)
 {
     ASSERT(std::isfinite(seconds));
-    protectedTimeContainer()->setElapsed(std::max(seconds, 0.0f));
+    protect(timeContainer())->setElapsed(std::max(seconds, 0.0f));
 }
 
 bool SVGSVGElement::selfHasRelativeLengths() const
@@ -678,13 +676,13 @@ AffineTransform SVGSVGElement::viewBoxToViewTransform(float viewWidth, float vie
 
     RefPtr viewSpec = m_viewSpec;
     AffineTransform transform = SVGFitToViewBox::viewBoxToViewTransform(currentViewBoxRect(), viewSpec->preserveAspectRatio(), viewWidth, viewHeight);
-    transform *= viewSpec->protectedTransform()->concatenate();
+    transform *= protect(viewSpec->transform())->concatenate();
     return transform;
 }
 
 RefPtr<SVGViewElement> SVGSVGElement::findViewAnchor(StringView fragmentIdentifier) const
 {
-    return dynamicDowncast<SVGViewElement>(protectedDocument()->findAnchor(fragmentIdentifier));
+    return dynamicDowncast<SVGViewElement>(protect(document())->findAnchor(fragmentIdentifier));
 }
 
 SVGSVGElement* SVGSVGElement::findRootAnchor(const SVGViewElement* viewElement) const
@@ -765,11 +763,6 @@ bool SVGSVGElement::scrollToFragment(StringView fragmentIdentifier)
     // FIXME: We need to decide which <svg> to focus on, and zoom to it.
     // FIXME: We need to actually "highlight" the viewTarget(s).
     return false;
-}
-
-Ref<SMILTimeContainer> SVGSVGElement::protectedTimeContainer() const
-{
-    return m_timeContainer;
 }
 
 void SVGSVGElement::resetScrollAnchor()

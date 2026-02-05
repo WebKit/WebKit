@@ -48,6 +48,7 @@
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "LogicalSelectionOffsetCachesInlines.h"
+#include "OutlinePainter.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
@@ -1226,7 +1227,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     }
 
     // 3. paint selection
-    if (!protectedDocument()->printing()) {
+    if (!protect(document())->printing()) {
         // Fill in gaps in selection on lines, between blocks and "empty space" when content is skipped.
         paintSelection(paintInfo, scrolledOffset);
     }
@@ -1442,6 +1443,9 @@ GapRects RenderBlock::selectionGapRectsForRepaint(const RenderLayerModelObject* 
     FloatPoint containerPoint = localToContainerPoint(FloatPoint(), repaintContainer, UseTransforms);
     LayoutPoint offsetFromRepaintContainer(containerPoint - toFloatSize(scrollPosition()));
 
+#if ENABLE(TEXT_SELECTION)
+    ASSERT(isSelectionRoot());
+#endif
     LogicalSelectionOffsetCaches cache(*this);
     LayoutUnit lastTop;
     LayoutUnit lastLeft = logicalLeftSelectionOffset(*this, lastTop, cache);
@@ -1454,6 +1458,7 @@ void RenderBlock::paintSelection(PaintInfo& paintInfo, const LayoutPoint& paintO
 {
 #if ENABLE(TEXT_SELECTION)
     if (shouldPaintSelectionGaps() && paintInfo.phase == PaintPhase::Foreground) {
+        ASSERT(isSelectionRoot());
         LogicalSelectionOffsetCaches cache(*this);
         LayoutUnit lastTop;
         LayoutUnit lastLeft = logicalLeftSelectionOffset(*this, lastTop, cache);
@@ -1462,7 +1467,7 @@ void RenderBlock::paintSelection(PaintInfo& paintInfo, const LayoutPoint& paintO
 
         LayoutRect gapRectsBounds = selectionGaps(*this, paintOffset, LayoutSize(), lastTop, lastLeft, lastRight, cache, &paintInfo);
         if (!gapRectsBounds.isEmpty()) {
-            if (RenderLayer* layer = enclosingLayer()) {
+            if (CheckedPtr layer = enclosingLayer()) {
                 gapRectsBounds.moveBy(-paintOffset);
                 if (!hasLayer()) {
                     LayoutRect localBounds(gapRectsBounds);
@@ -1666,7 +1671,7 @@ LayoutRect RenderBlock::blockSelectionGap(RenderBlock& rootBlock, const LayoutPo
 
     LayoutRect gapRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, LayoutRect(logicalLeft, logicalTop, logicalWidth, logicalHeight));
     if (paintInfo)
-        paintInfo->context().fillRect(snapRectToDevicePixels(gapRect, protectedDocument()->deviceScaleFactor()), selectionBackgroundColor());
+        paintInfo->context().fillRect(snapRectToDevicePixels(gapRect, protect(document())->deviceScaleFactor()), selectionBackgroundColor());
     return gapRect;
 }
 
@@ -1682,7 +1687,7 @@ LayoutRect RenderBlock::logicalLeftSelectionGap(RenderBlock& rootBlock, const La
 
     LayoutRect gapRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, LayoutRect(rootBlockLogicalLeft, rootBlockLogicalTop, rootBlockLogicalWidth, logicalHeight));
     if (paintInfo)
-        paintInfo->context().fillRect(snapRectToDevicePixels(gapRect, protectedDocument()->deviceScaleFactor()), selObj->selectionBackgroundColor());
+        paintInfo->context().fillRect(snapRectToDevicePixels(gapRect, protect(document())->deviceScaleFactor()), selObj->selectionBackgroundColor());
     return gapRect;
 }
 
@@ -1698,7 +1703,7 @@ LayoutRect RenderBlock::logicalRightSelectionGap(RenderBlock& rootBlock, const L
 
     LayoutRect gapRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, LayoutRect(rootBlockLogicalLeft, rootBlockLogicalTop, rootBlockLogicalWidth, logicalHeight));
     if (paintInfo)
-        paintInfo->context().fillRect(snapRectToDevicePixels(gapRect, protectedDocument()->deviceScaleFactor()), selObj->selectionBackgroundColor());
+        paintInfo->context().fillRect(snapRectToDevicePixels(gapRect, protect(document())->deviceScaleFactor()), selObj->selectionBackgroundColor());
     return gapRect;
 }
 

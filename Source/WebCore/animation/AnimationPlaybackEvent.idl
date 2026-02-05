@@ -28,7 +28,7 @@ typedef (double or CSSNumericValue) CSSNumberish;
 [
     Exposed=Window
 ] interface AnimationPlaybackEvent : Event {
-    constructor([AtomString] DOMString type, optional AnimationPlaybackEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional AnimationPlaybackEventInit eventInitDict = {});
 
     readonly attribute CSSNumberish? currentTime;
     readonly attribute CSSNumberish? timelineTime;

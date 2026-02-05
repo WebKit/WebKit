@@ -25,15 +25,16 @@
 
 typedef USVString CSSOMString;
 
+// https://drafts.csswg.org/css-mixins/#dictdef-functionparameter
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary FunctionParameter {
   required CSSOMString name;
   required CSSOMString type;
   CSSOMString? defaultValue;
 };
 
+// https://drafts.csswg.org/css-mixins/#cssfunctionrule
 [
     EnabledBySetting=CSSFunctionAtRuleEnabled,
     Exposed=Window

@@ -119,7 +119,7 @@ void MockPaymentCoordinator::dispatchIfShowing(Function<void()>&& function)
 bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest& request)
 {
     if (request.shippingContact().pkContact().get())
-        m_shippingAddress = request.shippingContact().toApplePayPaymentContact(request.version());
+        m_shippingAddress = request.shippingContact().toLocalizedApplePayPaymentContact(request.version());
     m_supportedCountries = request.supportedCountries();
     m_shippingMethods = request.shippingMethods();
     m_requiredBillingContactFields = request.requiredBillingContactFields();
@@ -346,8 +346,10 @@ void MockPaymentCoordinator::acceptPayment()
 
     dispatchIfShowing([page = WTF::move(page), shippingAddress = m_shippingAddress]() mutable {
         ApplePayPayment payment;
-        payment.shippingContact = WTF::move(shippingAddress);
-        page->protectedPaymentCoordinator()->didAuthorizePayment(MockPayment { WTF::move(payment) });
+        payment.shippingContact = shippingAddress;
+        LocalizedApplePayPayment localizedPayment;
+        localizedPayment.shippingContact = shippingAddress;
+        page->protectedPaymentCoordinator()->didAuthorizePayment(MockPayment { WTF::move(payment), WTF::move(localizedPayment) });
     });
 }
 

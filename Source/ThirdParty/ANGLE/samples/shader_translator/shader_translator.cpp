@@ -114,6 +114,9 @@ int main(int argc, char *argv[])
                 case 'u':
                     printActiveVariables = true;
                     break;
+                case 'r':
+                    compileOptions.useIR = true;
+                    break;
                 case 's':
                     if (argv[0][2] == '=')
                     {
@@ -141,22 +144,13 @@ int main(int argc, char *argv[])
                                 }
                                 break;
                             case 'w':
-                                if (argv[0][4] == '3')
-                                {
-                                    spec = SH_WEBGL3_SPEC;
-                                }
-                                else if (argv[0][4] == '2')
+                                if (argv[0][4] == '2')
                                 {
                                     spec = SH_WEBGL2_SPEC;
                                 }
-                                else if (argv[0][4] == 'n')
-                                {
-                                    spec = SH_WEBGL_SPEC;
-                                }
                                 else
                                 {
-                                    spec                            = SH_WEBGL_SPEC;
-                                    resources.FragmentPrecisionHigh = 1;
+                                    spec = SH_WEBGL_SPEC;
                                 }
                                 break;
                             default:
@@ -200,6 +194,10 @@ int main(int argc, char *argv[])
                                 break;
                             case 'm':
                                 output = SH_MSL_METAL_OUTPUT;
+                                compileOptions.initializeUninitializedLocals = true;
+                                compileOptions.forceDeferNonConstGlobalInitializers = true;
+                                compileOptions.clampPointSize                       = true;
+                                compileOptions.removeInactiveVariables              = true;
                                 break;
                             default:
                                 failCode = EFailUsage;
@@ -440,12 +438,12 @@ void usage()
         "       -i       : print intermediate tree\n"
         "       -o       : print translated code\n"
         "       -u       : print active attribs, uniforms, varyings and program outputs\n"
+        "       -r       : use the IR instead of AST\n"
         "       -s=e2    : use GLES2 spec (this is by default)\n"
         "       -s=e3    : use GLES3 spec\n"
         "       -s=e31   : use GLES31 spec (in development)\n"
         "       -s=e32   : use GLES32 spec (in development)\n"
         "       -s=w     : use WebGL 1.0 spec\n"
-        "       -s=wn    : use WebGL 1.0 spec with no highp support in fragment shaders\n"
         "       -s=w2    : use WebGL 2.0 spec\n"
         "       -b=e     : output GLSL ES code (this is by default)\n"
         "       -b=g     : output GLSL code (compatibility profile)\n"
@@ -454,7 +452,7 @@ void usage()
         "       -b=v     : output Vulkan SPIR-V code\n"
         "       -b=h9    : output HLSL9 code\n"
         "       -b=h11   : output HLSL11 code\n"
-        "       -b=m     : output MSL code (direct)\n"
+        "       -b=m     : output MSL code\n"
         "       -x=i     : enable GL_OES_EGL_image_external\n"
         "       -x=d     : enable GL_OES_EGL_standard_derivatives\n"
         "       -x=r     : enable ARB_texture_rectangle\n"

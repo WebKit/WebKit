@@ -35,6 +35,11 @@ WI.Redirect = class Redirect
         console.assert(typeof responseHeaders === "object");
         console.assert(!isNaN(timestamp));
 
+        // FIXME: <https://webkit.org/b/190214> Redirect model only stores basic information.
+        // Missing from backend: detailed timing breakdown (ResourceTiming), size metrics (Metrics),
+        // and security information (Security.Security). Protocol supports these fields in
+        // Network.Response but they're not populated for redirectResponse.
+
         this._url = url;
         this._urlComponents = null;
         this._requestMethod = requestMethod;
@@ -60,5 +65,25 @@ WI.Redirect = class Redirect
         if (!this._urlComponents)
             this._urlComponents = parseURL(this._url);
         return this._urlComponents;
+    }
+
+    generateFetchCode()
+    {
+        return WI.ResourceUtilities.generateFetchCode(this);
+    }
+
+    generateCURLCommand()
+    {
+        return WI.ResourceUtilities.generateCURLCommand(this);
+    }
+
+    stringifyHTTPRequestHeaders()
+    {
+        return WI.ResourceUtilities.stringifyHTTPRequestHeaders(this);
+    }
+
+    stringifyHTTPResponseHeaders()
+    {
+        return WI.ResourceUtilities.stringifyHTTPResponseHeaders(this);
     }
 };

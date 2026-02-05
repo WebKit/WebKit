@@ -49,9 +49,7 @@
   [CallWith=RelevantDocument] undefined scroll();
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary NavigateEventInit : EventInit {
+dictionary NavigateEventInit : EventInit {
   NavigationNavigationType navigationType = "push";
   required NavigationDestination destination;
   boolean canIntercept = false;
@@ -61,13 +59,11 @@
   DOMFormData? formData = null;
   DOMString? downloadRequest = null;
   any info;
-  Element? sourceElement = null;
   [EnabledBySetting=UAVisualTransitionDetectionEnabled] boolean hasUAVisualTransition = false;
+  Element? sourceElement = null;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary NavigationInterceptOptions {
+dictionary NavigationInterceptOptions {
   NavigationInterceptHandler handler;
   NavigationFocusReset focusReset;
   NavigationScrollBehavior scroll;

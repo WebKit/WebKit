@@ -121,8 +121,9 @@ public:
         virtual void suspend() { };
         virtual void resume() { };
         virtual void disableRelay() { };
+        virtual bool shouldEnableServiceClass() { return true; }
     };
-    virtual std::unique_ptr<SuspendableSocketFactory> createSocketFactory(String&& /* userAgent */, ScriptExecutionContextIdentifier, bool /* isFirstParty */, RegistrableDomain&&);
+    virtual std::unique_ptr<SuspendableSocketFactory> createSocketFactory(String&& /* userAgent */, ScriptExecutionContextIdentifier, bool /* isFirstParty */, RegistrableDomain&&, bool /* enableServiceClass */);
 
 protected:
     LibWebRTCProvider();
@@ -152,8 +153,8 @@ private:
 
     virtual void willCreatePeerConnectionFactory();
 
-    std::optional<MediaCapabilitiesDecodingInfo> videoDecodingCapabilitiesOverride(const VideoConfiguration&) final;
-    std::optional<MediaCapabilitiesEncodingInfo> videoEncodingCapabilitiesOverride(const VideoConfiguration&) final;
+    std::optional<PlatformMediaCapabilitiesDecodingInfo> videoDecodingCapabilitiesOverride(const PlatformMediaCapabilitiesVideoConfiguration&) final;
+    std::optional<PlatformMediaCapabilitiesEncodingInfo> videoEncodingCapabilitiesOverride(const PlatformMediaCapabilitiesVideoConfiguration&) final;
 
     bool m_useL4S { false };
     std::optional<bool> m_supportsVP9VTBForTesting { false };

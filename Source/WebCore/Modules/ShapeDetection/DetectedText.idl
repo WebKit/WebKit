@@ -28,7 +28,6 @@
 [
     EnabledBySetting=ShapeDetection,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary DetectedText {
     required DOMRectReadOnly boundingBox;
     required DOMString rawValue;

@@ -42,7 +42,7 @@ class SVGConditionalProcessingAttributes;
 template<typename T>
 concept HasFastPropertyForAttribute = requires(const T& element, const QualifiedName& name)
 {
-    { element.propertyForAttribute(name) } -> std::same_as<SVGAnimatedProperty*>;
+    { element.propertyForAttribute(name) } -> std::same_as<SVGAnimatedPropertyBase*>;
 };
 
 struct SVGAttributeHashTranslator {
@@ -226,7 +226,7 @@ public:
         return attributeName;
     }
 
-    QualifiedName animatedPropertyAttributeName(const SVGAnimatedProperty& animatedProperty) const override
+    QualifiedName animatedPropertyAttributeName(const SVGAnimatedPropertyBase& animatedProperty) const override
     {
         QualifiedName attributeName = nullQName();
         enumerateRecursively([&](const auto& entry) -> bool {
@@ -238,7 +238,7 @@ public:
         return attributeName;
     }
 
-    void setAnimatedPropertyDirty(const QualifiedName& attributeName, SVGAnimatedProperty& animatedProperty) const override
+    void setAnimatedPropertyDirty(const QualifiedName& attributeName, SVGAnimatedPropertyBase& animatedProperty) const override
     {
         if (RefPtr property = fastAnimatedPropertyLookup(m_owner, attributeName)) {
             property->setDirty();
@@ -259,7 +259,7 @@ public:
         });
     }
 
-    static inline SVGAnimatedProperty* fastAnimatedPropertyLookup(OwnerType& owner, const QualifiedName& attributeName)
+    static inline SVGAnimatedPropertyBase* fastAnimatedPropertyLookup(OwnerType& owner, const QualifiedName& attributeName)
     {
         if constexpr (HasFastPropertyForAttribute<OwnerType>)
             return owner.propertyForAttribute(attributeName);

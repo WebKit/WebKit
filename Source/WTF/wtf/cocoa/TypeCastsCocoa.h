@@ -120,7 +120,6 @@ template<typename T> inline T *checked_objc_cast(id object)
 
 template<typename T, typename U> inline T *checked_objc_cast(U *object)
 {
-    static_assert(std::is_base_of_v<U, T>);
     if (!object)
         return nullptr;
 
@@ -138,7 +137,6 @@ template<typename T, typename U>
     requires (std::is_base_of_v<U, T>)
 RetainPtr<T> dynamic_objc_cast(RetainPtr<U>&& object)
 {
-    static_assert(std::is_base_of_v<U, T>);
     static_assert(!std::is_same_v<U, T>);
     if (!is_objc<T>(object.get()))
         return nullptr;
@@ -156,7 +154,6 @@ template<typename T, typename U>
     requires (std::is_base_of_v<U, T>)
 RetainPtr<T> dynamic_objc_cast(const RetainPtr<U>& object)
 {
-    static_assert(std::is_base_of_v<U, T>);
     static_assert(!std::is_same_v<U, T>);
     if (!is_objc<T>(object.get()))
         return nullptr;

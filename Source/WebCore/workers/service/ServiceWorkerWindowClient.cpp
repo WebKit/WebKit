@@ -52,7 +52,7 @@ void ServiceWorkerWindowClient::focus(ScriptExecutionContext& context, Ref<Defer
 
     auto promiseIdentifier = serviceWorkerContext.clients().addPendingPromise(WTF::move(promise));
     callOnMainThread([clientIdentifier = identifier(), promiseIdentifier, serviceWorkerIdentifier = serviceWorkerContext.thread()->identifier()]() mutable {
-        SWContextManager::singleton().protectedConnection()->focus(clientIdentifier, [promiseIdentifier, serviceWorkerIdentifier](auto result) mutable {
+        protect(SWContextManager::singleton().connection())->focus(clientIdentifier, [promiseIdentifier, serviceWorkerIdentifier](auto result) mutable {
             SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promiseIdentifier, result = crossThreadCopy(WTF::move(result))](auto& serviceWorkerContext) mutable {
                 auto promise = serviceWorkerContext.clients().takePendingPromise(promiseIdentifier);
                 if (!promise)
@@ -88,7 +88,7 @@ void ServiceWorkerWindowClient::navigate(ScriptExecutionContext& context, const 
     auto& serviceWorkerContext = downcast<ServiceWorkerGlobalScope>(context);
     auto promiseIdentifier = serviceWorkerContext.clients().addPendingPromise(WTF::move(promise));
     callOnMainThread([clientIdentifier = identifier(), promiseIdentifier, serviceWorkerIdentifier = serviceWorkerContext.thread()->identifier(), url = WTF::move(url).isolatedCopy()]() mutable {
-        SWContextManager::singleton().protectedConnection()->navigate(clientIdentifier, serviceWorkerIdentifier, url, [promiseIdentifier, serviceWorkerIdentifier](auto result) mutable {
+        protect(SWContextManager::singleton().connection())->navigate(clientIdentifier, serviceWorkerIdentifier, url, [promiseIdentifier, serviceWorkerIdentifier](auto result) mutable {
             SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promiseIdentifier, result = crossThreadCopy(WTF::move(result))](auto& serviceWorkerContext) mutable {
                 auto promise = serviceWorkerContext.clients().takePendingPromise(promiseIdentifier);
                 if (!promise)

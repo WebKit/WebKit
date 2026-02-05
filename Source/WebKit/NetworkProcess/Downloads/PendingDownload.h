@@ -111,6 +111,8 @@ private:
 #endif
 
 private:
+    URL mainDocumentURL() const;
+
     const Ref<NetworkLoad> m_networkLoad;
     DownloadID m_downloadID;
     RefPtr<IPC::Connection> m_parentProcessConnection;

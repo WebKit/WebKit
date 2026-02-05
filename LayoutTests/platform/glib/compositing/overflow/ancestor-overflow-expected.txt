@@ -1,21 +1,21 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x430
-  RenderBlock {HTML} at (0,0) size 800x430
-    RenderBody {BODY} at (8,16) size 784x406
+layer at (0,0) size 800x429
+  RenderBlock {HTML} at (0,0) size 800x429
+    RenderBody {BODY} at (8,16) size 784x405
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 458x17
+        RenderText {#text} at (0,0) size 458x18
           text run at (0,0) width 458: "Test overflow clipping of composited elements in various configurations."
-      RenderBlock (anonymous) at (0,34) size 784x372
+      RenderBlock (anonymous) at (0,34) size 784x371
         RenderText {#text} at (182,168) size 4x17
           text run at (182,168) width 4: " "
         RenderText {#text} at (368,168) size 4x17
           text run at (368,168) width 4: " "
         RenderBR {BR} at (554,168) size 0x17
-        RenderText {#text} at (182,354) size 4x17
-          text run at (182,354) width 4: " "
-        RenderText {#text} at (368,354) size 4x17
-          text run at (368,354) width 4: " "
+        RenderText {#text} at (182,353) size 4x18
+          text run at (182,353) width 4: " "
+        RenderText {#text} at (368,353) size 4x18
+          text run at (368,353) width 4: " "
         RenderText {#text} at (0,0) size 0x0
 layer at (28,70) size 142x142 clip at (29,71) size 140x140 scrollHeight 171
   RenderBlock {DIV} at (20,20) size 142x142 [border: (1px solid #000000)]
@@ -23,10 +23,10 @@ layer at (28,70) size 142x142 clip at (29,71) size 140x140 scrollHeight 171
 layer at (214,70) size 142x142 clip at (215,71) size 140x140
   RenderBlock {DIV} at (206,20) size 142x142 [border: (1px solid #000000)]
 layer at (28,256) size 142x142 clip at (29,257) size 140x140 scrollHeight 171
-  RenderBlock {DIV} at (20,206) size 142x142 [border: (1px solid #000000)]
+  RenderBlock {DIV} at (20,205) size 142x143 [border: (1px solid #000000)]
     RenderBlock {DIV} at (11,11) size 122x122 [border: (1px solid #0000FF)]
 layer at (214,256) size 142x142 clip at (215,257) size 140x140
-  RenderBlock {DIV} at (206,206) size 142x142 [border: (1px solid #000000)]
+  RenderBlock {DIV} at (206,205) size 142x143 [border: (1px solid #000000)]
 layer at (50,92) size 100x150 backgroundClip at (29,71) size 140x140 clip at (29,71) size 140x140
   RenderBlock {DIV} at (11,11) size 100x150 [bgcolor=#808080]
 layer at (225,81) size 122x122
@@ -42,11 +42,11 @@ layer at (422,92) size 100x150 backgroundClip at (401,71) size 140x140 clip at (
 layer at (50,278) size 100x150 backgroundClip at (29,257) size 140x140 clip at (29,257) size 140x140
   RenderBlock {DIV} at (11,11) size 100x150 [bgcolor=#808080]
 layer at (225,267) size 122x122
-  RenderBlock (positioned) {DIV} at (225,267) size 122x122 [border: (1px solid #0000FF)]
+  RenderBlock (positioned) {DIV} at (225,266) size 122x123 [border: (1px solid #0000FF)]
 layer at (236,278) size 100x150
   RenderBlock {DIV} at (11,11) size 100x150 [bgcolor=#808080]
 layer at (400,256) size 142x142 clip at (401,257) size 140x140 scrollHeight 171
-  RenderBlock (relative positioned) {DIV} at (392,206) size 142x142 [border: (1px solid #000000)]
+  RenderBlock (relative positioned) {DIV} at (392,205) size 142x143 [border: (1px solid #000000)]
 layer at (411,267) size 122x122
   RenderBlock (positioned) {DIV} at (11,11) size 122x122 [border: (1px solid #0000FF)]
 layer at (422,278) size 100x150 backgroundClip at (401,257) size 140x140 clip at (401,257) size 140x140

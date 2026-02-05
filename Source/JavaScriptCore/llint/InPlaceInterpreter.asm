@@ -525,9 +525,6 @@ macro uintAlign(instrname)
 end
 
 # On JSVALUE64, each 64-bit argument GPR holds one whole Wasm value.
-# On JSVALUE32_64, a consecutive pair of even/odd numbered GPRs hold a single
-# Wasm value (even if that value is i32/f32, the odd numbered GPR holds the
-# more significant word).
 macro forEachWasmArgumentGPR(fn)
     if ARM64 or ARM64E
         fn(0, wa0, wa1)
@@ -1545,8 +1542,6 @@ defineWasmBuiltinTrampoline(jsstring, compare, a2)
 
 if JSVALUE64 and (ARM64 or ARM64E or X86_64)
     include InPlaceInterpreter64
-elsif ARMv7
-    include InPlaceInterpreter32_64
 else
 # For unimplemented architectures: make sure that the assertions can still find the labels
 # See https://webassembly.github.io/spec/core/appendix/index-instructions.html for the list of instructions.
@@ -2178,4 +2173,3 @@ unimplementedInstruction(_i64_atomic_rmw8_cmpxchg_u)
 unimplementedInstruction(_i64_atomic_rmw16_cmpxchg_u)
 unimplementedInstruction(_i64_atomic_rmw32_cmpxchg_u)
 end
-

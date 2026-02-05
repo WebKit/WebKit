@@ -30,6 +30,6 @@
 ] interface CompressionStreamEncoder {
     constructor(byte format);
 
-    [PrivateIdentifier] Uint8Array encode(BufferSource chunk);
-    [PrivateIdentifier] Uint8Array flush();
+    [PrivateIdentifier] Uint8Array? encode(BufferSource chunk);
+    [PrivateIdentifier] Uint8Array? flush();
 };

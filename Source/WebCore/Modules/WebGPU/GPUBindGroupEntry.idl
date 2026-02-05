@@ -32,7 +32,6 @@ typedef (GPUSampler or GPUTexture or GPUTextureView or GPUBuffer or GPUBufferBin
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUBindGroupEntry {
     required GPUIndex32 binding;
     required GPUBindingResource resource;

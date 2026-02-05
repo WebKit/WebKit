@@ -58,11 +58,6 @@ MemoryObjectStore* MemoryIndex::objectStore()
     return m_objectStore.get();
 }
 
-RefPtr<MemoryObjectStore> MemoryIndex::protectedObjectStore()
-{
-    return m_objectStore.get();
-}
-
 void MemoryIndex::cursorDidBecomeClean(MemoryIndexCursor& cursor)
 {
     m_cleanCursors.add(cursor);

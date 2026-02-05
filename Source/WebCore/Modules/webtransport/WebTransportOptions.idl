@@ -23,16 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/webtransport/#dictdef-webtransportoptions
 [
     EnabledBySetting=WebTransportEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary WebTransportOptions {
     boolean allowPooling = false;
     boolean requireUnreliable = false;
-    sequence<WebTransportHash> serverCertificateHashes;
+    sequence<WebTransportHash> serverCertificateHashes = [];
     WebTransportCongestionControl congestionControl = "default";
-    unsigned short? anticipatedConcurrentIncomingUnidirectionalStreams;
-    unsigned short? anticipatedConcurrentIncomingBidirectionalStreams;
+    [EnforceRange] unsigned short? anticipatedConcurrentIncomingUnidirectionalStreams = null;
+    [EnforceRange] unsigned short? anticipatedConcurrentIncomingBidirectionalStreams = null;
     sequence<DOMString> protocols = [];
     DatagramsReadableMode datagramsReadableMode;
 };

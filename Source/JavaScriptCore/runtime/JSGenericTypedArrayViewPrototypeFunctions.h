@@ -1889,7 +1889,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSubarray(VM& vm, JSGl
         Structure* structure = globalObject->typedArrayStructure(ViewClass::TypedArrayStorageType, arrayBuffer->isResizableOrGrowableShared());
         return ViewClass::create(globalObject, structure, WTF::move(arrayBuffer), newByteOffset, count);
     }, [&](MarkedArgumentBuffer& args) {
-        args.append(vm.m_typedArrayController->toJS(globalObject, thisObject->globalObject(), arrayBuffer.get()));
+        args.append(vm.m_typedArrayController->toJS(globalObject, thisObject->globalObject(), *arrayBuffer));
         args.append(jsNumber(newByteOffset));
         if (count)
             args.append(jsNumber(count.value()));

@@ -72,7 +72,7 @@ ServiceWorkerDownloadTask::~ServiceWorkerDownloadTask()
 
 void ServiceWorkerDownloadTask::startListeningForIPC()
 {
-    RefPtr { m_serviceWorkerConnection.get() }->protectedIPCConnection()->addMessageReceiver(*this, *this, Messages::ServiceWorkerDownloadTask::messageReceiverName(), fetchIdentifier().toUInt64());
+    protect(RefPtr { m_serviceWorkerConnection.get() }->ipcConnection())->addMessageReceiver(*this, *this, Messages::ServiceWorkerDownloadTask::messageReceiverName(), fetchIdentifier().toUInt64());
 }
 
 void ServiceWorkerDownloadTask::close()
@@ -80,7 +80,7 @@ void ServiceWorkerDownloadTask::close()
     ASSERT(isMainRunLoop());
 
     if (RefPtr serviceWorkerConnection = m_serviceWorkerConnection.get()) {
-        serviceWorkerConnection->protectedIPCConnection()->removeMessageReceiver(Messages::ServiceWorkerDownloadTask::messageReceiverName(), fetchIdentifier().toUInt64());
+        protect(serviceWorkerConnection->ipcConnection())->removeMessageReceiver(Messages::ServiceWorkerDownloadTask::messageReceiverName(), fetchIdentifier().toUInt64());
         serviceWorkerConnection->unregisterDownload(*this);
         m_serviceWorkerConnection = nullptr;
     }
@@ -92,7 +92,7 @@ template<typename Message> bool ServiceWorkerDownloadTask::sendToServiceWorker(M
     if (!serviceWorkerConnection)
         return false;
 
-    return serviceWorkerConnection->protectedIPCConnection()->send(std::forward<Message>(message), 0) == IPC::Error::NoError;
+    return protect(serviceWorkerConnection->ipcConnection())->send(std::forward<Message>(message), 0) == IPC::Error::NoError;
 }
 
 void ServiceWorkerDownloadTask::dispatch(Function<void()>&& function)

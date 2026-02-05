@@ -50,7 +50,7 @@ public:
     ~CachedFontLoadRequest()
     {
         if (m_fontLoadRequestClient)
-            protectedCachedFont()->removeClient(*this);
+            protect(m_font)->removeClient(*this);
     }
 
     // CachedResourceClient.
@@ -58,7 +58,6 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     CachedFont& cachedFont() const { return *m_font; }
-    CachedResourceHandle<CachedFont> protectedCachedFont() const { return m_font; }
 
 private:
     CachedFontLoadRequest(CachedFont& font, ScriptExecutionContext& context)
@@ -86,16 +85,16 @@ private:
 
     RefPtr<Font> createFont(const FontDescription& description, bool syntheticBold, bool syntheticItalic, const FontCreationContext& fontCreationContext) final
     {
-        return protectedCachedFont()->createFont(description, syntheticBold, syntheticItalic, fontCreationContext);
+        return protect(m_font)->createFont(description, syntheticBold, syntheticItalic, fontCreationContext);
     }
 
     void setClient(FontLoadRequestClient* client) final
     {
         WeakPtr oldClient = std::exchange(m_fontLoadRequestClient, client);
         if (!client && oldClient)
-            protectedCachedFont()->removeClient(*this);
+            protect(m_font)->removeClient(*this);
         else if (client && !oldClient)
-            protectedCachedFont()->addClient(*this);
+            protect(m_font)->addClient(*this);
     }
 
     bool isCachedFontLoadRequest() const final { return true; }

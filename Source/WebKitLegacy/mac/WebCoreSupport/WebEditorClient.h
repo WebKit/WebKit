@@ -91,6 +91,11 @@ private:
     void uppercaseWord() final;
     void lowercaseWord() final;
     void capitalizeWord() final;
+    bool canApplyCaseTransformations(const String&) final;
+    bool canConvertToTraditionalChinese(const String&) final;
+    bool canConvertToSimplifiedChinese(const String&) final;
+    void convertToTraditionalChinese() final;
+    void convertToSimplifiedChinese() final;
 #endif
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)

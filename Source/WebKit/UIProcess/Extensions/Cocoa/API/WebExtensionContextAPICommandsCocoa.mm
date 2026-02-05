@@ -43,7 +43,7 @@ namespace WebKit {
 
 bool WebExtensionContext::isCommandsMessageAllowed(IPC::Decoder& message)
 {
-    return isLoadedAndPrivilegedMessage(message) && protectedExtension()->hasCommands();
+    return isLoadedAndPrivilegedMessage(message) && protect(extension())->hasCommands();
 }
 
 void WebExtensionContext::commandsGetAll(CompletionHandler<void(Vector<WebExtensionCommandParameters>)>&& completionHandler)

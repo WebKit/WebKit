@@ -52,13 +52,13 @@ LayoutUnit IntegrationUtils::maxContentWidth(const ElementBox& box) const
 
 LayoutUnit IntegrationUtils::minContentWidth(const ElementBox& box) const
 {
-    ASSERT(box.isFlexItem());
+    ASSERT(box.isFlexItem() || box.isGridItem());
     return m_globalLayoutState->logicalWidthWithFormattingContextForBox(box, LayoutIntegration::LogicalWidthType::MinContent);
 }
 
 LayoutUnit IntegrationUtils::minContentHeight(const ElementBox& box) const
 {
-    ASSERT(box.isFlexItem());
+    ASSERT(box.isFlexItem() || box.isGridItem());
     return m_globalLayoutState->logicalHeightWithFormattingContextForBox(box, LayoutIntegration::LogicalHeightType::MinContent);
 }
 

@@ -240,4 +240,25 @@ TEST(NowPlayingSession, NavigateSubframeAfterHasSessionInSubframe)
     [webView removeObserver:observer.get() forKeyPath:nowPlayingSessionKeyPath];
 }
 
+TEST(NowPlayingSession, KillWebContentProcessAfterHasSession)
+{
+    RetainPtr webView = createWebView();
+    EXPECT_FALSE([webView _hasActiveNowPlayingSession]);
+
+    RetainPtr observer = adoptNS([[NowPlayingSessionObserver alloc] init]);
+    [webView addObserver:observer.get() forKeyPath:nowPlayingSessionKeyPath options:NSKeyValueObservingOptionNew context:nil];
+
+    [webView synchronouslyLoadTestPageNamed:@"now-playing-session-test"];
+    EXPECT_FALSE([webView _hasActiveNowPlayingSession]);
+
+    [webView evaluateJavaScript:@"playInMainFrame()" completionHandler:nil];
+    [observer waitForHasActiveNowPlayingSessionChanged];
+    EXPECT_TRUE([webView _hasActiveNowPlayingSession]);
+
+    [webView _killWebContentProcessAndResetState];
+    EXPECT_FALSE([webView _hasActiveNowPlayingSession]);
+
+    [webView removeObserver:observer.get() forKeyPath:nowPlayingSessionKeyPath];
+}
+
 @end

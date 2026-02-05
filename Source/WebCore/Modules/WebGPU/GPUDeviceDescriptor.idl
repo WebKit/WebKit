@@ -29,9 +29,9 @@ typedef [EnforceRange] unsigned long long GPUSize64;
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUDeviceDescriptor : GPUObjectDescriptorBase {
     sequence<GPUFeatureName> requiredFeatures = [];
-    record<DOMString, GPUSize64> requiredLimits;
+    // FIXME: This should have type `record<DOMString, (GPUSize64 or undefined)>`.
+    record<DOMString, GPUSize64> requiredLimits = {};
     GPUQueueDescriptor defaultQueue = {};
 };

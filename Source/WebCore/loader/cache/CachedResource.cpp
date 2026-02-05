@@ -250,20 +250,20 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         CachedResourceHandle protectedThis { *this };
 
         auto identifier = ResourceLoaderIdentifier::generate();
-        InspectorInstrumentation::willSendRequestOfType(frame.ptr(), identifier, frameLoader->protectedActiveDocumentLoader().get(), request, InspectorInstrumentation::LoadType::Beacon);
+        InspectorInstrumentation::willSendRequestOfType(frame.ptr(), identifier, protect(frameLoader->activeDocumentLoader()).get(), request, InspectorInstrumentation::LoadType::Beacon);
 
         platformStrategies()->loaderStrategy()->startPingLoad(frame, request, m_originalRequest->httpHeaderFields(), m_options, m_options.contentSecurityPolicyImposition, [this, protectedThis = WTF::move(protectedThis), frame = Ref { frame }, identifier] (const ResourceError& error, const ResourceResponse& response) {
             if (!response.isNull())
-                InspectorInstrumentation::didReceiveResourceResponse(frame, identifier, frame->loader().protectedActiveDocumentLoader().get(), response, nullptr);
+                InspectorInstrumentation::didReceiveResourceResponse(frame, identifier, protect(frame->loader().activeDocumentLoader()), response, nullptr);
             if (!error.isNull()) {
                 setResourceError(error);
                 this->error(LoadError);
-                InspectorInstrumentation::didFailLoading(frame.ptr(), frame->loader().protectedActiveDocumentLoader().get(), identifier, error);
+                InspectorInstrumentation::didFailLoading(frame.ptr(), protect(frame->loader().activeDocumentLoader()), identifier, error);
                 return;
             }
             finishLoading(nullptr, { });
             NetworkLoadMetrics emptyMetrics;
-            InspectorInstrumentation::didFinishLoading(frame.ptr(), frame->loader().protectedActiveDocumentLoader().get(), identifier, emptyMetrics, nullptr);
+            InspectorInstrumentation::didFinishLoading(frame.ptr(), protect(frame->loader().activeDocumentLoader()), identifier, emptyMetrics, nullptr);
         });
         return;
     }
@@ -287,7 +287,7 @@ void CachedResource::loadFrom(const CachedResource& resource)
 
     if (isCrossOrigin() && m_options.mode == FetchOptions::Mode::Cors) {
         ASSERT(m_origin);
-        auto accessControlCheckResult = WebCore::passesAccessControlCheck(resource.response(), m_options.storedCredentialsPolicy, *protectedOrigin(), &CrossOriginAccessControlCheckDisabler::singleton());
+        auto accessControlCheckResult = WebCore::passesAccessControlCheck(resource.response(), m_options.storedCredentialsPolicy, *protect(m_origin), &CrossOriginAccessControlCheckDisabler::singleton());
         if (!accessControlCheckResult) {
             setResourceError(ResourceError(String(), 0, url(), accessControlCheckResult.error(), ResourceError::Type::AccessControl));
             return;
@@ -299,10 +299,6 @@ void CachedResource::loadFrom(const CachedResource& resource)
     setLoading(false);
 }
 
-RefPtr<SecurityOrigin> CachedResource::protectedOrigin() const
-{
-    return m_origin;
-}
 
 void CachedResource::setBodyDataFrom(const CachedResource& resource)
 {
@@ -493,7 +489,7 @@ void CachedResource::setResponse(ResourceResponse&& newResponse)
 {
     ASSERT(response().type() == ResourceResponse::Type::Default || isOpaqueRedirectResponseWithoutLocationHeader(response()));
     mutableResponseData().m_response = WTF::move(newResponse);
-    m_varyingHeaderValues = collectVaryingRequestHeaders(protectedCookieJar().get(), m_resourceRequest, response());
+    m_varyingHeaderValues = collectVaryingRequestHeaders(protect(m_cookieJar).get(), m_resourceRequest, response());
 
     if (response().source() == ResourceResponse::Source::ServiceWorker) {
         m_responseTainting = response().tainting();
@@ -794,7 +790,7 @@ void CachedResource::switchClientsToRevalidatedResource()
     m_switchingClientsToRevalidatedResource = true;
     for (auto& handle : m_handlesToRevalidate) {
         handle->m_resource = m_resourceToRevalidate.get();
-        protectedResourceToRevalidate()->registerHandle(handle);
+        protect(m_resourceToRevalidate)->registerHandle(handle);
         --m_handleCount;
     }
     ASSERT(!m_handleCount);
@@ -818,7 +814,7 @@ void CachedResource::switchClientsToRevalidatedResource()
 
     for (auto& client : clientsToMove) {
         if (client)
-            protectedResourceToRevalidate()->addClientToSet(*client);
+            protect(m_resourceToRevalidate)->addClientToSet(*client);
     }
     for (auto& client : clientsToMove) {
         // Calling didAddClient may do anything, including trying to cancel revalidation.
@@ -826,7 +822,7 @@ void CachedResource::switchClientsToRevalidatedResource()
         ASSERT(m_resourceToRevalidate);
         // Calling didAddClient for a client may end up removing another client. In that case it won't be in the set anymore.
         if (client && m_resourceToRevalidate->m_clients.contains(*client))
-            protectedResourceToRevalidate()->didAddClient(*client);
+            protect(m_resourceToRevalidate)->didAddClient(*client);
     }
     m_switchingClientsToRevalidatedResource = false;
 }
@@ -913,12 +909,7 @@ bool CachedResource::varyHeaderValuesMatch(const ResourceRequest& request)
     if (m_varyingHeaderValues.isEmpty())
         return true;
 
-    return verifyVaryingRequestHeaders(protectedCookieJar().get(), m_varyingHeaderValues, request);
-}
-
-CachedResourceHandle<CachedResource> CachedResource::protectedResourceToRevalidate() const
-{
-    return m_resourceToRevalidate.get();
+    return verifyVaryingRequestHeaders(protect(m_cookieJar).get(), m_varyingHeaderValues, request);
 }
 
 unsigned CachedResource::overheadSize() const
@@ -985,11 +976,6 @@ const ResourceError& CachedResource::resourceError() const
         return emptyError;
     }
     return m_response->m_error;
-}
-
-RefPtr<const CookieJar> CachedResource::protectedCookieJar() const
-{
-    return m_cookieJar;
 }
 
 bool CachedResource::wasCanceled() const
@@ -1071,13 +1057,8 @@ ResourceCryptographicDigest CachedResource::cryptographicDigest(ResourceCryptogr
     ASSERT(static_cast<std::underlying_type_t<ResourceCryptographicDigest::Algorithm>>(algorithm) == (1 << digestIndex));
     auto& existingDigest = m_cryptographicDigests[digestIndex];
     if (!existingDigest)
-        existingDigest = cryptographicDigestForSharedBuffer(algorithm, protectedResourceBuffer().get());
+        existingDigest = cryptographicDigestForSharedBuffer(algorithm, protect(m_data).get());
     return *existingDigest;
-}
-
-RefPtr<FragmentedSharedBuffer> CachedResource::protectedResourceBuffer() const
-{
-    return m_data;
 }
 
 }

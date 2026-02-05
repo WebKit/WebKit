@@ -63,8 +63,9 @@ class UnaryExpression final : public Expression {
     WGSL_AST_BUILDER_NODE(UnaryExpression);
 public:
     NodeKind kind() const final;
-    Expression& expression() { return m_expression.get(); }
     UnaryOperation operation() const { return m_operation; }
+    Expression& expression() { return m_expression.get(); }
+    const Expression& expression() const { return m_expression.get(); }
 
 private:
     UnaryExpression(SourceSpan span, Expression::Ref&& expression, UnaryOperation operation)

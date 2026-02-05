@@ -1,7 +1,15 @@
 function axDebug(msg)
 {
-    getOrCreate("console", "div").innerText += `${msg}\n`;
-};
+    var log = document.getElementById("log");
+    if (!log)
+        log = document.getElementById("console");
+    if (!log) {
+        log = document.createElement("div");
+        log.id = "console";
+        document.body.insertBefore(log, document.body.firstChild);
+    }
+    log.innerText += `${msg}\n`;
+}
 
 // This function is necessary when printing AX attributes that are stringified with angle brackets:
 //    AXChildren: <array of size 0>
@@ -240,10 +248,17 @@ function waitFor(condition)
         // Schedule a timeout after 3 seconds if condition is never met.
         let timeoutID = setTimeout(() => {
             clearInterval(intervalID);
+
+            // Output a message to indicate that this call is timing out and avoid masking any possible failure.
+            let conditionString = condition.toString();
+            if (conditionString.length > 80)
+                conditionString = `${conditionString.substring(0, 80)}...`;
+            axDebug(`Condition '${conditionString}' was not satisfied in 3s, timing out.`);
+
             resolve(false);
         }, 3000);
 
-	// Repeatedly poll for the condition to be true.
+        // Repeatedly poll for the condition to be true.
         let intervalID = setInterval(() => {
             try {
                 if (condition()) {
@@ -270,21 +285,73 @@ async function waitForElementById(id) {
 }
 
 // Executes the operation and waits until an accessibility notification of the provided
-// `notificationName` is received. A notification listener is added to the AccessibilityUIElement
-// passed in; before the operation is executed. The `operation` is expected to be a function,
+// `notificationName` is received. A notification listener is added to the passed
+// AccessibilityUIElement if not null, or a global listener is installed, before
+// the operation is executed. The `operation` is expected to be a function,
 // which can optionally be async.
-async function waitForNotification(accessibilityElement, notificationName, operation) {
-    var reached = false;
-    function listener(receivedNotification) {
-        if (receivedNotification == notificationName) {
-            reached = true;
-            accessibilityElement.removeNotificationListener(listener);
-        }
+async function waitForNotification(axElement, notificationName, operation) {
+    var received = false;
+
+    function elementListener(notification) {
+        if (notification != notificationName)
+            return;
+        received = true;
+        axElement.removeNotificationListener(elementListener);
     }
 
-    accessibilityElement.addNotificationListener(listener);
+    function globalListener(element, notification) {
+        if (notification != notificationName)
+            return;
+        received = true;
+        accessibilityController.removeNotificationListener(globalListener);
+    }
+
+    if (axElement)
+        axElement.addNotificationListener(elementListener);
+    else
+        accessibilityController.addNotificationListener(globalListener);
+
     await operation();
-    await waitFor(() => { return reached; });
+    await waitFor(() => { return received; });
+}
+
+// Executes the passed operation function and waits for expectedCount number of
+// notifications of the given name. It takes a notificationHandler function to
+// be executed when the proper notifications are received. Similarly to
+// waitForNotification, the listener can be added to the given AccessibilityUIElement
+// or globally.
+async function waitForNotifications(axElement, notificationName, expectedCount, operation, notificationHandler) {
+    var receivedCount = 0;
+
+    function elementListener(notification) {
+        if (notification != notificationName)
+            return;
+        ++receivedCount;
+
+        notificationHandler(axElement, notification);
+
+        if (receivedCount == expectedCount)
+            axElement.removeNotificationListener(elementListener);
+    }
+
+    function globalListener(element, notification) {
+        if (notification != notificationName)
+            return;
+        ++receivedCount;
+
+        notificationHandler(element, notification);
+
+        if (receivedCount == expectedCount)
+            accessibilityController.removeNotificationListener(globalListener);
+    }
+
+    if (axElement)
+        axElement.addNotificationListener(elementListener);
+    else
+        accessibilityController.addNotificationListener(globalListener);
+
+    await operation();
+    await waitFor(() => { return receivedCount == expectedCount; });
 }
 
 // Expect an expression to equal a value and return the result as a string.
@@ -532,3 +599,55 @@ function checkTextAlternatives(axElement, { expected = [], unexpected = [] }) {
     return result;
 }
 
+// Keep walking the tree, calling the given elementTests on each element, until each returns true on at least one element.
+function waitForElements(elementTests) {
+    // Recursively searches all elements from element returns true if elementTests each pass on
+    // at least one element. The passes array is used to keep track of which tests have passed
+    // so far and doesn't need to be passed in.
+    function checkElementTests(element, elementTests, passes) {
+        if (!element || !element.role) {
+            return false;
+        }
+
+        if (passes === undefined) {
+            passes = Array(elementTests.length).fill(false);
+        }
+
+        for (let i = 0; i < elementTests.length; i++) {
+            if (!passes[i] && elementTests[i](element)) {
+                passes[i] = true;
+            }
+        }
+        const childrenCount = element.childrenCount;
+        for (let i = 0; i < childrenCount; i++) {
+            checkElementTests(element.childAtIndex(i), elementTests, passes);
+        }
+
+        // Return if all tests passed
+        return passes.every(Boolean);
+    }
+
+    return new Promise((resolve, reject) => {
+        // Schedule a timeout after 3 seconds if condition is never met.
+        let timeoutID = setTimeout(() => {
+            clearInterval(intervalID);
+            reject("Timed out");
+        }, 3000);
+
+        // Repeatedly poll until all elementTests pass or we time out.
+        let intervalID = setInterval(() => {
+            try {
+                let root = accessibilityController.rootElement;
+                if (checkElementTests(root, elementTests)) {
+                    clearTimeout(timeoutID);
+                    clearInterval(intervalID);
+                    resolve(true);
+                }
+            } catch (error) {
+                clearTimeout(timeoutID);
+                clearInterval(intervalID);
+                reject(error);
+            }
+        }, 0);
+    });
+}

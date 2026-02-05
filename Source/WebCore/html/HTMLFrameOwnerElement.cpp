@@ -82,7 +82,7 @@ void HTMLFrameOwnerElement::disconnectContentFrame()
 {
     if (RefPtr frame = m_contentFrame.get()) {
         if (RefPtr innerDocument = contentDocument())
-            innerDocument->willBeDisconnectedFromFrame(protectedDocument());
+            innerDocument->willBeDisconnectedFromFrame(protect(document()));
         frame->frameDetached();
         if (frame == m_contentFrame.get())
             frame->disconnectOwnerElement();

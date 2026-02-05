@@ -448,6 +448,20 @@ void RemoteRenderingBackend::releaseFontCustomPlatformData(WebCore::RenderingRes
     MESSAGE_CHECK(success, "FontCustomPlatformData released before being cached.");
 }
 
+void RemoteRenderingBackend::cachePathImpl(Ref<WebCore::PathImpl>&& path, RemotePathImplIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+    bool success = m_remoteResourceCache.cachePathImpl(identifier, WTF::move(path));
+    MESSAGE_CHECK(success, "Path already cached.");
+}
+
+void RemoteRenderingBackend::releasePathImpl(RemotePathImplIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+    bool success = m_remoteResourceCache.releasePathImpl(identifier);
+    MESSAGE_CHECK(success, "Path released before being cached.");
+}
+
 void RemoteRenderingBackend::cacheGradient(Ref<Gradient>&& gradient, RemoteGradientIdentifier identifier)
 {
     assertIsCurrent(workQueue());

@@ -359,8 +359,8 @@ void ServicesOverlayController::buildPhoneNumberHighlights()
         return;
 
     Vector<SimpleRange> phoneNumberRanges;
-    for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+    for (RefPtr frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame)
             continue;
         phoneNumberRanges.appendVector(localFrame->editor().detectedTelephoneNumberRanges());
@@ -376,7 +376,7 @@ void ServicesOverlayController::buildPhoneNumberHighlights()
 
     HashSet<RefPtr<DataDetectorHighlight>> newPotentialHighlights;
 
-    auto& mainFrameView = *localMainFrame->view();
+    Ref mainFrameView = *localMainFrame->view();
 
     for (auto& range : phoneNumberRanges) {
         // FIXME: This makes a big rect if the range extends from the end of one line to the start of the next. Handle that case better?
@@ -386,14 +386,14 @@ void ServicesOverlayController::buildPhoneNumberHighlights()
         // FIXME: It's a little crazy to call contentsToWindow and then windowToContents in order to get the right coordinate space.
         // We should consider adding conversion functions to ScrollView for contentsToDocument(). Right now, contentsToRootView() is
         // not equivalent to what we need when you have a content inset or a header banner.
-        auto* viewForRange = range.start.document().view();
+        RefPtr viewForRange = range.start.document().view();
         if (!viewForRange)
             continue;
 
-        rect.setLocation(mainFrameView.windowToContents(viewForRange->contentsToWindow(rect.location())));
+        rect.setLocation(mainFrameView->windowToContents(viewForRange->contentsToWindow(rect.location())));
 
         CGRect cgRect = rect;
-        auto ddHighlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, &cgRect, 1, mainFrameView.visibleContentRect(), static_cast<DDHighlightStyle>(DDHighlightStyleBubbleStandard) | static_cast<DDHighlightStyle>(DDHighlightStyleStandardIconArrow), YES, NSWritingDirectionNatural, NO, YES, 0));
+        auto ddHighlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, &cgRect, 1, mainFrameView->visibleContentRect(), static_cast<DDHighlightStyle>(DDHighlightStyleBubbleStandard) | static_cast<DDHighlightStyle>(DDHighlightStyleStandardIconArrow), YES, NSWritingDirectionNatural, NO, YES, 0));
         auto highlight = DataDetectorHighlight::createForTelephoneNumber(*this, WTF::move(ddHighlight), WTF::move(range));
         m_highlights.add(highlight.get());
         newPotentialHighlights.add(WTF::move(highlight));

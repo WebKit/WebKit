@@ -90,12 +90,18 @@ void BidiBrowsingContextAgent::close(const BrowsingContext& browsingContext, std
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
     // FIXME: implement `promptUnload` option.
-    // FIXME: raise `invalid argument` if `browsingContext` is not a top-level traversable.
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(browsingContext.isEmpty(), FrameNotFound);
 
-    RefPtr webPageProxy = session->webPageProxyForHandle(browsingContext);
+    auto handles = session->extractBrowsingContextHandles(browsingContext);
+    ASYNC_FAIL_IF_UNEXPECTED_RESULT(handles);
+    auto [pageHandle, frameHandle] = handles.value();
+
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!frameHandle.isEmpty(), InvalidParameter);
+
+    RefPtr webPageProxy = session->webPageProxyForHandle(pageHandle);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!webPageProxy, FrameNotFound);
 
-    session->closeBrowsingContext(browsingContext, WTF::move(callback));
+    session->closeBrowsingContext(pageHandle, WTF::move(callback));
 }
 
 static constexpr Inspector::Protocol::Automation::BrowsingContextPresentation defaultBrowsingContextPresentation = Inspector::Protocol::Automation::BrowsingContextPresentation::Tab;
@@ -221,7 +227,7 @@ void BidiBrowsingContextAgent::getTree(const BrowsingContext& optionalRoot, std:
 
     Vector<Ref<WebPageProxy>> pagesToProcess;
 
-    for (Ref process : session->protectedProcessPool()->processes()) {
+    for (Ref process : protect(session->processPool())->processes()) {
         for (Ref page : process->pages()) {
             if (!page->isControlledByAutomation())
                 continue;
@@ -347,4 +353,3 @@ void BidiBrowsingContextAgent::traverseHistory(const BrowsingContext& browsingCo
 } // namespace WebKit
 
 #endif // ENABLE(WEBDRIVER_BIDI)
-

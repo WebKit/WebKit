@@ -380,6 +380,20 @@ const RiceAddress* RiceBackend::ensureRiceAddressFromCache(const String& address
     return result.get();
 }
 
+void RiceBackend::setSocketTypeOfService(unsigned streamId, unsigned value)
+{
+#if RICE_CHECK_VERSION(0, 2, 2)
+    auto sockets = getSocketsForStream(streamId);
+    if (!sockets) [[unlikely]]
+        return;
+
+    rice_sockets_set_tos(sockets.get(), value);
+#else
+    UNUSED_PARAM(streamId);
+    UNUSED_PARAM(value);
+#endif
+}
+
 } // namespace WebKit
 
 #endif // USE(LIBRICE)

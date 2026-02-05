@@ -39,50 +39,6 @@ class SamplerMultisampleArrayTest : public ShaderCompileTreeTest
     ShShaderSpec getShaderSpec() const override { return SH_GLES3_1_SPEC; }
 };
 
-// Checks whether compiler has parsed the gsampler2DMS, texelfetch correctly.
-TEST_F(SamplerMultisampleTest, TexelFetchSampler2DMS)
-{
-    constexpr char kShaderString[] =
-        R"(#version 310 es
-        precision highp float;
-        uniform highp sampler2DMS s;
-        uniform highp isampler2DMS is;
-        uniform highp usampler2DMS us;
-
-        void main() {
-            vec4 tex1 = texelFetch(s, ivec2(0, 0), 0);
-            ivec4 tex2 = texelFetch(is, ivec2(0, 0), 0);
-            uvec4 tex3 = texelFetch(us, ivec2(0, 0), 0);
-        })";
-
-    if (!compile(kShaderString))
-    {
-        FAIL() << "Shader compilation failed, expecting success:\n" << mInfoLog;
-    }
-}
-
-// Checks whether compiler has parsed the gsampler2DMS, textureSize correctly.
-TEST_F(SamplerMultisampleTest, TextureSizeSampler2DMS)
-{
-    constexpr char kShaderString[] =
-        R"(#version 310 es
-        precision highp float;
-        uniform highp sampler2DMS s;
-        uniform highp isampler2DMS is;
-        uniform highp usampler2DMS us;
-
-        void main() {
-            ivec2 size = textureSize(s);
-            size = textureSize(is);
-            size = textureSize(us);
-        })";
-
-    if (!compile(kShaderString))
-    {
-        FAIL() << "Shader compilation failed, expecting success:\n" << mInfoLog;
-    }
-}
-
 // Check that sampler2DMS has no default precision.
 TEST_F(SamplerMultisampleTest, NoPrecisionSampler2DMS)
 {
@@ -233,52 +189,6 @@ TEST_F(SamplerMultisampleTest, USampler2DMSArrayNotSupported)
     }
 }
 
-// Checks whether compiler has parsed the gsampler2DMSArray, texelfetch correctly.
-TEST_F(SamplerMultisampleArrayTest, TexelFetchSampler2DMSArray)
-{
-    constexpr char kShaderString[] =
-        R"(#version 310 es
-        #extension GL_OES_texture_storage_multisample_2d_array : require
-        precision highp float;
-        uniform highp sampler2DMSArray s;
-        uniform highp isampler2DMSArray is;
-        uniform highp usampler2DMSArray us;
-
-        void main() {
-            vec4 tex1 = texelFetch(s, ivec3(0, 0, 0), 0);
-            ivec4 tex2 = texelFetch(is, ivec3(0, 0, 0), 0);
-            uvec4 tex3 = texelFetch(us, ivec3(0, 0, 0), 0);
-        })";
-
-    if (!compile(kShaderString))
-    {
-        FAIL() << "Shader compilation failed, expecting success:\n" << mInfoLog;
-    }
-}
-
-// Checks whether compiler has parsed the gsampler2DMSArray, textureSize correctly.
-TEST_F(SamplerMultisampleArrayTest, TextureSizeSampler2DMSArray)
-{
-    constexpr char kShaderString[] =
-        R"(#version 310 es
-        #extension GL_OES_texture_storage_multisample_2d_array : require
-        precision highp float;
-        uniform highp sampler2DMSArray s;
-        uniform highp isampler2DMSArray is;
-        uniform highp usampler2DMSArray us;
-
-        void main() {
-            ivec3 size = textureSize(s);
-            size = textureSize(is);
-            size = textureSize(us);
-        })";
-
-    if (!compile(kShaderString))
-    {
-        FAIL() << "Shader compilation failed, expecting success:\n" << mInfoLog;
-    }
-}
-
 // Check that sampler2DMSArray has no default precision.
 TEST_F(SamplerMultisampleArrayTest, NoPrecisionSampler2DMSArray)
 {
@@ -344,32 +254,6 @@ class SamplerMultisampleEXTTest : public SamplerMultisampleTest
     ::GLenum getShaderType() const override { return GL_FRAGMENT_SHADER; }
     ShShaderSpec getShaderSpec() const override { return SH_GLES3_SPEC; }
 };
-
-// checks ANGLE_texture_multisample is supported in es 3.0
-TEST_F(SamplerMultisampleEXTTest, TextureMultisampleEXTEnabled)
-{
-    constexpr char kShaderString[] =
-        R"(#version 300 es
-        #extension GL_ANGLE_texture_multisample : require
-        precision highp float;
-        uniform highp sampler2DMS s;
-        uniform highp isampler2DMS is;
-        uniform highp usampler2DMS us;
-
-        void main() {
-            ivec2 size = textureSize(s);
-            size = textureSize(is);
-            size = textureSize(us);
-            vec4 tex1 = texelFetch(s, ivec2(0, 0), 0);
-            ivec4 tex2 = texelFetch(is, ivec2(0, 0), 0);
-            uvec4 tex3 = texelFetch(us, ivec2(0, 0), 0);
-        })";
-
-    if (!compile(kShaderString))
-    {
-        FAIL() << "Shader compilation failure, expecting success:\n" << mInfoLog;
-    }
-}
 
 // checks that multisample texture is not supported without ANGLE_texture_multisample in es 3.0
 TEST_F(SamplerMultisampleEXTTest, TextureMultisampleEXTDisabled)

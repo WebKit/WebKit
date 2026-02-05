@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 429x17
+        RenderText {#text} at (0,0) size 429x18
           text run at (0,0) width 429: "Test appearances of outer-spin-button with its up button highlighted."
       RenderBlock {DIV} at (0,34) size 784x0
       RenderBlock (anonymous) at (0,34) size 784x27
@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
 layer at (11,45) size 172x21
   RenderBlock {DIV} at (0,0) size 172x21
-    RenderText {#text} at (0,0) size 9x20
+    RenderText {#text} at (0,0) size 9x21
       text run at (0,0) width 9: "1"
 layer at (183,47) size 16x18
   RenderBlock (relative positioned) {DIV} at (172,1) size 16x19

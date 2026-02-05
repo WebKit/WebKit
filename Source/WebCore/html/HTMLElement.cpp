@@ -86,6 +86,7 @@
 #include "RenderElement.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
+#include "SelectionGeometry.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SimulatedClick.h"
@@ -102,10 +103,6 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
-
-#if PLATFORM(IOS_FAMILY)
-#include "SelectionGeometry.h"
-#endif
 
 namespace WebCore {
 
@@ -504,7 +501,7 @@ ExceptionOr<void> HTMLElement::setInnerText(String&& text)
 
     // FIXME: This should use replaceAll(), after we fix that to work properly for DocumentFragment.
     // Add text nodes and <br> elements.
-    Ref fragment = textToFragment(protectedDocument(), WTF::move(text));
+    Ref fragment = textToFragment(protect(document()), WTF::move(text));
     // It's safe to dispatch events on the new fragment since author scripts have no access to it yet.
     ScriptDisallowedScope::EventAllowedScope allowedScope(fragment.get());
     return replaceChildrenWithFragment(*this, WTF::move(fragment));
@@ -522,9 +519,9 @@ ExceptionOr<void> HTMLElement::setOuterText(String&& text)
 
     // Convert text to fragment with <br> tags instead of linebreaks if needed.
     if (text.contains([](char16_t c) { return c == '\n' || c == '\r'; }))
-        newChild = textToFragment(protectedDocument(), WTF::move(text));
+        newChild = textToFragment(protect(document()), WTF::move(text));
     else
-        newChild = Text::create(protectedDocument(), WTF::move(text));
+        newChild = Text::create(protect(document()), WTF::move(text));
 
     if (!parentNode())
         return Exception { ExceptionCode::HierarchyRequestError };
@@ -968,7 +965,7 @@ void HTMLElement::setAutocorrect(bool autocorrect)
 InputMode HTMLElement::canonicalInputMode() const
 {
     auto mode = inputModeForAttributeValue(attributeWithoutSynchronization(inputmodeAttr));
-    if (mode == InputMode::None && protectedDocument()->quirks().shouldIgnoreInputModeNone())
+    if (mode == InputMode::None && protect(document())->quirks().shouldIgnoreInputModeNone())
         return InputMode::Unspecified;
     return mode;
 }
@@ -1076,7 +1073,7 @@ static ExceptionOr<bool> checkPopoverValidity(HTMLElement& element, PopoverVisib
     if (auto* dialog = dynamicDowncast<HTMLDialogElement>(element); dialog && dialog->isModal())
         return Exception { ExceptionCode::InvalidStateError, "Element is a modal <dialog> element"_s };
 
-    if (!element.protectedDocument()->isFullyActive())
+    if (!protect(element.document())->isFullyActive())
         return Exception { ExceptionCode::InvalidStateError, "Invalid for popovers within documents that are not fully active"_s };
 
 #if ENABLE(FULLSCREEN_API)
@@ -1114,9 +1111,9 @@ static void runPopoverFocusingSteps(HTMLElement& popover)
     page->setAutofocusProcessed();
 }
 
-void HTMLElement::queuePopoverToggleEventTask(ToggleState oldState, ToggleState newState)
+void HTMLElement::queuePopoverToggleEventTask(ToggleState oldState, ToggleState newState, Element* source)
 {
-    popoverData()->ensureToggleEventTask(*this)->queue(oldState, newState);
+    popoverData()->ensureToggleEventTask(*this)->queue(oldState, newState, source);
 }
 
 ExceptionOr<void> HTMLElement::showPopover(const ShowPopoverOptions& options)
@@ -1124,7 +1121,7 @@ ExceptionOr<void> HTMLElement::showPopover(const ShowPopoverOptions& options)
     return showPopoverInternal(options.source.get());
 }
 
-ExceptionOr<void> HTMLElement::showPopoverInternal(HTMLElement* invoker)
+ExceptionOr<void> HTMLElement::showPopoverInternal(HTMLElement* source)
 {
     auto check = checkPopoverValidity(*this, PopoverVisibilityState::Hidden);
     if (check.hasException())
@@ -1133,7 +1130,7 @@ ExceptionOr<void> HTMLElement::showPopoverInternal(HTMLElement* invoker)
         return { };
 
     if (popoverData())
-        setInvoker(invoker);
+        setInvoker(source);
 
     ASSERT(!isInTopLayer());
 
@@ -1141,7 +1138,11 @@ ExceptionOr<void> HTMLElement::showPopoverInternal(HTMLElement* invoker)
     auto fireEvents = showOrHidingPopoverScope.wasShowingOrHiding() ? FireEvents::No : FireEvents::Yes;
 
     Ref document = this->document();
-    Ref event = ToggleEvent::create(eventNames().beforetoggleEvent, { EventInit { }, "closed"_s, "open"_s }, Event::IsCancelable::Yes);
+    ToggleEvent::Init init;
+    init.oldState = "closed"_s;
+    init.newState = "open"_s;
+    init.source = source;
+    Ref event = ToggleEvent::create(eventNames().beforetoggleEvent, init, Event::IsCancelable::Yes);
     dispatchEvent(event);
     if (event->defaultPrevented() || event->defaultHandled())
         return { };
@@ -1189,7 +1190,7 @@ ExceptionOr<void> HTMLElement::showPopoverInternal(HTMLElement* invoker)
         popoverData()->setPreviouslyFocusedElement(previouslyFocusedElement.get());
     }
 
-    queuePopoverToggleEventTask(ToggleState::Closed, ToggleState::Open);
+    queuePopoverToggleEventTask(ToggleState::Closed, ToggleState::Open, source);
 
     if (CheckedPtr cache = document->existingAXObjectCache())
         cache->onPopoverToggle(*this);
@@ -1206,7 +1207,7 @@ void HTMLElement::setInvoker(HTMLElement* invoker)
         newInvoker->setInvokedPopover(RefPtr { this });
 }
 
-ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPreviousElement, FireEvents fireEvents)
+ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPreviousElement, FireEvents fireEvents, HTMLElement* source)
 {
     auto check = checkPopoverValidity(*this, PopoverVisibilityState::Showing);
     if (check.hasException())
@@ -1232,8 +1233,14 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
 
     setInvoker(nullptr);
 
-    if (fireEvents == FireEvents::Yes)
-        dispatchEvent(ToggleEvent::create(eventNames().beforetoggleEvent, { EventInit { }, "open"_s, "closed"_s }, Event::IsCancelable::No));
+    if (fireEvents == FireEvents::Yes) {
+        ToggleEvent::Init init;
+        init.oldState = "open"_s;
+        init.newState = "closed"_s;
+        init.source = source;
+        dispatchEvent(ToggleEvent::create(eventNames().beforetoggleEvent, init,
+            Event::IsCancelable::No));
+    }
 
     check = checkPopoverValidity(*this, PopoverVisibilityState::Showing);
     if (check.hasException())
@@ -1252,11 +1259,11 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
     popoverData()->setVisibilityState(PopoverVisibilityState::Hidden);
 
     if (fireEvents == FireEvents::Yes)
-        queuePopoverToggleEventTask(ToggleState::Open, ToggleState::Closed);
+        queuePopoverToggleEventTask(ToggleState::Open, ToggleState::Closed, source);
 
     Ref document = this->document();
     if (RefPtr element = popoverData()->previouslyFocusedElement()) {
-        if (focusPreviousElement == FocusPreviousElement::Yes && isShadowIncludingInclusiveAncestorOf(document->protectedFocusedElement().get())) {
+        if (focusPreviousElement == FocusPreviousElement::Yes && isShadowIncludingInclusiveAncestorOf(protect(document->focusedElement()).get())) {
             FocusOptions options;
             options.preventScroll = true;
             element->focus(options);
@@ -1275,29 +1282,27 @@ ExceptionOr<void> HTMLElement::hidePopover()
     return hidePopoverInternal(FocusPreviousElement::Yes, FireEvents::Yes);
 }
 
-ExceptionOr<bool> HTMLElement::togglePopover(std::optional<Variant<WebCore::HTMLElement::TogglePopoverOptions, bool>> options)
+ExceptionOr<bool> HTMLElement::togglePopover(Variant<WebCore::HTMLElement::TogglePopoverOptions, bool> options)
 {
     std::optional<bool> force;
-    HTMLElement* invoker = nullptr;
+    HTMLElement* source = nullptr;
 
-    if (options.has_value()) {
-        WTF::switchOn(options.value(),
-            [&](TogglePopoverOptions options) {
-                force = options.force;
-                invoker = options.source.get();
-            },
-            [&](bool value) {
-                force = value;
-            }
-        );
-    }
+    WTF::switchOn(options,
+        [&](TogglePopoverOptions options) {
+            force = options.force;
+            source = options.source.get();
+        },
+        [&](bool value) {
+            force = value;
+        }
+    );
 
     if (isPopoverShowing() && !force.value_or(false)) {
-        auto returnValue = hidePopover();
+        auto returnValue = hidePopoverInternal(FocusPreviousElement::Yes, FireEvents::Yes, source);
         if (returnValue.hasException())
             return returnValue.releaseException();
     } else if (!isPopoverShowing() && force.value_or(true)) {
-        auto returnValue = showPopoverInternal(invoker);
+        auto returnValue = showPopoverInternal(source);
         if (returnValue.hasException())
             return returnValue.releaseException();
     } else {
@@ -1352,7 +1357,7 @@ bool HTMLElement::handleCommandInternal(HTMLButtonElement& invoker, const Comman
     if (isPopoverShowing()) {
         bool shouldHide = command == CommandType::TogglePopover || command == CommandType::HidePopover;
         if (shouldHide) {
-            hidePopover();
+            hidePopoverInternal(FocusPreviousElement::Yes, FireEvents::Yes, &invoker);
             return true;
         }
     } else {
@@ -1384,14 +1389,10 @@ void HTMLElement::setPopover(const AtomString& value)
     setAttributeWithoutSynchronization(HTMLNames::popoverAttr, value);
 }
 
-#if PLATFORM(IOS_FAMILY)
-
 SelectionRenderingBehavior HTMLElement::selectionRenderingBehavior(const Node* node)
 {
     return ImageOverlay::isOverlayText(node) ? SelectionRenderingBehavior::UseIndividualQuads : SelectionRenderingBehavior::CoalesceBoundingRects;
 }
-
-#endif // PLATFORM(IOS_FAMILY)
 
 } // namespace WebCore
 

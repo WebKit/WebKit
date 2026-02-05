@@ -51,7 +51,7 @@ public:
     SessionHistoryVisibility shouldRevealToSessionHistory() const { return m_shouldRevealToSessionHistory; }
 
     FragmentedSharedBuffer* content() const { return m_content.get(); }
-    RefPtr<FragmentedSharedBuffer> protectedContent() const { return m_content; }
+    RefPtr<FragmentedSharedBuffer> contentForSerialization() const { return m_content; }
     const String& mimeType() const { return m_response.mimeType(); }
     const String& textEncoding() const { return m_response.textEncodingName(); }
     const URL& failingURL() const { return m_failingURL; }

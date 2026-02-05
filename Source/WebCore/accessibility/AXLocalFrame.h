@@ -37,22 +37,23 @@ class AXLocalFrame final : public AccessibilityMockObject {
 public:
     static Ref<AXLocalFrame> create(AXID, AXObjectCache&);
 
-#if ENABLE_ACCESSIBILITY_LOCAL_FRAME
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     void setLocalFrameView(LocalFrameView*);
+    LocalFrameView* localFrameView() const { return m_localFrameView.get(); }
     AccessibilityObject* crossFrameChildObject() const final;
     std::optional<FrameIdentifier> frameID() const { return m_frameID; }
-#endif // ENABLE_ACCESSIBILITY_LOCAL_FRAME
+#endif // ENABLE(ACCESSIBILITY_LOCAL_FRAME)
 
 private:
     virtual ~AXLocalFrame() = default;
     explicit AXLocalFrame(AXID, AXObjectCache&);
 
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::LocalFrame; }
-    bool computeIsIgnored() const final { return false; }
+    bool computeIsIgnored() const final;
     bool isAXLocalFrame() const final { return true; }
     LayoutRect elementRect() const final;
 
-#if ENABLE_ACCESSIBILITY_LOCAL_FRAME
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     SingleThreadWeakPtr<LocalFrameView> m_localFrameView;
     std::optional<FrameIdentifier> m_frameID { };
 #endif

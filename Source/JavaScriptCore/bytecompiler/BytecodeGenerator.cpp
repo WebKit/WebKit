@@ -37,7 +37,6 @@
 #include "BytecodeGeneratorBaseInlines.h"
 #include "BytecodeGeneratorification.h"
 #include "BytecodeUseDef.h"
-#include "CatchScope.h"
 #include "DefinePropertyAttributes.h"
 #include "Interpreter.h"
 #include "JSAsyncGenerator.h"
@@ -49,6 +48,7 @@
 #include "PrivateFieldPutKind.h"
 #include "StrongInlines.h"
 #include "SuperSampler.h"
+#include "TopExceptionScope.h"
 #include "UnlinkedCodeBlock.h"
 #include "UnlinkedEvalCodeBlock.h"
 #include "UnlinkedFunctionCodeBlock.h"
@@ -2635,12 +2635,6 @@ std::optional<Variable> BytecodeGenerator::tryResolveVariable(ExpressionNode* ex
     return std::nullopt;
 }
 
-RegisterID* BytecodeGenerator::emitOverridesHasInstance(RegisterID* dst, RegisterID* constructor, RegisterID* hasInstanceValue)
-{
-    OpOverridesHasInstance::emit(this, dst, constructor, hasInstanceValue);
-    return dst;
-}
-
 // Indicates the least upper bound of resolve type based on local scope. The bytecode linker
 // will start with this ResolveType and compute the least upper bound including intercepting scopes.
 ResolveType BytecodeGenerator::resolveType()
@@ -3407,7 +3401,7 @@ JSValue BytecodeGenerator::addBigIntConstant(const Identifier& identifier, uint8
     return m_bigIntMap.ensure(BigIntMapEntry(identifier.impl(), radix, sign), [&] {
         VM& vm = this->vm();
         DeferTermination deferScope(vm);
-        auto scope = DECLARE_CATCH_SCOPE(vm);
+        auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         auto parseIntSign = sign ? JSBigInt::ParseIntSign::Signed : JSBigInt::ParseIntSign::Unsigned;
         JSValue bigIntInMap = JSBigInt::parseInt(nullptr, vm, identifier.string(), radix, JSBigInt::ErrorParseMode::ThrowExceptions, parseIntSign);
         scope.assertNoException();
@@ -3966,12 +3960,6 @@ RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
     }
 
     OpRet::emit(this, src);
-    return src;
-}
-
-RegisterID* BytecodeGenerator::emitEnd(RegisterID* src)
-{
-    OpEnd::emit(this, src);
     return src;
 }
 
@@ -4660,7 +4648,7 @@ void BytecodeGenerator::emitTryWithFinallyThatDoesNotShadowException(FinallyCont
 
 void BytecodeGenerator::emitGenericEnumeration(ThrowableExpressionData* node, ExpressionNode* subjectNode, const ScopedLambda<void(BytecodeGenerator&, RegisterID*)>& callBack, ForOfNode* forLoopNode, RegisterID* forLoopSymbolTable)
 {
-    bool isForAwait = forLoopNode ? forLoopNode->isForAwait() : false;
+    bool isForAwait = forLoopNode && forLoopNode->isForAwait();
     auto shouldEmitAwait = isForAwait ? EmitAwait::Yes : EmitAwait::No;
     ASSERT(!isForAwait || (isAsyncFunctionParseMode(parseMode()) || isModuleParseMode(parseMode())));
 
@@ -5007,10 +4995,7 @@ void BytecodeGenerator::popForInScope(RegisterID* localRegister)
 
 RegisterID* BytecodeGenerator::emitRestParameter(RegisterID* result, unsigned numParametersToSkip)
 {
-    RefPtr<RegisterID> restArrayLength = newTemporary();
-    OpGetRestLength::emit(this, restArrayLength.get(), numParametersToSkip);
-
-    OpCreateRest::emit(this, result, restArrayLength.get(), numParametersToSkip);
+    OpCreateRest::emit(this, result, numParametersToSkip);
 
     return result;
 }

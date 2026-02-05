@@ -29,10 +29,10 @@
 #include "JSDOMGlobalObject.h"
 #include "LocalDOMWindow.h"
 #include <JavaScriptCore/BuiltinNames.h>
-#include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSNativeStdFunction.h>
 #include <JavaScriptCore/JSPromiseConstructor.h>
+#include <JavaScriptCore/TopExceptionScope.h>
 
 using namespace JSC;
 
@@ -58,9 +58,12 @@ auto DOMPromise::whenPromiseIsSettled(JSDOMGlobalObject* globalObject, JSC::JSPr
             std::exchange(callback, { })(JSC::jsCast<JSDOMGlobalObject*>(globalObject), castedThis->status() == JSC::JSPromise::Status::Fulfilled, castedThis->result());
         return JSC::JSValue::encode(JSC::jsUndefined());
     });
-    auto thisHandler = JSC::JSBoundFunction::create(vm, globalObject, handler, promise, { }, 0, jsEmptyString(vm), JSC::makeSource("createWhenPromiseSettledFunction"_s, JSC::SourceOrigin(), JSC::SourceTaintedOrigin::Untainted));
 
-    promise->performPromiseThenExported(vm, &lexicalGlobalObject, thisHandler, thisHandler, JSC::jsUndefined());
+    auto* thisHandler = JSC::JSBoundFunction::create(vm, globalObject, handler, promise, { }, 0, jsEmptyString(vm), JSC::makeSource("createWhenPromiseSettledFunction"_s, JSC::SourceOrigin(), JSC::SourceTaintedOrigin::Untainted));
+    if (!thisHandler) [[unlikely]]
+        return IsCallbackRegistered::No;
+
+    promise->performPromiseThenExported(vm, globalObject, thisHandler, thisHandler, JSC::jsUndefined());
     return IsCallbackRegistered::Yes;
 }
 

@@ -74,9 +74,9 @@ static bool isValidSampleLocation(Document& document, const IntPoint& location)
     document.hitTest(hitTestRequestTypes, hitTestResult);
 
     for (auto& hitTestNode : hitTestResult.listBasedTestResult()) {
-        auto& node = hitTestNode.get();
+        Ref node = hitTestNode.get();
 
-        auto* renderer = node.renderer();
+        auto* renderer = node->renderer();
         if (!renderer)
             return false;
 
@@ -84,7 +84,7 @@ static bool isValidSampleLocation(Document& document, const IntPoint& location)
         if (is<RenderImage>(renderer) || renderer->style().hasBackgroundImage())
             return false;
 
-        RefPtr element = dynamicDowncast<Element>(node);
+        RefPtr element = dynamicDowncast<Element>(node.get());
         if (!element)
             continue;
 

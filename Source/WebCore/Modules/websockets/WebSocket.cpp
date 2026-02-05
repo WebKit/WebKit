@@ -54,7 +54,6 @@
 #include "ResourceLoadObserver.h"
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
-#include "SecurityOrigin.h"
 #include "SocketProvider.h"
 #include "ThreadableWebSocketChannel.h"
 #include "WebSocketChannelInspector.h"

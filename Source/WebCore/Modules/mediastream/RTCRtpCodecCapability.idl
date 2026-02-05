@@ -22,12 +22,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/webrtc-pc/#dom-rtcrtpcodec
+// FIXME: This should be named `RTCRtpCodec`.
 [
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCRtpCodecCapability {
     required DOMString mimeType;
     required unsigned long clockRate;

@@ -112,7 +112,6 @@ public:
     enum class ForPrivateBrowsing { No, Yes };
 
     WebExtensionControllerConfiguration& configuration() const { return m_configuration.get(); }
-    Ref<WebExtensionControllerConfiguration> protectedConfiguration() const { return m_configuration; }
     WebExtensionControllerParameters parameters(const API::PageConfiguration&) const;
 
     bool operator==(const WebExtensionController& other) const { return (this == &other); }
@@ -197,8 +196,7 @@ public:
 
 #ifdef __OBJC__
     WKWebExtensionController *wrapper() const { return (WKWebExtensionController *)API::ObjectImpl<API::Object::Type::WebExtensionController>::wrapper(); }
-    RetainPtr<WKWebExtensionController> protectedWrapper() const { return wrapper(); }
-    WKWebExtensionControllerDelegatePrivate *delegate() const { return (WKWebExtensionControllerDelegatePrivate *)protectedWrapper().get().delegate; }
+    WKWebExtensionControllerDelegatePrivate *delegate() const { return (WKWebExtensionControllerDelegatePrivate *)protect(wrapper()).get().delegate; }
 #endif
 
 private:
@@ -269,7 +267,6 @@ private:
         WeakPtr<WebExtensionController> m_extensionController;
     };
 
-    RefPtr<HTTPCookieStoreObserver> protectedCookieStoreObserver() { return m_cookieStoreObserver; }
 
     const Ref<WebExtensionControllerConfiguration> m_configuration;
 

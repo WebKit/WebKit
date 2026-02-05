@@ -40,6 +40,7 @@
 #import "_WKElementActionInternal.h"
 #import <UIKit/UIView.h>
 #import <WebCore/CaptionDisplaySettingsOptions.h>
+#import <WebCore/ContextMenuItem.h>
 #import <WebCore/DataDetection.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/LocalizedStrings.h>
@@ -177,26 +178,25 @@ static LSAppLink *appLinkForURL(NSURL *url)
 
 - (UIView *)superviewForSheet
 {
-    UIView *view = _view.getAutoreleased();
-    UIView *superview = [view window];
+    RetainPtr view = _view.getAutoreleased();
+    RetainPtr<UIView> superview = [view window];
 
     // FIXME: WebKit has a delegate to retrieve the superview for the image sheet (superviewForImageSheetForWebView)
     // Do we need it in WK2?
 
     // Find the top most view with a view controller
-    UIViewController *controller = nil;
-    UIView *currentView = view;
+    RetainPtr<UIViewController> controller;
+    RetainPtr currentView = view;
     while (currentView) {
-        auto aController = WebCore::viewController(currentView);
-        if (aController)
-            controller = aController;
+        if (RetainPtr aController = WebCore::viewController(currentView.get()))
+            controller = WTF::move(aController);
 
         currentView = [currentView superview];
     }
     if (controller)
-        superview = controller.view;
+        superview = controller.get().view;
 
-    return superview;
+    return superview.autorelease();
 }
 
 - (CGRect)_presentationRectForSheetGivenPoint:(CGPoint)point inHostView:(UIView *)hostView
@@ -442,7 +442,7 @@ static bool isJavaScriptURL(NSURL *url)
     };
 
     if (_positionInformation->url.isEmpty() && _positionInformation->image && [delegate respondsToSelector:@selector(actionSheetAssistant:getAlternateURLForImage:completion:)]) {
-        RetainPtr<UIImage> uiImage = adoptNS([[UIImage alloc] initWithCGImage:_positionInformation->image->createPlatformImage().get()]);
+        RetainPtr<UIImage> uiImage = adoptNS([[UIImage alloc] initWithCGImage:protect(_positionInformation->image)->createPlatformImage().get()]);
 
         _hasPendingActionSheet = YES;
         RetainPtr<WKActionSheetAssistant> retainedSelf(self);
@@ -498,37 +498,37 @@ static bool isJavaScriptURL(NSURL *url)
     if (!applicationHasAppLinkEntitlements() || ![_delegate.get() actionSheetAssistant:self shouldIncludeAppLinkActionsForElement:elementInfo])
         return NO;
 
-    LSAppLink *appLink = appLinkForURL(url);
+    RetainPtr appLink = appLinkForURL(url);
     if (!appLink)
         return NO;
 
     RetainPtr openInDefaultBrowserTitle = WEB_UI_STRING("Open in Safari", "Title for Open in Safari Link action button").createNSString();
-    _WKElementAction *openInDefaultBrowserAction = [_WKElementAction _elementActionWithType:_WKElementActionTypeOpenInDefaultBrowser title:openInDefaultBrowserTitle.get() actionHandler:^(_WKActivatedElementInfo *) {
+    RetainPtr openInDefaultBrowserAction = [_WKElementAction _elementActionWithType:_WKElementActionTypeOpenInDefaultBrowser title:openInDefaultBrowserTitle.get() actionHandler:^(_WKActivatedElementInfo *) {
 #if HAVE(APP_LINKS_WITH_ISENABLED)
-        appLink.enabled = NO;
+        appLink.get().enabled = NO;
         [appLink openWithCompletionHandler:nil];
 #else
         [appLink openInWebBrowser:YES setAppropriateOpenStrategyAndWebBrowserState:nil completionHandler:^(BOOL success, NSError *error) { }];
 #endif
     }];
-    [defaultActions addObject:openInDefaultBrowserAction];
+    [defaultActions addObject:openInDefaultBrowserAction.get()];
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    NSString *externalApplicationName = appLink.targetApplicationProxy.localizedName;
+    NSString *externalApplicationName = appLink.get().targetApplicationProxy.localizedName;
 ALLOW_DEPRECATED_DECLARATIONS_END
     if (!externalApplicationName)
         return YES;
 
     SUPPRESS_UNRETAINED_ARG RetainPtr openInExternalApplicationTitle = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"Open in “%@”", "Title for Open in External Application Link action button"), externalApplicationName]);
-    _WKElementAction *openInExternalApplicationAction = [_WKElementAction _elementActionWithType:_WKElementActionTypeOpenInExternalApplication title:openInExternalApplicationTitle.get() actionHandler:^(_WKActivatedElementInfo *) {
+    RetainPtr openInExternalApplicationAction = [_WKElementAction _elementActionWithType:_WKElementActionTypeOpenInExternalApplication title:openInExternalApplicationTitle.get() actionHandler:^(_WKActivatedElementInfo *) {
 #if HAVE(APP_LINKS_WITH_ISENABLED)
-        appLink.enabled = YES;
+        appLink.get().enabled = YES;
         [appLink openWithCompletionHandler:nil];
 #else
         [appLink openInWebBrowser:NO setAppropriateOpenStrategyAndWebBrowserState:nil completionHandler:^(BOOL success, NSError *error) { }];
 #endif
     }];
-    [defaultActions addObject:openInExternalApplicationAction];
+    [defaultActions addObject:openInExternalApplicationAction.get()];
 
     return YES;
 }
@@ -548,7 +548,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     BOOL hasAnimation = elementInfo.isAnimatedImage || !elementInfo._animationsUnderElement.isEmpty();
-    if (!hasAnimation || !elementInfo.canShowAnimationControls)
+    if (!hasAnimation)
         return;
 
     if (![_delegate respondsToSelector:@selector(_allowAnimationControls)] || ![_delegate _allowAnimationControls])
@@ -774,14 +774,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (_WKElementAction *)_elementActionForDDAction:(DDAction *)action
 {
     auto retainedSelf = retainPtr(self);
-    _WKElementAction *elementAction = [_WKElementAction elementActionWithTitle:action.localizedName actionHandler:^(_WKActivatedElementInfo *actionInfo) {
+    RetainPtr elementAction = [_WKElementAction elementActionWithTitle:action.localizedName actionHandler:^(_WKActivatedElementInfo *actionInfo) {
         retainedSelf->_isPresentingDDUserInterface = action.hasUserInterface;
         [[PAL::getDDDetectionControllerClassSingleton() sharedController] performAction:action fromAlertController:retainedSelf->_interactionSheet.get() interactionDelegate:retainedSelf.get()];
     }];
-    elementAction.dismissalHandler = ^BOOL {
+    elementAction.get().dismissalHandler = ^BOOL {
         return !action.hasUserInterface;
     };
-    return elementAction;
+    return elementAction.autorelease();
 }
 
 #endif // ENABLE(DATA_DETECTION)
@@ -817,7 +817,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
 
-    NSArray *dataDetectorsActions = [controller actionsForURL:targetURL.get() identifier:_positionInformation->dataDetectorIdentifier.createNSString().get() selectedText:textAtSelection results:_positionInformation->dataDetectorResults.get() context:context];
+    RetainPtr dataDetectorsActions = [controller actionsForURL:targetURL.get() identifier:_positionInformation->dataDetectorIdentifier.createNSString().get() selectedText:textAtSelection results:_positionInformation->dataDetectorResults.get() context:context];
     if ([dataDetectorsActions count] == 0)
         return;
     
@@ -856,17 +856,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         if (item.id == WebCore::MediaControlsContextMenuItem::invalidID && item.title.isEmpty() && item.icon.isEmpty() && item.children.isEmpty())
             return [UIMenu menuWithTitle:@"" image:nil identifier:nil options:UIMenuOptionsDisplayInline children:@[]];
 
-        UIImage *image = !item.icon.isEmpty() ? [UIImage systemImageNamed:item.icon.createNSString().get()] : nil;
+        RetainPtr image = !item.icon.isEmpty() ? [UIImage systemImageNamed:item.icon.createNSString().get()] : nil;
 
         if (!item.children.isEmpty())
-            return [UIMenu menuWithTitle:item.title.createNSString().get() image:image identifier:nil options:0 children:[self _uiMenuElementsForMediaControlContextMenuItems:WTF::move(item.children)]];
+            return [UIMenu menuWithTitle:item.title.createNSString().get() image:image.get() identifier:nil options:0 children:[self _uiMenuElementsForMediaControlContextMenuItems:WTF::move(item.children)]];
 
         auto selectedItemID = item.id;
 
         if (selectedItemID == WebCore::ContextMenuItemCaptionDisplayStyleSubmenu)
             return [_captionStyleMenuController captionStyleMenu];
 
-        UIAction *action = [UIAction actionWithTitle:item.title.createNSString().get() image:image identifier:nil handler:[weakSelf = WeakObjCPtr<WKActionSheetAssistant>(self), selectedItemID] (UIAction *) {
+        RetainPtr action = [UIAction actionWithTitle:item.title.createNSString().get() image:image.get() identifier:nil handler:[weakSelf = WeakObjCPtr<WKActionSheetAssistant>(self), selectedItemID] (UIAction *) {
             auto strongSelf = weakSelf.get();
             if (!strongSelf)
                 return;
@@ -874,8 +874,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             strongSelf->_mediaControlsContextMenuCallback(selectedItemID);
         }];
         if (item.checked)
-            action.state = UIMenuElementStateOn;
-        return action;
+            action.get().state = UIMenuElementStateOn;
+        return action.autorelease();
     }).autorelease();
 }
 
@@ -933,9 +933,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
 
     BlockPtr<UIMenu*(UIMenu*)> menuUpdater;
-    menuUpdater = makeBlockPtr([&](UIMenu *menu) -> UIMenu* {
-        if ([menu.identifier isEqual:captionStyleMenu.identifier])
-            return captionStyleMenu;
+    menuUpdater = makeBlockPtr([&, captionStyleMenu = RetainPtr { captionStyleMenu }](UIMenu *menu) mutable -> UIMenu* {
+        if ([menu.identifier isEqual:captionStyleMenu.get().identifier])
+            return captionStyleMenu.getAutoreleased();
 
         if (!menu.children.count)
             return menu;
@@ -943,8 +943,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         RetainPtr newChildren = adoptNS([[NSMutableArray alloc] initWithCapacity:menu.children.count]);
 
         for (id childMenuItem in menu.children) {
-            if (auto childMenu = dynamic_objc_cast<UIMenu>(childMenuItem))
-                [newChildren addObject:menuUpdater(childMenu)];
+            if (RetainPtr childMenu = dynamic_objc_cast<UIMenu>(childMenuItem))
+                [newChildren addObject:menuUpdater(childMenu.get())];
             else
                 [newChildren addObject:childMenuItem];
         }
@@ -1243,19 +1243,15 @@ static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr
     if (item.title.length)
         result[@"title"] = item.title;
 
-    if ([item isKindOfClass:UIMenu.class]) {
-        UIMenu *menu = (UIMenu *)item;
-
-        NSMutableArray *children = [NSMutableArray arrayWithCapacity:menu.children.count];
-        for (UIMenuElement *child in menu.children)
+    if (RetainPtr menu = dynamic_objc_cast<UIMenu>(item)) {
+        NSMutableArray *children = [NSMutableArray arrayWithCapacity:[menu children].count];
+        for (UIMenuElement *child in [menu children])
             [children addObject:[self _contentsOfContextMenuItem:child]];
         result[@"children"] = children;
     }
 
-    if ([item isKindOfClass:UIAction.class]) {
-        UIAction *action = (UIAction *)item;
-
-        if (action.state == UIMenuElementStateOn)
+    if (RetainPtr action = dynamic_objc_cast<UIAction>(item)) {
+        if ([action state] == UIMenuElementStateOn)
             result[@"checked"] = @YES;
     }
 

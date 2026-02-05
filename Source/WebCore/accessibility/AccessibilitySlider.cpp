@@ -175,7 +175,7 @@ LayoutRect AccessibilitySliderThumb::elementRect() const
     auto* sliderRenderer = dynamicDowncast<RenderSlider>(m_parent->renderer());
     if (!sliderRenderer)
         return LayoutRect();
-    if (CheckedPtr thumbRenderer = sliderRenderer->protectedElement()->sliderThumbElement()->renderer())
+    if (CheckedPtr thumbRenderer = protect(sliderRenderer->element())->sliderThumbElement()->renderer())
         return thumbRenderer->absoluteBoundingBoxRect();
     return LayoutRect();
 }

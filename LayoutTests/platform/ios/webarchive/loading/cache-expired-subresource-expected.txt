@@ -24,16 +24,16 @@ layer at (0,0) size 800x600
         layer at (0,0) size 300x150
           RenderBlock {HTML} at (0,0) size 300x150
             RenderBody {BODY} at (8,8) size 284x134
-              RenderText {#text} at (0,0) size 240x19
+              RenderText {#text} at (0,0) size 240x20
                 text run at (0,0) width 240: "This page has a small pink circle in it"
-              RenderBR {BR} at (239,0) size 1x19
+              RenderBR {BR} at (239,0) size 1x20
               RenderImage {IMG} at (0,20) size 11x9
               RenderBR {BR} at (11,14) size 0x19
-              RenderText {#text} at (0,29) size 163x19
+              RenderText {#text} at (0,29) size 163x20
                 text run at (0,29) width 107: "See, right there! "
                 text run at (106,29) width 57: "A circle!"
-              RenderBR {BR} at (162,29) size 1x19
+              RenderBR {BR} at (162,29) size 1x20
       RenderBR {BR} at (304,139) size 0x19
-      RenderText {#text} at (0,154) size 736x39
+      RenderText {#text} at (0,154) size 736x40
         text run at (0,154) width 736: "This tests that loading a webarchive with a subresource that has an expired cache header does not attempt to hit the"
         text run at (0,174) width 364: "network for resource, and actually uses the archived data"

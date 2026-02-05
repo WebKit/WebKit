@@ -94,7 +94,6 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     WebPageProxy* page() const;
-    RefPtr<WebPageProxy> protectedPage() const;
 
     void injectPageIntoNewProcess();
     void processDidTerminate(WebProcessProxy&, ProcessTerminationReason);

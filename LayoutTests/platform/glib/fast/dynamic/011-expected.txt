@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderInline {SPAN} at (0,0) size 784x71
-        RenderInline {SPAN} at (0,0) size 784x71
-          RenderText {#text} at (0,0) size 780x35
+      RenderInline {SPAN} at (0,0) size 784x72
+        RenderInline {SPAN} at (0,0) size 784x72
+          RenderText {#text} at (0,0) size 780x36
             text run at (0,0) width 103: "Bug #3810389. "
             text run at (103,0) width 386: "Make sure we don't crash manipulating blocks inside inlines. "
             text run at (489,0) width 291: "You should see the numbers 1 and 2 vertically"
             text run at (0,18) width 147: "stacked below this line."
           RenderBlock {DIV} at (0,36) size 784x18
-            RenderText {#text} at (0,0) size 8x17
+            RenderText {#text} at (0,0) size 8x18
               text run at (0,0) width 8: "1"
-          RenderText {#text} at (0,54) size 8x17
+          RenderText {#text} at (0,54) size 8x18
             text run at (0,54) width 8: "2"
-        RenderText {#text} at (8,54) size 4x17
+        RenderText {#text} at (8,54) size 4x18
           text run at (8,54) width 4: " "
         RenderImage {IMG} at (12,68) size 0x0
-        RenderText {#text} at (12,54) size 4x17
+        RenderText {#text} at (12,54) size 4x18
           text run at (12,54) width 4: " "
       RenderText {#text} at (0,0) size 0x0
       RenderImage {IMG} at (16,68) size 0x0

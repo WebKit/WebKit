@@ -1,0 +1,308 @@
+# Copyright (C) 2025 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#if ENABLE(GPU_PROCESS_MODEL)
+header: <WebGPU/Float4x4.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::Float4x4 {
+    float m00;
+    float m01;
+    float m02;
+    float m03;
+
+    float m10;
+    float m11;
+    float m12;
+    float m13;
+
+    float m20;
+    float m21;
+    float m22;
+    float m23;
+
+    float m30;
+    float m31;
+    float m32;
+    float m33;
+};
+
+header: <WebGPU/Float3.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::Float3 {
+    float x;
+    float y;
+    float z;
+    float w;
+};
+
+header: <WebGPU/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::Edge {
+    long upstreamNodeIndex;
+    long downstreamNodeIndex;
+    String upstreamOutputName;
+    String downstreamInputName;
+};
+
+header: <WebGPU/ModelTypes.h>
+[CustomHeader] enum class WebModel::DataType : uint8_t {
+    kBool,
+    kInt,
+    kInt2,
+    kInt3,
+    kInt4,
+    kFloat,
+    kColor3f,
+    kColor3h,
+    kColor4f,
+    kColor4h,
+    kFloat2,
+    kFloat3,
+    kFloat4,
+    kHalf,
+    kHalf2,
+    kHalf3,
+    kHalf4,
+    kMatrix2f,
+    kMatrix3f,
+    kMatrix4f,
+    kSurfaceShader,
+    kGeometryModifier,
+    kString,
+    kToken,
+    kAsset
+};
+
+header: <WebGPU/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::Primvar {
+    String name;
+    String referencedGeomPropName;
+    uint64_t attributeFormat;
+};
+
+header: <WebGPU/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::InputOutput {
+    WebModel::DataType type;
+    String name;
+};
+
+header: <WebGPU/ModelTypes.h>
+[CustomHeader] enum class WebModel::Constant : uint8_t {
+    kBool,
+    kUchar,
+    kInt,
+    kUint,
+    kHalf,
+    kFloat,
+    kTimecode,
+    kString,
+    kToken,
+    kAsset,
+    kMatrix2f,
+    kMatrix3f,
+    kMatrix4f,
+    kQuatf,
+    kQuath,
+    kFloat2,
+    kHalf2,
+    kInt2,
+    kFloat3,
+    kHalf3,
+    kInt3,
+    kFloat4,
+    kHalf4,
+    kInt4,
+    kPoint3f,
+    kPoint3h,
+    kNormal3f,
+    kNormal3h,
+    kVector3f,
+    kVector3h,
+    kColor3f,
+    kColor3h,
+    kColor4f,
+    kColor4h,
+    kTexCoord2h,
+    kTexCoord2f,
+    kTexCoord3h,
+    kTexCoord3f
+};
+
+header: <WebGPU/ModelTypes.h>
+[CustomHeader] enum class WebModel::NodeType : uint8_t {
+    Builtin,
+    Constant,
+    Arguments,
+    Results
+};
+
+header: <WebGPU/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::ConstantContainer {
+    WebModel::Constant constant;
+    Vector<Variant<String, double>> constantValues;
+    String name;
+};
+
+header: <WebGPU/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::Builtin {
+    String definition;
+    String name;
+};
+
+header: <WebGPU/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::Node {
+    WebModel::NodeType bridgeNodeType;
+    WebModel::Builtin builtin;
+    WebModel::ConstantContainer constant;
+};
+
+header: <WebGPU/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::MaterialGraph {
+    Vector<WebModel::Node> nodes;
+    Vector<WebModel::Edge> edges;
+    Vector<WebModel::InputOutput> inputs;
+    Vector<WebModel::InputOutput> outputs;
+    Vector<WebModel::Primvar> primvars;
+    String identifier;
+};
+
+header: <WebGPU/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::UpdateTextureDescriptor {
+    WebModel::ImageAsset imageAsset;
+    String identifier;
+    String hashString;
+};
+
+header: <WebGPU/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::UpdateMaterialDescriptor {
+    Vector<uint8_t> materialGraph;
+    String identifier;
+};
+
+header: <WebGPU/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::MeshDescriptor {
+    long vertexBufferCount;
+    long vertexCapacity;
+    Vector<WebModel::VertexAttributeFormat> vertexAttributes;
+    Vector<WebModel::VertexLayout> vertexLayouts;
+    long indexCapacity;
+    long indexType;
+};
+
+header: <WebGPU/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::SkinningData {
+    uint8_t influencePerVertexCount;
+    Vector<WebModel::Float4x4> jointTransforms;
+    Vector<WebModel::Float4x4> inverseBindPoses;
+    Vector<uint32_t> influenceJointIndices;
+    Vector<float> influenceWeights;
+    WebModel::Float4x4 geometryBindTransform;
+};
+
+header: <WebGPU/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::BlendShapeData {
+    Vector<float> weights;
+    Vector<Vector<WebModel::Float3>> positionOffsets;
+    Vector<Vector<WebModel::Float3>> normalOffsets;
+};
+
+header: <WebGPU/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::RenormalizationData {
+    Vector<uint32_t> vertexIndicesPerTriangle;
+    Vector<uint32_t> vertexAdjacencies;
+    Vector<uint32_t> vertexAdjacencyEndIndices;
+};
+
+header: <WebGPU/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::DeformationData {
+    std::optional<WebModel::SkinningData> skinningData;
+    std::optional<WebModel::BlendShapeData> blendShapeData;
+    std::optional<WebModel::RenormalizationData> renormalizationData;
+};
+
+header: <WebGPU/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::UpdateMeshDescriptor {
+    String identifier;
+    uint8_t updateType;
+    WebModel::MeshDescriptor descriptor;
+    Vector<WebModel::MeshPart> parts;
+    Vector<uint8_t> indexData;
+    Vector<Vector<uint8_t>> vertexData;
+    WebModel::Float4x4 transform;
+    Vector<WebModel::Float4x4> instanceTransforms;
+    Vector<String> materialPrims;
+    std::optional<WebModel::DeformationData> deformationData;
+};
+
+header: <WebGPU/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::VertexAttributeFormat {
+    long semantic;
+    unsigned long format;
+    long layoutIndex;
+    long offset;
+};
+
+header: <WebGPU/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::VertexLayout {
+    long bufferIndex;
+    long bufferOffset;
+    long bufferStride;
+};
+
+header: <WebGPU/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::MaterialDescriptor {
+    Vector<uint8_t> materialGraph;
+    String identifier;
+};
+
+header: <WebGPU/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::ImageAssetSwizzle {
+    uint8_t red;
+    uint8_t green;
+    uint8_t blue;
+    uint8_t alpha;
+};
+
+header: <WebGPU/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::ImageAsset {
+    Vector<uint8_t> data;
+    long width;
+    long height;
+    long depth;
+    long bytesPerPixel;
+    uint64_t textureType;
+    uint64_t pixelFormat;
+    long mipmapLevelCount;
+    long arrayLength;
+    uint64_t textureUsage;
+    WebModel::ImageAssetSwizzle swizzle;
+};
+
+header: <WebGPU/ModelTypes.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::MeshPart {
+    uint32_t indexOffset;
+    uint32_t indexCount;
+    uint32_t topology;
+    uint32_t materialIndex;
+    WebModel::Float3 boundsMin;
+    WebModel::Float3 boundsMax;
+};
+
+#endif
+

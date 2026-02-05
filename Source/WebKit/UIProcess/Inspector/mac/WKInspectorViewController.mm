@@ -150,7 +150,7 @@ static void* const safeAreaInsetsKVOContext = (void*)&safeAreaInsetsKVOContext;
 #if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
     if (inspectedPage) {
         if (RefPtr webExtensionController = inspectedPage->webExtensionController())
-            configuration.get().webExtensionController = webExtensionController->protectedWrapper().get();
+            configuration.get().webExtensionController = protect(webExtensionController->wrapper()).get();
     }
 #endif
 

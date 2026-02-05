@@ -64,7 +64,7 @@ RenderObject* RenderTreePosition::nextSiblingRenderer(const Node& node) const
 {
     ASSERT(!node.renderer());
 
-    auto* parentElement = m_parent->element();
+    RefPtr parentElement = m_parent->element();
     if (!parentElement)
         return nullptr;
     // FIXME: PlugingReplacement shadow trees are very wrong.
@@ -74,9 +74,9 @@ RenderObject* RenderTreePosition::nextSiblingRenderer(const Node& node) const
     Vector<Element*, 30> elementStack;
 
     // In the common case ancestor == parentElement immediately and this just pushes parentElement into stack.
-    auto* ancestor = node.parentElementInComposedTree();
+    RefPtr ancestor = node.parentElementInComposedTree();
     while (true) {
-        elementStack.append(ancestor);
+        elementStack.append(ancestor.get());
         if (ancestor == parentElement)
             break;
         ancestor = ancestor->parentElementInComposedTree();
@@ -88,7 +88,7 @@ RenderObject* RenderTreePosition::nextSiblingRenderer(const Node& node) const
 
     auto initializeIteratorConsideringPseudoElements = [&] {
         if (auto* pseudoElement = dynamicDowncast<PseudoElement>(node)) {
-            auto* host = pseudoElement->hostElement();
+            RefPtr host = pseudoElement->hostElement();
             if (node.isBeforePseudoElement()) {
                 if (host != parentElement)
                     return composedDescendants.at(*host).traverseNext();
@@ -115,8 +115,8 @@ RenderObject* RenderTreePosition::nextSiblingRenderer(const Node& node) const
 
     auto popCheckingForAfterPseudoElementRenderers = [&] (unsigned iteratorDepthToMatch) -> RenderElement* {
         while (elementStack.size() > iteratorDepthToMatch) {
-            auto& element = *elementStack.takeLast();
-            if (auto* after = element.afterPseudoElement()) {
+            RefPtr element = elementStack.takeLast();
+            if (auto* after = element->afterPseudoElement()) {
                 if (auto* renderer = after->renderer())
                     return renderer;
             }
@@ -134,7 +134,7 @@ RenderObject* RenderTreePosition::nextSiblingRenderer(const Node& node) const
         if (auto* renderer = it->renderer())
             return renderer;
 
-        if (auto* element = dynamicDowncast<Element>(*it)) {
+        if (RefPtr element = dynamicDowncast<Element>(*it)) {
             if (element->hasDisplayContents()) {
                 if (auto* renderer = pushCheckingForAfterPseudoElementRenderer(*element))
                     return renderer;

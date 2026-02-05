@@ -91,7 +91,7 @@ void CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParameters& parameter
         return;
     }
 
-    callback(WTF::move(result));
+    callback(result.releaseNonNull());
 }
 
 void CryptoAlgorithmHMAC::importKey(CryptoKeyFormat format, KeyData&& data, const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)

@@ -322,22 +322,22 @@ public:
         std::swap(base::s, o.s);
     }
 
-    constexpr const value_type* operator->() const { return &std::get<0>(base::s); }
-    value_type* operator->() { return &std::get<0>(base::s); }
-    constexpr const value_type& operator*() const & { return std::get<0>(base::s); }
-    value_type& operator*() & { return std::get<0>(base::s); }
-    constexpr const value_type&& operator*() const && { return WTF::move(std::get<0>(base::s)); }
-    constexpr value_type&& operator*() && { return std::get<0>(base::s); }
+    constexpr const value_type* operator->() const LIFETIME_BOUND { return &std::get<0>(base::s); }
+    value_type* operator->() LIFETIME_BOUND { return &std::get<0>(base::s); }
+    constexpr const value_type& operator*() const & LIFETIME_BOUND { return std::get<0>(base::s); }
+    value_type& operator*() & LIFETIME_BOUND { return std::get<0>(base::s); }
+    constexpr const value_type&& operator*() const && LIFETIME_BOUND { return WTF::move(std::get<0>(base::s)); }
+    constexpr value_type&& operator*() && LIFETIME_BOUND { return WTF::move(std::get<0>(base::s)); }
     constexpr explicit operator bool() const { return has_value(); }
     constexpr bool has_value() const { return !base::s.index(); }
-    constexpr const value_type& value() const & { return std::get<0>(base::s); }
-    constexpr value_type& value() & { return std::get<0>(base::s); }
-    constexpr const value_type&& value() const && { return WTF::move(std::get<0>(base::s)); }
-    constexpr value_type&& value() && { return WTF::move(std::get<0>(base::s)); }
-    constexpr const error_type& error() const & { return std::get<1>(base::s); }
-    error_type& error() & { return std::get<1>(base::s); }
-    constexpr error_type&& error() && { return WTF::move(std::get<1>(base::s)); }
-    constexpr const error_type&& error() const && { return WTF::move(std::get<1>(base::s)); }
+    constexpr const value_type& value() const & LIFETIME_BOUND { return std::get<0>(base::s); }
+    constexpr value_type& value() & LIFETIME_BOUND { return std::get<0>(base::s); }
+    constexpr const value_type&& value() const && LIFETIME_BOUND { return WTF::move(std::get<0>(base::s)); }
+    constexpr value_type&& value() && LIFETIME_BOUND { return WTF::move(std::get<0>(base::s)); }
+    constexpr const error_type& error() const & LIFETIME_BOUND { return std::get<1>(base::s); }
+    error_type& error() & LIFETIME_BOUND { return std::get<1>(base::s); }
+    constexpr error_type&& error() && LIFETIME_BOUND { return WTF::move(std::get<1>(base::s)); }
+    constexpr const error_type&& error() const && LIFETIME_BOUND { return WTF::move(std::get<1>(base::s)); }
     template<class U> constexpr value_type value_or(U&& u) const & { return has_value() ? **this : static_cast<value_type>(std::forward<U>(u)); }
     template<class U> value_type value_or(U&& u) && { return has_value() ? WTF::move(**this) : static_cast<value_type>(std::forward<U>(u)); }
 };
@@ -390,11 +390,11 @@ public:
 
 template<class T, class E> constexpr bool operator==(const expected<T, E>& x, const expected<T, E>& y) { return bool(x) == bool(y) && (x ? x.value() == y.value() : x.error() == y.error()); }
 
-template<class E> constexpr bool operator==(const expected<void, E>& x, const expected<void, E>& y) { return bool(x) == bool(y) && (x ? true : x.error() == y.error()); }
+template<class E> constexpr bool operator==(const expected<void, E>& x, const expected<void, E>& y) { return bool(x) == bool(y) && (x || x.error() == y.error()); }
 
-template<class T, class E> constexpr bool operator==(const expected<T, E>& x, const T& y) { return x ? *x == y : false; }
+template<class T, class E> constexpr bool operator==(const expected<T, E>& x, const T& y) { return x && *x == y; }
 
-template<class T, class E> constexpr bool operator==(const expected<T, E>& x, const unexpected<E>& y) { return x ? false : x.error() == y.value(); }
+template<class T, class E> constexpr bool operator==(const expected<T, E>& x, const unexpected<E>& y) { return !x && x.error() == y.value(); }
 
 template<typename T, typename E> void swap(expected<T, E>& x, expected<T, E>& y) { x.swap(y); }
 

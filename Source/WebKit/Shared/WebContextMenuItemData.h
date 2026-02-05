@@ -54,7 +54,6 @@ public:
     WebCore::ContextMenuItem core() const;
     
     API::Object* userData() const;
-    RefPtr<API::Object> protectedUserData() const;
     void setUserData(API::Object*);
 
 private:

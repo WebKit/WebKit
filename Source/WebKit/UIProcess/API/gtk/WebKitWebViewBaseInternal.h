@@ -29,11 +29,7 @@
 #include <WebCore/PlatformMouseEvent.h>
 #include <wtf/text/WTFString.h>
 
-#if USE(CAIRO)
-typedef struct _cairo_surface cairo_surface_t;
-#elif USE(SKIA)
 class SkImage;
-#endif
 
 typedef struct _WebKitWebViewBase WebKitWebViewBase;
 
@@ -53,8 +49,5 @@ WK_EXPORT void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase*, KeyEventT
 enum class WheelEventPhase { NoPhase, Began, Changed, Ended, Cancelled, MayBegin };
 WK_EXPORT void webkitWebViewBaseSynthesizeWheelEvent(WebKitWebViewBase*, double deltaX, double deltaY, int x, int y, WheelEventPhase, WheelEventPhase momentumPhase, bool);
 
-#if USE(CAIRO)
-WK_EXPORT cairo_surface_t* webkitWebViewBaseSnapshotForTesting(WebKitWebViewBase*);
-#elif USE(SKIA)
 WK_EXPORT SkImage* webkitWebViewBaseSnapshotForTesting(WebKitWebViewBase*);
-#endif
+

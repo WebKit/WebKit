@@ -4,7 +4,7 @@ layer at (0,0) size 800x465
   RenderBlock {HTML} at (0,0) size 800x465
     RenderBody {BODY} at (8,16) size 784x441
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 672x19
+        RenderText {#text} at (0,0) size 672x20
           text run at (0,0) width 672: "Test if clip-path doesn't cause isolation. This test passes if you see a green rectangle with yellow borders."
       RenderBlock (anonymous) at (0,36) size 784x405
         RenderSVGRoot {svg} at (8,52) size 160x160

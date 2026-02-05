@@ -146,7 +146,7 @@ bool mainResourceContent(LocalFrame* frame, bool withBase64Encode, String* resul
 
 void resourceContent(Inspector::Protocol::ErrorString& errorString, LocalFrame* frame, const URL& url, String* result, bool* base64Encoded)
 {
-    DocumentLoader* loader = assertDocumentLoader(errorString, frame);
+    RefPtr<DocumentLoader> loader = assertDocumentLoader(errorString, frame);
     if (!loader)
         return;
 
@@ -269,8 +269,8 @@ Inspector::Protocol::Page::ResourceType cachedResourceTypeToProtocol(const Cache
 LocalFrame* findFrameWithSecurityOrigin(Page& page, const String& originRawString)
 {
     // FIXME: this frame tree traversal needs to be redesigned for Site Isolation.
-    for (Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+    for (SUPPRESS_UNCOUNTED_LOCAL auto* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        SUPPRESS_UNCOUNTED_LOCAL auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
         if (localFrame->document()->securityOrigin().toRawString() == originRawString)
@@ -282,7 +282,7 @@ LocalFrame* findFrameWithSecurityOrigin(Page& page, const String& originRawStrin
 DocumentLoader* assertDocumentLoader(Inspector::Protocol::ErrorString& errorString, LocalFrame* frame)
 {
     FrameLoader& frameLoader = frame->loader();
-    DocumentLoader* documentLoader = frameLoader.documentLoader();
+    SUPPRESS_UNCOUNTED_LOCAL auto* documentLoader = frameLoader.documentLoader();
     if (!documentLoader)
         errorString = "Missing document loader for given frame"_s;
     return documentLoader;
@@ -352,7 +352,7 @@ bool cachedResourceContent(CachedResource& resource, String* result, bool* base6
         *result = downcast<CachedScript>(resource).script().toString();
         return true;
     default:
-        auto* buffer = resource.resourceBuffer();
+        RefPtr buffer = resource.resourceBuffer();
         if (!buffer)
             return false;
 

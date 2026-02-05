@@ -32,6 +32,7 @@
 #import "MediaDeviceRoute.h"
 #import "MediaPlaybackTargetCocoa.h"
 #import "MediaPlaybackTargetWirelessPlayback.h"
+#import "MediaPlayerEnums.h"
 #import "PlatformMediaSessionManager.h"
 #import "WebCoreThreadRun.h"
 #import <AVFoundation/AVAudioSession.h>
@@ -89,14 +90,14 @@ class MediaSessionHelperIOS;
 
 class MediaSessionHelperIOS final
     : public MediaSessionHelper
-#if HAVE(AVROUTING_FRAMEWORK)
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaSessionHelperIOS>
 #endif
 {
 public:
     MediaSessionHelperIOS();
 
-#if HAVE(AVROUTING_FRAMEWORK)
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 #endif
 
@@ -290,7 +291,7 @@ void MediaSessionHelper::setActiveAudioRouteSupportsSpatialPlayback(bool support
     activeAudioRouteSupportsSpatialPlaybackDidChange(supports ? SupportsSpatialAudioPlayback::Yes : SupportsSpatialAudioPlayback::No);
 }
 
-#if HAVE(AVROUTING_FRAMEWORK)
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
 void MediaSessionHelper::activeRoutesDidChange(MediaDeviceRouteController& routeController)
 {
     if (RefPtr mostRecentActiveRoute = routeController.mostRecentActiveRoute()) {
@@ -300,7 +301,7 @@ void MediaSessionHelper::activeRoutesDidChange(MediaDeviceRouteController& route
 
     // FIXME: Reset the active route for local playback
 }
-#endif // HAVE(AVROUTING_FRAMEWORK)
+#endif // ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
 
 MediaSessionHelperIOS::MediaSessionHelperIOS()
 {
@@ -311,7 +312,7 @@ MediaSessionHelperIOS::MediaSessionHelperIOS()
 
     updateCarPlayIsConnected();
 
-#if HAVE(AVROUTING_FRAMEWORK)
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
     ASSERT(MediaDeviceRouteController::singleton().client() == nullptr);
     MediaDeviceRouteController::singleton().setClient(this);
 #endif

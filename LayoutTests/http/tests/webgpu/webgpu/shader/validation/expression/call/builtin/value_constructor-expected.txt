@@ -353,24 +353,7 @@ PASS :matrix_elementwise:type1="abstract-float";type2="bool"
 PASS :array_zero_value:case="i32"
 PASS :array_zero_value:case="f32"
 PASS :array_zero_value:case="u32"
-FAIL :array_zero_value:case="valid_array" assert_unreached:
-  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
-    8:58: error: cannot use override value in constant expression
-
-    ---- shader ----
-    override o : i32 = 1;
-        struct valid_S {
-          x : u32
-        }
-        struct invalid_S {
-          x : array<u32>
-        }
-        const x : array<array<u32, 2>, 2> = array<array<u32, 2>, 2>();
-      at (elided: below max severity)
-  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
-    8:57: cannot use override value in constant expression
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
+PASS :array_zero_value:case="valid_array"
 PASS :array_zero_value:case="invalid_rta"
 PASS :array_zero_value:case="invalid_override_array"
 PASS :array_zero_value:case="valid_struct"
@@ -379,24 +362,7 @@ PASS :array_zero_value:case="invalid_atomic"
 PASS :array_value:case="i32"
 PASS :array_value:case="f32"
 PASS :array_value:case="u32"
-FAIL :array_value:case="valid_array" assert_unreached:
-  - VALIDATION FAILED: Unexpected compilationInfo 'error' message.
-    8:58: error: cannot use override value in constant expression
-
-    ---- shader ----
-    override o : i32 = 1;
-        struct valid_S {
-          x : u32
-        }
-        struct invalid_S {
-          x : array<u32>
-        }
-        const x : array<array<u32, 2>, 2> = array<array<u32, 2>, 2>(array(0,1), array(2,3));
-      at (elided: below max severity)
-  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
-    8:57: cannot use override value in constant expression
-    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
- Reached unreachable code
+PASS :array_value:case="valid_array"
 PASS :array_value:case="invalid_rta"
 PASS :array_value:case="invalid_override_array"
 PASS :array_value:case="valid_struct"

@@ -97,6 +97,14 @@ CoreIPCPKPaymentMerchantSession::CoreIPCPKPaymentMerchantSession(PKPaymentMercha
         data.signedFields = WTF::move(result);
     }
 
+#if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
+    if (RetainPtr isDelegatedSessionNumber = dynamic_objc_cast<NSNumber>([dictionary.get() objectForKey:@"isDelegatedSession"]))
+        data.isDelegatedSession = [isDelegatedSessionNumber boolValue];
+
+    if (RetainPtr delegateDisplayName = dynamic_objc_cast<NSString>([dictionary.get() objectForKey:@"delegateDisplayName"]))
+        data.delegateDisplayName = WTF::move(delegateDisplayName);
+#endif
+
     m_data = WTF::move(data);
 }
 
@@ -110,7 +118,7 @@ RetainPtr<id> CoreIPCPKPaymentMerchantSession::toID() const
     if (!m_data)
         return { };
 
-    RetainPtr dictionary = [NSMutableDictionary dictionaryWithCapacity:14];
+    RetainPtr dictionary = [NSMutableDictionary dictionaryWithCapacity:16];
 
     if (m_data->merchantIdentifier)
         [dictionary setObject:m_data->merchantIdentifier.get() forKey:@"merchantIdentifier"];
@@ -145,6 +153,13 @@ RetainPtr<id> CoreIPCPKPaymentMerchantSession::toID() const
             [arr addObject:element.get()];
         [dictionary setObject:arr.get() forKey:@"signedFields"];
     }
+
+#if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
+    if (m_data->isDelegatedSession)
+        [dictionary setObject:@(*m_data->isDelegatedSession) forKey:@"isDelegatedSession"];
+    if (m_data->delegateDisplayName)
+        [dictionary setObject:m_data->delegateDisplayName.get() forKey:@"delegateDisplayName"];
+#endif
 
     RetainPtr unarchiver = adoptNS([[WKKeyedCoder alloc] initWithDictionary:dictionary.get()]);
     RetainPtr session = adoptNS([[PAL::getPKPaymentMerchantSessionClassSingleton() alloc] initWithCoder:unarchiver.get()]);

@@ -29,6 +29,13 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
+#ifndef RICE_CHECK_VERSION
+#define RICE_CHECK_VERSION(major, minor, patch) \
+    (RICE_PROTO_MAJOR > (major) || \
+    (RICE_PROTO_MAJOR == (major) && RICE_PROTO_MINOR > (minor)) || \
+    (RICE_PROTO_MAJOR == (major) && RICE_PROTO_MINOR == (minor) && RICE_PROTO_PATCH >= (patch)))
+#endif
+
 namespace WebCore {
 
 static inline String riceAddressToString(const RiceAddress* address, bool includePort = true)

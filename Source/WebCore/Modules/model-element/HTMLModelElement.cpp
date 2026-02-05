@@ -130,7 +130,7 @@ HTMLModelElement::~HTMLModelElement()
     }
 #endif
 
-    LazyLoadModelObserver::unobserve(*this, protectedDocument());
+    LazyLoadModelObserver::unobserve(*this, protect(document()));
 
     m_loadModelTimer = nullptr;
 
@@ -441,7 +441,7 @@ RefPtr<GraphicsLayer> HTMLModelElement::graphicsLayer() const
 
 bool HTMLModelElement::isVisible() const
 {
-    bool isVisibleInline = !protectedDocument()->hidden() && m_isIntersectingViewport;
+    bool isVisibleInline = !protect(document())->hidden() && m_isIntersectingViewport;
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     return isVisibleInline || m_detachedForImmersive;
 #else
@@ -453,7 +453,7 @@ void HTMLModelElement::logWarning(ModelPlayer& modelPlayer, const String& warnin
 {
     ASSERT_UNUSED(modelPlayer, &modelPlayer == m_modelPlayer);
 
-    protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, warningMessage);
+    protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, warningMessage);
 }
 
 // MARK: - ModelPlayer support
@@ -507,7 +507,7 @@ void HTMLModelElement::createModelPlayer()
 #endif
 
     if (!m_modelPlayerProvider)
-        m_modelPlayerProvider = document().protectedPage()->modelPlayerProvider();
+        m_modelPlayerProvider = protect(document().page())->modelPlayerProvider();
     if (RefPtr modelPlayerProvider = m_modelPlayerProvider.get()) {
         modelPlayer = modelPlayerProvider->createModelPlayer(*this);
         m_modelPlayer = modelPlayer.copyRef();
@@ -560,7 +560,7 @@ void HTMLModelElement::deleteModelPlayer()
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     if (immersive())
-        return document().protectedImmersive()->exitRemovedImmersiveElement(this, WTF::move(deleteModelPlayerBlock));
+        return protect(document().immersive())->exitRemovedImmersiveElement(this, WTF::move(deleteModelPlayerBlock));
 #endif
 
     deleteModelPlayerBlock();
@@ -618,7 +618,7 @@ void HTMLModelElement::reloadModelPlayer()
     ASSERT(animationState && transformState);
 
     if (!m_modelPlayerProvider)
-        m_modelPlayerProvider = protectedDocument()->protectedPage()->modelPlayerProvider();
+        m_modelPlayerProvider = protect(protect(document())->page())->modelPlayerProvider();
     if (RefPtr modelPlayerProvider = m_modelPlayerProvider.get()) {
         modelPlayer = modelPlayerProvider->createModelPlayer(*this);
         m_modelPlayer = modelPlayer.copyRef();
@@ -1147,7 +1147,7 @@ URL HTMLModelElement::selectEnvironmentMapURL() const
 void HTMLModelElement::environmentMapRequestResource()
 {
     auto request = createResourceRequest(m_environmentMapURL, FetchOptions::Destination::Environmentmap);
-    auto resource = document().protectedCachedResourceLoader()->requestEnvironmentMapResource(WTF::move(request));
+    auto resource = protect(document().cachedResourceLoader())->requestEnvironmentMapResource(WTF::move(request));
     if (!resource.has_value()) {
         if (!m_environmentMapReadyPromise->isFulfilled())
             m_environmentMapReadyPromise->reject(Exception { ExceptionCode::NetworkError });
@@ -1426,7 +1426,7 @@ bool HTMLModelElement::immersive() const
 
 void HTMLModelElement::requestImmersive(DOMPromiseDeferred<void>&& promise)
 {
-    document().protectedImmersive()->requestImmersive(this, [promise = WTF::move(promise)](ExceptionOr<void> result) mutable {
+    protect(document().immersive())->requestImmersive(this, [promise = WTF::move(promise)](ExceptionOr<void> result) mutable {
         if (result.hasException()) {
             promise.reject(result.releaseException());
             return;
@@ -1545,7 +1545,7 @@ void HTMLModelElement::stop()
 {
     RELEASE_LOG(ModelElement, "%p - HTMLModelElement::stop()", this);
 
-    LazyLoadModelObserver::unobserve(*this, protectedDocument());
+    LazyLoadModelObserver::unobserve(*this, protect(document()));
 
     m_loadModelTimer = nullptr;
 
@@ -1633,7 +1633,7 @@ Node::InsertedIntoAncestorResult HTMLModelElement::insertedIntoAncestor(Insertio
 #if ENABLE(MODEL_PROCESS)
         document->incrementModelElementCount();
 #endif
-        m_modelPlayerProvider = document->protectedPage()->modelPlayerProvider();
+        m_modelPlayerProvider = protect(document->page())->modelPlayerProvider();
         LazyLoadModelObserver::observe(*this);
     }
 
@@ -1701,7 +1701,7 @@ void HTMLModelElement::sourceRequestResource()
         return triggerModelPlayerCreationCallbacksIfNeeded(Exception { ExceptionCode::AbortError, "The source URL is empty"_s });
 
     auto request = createResourceRequest(m_sourceURL, FetchOptions::Destination::Model);
-    auto resource = protectedDocument()->protectedCachedResourceLoader()->requestModelResource(WTF::move(request));
+    auto resource = protect(protect(document())->cachedResourceLoader())->requestModelResource(WTF::move(request));
     if (!resource.has_value()) {
         ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
         if (!m_readyPromise->isFulfilled())

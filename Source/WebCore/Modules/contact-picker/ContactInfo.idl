@@ -27,7 +27,6 @@
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ContactInfo {
     sequence<USVString> name;
     sequence<USVString> email;

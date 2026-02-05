@@ -482,7 +482,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
                 auto element = decoder.template decode<T>();
                 if (!element)
                     return std::nullopt;
-                vector.append(WTF::move(*element));
+                SUPPRESS_UNCHECKED_ARG vector.append(WTF::move(*element));
             }
             return vector;
         }

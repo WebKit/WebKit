@@ -143,12 +143,12 @@ void TiledCoreAnimationDrawingArea::sendEnterAcceleratedCompositingModeIfNeeded(
 
 void TiledCoreAnimationDrawingArea::registerScrollingTree()
 {
-    WebProcess::singleton().protectedEventDispatcher()->addScrollingTreeForPage(Ref { m_webPage.get() });
+    protect(WebProcess::singleton().eventDispatcher())->addScrollingTreeForPage(Ref { m_webPage.get() });
 }
 
 void TiledCoreAnimationDrawingArea::unregisterScrollingTree()
 {
-    WebProcess::singleton().protectedEventDispatcher()->removeScrollingTreeForPage(Ref { m_webPage.get() });
+    protect(WebProcess::singleton().eventDispatcher())->removeScrollingTreeForPage(Ref { m_webPage.get() });
 }
 
 void TiledCoreAnimationDrawingArea::setNeedsDisplay()
@@ -177,7 +177,7 @@ void TiledCoreAnimationDrawingArea::updateRenderingWithForcedRepaint()
     if (m_layerTreeStateIsFrozen)
         return;
 
-    Ref { m_webPage.get() }->protectedCorePage()->forceRepaintAllFrames();
+    protect(Ref { m_webPage.get() }->corePage())->forceRepaintAllFrames();
     updateRendering();
     [CATransaction flush];
     [CATransaction synchronize];
@@ -195,7 +195,7 @@ void TiledCoreAnimationDrawingArea::updateRenderingWithForcedRepaintAsync(WebPag
         if (!protectedThis)
             return completionHandler();
         Ref protectedPage = protectedThis->m_webPage.get();
-        protectedPage->protectedDrawingArea()->updateRenderingWithForcedRepaint();
+        protect(protectedPage->drawingArea())->updateRenderingWithForcedRepaint();
         completionHandler();
     });
 }
@@ -240,7 +240,7 @@ void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&
     // in order to be scrolled by the ScrollingCoordinator.
     settings->setAcceleratedCompositingForFixedPositionEnabled(true);
 
-    DebugPageOverlays::settingsChanged(*webPage->protectedCorePage());
+    DebugPageOverlays::settingsChanged(*protect(webPage->corePage()));
 
     bool showTiledScrollingIndicator = settings->showTiledScrollingIndicator();
     if (showTiledScrollingIndicator == !!m_debugInfoLayer)
@@ -283,7 +283,7 @@ void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(W
         return;
     }
 
-    corePage->protectedScrollingCoordinator()->commitTreeStateIfNeeded();
+    protect(corePage->scrollingCoordinator())->commitTreeStateIfNeeded();
 
     if (!m_layerTreeStateIsFrozen) {
         invalidateRenderingUpdateRunLoopObserver();
@@ -646,11 +646,6 @@ PlatformCALayer* TiledCoreAnimationDrawingArea::layerForTransientZoom() const
     return scaledLayer->platformCALayer();
 }
 
-RefPtr<WebCore::PlatformCALayer> TiledCoreAnimationDrawingArea::protectedLayerForTransientZoom() const
-{
-    return layerForTransientZoom();
-}
-
 PlatformCALayer* TiledCoreAnimationDrawingArea::shadowLayerForTransientZoom() const
 {
     CheckedPtr frameView =  Ref { m_webPage.get() }->localMainFrameView();
@@ -813,7 +808,7 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, Float
     // and not apply the transform, so we can't depend on it to do so.
     TransformationMatrix finalTransform;
     finalTransform.scale(scale);
-    protectedLayerForTransientZoom()->setTransform(finalTransform);
+    protect(layerForTransientZoom())->setTransform(finalTransform);
     
     Ref frameView = *webPage->localMainFrameView();
 

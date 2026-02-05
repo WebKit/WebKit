@@ -37,17 +37,14 @@ namespace WebCore {
 struct GPUDepthStencilState {
     WebGPU::DepthStencilState convertToBacking() const
     {
-        std::optional<WebGPU::CompareFunction> optionalDepthCompare;
-        if (depthCompare)
-            optionalDepthCompare = WebCore::convertToBacking(*depthCompare);
         return {
             .format = WebCore::convertToBacking(format),
             .depthWriteEnabled = depthWriteEnabled,
-            .depthCompare = optionalDepthCompare,
-            .stencilFront = stencilFront.convertToBacking(),
-            .stencilBack = stencilBack.convertToBacking(),
-            .stencilReadMask = stencilReadMask ? std::optional { *stencilReadMask } : std::nullopt,
-            .stencilWriteMask = stencilWriteMask ? std::optional { *stencilWriteMask } : std::nullopt,
+            .depthCompare = depthCompare ? std::optional { WebCore::convertToBacking(*depthCompare) } : std::nullopt,
+            .stencilFront = stencilFront.value_or(GPUStencilFaceState { }).convertToBacking(),
+            .stencilBack = stencilBack.value_or(GPUStencilFaceState { }).convertToBacking(),
+            .stencilReadMask = stencilReadMask,
+            .stencilWriteMask = stencilWriteMask,
             .depthBias = depthBias,
             .depthBiasSlopeScale = depthBiasSlopeScale,
             .depthBiasClamp = depthBiasClamp,
@@ -59,11 +56,11 @@ struct GPUDepthStencilState {
     std::optional<bool> depthWriteEnabled;
     std::optional<GPUCompareFunction> depthCompare;
 
-    GPUStencilFaceState stencilFront;
-    GPUStencilFaceState stencilBack;
+    std::optional<GPUStencilFaceState> stencilFront;
+    std::optional<GPUStencilFaceState> stencilBack;
 
-    std::optional<GPUStencilValue> stencilReadMask;
-    std::optional<GPUStencilValue> stencilWriteMask;
+    GPUStencilValue stencilReadMask { 0xFFFFFFFF };
+    GPUStencilValue stencilWriteMask { 0xFFFFFFFF };
 
     GPUDepthBias depthBias { 0 };
     float depthBiasSlopeScale { 0 };

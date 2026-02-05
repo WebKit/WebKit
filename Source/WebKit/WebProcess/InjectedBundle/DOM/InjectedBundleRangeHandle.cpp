@@ -100,7 +100,7 @@ InjectedBundleRangeHandle::~InjectedBundleRangeHandle()
 
 Ref<InjectedBundleNodeHandle> InjectedBundleRangeHandle::document()
 {
-    return InjectedBundleNodeHandle::getOrCreate(m_range->startContainer().protectedDocument());
+    return InjectedBundleNodeHandle::getOrCreate(protect(m_range->startContainer().document()));
 }
 
 WebCore::IntRect InjectedBundleRangeHandle::boundingRectInWindowCoordinates() const
@@ -175,7 +175,7 @@ RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions option
 String InjectedBundleRangeHandle::text() const
 {
     auto range = makeSimpleRange(m_range);
-    range.start.protectedDocument()->updateLayout();
+    protect(range.start.document())->updateLayout();
     return plainText(range);
 }
 

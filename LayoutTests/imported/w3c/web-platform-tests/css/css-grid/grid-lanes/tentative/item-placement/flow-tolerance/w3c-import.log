@@ -32,6 +32,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/flow-tolerance/flow-tolerance-column-004-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/flow-tolerance/flow-tolerance-column-004-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/flow-tolerance/flow-tolerance-column-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/flow-tolerance/flow-tolerance-dynamic-update-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/flow-tolerance/flow-tolerance-dynamic-update-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/flow-tolerance/flow-tolerance-dynamic-update.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/flow-tolerance/flow-tolerance-row-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/flow-tolerance/flow-tolerance-row-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/tentative/item-placement/flow-tolerance/flow-tolerance-row-001.html

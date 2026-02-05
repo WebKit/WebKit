@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+    <script>
+        function sendMessage(msg) 
+        {
+            setTimeout(function() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage(msg);
+                } catch(e) {
+                    console.debug(`error: ${e}`);
+                }
+            }, 0);
+        }
+
+        async function play(time)
+        {
+            const video = document.querySelector('video');
+            video.currentTime = time;
+            await waitForEvent('seeked');
+
+            video.play();
+        }
+
+        function pause() 
+        {
+            document.querySelector('video').pause();
+        }
+        
+        function videoError()
+        {
+            return `${document.querySelector('video').error}`;
+        }
+
+        function waitForEvent(type)
+        {
+            return new Promise(resolve => {
+                document.querySelector('video').addEventListener(type, (event) => { 
+                    resolve(event); 
+                }, { once: true });
+            });
+        }
+
+
+        window.addEventListener('load', async () => {
+            const video = document.querySelector('video');
+
+            video.addEventListener('playing', () => { sendMessage('playing'); });
+            video.addEventListener('error', () => { sendMessage('error'); });
+
+            video.src = 'small-video-with-silent-audio.mp4';
+
+            await waitForEvent('canplaythrough');
+
+            sendMessage('ready');
+        });
+
+    </script>
+</head>
+<body>
+    <video loop controls title='Tiny little video'> </video>
+</body>
+<html>

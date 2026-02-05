@@ -178,12 +178,12 @@
           )
         )
         (GraphicsLayer
-          (position 8.00 167.00)
+          (position 8.00 166.50)
           (bounds 304.00 154.00)
           (drawsContent 1)
           (backingStoreAttached 1)
           (visible rect 0.00, 0.00 304.00 x 154.00)
-          (coverage rect -8.00, -167.00 800.00 x 600.00)
+          (coverage rect -8.00, -166.50 800.00 x 600.00)
           (intersects coverage rect 1)
           (contentsScale 2.00)
           (children 1
@@ -191,7 +191,7 @@
               (position 2.00 2.00)
               (backingStoreAttached 0)
               (visible rect 0.00, 0.00 0.00 x 0.00)
-              (coverage rect -10.00, -169.00 800.00 x 600.00)
+              (coverage rect -10.00, -168.50 800.00 x 600.00)
               (intersects coverage rect 0)
               (contentsScale 2.00)
               (children 1

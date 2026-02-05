@@ -5,7 +5,7 @@ layer at (0,0) size 800x240
     RenderBody {BODY} at (8,8) size 784x224
       RenderTable {TABLE} at (0,0) size 400x224 [border: (1px outset #000000)]
         RenderBlock {CAPTION} at (0,0) size 400x20
-          RenderText {#text} at (45,0) size 310x19
+          RenderText {#text} at (45,0) size 310x20
             text run at (45,0) width 310: "Table is 400 px width, set with table width=400."
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
@@ -14,7 +14,7 @@ layer at (0,0) size 800x240
         RenderTableSection {TBODY} at (1,21) size 398x202
           RenderTableRow {TR} at (0,0) size 398x202
             RenderTableCell {TD} at (0,0) size 398x202 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=3]
-              RenderText {#text} at (1,1) size 391x199
+              RenderText {#text} at (1,1) size 391x200
                 text run at (1,1) width 311: "table Cols 1 - 3. There must be a lot of text here "
                 text run at (311,1) width 67: "in order to"
                 text run at (1,21) width 228: "see the bug. table Cols 1 - 3. There "

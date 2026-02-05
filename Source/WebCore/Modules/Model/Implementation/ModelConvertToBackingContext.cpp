@@ -31,7 +31,7 @@
 #include <WebGPU/WebGPUExt.h>
 #include <wtf/TZoneMallocInlines.h>
 
-namespace WebCore::DDModel {
+namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ConvertToBackingContext);
 

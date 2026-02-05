@@ -60,7 +60,7 @@ private:
 
     void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
     {
-        static_cast<SVGAnimatedBooleanAnimator&>(animator).appendAnimatedInstance(property(owner));
+        downcast<SVGAnimatedBooleanAnimator>(animator).appendAnimatedInstance(property(owner));
     }
 };
 
@@ -82,7 +82,7 @@ private:
 
     void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
     {
-        static_cast<SVGAnimatedEnumerationAnimator<EnumType>&>(animator).appendAnimatedInstance(property(owner));
+        downcast<SVGAnimatedEnumerationAnimator<EnumType>>(animator).appendAnimatedInstance(property(owner));
     }
 };
 
@@ -104,7 +104,7 @@ private:
 
     void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
     {
-        static_cast<SVGAnimatedIntegerAnimator&>(animator).appendAnimatedInstance(property(owner));
+        downcast<SVGAnimatedIntegerAnimator>(animator).appendAnimatedInstance(property(owner));
     }
 };
 
@@ -129,7 +129,7 @@ private:
 
     void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
     {
-        static_cast<SVGAnimatedLengthAnimator&>(animator).appendAnimatedInstance(property(owner));
+        downcast<SVGAnimatedLengthAnimator>(animator).appendAnimatedInstance(property(owner));
     }
 };
 
@@ -151,7 +151,7 @@ private:
 
     void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
     {
-        static_cast<SVGAnimatedLengthListAnimator&>(animator).appendAnimatedInstance(property(owner));
+        downcast<SVGAnimatedLengthListAnimator>(animator).appendAnimatedInstance(property(owner));
     }
 };
 
@@ -173,7 +173,7 @@ private:
 
     void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
     {
-        static_cast<SVGAnimatedNumberAnimator&>(animator).appendAnimatedInstance(property(owner));
+        downcast<SVGAnimatedNumberAnimator>(animator).appendAnimatedInstance(property(owner));
     }
 };
 
@@ -195,7 +195,7 @@ private:
 
     void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
     {
-        static_cast<SVGAnimatedNumberListAnimator&>(animator).appendAnimatedInstance(property(owner));
+        downcast<SVGAnimatedNumberListAnimator>(animator).appendAnimatedInstance(property(owner));
     }
 };
 
@@ -217,7 +217,7 @@ private:
 
     void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
     {
-        static_cast<SVGAnimatedPathSegListAnimator&>(animator).appendAnimatedInstance(property(owner));
+        downcast<SVGAnimatedPathSegListAnimator>(animator).appendAnimatedInstance(property(owner));
     }
 };
 
@@ -239,7 +239,7 @@ private:
 
     void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
     {
-        static_cast<SVGAnimatedPointListAnimator&>(animator).appendAnimatedInstance(property(owner));
+        downcast<SVGAnimatedPointListAnimator>(animator).appendAnimatedInstance(property(owner));
     }
 };
     
@@ -271,7 +271,7 @@ private:
 
     void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
     {
-        static_cast<SVGAnimatedPreserveAspectRatioAnimator&>(animator).appendAnimatedInstance(property(owner));
+        downcast<SVGAnimatedPreserveAspectRatioAnimator>(animator).appendAnimatedInstance(property(owner));
     }
 };
 
@@ -293,7 +293,7 @@ private:
 
     void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
     {
-        static_cast<SVGAnimatedRectAnimator&>(animator).appendAnimatedInstance(property(owner));
+        downcast<SVGAnimatedRectAnimator>(animator).appendAnimatedInstance(property(owner));
     }
 };
 
@@ -315,7 +315,7 @@ private:
 
     void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
     {
-        static_cast<SVGAnimatedStringAnimator&>(animator).appendAnimatedInstance(property(owner));
+        downcast<SVGAnimatedStringAnimator>(animator).appendAnimatedInstance(property(owner));
     }
 };
 
@@ -337,7 +337,7 @@ private:
 
     void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
     {
-        static_cast<SVGAnimatedTransformListAnimator&>(animator).appendAnimatedInstance(property(owner));
+        downcast<SVGAnimatedTransformListAnimator>(animator).appendAnimatedInstance(property(owner));
     }
 };
 

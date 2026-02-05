@@ -28,15 +28,13 @@
     JSCustomMarkFunction,
     Exposed=Window
 ] interface PopStateEvent : Event {
-    constructor([AtomString] DOMString type, optional PopStateEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional PopStateEventInit eventInitDict = {});
 
     [CachedAttribute, CustomGetter] readonly attribute any state;
     [EnabledBySetting=UAVisualTransitionDetectionEnabled] readonly attribute boolean hasUAVisualTransition;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary PopStateEventInit : EventInit {
+dictionary PopStateEventInit : EventInit {
     any state = null;
     [EnabledBySetting=UAVisualTransitionDetectionEnabled] boolean hasUAVisualTransition = false;
 };

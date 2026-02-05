@@ -150,12 +150,14 @@ bool RenderStyle::scrollAnchoringSuppressionStyleDidChange(const RenderStyle* ot
         return false;
 
     if (m_computedStyle.m_nonInheritedData->boxData.ptr() != other->m_computedStyle.m_nonInheritedData->boxData.ptr()) {
-        if (m_computedStyle.m_nonInheritedData->boxData->width != other->m_computedStyle.m_nonInheritedData->boxData->width
-            || m_computedStyle.m_nonInheritedData->boxData->minWidth != other->m_computedStyle.m_nonInheritedData->boxData->minWidth
-            || m_computedStyle.m_nonInheritedData->boxData->maxWidth != other->m_computedStyle.m_nonInheritedData->boxData->maxWidth
-            || m_computedStyle.m_nonInheritedData->boxData->height != other->m_computedStyle.m_nonInheritedData->boxData->height
-            || m_computedStyle.m_nonInheritedData->boxData->minHeight != other->m_computedStyle.m_nonInheritedData->boxData->minHeight
-            || m_computedStyle.m_nonInheritedData->boxData->maxHeight != other->m_computedStyle.m_nonInheritedData->boxData->maxHeight)
+        SUPPRESS_UNCOUNTED_LOCAL auto& boxData = m_computedStyle.m_nonInheritedData->boxData.get();
+        SUPPRESS_UNCOUNTED_LOCAL auto& otherBoxData = other->m_computedStyle.m_nonInheritedData->boxData.get();
+        if (boxData.width != otherBoxData.width
+            || boxData.minWidth != otherBoxData.minWidth
+            || boxData.maxWidth != otherBoxData.maxWidth
+            || boxData.height != otherBoxData.height
+            || boxData.minHeight != otherBoxData.minHeight
+            || boxData.maxHeight != otherBoxData.maxHeight)
             return true;
     }
 
@@ -165,17 +167,19 @@ bool RenderStyle::scrollAnchoringSuppressionStyleDidChange(const RenderStyle* ot
     if (position() != other->position())
         return true;
 
-    if (m_computedStyle.m_nonInheritedData->surroundData.ptr() && other->m_computedStyle.m_nonInheritedData->surroundData.ptr() && m_computedStyle.m_nonInheritedData->surroundData != other->m_computedStyle.m_nonInheritedData->surroundData) {
-        if (m_computedStyle.m_nonInheritedData->surroundData->margin != other->m_computedStyle.m_nonInheritedData->surroundData->margin)
+    if (m_computedStyle.m_nonInheritedData->surroundData.ptr() && other->m_computedStyle.m_nonInheritedData->surroundData.ptr()) {
+        SUPPRESS_UNCOUNTED_LOCAL auto& surroundData = m_computedStyle.m_nonInheritedData->surroundData.get();
+        SUPPRESS_UNCOUNTED_LOCAL auto& otherSurroundData = other->m_computedStyle.m_nonInheritedData->surroundData.get();
+        if (surroundData.margin != otherSurroundData.margin)
             return true;
 
-        if (m_computedStyle.m_nonInheritedData->surroundData->padding != other->m_computedStyle.m_nonInheritedData->surroundData->padding)
+        if (surroundData.padding != otherSurroundData.padding)
             return true;
-    }
 
-    if (position() != PositionType::Static) {
-        if (m_computedStyle.m_nonInheritedData->surroundData->inset != other->m_computedStyle.m_nonInheritedData->surroundData->inset)
-            return true;
+        if (position() != PositionType::Static) {
+            if (surroundData.inset != otherSurroundData.inset)
+                return true;
+        }
     }
 
     if (hasTransformRelatedProperty() != other->hasTransformRelatedProperty() || transform() != other->transform())
@@ -310,7 +314,7 @@ float RenderStyle::usedStrokeWidth(const IntSize& viewportSize) const
 
     return WTF::switchOn(strokeWidth(),
         [&](const Style::StrokeWidth::Fixed& fixedStrokeWidth) -> float {
-            return Style::evaluate<float>(fixedStrokeWidth, Style::ZoomNeeded { });
+            return Style::evaluate<float>(fixedStrokeWidth, usedZoomForLength());
         },
         [&](const Style::StrokeWidth::Percentage& percentageStrokeWidth) -> float {
             // According to the spec, https://drafts.fxtf.org/paint/#stroke-width, the percentage is relative to the scaled viewport size.
@@ -319,7 +323,7 @@ float RenderStyle::usedStrokeWidth(const IntSize& viewportSize) const
         },
         [&](const Style::StrokeWidth::Calc& calcStrokeWidth) -> float {
             // FIXME: It is almost certainly wrong that calc and percentage are being handled differently - https://bugs.webkit.org/show_bug.cgi?id=296482
-            return Style::evaluate<float>(calcStrokeWidth, viewportSize.width(), Style::ZoomNeeded { });
+            return Style::evaluate<float>(calcStrokeWidth, viewportSize.width(), usedZoomForLength());
         }
     );
 }

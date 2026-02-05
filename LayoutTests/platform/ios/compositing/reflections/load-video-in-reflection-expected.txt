@@ -4,7 +4,7 @@ layer at (0,0) size 800x353
   RenderBlock {HTML} at (0,0) size 800x353
     RenderBody {BODY} at (8,16) size 784x329
       RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 498x19
+        RenderText {#text} at (0,0) size 498x20
           text run at (0,0) width 498: "You should see a reflected video below, rather than the red video background."
 layer at (8,52) size 300x293
   RenderBlock {DIV} at (0,36) size 300x293

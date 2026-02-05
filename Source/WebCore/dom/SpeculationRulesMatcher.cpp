@@ -27,11 +27,13 @@
 #include "SpeculationRulesMatcher.h"
 
 #include "CheckVisibilityOptions.h"
+#include "ComposedTreeIterator.h"
 #include "Document.h"
 #include "Element.h"
 #include "HTMLAnchorElement.h"
 #include "JSDOMGlobalObject.h"
 #include "ReferrerPolicy.h"
+#include "RenderElement.h"
 #include "ScriptController.h"
 #include "SelectorQuery.h"
 #include "ShadowRoot.h"
@@ -52,17 +54,26 @@ static bool isUnslottedElement(Element& element)
     return false;
 }
 
+static bool hasRenderedDescendants(Element& element)
+{
+    for (CheckedRef descendant : composedTreeDescendants(element)) {
+        if (descendant->renderer())
+            return true;
+    }
+    return false;
+}
+
 static bool matches(const SpeculationRules::DocumentPredicate&, Document&, HTMLAnchorElement&);
 
 static bool matches(const SpeculationRules::URLPatternPredicate& predicate, HTMLAnchorElement& anchor)
 {
     for (const auto& patternString : predicate.patterns) {
-        ExceptionOr<Ref<URLPattern>> exceptionOrPattern = URLPattern::create(anchor.protectedDocument(), patternString, String(anchor.document().baseURL().string()), URLPatternOptions());
+        ExceptionOr<Ref<URLPattern>> exceptionOrPattern = URLPattern::create(protect(anchor.document()), patternString, String(anchor.document().baseURL().string()), URLPatternOptions());
         if (exceptionOrPattern.hasException())
             continue;
 
         Ref<URLPattern> pattern = exceptionOrPattern.returnValue();
-        auto result = pattern->test(anchor.protectedDocument(), anchor.href().string(), String(anchor.document().baseURL().string()));
+        auto result = pattern->test(protect(anchor.document()), anchor.href().string(), String(anchor.document().baseURL().string()));
         if (!result.hasException() && result.returnValue())
             return true;
     }
@@ -72,7 +83,7 @@ static bool matches(const SpeculationRules::URLPatternPredicate& predicate, HTML
 static bool matches(const SpeculationRules::CSSSelectorPredicate& predicate, Element& element)
 {
     for (const auto& selectorString : predicate.selectors) {
-        auto query = element.protectedDocument()->selectorQueryForString(selectorString);
+        auto query = protect(element.document())->selectorQueryForString(selectorString);
         if (query.hasException())
             continue;
         if (query.returnValue().matches(element))
@@ -131,8 +142,20 @@ std::optional<PrefetchRule> SpeculationRulesMatcher::hasMatchingRule(Document& d
     // - It's unslotted (light DOM child of a shadow host without a slot assignment)
     // - It or an ancestor has display:none
     // - It's part of content-visibility:hidden content
-    if (isUnslottedElement(anchor) || !anchor.checkVisibility(CheckVisibilityOptions { }))
+    if (isUnslottedElement(anchor))
         return std::nullopt;
+
+    if (!anchor.checkVisibility(CheckVisibilityOptions { })) {
+        // checkVisibility returns false for elements with no renderer, which includes both
+        // display:none and display:contents.
+        //
+        // `display: none` elements can't have rendered descendants.
+        if (!anchor.hasDisplayContents())
+            return std::nullopt;
+        // `display: contents` elements can have rendered descendants, so we need to check for them.
+        if (!hasRenderedDescendants(anchor))
+            return std::nullopt;
+    }
 
     const auto& url = anchor.href();
 

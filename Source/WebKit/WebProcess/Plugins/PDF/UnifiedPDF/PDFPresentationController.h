@@ -59,7 +59,7 @@ class PDFPresentationController : public ThreadSafeRefCountedAndCanMakeThreadSaf
     WTF_MAKE_NONCOPYABLE(PDFPresentationController);
     WTF_MAKE_TZONE_ALLOCATED(PDFPresentationController);
 public:
-    static RefPtr<PDFPresentationController> createForMode(PDFDocumentLayout::DisplayMode, UnifiedPDFPlugin&);
+    static RefPtr<PDFPresentationController> createForMode(PDFDisplayMode, UnifiedPDFPlugin&);
 
     PDFPresentationController(UnifiedPDFPlugin&);
     virtual ~PDFPresentationController();
@@ -69,8 +69,8 @@ public:
     // Subclasses must call the base class teardown().
     virtual void teardown();
 
-    virtual bool supportsDisplayMode(PDFDocumentLayout::DisplayMode) const = 0;
-    virtual void willChangeDisplayMode(PDFDocumentLayout::DisplayMode newMode) = 0;
+    virtual bool supportsDisplayMode(PDFDisplayMode) const = 0;
+    virtual void willChangeDisplayMode(PDFDisplayMode newMode) = 0;
 
     // Package up the data needed to paint a set of pages for the given clip, for use by UnifiedPDFPlugin::paintPDFContent and async rendering.
     virtual PDFPageCoverage pageCoverageForContentsRect(const WebCore::FloatRect&, std::optional<PDFLayoutRow>) const = 0;

@@ -37,7 +37,7 @@ static ExceptionOr<JSC::JSValue> invokeReadableStreamDefaultReaderFunction(JSC::
     Ref vm = globalObject.vm();
     JSC::JSLockHolder lock(vm.get());
 
-    auto scope = DECLARE_CATCH_SCOPE(vm.get());
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm.get());
 
     auto function = globalObject.get(&globalObject, identifier);
     ASSERT(!!scope.exception() || function.isCallable());

@@ -372,7 +372,9 @@ private:
 #if RELEASE_LOG_DISABLED
         WTFLog(&channel, "%s", logMessage.utf8().data());
 #elif USE(OS_LOG)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         SUPPRESS_UNRETAINED_LOCAL os_log(channel.osLogChannel, "%{public}s", logMessage.utf8().data());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #elif OS(ANDROID)
         __android_log_print(ANDROID_LOG_VERBOSE, LOG_CHANNEL_WEBKIT_SUBSYSTEM, "[%s] %s", channel.name, logMessage.utf8().data());
 #elif ENABLE(JOURNALD_LOG)
@@ -406,7 +408,9 @@ private:
 #if RELEASE_LOG_DISABLED
         WTFLogVerbose(file, line, function, &channel, "%s", logMessage.utf8().data());
 #elif USE(OS_LOG)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         SUPPRESS_UNRETAINED_LOCAL os_log(channel.osLogChannel, "%{public}s", logMessage.utf8().data());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         UNUSED_PARAM(file);
         UNUSED_PARAM(line);
         UNUSED_PARAM(function);

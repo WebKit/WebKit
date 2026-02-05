@@ -347,10 +347,9 @@ bool SkPictureData::parseStreamTag(SkStream* stream,
                     return false;
                 }
                 sk_sp<SkTypeface> tf;
-                if (procs.fTypefaceProc) {
-                    tf = procs.fTypefaceProc(&stream, sizeof(stream), procs.fTypefaceCtx);
-                }
-                else {
+                if (procs.fTypefaceStreamProc) {
+                    tf = procs.fTypefaceStreamProc(*stream, procs.fTypefaceCtx);
+                } else {
                     tf = SkTypeface::MakeDeserialize(stream, nullptr);
                 }
                 if (!tf) {    // failed to deserialize
@@ -474,6 +473,8 @@ void SkPictureData::parseBufferTag(SkReadBuffer& buffer, uint32_t tag, uint32_t 
                     if (auto path = buffer.readPath()) {
                         fPaths.push_back(std::move(*path));
                     } else {
+                        // readPath should invalidate the buffer if we didn't get a path back.
+                        SkASSERT(!buffer.isValid());
                         return;
                     }
                 }

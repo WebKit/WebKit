@@ -36,13 +36,16 @@
 
 namespace JSC {
 class CallFrame;
+class JSGlobalObject;
 class JSObject;
 class JSValue;
 }
 
 namespace WebCore {
 
+class JSDOMGlobalObject;
 class LocalFrame;
+class SerializedScriptValue;
 class WebCoreOpaqueRoot;
 
 struct StructuredSerializeOptions;
@@ -62,10 +65,14 @@ public:
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, StructuredSerializeOptions&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
 
     void start();
     void close();
     void entangle();
+
+    using MessageHandler = Function<void(JSDOMGlobalObject&, SerializedScriptValue&)>;
+    void setMessageHandler(MessageHandler&&);
 
     // Returns nullptr if the passed-in vector is empty.
     static ExceptionOr<Vector<TransferredMessagePort>> disentanglePorts(Vector<Ref<MessagePort>>&&);
@@ -104,6 +111,7 @@ private:
     MessagePort(ScriptExecutionContext&, const MessagePortIdentifier& local, const MessagePortIdentifier& remote);
 
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
+    using EventTarget::addEventListener;
     bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) final;
 
     // ActiveDOMObject.
@@ -121,6 +129,8 @@ private:
 
     MessagePortIdentifier m_identifier;
     MessagePortIdentifier m_remoteIdentifier;
+
+    MessageHandler m_messageHandler;
 };
 
 WebCoreOpaqueRoot root(MessagePort*);

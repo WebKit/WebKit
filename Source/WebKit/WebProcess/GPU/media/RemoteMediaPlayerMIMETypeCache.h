@@ -60,7 +60,7 @@ private:
     ThreadSafeWeakRef<RemoteMediaPlayerManager> m_manager;
     WebCore::MediaPlayerEnums::MediaEngineIdentifier m_engineIdentifier;
 
-    using SupportedTypesAndCodecsKey = std::tuple<String, bool, bool, bool>;
+    using SupportedTypesAndCodecsKey = std::tuple<String, bool, bool, bool, WebCore::MediaPlaybackTargetType>;
     std::optional<HashMap<SupportedTypesAndCodecsKey, WebCore::MediaPlayerEnums::SupportsType>> m_supportsTypeAndCodecsCache;
     HashSet<String> m_supportedTypesCache;
     bool m_hasPopulatedSupportedTypesCacheFromGPUProcess { false };

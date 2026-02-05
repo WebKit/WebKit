@@ -97,15 +97,16 @@
     margin: 0 0.25em;
 }
 
-.color-picker > .color-inputs-wrapper > .pick-color-from-screen {
+.color-picker > .color-inputs-wrapper > :is(.pick-color-from-screen, .format-options) {
     width: 16px;
     height: 16px;
     color: var(--glyph-color);
     opacity: var(--glyph-opacity);
 }
 
+.color-picker > .color-inputs-wrapper > :is(.pick-color-from-screen, .format-options):active,
 .color-picker > .color-inputs-wrapper > .pick-color-from-screen.active {
-    color: var(--glyph-color-active);
+    color: var(--glyph-color-pressed);
 }
 
 .color-picker > .variable-color-swatches {

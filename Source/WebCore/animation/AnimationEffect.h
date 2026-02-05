@@ -60,8 +60,8 @@ public:
     BasicEffectTiming getBasicTiming();
     ComputedEffectTiming getBindingsComputedTiming();
     ComputedEffectTiming getComputedTiming(UseCachedCurrentTime = UseCachedCurrentTime::Yes, EndpointInclusiveActiveInterval = EndpointInclusiveActiveInterval::No);
-    ExceptionOr<void> bindingsUpdateTiming(Document&, std::optional<OptionalEffectTiming>);
-    ExceptionOr<void> updateTiming(Document&, std::optional<OptionalEffectTiming>);
+    ExceptionOr<void> bindingsUpdateTiming(Document&, const OptionalEffectTiming&);
+    ExceptionOr<void> updateTiming(Document&, const OptionalEffectTiming&);
 
     virtual void animationDidTick() { };
     virtual void animationBecameReady() { };

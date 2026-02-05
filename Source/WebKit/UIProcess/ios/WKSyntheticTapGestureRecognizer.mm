@@ -84,8 +84,8 @@
     if (!_supportingTouchEventsGestureRecognizer)
         return;
 
-    NSMapTable<NSNumber *, UITouch *> *activeTouches = [_supportingTouchEventsGestureRecognizer activeTouchesByIdentifier];
-    for (NSNumber *touchIdentifier in activeTouches) {
+    RetainPtr activeTouches = [_supportingTouchEventsGestureRecognizer activeTouchesByIdentifier];
+    for (NSNumber *touchIdentifier in activeTouches.get()) {
         UITouch *touch = [activeTouches objectForKey:touchIdentifier];
         if ([touch.gestureRecognizers containsObject:self]) {
             _lastActiveTouchIdentifier = touchIdentifier;

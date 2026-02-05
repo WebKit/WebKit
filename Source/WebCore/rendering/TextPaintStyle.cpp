@@ -117,7 +117,7 @@ TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const RenderSty
     paintStyle.fillColor = lineStyle.visitedDependentTextFillColorApplyingColorFilter(paintInfo.paintBehavior);
 
     bool forceBackgroundToWhite = false;
-    if (frame->document() && frame->protectedDocument()->printing()) {
+    if (frame->document() && protect(frame->document())->printing()) {
         if (lineStyle.printColorAdjust() == PrintColorAdjust::Economy)
             forceBackgroundToWhite = true;
 

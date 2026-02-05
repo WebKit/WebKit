@@ -29,7 +29,6 @@
 #include "WebKitDOMNodeListPrivate.h"
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
-#include <WebCore/AddEventListenerOptionsInlines.h>
 #include <WebCore/CSSImportRule.h>
 #include <WebCore/DOMException.h>
 #include <WebCore/Document.h>

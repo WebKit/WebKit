@@ -46,11 +46,6 @@ void LegacyCustomProtocolManagerProxy::deref() const
     m_networkProcessProxy->deref();
 }
 
-Ref<NetworkProcessProxy> LegacyCustomProtocolManagerProxy::protectedProcess()
-{
-    return m_networkProcessProxy.get();
-}
-
 LegacyCustomProtocolManagerProxy::~LegacyCustomProtocolManagerProxy()
 {
     Ref<NetworkProcessProxy> networkProcessProxy = m_networkProcessProxy.get();
@@ -60,12 +55,12 @@ LegacyCustomProtocolManagerProxy::~LegacyCustomProtocolManagerProxy()
 
 void LegacyCustomProtocolManagerProxy::startLoading(LegacyCustomProtocolID customProtocolID, const WebCore::ResourceRequest& request)
 {
-    protectedProcess()->customProtocolManagerClient().startLoading(*this, customProtocolID, request);
+    protect(m_networkProcessProxy)->customProtocolManagerClient().startLoading(*this, customProtocolID, request);
 }
 
 void LegacyCustomProtocolManagerProxy::stopLoading(LegacyCustomProtocolID customProtocolID)
 {
-    protectedProcess()->customProtocolManagerClient().stopLoading(*this, customProtocolID);
+    protect(m_networkProcessProxy)->customProtocolManagerClient().stopLoading(*this, customProtocolID);
 }
 
 void LegacyCustomProtocolManagerProxy::invalidate()
@@ -76,27 +71,27 @@ void LegacyCustomProtocolManagerProxy::invalidate()
 
 void LegacyCustomProtocolManagerProxy::wasRedirectedToRequest(LegacyCustomProtocolID customProtocolID, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& redirectResponse)
 {
-    protectedProcess()->send(Messages::LegacyCustomProtocolManager::WasRedirectedToRequest(customProtocolID, request, redirectResponse), 0);
+    protect(m_networkProcessProxy)->send(Messages::LegacyCustomProtocolManager::WasRedirectedToRequest(customProtocolID, request, redirectResponse), 0);
 }
 
 void LegacyCustomProtocolManagerProxy::didReceiveResponse(LegacyCustomProtocolID customProtocolID, const WebCore::ResourceResponse& response, CacheStoragePolicy cacheStoragePolicy)
 {
-    protectedProcess()->send(Messages::LegacyCustomProtocolManager::DidReceiveResponse(customProtocolID, response, cacheStoragePolicy), 0);
+    protect(m_networkProcessProxy)->send(Messages::LegacyCustomProtocolManager::DidReceiveResponse(customProtocolID, response, cacheStoragePolicy), 0);
 }
 
 void LegacyCustomProtocolManagerProxy::didLoadData(LegacyCustomProtocolID customProtocolID, std::span<const uint8_t> data)
 {
-    protectedProcess()->send(Messages::LegacyCustomProtocolManager::DidLoadData(customProtocolID, data), 0);
+    protect(m_networkProcessProxy)->send(Messages::LegacyCustomProtocolManager::DidLoadData(customProtocolID, data), 0);
 }
 
 void LegacyCustomProtocolManagerProxy::didFailWithError(LegacyCustomProtocolID customProtocolID, const WebCore::ResourceError& error)
 {
-    protectedProcess()->send(Messages::LegacyCustomProtocolManager::DidFailWithError(customProtocolID, error), 0);
+    protect(m_networkProcessProxy)->send(Messages::LegacyCustomProtocolManager::DidFailWithError(customProtocolID, error), 0);
 }
 
 void LegacyCustomProtocolManagerProxy::didFinishLoading(LegacyCustomProtocolID customProtocolID)
 {
-    protectedProcess()->send(Messages::LegacyCustomProtocolManager::DidFinishLoading(customProtocolID), 0);
+    protect(m_networkProcessProxy)->send(Messages::LegacyCustomProtocolManager::DidFinishLoading(customProtocolID), 0);
 }
 
 } // namespace WebKit

@@ -275,7 +275,7 @@ String ProcessThrottler::assertionName(ProcessAssertionType type) const
         return "Unknown"_s;
     }();
 
-    return makeString(protectedProcess()->clientName(), ' ', typeString, " Assertion"_s);
+    return makeString(protect(m_process)->clientName(), ' ', typeString, " Assertion"_s);
 }
 
 ProcessAssertionType ProcessThrottler::assertionTypeForState(ProcessThrottleState state)
@@ -339,7 +339,7 @@ void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
     } else
         m_dropNearSuspendedAssertionTimer.stop();
 
-    protectedProcess()->didChangeThrottleState(newState);
+    process->didChangeThrottleState(newState);
 }
 
 void ProcessThrottler::ref() const
@@ -368,7 +368,7 @@ void ProcessThrottler::updateThrottleStateIfNeeded(ASCIILiteral lastAddedActivit
             else
                 PROCESSTHROTTLER_RELEASE_LOG("updateThrottleStateIfNeeded: sending ProcessDidResume IPC because the WebProcess is still processing request to suspend=%" PRIu64 " (probable wakeup reason: %" PUBLIC_LOG_STRING ")", *m_pendingRequestToSuspendID, probableWakeupReason);
 #endif
-            protectedProcess()->sendProcessDidResume(expectedThrottleState() == ProcessThrottleState::Foreground ? AuxiliaryProcessProxy::ResumeReason::ForegroundActivity : AuxiliaryProcessProxy::ResumeReason::BackgroundActivity);
+            protect(m_process)->sendProcessDidResume(expectedThrottleState() == ProcessThrottleState::Foreground ? AuxiliaryProcessProxy::ResumeReason::ForegroundActivity : AuxiliaryProcessProxy::ResumeReason::BackgroundActivity);
             clearPendingRequestToSuspend();
         }
     } else {
@@ -551,7 +551,7 @@ void ProcessThrottler::clearAssertion()
         m_prepareToDropLastAssertionTimeoutTimer.startOneShot(10_s);
 
     m_assertionToClearAfterPrepareToDropLastAssertion = std::exchange(m_assertion, nullptr);
-    protectedProcess()->prepareToDropLastAssertion([weakThis = WeakPtr { *this }] {
+    protect(m_process)->prepareToDropLastAssertion([weakThis = WeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->dropLastAssertion();
     });
@@ -562,12 +562,7 @@ void ProcessThrottler::dropLastAssertion() {
     m_prepareToDropLastAssertionTimeoutTimer.stop();
     m_assertionToClearAfterPrepareToDropLastAssertion = nullptr;
     if (!m_assertion)
-        protectedProcess()->didDropLastAssertion();
-}
-
-Ref<AuxiliaryProcessProxy> ProcessThrottler::protectedProcess() const
-{
-    return m_process.get();
+        protect(m_process)->didDropLastAssertion();
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessThrottlerTimedActivity);

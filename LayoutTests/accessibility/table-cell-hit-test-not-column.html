@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<table border="1">
+<tr>
+<td id="cell1">Cell 1</td>
+<td>Cell 2</td>
+</tr>
+<tr>
+<td>Cell 3</td>
+<td id="cell4">Cell 4</td>
+</tr>
+</table>
+
+<script>
+var output = "This test ensures that hit testing a table cell returns the cell contents, not a table column.\n\n";
+
+if (window.accessibilityController) {
+    var cell1 = document.getElementById("cell1");
+    var rect1 = cell1.getBoundingClientRect();
+    var hitTestResult = accessibilityController.elementAtPoint(rect1.x + rect1.width / 2, rect1.y + rect1.height / 2);
+
+    output += `Hit test on cell 1: ${hitTestResult.role}\n`;
+    output += expect("hitTestResult.role.toLowerCase().includes('column')", "false");
+    output += expect("hitTestResult.role.toLowerCase().includes('statictext')", "true");
+
+    var cell4 = document.getElementById("cell4");
+    var rect4 = cell4.getBoundingClientRect();
+    hitTestResult = accessibilityController.elementAtPoint(rect4.x + rect4.width / 2, rect4.y + rect4.height / 2);
+
+    output += `Hit test on cell 4: ${hitTestResult.role}\n`;
+    output += expect("hitTestResult.role.toLowerCase().includes('column')", "false");
+    output += expect("hitTestResult.role.toLowerCase().includes('statictext')", "true");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

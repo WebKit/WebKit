@@ -43,6 +43,7 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     virtual bool hasCallback() const = 0;
+    virtual bool isJSPerformanceObserverCallback() const { return false; }
 
     virtual CallbackResult<void> invoke(PerformanceObserver&, PerformanceObserverEntryList&, PerformanceObserver&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(PerformanceObserver&, PerformanceObserverEntryList&, PerformanceObserver&) = 0;

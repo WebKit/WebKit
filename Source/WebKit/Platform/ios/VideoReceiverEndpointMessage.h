@@ -43,7 +43,7 @@ public:
 
     static ASCIILiteral messageName() { return "video-receiver-endpoint"_s; }
     static VideoReceiverEndpointMessage decode(xpc_object_t);
-    XPCObjectPtr<xpc_object_t> encode() const;
+    OSObjectPtr<xpc_object_t> encode() const;
 
     std::optional<WebCore::ProcessIdentifier> processIdentifier() const { return m_processIdentifier; }
     WebCore::HTMLMediaElementIdentifier mediaElementIdentifier() const { return m_mediaElementIdentifier; }
@@ -65,7 +65,7 @@ public:
 
     static ASCIILiteral messageName() { return "video-receiver-swap-endpoint"_s; }
     static VideoReceiverSwapEndpointsMessage decode(xpc_object_t);
-    XPCObjectPtr<xpc_object_t> encode() const;
+    OSObjectPtr<xpc_object_t> encode() const;
 
     std::optional<WebCore::ProcessIdentifier> processIdentifier() const { return m_processIdentifier; }
     WebCore::HTMLMediaElementIdentifier sourceMediaElementIdentifier() const { return m_sourceMediaElementIdentifier; }

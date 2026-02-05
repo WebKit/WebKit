@@ -202,6 +202,7 @@ private:
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollPositioningBehavior);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const AbsolutePositionConstraints&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const ViewportConstraints&);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FixedPositionViewportConstraints&);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const StickyPositionViewportConstraints&);
 

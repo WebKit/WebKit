@@ -82,7 +82,7 @@ void MockCcidService::platformStartDiscovery()
 {
     if (!!m_configuration.ccid) {
         auto card = adoptNS([[_WKMockTKSmartCard alloc] initWithService:this]);
-        onValidCard(WTF::move(card));
+        onValidCard(WTF::move(card), nullptr);
         return;
     }
     LOG_ERROR("No ccid authenticators is available.");

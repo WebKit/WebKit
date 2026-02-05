@@ -82,9 +82,45 @@ public:
     bool operator==(const CachedResourceHandleBase& o) const { return get() == o.get(); }
 };
 
-template <class R, class RR> bool operator==(const CachedResourceHandle<R>& h, const RR* res) 
-{ 
-    return h.get() == res; 
+template <class R, class RR> bool operator==(const CachedResourceHandle<R>& h, const RR* res)
+{
+    return h.get() == res;
 }
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<typename T> requires std::derived_from<T, WebCore::CachedResource>
+WebCore::CachedResourceHandle<T> protect(T* resource)
+{
+    return WebCore::CachedResourceHandle<T> { resource };
+}
+
+template<typename T> requires std::derived_from<T, WebCore::CachedResource>
+WebCore::CachedResourceHandle<T> protect(T& resource)
+{
+    return WebCore::CachedResourceHandle<T> { resource };
+}
+
+template<typename T, typename WeakPtrImpl, typename PtrTraits>
+    requires std::derived_from<T, WebCore::CachedResource>
+ALWAYS_INLINE CLANG_POINTER_CONVERSION WebCore::CachedResourceHandle<T> protect(const WeakPtr<T, WeakPtrImpl, PtrTraits>& resource)
+{
+    return WebCore::CachedResourceHandle<T> { resource.get() };
+}
+
+template<typename T, typename WeakPtrImpl>
+    requires std::derived_from<T, WebCore::CachedResource>
+ALWAYS_INLINE CLANG_POINTER_CONVERSION WebCore::CachedResourceHandle<T> protect(const WeakRef<T, WeakPtrImpl>& resource)
+{
+    return WebCore::CachedResourceHandle<T> { resource.get() };
+}
+
+template<typename T>
+WebCore::CachedResourceHandle<T> protect(const WebCore::CachedResourceHandle<T>& handle)
+{
+    return handle;
+}
+
+} // namespace WTF

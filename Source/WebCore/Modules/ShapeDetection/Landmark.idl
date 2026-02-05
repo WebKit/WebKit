@@ -28,7 +28,6 @@
 [
     EnabledBySetting=ShapeDetection,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary Landmark {
     required FrozenArray<Point2D> locations;
     LandmarkType type;

@@ -35,6 +35,7 @@
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <initializer_list>
 #include <wtf/CheckedPtr.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/RobinHoodHashSet.h>
@@ -151,7 +152,7 @@ private:
 
     const Ref<Inspector::CanvasBackendDispatcher> m_backendDispatcher;
 
-    Inspector::InjectedScriptManager& m_injectedScriptManager;
+    const CheckedRef<Inspector::InjectedScriptManager> m_injectedScriptManager;
 
     Vector<String> m_removedCanvasIdentifiers;
     Timer m_canvasDestroyedTimer;

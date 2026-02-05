@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (2,2) size 119x26
             RenderTableRow {TR} at (0,2) size 119x22
               RenderTableCell {TD} at (2,2) size 115x22 [border: (1px inset #008000)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 111x17
+                RenderText {#text} at (2,2) size 111x18
                   text run at (2,2) width 111: "This is also not."
         RenderText {#text} at (0,85) size 43x11
           text run at (0,85) width 43: "More text"

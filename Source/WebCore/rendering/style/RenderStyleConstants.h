@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
@@ -63,6 +63,7 @@ enum class PseudoElementType : uint8_t {
     WebKitScrollbar,
     SpellingError,
     TargetText,
+    Checkmark,
     ViewTransition,
     ViewTransitionGroup,
     ViewTransitionImagePair,
@@ -94,6 +95,7 @@ constexpr auto allPublicPseudoElementTypes = EnumSet {
     PseudoElementType::WebKitScrollbar,
     PseudoElementType::SpellingError,
     PseudoElementType::TargetText,
+    PseudoElementType::Checkmark,
     PseudoElementType::ViewTransition,
     PseudoElementType::ViewTransitionGroup,
     PseudoElementType::ViewTransitionImagePair,

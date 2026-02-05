@@ -184,8 +184,8 @@ class Span
         static_assert(Extent == dynamic_extent || Extent == N);
     }
 
-    template <size_t N>
-    constexpr Span(const std::array<T, N> &array) noexcept
+    template <typename U, size_t N, typename = std::enable_if_t<std::is_convertible_v<U *, T *>>>
+    constexpr Span(const std::array<U, N> &array) noexcept
         // SAFETY: The type signature guarantees `array` contains `N` elements.
         : ANGLE_UNSAFE_BUFFERS(Span(array.data(), N))
     {
@@ -364,11 +364,11 @@ Span(std::array<T, N> &) -> Span<T, N>;
 template <typename T, size_t N>
 Span(const std::array<T, N> &) -> Span<const T, N>;
 
-template <typename T>
-Span(std::vector<T> &) -> Span<T>;
-
-template <typename T>
-Span(const std::vector<T> &) -> Span<const T>;
+template <typename Container,
+          typename = internal::EnableIfSpanCompatibleContainer<
+              Container,
+              std::remove_pointer_t<decltype(std::declval<Container>().data())>>>
+Span(Container &&) -> Span<std::remove_pointer_t<decltype(std::declval<Container>().data())>>;
 
 // [span.objectrep], views of object representation
 template <typename T, size_t N, typename P>

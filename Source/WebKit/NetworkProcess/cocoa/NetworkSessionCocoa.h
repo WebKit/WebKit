@@ -157,9 +157,8 @@ public:
 
     SessionWrapper& sessionWrapperForTask(std::optional<WebPageProxyIdentifier>, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, std::optional<NavigatingToAppBoundDomain>);
     bool preventsSystemHTTPProxyAuthentication() const { return m_preventsSystemHTTPProxyAuthentication; }
-    
+
     _NSHSTSStorage *hstsStorage() const;
-    RetainPtr<_NSHSTSStorage> protectedHSTSStorage() const;
 
     NSURLCredentialStorage *nsCredentialStorage() const;
 

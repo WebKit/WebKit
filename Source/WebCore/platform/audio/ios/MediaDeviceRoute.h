@@ -25,8 +25,9 @@
 
 #pragma once
 
-#if HAVE(AVROUTING_FRAMEWORK)
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
 
+#include "MediaDeviceRouteLoadURLResult.h"
 #include <WebKitAdditions/MediaDeviceRouteAdditions.h>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Forward.h>
@@ -131,6 +132,8 @@ public:
     const WTF::UUID& identifier() const { return m_identifier; }
     WebMediaDevicePlatformRoute *platformRoute() const;
 
+    void loadURL(const URL&, CompletionHandler<void(const MediaDeviceRouteLoadURLResult&)>&&);
+
     float minValue() const;
     float maxValue() const;
     float currentValue() const;
@@ -169,4 +172,4 @@ private:
 
 } // namespace WebCore
 
-#endif // HAVE(AVROUTING_FRAMEWORK)
+#endif // ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)

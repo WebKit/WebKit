@@ -40,12 +40,10 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
-#if USE(SKIA)
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkData.h>
 #include <skia/encode/SkPngEncoder.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
-#endif
 
 namespace WTR {
 
@@ -159,18 +157,9 @@ TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCo
 
 WKRetainPtr<WKStringRef> TestController::takeViewPortSnapshot()
 {
-#if USE(CAIRO)
-    Vector<uint8_t> output;
-    cairo_surface_write_to_png_stream(mainWebView()->windowSnapshotImage(), [](void* output, const unsigned char* data, unsigned length) -> cairo_status_t {
-        reinterpret_cast<Vector<uint8_t>*>(output)->append(std::span { reinterpret_cast<const uint8_t*>(data), length });
-        return CAIRO_STATUS_SUCCESS;
-    }, &output);
-    auto uri = makeString("data:image/png;base64,"_s, base64Encoded(output.span()));
-#elif USE(SKIA)
     sk_sp<SkImage> image(mainWebView()->windowSnapshotImage());
     auto data = SkPngEncoder::Encode(nullptr, image.get(), { });
     auto uri = makeString("data:image/png;base64,"_s, base64Encoded(std::span { static_cast<const uint8_t*>(data->data()), data->size() }));
-#endif
     return adoptWK(WKStringCreateWithUTF8CString(uri.utf8().data()));
 }
 

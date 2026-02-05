@@ -21,8 +21,8 @@ fontRequest.addEventListener("load", function() {
 		var byteArray = new Uint8Array(arrayBuffer);
 		fontFace1 = new FontFace("WebFont1", arrayBuffer, {});
 		fontFace2 = new FontFace("WebFont2", byteArray, {});
-		shouldBeEqualToString("fontFace1.status", "unloaded");
-		shouldBeEqualToString("fontFace2.status", "unloaded");
+		shouldBeEqualToString("fontFace1.status", "loaded");
+		shouldBeEqualToString("fontFace2.status", "loaded");
 		document.fonts.add(fontFace1);
 		document.fonts.add(fontFace2);
 		document.getElementById("probe1").style.fontFamily = "WebFont1";

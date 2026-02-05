@@ -33,6 +33,7 @@
 #include "WebTransport.h"
 #include "WebTransportError.h"
 #include "WebTransportSession.h"
+#include <wtf/Scope.h>
 
 namespace WebCore {
 
@@ -103,6 +104,10 @@ void WebTransportReceiveStreamSource::receiveError(JSDOMGlobalObject& globalObje
 
 void WebTransportReceiveStreamSource::doCancel(JSC::JSValue value)
 {
+    auto scope = makeScopeExit([&] {
+        cancelFinished();
+    });
+
     if (m_isCancelled)
         return;
     m_isCancelled = true;

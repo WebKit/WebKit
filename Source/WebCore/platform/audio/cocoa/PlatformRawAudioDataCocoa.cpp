@@ -151,9 +151,9 @@ PlatformRawAudioDataCocoa::PlatformRawAudioDataCocoa(Ref<MediaSampleAVFObjC>&& s
 
 const AudioStreamBasicDescription& PlatformRawAudioDataCocoa::asbd() const
 {
-    auto description = PAL::CMSampleBufferGetFormatDescription(m_sample->sampleBuffer());
+    RetainPtr description = PAL::CMSampleBufferGetFormatDescription(RetainPtr { m_sample->sampleBuffer() }.get());
     ASSERT(description);
-    const AudioStreamBasicDescription* const asbd = PAL::CMAudioFormatDescriptionGetStreamBasicDescription(description);
+    const AudioStreamBasicDescription* const asbd = PAL::CMAudioFormatDescriptionGetStreamBasicDescription(description.get());
     ASSERT(asbd);
     return *asbd;
 }
@@ -187,7 +187,7 @@ size_t PlatformRawAudioDataCocoa::numberOfChannels() const
 
 size_t PlatformRawAudioDataCocoa::numberOfFrames() const
 {
-    return PAL::CMSampleBufferGetNumSamples(m_sample->sampleBuffer());
+    return PAL::CMSampleBufferGetNumSamples(RetainPtr { m_sample->sampleBuffer() }.get());
 }
 
 std::optional<uint64_t> PlatformRawAudioDataCocoa::duration() const

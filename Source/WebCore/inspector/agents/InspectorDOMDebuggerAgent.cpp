@@ -274,7 +274,7 @@ void InspectorDOMDebuggerAgent::willHandleEvent(ScriptExecutionContext& scriptEx
     // `scriptExecutionContext` parameter will always match in companion calls to `willHandleEvent` and
     // `didHandleEvent`, and will not be null.
     auto state = globalObjectFor(scriptExecutionContext, registeredEventListener.callback());
-    auto injectedScript = m_injectedScriptManager.injectedScriptFor(state);
+    auto injectedScript = m_injectedScriptManager->injectedScriptFor(state);
     if (injectedScript.hasNoValue())
         return;
 
@@ -323,7 +323,7 @@ void InspectorDOMDebuggerAgent::didHandleEvent(ScriptExecutionContext& scriptExe
     // could also be nullptr. The passed `scriptExecutionContext` parameter here will always match in companion calls to
     // `willHandleEvent` and `didHandleEvent`, and will not be null.
     auto state = globalObjectFor(scriptExecutionContext, registeredEventListener.callback());
-    auto injectedScript = m_injectedScriptManager.injectedScriptFor(state);
+    auto injectedScript = m_injectedScriptManager->injectedScriptFor(state);
     if (injectedScript.hasNoValue())
         return;
 

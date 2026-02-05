@@ -154,7 +154,7 @@ public:
     }
 
     size_t size() const { return m_storage ? m_storage->size() : 0; }
-    bool isEmpty() const { return m_storage ? m_storage->isEmpty() : true; }
+    bool isEmpty() const { return !m_storage || m_storage->isEmpty(); }
     size_t byteSize() const { return m_storage ? m_storage->byteSize() : 0; }
 
     iterator begin() LIFETIME_BOUND { return m_storage ? m_storage->begin() : nullptr; }

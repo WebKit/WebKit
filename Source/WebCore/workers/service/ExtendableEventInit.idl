@@ -23,7 +23,5 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary ExtendableEventInit : EventInit {
+dictionary ExtendableEventInit : EventInit {
 };

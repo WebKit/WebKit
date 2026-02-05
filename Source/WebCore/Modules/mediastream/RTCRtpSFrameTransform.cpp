@@ -199,7 +199,8 @@ static void transformFrame(std::span<const uint8_t> data, JSDOMGlobalObject& glo
 {
     auto result = processFrame(data, transformer, identifier, weakTransform);
     auto buffer = result ? SharedBuffer::create(WTF::move(*result)) : SharedBuffer::create();
-    source.enqueue(toJS(&globalObject, &globalObject, buffer->tryCreateArrayBuffer().get()));
+    RefPtr arrayBuffer = buffer->tryCreateArrayBuffer();
+    source.enqueue(arrayBuffer ? toJS(&globalObject, &globalObject, *arrayBuffer) : JSC::jsNull());
 }
 
 template<typename Frame>

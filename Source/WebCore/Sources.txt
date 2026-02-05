@@ -112,7 +112,6 @@ Modules/compression/DecompressionStreamDecoder.cpp
 Modules/compression/ZStream.cpp
 Modules/contact-picker/ContactsManager.cpp
 Modules/contact-picker/NavigatorContacts.cpp
-Modules/cookie-consent/NavigatorCookieConsent.cpp
 Modules/cookie-store/CookieChangeEvent.cpp
 Modules/cookie-store/CookieStore.cpp
 Modules/cookie-store/CookieStoreManager.cpp
@@ -252,6 +251,7 @@ Modules/mediastream/MediaDevices.cpp
 Modules/mediastream/MediaStream.cpp
 Modules/mediastream/MediaStreamTrack.cpp
 Modules/mediastream/MediaStreamTrackEvent.cpp
+Modules/mediastream/MediaStreamTrackHandle.cpp
 Modules/mediastream/MediaStreamTrackProcessor.cpp
 Modules/mediastream/MediaTrackCapabilities.cpp
 Modules/mediastream/MediaTrackConstraints.cpp
@@ -386,8 +386,10 @@ Modules/streams/ReadableStreamToSharedBufferSink.cpp
 Modules/streams/ReadableStreamSource.cpp
 Modules/streams/StreamPipeToUtilities.cpp @no-unify
 Modules/streams/StreamTeeUtilities.cpp
+Modules/streams/StreamTransferUtilities.cpp
 Modules/streams/TransformStream.cpp
 Modules/streams/WritableStream.cpp
+Modules/streams/WritableStreamSink.cpp
 Modules/url-pattern/URLPattern.cpp
 Modules/url-pattern/URLPatternCanonical.cpp
 Modules/url-pattern/URLPatternComponent.cpp
@@ -594,6 +596,7 @@ accessibility/AXStitchUtilities.cpp
 accessibility/AXTableHelpers.cpp
 accessibility/AXTextMarker.cpp
 accessibility/AXTextRun.cpp
+accessibility/AXTextStateChangeIntent.cpp
 accessibility/AXTreeStore.cpp
 accessibility/AXUtilities.cpp
 accessibility/AXAttachmentHelpers.cpp
@@ -657,6 +660,7 @@ bindings/js/BindingsJSTZoneImpls.cpp
 bindings/js/CachedModuleScriptLoader.cpp
 bindings/js/CachedScriptFetcher.cpp
 bindings/js/CommonVM.cpp
+bindings/js/DOMAsyncIterator.cpp
 bindings/js/DOMGCOutputConstraint.cpp
 bindings/js/DOMWrapperWorld.cpp
 bindings/js/GarbageCollectionController.cpp
@@ -713,7 +717,6 @@ bindings/js/JSEventTargetCustom.cpp
 bindings/js/JSExecState.cpp
 bindings/js/JSExtendableMessageEventCustom.cpp
 bindings/js/JSFetchEventCustom.cpp
-bindings/js/JSFontFaceSetLoadEventCustom.cpp
 bindings/js/JSHTMLAllCollectionCustom.cpp
 bindings/js/JSHTMLCanvasElementCustom.cpp
 bindings/js/JSHTMLElementCustom.cpp
@@ -805,7 +808,6 @@ bindings/js/WebCoreJSClientData.cpp
 bindings/js/WebCoreTypedArrayController.cpp
 bindings/js/WindowProxy.cpp
 bindings/js/WorkerModuleScriptLoader.cpp
-bridge/IdentifierRep.cpp
 bridge/jsc/BridgeJSC.cpp
 bridge/runtime_array.cpp
 bridge/runtime_method.cpp
@@ -992,7 +994,6 @@ css/DeprecatedCSSOMValue.cpp
 css/DeprecatedCSSOMValueList.cpp
 css/FontFace.cpp
 css/FontFaceSet.cpp
-css/FontFaceSetLoadEvent.cpp
 css/ImmutableStyleProperties.cpp
 css/MediaList.cpp
 css/MediaQueryList.cpp
@@ -1189,6 +1190,7 @@ dom/AbortSignal.cpp
 dom/AbstractRange.cpp
 dom/ActiveDOMCallback.cpp
 dom/ActiveDOMObject.cpp
+dom/AddEventListenerOptions.cpp
 dom/AllDescendantsCollection.cpp
 dom/Attr.cpp
 dom/BeforeTextInsertedEvent.cpp
@@ -1802,6 +1804,7 @@ html/shadow/DateTimeNumericFieldElement.cpp
 html/shadow/DateTimeSymbolicFieldElement.cpp
 html/shadow/MediaControlTextTrackContainerElement.cpp
 html/shadow/ProgressShadowElement.cpp
+html/shadow/SelectFallbackButtonElement.cpp
 html/shadow/SliderThumbElement.cpp
 html/shadow/SpinButtonElement.cpp
 html/shadow/TextControlInnerElements.cpp
@@ -1887,9 +1890,9 @@ inspector/agents/InspectorWorkerAgent.cpp
 inspector/agents/WebConsoleAgent.cpp
 inspector/agents/WebDebuggerAgent.cpp
 inspector/agents/WebHeapAgent.cpp
-inspector/agents/frame/FrameConsoleAgent.cpp
 inspector/agents/page/PageAuditAgent.cpp
 inspector/agents/page/PageCanvasAgent.cpp
+inspector/agents/page/PageConsoleAgent.cpp
 inspector/agents/page/PageDOMDebuggerAgent.cpp
 inspector/agents/page/PageDebuggerAgent.cpp
 inspector/agents/page/PageHeapAgent.cpp
@@ -2318,6 +2321,7 @@ platform/FileMonitor.cpp
 platform/FileStream.cpp
 platform/FixedContainerEdges.cpp
 platform/FrameRateMonitor.cpp
+platform/SelectionGeometry.cpp
 platform/StringEntropyHelpers.cpp
 platform/KeyboardScroll.cpp
 platform/KeyboardScrollingAnimator.cpp
@@ -2709,8 +2713,8 @@ platform/graphics/transforms/TransformOperations.cpp
 platform/graphics/transforms/TransformState.cpp
 platform/graphics/transforms/TransformationMatrix.cpp
 platform/graphics/transforms/TranslateTransformOperation.cpp
-platform/mediacapabilities/MediaCapabilitiesLogging.cpp
-platform/mediacapabilities/MediaEngineConfigurationFactory.cpp
+platform/mediacapabilities/PlatformMediaCapabilitiesLogging.cpp
+platform/mediacapabilities/PlatformMediaEngineConfigurationFactory.cpp
 platform/mediarecorder/MediaRecorderPrivate.cpp
 platform/mediarecorder/MediaRecorderPrivateMock.cpp
 platform/mediastream/AudioMediaStreamTrackRenderer.cpp
@@ -2737,10 +2741,10 @@ platform/mediastream/RealtimeVideoCaptureSource.cpp
 platform/mediastream/WebRTCProvider.cpp
 platform/mock/DeviceOrientationClientMock.cpp
 platform/mock/GeolocationClientMock.cpp
-platform/mock/MediaEngineConfigurationFactoryMock.cpp
 platform/mock/MockRealtimeAudioSource.cpp
 platform/mock/MockRealtimeMediaSourceCenter.cpp
 platform/mock/MockRealtimeVideoSource.cpp
+platform/mock/PlatformMediaEngineConfigurationFactoryMock.cpp
 platform/mock/PlatformSpeechSynthesizerMock.cpp
 platform/mock/RTCDataChannelHandlerMock.cpp
 platform/mock/RTCNotifiersMock.cpp
@@ -2837,7 +2841,7 @@ rendering/GlyphDisplayListCacheRemoval.cpp
 rendering/Grid.cpp
 rendering/GridBaselineAlignment.cpp
 rendering/GridLayoutFunctions.cpp
-rendering/GridLayoutState.cpp
+rendering/RenderGridLayoutState.cpp
 rendering/GridMasonryLayout.cpp
 rendering/GridTrackSizingAlgorithm.cpp
 rendering/HitTestLocation.cpp
@@ -2923,6 +2927,7 @@ rendering/RenderScrollbar.cpp
 rendering/RenderScrollbarPart.cpp
 rendering/RenderScrollbarTheme.cpp
 rendering/RenderSearchField.cpp
+rendering/RenderSelectFallbackButton.cpp
 rendering/RenderSelection.cpp
 rendering/RenderSelectionGeometry.cpp
 rendering/RenderSlider.cpp
@@ -3549,7 +3554,7 @@ svg/graphics/SVGImageCache.cpp
 svg/graphics/SVGImageForContainer.cpp
 svg/graphics/SVGResourceImage.cpp
 svg/graphics/filters/SVGFilterRenderer.cpp
-svg/properties/SVGAnimatedProperty.cpp
+svg/properties/SVGAnimatedPropertyBase.cpp
 svg/properties/SVGAnimatedString.cpp
 svg/properties/SVGAnimationAdditiveValueFunctionImpl.cpp
 svg/properties/SVGAttributeAnimator.cpp
@@ -4131,8 +4136,6 @@ JSFocusEvent.cpp
 JSFocusOptions.cpp
 JSFontFace.cpp
 JSFontFaceSet.cpp
-JSFontFaceSetLoadEvent.cpp
-JSFontFaceSetLoadEventInit.cpp
 JSFormDataEvent.cpp
 JSFragmentDirective.cpp
 JSFullscreenOptions.cpp
@@ -4403,7 +4406,7 @@ JSIDBVersionChangeEvent.cpp
 JSIIRFilterNode.cpp
 JSIIRFilterOptions.cpp
 JSIPAddressSpace.cpp
-JSIdentityCredentialProtocol.cpp
+JSDigitalCredentialPresentationProtocol.cpp
 JSIdleDeadline.cpp
 JSIdleRequestCallback.cpp
 JSIdleRequestOptions.cpp
@@ -4505,6 +4508,7 @@ JSMediaStreamAudioSourceNode.cpp
 JSMediaStreamAudioSourceOptions.cpp
 JSMediaStreamTrack.cpp
 JSMediaStreamTrackEvent.cpp
+JSMediaStreamTrackHandle.cpp
 JSMediaStreamTrackProcessor.cpp
 JSMediaTrackCapabilities.cpp
 JSMediaTrackConstraints.cpp
@@ -4767,7 +4771,6 @@ JSReportBody.cpp
 JSReportingObserver.cpp
 JSReportingObserverCallback.cpp
 JSRequestAnimationFrameCallback.cpp
-JSRequestCookieConsentOptions.cpp
 JSRequestPriority.cpp
 JSResidentKeyRequirement.cpp
 JSResizeObserver.cpp

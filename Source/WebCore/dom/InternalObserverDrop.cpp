@@ -64,7 +64,7 @@ public:
 
             SubscribeOptions options;
             options.signal = subscriber.signal();
-            m_sourceObservable->subscribeInternal(*context, InternalObserverDrop::create(*context, subscriber, m_amount), options);
+            m_sourceObservable->subscribeInternal(*context, InternalObserverDrop::create(*context, subscriber, m_amount), WTF::move(options));
 
             return { };
         }

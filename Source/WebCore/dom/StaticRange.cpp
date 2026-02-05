@@ -63,11 +63,9 @@ static bool isDocumentTypeOrAttr(Node& node)
 
 ExceptionOr<Ref<StaticRange>> StaticRange::create(Init&& init)
 {
-    ASSERT(init.startContainer);
-    ASSERT(init.endContainer);
-    if (isDocumentTypeOrAttr(*init.startContainer) || isDocumentTypeOrAttr(*init.endContainer))
+    if (isDocumentTypeOrAttr(init.startContainer) || isDocumentTypeOrAttr(init.endContainer))
         return Exception { ExceptionCode::InvalidNodeTypeError };
-    return create({ { init.startContainer.releaseNonNull(), init.startOffset }, { init.endContainer.releaseNonNull(), init.endOffset } });
+    return create({ { WTF::move(init.startContainer), init.startOffset }, { WTF::move(init.endContainer), init.endOffset } });
 }
 
 void StaticRange::visitNodesConcurrently(JSC::AbstractSlotVisitor& visitor) const
@@ -87,7 +85,7 @@ bool StaticRange::computeValidity() const
         return false;
     if (startContainer.ptr() == endContainer.ptr())
         return endOffset() > startOffset();
-    if (!connectedInSameTreeScope(startContainer->protectedRootNode().ptr(), endContainer->protectedRootNode().ptr()))
+    if (!connectedInSameTreeScope(protect(startContainer->rootNode()).ptr(), protect(endContainer->rootNode()).ptr()))
         return false;
     return !is_gt(treeOrder<ComposedTree>(startContainer, endContainer));
 }

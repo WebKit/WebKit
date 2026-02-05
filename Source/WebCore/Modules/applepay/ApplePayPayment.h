@@ -45,6 +45,13 @@ struct ApplePayPayment {
     String installmentAuthorizationToken;
 };
 
+struct LocalizedApplePayPayment {
+    ApplePayPayment::Token token;
+    std::optional<LocalizedApplePayPaymentContact> billingContact;
+    std::optional<LocalizedApplePayPaymentContact> shippingContact;
+    String installmentAuthorizationToken;
+};
+
 }
 
 #endif

@@ -235,7 +235,17 @@ static gboolean parseOptionEntryCallback(const gchar *optionNameFull, const gcha
         break;
     }
     default:
-        g_assert_not_reached();
+        if (G_PARAM_SPEC_VALUE_TYPE(spec) == WEBKIT_TYPE_HARDWARE_ACCELERATION_POLICY) {
+            GEnumClass *enumClass = g_type_class_ref(WEBKIT_TYPE_HARDWARE_ACCELERATION_POLICY);
+            GEnumValue *enumValue = g_enum_get_value_by_nick(enumClass, value);
+            g_type_class_unref(enumClass);
+            if (!enumValue) {
+                g_set_error(error, G_OPTION_ERROR, G_OPTION_ERROR_BAD_VALUE, "Hardware acceleration policy '%s' is not valid", value);
+                return FALSE;
+            }
+            webkit_settings_set_hardware_acceleration_policy(webSettings, enumValue->value);
+        } else
+            g_assert_not_reached();
     }
 
     return TRUE;
@@ -243,8 +253,7 @@ static gboolean parseOptionEntryCallback(const gchar *optionNameFull, const gcha
 
 static gboolean isValidParameterType(GType gParamType)
 {
-    return (gParamType == G_TYPE_BOOLEAN || gParamType == G_TYPE_STRING || gParamType == G_TYPE_INT
-            || gParamType == G_TYPE_FLOAT);
+    return (gParamType == G_TYPE_BOOLEAN || gParamType == G_TYPE_STRING || gParamType == G_TYPE_INT || gParamType == G_TYPE_FLOAT || gParamType == WEBKIT_TYPE_HARDWARE_ACCELERATION_POLICY);
 }
 
 static WebKitFeature* findFeature(WebKitFeatureList *featureList, const char *identifier)

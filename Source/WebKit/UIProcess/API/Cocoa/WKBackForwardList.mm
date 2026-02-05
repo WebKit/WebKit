@@ -32,12 +32,12 @@
 #import <wtf/AlignedStorage.h>
 
 @implementation WKBackForwardList {
-    AlignedStorage<WebKit::WebBackForwardList> _list;
+    AlignedStorage<WebKit::WebBackForwardListWrapper> _list;
 }
 
 WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
-- (Ref<WebKit::WebBackForwardList>)_protectedList
+- (Ref<WebKit::WebBackForwardListWrapper>)_protectedList
 {
     return *_list;
 }
@@ -47,29 +47,33 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKBackForwardList.class, self))
         return;
 
+#if ENABLE(BACK_FORWARD_LIST_SWIFT)
+    self._protectedList->~WebBackForwardListWrapper();
+#else
     self._protectedList->~WebBackForwardList();
+#endif
 
     [super dealloc];
 }
 
 - (WKBackForwardListItem *)currentItem
 {
-    return WebKit::wrapper(self._protectedList->protectedCurrentItem().get());
+    return WebKit::wrapper(protect(self._protectedList->currentItem()).get());
 }
 
 - (WKBackForwardListItem *)backItem
 {
-    return WebKit::wrapper(self._protectedList->protectedBackItem().get());
+    return WebKit::wrapper(protect(self._protectedList->backItem()).get());
 }
 
 - (WKBackForwardListItem *)forwardItem
 {
-    return WebKit::wrapper(self._protectedList->protectedForwardItem().get());
+    return WebKit::wrapper(protect(self._protectedList->forwardItem()).get());
 }
 
 - (WKBackForwardListItem *)itemAtIndex:(NSInteger)index
 {
-    return WebKit::wrapper(self._protectedList->protectedItemAtIndex(index).get());
+    return WebKit::wrapper(protect(self._protectedList->itemAtIndex(index)).get());
 }
 
 - (NSArray *)backList

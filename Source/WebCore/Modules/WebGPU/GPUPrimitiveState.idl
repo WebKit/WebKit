@@ -27,7 +27,6 @@
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUPrimitiveState {
     GPUPrimitiveTopology topology = "triangle-list";
     GPUIndexFormat stripIndexFormat;

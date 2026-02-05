@@ -40,7 +40,7 @@ Ref<RealtimeMediaSource> RemoteRealtimeAudioSource::create(const CaptureDevice& 
 {
     auto source = adoptRef(*new RemoteRealtimeAudioSource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTF::move(hashSalts), manager, shouldCaptureInGPUProcess, pageIdentifier));
     manager.addSource(source.copyRef());
-    manager.protectedRemoteCaptureSampleManager()->addSource(source.copyRef());
+    protect(manager.remoteCaptureSampleManager())->addSource(source.copyRef());
     source->createRemoteMediaSource();
     return source;
 }

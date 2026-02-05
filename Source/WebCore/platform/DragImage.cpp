@@ -85,7 +85,7 @@ struct ScopedNodeDragEnabler {
     {
         if (element)
             element->setBeingDragged(true);
-        frame.protectedDocument()->updateLayout();
+        protect(frame.document())->updateLayout();
     }
 
     ~ScopedNodeDragEnabler()
@@ -162,7 +162,7 @@ struct ScopedFrameSelectionState {
 
 DragImageRef createDragImageForRange(LocalFrame& frame, const SimpleRange& range, bool forceBlackText)
 {
-    frame.protectedDocument()->updateLayout();
+    protect(frame.document())->updateLayout();
     RenderView* view = frame.contentRenderer();
     if (!view)
         return nullptr;
@@ -285,7 +285,7 @@ DragImage::~DragImage()
         deleteDragImage(m_dragImageRef);
 }
 
-#if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WIN) && !(PLATFORM(WPE) && ENABLE(DRAG_SUPPORT) && USE(SKIA))
+#if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WIN) && !(PLATFORM(WPE) && ENABLE(DRAG_SUPPORT))
 
 IntSize dragImageSize(DragImageRef)
 {

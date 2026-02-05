@@ -1053,7 +1053,7 @@ void _mi_arenas_page_abandon(mi_page_t* page, mi_theap_t* current_theap) {
     const bool was_clear = mi_bitmap_set(arena_pages->pages_abandoned[bin], slice_index);
     MI_UNUSED(was_clear); mi_assert_internal(was_clear);
     mi_atomic_increment_relaxed(&heap->abandoned_count[bin]);
-    mi_theap_stat_increase(current_theap, pages_abandoned, 1);
+    mi_theap_stat_increase(current_theap, pages_abandoned, 1);    
   }
   else {
     // page is full (or a singleton), or the page is OS/externally allocated

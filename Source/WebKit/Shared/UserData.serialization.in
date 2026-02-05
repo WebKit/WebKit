@@ -21,5 +21,5 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 class WebKit::UserData {
-    RefPtr<API::Object> protectedObject()
+    RefPtr<API::Object> objectForSerialization()
 }

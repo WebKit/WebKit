@@ -181,7 +181,7 @@ bool DatabaseContext::allowDatabaseAccess() const
 {
     RefPtr context = scriptExecutionContext();
     if (RefPtr document = dynamicDowncast<Document>(*context)) {
-        if (!document->page() || (document->page()->usesEphemeralSession() && !LegacySchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(document->protectedSecurityOrigin()->protocol())))
+        if (!document->page() || (document->page()->usesEphemeralSession() && !LegacySchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(protect(document->securityOrigin())->protocol())))
             return false;
         return true;
     }

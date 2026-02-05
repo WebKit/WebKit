@@ -41,8 +41,8 @@ Ref<XRSessionEvent> XRSessionEvent::create(const AtomString& type, Init&& initia
 }
 
 XRSessionEvent::XRSessionEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::XRSessionEvent, type, initializer, isTrusted)
-    , m_session(initializer.session.releaseNonNull())
+    : Event(EventInterfaceType::XRSessionEvent, type, WTF::move(initializer), isTrusted)
+    , m_session(WTF::move(initializer.session))
 {
 }
 

@@ -62,7 +62,7 @@ RefPtr<LibWebRTCNetworkManager> LibWebRTCNetworkManager::getOrCreate(WebCore::Sc
         auto newNetworkManager = adoptRef(*new LibWebRTCNetworkManager(identifier));
         networkManager = newNetworkManager.ptr();
         document->setRTCNetworkManager(WTF::move(newNetworkManager));
-        WebProcess::singleton().libWebRTCNetwork().protectedMonitor()->addObserver(*networkManager);
+        protect(WebProcess::singleton().libWebRTCNetwork().monitor())->addObserver(*networkManager);
     }
 
     return networkManager;
@@ -91,12 +91,12 @@ void LibWebRTCNetworkManager::close()
 #if ASSERT_ENABLED
     m_isClosed = true;
 #endif
-    WebProcess::singleton().libWebRTCNetwork().protectedMonitor()->removeObserver(*this);
+    protect(WebProcess::singleton().libWebRTCNetwork().monitor())->removeObserver(*this);
 }
 
 void LibWebRTCNetworkManager::unregisterMDNSNames()
 {
-    WebProcess::singleton().protectedLibWebRTCNetwork()->protectedMDNSRegister()->unregisterMDNSNames(m_documentIdentifier);
+    protect(protect(WebProcess::singleton().libWebRTCNetwork())->mdnsRegister())->unregisterMDNSNames(m_documentIdentifier);
 }
 
 void LibWebRTCNetworkManager::setEnumeratingAllNetworkInterfacesEnabled(bool enabled)
@@ -132,7 +132,7 @@ void LibWebRTCNetworkManager::StopUpdating()
     callOnMainRunLoop([weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
-        WebProcess::singleton().libWebRTCNetwork().protectedMonitor()->stopUpdating();
+        protect(WebProcess::singleton().libWebRTCNetwork().monitor())->stopUpdating();
     });
 }
 
@@ -235,7 +235,7 @@ void LibWebRTCNetworkManager::CreateNameForAddress(const webrtc::IPAddress& addr
         if (!weakThis)
             return;
 
-        WebProcess::singleton().protectedLibWebRTCNetwork()->protectedMDNSRegister()->registerMDNSName(weakThis->m_documentIdentifier, fromStdString(address.ToString()), [address, callback = std::move(callback)](auto name, auto error) mutable {
+        protect(protect(WebProcess::singleton().libWebRTCNetwork())->mdnsRegister())->registerMDNSName(weakThis->m_documentIdentifier, fromStdString(address.ToString()), [address, callback = WTF::move(callback)](auto name, auto error) mutable {
             WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([address, callback = std::move(callback), name = WTF::move(name).isolatedCopy(), error] {
                 RELEASE_LOG_ERROR_IF(error, WebRTC, "MDNS registration of a host candidate failed with error %hhu", enumToUnderlyingType(*error));
                 // In case of error, we provide the name to let gathering complete.

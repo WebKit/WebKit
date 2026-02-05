@@ -90,11 +90,6 @@ void StackmapSpecial::forEachArgImpl(
         Arg& arg = inst.args[i + numIgnoredAirArgs];
         ConstrainedValue child = value->constrainedChild(i + numIgnoredB3Args);
 
-#if USE(JSVALUE32_64)
-        // LowerInt64 should have lowered this argument already.
-        RELEASE_ASSERT(child.value()->type() != Int64 || child.rep().isStack() || child.rep().isStackArgument());
-#endif
-
         Arg::Role role;
         switch (roleMode) {
         case ForceLateUseUnlessRecoverable:

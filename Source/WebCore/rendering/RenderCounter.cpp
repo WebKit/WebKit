@@ -65,7 +65,7 @@ static CounterMaps& counterMaps()
 static Element* ancestorStyleContainmentObject(const Element& element)
 {
     auto* pseudoElement = dynamicDowncast<PseudoElement>(element);
-    Element* ancestor = pseudoElement ? pseudoElement->hostElement() : element.parentElement();
+    SUPPRESS_UNCOUNTED_LOCAL auto* ancestor = pseudoElement ? pseudoElement->hostElement() : element.parentElement();
     while (ancestor) {
         if (auto* style = ancestor->existingComputedStyle()) {
             if (style->usedContain().contains(Style::ContainValue::Style))
@@ -83,15 +83,15 @@ static Element* ancestorStyleContainmentObject(const Element& element)
 static RenderElement* previousInPreOrderRespectingContainment(const RenderElement& renderer)
 {
     ASSERT(renderer.element());
-    Element* previous = ElementTraversal::previousIncludingPseudo(*renderer.element());
-    Element* styleContainmentAncestor = ancestorStyleContainmentObject(*renderer.element());
+    RefPtr previous = ElementTraversal::previousIncludingPseudo(*renderer.element());
+    RefPtr styleContainmentAncestor = ancestorStyleContainmentObject(*renderer.element());
 
     while (previous) {
         while (previous && !previous->renderer())
             previous = ElementTraversal::previousIncludingPseudo(*previous, styleContainmentAncestor);
         if (!previous)
             break;
-        auto* previousStyleContainmentAncestor = ancestorStyleContainmentObject(*previous);
+        RefPtr previousStyleContainmentAncestor = ancestorStyleContainmentObject(*previous);
         // If the candidate's containment ancestor is the same as elements, then
         // that's a valid candidate.
         if (previousStyleContainmentAncestor == styleContainmentAncestor)
@@ -114,7 +114,7 @@ static inline Element* parentOrPseudoHostElement(const RenderElement& renderer)
 
 static Element* previousSiblingOrParentElement(const Element& element)
 {
-    if (auto* previous = ElementTraversal::pseudoAwarePreviousSibling(element)) {
+    if (SUPPRESS_UNCHECKED_LOCAL auto* previous = ElementTraversal::pseudoAwarePreviousSibling(element)) {
         while (previous && !previous->renderer())
             previous = ElementTraversal::pseudoAwarePreviousSibling(*previous);
 
@@ -123,14 +123,14 @@ static Element* previousSiblingOrParentElement(const Element& element)
     }
 
     if (auto* pseudoElement = dynamicDowncast<PseudoElement>(element)) {
-        auto* hostElement = pseudoElement->hostElement();
+        SUPPRESS_UNCOUNTED_LOCAL auto* hostElement = pseudoElement->hostElement();
         ASSERT(hostElement);
         if (hostElement->renderer())
             return hostElement;
         return previousSiblingOrParentElement(*hostElement);
     }
     
-    auto* parent = element.parentElement();
+    SUPPRESS_UNCOUNTED_LOCAL auto* parent = element.parentElement();
     if (parent && !parent->renderer())
         parent = previousSiblingOrParentElement(*parent);
     if (parent && parent->renderer() && parent->renderer()->style().usedContain().contains(Style::ContainValue::Style))
@@ -144,7 +144,7 @@ static RenderElement* previousSiblingOrParent(const RenderElement& renderer)
 {
     ASSERT(renderer.element());
 
-    auto* previous = previousSiblingOrParentElement(*renderer.element());
+    RefPtr previous = previousSiblingOrParentElement(*renderer.element());
     return previous ? previous->renderer() : nullptr;
 }
 
@@ -158,8 +158,8 @@ static inline bool areRenderersElementsSiblings(const RenderElement& first, cons
 static RenderElement* nextInPreOrder(const RenderElement& renderer, const Element* stayWithin, bool skipDescendants = false)
 {
     ASSERT(renderer.element());
-    Element& self = *renderer.element();
-    Element* next = skipDescendants ? ElementTraversal::nextIncludingPseudoSkippingChildren(self, stayWithin) : ElementTraversal::nextIncludingPseudo(self, stayWithin);
+    Ref self = *renderer.element();
+    RefPtr next = skipDescendants ? ElementTraversal::nextIncludingPseudoSkippingChildren(self, stayWithin) : ElementTraversal::nextIncludingPseudo(self, stayWithin);
     while (next && !next->renderer())
         next = skipDescendants ? ElementTraversal::nextIncludingPseudoSkippingChildren(*next, stayWithin) : ElementTraversal::nextIncludingPseudo(*next, stayWithin);
     return next ? next->renderer() : nullptr;
@@ -174,8 +174,8 @@ static CounterDirectives listItemCounterDirectives(RenderElement& renderer)
             .setValue = std::nullopt
         };
     }
-    if (auto element = renderer.element()) {
-        if (auto* list = dynamicDowncast<HTMLOListElement>(*element)) {
+    if (RefPtr element = renderer.element()) {
+        if (RefPtr list = dynamicDowncast<HTMLOListElement>(*element)) {
             return {
                 .resetValue = list->start(),
                 .incrementValue = list->isReversed() ? 1 : -1,
@@ -200,7 +200,7 @@ struct CounterPlan {
 static std::optional<CounterPlan> planCounter(RenderElement& renderer, const AtomString& identifier)
 {
     // We must have a generating node or else we cannot have a counter.
-    Element* generatingElement = renderer.generatingElement();
+    RefPtr generatingElement = renderer.generatingElement();
     if (!generatingElement)
         return std::nullopt;
 
@@ -414,7 +414,7 @@ static CounterNode* makeCounterNode(RenderElement& renderer, const AtomString& i
 
     // Check if some nodes that were previously root nodes should become children of this node now.
     auto* currentRenderer = &renderer;
-    auto* stayWithin = parentOrPseudoHostElement(renderer);
+    RefPtr stayWithin = parentOrPseudoHostElement(renderer);
     bool skipDescendants = false;
     while ((currentRenderer = nextInPreOrder(*currentRenderer, stayWithin, skipDescendants))) {
         skipDescendants = currentRenderer->shouldApplyStyleContainment();
@@ -475,7 +475,7 @@ String RenderCounter::originalText() const
     if (!m_counter.separator.isNull()) {
         if (!child->actsAsReset())
             child = child->parent();
-        while (CounterNode* parent = child->parent()) {
+        while (RefPtr parent = child->parent()) {
             text = makeString(counterText(child->countInParent()), m_counter.separator, text);
             child = parent;
         }
@@ -513,7 +513,7 @@ static void destroyCounterNodeWithoutMapRemoval(const AtomString& identifier, Co
         ASSERT(counterMaps().find(child->owner())->value->get(identifier) == child);
         counterMaps().find(child->owner())->value->remove(identifier);
     }
-    if (auto* parent = node.parent())
+    if (RefPtr parent = node.parent())
         parent->removeChild(node);
 }
 

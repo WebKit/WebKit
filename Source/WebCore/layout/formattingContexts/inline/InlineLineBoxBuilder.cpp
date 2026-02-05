@@ -107,9 +107,9 @@ TextUtil::FallbackFontList LineBoxBuilder::collectFallbackFonts(const InlineLeve
 
     auto fallbackFontsForInlineBoxes = m_fallbackFontsForInlineBoxes.get(&parentInlineBox);
     auto numberOfFallbackFontsForInlineBox = fallbackFontsForInlineBoxes.computeSize();
-    for (auto& font : fallbackFonts) {
-        fallbackFontsForInlineBoxes.add(font);
-        m_fallbackFontRequiresIdeographicBaseline = m_fallbackFontRequiresIdeographicBaseline || font.hasVerticalGlyphs();
+    for (Ref font : fallbackFonts) {
+        fallbackFontsForInlineBoxes.add(font.ptr());
+        m_fallbackFontRequiresIdeographicBaseline = m_fallbackFontRequiresIdeographicBaseline || font->hasVerticalGlyphs();
     }
     if (fallbackFontsForInlineBoxes.computeSize() != numberOfFallbackFontsForInlineBox)
         m_fallbackFontsForInlineBoxes.set(&parentInlineBox, fallbackFontsForInlineBoxes);
@@ -248,8 +248,8 @@ InlineLevelBox::AscentAndDescent LineBoxBuilder::enclosingAscentDescentWithFallb
     // If line-height computes to normal and either line-fit-edge is leading or this is the root inline box,
     // the font's line gap metric may also be incorporated into A and D by adding half to each side as half-leading.
     auto shouldUseLineGapToAdjustAscentDescent = (inlineBox.isRootInlineBox() || isLineFitEdgeLeading(inlineBox)) && !rootBox().isRubyAnnotationBox();
-    for (auto& font : fallbackFontsForContent) {
-        auto& fontMetrics = font.fontMetrics();
+    for (Ref font : fallbackFontsForContent) {
+        auto& fontMetrics = font->fontMetrics();
         auto [ascent, descent] = textBoxAdjustedInlineBoxHeight(inlineBox, fontMetrics, fontBaseline);
         if (shouldUseLineGapToAdjustAscentDescent) {
             auto halfLeading = (InlineFormattingUtils::snapToInt(fontMetrics.lineSpacing(), inlineBox) - (ascent + descent)) / 2;

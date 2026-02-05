@@ -91,7 +91,7 @@ void HTMLStyleElement::attributeChanged(const QualifiedName& name, const AtomStr
     case AttributeNames::mediaAttr:
         m_styleSheetOwner.setMedia(newValue);
         if (RefPtr sheet = this->sheet()) {
-            sheet->setMediaQueries(MQ::MediaQueryParser::parse(newValue, protectedDocument()->cssParserContext()));
+            sheet->setMediaQueries(MQ::MediaQueryParser::parse(newValue, protect(document())->cssParserContext()));
             if (auto* scope = m_styleSheetOwner.styleScope())
                 scope->didChangeStyleSheetContents();
         } else

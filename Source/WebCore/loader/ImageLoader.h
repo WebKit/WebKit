@@ -70,14 +70,12 @@ public:
 
     Element& element() { return m_element; }
     const Element& element() const { return m_element; }
-    Ref<Element> protectedElement() const { return m_element; }
 
     bool shouldIgnoreCandidateWhenLoadingFromArchive(const ImageCandidate&) const;
 
     bool imageComplete() const { return m_imageComplete; }
 
     CachedImage* image() const { return m_image.get(); }
-    CachedResourceHandle<CachedImage> protectedImage() const;
     void clearImage(); // Cancels pending load events, and doesn't dispatch new ones.
     
     size_t pendingDecodePromisesCountForTesting() const { return m_decodingPromises.size(); }
@@ -99,7 +97,6 @@ public:
     bool isDeferred() const { return m_lazyImageLoadState == LazyImageLoadState::Deferred || m_lazyImageLoadState == LazyImageLoadState::LoadImmediately; }
 
     Document& document() { return m_element->document(); }
-    Ref<Document> protectedDocument() { return m_element->document(); }
 
 protected:
     explicit ImageLoader(Element&);

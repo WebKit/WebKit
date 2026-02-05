@@ -39,6 +39,7 @@
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
@@ -279,7 +280,7 @@ private:
 
     Ref<InspectorOverlay> protectedOverlay() const;
 
-    Inspector::InjectedScriptManager& m_injectedScriptManager;
+    const CheckedRef<Inspector::InjectedScriptManager> m_injectedScriptManager;
     const UniqueRef<Inspector::DOMFrontendDispatcher> m_frontendDispatcher;
     const Ref<Inspector::DOMBackendDispatcher> m_backendDispatcher;
     WeakRef<Page> m_inspectedPage;

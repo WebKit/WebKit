@@ -1,0 +1,14 @@
+
+PASS Can anchor to a name both defined and scoped by the same element
+PASS Sibling can not anchor into anchor-scope, even when anchor-name present
+PASS anchor-scope:all on common ancestor
+PASS anchor-scope:--a on common ancestor
+FAIL anchor-scope:all on sibling assert_equals: expected "20px" but got "40px"
+FAIL anchor-scope:all scopes multiple names assert_equals: expected "20px" but got "40px"
+FAIL anchor-scope:--a,--b scopes --a and --b assert_equals: expected "20px" but got "40px"
+FAIL anchor-scope:--a scopes only --a assert_equals: expected "20px" but got "50px"
+FAIL anchor-scope:--b scopes only --b assert_equals: expected "10px" but got "40px"
+FAIL anchor-scope:--a scopes only --a (out-of-flow anchors) assert_equals: expected "20px" but got "40px"
+FAIL anchor-scope:--a scopes only --a (both out-of-flow and in-flow anchors) assert_equals: expected "20px" but got "55px"
+FAIL anchor-scope:--a scopes only --a (both out-of-flow and in-flow anchors, reverse) assert_equals: expected "55px" but got "30px"
+

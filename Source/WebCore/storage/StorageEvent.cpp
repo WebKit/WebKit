@@ -45,9 +45,9 @@ Ref<StorageEvent> StorageEvent::create(const AtomString& type, const String& key
     return adoptRef(*new StorageEvent(type, key, oldValue, newValue, url, storageArea));
 }
 
-Ref<StorageEvent> StorageEvent::create(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+Ref<StorageEvent> StorageEvent::create(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
 {
-    return adoptRef(*new StorageEvent(type, initializer, isTrusted));
+    return adoptRef(*new StorageEvent(type, WTF::move(initializer), isTrusted));
 }
 
 StorageEvent::StorageEvent()
@@ -65,13 +65,13 @@ StorageEvent::StorageEvent(const AtomString& type, const String& key, const Stri
 {
 }
 
-StorageEvent::StorageEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::StorageEvent, type, initializer, isTrusted)
-    , m_key(initializer.key)
-    , m_oldValue(initializer.oldValue)
-    , m_newValue(initializer.newValue)
-    , m_url(initializer.url)
-    , m_storageArea(initializer.storageArea)
+StorageEvent::StorageEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+    : Event(EventInterfaceType::StorageEvent, type, WTF::move(initializer), isTrusted)
+    , m_key(WTF::move(initializer.key))
+    , m_oldValue(WTF::move(initializer.oldValue))
+    , m_newValue(WTF::move(initializer.newValue))
+    , m_url(WTF::move(initializer.url))
+    , m_storageArea(WTF::move(initializer.storageArea))
 {
 }
 

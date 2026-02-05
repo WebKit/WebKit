@@ -27,13 +27,11 @@
 
 enum RTCEncodedVideoFrameType { "empty", "key", "delta" };
 
-// // https://w3c.github.io/webrtc-encoded-transform/#RTCEncodedVideoFrameMetadata
-
+// https://w3c.github.io/webrtc-encoded-transform/#RTCEncodedVideoFrameMetadata
 [
     Conditional=WEB_RTC,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCEncodedVideoFrameMetadata {
     long long frameId;
     sequence<long long> dependencies;
@@ -53,15 +51,14 @@ enum RTCEncodedVideoFrameType { "empty", "key", "delta" };
     DOMString mimeType;
 };
 
+// https://w3c.github.io/webrtc-encoded-transform/#dictdef-rtcencodedvideoframeoptions
 [
     Conditional=WEB_RTC,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCEncodedVideoFrameOptions {
     RTCEncodedVideoFrameMetadata metadata;
 };
 
 // https://w3c.github.io/webrtc-encoded-transform/#RTCEncodedVideoFrame-interface
-
 [
     Conditional=WEB_RTC,
     EnabledBySetting=WebRTCEncodedTransformEnabled,

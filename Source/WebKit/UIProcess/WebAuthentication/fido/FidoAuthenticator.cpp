@@ -51,11 +51,6 @@ CtapDriver& FidoAuthenticator::driver() const
     return *m_driver;
 }
 
-Ref<CtapDriver> FidoAuthenticator::protectedDriver() const
-{
-    return driver();
-}
-
 Ref<CtapDriver> FidoAuthenticator::releaseDriver()
 {
     ASSERT(m_driver);

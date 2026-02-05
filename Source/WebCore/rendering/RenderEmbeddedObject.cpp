@@ -104,7 +104,7 @@ bool RenderEmbeddedObject::requiresAcceleratedCompositing() const
     if (RenderWidget::requiresAcceleratedCompositing())
         return true;
 
-    auto* pluginViewBase = dynamicDowncast<PluginViewBase>(widget());
+    RefPtr pluginViewBase = dynamicDowncast<PluginViewBase>(widget());
     if (!pluginViewBase)
         return false;
     return pluginViewBase->layerHostingStrategy() != PluginLayerHostingStrategy::None;
@@ -376,19 +376,19 @@ bool RenderEmbeddedObject::nodeAtPoint(const HitTestRequest& request, HitTestRes
     if (!is<PluginViewBase>(widget()))
         return true;
 
-    PluginViewBase& view = downcast<PluginViewBase>(*widget());
+    Ref view = downcast<PluginViewBase>(*widget());
     IntPoint roundedPoint = locationInContainer.roundedPoint();
 
-    if (Scrollbar* horizontalScrollbar = view.horizontalScrollbar()) {
+    if (RefPtr horizontalScrollbar = view->horizontalScrollbar()) {
         if (horizontalScrollbar->shouldParticipateInHitTesting() && horizontalScrollbar->frameRect().contains(roundedPoint)) {
-            result.setScrollbar(horizontalScrollbar);
+            result.setScrollbar(WTF::move(horizontalScrollbar));
             return true;
         }
     }
 
-    if (Scrollbar* verticalScrollbar = view.verticalScrollbar()) {
+    if (RefPtr verticalScrollbar = view->verticalScrollbar()) {
         if (verticalScrollbar->shouldParticipateInHitTesting() && verticalScrollbar->frameRect().contains(roundedPoint)) {
-            result.setScrollbar(verticalScrollbar);
+            result.setScrollbar(WTF::move(verticalScrollbar));
             return true;
         }
     }

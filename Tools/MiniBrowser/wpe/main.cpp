@@ -535,19 +535,17 @@ static void activate(GApplication* application, gpointer)
     }
 #endif
 
-    WebKitUserContentManager* userContentManager = nullptr;
+    g_autoptr(WebKitUserContentManager) userContentManager = nullptr;
     if (contentFilter) {
-        GFile* contentFilterFile = g_file_new_for_commandline_arg(contentFilter);
+        g_autoptr(GFile) contentFilterFile = g_file_new_for_commandline_arg(contentFilter);
 
         FilterSaveData saveData = { nullptr, };
-        gchar* filtersPath = g_build_filename(g_get_user_cache_dir(), g_get_prgname(), "filters", nullptr);
-        WebKitUserContentFilterStore* store = webkit_user_content_filter_store_new(filtersPath);
-        g_free(filtersPath);
+        g_autofree gchar* filtersPath = g_build_filename(g_get_user_cache_dir(), g_get_prgname(), "filters", nullptr);
+        g_autoptr(WebKitUserContentFilterStore) store = webkit_user_content_filter_store_new(filtersPath);
 
         webkit_user_content_filter_store_save_from_file(store, "WPEMiniBrowserFilter", contentFilterFile, nullptr, (GAsyncReadyCallback)filterSavedCallback, &saveData);
         saveData.mainLoop = g_main_loop_new(nullptr, FALSE);
         g_main_loop_run(saveData.mainLoop);
-        g_object_unref(store);
 
         if (saveData.filter) {
             userContentManager = webkit_user_content_manager_new();
@@ -558,7 +556,6 @@ static void activate(GApplication* application, gpointer)
         g_clear_pointer(&saveData.error, g_error_free);
         g_clear_pointer(&saveData.filter, webkit_user_content_filter_unref);
         g_main_loop_unref(saveData.mainLoop);
-        g_object_unref(contentFilterFile);
     }
 
     auto* settings = webkit_settings_new_with_settings(

@@ -69,6 +69,8 @@
                   { "name": "bot632", "platform": "mac-sequoia" },
 
                   { "name": "bot304", "platform": "ios-26" },
+                  { "name": "bot2004", "platform": "ios-26" },
+                  { "name": "bot2005", "platform": "ios-26" },
                   { "name": "bot305", "platform": "ios-simulator-26" },
                   { "name": "bot306", "platform": "ios-simulator-26" },
                   { "name": "bot307", "platform": "ios-simulator-26" },
@@ -101,6 +103,34 @@
                     "os": "macOS Tahoe 26.0-25A354",
                     "device": "Mac16,11",
                     "xcode": "Xcode 26.0.1-17A400"
+                  },
+                  {
+                    "name": "bot10001",
+                    "platform": "mac-tahoe",
+                    "os": "macOS Tahoe 26.2-25C56",
+                    "device": "Mac16,11",
+                    "xcode": "Xcode 26.2-17C52"
+                  },
+                  {
+                    "name": "bot10002",
+                    "platform": "mac-tahoe",
+                    "os": "macOS Tahoe 26.2-25C56",
+                    "device": "Mac16,11",
+                    "xcode": "Xcode 26.2-17C52"
+                  },
+                  {
+                    "name": "bot10003",
+                    "platform": "mac-tahoe",
+                    "os": "macOS Tahoe 26.2-25C56",
+                    "device": "Mac16,11",
+                    "xcode": "Xcode 26.2-17C52"
+                  },
+                  {
+                    "name": "bot10004",
+                    "platform": "mac-tahoe",
+                    "os": "macOS Tahoe 26.2-25C56",
+                    "device": "Mac16,11",
+                    "xcode": "Xcode 26.2-17C52"
                   },
 
                   { "name": "wincairo-debug-build-01", "platform": "win" },
@@ -199,7 +229,7 @@
                       "tahoe-applesilicon-release-tests-test262", "tahoe-release-tests-wk2-accessibility-isolated-tree", 
                       "tahoe-release-tests-wk2-site-isolation-tree", "tahoe-release-world-leaks-tests"
                   ],
-                  "workernames": ["bot678"]
+                  "workernames": ["bot678", "bot10004"]
                   },
                   { "name": "Apple-Tahoe-Release-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                   "platform": "mac-tahoe", "configuration": "release", "architectures": ["x86_64", "arm64"],
@@ -214,7 +244,7 @@
                   { "name": "Apple-Tahoe-Release-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
                   "platform": "mac-tahoe", "configuration": "release", "architectures": ["x86_64", "arm64"],
                   "additionalArguments": ["--no-retry-failures"],
-                  "workernames": ["bot246"]
+                  "workernames": ["bot246", "bot10003"]
                   },
                   { "name": "Apple-Tahoe-Release-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                   "platform": "mac-tahoe", "configuration": "release", "architectures": ["x86_64", "arm64"],
@@ -250,7 +280,7 @@
                       "tahoe-debug-tests-wk1", "tahoe-debug-tests-wk2", "tahoe-debug-applesilicon-tests-wk1",
                       "tahoe-debug-applesilicon-tests-wk2"
                   ],
-                  "workernames": ["bot621"]
+                  "workernames": ["bot621", "bot10002"]
                   },
                   { "name": "Apple-Tahoe-Debug-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
                   "platform": "mac-tahoe", "configuration": "debug", "architectures": ["x86_64", "arm64"],
@@ -270,7 +300,7 @@
                   { "name": "Apple-Tahoe-Debug-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
                   "platform": "mac-tahoe", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                   "additionalArguments": ["--no-retry-failures"],
-                  "workernames": ["bot257"]
+                  "workernames": ["bot257", "bot10001"]
                   },
                   { "name": "Apple-Tahoe-LLINT-CLoop-BuildAndTest", "factory": "BuildAndTestLLINTCLoopFactory",
                   "platform": "mac-tahoe", "configuration": "debug", "architectures": ["x86_64", "arm64"],
@@ -394,6 +424,11 @@
                     "platform": "ios-simulator-26", "configuration": "debug", "architectures": ["x86_64", "arm64"], "device_model": "ipad",
                     "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--child-processes=6"],
                     "workernames": ["bot664"]
+                  },
+                  {
+                    "name": "Apple-iOS-26-Safer-CPP-Checks", "factory": "SaferCPPStaticAnalyzerFactory",
+                    "platform": "ios-26", "configuration": "release", "architectures": ["arm64"],
+                    "workernames": ["bot2004", "bot2005"]
                   },
                   {
                     "name": "Apple-visionOS-26-Release-Build", "factory": "BuildFactory",
@@ -693,7 +728,7 @@
                     "workernames": ["wpe-linux-bot-27", "wpe-linux-bot-28", "wpe-linux-bot-29", "wpe-linux-bot-30", "wpe-linux-bot-31", "wpe-linux-bot-32", "wpe-linux-bot-33", "wpe-linux-bot-34"]
                   },
                   {
-                    "name": "WPE-Linux-64-bit-Release-Cairo-LibWebRTC-Build", "factory": "BuildFactory",
+                    "name": "WPE-Linux-64-bit-Release-LibWebRTC-Build", "factory": "BuildFactory",
                     "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                     "workernames": ["wpe-linux-bot-35"]
                   },
@@ -734,7 +769,7 @@
                                      "Windows-64-bit-Release-Build", "Windows-64-bit-Debug-Build",
                                      "WPE-Linux-64-bit-Release-Build", "WPE-Linux-64-bit-Debug-Build",
                                      "WPE-Linux-64-bit-Release-Clang-Build",
-                                     "WPE-Linux-64-bit-Release-Cairo-LibWebRTC-Build",
+                                     "WPE-Linux-64-bit-Release-LibWebRTC-Build",
                                      "WPE-Linux-ARM64-bit-Release-Debian-Stable-Build",
                                      "WPE-Linux-ARM32-bit-Release-Debian-Stable-Build",
                                      "WPE-Linux-64-bit-Release-Non-Unified-Build"]

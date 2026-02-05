@@ -23,9 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary CacheQueryOptions {
+dictionary CacheQueryOptions {
     boolean ignoreSearch = false;
     boolean ignoreMethod = false;
     boolean ignoreVary = false;

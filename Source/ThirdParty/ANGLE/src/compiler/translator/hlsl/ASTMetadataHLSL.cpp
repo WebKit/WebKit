@@ -47,8 +47,6 @@ class PullGradient : public TIntermTraverser
         mGradientBuiltinFunctions.insert(ImmutableString("textureProj"));
         mGradientBuiltinFunctions.insert(ImmutableString("textureOffset"));
         mGradientBuiltinFunctions.insert(ImmutableString("textureProjOffset"));
-
-        // ESSL 310 doesn't add builtin gradient functions
     }
 
     void traverse(TIntermFunctionDefinition *node)

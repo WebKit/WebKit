@@ -30,6 +30,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class WKFrameInfo;
+@class WKNavigation;
 
 /*! Contains information about a navigation response, used for making policy decisions.
  */
@@ -49,6 +50,10 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  @discussion Allowing a navigation response with a MIME type that can't be shown will cause the navigation to fail.
  */
 @property (nonatomic, readonly) BOOL canShowMIMEType;
+
+/*! @abstract The most recent main frame navigation that took place that encompasses this navigation response.
+ */
+@property (nonatomic, readonly, nullable) WKNavigation *mainFrameNavigation WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @end
 

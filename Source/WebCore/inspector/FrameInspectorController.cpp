@@ -32,7 +32,6 @@
 
 #include "CommonVM.h"
 #include "DocumentPage.h"
-#include "FrameConsoleAgent.h"
 #include "FrameInlines.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorWebAgentBase.h"
@@ -49,6 +48,7 @@
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/Strong.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -59,18 +59,14 @@ using namespace Inspector;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FrameInspectorController);
 
-FrameInspectorController::FrameInspectorController(LocalFrame& frame, PageInspectorController& parentPageController)
+FrameInspectorController::FrameInspectorController(LocalFrame& frame)
     : m_frame(frame)
-    , m_instrumentingAgents(InstrumentingAgents::create(*this, parentPageController.instrumentingAgents()))
-    , m_injectedScriptManager(parentPageController.injectedScriptManager())
+    , m_instrumentingAgents(InstrumentingAgents::create(*this, protect(frame.page())->protectedInspectorController()->instrumentingAgents()))
+    , m_injectedScriptManager(protect(frame.page())->protectedInspectorController()->injectedScriptManager())
     , m_frontendRouter(FrontendRouter::create())
-    , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef(), &parentPageController.backendDispatcher()))
+    , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef(), &protect(frame.page())->protectedInspectorController()->backendDispatcher()))
     , m_executionStopwatch(Stopwatch::create())
 {
-    auto agentContext = frameAgentContext();
-    UniqueRef consoleAgent = makeUniqueRef<FrameConsoleAgent>(agentContext);
-    m_instrumentingAgents->setWebConsoleAgent(consoleAgent.ptr());
-    m_agents.append(WTF::move(consoleAgent));
 }
 
 FrameInspectorController::~FrameInspectorController()
@@ -92,7 +88,7 @@ FrameAgentContext FrameInspectorController::frameAgentContext()
 {
     AgentContext baseContext = {
         *this,
-        m_injectedScriptManager,
+        m_injectedScriptManager.get(),
         m_frontendRouter.get(),
         m_backendDispatcher
     };

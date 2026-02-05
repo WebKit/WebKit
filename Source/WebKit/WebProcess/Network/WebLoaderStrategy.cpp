@@ -238,7 +238,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     // If the DocumentLoader schedules this as an archive resource load,
     // then we should remember the ResourceLoader in our records but not schedule it in the NetworkProcess.
-    if (resourceLoader.protectedDocumentLoader()->scheduleArchiveLoad(resourceLoader, resourceLoader.request())) {
+    if (protect(resourceLoader.documentLoader())->scheduleArchiveLoad(resourceLoader, resourceLoader.request())) {
         LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be handled as an archive resource.", resourceLoader.url().string().utf8().data());
         WEBLOADERSTRATEGY_RELEASE_LOG("scheduleLoad: URL will be handled as an archive resource");
         m_webResourceLoaders.set(identifier, WebResourceLoader::create(resourceLoader, trackingParameters));
@@ -507,9 +507,11 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
 
     if (document) {
         loadParameters.frameURL = document->url();
+#if ENABLE(CONTENT_EXTENSIONS) || (ENABLE(CONTENT_FILTERING) && HAVE(WEBCONTENTRESTRICTIONS))
+    if (RefPtr page = document->page())
+        loadParameters.mainDocumentURL = page->mainFrameURL();
+#endif
 #if ENABLE(CONTENT_EXTENSIONS)
-        if (RefPtr page = document->page())
-            loadParameters.mainDocumentURL = page->mainFrameURL();
         // FIXME: Instead of passing userContentControllerIdentifier, the NetworkProcess should be able to get it using webPageId.
         if (RefPtr webPage = webFrame ? webFrame->page() : nullptr)
             loadParameters.userContentControllerIdentifier = webPage->userContentControllerIdentifier();
@@ -555,8 +557,19 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.shouldRestrictHTTPResponseAccess = shouldPerformSecurityChecks();
 
     loadParameters.isMainFrameNavigation = isMainFrameNavigation;
-    if (loadParameters.isMainFrameNavigation && document)
-        loadParameters.sourceCrossOriginOpenerPolicy = document->crossOriginOpenerPolicy();
+    if (loadParameters.isMainFrameNavigation && document) {
+        // Fall back to use opener's cross-origin opener policy like in Document::initSecurityContext.
+        RefPtr webFrame = WebFrame::webFrame(frame->frameID());
+        RefPtr coreFrame = webFrame ? webFrame->coreFrame() : nullptr;
+        RefPtr openerFrame = coreFrame ? coreFrame->opener() : nullptr;
+        RefPtr openerDocumentSecurityOrigin = openerFrame ? openerFrame->frameDocumentSecurityOrigin() : nullptr;
+        bool openerDocumentIsSameOriginAsTopDocument = openerDocumentSecurityOrigin ? openerDocumentSecurityOrigin->isSameOriginAs(openerFrame->protectedTopOrigin()) : false;
+        auto openerDocumentSecurityPolicy = openerFrame ? openerFrame->frameDocumentSecurityPolicy() : std::nullopt;
+        if (!document->haveInitializedSecurityOrigin() && openerDocumentSecurityPolicy && openerDocumentIsSameOriginAsTopDocument)
+            loadParameters.sourceCrossOriginOpenerPolicy = openerDocumentSecurityPolicy->crossOriginOpenerPolicy;
+        else
+            loadParameters.sourceCrossOriginOpenerPolicy = document->crossOriginOpenerPolicy();
+    }
 
     if (resourceLoader.frame()
         && resourceLoader.options().mode == FetchOptions::Mode::Navigate
@@ -719,7 +732,7 @@ void WebLoaderStrategy::networkProcessCrashed()
     WEBLOADERSTRATEGY_RELEASE_LOG_ERROR_BASIC("networkProcessCrashed: failing all pending resource loaders");
 
     for (auto& loader : m_webResourceLoaders.values()) {
-        scheduleInternallyFailedLoad(*loader->protectedResourceLoader());
+        scheduleInternallyFailedLoad(*protect(loader->resourceLoader()));
         loader->detachFromCoreLoader();
     }
 
@@ -847,7 +860,7 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, WebC
     loadParameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Default;
     loadParameters.storedCredentialsPolicy = options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
     loadParameters.clientCredentialPolicy = clientCredentialPolicy;
-    loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect(webFrame ? webFrame->protectedCoreLocalFrame().get() : nullptr);
+    loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect(webFrame ? protect(webFrame->coreLocalFrame()).get() : nullptr);
     loadParameters.shouldRestrictHTTPResponseAccess = shouldPerformSecurityChecks();
 
     loadParameters.options = options;
@@ -862,7 +875,7 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, WebC
     if (webFrame)
         loadParameters.isNavigatingToAppBoundDomain = webFrame->isTopFrameNavigatingToAppBoundDomain();
 #endif
-    addParametersShared(webFrame->protectedCoreLocalFrame().get(), loadParameters);
+    addParametersShared(protect(webFrame->coreLocalFrame()).get(), loadParameters);
 
     data.shrink(0);
 
@@ -893,7 +906,7 @@ void WebLoaderStrategy::browsingContextRemoved(LocalFrame& frame)
     if (!networkProcessConnection)
         return;
 
-    Ref page = *WebPage::fromCorePage(*frame.protectedPage());
+    Ref page = *WebPage::fromCorePage(*protect(frame.page()));
     networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::BrowsingContextRemoved(page->webPageProxyIdentifier(), page->identifier(), WebFrame::fromCoreFrame(frame)->frameID()), 0);
 }
 
@@ -941,9 +954,11 @@ void WebLoaderStrategy::startPingLoad(LocalFrame& frame, ResourceRequest& reques
 #endif
 
     loadParameters.frameURL = document->url();
-#if ENABLE(CONTENT_EXTENSIONS)
+#if ENABLE(CONTENT_EXTENSIONS) || (ENABLE(CONTENT_FILTERING) && HAVE(WEBCONTENTRESTRICTIONS))
     if (RefPtr page = document->page())
         loadParameters.mainDocumentURL = page->mainFrameURL();
+#endif
+#if ENABLE(CONTENT_EXTENSIONS)
     // FIXME: Instead of passing userContentControllerIdentifier, we should just pass webPageId to NetworkProcess.
     loadParameters.userContentControllerIdentifier = webPage->userContentControllerIdentifier();
 #endif
@@ -1016,7 +1031,7 @@ void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage
 #if ENABLE(APP_BOUND_DOMAINS)
     parameters.isNavigatingToAppBoundDomain = webFrame.isTopFrameNavigatingToAppBoundDomain();
 #endif
-    if (RefPtr loader = policySourceDocumentLoaderForFrame(*webFrame.protectedCoreLocalFrame()))
+    if (RefPtr loader = policySourceDocumentLoaderForFrame(*protect(webFrame.coreLocalFrame())))
         parameters.advancedPrivacyProtections = loader->advancedPrivacyProtections();
 
     std::optional<WebCore::ResourceLoaderIdentifier> preconnectionIdentifier;

@@ -1,46 +1,46 @@
 CONSOLE MESSAGE: Hello from http://127.0.0.1:8000/inspector/console/resources/console-messages.html
 CONSOLE MESSAGE: Warning from http://127.0.0.1:8000/inspector/console/resources/console-messages.html
 CONSOLE MESSAGE: Error from http://127.0.0.1:8000/inspector/console/resources/console-messages.html
-CONSOLE MESSAGE: iframe 1 is loaded in http://127.0.0.1:8000/inspector/console/message-from-iframe.html
+CONSOLE MESSAGE: iframe is loaded in http://127.0.0.1:8000/inspector/console/message-from-iframe.html
 CONSOLE MESSAGE: Hello from http://localhost:8000/inspector/console/resources/console-messages.html
 CONSOLE MESSAGE: Warning from http://localhost:8000/inspector/console/resources/console-messages.html
 CONSOLE MESSAGE: Error from http://localhost:8000/inspector/console/resources/console-messages.html
-CONSOLE MESSAGE: iframe 2 is loaded in http://127.0.0.1:8000/inspector/console/message-from-iframe.html
+CONSOLE MESSAGE: iframe is loaded in http://127.0.0.1:8000/inspector/console/message-from-iframe.html
 CONSOLE MESSAGE: Hello from http://127.0.0.1:8000/inspector/console/resources/console-messages.html
 CONSOLE MESSAGE: Warning from http://127.0.0.1:8000/inspector/console/resources/console-messages.html
 CONSOLE MESSAGE: Error from http://127.0.0.1:8000/inspector/console/resources/console-messages.html
 CONSOLE MESSAGE: iframe is loaded in iframe http://127.0.0.1:8000/inspector/console/resources/embedded-same-origin.html
-CONSOLE MESSAGE: iframe 3 is loaded in http://127.0.0.1:8000/inspector/console/message-from-iframe.html
+CONSOLE MESSAGE: iframe is loaded in http://127.0.0.1:8000/inspector/console/message-from-iframe.html
 CONSOLE MESSAGE: Hello from http://127.0.0.1:8000/inspector/console/resources/console-messages.html
 CONSOLE MESSAGE: Warning from http://127.0.0.1:8000/inspector/console/resources/console-messages.html
 CONSOLE MESSAGE: Error from http://127.0.0.1:8000/inspector/console/resources/console-messages.html
 CONSOLE MESSAGE: iframe is loaded in http://localhost:8000/inspector/console/resources/embedded-cross-origin.html
-CONSOLE MESSAGE: iframe 4 is loaded in http://127.0.0.1:8000/inspector/console/message-from-iframe.html
+CONSOLE MESSAGE: iframe is loaded in http://127.0.0.1:8000/inspector/console/message-from-iframe.html
 
 == Running test suite: MessageFromIFrame
 -- Running test case: MessageFromIFrame.SameOriginIFrame
 Got message: Hello from http://127.0.0.1:8000/inspector/console/resources/console-messages.html
 Got message: Warning from http://127.0.0.1:8000/inspector/console/resources/console-messages.html
 Got message: Error from http://127.0.0.1:8000/inspector/console/resources/console-messages.html
-Got message: iframe 1 is loaded in http://127.0.0.1:8000/inspector/console/message-from-iframe.html
+Got message: iframe is loaded in http://127.0.0.1:8000/inspector/console/message-from-iframe.html
 
 -- Running test case: MessageFromIFrame.CrossOriginIFrame
 Got message: Hello from http://localhost:8000/inspector/console/resources/console-messages.html
 Got message: Warning from http://localhost:8000/inspector/console/resources/console-messages.html
 Got message: Error from http://localhost:8000/inspector/console/resources/console-messages.html
-Got message: iframe 2 is loaded in http://127.0.0.1:8000/inspector/console/message-from-iframe.html
+Got message: iframe is loaded in http://127.0.0.1:8000/inspector/console/message-from-iframe.html
 
 -- Running test case: MessageFromIFrame.GrandChildSameOriginIFrameInSameOrigin
 Got message: Hello from http://127.0.0.1:8000/inspector/console/resources/console-messages.html
 Got message: Warning from http://127.0.0.1:8000/inspector/console/resources/console-messages.html
 Got message: Error from http://127.0.0.1:8000/inspector/console/resources/console-messages.html
 Got message: iframe is loaded in iframe http://127.0.0.1:8000/inspector/console/resources/embedded-same-origin.html
-Got message: iframe 3 is loaded in http://127.0.0.1:8000/inspector/console/message-from-iframe.html
+Got message: iframe is loaded in http://127.0.0.1:8000/inspector/console/message-from-iframe.html
 
 -- Running test case: MessageFromIFrame.GrandChildSameOriginIFrameInCrossOrigin
 Got message: Hello from http://127.0.0.1:8000/inspector/console/resources/console-messages.html
 Got message: Warning from http://127.0.0.1:8000/inspector/console/resources/console-messages.html
 Got message: Error from http://127.0.0.1:8000/inspector/console/resources/console-messages.html
 Got message: iframe is loaded in http://localhost:8000/inspector/console/resources/embedded-cross-origin.html
-Got message: iframe 4 is loaded in http://127.0.0.1:8000/inspector/console/message-from-iframe.html
+Got message: iframe is loaded in http://127.0.0.1:8000/inspector/console/message-from-iframe.html
 

@@ -29,6 +29,7 @@
 #include <WebCore/Element.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/ScrollTypes.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
@@ -42,31 +43,40 @@ enum class CandidateExaminationResult {
     Exclude, Select, Descend, Skip
 };
 
-class ScrollAnchoringController {
+class ScrollAnchoringController : public CanMakeCheckedPtr<ScrollAnchoringController> {
     WTF_MAKE_TZONE_ALLOCATED(ScrollAnchoringController);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScrollAnchoringController);
 public:
     explicit ScrollAnchoringController(ScrollableArea&);
     ~ScrollAnchoringController();
-    void invalidateAnchorElement();
+
     void adjustScrollPositionForAnchoring();
-    void chooseAnchorElement(Document&);
-    CandidateExaminationResult examineAnchorCandidate(Element&);
+
+    void invalidateAnchorElement();
     void updateAnchorElement();
+
     void notifyChildHadSuppressingStyleChange();
     bool isInScrollAnchoringAncestorChain(const RenderObject&);
 
+    bool hasAnchorElement() const { return !!m_anchorElement; }
+
+    CandidateExaminationResult examineAnchorCandidate(Element&);
     Element* anchorElement() const { return m_anchorElement.get(); }
 
-
 private:
+    void chooseAnchorElement(Document&);
+
     Element* findAnchorElementRecursive(Element*);
     bool didFindPriorityCandidate(Document&);
+
     FloatPoint computeOffsetFromOwningScroller(RenderObject&);
+
     LocalFrameView& frameView();
 
     CheckedRef<ScrollableArea> m_owningScrollableArea;
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_anchorElement;
     FloatPoint m_lastOffsetForAnchorElement;
+
     bool m_midUpdatingScrollPositionForAnchorElement { false };
     bool m_isQueuedForScrollPositionUpdate { false };
     bool m_shouldSuppressScrollPositionUpdate { false };

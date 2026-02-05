@@ -28,6 +28,7 @@
 
 #import "APIPageConfiguration.h"
 #import "CSPExtensionUtilities.h"
+#import "DefaultWebBrowserChecks.h"
 #import "PlatformWritingToolsUtilities.h"
 #import "WKDataDetectorTypesInternal.h"
 #import "WKPreferencesInternal.h"
@@ -357,7 +358,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (WKProcessPool *)processPool
 {
-    return wrapper(self._protectedPageConfiguration->protectedProcessPool().get());
+    return wrapper(protect(self._protectedPageConfiguration->processPool()).get());
 }
 
 - (void)setProcessPool:(WKProcessPool *)processPool
@@ -365,9 +366,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     self._protectedPageConfiguration->setProcessPool(processPool ? processPool->_processPool.get() : nullptr);
 }
 
+- (Ref<WebKit::WebPreferences>)_webPreferences
+{
+    return self._protectedPageConfiguration->preferences();
+}
+
 - (WKPreferences *)preferences
 {
-    return wrapper(self._protectedPageConfiguration->protectedPreferences().get());
+    return wrapper(self._webPreferences.get());
 }
 
 - (void)setPreferences:(WKPreferences *)preferences
@@ -377,7 +383,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (WKUserContentController *)userContentController
 {
-    return wrapper(self._protectedPageConfiguration->protectedUserContentController().get());
+    return wrapper(protect(self._protectedPageConfiguration->userContentController()).get());
 }
 
 - (void)setUserContentController:(WKUserContentController *)userContentController
@@ -404,7 +410,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (WKWebExtensionController *)_strongWebExtensionController
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    return wrapper(self._protectedPageConfiguration->protectedWebExtensionController().get());
+    return wrapper(protect(self._protectedPageConfiguration->webExtensionController()).get());
 #else
     return nil;
 #endif
@@ -413,7 +419,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (WKWebExtensionController *)_weakWebExtensionController
 {
 #if ENABLE(WK_WEB_EXTENSIONS)
-    return wrapper(self._protectedPageConfiguration->protectedWeakWebExtensionController().get());
+    return wrapper(protect(self._protectedPageConfiguration->weakWebExtensionController()).get());
 #else
     return nil;
 #endif
@@ -470,7 +476,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (WKWebsiteDataStore *)websiteDataStore
 {
-    return wrapper(self._protectedPageConfiguration->protectedWebsiteDataStore().get());
+    return wrapper(protect(self._protectedPageConfiguration->websiteDataStore()).get());
 }
 
 - (WKAudiovisualMediaTypes)mediaTypesRequiringUserActionForPlayback
@@ -520,7 +526,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (WKWebpagePreferences *)defaultWebpagePreferences
 {
-    return wrapper(self._protectedPageConfiguration->protectedDefaultWebsitePolicies().get());
+    return wrapper(protect(self._protectedPageConfiguration->defaultWebsitePolicies()).get());
 }
 
 - (void)setDefaultWebpagePreferences:(WKWebpagePreferences *)defaultWebpagePreferences
@@ -554,7 +560,7 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (_WKVisitedLinkStore *)_visitedLinkStore
 {
-    return wrapper(self._protectedPageConfiguration->protectedVisitedLinkStore().get());
+    return wrapper(protect(self._protectedPageConfiguration->visitedLinkStore()).get());
 }
 
 - (void)_setVisitedLinkStore:(_WKVisitedLinkStore *)visitedLinkStore
@@ -724,12 +730,12 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (BOOL)_respectsImageOrientation
 {
-    return Ref { *self.preferences->_preferences }->shouldRespectImageOrientation();
+    return self._webPreferences->shouldRespectImageOrientation();
 }
 
 - (void)_setRespectsImageOrientation:(BOOL)respectsImageOrientation
 {
-    Ref { *self.preferences->_preferences }->setShouldRespectImageOrientation(respectsImageOrientation);
+    self._webPreferences->setShouldRespectImageOrientation(respectsImageOrientation);
 }
 
 - (BOOL)_printsBackgrounds
@@ -1069,7 +1075,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (WKWebsiteDataStore *)_websiteDataStoreIfExists
 {
-    return wrapper(self._protectedPageConfiguration->protectedWebsiteDataStoreIfExists().get());
+    return wrapper(protect(self._protectedPageConfiguration->websiteDataStoreIfExists()).get());
 }
 
 - (NSArray<NSString *> *)_corsDisablingPatterns
@@ -1228,7 +1234,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (_WKApplicationManifest *)_applicationManifest
 {
-    return wrapper(self._protectedPageConfiguration->protectedApplicationManifest().get());
+    return wrapper(protect(self._protectedPageConfiguration->applicationManifest()).get());
 }
 
 - (void)_setApplicationManifest:(_WKApplicationManifest *)applicationManifest
@@ -1567,6 +1573,39 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 #else
     return NO;
 #endif
+}
+
+- (void)_setSystemTextExtractionEnabled:(BOOL)enabled
+{
+#if ENABLE(SYSTEM_TEXT_EXTRACTION)
+    self._webPreferences->setSystemTextExtractionEnabled(enabled);
+#endif
+}
+
+- (BOOL)_systemTextExtractionEnabled
+{
+#if ENABLE(SYSTEM_TEXT_EXTRACTION)
+    return self._webPreferences->systemTextExtractionEnabled();
+#else
+    return NO;
+#endif
+}
+
+
+- (void)_setBackgroundTextExtractionEnabled:(BOOL)enabled
+{
+#if PLATFORM(IOS_FAMILY)
+    if (enabled && !WebKit::isFullWebBrowserOrRunningTest()) {
+        [NSException raise:NSInvalidArgumentException format:@"%s is only available for web browsers", __PRETTY_FUNCTION__];
+        return;
+    }
+#endif
+    _pageConfiguration->setBackgroundTextExtractionEnabled(enabled);
+}
+
+- (BOOL)_backgroundTextExtractionEnabled
+{
+    return _pageConfiguration->backgroundTextExtractionEnabled();
 }
 
 #if PLATFORM(VISION)

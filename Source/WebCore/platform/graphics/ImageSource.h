@@ -42,6 +42,9 @@ public:
     virtual EncodedDataStatus dataChanged(FragmentedSharedBuffer*, bool) { RELEASE_ASSERT_NOT_REACHED(); return EncodedDataStatus::Unknown; }
     virtual void destroyDecodedData(bool) { RELEASE_ASSERT_NOT_REACHED(); }
 
+    virtual bool canReplaceData() const { return false; }
+    virtual void dataReplaced(FragmentedSharedBuffer*) { RELEASE_ASSERT_NOT_REACHED(); }
+
     // Animation
     virtual void startAnimation() { }
     virtual void stopAnimation() { }

@@ -166,7 +166,7 @@ static std::optional<AuthenticationExtensionsClientOutputs> parseAuthenticatorDa
                 if (first) {
                     if (!outputs.prf)
                         outputs.prf = AuthenticationExtensionsClientOutputs::PRFOutputs { };
-                    outputs.prf->results = AuthenticationExtensionsClientOutputs::PRFValues { first, second };
+                    outputs.prf->results = AuthenticationExtensionsClientOutputs::PRFValues { first.releaseNonNull(), WTF::move(second) };
                 }
             }
         }

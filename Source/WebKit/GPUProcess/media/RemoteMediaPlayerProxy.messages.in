@@ -132,6 +132,7 @@ messages -> RemoteMediaPlayerProxy {
     ColorSpace() -> (WebCore::DestinationColorSpace colorSpace) Synchronous
 #endif
     VideoFrameForCurrentTimeIfChanged() -> (struct std::optional<WebKit::RemoteVideoFrameProxyProperties> videoFrame, bool changed) Synchronous
+    BitmapImageForCurrentTime() -> (std::optional<WebCore::ShareableBitmapHandle> image)
 
     PlayAtHostTime(MonotonicTime time)
     PauseAtHostTime(MonotonicTime time)

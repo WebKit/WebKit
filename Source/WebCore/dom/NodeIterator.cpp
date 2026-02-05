@@ -80,7 +80,7 @@ inline NodeIterator::NodeIterator(Node& rootNode, unsigned whatToShow, RefPtr<No
     : NodeIteratorBase(rootNode, whatToShow, WTF::move(filter))
     , m_referenceNode(rootNode, true)
 {
-    root().protectedDocument()->attachNodeIterator(*this);
+    protect(root().document())->attachNodeIterator(*this);
 }
 
 Ref<NodeIterator> NodeIterator::create(Node& rootNode, unsigned whatToShow, RefPtr<NodeFilter>&& filter)

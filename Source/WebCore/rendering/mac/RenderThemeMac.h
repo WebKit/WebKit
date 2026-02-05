@@ -100,9 +100,9 @@ public:
     bool usesTestModeFocusRingColor() const;
 
     WEBCORE_EXPORT static IconAndSize iconForAttachment(const String& fileName, const String& attachmentType, const String& title);
-
-private:
-    RenderThemeMac();
+    WEBCORE_EXPORT Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const final;
+    Seconds switchAnimationVisuallyOnDuration() const final { return 300_ms; }
+    bool hasSwitchHapticFeedback(SwitchTrigger trigger) const final { return trigger == SwitchTrigger::PointerTracking; }
 
     bool canPaint(const PaintInfo&, const Settings&, StyleAppearance) const final;
     bool canCreateControlPartForRenderer(const RenderElement&) const final;
@@ -131,9 +131,6 @@ private:
 
     void adjustSearchFieldResultsButtonStyle(RenderStyle&, const Element*) const final;
 
-    Seconds switchAnimationVisuallyOnDuration() const final { return 300_ms; }
-    bool hasSwitchHapticFeedback(SwitchTrigger trigger) const final { return trigger == SwitchTrigger::PointerTracking; }
-
     void adjustListButtonStyle(RenderStyle&, const Element*) const final;
 
 #if ENABLE(SERVICE_CONTROLS)
@@ -145,23 +142,23 @@ private:
     bool paintAttachment(const RenderElement&, const PaintInfo&, const IntRect&) final;
 #endif
 
-private:
     String fileListNameForWidth(const FileList*, const FontCascade&, int width, bool multipleFilesAllowed) const final;
 
-    Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const final;
-
     bool searchFieldShouldAppearAsTextField(const RenderStyle&, const Settings&) const final;
+
+#if ENABLE(SERVICE_CONTROLS)
+    IntSize imageControlsButtonSize() const final;
+    bool isImageControlsButton(const Element&) const final;
+#endif
+
+private:
+    RenderThemeMac();
 
     std::span<const IntSize, 4> menuListSizes() const;
     std::span<const IntSize, 4> searchFieldSizes() const;
     std::span<const IntSize, 4> cancelButtonSizes() const;
     std::span<const IntSize, 4> resultsButtonSizes() const;
     void setSearchFieldSize(RenderStyle&) const;
-
-#if ENABLE(SERVICE_CONTROLS)
-    IntSize imageControlsButtonSize() const final;
-    bool isImageControlsButton(const Element&) const final;
-#endif
 
     mutable RetainPtr<NSPopUpButtonCell> m_popupButton;
 

@@ -34,7 +34,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mimalloc-logo.svg"/></td>
   <td id="projectalign">
-   <div id="projectname">mi-malloc<span id="projectnumber">&#160;3.2</span>
+   <div id="projectname">mi-malloc<span id="projectnumber">&#160;v1.9,  v2.2,  v3.2</span>
    </div>
   </td>
     <td>        <div id="MSearchBox" class="MSearchBoxInactive">
@@ -109,6 +109,9 @@ $(function(){initNavTree('group__aligned.html',''); initResizable(true); });
   <div class="headertitle"><div class="title">Aligned Allocation</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Allocating aligned memory blocks.  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -132,7 +135,8 @@ Functions</h2></td></tr>
 <tr class="separator:gad06dcf2bb8faadb2c8ea61ee5d24bbf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>Allocating aligned memory blocks. Note that <code>alignment</code> always follows <code>size</code> for consistency with the unaligned allocation API, but unfortunately this differs from <code>posix_memalign</code> and <code>aligned_alloc</code> in the C library. </p>
+<p>Allocating aligned memory blocks. </p>
+<p>Note that <code>alignment</code> always follows <code>size</code> for consistency with the unaligned allocation API, but unfortunately this differs from <code>posix_memalign</code> and <code>aligned_alloc</code> in the C library. </p>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="ga424ef386fb1f9f8e0a86ab53f16eaaf1" name="ga424ef386fb1f9f8e0a86ab53f16eaaf1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga424ef386fb1f9f8e0a86ab53f16eaaf1">&#9670;&#160;</a></span>mi_calloc_aligned()</h2>

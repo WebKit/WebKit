@@ -37,6 +37,7 @@
 #include <WebCore/EventTarget.h>
 #include <WebCore/EventTargetInterfaces.h>
 #include <WebCore/NotificationDirection.h>
+#include <WebCore/NotificationOptions.h>
 #include <WebCore/NotificationPayload.h>
 #include <WebCore/NotificationPermission.h>
 #include <WebCore/NotificationResources.h>
@@ -62,21 +63,8 @@ class Notification final : public RefCounted<Notification>, public ActiveDOMObje
 public:
     using Permission = NotificationPermission;
     using Direction = NotificationDirection;
+    using Options = NotificationOptions;
 
-    struct Options {
-        Direction dir;
-        String lang;
-        String body;
-        String tag;
-        String icon;
-        JSC::JSValue data;
-        RefPtr<SerializedScriptValue> serializedData;
-        RefPtr<JSON::Value> jsonData;
-        std::optional<bool> silent;
-#if ENABLE(DECLARATIVE_WEB_PUSH)
-        String navigate;
-#endif
-    };
     // For JS constructor only.
     static ExceptionOr<Ref<Notification>> create(ScriptExecutionContext&, String&& title, Options&&);
 

@@ -10,7 +10,7 @@
 #include "include/core/SkStream.h"
 #include "include/core/SkTextBlob.h"
 #include "include/core/SkTypeface.h"
-#include "include/effects/SkGradientShader.h"
+#include "include/effects/SkGradient.h"
 #include "modules/skparagraph/include/Paragraph.h"
 #include "modules/skparagraph/include/TypefaceFontProvider.h"
 #include "modules/skparagraph/src/ParagraphBuilderImpl.h"
@@ -71,9 +71,9 @@ private:
 };
 
 sk_sp<SkShader> setgrad(const SkRect& r, SkColor c0, SkColor c1) {
-    SkColor colors[] = {c0, c1};
+    SkColor4f colors[] = {SkColor4f::FromColor(c0), SkColor4f::FromColor(c1)};
     SkPoint pts[] = {{r.fLeft, r.fTop}, {r.fRight, r.fTop}};
-    return SkGradientShader::MakeLinear(pts, colors, nullptr, 2, SkTileMode::kClamp);
+    return SkShaders::LinearGradient(pts, {{colors, {}, SkTileMode::kClamp}, {}});
 }
 /*
 void writeHtml(const char* name, Paragraph* paragraph) {

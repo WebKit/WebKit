@@ -381,8 +381,7 @@ void LocalAuthenticator::makeCredential()
     auto excludeCredentialIds = produceHashSet(creationOptions.excludeCredentials);
     if (!excludeCredentialIds.isEmpty()) {
         if (notFound != m_existingCredentials.findIf([&excludeCredentialIds] (auto& credential) {
-            RefPtr rawId = credential->rawId();
-            ASSERT(rawId);
+            Ref rawId = credential->rawId();
             return excludeCredentialIds.contains(base64EncodeToString(rawId->span()));
         })) {
             receiveException({ ExceptionCode::InvalidStateError, "At least one credential matches an entry of the excludeCredentials list in the platform attached authenticator."_s }, WebAuthenticationStatus::LAExcludeCredentialsMatched);
@@ -473,7 +472,7 @@ std::optional<WebCore::ExceptionData> LocalAuthenticator::processLargeBlobExtens
 
     // Step 4.
     if (largeBlobInput->write) {
-        auto nsCredentialId = toNSData(response->rawId());
+        auto nsCredentialId = toNSData(&response->rawId());
         BOOL useAlternateKeychainAttribute = shouldUseAlternateKeychainAttribute();
         auto fetchQuery = adoptNS([[NSMutableDictionary alloc] init]);
         [fetchQuery setDictionary:@{
@@ -728,7 +727,7 @@ void LocalAuthenticator::getAssertion()
     auto assertionResponses = WTF::compactMap(m_existingCredentials, [&](auto& credential) -> RefPtr<WebCore::AuthenticatorAssertionResponse> {
         if (allowCredentialIds.isEmpty())
             return credential.copyRef();
-        RefPtr rawId = credential->rawId();
+        Ref rawId = credential->rawId();
         if (allowCredentialIds.contains(base64EncodeToString(rawId->span())))
             return credential.copyRef();
         return nullptr;
@@ -770,7 +769,7 @@ void LocalAuthenticator::continueGetAssertionAfterResponseSelected(Ref<WebCore::
     auto callback = [weakThis = WeakPtr { *this }, response = WTF::move(response)] (LocalConnection::UserVerification verification) mutable {
         ASSERT(RunLoop::isMain());
         if (RefPtr protectedThis = weakThis.get())
-            protectedThis->continueGetAssertionAfterUserVerification(WTF::move(response), verification, response->protectedLAContext().get());
+            protectedThis->continueGetAssertionAfterUserVerification(WTF::move(response), verification, protect(response->laContext()).get());
     };
 
     m_connection->verifyUser(accessControlRef.get(), context.get(), WTF::move(callback));
@@ -792,7 +791,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
 
     // Step 11.
     RetainPtr<CFDataRef> signature;
-    auto nsCredentialId = toNSData(response->rawId());
+    auto nsCredentialId = toNSData(&response->rawId());
     {
         BOOL useAlternateKeychainAttribute = shouldUseAlternateKeychainAttribute();
         RetainPtr<NSMutableDictionary> query = adoptNS([@{
@@ -928,18 +927,18 @@ void LocalAuthenticator::deleteDuplicateCredential() const
         auto query = adoptNS([[NSMutableDictionary alloc] init]);
         [query setDictionary:@{
             (id)kSecClass: (id)kSecClassKey,
-            (id)kSecAttrAlias: toNSData(credential->rawId()).get(),
+            (id)kSecAttrAlias: toNSData(&credential->rawId()).get(),
             (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
             (id)kSecUseDataProtectionKeychain: @YES
         }];
 
         CFStringRef credentialIdKey = useAlternateKeychainAttribute ? kSecAttrAlias : kSecAttrApplicationLabel;
-        [query setObject:toNSData(credential->rawId()).get() forKey:(id)credentialIdKey];
+        [query setObject:toNSData(&credential->rawId()).get() forKey:(id)credentialIdKey];
 
         OSStatus status = SecItemDelete((__bridge CFDictionaryRef)query.get());
         if (useAlternateKeychainAttribute && status == errSecItemNotFound) {
             [query removeObjectForKey:(id)kSecAttrAlias];
-            [query setObject:toNSData(credential->rawId()).get() forKey:(id)kSecAttrApplicationLabel];
+            [query setObject:toNSData(&credential->rawId()).get() forKey:(id)kSecAttrApplicationLabel];
             status = SecItemDelete((__bridge CFDictionaryRef)query.get());
         }
 

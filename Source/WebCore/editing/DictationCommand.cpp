@@ -114,7 +114,7 @@ void DictationCommand::doApply()
 {
     DictationCommandLineOperation operation(*this);
     forEachLineInString(m_textToInsert, operation);
-    postTextStateChangeNotification(AXTextEditTypeDictation, m_textToInsert);
+    postTextStateChangeNotification(AXTextEditType::Dictation, m_textToInsert);
 }
 
 void DictationCommand::insertTextRunWithoutNewlines(size_t lineStart, size_t lineLength)

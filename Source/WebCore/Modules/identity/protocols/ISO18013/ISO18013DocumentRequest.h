@@ -25,6 +25,9 @@
 
 #pragma once
 
+#if ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
+#include <WebCore/ISO18013DocumentRequestInfo.h>
+#endif // ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
 #include <WebCore/ISO18013ElementInfo.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -38,6 +41,9 @@ using ISO18013ElementNamespacesVector = Vector<std::pair<String, ISO18013Element
 struct ISO18013DocumentRequest {
     String documentType;
     ISO18013ElementNamespacesVector namespaces;
+#if ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
+    std::optional<ISO18013DocumentRequestInfo> requestInfo;
+#endif // ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
 };
 
 using ISO18013DocumentRequests = Vector<ISO18013DocumentRequest>;

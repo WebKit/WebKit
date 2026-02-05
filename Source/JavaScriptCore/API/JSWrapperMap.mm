@@ -187,7 +187,7 @@ inline void putNonEnumerable(JSContext *context, JSValue *base, NSString *proper
     JSC::JSGlobalObject* globalObject = toJS([context JSGlobalContextRef]);
     JSC::VM& vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSC::JSObject* baseObject = JSC::asObject(toJS(globalObject, [base JSValueRef]));
     auto name = OpaqueJSString::tryCreate(propertyName);

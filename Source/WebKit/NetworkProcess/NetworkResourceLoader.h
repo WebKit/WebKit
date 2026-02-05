@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "NetworkResourceLoadIdentifier.h"
 #include "NetworkResourceLoadParameters.h"
 #include "PrivateRelayed.h"
+#include "ServiceWorkerTimingInfo.h"
 #include <WebCore/ContentFilterClient.h>
 #include <WebCore/ContentFilterUnblockHandler.h>
 #include <WebCore/ContentSecurityPolicyClient.h>
@@ -117,7 +118,6 @@ public:
     const WebCore::ResourceResponse& response() const { return m_response; }
 
     NetworkConnectionToWebProcess& connectionToWebProcess() const { return m_connection; }
-    Ref<NetworkConnectionToWebProcess> protectedConnectionToWebProcess() const;
     PAL::SessionID sessionID() const { return m_connection->sessionID(); }
     WebCore::ResourceLoaderIdentifier coreIdentifier() const { return *m_parameters.identifier; }
     WebCore::FrameIdentifier frameID() const { return m_parameters.webFrameID; }
@@ -169,7 +169,11 @@ public:
     void serviceWorkerDidNotHandle(ServiceWorkerFetchTask*);
     void setServiceWorkerRegistration(WebCore::SWServerRegistration& serviceWorkerRegistration) { m_serviceWorkerRegistration = serviceWorkerRegistration; }
     void setWorkerStart(MonotonicTime);
-    MonotonicTime workerStart() const { return m_workerStart; }
+
+    void setWorkerRouterEvaluationStart(MonotonicTime);
+    void setWorkerCacheLookupStart(MonotonicTime);
+    void setWorkerMatchedRouterSource(WebCore::RouterSourceEnum);
+    void setWorkerFinalRouterSource(WebCore::RouterSourceEnum);
 
     std::optional<WebCore::ResourceError> doCrossOriginOpenerHandlingOfResponse(const WebCore::ResourceResponse&);
     void sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(const WebCore::ResourceResponse&, PrivateRelayed, bool needsContinueDidReceiveResponseMessage);
@@ -202,9 +206,11 @@ private:
     WebCore::ResourceError contentFilterDidBlock(WebCore::ContentFilterUnblockHandler&&, String&& unblockRequestDeniedScript) final;
     void cancelMainResourceLoadForContentFilter(const WebCore::ResourceError&) final;
     void handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, WebCore::SubstituteData&&) final;
-    CheckedPtr<WebCore::ContentFilter> checkedContentFilter();
+#if HAVE(WEBCONTENTRESTRICTIONS)
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
     String webContentRestrictionsConfigurationPath() const final;
+#endif
+    URL mainDocumentURL() const final { return m_parameters.mainDocumentURL; }
 #endif
 #endif
 
@@ -338,14 +344,15 @@ private:
     std::optional<NetworkActivityTracker> m_networkActivityTracker;
     RefPtr<ServiceWorkerFetchTask> m_serviceWorkerFetchTask;
     WeakPtr<WebCore::SWServerRegistration> m_serviceWorkerRegistration;
-    MonotonicTime m_workerStart;
+    std::optional<ServiceWorkerTimingInfo> m_serviceWorkerTimingInfo;
+
     NetworkResourceLoadIdentifier m_resourceLoadID;
     WebCore::ResourceResponse m_redirectResponse;
     URL m_firstResponseURL; // First URL in response's URL list (https://fetch.spec.whatwg.org/#concept-response-url-list).
     std::optional<WebCore::CrossOriginOpenerPolicyEnforcementResult> m_currentCoopEnforcementResult;
 
 #if ENABLE(CONTENT_FILTERING)
-    std::unique_ptr<WebCore::ContentFilter> m_contentFilter;
+    RefPtr<WebCore::ContentFilter> m_contentFilter;
     WebCore::ContentFilterUnblockHandler m_unblockHandler;
     String m_unblockRequestDeniedScript;
 #endif

@@ -403,3 +403,26 @@ if (!window.InspectorFrontendHost) {
 
     WI.dontLocalizeUserInterface = true;
 }
+
+function getOrInsert(key, value) {
+    let existing = this.get(key);
+    if (existing !== undefined)
+        return existing;
+
+    this.set(key, value);
+    return value;
+}
+Map.prototype.getOrInsert ??= getOrInsert;
+WeakMap.prototype.getOrInsert ??= getOrInsert;
+
+function getOrInsertComputed(key, callback) {
+    let existing = this.get(key);
+    if (existing !== undefined)
+        return existing;
+
+    let value = callback();
+    this.set(key, value);
+    return value;
+}
+Map.prototype.getOrInsertComputed ??= getOrInsertComputed;
+WeakMap.prototype.getOrInsertComputed ??= getOrInsertComputed;

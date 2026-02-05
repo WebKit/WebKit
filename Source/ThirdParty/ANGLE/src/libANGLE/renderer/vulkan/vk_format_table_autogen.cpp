@@ -319,19 +319,71 @@ void Format::initialize(Renderer *renderer, const angle::Format &angleFormat)
             break;
 
         case angle::FormatID::ASTC_3x3x3_UNORM_BLOCK:
-            // This format is not implemented in Vulkan.
+            mIntendedGLFormat = GL_COMPRESSED_RGBA_ASTC_3x3x3_OES;
+            {
+                static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::ASTC_3x3x3_UNORM_BLOCK, nullptr},
+#ifdef ANGLE_HAS_ASTCENC
+                    {angle::FormatID::R8G8B8A8_UNORM, nullptr},
+#endif
+                };
+                initImageFallback(renderer, kInfo, ArraySize(kInfo));
+            }
+            mActualBufferFormatID         = angle::FormatID::ASTC_3x3x3_UNORM_BLOCK;
+            mVkBufferFormatIsPacked       = false;
+            mVertexLoadFunction           = nullptr;
+            mVertexLoadRequiresConversion = false;
             break;
 
         case angle::FormatID::ASTC_3x3x3_UNORM_SRGB_BLOCK:
-            // This format is not implemented in Vulkan.
+            mIntendedGLFormat = GL_COMPRESSED_SRGB8_ALPHA8_ASTC_3x3x3_OES;
+            {
+                static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::ASTC_3x3x3_UNORM_SRGB_BLOCK, nullptr},
+#ifdef ANGLE_HAS_ASTCENC
+                    {angle::FormatID::R8G8B8A8_UNORM_SRGB, nullptr},
+#endif
+                };
+                initImageFallback(renderer, kInfo, ArraySize(kInfo));
+            }
+            mActualBufferFormatID         = angle::FormatID::ASTC_3x3x3_UNORM_SRGB_BLOCK;
+            mVkBufferFormatIsPacked       = false;
+            mVertexLoadFunction           = nullptr;
+            mVertexLoadRequiresConversion = false;
             break;
 
         case angle::FormatID::ASTC_4x3x3_UNORM_BLOCK:
-            // This format is not implemented in Vulkan.
+            mIntendedGLFormat = GL_COMPRESSED_RGBA_ASTC_4x3x3_OES;
+            {
+                static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::ASTC_4x3x3_UNORM_BLOCK, nullptr},
+#ifdef ANGLE_HAS_ASTCENC
+                    {angle::FormatID::R8G8B8A8_UNORM, nullptr},
+#endif
+                };
+                initImageFallback(renderer, kInfo, ArraySize(kInfo));
+            }
+            mActualBufferFormatID         = angle::FormatID::ASTC_4x3x3_UNORM_BLOCK;
+            mVkBufferFormatIsPacked       = false;
+            mVertexLoadFunction           = nullptr;
+            mVertexLoadRequiresConversion = false;
             break;
 
         case angle::FormatID::ASTC_4x3x3_UNORM_SRGB_BLOCK:
-            // This format is not implemented in Vulkan.
+            mIntendedGLFormat = GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x3x3_OES;
+            {
+                static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::ASTC_4x3x3_UNORM_SRGB_BLOCK, nullptr},
+#ifdef ANGLE_HAS_ASTCENC
+                    {angle::FormatID::R8G8B8A8_UNORM_SRGB, nullptr},
+#endif
+                };
+                initImageFallback(renderer, kInfo, ArraySize(kInfo));
+            }
+            mActualBufferFormatID         = angle::FormatID::ASTC_4x3x3_UNORM_SRGB_BLOCK;
+            mVkBufferFormatIsPacked       = false;
+            mVertexLoadFunction           = nullptr;
+            mVertexLoadRequiresConversion = false;
             break;
 
         case angle::FormatID::ASTC_4x4_SRGB_BLOCK:
@@ -369,19 +421,71 @@ void Format::initialize(Renderer *renderer, const angle::Format &angleFormat)
             break;
 
         case angle::FormatID::ASTC_4x4x3_UNORM_BLOCK:
-            // This format is not implemented in Vulkan.
+            mIntendedGLFormat = GL_COMPRESSED_RGBA_ASTC_4x4x3_OES;
+            {
+                static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::ASTC_4x4x3_UNORM_BLOCK, nullptr},
+#ifdef ANGLE_HAS_ASTCENC
+                    {angle::FormatID::R8G8B8A8_UNORM, nullptr},
+#endif
+                };
+                initImageFallback(renderer, kInfo, ArraySize(kInfo));
+            }
+            mActualBufferFormatID         = angle::FormatID::ASTC_4x4x3_UNORM_BLOCK;
+            mVkBufferFormatIsPacked       = false;
+            mVertexLoadFunction           = nullptr;
+            mVertexLoadRequiresConversion = false;
             break;
 
         case angle::FormatID::ASTC_4x4x3_UNORM_SRGB_BLOCK:
-            // This format is not implemented in Vulkan.
+            mIntendedGLFormat = GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4x3_OES;
+            {
+                static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::ASTC_4x4x3_UNORM_SRGB_BLOCK, nullptr},
+#ifdef ANGLE_HAS_ASTCENC
+                    {angle::FormatID::R8G8B8A8_UNORM_SRGB, nullptr},
+#endif
+                };
+                initImageFallback(renderer, kInfo, ArraySize(kInfo));
+            }
+            mActualBufferFormatID         = angle::FormatID::ASTC_4x4x3_UNORM_SRGB_BLOCK;
+            mVkBufferFormatIsPacked       = false;
+            mVertexLoadFunction           = nullptr;
+            mVertexLoadRequiresConversion = false;
             break;
 
         case angle::FormatID::ASTC_4x4x4_UNORM_BLOCK:
-            // This format is not implemented in Vulkan.
+            mIntendedGLFormat = GL_COMPRESSED_RGBA_ASTC_4x4x4_OES;
+            {
+                static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::ASTC_4x4x4_UNORM_BLOCK, nullptr},
+#ifdef ANGLE_HAS_ASTCENC
+                    {angle::FormatID::R8G8B8A8_UNORM, nullptr},
+#endif
+                };
+                initImageFallback(renderer, kInfo, ArraySize(kInfo));
+            }
+            mActualBufferFormatID         = angle::FormatID::ASTC_4x4x4_UNORM_BLOCK;
+            mVkBufferFormatIsPacked       = false;
+            mVertexLoadFunction           = nullptr;
+            mVertexLoadRequiresConversion = false;
             break;
 
         case angle::FormatID::ASTC_4x4x4_UNORM_SRGB_BLOCK:
-            // This format is not implemented in Vulkan.
+            mIntendedGLFormat = GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4x4_OES;
+            {
+                static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::ASTC_4x4x4_UNORM_SRGB_BLOCK, nullptr},
+#ifdef ANGLE_HAS_ASTCENC
+                    {angle::FormatID::R8G8B8A8_UNORM_SRGB, nullptr},
+#endif
+                };
+                initImageFallback(renderer, kInfo, ArraySize(kInfo));
+            }
+            mActualBufferFormatID         = angle::FormatID::ASTC_4x4x4_UNORM_SRGB_BLOCK;
+            mVkBufferFormatIsPacked       = false;
+            mVertexLoadFunction           = nullptr;
+            mVertexLoadRequiresConversion = false;
             break;
 
         case angle::FormatID::ASTC_5x4_SRGB_BLOCK:
@@ -419,11 +523,37 @@ void Format::initialize(Renderer *renderer, const angle::Format &angleFormat)
             break;
 
         case angle::FormatID::ASTC_5x4x4_UNORM_BLOCK:
-            // This format is not implemented in Vulkan.
+            mIntendedGLFormat = GL_COMPRESSED_RGBA_ASTC_5x4x4_OES;
+            {
+                static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::ASTC_5x4x4_UNORM_BLOCK, nullptr},
+#ifdef ANGLE_HAS_ASTCENC
+                    {angle::FormatID::R8G8B8A8_UNORM, nullptr},
+#endif
+                };
+                initImageFallback(renderer, kInfo, ArraySize(kInfo));
+            }
+            mActualBufferFormatID         = angle::FormatID::ASTC_5x4x4_UNORM_BLOCK;
+            mVkBufferFormatIsPacked       = false;
+            mVertexLoadFunction           = nullptr;
+            mVertexLoadRequiresConversion = false;
             break;
 
         case angle::FormatID::ASTC_5x4x4_UNORM_SRGB_BLOCK:
-            // This format is not implemented in Vulkan.
+            mIntendedGLFormat = GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x4x4_OES;
+            {
+                static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::ASTC_5x4x4_UNORM_SRGB_BLOCK, nullptr},
+#ifdef ANGLE_HAS_ASTCENC
+                    {angle::FormatID::R8G8B8A8_UNORM_SRGB, nullptr},
+#endif
+                };
+                initImageFallback(renderer, kInfo, ArraySize(kInfo));
+            }
+            mActualBufferFormatID         = angle::FormatID::ASTC_5x4x4_UNORM_SRGB_BLOCK;
+            mVkBufferFormatIsPacked       = false;
+            mVertexLoadFunction           = nullptr;
+            mVertexLoadRequiresConversion = false;
             break;
 
         case angle::FormatID::ASTC_5x5_SRGB_BLOCK:
@@ -461,19 +591,71 @@ void Format::initialize(Renderer *renderer, const angle::Format &angleFormat)
             break;
 
         case angle::FormatID::ASTC_5x5x4_UNORM_BLOCK:
-            // This format is not implemented in Vulkan.
+            mIntendedGLFormat = GL_COMPRESSED_RGBA_ASTC_5x5x4_OES;
+            {
+                static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::ASTC_5x5x4_UNORM_BLOCK, nullptr},
+#ifdef ANGLE_HAS_ASTCENC
+                    {angle::FormatID::R8G8B8A8_UNORM, nullptr},
+#endif
+                };
+                initImageFallback(renderer, kInfo, ArraySize(kInfo));
+            }
+            mActualBufferFormatID         = angle::FormatID::ASTC_5x5x4_UNORM_BLOCK;
+            mVkBufferFormatIsPacked       = false;
+            mVertexLoadFunction           = nullptr;
+            mVertexLoadRequiresConversion = false;
             break;
 
         case angle::FormatID::ASTC_5x5x4_UNORM_SRGB_BLOCK:
-            // This format is not implemented in Vulkan.
+            mIntendedGLFormat = GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5x4_OES;
+            {
+                static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::ASTC_5x5x4_UNORM_SRGB_BLOCK, nullptr},
+#ifdef ANGLE_HAS_ASTCENC
+                    {angle::FormatID::R8G8B8A8_UNORM_SRGB, nullptr},
+#endif
+                };
+                initImageFallback(renderer, kInfo, ArraySize(kInfo));
+            }
+            mActualBufferFormatID         = angle::FormatID::ASTC_5x5x4_UNORM_SRGB_BLOCK;
+            mVkBufferFormatIsPacked       = false;
+            mVertexLoadFunction           = nullptr;
+            mVertexLoadRequiresConversion = false;
             break;
 
         case angle::FormatID::ASTC_5x5x5_UNORM_BLOCK:
-            // This format is not implemented in Vulkan.
+            mIntendedGLFormat = GL_COMPRESSED_RGBA_ASTC_5x5x5_OES;
+            {
+                static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::ASTC_5x5x5_UNORM_BLOCK, nullptr},
+#ifdef ANGLE_HAS_ASTCENC
+                    {angle::FormatID::R8G8B8A8_UNORM, nullptr},
+#endif
+                };
+                initImageFallback(renderer, kInfo, ArraySize(kInfo));
+            }
+            mActualBufferFormatID         = angle::FormatID::ASTC_5x5x5_UNORM_BLOCK;
+            mVkBufferFormatIsPacked       = false;
+            mVertexLoadFunction           = nullptr;
+            mVertexLoadRequiresConversion = false;
             break;
 
         case angle::FormatID::ASTC_5x5x5_UNORM_SRGB_BLOCK:
-            // This format is not implemented in Vulkan.
+            mIntendedGLFormat = GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5x5_OES;
+            {
+                static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::ASTC_5x5x5_UNORM_SRGB_BLOCK, nullptr},
+#ifdef ANGLE_HAS_ASTCENC
+                    {angle::FormatID::R8G8B8A8_UNORM_SRGB, nullptr},
+#endif
+                };
+                initImageFallback(renderer, kInfo, ArraySize(kInfo));
+            }
+            mActualBufferFormatID         = angle::FormatID::ASTC_5x5x5_UNORM_SRGB_BLOCK;
+            mVkBufferFormatIsPacked       = false;
+            mVertexLoadFunction           = nullptr;
+            mVertexLoadRequiresConversion = false;
             break;
 
         case angle::FormatID::ASTC_6x5_SRGB_BLOCK:
@@ -511,11 +693,37 @@ void Format::initialize(Renderer *renderer, const angle::Format &angleFormat)
             break;
 
         case angle::FormatID::ASTC_6x5x5_UNORM_BLOCK:
-            // This format is not implemented in Vulkan.
+            mIntendedGLFormat = GL_COMPRESSED_RGBA_ASTC_6x5x5_OES;
+            {
+                static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::ASTC_6x5x5_UNORM_BLOCK, nullptr},
+#ifdef ANGLE_HAS_ASTCENC
+                    {angle::FormatID::R8G8B8A8_UNORM, nullptr},
+#endif
+                };
+                initImageFallback(renderer, kInfo, ArraySize(kInfo));
+            }
+            mActualBufferFormatID         = angle::FormatID::ASTC_6x5x5_UNORM_BLOCK;
+            mVkBufferFormatIsPacked       = false;
+            mVertexLoadFunction           = nullptr;
+            mVertexLoadRequiresConversion = false;
             break;
 
         case angle::FormatID::ASTC_6x5x5_UNORM_SRGB_BLOCK:
-            // This format is not implemented in Vulkan.
+            mIntendedGLFormat = GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x5x5_OES;
+            {
+                static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::ASTC_6x5x5_UNORM_SRGB_BLOCK, nullptr},
+#ifdef ANGLE_HAS_ASTCENC
+                    {angle::FormatID::R8G8B8A8_UNORM_SRGB, nullptr},
+#endif
+                };
+                initImageFallback(renderer, kInfo, ArraySize(kInfo));
+            }
+            mActualBufferFormatID         = angle::FormatID::ASTC_6x5x5_UNORM_SRGB_BLOCK;
+            mVkBufferFormatIsPacked       = false;
+            mVertexLoadFunction           = nullptr;
+            mVertexLoadRequiresConversion = false;
             break;
 
         case angle::FormatID::ASTC_6x6_SRGB_BLOCK:
@@ -553,19 +761,71 @@ void Format::initialize(Renderer *renderer, const angle::Format &angleFormat)
             break;
 
         case angle::FormatID::ASTC_6x6x5_UNORM_BLOCK:
-            // This format is not implemented in Vulkan.
+            mIntendedGLFormat = GL_COMPRESSED_RGBA_ASTC_6x6x5_OES;
+            {
+                static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::ASTC_6x6x5_UNORM_BLOCK, nullptr},
+#ifdef ANGLE_HAS_ASTCENC
+                    {angle::FormatID::R8G8B8A8_UNORM, nullptr},
+#endif
+                };
+                initImageFallback(renderer, kInfo, ArraySize(kInfo));
+            }
+            mActualBufferFormatID         = angle::FormatID::ASTC_6x6x5_UNORM_BLOCK;
+            mVkBufferFormatIsPacked       = false;
+            mVertexLoadFunction           = nullptr;
+            mVertexLoadRequiresConversion = false;
             break;
 
         case angle::FormatID::ASTC_6x6x5_UNORM_SRGB_BLOCK:
-            // This format is not implemented in Vulkan.
+            mIntendedGLFormat = GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6x5_OES;
+            {
+                static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::ASTC_6x6x5_UNORM_SRGB_BLOCK, nullptr},
+#ifdef ANGLE_HAS_ASTCENC
+                    {angle::FormatID::R8G8B8A8_UNORM_SRGB, nullptr},
+#endif
+                };
+                initImageFallback(renderer, kInfo, ArraySize(kInfo));
+            }
+            mActualBufferFormatID         = angle::FormatID::ASTC_6x6x5_UNORM_SRGB_BLOCK;
+            mVkBufferFormatIsPacked       = false;
+            mVertexLoadFunction           = nullptr;
+            mVertexLoadRequiresConversion = false;
             break;
 
         case angle::FormatID::ASTC_6x6x6_UNORM_BLOCK:
-            // This format is not implemented in Vulkan.
+            mIntendedGLFormat = GL_COMPRESSED_RGBA_ASTC_6x6x6_OES;
+            {
+                static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::ASTC_6x6x6_UNORM_BLOCK, nullptr},
+#ifdef ANGLE_HAS_ASTCENC
+                    {angle::FormatID::R8G8B8A8_UNORM, nullptr},
+#endif
+                };
+                initImageFallback(renderer, kInfo, ArraySize(kInfo));
+            }
+            mActualBufferFormatID         = angle::FormatID::ASTC_6x6x6_UNORM_BLOCK;
+            mVkBufferFormatIsPacked       = false;
+            mVertexLoadFunction           = nullptr;
+            mVertexLoadRequiresConversion = false;
             break;
 
         case angle::FormatID::ASTC_6x6x6_UNORM_SRGB_BLOCK:
-            // This format is not implemented in Vulkan.
+            mIntendedGLFormat = GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6x6_OES;
+            {
+                static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::ASTC_6x6x6_UNORM_SRGB_BLOCK, nullptr},
+#ifdef ANGLE_HAS_ASTCENC
+                    {angle::FormatID::R8G8B8A8_UNORM_SRGB, nullptr},
+#endif
+                };
+                initImageFallback(renderer, kInfo, ArraySize(kInfo));
+            }
+            mActualBufferFormatID         = angle::FormatID::ASTC_6x6x6_UNORM_SRGB_BLOCK;
+            mVkBufferFormatIsPacked       = false;
+            mVertexLoadFunction           = nullptr;
+            mVertexLoadRequiresConversion = false;
             break;
 
         case angle::FormatID::ASTC_8x5_SRGB_BLOCK:
@@ -949,6 +1209,7 @@ void Format::initialize(Renderer *renderer, const angle::Format &angleFormat)
                 static constexpr ImageFormatInitInfo kInfo[] = {
                     {angle::FormatID::D24_UNORM_X8_UINT, nullptr},
                     {angle::FormatID::D24_UNORM_S8_UINT, nullptr},
+                    {angle::FormatID::D32_FLOAT, nullptr},
                     {angle::FormatID::D32_FLOAT_S8X24_UINT, nullptr},
                 };
                 initImageFallback(renderer, kInfo, ArraySize(kInfo));
@@ -2871,16 +3132,36 @@ VkFormat GetVkFormatFromFormatID(const Renderer *renderer, angle::FormatID forma
         {angle::FormatID::ASTC_12x10_UNORM_BLOCK, VK_FORMAT_ASTC_12x10_UNORM_BLOCK},
         {angle::FormatID::ASTC_12x12_SRGB_BLOCK, VK_FORMAT_ASTC_12x12_SRGB_BLOCK},
         {angle::FormatID::ASTC_12x12_UNORM_BLOCK, VK_FORMAT_ASTC_12x12_UNORM_BLOCK},
+        {angle::FormatID::ASTC_3x3x3_UNORM_BLOCK, VK_FORMAT_ASTC_3x3x3_SFLOAT_BLOCK_EXT},
+        {angle::FormatID::ASTC_3x3x3_UNORM_SRGB_BLOCK, VK_FORMAT_ASTC_3x3x3_SRGB_BLOCK_EXT},
+        {angle::FormatID::ASTC_4x3x3_UNORM_BLOCK, VK_FORMAT_ASTC_4x3x3_SFLOAT_BLOCK_EXT},
+        {angle::FormatID::ASTC_4x3x3_UNORM_SRGB_BLOCK, VK_FORMAT_ASTC_4x3x3_SRGB_BLOCK_EXT},
         {angle::FormatID::ASTC_4x4_SRGB_BLOCK, VK_FORMAT_ASTC_4x4_SRGB_BLOCK},
         {angle::FormatID::ASTC_4x4_UNORM_BLOCK, VK_FORMAT_ASTC_4x4_UNORM_BLOCK},
+        {angle::FormatID::ASTC_4x4x3_UNORM_BLOCK, VK_FORMAT_ASTC_4x4x3_SFLOAT_BLOCK_EXT},
+        {angle::FormatID::ASTC_4x4x3_UNORM_SRGB_BLOCK, VK_FORMAT_ASTC_4x4x3_SRGB_BLOCK_EXT},
+        {angle::FormatID::ASTC_4x4x4_UNORM_BLOCK, VK_FORMAT_ASTC_4x4x4_SFLOAT_BLOCK_EXT},
+        {angle::FormatID::ASTC_4x4x4_UNORM_SRGB_BLOCK, VK_FORMAT_ASTC_4x4x4_SRGB_BLOCK_EXT},
         {angle::FormatID::ASTC_5x4_SRGB_BLOCK, VK_FORMAT_ASTC_5x4_SRGB_BLOCK},
         {angle::FormatID::ASTC_5x4_UNORM_BLOCK, VK_FORMAT_ASTC_5x4_UNORM_BLOCK},
+        {angle::FormatID::ASTC_5x4x4_UNORM_BLOCK, VK_FORMAT_ASTC_5x4x4_SFLOAT_BLOCK_EXT},
+        {angle::FormatID::ASTC_5x4x4_UNORM_SRGB_BLOCK, VK_FORMAT_ASTC_5x4x4_SRGB_BLOCK_EXT},
         {angle::FormatID::ASTC_5x5_SRGB_BLOCK, VK_FORMAT_ASTC_5x5_SRGB_BLOCK},
         {angle::FormatID::ASTC_5x5_UNORM_BLOCK, VK_FORMAT_ASTC_5x5_UNORM_BLOCK},
+        {angle::FormatID::ASTC_5x5x4_UNORM_BLOCK, VK_FORMAT_ASTC_5x5x4_SFLOAT_BLOCK_EXT},
+        {angle::FormatID::ASTC_5x5x4_UNORM_SRGB_BLOCK, VK_FORMAT_ASTC_5x5x4_SRGB_BLOCK_EXT},
+        {angle::FormatID::ASTC_5x5x5_UNORM_BLOCK, VK_FORMAT_ASTC_5x5x5_SFLOAT_BLOCK_EXT},
+        {angle::FormatID::ASTC_5x5x5_UNORM_SRGB_BLOCK, VK_FORMAT_ASTC_5x5x5_SRGB_BLOCK_EXT},
         {angle::FormatID::ASTC_6x5_SRGB_BLOCK, VK_FORMAT_ASTC_6x5_SRGB_BLOCK},
         {angle::FormatID::ASTC_6x5_UNORM_BLOCK, VK_FORMAT_ASTC_6x5_UNORM_BLOCK},
+        {angle::FormatID::ASTC_6x5x5_UNORM_BLOCK, VK_FORMAT_ASTC_6x5x5_SFLOAT_BLOCK_EXT},
+        {angle::FormatID::ASTC_6x5x5_UNORM_SRGB_BLOCK, VK_FORMAT_ASTC_6x5x5_SRGB_BLOCK_EXT},
         {angle::FormatID::ASTC_6x6_SRGB_BLOCK, VK_FORMAT_ASTC_6x6_SRGB_BLOCK},
         {angle::FormatID::ASTC_6x6_UNORM_BLOCK, VK_FORMAT_ASTC_6x6_UNORM_BLOCK},
+        {angle::FormatID::ASTC_6x6x5_UNORM_BLOCK, VK_FORMAT_ASTC_6x6x5_SFLOAT_BLOCK_EXT},
+        {angle::FormatID::ASTC_6x6x5_UNORM_SRGB_BLOCK, VK_FORMAT_ASTC_6x6x5_SRGB_BLOCK_EXT},
+        {angle::FormatID::ASTC_6x6x6_UNORM_BLOCK, VK_FORMAT_ASTC_6x6x6_SFLOAT_BLOCK_EXT},
+        {angle::FormatID::ASTC_6x6x6_UNORM_SRGB_BLOCK, VK_FORMAT_ASTC_6x6x6_SRGB_BLOCK_EXT},
         {angle::FormatID::ASTC_8x5_SRGB_BLOCK, VK_FORMAT_ASTC_8x5_SRGB_BLOCK},
         {angle::FormatID::ASTC_8x5_UNORM_BLOCK, VK_FORMAT_ASTC_8x5_UNORM_BLOCK},
         {angle::FormatID::ASTC_8x6_SRGB_BLOCK, VK_FORMAT_ASTC_8x6_SRGB_BLOCK},
@@ -3052,26 +3333,66 @@ angle::FormatID GetFormatIDFromVkFormat(VkFormat vkFormat)
             return angle::FormatID::ASTC_12x12_SRGB_BLOCK;
         case VK_FORMAT_ASTC_12x12_UNORM_BLOCK:
             return angle::FormatID::ASTC_12x12_UNORM_BLOCK;
+        case VK_FORMAT_ASTC_3x3x3_SFLOAT_BLOCK_EXT:
+            return angle::FormatID::ASTC_3x3x3_UNORM_BLOCK;
+        case VK_FORMAT_ASTC_3x3x3_SRGB_BLOCK_EXT:
+            return angle::FormatID::ASTC_3x3x3_UNORM_SRGB_BLOCK;
+        case VK_FORMAT_ASTC_4x3x3_SFLOAT_BLOCK_EXT:
+            return angle::FormatID::ASTC_4x3x3_UNORM_BLOCK;
+        case VK_FORMAT_ASTC_4x3x3_SRGB_BLOCK_EXT:
+            return angle::FormatID::ASTC_4x3x3_UNORM_SRGB_BLOCK;
         case VK_FORMAT_ASTC_4x4_SRGB_BLOCK:
             return angle::FormatID::ASTC_4x4_SRGB_BLOCK;
         case VK_FORMAT_ASTC_4x4_UNORM_BLOCK:
             return angle::FormatID::ASTC_4x4_UNORM_BLOCK;
+        case VK_FORMAT_ASTC_4x4x3_SFLOAT_BLOCK_EXT:
+            return angle::FormatID::ASTC_4x4x3_UNORM_BLOCK;
+        case VK_FORMAT_ASTC_4x4x3_SRGB_BLOCK_EXT:
+            return angle::FormatID::ASTC_4x4x3_UNORM_SRGB_BLOCK;
+        case VK_FORMAT_ASTC_4x4x4_SFLOAT_BLOCK_EXT:
+            return angle::FormatID::ASTC_4x4x4_UNORM_BLOCK;
+        case VK_FORMAT_ASTC_4x4x4_SRGB_BLOCK_EXT:
+            return angle::FormatID::ASTC_4x4x4_UNORM_SRGB_BLOCK;
         case VK_FORMAT_ASTC_5x4_SRGB_BLOCK:
             return angle::FormatID::ASTC_5x4_SRGB_BLOCK;
         case VK_FORMAT_ASTC_5x4_UNORM_BLOCK:
             return angle::FormatID::ASTC_5x4_UNORM_BLOCK;
+        case VK_FORMAT_ASTC_5x4x4_SFLOAT_BLOCK_EXT:
+            return angle::FormatID::ASTC_5x4x4_UNORM_BLOCK;
+        case VK_FORMAT_ASTC_5x4x4_SRGB_BLOCK_EXT:
+            return angle::FormatID::ASTC_5x4x4_UNORM_SRGB_BLOCK;
         case VK_FORMAT_ASTC_5x5_SRGB_BLOCK:
             return angle::FormatID::ASTC_5x5_SRGB_BLOCK;
         case VK_FORMAT_ASTC_5x5_UNORM_BLOCK:
             return angle::FormatID::ASTC_5x5_UNORM_BLOCK;
+        case VK_FORMAT_ASTC_5x5x4_SFLOAT_BLOCK_EXT:
+            return angle::FormatID::ASTC_5x5x4_UNORM_BLOCK;
+        case VK_FORMAT_ASTC_5x5x4_SRGB_BLOCK_EXT:
+            return angle::FormatID::ASTC_5x5x4_UNORM_SRGB_BLOCK;
+        case VK_FORMAT_ASTC_5x5x5_SFLOAT_BLOCK_EXT:
+            return angle::FormatID::ASTC_5x5x5_UNORM_BLOCK;
+        case VK_FORMAT_ASTC_5x5x5_SRGB_BLOCK_EXT:
+            return angle::FormatID::ASTC_5x5x5_UNORM_SRGB_BLOCK;
         case VK_FORMAT_ASTC_6x5_SRGB_BLOCK:
             return angle::FormatID::ASTC_6x5_SRGB_BLOCK;
         case VK_FORMAT_ASTC_6x5_UNORM_BLOCK:
             return angle::FormatID::ASTC_6x5_UNORM_BLOCK;
+        case VK_FORMAT_ASTC_6x5x5_SFLOAT_BLOCK_EXT:
+            return angle::FormatID::ASTC_6x5x5_UNORM_BLOCK;
+        case VK_FORMAT_ASTC_6x5x5_SRGB_BLOCK_EXT:
+            return angle::FormatID::ASTC_6x5x5_UNORM_SRGB_BLOCK;
         case VK_FORMAT_ASTC_6x6_SRGB_BLOCK:
             return angle::FormatID::ASTC_6x6_SRGB_BLOCK;
         case VK_FORMAT_ASTC_6x6_UNORM_BLOCK:
             return angle::FormatID::ASTC_6x6_UNORM_BLOCK;
+        case VK_FORMAT_ASTC_6x6x5_SFLOAT_BLOCK_EXT:
+            return angle::FormatID::ASTC_6x6x5_UNORM_BLOCK;
+        case VK_FORMAT_ASTC_6x6x5_SRGB_BLOCK_EXT:
+            return angle::FormatID::ASTC_6x6x5_UNORM_SRGB_BLOCK;
+        case VK_FORMAT_ASTC_6x6x6_SFLOAT_BLOCK_EXT:
+            return angle::FormatID::ASTC_6x6x6_UNORM_BLOCK;
+        case VK_FORMAT_ASTC_6x6x6_SRGB_BLOCK_EXT:
+            return angle::FormatID::ASTC_6x6x6_UNORM_SRGB_BLOCK;
         case VK_FORMAT_ASTC_8x5_SRGB_BLOCK:
             return angle::FormatID::ASTC_8x5_SRGB_BLOCK;
         case VK_FORMAT_ASTC_8x5_UNORM_BLOCK:

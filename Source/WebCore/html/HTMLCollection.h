@@ -128,7 +128,7 @@ inline CollectionType HTMLCollection::type() const
 
 } // namespace WebCore
 
-#define SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(ClassName, Type) \
+#define SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(ClassName) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ClassName) \
-    static bool isType(const WebCore::HTMLCollection& collection) { return collection.type() == WebCore::Type; } \
+    static bool isType(const WebCore::HTMLCollection& collection) { return collection.type() == WebCore::CollectionClassTraits<WebCore::ClassName>::collectionType; } \
 SPECIALIZE_TYPE_TRAITS_END()

@@ -37,14 +37,15 @@ using OptionalDoubleOrString = std::optional<Variant<double, String>>;
 using DoubleOrCSSNumericValueOrString = Variant<double, RefPtr<CSSNumericValue>, String>;
 
 struct EffectTiming {
-    DoubleOrCSSNumericValueOrString duration { autoAtom() };
     double delay { 0 };
     double endDelay { 0 };
+    FillMode fill { FillMode::Auto };
     double iterationStart { 0 };
     double iterations { 1 };
-    String easing { "linear"_s };
-    FillMode fill { FillMode::Auto };
+    DoubleOrCSSNumericValueOrString duration { autoAtom() };
     PlaybackDirection direction { PlaybackDirection::Normal };
+    String easing { "linear"_s };
+
     OptionalDoubleOrString durationAsDoubleOrString() const;
 };
 

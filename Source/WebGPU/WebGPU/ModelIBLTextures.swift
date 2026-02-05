@@ -21,30 +21,29 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if canImport(RealityCoreRenderer, _version: 9999)
+#if canImport(RealityCoreRenderer, _version: 6) && canImport(USDStageKit, _version: 34)
 
 import Metal
-@_spi(RealityCoreRendererAPI) import RealityCoreRenderer
-@_spi(RealityCoreTextureProcessingAPI) import RealityCoreTextureProcessing
+@_spi(RealityCoreRendererAPI) import RealityKit
+@_spi(RealityCoreTextureProcessingAPI) import RealityKit
 
 class IBLTextures {
     static func loadIBLTextures(
-        resourceContext: _Proto_LowLevelResourceContext_v1,
-        renderer: _Proto_LowLevelRenderer_v1,
+        renderContext: _Proto_LowLevelRenderContext_v1,
         diffuseTextureOriginal: MTLTexture,
         specularTextureOriginal: MTLTexture
     ) throws -> (
         diffuse: _Proto_LowLevelTextureResource_v1,
         specular: _Proto_LowLevelTextureResource_v1
     ) {
-        guard let commandQueue = renderer.device.makeCommandQueue() else {
+        guard let commandQueue = renderContext.device.makeCommandQueue() else {
             fatalError("Failed to create command queue")
         }
         guard let commandBuffer = commandQueue.makeCommandBuffer() else {
             fatalError("Failed to create command buffer")
         }
 
-        let diffuseTextureResource = try resourceContext.makeTextureResource(
+        let diffuseTextureResource = try renderContext.makeTextureResource(
             descriptor: .init(
                 textureType: diffuseTextureOriginal.textureType,
                 pixelFormat: diffuseTextureOriginal.pixelFormat,
@@ -62,7 +61,7 @@ class IBLTextures {
                 )
             )
         )
-        let specularTextureResource = try resourceContext.makeTextureResource(
+        let specularTextureResource = try renderContext.makeTextureResource(
             descriptor: .init(
                 textureType: specularTextureOriginal.textureType,
                 pixelFormat: specularTextureOriginal.pixelFormat,
@@ -84,6 +83,7 @@ class IBLTextures {
         let diffuseTexture = diffuseTextureResource.replace(using: commandBuffer)
         let specularTexture = specularTextureResource.replace(using: commandBuffer)
 
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
         // swift-format-ignore: NeverForceUnwrap
         let blitEncoder = commandBuffer.makeBlitCommandEncoder()!
         blitEncoder.copy(from: diffuseTextureOriginal, to: diffuseTexture)

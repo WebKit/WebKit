@@ -176,7 +176,7 @@ void WebExtensionContext::actionOpenPopup(WebPageProxyIdentifier identifier, std
 {
     static NSString * const apiName = @"action.openPopup()";
 
-    if (!protectedDefaultAction()->canProgrammaticallyPresentPopup()) {
+    if (!protect(defaultAction())->canProgrammaticallyPresentPopup()) {
         completionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented"));
         return;
     }

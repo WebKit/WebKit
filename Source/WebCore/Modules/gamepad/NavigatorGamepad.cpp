@@ -74,7 +74,7 @@ Ref<Gamepad> NavigatorGamepad::gamepadFromPlatformGamepad(PlatformGamepad& platf
 {
     unsigned index = platformGamepad.index();
     if (index >= m_gamepads.size() || !m_gamepads[index])
-        return Gamepad::create(m_navigator->protectedDocument().get(), platformGamepad);
+        return Gamepad::create(protect(m_navigator->document()).get(), platformGamepad);
 
     return *m_gamepads[index];
 }
@@ -152,7 +152,7 @@ void NavigatorGamepad::gamepadsBecameVisible()
 
     for (size_t i = 0; i < platformGamepads.size(); ++i) {
         if (CheckedPtr gamepad = platformGamepads[i].get())
-            m_gamepads[i] = Gamepad::create(m_navigator->protectedDocument().get(), *gamepad);
+            m_gamepads[i] = Gamepad::create(protect(m_navigator->document()).get(), *gamepad);
     }
 }
 
@@ -171,9 +171,9 @@ void NavigatorGamepad::gamepadConnected(PlatformGamepad& platformGamepad)
     ASSERT(index <= m_gamepads.size());
 
     if (index < m_gamepads.size())
-        m_gamepads[index] = Gamepad::create(m_navigator->protectedDocument().get(), platformGamepad);
+        m_gamepads[index] = Gamepad::create(protect(m_navigator->document()).get(), platformGamepad);
     else if (index == m_gamepads.size())
-        m_gamepads.append(Gamepad::create(m_navigator->protectedDocument().get(), platformGamepad));
+        m_gamepads.append(Gamepad::create(protect(m_navigator->document()).get(), platformGamepad));
 }
 
 void NavigatorGamepad::gamepadDisconnected(PlatformGamepad& platformGamepad)
@@ -191,7 +191,7 @@ void NavigatorGamepad::gamepadDisconnected(PlatformGamepad& platformGamepad)
 RefPtr<Page> NavigatorGamepad::protectedPage() const
 {
     RefPtr frame = m_navigator->frame();
-    return frame ? frame->protectedPage() : nullptr;
+    return frame ? protect(frame->page()) : nullptr;
 }
 
 } // namespace WebCore

@@ -40,22 +40,22 @@ namespace JSC {
 
 const ClassInfo JSWebAssemblyStruct::s_info = { "WebAssembly.Struct"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyStruct) };
 
-JSWebAssemblyStruct::JSWebAssemblyStruct(VM& vm, WebAssemblyGCStructure* structure)
+JSWebAssemblyStruct::JSWebAssemblyStruct(VM& vm, WebAssemblyGCStructure* structure, unsigned payloadSize)
     : Base(vm, structure)
-    , TrailingArrayType(structure->typeDefinition().as<Wasm::StructType>()->instancePayloadSize())
 {
     // Make sure if another object is allocated while initializing the struct we don't crash the GC. It's *VERY* important this happens before finishCreation since that executes our mutator fence.
-    memsetSpan(span(), 0);
+    memset(payload(), 0, payloadSize);
 }
 
 JSWebAssemblyStruct* JSWebAssemblyStruct::tryCreate(VM& vm, WebAssemblyGCStructure* structure)
 {
     SUPPRESS_UNCOUNTED_LOCAL auto* structType = structure->typeDefinition().as<Wasm::StructType>();
-    auto* cell = tryAllocateCell<JSWebAssemblyStruct>(vm, TrailingArrayType::allocationSize(structType->instancePayloadSize()));
+    unsigned payloadSize = structType->instancePayloadSize();
+    auto* cell = tryAllocateCell<JSWebAssemblyStruct>(vm, JSWebAssemblyStruct::allocationSize(payloadSize));
     if (!cell) [[unlikely]]
         return nullptr;
 
-    auto* structValue = new (NotNull, cell) JSWebAssemblyStruct(vm, structure);
+    auto* structValue = new (NotNull, cell) JSWebAssemblyStruct(vm, structure, payloadSize);
     structValue->finishCreation(vm);
     return structValue;
 }

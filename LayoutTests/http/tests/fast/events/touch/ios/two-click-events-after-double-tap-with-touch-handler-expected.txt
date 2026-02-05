@@ -1,0 +1,18 @@
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+This test verifies that double-tapping a button dispatches two click events when fast-clicking is active. To manually run the test, double tap the button; two 'Clicked' messages should appear.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Clicked
+PASS Clicked
+PASS clickCount became 2
+PASS touchStartCount is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Double tap here

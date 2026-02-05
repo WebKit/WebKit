@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="../../../resources/js-test.js"></script>
+    <style>
+        .test-field {
+            font-size: 20px;
+            padding: 10px;
+            margin: 10px;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <p id="description"></p>
+    <div id="editable" class="test-field" contenteditable>Library</div>
+    <div id="console"></div>
+    <script>
+        description("This test verifies that the Transformations context menu shows appropriate items based on the selected text.");
+
+        window.jsTestIsAsync = true;
+
+        var transformItems;
+        var transformationsMenu;
+
+        function findMenuItem(items, title) {
+            for (let item of items) {
+                if (item.title === title)
+                    return item;
+            }
+            return null;
+        }
+
+        function findTransformationsSubmenu(items) {
+            return findMenuItem(items, "Transformations");
+        }
+
+        function hasMenuItem(items, title) {
+            return findMenuItem(items, title) !== null;
+        }
+
+        function getTransformationItems(items) {
+            let menu = findTransformationsSubmenu(items);
+            if (!menu)
+                return null;
+            return menu.children;
+        }
+
+        async function selectAllAndContextClick(elementId) {
+            let element = document.getElementById(elementId);
+            let range = document.createRange();
+            range.selectNodeContents(element);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+
+            let rect = element.getBoundingClientRect();
+            eventSender.mouseMoveTo(rect.left + 2, rect.top + 2);
+            return eventSender.contextClick();
+        }
+
+        async function runTests() {
+            if (!window.eventSender || !window.testRunner) {
+                debug("This test requires eventSender and testRunner.");
+                finishJSTest();
+                return;
+            }
+
+            debug("Test 1: Latin characters should show case transformations but not Chinese conversions");
+            let items = await selectAllAndContextClick("editable");
+            transformItems = getTransformationItems(items);
+            if (!transformItems) {
+                testFailed("Transformations submenu not found");
+            } else {
+                shouldBeTrue("hasMenuItem(transformItems, 'Make Upper Case')");
+                shouldBeTrue("hasMenuItem(transformItems, 'Make Lower Case')");
+                shouldBeTrue("hasMenuItem(transformItems, 'Capitalize')");
+                shouldBeFalse("hasMenuItem(transformItems, 'Convert to Traditional Chinese')");
+                shouldBeFalse("hasMenuItem(transformItems, 'Convert to Simplified Chinese')");
+            }
+            debug("");
+
+            debug("Test 2: Simplified Chinese text should show conversion to Traditional Chinese");
+            editable.innerText = "图书馆";
+            items = await selectAllAndContextClick("editable");
+            transformItems = getTransformationItems(items);
+            if (!transformItems) {
+                testFailed("Transformations submenu not found");
+            } else {
+                shouldBeFalse("hasMenuItem(transformItems, 'Make Upper Case')");
+                shouldBeFalse("hasMenuItem(transformItems, 'Make Lower Case')");
+                shouldBeFalse("hasMenuItem(transformItems, 'Capitalize')");
+                shouldBeTrue("hasMenuItem(transformItems, 'Convert to Traditional Chinese')");
+                shouldBeFalse("hasMenuItem(transformItems, 'Convert to Simplified Chinese')");
+            }
+            debug("");
+
+            debug("Test 3: Traditional Chinese text should show conversion to Simplified Chinese");
+            editable.innerText = "圖書館";
+            items = await selectAllAndContextClick("editable");
+            transformItems = getTransformationItems(items);
+            if (!transformItems) {
+                testFailed("Transformations submenu not found");
+            } else {
+                shouldBeFalse("hasMenuItem(transformItems, 'Make Upper Case')");
+                shouldBeFalse("hasMenuItem(transformItems, 'Make Lower Case')");
+                shouldBeFalse("hasMenuItem(transformItems, 'Capitalize')");
+                shouldBeFalse("hasMenuItem(transformItems, 'Convert to Traditional Chinese')");
+                shouldBeTrue("hasMenuItem(transformItems, 'Convert to Simplified Chinese')");
+            }
+            debug("");
+
+            debug("Test 4: Traditional Chinese text and Simplified Chinese text should should show both conversion options");
+            editable.innerText = "图书馆 圖書館";
+            items = await selectAllAndContextClick("editable");
+            transformItems = getTransformationItems(items);
+            if (!transformItems) {
+                testFailed("Transformations submenu not found");
+            } else {
+                shouldBeFalse("hasMenuItem(transformItems, 'Make Upper Case')");
+                shouldBeFalse("hasMenuItem(transformItems, 'Make Lower Case')");
+                shouldBeFalse("hasMenuItem(transformItems, 'Capitalize')");
+                shouldBeTrue("hasMenuItem(transformItems, 'Convert to Traditional Chinese')");
+                shouldBeTrue("hasMenuItem(transformItems, 'Convert to Simplified Chinese')");
+            }
+            debug("");
+
+            debug("Test 5: Traditional Chinese characters, Simplified Chinese character, and latin characters should should show all transformation options.");
+            editable.innerText = "Library 图书馆 圖書館";
+            items = await selectAllAndContextClick("editable");
+            transformItems = getTransformationItems(items);
+            if (!transformItems) {
+                testFailed("Transformations submenu not found");
+            } else {
+                shouldBeTrue("hasMenuItem(transformItems, 'Make Upper Case')");
+                shouldBeTrue("hasMenuItem(transformItems, 'Make Lower Case')");
+                shouldBeTrue("hasMenuItem(transformItems, 'Capitalize')");
+                shouldBeTrue("hasMenuItem(transformItems, 'Convert to Traditional Chinese')");
+                shouldBeTrue("hasMenuItem(transformItems, 'Convert to Simplified Chinese')");
+            }
+            debug("");
+
+            debug("Test 6: Case transformations are shown as fallback when selection exceeds 200 characters.");
+            editable.innerText = ""
+            let longText = "图书馆 圖書館 ".repeat(30);
+            editable.innerText = longText;
+            items = await selectAllAndContextClick("editable");
+            transformItems = getTransformationItems(items);
+            if (!transformItems) {
+                testFailed("Transformations submenu not found");
+            } else {
+                shouldBeTrue("hasMenuItem(transformItems, 'Make Upper Case')");
+                shouldBeTrue("hasMenuItem(transformItems, 'Make Lower Case')");
+                shouldBeTrue("hasMenuItem(transformItems, 'Capitalize')");
+                shouldBeTrue("hasMenuItem(transformItems, 'Convert to Traditional Chinese')");
+                shouldBeTrue("hasMenuItem(transformItems, 'Convert to Simplified Chinese')");
+            }
+            debug("");
+
+            debug("Test 7: Numbers only should not show Transformations submenu at all");
+            editable.innerText = "12345";
+            items = await selectAllAndContextClick("editable");
+            transformationsMenu = findTransformationsSubmenu(items);
+            shouldBeNull("transformationsMenu");
+
+            editable.innerText = "";
+            finishJSTest();
+        }
+
+        window.addEventListener("load", runTests);
+    </script>
+</body>
+</html>

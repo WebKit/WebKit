@@ -29,7 +29,6 @@ typedef unsigned long GLenum;
 [
     Conditional=WEBXR_LAYERS,
     EnabledBySetting=WebXRLayersAPIEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary XRProjectionLayerInit {
     XRTextureType textureType = "texture";
     GLenum colorFormat = 0x1908; // RGBA

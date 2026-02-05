@@ -22,6 +22,19 @@
 
 #pragma once
 
+#include <WebCore/CollectionType.h>
+
+namespace WebCore {
+
+class HTMLFormControlsCollection;
+
+template<>
+struct CollectionClassTraits<HTMLFormControlsCollection> {
+    static constexpr CollectionType collectionType = CollectionType::FormControls;
+};
+
+} // namespace WebCore
+
 #include "CachedHTMLCollection.h"
 #include "HTMLFormElement.h"
 #include "RadioNodeList.h"
@@ -34,7 +47,7 @@ class HTMLImageElement;
 // This class is just a big hack to find form elements even in malformed HTML elements.
 // The famous <table><tr><form><td> problem.
 
-class HTMLFormControlsCollection final : public CachedHTMLCollection<HTMLFormControlsCollection, CollectionTypeTraits<CollectionType::FormControls>::traversalType> {
+class HTMLFormControlsCollection final : public CachedHTMLCollection<HTMLFormControlsCollection> {
     WTF_MAKE_TZONE_ALLOCATED(HTMLFormControlsCollection);
 public:
     static Ref<HTMLFormControlsCollection> create(ContainerNode&, CollectionType);
@@ -60,4 +73,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLFormControlsCollection, CollectionType::FormControls)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLFormControlsCollection)

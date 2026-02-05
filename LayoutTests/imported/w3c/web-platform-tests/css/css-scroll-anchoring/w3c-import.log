@@ -1,0 +1,100 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/README.md
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/abspos-containing-block-outside-scroller.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/abspos-contributes-to-static-parent-bounds.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/abspos-in-multicol-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/abspos-in-multicol-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/abspos-in-multicol-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/adjustment-followed-by-scrollBy.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/adjustments-in-scroll-event-handler.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/after-scrollable-range-shrinkage-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/after-scrollable-range-shrinkage-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/after-scrollable-range-shrinkage-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/after-scrollable-range-shrinkage-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/ancestor-change-heuristic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/anchor-inside-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/anchor-inside-textarea.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/anchor-updates-after-explicit-scroll.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/anchoring-with-bounds-clamping-div.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/anchoring-with-bounds-clamping.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/anonymous-block-box.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/basic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/clamp-negative-overflow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/clipped-scrollers-skipped.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/contain-paint-offscreen-container.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/contenteditable-insert-line-at-top.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/contenteditable-near-cursor.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/descend-into-container-with-float.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/descend-into-container-with-overflow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/device-pixel-adjustment.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/dirty-contents-reselect-anchor.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/editable-scroll-anchor.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/exclude-fixed-position.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/exclude-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/exclude-sticky.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/focus-prioritized.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/focused-element-in-excluded-subtree.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/focused-element-nested-anchor.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/focused-element-outside-scroller.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/fragment-scrolling-anchors.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/fresh-table-col-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/fullscreen-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/heuristic-with-offset-update-from-scroll-event-listener.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/heuristic-with-offset-update.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/history-restore-anchors.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/ignore-adjustments-while-scrolling-to-anchor.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/image-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/infinite-scroll-event.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/inline-block-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/inline-block.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/multicol-fragmented-anchor.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/negative-layout-overflow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/nested-overflow-subtree-layout-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/nested-overflow-subtree-layout-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/nested-overflow-subtree-layout-vertical-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/nested-overflow-subtree-layout-vertical-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/nested-overflow-subtree-layout-vertical.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/nested-overflow-subtree-layout.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/opt-out-dynamic-scroller.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/opt-out-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/opt-out-inner-table.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/opt-out-table.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/opt-out.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/position-change-heuristic-display-none-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/position-change-heuristic-display-none-to-abspos-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/position-change-heuristic-ib-split.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/position-change-heuristic-in-nested-scroll-box.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/position-change-heuristic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/reading-scroll-forces-anchoring.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/scroll-padding-affects-anchoring.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/shadow-dom-subscroller.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/start-edge-in-block-layout-direction.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/subtree-exclusion.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/table-col-and-dead-row-group-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/table-collapsed-borders-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/text-anchor-in-vertical-rl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/vertical-rl-viewport-size-change-000-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/vertical-rl-viewport-size-change-000.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/vertical-rl-viewport-size-change-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/vertical-rl-viewport-size-change-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/wrapped-text.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/zero-scroll-offset-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-anchoring/zero-scroll-offset-002.html

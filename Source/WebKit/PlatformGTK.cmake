@@ -1,13 +1,10 @@
 include(GLibMacros)
 include(InspectorGResources.cmake)
 include(ModernMediaControlsGResources.cmake)
+include(Platform/Skia.cmake)
 
 if (ENABLE_PDFJS)
     include(PdfJSGResources.cmake)
-endif ()
-
-if (USE_SKIA)
-    include(Platform/Skia.cmake)
 endif ()
 
 set(WebKit_OUTPUT_NAME webkit${WEBKITGTK_API_INFIX}gtk-${WEBKITGTK_API_VERSION})
@@ -372,12 +369,6 @@ endif ()
 
 if (USE_OPENXR)
    list(APPEND WebKit_LIBRARIES OpenXR::openxr_loader)
-endif ()
-
-if (USE_CAIRO)
-    list(APPEND WebKit_SERIALIZATION_IN_FILES
-        Shared/cairo/WebCoreFontCairo.serialization.in
-    )
 endif ()
 
 if (USE_LIBWEBRTC)

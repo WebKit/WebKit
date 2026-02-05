@@ -26,6 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/encrypted-media/#dom-mediakeymessageevent
 [
     Conditional=ENCRYPTED_MEDIA,
     EnabledBySetting=EncryptedMediaAPIEnabled,
@@ -35,5 +36,6 @@
     constructor([AtomString] DOMString type, MediaKeyMessageEventInit eventInitDict);
 
     readonly attribute MediaKeyMessageType messageType;
-    readonly attribute ArrayBuffer message;
+    // FIXME: `message` should not be nullable.
+    readonly attribute ArrayBuffer? message;
 };

@@ -64,9 +64,7 @@ public:
 
     // These methods are called from DOM through the super classes.
     SVGStringList& requiredExtensions() { return conditionalProcessingAttributes().requiredExtensions(); }
-    Ref<SVGStringList> protectedRequiredExtensions();
     SVGStringList& systemLanguage() { return conditionalProcessingAttributes().systemLanguage(); }
-    Ref<SVGStringList> protectedSystemLanguage();
 
 protected:
     bool isValid() const;

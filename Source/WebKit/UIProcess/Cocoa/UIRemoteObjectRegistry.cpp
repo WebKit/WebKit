@@ -37,7 +37,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(UIRemoteObjectRegistry);
 RefPtr<ProcessThrottler::BackgroundActivity> UIRemoteObjectRegistry::backgroundActivity(ASCIILiteral name)
 {
     if (RefPtr page = m_page.get())
-        return page->protectedLegacyMainFrameProcess()->protectedThrottler()->backgroundActivity(name);
+        return protect(protect(page->legacyMainFrameProcess())->throttler())->backgroundActivity(name);
     return nullptr;
 }
 

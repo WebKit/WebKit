@@ -330,7 +330,9 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
             status = URLFilterParser::Ok;
         }
         if (status != URLFilterParser::Ok) {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             dataLogF("Error while parsing %s: %s\n", trigger.urlFilter.utf8().data(), URLFilterParser::statusString(status).characters());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             return ContentExtensionError::JSONInvalidRegex;
         }
 
@@ -347,7 +349,9 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
                     status = URLFilterParser::Ok;
                 }
                 if (status != URLFilterParser::Ok) {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
                     dataLogF("Error while parsing %s: %s\n", condition.utf8().data(), URLFilterParser::statusString(status).characters());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                     return ContentExtensionError::JSONInvalidRegex;
                 }
                 break;
@@ -359,7 +363,9 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
                     status = URLFilterParser::Ok;
                 }
                 if (status != URLFilterParser::Ok) {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
                     dataLogF("Error while parsing %s: %s\n", condition.utf8().data(), URLFilterParser::statusString(status).characters());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                     return ContentExtensionError::JSONInvalidRegex;
                 }
                 break;
@@ -374,7 +380,9 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime patternPartitioningEnd = MonotonicTime::now();
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     dataLogF("    Time spent partitioning the rules into groups: %f\n", (patternPartitioningEnd - patternPartitioningStart).seconds());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
     LOG_LARGE_STRUCTURES(filtersWithoutConditions, filtersWithoutConditions.memoryUsed());
@@ -404,7 +412,9 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime totalNFAToByteCodeBuildTimeEnd = MonotonicTime::now();
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     dataLogF("    Time spent building and compiling the DFAs: %f\n", (totalNFAToByteCodeBuildTimeEnd - totalNFAToByteCodeBuildTimeStart).seconds());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
     client.finalize();

@@ -1058,9 +1058,11 @@ void ModelProcessModelPlayerProxy::ensureImmersivePresentation(CompletionHandler
         if (!protectedThis)
             return completion(std::nullopt);
 
-        if (loaded)
+        RetainPtr entity = protectedThis->m_modelRKEntity;
+        if (loaded && entity) {
+            [entity ensureSceneUnderstanding];
             completion(protectedThis->layerHostingContextIdentifier().value());
-        else {
+        } else {
             protectedThis->setImmersivePresentation(false);
             completion(std::nullopt);
         }

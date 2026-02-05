@@ -114,9 +114,13 @@ public:
     FloatRect strokeBoundingRect(NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier = { }) const;
 
     WEBCORE_EXPORT void ensureImplForTesting();
+    WEBCORE_EXPORT const PathImpl* asImpl() const;
+
+    void setNotTransient();
 
 private:
     PlatformPathImpl& ensurePlatformPathImpl();
+    Ref<PlatformPathImpl> ensureProtectedPlatformPathImpl();
     PathImpl& setImpl(Ref<PathImpl>&&);
     WEBCORE_EXPORT PathImpl& ensureImpl();
     WEBCORE_EXPORT Ref<PathImpl> ensureProtectedImpl();
@@ -125,7 +129,6 @@ private:
     const PathSegment* asSingle() const { return std::get_if<PathSegment>(&m_data); }
 
     PathImpl* asImpl();
-    const PathImpl* asImpl() const;
     RefPtr<PathImpl> asProtectedImpl();
     RefPtr<const PathImpl> asProtectedImpl() const;
 

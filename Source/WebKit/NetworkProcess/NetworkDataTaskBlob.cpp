@@ -175,7 +175,7 @@ bool NetworkDataTaskBlob::didReceiveData(std::span<const uint8_t> data)
             return false;
     } else {
         ASSERT(m_client);
-        protectedClient()->didReceiveData(SharedBuffer::create(data));
+        protect(client())->didReceiveData(SharedBuffer::create(data));
     }
     return true;
 }
@@ -302,7 +302,7 @@ void NetworkDataTaskBlob::didFail(Error errorCode)
 
     clearStream();
     ASSERT(m_client);
-    protectedClient()->didCompleteWithError(ResourceError(webKitBlobResourceDomain, static_cast<int>(errorCode), m_firstRequest.url(), String()));
+    protect(client())->didCompleteWithError(ResourceError(webKitBlobResourceDomain, static_cast<int>(errorCode), m_firstRequest.url(), String()));
 }
 
 void NetworkDataTaskBlob::didFinish()
@@ -318,7 +318,7 @@ void NetworkDataTaskBlob::didFinish()
 
     clearStream();
     ASSERT(m_client);
-    protectedClient()->didCompleteWithError({ });
+    protect(client())->didCompleteWithError({ });
 }
 
 } // namespace WebKit

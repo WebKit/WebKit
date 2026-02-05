@@ -62,7 +62,7 @@ void reportExceptionIfJSDOMWindow(JSC::JSGlobalObject* globalObject, JSC::JSValu
     reportException(globalObject, exception);
 }
 
-String retrieveErrorMessageWithoutName(JSGlobalObject& lexicalGlobalObject, VM& vm, JSValue exception, CatchScope& catchScope)
+String retrieveErrorMessageWithoutName(JSGlobalObject& lexicalGlobalObject, VM& vm, JSValue exception, TopExceptionScope& topExceptionScope)
 {
     // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions
     // If this is a custom exception object, call toString on it to try and get a nice string representation for the exception.
@@ -76,12 +76,12 @@ String retrieveErrorMessageWithoutName(JSGlobalObject& lexicalGlobalObject, VM& 
 
     // We need to clear any new exception that may be thrown in the toString() call above.
     // reportException() is not supposed to be making new exceptions.
-    catchScope.clearException();
+    topExceptionScope.clearException();
     vm.clearLastException();
     return errorMessage;
 }
 
-String retrieveErrorMessage(JSGlobalObject& lexicalGlobalObject, VM& vm, JSValue exception, CatchScope& catchScope)
+String retrieveErrorMessage(JSGlobalObject& lexicalGlobalObject, VM& vm, JSValue exception, TopExceptionScope& topExceptionScope)
 {
     // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions
     // If this is a custom exception object, call toString on it to try and get a nice string representation for the exception.
@@ -93,7 +93,7 @@ String retrieveErrorMessage(JSGlobalObject& lexicalGlobalObject, VM& vm, JSValue
 
     // We need to clear any new exception that may be thrown in the toString() call above.
     // reportException() is not supposed to be making new exceptions.
-    catchScope.clearException();
+    topExceptionScope.clearException();
     vm.clearLastException();
     return errorMessage;
 }
@@ -105,10 +105,10 @@ void reportException(JSGlobalObject* lexicalGlobalObject, JSC::Exception* except
     if (vm.isTerminationException(exception))
         return;
 
-    // We can declare a CatchScope here because we will clear the exception below if it's
+    // We can declare a TopExceptionScope here because we will clear the exception below if it's
     // not a TerminationException. If it's a TerminationException, it'll remain sticky in
     // the VM, but we have the check above to ensure that we do not re-enter this scope.
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     ErrorHandlingScope errorScope(lexicalGlobalObject->vm());
 
@@ -146,7 +146,7 @@ void reportException(JSGlobalObject* lexicalGlobalObject, JSC::Exception* except
 void reportCurrentException(JSGlobalObject* lexicalGlobalObject)
 {
     VM& vm = lexicalGlobalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     auto* exception = scope.exception();
     scope.clearException();
     reportException(lexicalGlobalObject, exception);

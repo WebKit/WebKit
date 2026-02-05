@@ -103,7 +103,7 @@ TEST_F(JsonSerializerTest, NamedStringValue)
 TEST_F(JsonSerializerTest, ByteArrayValue)
 {
     const uint8_t value[5] = {10, 0, 0xcc, 0xff, 0xaa};
-    js.addBlob("test2", value, 5);
+    js.addBlob("test2", value);
 
     const std::string expect =
         R"({

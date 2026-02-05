@@ -116,7 +116,6 @@ public:
     void callOnRTCNetworkThread(Function<void()>&&);
 
     IPC::Connection& connection() { return m_ipcConnection.get(); }
-    Ref<IPC::Connection> protectedConnection() { return m_ipcConnection.get(); }
 
     void closeSocket(WebCore::LibWebRTCSocketIdentifier);
 

@@ -448,6 +448,8 @@ angle::Result Framebuffer11::getSamplePosition(const gl::Context *context,
     const gl::FramebufferAttachment *attachment = mState.getFirstNonNullAttachment();
     ASSERT(attachment);
     GLsizei sampleCount = attachment->getSamples();
+    // GL_OVR_multiview_multisampled_render_to_texture is not supported on D3D backend
+    ASSERT(!(attachment->isRenderToTexture() && attachment->isMultiview()));
 
     rx::GetSamplePosition(sampleCount, index, xy);
     return angle::Result::Continue;

@@ -36,8 +36,9 @@ namespace WebCore {
 class SpeechSynthesisEvent : public Event {
     WTF_MAKE_TZONE_ALLOCATED(SpeechSynthesisEvent);
 public:
-    
-    static Ref<SpeechSynthesisEvent> create(const AtomString& type, SpeechSynthesisEventInit&&);
+    using Init = SpeechSynthesisEventInit;
+
+    static Ref<SpeechSynthesisEvent> create(const AtomString& type, Init&&);
 
     const SpeechSynthesisUtterance& utterance() const { return m_utterance; }
     unsigned long charIndex() const { return m_charIndex; }
@@ -46,7 +47,7 @@ public:
     const String& name() const { return m_name; }
 
 protected:
-    SpeechSynthesisEvent(enum EventInterfaceType, const AtomString& type, SpeechSynthesisEventInit&&);
+    SpeechSynthesisEvent(enum EventInterfaceType, const AtomString& type, Init&&);
 
 private:
     const Ref<SpeechSynthesisUtterance> m_utterance;

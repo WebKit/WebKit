@@ -38,7 +38,7 @@ namespace WebKit {
 
 void WebPaymentCoordinatorProxy::platformCanMakePayments(CompletionHandler<void(bool)>&& completionHandler)
 {
-    m_canMakePaymentsQueue->dispatch([theClass = retainPtr(PAL::getPKPaymentAuthorizationControllerClassSingleton()), completionHandler = WTF::move(completionHandler)]() mutable {
+    protect(m_canMakePaymentsQueue)->dispatch([theClass = retainPtr(PAL::getPKPaymentAuthorizationControllerClassSingleton()), completionHandler = WTF::move(completionHandler)]() mutable {
         RunLoop::mainSingleton().dispatch([canMakePayments = [theClass canMakePayments], completionHandler = WTF::move(completionHandler)]() mutable {
             completionHandler(canMakePayments);
         });
@@ -59,7 +59,7 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier we
         paymentRequest = platformPaymentRequest(originatingURL, linkIconURLs, request);
 
     checkedClient()->getPaymentCoordinatorEmbeddingUserAgent(webPageProxyID, [webPageProxyID, paymentRequest, weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](const String& userAgent) mutable {
-        auto paymentCoordinatorProxy = weakThis.get();
+        RefPtr paymentCoordinatorProxy = weakThis.get();
         if (!paymentCoordinatorProxy)
             return completionHandler(false);
 
@@ -85,7 +85,7 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier we
         });
 #else
         UNUSED_VARIABLE(webPageProxyID);
-        paymentCoordinatorProxy->m_authorizationPresenter->present(paymentCoordinatorProxy->checkedClient()->paymentCoordinatorPresentingViewController(*paymentCoordinatorProxy), WTF::move(completionHandler));
+        protect(paymentCoordinatorProxy->m_authorizationPresenter)->present(paymentCoordinatorProxy->checkedClient()->paymentCoordinatorPresentingViewController(*paymentCoordinatorProxy), WTF::move(completionHandler));
 #endif
     });
 }
@@ -93,7 +93,7 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier we
 void WebPaymentCoordinatorProxy::platformHidePaymentUI()
 {
     if (m_authorizationPresenter)
-        m_authorizationPresenter->dismiss();
+        protect(m_authorizationPresenter)->dismiss();
 }
 
 }

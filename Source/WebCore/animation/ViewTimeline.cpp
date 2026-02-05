@@ -71,7 +71,7 @@ ExceptionOr<Ref<ViewTimeline>> ViewTimeline::create(Document& document, ViewTime
     viewTimeline->m_specifiedInsets = WTF::move(specifiedInsets);
     viewTimeline->setSubject(options.subject.get());
     if (auto subject = options.subject)
-        subject->protectedDocument()->updateLayoutIgnorePendingStylesheets();
+        protect(subject->document())->updateLayoutIgnorePendingStylesheets();
     viewTimeline->cacheCurrentTime();
 
     return viewTimeline;
@@ -193,7 +193,7 @@ void ViewTimeline::setSubject(const Styleable& styleable)
 
     removeTimelineFromDocument(previousSubject.get());
 
-    styleable.element.protectedDocument()->ensureTimelinesController().addTimeline(*this);
+    protect(styleable.element.document())->ensureTimelinesController().addTimeline(*this);
 }
 
 AnimationTimelinesController* ViewTimeline::controller() const
@@ -435,7 +435,7 @@ Style::SingleAnimationRange ViewTimeline::defaultRange() const
 RefPtr<Element> ViewTimeline::bindingsSource() const
 {
     if (auto subject = m_subject.styleable())
-        subject->element.protectedDocument()->updateStyleIfNeeded();
+        protect(subject->element.document())->updateStyleIfNeeded();
     return ScrollTimeline::bindingsSource();
 }
 

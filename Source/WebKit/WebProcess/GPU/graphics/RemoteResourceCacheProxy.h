@@ -29,6 +29,7 @@
 
 #include "RemoteDisplayListIdentifier.h"
 #include "RemoteGradientIdentifier.h"
+#include "RemotePathImplIdentifier.h"
 #include "RenderingUpdateID.h"
 #include <WebCore/FilterFunction.h>
 #include <WebCore/Gradient.h>
@@ -63,6 +64,7 @@ public:
     Ref<RemoteNativeImageProxy> createNativeImage(const WebCore::IntSize&, WebCore::PlatformColorSpace&&, bool hasAlpha);
 
     [[nodiscard]] bool recordNativeImageUse(WebCore::NativeImage&, const WebCore::DestinationColorSpace&);
+    RemotePathImplIdentifier recordPathImplUse(const WebCore::PathImpl&);
     void recordFontUse(WebCore::Font&);
     RemoteGradientIdentifier recordGradientUse(WebCore::Gradient&);
     void recordFilterUse(WebCore::Filter&);
@@ -91,6 +93,7 @@ private:
     // WebCore::RenderingResourceObserver overrides.
     void willDestroyNativeImage(const WebCore::NativeImage&) override;
     void willDestroyGradient(const WebCore::Gradient&) override;
+    void willDestroyPathImpl(const WebCore::PathImpl&) override;
     void willDestroyFilter(WebCore::RenderingResourceIdentifier) override;
     void willDestroyDisplayList(const WebCore::DisplayList::DisplayList&) override;
 
@@ -105,6 +108,7 @@ private:
     };
     HashMap<CheckedPtr<const WebCore::NativeImage>, NativeImageEntry> m_nativeImages;
     HashMap<CheckedPtr<const WebCore::Gradient>, RemoteGradientIdentifier> m_gradients;
+    HashMap<CheckedPtr<const WebCore::PathImpl>, RemotePathImplIdentifier> m_paths;
     HashSet<WebCore::RenderingResourceIdentifier> m_filters;
     HashMap<CheckedPtr<const WebCore::DisplayList::DisplayList>, RemoteDisplayListIdentifier> m_displayLists;
     WeakPtrFactory<WebCore::RenderingResourceObserver> m_resourceObserverWeakFactory;

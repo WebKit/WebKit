@@ -27,9 +27,9 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "DDModelIdentifier.h"
 #include "ModelConvertFromBackingContext.h"
 #include "ScopedActiveMessageReceiveQueue.h"
+#include "WebModelIdentifier.h"
 #include <WebCore/WebGPU.h>
 #include <functional>
 #include <wtf/HashMap.h>
@@ -37,52 +37,52 @@
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 
-namespace WebCore::DDModel {
-class DDMesh;
+namespace WebCore {
+class Mesh;
 }
 
 namespace WebKit {
-class RemoteDDMesh;
+class RemoteMesh;
 }
 
-namespace WebKit::DDModel {
+namespace WebKit {
 
-class ObjectHeap final : public RefCountedAndCanMakeWeakPtr<ObjectHeap>, public ConvertFromBackingContext {
-    WTF_MAKE_TZONE_ALLOCATED(ObjectHeap);
+class ModelObjectHeap final : public RefCountedAndCanMakeWeakPtr<ModelObjectHeap>, public ModelConvertFromBackingContext {
+    WTF_MAKE_TZONE_ALLOCATED(ModelObjectHeap);
 public:
-    static Ref<ObjectHeap> create()
+    static Ref<ModelObjectHeap> create()
     {
-        return adoptRef(*new ObjectHeap());
+        return adoptRef(*new ModelObjectHeap());
     }
 
-    ~ObjectHeap();
+    ~ModelObjectHeap();
 
-    void addObject(DDModelIdentifier, RemoteDDMesh&);
+    void addObject(WebModelIdentifier, RemoteMesh&);
 
-    void removeObject(DDModelIdentifier);
+    void removeObject(WebModelIdentifier);
 
     void clear();
 
-    WeakPtr<WebCore::DDModel::DDMesh> convertDDMeshFromBacking(DDModelIdentifier) final;
+    WeakPtr<WebCore::Mesh> convertMeshFromBacking(WebModelIdentifier) final;
 
     struct ExistsAndValid {
         bool exists { false };
         bool valid { false };
     };
-    ExistsAndValid objectExistsAndValid(const WebCore::WebGPU::GPU&, DDModelIdentifier) const;
+    ExistsAndValid objectExistsAndValid(const WebCore::WebGPU::GPU&, WebModelIdentifier) const;
 private:
-    ObjectHeap();
+    ModelObjectHeap();
 
     using Object = Variant<
         std::monostate,
 #if ENABLE(GPU_PROCESS_MODEL)
-        IPC::ScopedActiveMessageReceiveQueue<RemoteDDMesh>
+        IPC::ScopedActiveMessageReceiveQueue<RemoteMesh>
 #else
         uint32_t
 #endif
     >;
 
-    HashMap<DDModelIdentifier, Object> m_objects;
+    HashMap<WebModelIdentifier, Object> m_objects;
 };
 
 }

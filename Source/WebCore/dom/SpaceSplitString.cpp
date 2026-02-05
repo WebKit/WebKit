@@ -196,16 +196,17 @@ inline Ref<SpaceSplitStringData> SpaceSplitStringData::create(const AtomString& 
 
     RELEASE_ASSERT(tokenCount < (std::numeric_limits<unsigned>::max() - sizeof(SpaceSplitStringData)) / sizeof(AtomString));
     size_t sizeToAllocate = sizeof(SpaceSplitStringData) + tokenCount * sizeof(AtomString);
-    SpaceSplitStringData* spaceSplitStringData = static_cast<SpaceSplitStringData*>(fastMalloc(sizeToAllocate));
+    auto* rawPointer = static_cast<SpaceSplitStringData*>(fastMalloc(sizeToAllocate));
 
-    new (NotNull, spaceSplitStringData) SpaceSplitStringData(keyString, tokenCount);
+    new (NotNull, rawPointer) SpaceSplitStringData(keyString, tokenCount);
+    Ref spaceSplitStringData = adoptRef(*rawPointer);
     auto tokenArray = spaceSplitStringData->tokenArray();
     TokenAtomStringInitializer tokenInitializer(keyString, tokenArray);
     tokenizeSpaceSplitString(tokenInitializer, keyString);
     ASSERT(static_cast<unsigned>(tokenInitializer.nextMemoryBucket() - tokenArray.data()) == tokenCount);
-    ASSERT(reinterpret_cast<const char*>(tokenInitializer.nextMemoryBucket()) - reinterpret_cast<const char*>(spaceSplitStringData) == static_cast<ptrdiff_t>(sizeToAllocate));
+    ASSERT(reinterpret_cast<const char*>(tokenInitializer.nextMemoryBucket()) - reinterpret_cast<const char*>(spaceSplitStringData.ptr()) == static_cast<ptrdiff_t>(sizeToAllocate));
 
-    return adoptRef(*spaceSplitStringData);
+    return spaceSplitStringData;
 }
 
 RefPtr<SpaceSplitStringData> SpaceSplitStringData::create(const AtomString& keyString)

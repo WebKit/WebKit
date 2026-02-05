@@ -28,9 +28,9 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://drafts.csswg.org/geometry/#dictdef-dompointinit
 [
     ExportMacro=WEBCORE_EXPORT,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary DOMPointInit {
     unrestricted double x = 0;
     unrestricted double y = 0;

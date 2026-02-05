@@ -614,7 +614,7 @@ struct EncodedJSValueHashTraits : HashTraits<EncodedJSValue> {
 
 typedef std::pair<EncodedJSValue, SourceCodeRepresentation> EncodedJSValueWithRepresentation;
 
-struct EncodedJSValueWithRepresentationHashTraits : HashTraits<EncodedJSValueWithRepresentation> {
+struct EncodedJSValueWithRepresentationHashTraits : WTF::GenericHashTraits<EncodedJSValueWithRepresentation> {
     static constexpr bool emptyValueIsZero = false;
     static EncodedJSValueWithRepresentation emptyValue() { return std::make_pair(JSValue::encode(JSValue()), SourceCodeRepresentation::Other); }
     static void constructDeletedValue(EncodedJSValueWithRepresentation& slot) { slot = std::make_pair(JSValue::encode(JSValue(JSValue::HashTableDeletedValue)), SourceCodeRepresentation::Other); }

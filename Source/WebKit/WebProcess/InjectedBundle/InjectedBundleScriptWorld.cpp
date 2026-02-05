@@ -165,14 +165,4 @@ void InjectedBundleScriptWorld::disableOverrideBuiltinsBehavior()
     m_world->disableLegacyOverrideBuiltInsBehavior();
 }
 
-Ref<const WebCore::DOMWrapperWorld> InjectedBundleScriptWorld::protectedCoreWorld() const
-{
-    return m_world;
-}
-
-Ref<WebCore::DOMWrapperWorld> InjectedBundleScriptWorld::protectedCoreWorld()
-{
-    return m_world;
-}
-
 } // namespace WebKit

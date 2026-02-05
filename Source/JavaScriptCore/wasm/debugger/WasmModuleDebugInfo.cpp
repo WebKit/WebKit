@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmModuleDebugInfo.h"
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 #include "Options.h"
 #include "WasmIPIntGenerator.h"
@@ -88,4 +88,4 @@ FunctionDebugInfo& ModuleDebugInfo::ensureFunctionDebugInfo(FunctionCodeIndex fu
 } // namespace Wasm
 } // namespace JSC
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

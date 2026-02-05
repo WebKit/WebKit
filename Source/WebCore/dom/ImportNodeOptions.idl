@@ -23,9 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary ImportNodeOptions {
+// https://dom.spec.whatwg.org/#dictdef-importnodeoptions
+dictionary ImportNodeOptions {
     boolean selfOnly = false;
     CustomElementRegistry customElementRegistry;
 };

@@ -166,7 +166,7 @@ Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::op
 
 void InspectorRuntimeAgent::awaitPromise(const Protocol::Runtime::RemoteObjectId& promiseObjectId, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, Ref<AwaitPromiseCallback>&& callback)
 {
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(promiseObjectId);
+    auto injectedScript = injectedScriptManager().injectedScriptForObjectId(promiseObjectId);
     if (injectedScript.hasNoValue()) {
         callback->sendFailure("Missing injected script for given promiseObjectId"_s);
         return;
@@ -182,7 +182,7 @@ void InspectorRuntimeAgent::awaitPromise(const Protocol::Runtime::RemoteObjectId
 
 void InspectorRuntimeAgent::callFunctionOn(const Protocol::Runtime::RemoteObjectId& objectId, const String& functionDeclaration, RefPtr<JSON::Array>&& arguments, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& emulateUserGesture, std::optional<bool>&& awaitPromise, Ref<CallFunctionOnCallback>&& callback)
 {
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
+    auto injectedScript = injectedScriptManager().injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
         callback->sendFailure("Missing injected script for given objectId"_s);
         return;
@@ -219,7 +219,7 @@ Protocol::ErrorStringOr<Ref<Protocol::Runtime::ObjectPreview>> InspectorRuntimeA
 {
     Protocol::ErrorString errorString;
 
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
+    auto injectedScript = injectedScriptManager().injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue())
         return makeUnexpected("Missing injected script for given objectId"_s);
 
@@ -244,7 +244,7 @@ Protocol::ErrorStringOr<std::tuple<Ref<JSON::ArrayOf<Protocol::Runtime::Property
 {
     Protocol::ErrorString errorString;
 
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
+    auto injectedScript = injectedScriptManager().injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue())
         return makeUnexpected("Missing injected script for given objectId"_s);
 
@@ -282,7 +282,7 @@ Protocol::ErrorStringOr<std::tuple<Ref<JSON::ArrayOf<Protocol::Runtime::Property
 {
     Protocol::ErrorString errorString;
 
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
+    auto injectedScript = injectedScriptManager().injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue())
         return makeUnexpected("Missing injected script for given objectId"_s);
 
@@ -320,7 +320,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Runtime::CollectionEntry>>> 
 {
     Protocol::ErrorString errorString;
 
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
+    auto injectedScript = injectedScriptManager().injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue())
         return makeUnexpected("Missing injected script for given objectId"_s);
 
@@ -354,7 +354,7 @@ Protocol::ErrorStringOr<std::optional<int> /* saveResultIndex */> InspectorRunti
         if (injectedScript.hasNoValue())
             return makeUnexpected(errorString);
     } else {
-        injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
+        injectedScript = injectedScriptManager().injectedScriptForObjectId(objectId);
         if (injectedScript.hasNoValue())
             return makeUnexpected("Missing injected script for given objectId"_s);
     }
@@ -371,14 +371,14 @@ Protocol::ErrorStringOr<std::optional<int> /* saveResultIndex */> InspectorRunti
 
 Protocol::ErrorStringOr<void> InspectorRuntimeAgent::setSavedResultAlias(const String& savedResultAlias)
 {
-    m_injectedScriptManager.injectedScriptHost().setSavedResultAlias(savedResultAlias);
+    injectedScriptManager().injectedScriptHost().setSavedResultAlias(savedResultAlias);
 
     return { };
 }
 
 Protocol::ErrorStringOr<void> InspectorRuntimeAgent::releaseObject(const Protocol::Runtime::RemoteObjectId& objectId)
 {
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
+    auto injectedScript = injectedScriptManager().injectedScriptForObjectId(objectId);
     if (!injectedScript.hasNoValue())
         injectedScript.releaseObject(objectId);
 
@@ -387,7 +387,7 @@ Protocol::ErrorStringOr<void> InspectorRuntimeAgent::releaseObject(const Protoco
 
 Protocol::ErrorStringOr<void> InspectorRuntimeAgent::releaseObjectGroup(const String& objectGroup)
 {
-    m_injectedScriptManager.releaseObjectGroup(objectGroup);
+    injectedScriptManager().releaseObjectGroup(objectGroup);
 
     return { };
 }

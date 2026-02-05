@@ -15,32 +15,32 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x179 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x81
-          RenderText {#text} at (0,0) size 59x26
+          RenderText {#text} at (0,0) size 59x27
             text run at (0,0) width 59: "Tests:"
-          RenderBR {BR} at (58,0) size 1x26
-          RenderText {#text} at (0,27) size 113x26
+          RenderBR {BR} at (58,0) size 1x27
+          RenderText {#text} at (0,27) size 113x27
             text run at (0,27) width 113: "Bug fix for "
-          RenderInline {A} at (113,27) size 260x26 [color=#0000EE]
-            RenderText {#text} at (113,27) size 260x26
+          RenderInline {A} at (113,27) size 260x27 [color=#0000EE]
+            RenderText {#text} at (113,27) size 260x27
               text run at (113,27) width 260: "<rdar://problem/3998892>"
-          RenderText {#text} at (0,27) size 698x53
+          RenderText {#text} at (0,27) size 698x54
             text run at (373,27) width 325: " REGRESSION (Mail): bolding a"
             text run at (0,54) width 93: "selection "
             text run at (93,54) width 551: "from end of line changes unselected text on starting line."
         RenderBlock {DIV} at (14,111) size 756x54
-          RenderText {#text} at (0,0) size 183x26
+          RenderText {#text} at (0,0) size 183x27
             text run at (0,0) width 183: "Expected Results:"
-          RenderBR {BR} at (183,0) size 0x26
-          RenderText {#text} at (0,27) size 604x26
+          RenderBR {BR} at (183,0) size 0x27
+          RenderText {#text} at (0,27) size 604x27
             text run at (0,27) width 604: "Should see first line (\"foo\") not bold; second line (\"bar\") bold."
       RenderBlock {DIV} at (0,203) size 784x58
         RenderBlock {DIV} at (0,0) size 784x58 [border: (2px solid #FF0000)]
           RenderBlock {DIV} at (2,2) size 780x27
-            RenderText {#text} at (0,0) size 32x26
+            RenderText {#text} at (0,0) size 32x27
               text run at (0,0) width 32: "foo"
           RenderBlock {DIV} at (2,29) size 780x27
-            RenderInline {B} at (0,0) size 36x26
-              RenderText {#text} at (0,0) size 36x26
+            RenderInline {B} at (0,0) size 36x27
+              RenderText {#text} at (0,0) size 36x27
                 text run at (0,0) width 36: "bar"
 selection start: position 3 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body
 selection end:   position 3 of child 0 {#text} of child 0 {B} of child 3 {DIV} of child 1 {DIV} of child 3 {DIV} of body

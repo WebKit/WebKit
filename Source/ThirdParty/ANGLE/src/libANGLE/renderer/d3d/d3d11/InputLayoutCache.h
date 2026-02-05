@@ -18,6 +18,7 @@
 #include <map>
 
 #include "common/angleutils.h"
+#include "common/span.h"
 #include "libANGLE/Constants.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/SizedMRUCache.h"
@@ -51,7 +52,7 @@ struct hash<rx::PackedAttributeLayout>
 {
     size_t operator()(const rx::PackedAttributeLayout &value) const
     {
-        return angle::ComputeGenericHash(value);
+        return angle::ComputeGenericHash(angle::byte_span_from_ref(value));
     }
 };
 }  // namespace std

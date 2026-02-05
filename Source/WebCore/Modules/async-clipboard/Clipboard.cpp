@@ -259,7 +259,7 @@ void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPro
     if (RefPtr page = frame->page())
         resultAsString = page->applyLinkDecorationFiltering(resultAsString, LinkDecorationFilteringTrigger::Paste);
 
-    promise->resolve<IDLInterface<Blob>>(ClipboardItem::blobFromString(frame->protectedDocument().get(), resultAsString, type));
+    promise->resolve<IDLInterface<Blob>>(ClipboardItem::blobFromString(protect(frame->document()).get(), resultAsString, type));
 }
 
 Clipboard::SessionIsValid Clipboard::updateSessionValidity()

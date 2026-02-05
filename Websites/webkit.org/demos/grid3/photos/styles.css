@@ -106,6 +106,7 @@ body:has(option[value="eight"]:checked) {
         .card {
             cursor: pointer;
             transition: transform 1s;
+            view-transition-name: match-element;
         }
         ::view-transition-group(*) {
             animation-duration: 0.5s; /* This is having no effect */
@@ -119,88 +120,6 @@ body:has(option[value="eight"]:checked) {
         ::view-transition-new(img-shrink) {
             display: none;
         }
-        /* This code is a hack to make View transitions work */
-        .card:nth-child(1) { view-transition-name: card-1; }
-        .card:nth-child(2) { view-transition-name: card-2; }
-        .card:nth-child(3) { view-transition-name: card-3; }
-        .card:nth-child(4) { view-transition-name: card-4; }
-        .card:nth-child(5) { view-transition-name: card-5; }
-        .card:nth-child(6) { view-transition-name: card-6; }
-        .card:nth-child(7) { view-transition-name: card-7; }
-        .card:nth-child(8) { view-transition-name: card-8; }
-        .card:nth-child(9) { view-transition-name: card-9; }
-        .card:nth-child(10) { view-transition-name: card-10; }
-        .card:nth-child(11) { view-transition-name: card-11; }
-        .card:nth-child(12) { view-transition-name: card-12; }
-        .card:nth-child(13) { view-transition-name: card-13; }
-        .card:nth-child(14) { view-transition-name: card-14; }
-        .card:nth-child(15) { view-transition-name: card-15; }
-        .card:nth-child(16) { view-transition-name: card-16; }
-        .card:nth-child(17) { view-transition-name: card-17; }
-        .card:nth-child(18) { view-transition-name: card-18; }
-        .card:nth-child(19) { view-transition-name: card-19; }
-        .card:nth-child(20) { view-transition-name: card-20; }
-        .card:nth-child(21) { view-transition-name: card-21; }
-        .card:nth-child(22) { view-transition-name: card-22; }
-        .card:nth-child(23) { view-transition-name: card-23; }
-        .card:nth-child(24) { view-transition-name: card-24; }
-        .card:nth-child(25) { view-transition-name: card-25; }
-        .card:nth-child(26) { view-transition-name: card-26; }
-        .card:nth-child(27) { view-transition-name: card-27; }
-        .card:nth-child(28) { view-transition-name: card-28; }
-        .card:nth-child(29) { view-transition-name: card-29; }
-        .card:nth-child(30) { view-transition-name: card-30; }
-        .card:nth-child(31) { view-transition-name: card-31; }
-        .card:nth-child(32) { view-transition-name: card-32; }
-        .card:nth-child(33) { view-transition-name: card-33; }
-        .card:nth-child(34) { view-transition-name: card-34; }
-        .card:nth-child(35) { view-transition-name: card-35; }
-        .card:nth-child(36) { view-transition-name: card-36; }
-        .card:nth-child(37) { view-transition-name: card-37; }
-        .card:nth-child(38) { view-transition-name: card-38; }
-        .card:nth-child(39) { view-transition-name: card-39; }
-        .card:nth-child(40) { view-transition-name: card-40; }
-        .card:nth-child(41) { view-transition-name: card-41; }
-        .card:nth-child(42) { view-transition-name: card-42; }
-        .card:nth-child(43) { view-transition-name: card-43; }
-        .card:nth-child(44) { view-transition-name: card-44; }
-        .card:nth-child(45) { view-transition-name: card-45; }
-        .card:nth-child(46) { view-transition-name: card-46; }
-        .card:nth-child(47) { view-transition-name: card-47; }
-        .card:nth-child(48) { view-transition-name: card-48; }
-        .card:nth-child(49) { view-transition-name: card-49; }
-        .card:nth-child(50) { view-transition-name: card-50; }
-        .card:nth-child(51) { view-transition-name: card-51; }
-        .card:nth-child(52) { view-transition-name: card-52; }
-        .card:nth-child(53) { view-transition-name: card-53; }
-        .card:nth-child(54) { view-transition-name: card-54; }
-        .card:nth-child(55) { view-transition-name: card-55; }
-        .card:nth-child(56) { view-transition-name: card-56; }
-        .card:nth-child(57) { view-transition-name: card-57; }
-        .card:nth-child(58) { view-transition-name: card-58; }
-        .card:nth-child(59) { view-transition-name: card-59; }
-        .card:nth-child(60) { view-transition-name: card-60; }
-        .card:nth-child(61) { view-transition-name: card-61; }
-        .card:nth-child(62) { view-transition-name: card-62; }
-        .card:nth-child(63) { view-transition-name: card-63; }
-        .card:nth-child(64) { view-transition-name: card-64; }
-        .card:nth-child(65) { view-transition-name: card-65; }
-        .card:nth-child(66) { view-transition-name: card-66; }
-        .card:nth-child(67) { view-transition-name: card-67; }
-        .card:nth-child(68) { view-transition-name: card-68; }
-        .card:nth-child(69) { view-transition-name: card-69; }
-        .card:nth-child(70) { view-transition-name: card-70; }
-        .card:nth-child(71) { view-transition-name: card-71; }
-        .card:nth-child(72) { view-transition-name: card-72; }
-        .card:nth-child(73) { view-transition-name: card-73; }
-        .card:nth-child(74) { view-transition-name: card-74; }
-        .card:nth-child(75) { view-transition-name: card-75; }
-        .card:nth-child(76) { view-transition-name: card-76; }
-        .card:nth-child(77) { view-transition-name: card-77; }
-        .card:nth-child(78) { view-transition-name: card-78; }
-        .card:nth-child(79) { view-transition-name: card-79; }
-        .card:nth-child(80) { view-transition-name: card-80; }
-        /* If there are more than 80 items, the experience will break. */
         img {
             border-radius: 0;
         }

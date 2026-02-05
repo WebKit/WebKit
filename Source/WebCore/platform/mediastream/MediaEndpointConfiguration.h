@@ -56,14 +56,13 @@ struct MediaEndpointConfiguration {
         String privateKey;
     };
 
-    MediaEndpointConfiguration(Vector<IceServerInfo>&&, RTCIceTransportPolicy, RTCBundlePolicy, RTCPMuxPolicy, unsigned short, Vector<CertificatePEM>&&);
-
     Vector<IceServerInfo> iceServers;
     RTCIceTransportPolicy iceTransportPolicy;
     RTCBundlePolicy bundlePolicy;
     RTCPMuxPolicy rtcpMuxPolicy;
     unsigned short iceCandidatePoolSize;
     Vector<CertificatePEM> certificates;
+    bool shouldEnableServiceClass { false };
 };
 
 } // namespace WebCore

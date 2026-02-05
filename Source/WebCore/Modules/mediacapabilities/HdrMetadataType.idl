@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/media-capabilities/#enumdef-hdrmetadatatype
 enum HdrMetadataType {
     "smpteSt2086",
     "smpteSt2094-10",

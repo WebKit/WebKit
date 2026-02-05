@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if HAVE_CORE_ANIMATION_SEPARATED_LAYERS && compiler(>=6.0)
+#if HAVE_CORE_ANIMATION_SEPARATED_LAYERS && compiler(>=6.2)
 
 internal import CommonCrypto
 internal import CoreGraphics
@@ -44,10 +44,10 @@ extension WKSeparatedImageView {
     func didReceiveImage() {
         computeHashTask?.cancel()
 
-        computeHashTask = Task.detached { [weak self] in
+        computeHashTask = Task { [weak self] in
             try await Task.sleep(for: SeparatedImageViewConstants.cancellationDelay)
 
-            guard let self, let cgImage = await self.cgImage, let (data, hash) = cgImageAsDataWithHash(cgImage) else { return }
+            guard let self, let (data, hash) = await self.computeHash() else { return }
 
             Task { @MainActor [weak self] in
                 try Task.checkCancellation()
@@ -75,6 +75,12 @@ extension WKSeparatedImageView {
                 self.scheduleUpdate()
             }
         }
+    }
+
+    @concurrent
+    func computeHash() async -> (Data, NSString)? {
+        guard let cgImage = await self.cgImage else { return nil }
+        return cgImageAsDataWithHash(cgImage)
     }
 }
 

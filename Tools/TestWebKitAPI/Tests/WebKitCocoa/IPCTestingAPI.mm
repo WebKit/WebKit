@@ -32,6 +32,7 @@
 #import "Utilities.h"
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFeature.h>

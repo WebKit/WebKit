@@ -23,11 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary AddEventListenerOptions : EventListenerOptions {
+// https://dom.spec.whatwg.org/#dictdef-addeventlisteneroptions
+dictionary AddEventListenerOptions : EventListenerOptions {
     boolean passive;
     boolean once = false;
     AbortSignal signal;
+
+    // Non-standard.
     [EnabledForWorld=allowAutofill] boolean webkitTrustedOnly = false;
 };

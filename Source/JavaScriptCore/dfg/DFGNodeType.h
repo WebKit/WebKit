@@ -249,6 +249,7 @@ namespace JSC { namespace DFG {
     macro(PutSetterByVal, NodeMustGenerate) \
     macro(DefineDataProperty, NodeMustGenerate | NodeHasVarArgs) \
     macro(DefineAccessorProperty, NodeMustGenerate | NodeHasVarArgs) \
+    macro(ObjectDefineProperty, NodeMustGenerate) \
     macro(DeleteById, NodeResultBoolean | NodeMustGenerate) \
     macro(DeleteByVal, NodeResultBoolean | NodeMustGenerate) \
     macro(CheckStructure, NodeMustGenerate) \
@@ -359,6 +360,7 @@ namespace JSC { namespace DFG {
     macro(StringReplaceRegExp, NodeResultJS | NodeMustGenerate) \
     macro(StringReplaceString, NodeResultJS | NodeMustGenerate) \
     macro(StringIndexOf, NodeResultInt32) \
+    macro(StringStartsWith, NodeResultBoolean) \
     \
     /* Optimizations for string access */ \
     macro(StringAt, NodeResultJS) \
@@ -405,8 +407,6 @@ namespace JSC { namespace DFG {
     \
     /* Allocations. */\
     macro(NewObject, NodeResultJS) \
-    macro(NewGenerator, NodeResultJS) \
-    macro(NewAsyncGenerator, NodeResultJS) \
     /* FIXME: A lot of these could likely be consolidated but there's some subtle differences between them, particularly when having a bad time. */ \
     macro(NewArray, NodeResultJS | NodeHasVarArgs) \
     macro(NewArrayWithSpread, NodeResultJS | NodeHasVarArgs) \
@@ -426,7 +426,6 @@ namespace JSC { namespace DFG {
     macro(NewMap, NodeResultJS) \
     macro(NewSet, NodeResultJS) \
     /* Rest Parameter */\
-    macro(GetRestLength, NodeResultInt32) \
     macro(CreateRest, NodeResultJS | NodeMustGenerate) \
     \
     macro(Spread, NodeResultJS | NodeMustGenerate) \
@@ -595,6 +594,7 @@ namespace JSC { namespace DFG {
     macro(MapIterationEntry, NodeResultJS) \
     macro(MapIterationEntryKey, NodeResultInt32) \
     macro(MapIterationEntryValue, NodeResultJS) \
+    macro(MapOrSetSize, NodeResultInt32) \
     macro(SetAdd, NodeMustGenerate) \
     macro(MapSet, NodeMustGenerate | NodeHasVarArgs) \
     macro(MapOrSetDelete, NodeMustGenerate | NodeResultBoolean) \

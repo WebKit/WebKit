@@ -87,8 +87,7 @@ public:
     const URL& action() const { return m_action; }
     const AtomString& target() const { return m_target; }
     const String& contentType() const { return m_contentType; }
-    FormState& state() const { return *m_formState; }
-    RefPtr<FormState> protectedState() const { return m_formState; }
+    FormState* state() const { return m_formState.get(); }
     FormData& data() const { return *m_formData; }
     const String boundary() const { return m_boundary; }
     LockHistory lockHistory() const { return m_lockHistory; }

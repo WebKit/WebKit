@@ -48,6 +48,7 @@ class BlockLayoutEncoderMTL : public sh::BlockLayoutEncoder
     ~BlockLayoutEncoderMTL() override {}
 
     sh::BlockMemberInfo encodeType(GLenum type,
+                                   size_t bytesPerComponent,
                                    const std::vector<unsigned int> &arraySizes,
                                    bool isRowMajorMatrix) override;
     // Advance the offset based on struct size and array dimensions.  Size can be calculated with
@@ -66,11 +67,13 @@ class BlockLayoutEncoderMTL : public sh::BlockLayoutEncoder
 
   private:
     void getBlockLayoutInfo(GLenum type,
+                            size_t bytesPerComponent,
                             const std::vector<unsigned int> &arraySizes,
                             bool isRowMajorMatrix,
                             int *arrayStrideOut,
                             int *matrixStrideOut) override;
     void advanceOffset(GLenum type,
+                       size_t bytesPerComponent,
                        const std::vector<unsigned int> &arraySizes,
                        bool isRowMajorMatrix,
                        int arrayStride,

@@ -86,11 +86,6 @@ API::Object* WebContextMenuItemData::userData() const
     return m_userData.get();
 }
 
-RefPtr<API::Object> WebContextMenuItemData::protectedUserData() const
-{
-    return m_userData;
-}
-
 void WebContextMenuItemData::setUserData(API::Object* userData)
 {
     m_userData = userData;

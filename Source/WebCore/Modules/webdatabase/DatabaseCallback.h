@@ -46,6 +46,8 @@ public:
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }
 
+    virtual bool isJSDatabaseCallback() const { return false; }
+
     virtual CallbackResult<void> invoke(Database&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(Database&) = 0;
 

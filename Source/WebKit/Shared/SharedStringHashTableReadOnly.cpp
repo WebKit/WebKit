@@ -96,9 +96,4 @@ SharedStringHash* SharedStringHashTableReadOnly::findSlot(SharedStringHash share
     }
 }
 
-RefPtr<WebCore::SharedMemory> SharedStringHashTableReadOnly::protectedSharedMemory() const
-{
-    return sharedMemory();
-}
-
 } // namespace WebKit

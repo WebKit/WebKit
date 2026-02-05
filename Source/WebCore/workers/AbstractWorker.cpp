@@ -72,7 +72,7 @@ ExceptionOr<URL> AbstractWorker::resolveURL(const String& url)
 std::optional<Exception> AbstractWorker::validateURL(ScriptExecutionContext& context, const URL& scriptURL)
 {
     // Per the specification, any same-origin URL (including blob: URLs) can be used. data: URLs can also be used, but they create a worker with an opaque origin.
-    if (!context.protectedSecurityOrigin()->canRequest(scriptURL, OriginAccessPatternsForWebProcess::singleton()) && !scriptURL.protocolIsData())
+    if (!protect(context.securityOrigin())->canRequest(scriptURL, OriginAccessPatternsForWebProcess::singleton()) && !scriptURL.protocolIsData())
         return Exception { ExceptionCode::SecurityError };
 
     ASSERT(context.contentSecurityPolicy());

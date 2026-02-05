@@ -96,7 +96,7 @@ void NetscapePlugInStreamLoader::init(ResourceRequest&& request, CompletionHandl
         if (!success)
             return completionHandler(false);
         ASSERT(!reachedTerminalState());
-        protectedDocumentLoader()->addPlugInStreamLoader(*this);
+        protect(documentLoader())->addPlugInStreamLoader(*this);
         m_isInitialized = true;
         completionHandler(true);
     });

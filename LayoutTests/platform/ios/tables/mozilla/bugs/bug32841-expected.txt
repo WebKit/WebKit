@@ -10,14 +10,14 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 527x48
           RenderTableRow {TR} at (0,0) size 527x24
             RenderTableCell {TD} at (0,0) size 527x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (2,2) size 523x19
+              RenderText {#text} at (2,2) size 523x20
                 text run at (2,2) width 523: "thelefttablecellis335pixwidewhiletherightoneisonly155pixwidehblahlahblahblahb"
           RenderTableRow {TR} at (0,24) size 527x24
             RenderTableCell {TD} at (0,24) size 360x24 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 4x19
+              RenderText {#text} at (2,2) size 4x20
                 text run at (2,2) width 4: " "
             RenderTableCell {TD} at (360,24) size 167x24 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 4x19
+              RenderText {#text} at (2,2) size 4x20
                 text run at (2,2) width 4: " "
 layer at (8,66) size 492x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,58) size 492x2 [color=#808080] [border: (1px inset #808080)]

@@ -39,7 +39,7 @@ static ExceptionOr<JSC::JSValue> invokeReadableStreamFunction(JSC::JSGlobalObjec
     JSC::VM& vm = globalObject.vm();
     JSC::JSLockHolder lock(vm);
 
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     auto function = globalObject.get(&globalObject, identifier);
     ASSERT(!!scope.exception() || function.isCallable());
@@ -54,7 +54,7 @@ static ExceptionOr<JSC::JSValue> invokeReadableStreamFunction(JSC::JSGlobalObjec
     return result;
 }
 
-ExceptionOr<Ref<InternalReadableStream>> InternalReadableStream::createFromUnderlyingSource(JSDOMGlobalObject& globalObject, JSC::JSValue underlyingSource, JSC::JSValue strategy)
+ExceptionOr<Ref<InternalReadableStream>> InternalReadableStream::createFromUnderlyingSource(JSDOMGlobalObject& globalObject, JSC::JSValue underlyingSource, JSC::JSValue strategy, std::optional<double> highWaterMark)
 {
     auto* clientData = downcast<JSVMClientData>(globalObject.vm().clientData);
     auto& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().createInternalReadableStreamFromUnderlyingSourcePrivateName();
@@ -62,6 +62,8 @@ ExceptionOr<Ref<InternalReadableStream>> InternalReadableStream::createFromUnder
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(underlyingSource);
     arguments.append(strategy);
+    if (highWaterMark)
+        arguments.append(JSC::jsNumber(*highWaterMark));
     ASSERT(!arguments.hasOverflowed());
 
     auto result = invokeReadableStreamFunction(globalObject, privateName, arguments);

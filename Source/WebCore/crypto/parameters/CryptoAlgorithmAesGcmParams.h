@@ -25,8 +25,9 @@
 
 #pragma once
 
-#include "BufferSource.h"
-#include "CryptoAlgorithmParameters.h"
+#include <WebCore/BufferSource.h>
+#include <WebCore/CryptoAlgorithmAesGcmParamsInit.h>
+#include <WebCore/CryptoAlgorithmParameters.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -34,19 +35,33 @@ namespace WebCore {
 class CryptoAlgorithmAesGcmParams final : public CryptoAlgorithmParameters {
     WTF_MAKE_TZONE_ALLOCATED(CryptoAlgorithmAesGcmParams);
 public:
-    BufferSource iv;
+    std::optional<BufferSource> iv;
     // Use additionalDataVector() instead of additionalData. The label will be gone once additionalDataVector() is called.
-    mutable std::optional<BufferSource::VariantType> additionalData;
+    mutable std::optional<BufferSource> additionalData;
     mutable std::optional<uint8_t> tagLength;
+
+    CryptoAlgorithmAesGcmParams(CryptoAlgorithmIdentifier identifier)
+        : CryptoAlgorithmParameters { WTF::move(identifier) }
+    {
+    }
+
+    CryptoAlgorithmAesGcmParams(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmAesGcmParamsInit init)
+        : CryptoAlgorithmParameters { WTF::move(identifier), WTF::move(init) }
+        , iv { WTF::move(init.iv) }
+        , additionalData { WTF::move(init.additionalData) }
+        , tagLength { WTF::move(init.tagLength) }
+    {
+    }
 
     Class parametersClass() const final { return Class::AesGcmParams; }
 
     const Vector<uint8_t>& ivVector() const
     {
-        if (!m_ivVector.isEmpty() || !iv.length())
+        if (!m_ivVector.isEmpty() || !iv || !iv->length())
             return m_ivVector;
 
-        m_ivVector.append(iv.span());
+        if (iv)
+            m_ivVector.append(iv->span());
         return m_ivVector;
     }
 
@@ -65,8 +80,7 @@ public:
 
     CryptoAlgorithmAesGcmParams isolatedCopy() const
     {
-        CryptoAlgorithmAesGcmParams result;
-        result.identifier = identifier;
+        CryptoAlgorithmAesGcmParams result { identifier };
         result.m_ivVector = ivVector();
         result.m_additionalDataVector = additionalDataVector();
         result.tagLength = tagLength;

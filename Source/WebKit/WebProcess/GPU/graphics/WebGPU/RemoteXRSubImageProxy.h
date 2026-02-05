@@ -56,7 +56,6 @@ public:
 
     RemoteGPUProxy& parent() { return m_parent; }
     RemoteGPUProxy& root() { return m_parent; }
-    Ref<RemoteGPUProxy> protectedRoot() { return m_parent; }
 
 private:
     friend class DowncastConvertToBackingContext;

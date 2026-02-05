@@ -44,7 +44,6 @@ typedef [EnforceRange] unsigned long long WebCodecsEncodedVideoChunkInitDuration
 
 [
     Conditional=WEB_CODECS,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary WebCodecsEncodedVideoChunkInit {
   required WebCodecsEncodedVideoChunkType type;
   WebCodecsEncodedVideoChunkInitTimestamp timestamp;

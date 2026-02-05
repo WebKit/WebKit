@@ -89,7 +89,7 @@ TrackBase::~TrackBase() = default;
 
 void TrackBase::didMoveToNewDocument(Document& newDocument)
 {
-    observeContext(newDocument.protectedContextDocument().ptr());
+    observeContext(protect(newDocument.contextDocument()).ptr());
 }
 
 #if ENABLE(MEDIA_SOURCE)

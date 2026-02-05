@@ -30,6 +30,6 @@
 ] interface DecompressionStreamDecoder {
     constructor(byte format);
 
-    [PrivateIdentifier] Uint8Array decode(BufferSource chunk);
-    [PrivateIdentifier] Uint8Array flush();
+    [PrivateIdentifier] Uint8Array? decode(BufferSource chunk);
+    [PrivateIdentifier] Uint8Array? flush();
 };

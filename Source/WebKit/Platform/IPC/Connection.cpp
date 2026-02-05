@@ -1276,7 +1276,7 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
         } else
             decoder.markInvalid();
     } else
-        protectedClient()->didReceiveSyncMessage(*this, decoder, replyEncoder);
+        protect(client())->didReceiveSyncMessage(*this, decoder, replyEncoder);
 
     // If the message was not handled, i.e. replyEncoder was not consumed, reply with cancel
     // message. We do not distinquish between a decode failure and failure to find a
@@ -1294,7 +1294,7 @@ void Connection::dispatchDidReceiveInvalidMessage(MessageName messageName, const
     dispatchToClient([protectedThis = Ref { *this }, messageName, indicesOfObjectsFailingDecoding] {
         if (!protectedThis->isValid())
             return;
-        protectedThis->protectedClient()->didReceiveInvalidMessage(protectedThis, messageName, indicesOfObjectsFailingDecoding);
+        protect(protectedThis->client())->didReceiveInvalidMessage(protectedThis, messageName, indicesOfObjectsFailingDecoding);
     });
 }
 
@@ -1443,7 +1443,7 @@ void Connection::dispatchMessage(UniqueRef<Decoder> message)
             if (m_ignoreInvalidMessageForTesting)
                 return;
 #endif
-            protectedClient()->didReceiveInvalidMessage(*this, message->messageName(), message->indicesOfObjectsFailingDecoding());
+            protect(client())->didReceiveInvalidMessage(*this, message->messageName(), message->indicesOfObjectsFailingDecoding());
             return;
         }
         m_inDispatchMessageMarkedToUseFullySynchronousModeForTesting++;
@@ -1489,7 +1489,7 @@ void Connection::dispatchMessage(UniqueRef<Decoder> message)
         return;
 #endif
     if (didReceiveInvalidMessage && isValid())
-        protectedClient()->didReceiveInvalidMessage(*this, message->messageName(), message->indicesOfObjectsFailingDecoding());
+        protect(client())->didReceiveInvalidMessage(*this, message->messageName(), message->indicesOfObjectsFailingDecoding());
 }
 
 size_t Connection::numberOfMessagesToProcess(size_t totalMessages)

@@ -243,13 +243,13 @@ void TreeScope::removeElementByName(const AtomString& name, Element& element)
 
 Ref<Node> TreeScope::retargetToScope(Node& node) const
 {
-    auto& scope = node.treeScope();
-    if (this == &scope || !node.isInShadowTree()) [[likely]]
+    Ref scope = node.treeScope();
+    if (this == scope.ptr() || !node.isInShadowTree()) [[likely]]
         return node;
-    ASSERT(is<ShadowRoot>(scope.rootNode()));
+    ASSERT(is<ShadowRoot>(scope->rootNode()));
 
     Vector<TreeScope*, 8> nodeTreeScopes;
-    for (auto* currentScope = &scope; currentScope; currentScope = currentScope->parentTreeScope())
+    for (auto* currentScope = scope.ptr(); currentScope; currentScope = currentScope->parentTreeScope())
         nodeTreeScopes.append(currentScope);
     ASSERT(nodeTreeScopes.size() >= 2);
 
@@ -272,7 +272,7 @@ Ref<Node> TreeScope::retargetToScope(Node& node) const
     return *shadowRootInLowestCommonTreeScope.host();
 }
 
-Node* TreeScope::ancestorNodeInThisScope(Node* node) const
+Node* TreeScope::ancestorNodeInThisScope(SUPPRESS_UNCHECKED_ARG Node* node) const
 {
     for (; node; node = node->shadowHost()) {
         if (&node->treeScope() == this)
@@ -283,7 +283,7 @@ Node* TreeScope::ancestorNodeInThisScope(Node* node) const
     return nullptr;
 }
 
-Element* TreeScope::ancestorElementInThisScope(Element* element) const
+Element* TreeScope::ancestorElementInThisScope(SUPPRESS_UNCHECKED_ARG Element* element) const
 {
     for (; element; element = element->shadowHost()) {
         if (&element->treeScope() == this)
@@ -383,7 +383,7 @@ static std::optional<LayoutPoint> absolutePointIfNotClipped(Document& document, 
         document.updateLayout();
         if (!document.view() || !document.hasLivingRenderTree())
             return std::nullopt;
-        auto* view = document.view();
+        RefPtr view = document.view();
         FloatPoint layoutViewportPoint = view->clientToLayoutViewportPoint(clientPoint);
         FloatRect layoutViewportBounds({ }, view->layoutViewportRect().size());
         if (!layoutViewportBounds.contains(layoutViewportPoint))
@@ -391,8 +391,8 @@ static std::optional<LayoutPoint> absolutePointIfNotClipped(Document& document, 
         return LayoutPoint(view->layoutViewportToAbsolutePoint(layoutViewportPoint));
     }
 
-    auto* frame = document.frame();
-    auto* view = document.view();
+    RefPtr frame = document.frame();
+    CheckedPtr view = document.view();
     float scaleFactor = frame->pageZoomFactor() * frame->frameScaleFactor();
 
     LayoutPoint absolutePoint = clientPoint;
@@ -426,7 +426,7 @@ RefPtr<Node> TreeScope::nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoin
 
 RefPtr<Element> TreeScope::elementFromPoint(double clientX, double clientY, HitTestSource source)
 {
-    if (!protectedDocumentScope()->hasLivingRenderTree())
+    if (!protect(documentScope())->hasLivingRenderTree())
         return nullptr;
 
     auto node = nodeFromPoint(LayoutPoint { clientX, clientY }, nullptr, source);
@@ -495,7 +495,7 @@ Vector<Ref<Element>> TreeScope::elementsFromPoint(double clientX, double clientY
     }
 
     if (auto* rootDocument = dynamicDowncast<Document>(m_rootNode.get())) {
-        if (auto* rootElement = rootDocument->documentElement()) {
+        if (RefPtr rootElement = rootDocument->documentElement()) {
             if (elements.isEmpty() || elements.last().ptr() != rootElement)
                 elements.append(*rootElement);
         }
@@ -560,14 +560,14 @@ Element* TreeScope::focusedElementInScope()
 
 Element* TreeScope::pointerLockElement() const
 {
-    Document& document = documentScope();
-    Page* page = document.page();
+    CheckedRef document = documentScope();
+    RefPtr page = document->page();
     if (!page || page->pointerLockController().lockPending())
         return nullptr;
-    auto* element = page->pointerLockController().element();
-    if (!element || &element->document() != &document)
+    RefPtr element = page->pointerLockController().element();
+    if (!element || &element->document() != document.ptr())
         return nullptr;
-    return ancestorElementInThisScope(element);
+    return ancestorElementInThisScope(element.get());
 }
 
 #endif
@@ -576,10 +576,10 @@ static void listTreeScopes(Node* node, Vector<TreeScope*, 5>& treeScopes)
 {
     while (true) {
         treeScopes.append(&node->treeScope());
-        Element* ancestor = node->shadowHost();
+        RefPtr ancestor = node->shadowHost();
         if (!ancestor)
             break;
-        node = ancestor;
+        SUPPRESS_UNCHECKED_ARG(node) = ancestor.get();
     }
 }
 
@@ -795,11 +795,6 @@ RefPtr<SVGElement> TreeScope::takeElementFromPendingSVGResourcesForRemovalMap(co
         svgResourcesMap().pendingResourcesForRemoval.remove(id);
 
     return firstElement;
-}
-
-Ref<Document> TreeScope::protectedDocumentScope() const
-{
-    return m_documentScope.get();
 }
 
 } // namespace WebCore

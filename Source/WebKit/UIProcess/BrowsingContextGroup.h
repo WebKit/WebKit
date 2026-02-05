@@ -31,6 +31,7 @@
 #include <WebCore/Site.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/SwiftBridging.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakListHashSet.h>
 
@@ -82,7 +83,6 @@ public:
     void transitionProvisionalPageToRemotePage(ProvisionalPageProxy&, const WebCore::Site& provisionalNavigationFailureSite);
 
     bool hasRemotePages(const WebPageProxy&);
-    bool isFrameProcessInUseForMainFrame(const FrameProcess&);
 
 private:
     BrowsingContextGroup();
@@ -94,6 +94,16 @@ private:
     HashMap<WebCore::Site, WeakPtr<FrameProcess>> m_processMap;
     WeakListHashSet<WebPageProxy> m_pages;
     WeakHashMap<WebPageProxy, HashSet<Ref<RemotePageProxy>>> m_remotePages;
-};
+} SWIFT_SHARED_REFERENCE(refBrowsingContextGroup, derefBrowsingContextGroup);
 
+}
+
+inline void refBrowsingContextGroup(WebKit::BrowsingContextGroup* WTF_NONNULL obj)
+{
+    WTF::ref(obj);
+}
+
+inline void derefBrowsingContextGroup(WebKit::BrowsingContextGroup* WTF_NONNULL obj)
+{
+    WTF::deref(obj);
 }

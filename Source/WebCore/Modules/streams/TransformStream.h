@@ -42,7 +42,7 @@ template<typename> class ExceptionOr;
 
 class TransformStream : public RefCounted<TransformStream> {
 public:
-    static ExceptionOr<Ref<TransformStream>> create(JSC::JSGlobalObject&, std::optional<JSC::Strong<JSC::JSObject>>&&, std::optional<JSC::Strong<JSC::JSObject>>&&, std::optional<JSC::Strong<JSC::JSObject>>&&);
+    static ExceptionOr<Ref<TransformStream>> create(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&, JSC::Strong<JSC::JSObject>&&, JSC::Strong<JSC::JSObject>&&);
 
     ~TransformStream();
 

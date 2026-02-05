@@ -80,7 +80,7 @@ void LegacyDownloadClient::legacyDidStart(DownloadProxy& downloadProxy)
 void LegacyDownloadClient::didReceiveResponse(DownloadProxy& downloadProxy, const WebCore::ResourceResponse& response)
 {
     if (m_delegateMethods.downloadDidReceiveResponse)
-        [m_delegate.get() _download:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()] didReceiveResponse:response.protectedNSURLResponse().get()];
+        [m_delegate.get() _download:[_WKDownload downloadWithDownload:RetainPtr { wrapper(downloadProxy) }.get()] didReceiveResponse:protect(response.nsURLResponse()).get()];
 }
 
 void LegacyDownloadClient::didReceiveData(DownloadProxy& downloadProxy, uint64_t bytesWritten, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite)

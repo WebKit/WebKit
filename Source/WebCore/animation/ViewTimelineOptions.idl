@@ -25,9 +25,8 @@
 
 typedef (DOMString or CSSKeywordValue) CSSKeywordish;
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary ViewTimelineOptions {
+// https://drafts.csswg.org/scroll-animations/#dictdef-viewtimelineoptions
+dictionary ViewTimelineOptions {
     Element subject;
     ScrollAxis axis = "block";
     (DOMString or sequence<(CSSNumericValue or CSSKeywordish)>) inset = "auto";

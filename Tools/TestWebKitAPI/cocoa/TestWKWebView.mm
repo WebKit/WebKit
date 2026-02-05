@@ -800,9 +800,19 @@ static IterationStatus forEachCALayer(CALayer *layer, IterationStatus(^visitor)(
 
 - (CALayer *)firstLayerWithName:(NSString *)layerName
 {
+    return [self _firstLayerWithName:layerName andMatcher:@selector(isEqualToString:)];
+}
+
+- (CALayer *)firstLayerWithNameContaining:(NSString *)layerName
+{
+    return [self _firstLayerWithName:layerName andMatcher:@selector(containsString:)];
+}
+
+- (CALayer *)_firstLayerWithName:(NSString *)layerName andMatcher:(SEL)matcher
+{
     __block RetainPtr<CALayer> result;
     [self forEachCALayer:^(CALayer *layer) {
-        if (![layer.name isEqualToString:@"Gesture Swipe Snapshot Layer"])
+        if (![layer.name performSelector:matcher withObject:layerName])
             return IterationStatus::Continue;
 
         result = layer;
@@ -1218,6 +1228,20 @@ static UIWindowScene *windowScene()
     }];
 
     TestWebKitAPI::Util::run(&done);
+}
+
+- (void)setVisibility:(BOOL)isVisible
+{
+#if PLATFORM(MAC)
+    [self.window setIsVisible:isVisible];
+#else
+    [self.window setHidden:!isVisible];
+#endif
+
+    if (!isVisible)
+        [self.window resignKeyWindow];
+
+    [self waitUntilActivityStateUpdateDone];
 }
 
 - (void)forceLightMode

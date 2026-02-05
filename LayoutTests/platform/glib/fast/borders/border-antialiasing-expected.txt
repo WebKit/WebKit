@@ -98,67 +98,67 @@ layer at (18,20) size 764x431
           RenderTableCell {TD} at (130,55) size 14x4 [border: (1px solid #000000)] [r=3 c=8 rs=1 cs=1]
           RenderTableCell {TD} at (146,55) size 14x4 [border: (1px solid #000000)] [r=3 c=9 rs=1 cs=1]
     RenderBlock {DIV} at (10,269) size 744x162
-      RenderInline {SPAN} at (0,-2) size 78x39
-        RenderText {#text} at (6,0) size 72x17
+      RenderInline {SPAN} at (0,-2) size 78x40
+        RenderText {#text} at (6,0) size 72x18
           text run at (6,0) width 72: "I am a span"
-        RenderBR {BR} at (78,0) size 0x17
-        RenderText {#text} at (0,18) size 28x17
+        RenderBR {BR} at (78,0) size 0x18
+        RenderText {#text} at (0,18) size 28x18
           text run at (0,18) width 28: "I am"
-      RenderText {#text} at (34,18) size 4x17
+      RenderText {#text} at (34,18) size 4x18
         text run at (34,18) width 4: " "
-      RenderInline {SPAN} at (0,16) size 74x39
-        RenderText {#text} at (44,18) size 28x17
+      RenderInline {SPAN} at (0,16) size 74x40
+        RenderText {#text} at (44,18) size 28x18
           text run at (44,18) width 28: "I am"
-        RenderBR {BR} at (72,18) size 0x17
-        RenderText {#text} at (0,36) size 72x17
+        RenderBR {BR} at (72,18) size 0x18
+        RenderText {#text} at (0,36) size 72x18
           text run at (0,36) width 72: "a span I am"
-      RenderText {#text} at (78,36) size 4x17
+      RenderText {#text} at (78,36) size 4x18
         text run at (78,36) width 4: " "
-      RenderInline {SPAN} at (0,34) size 160x39
-        RenderText {#text} at (88,36) size 72x17
+      RenderInline {SPAN} at (0,34) size 160x40
+        RenderText {#text} at (88,36) size 72x18
           text run at (88,36) width 72: "I am a span"
-        RenderBR {BR} at (160,36) size 0x17
-        RenderText {#text} at (0,54) size 28x17
+        RenderBR {BR} at (160,36) size 0x18
+        RenderText {#text} at (0,54) size 28x18
           text run at (0,54) width 28: "I am"
-      RenderText {#text} at (34,54) size 4x17
+      RenderText {#text} at (34,54) size 4x18
         text run at (34,54) width 4: " "
-      RenderInline {SPAN} at (0,52) size 74x39
-        RenderText {#text} at (44,54) size 28x17
+      RenderInline {SPAN} at (0,52) size 74x40
+        RenderText {#text} at (44,54) size 28x18
           text run at (44,54) width 28: "I am"
-        RenderBR {BR} at (72,54) size 0x17
-        RenderText {#text} at (0,72) size 72x17
+        RenderBR {BR} at (72,54) size 0x18
+        RenderText {#text} at (0,72) size 72x18
           text run at (0,72) width 72: "a span I am"
-      RenderText {#text} at (78,72) size 4x17
+      RenderText {#text} at (78,72) size 4x18
         text run at (78,72) width 4: " "
-      RenderInline {SPAN} at (0,70) size 160x39
-        RenderText {#text} at (88,72) size 72x17
+      RenderInline {SPAN} at (0,70) size 160x40
+        RenderText {#text} at (88,72) size 72x18
           text run at (88,72) width 72: "I am a span"
-        RenderBR {BR} at (160,72) size 0x17
-        RenderText {#text} at (0,90) size 28x17
+        RenderBR {BR} at (160,72) size 0x18
+        RenderText {#text} at (0,90) size 28x18
           text run at (0,90) width 28: "I am"
-      RenderText {#text} at (34,90) size 4x17
+      RenderText {#text} at (34,90) size 4x18
         text run at (34,90) width 4: " "
-      RenderInline {SPAN} at (0,88) size 74x39
-        RenderText {#text} at (44,90) size 28x17
+      RenderInline {SPAN} at (0,88) size 74x40
+        RenderText {#text} at (44,90) size 28x18
           text run at (44,90) width 28: "I am"
-        RenderBR {BR} at (72,90) size 0x17
-        RenderText {#text} at (0,108) size 72x17
+        RenderBR {BR} at (72,90) size 0x18
+        RenderText {#text} at (0,108) size 72x18
           text run at (0,108) width 72: "a span I am"
-      RenderText {#text} at (78,108) size 4x17
+      RenderText {#text} at (78,108) size 4x18
         text run at (78,108) width 4: " "
-      RenderInline {SPAN} at (0,106) size 160x39
-        RenderText {#text} at (88,108) size 72x17
+      RenderInline {SPAN} at (0,106) size 160x40
+        RenderText {#text} at (88,108) size 72x18
           text run at (88,108) width 72: "I am a span"
-        RenderBR {BR} at (160,108) size 0x17
-        RenderText {#text} at (0,126) size 28x17
+        RenderBR {BR} at (160,108) size 0x18
+        RenderText {#text} at (0,126) size 28x18
           text run at (0,126) width 28: "I am"
-      RenderText {#text} at (34,126) size 4x17
+      RenderText {#text} at (34,126) size 4x18
         text run at (34,126) width 4: " "
-      RenderInline {SPAN} at (0,124) size 74x39
-        RenderText {#text} at (44,126) size 28x17
+      RenderInline {SPAN} at (0,124) size 74x40
+        RenderText {#text} at (44,126) size 28x18
           text run at (44,126) width 28: "I am"
-        RenderBR {BR} at (72,126) size 0x17
-        RenderText {#text} at (0,144) size 72x17
+        RenderBR {BR} at (72,126) size 0x18
+        RenderText {#text} at (0,144) size 72x18
           text run at (0,144) width 72: "a span I am"
       RenderText {#text} at (0,0) size 0x0
 layer at (28,179) size 600x100
@@ -166,7 +166,7 @@ layer at (28,179) size 600x100
     RenderMultiColumnSet at (0,0) size 600x100
 layer at (28,179) size 11x1190 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderMultiColumnFlowThread at (0,0) size 11x1190
-    RenderText {#text} at (0,0) size 8x1189
+    RenderText {#text} at (0,0) size 8x1190
       text run at (0,0) width 8: "_"
       text run at (0,18) width 8: "_"
       text run at (0,36) width 8: "_"

@@ -75,9 +75,9 @@ FunctionAllowlist& OMGPlan::ensureGlobalOMGAllowlist()
     return omgAllowlist;
 }
 
-void OMGPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffer, const TypeDefinition& signature, FunctionSpaceIndex functionIndexSpace)
+void OMGPlan::dumpDisassembly(const Callee& callee, CompilationContext& context, LinkBuffer& linkBuffer, const TypeDefinition& signature, FunctionSpaceIndex functionIndexSpace)
 {
-    dataLogLnIf(context.procedure->shouldDumpIR() || shouldDumpDisassemblyFor(CompilationMode::OMGMode), "Generated OMG functionIndexSpace:(", functionIndexSpace, "),sig:(", signature.toString().ascii().data(), "),name:(", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data(), "),wasmSize:(", m_moduleInformation->functionWasmSizeImportSpace(functionIndexSpace), ")");
+    dataLogLnIf(context.procedure->shouldDumpIR() || shouldDumpDisassemblyFor(CompilationMode::OMGMode), "Generated OMG functionIndexSpace:(", functionIndexSpace, "),sig:(", signature.toString().ascii().data(), "),name:(", callee.nameWithHash(), "),wasmSize:(", m_moduleInformation->functionWasmSizeImportSpace(functionIndexSpace), ")");
     if (shouldDumpDisassemblyFor(CompilationMode::OMGMode)) [[unlikely]] {
         ScopedPrintStream out;
         UncheckedKeyHashSet<B3::Value*> printedValues;
@@ -131,7 +131,7 @@ void OMGPlan::work()
     const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
 
     Ref<IPIntCallee> profiledCallee = m_calleeGroup->ipintCalleeFromFunctionIndexSpace(functionIndexSpace);
-    Ref<OMGCallee> callee = OMGCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace));
+    Ref<OMGCallee> callee = OMGCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), Ref { profiledCallee });
 
     beginCompilerSignpost(callee.get());
     Vector<UnlinkedWasmToWasmCall> unlinkedCalls;
@@ -160,7 +160,7 @@ void OMGPlan::work()
     auto samplingProfilerMap = callee->materializePCToOriginMap(context.procedure->releasePCToOriginMap(), linkBuffer);
     {
         ScopedPrintStream out;
-        dumpDisassembly(context, linkBuffer, signature, functionIndexSpace);
+        dumpDisassembly(callee.get(), context, linkBuffer, signature, functionIndexSpace);
         omgEntrypoint.compilation = makeUnique<Compilation>(
             FINALIZE_CODE_IF(context.procedure->shouldDumpIR(), linkBuffer, JITCompilationPtrTag, nullptr, "OMG functionIndexSpace:(", functionIndexSpace, "),sig:(", signature.toString().ascii().data(), "),name:(", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data(), "),wasmSize:(", m_moduleInformation->functionWasmSizeImportSpace(functionIndexSpace), ")"),
             WTF::move(context.wasmEntrypointByproducts));

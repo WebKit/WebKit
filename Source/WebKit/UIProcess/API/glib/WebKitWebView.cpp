@@ -836,6 +836,7 @@ static Ref<API::PageConfiguration> webkitWebViewCreatePageConfiguration(WebKitWe
     pageConfiguration->setProcessPool(&webkitWebContextGetProcessPool(priv->context.get()));
     pageConfiguration->setPreferences(webkitSettingsGetPreferences(priv->settings.get()));
     pageConfiguration->preferences().setAllowTestOnlyIPC(pageConfiguration->allowTestOnlyIPC());
+    pageConfiguration->preferences().setUsesSingleWebProcess(pageConfiguration->processPool().usesSingleWebProcess());
     pageConfiguration->setRelatedPage(priv->relatedView ? &webkitWebViewGetPage(priv->relatedView) : nullptr);
     pageConfiguration->setUserContentController(priv->userContentManager ? webkitUserContentManagerGetUserContentControllerProxy(priv->userContentManager.get()) : nullptr);
     pageConfiguration->setControlledByAutomation(priv->isControlledByAutomation);
@@ -5229,11 +5230,7 @@ void webkit_web_view_get_snapshot(WebKitWebView* webView, WebKitSnapshotRegion r
 #endif // USE(GTK4)
                 }
 #else
-#if USE(CAIRO)
-                auto surface = bitmap->createCairoSurface();
-#elif USE(SKIA)
                 auto surface = skiaImageToCairoSurface(*bitmap->createPlatformImage(BackingStoreCopy::DontCopyBackingStore));
-#endif
                 if (surface) {
                     g_task_return_pointer(task.get(), surface.leakRef(), reinterpret_cast<GDestroyNotify>(cairo_surface_destroy));
                     return;

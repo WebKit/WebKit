@@ -68,11 +68,11 @@ public:
 
 #if PLATFORM(MAC)
     // DataDetectorHighlightClient.
-    void ref() const final;
-    void deref() const final;
+    WEBCORE_EXPORT void ref() const final;
+    WEBCORE_EXPORT void deref() const final;
 #else
-    void ref() const;
-    void deref() const;
+    WEBCORE_EXPORT void ref() const;
+    WEBCORE_EXPORT void deref() const;
 #endif
 
 #if ENABLE(DATA_DETECTION)

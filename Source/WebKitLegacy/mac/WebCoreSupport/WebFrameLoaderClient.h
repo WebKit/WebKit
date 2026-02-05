@@ -190,6 +190,7 @@ private:
     void provisionalLoadStarted() final;
     void didFinishLoad() final;
     void prepareForDataSourceReplacement() final;
+    Ref<WebCore::DocumentLoader> createDocumentLoader(WebCore::ResourceRequest&&, WebCore::SubstituteData&&, WebCore::ResourceRequest&&) final;
     Ref<WebCore::DocumentLoader> createDocumentLoader(WebCore::ResourceRequest&&, WebCore::SubstituteData&&) final;
     void updateCachedDocumentLoader(WebCore::DocumentLoader&) final { }
 

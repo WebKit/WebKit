@@ -28,6 +28,7 @@
 
 #if HAVE(REDESIGNED_TEXT_CURSOR)
 
+#include "Document.h"
 #include "Editing.h"
 #include "FloatRoundedRect.h"
 #include "Gradient.h"

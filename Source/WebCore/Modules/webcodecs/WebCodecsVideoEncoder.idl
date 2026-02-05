@@ -49,7 +49,6 @@
 
 [
     Conditional=WEB_CODECS,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary WebCodecsVideoEncoderInit {
     required WebCodecsEncodedVideoChunkOutputCallback output;
     required WebCodecsErrorCallback error;

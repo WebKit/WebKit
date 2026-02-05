@@ -37,10 +37,10 @@ class MathMLFractionElement final : public MathMLRowElement {
 public:
     static Ref<MathMLFractionElement> create(const QualifiedName& tagName, Document&);
     const Length& lineThickness();
-    enum FractionAlignment {
-        FractionAlignmentCenter,
-        FractionAlignmentLeft,
-        FractionAlignmentRight
+    enum class FractionAlignment : uint8_t {
+        Center,
+        Left,
+        Right
     };
     FractionAlignment numeratorAlignment();
     FractionAlignment denominatorAlignment();

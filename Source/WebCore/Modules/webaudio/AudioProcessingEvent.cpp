@@ -41,8 +41,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioProcessingEvent);
 
 Ref<AudioProcessingEvent> AudioProcessingEvent::create(const AtomString& eventType, AudioProcessingEventInit&& eventInitDict)
 {
-    RELEASE_ASSERT(eventInitDict.inputBuffer);
-    RELEASE_ASSERT(eventInitDict.outputBuffer);
     return adoptRef(*new AudioProcessingEvent(eventType, WTF::move(eventInitDict)));
 }
 
@@ -56,8 +54,8 @@ AudioProcessingEvent::AudioProcessingEvent(RefPtr<AudioBuffer>&& inputBuffer, Re
 
 AudioProcessingEvent::AudioProcessingEvent(const AtomString& eventType, AudioProcessingEventInit&& eventInitDict)
     : Event(EventInterfaceType::AudioProcessingEvent, eventType, eventInitDict, IsTrusted::No)
-    , m_inputBuffer(eventInitDict.inputBuffer.releaseNonNull())
-    , m_outputBuffer(eventInitDict.outputBuffer.releaseNonNull())
+    , m_inputBuffer(WTF::move(eventInitDict.inputBuffer))
+    , m_outputBuffer(WTF::move(eventInitDict.outputBuffer))
     , m_playbackTime(eventInitDict.playbackTime)
 {
 }

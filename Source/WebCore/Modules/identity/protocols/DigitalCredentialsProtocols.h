@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/IdentityCredentialProtocol.h>
+#include <WebCore/DigitalCredentialPresentationProtocol.h>
 #include <WebCore/MobileDocumentRequest.h>
 #include <WebCore/ValidatedMobileDocumentRequest.h>
 

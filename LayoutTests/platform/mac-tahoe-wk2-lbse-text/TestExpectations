@@ -219,15 +219,16 @@ svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html                 [ Imag
 # SVG document w/o viewBox + <img> sizing differs to FF/Chrome
 svg/as-background-image/background-image-preserveaspectRatio-support.html [ ImageOnlyFailure ]
 
+# Precision differences
+svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
+
 # Pattern problems
 svg/batik/paints/patternPreserveAspectRatioA.svg  [ Failure ]
 svg/custom/pattern-content-inheritance-cycle.svg  [ ImageOnlyFailure ]
-svg/transforms/transformed-text-fill-pattern.html [ ImageOnlyFailure ]
 
 # Clipping problems
 css3/masking/reference-clip-path-change-repaint.html          [ Failure ]
 svg/batik/text/textProperties.svg                             [ ImageOnlyFailure ]
-svg/clip-path/clip-path-use-referencing-clipped-text.html     [ ImageOnlyFailure ]
 svg/clip-path/hittest-transformed-clip-objectboundingbox.html [ Failure ]
 svg/clip-path/transformed-clip.svg                            [ ImageOnlyFailure ]
 svg/custom/image-clipped-hit.svg                              [ Failure ]
@@ -286,8 +287,6 @@ imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-02.svg 
 imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-inheritance-template-pattern-removed.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/render/reftests/blending-svg-foreign-object.html                   [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-004b.svg                                [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-005.html                                [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/styling/border-spacing-svg-zoom-table-display.html                 [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/styling/invalidation/nth-child-of-class.svg                        [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/styling/invalidation/nth-last-child-of-class.svg                   [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/dominant-baseline-hanging-small-font-size.svg        [ ImageOnlyFailure ]
@@ -373,6 +372,9 @@ svg/carto.net/selectionlist.svg [ Failure ]
 svg/carto.net/tabgroup.svg      [ Failure ]
 svg/carto.net/textbox.svg       [ Failure ]
 
+# Missing text output
+svg/animations/svg-element-attribute-changed-crash.html [ Failure ]
+
 ###############
 # Buggy tests #
 ###############
@@ -425,17 +427,19 @@ svg/custom/image-with-prefix-in-webarchive.svg [ Pass ImageOnlyFailure ]
 # 4) Unknown origin
 svg/carto.net/scrollbar.svg                                       [ Pass Failure ]
 svg/carto.net/slider.svg                                          [ Pass Failure ]
+svg/custom/hit-test-path-stroke.svg                               [ Pass ImageOnlyFailure ]
 svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html [ Pass ImageOnlyFailure ]
 svg/dom/use-element-reference-within-use-shadow-tree.html         [ Pass ImageOnlyFailure ]
+svg/hixie/perf/004.xml                                            [ Pass ImageOnlyFailure ]
+svg/text/kerning.svg                                              [ Pass ImageOnlyFailure ]
 svg/transforms/animated-path-inside-transformed-html.xhtml        [ Pass ImageOnlyFailure ]
+svg/wicd/test-rightsizing-b.xhtml                                 [ Pass ImageOnlyFailure ]
 svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml  [ Pass ImageOnlyFailure ]
 
 ###################
 # Crash / Timeout #
 ###################
 
-svg/custom/marker-child-changes-css.svg                [ Crash ]
-svg/custom/marker-child-changes.svg                    [ Crash ]
 svg/custom/pattern-3-step-cycle-dynamic-4.html         [ Pass Crash ]
 
 ###############

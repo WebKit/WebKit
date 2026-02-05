@@ -1110,6 +1110,13 @@ void ReplayTraceFunctionCall(const CallCapture &call, const TraceFunctionMap &cu
                                       gTextureMap[captures[2].value.GLuintVal],
                                       captures[3].value.GLintVal, captures[4].value.GLintVal);
             break;
+        case angle::EntryPoint::GLFramebufferTextureMultisampleMultiviewOVR:
+            glFramebufferTextureMultisampleMultiviewOVR(
+                captures[0].value.GLenumVal, captures[1].value.GLenumVal,
+                gTextureMap[captures[2].value.GLuintVal], captures[3].value.GLintVal,
+                captures[4].value.GLsizeiVal, captures[5].value.GLintVal,
+                captures[6].value.GLsizeiVal);
+            break;
         case angle::EntryPoint::GLFramebufferTextureMultiviewOVR:
             glFramebufferTextureMultiviewOVR(
                 captures[0].value.GLenumVal, captures[1].value.GLenumVal,

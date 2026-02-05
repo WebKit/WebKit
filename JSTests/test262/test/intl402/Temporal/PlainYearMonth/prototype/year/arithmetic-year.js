@@ -102,7 +102,7 @@ const tests = {
     [{ era: "bce", eraYear: 2, monthCode: "M06" }, -1],
     [{ era: "bce", eraYear: 1, monthCode: "M12" }, 0],
     [{ era: "ce", eraYear: 1, monthCode: "M07" }, 1],
-    [{ era: "meiji", eraYear: 1, monthCode: "M12" }, 1868],
+    [{ era: "meiji", eraYear: 6, monthCode: "M12" }, 1873],
     [{ era: "taisho", eraYear: 1, monthCode: "M12" }, 1912],
     [{ era: "showa", eraYear: 1, monthCode: "M12" }, 1926],
     [{ era: "heisei", eraYear: 1, monthCode: "M12" }, 1989],

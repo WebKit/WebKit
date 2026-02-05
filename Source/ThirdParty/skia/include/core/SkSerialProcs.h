@@ -19,16 +19,13 @@ class SkImage;
 class SkPicture;
 class SkTypeface;
 class SkReadBuffer;
+class SkStream;
 enum SkAlphaType : int;
 namespace sktext::gpu {
     class Slug;
 }
 
-#if defined(SK_DISABLE_LEGACY_NONCONST_SERIAL_PROCS)
 using SkSerialReturnType = sk_sp<const SkData>;
-#else
-using SkSerialReturnType = sk_sp<SkData>;
-#endif
 /**
  *  A serial-proc is asked to serialize the specified object (e.g. picture or image).
  *  If a data object is returned, it will be used (even if it is zero-length).
@@ -84,7 +81,9 @@ using SkSlugProc = sk_sp<sktext::gpu::Slug> (*)(SkReadBuffer&, void* ctx);
 /**
  *  Called with the encoded form of a typeface (previously written with a custom
  *  SkSerialTypefaceProc proc). Return a typeface object, or nullptr indicating failure.
+ *  TODO: Users must not attempt to fork or duplicate the passed stream and hold on to the result.
  */
+using SkDeserialTypefaceStreamProc = sk_sp<SkTypeface> (*)(SkStream&, void* ctx);
 using SkDeserialTypefaceProc = sk_sp<SkTypeface> (*)(const void* data, size_t length, void* ctx);
 
 struct SK_API SkSerialProcs {
@@ -109,7 +108,7 @@ struct SK_API SkDeserialProcs {
     SkSlugProc                   fSlugProc = nullptr;
     void*                        fSlugCtx = nullptr;
 
-    SkDeserialTypefaceProc       fTypefaceProc = nullptr;
+    SkDeserialTypefaceStreamProc fTypefaceStreamProc = nullptr;
     void*                        fTypefaceCtx = nullptr;
 
     // This looks like a flag, but it could be considered a proc as well (one that takes no

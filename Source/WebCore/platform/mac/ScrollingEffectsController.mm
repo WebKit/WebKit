@@ -129,14 +129,16 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
     else if (wheelEvent.isGestureStart() || wheelEvent.isTransitioningToMomentumScroll())
         m_client.willStartWheelEventScroll();
 
+    const auto rawDelta = wheelEvent.delta();
+
     if (wheelEvent.phase() == PlatformWheelEventPhase::Began) {
         // FIXME: Trying to decide if a gesture is horizontal or vertical at the "began" phase is very error-prone.
-        auto horizontalSide = ScrollableArea::targetSideForScrollDelta(-wheelEvent.delta(), ScrollEventAxis::Horizontal);
-        if (horizontalSide && m_client.isPinnedOnSide(*horizontalSide) && !shouldRubberBandOnSide(*horizontalSide))
+        auto horizontalSide = ScrollableArea::targetSideForScrollDelta(-rawDelta, ScrollEventAxis::Horizontal);
+        if (horizontalSide && m_client.isPinnedOnSide(*horizontalSide) && !shouldRubberBandOnSide(*horizontalSide, rawDelta))
             return false;
 
-        auto verticalSide = ScrollableArea::targetSideForScrollDelta(-wheelEvent.delta(), ScrollEventAxis::Vertical);
-        if (verticalSide && m_client.isPinnedOnSide(*verticalSide) && !shouldRubberBandOnSide(*verticalSide))
+        auto verticalSide = ScrollableArea::targetSideForScrollDelta(-rawDelta, ScrollEventAxis::Vertical);
+        if (verticalSide && m_client.isPinnedOnSide(*verticalSide) && !shouldRubberBandOnSide(*verticalSide, rawDelta))
             return false;
 
         m_momentumScrollInProgress = false;
@@ -178,7 +180,7 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
     bool isHorizontallyStretched = stretchAmount.width();
 
     // Much of this code, including this use of unaccelerated deltas when stretched, is based on AppKit behavior.
-    auto eventDelta = (isVerticallyStretched || isHorizontallyStretched) ? -wheelEvent.unacceleratedScrollingDelta() : -wheelEvent.delta();
+    auto eventDelta = (isVerticallyStretched || isHorizontallyStretched) ? -wheelEvent.unacceleratedScrollingDelta() : -rawDelta;
 
     // Reset unapplied overscroll because we may decide to remove delta at various points and put it into this value.
     auto delta = std::exchange(m_unappliedOverscrollDelta, { });
@@ -193,7 +195,9 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
 
 #if HAVE(OS_SIGNPOST)
     if (momentumPhase == PlatformWheelEventPhase::Began)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         SUPPRESS_UNRETAINED_ARG os_signpost_interval_begin(WTFSignpostLogHandle(), OS_SIGNPOST_ID_EXCLUSIVE, "Momentum scroll", "isAnimation=YES");
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
     if (!m_momentumScrollInProgress && (momentumPhase == PlatformWheelEventPhase::Began || momentumPhase == PlatformWheelEventPhase::Changed))
@@ -241,7 +245,9 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
 
     if (m_momentumScrollInProgress && momentumPhase == PlatformWheelEventPhase::Ended) {
 #if HAVE(OS_SIGNPOST)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         SUPPRESS_UNRETAINED_ARG os_signpost_interval_end(WTFSignpostLogHandle(), OS_SIGNPOST_ID_EXCLUSIVE, "Momentum scroll");
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
         m_momentumScrollInProgress = false;
         m_ignoreMomentumScrolls = false;
@@ -318,6 +324,14 @@ bool ScrollingEffectsController::applyScrollDeltaWithStretching(const PlatformWh
     auto eventDelta = (isVerticallyStretched || isHorizontallyStretched) ? -wheelEvent.unacceleratedScrollingDelta() : -wheelEvent.delta();
     auto affectedSide = affectedSideOnDominantAxis(delta);
 
+    const auto horizontalDeltaOpposesStretch = isHorizontallyStretched && m_client.isScrollDeltaOpposingStretch(ScrollEventAxis::Horizontal, delta.width());
+    const auto verticalDeltaOpposesStretch = isVerticallyStretched && m_client.isScrollDeltaOpposingStretch(ScrollEventAxis::Vertical, delta.height());
+
+    if (horizontalDeltaOpposesStretch)
+        m_stretchScrollForce.setWidth(0);
+    if (verticalDeltaOpposesStretch)
+        m_stretchScrollForce.setHeight(0);
+
     FloatSize deltaToScroll;
 
     if (delta.width()) {
@@ -352,18 +366,39 @@ bool ScrollingEffectsController::applyScrollDeltaWithStretching(const PlatformWh
         canStartAnimation = !sideAffectedByEventDelta || m_client.isPinnedOnSide(*sideAffectedByEventDelta);
     }
 
-    m_stretchScrollForce += delta;
-    auto dampedDelta = FloatSize {
-        ceilf(elasticDeltaForReboundDelta(m_stretchScrollForce.width())),
-        ceilf(elasticDeltaForReboundDelta(m_stretchScrollForce.height()))
-    };
+    if (delta.isZero())
+        return canStartAnimation;
+
+    auto stretchScrollForceDelta = delta;
+    if (horizontalDeltaOpposesStretch)
+        stretchScrollForceDelta.setWidth(0);
+    if (verticalDeltaOpposesStretch)
+        stretchScrollForceDelta.setHeight(0);
+
+    m_stretchScrollForce += stretchScrollForceDelta;
+
+    FloatSize dampedDelta;
+    auto stretchAmount = m_client.stretchAmount();
+
+    if (horizontalDeltaOpposesStretch) {
+        dampedDelta.setWidth(delta.width());
+    } else if (delta.width()) {
+        const auto dampedWidth = ceilf(elasticDeltaForReboundDelta(m_stretchScrollForce.width()));
+        dampedDelta.setWidth(dampedWidth - stretchAmount.width());
+    }
+
+    if (verticalDeltaOpposesStretch) {
+        dampedDelta.setHeight(delta.height());
+    } else if (delta.height()) {
+        const auto dampedHeight = ceilf(elasticDeltaForReboundDelta(m_stretchScrollForce.height()));
+        dampedDelta.setHeight(dampedHeight - stretchAmount.height());
+    }
 
     clampDeltaForAllowedAxes(wheelEvent, dampedDelta);
 
     LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::applyScrollDeltaWithStretching() - stretchScrollForce " << m_stretchScrollForce << " move delta " << delta << " dampedDelta " << dampedDelta);
 
-    auto stretchAmount = m_client.stretchAmount();
-    m_client.immediateScrollBy(dampedDelta - stretchAmount, ScrollClamping::Unclamped);
+    m_client.immediateScrollBy(dampedDelta, ScrollClamping::Unclamped);
 
     return canStartAnimation;
 }
@@ -371,6 +406,15 @@ bool ScrollingEffectsController::applyScrollDeltaWithStretching(const PlatformWh
 FloatSize ScrollingEffectsController::wheelDeltaBiasingTowardsVertical(const FloatSize& wheelDelta)
 {
     return deltaAlignedToDominantAxis(wheelDelta);
+}
+
+bool ScrollingEffectsController::isScrollDeltaOpposingStretch(IntSize stretch, ScrollEventAxis axis, float delta)
+{
+    auto stretchOnAxis = (axis == ScrollEventAxis::Horizontal) ? stretch.width() : stretch.height();
+    if (!stretchOnAxis || !delta)
+        return false;
+
+    return (stretchOnAxis > 0 && delta < 0) || (stretchOnAxis < 0 && delta > 0);
 }
 
 void ScrollingEffectsController::updateRubberBandAnimatingState()
@@ -494,9 +538,9 @@ void ScrollingEffectsController::startRubberBandAnimationIfNecessary()
     startRubberBandAnimation(initialVelocity, stretchAmount);
 }
 
-bool ScrollingEffectsController::shouldRubberBandOnSide(BoxSide side) const
+bool ScrollingEffectsController::shouldRubberBandOnSide(BoxSide side, FloatSize delta) const
 {
-    return m_client.shouldRubberBandOnSide(side);
+    return m_client.shouldRubberBandOnSide(side, delta);
 }
 
 bool ScrollingEffectsController::isRubberBandInProgressInternal() const

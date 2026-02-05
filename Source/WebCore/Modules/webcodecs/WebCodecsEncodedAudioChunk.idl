@@ -45,7 +45,6 @@ typedef [EnforceRange] unsigned long long WebCodecsEncodedAudioChunkInitDuration
 
 [
     Conditional=WEB_CODECS,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary WebCodecsEncodedAudioChunkInit {
   required WebCodecsEncodedAudioChunkType type;
   WebCodecsEncodedAudioChunkInitTimestamp timestamp;

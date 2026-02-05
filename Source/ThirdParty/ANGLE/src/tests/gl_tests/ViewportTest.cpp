@@ -439,15 +439,7 @@ TEST_P(ViewportTest, ClampOnStore)
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against. D3D11 Feature Level 9 and D3D9 emulate large and negative viewports
 // in the vertex shader. We should test both of these as well as D3D11 Feature Level 10_0+.
-ANGLE_INSTANTIATE_TEST(ViewportTest,
-                       ES2_D3D9(),
-                       ES2_D3D11(),
-                       ES2_D3D11_PRESENT_PATH_FAST(),
-                       ES2_OPENGLES(),
-                       ES3_OPENGLES(),
-                       ES2_METAL(),
-                       ES2_OPENGL(),
-                       ES2_VULKAN());
+ANGLE_INSTANTIATE_TEST_ES2_AND(ViewportTest, ES2_D3D11_PRESENT_PATH_FAST());
 
 // This test suite is not instantiated on some OSes.
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ViewportTest);

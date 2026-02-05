@@ -31,7 +31,6 @@ typedef [EnforceRange] unsigned long long GPUSize64;
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUVertexAttribute {
     required GPUVertexFormat format;
     required GPUSize64 offset;

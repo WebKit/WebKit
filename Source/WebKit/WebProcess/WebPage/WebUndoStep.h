@@ -37,7 +37,6 @@ public:
     ~WebUndoStep();
 
     WebCore::UndoStep& step() const { return m_step.get(); }
-    Ref<WebCore::UndoStep> protectedStep() const { return m_step; }
     WebUndoStepID stepID() const { return m_stepID; }
 
     void didRemoveFromUndoManager() { m_step->didRemoveFromUndoManager(); }

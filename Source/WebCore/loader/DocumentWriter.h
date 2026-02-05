@@ -62,8 +62,6 @@ public:
     const String& mimeType() const { return m_mimeType; }
     void setMIMEType(const String& type) { m_mimeType = type; }
 
-    Ref<TextResourceDecoder> protectedDecoder();
-
     // Exposed for DocumentParser::appendBytes.
     TextResourceDecoder& decoder();
     void reportDataReceived();
@@ -73,7 +71,6 @@ public:
 private:
     Ref<Document> createDocument(const URL&, std::optional<ScriptExecutionContextIdentifier>);
     void clear();
-    RefPtr<DocumentParser> protectedParser() const;
 
     WeakPtr<LocalFrame> m_frame;
 

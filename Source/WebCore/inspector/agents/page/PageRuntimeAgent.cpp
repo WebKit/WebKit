@@ -115,13 +115,13 @@ InjectedScript PageRuntimeAgent::injectedScriptForEval(Inspector::Protocol::Erro
         if (!localMainFrame)
             return InjectedScript();
 
-        InjectedScript result = injectedScriptManager().injectedScriptFor(&mainWorldGlobalObject(*localMainFrame));
+        auto result = injectedScriptManager().injectedScriptFor(&mainWorldGlobalObject(*localMainFrame));
         if (result.hasNoValue())
             errorString = "Internal error: main world execution context not found"_s;
         return result;
     }
 
-    InjectedScript injectedScript = injectedScriptManager().injectedScriptForId(*executionContextId);
+    auto injectedScript = injectedScriptManager().injectedScriptForId(*executionContextId);
     if (injectedScript.hasNoValue())
         errorString = "Missing injected script for given executionContextId"_s;
     return injectedScript;

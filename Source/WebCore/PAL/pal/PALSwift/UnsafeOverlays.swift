@@ -21,16 +21,10 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if swift(>=5.9)
-
 import Foundation
 import CryptoKit
 
-#if swift(>=6.0)
 public import pal.Core.PALSwift
-#else
-import pal.Core.PALSwift
-#endif
 
 enum UnsafeErrors: Error {
     case invalidLength
@@ -347,5 +341,3 @@ extension CryptoKit.HKDF {
         .copyToVectorUInt8()
     }
 }
-
-#endif

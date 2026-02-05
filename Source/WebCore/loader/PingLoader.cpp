@@ -91,7 +91,7 @@ void PingLoader::loadImage(LocalFrame& frame, URL&& url)
     ASSERT(frame.document());
     Ref document = *frame.document();
 
-    if (!document->protectedSecurityOrigin()->canDisplay(url, OriginAccessPatternsForWebProcess::singleton())) {
+    if (!protect(document->securityOrigin())->canDisplay(url, OriginAccessPatternsForWebProcess::singleton())) {
         FrameLoader::reportLocalLoadFailed(&frame, url.string());
         return;
     }
@@ -156,7 +156,7 @@ void PingLoader::sendPing(LocalFrame& frame, URL&& sendPingURL, const URL& desti
     frame.loader().updateRequestAndAddExtraFields(request, IsMainResource::No);
 
     // https://html.spec.whatwg.org/multipage/links.html#hyperlink-auditing
-    if (document->protectedSecurityOrigin()->isSameOriginAs(SecurityOrigin::create(pingURL).get())
+    if (protect(document->securityOrigin())->isSameOriginAs(SecurityOrigin::create(pingURL).get())
         || !document->url().protocolIs("https"_s))
         request.setHTTPHeaderField(HTTPHeaderName::PingFrom, document->url().string());
     request.setHTTPHeaderField(HTTPHeaderName::PingTo, destinationURL.string());
@@ -202,7 +202,7 @@ void PingLoader::sendViolationReport(LocalFrame& frame, URL&& violationReportURL
     }
 
     bool removeCookies = true;
-    if (document->protectedSecurityOrigin()->isSameSchemeHostPort(SecurityOrigin::create(reportURL).get()))
+    if (protect(document->securityOrigin())->isSameSchemeHostPort(SecurityOrigin::create(reportURL).get()))
         removeCookies = false;
     if (removeCookies)
         request.setAllowCookies(false);
@@ -227,7 +227,7 @@ void PingLoader::startPingLoad(LocalFrame& frame, ResourceRequest& request, HTTP
     // Document in the Frame, but the activeDocumentLoader will be associated
     // with the provisional DocumentLoader if there is a provisional
     // DocumentLoader.
-    bool shouldUseCredentialStorage = frame.loader().client().shouldUseCredentialStorage(frame.loader().protectedActiveDocumentLoader().get(), identifier);
+    bool shouldUseCredentialStorage = frame.loader().client().shouldUseCredentialStorage(protect(frame.loader().activeDocumentLoader()), identifier);
     ResourceLoaderOptions options;
     options.credentials = shouldUseCredentialStorage ? FetchOptions::Credentials::Include : FetchOptions::Credentials::Omit;
     options.redirect = shouldFollowRedirects == ShouldFollowRedirects::Yes ? FetchOptions::Redirect::Follow : FetchOptions::Redirect::Error;
@@ -247,22 +247,22 @@ void PingLoader::startPingLoad(LocalFrame& frame, ResourceRequest& request, HTTP
 
     // FIXME: Deprecate the ping load code path.
     if (platformStrategies()->loaderStrategy()->usePingLoad()) {
-        InspectorInstrumentation::willSendRequestOfType(&frame, identifier, frame.loader().protectedActiveDocumentLoader().get(), request, InspectorInstrumentation::LoadType::Ping);
+        InspectorInstrumentation::willSendRequestOfType(&frame, identifier, protect(frame.loader().activeDocumentLoader()), request, InspectorInstrumentation::LoadType::Ping);
 
         platformStrategies()->loaderStrategy()->startPingLoad(frame, request, WTF::move(originalRequestHeaders), options, policyCheck, [protectedFrame = Ref { frame }, identifier] (const ResourceError& error, const ResourceResponse& response) {
             if (!response.isNull())
-                InspectorInstrumentation::didReceiveResourceResponse(protectedFrame, identifier, protectedFrame->loader().protectedActiveDocumentLoader().get(), response, nullptr);
+                InspectorInstrumentation::didReceiveResourceResponse(protectedFrame, identifier, protect(protectedFrame->loader().activeDocumentLoader()), response, nullptr);
             if (!error.isNull()) {
-                InspectorInstrumentation::didFailLoading(protectedFrame.ptr(), protectedFrame->loader().protectedActiveDocumentLoader().get(), identifier, error);
+                InspectorInstrumentation::didFailLoading(protectedFrame.ptr(), protect(protectedFrame->loader().activeDocumentLoader()), identifier, error);
                 return;
             }
-            InspectorInstrumentation::didFinishLoading(protectedFrame.ptr(), protectedFrame->loader().protectedActiveDocumentLoader().get(), identifier, { }, nullptr);
+            InspectorInstrumentation::didFinishLoading(protectedFrame.ptr(), protect(protectedFrame->loader().activeDocumentLoader()), identifier, { }, nullptr);
         });
         return;
     }
 
     CachedResourceRequest cachedResourceRequest { ResourceRequest { request }, options };
-    std::ignore = frame.protectedDocument()->protectedCachedResourceLoader()->requestPingResource(WTF::move(cachedResourceRequest));
+    std::ignore = protect(protect(frame.document())->cachedResourceLoader())->requestPingResource(WTF::move(cachedResourceRequest));
 }
 
 // // https://html.spec.whatwg.org/multipage/origin.html#sanitize-url-report

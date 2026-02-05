@@ -208,6 +208,9 @@ public:
 
     virtual RefPtr<VideoFrame> videoFrameForCurrentTime();
     virtual RefPtr<NativeImage> nativeImageForCurrentTime() { return nullptr; }
+    WEBCORE_EXPORT virtual RefPtr<ShareableBitmap> bitmapImageForCurrentTimeSync();
+    using BitmapImagePromise = MediaPlayer::BitmapImagePromise;
+    WEBCORE_EXPORT virtual Ref<BitmapImagePromise> bitmapImageForCurrentTime();
     virtual DestinationColorSpace colorSpace() = 0;
     virtual bool shouldGetNativeImageForCanvasDrawing() const { return true; }
 
@@ -389,6 +392,8 @@ public:
     virtual void setMessageClientForTesting(WeakPtr<MessageClientForTesting>) { }
 
     virtual void elementIdChanged(const String&) const { }
+
+    static WEBCORE_EXPORT RefPtr<ShareableBitmap> bitmapFromImage(NativeImage&);
 
 protected:
     mutable PlatformTimeRanges m_seekable;

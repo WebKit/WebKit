@@ -90,38 +90,38 @@ static Ref<WebCore::Node> protectedImpl(WKDOMNode *node)
 
 - (WKDOMDocument *)document
 {
-    return WebKit::toWKDOMDocument(protectedImpl(self)->protectedDocument().ptr());
+    return WebKit::toWKDOMDocument(protect(protectedImpl(self)->document()).ptr());
 }
 
 - (WKDOMNode *)parentNode
 {
-    return WebKit::toWKDOMNode(protectedImpl(self)->protectedParentNode().get());
+    return WebKit::toWKDOMNode(protect(protectedImpl(self)->parentNode()).get());
 }
 
 - (WKDOMNode *)firstChild
 {
-    return WebKit::toWKDOMNode(protectedImpl(self)->protectedFirstChild().get());
+    return WebKit::toWKDOMNode(protect(protectedImpl(self)->firstChild()).get());
 }
 
 - (WKDOMNode *)lastChild
 {
-    return WebKit::toWKDOMNode(protectedImpl(self)->protectedLastChild().get());
+    return WebKit::toWKDOMNode(protect(protectedImpl(self)->lastChild()).get());
 }
 
 - (WKDOMNode *)previousSibling
 {
-    return WebKit::toWKDOMNode(protectedImpl(self)->protectedPreviousSibling().get());
+    return WebKit::toWKDOMNode(protect(protectedImpl(self)->previousSibling()).get());
 }
 
 - (WKDOMNode *)nextSibling
 {
-    return WebKit::toWKDOMNode(protectedImpl(self)->protectedNextSibling().get());
+    return WebKit::toWKDOMNode(protect(protectedImpl(self)->nextSibling()).get());
 }
 
 - (NSArray *)textRects
 {
     Ref impl = *_impl;
-    impl->protectedDocument()->updateLayout(WebCore::LayoutOptions::IgnorePendingStylesheets);
+    protect(impl->document())->updateLayout(WebCore::LayoutOptions::IgnorePendingStylesheets);
     if (!impl->renderer())
         return nil;
     return createNSArray(WebCore::RenderObject::absoluteTextRects(WebCore::makeRangeSelectingNodeContents(impl))).autorelease();

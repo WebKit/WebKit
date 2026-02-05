@@ -125,9 +125,7 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
     {
         ASSERT(index < internalFunctionCount());
         ASSERT(functions[index].finishedValidating);
-        auto size = functions[index].end - functions[index].start + 1;
-        RELEASE_ASSERT(size > 1);
-        return size;
+        return functions[index].end - functions[index].start;
     }
 
     bool usesSIMDImportSpace(FunctionSpaceIndex index) const { return usesSIMD(toCodeIndex(index)); }
@@ -214,7 +212,9 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
     Vector<Ref<const RTT>> rtts;
     Vector<Vector<uint8_t>> constantExpressions;
     Name sourceMappingURL;
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
     std::unique_ptr<Wasm::ModuleDebugInfo> debugInfo;
+#endif
 
     BitVector m_declaredFunctions;
     BitVector m_declaredExceptions;

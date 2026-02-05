@@ -30,7 +30,6 @@ typedef [EnforceRange] unsigned long GPUColorWriteFlags;
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUColorTargetState {
     required GPUTextureFormat format;
 

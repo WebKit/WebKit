@@ -217,14 +217,24 @@ void doCaptureMuteTest(NOESCAPE const Function<void(TestWKWebView*, _WKMediaMute
     EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedNone));
 }
 
+// FIXME when rdar://168769459 is resolved.
+#if PLATFORM(MAC) && !defined(NDEBUG)
+TEST(WebKit2, DISABLED_CaptureMute)
+#else
 TEST(WebKit2, CaptureMute)
+#endif
 {
     doCaptureMuteTest([](auto* webView, auto state) {
         [webView _setPageMuted: state];
     });
 }
 
+// FIXME when rdar://168769459 is resolved.
+#if PLATFORM(MAC) && !defined(NDEBUG)
+TEST(WebKit2, DISABLED_CaptureMute2)
+#else
 TEST(WebKit2, CaptureMute2)
+#endif
 {
     doCaptureMuteTest([](auto* webView, auto state) {
         WKPageSetMuted([webView _pageForTesting], state);
@@ -247,7 +257,12 @@ bool waitUntilMicrophoneState(WKWebView *webView, WKMediaCaptureState expectedSt
     return expectedState == microphoneCaptureState;
 }
 
+// FIXME when rdar://168769459 is resolved.
+#if PLATFORM(MAC) && !defined(NDEBUG)
+TEST(WebKit2, DISABLED_CaptureMuteAPI)
+#else
 TEST(WebKit2, CaptureMuteAPI)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
@@ -2054,7 +2069,12 @@ TEST(WebKit2, getUserMediaWithDeviceChangeWebPage)
     done = false;
 }
 
+// FIXME when rdar://169549045 is resolved.
+#if PLATFORM(MAC) && !defined(NDEBUG)
+TEST(WebKit2, DISABLED_GetUserMediaAfterMuting)
+#else
 TEST(WebKit2, GetUserMediaAfterMuting)
+#endif
 {
     [TestProtocol registerWithScheme:@"https"];
 

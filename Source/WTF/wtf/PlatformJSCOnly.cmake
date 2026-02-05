@@ -25,6 +25,7 @@ if (WIN32)
     list(APPEND WTF_LIBRARIES
         DbgHelp
         shlwapi
+        synchronization
         winmm
     )
     list(APPEND WTF_PUBLIC_HEADERS

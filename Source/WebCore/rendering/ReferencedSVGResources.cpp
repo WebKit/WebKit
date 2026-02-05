@@ -30,6 +30,7 @@
 #include "LegacyRenderSVGResourceClipper.h"
 #include "PathOperation.h"
 #include "RenderLayer.h"
+#include "RenderLayerModelObject.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGPath.h"
 #include "RenderStyle.h"
@@ -77,12 +78,21 @@ void CSSSVGResourceElementClient::resourceChanged(SVGElement& element)
     if (m_clientRenderer->needsLayout())
         return;
 
+    // Invalidate cached visual overflow rect since resource bounds may have changed.
+    if (auto* layerModelObject = dynamicDowncast<RenderLayerModelObject>(m_clientRenderer.get()))
+        layerModelObject->invalidateCachedVisualOverflowRect();
+
     // Special case for markers. Markers can be attached to RenderSVGPath object. Marker positions are computed
     // once during layout, or if the shape itself changes. Here we manually update the marker positions without
     // requiring a relayout. Instead we can simply repaint the path - via the updateLayerPosition() logic, properly
     // repainting the old repaint boundaries and the new ones (after the marker change).
     if (auto* pathClientRenderer = dynamicDowncast<RenderSVGPath>(m_clientRenderer.get()); pathClientRenderer && is<SVGMarkerElement>(element))
         pathClientRenderer->updateMarkerPositions();
+
+    // During layout, skip the repaint - the post-layout phase handles it via updateLayerPositions().
+    // We only need to ensure the cached visual overflow rect is invalidated (done above).
+    if (m_clientRenderer->document().view()->layoutContext().isInLayout())
+        return;
 
     m_clientRenderer->repaintOldAndNewPositionsForSVGRenderer();
 }
@@ -240,7 +250,7 @@ RefPtr<SVGClipPathElement> ReferencedSVGResources::referencedClipPathElement(Tre
 
 RefPtr<SVGMarkerElement> ReferencedSVGResources::referencedMarkerElement(TreeScope& treeScope, const Style::URL& markerResource)
 {
-    auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(markerResource, treeScope.protectedDocumentScope());
+    auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(markerResource, protect(treeScope.documentScope()));
     if (resourceID.isEmpty())
         return nullptr;
 
@@ -249,7 +259,7 @@ RefPtr<SVGMarkerElement> ReferencedSVGResources::referencedMarkerElement(TreeSco
 
 RefPtr<SVGMaskElement> ReferencedSVGResources::referencedMaskElement(TreeScope& treeScope, const StyleImage& maskImage)
 {
-    auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(maskImage.url(), treeScope.protectedDocumentScope());
+    auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(maskImage.url(), protect(treeScope.documentScope()));
     if (resourceID.isEmpty())
         return nullptr;
 
@@ -263,7 +273,7 @@ RefPtr<SVGMaskElement> ReferencedSVGResources::referencedMaskElement(TreeScope& 
 
 RefPtr<SVGElement> ReferencedSVGResources::referencedPaintServerElement(TreeScope& treeScope, const Style::URL& uri)
 {
-    auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(uri, treeScope.protectedDocumentScope());
+    auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(uri, protect(treeScope.documentScope()));
     if (resourceID.isEmpty())
         return nullptr;
 

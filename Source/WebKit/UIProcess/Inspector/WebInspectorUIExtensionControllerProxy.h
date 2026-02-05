@@ -84,7 +84,6 @@ public:
 private:
     explicit WebInspectorUIExtensionControllerProxy(WebPageProxy& inspectorPage);
 
-    RefPtr<WebPageProxy> protectedInspectorPage() const;
 
     void whenFrontendHasLoaded(Function<void()>&&);
 

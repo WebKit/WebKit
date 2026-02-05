@@ -32,8 +32,32 @@ class HTMLHeadingElement final : public HTMLElement {
 public:
     static Ref<HTMLHeadingElement> create(const QualifiedName&, Document&);
 
+    unsigned level() const;
+
 private:
     HTMLHeadingElement(const QualifiedName&, Document&);
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLHeadingElement)
+    static bool isType(const WebCore::HTMLElement& element)
+    {
+        return element.hasTagName(WebCore::HTMLNames::h1Tag)
+            || element.hasTagName(WebCore::HTMLNames::h2Tag)
+            || element.hasTagName(WebCore::HTMLNames::h3Tag)
+            || element.hasTagName(WebCore::HTMLNames::h4Tag)
+            || element.hasTagName(WebCore::HTMLNames::h5Tag)
+            || element.hasTagName(WebCore::HTMLNames::h6Tag);
+    }
+    static bool isType(const WebCore::Element& element)
+    {
+        auto* htmlElement = dynamicDowncast<WebCore::HTMLElement>(element);
+        return htmlElement && isType(*htmlElement);
+    }
+    static bool isType(const WebCore::Node& node)
+    {
+        auto* htmlElement = dynamicDowncast<WebCore::HTMLElement>(node);
+        return htmlElement && isType(*htmlElement);
+    }
+SPECIALIZE_TYPE_TRAITS_END()

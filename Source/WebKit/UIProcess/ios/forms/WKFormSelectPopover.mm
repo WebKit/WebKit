@@ -39,6 +39,7 @@
 #import <WebCore/LocalizedStrings.h>
 #import <pal/spi/cocoa/IOKitSPI.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 using namespace WebKit;
 
@@ -84,13 +85,13 @@ static RetainPtr<NSString> stringWithWritingDirection(NSString *string, NSWritin
     NSUInteger _singleSelectionSection;
     NSInteger _numberOfSections;
     BOOL _allowsMultipleSelection;
-    
+
     CGFloat _fontSize;
     CGFloat _maximumTextWidth;
     NSTextAlignment _textAlignment;
-    
-    WKSelectPopover *_popover;
-    WKContentView *_contentView;
+
+    WeakObjCPtr<WKSelectPopover> _popover;
+    WeakObjCPtr<WKContentView> _contentView;
 }
 
 @property (nonatomic, readonly) BOOL shouldDismissWithAnimation;
@@ -105,8 +106,8 @@ static RetainPtr<NSString> stringWithWritingDirection(NSString *string, NSWritin
         return nil;
     
     _contentView = view;
-    Vector<OptionItem>& selectOptions = [_contentView focusedSelectElementOptions];
-    _allowsMultipleSelection = _contentView.focusedElementInformation.isMultiSelect;
+    Vector<OptionItem>& selectOptions = [_contentView.get() focusedSelectElementOptions];
+    _allowsMultipleSelection = [_contentView.get() focusedElementInformation].isMultiSelect;
     
     // Even if the select is empty, there is at least one tableview section.
     _numberOfSections = 1;
@@ -126,7 +127,7 @@ static RetainPtr<NSString> stringWithWritingDirection(NSString *string, NSWritin
         currentIndex++;
     }
 
-    NSWritingDirection writingDirection = _contentView.focusedElementInformation.isRTL ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight;
+    NSWritingDirection writingDirection = [_contentView.get() focusedElementInformation].isRTL ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight;
     BOOL override = NO;
     _textAlignment = (writingDirection == NSWritingDirectionLeftToRight) ? NSTextAlignmentLeft : NSTextAlignmentRight;
 
@@ -135,7 +136,7 @@ static RetainPtr<NSString> stringWithWritingDirection(NSString *string, NSWritin
     // For that reason we have to override what the system thinks.
     if (writingDirection == NSWritingDirectionRightToLeft)
         self.view.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
-    [self setTitle:stringWithWritingDirection(_contentView.focusedElementInformation.title.createNSString().get(), writingDirection, override).get()];
+    [self setTitle:stringWithWritingDirection([_contentView.get() focusedElementInformation].title.createNSString().get(), writingDirection, override).get()];
 
     return self;
 }
@@ -166,12 +167,12 @@ static RetainPtr<NSString> stringWithWritingDirection(NSString *string, NSWritin
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if ([_contentView focusedSelectElementOptions].isEmpty())
+    if ([_contentView.get() focusedSelectElementOptions].isEmpty())
         return 1;
     
     int rowCount = 0;
-    for (size_t i = 0; i < [_contentView focusedSelectElementOptions].size(); ++i) {
-        const OptionItem& item = [_contentView focusedSelectElementOptions][i];
+    for (size_t i = 0; i < [_contentView.get() focusedSelectElementOptions].size(); ++i) {
+        const OptionItem& item = [_contentView.get() focusedSelectElementOptions][i];
         if (item.isGroup)
             continue;
         if (item.parentGroupID == section)
@@ -189,8 +190,8 @@ static RetainPtr<NSString> stringWithWritingDirection(NSString *string, NSWritin
         return nil;
     
     int groupCount = 0;
-    for (size_t i = 0; i < [_contentView focusedSelectElementOptions].size(); ++i) {
-        const OptionItem& item = [_contentView focusedSelectElementOptions][i];
+    for (size_t i = 0; i < [_contentView.get() focusedSelectElementOptions].size(); ++i) {
+        const OptionItem& item = [_contentView.get() focusedSelectElementOptions][i];
         if (!item.isGroup)
             continue;
         groupCount++;
@@ -218,8 +219,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     
     int optionIndex = 0;
     int rowIndex = 0;
-    for (size_t i = 0; i < [_contentView focusedSelectElementOptions].size(); ++i) {
-        const OptionItem& item = [_contentView focusedSelectElementOptions][i];
+    for (size_t i = 0; i < [_contentView.get() focusedSelectElementOptions].size(); ++i) {
+        const OptionItem& item = [_contentView.get() focusedSelectElementOptions][i];
         if (item.isGroup) {
             rowIndex = 0;
             continue;
@@ -238,8 +239,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT(indexPath.section <= _numberOfSections);
 
     int index = 0;
-    for (size_t i = 0; i < [_contentView focusedSelectElementOptions].size(); ++i) {
-        OptionItem& item = [_contentView focusedSelectElementOptions][i];
+    for (size_t i = 0; i < [_contentView.get() focusedSelectElementOptions].size(); ++i) {
+        OptionItem& item = [_contentView.get() focusedSelectElementOptions][i];
         if (item.isGroup || item.parentGroupID != indexPath.section)
             continue;
         if (index == indexPath.row)
@@ -258,7 +259,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [cell setSemanticContentAttribute:self.view.semanticContentAttribute];
     [cell textLabel].textAlignment = _textAlignment;
     
-    if (_contentView.focusedElementInformation.selectOptions.isEmpty()) {
+    if ([_contentView.get() focusedElementInformation].selectOptions.isEmpty()) {
         [cell textLabel].enabled = NO;
         [cell textLabel].text = WEB_UI_STRING_KEY("No Options", "No Options Select Popover", "Empty select list").createNSString().get();
         [cell setAccessoryType:UITableViewCellAccessoryNone];
@@ -275,7 +276,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT(initialFontSize);
     if (textRect.size.width != _maximumTextWidth || _fontSize == 0) {
         _maximumTextWidth = textRect.size.width;
-        _fontSize = adjustedFontSize(_maximumTextWidth, font, initialFontSize, _contentView.focusedElementInformation.selectOptions);
+        _fontSize = adjustedFontSize(_maximumTextWidth, font, initialFontSize, [_contentView.get() focusedElementInformation].selectOptions);
     }
     
     const OptionItem* item = [self findItemAt:indexPath];
@@ -290,7 +291,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (_contentView.focusedElementInformation.selectOptions.isEmpty())
+    if ([_contentView.get() focusedElementInformation].selectOptions.isEmpty())
         return;
     
     NSInteger itemIndex = [self findItemIndexAt:indexPath];
@@ -315,8 +316,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         // To trigger onchange events programmatically we need to go through this
         // SPI which mimics a user action on the <select>. Normally programmatic
         // changes do not trigger "change" events on such selects.
-        [_contentView updateFocusedElementSelectedIndex:itemIndex allowsMultipleSelection:true];
-        OptionItem& item = [_contentView focusedSelectElementOptions][itemIndex];
+        [_contentView.get() updateFocusedElementSelectedIndex:itemIndex allowsMultipleSelection:true];
+        OptionItem& item = [_contentView.get() focusedSelectElementOptions][itemIndex];
         item.isSelected = newStateIsSelected;
     } else {
         [tableView deselectRowAtIndexPath:indexPath animated:NO];
@@ -326,7 +327,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         if (_singleSelectionIndex != NSNotFound) {
             oldIndexPath = [NSIndexPath indexPathForRow:_singleSelectionIndex inSection:_singleSelectionSection];
             if ([indexPath isEqual:oldIndexPath]) {
-                [_popover _userActionDismissedPopover:nil];
+                [_popover.get() _userActionDismissedPopover:nil];
                 return;
             }
         }
@@ -351,8 +352,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             _singleSelectionIndex = indexPath.row;
             _singleSelectionSection = indexPath.section;
 
-            [_contentView updateFocusedElementSelectedIndex:itemIndex allowsMultipleSelection:false];
-            OptionItem& newItem = [_contentView focusedSelectElementOptions][itemIndex];
+            [_contentView.get() updateFocusedElementSelectedIndex:itemIndex allowsMultipleSelection:false];
+            OptionItem& newItem = [_contentView.get() focusedSelectElementOptions][itemIndex];
             newItem.isSelected = true;
         }
         
@@ -362,13 +363,23 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 oldItem->isSelected = false;
         }
         
-        [_popover _userActionDismissedPopover:nil];
+        [_popover.get() _userActionDismissedPopover:nil];
     }
 }
 
 - (BOOL)shouldDismissWithAnimation
 {
-    return _contentView._shouldUseLegacySelectPopoverDismissalBehavior;
+    return _contentView.getAutoreleased()._shouldUseLegacySelectPopoverDismissalBehavior;
+}
+
+- (WKSelectPopover *)popover
+{
+    return _popover.getAutoreleased();
+}
+
+- (void)setPopover:(WKSelectPopover *)popover
+{
+    _popover = popover;
 }
 
 @end

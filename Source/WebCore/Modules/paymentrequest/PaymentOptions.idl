@@ -25,7 +25,6 @@
 
 [
     Conditional=PAYMENT_REQUEST,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary PaymentOptions {
     boolean requestPayerName = false;
     boolean requestPayerEmail = false;

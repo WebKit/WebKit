@@ -27,7 +27,6 @@
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCDtlsFingerprint {
     DOMString algorithm;
     DOMString value;

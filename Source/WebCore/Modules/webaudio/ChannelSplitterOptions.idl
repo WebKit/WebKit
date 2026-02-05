@@ -25,7 +25,6 @@
 
 [
     Conditional=WEB_AUDIO,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ChannelSplitterOptions : AudioNodeOptions {
     unsigned long numberOfOutputs = 6;
 };

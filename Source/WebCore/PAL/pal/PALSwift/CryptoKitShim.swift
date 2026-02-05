@@ -21,18 +21,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if swift(>=5.9)
-
 import CryptoKit
 import Foundation
 
-#if swift(>=6.0)
 public import pal.Core.PALSwift
 public import pal.Core.crypto.CryptoDigestHashFunction
-#else
-import pal.Core.PALSwift
-import pal.Core.crypto.CryptoDigestHashFunction
-#endif
 
 // FIXME: PALSwift should have no public symbols.
 // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
@@ -931,5 +924,3 @@ public class HKDF {
         return returnValue
     }
 }
-
-#endif

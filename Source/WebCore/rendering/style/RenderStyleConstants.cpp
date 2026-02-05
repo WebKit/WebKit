@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -943,6 +943,7 @@ TextStream& operator<<(TextStream& ts, PseudoElementType pseudoElementType)
     case PseudoElementType::Selection: ts << "selection"_s; break;
     case PseudoElementType::SpellingError: ts << "spelling-error"_s; break;
     case PseudoElementType::TargetText: ts << "target-text"_s; break;
+    case PseudoElementType::Checkmark: ts << "checkmark"_s; break;
     case PseudoElementType::ViewTransition: ts << "view-transition"_s; break;
     case PseudoElementType::ViewTransitionGroup: ts << "view-transition-group"_s; break;
     case PseudoElementType::ViewTransitionImagePair: ts << "view-transition-image-pair"_s; break;

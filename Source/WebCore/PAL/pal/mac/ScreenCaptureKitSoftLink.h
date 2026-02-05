@@ -30,18 +30,14 @@
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, ScreenCaptureKit);
 
-SOFT_LINK_CLASS_FOR_HEADER_WITH_AVAILABILITY(PAL, SCWindow, API_AVAILABLE(macos(12.3)))
-SOFT_LINK_CLASS_FOR_HEADER_WITH_AVAILABILITY(PAL, SCDisplay, API_AVAILABLE(macos(12.3)))
-SOFT_LINK_CLASS_FOR_HEADER_WITH_AVAILABILITY(PAL, SCShareableContent, API_AVAILABLE(macos(12.3)))
-SOFT_LINK_CLASS_FOR_HEADER_WITH_AVAILABILITY(PAL, SCContentFilter, API_AVAILABLE(macos(12.3)))
-SOFT_LINK_CLASS_FOR_HEADER_WITH_AVAILABILITY(PAL, SCStreamConfiguration, API_AVAILABLE(macos(12.3)))
-SOFT_LINK_CLASS_FOR_HEADER_WITH_AVAILABILITY(PAL, SCStream, API_AVAILABLE(macos(12.3)))
-SOFT_LINK_CLASS_FOR_HEADER(PAL, SCContentSharingSession)
-
-#if HAVE(SC_CONTENT_SHARING_PICKER)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, SCWindow)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, SCDisplay)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, SCShareableContent)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, SCContentFilter)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, SCStreamConfiguration)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, SCStream)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, SCContentSharingPicker)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, SCContentSharingPickerConfiguration)
-#endif
 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, ScreenCaptureKit, SCStreamFrameInfoStatus, NSString *)
 #define SCStreamFrameInfoStatus PAL::get_ScreenCaptureKit_SCStreamFrameInfoStatusSingleton()
@@ -51,10 +47,7 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, ScreenCaptureKit, SCStreamFrameInfoContentSca
 #define SCStreamFrameInfoContentScale PAL::get_ScreenCaptureKit_SCStreamFrameInfoContentScaleSingleton()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, ScreenCaptureKit, SCStreamFrameInfoContentRect, NSString *)
 #define SCStreamFrameInfoContentRect PAL::get_ScreenCaptureKit_SCStreamFrameInfoContentRectSingleton()
-
-#if HAVE(SC_CONTENT_SHARING_PICKER)
-SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, ScreenCaptureKit, SCStreamFrameInfoPresenterOverlayContentRect, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, ScreenCaptureKit, SCStreamFrameInfoPresenterOverlayContentRect, NSString *)
 #define SCStreamFrameInfoPresenterOverlayContentRect PAL::get_ScreenCaptureKit_SCStreamFrameInfoPresenterOverlayContentRectSingleton()
-#endif
 
 #endif // HAVE(SCREEN_CAPTURE_KIT)

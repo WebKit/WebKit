@@ -72,22 +72,6 @@ void CoordinatedPlatformLayerBufferHolePunch::paintToTextureMapper(TextureMapper
     textureMapper.drawSolidColor(targetRect, modelViewMatrix, Color::transparentBlack, false);
 }
 
-void CoordinatedPlatformLayerBufferHolePunch::notifyVideoPosition(const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix)
-{
-#if USE(GSTREAMER)
-    if (m_videoSink && m_quirksManager)
-        m_quirksManager->setHolePunchVideoRectangle(m_videoSink.get(), enclosingIntRect(modelViewMatrix.mapRect(targetRect)));
-#else
-    UNUSED_PARAM(targetRect);
-    UNUSED_PARAM(modelViewMatrix);
-#endif
-}
-
-void CoordinatedPlatformLayerBufferHolePunch::paintTransparentRectangle(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix)
-{
-    textureMapper.drawSolidColor(targetRect, modelViewMatrix, Color::transparentBlack, false);
-}
-
 } // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS) && ENABLE(VIDEO)

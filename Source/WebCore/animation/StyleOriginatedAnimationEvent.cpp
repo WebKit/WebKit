@@ -44,10 +44,10 @@ StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(enum EventInterface
 {
 }
 
-StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(enum EventInterfaceType eventInterface, const AtomString& type, const EventInit& init, IsTrusted isTrusted, double elapsedTime, const String& pseudoElement)
-    : AnimationEventBase(eventInterface, type, init, isTrusted)
+StyleOriginatedAnimationEvent::StyleOriginatedAnimationEvent(enum EventInterfaceType eventInterface, const AtomString& type, EventInit&& init, IsTrusted isTrusted, double elapsedTime, String&& pseudoElement)
+    : AnimationEventBase(eventInterface, type, WTF::move(init), isTrusted)
     , m_elapsedTime(elapsedTime)
-    , m_pseudoElement(pseudoElement)
+    , m_pseudoElement(WTF::move(pseudoElement))
 {
     RefPtr node = dynamicDowncast<Node>(target());
     auto [parsed, pseudoElementIdentifier] = pseudoElementIdentifierFromString(m_pseudoElement, node ? &node->document() : nullptr);

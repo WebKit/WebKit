@@ -1,0 +1,20 @@
+This test ensures that iframe content is ignored when the iframe is display:none.
+
+PASS: root.childAtIndex(0).isIgnored === false
+PASS: iframeButton1.isIgnored === false
+PASS: iframeButton2.isIgnored === false
+
+document.getElementById('iframe1').style.display = 'none';
+PASS: !root.childAtIndex(0) === true
+PASS: !iframeButton1 === true
+PASS: !iframeButton2 === true
+
+document.getElementById('iframe1').style.display = '';
+PASS: root.childAtIndex(0).isIgnored === false
+PASS: iframeButton1.isIgnored === false
+PASS: iframeButton2.isIgnored === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

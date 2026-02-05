@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/push-api/#dom-pushmessagedata
+// FIXME: This should be marked as `SecureContext`.
 [
     EnabledBySetting=PushAPIEnabled,
     Exposed=ServiceWorker,

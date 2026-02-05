@@ -47,7 +47,7 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFPresentationController);
 
-RefPtr<PDFPresentationController> PDFPresentationController::createForMode(PDFDocumentLayout::DisplayMode mode, UnifiedPDFPlugin& plugin)
+RefPtr<PDFPresentationController> PDFPresentationController::createForMode(PDFDisplayMode mode, UnifiedPDFPlugin& plugin)
 {
     if (PDFDocumentLayout::isScrollingDisplayMode(mode))
         return adoptRef(*new PDFScrollingPresentationController { plugin });

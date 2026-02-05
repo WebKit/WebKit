@@ -79,20 +79,20 @@ static const AtomString& forcedKeyword()
 
 TextTrack& TextTrack::captionMenuOffItemSingleton()
 {
-    static TextTrack& off = TextTrack::create(nullptr, "off menu item"_s, emptyAtom(), emptyAtom(), emptyAtom()).leakRef();
-    return off;
+    static NeverDestroyed<Ref<TextTrack>> off = TextTrack::create(nullptr, "off menu item"_s, emptyAtom(), emptyAtom(), emptyAtom());
+    return off->get();
 }
 
 TextTrack& TextTrack::captionMenuOnItemSingleton()
 {
-    static TextTrack& on = TextTrack::create(nullptr, "on menu item"_s, emptyAtom(), emptyAtom(), emptyAtom()).leakRef();
-    return on;
+    static NeverDestroyed<Ref<TextTrack>> on = TextTrack::create(nullptr, "on menu item"_s, emptyAtom(), emptyAtom(), emptyAtom());
+    return on->get();
 }
 
 TextTrack& TextTrack::captionMenuAutomaticItemSingleton()
 {
-    static TextTrack& automatic = TextTrack::create(nullptr, "automatic menu item"_s, emptyAtom(), emptyAtom(), emptyAtom()).leakRef();
-    return automatic;
+    static NeverDestroyed<Ref<TextTrack>> automatic = TextTrack::create(nullptr, "automatic menu item"_s, emptyAtom(), emptyAtom(), emptyAtom());
+    return automatic->get();
 }
 
 TextTrack::Kind TextTrack::convertKind(const AtomString& kind)
@@ -603,8 +603,8 @@ bool TextTrack::isMainProgramContent() const
     // "Main program" content is intrinsic to the presentation of the media file, regardless of locale. Content such as
     // directors commentary is not "main program" because it is not essential for the presentation. HTML5 doesn't have
     // a way to express this in a machine-reable form, it is typically done with the track label, so we assume that caption
-    // tracks are main content and all other track types are not.
-    return m_kind == Kind::Captions;
+    // and subtitle tracks are main content and all other track types are not.
+    return m_kind == Kind::Captions || m_kind == Kind::Subtitles;
 }
 
 bool TextTrack::containsOnlyForcedSubtitles() const

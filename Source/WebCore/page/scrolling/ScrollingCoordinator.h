@@ -215,12 +215,19 @@ public:
 
     WEBCORE_EXPORT virtual void setMouseIsOverContentArea(ScrollableArea&, bool) { }
     WEBCORE_EXPORT virtual void setMouseMovedInContentArea(ScrollableArea&) { }
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    virtual void setHoveredAndPressedScrollbarParts(ScrollableArea&) { }
+#else
     WEBCORE_EXPORT virtual void setMouseIsOverScrollbar(Scrollbar*, bool) { }
+#endif
     WEBCORE_EXPORT virtual void setScrollbarEnabled(Scrollbar&) { }
     WEBCORE_EXPORT virtual void setLayerHostingContextIdentifierForFrameHostingNode(ScrollingNodeID, std::optional<LayerHostingContextIdentifier>) { }
     WEBCORE_EXPORT virtual void setScrollbarLayoutDirection(ScrollableArea&, UserInterfaceLayoutDirection) { }
     WEBCORE_EXPORT virtual void setScrollbarWidth(ScrollableArea&, ScrollbarWidth) { }
     WEBCORE_EXPORT virtual void setScrollbarColor(ScrollableArea&, std::optional<ScrollbarColor>);
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    virtual void setScrollbarOpacity(ScrollableArea&) { }
+#endif
 
     FrameIdentifier mainFrameIdentifier() const;
 

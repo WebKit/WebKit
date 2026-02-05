@@ -32,15 +32,16 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
+namespace WebModel {
+struct ImageAsset;
+struct MeshDescriptor;
+}
+
 namespace WebCore {
 class NativeImage;
 class IntSize;
 class GraphicsContext;
-namespace DDModel {
-class DDMesh;
-struct DDImageAsset;
-struct DDMeshDescriptor;
-}
+class Mesh;
 }
 
 namespace WebCore::WebGPU {
@@ -84,7 +85,7 @@ public:
     virtual ~GPU() = default;
 
     virtual void requestAdapter(const RequestAdapterOptions&, CompletionHandler<void(RefPtr<Adapter>&&)>&&) = 0;
-    virtual RefPtr<DDModel::DDMesh> createModelBacking(unsigned width, unsigned height, const DDModel::DDImageAsset& diffuseTexture, const DDModel::DDImageAsset& specularTexture, CompletionHandler<void(Vector<MachSendRight>&&)>&&) = 0;
+    virtual RefPtr<WebCore::Mesh> createModelBacking(unsigned width, unsigned height, const WebModel::ImageAsset& diffuseTexture, const WebModel::ImageAsset& specularTexture, CompletionHandler<void(Vector<MachSendRight>&&)>&&) = 0;
 
     virtual RefPtr<PresentationContext> createPresentationContext(const PresentationContextDescriptor&) = 0;
 

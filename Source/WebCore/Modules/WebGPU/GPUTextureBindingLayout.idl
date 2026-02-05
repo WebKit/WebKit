@@ -27,7 +27,6 @@
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUTextureBindingLayout {
     GPUTextureSampleType sampleType = "float";
     GPUTextureViewDimension viewDimension = "2d";

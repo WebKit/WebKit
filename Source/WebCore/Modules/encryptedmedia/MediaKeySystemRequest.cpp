@@ -76,7 +76,7 @@ void MediaKeySystemRequest::start()
         return;
     }
 
-    auto* controller = MediaKeySystemController::from(document->protectedPage().get());
+    auto* controller = MediaKeySystemController::from(protect(document->page()).get());
     if (!controller) {
         deny();
         return;
@@ -115,7 +115,7 @@ void MediaKeySystemRequest::deny(const String& message)
 void MediaKeySystemRequest::stop()
 {
     Ref document = *this->document();
-    if (auto* controller = MediaKeySystemController::from(document->protectedPage().get()))
+    if (auto* controller = MediaKeySystemController::from(protect(document->page()).get()))
         controller->cancelMediaKeySystemRequest(*this);
 }
 

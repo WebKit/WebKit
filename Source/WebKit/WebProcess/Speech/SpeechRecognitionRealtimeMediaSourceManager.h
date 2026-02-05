@@ -66,7 +66,6 @@ private:
     uint64_t messageSenderDestinationID() const final;
 
     IPC::Connection& connection() const;
-    Ref<IPC::Connection> protectedConnection() const;
 
     WeakRef<WebProcess> m_process;
 

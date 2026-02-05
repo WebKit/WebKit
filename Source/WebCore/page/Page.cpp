@@ -70,6 +70,7 @@
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "DocumentPage.h"
+#include "DocumentQuirks.h"
 #include "DocumentResourceLoader.h"
 #include "DocumentSyncClient.h"
 #include "DocumentSyncData.h"
@@ -123,7 +124,6 @@
 #include "LoginStatus.h"
 #include "LowPowerModeNotifier.h"
 #include "MediaCanStartListener.h"
-#include "MediaEngineConfigurationFactory.h"
 #include "MemoryCache.h"
 #include "ModelPlayerProvider.h"
 #include "NavigationScheduler.h"
@@ -139,6 +139,7 @@
 #include "PerformanceLogging.h"
 #include "PerformanceLoggingClient.h"
 #include "PerformanceMonitor.h"
+#include "PlatformMediaEngineConfigurationFactory.h"
 #include "PlatformMediaSessionManager.h"
 #include "PlatformScreen.h"
 #include "PlatformStrategies.h"
@@ -148,6 +149,7 @@
 #include "PointerCaptureController.h"
 #include "PointerLockController.h"
 #include "ProgressTracker.h"
+#include "Quirks.h"
 #include "RTCController.h"
 #include "Range.h"
 #include "RemoteFrame.h"
@@ -589,7 +591,7 @@ void Page::firstTimeInitialization()
     });
 }
 
-void Page::clearPreviousItemFromAllPages(BackForwardItemIdentifier itemID)
+void Page::clearPreviousItemFromAllPages(BackForwardFrameItemIdentifier frameItemID)
 {
     for (auto& page : allPages()) {
         RefPtr localMainFrame = page->localMainFrame();
@@ -597,7 +599,7 @@ void Page::clearPreviousItemFromAllPages(BackForwardItemIdentifier itemID)
             return;
 
         Ref controller = localMainFrame->loader().history();
-        if (controller->previousItem() && controller->previousItem()->itemID() == itemID) {
+        if (controller->previousItem() && controller->previousItem()->frameItemID() == frameItemID) {
             controller->clearPreviousItem();
             return;
         }
@@ -1211,7 +1213,7 @@ Page::FindStringData Page::findString(const String& target, FindOptions options,
             frame = incrementFrame(frame.get(), !options.contains(FindOption::Backwards), canWrap, didWrap);
             continue;
         }
-        auto foundRange = localFrame->protectedEditor()->findString(target, (options - FindOption::WrapAround) | FindOption::StartInSelection);
+        auto foundRange = protect(localFrame->editor())->findString(target, (options - FindOption::WrapAround) | FindOption::StartInSelection);
         if (foundRange) {
             if (!options.contains(FindOption::DoNotSetSelection)) {
                 if (focusedLocalFrame && localFrame != focusedLocalFrame)
@@ -1228,7 +1230,7 @@ Page::FindStringData Page::findString(const String& target, FindOptions options,
     if (canWrap == CanWrap::Yes && focusedLocalFrame && !focusedLocalFrame->selection().isNone()) {
         if (didWrap)
             *didWrap = DidWrap::Yes;
-        auto foundRange = focusedLocalFrame->protectedEditor()->findString(target, options | FindOption::WrapAround | FindOption::StartInSelection);
+        auto foundRange = protect(focusedLocalFrame->editor())->findString(target, options | FindOption::WrapAround | FindOption::StartInSelection);
         if (!options.contains(FindOption::DoNotSetSelection))
             m_focusController->setFocusedFrame(frame.get());
         if (!foundRange)
@@ -1262,7 +1264,7 @@ auto Page::findTextMatches(const String& target, FindOptions options, unsigned l
             frame = incrementFrame(frame.get(), true, CanWrap::No);
             continue;
         }
-        localFrame->protectedEditor()->countMatchesForText(target, { }, options, limit ? (limit - result.ranges.size()) : 0, markMatches, &result.ranges);
+        protect(localFrame->editor())->countMatchesForText(target, { }, options, limit ? (limit - result.ranges.size()) : 0, markMatches, &result.ranges);
         if (localFrame->selection().isRange())
             frameWithSelection = localFrame;
         frame = incrementFrame(frame.get(), true, CanWrap::No);
@@ -1318,7 +1320,7 @@ std::optional<SimpleRange> Page::rangeOfString(const String& target, const std::
             frame = incrementFrame(frame.get(), !options.contains(FindOption::Backwards), canWrap);
             continue;
         }
-        if (auto resultRange = localFrame->protectedEditor()->rangeOfString(target, localFrame.get() == startFrame.get() ? referenceRange : std::nullopt, options - FindOption::WrapAround))
+        if (auto resultRange = protect(localFrame->editor())->rangeOfString(target, localFrame.get() == startFrame.get() ? referenceRange : std::nullopt, options - FindOption::WrapAround))
             return resultRange;
         frame = incrementFrame(localFrame.get(), !options.contains(FindOption::Backwards), canWrap);
     } while (frame && frame != startFrame);
@@ -1326,7 +1328,7 @@ std::optional<SimpleRange> Page::rangeOfString(const String& target, const std::
     // Search contents of startFrame, on the other side of the reference range that we did earlier.
     // We cheat a bit and just search again with wrap on.
     if (canWrap == CanWrap::Yes && referenceRange) {
-        if (auto resultRange = startFrame->protectedEditor()->rangeOfString(target, *referenceRange, options | FindOption::WrapAround | FindOption::StartInSelection))
+        if (auto resultRange = protect(startFrame->editor())->rangeOfString(target, *referenceRange, options | FindOption::WrapAround | FindOption::StartInSelection))
             return resultRange;
     }
 
@@ -1348,8 +1350,8 @@ unsigned Page::findMatchesForText(const String& target, FindOptions options, uns
             continue;
         }
         if (shouldMarkMatches == MarkMatches)
-            localFrame->protectedEditor()->setMarkedTextMatchesAreHighlighted(shouldHighlightMatches == HighlightMatches);
-        matchCount += localFrame->protectedEditor()->countMatchesForText(target, std::nullopt, options, maxMatchCount ? (maxMatchCount - matchCount) : 0, shouldMarkMatches == MarkMatches, nullptr);
+            protect(localFrame->editor())->setMarkedTextMatchesAreHighlighted(shouldHighlightMatches == HighlightMatches);
+        matchCount += protect(localFrame->editor())->countMatchesForText(target, std::nullopt, options, maxMatchCount ? (maxMatchCount - matchCount) : 0, shouldMarkMatches == MarkMatches, nullptr);
         frame = incrementFrame(frame.get(), true, CanWrap::No);
     } while (frame);
 
@@ -1434,7 +1436,7 @@ static void replaceRanges(Page& page, const Vector<FindReplacementRange>& ranges
                 continue;
 
             frame->checkedSelection()->setSelectedRange(range, Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes);
-            frame->protectedEditor()->replaceSelectionWithText(replacementText, Editor::SelectReplacement::Yes, Editor::SmartReplace::No, EditAction::InsertReplacement);
+            protect(frame->editor())->replaceSelectionWithText(replacementText, Editor::SelectReplacement::Yes, Editor::SmartReplace::No, EditAction::InsertReplacement);
         }
     }
 }
@@ -1466,7 +1468,7 @@ uint32_t Page::replaceSelectionWithText(const String& replacementText)
         return 0;
 
     auto editAction = selection.isRange() ? EditAction::InsertReplacement : EditAction::Insert;
-    frame->protectedEditor()->replaceSelectionWithText(replacementText, Editor::SelectReplacement::Yes, Editor::SmartReplace::No, editAction);
+    protect(frame->editor())->replaceSelectionWithText(replacementText, Editor::SelectReplacement::Yes, Editor::SmartReplace::No, editAction);
     return 1;
 }
 
@@ -2141,6 +2143,15 @@ std::optional<MonotonicTime> Page::nextRenderingUpdateTimestamp() const
     return m_lastRenderingUpdateTimestamp + std::floor((now + interval - m_lastRenderingUpdateTimestamp) / interval) * interval;
 }
 
+std::optional<Seconds> Page::timeToNextRenderingUpdateForTesting() const
+{
+    auto nextUpdate = nextRenderingUpdateTimestamp();
+    if (!nextUpdate)
+        return std::nullopt;
+
+    return *nextUpdate - MonotonicTime::now();
+}
+
 void Page::didScheduleRenderingUpdate()
 {
 #if ENABLE(ASYNC_SCROLLING)
@@ -2185,7 +2196,7 @@ void Page::syncLocalFrameInfoToRemote()
         {
             HashMap<FrameIdentifier, RemoteFrameLayoutInfo> childrenFrameLayoutInfo;
 
-            for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().traverseNextSkippingChildren()) {
+            for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
                 auto visibleRect = frameView->visibleRectOfChild(*child.get());
 
                 float usedZoom = 1.0;
@@ -2245,7 +2256,7 @@ void Page::updateRendering()
     // Timestamps should not change while serving the rendering update steps.
     Vector<WeakPtr<Document, WeakPtrImplWithEventTargetData>> initialDocuments;
     forEachDocument([&initialDocuments] (Document& document) {
-        document.protectedWindow()->freezeNowTimestamp();
+        protect(document.window())->freezeNowTimestamp();
         initialDocuments.append(document);
     });
 
@@ -2283,7 +2294,7 @@ void Page::updateRendering()
 
 #if ENABLE(FULLSCREEN_API)
     runProcessingStep(RenderingUpdateStep::Fullscreen, [] (Document& document) {
-        document.protectedFullscreen()->dispatchPendingEvents();
+        protect(document.fullscreen())->dispatchPendingEvents();
     });
 #else
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::Fullscreen);
@@ -2291,7 +2302,7 @@ void Page::updateRendering()
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     runProcessingStep(RenderingUpdateStep::Immersive, [] (Document& document) {
-        document.protectedImmersive()->dispatchPendingEvents();
+        protect(document.immersive())->dispatchPendingEvents();
     });
 #endif
 
@@ -2339,7 +2350,7 @@ void Page::updateRendering()
     });
 
     runProcessingStep(RenderingUpdateStep::Images, [] (Document& document) {
-        for (auto& image : document.protectedCachedResourceLoader()->allCachedSVGImages()) {
+        for (auto& image : protect(document.cachedResourceLoader())->allCachedSVGImages()) {
             if (RefPtr page = image->internalPage())
                 page->isolatedUpdateRendering();
         }
@@ -2356,7 +2367,7 @@ void Page::updateRendering()
 
     for (auto& document : initialDocuments) {
         if (document && document->window())
-            document->protectedWindow()->unfreezeNowTimestamp();
+            protect(document->window())->unfreezeNowTimestamp();
     }
 
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::WheelEventMonitorCallbacks);
@@ -2601,7 +2612,7 @@ void Page::prioritizeVisibleResources()
     Vector<CachedResourceHandle<CachedResource>> toPrioritize;
 
     forEachRenderableDocument([&] (Document& document) {
-        toPrioritize.appendVector(document.protectedCachedResourceLoader()->visibleResourcesToPrioritize());
+        toPrioritize.appendVector(protect(document.cachedResourceLoader())->visibleResourcesToPrioritize());
     });
     
     auto computeSchedulingMode = [&] {
@@ -2674,9 +2685,6 @@ bool Page::shouldUpdateAccessibilityRegions() const
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void Page::setImageAnimationEnabled(bool enabled)
 {
-    if (!settings().imageAnimationControlEnabled())
-        return;
-
     // This method overrides any individually set animation play-states (so we need to do work even if `enabled` is
     // already equal to `m_imageAnimationEnabled` because there may be individually playing or paused images).
     m_imageAnimationEnabled = enabled;
@@ -2916,7 +2924,7 @@ void Page::setDebugger(JSC::Debugger* debugger)
     m_debugger = debugger;
 
     for (RefPtr frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext())
-        frame->protectedWindowProxy()->attachDebugger(m_debugger);
+        protect(frame->windowProxy())->attachDebugger(m_debugger);
 }
 
 bool Page::hasCustomHTMLTokenizerTimeDelay() const
@@ -4369,7 +4377,7 @@ void Page::setUseColorAppearance(bool useDarkAppearance, bool useElevatedUserInt
 #endif
 
     forEachRenderableDocument([useDarkAppearance, useElevatedUserInterfaceLevel] (Document& document) {
-        for (auto& image : document.protectedCachedResourceLoader()->allCachedSVGImages()) {
+        for (auto& image : protect(document.cachedResourceLoader())->allCachedSVGImages()) {
             if (RefPtr page = image->internalPage())
                 page->setUseColorAppearance(useDarkAppearance, useElevatedUserInterfaceLevel);
         }
@@ -4449,7 +4457,7 @@ Document* Page::outermostFullscreenDocument() const
     RefPtr<Document> outermostFullscreenDocument;
     RefPtr currentDocument = localMainFrame->document();
     while (currentDocument) {
-        RefPtr fullscreenElement = currentDocument->protectedFullscreen()->fullscreenElement();
+        RefPtr fullscreenElement = protect(currentDocument->fullscreen())->fullscreenElement();
         if (!fullscreenElement)
             break;
 
@@ -4721,7 +4729,7 @@ static void dispatchPrintEvent(Frame& mainFrame, const AtomString& eventType, Di
     for (auto& frame : frames) {
         if (RefPtr window = frame->window()) {
             auto dispatchEvent = [window = WTF::move(window), eventType] {
-                window->dispatchEvent(Event::create(eventType, Event::CanBubble::No, Event::IsCancelable::No), window->protectedDocument().get());
+                window->dispatchEvent(Event::create(eventType, Event::CanBubble::No, Event::IsCancelable::No), protect(window->document()).get());
             };
             if (dispatchedOnDocumentEventLoop == DispatchedOnDocumentEventLoop::No)
                 return dispatchEvent();
@@ -4847,12 +4855,12 @@ void Page::configureLoggingChannel(const String& channelName, WTFLogChannelState
 
 void Page::didFinishLoadingImageForElement(HTMLImageElement& element)
 {
-    element.protectedDocument()->checkedEventLoop()->queueTask(TaskSource::Networking, [element = Ref { element }]() {
+    protect(element.document())->checkedEventLoop()->queueTask(TaskSource::Networking, [element = Ref { element }]() {
         RefPtr frame = element->document().frame();
         if (!frame)
             return;
 
-        frame->protectedEditor()->revealSelectionIfNeededAfterLoadingImageForElement(element);
+        protect(frame->editor())->revealSelectionIfNeededAfterLoadingImageForElement(element);
 
         if (element->document().frame() != frame)
             return;
@@ -5125,7 +5133,7 @@ void Page::updateElementsWithTextRecognitionResults()
     }
 
     for (auto& [element, result] : elementsToUpdate) {
-        element->protectedDocument()->checkedEventLoop()->queueTask(TaskSource::InternalAsyncTask, [result = TextRecognitionResult { result }, weakElement = WeakPtr { element }] {
+        protect(element->document())->checkedEventLoop()->queueTask(TaskSource::InternalAsyncTask, [result = TextRecognitionResult { result }, weakElement = WeakPtr { element }] {
             if (RefPtr element = weakElement.get())
                 ImageOverlay::updateWithTextRecognitionResult(*element, result, ImageOverlay::CacheTextRecognitionResults::No);
         });
@@ -5333,7 +5341,7 @@ void Page::setMediaKeysStorageDirectory(const String& directory)
 void Page::reloadExecutionContextsForOrigin(const ClientOrigin& origin, std::optional<FrameIdentifier> triggeringFrame) const
 {
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
-    if (!localMainFrame || localMainFrame->protectedDocument()->topOrigin().data() != origin.topOrigin)
+    if (!localMainFrame || protect(localMainFrame->document())->topOrigin().data() != origin.topOrigin)
         return;
 
     for (RefPtr frame = m_mainFrame.get(); frame;) {
@@ -5864,6 +5872,11 @@ bool Page::shouldAllowScriptAccess(const URL& url, const SecurityOrigin& topOrig
 
 bool Page::requiresScriptTrackingPrivacyProtections(const URL& scriptURL) const
 {
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+    if (RefPtr document = localMainFrame ? localMainFrame->document() : nullptr) {
+        if (document->quirks().needsConsistentQueryParameterFilteringQuirk(scriptURL))
+            return true;
+    }
     if (!advancedPrivacyProtections().contains(AdvancedPrivacyProtections::ScriptTrackingPrivacy))
         return false;
 
@@ -6009,7 +6022,7 @@ RefPtr<MediaSessionManagerInterface> Page::mediaSessionManager()
         Ref { *m_mediaSessionManager }->setShouldDeactivateAudioSession(true);
 #endif
 
-        MediaEngineConfigurationFactory::setMediaSessionManagerProvider([] (PageIdentifier identifier) {
+        PlatformMediaEngineConfigurationFactory::setMediaSessionManagerProvider([](PageIdentifier identifier) {
             return Page::mediaSessionManagerForPageIdentifier(identifier);
         });
     }

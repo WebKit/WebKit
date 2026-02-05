@@ -4,6 +4,6 @@ Spec
 Setting row and column to visibility:collapse changes both height and width. The collapsed result should have whitespace in the bottom right corner.
 
 
-FAIL spanning col visibility:collapse changes table width assert_equals: spanning col visibility:collapse changes table width expected 112 but got 148
+FAIL spanning col visibility:collapse changes table width assert_equals: spanning col visibility:collapse changes table width expected 112 but got 114
 PASS spanning row visibility:collapse changes height
 

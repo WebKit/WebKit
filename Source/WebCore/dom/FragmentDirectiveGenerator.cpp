@@ -66,7 +66,7 @@ static bool positionsHaveSameBlockAncestor(const VisiblePosition& a, const Visib
 static VisiblePosition beforeStartOfCurrentBlock(const VisiblePosition& visiblePosition)
 {
     auto position = visiblePosition.deepEquivalent();
-    Ref blockContainer = nearestBlockAncestor(*position.protectedContainerNode().get());
+    Ref blockContainer = nearestBlockAncestor(*protect(position.containerNode()).get());
     VisiblePosition firstPositionInBlock = firstPositionInNode(blockContainer.ptr());
     if (firstPositionInBlock == visiblePosition)
         return visiblePosition.previous();
@@ -76,7 +76,7 @@ static VisiblePosition beforeStartOfCurrentBlock(const VisiblePosition& visibleP
 static VisiblePosition afterEndOfCurrentBlock(const VisiblePosition& visiblePosition)
 {
     auto position = visiblePosition.deepEquivalent();
-    Ref blockContainer = nearestBlockAncestor(*position.protectedContainerNode().get());
+    Ref blockContainer = nearestBlockAncestor(*protect(position.containerNode()).get());
     VisiblePosition lastPositionInBlock = lastPositionInNode(blockContainer.ptr());
     if (lastPositionInBlock == visiblePosition)
         return visiblePosition.next();

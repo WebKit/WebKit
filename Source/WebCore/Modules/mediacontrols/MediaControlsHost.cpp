@@ -29,7 +29,7 @@
 
 #include "MediaControlsHost.h"
 
-#include "AddEventListenerOptionsInlines.h"
+#include "AbortSignal.h"
 #include "AudioTrackList.h"
 #include "CaptionUserPreferences.h"
 #include "Chrome.h"
@@ -227,7 +227,7 @@ MediaControlTextTrackContainerElement* MediaControlsHost::ensureTextTrackContain
 {
     if (!m_textTrackContainer) {
         Ref mediaElement = m_mediaElement.get();
-        m_textTrackContainer = MediaControlTextTrackContainerElement::create(mediaElement->protectedDocument().get(), mediaElement);
+        m_textTrackContainer = MediaControlTextTrackContainerElement::create(protect(mediaElement->document()).get(), mediaElement);
     }
 
     return m_textTrackContainer.get();
@@ -340,7 +340,7 @@ bool MediaControlsHost::supportsRewind() const
 
 bool MediaControlsHost::needsChromeMediaControlsPseudoElement() const
 {
-    return protectedMediaElement()->protectedDocument()->quirks().needsChromeMediaControlsPseudoElement();
+    return protect(protectedMediaElement()->document())->quirks().needsChromeMediaControlsPseudoElement();
 }
 
 bool MediaControlsHost::isMediaControlsMacInlineSizeSpecsEnabled() const
@@ -847,7 +847,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 #if USE(UICONTEXTMENU)
     page->chrome().client().showMediaControlsContextMenu(bounds, WTF::move(items), mediaElement.get(), WTF::move(handleItemSelected));
 #elif ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
-    target.addEventListener(eventNames().contextmenuEvent, MediaControlsContextMenuEventListener::create(MediaControlsContextMenuProvider::create(mediaElement->identifier(), WTF::move(items), WTF::move(handleItemSelected))), { /*capture */ true, /* passive */ std::nullopt, /* once */ true });
+    target.addEventListener(eventNames().contextmenuEvent, MediaControlsContextMenuEventListener::create(MediaControlsContextMenuProvider::create(mediaElement->identifier(), WTF::move(items), WTF::move(handleItemSelected))), { { /*capture */ true }, /* passive */ std::nullopt, /* once */ true, nullptr, false });
     page->contextMenuController().showContextMenuAt(*target.document().protectedFrame(), bounds.center());
 #endif
 

@@ -91,7 +91,7 @@ ExceptionOr<JSC::JSValue> WindowOrWorkerGlobalScope::structuredClone(JSDOMGlobal
     if (RefPtr scriptExecutionContext = relevantGlobalObject.scriptExecutionContext())
         entangledPorts = MessagePort::entanglePorts(*scriptExecutionContext, disentangledPorts.releaseReturnValue());
 
-    return messageData.returnValue()->deserialize(lexicalGlobalObject, &relevantGlobalObject, WTF::move(entangledPorts));
+    return messageData.returnValue()->deserialize(lexicalGlobalObject, &relevantGlobalObject, entangledPorts);
 }
 
 } // namespace WebCore

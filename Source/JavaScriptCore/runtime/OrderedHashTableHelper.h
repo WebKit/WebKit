@@ -153,6 +153,9 @@ public:
     ALWAYS_INLINE static constexpr TableIndex capacityIndex() { return deletedEntryCountIndex() + 1; }
     ALWAYS_INLINE static constexpr TableIndex iterationEntryIndex() { return capacityIndex() + 1; }
 
+    ALWAYS_INLINE static constexpr size_t offsetInStorageForIndex(TableIndex index) { return JSCellButterfly::offsetOfData() + index * sizeof(uint64_t); }
+    ALWAYS_INLINE static constexpr size_t offsetOfAliveEntryCount() { return offsetInStorageForIndex(aliveEntryCountIndex()); }
+
     ALWAYS_INLINE static constexpr TableSize aliveEntryCount(Storage& storage) { return asNumber(storage, aliveEntryCountIndex()); }
     ALWAYS_INLINE static constexpr TableSize deletedEntryCount(Storage& storage) { return asNumber(storage, deletedEntryCountIndex()); }
     ALWAYS_INLINE static constexpr TableSize usedCapacity(Storage& storage) { return aliveEntryCount(storage) + deletedEntryCount(storage); }

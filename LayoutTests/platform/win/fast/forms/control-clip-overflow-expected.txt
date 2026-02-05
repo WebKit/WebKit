@@ -22,7 +22,7 @@ layer at (0,0) size 800x600
 layer at (8,100) size 100x50
   RenderBlock {DIV} at (0,92) size 100x50
     RenderMenuList {SELECT} at (0,2) size 80x20 [bgcolor=#FFFFFF]
-      RenderBlock (anonymous) at (4,2) size 55x16
+      RenderSelectFallbackButton {DIV} at (4,2) size 55x16
         RenderText at (0,0) size 160x16
           text run at (0,0) width 160: "Lorem ipsum dolor sit amet"
     RenderText {#text} at (0,0) size 0x0

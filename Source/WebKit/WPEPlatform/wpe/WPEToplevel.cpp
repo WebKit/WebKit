@@ -36,8 +36,8 @@
 #include <wtf/text/WTFString.h>
 
 #if USE(ATK)
-#include "WPEApplicationAccessibleAtk.h"
-#include "WPEToplevelAccessibleAtk.h"
+#include "atk/WPEApplicationAccessibleAtk.h"
+#include "atk/WPEToplevelAccessibleAtk.h"
 #endif
 
 #if USE(LIBDRM)

@@ -262,14 +262,12 @@ void CanvasRenderingContext2DBase::unwindStateStack()
     size_t stackSize = m_stateStack.size();
     if (stackSize <= 1)
         return;
-
-    // We need to keep the last state because it is tracked by CanvasBase::m_contextStateSaver.
+    m_stateStack.shrink(1);
     auto* context = existingDrawingContext();
-    while (m_stateStack.size() > 1) {
-        m_stateStack.removeLast();
-        if (context)
-            context->restore();
-    }
+    if (!context)
+        return;
+    for (;stackSize > 1; --stackSize)
+        context->restore();
 }
 
 CanvasRenderingContext2DBase::~CanvasRenderingContext2DBase()
@@ -330,7 +328,8 @@ void CanvasRenderingContext2DBase::reset()
     m_hasDeferredOperations = false;
     clearAccumulatedDirtyRect();
     if (auto* c = existingDrawingContext()) {
-        canvasBase().resetGraphicsContextState();
+        c->restore();
+        c->save();
         c->clearRect(FloatRect { { }, canvasBase().size() });
     }
 }
@@ -1154,7 +1153,7 @@ void CanvasRenderingContext2DBase::fillInternal(const Path& path, CanvasFillRule
         return;
 
     // If gradient size is zero, then paint nothing.
-    auto gradient = c->fillGradient();
+    RefPtr gradient = c->fillGradient();
     if (gradient && gradient->isZeroSize())
         return;
 
@@ -1197,7 +1196,7 @@ void CanvasRenderingContext2DBase::strokeInternal(const Path& path)
         return;
 
     // If gradient size is zero, then paint nothing.
-    auto gradient = c->strokeGradient();
+    RefPtr gradient = c->strokeGradient();
     if (gradient && gradient->isZeroSize())
         return;
 
@@ -1369,7 +1368,7 @@ void CanvasRenderingContext2DBase::fillRect(double x, double y, double width, do
     // from the HTML5 Canvas spec:
     // If x0 = x1 and y0 = y1, then the linear gradient must paint nothing
     // If x0 = x1 and y0 = y1 and r0 = r1, then the radial gradient must paint nothing
-    auto gradient = c->fillGradient();
+    RefPtr gradient = c->fillGradient();
     if (gradient && gradient->isZeroSize())
         return;
 
@@ -1421,7 +1420,7 @@ void CanvasRenderingContext2DBase::strokeRect(double x, double y, double width, 
         return;
 
     // If gradient size is zero, then paint nothing.
-    auto gradient = c->strokeGradient();
+    RefPtr gradient = c->strokeGradient();
     if (gradient && gradient->isZeroSize())
         return;
 
@@ -1633,7 +1632,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLImageElement& imag
             orientation = Style::toPlatform(computedStyle->imageOrientation()).orientation();
     }
 
-    auto result = drawImage(imageElement.protectedDocument().get(), *cachedImage, imageElement.checkedRenderer().get(), imageRect, srcRect, dstRect, op, blendMode, orientation);
+    auto result = drawImage(protect(imageElement.document()).get(), *cachedImage, imageElement.checkedRenderer().get(), imageRect, srcRect, dstRect, op, blendMode, orientation);
 
     if (!result.hasException())
         checkOrigin(&imageElement);
@@ -1656,7 +1655,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(SVGImageElement& image
 
     auto imageRect = FloatRect(FloatPoint(), size(imageElement, ImageSizeType::BeforeDevicePixelRatio));
 
-    auto result = drawImage(imageElement.protectedDocument().get(), *cachedImage, imageElement.checkedRenderer().get(), imageRect, srcRect, dstRect, op, blendMode);
+    auto result = drawImage(protect(imageElement.document()).get(), *cachedImage, imageElement.checkedRenderer().get(), imageRect, srcRect, dstRect, op, blendMode);
 
     if (!result.hasException())
         checkOrigin(&imageElement);
@@ -2267,7 +2266,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(C
 {
     if (!canvas.width() || !canvas.height())
         return Exception { ExceptionCode::InvalidStateError };
-    auto* copiedImage = canvas.copiedImage();
+    RefPtr copiedImage = canvas.copiedImage();
 
     if (!copiedImage)
         return Exception { ExceptionCode::InvalidStateError };
@@ -2436,7 +2435,7 @@ GraphicsContext* CanvasRenderingContext2DBase::drawingContext() const
 {
     if (auto* paintContext = dynamicDowncast<PaintRenderingContext2D>(*this))
         return paintContext->ensureDrawingContext();
-    if (auto* buffer = canvasBase().buffer())
+    if (RefPtr buffer = canvasBase().buffer())
         return &buffer->context();
     return nullptr;
 }
@@ -2467,7 +2466,7 @@ AffineTransform CanvasRenderingContext2DBase::baseTransform() const
 
 void CanvasRenderingContext2DBase::prepareForDisplay()
 {
-    if (auto buffer = canvasBase().buffer())
+    if (RefPtr buffer = canvasBase().buffer())
         buffer->prepareForDisplay();
 }
 
@@ -2807,7 +2806,7 @@ bool CanvasRenderingContext2DBase::canDrawText(double x, double y, bool fill, st
         return false;
 
     // If gradient size is zero, nothing would be painted.
-    auto gradient = c->strokeGradient();
+    RefPtr gradient = c->strokeGradient();
     if (!fill && gradient && gradient->isZeroSize())
         return false;
 
@@ -2964,8 +2963,12 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
         clearCanvas();
         fontProxy.drawBidiText(*c, textRun, location, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
         repaintEntireCanvas = true;
-    } else
+    } else {
+        auto clipBounds = c->clipBounds();
+        if ((clipBounds.isEmpty() || !clipBounds.intersects(enclosingIntRect(textRect))) && !shouldDrawShadows())
+            return;
         fontProxy.drawBidiText(*c, textRun, location, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
+    }
 
     didDraw(repaintEntireCanvas, targetSwitcher ? targetSwitcher->expandedBounds() : textRect);
 }
@@ -3100,7 +3103,7 @@ std::optional<RenderingMode> CanvasRenderingContext2DBase::renderingModeForTesti
 
 std::optional<CanvasRenderingContext2DBase::RenderingMode> CanvasRenderingContext2DBase::getEffectiveRenderingModeForTesting()
 {
-    if (auto* buffer = canvasBase().buffer()) {
+    if (RefPtr buffer = canvasBase().buffer()) {
         buffer->ensureBackendCreated();
         if (buffer->hasBackend())
             return buffer->renderingMode();

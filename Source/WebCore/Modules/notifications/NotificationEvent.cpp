@@ -37,20 +37,23 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(NotificationEvent);
 
 Ref<NotificationEvent> NotificationEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
 {
-    Ref notification = init.notification.releaseNonNull();
-    auto action = init.action;
-    return adoptRef(*new NotificationEvent(type, WTF::move(init), WTF::move(notification), action, isTrusted));
+    return adoptRef(*new NotificationEvent(type, WTF::move(init), isTrusted));
 }
 
 Ref<NotificationEvent> NotificationEvent::create(const AtomString& type, Ref<Notification>&& notification, const String& action, IsTrusted isTrusted)
 {
-    return adoptRef(*new NotificationEvent(type, { }, WTF::move(notification), action, isTrusted));
+    auto init = Init {
+        { false, false, false },
+        WTF::move(notification),
+        action
+    };
+    return adoptRef(*new NotificationEvent(type, WTF::move(init), isTrusted));
 }
 
-NotificationEvent::NotificationEvent(const AtomString& type, NotificationEventInit&& eventInit, Ref<Notification>&& notification, const String& action, IsTrusted isTrusted)
-    : ExtendableEvent(EventInterfaceType::NotificationEvent, type, WTF::move(eventInit), isTrusted)
-    , m_notification(WTF::move(notification))
-    , m_action(action)
+NotificationEvent::NotificationEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
+    : ExtendableEvent(EventInterfaceType::NotificationEvent, type, WTF::move(init), isTrusted)
+    , m_notification(WTF::move(init.notification))
+    , m_action(WTF::move(init.action))
 {
 }
 

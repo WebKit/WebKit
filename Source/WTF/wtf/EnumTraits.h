@@ -93,7 +93,7 @@ template<typename T, typename E, E e, E... es>
 struct EnumValueChecker<T, EnumValues<E, e, es...>> {
     static constexpr bool isValidEnumForPersistence(T t)
     {
-        return (static_cast<T>(e) == t) ? true : EnumValueChecker<T, EnumValues<E, es...>>::isValidEnumForPersistence(t);
+        return (static_cast<T>(e) == t) || EnumValueChecker<T, EnumValues<E, es...>>::isValidEnumForPersistence(t);
     }
 };
 

@@ -83,6 +83,7 @@ struct GPUTextureDescriptor;
 class HTMLVideoElement;
 class WebXRSession;
 class XRGPUBinding;
+template<typename T> struct UniquelyAnnotatedDescriptor;
 
 namespace WebGPU {
 class XRBinding;
@@ -114,34 +115,35 @@ public:
     void destroy(ScriptExecutionContext&);
 
     RefPtr<WebGPU::XRBinding> createXRBinding(const WebXRSession&);
-    ExceptionOr<Ref<GPUBuffer>> createBuffer(const GPUBufferDescriptor&);
-    ExceptionOr<Ref<GPUTexture>> createTexture(const GPUTextureDescriptor&);
+    ExceptionOr<Ref<GPUBuffer>> createBuffer(GPUBufferDescriptor&&);
+    ExceptionOr<Ref<GPUTexture>> createTexture(GPUTextureDescriptor&&);
     std::optional<String> errorValidatingSupportedFormat(GPUTextureFormat) const;
-    ExceptionOr<Ref<GPUSampler>> createSampler(const std::optional<GPUSamplerDescriptor>&);
-    ExceptionOr<Ref<GPUExternalTexture>> importExternalTexture(const GPUExternalTextureDescriptor&);
+    ExceptionOr<Ref<GPUSampler>> createSampler(std::optional<GPUSamplerDescriptor>&&);
+    ExceptionOr<Ref<GPUExternalTexture>> importExternalTexture(GPUExternalTextureDescriptor&&);
 
-    ExceptionOr<Ref<GPUBindGroupLayout>> createBindGroupLayout(const GPUBindGroupLayoutDescriptor&);
-    ExceptionOr<Ref<GPUPipelineLayout>> createPipelineLayout(const GPUPipelineLayoutDescriptor&);
-    ExceptionOr<Ref<GPUBindGroup>> createBindGroup(const GPUBindGroupDescriptor&);
+    ExceptionOr<Ref<GPUBindGroupLayout>> createBindGroupLayout(GPUBindGroupLayoutDescriptor&&);
+    ExceptionOr<Ref<GPUPipelineLayout>> createPipelineLayout(GPUPipelineLayoutDescriptor&&);
+    ExceptionOr<Ref<GPUBindGroup>> createBindGroup(GPUBindGroupDescriptor&&);
 
-    ExceptionOr<Ref<GPUShaderModule>> createShaderModule(const GPUShaderModuleDescriptor&);
-    ExceptionOr<Ref<GPUComputePipeline>> createComputePipeline(const GPUComputePipelineDescriptor&);
-    ExceptionOr<Ref<GPURenderPipeline>> createRenderPipeline(const GPURenderPipelineDescriptor&);
+    ExceptionOr<Ref<GPUShaderModule>> createShaderModule(GPUShaderModuleDescriptor&&);
+    ExceptionOr<Ref<GPUComputePipeline>> createComputePipeline(UniquelyAnnotatedDescriptor<GPUComputePipelineDescriptor>&&);
+    ExceptionOr<Ref<GPURenderPipeline>> createRenderPipeline(UniquelyAnnotatedDescriptor<GPURenderPipelineDescriptor>&&);
     using CreateComputePipelineAsyncPromise = DOMPromiseDeferred<IDLInterface<GPUComputePipeline>>;
-    void createComputePipelineAsync(const GPUComputePipelineDescriptor&, CreateComputePipelineAsyncPromise&&);
+    void createComputePipelineAsync(UniquelyAnnotatedDescriptor<GPUComputePipelineDescriptor>&&, CreateComputePipelineAsyncPromise&&);
     using CreateRenderPipelineAsyncPromise = DOMPromiseDeferred<IDLInterface<GPURenderPipeline>>;
-    ExceptionOr<void> createRenderPipelineAsync(const GPURenderPipelineDescriptor&, CreateRenderPipelineAsyncPromise&&);
+    ExceptionOr<void> createRenderPipelineAsync(UniquelyAnnotatedDescriptor<GPURenderPipelineDescriptor>&&, CreateRenderPipelineAsyncPromise&&);
 
-    ExceptionOr<Ref<GPUCommandEncoder>> createCommandEncoder(const std::optional<GPUCommandEncoderDescriptor>&);
-    ExceptionOr<Ref<GPURenderBundleEncoder>> createRenderBundleEncoder(const GPURenderBundleEncoderDescriptor&);
+    ExceptionOr<Ref<GPUCommandEncoder>> createCommandEncoder(std::optional<GPUCommandEncoderDescriptor>&&);
+    ExceptionOr<Ref<GPURenderBundleEncoder>> createRenderBundleEncoder(GPURenderBundleEncoderDescriptor&&);
 
-    ExceptionOr<Ref<GPUQuerySet>> createQuerySet(const GPUQuerySetDescriptor&);
+    ExceptionOr<Ref<GPUQuerySet>> createQuerySet(GPUQuerySetDescriptor&&);
 
     void pushErrorScope(GPUErrorFilter);
     using ErrorScopePromise = DOMPromiseDeferred<IDLNullable<IDLUnion<IDLInterface<GPUOutOfMemoryError>, IDLInterface<GPUValidationError>, IDLInterface<GPUInternalError>>>>;
     void popErrorScope(ErrorScopePromise&&);
 
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
+    using EventTarget::addEventListener;
 
     using LostPromise = DOMPromiseProxy<IDLInterface<GPUDeviceLostInfo>>;
     LostPromise& lost();

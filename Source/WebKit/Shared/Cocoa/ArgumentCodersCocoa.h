@@ -104,6 +104,9 @@ enum class NSType : uint8_t {
 #if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
     SecureCoding,
 #endif
+#if HAVE(WK_SECURE_CODING_PKPAYMENTSETUPFEATURE)
+    Set,
+#endif
     String,
     URL,
     NSValue,

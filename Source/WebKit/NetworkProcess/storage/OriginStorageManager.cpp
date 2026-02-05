@@ -681,11 +681,6 @@ OriginQuotaManager& OriginStorageManager::quotaManager()
     return m_quotaManager.get();
 }
 
-Ref<OriginQuotaManager> OriginStorageManager::protectedQuotaManager()
-{
-    return m_quotaManager.get();
-}
-
 FileSystemStorageManager& OriginStorageManager::fileSystemStorageManager(FileSystemStorageHandleRegistry& registry)
 {
     return defaultBucket().fileSystemStorageManager(registry, [quotaManager = ThreadSafeWeakPtr { this->quotaManager() }](uint64_t spaceRequested, CompletionHandler<void(bool)>&& completionHandler) mutable {

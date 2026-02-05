@@ -172,7 +172,7 @@ void WKWebsitePoliciesSetPopUpPolicy(WKWebsitePoliciesRef websitePolicies, WKWeb
 
 WKWebsiteDataStoreRef WKWebsitePoliciesGetDataStore(WKWebsitePoliciesRef websitePolicies)
 {
-    return toAPI(toProtectedImpl(websitePolicies)->protectedWebsiteDataStore().get());
+    return toAPI(protect(toProtectedImpl(websitePolicies)->websiteDataStore()).get());
 }
 
 void WKWebsitePoliciesSetDataStore(WKWebsitePoliciesRef websitePolicies, WKWebsiteDataStoreRef websiteDataStore)

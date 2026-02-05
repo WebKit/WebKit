@@ -26,3 +26,12 @@ assert.throws(RangeError, function () {
   instance.subtract(new Temporal.Duration(0, -1), options);
 }, "exception thrown when converting -271821-04 to date");
 assert.compareArray(actual, expected, "all options should be read first");
+
+actual.splice(0);  // clear
+
+const instance2 = new Temporal.PlainYearMonth(1999, 12);
+
+assert.throws(RangeError, function () {
+  instance2.add(new Temporal.Duration(0, 0, 1), options);
+}, "exception thrown when attempting to add too-low unit");
+assert.compareArray(actual, expected, "all options should be read first");

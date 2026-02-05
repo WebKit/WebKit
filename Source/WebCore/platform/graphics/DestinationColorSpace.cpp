@@ -94,6 +94,24 @@ const DestinationColorSpace& DestinationColorSpace::ExtendedDisplayP3()
     return knownColorSpace<PlatformColorSpace::Name::ExtendedDisplayP3>();
 #endif
 }
+
+const DestinationColorSpace& DestinationColorSpace::LinearDisplayP3()
+{
+#if USE(CG) || USE(SKIA)
+    return knownColorSpace<linearDisplayP3ColorSpaceSingleton>();
+#else
+    return knownColorSpace<PlatformColorSpace::Name::LinearDisplayP3>();
+#endif
+}
+
+const DestinationColorSpace& DestinationColorSpace::ExtendedLinearDisplayP3()
+{
+#if USE(CG) || USE(SKIA)
+    return knownColorSpace<extendedLinearDisplayP3ColorSpaceSingleton>();
+#else
+    return knownColorSpace<PlatformColorSpace::Name::ExtendedLinearDisplayP3>();
+#endif
+}
 #endif
 
 #if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
@@ -103,6 +121,15 @@ const DestinationColorSpace& DestinationColorSpace::ExtendedSRGB()
     return knownColorSpace<extendedSRGBColorSpaceSingleton>();
 #else
     return knownColorSpace<PlatformColorSpace::Name::ExtendedSRGB>();
+#endif
+}
+
+const DestinationColorSpace& DestinationColorSpace::ExtendedLinearSRGB()
+{
+#if USE(CG) || USE(SKIA)
+    return knownColorSpace<extendedLinearSRGBColorSpaceSingleton>();
+#else
+    return knownColorSpace<PlatformColorSpace::Name::ExtendedLinearSRGB>();
 #endif
 }
 #endif

@@ -146,12 +146,22 @@ Ref<MediaSession> MediaSession::create(Navigator& navigator)
 {
     auto session = adoptRef(*new MediaSession(navigator));
     session->suspendIfNeeded();
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    RefPtr frame = navigator.frame();
+    RefPtr page = frame ? frame->page() : nullptr;
+    if (page && page->mediaSessionCoordinator())
+        session->m_coordinator->setMediaSessionCoordinatorPrivate(*page->mediaSessionCoordinator());
+    session->m_coordinator->setMediaSession(session.ptr());
+#endif
+
     return session;
 }
 
 MediaSession::MediaSession(Navigator& navigator)
     : ActiveDOMObject(navigator.scriptExecutionContext())
     , m_navigator(navigator)
+    , m_platformSession { PlatformMediaSession::create(*this) }
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     , m_coordinator(MediaSessionCoordinator::create(navigator.protectedScriptExecutionContext().get()))
 #endif
@@ -159,19 +169,13 @@ MediaSession::MediaSession(Navigator& navigator)
     m_logger = Document::sharedLogger();
     m_logIdentifier = nextLogIdentifier();
 
-#if ENABLE(MEDIA_SESSION_COORDINATOR)
-    RefPtr frame = navigator.frame();
-    RefPtr page = frame ? frame->page() : nullptr;
-    if (page && page->mediaSessionCoordinator())
-        m_coordinator->setMediaSessionCoordinatorPrivate(*page->mediaSessionCoordinator());
-    m_coordinator->setMediaSession(this);
-#endif
-
     ALWAYS_LOG(LOGIDENTIFIER);
 }
 
 MediaSession::~MediaSession()
 {
+    m_platformSession->invalidateClient();
+
     if (m_metadata)
         m_metadata->resetMediaSession();
     if (m_defaultMetadata)
@@ -254,6 +258,11 @@ void MediaSession::setPlaybackState(MediaSessionPlaybackState state)
     ALWAYS_LOG(LOGIDENTIFIER, state);
 
     updateReportedPosition();
+
+    if (state == MediaSessionPlaybackState::Playing)
+        m_platformSession->clientWillBeginPlayback([] (bool) { });
+    else if (m_playbackState == MediaSessionPlaybackState::Playing)
+        m_platformSession->clientWillPausePlayback();
 
     m_playbackState = state;
     notifyPlaybackStateObservers();
@@ -401,11 +410,6 @@ Document* MediaSession::document() const
     return m_navigator->window()->document();
 }
 
-RefPtr<Document> MediaSession::protectedDocument() const
-{
-    return document();
-}
-
 RefPtr<MediaSessionManagerInterface> MediaSession::sessionManager() const
 {
     RefPtr document = this->document();
@@ -545,7 +549,7 @@ void MediaSession::updateNowPlayingInfo(NowPlayingInfo& info)
 
     if (!m_defaultArtworkAttempted && (!m_metadata || m_metadata->artwork().isEmpty())) {
         m_defaultArtworkAttempted = true;
-        if (auto images = fallbackArtwork(protectedDocument() ? protectedDocument()->loader() : nullptr); images.size())
+        if (auto images = fallbackArtwork(protect(document()) ? protect(document())->loader() : nullptr); images.size())
             m_defaultMetadata = MediaMetadata::create(*this, WTF::move(images));
     }
 
@@ -618,6 +622,44 @@ String MediaPositionState::toJSONString() const
     object->setDouble("position"_s, position);
 
     return object->toJSONString();
+}
+
+void MediaSession::mayResumePlayback(bool shouldResume)
+{
+    ALWAYS_LOG(LOGIDENTIFIER, "shouldResume: "_s, shouldResume);
+    if (shouldResume)
+        callActionHandler({ MediaSessionAction::Play });
+}
+
+void MediaSession::suspendPlayback()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    callActionHandler({ MediaSessionAction::Pause });
+}
+
+bool MediaSession::isPlaying() const
+{
+    return m_playbackState == MediaSessionPlaybackState::Playing;
+}
+
+bool MediaSession::isEnded() const
+{
+    if (isPlaying() && m_positionState)
+        return m_positionState->position >= m_positionState->duration;
+    return false;
+}
+
+MediaTime MediaSession::mediaSessionDuration() const
+{
+    if (m_positionState)
+        return MediaTime::createWithDouble(m_positionState->duration);
+    return MediaTime::zeroTime();
+}
+
+std::optional<MediaSessionGroupIdentifier> MediaSession::mediaSessionGroupIdentifier() const
+{
+    RefPtr document = this->document();
+    return document && document->page() ? protect(document->page())->mediaSessionGroupIdentifier() : std::nullopt;
 }
 
 }

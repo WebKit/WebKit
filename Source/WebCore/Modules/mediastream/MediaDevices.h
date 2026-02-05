@@ -105,6 +105,7 @@ private:
 
     void scheduledEventTimerFired();
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
+    using EventTarget::addEventListener;
 
     void exposeDevices(Vector<CaptureDeviceWithCapabilities>&&, MediaDeviceHashSalts&&, EnumerateDevicesPromise&&);
     void listenForDeviceChanges();

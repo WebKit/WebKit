@@ -75,6 +75,9 @@ NS_SWIFT_UI_ACTOR
 - (void)interactionContainerDidRecenterFromTransform:(simd_float4x4)transform;
 - (void)recenterEntityAtTransform:(WKEntityTransform)transform;
 - (void)applyDefaultIBL;
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+- (void)ensureSceneUnderstanding;
+#endif
 @end
 
 NS_ASSUME_NONNULL_END

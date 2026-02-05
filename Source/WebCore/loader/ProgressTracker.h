@@ -73,7 +73,6 @@ private:
     void progressEstimateChanged(LocalFrame&);
 
     void progressHeartbeatTimerFired();
-    Ref<Page> protectedPage() const;
 
     WeakRef<Page> m_page;
     const UniqueRef<ProgressTrackerClient> m_client;

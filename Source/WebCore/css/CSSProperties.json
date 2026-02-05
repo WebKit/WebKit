@@ -5225,7 +5225,7 @@
                 "infinite"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
+                "computed-style-storage-path": ["m_nonInheritedData", "rareData", "grid"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::FlowTolerance",
                 "parser-grammar": "normal | <length-percentage> | infinite"
@@ -9133,6 +9133,10 @@
                 {
                     "value": "base",
                     "settings-flag": "cssAppearanceBaseEnabled"
+                },
+                {
+                    "value": "base-select",
+                    "settings-flag": "htmlEnhancedSelectPseudoElementsEnabled"
                 },
                 "auto",
                 "none",

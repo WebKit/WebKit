@@ -4,10 +4,10 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,16) size 784x568
       RenderBlock {DIV} at (16,0) size 400x120
-        RenderBlock (floating) at (2,1) size 62x57 [color=#FF0000] [border: (2px solid #FF0000)]
+        RenderBlock (floating) at (2,1) size 62x58 [color=#FF0000] [border: (2px solid #FF0000)]
           RenderText at (3,-15) size 56x86
             text run at (3,-15) width 56: "A"
-        RenderText {#text} at (0,20) size 386x99
+        RenderText {#text} at (0,20) size 386x100
           text run at (65,20) width 317: "n example of first-letter. This letter should span 3"
           text run at (65,40) width 308: "lines of text, and so it should align itself cleanly"
           text run at (0,60) width 386: "with the cap-height of the A lining up with the cap-height of"
@@ -15,10 +15,10 @@ layer at (0,0) size 800x600
           text run at (0,100) width 160: "baseline of the third line."
       RenderBlock {SPAN} at (0,136) size 784x120
         RenderBlock {DIV} at (368,0) size 400x120
-          RenderBlock (floating) at (336,1) size 62x57 [color=#FF0000] [border: (2px solid #FF0000)]
+          RenderBlock (floating) at (336,1) size 62x58 [color=#FF0000] [border: (2px solid #FF0000)]
             RenderText at (3,-15) size 56x86
               text run at (3,-15) width 56: "A"
-          RenderText {#text} at (0,20) size 400x99
+          RenderText {#text} at (0,20) size 400x100
             text run at (31,20) width 304: "n RTL example of first-letter. This letter should"
             text run at (32,40) width 303: "span 3 lines of text, and so it should align itself"
             text run at (21,60) width 379: "cleanly with the cap-height of the A lining up with the cap-"

@@ -27,7 +27,7 @@ typedef double DOMHighResTimeStamp;
     Exposed=*,
     JSCustomHeader,
 ] interface Event {
-    constructor([AtomString] DOMString type, optional EventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional EventInit eventInitDict = {});
 
     readonly attribute DOMString type;
     readonly attribute EventTarget? target;

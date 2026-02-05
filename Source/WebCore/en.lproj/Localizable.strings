@@ -373,6 +373,12 @@
 /* Undo action name */
 "Convert to Ordered List (Undo action name)" = "Convert to Ordered List";
 
+/* Convert to Simplified Chinese context menu item */
+"Convert to Simplified Chinese" = "Convert to Simplified Chinese";
+
+/* Convert to Traditional Chinese context menu item */
+"Convert to Traditional Chinese" = "Convert to Traditional Chinese";
+
 /* Undo action name */
 "Convert to Unordered List (Undo action name)" = "Convert to Unordered List";
 

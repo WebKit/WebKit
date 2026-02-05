@@ -1,5 +1,4 @@
 Modules/cache/DOMCache.cpp
-Modules/credentialmanagement/CredentialsContainer.cpp
 Modules/entriesapi/FileSystemDirectoryEntry.cpp
 Modules/entriesapi/FileSystemEntry.cpp
 Modules/entriesapi/FileSystemFileEntry.cpp
@@ -52,6 +51,7 @@ Modules/webaudio/OfflineAudioDestinationNode.cpp
 Modules/webaudio/OscillatorNode.cpp
 Modules/webaudio/PannerNode.cpp
 Modules/webaudio/ScriptProcessorNode.cpp
+Modules/webauthn/AuthenticatorResponse.cpp
 Modules/webcodecs/WebCodecsAudioData.cpp
 Modules/webcodecs/WebCodecsAudioInternalData.h
 Modules/webcodecs/WebCodecsVideoFrame.cpp
@@ -103,7 +103,6 @@ bindings/js/JSDOMBindingSecurity.cpp
 bindings/js/JSDOMBindingSecurity.h
 bindings/js/JSDOMBindingSecurityInlines.h
 bindings/js/JSDOMConvertBase.h
-bindings/js/JSDOMConvertBufferSource.h
 bindings/js/JSDOMConvertCallbacks.h
 bindings/js/JSDOMConvertEventListener.h
 bindings/js/JSDOMConvertNullable.h
@@ -132,7 +131,6 @@ bindings/js/JSIntersectionObserverCustom.cpp
 bindings/js/JSKeyframeEffectCustom.cpp
 bindings/js/JSLazyEventListener.cpp
 bindings/js/JSLocationCustom.cpp
-bindings/js/JSMediaSessionCustom.cpp
 bindings/js/JSMessageChannelCustom.cpp
 bindings/js/JSMessagePortCustom.cpp
 bindings/js/JSMutationObserverCustom.cpp
@@ -434,6 +432,7 @@ inspector/agents/InspectorTimelineAgent.cpp
 inspector/agents/InspectorWorkerAgent.cpp
 inspector/agents/page/PageAuditAgent.cpp
 inspector/agents/page/PageCanvasAgent.cpp
+inspector/agents/page/PageConsoleAgent.cpp
 inspector/agents/page/PageDOMDebuggerAgent.cpp
 inspector/agents/page/PageDebuggerAgent.cpp
 inspector/agents/page/PageNetworkAgent.cpp
@@ -536,7 +535,6 @@ platform/ScrollView.cpp
 platform/ScrollableArea.cpp
 platform/Widget.cpp
 platform/animation/AcceleratedEffectValues.cpp
-platform/audio/cocoa/AudioFileReaderCocoa.cpp
 [ iOS ] platform/audio/ios/MediaSessionManagerIOS.mm
 [ Mac ] platform/cocoa/DragImageCocoa.mm
 platform/cocoa/PlaybackSessionModelMediaElement.mm
@@ -553,7 +551,6 @@ platform/graphics/ImageAdapter.cpp
 platform/graphics/ImageBackingStore.h
 platform/graphics/ImageBufferContextSwitcher.cpp
 platform/graphics/ImageFrameWorkQueue.cpp
-platform/graphics/Path.cpp
 platform/graphics/TransparencyLayerContextSwitcher.cpp
 platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp
 [ iOS ] platform/graphics/avfoundation/SampleBufferDisplayLayer.h

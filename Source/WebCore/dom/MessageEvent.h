@@ -45,7 +45,7 @@ class MessageEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(MessageEvent);
 public:
     struct JSValueTag { };
-    using DataType = Variant<JSValueTag, Ref<SerializedScriptValue>, String, Ref<Blob>, Ref<ArrayBuffer>>;
+    using DataType = Variant<JSValueTag, String, Ref<Blob>, Ref<ArrayBuffer>>;
     static Ref<MessageEvent> create(const AtomString& type, DataType&&, RefPtr<SecurityOrigin>&& origin = nullptr, const String& lastEventId = { }, std::optional<MessageEventSource>&& = std::nullopt, Vector<Ref<MessagePort>>&& = { });
     static Ref<MessageEvent> create(DataType&&, RefPtr<SecurityOrigin>&& origin = nullptr, const String& lastEventId = { }, std::optional<MessageEventSource>&& = std::nullopt, Vector<Ref<MessagePort>>&& = { });
     static Ref<MessageEvent> createForBindings();

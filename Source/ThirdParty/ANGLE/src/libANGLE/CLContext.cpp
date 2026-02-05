@@ -381,6 +381,46 @@ void Context::ErrorCallback(const char *errinfo, const void *privateInfo, size_t
     }
 }
 
+Memory::PropArray Context::ConvertArmMemPropToMemProp(const cl_import_properties_arm *properties,
+                                                      const void *handle)
+{
+    Memory::PropArray convertedProperties;
+    const NameValueProperty *propertiesIterator =
+        reinterpret_cast<const NameValueProperty *>(properties);
+
+    if (propertiesIterator != nullptr)
+    {
+        for (; propertiesIterator->name != 0; propertiesIterator++)
+        {
+            if (propertiesIterator->name == CL_IMPORT_TYPE_ARM)
+            {
+                switch (propertiesIterator->value)
+                {
+                    case CL_IMPORT_TYPE_DMA_BUF_ARM:
+                        convertedProperties.push_back(CL_EXTERNAL_MEMORY_HANDLE_DMA_BUF_KHR);
+                        break;
+                    case CL_IMPORT_TYPE_HOST_ARM:
+                    case CL_IMPORT_TYPE_ANDROID_HARDWARE_BUFFER_ARM:
+                        // currently no equivalents for HOST or AHB types
+                    default:
+                        UNIMPLEMENTED();
+                        continue;
+                }
+                convertedProperties.push_back(reinterpret_cast<cl_mem_properties>(handle));
+            }
+            else if (propertiesIterator->name == CL_IMPORT_TYPE_PROTECTED_ARM)
+            {
+                // currently no equivalent for cl_khr_external_memory
+                UNIMPLEMENTED();
+                continue;
+            }
+        }
+    }
+    convertedProperties.push_back(0);  // zero-terminator
+
+    return convertedProperties;
+}
+
 Context::Context(Platform &platform,
                  PropArray &&properties,
                  DevicePtrs &&devices,

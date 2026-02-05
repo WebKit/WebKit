@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "testb3.h"
+#include <array>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -328,7 +329,7 @@ void testLoadZeroExtendIndexAddress()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(amount == 2 ? ".*ldr.*uxtw#2.*" : ".*ldr.*[.*,.*].*");
+            std::string regex(amount == 2 ? ".*ldr.*uxtw #0x2.*" : ".*ldr.*[.*,.*].*");
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         intptr_t addr = std::bit_cast<intptr_t>(&num);
@@ -361,7 +362,7 @@ void testLoadZeroExtendIndexAddress()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(amount == 3 ? ".*ldr.*uxtw#3.*" : ".*ldr.*[.*,.*].*");
+            std::string regex(amount == 3 ? ".*ldr.*uxtw #0x3.*" : ".*ldr.*[.*,.*].*");
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         intptr_t addr = std::bit_cast<intptr_t>(&num);
@@ -401,7 +402,7 @@ void testLoadSignExtendIndexAddress()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(amount == 2 ? ".*ldr.*sxtw#2.*" : ".*ldr.*[.*,.*].*");
+            std::string regex(amount == 2 ? ".*ldr.*sxtw #0x2.*" : ".*ldr.*[.*,.*].*");
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         intptr_t addr = std::bit_cast<intptr_t>(&num);
@@ -435,7 +436,7 @@ void testLoadSignExtendIndexAddress()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(amount == 3 ? ".*ldr.*sxtw#3.*" : ".*ldr.*[.*,.*].*");
+            std::string regex(amount == 3 ? ".*ldr.*sxtw #0x3.*" : ".*ldr.*[.*,.*].*");
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         intptr_t addr = std::bit_cast<intptr_t>(&num);
@@ -476,7 +477,7 @@ void testStoreZeroExtendIndexAddress()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(amount == 2 ? ".*str.*uxtw#2.*" : ".*str.*[.*,.*].*");
+            std::string regex(amount == 2 ? ".*str.*uxtw #0x2.*" : ".*str.*[.*,.*].*");
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         int32_t slot = 12341234;
@@ -511,7 +512,7 @@ void testStoreZeroExtendIndexAddress()
 
         auto code = compileProc(proc);
         if (isARM64() && amount == 3) {
-            std::string regex(amount == 3 ? ".*str.*uxtw#3.*" : ".*str.*[.*,.*].*");
+            std::string regex(amount == 3 ? ".*str.*uxtw #0x3.*" : ".*str.*[.*,.*].*");
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         int64_t slot = 12341234;
@@ -554,7 +555,7 @@ void testStoreSignExtendIndexAddress()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(amount == 2 ? ".*str.*sxtw#2.*" : ".*str.*[.*,.*].*");
+            std::string regex(amount == 2 ? ".*str.*sxtw #0x2.*" : ".*str.*[.*,.*].*");
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         int32_t slot = 12341234;
@@ -589,7 +590,7 @@ void testStoreSignExtendIndexAddress()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(amount == 3 ? ".*str.*sxtw#3.*" : ".*str.*[.*,.*].*");
+            std::string regex(amount == 3 ? ".*str.*sxtw #0x3.*" : ".*str.*[.*,.*].*");
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         int64_t slot = 12341234;
@@ -4854,8 +4855,8 @@ void testXorNotWithLeftShift32()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*eon.*,.*,.*,.*lsl #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*eon.*,.*,.*,.*lsl #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int32_t>(*code, n, m);
@@ -4898,8 +4899,8 @@ void testXorNotWithRightShift32()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*eon.*,.*,.*,.*asr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*eon.*,.*,.*,.*asr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int32_t>(*code, n, m);
@@ -4942,8 +4943,8 @@ void testXorNotWithUnsignedRightShift32()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*eon.*,.*,.*,.*lsr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*eon.*,.*,.*,.*lsr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<uint32_t>(*code, n, m);
@@ -4986,8 +4987,8 @@ void testXorNotWithLeftShift64()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*eon.*,.*,.*,.*lsl #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*eon.*,.*,.*,.*lsl #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int64_t>(*code, n, m);
@@ -5030,8 +5031,8 @@ void testXorNotWithRightShift64()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*eon.*,.*,.*,.*asr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*eon.*,.*,.*,.*asr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int64_t>(*code, n, m);
@@ -5074,8 +5075,8 @@ void testXorNotWithUnsignedRightShift64()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*eon.*,.*,.*,.*lsr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*eon.*,.*,.*,.*lsr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<uint64_t>(*code, n, m);
@@ -5301,8 +5302,8 @@ void testAddWithLeftShift32()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*add.*,.*,.*,.*lsl #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*add.*,.*,.*,.*lsl #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int32_t>(*code, n, m);
@@ -5342,8 +5343,8 @@ void testAddWithRightShift32()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*add.*,.*,.*,.*asr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*add.*,.*,.*,.*asr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int32_t>(*code, n, m);
@@ -5383,8 +5384,8 @@ void testAddWithUnsignedRightShift32()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*add.*,.*,.*,.*lsr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*add.*,.*,.*,.*lsr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<uint32_t>(*code, n, m);
@@ -5424,8 +5425,8 @@ void testAddWithLeftShift64()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*add.*,.*,.*,.*lsl #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*add.*,.*,.*,.*lsl #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int64_t>(*code, n, m);
@@ -5465,8 +5466,8 @@ void testAddWithRightShift64()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*add.*,.*,.*,.*asr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*add.*,.*,.*,.*asr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int64_t>(*code, n, m);
@@ -5506,8 +5507,8 @@ void testAddWithUnsignedRightShift64()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*add.*,.*,.*,.*lsr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*add.*,.*,.*,.*lsr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<uint64_t>(*code, n, m);
@@ -5587,8 +5588,8 @@ void testSubWithLeftShift32()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*sub.*,.*,.*,.*lsl #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*sub.*,.*,.*,.*lsl #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int32_t>(*code, n, m);
@@ -5628,8 +5629,8 @@ void testSubWithRightShift32()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*sub.*,.*,.*,.*asr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*sub.*,.*,.*,.*asr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int32_t>(*code, n, m);
@@ -5669,8 +5670,8 @@ void testSubWithUnsignedRightShift32()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*sub.*,.*,.*,.*lsr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*sub.*,.*,.*,.*lsr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<uint32_t>(*code, n, m);
@@ -5710,8 +5711,8 @@ void testSubWithLeftShift64()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*sub.*,.*,.*,.*lsl #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*sub.*,.*,.*,.*lsl #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int64_t>(*code, n, m);
@@ -5751,8 +5752,8 @@ void testSubWithRightShift64()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*sub.*,.*,.*,.*asr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*sub.*,.*,.*,.*asr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int64_t>(*code, n, m);
@@ -5792,8 +5793,8 @@ void testSubWithUnsignedRightShift64()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*sub.*,.*,.*,.*lsr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*sub.*,.*,.*,.*lsr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<uint64_t>(*code, n, m);
@@ -5833,8 +5834,8 @@ void testAndLeftShift32()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*and.*,.*,.*,.*lsl #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*and.*,.*,.*,.*lsl #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int32_t>(*code, n, m);
@@ -5874,8 +5875,8 @@ void testAndRightShift32()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*and.*,.*,.*,.*asr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*and.*,.*,.*,.*asr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int32_t>(*code, n, m);
@@ -5915,8 +5916,8 @@ void testAndUnsignedRightShift32()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*and.*,.*,.*,.*lsr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*and.*,.*,.*,.*lsr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<uint32_t>(*code, n, m);
@@ -5956,8 +5957,8 @@ void testAndLeftShift64()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*and.*,.*,.*,.*lsl #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*and.*,.*,.*,.*lsl #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int64_t>(*code, n, m);
@@ -5997,8 +5998,8 @@ void testAndRightShift64()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*and.*,.*,.*,.*asr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*and.*,.*,.*,.*asr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int64_t>(*code, n, m);
@@ -6038,8 +6039,8 @@ void testAndUnsignedRightShift64()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*and.*,.*,.*,.*lsr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*and.*,.*,.*,.*lsr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<uint64_t>(*code, n, m);
@@ -6079,8 +6080,8 @@ void testXorLeftShift32()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*eor.*,.*,.*,.*lsl #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*eor.*,.*,.*,.*lsl #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int32_t>(*code, n, m);
@@ -6120,8 +6121,8 @@ void testXorRightShift32()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*eor.*,.*,.*,.*asr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*eor.*,.*,.*,.*asr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int32_t>(*code, n, m);
@@ -6161,8 +6162,8 @@ void testXorUnsignedRightShift32()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*eor.*,.*,.*,.*lsr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*eor.*,.*,.*,.*lsr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<uint32_t>(*code, n, m);
@@ -6202,8 +6203,8 @@ void testXorLeftShift64()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*eor.*,.*,.*,.*lsl #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*eor.*,.*,.*,.*lsl #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int64_t>(*code, n, m);
@@ -6243,8 +6244,8 @@ void testXorRightShift64()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*eor.*,.*,.*,.*asr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*eor.*,.*,.*,.*asr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int64_t>(*code, n, m);
@@ -6284,8 +6285,8 @@ void testXorUnsignedRightShift64()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*eor.*,.*,.*,.*lsr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*eor.*,.*,.*,.*lsr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<uint64_t>(*code, n, m);
@@ -6325,8 +6326,8 @@ void testOrLeftShift32()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*orr.*,.*,.*,.*lsl #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*orr.*,.*,.*,.*lsl #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int32_t>(*code, n, m);
@@ -6366,8 +6367,8 @@ void testOrRightShift32()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*orr.*,.*,.*,.*asr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*orr.*,.*,.*,.*asr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int32_t>(*code, n, m);
@@ -6407,8 +6408,8 @@ void testOrUnsignedRightShift32()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*orr.*,.*,.*,.*lsr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*orr.*,.*,.*,.*lsr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<uint32_t>(*code, n, m);
@@ -6448,8 +6449,8 @@ void testOrLeftShift64()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*orr.*,.*,.*,.*lsl #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*orr.*,.*,.*,.*lsl #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int64_t>(*code, n, m);
@@ -6489,8 +6490,8 @@ void testOrRightShift64()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*orr.*,.*,.*,.*asr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*orr.*,.*,.*,.*asr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<int64_t>(*code, n, m);
@@ -6530,8 +6531,8 @@ void testOrUnsignedRightShift64()
 
         auto code = compileProc(proc);
         if (isARM64()) {
-            std::string regex(".*orr.*,.*,.*,.*lsr #");
-            regex += std::to_string(amount) + ".*";
+            std::string regex(".*orr.*,.*,.*,.*lsr #0x");
+            regex += toHex(amount) + ".*";
             checkUsesInstruction(*code, regex.c_str(), true);
         }
         return invoke<uint64_t>(*code, n, m);

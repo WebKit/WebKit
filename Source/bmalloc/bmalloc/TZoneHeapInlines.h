@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,7 @@ namespace bmalloc { namespace api {
 #define MAKE_BTZONE_MALLOCED_COMMON_INLINE(_type, _compactMode, _exportMacro) \
 public: \
     using HeapRef = ::bmalloc::api::HeapRef; \
-    using SizeAndAlignment = ::bmalloc::api::SizeAndAlignment; \
+    using TZoneDescriptor = ::bmalloc::api::TZoneDescriptor; \
     using TZoneMallocFallback = ::bmalloc::api::TZoneMallocFallback; \
     using CompactAllocationMode = ::bmalloc::CompactAllocationMode; \
     \
@@ -63,7 +63,15 @@ public: \
     void* operator new(size_t size) \
     { \
         static HeapRef s_heapRef; \
-        static const TZoneSpecification s_heapSpec = { &s_heapRef, sizeof(_type), ::bmalloc::api::compactAllocationMode<_type>(), SizeAndAlignment::encode<_type>() TZONE_SPEC_NAME_ARG(#_type) }; \
+        static const TZoneSpecification s_heapSpec = { \
+            &s_heapRef, \
+            TZoneSpecification::encodeSize<_type>(), \
+            TZoneSpecification::encodeAlignment<_type>(), \
+            TZoneSpecification::encodeCategory<_type>(), \
+            ::bmalloc::api::compactAllocationMode<_type>(), \
+            TZoneSpecification::encodeDescriptor<_type>(), \
+            TZONE_SPEC_NAME_ARG(#_type) \
+        }; \
     \
         if (!s_heapRef || size != sizeof(_type)) { [[unlikely]] \
             if constexpr (::bmalloc::api::compactAllocationMode<_type>() == CompactAllocationMode::Compact) \
@@ -98,7 +106,15 @@ private: \
 #define MAKE_BTZONE_MALLOCED_IMPL(_type, _compactMode) \
 ::bmalloc::api::HeapRef _type::s_heapRef; \
 \
-const TZoneSpecification _type::s_heapSpec = { &_type::s_heapRef, sizeof(_type), ::bmalloc::api::compactAllocationMode<_type>(), SizeAndAlignment::encode<_type>() TZONE_SPEC_NAME_ARG(#_type) }; \
+const TZoneSpecification _type::s_heapSpec = { \
+    &_type::s_heapRef, \
+    TZoneSpecification::encodeSize<_type>(), \
+    TZoneSpecification::encodeAlignment<_type>(), \
+    TZoneSpecification::encodeCategory<_type>(), \
+    ::bmalloc::api::compactAllocationMode<_type>(), \
+    TZoneSpecification::encodeDescriptor<_type>(), \
+    TZONE_SPEC_NAME_ARG(#_type) \
+}; \
 \
 void* _type::operatorNewSlow(size_t size) \
 { \

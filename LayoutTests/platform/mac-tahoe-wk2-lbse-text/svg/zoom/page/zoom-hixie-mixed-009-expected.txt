@@ -1,14 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x435
-  RenderBlock {html} at (0,0) size 800x435.36
-    RenderBody {body} at (11.52,14.39) size 776.97x406.58
+  RenderBlock {html} at (0,0) size 800x434.89
+    RenderBody {body} at (11.52,14.39) size 776.97x406.11
       RenderBlock {p} at (0,0) size 776.97x26 [color=#000080]
-        RenderText {#text} at (0,0) size 660x26
+        RenderText {#text} at (0,-1) size 660x28
           text run at (0,0) width 660: "The word \"TEST \" should appear twice below, the same size each time."
-      RenderBlock (anonymous) at (0,40.39) size 776.97x179
+      RenderBlock (anonymous) at (0,40.39) size 776.97x178.53
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {div} at (0,233.78) size 576x172.80 [color=#000080] [bgcolor=#EEEEEE]
+      RenderBlock {div} at (0,233.31) size 576x172.80 [color=#000080] [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 344x166
           text run at (0,0) width 344: "TEST"
 layer at (12,55) size 576x173 backgroundClip at (12,55) size 576x172.80 clip at (12,55) size 576x172.80 scrollWidth 480 scrollHeight 144

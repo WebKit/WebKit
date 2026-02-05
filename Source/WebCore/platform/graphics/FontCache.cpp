@@ -437,7 +437,7 @@ void FontCache::invalidateAllFontCaches(ShouldRunInvalidationCallback shouldRunI
 void FontCache::releaseNoncriticalMemory()
 {
     purgeInactiveFontData();
-    m_fontCascadeCache.clearWidthCaches();
+    m_fontCascadeCache.clearMeasurementCaches();
     platformReleaseNoncriticalMemory();
 }
 

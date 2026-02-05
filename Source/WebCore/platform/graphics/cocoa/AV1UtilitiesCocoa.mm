@@ -31,7 +31,8 @@
 #import "AV1Utilities.h"
 #import "BitReader.h"
 #import "CMUtilities.h"
-#import "MediaCapabilitiesInfo.h"
+#import "PlatformMediaCapabilitiesInfo.h"
+#import "PlatformMediaCapabilitiesVideoConfiguration.h"
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cf/VectorCF.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -64,7 +65,7 @@ static bool isConfigurationRecordHDR(const AV1CodecConfigurationRecord& record)
     return true;
 }
 
-std::optional<MediaCapabilitiesInfo> validateAV1Parameters(const AV1CodecConfigurationRecord& record, const VideoConfiguration& configuration)
+std::optional<PlatformMediaCapabilitiesInfo> validateAV1Parameters(const AV1CodecConfigurationRecord& record, const PlatformMediaCapabilitiesVideoConfiguration& configuration)
 {
     if (!validateAV1ConfigurationRecord(record))
         return std::nullopt;
@@ -105,7 +106,7 @@ std::optional<MediaCapabilitiesInfo> validateAV1Parameters(const AV1CodecConfigu
     if (!profileSupport)
         return std::nullopt;
 
-    MediaCapabilitiesInfo info;
+    PlatformMediaCapabilitiesInfo info;
 
     info.supported = true;
 

@@ -27,7 +27,6 @@
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUPipelineDescriptorBase : GPUObjectDescriptorBase {
     required (GPUPipelineLayout or GPUAutoLayoutMode) layout;
 };

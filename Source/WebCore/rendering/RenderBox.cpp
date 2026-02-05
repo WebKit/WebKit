@@ -517,8 +517,8 @@ void RenderBox::updateFromStyle()
             // (2) We are the primary <body> (can be checked by looking at document.body).
             // (3) The root element has visible overflow.
             // (4) No containment is set either on the body or on the html document element.
-            auto& documentElement = *document().documentElement();
-            auto& documentElementRenderer = *documentElement.renderer();
+            Ref documentElement = *document().documentElement();
+            auto& documentElementRenderer = *documentElement->renderer();
             if (is<HTMLHtmlElement>(documentElement)
                 && document().body() == element()
                 && documentElementRenderer.effectiveOverflowX() == Overflow::Visible
@@ -651,10 +651,10 @@ void RenderBox::resetLogicalHeightBeforeLayoutIfNeeded()
 
 static void setupWheelEventMonitor(RenderLayerScrollableArea& scrollableArea)
 {
-    Page& page = scrollableArea.layer().renderer().page();
-    if (!page.isMonitoringWheelEvents())
+    Ref page = scrollableArea.layer().renderer().page();
+    if (!page->isMonitoringWheelEvents())
         return;
-    scrollableArea.scrollAnimator().setWheelEventTestMonitor(page.wheelEventTestMonitor());
+    scrollableArea.scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
 }
 
 void RenderBox::setScrollLeft(int newLeft, const ScrollPositionChangeOptions& options)
@@ -1775,7 +1775,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     // The theme will tell us whether or not we should also paint the CSS background.
     bool borderOrBackgroundPaintingIsNeeded = true;
     if (style().hasUsedAppearance()) {
-        if (auto* control = ensureControlPartForRenderer())
+        if (RefPtr control = ensureControlPartForRenderer())
             borderOrBackgroundPaintingIsNeeded = theme().paint(*this, *control, paintInfo, paintRect);
         else
             borderOrBackgroundPaintingIsNeeded = theme().paint(*this, paintInfo, paintRect);
@@ -1790,7 +1790,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
         backgroundPainter.paintBackground(paintRect, bleedAvoidance);
 
         if (style().hasUsedAppearance()) {
-            if (auto* control = ensureControlPartForDecorations())
+            if (RefPtr control = ensureControlPartForDecorations())
                 theme().paint(*this, *control, paintInfo, paintRect);
             else
                 theme().paintDecorations(*this, paintInfo, paintRect);
@@ -1806,7 +1806,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
             paintCSSBorder = true;
         else if (borderOrBackgroundPaintingIsNeeded) {
             // The theme will tell us whether or not we should also paint the CSS border.
-            if (auto* control = ensureControlPartForBorderOnly())
+            if (RefPtr control = ensureControlPartForBorderOnly())
                 paintCSSBorder = theme().paint(*this, *control, paintInfo, paintRect);
             else
                 paintCSSBorder = theme().paintBorderOnly(*this, paintInfo);
@@ -1897,7 +1897,7 @@ static bool isCandidateForOpaquenessTest(const RenderBox& childBox)
         return false;
     if (!childBox.width() || !childBox.height())
         return false;
-    if (RenderLayer* childLayer = childBox.layer()) {
+    if (CheckedPtr childLayer = childBox.layer()) {
         if (childLayer->isComposited())
             return false;
         // FIXME: Deal with z-index.
@@ -2109,7 +2109,7 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
     if (styleImage && isNonEmpty) {
         incrementVisuallyNonEmptyPixelCountIfNeeded(flooredIntSize(styleImage->imageSize(this, style().usedZoom())));
         if (auto styleable = Styleable::fromRenderer(*this))
-            protectedDocument()->didLoadImage(styleable->protectedElement().get(), styleImage->cachedImage());
+            protect(document())->didLoadImage(styleable->protectedElement().get(), styleImage->cachedImage());
     }
 
     if (!isComposited())
@@ -2158,7 +2158,7 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const Layers& l
                     // (since root backgrounds cover the canvas, not just the element). If the root element
                     // is composited though, we need to issue the repaint to that root element.
                     auto documentElementRenderer = downcast<RenderBox>(document().documentElement()->renderer());
-                    auto rendererLayer = documentElementRenderer->layer();
+                    CheckedPtr rendererLayer = documentElementRenderer->layer();
                     if (rendererLayer && rendererLayer->isComposited())
                         layerRenderer = documentElementRenderer;
                 } else {
@@ -4944,7 +4944,7 @@ bool RenderBox::shouldComputeLogicalHeightFromAspectRatio() const
         return false;
 
     auto h = style().logicalHeight();
-    return (h.isAuto() && !hasStretchedLogicalHeight(StretchingMode::Explicit)) || h.isIntrinsic() || (!isOutOfFlowPositioned() && h.isPercentOrCalculated() && !percentageLogicalHeightIsResolvable());
+    return (h.isAuto()) || h.isIntrinsic() || (!isOutOfFlowPositioned() && h.isPercentOrCalculated() && !percentageLogicalHeightIsResolvable());
 }
 
 bool RenderBox::shouldComputeLogicalWidthFromAspectRatio() const

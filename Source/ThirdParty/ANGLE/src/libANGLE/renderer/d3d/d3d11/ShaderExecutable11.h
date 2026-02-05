@@ -32,7 +32,6 @@ class ShaderExecutable11 : public ShaderExecutableD3D
                        d3d11::VertexShader &&executable,
                        d3d11::GeometryShader &&streamOut);
     ShaderExecutable11(const void *function, size_t length, d3d11::GeometryShader &&executable);
-    ShaderExecutable11(const void *function, size_t length, d3d11::ComputeShader &&executable);
 
     ~ShaderExecutable11() override;
 
@@ -40,14 +39,12 @@ class ShaderExecutable11 : public ShaderExecutableD3D
     const d3d11::VertexShader &getVertexShader() const;
     const d3d11::GeometryShader &getGeometryShader() const;
     const d3d11::GeometryShader &getStreamOutShader() const;
-    const d3d11::ComputeShader &getComputeShader() const;
 
   private:
     d3d11::PixelShader mPixelExecutable;
     d3d11::VertexShader mVertexExecutable;
     d3d11::GeometryShader mGeometryExecutable;
     d3d11::GeometryShader mStreamOutExecutable;
-    d3d11::ComputeShader mComputeExecutable;
 };
 
 class UniformStorage11 : public UniformStorageD3D

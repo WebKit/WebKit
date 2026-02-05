@@ -3247,7 +3247,9 @@ public:
         }
 
         // Check if upper and lower 64-bit halves are equal
+        bool sameUInt64Elements = false;
         if (value.u64x2[0] == value.u64x2[1]) {
+            sameUInt64Elements = true;
             uint64_t repeatedValue = value.u64x2[0];
 
             // Try FP immediate encoding - use vector FMOV to load both lanes at once
@@ -3266,7 +3268,9 @@ public:
 
         // Check if all four 32-bit lanes are equal
         // This allows using movi<128> which replicates the pattern across all lanes
+        bool sameUInt32Elements = false;
         if (value.u32x4[0] == value.u32x4[1] && value.u32x4[0] == value.u32x4[2] && value.u32x4[0] == value.u32x4[3]) {
+            sameUInt32Elements = true;
             uint32_t repeatedValue = value.u32x4[0];
 
             // Try FP immediate encoding - use vector FMOV to load all four lanes at once
@@ -3306,8 +3310,10 @@ public:
 
         // Check if all eight 16-bit lanes are equal
         // Example: value.u16x8 all equal to 0x1200 → movi Vd.8H, #0x12, lsl #8
+        bool sameUInt16Elements = false;
         if (value.u16x8[0] == value.u16x8[1] && value.u16x8[0] == value.u16x8[2] && value.u16x8[0] == value.u16x8[3] &&
             value.u16x8[0] == value.u16x8[4] && value.u16x8[0] == value.u16x8[5] && value.u16x8[0] == value.u16x8[6] && value.u16x8[0] == value.u16x8[7]) {
+            sameUInt16Elements = true;
             uint16_t repeatedValue = value.u16x8[0];
 
             // Try FP immediate encoding - use vector FMOV to load all four lanes at once
@@ -3343,6 +3349,25 @@ public:
         }
         if (allBytesEqual) {
             m_assembler.movi<128, 8>(dest, byte0);
+            return;
+        }
+
+        // Now, try dup patterns.
+        if (sameUInt16Elements) {
+            move(TrustedImm32(value.u16x8[0]), scratchRegister());
+            vectorSplatInt16(scratchRegister(), dest);
+            return;
+        }
+
+        if (sameUInt32Elements) {
+            move(TrustedImm32(value.u32x4[0]), scratchRegister());
+            vectorSplatInt32(scratchRegister(), dest);
+            return;
+        }
+
+        if (sameUInt64Elements) {
+            move(TrustedImm64(value.u64x2[0]), scratchRegister());
+            vectorSplatInt64(scratchRegister(), dest);
             return;
         }
 
@@ -4335,6 +4360,32 @@ public:
         m_assembler.csel<64>(dest, thenCase, elseCase, ARM64Condition(cond));
     }
 
+    void moveConditionally32(RelationalCondition cond, RegisterID left, TrustedImm32 right, TrustedImm32 thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        auto immediate = right.m_value;
+        if (!immediate) {
+            if (auto resultCondition = commuteCompareToZeroIntoTest(cond)) {
+                moveConditionallyTest32(*resultCondition, left, left, thenCase, elseCase, dest);
+                return;
+            }
+        }
+
+        if (auto tuple = tryExtractShiftedImm(immediate)) {
+            auto [u12, shift, inverted] = tuple.value();
+            if (!inverted)
+                m_assembler.cmp<32>(left, u12, shift);
+            else
+                m_assembler.cmn<32>(left, u12, shift);
+            moveToCachedReg(thenCase, dataMemoryTempRegister());
+            m_assembler.csel<64>(dest, dataTempRegister, elseCase, ARM64Condition(cond));
+        } else {
+            moveToCachedReg(right, dataMemoryTempRegister());
+            m_assembler.cmp<32>(left, dataTempRegister);
+            moveToCachedReg(thenCase, dataMemoryTempRegister());
+            m_assembler.csel<64>(dest, dataTempRegister, elseCase, ARM64Condition(cond));
+        }
+    }
+
     void moveConditionally64(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID src, RegisterID dest)
     {
         m_assembler.cmp<64>(left, right);
@@ -4411,10 +4462,24 @@ public:
         m_assembler.csel<64>(dest, thenCase, elseCase, ARM64Condition(cond));
     }
 
+    void moveConditionallyTest32(ResultCondition cond, RegisterID left, RegisterID right, TrustedImm32 thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        m_assembler.tst<32>(left, right);
+        moveToCachedReg(thenCase, dataMemoryTempRegister());
+        m_assembler.csel<64>(dest, dataTempRegister, elseCase, ARM64Condition(cond));
+    }
+
     void moveConditionallyTest32(ResultCondition cond, RegisterID left, TrustedImm32 right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
     {
         test32(left, right);
         m_assembler.csel<64>(dest, thenCase, elseCase, ARM64Condition(cond));
+    }
+
+    void moveConditionallyTest32(ResultCondition cond, RegisterID left, TrustedImm32 right, TrustedImm32 thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        test32(left, right);
+        moveToCachedReg(thenCase, dataMemoryTempRegister());
+        m_assembler.csel<64>(dest, dataTempRegister, elseCase, ARM64Condition(cond));
     }
 
     void moveConditionallyTest64(ResultCondition cond, RegisterID testReg, RegisterID mask, RegisterID src, RegisterID dest)

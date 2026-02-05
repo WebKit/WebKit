@@ -96,7 +96,7 @@ private:
     const UniqueRef<Inspector::AnimationFrontendDispatcher> m_frontendDispatcher;
     const Ref<Inspector::AnimationBackendDispatcher> m_backendDispatcher;
 
-    Inspector::InjectedScriptManager& m_injectedScriptManager;
+    const CheckedRef<Inspector::InjectedScriptManager> m_injectedScriptManager;
     WeakRef<Page> m_inspectedPage;
 
     // FIXME <https://webkit.org/b/303593>: Animation should not be destroyed before notifying this agent to unbind it.

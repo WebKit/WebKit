@@ -219,7 +219,7 @@ void HTMLEmbedElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     HTMLPlugInElement::addSubresourceAttributeURLs(urls);
 
-    addSubresourceURL(urls, protectedDocument()->completeURL(attributeWithoutSynchronization(srcAttr)));
+    addSubresourceURL(urls, protect(document())->completeURL(attributeWithoutSynchronization(srcAttr)));
 }
 
 }

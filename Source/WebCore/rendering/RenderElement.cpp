@@ -51,6 +51,7 @@
 #include "LayoutElementBox.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LocalFrame.h"
+#include "LocalFrameViewLayoutContext.h"
 #include "Logging.h"
 #include "OutlinePainter.h"
 #include "Page.h"
@@ -97,6 +98,7 @@
 #include "SVGLengthContext.h"
 #include "SVGRenderSupport.h"
 #include "SVGSVGElement.h"
+#include "ScrollAnchoringController.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StyleDifference.h"
@@ -335,8 +337,8 @@ Style::Difference RenderElement::adjustStyleDifference(Style::Difference diff) c
     }
     
     if ((diff.contextSensitiveProperties & Style::DifferenceContextSensitiveProperty::Filter) && hasLayer()) {
-        auto& layer = *downcast<RenderLayerModelObject>(*this).layer();
-        if (!layer.isComposited() || layer.shouldPaintWithFilters())
+        CheckedRef layer = *downcast<RenderLayerModelObject>(*this).layer();
+        if (!layer->isComposited() || layer->shouldPaintWithFilters())
             diff.result = std::max(diff.result, Style::DifferenceResult::RepaintLayer);
         else
             diff.result = std::max(diff.result, Style::DifferenceResult::RecompositeLayer);
@@ -565,7 +567,7 @@ bool RenderElement::repaintBeforeStyleChange(Style::Difference diff, const Rende
 
 void RenderElement::initializeStyle()
 {
-    Style::loadPendingResources(m_style, protectedDocument(), protectedElement().get());
+    Style::loadPendingResources(m_style, protect(document()), protectedElement().get());
 
     styleWillChange(Style::DifferenceResult::NewStyle, style());
     m_hasInitializedStyle = true;
@@ -613,7 +615,7 @@ void RenderElement::setStyle(RenderStyle&& style, Style::DifferenceResult minima
     diff.result = std::max(diff.result, minimalStyleDifference);
     diff = adjustStyleDifference(diff);
 
-    Style::loadPendingResources(style, protectedDocument(), protectedElement().get());
+    Style::loadPendingResources(style, protect(document()), protectedElement().get());
 
     auto didRepaint = repaintBeforeStyleChange(diff, m_style, style);
     styleWillChange(diff, style);
@@ -720,7 +722,7 @@ RenderPtr<RenderObject> RenderElement::detachRendererInternal(RenderObject& rend
 static RenderLayer* findNextLayer(const RenderElement& currRenderer, const RenderLayer& parentLayer, const RenderObject* siblingToTraverseFrom, bool checkParent = true)
 {
     // Step 1: If our layer is a child of the desired parent, then return our layer.
-    auto* ourLayer = currRenderer.hasLayer() ? downcast<RenderLayerModelObject>(currRenderer).layer() : nullptr;
+    SUPPRESS_UNCOUNTED_LOCAL auto* ourLayer = currRenderer.hasLayer() ? downcast<RenderLayerModelObject>(currRenderer).layer() : nullptr;
     if (ourLayer && ourLayer->parent() == &parentLayer)
         return ourLayer;
 
@@ -941,7 +943,7 @@ void RenderElement::styleWillChange(Style::Difference diff, const RenderStyle& n
             || m_style.usedZIndex() != newStyle.usedZIndex();
 
         if (visibilityChanged)
-            protectedDocument()->invalidateRenderingDependentRegions();
+            protect(document())->invalidateRenderingDependentRegions();
 
         bool inertChanged = m_style.effectiveInert() != newStyle.effectiveInert();
 
@@ -1128,8 +1130,8 @@ void RenderElement::styleDidChange(Style::Difference diff, const RenderStyle* ol
     }
 
     bool shouldCheckIfInAncestorChain = false;
-    if (frame().settings().cssScrollAnchoringEnabled() && (style().outOfFlowPositionStyleDidChange(oldStyle) || (shouldCheckIfInAncestorChain = style().scrollAnchoringSuppressionStyleDidChange(oldStyle)))) {
-        LOG_WITH_STREAM(ScrollAnchoring, stream << "RenderElement::styleDidChange() found node with style change: " << *this << " from: " << oldStyle->position() <<" to: " << style().position());
+    if (settings().cssScrollAnchoringEnabled() && (style().outOfFlowPositionStyleDidChange(oldStyle) || (shouldCheckIfInAncestorChain = style().scrollAnchoringSuppressionStyleDidChange(oldStyle)))) {
+        LOG_WITH_STREAM(ScrollAnchoring, stream << "RenderElement::styleDidChange() " << diff << " found node with style change: " << *this << " from: " << oldStyle->position() <<" to: " << style().position());
         auto* controller = searchParentChainForScrollAnchoringController(*this);
         if (controller && (!shouldCheckIfInAncestorChain || (shouldCheckIfInAncestorChain && controller->isInScrollAnchoringAncestorChain(*this))))
             controller->notifyChildHadSuppressingStyleChange();
@@ -1733,12 +1735,12 @@ void RenderElement::notifyFinished(CachedResource& resource, const NetworkLoadMe
     if (auto* cachedImage = dynamicDowncast<CachedImage>(resource))
         imageContentChanged(*cachedImage);
 
-    document().protectedCachedResourceLoader()->notifyFinished(resource);
+    protect(document().cachedResourceLoader())->notifyFinished(resource);
 }
 
 bool RenderElement::allowsAnimation() const
 {
-    if (auto* imageElement = dynamicDowncast<HTMLImageElement>(element()))
+    if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element()))
         return imageElement->allowsAnimation();
     return page().imageAnimationEnabled();
 }
@@ -1831,13 +1833,13 @@ std::unique_ptr<RenderStyle> RenderElement::getUncachedPseudoStyle(const Style::
         return nullptr;
 
     Ref element = *this->element();
-    auto& styleResolver = element->styleResolver();
+    Ref styleResolver = element->styleResolver();
 
-    auto resolvedStyle = styleResolver.styleForPseudoElement(element, pseudoElementRequest, { parentStyle });
+    auto resolvedStyle = styleResolver->styleForPseudoElement(element, pseudoElementRequest, { parentStyle });
     if (!resolvedStyle)
         return nullptr;
 
-    Style::loadPendingResources(*resolvedStyle->style, protectedDocument(), element.ptr());
+    Style::loadPendingResources(*resolvedStyle->style, protect(document()), element.ptr());
 
     return WTF::move(resolvedStyle->style);
 }
@@ -2296,7 +2298,7 @@ bool RenderElement::checkForRepaintDuringLayout() const
 
 ImageOrientation RenderElement::imageOrientation() const
 {
-    auto* imageElement = dynamicDowncast<HTMLImageElement>(element());
+    RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element());
     return (imageElement && !imageElement->allowsOrientationOverride())
         ? ImageOrientation(ImageOrientation::Orientation::FromImage)
         : Style::toPlatform(style().imageOrientation());
@@ -2464,7 +2466,7 @@ void RenderElement::repaintOldAndNewPositionsForSVGRenderer() const
     // the old and the new repaint boundaries, if they differ -- instead of just the new boundaries.
     if (auto layer = useUpdateLayerPositionsLogic()) {
         (*layer.value()).setSelfAndDescendantsNeedPositionUpdate();
-        (*layer.value()).updateLayerPositionsAfterStyleChange();
+        view().layoutContext().markForUpdateLayerPositionsAfterSVGTransformChange();
         return;
     }
 

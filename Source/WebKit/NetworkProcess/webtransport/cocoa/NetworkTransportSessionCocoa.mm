@@ -174,7 +174,7 @@ static void didReceiveServerTrustChallenge(NetworkConnectionToWebProcess& connec
                 return;
             }
 
-            connectionToWebProcess->networkProcess().protectedAuthenticationManager()->didReceiveAuthenticationChallenge(connectionToWebProcess->sessionID(), pageID, &clientOrigin.topOrigin, challenge, NegotiatedLegacyTLS::No, WTF::move(challengeCompletionHandler));
+            protect(connectionToWebProcess->networkProcess().authenticationManager())->didReceiveAuthenticationChallenge(connectionToWebProcess->sessionID(), pageID, &clientOrigin.topOrigin, challenge, NegotiatedLegacyTLS::No, WTF::move(challengeCompletionHandler));
         });
 
 
@@ -182,7 +182,7 @@ static void didReceiveServerTrustChallenge(NetworkConnectionToWebProcess& connec
         return;
     }
 
-    connectionToWebProcess.networkProcess().protectedAuthenticationManager()->didReceiveAuthenticationChallenge(connectionToWebProcess.sessionID(), pageID, &clientOrigin.topOrigin, challenge.get(), NegotiatedLegacyTLS::No, WTF::move(challengeCompletionHandler));
+    protect(connectionToWebProcess.networkProcess().authenticationManager())->didReceiveAuthenticationChallenge(connectionToWebProcess.sessionID(), pageID, &clientOrigin.topOrigin, challenge.get(), NegotiatedLegacyTLS::No, WTF::move(challengeCompletionHandler));
 }
 
 static String joinProtocolStrings(const Vector<String>& protocols)

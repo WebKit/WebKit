@@ -124,7 +124,7 @@ void SVGPathElement::attributeChanged(const QualifiedName& name, const AtomStrin
         else if (Ref { m_pathSegList }->baseVal()->parse(newValue))
             cache.add(newValue, m_pathSegList->baseVal()->existingPathByteStream().data());
         else
-            protectedDocument()->checkedSVGExtensions()->reportError(makeString("Problem parsing d=\""_s, newValue, "\""_s));
+            protect(document())->checkedSVGExtensions()->reportError(makeString("Problem parsing d=\""_s, newValue, "\""_s));
     }
 
     SVGGeometryElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
@@ -183,14 +183,14 @@ void SVGPathElement::removedFromAncestor(RemovalType removalType, ContainerNode&
 
 float SVGPathElement::getTotalLength() const
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
+    protect(document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
 
     return getTotalLengthOfSVGPathByteStream(pathByteStream());
 }
 
 ExceptionOr<Ref<SVGPoint>> SVGPathElement::getPointAtLength(float distance) const
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
+    protect(document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
 
     // Spec: If it is not able to compute the total length of path, then throw.
     if (pathByteStream().isEmpty())
@@ -205,7 +205,7 @@ ExceptionOr<Ref<SVGPoint>> SVGPathElement::getPointAtLength(float distance) cons
 
 unsigned SVGPathElement::getPathSegAtLength(float length) const
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
+    protect(document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
 
     return getSVGPathSegAtLengthFromSVGPathByteStream(pathByteStream(), length);
 }
@@ -213,7 +213,7 @@ unsigned SVGPathElement::getPathSegAtLength(float length) const
 FloatRect SVGPathElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
 {
     if (styleUpdateStrategy == AllowStyleUpdate)
-        protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
+        protect(document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
 
     // FIXME: Eventually we should support getBBox for detached elements.
     // FIXME: If the path is null it means we're calling getBBox() before laying out this element,

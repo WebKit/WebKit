@@ -1,0 +1,139 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ModelProcessEnabled=true ModelElementImmersiveEnabled=true shouldAcceptImmersiveEnvironmentRequests=true ] -->
+<meta charset="utf-8">
+<title>&lt;model> immersive state consistency</title>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver.js"></script>
+<script src="../../resources/testdriver-vendor.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../resources/model-element-test-utils.js"></script>
+<body>
+<script>
+
+promise_test(async t => {
+    const [model1, source1] = createModelAndSource(t, "../resources/cube.usdz");
+    const [model2, source2] = createModelAndSource(t, "../resources/cube.usdz");
+
+    await test_driver.bless("immersive");
+    const promise1 = model1.requestImmersive();
+
+    await test_driver.bless("immersive");
+    const promise2 = model2.requestImmersive();
+
+    await promise_rejects_dom(t, "AbortError", promise1,
+        'First request should be superseded by second');
+
+    await promise2;
+
+    assert_equals(document.immersiveElement, model2,
+        'document.immersiveElement should match successful request');
+
+}, 'Second request during first request completes correctly');
+
+promise_test(async t => {
+    const [model1, source1] = createModelAndSource(t, "../resources/cube.usdz");
+    const [model2, source2] = createModelAndSource(t, "../resources/cube.usdz");
+
+    await test_driver.bless("immersive");
+    await model1.requestImmersive();
+    const exitPromise = document.exitImmersive();
+
+    await test_driver.bless("immersive");
+    const requestPromise = model2.requestImmersive();
+
+    await t.step_wait(() => document.immersiveElement === null, 'Waiting for immersive exit');
+    await t.step_wait(() => document.immersiveElement === model2, 'Waiting for new model to be immersive');
+}, 'Immersive request during immersive exit should first wait for exit and then proceeds');
+
+promise_test(async t => {
+    const [model1, source1] = createModelAndSource(t, "../resources/cube.usdz");
+    const [model2, source2] = createModelAndSource(t, "../resources/cube.usdz");
+    const [model3, source3] = createModelAndSource(t, "../resources/cube.usdz");
+
+    await test_driver.bless("immersive");
+    await model1.requestImmersive();
+    assert_equals(document.immersiveElement, model1);
+
+    await document.exitImmersive();
+    assert_equals(document.immersiveElement, null);
+
+    await test_driver.bless("immersive");
+    await model2.requestImmersive();
+    assert_equals(document.immersiveElement, model2);
+
+    await document.exitImmersive();
+    assert_equals(document.immersiveElement, null);
+
+    await test_driver.bless("immersive");
+    await model3.requestImmersive();
+    assert_equals(document.immersiveElement, model3);
+
+}, 'Rapid request/exit cycles maintain consistent state');
+
+promise_test(async t => {
+    const promises = [];
+    const models = [];
+
+    // Create 5 models and start 5 concurrent requests
+    for (let i = 0; i < 5; i++) {
+        const [model, source] = createModelAndSource(t, "../resources/teapot.usdz");
+        models.push(model);
+        await test_driver.bless("immersive", () => {
+            promises.push(model.requestImmersive());
+        });
+    }
+
+    const results = await Promise.allSettled(promises);
+
+    const succeeded = results.filter(r => r.status === 'fulfilled');
+    const failed = results.filter(r => r.status === 'rejected');
+
+    assert_equals(succeeded.length, 1, 'Exactly one request should succeed');
+    assert_equals(failed.length, 4, 'Four requests should be rejected');
+
+    for (const result of failed) {
+        assert_equals(result.reason.name, 'AbortError', 'Failed requests should reject with AbortError');
+        assert_true(result.reason.message.includes('superseded'), 'Failed requests should indicate they were superseded');
+    }
+
+    assert_equals(document.immersiveElement, models[4], 'Last request should be the one fulfilled');
+
+}, 'Multiple concurrent requests - exactly one succeeds');
+
+promise_test(async t => {
+    const [model1, source1] = createModelAndSource(t, "../resources/cube.usdz");
+    const [model2, source2] = createModelAndSource(t, "../resources/cube.usdz");
+
+    await test_driver.bless("immersive");
+    const promise1 = model1.requestImmersive();
+    model1.remove();
+    await promise_rejects_dom(t, "AbortError", promise1);
+
+    assert_equals(document.immersiveElement, null, 'No immersive element after aborted request');
+
+    await test_driver.bless("immersive");
+    await model2.requestImmersive();
+
+    assert_equals(document.immersiveElement, model2, 'State should be clean for new request');
+
+}, 'State remains clean after request aborted by element removal');
+
+promise_test(async t => {
+    const [model1, source1] = createModelAndSource(t, "../resources/cube.usdz");
+    const [model2, source2] = createModelAndSource(t, "../resources/cube.usdz");
+
+    await test_driver.bless("immersive");
+    await model1.requestImmersive();
+    const exitPromise = document.exitImmersive();
+
+    await test_driver.bless("immersive");
+    const requestPromise = model2.requestImmersive();
+    model2.remove();
+
+    await exitPromise;
+    await promise_rejects_dom(t, "AbortError", requestPromise);
+    assert_equals(document.immersiveElement, null, 'State should be clean after removal during exit');
+
+}, 'Element removed while waiting for exit to complete');
+
+</script>
+</body>

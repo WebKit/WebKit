@@ -462,7 +462,7 @@ VisiblePosition VisiblePosition::honorEditingBoundaryAtOrBefore(const VisiblePos
     RefPtr highestRoot = highestEditableRoot(deepEquivalent());
     
     // Return empty position if pos is not somewhere inside the editable region containing this position
-    if (highestRoot && !position.deepEquivalent().protectedDeprecatedNode()->isDescendantOf(*highestRoot)) {
+    if (highestRoot && !protect(position.deepEquivalent().deprecatedNode())->isDescendantOf(*highestRoot)) {
         if (reachedBoundary)
             *reachedBoundary = true;
         return VisiblePosition();
@@ -499,7 +499,7 @@ VisiblePosition VisiblePosition::honorEditingBoundaryAtOrAfter(const VisiblePosi
     RefPtr highestRoot = highestEditableRoot(deepEquivalent());
     
     // Return empty position if otherPosition is not somewhere inside the editable region containing this position
-    if (highestRoot && !otherPosition.deepEquivalent().protectedDeprecatedNode()->isDescendantOf(*highestRoot)) {
+    if (highestRoot && !protect(otherPosition.deepEquivalent().deprecatedNode())->isDescendantOf(*highestRoot)) {
         if (reachedBoundary)
             *reachedBoundary = true;
         return VisiblePosition();
@@ -727,7 +727,7 @@ Element* enclosingBlockFlowElement(const VisiblePosition& visiblePosition)
     if (visiblePosition.isNull())
         return nullptr;
 
-    return deprecatedEnclosingBlockFlowElement(visiblePosition.deepEquivalent().protectedDeprecatedNode().get());
+    return deprecatedEnclosingBlockFlowElement(protect(visiblePosition.deepEquivalent().deprecatedNode()).get());
 }
 
 bool isFirstVisiblePositionInNode(const VisiblePosition& visiblePosition, const Node* node)
@@ -735,11 +735,11 @@ bool isFirstVisiblePositionInNode(const VisiblePosition& visiblePosition, const 
     if (visiblePosition.isNull())
         return false;
 
-    if (!visiblePosition.deepEquivalent().protectedContainerNode()->isDescendantOf(node))
+    if (!protect(visiblePosition.deepEquivalent().containerNode())->isDescendantOf(node))
         return false;
 
     VisiblePosition previous = visiblePosition.previous();
-    return previous.isNull() || !previous.deepEquivalent().protectedDeprecatedNode()->isDescendantOf(node);
+    return previous.isNull() || !protect(previous.deepEquivalent().deprecatedNode())->isDescendantOf(node);
 }
 
 bool isLastVisiblePositionInNode(const VisiblePosition& visiblePosition, const Node* node)
@@ -747,16 +747,16 @@ bool isLastVisiblePositionInNode(const VisiblePosition& visiblePosition, const N
     if (visiblePosition.isNull())
         return false;
 
-    if (!visiblePosition.deepEquivalent().protectedContainerNode()->isDescendantOf(node))
+    if (!protect(visiblePosition.deepEquivalent().containerNode())->isDescendantOf(node))
         return false;
 
     VisiblePosition next = visiblePosition.next();
-    return next.isNull() || !next.deepEquivalent().protectedDeprecatedNode()->isDescendantOf(node);
+    return next.isNull() || !protect(next.deepEquivalent().deprecatedNode())->isDescendantOf(node);
 }
 
 bool areVisiblePositionsInSameTreeScope(const VisiblePosition& a, const VisiblePosition& b)
 {
-    return connectedInSameTreeScope(a.deepEquivalent().protectedAnchorNode().get(), b.deepEquivalent().protectedAnchorNode().get());
+    return connectedInSameTreeScope(protect(a.deepEquivalent().anchorNode()).get(), protect(b.deepEquivalent().anchorNode()).get());
 }
 
 bool VisiblePosition::equals(const VisiblePosition& other) const

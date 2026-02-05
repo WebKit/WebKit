@@ -205,7 +205,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObjec
         return makeUnexpected(errorString);
 
     auto* state = inspectorCanvas->scriptExecutionContext()->globalObject();
-    auto injectedScript = m_injectedScriptManager.injectedScriptFor(state);
+    auto injectedScript = m_injectedScriptManager->injectedScriptFor(state);
     ASSERT(!injectedScript.hasNoValue());
 
     JSC::JSValue value = inspectorCanvas->resolveContext(state);
@@ -377,7 +377,7 @@ void InspectorCanvasAgent::didChangeCanvasMemory(CanvasRenderingContext& context
     if (!inspectorCanvas)
         return;
 
-    m_frontendDispatcher->canvasMemoryChanged(inspectorCanvas->identifier(), inspectorCanvas->canvasContext().canvasBase().memoryCost());
+    m_frontendDispatcher->canvasMemoryChanged(inspectorCanvas->identifier(), inspectorCanvas->canvasContext().memoryCost());
 }
 
 void InspectorCanvasAgent::canvasChanged(CanvasBase& canvasBase, const FloatRect&)

@@ -64,7 +64,7 @@ struct ResolutionContext;
 class KeyframeEffect final : public AnimationEffect, public Style::Interpolation::Client, public KeyframeInterpolation {
     WTF_MAKE_TZONE_ALLOCATED(KeyframeEffect);
 public:
-    static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Document&, Element*, JSC::Strong<JSC::JSObject>&&, std::optional<Variant<double, KeyframeEffectOptions>>&&);
+    static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Document&, Element*, JSC::Strong<JSC::JSObject>&&, Variant<double, KeyframeEffectOptions>&&);
     static Ref<KeyframeEffect> create(Ref<KeyframeEffect>&&);
     static Ref<KeyframeEffect> create(const Element&, const std::optional<Style::PseudoElementIdentifier>&);
 

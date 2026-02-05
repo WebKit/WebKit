@@ -482,29 +482,29 @@ LayoutRect MathOperator::paintGlyph(const RenderStyle& style, PaintInfo& info, c
     // than full coverage. These edge pixels can introduce small seams between connected glyphs.
     FloatRect clipBounds = info.rect;
     switch (trim) {
-    case TrimTop:
+    case GlyphPaintTrimming::Top:
         glyphPaintRect.shiftYEdgeTo(glyphPaintRect.y().ceil() + 1);
         clipBounds.shiftYEdgeTo(glyphPaintRect.y());
         break;
-    case TrimBottom:
+    case GlyphPaintTrimming::Bottom:
         glyphPaintRect.shiftMaxYEdgeTo(glyphPaintRect.maxY().floor() - 1);
         clipBounds.shiftMaxYEdgeTo(glyphPaintRect.maxY());
         break;
-    case TrimTopAndBottom:
+    case GlyphPaintTrimming::TopAndBottom:
         glyphPaintRect.shiftYEdgeTo(glyphPaintRect.y().ceil() + 1);
         glyphPaintRect.shiftMaxYEdgeTo(glyphPaintRect.maxY().floor() - 1);
         clipBounds.shiftYEdgeTo(glyphPaintRect.y());
         clipBounds.shiftMaxYEdgeTo(glyphPaintRect.maxY());
         break;
-    case TrimLeft:
+    case GlyphPaintTrimming::Left:
         glyphPaintRect.shiftXEdgeTo(glyphPaintRect.x().ceil() + 1);
         clipBounds.shiftXEdgeTo(glyphPaintRect.x());
         break;
-    case TrimRight:
+    case GlyphPaintTrimming::Right:
         glyphPaintRect.shiftMaxXEdgeTo(glyphPaintRect.maxX().floor() - 1);
         clipBounds.shiftMaxXEdgeTo(glyphPaintRect.maxX());
         break;
-    case TrimLeftAndRight:
+    case GlyphPaintTrimming::LeftAndRight:
         glyphPaintRect.shiftXEdgeTo(glyphPaintRect.x().ceil() + 1);
         glyphPaintRect.shiftMaxXEdgeTo(glyphPaintRect.maxX().floor() - 1);
         clipBounds.shiftXEdgeTo(glyphPaintRect.x());
@@ -554,7 +554,7 @@ void MathOperator::fillWithVerticalExtensionGlyph(const RenderStyle& style, Pain
 
     // In practice, only small stretch sizes are requested but we limit the number of glyphs to avoid hangs.
     for (unsigned extensionCount = 0; lastPaintedGlyphRect.maxY() < to.y() && extensionCount < kMaximumExtensionCount; extensionCount++) {
-        lastPaintedGlyphRect = paintGlyph(style, info, extension, glyphOrigin, TrimTopAndBottom);
+        lastPaintedGlyphRect = paintGlyph(style, info, extension, glyphOrigin, GlyphPaintTrimming::TopAndBottom);
         glyphOrigin.setY(glyphOrigin.y() + lastPaintedGlyphRect.height());
 
         // There's a chance that if the font size is small enough the glue glyph has been reduced to an empty rectangle
@@ -595,7 +595,7 @@ void MathOperator::fillWithHorizontalExtensionGlyph(const RenderStyle& style, Pa
 
     // In practice, only small stretch sizes are requested but we limit the number of glyphs to avoid hangs.
     for (unsigned extensionCount = 0; lastPaintedGlyphRect.maxX() < to.x() && extensionCount < kMaximumExtensionCount; extensionCount++) {
-        lastPaintedGlyphRect = paintGlyph(style, info, extension, glyphOrigin, TrimLeftAndRight);
+        lastPaintedGlyphRect = paintGlyph(style, info, extension, glyphOrigin, GlyphPaintTrimming::LeftAndRight);
         glyphOrigin.setX(glyphOrigin.x() + lastPaintedGlyphRect.width());
 
         // There's a chance that if the font size is small enough the glue glyph has been reduced to an empty rectangle
@@ -624,11 +624,11 @@ void MathOperator::paintVerticalGlyphAssembly(const RenderStyle& style, PaintInf
     LayoutPoint operatorTopLeft = paintOffset;
     FloatRect topGlyphBounds = boundsForGlyph(topOrRight);
     LayoutPoint topGlyphOrigin { operatorTopLeft.x(), LayoutUnit(operatorTopLeft.y() - topGlyphBounds.y()) };
-    LayoutRect topGlyphPaintRect = paintGlyph(style, info, topOrRight, topGlyphOrigin, TrimBottom);
+    LayoutRect topGlyphPaintRect = paintGlyph(style, info, topOrRight, topGlyphOrigin, GlyphPaintTrimming::Bottom);
 
     FloatRect bottomGlyphBounds = boundsForGlyph(bottomOrLeft);
     LayoutPoint bottomGlyphOrigin { operatorTopLeft.x(), LayoutUnit(operatorTopLeft.y() + stretchSize() - (bottomGlyphBounds.height() + bottomGlyphBounds.y())) };
-    LayoutRect bottomGlyphPaintRect = paintGlyph(style, info, bottomOrLeft, bottomGlyphOrigin, TrimTop);
+    LayoutRect bottomGlyphPaintRect = paintGlyph(style, info, bottomOrLeft, bottomGlyphOrigin, GlyphPaintTrimming::Top);
 
     if (m_assembly.hasMiddle()) {
         auto middle = glyphDataForCodePointOrFallbackGlyph(style, m_assembly.middleCodePoint, m_assembly.middleFallbackGlyph);
@@ -639,7 +639,7 @@ void MathOperator::paintVerticalGlyphAssembly(const RenderStyle& style, PaintInf
         middleGlyphOrigin.moveBy(LayoutPoint(0, (bottomGlyphPaintRect.y() - topGlyphPaintRect.maxY()) / 2.0));
         middleGlyphOrigin.moveBy(LayoutPoint(0, middleGlyphBounds.height() / 2.0));
 
-        LayoutRect middleGlyphPaintRect = paintGlyph(style, info, middle, middleGlyphOrigin, TrimTopAndBottom);
+        LayoutRect middleGlyphPaintRect = paintGlyph(style, info, middle, middleGlyphOrigin, GlyphPaintTrimming::TopAndBottom);
         fillWithVerticalExtensionGlyph(style, info, topGlyphPaintRect.minXMaxYCorner(), middleGlyphPaintRect.minXMinYCorner());
         fillWithVerticalExtensionGlyph(style, info, middleGlyphPaintRect.minXMaxYCorner(), bottomGlyphPaintRect.minXMinYCorner());
     } else
@@ -665,11 +665,11 @@ void MathOperator::paintHorizontalGlyphAssembly(const RenderStyle& style, PaintI
     LayoutPoint operatorTopLeft = paintOffset;
     LayoutUnit baselineY = operatorTopLeft.y() + m_ascent;
     LayoutPoint leftGlyphOrigin(operatorTopLeft.x(), baselineY);
-    LayoutRect leftGlyphPaintRect = paintGlyph(style, info, bottomOrLeft, leftGlyphOrigin, TrimRight);
+    LayoutRect leftGlyphPaintRect = paintGlyph(style, info, bottomOrLeft, leftGlyphOrigin, GlyphPaintTrimming::Right);
 
     FloatRect rightGlyphBounds = boundsForGlyph(topOrRight);
     LayoutPoint rightGlyphOrigin { LayoutUnit(operatorTopLeft.x() + stretchSize() - rightGlyphBounds.width()), baselineY };
-    LayoutRect rightGlyphPaintRect = paintGlyph(style, info, topOrRight, rightGlyphOrigin, TrimLeft);
+    LayoutRect rightGlyphPaintRect = paintGlyph(style, info, topOrRight, rightGlyphOrigin, GlyphPaintTrimming::Left);
 
     if (m_assembly.hasMiddle()) {
         auto middle = glyphDataForCodePointOrFallbackGlyph(style, m_assembly.middleCodePoint, m_assembly.middleFallbackGlyph);
@@ -677,7 +677,7 @@ void MathOperator::paintHorizontalGlyphAssembly(const RenderStyle& style, PaintI
         // Center the glyph origin between the start and end glyph paint extents.
         LayoutPoint middleGlyphOrigin(operatorTopLeft.x(), baselineY);
         middleGlyphOrigin.moveBy(LayoutPoint((rightGlyphPaintRect.x() - leftGlyphPaintRect.maxX()) / 2.0, 0));
-        LayoutRect middleGlyphPaintRect = paintGlyph(style, info, middle, middleGlyphOrigin, TrimLeftAndRight);
+        LayoutRect middleGlyphPaintRect = paintGlyph(style, info, middle, middleGlyphOrigin, GlyphPaintTrimming::LeftAndRight);
         fillWithHorizontalExtensionGlyph(style, info, LayoutPoint(leftGlyphPaintRect.maxX(), baselineY), LayoutPoint(middleGlyphPaintRect.x(), baselineY));
         fillWithHorizontalExtensionGlyph(style, info, LayoutPoint(middleGlyphPaintRect.maxX(), baselineY), LayoutPoint(rightGlyphPaintRect.x(), baselineY));
     } else

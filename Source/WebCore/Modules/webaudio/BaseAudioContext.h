@@ -107,14 +107,11 @@ public:
     uint64_t contextID() const { return m_contextID; }
 
     Document* document() const;
-    RefPtr<Document> protectedDocument() const;
     bool isInitialized() const { return m_isInitialized; }
     
     virtual bool isOfflineContext() const = 0;
     virtual AudioDestinationNode& destination() = 0;
-    Ref<AudioDestinationNode> protectedDestination() { return destination(); }
     virtual const AudioDestinationNode& destination() const = 0;
-    Ref<const AudioDestinationNode> protectedDestination() const { return destination(); }
 #if PLATFORM(IOS_FAMILY)
     virtual const String& sceneIdentifier() const { return nullString(); }
 #endif

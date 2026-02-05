@@ -45,6 +45,7 @@ ALWAYS_INLINE bool JSMap::isIteratorProtocolFastAndNonObservable()
     if (!globalObject->isMapPrototypeIteratorProtocolFastAndNonObservable())
         return false;
 
+    VM& vm = globalObject->vm();
     Structure* structure = this->structure();
     // This is the fast case. Many maps will be an original map.
     if (structure == globalObject->mapStructure())
@@ -53,7 +54,10 @@ ALWAYS_INLINE bool JSMap::isIteratorProtocolFastAndNonObservable()
     if (getPrototypeDirect() != globalObject->mapPrototype())
         return false;
 
-    return !structure->hasSpecialProperties();
+    if (getDirectOffset(vm, vm.propertyNames->iteratorSymbol) != invalidOffset)
+        return false;
+
+    return true;
 }
 
 } // namespace JSC

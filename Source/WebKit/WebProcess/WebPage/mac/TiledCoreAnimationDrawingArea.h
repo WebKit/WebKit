@@ -129,7 +129,6 @@ private:
     void commitTransientZoom(double scale, WebCore::FloatPoint origin, CompletionHandler<void()>&&) override;
     void applyTransientZoomToPage(double scale, WebCore::FloatPoint origin);
     WebCore::PlatformCALayer* layerForTransientZoom() const;
-    RefPtr<WebCore::PlatformCALayer> protectedLayerForTransientZoom() const;
     WebCore::PlatformCALayer* shadowLayerForTransientZoom() const;
 
     void applyTransientZoomToLayers(double scale, WebCore::FloatPoint origin);

@@ -30,7 +30,7 @@
 namespace WebCore {
 namespace Style {
 
-struct StrokeWidthLength : LengthWrapperBase<LengthPercentage<CSS::Nonnegative>> {
+struct StrokeWidthLength : LengthWrapperBase<LengthPercentage<CSS::NonnegativeUnzoomed>> {
     using Base::Base;
 };
 

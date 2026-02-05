@@ -40,7 +40,6 @@
 #include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
 #include "PseudoClassChangeInvalidation.h"
-#include "RenderMenuList.h"
 #include "RenderStyle+GettersInlines.h"
 #include "RenderTheme.h"
 #include "ScriptElement.h"
@@ -98,7 +97,7 @@ auto HTMLOptionElement::insertedIntoAncestor(InsertionType insertionType, Contai
     if (!document().settings().htmlEnhancedSelectParsingEnabled() || m_ownerSelect)
         return result;
 
-    if (RefPtr select = HTMLSelectElement::findOwnerSelect(protectedParentNode().get(), HTMLSelectElement::ExcludeOptGroup::No)) {
+    if (RefPtr select = HTMLSelectElement::findOwnerSelect(protect(parentNode()).get(), HTMLSelectElement::ExcludeOptGroup::No)) {
         m_ownerSelect = select.get();
         select->setRecalcListItems();
     }
@@ -113,7 +112,7 @@ void HTMLOptionElement::removedFromAncestor(RemovalType removalType, ContainerNo
     if (!document().settings().htmlEnhancedSelectParsingEnabled() || !m_ownerSelect)
         return;
 
-    if (RefPtr select = HTMLSelectElement::findOwnerSelect(protectedParentNode().get(), HTMLSelectElement::ExcludeOptGroup::No)) {
+    if (RefPtr select = HTMLSelectElement::findOwnerSelect(protect(parentNode()).get(), HTMLSelectElement::ExcludeOptGroup::No)) {
         ASSERT_UNUSED(select, select == m_ownerSelect.get());
         return;
     }
@@ -141,7 +140,7 @@ String HTMLOptionElement::text() const
 
     // FIXME: Is displayStringModifiedByEncoding helpful here?
     // If it's correct here, then isn't it needed in the value and label functions too?
-    return protectedDocument()->displayStringModifiedByEncoding(text).trim(isASCIIWhitespace).simplifyWhiteSpace(isASCIIWhitespace);
+    return protect(document())->displayStringModifiedByEncoding(text).trim(isASCIIWhitespace).simplifyWhiteSpace(isASCIIWhitespace);
 }
 
 void HTMLOptionElement::setText(String&& text)
@@ -281,7 +280,7 @@ void HTMLOptionElement::setSelectedState(bool selected, AllowStyleInvalidation a
 
     m_isSelected = selected;
 
-    if (CheckedPtr cache = protectedDocument()->existingAXObjectCache())
+    if (CheckedPtr cache = protect(document())->existingAXObjectCache())
         cache->onSelectedOptionChanged(*this);
 }
 

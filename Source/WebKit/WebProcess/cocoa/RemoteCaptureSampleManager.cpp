@@ -71,7 +71,7 @@ void RemoteCaptureSampleManager::deref() const
 void RemoteCaptureSampleManager::stopListeningForIPC()
 {
     if (m_isRegisteredToParentProcessConnection)
-        WebProcess::singleton().protectedParentProcessConnection()->removeWorkQueueMessageReceiver(Messages::RemoteCaptureSampleManager::messageReceiverName());
+        protect(WebProcess::singleton().parentProcessConnection())->removeWorkQueueMessageReceiver(Messages::RemoteCaptureSampleManager::messageReceiverName());
     setConnection(nullptr);
 }
 

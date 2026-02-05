@@ -44,14 +44,6 @@ AutomationClient::~AutomationClient()
     Inspector::RemoteInspector::singleton().setClient(nullptr);
 }
 
-RefPtr<WebProcessPool> AutomationClient::protectedProcessPool() const
-{
-    if (RefPtr processPool = m_processPool.get())
-        return processPool;
-
-    return nullptr;
-}
-
 void AutomationClient::requestAutomationSession(const String& sessionIdentifier, const Inspector::RemoteInspector::Client::SessionCapabilities& capabilities)
 {
     ASSERT(isMainRunLoop());
@@ -65,7 +57,7 @@ void AutomationClient::requestAutomationSession(const String& sessionIdentifier,
 void AutomationClient::closeAutomationSession()
 {
     RunLoop::mainSingleton().dispatch([this] {
-        auto processPool = protectedProcessPool();
+        RefPtr processPool = m_processPool;
         if (!processPool || !processPool->automationSession())
             return;
 

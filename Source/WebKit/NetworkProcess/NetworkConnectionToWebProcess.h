@@ -268,7 +268,6 @@ public:
 
 #if ENABLE(WEB_RTC)
     NetworkMDNSRegister& mdnsRegister() { return m_mdnsRegister; }
-    Ref<NetworkMDNSRegister> protectedMDNSRegister() { return m_mdnsRegister; }
 #if PLATFORM(COCOA)
     bool webRTCInterfaceMonitoringViaNWEnabled() const { return m_sharedPreferencesForWebProcess.webRTCInterfaceMonitoringViaNWEnabled; }
 #endif
@@ -385,7 +384,6 @@ private:
 
 #if USE(LIBWEBRTC)
     NetworkRTCProvider& rtcProvider();
-    Ref<NetworkRTCProvider> protectedRTCProvider() { return rtcProvider(); }
 #endif
 #if ENABLE(WEB_RTC)
     void registerToRTCDataChannelProxy();

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="navigation-utils.js"></script>
+<script>
+
+const page = "page1";
+
+window.onload = () => sendMessageToTop("load");
+window.onpageshow = ()=> sendMessageToTop("pageshow", event.persisted ? "persisted" : "not-persisted");
+
+</script>
+</head>
+<body>
+<h1>Page 1</h1>
+<p>PASS: iframe content: Page 1</p>
+</body>
+</html>

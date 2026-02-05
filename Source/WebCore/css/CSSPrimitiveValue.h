@@ -46,25 +46,6 @@ template<typename> class ExceptionOr;
 constexpr float maxValueForCssLength = static_cast<float>(intMaxForLayoutUnit - 2);
 constexpr float minValueForCssLength = static_cast<float>(intMinForLayoutUnit + 2);
 
-// Dimension calculations are imprecise, often resulting in values of e.g.
-// 44.99998. We need to round if we're really close to the next integer value.
-template<typename T> inline T roundForImpreciseConversion(double value)
-{
-    value += (value < 0) ? -0.01 : +0.01;
-    return ((value > std::numeric_limits<T>::max()) || (value < std::numeric_limits<T>::min())) ? 0 : static_cast<T>(value);
-}
-
-template<> inline float roundForImpreciseConversion(double value)
-{
-    double ceiledValue = ceil(value);
-    double proximityToNextInt = ceiledValue - value;
-    if (proximityToNextInt <= 0.01 && value > 0)
-        return static_cast<float>(ceiledValue);
-    if (proximityToNextInt >= 0.99 && value < 0)
-        return static_cast<float>(floor(value));
-    return static_cast<float>(value);
-}
-
 class CSSPrimitiveValue final : public CSSValue {
 public:
     static constexpr bool isLength(CSSUnitType);

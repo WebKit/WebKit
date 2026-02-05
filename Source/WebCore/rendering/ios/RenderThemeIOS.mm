@@ -32,7 +32,6 @@
 #import "ARKitBadgeSystemImage.h"
 #import "BitmapImage.h"
 #import "BorderShape.h"
-#import "CSSPrimitiveValue.h"
 #import "CSSToLengthConversionData.h"
 #import "CSSValueKey.h"
 #import "CSSValueKeywords.h"
@@ -81,6 +80,7 @@
 #import "RenderStyle+SettersInlines.h"
 #import "RenderView.h"
 #import "Settings.h"
+#import "StyleLengthResolution.h"
 #import "StylePadding.h"
 #import "Theme.h"
 #import "TypedElementDescendantIteratorInlines.h"
@@ -113,7 +113,7 @@ RenderThemeIOS::RenderThemeIOS() = default;
 
 RenderThemeIOS::~RenderThemeIOS() = default;
 
-RenderTheme& RenderTheme::singleton()
+RenderThemeIOS& RenderTheme::singleton()
 {
     static NeverDestroyed<RenderThemeIOS> theme;
     return theme;
@@ -380,8 +380,7 @@ static Style::PaddingEdge toTruncatedPaddingEdge(auto value)
 
 Style::PaddingBox RenderThemeIOS::popupInternalPaddingBox(const RenderStyle& style) const
 {
-    auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EM);
-    auto padding = emSize->resolveAsLength<float>({ style, nullptr, nullptr, nullptr });
+    const auto padding = Style::emToPx<float>(1, style);
 
     if (style.usedAppearance() == StyleAppearance::MenulistButton) {
         // FIXME: Reduce code duplication with toTruncatedPaddingEdge.
@@ -435,12 +434,9 @@ void RenderThemeIOS::adjustRoundBorderRadius(RenderStyle& style, RenderBox& box)
     style.setBorderRadius(WTF::move(borderRadius));
 }
 
-static void applyCommonButtonPaddingToStyle(RenderStyle& style, const Element& element)
+static void applyCommonButtonPaddingToStyle(RenderStyle& style)
 {
-    Ref document = element.document();
-    Ref emSize = CSSPrimitiveValue::create(0.5, CSSUnitType::CSS_EM);
-    // We don't need this element's parent style to calculate `em` units, so it's okay to pass nullptr for it here.
-    auto edge = toTruncatedPaddingEdge(emSize->resolveAsLength<int>({ style, document->renderStyle(), nullptr, document->renderView() }));
+    auto edge = toTruncatedPaddingEdge(Style::emToPx<int>(0.5, style));
 
     auto paddingBox = Style::PaddingBox { 0_css_px, edge, 0_css_px, edge };
     if (!style.writingMode().isHorizontal())
@@ -449,10 +445,10 @@ static void applyCommonButtonPaddingToStyle(RenderStyle& style, const Element& e
     style.setPaddingBox(WTF::move(paddingBox));
 }
 
-static void adjustSelectListButtonStyle(RenderStyle& style, const Element& element)
+static void adjustSelectListButtonStyle(RenderStyle& style)
 {
     // Enforce "padding: 0 0.5em".
-    applyCommonButtonPaddingToStyle(style, element);
+    applyCommonButtonPaddingToStyle(style);
 
     style.setLineHeight(CSS::Keyword::Normal { });
 }
@@ -477,7 +473,7 @@ private:
 static void adjustInputElementButtonStyle(RenderStyle& style, const HTMLInputElement& inputElement)
 {
     // Always Enforce "padding: 0 0.5em".
-    applyCommonButtonPaddingToStyle(style, inputElement);
+    applyCommonButtonPaddingToStyle(style);
 
     applyCommonNonCapsuleBorderRadiusToStyle(style);
 
@@ -532,7 +528,7 @@ void RenderThemeIOS::adjustMenuListButtonStyle(RenderStyle& style, const Element
     // or a date input. We don't force these if this is just an element with
     // "-webkit-appearance: menulist-button".
     if (is<HTMLSelectElement>(*element) && !element->hasAttributeWithoutSynchronization(HTMLNames::multipleAttr))
-        adjustSelectListButtonStyle(style, *element);
+        adjustSelectListButtonStyle(style);
     else if (RefPtr input = dynamicDowncast<HTMLInputElement>(*element))
         adjustInputElementButtonStyle(style, *input);
 }
@@ -601,8 +597,7 @@ void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
         glyphPath.addBezierCurveTo({ 29.4179f, 71.8f }, { 30.541f, 72.3867f }, { 31.8593f, 72.3867 });
     }
 
-    auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EM);
-    auto emPixels = emSize->resolveAsLength<float>({ style, nullptr, nullptr, nullptr });
+    auto emPixels = Style::emToPx<float>(1, style);
     auto glyphScale = 0.65f * emPixels / glyphSize.width();
     glyphSize = glyphScale * glyphSize;
 
@@ -953,11 +948,8 @@ void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* elemen
         return;
 
     // Set padding: 0 1.0em; on buttons.
-    // CSSPrimitiveValue::resolveAsLength only needs the element's style to calculate em lengths.
-    // Since the element might not be in a document, just pass nullptr for the root element style,
-    // the parent element style, and the render view.
-    auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EM);
-    auto edge = toTruncatedPaddingEdge(emSize->resolveAsLength<int>({ style, nullptr, nullptr, nullptr }));
+
+    auto edge = toTruncatedPaddingEdge(Style::emToPx<int>(1, style));
 
     auto paddingBox = Style::PaddingBox { 0_css_px, edge, 0_css_px, edge };
     if (!style.writingMode().isHorizontal())
@@ -1897,10 +1889,7 @@ void RenderThemeIOS::adjustSearchFieldDecorationPartStyle(RenderStyle& style, co
     constexpr auto searchFieldDecorationEmSize = 1.0f;
     constexpr auto searchFieldDecorationMargin = 4_css_px;
 
-    CSSToLengthConversionData conversionData(style, nullptr, nullptr, nullptr);
-
-    auto emSize = CSSPrimitiveValue::create(searchFieldDecorationEmSize, CSSUnitType::CSS_EM);
-    auto size = Style::PreferredSize::Fixed { emSize->resolveAsLength<float>(conversionData) };
+    auto size = Style::PreferredSize::Fixed { Style::emToPx<float>(searchFieldDecorationEmSize, style) };
 
     style.setWidth(size);
     style.setHeight(size);

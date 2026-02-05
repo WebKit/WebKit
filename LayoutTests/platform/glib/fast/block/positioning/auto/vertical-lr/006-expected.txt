@@ -4,18 +4,18 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 776x584
       RenderBlock (anonymous) at (0,0) size 72x584
-        RenderText {#text} at (1,0) size 71x560
-          text run at (1,0) width 558: "In this test, you should see three blocks that are aligned to the bottom within a black box."
-          text run at (19,0) width 535: "They should be stacked horizontally with the green box in between two olive boxes. "
-          text run at (19,535) width 25: "The"
-          text run at (37,0) width 531: "olive boxes and the green box should be 100x100, and there should be 100 pixels of"
-          text run at (55,0) width 255: "padding on the top side of the box stack."
+        RenderText {#text} at (0,0) size 72x560
+          text run at (0,0) width 559: "In this test, you should see three blocks that are aligned to the bottom within a black box."
+          text run at (18,0) width 536: "They should be stacked horizontally with the green box in between two olive boxes. "
+          text run at (18,535) width 26: "The"
+          text run at (36,0) width 532: "olive boxes and the green box should be 100x100, and there should be 100 pixels of"
+          text run at (54,0) width 256: "padding on the top side of the box stack."
 layer at (96,8) size 36x584
   RenderBlock (relative positioned) {DIV} at (88,0) size 36x584
-    RenderText {#text} at (1,31) size 35x553
-      text run at (1,31) width 553: "The black box's left should be aligned with the last line in this paragraph and its top side"
-      text run at (19,316) width 4 RTL: "."
-      text run at (19,320) width 264: "should begin after the end of this sentence"
+    RenderText {#text} at (0,31) size 36x553
+      text run at (0,31) width 554: "The black box's left should be aligned with the last line in this paragraph and its top side"
+      text run at (18,316) width 5 RTL: "."
+      text run at (18,320) width 265: "should begin after the end of this sentence"
     RenderText {#text} at (0,0) size 0x0
 layer at (114,84) size 340x240
   RenderBlock (positioned) {SPAN} at (18,76) size 340x240 [border: (20px solid #000000)]

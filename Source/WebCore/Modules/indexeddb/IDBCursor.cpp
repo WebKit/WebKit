@@ -96,20 +96,10 @@ IDBObjectStore& IDBCursor::effectiveObjectStore() const
     );
 }
 
-Ref<IDBObjectStore> IDBCursor::protectedEffectiveObjectStore() const
-{
-    return effectiveObjectStore();
-}
-
 IDBTransaction& IDBCursor::transaction() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(effectiveObjectStore().transaction().database().originThread()));
-    return protectedEffectiveObjectStore()->transaction();
-}
-
-Ref<IDBTransaction> IDBCursor::protectedTransaction() const
-{
-    return transaction();
+    return protect(effectiveObjectStore())->transaction();
 }
 
 ExceptionOr<Ref<IDBRequest>> IDBCursor::update(JSGlobalObject& state, JSValue value)
@@ -134,7 +124,7 @@ ExceptionOr<Ref<IDBRequest>> IDBCursor::update(JSGlobalObject& state, JSValue va
         return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'update' on 'IDBCursor': The cursor is a key cursor."_s };
 
     VM& vm = state.vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     // Transaction should be inactive during structured clone.
     Ref objectStore = effectiveObjectStore();
@@ -296,7 +286,7 @@ void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, unsigned count)
     ASSERT(canCurrentThreadAccessThreadLocalData(effectiveObjectStore().transaction().database().originThread()));
 
     request->willIterateCursor(*this);
-    protectedTransaction()->iterateCursor(*this, { key, { }, count });
+    protect(transaction())->iterateCursor(*this, { key, { }, count });
 }
 
 void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, const IDBKeyData& primaryKey)
@@ -306,7 +296,7 @@ void IDBCursor::uncheckedIterateCursor(const IDBKeyData& key, const IDBKeyData& 
     ASSERT(canCurrentThreadAccessThreadLocalData(effectiveObjectStore().transaction().database().originThread()));
 
     request->willIterateCursor(*this);
-    protectedTransaction()->iterateCursor(*this, { key, primaryKey, 0 });
+    protect(transaction())->iterateCursor(*this, { key, primaryKey, 0 });
 }
 
 ExceptionOr<Ref<WebCore::IDBRequest>> IDBCursor::deleteFunction()
@@ -329,7 +319,7 @@ ExceptionOr<Ref<WebCore::IDBRequest>> IDBCursor::deleteFunction()
     if (!isKeyCursorWithValue())
         return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'delete' on 'IDBCursor': The cursor is a key cursor."_s };
 
-    auto result = protectedEffectiveObjectStore()->deleteFunction(IDBKeyRange::create(m_primaryKey.copyRef()).ptr());
+    auto result = protect(effectiveObjectStore())->deleteFunction(IDBKeyRange::create(m_primaryKey.copyRef()).ptr());
     if (result.hasException())
         return result.releaseException();
 
@@ -404,7 +394,7 @@ std::optional<IDBGetResult> IDBCursor::iterateWithPrefetchedRecords(unsigned cou
     auto record = m_prefetchedRecords.takeFirst();
 
     LOG(IndexedDB, "IDBTransaction::iterateWithPrefetchedRecords consumes %u records", count > 0 ? count : 1);
-    return IDBGetResult(record.key, record.primaryKey, IDBValue(record.value), protectedEffectiveObjectStore()->keyPath());
+    return IDBGetResult(record.key, record.primaryKey, IDBValue(record.value), protect(effectiveObjectStore())->keyPath());
 }
 
 void IDBCursor::clearPrefetchedRecords()

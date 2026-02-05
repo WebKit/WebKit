@@ -53,13 +53,11 @@ public:
     void cancelIfNotFinishing();
     bool isSubresourceLoader() const final;
     CachedResource* cachedResource() const final { return m_resource.get(); };
-    CachedResourceHandle<CachedResource> protectedCachedResource() const { return cachedResource(); }
 
     WEBCORE_EXPORT const HTTPHeaderMap* originalHeaders() const;
 
     const SecurityOrigin* origin() const { return m_origin.get(); }
     SecurityOrigin* origin() { return m_origin.get(); }
-    RefPtr<SecurityOrigin> protectedOrigin() const;
 #if PLATFORM(IOS_FAMILY)
     void startLoading() final;
 

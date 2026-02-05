@@ -53,7 +53,7 @@
     [DoNotCheckSecurity, CallWith=IncumbentWindow] undefined focus();
     [DoNotCheckSecurity] undefined blur();
     [DoNotCheckSecurity, CallWith=CurrentGlobalObject&IncumbentWindow] undefined postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
-    [DoNotCheckSecurity, CallWith=CurrentGlobalObject&IncumbentWindow] undefined postMessage(any message, optional WindowPostMessageOptions options);
+    [DoNotCheckSecurity, CallWith=CurrentGlobalObject&IncumbentWindow] undefined postMessage(any message, optional WindowPostMessageOptions options = {});
     [DoNotCheckSecurity, PutForwards=href, LegacyUnforgeable] readonly attribute Location location;
     [DoNotCheckSecurity, LegacyUnforgeable, CustomGetter] readonly attribute WindowProxy window;
     [DoNotCheckSecurityOnGetter, Replaceable, CustomGetter] readonly attribute WindowProxy self;

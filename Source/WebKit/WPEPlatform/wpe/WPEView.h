@@ -52,6 +52,9 @@ struct _WPEViewClass
 {
     GObjectClass parent_class;
 
+    void               (* buffers_changed)       (WPEView            *view,
+                                                  WPEBuffer         **buffers,
+                                                  guint               n_buffers);
     gboolean           (* render_buffer)         (WPEView            *view,
                                                   WPEBuffer          *buffer,
                                                   const WPERectangle *damage_rects,
@@ -122,6 +125,9 @@ WPE_API void                  wpe_view_set_cursor_from_bytes        (WPEView    
                                                                      guint               hotspot_y);
 WPE_API WPEToplevelState      wpe_view_get_toplevel_state           (WPEView            *view);
 WPE_API WPEScreen            *wpe_view_get_screen                   (WPEView            *view);
+WPE_API void                  wpe_view_buffers_changed              (WPEView            *view,
+                                                                     WPEBuffer         **buffers,
+                                                                     guint               n_buffers);
 WPE_API gboolean              wpe_view_render_buffer                (WPEView            *view,
                                                                      WPEBuffer          *buffer,
                                                                      const WPERectangle *damage_rects,

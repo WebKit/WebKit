@@ -101,21 +101,6 @@ RefPtr<ImageBuffer> CanvasBase::makeRenderingResultsAvailable(ShouldApplyPostPro
     return buffer();
 }
 
-size_t CanvasBase::memoryCost() const
-{
-    // May be called from GC threads.
-    return m_imageBufferMemoryCost.load(std::memory_order_relaxed);
-}
-
-#if ENABLE(RESOURCE_USAGE)
-size_t CanvasBase::externalMemoryCost() const
-{
-    // For the purposes of Web Inspector, external memory means memory reported as 1) being traceable from JS objects, i.e. GC owned memory
-    // 2) not allocated from "Page" category, e.g. from bmalloc.
-    return memoryCost();
-}
-#endif
-
 static inline size_t maxCanvasArea()
 {
     if (maxCanvasAreaForTesting)
@@ -250,32 +235,26 @@ void CanvasBase::setSize(const IntSize& size)
 
 RefPtr<ImageBuffer> CanvasBase::setImageBuffer(RefPtr<ImageBuffer>&& buffer) const
 {
-    m_contextStateSaver = nullptr;
     RefPtr returnBuffer = std::exchange(m_imageBuffer, WTF::move(buffer));
+    if (returnBuffer)
+        returnBuffer->context().restore();
 
     IntSize oldSize = m_size;
-    size_t oldMemoryCost = m_imageBufferMemoryCost.load(std::memory_order_relaxed);
-    size_t newMemoryCost = 0;
     if (RefPtr imageBuffer = m_imageBuffer) {
         m_size = imageBuffer->truncatedLogicalSize();
-        newMemoryCost = imageBuffer->memoryCost();
-        imageBuffer->context().setShadowsIgnoreTransforms(true);
-        imageBuffer->context().setImageInterpolationQuality(defaultInterpolationQuality);
-        imageBuffer->context().setStrokeThickness(1);
-        m_contextStateSaver = makeUnique<GraphicsContextStateSaver>(imageBuffer->context());
-    }
-    m_imageBufferMemoryCost.store(newMemoryCost, std::memory_order_relaxed);
-    if (newMemoryCost) {
-        if (RefPtr scriptExecutionContext = this->scriptExecutionContext()) {
-            JSC::JSLockHolder lock(scriptExecutionContext->vm());
-            scriptExecutionContext->vm().heap.reportExtraMemoryAllocated(static_cast<JSCell*>(nullptr), newMemoryCost);
-        }
+        auto& context = imageBuffer->context();
+        context.setShadowsIgnoreTransforms(true);
+        context.setImageInterpolationQuality(defaultInterpolationQuality);
+        context.setStrokeThickness(1);
+        // Save the initial state, so that 2D rendering context reset can restore it.
+        // Will be made more localized when the ImageBuffer is moved to 2D rendering context.
+        context.save();
     }
     if (RefPtr context = renderingContext()) {
         if (oldSize != m_size)
             InspectorInstrumentation::didChangeCanvasSize(*context);
-        if (oldMemoryCost != newMemoryCost)
-            InspectorInstrumentation::didChangeCanvasMemory(*context);
+        const bool hasNewBuffer = m_imageBuffer;
+        context->updateMemoryCostOnAllocation(hasNewBuffer);
     }
     return returnBuffer;
 }
@@ -396,15 +375,6 @@ RefPtr<ImageBuffer> CanvasBase::createImageForNoiseInjection() const
     buffer->context().setFillColor(fillColor);
     buffer->context().fillRect({ IntPoint { }, size() });
     return buffer;
-}
-
-void CanvasBase::resetGraphicsContextState() const
-{
-    if (m_contextStateSaver) {
-        // Reset to the initial graphics context state.
-        m_contextStateSaver->restore();
-        m_contextStateSaver->save();
-    }
 }
 
 WebCoreOpaqueRoot root(CanvasBase* canvas)

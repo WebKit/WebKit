@@ -48,7 +48,7 @@ template<typename CharacterType> static bool isDirectiveNameCharacter(CharacterT
 
 template<typename CharacterType> static bool isDirectiveValueCharacter(CharacterType c)
 {
-    return isUnicodeCompatibleASCIIWhitespace(c) || (c >= 0x21 && c <= 0x7e); // Whitespace + VCHAR
+    return isASCIIWhitespace(c) || (c >= 0x21 && c <= 0x7e); // Whitespace + VCHAR
 }
 
 static inline bool checkEval(ContentSecurityPolicySourceListDirective* directive)
@@ -117,7 +117,7 @@ static inline bool checkFrameAncestors(ContentSecurityPolicySourceListDirective*
         RefPtr localFrame = dynamicDowncast<LocalFrame>(*current);
         if (!localFrame)
             continue;
-        URL origin = urlFromOrigin(localFrame->protectedDocument()->protectedSecurityOrigin());
+        URL origin = urlFromOrigin(protect(protect(localFrame->document())->securityOrigin()));
         if (!origin.isValid() || !directive->allows(origin, didReceiveRedirectResponse, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone::No))
             return false;
     }
@@ -518,7 +518,7 @@ void ContentSecurityPolicyDirectiveList::parse(const String& policy, ContentSecu
 template<typename CharacterType> auto ContentSecurityPolicyDirectiveList::parseDirective(std::span<const CharacterType> span) -> std::optional<ParsedDirective>
 {
     StringParsingBuffer buffer { span };
-    skipWhile<isUnicodeCompatibleASCIIWhitespace>(buffer);
+    skipWhile<isASCIIWhitespace>(buffer);
 
     // Empty directive (e.g. ";;;"). Exit early.
     if (buffer.atEnd())
@@ -529,7 +529,7 @@ template<typename CharacterType> auto ContentSecurityPolicyDirectiveList::parseD
 
     // The directive-name must be non-empty.
     if (nameBegin.data() == buffer.position()) {
-        skipWhile<isNotASCIISpace>(buffer);
+        skipWhile<isNotASCIIWhitespace>(buffer);
         m_policy->reportUnsupportedDirective(nameBegin.first(buffer.position() - nameBegin.data()));
         return std::nullopt;
     }
@@ -539,13 +539,13 @@ template<typename CharacterType> auto ContentSecurityPolicyDirectiveList::parseD
     if (buffer.atEnd())
         return ParsedDirective { WTF::move(name), { } };
 
-    if (!skipExactly<isUnicodeCompatibleASCIIWhitespace>(buffer)) {
-        skipWhile<isNotASCIISpace>(buffer);
+    if (!skipExactly<isASCIIWhitespace>(buffer)) {
+        skipWhile<isNotASCIIWhitespace>(buffer);
         m_policy->reportUnsupportedDirective(nameBegin.first(buffer.position() - nameBegin.data()));
         return std::nullopt;
     }
 
-    skipWhile<isUnicodeCompatibleASCIIWhitespace>(buffer);
+    skipWhile<isASCIIWhitespace>(buffer);
 
     auto valueBegin = buffer.span();
     skipWhile<isDirectiveValueCharacter>(buffer);
@@ -573,10 +573,10 @@ void ContentSecurityPolicyDirectiveList::parseReportURI(ParsedDirective&& direct
     readCharactersForParsing(directive.value, [&](auto buffer) {
         auto begin = buffer.position();
         while (buffer.hasCharactersRemaining()) {
-            skipWhile<isUnicodeCompatibleASCIIWhitespace>(buffer);
+            skipWhile<isASCIIWhitespace>(buffer);
 
             auto urlBegin = buffer.position();
-            skipWhile<isNotASCIISpace>(buffer);
+            skipWhile<isNotASCIIWhitespace>(buffer);
 
             if (urlBegin < buffer.position())
                 m_reportURIs.append(directive.value.substring(urlBegin - begin, buffer.position() - urlBegin));
@@ -594,10 +594,10 @@ void ContentSecurityPolicyDirectiveList::parseReportTo(ParsedDirective&& directi
     readCharactersForParsing(directive.value, [&](auto buffer) {
         auto begin = buffer.position();
         while (buffer.hasCharactersRemaining()) {
-            skipWhile<isUnicodeCompatibleASCIIWhitespace>(buffer);
+            skipWhile<isASCIIWhitespace>(buffer);
 
             auto urlBegin = buffer.position();
-            skipWhile<isNotASCIISpace>(buffer);
+            skipWhile<isNotASCIIWhitespace>(buffer);
 
             if (urlBegin < buffer.position())
                 m_reportToTokens.append(directive.value.substring(urlBegin - begin, buffer.position() - urlBegin));
@@ -624,7 +624,7 @@ void ContentSecurityPolicyDirectiveList::parseRequireTrustedTypesFor(ParsedDirec
             if (skipExactlyIgnoringASCIICase(buffer, "'script'"_s) && (buffer.atEnd() || isUnicodeCompatibleASCIIWhitespace(*buffer)))
                 m_requireTrustedTypesForScript = true;
             else {
-                skipWhile<isNotASCIISpace>(buffer);
+                skipWhile<isNotASCIIWhitespace>(buffer);
                 m_policy->reportInvalidTrustedTypesSinkGroup(std::span { begin, buffer.position() });
                 continue;
             }

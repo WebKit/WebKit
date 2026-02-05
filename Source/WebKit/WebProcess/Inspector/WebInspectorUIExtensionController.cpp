@@ -476,22 +476,22 @@ void WebInspectorUIExtensionController::evaluateScriptInExtensionTab(const Inspe
 
 void WebInspectorUIExtensionController::didShowExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID, WebCore::FrameIdentifier frameID)
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebInspectorUIExtensionControllerProxy::DidShowExtensionTab { extensionID, extensionTabID, frameID }, m_inspectorPageIdentifier);
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorUIExtensionControllerProxy::DidShowExtensionTab { extensionID, extensionTabID, frameID }, m_inspectorPageIdentifier);
 }
 
 void WebInspectorUIExtensionController::didHideExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID)
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebInspectorUIExtensionControllerProxy::DidHideExtensionTab { extensionID, extensionTabID }, m_inspectorPageIdentifier);
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorUIExtensionControllerProxy::DidHideExtensionTab { extensionID, extensionTabID }, m_inspectorPageIdentifier);
 }
 
 void WebInspectorUIExtensionController::didNavigateExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID, const URL& newURL)
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebInspectorUIExtensionControllerProxy::DidNavigateExtensionTab { extensionID, extensionTabID, newURL }, m_inspectorPageIdentifier);
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorUIExtensionControllerProxy::DidNavigateExtensionTab { extensionID, extensionTabID, newURL }, m_inspectorPageIdentifier);
 }
 
 void WebInspectorUIExtensionController::inspectedPageDidNavigate(const URL& newURL)
 {
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebInspectorUIExtensionControllerProxy::InspectedPageDidNavigate { newURL }, m_inspectorPageIdentifier);
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorUIExtensionControllerProxy::InspectedPageDidNavigate { newURL }, m_inspectorPageIdentifier);
 }
 
 } // namespace WebKit

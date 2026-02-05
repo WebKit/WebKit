@@ -251,12 +251,12 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const ElementBox& parentContai
                 childLayoutBox = createContainer(elementAttributes(renderer), WTF::move(clonedStyle));
             } else if (displayType == DisplayType::TableColumn) {
                 childLayoutBox = createContainer(elementAttributes(renderer), WTF::move(clonedStyle));
-                auto& tableColElement = downcast<HTMLTableColElement>(*renderer.element());
-                auto columnWidth = tableColElement.width();
+                Ref tableColElement = downcast<HTMLTableColElement>(*renderer.element());
+                auto columnWidth = tableColElement->width();
                 if (!columnWidth.isEmpty())
                     childLayoutBox->setColumnWidth(parseHTMLInteger(columnWidth).value_or(0));
-                if (tableColElement.span() > 1)
-                    childLayoutBox->setColumnSpan(tableColElement.span());
+                if (tableColElement->span() > 1)
+                    childLayoutBox->setColumnSpan(tableColElement->span());
             } else {
                 ASSERT_NOT_IMPLEMENTED_YET();
                 // Let's fall back to a regular block level container when the renderer type is not yet supported.
@@ -266,8 +266,8 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const ElementBox& parentContai
         }
 
         if (is<RenderTableCell>(renderer)) {
-            auto* tableCellElement = renderer.element();
-            if (auto* cellElement = dynamicDowncast<HTMLTableCellElement>(tableCellElement)) {
+            RefPtr tableCellElement = renderer.element();
+            if (RefPtr cellElement = dynamicDowncast<HTMLTableCellElement>(tableCellElement)) {
                 auto rowSpan = cellElement->rowSpan();
                 if (rowSpan > 1)
                     childLayoutBox->setRowSpan(rowSpan);

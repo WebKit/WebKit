@@ -1,0 +1,4 @@
+
+
+FAIL Clicking directly on ::picker(select) should not trigger light dismiss. assert_true: Select should be open after clicking it. expected true got false
+

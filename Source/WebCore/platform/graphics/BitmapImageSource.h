@@ -54,6 +54,8 @@ public:
     // Encoded and decoded data
     void destroyDecodedData(bool destroyAll) final;
     void resetData();
+    bool canReplaceData() const { return true; }
+    void dataReplaced(FragmentedSharedBuffer*) final;
     unsigned decodedSize() const { return m_decodedSize; }
     void didDecodeProperties(unsigned decodedPropertiesSize);
 
@@ -107,6 +109,7 @@ private:
     void decodedSizeDecreased(unsigned decodedSize);
     void decodedSizeReset(unsigned decodedSize);
     bool canDestroyDecodedData() const;
+    void destroyDecodedFrames(bool destroyAll);
 
     void clearFrameBufferCache();
 

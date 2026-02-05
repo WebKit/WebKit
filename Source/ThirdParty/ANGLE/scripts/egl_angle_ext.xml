@@ -273,6 +273,7 @@
         <extension name="EGL_ANGLE_create_context_webgl_compatibility" supported="egl">
             <require>
                 <enum name="EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE"/>
+                <enum name="EGL_CONTEXT_HARDENED_ANGLE"/>
             </require>
         </extension>
         <extension name="EGL_ANGLE_create_surface_swap_interval" supported="egl">
@@ -670,6 +671,7 @@
         <enum value="0x34F0" name="EGL_PLATFORM_ANGLE_VULKAN_DEVICE_UUID_ANGLE"/>
         <enum value="0x34F1" name="EGL_PLATFORM_ANGLE_VULKAN_DRIVER_UUID_ANGLE"/>
         <enum value="0x34F2" name="EGL_PLATFORM_ANGLE_VULKAN_DRIVER_ID_ANGLE"/>
+        <enum value="0x34F8" name="EGL_CONTEXT_HARDENED_ANGLE"/>
     </enums>
     <enums namespace="EGL" vendor="ANGLE">
         <enum value="0x0001" name="EGL_LOW_POWER_ANGLE"/>

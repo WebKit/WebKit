@@ -125,7 +125,7 @@ PlatformCALayerRemote::PlatformCALayerRemote(const PlatformCALayerRemote& other,
 Ref<PlatformCALayer> PlatformCALayerRemote::clone(PlatformCALayerClient* owner) const
 {
     RELEASE_ASSERT(m_context.get());
-    Ref clone = PlatformCALayerRemote::create(*this, owner, *protectedContext());
+    Ref clone = PlatformCALayerRemote::create(*this, owner, *protect(context()));
 
     updateClonedLayerProperties(clone);
 
@@ -1178,7 +1178,7 @@ void PlatformCALayerRemote::setAppleVisualEffectData(WebCore::AppleVisualEffectD
 Ref<PlatformCALayer> PlatformCALayerRemote::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const
 {
     RELEASE_ASSERT(m_context.get());
-    return PlatformCALayerRemote::create(layerType, client, *protectedContext());
+    return PlatformCALayerRemote::create(layerType, client, *protect(context()));
 }
 
 void PlatformCALayerRemote::enumerateRectsBeingDrawn(WebCore::GraphicsContext& context, void (^block)(WebCore::FloatRect))

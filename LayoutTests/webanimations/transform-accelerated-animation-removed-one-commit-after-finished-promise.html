@@ -1,0 +1,20 @@
+<pre id="results"></pre>
+<div id="target" style="width: 100px; height: 100px; background-color: black;"></div>
+<script src="threaded-animations/threaded-animations-utils.js"></script>
+<script>
+
+(async function () {
+    window.testRunner?.waitUntilDone();
+    window.testRunner?.dumpAsText();
+
+    await document.getElementById("target").animate([
+        { transform: "translateX(0)" },
+        { transform: "translateX(100px)" }
+    ], 100).finished;
+    await threadedAnimationsCommit();
+
+    document.getElementById("results").innerText = internals.layerTreeAsText(document);
+    window.testRunner?.notifyDone();
+})();
+
+</script>

@@ -63,29 +63,29 @@ TEST(WTF_ContextualizedNSString, getCharacters)
     auto contextualizedString = adoptNS([[WTFContextualizedNSString alloc] initWithContext:context contents:contents]);
 
     unichar buffer[7];
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 
     [contextualizedString getCharacters:buffer range:NSMakeRange(0, 0)];
     EXPECT_EQ(buffer[0], '\0');
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 
     [contextualizedString getCharacters:buffer range:NSMakeRange(0, 1)];
     EXPECT_EQ(buffer[0], 'a');
     EXPECT_EQ(buffer[1], '\0');
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 
     [contextualizedString getCharacters:buffer range:NSMakeRange(0, 2)];
     EXPECT_EQ(buffer[0], 'a');
     EXPECT_EQ(buffer[1], 'b');
     EXPECT_EQ(buffer[2], '\0');
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 
     [contextualizedString getCharacters:buffer range:NSMakeRange(0, 3)];
     EXPECT_EQ(buffer[0], 'a');
     EXPECT_EQ(buffer[1], 'b');
     EXPECT_EQ(buffer[2], 'c');
     EXPECT_EQ(buffer[3], '\0');
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 
     [contextualizedString getCharacters:buffer range:NSMakeRange(0, 4)];
     EXPECT_EQ(buffer[0], 'a');
@@ -93,7 +93,7 @@ TEST(WTF_ContextualizedNSString, getCharacters)
     EXPECT_EQ(buffer[2], 'c');
     EXPECT_EQ(buffer[3], 'd');
     EXPECT_EQ(buffer[4], '\0');
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 
     [contextualizedString getCharacters:buffer range:NSMakeRange(0, 5)];
     EXPECT_EQ(buffer[0], 'a');
@@ -102,7 +102,7 @@ TEST(WTF_ContextualizedNSString, getCharacters)
     EXPECT_EQ(buffer[3], 'd');
     EXPECT_EQ(buffer[4], 'e');
     EXPECT_EQ(buffer[5], '\0');
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 
     [contextualizedString getCharacters:buffer range:NSMakeRange(0, 6)];
     EXPECT_EQ(buffer[0], 'a');
@@ -112,29 +112,29 @@ TEST(WTF_ContextualizedNSString, getCharacters)
     EXPECT_EQ(buffer[4], 'e');
     EXPECT_EQ(buffer[5], 'f');
     EXPECT_EQ(buffer[6], '\0');
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 
     [contextualizedString getCharacters:buffer range:NSMakeRange(1, 0)];
     EXPECT_EQ(buffer[0], '\0');
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 
     [contextualizedString getCharacters:buffer range:NSMakeRange(1, 1)];
     EXPECT_EQ(buffer[0], 'b');
     EXPECT_EQ(buffer[1], '\0');
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 
     [contextualizedString getCharacters:buffer range:NSMakeRange(1, 2)];
     EXPECT_EQ(buffer[0], 'b');
     EXPECT_EQ(buffer[1], 'c');
     EXPECT_EQ(buffer[2], '\0');
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 
     [contextualizedString getCharacters:buffer range:NSMakeRange(1, 3)];
     EXPECT_EQ(buffer[0], 'b');
     EXPECT_EQ(buffer[1], 'c');
     EXPECT_EQ(buffer[2], 'd');
     EXPECT_EQ(buffer[3], '\0');
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 
     [contextualizedString getCharacters:buffer range:NSMakeRange(1, 4)];
     EXPECT_EQ(buffer[0], 'b');
@@ -142,7 +142,7 @@ TEST(WTF_ContextualizedNSString, getCharacters)
     EXPECT_EQ(buffer[2], 'd');
     EXPECT_EQ(buffer[3], 'e');
     EXPECT_EQ(buffer[4], '\0');
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 
     [contextualizedString getCharacters:buffer range:NSMakeRange(1, 5)];
     EXPECT_EQ(buffer[0], 'b');
@@ -151,52 +151,52 @@ TEST(WTF_ContextualizedNSString, getCharacters)
     EXPECT_EQ(buffer[3], 'e');
     EXPECT_EQ(buffer[4], 'f');
     EXPECT_EQ(buffer[5], '\0');
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 
     [contextualizedString getCharacters:buffer range:NSMakeRange(3, 0)];
     EXPECT_EQ(buffer[0], '\0');
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 
     [contextualizedString getCharacters:buffer range:NSMakeRange(3, 1)];
     EXPECT_EQ(buffer[0], 'd');
     EXPECT_EQ(buffer[1], '\0');
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 
     [contextualizedString getCharacters:buffer range:NSMakeRange(3, 2)];
     EXPECT_EQ(buffer[0], 'd');
     EXPECT_EQ(buffer[1], 'e');
     EXPECT_EQ(buffer[2], '\0');
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 
     [contextualizedString getCharacters:buffer range:NSMakeRange(3, 3)];
     EXPECT_EQ(buffer[0], 'd');
     EXPECT_EQ(buffer[1], 'e');
     EXPECT_EQ(buffer[2], 'f');
     EXPECT_EQ(buffer[3], '\0');
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 
     [contextualizedString getCharacters:buffer range:NSMakeRange(4, 0)];
     EXPECT_EQ(buffer[0], '\0');
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 
     [contextualizedString getCharacters:buffer range:NSMakeRange(4, 1)];
     EXPECT_EQ(buffer[0], 'e');
     EXPECT_EQ(buffer[1], '\0');
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 
     [contextualizedString getCharacters:buffer range:NSMakeRange(4, 2)];
     EXPECT_EQ(buffer[0], 'e');
     EXPECT_EQ(buffer[1], 'f');
     EXPECT_EQ(buffer[2], '\0');
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 
     [contextualizedString getCharacters:buffer range:NSMakeRange(6, 0)];
     EXPECT_EQ(buffer[0], '\0');
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 
     [contextualizedString getCharacters:buffer range:NSMakeRange(7, 0)];
     EXPECT_EQ(buffer[0], '\0');
-    std::fill(buffer, buffer + std::size(buffer), '\0');
+    std::ranges::fill(buffer, '\0');
 }
 
 TEST(WTF_ContextualizedNSString, nonPrimitive)

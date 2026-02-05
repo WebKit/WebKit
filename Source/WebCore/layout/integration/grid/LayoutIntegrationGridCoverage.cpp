@@ -101,42 +101,64 @@ enum class GridAvoidanceReason : uint8_t {
 #endif
 
 
-static std::optional<GridAvoidanceReason> hasValidColumnEnd(const Style::GridPositionExplicit&, const Style::GridPosition columnEnd, size_t linesFromGridTemplateColumnsCount)
+static bool hasValidColumnEnd(const Style::GridPositionExplicit& explicitColumnStart, const Style::GridPosition columnEnd, size_t linesFromGridTemplateColumnsCount)
 {
+    UNUSED_PARAM(explicitColumnStart);
+
     return WTF::switchOn(columnEnd,
-        [&](const CSS::Keyword::Auto&) -> std::optional<GridAvoidanceReason> {
-            return GridAvoidanceReason::GridItemHasUnsupportedColumnPlacement;
+        [&](const CSS::Keyword::Auto&) {
+            return false;
         },
-        [&](const Style::GridPositionExplicit&) -> std::optional<GridAvoidanceReason> {
+        [&](const Style::GridPositionExplicit&) {
             if (!columnEnd.namedGridLine().isEmpty() || columnEnd.explicitPosition() < 0 || columnEnd.explicitPosition() > static_cast<int>(linesFromGridTemplateColumnsCount))
-                return GridAvoidanceReason::GridItemHasUnsupportedColumnPlacement;
-            return { };
+                return false;
+            return true;
         },
-        [&](const Style::GridPositionSpan&) -> std::optional<GridAvoidanceReason> {
-            return GridAvoidanceReason::GridItemHasUnsupportedColumnPlacement;
+        [&](const Style::GridPositionSpan&) {
+            return false;
         },
-        [&](const CustomIdentifier&) -> std::optional<GridAvoidanceReason> {
-            return GridAvoidanceReason::GridItemHasUnsupportedColumnPlacement;
+        [&](const CustomIdentifier&) {
+            return false;
         }
     );
 }
 
-static std::optional<GridAvoidanceReason> hasValidRowEnd(const Style::GridPositionExplicit&, const Style::GridPosition rowEnd, size_t linesFromGridTemplateRowsCount)
+static bool hasValidColumnEnd(const CSS::Keyword::Auto& autoColumnStart, const Style::GridPosition columnEnd)
+{
+    UNUSED_PARAM(autoColumnStart);
+
+    return WTF::switchOn(columnEnd,
+        [](const CSS::Keyword::Auto&) {
+            return true;
+        },
+        [](const Style::GridPositionExplicit&) {
+            return false;
+        },
+        [](const Style::GridPositionSpan&) {
+            return false;
+        },
+        [](const CustomIdentifier&) {
+            return false;
+        }
+    );
+}
+
+static bool hasValidRowEnd(const Style::GridPositionExplicit&, const Style::GridPosition rowEnd, size_t linesFromGridTemplateRowsCount)
 {
     return WTF::switchOn(rowEnd,
-        [&](const CSS::Keyword::Auto&) -> std::optional<GridAvoidanceReason> {
-            return GridAvoidanceReason::GridItemHasUnsupportedRowPlacement;
+        [&](const CSS::Keyword::Auto&) {
+            return false;
         },
-        [&](const Style::GridPositionExplicit&) -> std::optional<GridAvoidanceReason> {
+        [&](const Style::GridPositionExplicit&) {
             if (!rowEnd.namedGridLine().isEmpty() || rowEnd.explicitPosition() < 0 || rowEnd.explicitPosition() > static_cast<int>(linesFromGridTemplateRowsCount))
-                return GridAvoidanceReason::GridItemHasUnsupportedRowPlacement;
-            return { };
+                return false;
+            return true;
         },
-        [&](const Style::GridPositionSpan&) -> std::optional<GridAvoidanceReason> {
-            return GridAvoidanceReason::GridItemHasUnsupportedRowPlacement;
+        [&](const Style::GridPositionSpan&) {
+            return false;
         },
-        [&](const CustomIdentifier&) -> std::optional<GridAvoidanceReason> {
-            return GridAvoidanceReason::GridItemHasUnsupportedRowPlacement;
+        [&](const CustomIdentifier&) {
+            return false;
         }
     );
 }
@@ -203,18 +225,30 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         ADD_REASON_AND_RETURN_IF_NEEDED(GridHasUnsupportedGridTemplateColumns, reasons, reasonCollectionMode);
 
     for (auto& columnsTrackListEntry : gridTemplateColumnsTrackList) {
-
         auto avoidanceReason = WTF::switchOn(columnsTrackListEntry,
             [&](const Style::GridTrackSize& trackSize) -> std::optional<GridAvoidanceReason> {
                 // Since a GridTrackSize type of Breadth sets the MinTrackBreadth and
                 // MaxTrackBreadth to the same value we only need to check one.
-                if (!trackSize.isBreadth() || !trackSize.minTrackBreadth().isLength())
+                if (!trackSize.isBreadth())
                     return GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns;
 
-                auto& gridTrackBreadthLength = trackSize.minTrackBreadth().length();
-                if (!gridTrackBreadthLength.isFixed())
-                    return GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns;
-                return std::nullopt;
+                auto& minBreadth = trackSize.minTrackBreadth();
+
+                if (minBreadth.isLength()) {
+                    auto& gridTrackBreadthLength = minBreadth.length();
+                    // Length types like auto, min-content, max-content, etc. not yet supported
+                    if (!gridTrackBreadthLength.isFixed())
+                        return GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns;
+                    return std::nullopt;
+                }
+
+                if (minBreadth.isFlex()) {
+                    // Flex tracks (fr units) are now supported
+                    return std::nullopt;
+                }
+
+                ASSERT_NOT_REACHED();
+                return GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns;
             },
             [&](const Vector<String>& names) -> std::optional<GridAvoidanceReason> {
                 if (!names.isEmpty())
@@ -249,13 +283,26 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
             [&](const Style::GridTrackSize& trackSize) -> std::optional<GridAvoidanceReason> {
                 // Since a GridTrackSize type of Breadth sets the MinTrackBreadth and
                 // MaxTrackBreadth to the same value we only need to check one.
-                if (!trackSize.isBreadth() || !trackSize.minTrackBreadth().isLength())
+                if (!trackSize.isBreadth())
                     return GridAvoidanceReason::GridHasUnsupportedGridTemplateRows;
 
-                auto& gridTrackBreadthLength = trackSize.minTrackBreadth().length();
-                if (!gridTrackBreadthLength.isFixed())
-                    return GridAvoidanceReason::GridHasUnsupportedGridTemplateRows;
-                return std::nullopt;
+                auto& minBreadth = trackSize.minTrackBreadth();
+
+                if (minBreadth.isLength()) {
+                    auto& gridTrackBreadthLength = minBreadth.length();
+                    // Length types like auto, min-content, max-content, etc. not yet supported
+                    if (!gridTrackBreadthLength.isFixed())
+                        return GridAvoidanceReason::GridHasUnsupportedGridTemplateRows;
+                    return std::nullopt;
+                }
+
+                if (minBreadth.isFlex()) {
+                    // Flex tracks (fr units) are now supported
+                    return std::nullopt;
+                }
+
+                ASSERT_NOT_REACHED();
+                return GridAvoidanceReason::GridHasUnsupportedGridTemplateRows;
             },
             [&](const Vector<String>& names) -> std::optional<GridAvoidanceReason> {
                 if (!names.isEmpty())
@@ -282,6 +329,10 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
 
     if (renderGridStyle->usedContain().contains(Style::ContainValue::Size))
         ADD_REASON_AND_RETURN_IF_NEEDED(GridHasContainsSize, reasons, reasonCollectionMode);
+
+    ASSERT(renderGridStyle->gridAutoFlow().isRow(),
+        "If we end up supporting column auto flow before broader implicit grid support then the logic using explicitlyPlacedItemsInRowCount will need to be reworked to be based upon the auto flow direction");
+    Vector<size_t> explicitlyPlacedItemsInRowCount;
 
     for (CheckedRef gridItem : childrenOfType<RenderBox>(renderGrid)) {
         if (!gridItem->isRenderBlockFlow())
@@ -340,13 +391,18 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         auto linesFromGridTemplateRowsCount = gridTemplateRows.sizes.size() + 1;
         auto& columnStart = gridItemStyle->gridItemColumnStart();
         auto columnPositioningAvoidanceReason = WTF::switchOn(columnStart,
-            [&](const CSS::Keyword::Auto&) -> std::optional<GridAvoidanceReason> {
-                return GridAvoidanceReason::GridItemHasUnsupportedColumnPlacement;
+            [&](const CSS::Keyword::Auto& autoPosition) -> std::optional<GridAvoidanceReason> {
+                auto& columnEnd = gridItemStyle->gridItemColumnEnd();
+                if (!hasValidColumnEnd(autoPosition, columnEnd))
+                    return GridAvoidanceReason::GridItemHasUnsupportedColumnPlacement;
+                return { };
             },
             [&](const Style::GridPositionExplicit& explicitPosition) -> std::optional<GridAvoidanceReason> {
                 if (!columnStart.namedGridLine().isEmpty() || columnStart.explicitPosition() < 0 || columnStart.explicitPosition() > static_cast<int>(linesFromGridTemplateColumnsCount))
                     return GridAvoidanceReason::GridItemHasUnsupportedColumnPlacement;
-                return hasValidColumnEnd(explicitPosition, gridItemStyle->gridItemColumnEnd(), linesFromGridTemplateColumnsCount);
+                if (!hasValidColumnEnd(explicitPosition, gridItemStyle->gridItemColumnEnd(), linesFromGridTemplateColumnsCount))
+                    return GridAvoidanceReason::GridItemHasUnsupportedColumnPlacement;
+                return { };
             },
             [&](const Style::GridPositionSpan&) -> std::optional<GridAvoidanceReason> {
                 return GridAvoidanceReason::GridItemHasUnsupportedColumnPlacement;
@@ -367,9 +423,18 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
                 return GridAvoidanceReason::GridItemHasUnsupportedRowPlacement;
             },
             [&](const Style::GridPositionExplicit& explicitPosition) -> std::optional<GridAvoidanceReason> {
-                if (!rowStart.namedGridLine().isEmpty() || rowStart.explicitPosition() < 0 || rowStart.explicitPosition() > static_cast<int>(linesFromGridTemplateRowsCount))
+                auto rowStartLineNumber = explicitPosition.position.value;
+                if (!rowStart.namedGridLine().isEmpty() || rowStartLineNumber < 0 || rowStartLineNumber > static_cast<int>(linesFromGridTemplateRowsCount))
                     return GridAvoidanceReason::GridItemHasUnsupportedRowPlacement;
-                return hasValidRowEnd(explicitPosition, gridItemStyle->gridItemRowEnd(), linesFromGridTemplateRowsCount);
+
+                auto rowEnd = gridItemStyle->gridItemRowEnd();
+                if (!hasValidRowEnd(explicitPosition, rowEnd, linesFromGridTemplateRowsCount))
+                    return GridAvoidanceReason::GridItemHasUnsupportedRowPlacement;
+
+                ASSERT(rowEnd.isExplicit());
+                explicitlyPlacedItemsInRowCount.resize(rowStartLineNumber + 1);
+                ++explicitlyPlacedItemsInRowCount[rowStartLineNumber];
+                return { };
             },
             [&](const Style::GridPositionSpan&) -> std::optional<GridAvoidanceReason> {
                 return GridAvoidanceReason::GridItemHasUnsupportedRowPlacement;
@@ -383,6 +448,16 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
             ASSERT(rowPositioningAvoidanceReason == GridAvoidanceReason::GridItemHasUnsupportedRowPlacement);
             ADD_REASON_AND_RETURN_IF_NEEDED(GridItemHasUnsupportedRowPlacement, reasons, reasonCollectionMode);
         }
+
+        // If there are too many items in a given row compared to the total number of columns in the
+        // explicit grid, then we may need to add additional columns to the implicit grid to place
+        // them properly. We can be more fine grained than what we are doing now, but this is
+        // a good start as we allow more complex placements.
+        auto ineligibleRowIndex = explicitlyPlacedItemsInRowCount.findIf([&](size_t itemsInRowCount) {
+            return itemsInRowCount >= linesFromGridTemplateColumnsCount;
+        });
+        if (ineligibleRowIndex != notFound)
+            ADD_REASON_AND_RETURN_IF_NEEDED(GridItemHasUnsupportedRowPlacement, reasons, reasonCollectionMode);
 
         if (gridItemStyle->writingMode().isVertical())
             ADD_REASON_AND_RETURN_IF_NEEDED(GridItemHasVerticalWritingMode, reasons, reasonCollectionMode);

@@ -440,10 +440,10 @@ private:
 class ScheduledFormSubmission final : public ScheduledNavigation {
 public:
     ScheduledFormSubmission(Ref<FormSubmission>&& submission, LockBackForwardList lockBackForwardList, bool duringLoad)
-        : ScheduledNavigation(0, submission->lockHistory(), lockBackForwardList, duringLoad, true, submission->state().sourceDocument().shouldOpenExternalURLsPolicyToPropagate())
+        : ScheduledNavigation(0, submission->lockHistory(), lockBackForwardList, duringLoad, true, submission->state()->sourceDocument().shouldOpenExternalURLsPolicyToPropagate())
         , m_submission(WTF::move(submission))
     {
-        Ref requestingDocument = m_submission->state().sourceDocument();
+        Ref requestingDocument = m_submission->state()->sourceDocument();
         if (!requestingDocument->loadEventFinished() && !UserGestureIndicator::processingUserGesture())
             m_navigationHistoryBehavior = NavigationHistoryBehavior::Replace;
     }
@@ -460,10 +460,10 @@ public:
         // Now that the timer has fired, we need to repeat the security check which normally is done when
         // selecting a target, in case conditions have changed. Other code paths avoid this by targeting
         // without leaving a time window. If we fail the check just silently drop the form submission.
-        Ref requestingDocument = m_submission->state().sourceDocument();
+        Ref requestingDocument = m_submission->state()->sourceDocument();
         if (requestingDocument->canNavigate(&frame) != CanNavigateState::Able)
             return;
-        FrameLoadRequest frameLoadRequest { requestingDocument.copyRef(), requestingDocument->protectedSecurityOrigin(), { }, { }, initiatedByMainFrame() };
+        FrameLoadRequest frameLoadRequest { requestingDocument.copyRef(), protect(requestingDocument->securityOrigin()), { }, { }, initiatedByMainFrame() };
         frameLoadRequest.setLockHistory(lockHistory());
         frameLoadRequest.setLockBackForwardList(lockBackForwardList());
         frameLoadRequest.setReferrerPolicy(m_submission->referrerPolicy());
@@ -547,7 +547,7 @@ public:
         ResourceRequest resourceRequest { URL { originDocument->url() }, emptyString(), ResourceRequestCachePolicy::ReloadIgnoringCacheData };
         if (RefPtr documentLoader = originDocument->loader())
             resourceRequest.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
-        FrameLoadRequest frameLoadRequest { originDocument.copyRef(), originDocument->protectedSecurityOrigin(), WTF::move(resourceRequest), { }, initiatedByMainFrame() };
+        FrameLoadRequest frameLoadRequest { originDocument.copyRef(), protect(originDocument->securityOrigin()), WTF::move(resourceRequest), { }, initiatedByMainFrame() };
         frameLoadRequest.setLockHistory(lockHistory());
         frameLoadRequest.setLockBackForwardList(lockBackForwardList());
         frameLoadRequest.setSubstituteData(WTF::move(replacementData));
@@ -577,11 +577,6 @@ bool NavigationScheduler::locationChangePending()
     return m_redirect && m_redirect->isLocationChange() && m_redirect->targetIsCurrentFrame() && !m_redirect->isSameDocumentNavigation(m_frame);
 }
 
-Ref<Frame> NavigationScheduler::protectedFrame() const
-{
-    return m_frame;
-}
-
 void NavigationScheduler::clear()
 {
     m_timer.stop();
@@ -599,7 +594,7 @@ inline bool NavigationScheduler::shouldScheduleNavigation(const URL& url) const
         return false;
     if (url.protocolIsJavaScript())
         return true;
-    return NavigationDisabler::isNavigationAllowed(protectedFrame());
+    return NavigationDisabler::isNavigationAllowed(protect(m_frame));
 }
 
 void NavigationScheduler::scheduleRedirect(Document& initiatingDocument, double delay, const URL& url, IsMetaRefresh isMetaRefresh)
@@ -614,7 +609,7 @@ void NavigationScheduler::scheduleRedirect(Document& initiatingDocument, double 
     // We want a new back/forward list item if the refresh timeout is > 1 second.
     if (!m_redirect || delay <= m_redirect->delay()) {
         auto lockBackForwardList = delay <= 1 ? LockBackForwardList::Yes : LockBackForwardList::No;
-        schedule(makeUnique<ScheduledRedirect>(initiatingDocument, delay, downcast<LocalFrame>(m_frame.get()).document()->protectedSecurityOrigin().ptr(), url, LockHistory::Yes, lockBackForwardList, isMetaRefresh));
+        schedule(makeUnique<ScheduledRedirect>(initiatingDocument, delay, protect(downcast<LocalFrame>(m_frame.get()).document()->securityOrigin()).ptr(), url, LockHistory::Yes, lockBackForwardList, isMetaRefresh));
     }
 }
 
@@ -649,7 +644,7 @@ void NavigationScheduler::scheduleLocationChange(Document& initiatingDocument, S
     if (url.hasFragmentIdentifier()
         && localFrame
         && equalIgnoringFragmentIdentifier(localFrame->document()->url(), url)) {
-        ResourceRequest resourceRequest { localFrame->protectedDocument()->completeURL(url.string()), referrer, ResourceRequestCachePolicy::UseProtocolCachePolicy };
+        ResourceRequest resourceRequest { protect(localFrame->document())->completeURL(url.string()), referrer, ResourceRequestCachePolicy::UseProtocolCachePolicy };
         RefPtr frame = lexicalFrameFromCommonVM();
         auto initiatedByMainFrame = frame && frame->isMainFrame() ? InitiatedByMainFrame::Yes : InitiatedByMainFrame::Unknown;
         
@@ -710,9 +705,9 @@ void NavigationScheduler::scheduleFormSubmission(Ref<FormSubmission>&& submissio
     // If this is a child frame and the form submission was triggered by a script, lock the back/forward list
     // to match IE and Opera.
     // See https://bugs.webkit.org/show_bug.cgi?id=32383 for the original motivation for this.
-    LockBackForwardList lockBackForwardList = mustLockBackForwardList(protectedFrame());
+    LockBackForwardList lockBackForwardList = mustLockBackForwardList(protect(m_frame));
     if (lockBackForwardList == LockBackForwardList::No
-        && (submission->state().formSubmissionTrigger() == SubmittedByJavaScript && m_frame->tree().parent() && !UserGestureIndicator::processingUserGesture())) {
+        && (submission->state()->formSubmissionTrigger() == SubmittedByJavaScript && m_frame->tree().parent() && !UserGestureIndicator::processingUserGesture())) {
         lockBackForwardList = LockBackForwardList::Yes;
     }
 
@@ -722,7 +717,7 @@ void NavigationScheduler::scheduleFormSubmission(Ref<FormSubmission>&& submissio
 
     // FIXME: We currently run JavaScript URLs synchronously even though this doesn't appear to match the specification.
     if (isJavaScriptURL) {
-        scheduledFormSubmission->fire(protectedFrame());
+        scheduledFormSubmission->fire(protect(m_frame));
         return;
     }
     
@@ -738,7 +733,7 @@ void NavigationScheduler::scheduleRefresh(Document& initiatingDocument)
     if (url.isEmpty())
         return;
 
-    schedule(makeUnique<ScheduledRefresh>(initiatingDocument, frame->document()->protectedSecurityOrigin().ptr(), url, frame->loader().outgoingReferrer()));
+    schedule(makeUnique<ScheduledRefresh>(initiatingDocument, protect(protect(frame->document())->securityOrigin()).ptr(), url, frame->loader().outgoingReferrer()));
 }
 
 void NavigationScheduler::scheduleHistoryNavigation(int steps)
@@ -869,7 +864,7 @@ void NavigationScheduler::cancel(NewLoadInProgress newLoadInProgress)
     m_timer.stop();
 
     if (auto redirect = std::exchange(m_redirect, nullptr))
-        redirect->didStopTimer(protectedFrame(), newLoadInProgress);
+        redirect->didStopTimer(protect(m_frame), newLoadInProgress);
 }
 
 bool NavigationScheduler::hasQueuedNavigation() const

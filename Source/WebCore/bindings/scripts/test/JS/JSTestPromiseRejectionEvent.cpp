@@ -32,7 +32,6 @@
 #include "JSDOMConvertAny.h"
 #include "JSDOMConvertBoolean.h"
 #include "JSDOMConvertInterface.h"
-#include "JSDOMConvertOptional.h"
 #include "JSDOMConvertPromise.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
@@ -84,7 +83,7 @@ template<> ConversionResult<IDLDictionary<TestPromiseRejectionEvent::Init>> conv
         bubblesValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "bubbles"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto bubblesConversionResult = convertOptionalWithDefault<IDLBoolean>(lexicalGlobalObject, bubblesValue, [&]() -> ConversionResult<IDLBoolean> { return Converter<IDLBoolean>::ReturnType { false }; });
+    auto bubblesConversionResult = convert<IDLBoolean>(lexicalGlobalObject, bubblesValue);
     if (bubblesConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
     JSValue cancelableValue;
@@ -94,7 +93,7 @@ template<> ConversionResult<IDLDictionary<TestPromiseRejectionEvent::Init>> conv
         cancelableValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "cancelable"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto cancelableConversionResult = convertOptionalWithDefault<IDLBoolean>(lexicalGlobalObject, cancelableValue, [&]() -> ConversionResult<IDLBoolean> { return Converter<IDLBoolean>::ReturnType { false }; });
+    auto cancelableConversionResult = convert<IDLBoolean>(lexicalGlobalObject, cancelableValue);
     if (cancelableConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
     JSValue composedValue;
@@ -104,7 +103,7 @@ template<> ConversionResult<IDLDictionary<TestPromiseRejectionEvent::Init>> conv
         composedValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "composed"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto composedConversionResult = convertOptionalWithDefault<IDLBoolean>(lexicalGlobalObject, composedValue, [&]() -> ConversionResult<IDLBoolean> { return Converter<IDLBoolean>::ReturnType { false }; });
+    auto composedConversionResult = convert<IDLBoolean>(lexicalGlobalObject, composedValue);
     if (composedConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
     JSValue promiseValue;
@@ -128,7 +127,7 @@ template<> ConversionResult<IDLDictionary<TestPromiseRejectionEvent::Init>> conv
         reasonValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "reason"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto reasonConversionResult = convertOptionalWithDefault<IDLAny>(lexicalGlobalObject, reasonValue, [&]() -> ConversionResult<IDLAny> { return Converter<IDLAny>::ReturnType { jsUndefined() }; });
+    auto reasonConversionResult = convert<IDLAny>(lexicalGlobalObject, reasonValue);
     if (reasonConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
     return TestPromiseRejectionEvent::Init {

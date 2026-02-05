@@ -1,5 +1,4 @@
 
-
-FAIL Test that timing allow check fails when service worker changes origin from same to cross origin (cors). assert_equals: domainLookupStart should be 0 in cross-origin request. expected 7 but got 0
-FAIL Test that timing allow check fails when service worker changes origin from same to cross origin (no-cors). assert_equals: domainLookupStart should be 0 in cross-origin request. expected 7 but got 0
+PASS Test that timing allow check fails when service worker changes origin from same to cross origin (cors).
+PASS Test that timing allow check fails when service worker changes origin from same to cross origin (no-cors).
 

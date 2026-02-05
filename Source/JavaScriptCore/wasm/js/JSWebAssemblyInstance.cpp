@@ -380,9 +380,11 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* insta
     }
 
 
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
     // Register with debugger after memory and anchor are fully initialized.
     if (Options::enableWasmDebugger()) [[unlikely]]
         Wasm::DebugServer::singleton().trackInstance(jsInstance);
+#endif
 
     return jsInstance;
 }

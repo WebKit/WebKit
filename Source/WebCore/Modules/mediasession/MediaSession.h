@@ -34,6 +34,7 @@
 #include <WebCore/MediaSessionActionHandler.h>
 #include <WebCore/MediaSessionPlaybackState.h>
 #include <WebCore/MediaSessionReadyState.h>
+#include <WebCore/PlatformMediaSessionInterface.h>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Logger.h>
 #include <wtf/MonotonicTime.h>
@@ -51,6 +52,7 @@ class MediaSessionCoordinator;
 class MediaSessionCoordinatorPrivate;
 class MediaSessionManagerInterface;
 class Navigator;
+class PlatformMediaSession;
 struct NowPlayingInfo;
 template<typename> class DOMPromiseDeferred;
 template<typename> class ExceptionOr;
@@ -69,14 +71,18 @@ public:
 #endif
 };
 
-class MediaSession : public RefCounted<MediaSession>, public ActiveDOMObject {
+class MediaSession final
+    : public RefCounted<MediaSession>
+    , public PlatformMediaSessionClient
+    , public ActiveDOMObject {
     WTF_MAKE_TZONE_ALLOCATED(MediaSession);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaSession);
 public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
     static Ref<MediaSession> create(Navigator&);
-    ~MediaSession();
+    WEBCORE_EXPORT virtual ~MediaSession();
 
     MediaMetadata* metadata() const { return m_metadata.get(); };
     void setMetadata(RefPtr<MediaMetadata>&&);
@@ -99,7 +105,6 @@ public:
     void willPausePlayback();
 
     WEBCORE_EXPORT Document* document() const;
-    RefPtr<Document> protectedDocument() const;
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     MediaSessionReadyState readyState() const { return m_readyState; };
@@ -164,9 +169,24 @@ private:
     void stop() final;
     bool virtualHasPendingActivity() const final;
 
-    RefPtr<MediaSessionManagerInterface> sessionManager() const;
+    // PlatformMediaSessionManagerInterface:
+    RefPtr<MediaSessionManagerInterface> sessionManager() const final;
+    PlatformMediaSessionMediaType mediaType() const final { return PlatformMediaSessionMediaType::DOMMediaSession; }
+    PlatformMediaSessionMediaType presentationType() const final { return PlatformMediaSessionMediaType::DOMMediaSession; }
+    void mayResumePlayback(bool shouldResume) final;
+    void suspendPlayback() final;
+    bool isPlaying() const final;
+    bool isAudible() const final { return false; }
+    bool isEnded() const final;
+    MediaTime mediaSessionDuration() const final;
+    bool canReceiveRemoteControlCommands() const final { return false; }
+    void didReceiveRemoteControlCommand(PlatformMediaSessionRemoteControlCommandType, const PlatformMediaSessionRemoteCommandArgument&) final { }
+    bool supportsSeeking() const final { return false; }
+    bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSessionInterruptionType) const final { return false; }
+    std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier() const final;
 
     WeakPtr<Navigator> m_navigator;
+    Ref<PlatformMediaSession> m_platformSession;
     RefPtr<MediaMetadata> m_metadata;
     RefPtr<MediaMetadata> m_defaultMetadata;
     MediaSessionPlaybackState m_playbackState { MediaSessionPlaybackState::None };

@@ -38,6 +38,7 @@
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <JavaScriptCore/Microtask.h>
 #include <JavaScriptCore/RegularExpression.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -250,7 +251,7 @@ private:
     const Ref<DebuggerBackendDispatcher> m_backendDispatcher;
 
     JSC::Debugger& m_debugger;
-    InjectedScriptManager& m_injectedScriptManager;
+    const CheckedRef<InjectedScriptManager> m_injectedScriptManager;
     UncheckedKeyHashMap<JSC::SourceID, JSC::Debugger::Script> m_scripts;
 
     struct BlackboxedScript {

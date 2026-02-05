@@ -118,7 +118,7 @@ void NetworkCORSPreflightChecker::didReceiveChallenge(WebCore::AuthenticationCha
         return;
     }
 
-    m_networkProcess->protectedAuthenticationManager()->didReceiveAuthenticationChallenge(m_parameters.sessionID, m_parameters.webPageProxyID, &m_parameters.topOrigin->data(), challenge, negotiatedLegacyTLS, WTF::move(completionHandler));
+    protect(m_networkProcess->authenticationManager())->didReceiveAuthenticationChallenge(m_parameters.sessionID, m_parameters.webPageProxyID, &m_parameters.topOrigin->data(), challenge, negotiatedLegacyTLS, WTF::move(completionHandler));
 }
 
 void NetworkCORSPreflightChecker::didReceiveResponse(WebCore::ResourceResponse&& response, NegotiatedLegacyTLS, PrivateRelayed, ResponseCompletionHandler&& completionHandler)

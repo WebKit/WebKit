@@ -56,6 +56,7 @@ public:
     void pushNewBuffer(GRefPtr<GstBuffer>&&);
     void resetParserState();
     void stopParser();
+    void startChangingType();
     SourceBufferPrivateGStreamer& sourceBufferPrivate() { return m_sourceBufferPrivate; }
     MediaPlayerPrivateGStreamerMSE* playerPrivate() { return m_playerPrivate; }
 
@@ -80,6 +81,8 @@ private:
         GRefPtr<GstCaps> finalCaps;
         FloatSize presentationSize;
 
+        gboolean ongoingChangeType { false };
+
         // Needed by some formats. To simplify the code, parser/encoder can be a GstIdentity when not needed.
         GRefPtr<GstElement> parser;
         GRefPtr<GstElement> encoder;
@@ -102,6 +105,8 @@ private:
         bool isLinked() const { return gst_pad_is_linked(entryPad.get()); }
     };
 
+    void resetElementsForChangeType();
+    void setupDemuxing();
     void configureOptionalDemuxerFromAnyThread();
     void removeParserForDemuxerPad(const GRefPtr<GstPad>&);
     void handleErrorSyncMessage(GstMessage*);
@@ -146,6 +151,7 @@ private:
     Thread* m_streamingThread;
 
     bool m_hasReceivedFirstInitializationSegment { false };
+    bool m_pendingInitializationSegmentForChangeType { false };
     // Used only for asserting EOS events are only caused by demuxing errors.
     bool m_errorReceived { false };
 

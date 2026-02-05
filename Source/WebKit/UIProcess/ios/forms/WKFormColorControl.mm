@@ -88,7 +88,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)updateColorPickerState
 {
     [_colorPickerViewController setSelectedColor:cocoaColor(_view.focusedElementInformation.colorValue).get()];
-    [_colorPickerViewController setSupportsAlpha:_view.focusedElementInformation.supportsAlpha == WebKit::ColorControlSupportsAlpha::Yes && _view.page->preferences().inputTypeColorEnhancementsEnabled()];
+    [_colorPickerViewController setSupportsAlpha:_view.focusedElementInformation.supportsAlpha == WebKit::ColorControlSupportsAlpha::Yes && protect(_view.page)->preferences().inputTypeColorEnhancementsEnabled()];
     if ([_colorPickerViewController respondsToSelector:@selector(_setSuggestedColors:)])
         [_colorPickerViewController _setSuggestedColors:[self focusedElementSuggestedColors]];
 }
@@ -117,8 +117,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self updateColorPickerState];
     [self configurePresentation];
 
-    auto presentingViewController = _view._wk_viewControllerForFullScreenPresentation;
-    [presentingViewController presentViewController:_colorPickerViewController.get() animated:YES completion:nil];
+    RetainPtr<UIViewController> presentingViewController = _view._wk_viewControllerForFullScreenPresentation;
+#if PLATFORM(VISION)
+    [_view page]->dispatchWillPresentModalUI();
+#endif
+    [presentingViewController.get() presentViewController:_colorPickerViewController.get() animated:YES completion:nil];
 }
 
 - (void)controlUpdateEditing

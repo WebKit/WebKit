@@ -27,6 +27,7 @@
 
 #include <wtf/CheckedRef.h>
 #include <wtf/RawPtrTraits.h>
+#include <wtf/TypeTraits.h>
 
 namespace WTF {
 
@@ -204,6 +205,19 @@ struct IsSmartPtr<CheckedPtr<T, U>> {
     static constexpr bool isNullable = false;
 };
 
+template<typename T, typename PtrTraits = RawPtrTraits<T>>
+    requires (HasCheckedPtrMemberFunctions<T>::value && !HasRefPtrMemberFunctions<T>::value)
+ALWAYS_INLINE CLANG_POINTER_CONVERSION CheckedPtr<T, PtrTraits> protect(T* ptr)
+{
+    return CheckedPtr<T, PtrTraits>(ptr);
+}
+
+template<typename T, typename PtrTraits>
+ALWAYS_INLINE CLANG_POINTER_CONVERSION CheckedPtr<T, PtrTraits> protect(const CheckedPtr<T, PtrTraits>& ptr)
+{
+    return ptr;
+}
+
 template<typename ExpectedType, typename ArgType, typename ArgPtrTraits>
 inline bool is(CheckedPtr<ArgType, ArgPtrTraits>& source)
 {
@@ -242,4 +256,5 @@ template<typename T> using PackedCheckedPtr = CheckedPtr<T, PackedPtrTraits<T>>;
 
 using WTF::CheckedPtr;
 using WTF::PackedCheckedPtr;
+using WTF::protect;
 

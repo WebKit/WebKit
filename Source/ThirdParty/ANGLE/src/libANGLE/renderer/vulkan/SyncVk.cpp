@@ -441,7 +441,7 @@ angle::Result SyncHelperNativeFence::initializeWithFd(ContextVk *contextVk, int 
     */
     // Flush current pending set of commands providing the fence...
     ANGLE_TRY(contextVk->flushAndSubmitCommands(nullptr, &mExternalFence,
-                                                RenderPassClosureReason::SyncObjectWithFdInit));
+                                                QueueSubmitReason::SyncObjectWithFdInit));
 
     ANGLE_VK_TRY(contextVk, mExternalFence->getFenceFdStatus());
 
@@ -473,7 +473,7 @@ angle::Result SyncHelperNativeFence::prepareForClientWait(ErrorContext *context,
     if (flushCommands && contextVk)
     {
         ANGLE_TRY(contextVk->flushAndSubmitCommands(nullptr, nullptr,
-                                                    RenderPassClosureReason::SyncObjectClientWait));
+                                                    QueueSubmitReason::SyncObjectClientWait));
     }
 
     *resultOut = VK_INCOMPLETE;

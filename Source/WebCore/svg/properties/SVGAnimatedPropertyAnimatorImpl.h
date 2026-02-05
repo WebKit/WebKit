@@ -31,6 +31,7 @@
 #include "SVGAnimationAdditiveListFunctionImpl.h"
 #include "SVGAnimationAdditiveValueFunctionImpl.h"
 #include "SVGAnimationDiscreteFunctionImpl.h"
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -55,6 +56,8 @@ public:
     }
 
 private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::Angle; }
+
     void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         m_function.animate(targetElement, progress, repeatCount, m_animated->animVal().value());
@@ -74,6 +77,8 @@ public:
     }
 
 private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::Boolean; }
+
     void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         bool& animated = m_animated->animVal();
@@ -96,6 +101,8 @@ public:
     }
 
 private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::Enumeration; }
+
     void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         EnumType animated;
@@ -121,6 +128,8 @@ public:
     }
 
 private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::Integer; }
+
     void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         m_function.animate(targetElement, progress, repeatCount, m_animated->animVal());
@@ -143,6 +152,8 @@ public:
     }
 
 private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::Length; }
+
     void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         m_function.animate(targetElement, progress, repeatCount, m_animated->animVal().value());
@@ -165,6 +176,8 @@ public:
     }
 
 private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::LengthList; }
+
     void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         m_function.animate(targetElement, progress, repeatCount, m_animated->animVal());
@@ -185,6 +198,8 @@ public:
     }
 
 private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::Number; }
+
     void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         m_function.animate(targetElement, progress, repeatCount, m_animated->animVal());
@@ -201,8 +216,10 @@ public:
     {
         return adoptRef(*new SVGAnimatedNumberListAnimator(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive));
     }
-    
+
 private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::NumberList; }
+
     void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         m_function.animate(targetElement, progress, repeatCount, m_animated->animVal());
@@ -221,6 +238,8 @@ public:
     }
 
 private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::PathSegList; }
+
     void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         m_animated->animVal().pathByteStreamWillChange();
@@ -238,8 +257,10 @@ public:
     {
         return adoptRef(*new SVGAnimatedPointListAnimator(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive));
     }
-    
+
 private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::PointList; }
+
     void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         m_function.animate(targetElement, progress, repeatCount, m_animated->animVal());
@@ -260,6 +281,8 @@ public:
     }
 
 private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::OrientType; }
+
     void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         SVGMarkerOrientType animated;
@@ -280,6 +303,8 @@ public:
     }
 
 private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::PreserveAspectRatio; }
+
     void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         SVGPreserveAspectRatioValue& animated = m_animated->animVal().value();
@@ -300,6 +325,8 @@ public:
     }
 
 private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::Rect; }
+
     void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         m_function.animate(targetElement, progress, repeatCount, m_animated->animVal().value());
@@ -318,6 +345,8 @@ public:
     }
 
 private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::String; }
+
     bool isAnimatedStyleClassAnimator() const
     {
         return m_attributeName.matches(HTMLNames::classAttr);
@@ -359,6 +388,8 @@ public:
     }
 
 private:
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::TransformList; }
+
     void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         m_function.animate(targetElement, progress, repeatCount, m_animated->animVal());
@@ -366,3 +397,68 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedAngleAnimator)
+    static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::Angle; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedBooleanAnimator)
+    static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::Boolean; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+// Type trait for template class SVGAnimatedEnumerationAnimator
+namespace WTF {
+template<typename EnumType, typename ArgType>
+class TypeCastTraits<const WebCore::SVGAnimatedEnumerationAnimator<EnumType>, ArgType, false> {
+public:
+    static bool isOfType(ArgType& source) { return source.animatorType() == WebCore::SVGAnimatorType::Enumeration; }
+};
+}
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedIntegerAnimator)
+    static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::Integer; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedLengthAnimator)
+    static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::Length; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedLengthListAnimator)
+    static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::LengthList; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedNumberAnimator)
+    static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::Number; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedNumberListAnimator)
+    static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::NumberList; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedPathSegListAnimator)
+    static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::PathSegList; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedPointListAnimator)
+    static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::PointList; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedOrientTypeAnimator)
+    static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::OrientType; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedPreserveAspectRatioAnimator)
+    static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::PreserveAspectRatio; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedRectAnimator)
+    static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::Rect; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedStringAnimator)
+    static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::String; }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedTransformListAnimator)
+    static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::TransformList; }
+SPECIALIZE_TYPE_TRAITS_END()

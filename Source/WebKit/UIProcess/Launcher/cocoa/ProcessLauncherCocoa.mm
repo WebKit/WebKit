@@ -78,8 +78,6 @@ static std::pair<ASCIILiteral, RetainPtr<NSString>> serviceNameAndIdentifier(Pro
     case ProcessLauncher::ProcessType::Web: {
         bool useCaptivePortal = client && client->shouldEnableLockdownMode();
         bool useEnhancedSecurity = client && client->shouldEnableEnhancedSecurity();
-        if (client && !useCaptivePortal && lockdownModeEnabledBySystem())
-            useEnhancedSecurity = true;
         if (!hasExtensionsInAppBundle) {
             if (!useCaptivePortal && !useEnhancedSecurity)
                 return { "com.apple.WebKit.WebContent"_s, @"com.apple.WebKit.WebContent" };
@@ -160,8 +158,6 @@ static ASCIILiteral webContentServiceName(const ProcessLauncher::LaunchOptions& 
 {
     bool useCaptivePortal = client && client->shouldEnableLockdownMode();
     bool useEnhancedSecurity = client && client->shouldEnableEnhancedSecurity();
-    if (client && !useCaptivePortal && lockdownModeEnabledBySystem())
-        useEnhancedSecurity = true;
 
     if (useCaptivePortal)
         return "com.apple.WebKit.WebContent.CaptivePortal"_s;
@@ -245,7 +241,7 @@ void ProcessLauncher::launchProcess()
                     return;
                 auto name = serviceName(launcher->m_launchOptions, launcher->m_client);
                 // FIXME: This is a false positive. <rdar://164843889>
-                SUPPRESS_RETAINPTR_CTOR_ADOPT launcher->m_xpcConnection = adoptXPCObject(xpc_connection_create(name, nullptr));
+                SUPPRESS_RETAINPTR_CTOR_ADOPT launcher->m_xpcConnection = adoptOSObject(xpc_connection_create(name, nullptr));
                 launcher->finishLaunchingProcess(name);
             });
 #endif
@@ -283,7 +279,7 @@ void ProcessLauncher::launchProcess()
 #else
     auto name = serviceName(m_launchOptions, m_client.get());
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT m_xpcConnection = adoptXPCObject(xpc_connection_create(name, nullptr));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT m_xpcConnection = adoptOSObject(xpc_connection_create(name, nullptr));
     finishLaunchingProcess(name);
 #endif
 }
@@ -301,7 +297,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
     // 2. When AppleLanguages is passed as command line argument for UI process, or set in its preferences, we should respect it in child processes.
 #if !USE(EXTENSIONKIT)
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto initializationMessage = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto initializationMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     _CFBundleSetupXPCBootstrap(initializationMessage.get());
     xpc_connection_set_bootstrap(m_xpcConnection.get(), initializationMessage.get());
 #endif
@@ -335,7 +331,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
 
     // FIXME: Switch to xpc_connection_set_bootstrap once it's available everywhere we need.
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto bootstrapMessage = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto bootstrapMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     xpc_dictionary_set_string(bootstrapMessage.get(), "WebKitBundleVersion", WEBKIT_BUNDLE_VERSION);
@@ -345,7 +341,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
     if (languagesIterator != m_launchOptions.extraInitializationData.end()) {
         LOG_WITH_STREAM(Language, stream << "Process Launcher is copying OverrideLanguages into initialization message: " << languagesIterator->value);
         // FIXME: This is a false positive. <rdar://164843889>
-        SUPPRESS_RETAINPTR_CTOR_ADOPT auto languages = adoptXPCObject(xpc_array_create(nullptr, 0));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT auto languages = adoptOSObject(xpc_array_create(nullptr, 0));
         for (auto language : StringView(languagesIterator->value).split(','))
             xpc_array_set_string(languages.get(), XPC_ARRAY_APPEND, language.utf8().data());
         xpc_dictionary_set_value(bootstrapMessage.get(), "OverrideLanguages", languages.get());
@@ -417,7 +413,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
     xpc_dictionary_set_data(bootstrapMessage.get(), "client-sdk-aligned-behaviors", sdkBehaviorBytes.data(), sdkBehaviorBytes.size());
 
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto extraInitializationData = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto extraInitializationData = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
 
     for (const auto& keyValuePair : m_launchOptions.extraInitializationData)
         xpc_dictionary_set_string(extraInitializationData.get(), keyValuePair.key.utf8().data(), keyValuePair.value.utf8().data());
@@ -465,7 +461,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
     Function<void(xpc_object_t)> eventHandler = [errorHandlerImpl = WTF::move(errorHandlerImpl), xpcEventHandler = client->xpcEventHandler()] (xpc_object_t event) mutable {
 
         if (!event || xpc_get_type(event) == XPC_TYPE_ERROR) {
-            RunLoop::mainSingleton().dispatch([errorHandlerImpl = std::exchange(errorHandlerImpl, nullptr), event = XPCObjectPtr<xpc_object_t> { event }] {
+            RunLoop::mainSingleton().dispatch([errorHandlerImpl = std::exchange(errorHandlerImpl, nullptr), event = OSObjectPtr<xpc_object_t> { event }] {
                 if (errorHandlerImpl)
                     errorHandlerImpl(event.get());
                 else if (event.get() != XPC_ERROR_CONNECTION_INVALID)
@@ -475,7 +471,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
         }
 
         if (xpcEventHandler) {
-            RunLoop::mainSingleton().dispatch([xpcEventHandler = xpcEventHandler, event = XPCObjectPtr<xpc_object_t> { event }] {
+            RunLoop::mainSingleton().dispatch([xpcEventHandler = xpcEventHandler, event = OSObjectPtr<xpc_object_t> { event }] {
                 xpcEventHandler->handleXPCEvent(event.get());
             });
         }

@@ -62,7 +62,7 @@ auto HTMLArticleElement::insertedIntoAncestor(InsertionType insertionType, Conta
 void HTMLArticleElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (removalType.disconnectedFromDocument)
-        oldParentOfRemovedTree.protectedDocument()->unregisterArticleElement(*this);
+        protect(oldParentOfRemovedTree.document())->unregisterArticleElement(*this);
 
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 }

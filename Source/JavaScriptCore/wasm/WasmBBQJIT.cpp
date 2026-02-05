@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "WasmBBQJIT.h"
-#include "WasmBBQJIT32_64.h"
 #include "WasmBBQJIT64.h"
 
 #if ENABLE(WEBASSEMBLY_BBQJIT)
@@ -3918,8 +3917,13 @@ void BBQJIT::prepareForExceptions()
 
     constexpr unsigned minCasesForTable = 7;
     if (minCasesForTable <= targets.size()) {
+#if USE(JSVALUE64)
+        auto* jumpTable = m_callee.addJumpTable(targets.size() + 1);
+        m_jit.moveConditionally32(RelationalCondition::AboveOrEqual, wasmScratchGPR, TrustedImm32(targets.size()), TrustedImm32(targets.size()), wasmScratchGPR, wasmScratchGPR);
+#else
         auto* jumpTable = m_callee.addJumpTable(targets.size());
         auto fallThrough = m_jit.branch32(RelationalCondition::AboveOrEqual, wasmScratchGPR, TrustedImm32(targets.size()));
+#endif
         m_jit.zeroExtend32ToWord(wasmScratchGPR, wasmScratchGPR);
         if constexpr (is64Bit())
             m_jit.lshiftPtr(TrustedImm32(3), wasmScratchGPR);
@@ -3941,13 +3945,16 @@ void BBQJIT::prepareForExceptions()
             }
             return label;
         });
+#if USE(JSVALUE64)
+        labels.append(Box<CCallHelpers::Label>::create(m_jit.label()));
+#else
+        fallThrough.link(&m_jit);
+#endif
 
         m_jit.addLinkTask([labels = WTF::move(labels), jumpTable](LinkBuffer& linkBuffer) {
             for (unsigned index = 0; index < labels.size(); ++index)
                 jumpTable->at(index) = linkBuffer.locationOf<JSSwitchPtrTag>(*labels[index]);
         });
-
-        fallThrough.link(&m_jit);
     } else {
         Vector<int64_t, 16> cases(targets.size(), [](size_t i) { return i; });
 
@@ -5671,11 +5678,9 @@ void BBQJIT::emitArrayGetPayload(StorageType type, GPRReg arrayGPR, GPRReg paylo
         return;
     }
 
-    // FIXME: This could probably use a moveConditionally but we don't have enough scratches and this case is unlikely to exist in practice.
-    m_jit.addPtr(MacroAssembler::TrustedImm32(JSWebAssemblyArray::offsetOfData()), arrayGPR, payloadGPR);
-    auto precise = m_jit.branchTestPtr(MacroAssembler::NonZero, arrayGPR, MacroAssembler::TrustedImm32(PreciseAllocation::halfAlignment));
-    m_jit.addPtr(MacroAssembler::TrustedImm32(JSWebAssemblyArray::v128AlignmentShift), payloadGPR, payloadGPR);
-    precise.link(m_jit);
+    // Round-up to 16x for PreciseAllocation + V128 array data handling.
+    m_jit.addPtr(MacroAssembler::TrustedImm32(JSWebAssemblyArray::offsetOfData() + 15), arrayGPR, payloadGPR);
+    m_jit.andPtr(MacroAssembler::TrustedImm32(-16), payloadGPR);
 }
 
 } // namespace JSC::Wasm::BBQJITImpl

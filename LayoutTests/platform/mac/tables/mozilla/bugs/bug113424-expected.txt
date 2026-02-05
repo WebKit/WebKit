@@ -19,33 +19,33 @@ layer at (0,0) size 800x600
                         RenderTableSection {TBODY} at (0,0) size 297x55
                           RenderTableRow {TR} at (0,1) size 297x17 [bgcolor=#CD9944]
                             RenderTableCell {TD} at (1,1) size 107x17 [r=0 c=0 rs=1 cs=1]
-                              RenderInline {FONT} at (3,3) size 39x11 [color=#FFFFFF]
-                                RenderText {#text} at (3,3) size 39x11
-                                  text run at (3,3) width 39: "Funktion"
+                              RenderInline {FONT} at (3,2) size 39x13 [color=#FFFFFF]
+                                RenderText {#text} at (3,2) size 39x13
+                                  text run at (3,2) width 39: "Funktion"
                           RenderTableRow {TR} at (0,19) size 297x17 [bgcolor=#E7E7AD]
                             RenderTableCell {TD} at (1,19) size 107x17 [r=1 c=0 rs=1 cs=1]
-                              RenderInline {FONT} at (3,3) size 63x11
-                                RenderText {#text} at (3,3) size 63x11
-                                  text run at (3,3) width 63: "Umlaufrendite"
+                              RenderInline {FONT} at (3,2) size 63x13
+                                RenderText {#text} at (3,2) size 63x13
+                                  text run at (3,2) width 63: "Umlaufrendite"
                           RenderTableRow {TR} at (0,37) size 297x17 [bgcolor=#E7DEA5]
                             RenderTableCell {TD} at (1,37) size 107x17 [r=2 c=0 rs=1 cs=1]
-                              RenderInline {FONT} at (3,3) size 68x11
-                                RenderText {#text} at (3,3) size 68x11
-                                  text run at (3,3) width 68: "10 Jahre US %"
+                              RenderInline {FONT} at (3,2) size 68x13
+                                RenderText {#text} at (3,2) size 68x13
+                                  text run at (3,2) width 68: "10 Jahre US %"
                             RenderTableCell {TD} at (108,37) size 37x17 [r=2 c=1 rs=1 cs=1]
-                              RenderInline {FONT} at (3,3) size 20x11
-                                RenderText {#text} at (3,3) size 20x11
-                                  text run at (3,3) width 20: "4,75"
+                              RenderInline {FONT} at (3,2) size 20x13
+                                RenderText {#text} at (3,2) size 20x13
+                                  text run at (3,2) width 20: "4,75"
                             RenderTableCell {TD} at (145,37) size 26x17 [r=2 c=2 rs=1 cs=1]
                               RenderImage {IMG} at (6,3) size 12x11
                             RenderTableCell {TD} at (171,37) size 43x17 [r=2 c=3 rs=1 cs=1]
-                              RenderInline {FONT} at (3,3) size 23x11
-                                RenderText {#text} at (3,3) size 23x11
-                                  text run at (3,3) width 23: "-0.02"
+                              RenderInline {FONT} at (3,2) size 23x13
+                                RenderText {#text} at (3,2) size 23x13
+                                  text run at (3,2) width 23: "-0.02"
                             RenderTableCell {TD} at (214,37) size 50x17 [r=2 c=4 rs=1 cs=1]
-                              RenderInline {FONT} at (3,3) size 28x11
-                                RenderText {#text} at (3,3) size 28x11
-                                  text run at (3,3) width 28: "03.12."
+                              RenderInline {FONT} at (3,2) size 28x13
+                                RenderText {#text} at (3,2) size 28x13
+                                  text run at (3,2) width 28: "03.12."
                             RenderTableCell {TD} at (264,37) size 33x17 [r=2 c=5 rs=1 cs=1]
                               RenderInline {FONT} at (7,4) size 17x12
                                 RenderInline {A} at (7,4) size 17x12 [color=#0000EE]
@@ -55,9 +55,9 @@ layer at (0,0) size 800x600
                         RenderTableSection {TBODY} at (0,0) size 297x55
                           RenderTableRow {TR} at (0,1) size 297x17 [bgcolor=#CD9944]
                             RenderTableCell {TD} at (1,1) size 203x17 [r=0 c=0 rs=1 cs=1]
-                              RenderInline {FONT} at (3,3) size 43x11 [color=#FFFFFF]
-                                RenderText {#text} at (3,3) size 43x11
-                                  text run at (3,3) width 43: "Rohstoffe"
+                              RenderInline {FONT} at (3,2) size 43x13 [color=#FFFFFF]
+                                RenderText {#text} at (3,2) size 43x13
+                                  text run at (3,2) width 43: "Rohstoffe"
                           RenderTableRow {TR} at (0,19) size 297x17 [bgcolor=#E7E7AD]
                             RenderTableCell {TD} at (1,19) size 203x17 [r=1 c=0 rs=1 cs=1]
                               RenderImage {IMG} at (95,3) size 12x11

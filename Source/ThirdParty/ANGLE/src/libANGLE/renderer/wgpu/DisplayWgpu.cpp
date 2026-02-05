@@ -61,6 +61,14 @@ egl::Error DisplayWgpu::initialize(egl::Display *display)
         attribs.get(EGL_PLATFORM_ANGLE_DAWN_PROC_TABLE_ANGLE,
                                           reinterpret_cast<EGLAttrib>(&webgpu::GetDefaultProcTable())));
 
+    WGPUInstance providedInstance =
+        reinterpret_cast<WGPUInstance>(attribs.get(EGL_PLATFORM_ANGLE_WEBGPU_INSTANCE_ANGLE, 0));
+    if (providedInstance)
+    {
+        mProcTable.instanceAddRef(providedInstance);
+        mInstance = webgpu::InstanceHandle::Acquire(&mProcTable, providedInstance);
+    }
+
     WGPUDevice providedDevice =
         reinterpret_cast<WGPUDevice>(attribs.get(EGL_PLATFORM_ANGLE_WEBGPU_DEVICE_ANGLE, 0));
     if (providedDevice)
@@ -70,8 +78,12 @@ egl::Error DisplayWgpu::initialize(egl::Display *display)
 
         mAdapter =
             webgpu::AdapterHandle::Acquire(&mProcTable, mProcTable.deviceGetAdapter(mDevice.get()));
-        mInstance = webgpu::InstanceHandle::Acquire(&mProcTable,
-                                                    mProcTable.adapterGetInstance(mAdapter.get()));
+
+        if (!mInstance)
+        {
+            mInstance = webgpu::InstanceHandle::Acquire(
+                &mProcTable, mProcTable.adapterGetInstance(mAdapter.get()));
+        }
     }
     else
     {
@@ -398,12 +410,15 @@ void DisplayWgpu::initializeFeatures()
 
 egl::Error DisplayWgpu::createWgpuDevice()
 {
-    WGPUInstanceDescriptor instanceDescriptor          = WGPU_INSTANCE_DESCRIPTOR_INIT;
-    static constexpr auto kTimedWaitAny     = WGPUInstanceFeatureName_TimedWaitAny;
-    instanceDescriptor.requiredFeatureCount = 1;
-    instanceDescriptor.requiredFeatures     = &kTimedWaitAny;
-    mInstance = webgpu::InstanceHandle::Acquire(&mProcTable,
-                                                mProcTable.createInstance(&instanceDescriptor));
+    if (!mInstance)
+    {
+        WGPUInstanceDescriptor instanceDescriptor = WGPU_INSTANCE_DESCRIPTOR_INIT;
+        static constexpr auto kTimedWaitAny       = WGPUInstanceFeatureName_TimedWaitAny;
+        instanceDescriptor.requiredFeatureCount   = 1;
+        instanceDescriptor.requiredFeatures       = &kTimedWaitAny;
+        mInstance                                 = webgpu::InstanceHandle::Acquire(&mProcTable,
+                                                                                    mProcTable.createInstance(&instanceDescriptor));
+    }
 
     struct RequestAdapterResult
     {
@@ -458,8 +473,42 @@ egl::Error DisplayWgpu::createWgpuDevice()
                   << " - message: " << std::string(message.data, message.length);
         };
 
-    mDevice = webgpu::DeviceHandle::Acquire(
-        &mProcTable, mProcTable.adapterCreateDevice(mAdapter.get(), &deviceDesc));
+    struct RequestDeviceResult
+    {
+        WGPURequestDeviceStatus status;
+        webgpu::DeviceHandle device;
+        std::string message;
+    };
+    RequestDeviceResult deviceResult;
+
+    WGPURequestDeviceCallbackInfo requestDeviceCallback = WGPU_REQUEST_DEVICE_CALLBACK_INFO_INIT;
+    requestDeviceCallback.mode                          = WGPUCallbackMode_WaitAnyOnly;
+    requestDeviceCallback.callback = [](WGPURequestDeviceStatus status, WGPUDevice device,
+                                        struct WGPUStringView message, void *userdata1,
+                                        void *userdata2) {
+        RequestDeviceResult *result = reinterpret_cast<RequestDeviceResult *>(userdata1);
+        const DawnProcTable *wgpu   = reinterpret_cast<const DawnProcTable *>(userdata2);
+
+        result->status  = status;
+        result->device  = webgpu::DeviceHandle::Acquire(wgpu, device);
+        result->message = std::string(message.data, message.length);
+    };
+    requestDeviceCallback.userdata1 = &deviceResult;
+    requestDeviceCallback.userdata2 = &mProcTable;
+
+    futureWaitInfo.future =
+        mProcTable.adapterRequestDevice(mAdapter.get(), &deviceDesc, requestDeviceCallback);
+
+    status = mProcTable.instanceWaitAny(mInstance.get(), 1, &futureWaitInfo, -1);
+    if (webgpu::IsWgpuError(status))
+    {
+        std::ostringstream err;
+        err << "Failed to get WebGPU device: " << deviceResult.message;
+        return egl::Error(EGL_BAD_ALLOC, err.str());
+    }
+
+    mDevice = deviceResult.device;
+
     return egl::NoError();
 }
 

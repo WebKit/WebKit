@@ -35,7 +35,7 @@ typedef (WebGLRenderingContext or WebGL2RenderingContext) WebXRWebGLRenderingCon
     JSGenerateToNativeObject,
     InterfaceName=XRWebGLLayer
 ] interface WebXRWebGLLayer : WebXRLayer {
-    constructor(WebXRSession session, WebXRWebGLRenderingContext context, optional XRWebGLLayerInit layerInit);
+    constructor(WebXRSession session, WebXRWebGLRenderingContext context, optional XRWebGLLayerInit layerInit = {});
 
     // Attributes
     readonly attribute boolean antialias;

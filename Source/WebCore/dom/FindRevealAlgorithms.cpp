@@ -47,7 +47,7 @@ enum class RevealType : bool {
 // https://html.spec.whatwg.org/#ancestor-revealing-algorithm
 bool revealClosedDetailsAndHiddenUntilFoundAncestors(Node& node)
 {
-    node.protectedDocument()->updateStyleIfNeeded();
+    protect(node.document())->updateStyleIfNeeded();
 
     // Bail out if there is neither a hidden=until-found or details ancestor.
     if (node.renderStyle() && !node.renderStyle()->autoRevealsWhenFound())

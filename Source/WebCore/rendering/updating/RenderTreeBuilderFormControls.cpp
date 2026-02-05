@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,14 @@
 #include "config.h"
 #include "RenderTreeBuilderFormControls.h"
 
+#include "HTMLInputElement.h"
+#include "InputType.h"
 #include "RenderBlockFlow.h"
 #include "RenderBlockInlines.h"
 #include "RenderButton.h"
-#include "RenderMenuList.h"
+#include "RenderDescendantIterator.h"
 #include "RenderTreeBuilderBlock.h"
+#include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -45,21 +48,6 @@ RenderTreeBuilder::FormControls::FormControls(RenderTreeBuilder& builder)
 void RenderTreeBuilder::FormControls::attach(RenderButton& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     m_builder.blockBuilder().attach(findOrCreateParentForChild(parent), WTF::move(child), beforeChild);
-}
-
-void RenderTreeBuilder::FormControls::attach(RenderMenuList& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
-{
-    auto& newChild = *child.get();
-    m_builder.blockBuilder().attach(findOrCreateParentForChild(parent), WTF::move(child), beforeChild);
-    parent.didAttachChild(newChild, beforeChild);
-}
-
-RenderPtr<RenderObject> RenderTreeBuilder::FormControls::detach(RenderMenuList& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed willBeDestroyed)
-{
-    auto* innerRenderer = parent.innerRenderer();
-    if (!innerRenderer || &child == innerRenderer)
-        return m_builder.blockBuilder().detach(parent, child, willBeDestroyed);
-    return m_builder.detach(*innerRenderer, child, willBeDestroyed);
 }
 
 RenderPtr<RenderObject> RenderTreeBuilder::FormControls::detach(RenderButton& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed willBeDestroyed)
@@ -79,24 +67,56 @@ RenderBlock& RenderTreeBuilder::FormControls::findOrCreateParentForChild(RenderB
     if (innerRenderer)
         return *innerRenderer;
 
-    auto wrapper = Block::createAnonymousBlockWithStyle(parent.protectedDocument(), parent.style());
+    auto wrapper = Block::createAnonymousBlockWithStyle(protect(parent.document()), parent.style());
     innerRenderer = wrapper.get();
     m_builder.blockBuilder().attach(parent, WTF::move(wrapper), nullptr);
     parent.setInnerRenderer(*innerRenderer);
     return *innerRenderer;
 }
 
-RenderBlock& RenderTreeBuilder::FormControls::findOrCreateParentForChild(RenderMenuList& parent)
+void RenderTreeBuilder::FormControls::updateAfterDescendants(RenderElement& renderer)
 {
-    auto* innerRenderer = parent.innerRenderer();
-    if (innerRenderer)
-        return *innerRenderer;
+    if (RefPtr inputElement = dynamicDowncast<HTMLInputElement>(renderer.element())) {
+        RefPtr inputType = inputElement->inputType();
+        if (!inputType)
+            return;
 
-    auto wrapper = Block::createAnonymousBlockWithStyle(parent.protectedDocument(), parent.style());
-    innerRenderer = wrapper.get();
-    m_builder.blockBuilder().attach(parent, WTF::move(wrapper), nullptr);
-    parent.setInnerRenderer(*innerRenderer);
-    return *innerRenderer;
+        if (inputType->isCheckable())
+            updateCheckmark(renderer);
+    }
 }
 
+void RenderTreeBuilder::FormControls::updateCheckmark(RenderElement& renderer)
+{
+    RefPtr inputElement = dynamicDowncast<HTMLInputElement>(renderer.element());
+    ASSERT(inputElement);
+
+    auto pseudoStyle = renderer.getCachedPseudoStyle({ PseudoElementType::Checkmark });
+    if (!pseudoStyle)
+        return;
+
+    auto shouldHaveCheckmarkRenderer = [&]() -> bool {
+        return renderer.style().appearance() == StyleAppearance::Base && pseudoStyle->display() != DisplayType::None;
+    };
+
+    for (CheckedRef child : childrenOfType<RenderElement>(renderer)) {
+        if (child->style().pseudoElementType() == PseudoElementType::Checkmark) {
+            if (!shouldHaveCheckmarkRenderer())
+                m_builder.destroy(child);
+            return;
+        }
+    }
+
+    if (!shouldHaveCheckmarkRenderer())
+        return;
+
+    Ref document = renderer.document();
+    auto checkmarkStyle = RenderStyle::clone(*pseudoStyle);
+
+    RenderPtr<RenderBlockFlow> checkmark = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, WTF::move(checkmarkStyle));
+    checkmark->initializeStyle();
+
+    m_builder.attach(renderer, WTF::move(checkmark));
 }
+
+} // namespace WebCore

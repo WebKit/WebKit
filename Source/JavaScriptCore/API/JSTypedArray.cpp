@@ -158,7 +158,7 @@ JSObjectRef JSObjectMakeTypedArray(JSContextRef ctx, JSTypedArrayType arrayType,
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     if (arrayType == kJSTypedArrayTypeNone || arrayType == kJSTypedArrayTypeArrayBuffer)
         return nullptr;
@@ -177,7 +177,7 @@ JSObjectRef JSObjectMakeTypedArrayWithBytesNoCopy(JSContextRef ctx, JSTypedArray
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     if (arrayType == kJSTypedArrayTypeNone || arrayType == kJSTypedArrayTypeArrayBuffer)
         return nullptr;
@@ -199,7 +199,7 @@ JSObjectRef JSObjectMakeTypedArrayWithArrayBuffer(JSContextRef ctx, JSTypedArray
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     if (arrayType == kJSTypedArrayTypeNone || arrayType == kJSTypedArrayTypeArrayBuffer)
         return nullptr;
@@ -227,7 +227,7 @@ JSObjectRef JSObjectMakeTypedArrayWithArrayBufferAndOffset(JSContextRef ctx, JST
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     if (arrayType == kJSTypedArrayTypeNone || arrayType == kJSTypedArrayTypeArrayBuffer)
         return nullptr;
@@ -302,7 +302,7 @@ JSObjectRef JSObjectGetTypedArrayBuffer(JSContextRef ctx, JSObjectRef objectRef,
 
     if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(object)) {
         if (ArrayBuffer* buffer = typedArray->possiblySharedBuffer())
-            return toRef(vm.m_typedArrayController->toJS(globalObject, typedArray->globalObject(), buffer));
+            return toRef(vm.m_typedArrayController->toJS(globalObject, typedArray->globalObject(), *buffer));
 
         setException(ctx, exception, createOutOfMemoryError(globalObject));
     }
@@ -315,7 +315,7 @@ JSObjectRef JSObjectMakeArrayBufferWithBytesNoCopy(JSContextRef ctx, void* bytes
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     auto buffer = ArrayBuffer::createFromBytes({ static_cast<const uint8_t*>(bytes), byteLength }, createSharedTask<void(void*)>([=](void* p) {
         if (bytesDeallocator)

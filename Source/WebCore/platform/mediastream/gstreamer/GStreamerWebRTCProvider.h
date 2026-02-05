@@ -38,7 +38,7 @@ private:
     void initializeVideoDecodingCapabilities() final;
     void initializeAudioEncodingCapabilities() final;
     void initializeVideoEncodingCapabilities() final;
-    std::optional<MediaCapabilitiesDecodingInfo> videoDecodingCapabilitiesOverride(const VideoConfiguration&) final;
+    std::optional<PlatformMediaCapabilitiesDecodingInfo> videoDecodingCapabilitiesOverride(const PlatformMediaCapabilitiesVideoConfiguration&) final;
 };
 
 } // namespace WebCore

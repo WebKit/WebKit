@@ -22,7 +22,7 @@
 #include "include/core/SkPath.h"
 #include "include/core/SkPictureRecorder.h"
 #include "include/core/SkSpan.h"
-#include "include/effects/SkGradientShader.h"
+#include "include/effects/SkGradient.h"
 #include "include/private/base/SkMutex.h"
 #include "include/private/base/SkTo.h"
 #include "src/base/SkEndian.h"
@@ -789,16 +789,20 @@ bool SkScalerContext_DW::drawColorV1Paint(SkCanvas& canvas,
             skStops[i] = stops[i].position;
         }
 
-        sk_sp<SkShader> shader(SkGradientShader::MakeLinear(
+        sk_sp<SkShader> shader(SkShaders::LinearGradient(
             linePositions,
-            skColors.get(), SkColorSpace::MakeSRGB(), skStops.get(), stops.size(),
-            tileMode,
-            SkGradient::Interpolation{
-                SkGradient::Interpolation::InPremul::kNo,
-                SkGradient::Interpolation::ColorSpace::kSRGB,
-                SkGradient::Interpolation::HueMethod::kShorter
-            },
-            nullptr));
+            SkGradient(
+                SkGradient::Colors(
+                    SkSpan(skColors.get(), stops.size()),
+                    SkSpan(skStops.get(), stops.size()),
+                    tileMode),
+                SkGradient::Interpolation{
+                    SkGradient::Interpolation::InPremul::kNo,
+                    SkGradient::Interpolation::ColorSpace::kSRGB,
+                    SkGradient::Interpolation::HueMethod::kShorter
+                }
+            )
+        ));
 
         SkASSERT(shader);
         // An opaque color is needed to ensure the gradient is not modulated by alpha.
@@ -982,16 +986,20 @@ bool SkScalerContext_DW::drawColorV1Paint(SkCanvas& canvas,
 
         // An opaque color is needed to ensure the gradient is not modulated by alpha.
         skPaint.setColor(SK_ColorBLACK);
-        skPaint.setShader(SkGradientShader::MakeTwoPointConical(
+        skPaint.setShader(SkShaders::TwoPointConicalGradient(
             start, startRadius, end, endRadius,
-            skColors.get(), SkColorSpace::MakeSRGB(), skStops.get(), stops.size(),
-            tileMode,
-            SkGradient::Interpolation{
-                SkGradient::Interpolation::InPremul::kNo,
-                SkGradient::Interpolation::ColorSpace::kSRGB,
-                SkGradient::Interpolation::HueMethod::kShorter
-            },
-            nullptr));
+            SkGradient(
+                SkGradient::Colors(
+                    SkSpan(skColors.get(), stops.size()),
+                    SkSpan(skStops.get(), stops.size()),
+                    tileMode),
+                SkGradient::Interpolation{
+                    SkGradient::Interpolation::InPremul::kNo,
+                    SkGradient::Interpolation::ColorSpace::kSRGB,
+                    SkGradient::Interpolation::HueMethod::kShorter
+                }
+            )
+        ));
         canvas.drawPaint(skPaint);
         return true;
     }
@@ -1102,17 +1110,20 @@ bool SkScalerContext_DW::drawColorV1Paint(SkCanvas& canvas,
             skStops[i] = stops[i].position;
         }
 
-        skPaint.setShader(SkGradientShader::MakeSweep(
-            center.x(), center.y(),
-            skColors.get(), SkColorSpace::MakeSRGB(), skStops.get(), stops.size(),
-            tileMode,
-            startAngleScaled, endAngleScaled,
-            SkGradient::Interpolation{
-                SkGradient::Interpolation::InPremul::kNo,
-                SkGradient::Interpolation::ColorSpace::kSRGB,
-                SkGradient::Interpolation::HueMethod::kShorter
-            },
-            nullptr));
+        skPaint.setShader(SkShaders::SweepGradient(
+            center, startAngleScaled, endAngleScaled,
+            SkGradient(
+                SkGradient::Colors(
+                    SkSpan(skColors.get(), stops.size()),
+                    SkSpan(skStops.get(), stops.size()),
+                    tileMode),
+                SkGradient::Interpolation{
+                    SkGradient::Interpolation::InPremul::kNo,
+                    SkGradient::Interpolation::ColorSpace::kSRGB,
+                    SkGradient::Interpolation::HueMethod::kShorter
+                }
+            )
+        ));
         canvas.drawPaint(skPaint);
         return true;
     }
@@ -1256,10 +1267,10 @@ bool SkScalerContext_DW::generateColorV1Image(const SkGlyph& glyph, void* imageB
 
     SkBitmap dstBitmap;
     // TODO: mark this as sRGB when the blits will be sRGB.
-    dstBitmap.setInfo(SkImageInfo::Make(glyph.width(), glyph.height(),
-                      kN32_SkColorType, kPremul_SkAlphaType),
-                      glyph.rowBytes());
-    dstBitmap.setPixels(imageBuffer);
+    dstBitmap.installPixels(
+            SkImageInfo::Make(glyph.width(), glyph.height(), kN32_SkColorType, kPremul_SkAlphaType),
+            imageBuffer,
+            glyph.rowBytes());
 
     SkCanvas canvas(dstBitmap);
     if constexpr (kSkShowTextBlitCoverage) {
@@ -2245,10 +2256,10 @@ bool SkScalerContext_DW::generateColorImage(const SkGlyph& glyph, void* imageBuf
 
     SkBitmap dstBitmap;
     // TODO: mark this as sRGB when the blits will be sRGB.
-    dstBitmap.setInfo(SkImageInfo::Make(glyph.width(), glyph.height(),
-                                        kN32_SkColorType, kPremul_SkAlphaType),
-                                        glyph.rowBytes());
-    dstBitmap.setPixels(imageBuffer);
+    dstBitmap.installPixels(
+            SkImageInfo::Make(glyph.width(), glyph.height(), kN32_SkColorType, kPremul_SkAlphaType),
+            imageBuffer,
+            glyph.rowBytes());
 
     SkCanvas canvas(dstBitmap);
     if constexpr (kSkShowTextBlitCoverage) {
@@ -2317,10 +2328,10 @@ bool SkScalerContext_DW::generateSVGImage(const SkGlyph& glyph, void* imageBuffe
 
     SkBitmap dstBitmap;
     // TODO: mark this as sRGB when the blits will be sRGB.
-    dstBitmap.setInfo(SkImageInfo::Make(glyph.width(), glyph.height(),
-                                        kN32_SkColorType, kPremul_SkAlphaType),
-                      glyph.rowBytes());
-    dstBitmap.setPixels(imageBuffer);
+    dstBitmap.installPixels(
+            SkImageInfo::Make(glyph.width(), glyph.height(), kN32_SkColorType, kPremul_SkAlphaType),
+            imageBuffer,
+            glyph.rowBytes());
 
     SkCanvas canvas(dstBitmap);
     if constexpr (kSkShowTextBlitCoverage) {
@@ -2374,10 +2385,10 @@ bool SkScalerContext_DW::generatePngImage(const SkGlyph& glyph, void* imageBuffe
     SkASSERT(glyph.maskFormat() == SkMask::Format::kARGB32_Format);
 
     SkBitmap dstBitmap;
-    dstBitmap.setInfo(SkImageInfo::Make(glyph.width(), glyph.height(),
-                                        kN32_SkColorType, kPremul_SkAlphaType),
-                      glyph.rowBytes());
-    dstBitmap.setPixels(imageBuffer);
+    dstBitmap.installPixels(
+            SkImageInfo::Make(glyph.width(), glyph.height(), kN32_SkColorType, kPremul_SkAlphaType),
+            imageBuffer,
+            glyph.rowBytes());
 
     SkCanvas canvas(dstBitmap);
     canvas.clear(SK_ColorTRANSPARENT);

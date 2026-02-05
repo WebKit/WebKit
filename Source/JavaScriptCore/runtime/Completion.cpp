@@ -25,7 +25,6 @@
 
 #include "BuiltinNames.h"
 #include "BytecodeCacheError.h"
-#include "CatchScope.h"
 #include "CodeCache.h"
 #include "Exception.h"
 #include "IdentifierInlines.h"
@@ -38,6 +37,7 @@
 #include "ModuleAnalyzer.h"
 #include "Parser.h"
 #include "ScriptProfilingScope.h"
+#include "TopExceptionScope.h"
 #include <wtf/text/MakeString.h>
 
 namespace JSC {
@@ -128,7 +128,7 @@ JSValue evaluate(JSGlobalObject* globalObject, const SourceCode& source, JSValue
 {
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     RELEASE_ASSERT(vm.atomStringTable() == Thread::currentSingleton().atomStringTable());
     RELEASE_ASSERT(!vm.isCollectorBusyOnCurrentThread());
 

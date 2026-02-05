@@ -73,7 +73,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionController, WebExtensionCont
 
 - (WKWebExtensionControllerConfiguration *)configuration
 {
-    return Ref { *_webExtensionController }->protectedConfiguration()->copy()->wrapper();
+    return protect(Ref { *_webExtensionController }->configuration())->copy()->wrapper();
 }
 
 - (BOOL)loadExtensionContext:(WKWebExtensionContext *)extensionContext error:(NSError **)outError

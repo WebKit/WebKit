@@ -45,9 +45,9 @@ layer at (0,0) size 800x376
         layer at (85,85) size 10x7
           RenderSVGPath {path} at (7,0) size 8x6 [fill={[type=SOLID] [color=#4D4D4D] [fill rule=EVEN-ODD]}] [clip rule=EVEN-ODD] [data="M 90.503 85.853 C 89.061 85.314 88.014 85.066 86.751 85.017 C 85.064 84.935 85.213 85.361 85.213 85.361 C 85.213 86.148 86.834 86.429 88.358 86.656 C 89.881 86.867 91.091 87.164 91.157 88.752 C 91.241 90.326 90.848 91.438 91.536 91.309 C 93.023 91.028 93.565 89.424 93.549 88.688 C 93.548 87.933 92.451 86.608 90.503 85.853 Z"]
       RenderText {#text} at (0,0) size 0x0
-      RenderBR {BR} at (349,339) size 1x13
-      RenderText {#text} at (0,352) size 224x13
-        text run at (0,352) width 224: "The image of Tux should fill the entire red square."
+      RenderBR {BR} at (349,338) size 1x14
+      RenderText {#text} at (0,351) size 224x14
+        text run at (0,351) width 224: "The image of Tux should fill the entire red square."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

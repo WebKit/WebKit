@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY) && ENABLE(REMOTE_INSPECTOR)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 #include <atomic>
 #include <functional>
@@ -68,4 +68,4 @@ inline unsigned getReplyCount() { return replyCount.load(); }
 
 } // namespace ExecutionHandlerTestSupport
 
-#endif // ENABLE(WEBASSEMBLY) && ENABLE(REMOTE_INSPECTOR)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

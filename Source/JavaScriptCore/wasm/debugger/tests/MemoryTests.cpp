@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TestUtilities.h"
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 #include <span>
 #include <wtf/DataLog.h>
@@ -188,4 +188,4 @@ void testAllMemoryOps()
 
 } // namespace WasmDebugInfoTest
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

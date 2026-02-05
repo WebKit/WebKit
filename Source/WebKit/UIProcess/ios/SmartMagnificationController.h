@@ -31,6 +31,7 @@
 #include <WebCore/FloatRect.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakObjCPtr.h>
 
 OBJC_CLASS WKContentView;
 OBJC_CLASS UIScrollView;
@@ -65,7 +66,7 @@ private:
     std::tuple<WebCore::FloatRect, double, double> smartMagnificationTargetRectAndZoomScales(WebCore::FloatRect targetRect, double minimumScale, double maximumScale, bool addMagnificationPadding);
 
     WeakPtr<WebPageProxy> m_webPageProxy;
-    WKContentView *m_contentView;
+    WeakObjCPtr<WKContentView> m_contentView;
 };
     
 } // namespace WebKit

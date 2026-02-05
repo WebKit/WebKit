@@ -242,7 +242,14 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect
     auto& settings = effect.document()->settings();
     CheckedPtr renderLayerModelObject = dynamicDowncast<RenderLayerModelObject>(effect.renderer());
 
+    OptionSet<AcceleratedEffectProperty> propertiesReplacedByZeroKeyframe;
+    OptionSet<AcceleratedEffectProperty> propertiesReplacedByOneKeyframe;
+
     for (auto& srcKeyframe : effect.blendingKeyframes()) {
+        ASSERT(!std::isnan(srcKeyframe.offset()));
+        auto offset = srcKeyframe.offset();
+        auto isReplacingKeyframe = m_compositeOperation == CompositeOperation::Replace
+            && (!srcKeyframe.compositeOperation() || srcKeyframe.compositeOperation() == CompositeOperation::Replace);
         OptionSet<AcceleratedEffectProperty> animatedProperties;
         for (auto animatedCSSProperty : srcKeyframe.properties()) {
             if (Style::Interpolation::isAccelerated(animatedCSSProperty, settings)) {
@@ -251,6 +258,12 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect
                     continue;
                 animatedProperties.add(acceleratedProperty);
                 m_animatedProperties.add(acceleratedProperty);
+                if (!isReplacingKeyframe)
+                    continue;
+                if (!offset)
+                    propertiesReplacedByZeroKeyframe.add(acceleratedProperty);
+                if (offset == 1.0)
+                    propertiesReplacedByOneKeyframe.add(acceleratedProperty);
             }
         }
 
@@ -263,9 +276,13 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect
             return { };
         }();
 
-        ASSERT(!std::isnan(srcKeyframe.offset()));
-        m_keyframes.append({ srcKeyframe.offset(), WTF::move(values), srcKeyframe.timingFunction(), srcKeyframe.compositeOperation(), WTF::move(animatedProperties) });
+        m_keyframes.append({ offset, WTF::move(values), srcKeyframe.timingFunction(), srcKeyframe.compositeOperation(), WTF::move(animatedProperties) });
     }
+
+    // Any property that was added to both the zero and one keyframe replaced
+    // properties is a property fully replaced by this effect.
+    m_replacedProperties = propertiesReplacedByZeroKeyframe & propertiesReplacedByOneKeyframe;
+    ASSERT(!m_replacedProperties.containsAny(disallowedProperties));
 
     m_animatedProperties.remove(disallowedProperties);
 }
@@ -338,6 +355,10 @@ static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& o
             output.scale = toScale->blend(from.scale.get(), blendingContext);
         break;
     case AcceleratedEffectProperty::OffsetAnchor:
+        if (!canBlend(from.offsetAnchor, to.offsetAnchor)) {
+            blendingContext.isDiscrete = true;
+            blendingContext.normalizeProgress();
+        }
         output.offsetAnchor = blend(from.offsetAnchor, to.offsetAnchor, blendingContext);
         break;
     case AcceleratedEffectProperty::OffsetDistance:
@@ -348,6 +369,10 @@ static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& o
             output.offsetPath = fromOffsetPath->blend(to.offsetPath.get(), blendingContext);
         break;
     case AcceleratedEffectProperty::OffsetPosition:
+        if (!canBlend(from.offsetPosition, to.offsetPosition)) {
+            blendingContext.isDiscrete = true;
+            blendingContext.normalizeProgress();
+        }
         output.offsetPosition = blend(from.offsetPosition, to.offsetPosition, blendingContext);
         break;
     case AcceleratedEffectProperty::OffsetRotate:

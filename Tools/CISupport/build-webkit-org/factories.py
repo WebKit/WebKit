@@ -321,6 +321,12 @@ class SaferCPPStaticAnalyzerFactory(Factory):
         self.addStep(PrintClangVersion())
         self.addStep(CheckOutLLVMProject())
         self.addStep(UpdateClang())
+        if platform.startswith('ios'):
+            self.addStep(GetSwiftTagName())
+            self.addStep(PrintSwiftVersion())
+            self.addStep(CheckOutSwiftProject())
+            self.addStep(UpdateSwiftCheckouts())
+            self.addStep(BuildSwift())
         self.addStep(ScanBuild())
 
 

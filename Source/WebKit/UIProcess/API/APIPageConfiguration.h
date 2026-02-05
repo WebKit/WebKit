@@ -145,11 +145,9 @@ public:
     void setWindowFeatures(WebCore::WindowFeatures&&);
 
     WebKit::WebProcessPool& processPool() const;
-    Ref<WebKit::WebProcessPool> protectedProcessPool() const;
     void setProcessPool(RefPtr<WebKit::WebProcessPool>&&);
 
     WebKit::WebUserContentControllerProxy& userContentController() const;
-    Ref<WebKit::WebUserContentControllerProxy> protectedUserContentController() const;
     void setUserContentController(RefPtr<WebKit::WebUserContentControllerProxy>&&);
 
 #if ENABLE(WK_WEB_EXTENSIONS)
@@ -157,11 +155,9 @@ public:
     void setRequiredWebExtensionBaseURL(WTF::URL&&);
 
     WebKit::WebExtensionController* webExtensionController() const;
-    RefPtr<WebKit::WebExtensionController> protectedWebExtensionController() const;
     void setWebExtensionController(RefPtr<WebKit::WebExtensionController>&&);
 
     WebKit::WebExtensionController* weakWebExtensionController() const;
-    RefPtr<WebKit::WebExtensionController> protectedWeakWebExtensionController() const;
     void setWeakWebExtensionController(WebKit::WebExtensionController*);
 #endif
 
@@ -169,12 +165,10 @@ public:
     void setPageGroup(RefPtr<WebKit::WebPageGroup>&&);
 
     WebKit::WebPreferences& preferences() const;
-    Ref<WebKit::WebPreferences> protectedPreferences() const;
     void setPreferences(RefPtr<WebKit::WebPreferences>&&);
 
     WebKit::WebPageProxy* relatedPage() const;
     void setRelatedPage(WeakPtr<WebKit::WebPageProxy>&& relatedPage) { m_data.relatedPage = WTF::move(relatedPage); }
-    RefPtr<WebKit::WebPageProxy> protectedRelatedPage() const;
 
     WebKit::WebPageProxy* pageToCloneSessionStorageFrom() const;
     void setPageToCloneSessionStorageFrom(WeakPtr<WebKit::WebPageProxy>&&);
@@ -183,17 +177,13 @@ public:
     void setAlternateWebViewForNavigationGestures(WeakPtr<WebKit::WebPageProxy>&&);
 
     WebKit::VisitedLinkStore& visitedLinkStore() const;
-    Ref<WebKit::VisitedLinkStore> protectedVisitedLinkStore() const;
     void setVisitedLinkStore(RefPtr<WebKit::VisitedLinkStore>&&);
 
     WebKit::WebsiteDataStore& websiteDataStore() const;
     WebKit::WebsiteDataStore* websiteDataStoreIfExists() const;
-    RefPtr<WebKit::WebsiteDataStore> protectedWebsiteDataStoreIfExists() const;
-    Ref<WebKit::WebsiteDataStore> protectedWebsiteDataStore() const;
     void setWebsiteDataStore(RefPtr<WebKit::WebsiteDataStore>&&);
 
     WebsitePolicies& defaultWebsitePolicies() const;
-    Ref<WebsitePolicies> protectedDefaultWebsitePolicies() const;
     void setDefaultWebsitePolicies(RefPtr<WebsitePolicies>&&);
 
 #if PLATFORM(IOS_FAMILY)
@@ -279,7 +269,6 @@ public:
 
 #if ENABLE(APPLICATION_MANIFEST)
     ApplicationManifest* applicationManifest() const;
-    RefPtr<ApplicationManifest> protectedApplicationManifest() const;
     void setApplicationManifest(RefPtr<ApplicationManifest>&&);
 #endif
 
@@ -477,6 +466,11 @@ public:
     void setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension mode) { m_data.contentSecurityPolicyModeForExtension = mode; }
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension() const { return m_data.contentSecurityPolicyModeForExtension; }
 
+    void setBackgroundTextExtractionEnabled(bool enabled) { m_data.backgroundTextExtractionEnabled = enabled; }
+    bool backgroundTextExtractionEnabled() const { return m_data.backgroundTextExtractionEnabled; }
+
+    WebKit::BrowsingContextGroup* preferredBrowsingContextGroup() const;
+
 #if PLATFORM(VISION)
 
 #if ENABLE(GAMEPAD)
@@ -659,6 +653,7 @@ private:
         bool showsSystemScreenTimeBlockingView { true };
         bool shouldSendConsoleLogsToUIProcessForTesting { false };
         bool allowPostingLegacySynchronousMessages { false };
+        bool backgroundTextExtractionEnabled { false };
 
 #if PLATFORM(VISION)
 

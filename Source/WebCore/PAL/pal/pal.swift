@@ -23,8 +23,4 @@
 
 // The Swift module shadows the Clang module and the Swift module therefore needs to publicly import and re-export the underlying Clang module.
 
-#if swift(>=6.0)
 @_exported public import pal
-#else
-@_exported import pal
-#endif

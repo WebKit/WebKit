@@ -756,6 +756,28 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
+        'Apple-iOS-26-Safer-CPP-Checks': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'install-cmake',
+            'install-ninja',
+            'get-llvm-version',
+            'print-clang-version',
+            'checkout-llvm-project',
+            'update-clang',
+            'get-swift-tag-name',
+            'print-swift-version',
+            'checkout-swift-project',
+            'update-swift-checkouts',
+            'build-swift',
+            'scan-build'
+        ],
         'Apple-iPadOS-26-Simulator-Release-WK2-Tests': [
             'configure-build',
             'configuration',
@@ -1597,7 +1619,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'extract-built-product',
             'benchmark-test'
         ],
-        'WPE-Linux-64-bit-Release-Cairo-LibWebRTC-Build': [
+        'WPE-Linux-64-bit-Release-LibWebRTC-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',

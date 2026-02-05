@@ -179,7 +179,7 @@ private:
     CheckedPtr<Client> m_client;
 
 #if PLATFORM(COCOA)
-    XPCObjectPtr<xpc_connection_t> m_xpcConnection;
+    OSObjectPtr<xpc_connection_t> m_xpcConnection;
 #endif
 
 #if USE(EXTENSIONKIT)

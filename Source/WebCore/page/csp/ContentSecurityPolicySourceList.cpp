@@ -60,11 +60,6 @@ static bool isCSPDirectiveName(StringView name)
         || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::styleSrc);
 }
 
-template<typename CharacterType> static bool isSourceCharacter(CharacterType c)
-{
-    return !isUnicodeCompatibleASCIIWhitespace(c);
-}
-
 template<typename CharacterType> static bool isHostCharacter(CharacterType c)
 {
     return isASCIIAlphanumeric(c) || c == '-';
@@ -87,12 +82,12 @@ template<typename CharacterType> static bool isNotColonOrSlash(CharacterType c)
 
 template<typename CharacterType> static bool isSourceListNone(StringParsingBuffer<CharacterType> buffer)
 {
-    skipWhile<isUnicodeCompatibleASCIIWhitespace>(buffer);
+    skipWhile<isASCIIWhitespace>(buffer);
 
     if (!skipExactlyIgnoringASCIICase(buffer, "'none'"_s))
         return false;
 
-    skipWhile<isUnicodeCompatibleASCIIWhitespace>(buffer);
+    skipWhile<isASCIIWhitespace>(buffer);
 
     return buffer.atEnd();
 }
@@ -242,12 +237,12 @@ static bool extensionModeAllowsKeywordsForDirective(ContentSecurityPolicyModeFor
 template<typename CharacterType> void ContentSecurityPolicySourceList::parse(StringParsingBuffer<CharacterType> buffer)
 {
     while (buffer.hasCharactersRemaining()) {
-        skipWhile<isUnicodeCompatibleASCIIWhitespace>(buffer);
+        skipWhile<isASCIIWhitespace>(buffer);
         if (buffer.atEnd())
             return;
 
         auto beginSource = buffer.span();
-        skipWhile<isSourceCharacter>(buffer);
+        skipWhile<isNotASCIIWhitespace>(buffer);
 
         StringParsingBuffer sourceBuffer(beginSource.first(buffer.position() - beginSource.data()));
 
@@ -270,7 +265,7 @@ template<typename CharacterType> void ContentSecurityPolicySourceList::parse(Str
         } else
             m_policy->reportInvalidSourceExpression(m_directiveName, beginSource.first(buffer.position() - beginSource.data()));
 
-        ASSERT(buffer.atEnd() || isUnicodeCompatibleASCIIWhitespace(*buffer));
+        ASSERT(buffer.atEnd() || isASCIIWhitespace(*buffer));
     }
     
     m_list.shrinkToFit();

@@ -60,7 +60,6 @@
 #import <WebCore/ColorChooser.h>
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
-#import <WebCore/CookieConsentDecisionResult.h>
 #import <WebCore/Cursor.h>
 #import <WebCore/DataListSuggestionPicker.h>
 #import <WebCore/DocumentFullscreen.h>
@@ -316,15 +315,6 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
         if (!features.wantsNoOpener()) {
             m_webView.page->protectedStorageNamespaceProvider()->cloneSessionStorageNamespaceForPage(*m_webView.page, *newPage);
             newPage->mainFrame().setOpenerForWebKitLegacy(&frame);
-
-            auto& newPageClient = static_cast<WebChromeClient&>(newPage->chrome().client());
-            setToolbarsVisible(features.toolBarVisible || features.locationBarVisible);
-            if (features.statusBarVisible)
-                newPageClient.setStatusbarVisible(*features.statusBarVisible);
-            if (features.scrollbarsVisible)
-                newPageClient.setScrollbarsVisible(*features.scrollbarsVisible);
-            if (features.menuBarVisible)
-                newPageClient.setMenubarVisible(*features.menuBarVisible);
             newPage->applyWindowFeatures(features);
         }
 
@@ -356,46 +346,9 @@ void WebChromeClient::runModal()
     CallUIDelegate(m_webView, @selector(webViewRunModal:));
 }
 
-void WebChromeClient::setToolbarsVisible(bool b)
+bool WebChromeClient::isPopup() const
 {
-    [[m_webView _UIDelegateForwarder] webView:m_webView setToolbarsVisible:b];
-}
-
-bool WebChromeClient::toolbarsVisible() const
-{
-    return CallUIDelegateReturningBoolean(NO, m_webView, @selector(webViewAreToolbarsVisible:));
-}
-
-void WebChromeClient::setStatusbarVisible(bool b)
-{
-    [[m_webView _UIDelegateForwarder] webView:m_webView setStatusBarVisible:b];
-}
-
-bool WebChromeClient::statusbarVisible() const
-{
-    return CallUIDelegateReturningBoolean(NO, m_webView, @selector(webViewIsStatusBarVisible:));
-}
-
-void WebChromeClient::setScrollbarsVisible(bool b)
-{
-    [[[m_webView mainFrame] frameView] setAllowsScrolling:b];
-}
-
-bool WebChromeClient::scrollbarsVisible() const
-{
-    return [[[m_webView mainFrame] frameView] allowsScrolling];
-}
-
-void WebChromeClient::setMenubarVisible(bool)
-{
-    // The menubar is always visible in Mac OS X.
-    return;
-}
-
-bool WebChromeClient::menubarVisible() const
-{
-    // The menubar is always visible in Mac OS X.
-    return true;
+    return NO;
 }
 
 void WebChromeClient::setResizable(bool b)
@@ -893,16 +846,6 @@ void WebChromeClient::elementDidBlur(WebCore::Element& element)
 }
 #endif
 
-bool WebChromeClient::selectItemWritingDirectionIsNatural()
-{
-    return false;
-}
-
-bool WebChromeClient::selectItemAlignmentFollowsMenuWritingDirection()
-{
-    return true;
-}
-
 RefPtr<WebCore::PopupMenu> WebChromeClient::createPopupMenu(WebCore::PopupMenuClient& client) const
 {
 #if !PLATFORM(IOS_FAMILY)
@@ -1211,9 +1154,4 @@ RefPtr<WebCore::ShapeDetection::TextDetector> WebChromeClient::createTextDetecto
 void WebChromeClient::registerBlobPathForTesting(const String&, CompletionHandler<void()>&& completion)
 {
     completion();
-}
-
-void WebChromeClient::requestCookieConsent(CompletionHandler<void(CookieConsentDecisionResult)>&& completion)
-{
-    completion(CookieConsentDecisionResult::NotSupported);
 }

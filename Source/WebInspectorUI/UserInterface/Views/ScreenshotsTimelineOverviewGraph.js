@@ -67,7 +67,7 @@ WI.ScreenshotsTimelineOverviewGraph = class ScreenshotsTimelineOverviewGraph ext
         let secondsPerPixel = this.timelineOverview.secondsPerPixel;
 
         for (let record of this._visibleRecords()) {
-            let recordElement = this.element.appendChild(this._imageElementForRecord.getOrInitialize(record, () => {
+            let recordElement = this.element.appendChild(this._imageElementForRecord.getOrInsertComputed(record, () => {
                 let imageElement = document.createElement("img");
 
                 imageElement.hidden = true;

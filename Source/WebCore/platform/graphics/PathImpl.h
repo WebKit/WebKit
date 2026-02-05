@@ -28,16 +28,19 @@
 #include <WebCore/FloatRoundedRect.h>
 #include <WebCore/PathElement.h>
 #include <WebCore/PathSegment.h>
+#include <WebCore/RenderingResource.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
-class PathImpl : public ThreadSafeRefCounted<PathImpl> {
+class PathImpl : public ThreadSafeRefCounted<PathImpl>, public CanMakeThreadSafeCheckedPtr<PathImpl> {
     WTF_MAKE_TZONE_ALLOCATED(PathImpl);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PathImpl);
 public:
-    virtual ~PathImpl() = default;
+    virtual ~PathImpl();
 
     static constexpr float circleControlPoint()
     {
@@ -51,6 +54,9 @@ public:
     virtual bool definitelyEqual(const PathImpl&) const = 0;
 
     virtual Ref<PathImpl> copy() const = 0;
+
+    virtual const Vector<PathSegment>* segmentsIfExists() const { return nullptr; }
+    virtual Vector<PathSegment> segments() const;
 
     void addSegment(PathSegment);
     virtual void add(PathMoveTo) = 0;
@@ -85,6 +91,11 @@ public:
 
     virtual FloatRect fastBoundingRect() const = 0;
     virtual FloatRect boundingRect() const = 0;
+
+    WEBCORE_EXPORT void addObserver(WeakRef<RenderingResourceObserver>&&) const;
+
+    virtual bool isTransient() const { return true; }
+    virtual void setNotTransient() { }
 
 protected:
     PathImpl() = default;

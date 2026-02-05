@@ -73,7 +73,6 @@ NonInheritedRareData::NonInheritedRareData()
     , viewTransitionName(ComputedStyle::initialViewTransitionName())
     , columnGap(ComputedStyle::initialColumnGap())
     , rowGap(ComputedStyle::initialRowGap())
-    , flowTolerance(ComputedStyle::initialFlowTolerance())
     , offsetPath(ComputedStyle::initialOffsetPath())
     , offsetDistance(ComputedStyle::initialOffsetDistance())
     , offsetPosition(ComputedStyle::initialOffsetPosition())
@@ -184,7 +183,6 @@ inline NonInheritedRareData::NonInheritedRareData(const NonInheritedRareData& o)
     , viewTransitionName(o.viewTransitionName)
     , columnGap(o.columnGap)
     , rowGap(o.rowGap)
-    , flowTolerance(o.flowTolerance)
     , offsetPath(o.offsetPath)
     , offsetDistance(o.offsetDistance)
     , offsetPosition(o.offsetPosition)
@@ -301,7 +299,6 @@ bool NonInheritedRareData::operator==(const NonInheritedRareData& o) const
         && containerNames == o.containerNames
         && columnGap == o.columnGap
         && rowGap == o.rowGap
-        && flowTolerance == o.flowTolerance
         && offsetPath == o.offsetPath
         && offsetDistance == o.offsetDistance
         && offsetPosition == o.offsetPosition
@@ -451,7 +448,6 @@ void NonInheritedRareData::dumpDifferences(TextStream& ts, const NonInheritedRar
 
     LOG_IF_DIFFERENT(columnGap);
     LOG_IF_DIFFERENT(rowGap);
-    LOG_IF_DIFFERENT(flowTolerance);
 
     LOG_IF_DIFFERENT(offsetPath);
     LOG_IF_DIFFERENT(offsetDistance);

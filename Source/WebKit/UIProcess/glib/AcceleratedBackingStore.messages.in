@@ -35,4 +35,8 @@ messages -> AcceleratedBackingStore {
 
     DidDestroyBuffer(uint64_t id)
     Frame(uint64_t id, Vector<WebCore::IntRect, 1> damage, UnixFileDescriptor syncFD)
+
+#if ENABLE(WPE_PLATFORM)
+    DidChangeBufferConfiguration(uint32_t bufferCount);
+#endif
 }

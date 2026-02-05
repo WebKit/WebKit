@@ -69,6 +69,7 @@ JavaScriptCore_SCRIPTS_DIR = $(JavaScriptCore)/Scripts
 all : \
     Lexer.lut.h \
     KeywordLookup.h \
+    LexerUnicodePropertyTables.h \
     RegExpJitTables.h \
     UnicodePatternTables.h \
     yarr/YarrCanonicalizeUnicode.cpp \
@@ -378,6 +379,9 @@ all : $(AIR_OPCODE_FILES)
 
 $(AIR_OPCODE_FILES_PATTERNS) : $(JavaScriptCore)/b3/air/opcode_generator.rb $(JavaScriptCore)/b3/air/AirOpcode.opcodes
 	$(RUBY) $^
+
+LexerUnicodePropertyTables.h: $(JavaScriptCore)/parser/generateLexerUnicodePropertyTables.py $(JavaScriptCore)/ucd/UnicodeData.txt
+	$(PYTHON) $(JavaScriptCore)/parser/generateLexerUnicodePropertyTables.py $(JavaScriptCore)/ucd/UnicodeData.txt ./LexerUnicodePropertyTables.h
 
 UnicodePatternTables.h: $(JavaScriptCore)/yarr/generateYarrUnicodePropertyTables.py $(JavaScriptCore)/yarr/hasher.py $(JavaScriptCore)/ucd/DerivedBinaryProperties.txt $(JavaScriptCore)/ucd/DerivedCoreProperties.txt $(JavaScriptCore)/ucd/DerivedNormalizationProps.txt $(JavaScriptCore)/ucd/PropList.txt $(JavaScriptCore)/ucd/PropertyAliases.txt $(JavaScriptCore)/ucd/PropertyValueAliases.txt $(JavaScriptCore)/ucd/ScriptExtensions.txt $(JavaScriptCore)/ucd/Scripts.txt $(JavaScriptCore)/ucd/UnicodeData.txt $(JavaScriptCore)/ucd/emoji-data.txt
 	$(PYTHON) $(JavaScriptCore)/yarr/generateYarrUnicodePropertyTables.py $(JavaScriptCore)/ucd ./UnicodePatternTables.h

@@ -82,13 +82,13 @@ std::ostream &operator<<(std::ostream &out, VertexDepth vertexDepth)
     switch (vertexDepth)
     {
         case VertexDepth::InsideClipVolume:
-            out << "InsideClipVolume";
+            out << "VInside";
             break;
         case VertexDepth::LessThanMinusOne:
-            out << "LessThanMinusOne";
+            out << "VUnderNegOne";
             break;
         case VertexDepth::GreaterThanOne:
-            out << "GreaterThanOne";
+            out << "VOverOne";
             break;
     }
 
@@ -100,25 +100,25 @@ std::ostream &operator<<(std::ostream &out, FragmentDepth fragmentDepth)
     switch (fragmentDepth)
     {
         case FragmentDepth::Unused:
-            out << "Unused";
+            out << "FUnused";
             break;
         case FragmentDepth::Passthrough:
-            out << "Passthrough";
+            out << "FPassthru";
             break;
         case FragmentDepth::WithinDepthRange:
-            out << "WithinDepthRange";
+            out << "FWithinRange";
             break;
         case FragmentDepth::BetweenZeroAndNearPlane:
-            out << "BetweenZeroAndNearPlane";
+            out << "FZeroToNear";
             break;
         case FragmentDepth::BetweenFarPlaneAndOne:
-            out << "BetweenFarPlaneAndOne";
+            out << "FFarToOne";
             break;
         case FragmentDepth::Negative:
-            out << "Negative";
+            out << "FNegative";
             break;
         case FragmentDepth::GreaterThanOne:
-            out << "GreaterThanOne";
+            out << "FOverOne";
             break;
     }
 
@@ -130,9 +130,9 @@ std::string BufferFormatToString(GLenum format)
     switch (format)
     {
         case GL_DEPTH_COMPONENT16:
-            return "Depth16Unorm";
+            return "D16";
         case GL_DEPTH_COMPONENT32F:
-            return "Depth32Float";
+            return "D32F";
         default:
             return "";
     }
@@ -168,10 +168,8 @@ std::string DepthWriteVariationsTestPrint(
     ParseDepthWriteVariationsTestParams(params, &depthRange, &depthClampEnabled, &vertexDepth,
                                         &fragmentDepth, &depthBufferFormat);
 
-    out << "__"
-        << "DepthRange" << depthRange << "_" << (depthClampEnabled ? "Clamped" : "Clipped") << "_"
-        << "VertexDepth" << vertexDepth << "_"
-        << "FragmentDepth" << fragmentDepth << "_" << BufferFormatToString(depthBufferFormat);
+    out << "__" << depthRange << "_" << (depthClampEnabled ? "Clamped" : "Clipped") << "_"
+        << vertexDepth << "_" << fragmentDepth << "_" << BufferFormatToString(depthBufferFormat);
     return out.str();
 }
 

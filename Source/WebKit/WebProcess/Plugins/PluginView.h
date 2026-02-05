@@ -72,7 +72,6 @@ public:
     static RefPtr<PluginView> create(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader);
 
     WebCore::LocalFrame* frame() const;
-    RefPtr<WebCore::LocalFrame> protectedFrame() const;
 
     bool isBeingDestroyed() const;
 
@@ -170,6 +169,8 @@ public:
     bool pluginDelegatesScrollingToMainFrame() const;
 
     bool isPresentingLockedContent() const;
+
+    void effectiveAppearanceDidChange();
 
 private:
     PluginView(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader, WebPage&);

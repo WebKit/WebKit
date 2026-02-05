@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x596
+layer at (0,0) size 800x595
   RenderBlock {HTML} at (0,0) size 800x596
     RenderBody {BODY} at (8,21) size 784x567
       RenderBlock {H1} at (0,0) size 784x38
         RenderText {#text} at (0,1) size 470x36
           text run at (0,1) width 470: "Small fonts in HTML5/inline SVG"
-      RenderBlock (anonymous) at (0,59) size 784x508
+      RenderBlock (anonymous) at (0,59) size 784x507
         RenderSVGRoot {svg} at (8,80) size 502x503
           RenderSVGContainer {g} at (8,80) size 502x503 [transform={m=((400.00,0.00)(0.00,400.00)) t=(0.00,0.00)}]
             RenderSVGText {text} at (0,0) size 1x1 contains 1 chunk(s)

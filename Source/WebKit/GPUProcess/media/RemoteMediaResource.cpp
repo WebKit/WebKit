@@ -30,7 +30,6 @@
 
 #include "RemoteMediaPlayerProxy.h"
 #include "RemoteMediaResourceLoader.h"
-#include "RemoteMediaResourceManager.h"
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -41,17 +40,15 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaResource);
 
 using namespace WebCore;
 
-Ref<RemoteMediaResource> RemoteMediaResource::create(RemoteMediaResourceManager& remoteMediaResourceManager, RemoteMediaPlayerProxy& remoteMediaPlayerProxy, RemoteMediaResourceIdentifier identifier)
+Ref<RemoteMediaResource> RemoteMediaResource::create(RemoteMediaResourceLoader& loader, RemoteMediaResourceIdentifier identifier)
 {
-    return adoptRef(*new RemoteMediaResource(remoteMediaResourceManager, remoteMediaPlayerProxy, identifier));
+    return adoptRef(*new RemoteMediaResource(loader, identifier));
 }
 
-RemoteMediaResource::RemoteMediaResource(RemoteMediaResourceManager& remoteMediaResourceManager, RemoteMediaPlayerProxy& remoteMediaPlayerProxy, RemoteMediaResourceIdentifier identifier)
-    : m_remoteMediaResourceManager(remoteMediaResourceManager)
-    , m_remoteMediaPlayerProxy(remoteMediaPlayerProxy)
+RemoteMediaResource::RemoteMediaResource(RemoteMediaResourceLoader& loader, RemoteMediaResourceIdentifier identifier)
+    : m_remoteMediaResourceLoader(loader)
     , m_id(identifier)
 {
-    ASSERT(isMainRunLoop());
 }
 
 RemoteMediaResource::~RemoteMediaResource()
@@ -61,17 +58,24 @@ RemoteMediaResource::~RemoteMediaResource()
 
 void RemoteMediaResource::shutdown()
 {
+    // This call must be thread-safe, so protect against simultaneous calls
+    // on multiple threads and dispatch to the loader's queue if necessary.
     if (m_shutdown.exchange(true))
         return;
 
     setClient(nullptr);
 
-    if (RefPtr remoteMediaResourceManager = m_remoteMediaResourceManager.get())
-        remoteMediaResourceManager->removeMediaResource(m_id);
+    RefPtr loader = m_remoteMediaResourceLoader.get();
+    if (!loader)
+        return;
 
-    ensureOnMainRunLoop([remoteMediaPlayerProxy = WTF::move(m_remoteMediaPlayerProxy), id = m_id] {
-        if (remoteMediaPlayerProxy)
-            remoteMediaPlayerProxy->removeResource(id);
+    if (RemoteMediaResourceLoader::defaultQueue()->isCurrent()) {
+        loader->removeMediaResource(m_id);
+        return;
+    }
+
+    RemoteMediaResourceLoader::defaultQueue()->dispatchSync([loader = WTF::move(loader), id = m_id] {
+        loader->removeMediaResource(id);
     });
 }
 
@@ -90,11 +94,8 @@ void RemoteMediaResource::responseReceived(const ResourceResponse& response, boo
 
     m_didPassAccessControlCheck = didPassAccessControlCheck;
     client->responseReceived(*this, response, [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](auto shouldContinue) mutable {
-        if (shouldContinue == ShouldContinuePolicyCheck::No) {
-            ensureOnMainThread([protectedThis] {
-                protectedThis->shutdown();
-            });
-        }
+        if (shouldContinue == ShouldContinuePolicyCheck::No)
+            protectedThis->shutdown();
 
         completionHandler(shouldContinue);
     });

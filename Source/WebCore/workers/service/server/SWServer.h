@@ -298,7 +298,6 @@ public:
     RefPtr<BackgroundFetchRecordLoader> createBackgroundFetchRecordLoader(BackgroundFetchRecordLoaderClient& client, const BackgroundFetchRequest& request, size_t responseDataSize, const WebCore::ClientOrigin& origin) { return CheckedRef { *m_delegate }->createBackgroundFetchRecordLoader(client, request, responseDataSize, origin); }
     Ref<BackgroundFetchStore> createBackgroundFetchStore() { return CheckedRef { *m_delegate }->createBackgroundFetchStore(); }
     WEBCORE_EXPORT BackgroundFetchEngine& backgroundFetchEngine();
-    WEBCORE_EXPORT Ref<BackgroundFetchEngine> protectedBackgroundFetchEngine();
 
     WEBCORE_EXPORT Vector<ServiceWorkerClientPendingMessage> releaseServiceWorkerClientPendingMessage(ScriptExecutionContextIdentifier);
 

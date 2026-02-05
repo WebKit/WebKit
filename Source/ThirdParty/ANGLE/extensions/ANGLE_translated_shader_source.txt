@@ -72,10 +72,10 @@ Requests)
     Append in the end of the fourth paragraph of section 6.1.8 (Shader and
     Program Queries):
 
-    " If <pname> is TRANSLATED_SHADER_LENGTH_ANGLE, the length of the translated
-    source string, including a null terminator, is returned. If no source has
-    been defined, CompileShader has not been called, or the translation has
-    failed for <shader>, zero is returned."
+    " If <pname> is TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE, the length of the
+    translated source string, including a null terminator, is returned. If no
+    source has been defined, CompileShader has not been called, or the
+    translation has failed for <shader>, zero is returned."
 
     Append after the last paragraph of section 6.1.8 (Shader and Program
     Queries):

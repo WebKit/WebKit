@@ -175,12 +175,6 @@ TEST(WKPreferencesPrivate, DisableRichJavaScriptFeatures)
     result = (NSString *)[getNextMessage() body];
     EXPECT_WK_STREQ(@"Contact Picker Disabled", result.get());
 
-    [webView evaluateJavaScript:@"log(navigator.cookieConsent ? 'Cookie Consent Enabled' : 'Cookie Consent Disabled');" completionHandler:^(id, NSError *error) {
-        EXPECT_NULL(error);
-    }];
-    result = (NSString *)[getNextMessage() body];
-    EXPECT_WK_STREQ(@"Cookie Consent Disabled", result.get());
-
     [webView evaluateJavaScript:@"log(window.cookieStore ? 'Cookie Store Enabled' : 'Cookie Store Disabled');" completionHandler:^(id, NSError *error) {
         EXPECT_NULL(error);
     }];

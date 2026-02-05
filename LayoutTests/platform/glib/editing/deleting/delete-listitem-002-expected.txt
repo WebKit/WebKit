@@ -37,22 +37,22 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x211 [border: (2px solid #FF0000)]
         RenderBlock {UL} at (14,38) size 756x135
           RenderListItem {LI} at (40,0) size 716x27
-            RenderListMarker at (-22,0) size 9x26: bullet
-            RenderText {#text} at (0,0) size 35x26
+            RenderListMarker at (-22,0) size 9x27: bullet
+            RenderText {#text} at (0,0) size 35x27
               text run at (0,0) width 35: "one"
           RenderListItem {LI} at (40,27) size 716x27
-            RenderListMarker at (-22,0) size 9x26: bullet
-            RenderText {#text} at (0,0) size 36x26
+            RenderListMarker at (-22,0) size 9x27: bullet
+            RenderText {#text} at (0,0) size 36x27
               text run at (0,0) width 36: "two"
           RenderListItem {LI} at (40,54) size 716x27
-            RenderListMarker at (-22,0) size 9x26: bullet
-            RenderBR {BR} at (0,0) size 0x26
+            RenderListMarker at (-22,0) size 9x27: bullet
+            RenderBR {BR} at (0,0) size 0x27
           RenderListItem {LI} at (40,81) size 716x27
-            RenderListMarker at (-22,0) size 9x26: bullet
-            RenderText {#text} at (0,0) size 40x26
+            RenderListMarker at (-22,0) size 9x27: bullet
+            RenderText {#text} at (0,0) size 40x27
               text run at (0,0) width 40: "four"
           RenderListItem {LI} at (40,108) size 716x27
-            RenderListMarker at (-22,0) size 9x26: bullet
-            RenderText {#text} at (0,0) size 38x26
+            RenderListMarker at (-22,0) size 9x27: bullet
+            RenderText {#text} at (0,0) size 38x27
               text run at (0,0) width 38: "five"
 caret: position 0 of child 0 {BR} of child 5 {LI} of child 1 {UL} of child 1 {DIV} of body

@@ -95,7 +95,6 @@
 #include "RenderLayerInlines.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
-#include "RenderMenuList.h"
 #include "RenderObjectInlines.h"
 #include "RenderText.h"
 #include "RenderTextControl.h"
@@ -1560,7 +1559,7 @@ String AccessibilityObject::language() const
     if (!lang.isEmpty())
         return lang;
 
-    if (isScrollView() && !parentObject()) {
+    if (isScrollArea() && !parentObject()) {
         // If this is the root, use the content language specified in the meta tag.
         if (RefPtr document = this->document())
             return document->contentLanguage();
@@ -3644,7 +3643,7 @@ bool AccessibilityObject::isOnScreen() const
 
 void AccessibilityObject::scrollToMakeVisible(const ScrollRectToVisibleOptions& options) const
 {
-    if (isScrollView() && parentObject())
+    if (isScrollArea() && parentObject())
         parentObject()->scrollToMakeVisible();
 
     if (auto* renderer = this->renderer())
@@ -3670,7 +3669,7 @@ void AccessibilityObject::scrollToMakeVisibleWithSubFocus(IntRect&& subfocus) co
     // FIXME: unclear if we need LegacyIOSDocumentVisibleRect.
     IntRect scrollVisibleRect = scrollableArea->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
 
-    if (!scrollParent->isScrollView()) {
+    if (!scrollParent->isScrollArea()) {
         objectRect.moveBy(scrollPosition);
         objectRect.moveBy(-snappedIntRect(scrollParent->elementRect()).location());
     }
@@ -3731,13 +3730,13 @@ void AccessibilityObject::scrollToGlobalPoint(IntPoint&& point) const
 
         CheckedPtr scrollableArea = outer->getScrollableAreaIfScrollable();
 
-        LayoutRect innerRect = inner->isScrollView() ? inner->parentObject()->boundingBoxRect() : inner->boundingBoxRect();
+        LayoutRect innerRect = inner->isScrollArea() ? inner->parentObject()->boundingBoxRect() : inner->boundingBoxRect();
         LayoutRect objectRect = innerRect;
         IntPoint scrollPosition = scrollableArea->scrollPosition();
 
         // Convert the object rect into local coordinates.
         objectRect.move(offsetX, offsetY);
-        if (!outer->isScrollView())
+        if (!outer->isScrollArea())
             objectRect.move(scrollPosition.x(), scrollPosition.y());
 
         int desiredX = computeBestScrollOffset(
@@ -3752,7 +3751,7 @@ void AccessibilityObject::scrollToGlobalPoint(IntPoint&& point) const
             point.y(), point.y());
         outer->scrollTo(IntPoint(desiredX, desiredY));
 
-        if (outer->isScrollView() && !inner->isScrollView()) {
+        if (outer->isScrollArea() && !inner->isScrollArea()) {
             // If outer object we just scrolled is a scroll view (main window or iframe) but the
             // inner object is not, keep track of the coordinate transformation to apply to
             // future nested calculations.
@@ -3762,7 +3761,7 @@ void AccessibilityObject::scrollToGlobalPoint(IntPoint&& point) const
             point.move(
                 scrollPosition.x() - innerRect.x(),
                 scrollPosition.y() - innerRect.y());
-        } else if (inner->isScrollView()) {
+        } else if (inner->isScrollArea()) {
             // Otherwise, if the inner object is a scroll view, reset the coordinate transformation.
             offsetX = 0;
             offsetY = 0;
@@ -4020,6 +4019,19 @@ AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
 bool AccessibilityObject::isWithinHiddenWebArea() const
 {
     RefPtr webArea = this->containingWebArea();
+    if (!webArea)
+        return false;
+
+#if ENABLE_ACCESSIBILITY_LOCAL_FRAME
+    if (RefPtr parentScrollView = dynamicDowncast<AccessibilityScrollView>(webArea->parentObject())) {
+        if (parentScrollView->isHostingFrameInert() || parentScrollView->isHostingFrameRenderHidden()) {
+            // The frame that hosts this web area is inert or render-hidden, so this entire frame should be hidden as well.
+            return true;
+        }
+    }
+#endif
+
+    // Fallback for same-process visibility/inert check.
     CheckedPtr renderView = webArea ? dynamicDowncast<RenderView>(webArea->renderer()) : nullptr;
     CheckedPtr frameRenderer = renderView ? renderView->frameView().frame().ownerRenderer() : nullptr;
     while (frameRenderer) {
@@ -4077,14 +4089,12 @@ bool AccessibilityObject::isIgnoredWithoutCache(AXObjectCache* cache) const
         bool becameUnignored = previousLastKnownIsIgnoredValue == AccessibilityObjectInclusion::IgnoreObject && !ignored;
         bool becameIgnored = !becameUnignored && previousLastKnownIsIgnoredValue == AccessibilityObjectInclusion::IncludeObject && ignored;
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         if (becameIgnored) {
             // If a menu became ignored, e.g. because it became display:none, ATs need to be informed.
             postMenuClosedNotificationIfNecessary();
             cache->objectBecameIgnored(*this);
         } else if (becameUnignored)
             cache->objectBecameUnignored(*this);
-#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
         if (becameUnignored || becameIgnored) {
             // FIXME: We should not have to submit a children-changed when ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE), but that causes a few failing

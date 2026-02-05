@@ -33,9 +33,7 @@
     readonly attribute DOMString message;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary SpeechRecognitionErrorEventInit : EventInit {
+dictionary SpeechRecognitionErrorEventInit : EventInit {
     required SpeechRecognitionErrorCode error;
     DOMString message = "";
 };

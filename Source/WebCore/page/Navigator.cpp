@@ -82,7 +82,7 @@ String Navigator::appVersion() const
     if (!frame)
         return String();
     if (frame->settings().webAPIStatisticsEnabled())
-        ResourceLoadObserver::singleton().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::AppVersion);
+        ResourceLoadObserver::singleton().logNavigatorAPIAccessed(*protect(frame->document()), NavigatorAPIsAccessed::AppVersion);
     return NavigatorBase::appVersion();
 }
 
@@ -92,7 +92,7 @@ const String& Navigator::userAgent() const
     if (!frame || !frame->page())
         return m_userAgent;
     if (frame->settings().webAPIStatisticsEnabled())
-        ResourceLoadObserver::singleton().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::UserAgent);
+        ResourceLoadObserver::singleton().logNavigatorAPIAccessed(*protect(frame->document()), NavigatorAPIsAccessed::UserAgent);
 
 #if PLATFORM(IOS_FAMILY)
     if (RefPtr document = frame->document(); document && document->quirks().needsChromeOSNavigatorUserAgentQuirk(*document)) {
@@ -270,10 +270,10 @@ void Navigator::initializePluginAndMimeTypeArrays()
         return;
 
     RefPtr frame = this->frame();
-    bool needsEmptyNavigatorPluginsQuirk = frame && frame->document() && frame->protectedDocument()->quirks().shouldNavigatorPluginsBeEmpty();
+    bool needsEmptyNavigatorPluginsQuirk = frame && frame->document() && protect(frame->document())->quirks().shouldNavigatorPluginsBeEmpty();
     if (!frame || !frame->page() || needsEmptyNavigatorPluginsQuirk) {
         if (needsEmptyNavigatorPluginsQuirk)
-            frame->protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Info, "QUIRK: Navigator plugins / mimeTypes empty on marcus.com. More information at https://bugs.webkit.org/show_bug.cgi?id=248798"_s);
+            protect(frame->document())->addConsoleMessage(MessageSource::Other, MessageLevel::Info, "QUIRK: Navigator plugins / mimeTypes empty on marcus.com. More information at https://bugs.webkit.org/show_bug.cgi?id=248798"_s);
         m_plugins = DOMPluginArray::create(*this);
         m_mimeTypes = DOMMimeTypeArray::create(*this);
         return;
@@ -288,7 +288,7 @@ void Navigator::initializePluginAndMimeTypeArrays()
 
     // macOS uses a PDF Plugin (which may be disabled). Other ports handle PDF's through native
     // platform views outside the engine, or use pdf.js.
-    PluginInfo pdfPluginInfo = frame->protectedPage()->pluginData().builtInPDFPlugin().value_or(PluginData::dummyPDFPluginInfo());
+    PluginInfo pdfPluginInfo = protect(frame->page())->pluginData().builtInPDFPlugin().value_or(PluginData::dummyPDFPluginInfo());
 
     Vector<Ref<DOMPlugin>> domPlugins;
     Vector<Ref<DOMMimeType>> domMimeTypes;
@@ -316,7 +316,7 @@ void Navigator::initializePluginAndMimeTypeArrays()
 DOMPluginArray& Navigator::plugins()
 {
     if (RefPtr frame = this->frame(); frame && frame->settings().webAPIStatisticsEnabled())
-        ResourceLoadObserver::singleton().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::Plugins);
+        ResourceLoadObserver::singleton().logNavigatorAPIAccessed(*protect(frame->document()), NavigatorAPIsAccessed::Plugins);
 
     initializePluginAndMimeTypeArrays();
     return *m_plugins;
@@ -325,7 +325,7 @@ DOMPluginArray& Navigator::plugins()
 DOMMimeTypeArray& Navigator::mimeTypes()
 {
     if (RefPtr frame = this->frame(); frame && frame->settings().webAPIStatisticsEnabled())
-        ResourceLoadObserver::singleton().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::MimeTypes);
+        ResourceLoadObserver::singleton().logNavigatorAPIAccessed(*protect(frame->document()), NavigatorAPIsAccessed::MimeTypes);
 
     initializePluginAndMimeTypeArrays();
     return *m_mimeTypes;
@@ -345,7 +345,7 @@ bool Navigator::cookieEnabled() const
         return false;
 
     if (frame->settings().webAPIStatisticsEnabled())
-        ResourceLoadObserver::singleton().logNavigatorAPIAccessed(*frame->protectedDocument(), NavigatorAPIsAccessed::CookieEnabled);
+        ResourceLoadObserver::singleton().logNavigatorAPIAccessed(*protect(frame->document()), NavigatorAPIsAccessed::CookieEnabled);
 
     RefPtr page = frame->page();
     if (!page)
@@ -467,7 +467,7 @@ NavigatorUAData& Navigator::userAgentData() const
     RefPtr frame = this->frame();
     if (frame && frame->page()) {
         RefPtr client = frame->loader().client();
-        if (client->hasCustomUserAgent() || (frame->document() && frame->protectedDocument()->quirks().needsCustomUserAgentData())) {
+        if (client->hasCustomUserAgent() || (frame->document() && protect(frame->document())->quirks().needsCustomUserAgentData())) {
             auto userAgentString = frame->loader().userAgent({ });
             Ref parser = UserAgentStringParser::create(userAgentString);
             std::optional userAgentStringData = parser->parse();

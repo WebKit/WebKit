@@ -16,9 +16,6 @@ declare_args() {
   # Enable custom (cpu-side) secondary command buffers
   angle_enable_custom_vulkan_cmd_buffers = true
 
-  # Enable Vulkan GPU trace event capability
-  angle_enable_vulkan_gpu_trace_events = false
-
   # Enable compute only queue for OpenCL Vulkan backend
   angle_enable_cl_compute_only_pipe = true
 }
@@ -62,9 +59,6 @@ config("angle_vulkan_backend_config") {
   defines = [ "ANGLE_ENABLE_VULKAN" ]
   if (angle_enable_swiftshader) {
     defines += [ "ANGLE_ENABLE_SWIFTSHADER" ]
-  }
-  if (angle_enable_vulkan_gpu_trace_events) {
-    defines += [ "ANGLE_ENABLE_VULKAN_GPU_TRACE_EVENTS=1" ]
   }
   if (angle_enable_vulkan_validation_layers) {
     defines += [ "ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS" ]

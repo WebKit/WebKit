@@ -58,9 +58,29 @@ function waitForVideoFrame(video, cb) {
     const p = new Promise((resolve) => {
         video.requestVideoFrameCallback((now, metadata) => resolve([now, metadata]));
     });
+
     if (cb)
         p.then(cb);
     return p;
+}
+
+function waitForVideoFrameWithTimeout(video, time, message) {
+    const framePromise = new Promise((resolve) => {
+        video.requestVideoFrameCallback((now, metadata) => resolve([now, metadata]));
+    });
+    const timeoutPromise = new Promise((resolve) => {
+        setTimeout(resolve, time, 'timeout');
+    });
+
+    return Promise.race([
+        framePromise, 
+        timeoutPromise,
+    ]).then(result => {
+        if (result === 'timeout')
+            return Promise.reject(new Error(message));
+
+        return Promise.resolve(result);
+    });
 }
 
 function waitForVideoFrameUntil(video, time, cb) {

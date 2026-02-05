@@ -108,7 +108,7 @@ Expected<JSValue, NakedPtr<Exception>> ScriptFunctionCall::call()
 
     VM& vm = m_globalObject->vm();
     JSLockHolder lock(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     auto makeExceptionResult = [&] (Exception* exception) -> Expected<JSValue, NakedPtr<Exception>> {
         // Do not treat a terminated execution exception as having an exception. Just treat it as an empty result.

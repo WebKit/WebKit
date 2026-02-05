@@ -423,10 +423,12 @@
 
 (with-filter (system-attribute apple-internal)
     (allow mach-lookup
-        (global-name "com.apple.aggregated")
-        (global-name "com.apple.analyticsd")
-        (global-name "com.apple.diagnosticd")
-        (global-name "com.apple.ReportMemoryException"))) ;; FIXME: This should be removed after crash investigation as part of <rdar://problem/160965793>.
+        (global-name
+            "com.apple.aggregated"
+            "com.apple.analyticsd"
+            "com.apple.diagnosticd"
+            "com.apple.networkscored"
+            "com.apple.ReportMemoryException"))) ;; FIXME: This should be removed after crash investigation as part of <rdar://problem/160965793>.
 
 (allow mach-lookup (global-name "com.apple.webkit.adattributiond.service"))
 (allow mach-lookup (global-name "org.webkit.pcmtestdaemon.service"))

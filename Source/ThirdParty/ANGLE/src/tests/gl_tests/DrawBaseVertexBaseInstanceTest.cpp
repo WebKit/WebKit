@@ -1213,6 +1213,98 @@ TEST_P(DrawBaseInstanceTest, DrawElementsInstancedBaseVertexBaseInstance)
     checkDrawResult(true, true);
 }
 
+class DrawBaseVertexBaseInstanceTest_ES3 : public ANGLETest<>
+{
+  public:
+    DrawBaseVertexBaseInstanceTest_ES3()
+    {
+        setWindowWidth(16);
+        setWindowHeight(16);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+    }
+};
+
+// gl_BaseVertex and gl_BaseInstance are translated to angle_BaseVertex and angle_BaseInstance
+// internally.  Check that a user-defined angle_BaseVertex or angle_BaseInstance is permitted
+TEST_P(DrawBaseVertexBaseInstanceTest_ES3, AllowsUserDefinedANGLEDrawID)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_base_vertex_base_instance"));
+    ANGLE_SKIP_TEST_IF(
+        !EnsureGLExtensionEnabled("GL_ANGLE_base_vertex_base_instance_shader_builtin"));
+
+    constexpr char kVS[] = R"(#version 300 es
+#extension GL_ANGLE_base_vertex_base_instance_shader_builtin : require
+in vec2 position;
+uniform int angle_BaseVertex;
+uniform int angle_BaseInstance;
+out vec4 verified;
+
+void main()
+{
+    // Expect gl_BaseVertex and gl_BaseInstance to be untouched when angle_BaseVertex and
+    // angle_BaseInstance are not.
+    verified = vec4(gl_BaseVertex == 2, gl_BaseInstance == 0,
+                    angle_BaseVertex == 3, angle_BaseInstance == 5);
+    gl_Position = vec4(position, 0, 1);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+in vec4 verified;
+out vec4 color;
+
+void main()
+{
+    color = verified;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    glUniform1i(glGetUniformLocation(program, "angle_BaseVertex"), 3);
+    glUniform1i(glGetUniformLocation(program, "angle_BaseInstance"), 5);
+
+    constexpr std::array<GLfloat, 5 * 2> kVertexData = {
+        // Vertex 0, unused
+        10000,
+        10000,
+        // Vertex 1, unused
+        10000,
+        10000,
+        // Vertices 2, 3 and 4 define the triangle because base vertex is 2.
+        -1,
+        -1,
+        3,
+        -1,
+        -1,
+        3,
+    };
+    constexpr std::array<GLushort, 3> kIndexData = {
+        0,
+        1,
+        2,
+    };
+
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(kVertexData), kVertexData.data(), GL_STATIC_DRAW);
+    const GLint positionLoc = glGetAttribLocation(program, "position");
+    glEnableVertexAttribArray(positionLoc);
+    glVertexAttribPointer(positionLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(kIndexData), kIndexData.data(), GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    glDrawElementsInstancedBaseVertexBaseInstanceANGLE(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, nullptr,
+                                                       1, 2, 0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
+    ASSERT_GL_NO_ERROR();
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DrawBaseVertexBaseInstanceTest);
 
 #define ANGLE_ALL_BASEVERTEXBASEINTANCE_TEST_PLATFORMS_ES3                                 \
@@ -1238,5 +1330,9 @@ ANGLE_INSTANTIATE_TEST_COMBINE_3(
     testing::Values(BaseInstanceOption::NoBaseInstance, BaseInstanceOption::UseBaseInstance),
     testing::Values(BufferDataUsageOption::StaticDraw, BufferDataUsageOption::DynamicDraw),
     ANGLE_ALL_BASEVERTEXBASEINTANCE_TEST_PLATFORMS_ES3);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DrawBaseVertexBaseInstanceTest_ES3);
+ANGLE_INSTANTIATE_TEST(DrawBaseVertexBaseInstanceTest_ES3,
+                       ANGLE_ALL_BASEVERTEXBASEINTANCE_TEST_PLATFORMS_ES3);
 
 }  // namespace

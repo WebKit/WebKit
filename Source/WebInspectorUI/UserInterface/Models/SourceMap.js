@@ -36,8 +36,8 @@ WI.SourceMap = class SourceMap
         for (let [generatedLine, generatedColumn, sourceURL, originalLine, originalColumn] of this._mappings) {
             if (!sourceURL)
                 continue;
-            let generatedPositionForOriginalLine = this._generatedPositionForOriginalLineForURL.getOrInitialize(sourceURL, () => new Map);
-            generatedPositionForOriginalLine.getOrInitialize(originalLine, [generatedLine, generatedColumn]);
+            let generatedPositionForOriginalLine = this._generatedPositionForOriginalLineForURL.getOrInsert(sourceURL, new Map);
+            generatedPositionForOriginalLine.getOrInsert(originalLine, [generatedLine, generatedColumn]);
         }
 
         this._sourceMapResourceForURL = new Map;

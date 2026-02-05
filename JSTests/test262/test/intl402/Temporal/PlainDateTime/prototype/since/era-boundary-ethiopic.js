@@ -24,12 +24,12 @@ const tests = [
   [
     aa5500, am1,
     [-1, 0, 0, 0, "-1y backwards  from 5500 AA to 1 AM"],
-    [0, -13, 0, 0, 0, "-13mo backwards  from 5500 AA to 1 AM"],
+    [0, -13, 0, 0, "-13mo backwards  from 5500 AA to 1 AM"],
   ],
   [
     am1, aa5500,
     [1, 0, 0, 0, "1y  from 5500 AA to 1 AM"],
-    [0, 13, 0, 0, 0, "13mo  from 1 AM to 5500 AA"],
+    [0, 13, 0, 0, "13mo  from 1 AM to 5500 AA"],
   ],
   // From 2000 AM to 2005 AM
   [

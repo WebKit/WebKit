@@ -129,6 +129,7 @@
 
 /* When disabled, we only want to show the track and turn off interaction. */
 
-.slider.default.disabled > .appearance > .fill > :is(.primary, .secondary) {
+.slider.default.disabled > .appearance > .fill > .primary,
+.slider.default.disabled > .appearance > .fill > .secondary {
     display: none;
 }

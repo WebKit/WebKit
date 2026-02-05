@@ -227,9 +227,10 @@ const JSC::ClassInfo TestAsyncIterableWithoutFlagsIteratorPrototype::s_info = { 
 
 static inline EncodedJSValue jsTestAsyncIterableWithoutFlagsPrototypeFunction_valuesCaller(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame, JSTestAsyncIterableWithoutFlags* thisObject)
 {
-    UNUSED_PARAM(callFrame);
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
     RELEASE_AND_RETURN(throwScope, JSValue::encode(iteratorCreate<TestAsyncIterableWithoutFlagsIterator>(*thisObject, *lexicalGlobalObject, throwScope, IterationKind::Values)));
 }
 

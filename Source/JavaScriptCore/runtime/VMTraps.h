@@ -235,13 +235,14 @@ public:
         BitField maskedBits = event & mask;
         return m_trapBits.loadRelaxed() & maskedBits;
     }
-    ALWAYS_INLINE CONCURRENT_SAFE void clearTrap(Event event)
+    ALWAYS_INLINE CONCURRENT_SAFE bool clearTrap(Event event)
     {
         ASSERT(!(event & ~AllEvents));
-        clearTrapWithoutCancellingThreadStop(event);
+        auto oldBits = clearTrapWithoutCancellingThreadStop(event);
         // Trap bit must be cleared before we update the thread stop request.
         if (isAsyncEvent(event))
             updateThreadStopRequestIfNeeded();
+        return oldBits & event;
     }
     ALWAYS_INLINE CONCURRENT_SAFE void fireTrap(Event event)
     {
@@ -291,9 +292,9 @@ public:
     void cancelStop() { m_stack.cancelStop(); }
 
 private:
-    ALWAYS_INLINE void clearTrapWithoutCancellingThreadStop(Event event)
+    ALWAYS_INLINE BitField clearTrapWithoutCancellingThreadStop(Event event)
     {
-        m_trapBits.exchangeAnd(~event);
+        return m_trapBits.exchangeAnd(~event);
     }
 
     CONCURRENT_SAFE void cancelThreadStopIfNeeded() WTF_REQUIRES_LOCK(m_trapSignalingLock);

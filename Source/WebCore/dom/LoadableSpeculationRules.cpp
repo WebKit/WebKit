@@ -81,7 +81,7 @@ CachedResourceHandle<CachedScript> LoadableSpeculationRules::requestSpeculationR
     request.upgradeInsecureRequestIfNeeded(document);
     request.setPriority(ResourceLoadPriority::Low);
 
-    return document.protectedCachedResourceLoader()->requestScript(WTF::move(request)).value_or(nullptr);
+    return protect(document.cachedResourceLoader())->requestScript(WTF::move(request)).value_or(nullptr);
 }
 
 bool LoadableSpeculationRules::load(Document& document, const URL& url)
@@ -100,7 +100,7 @@ bool LoadableSpeculationRules::load(Document& document, const URL& url)
     return true;
 }
 
-// https://html.spec.whatwg.org/C#the-speculation-rules-header
+// https://html.spec.whatwg.org/C#process-the-speculation-rules-header
 // 3.4.2.2. processResponseConsumeBody
 void LoadableSpeculationRules::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
@@ -124,12 +124,7 @@ void LoadableSpeculationRules::notifyFinished(CachedResource& resource, const Ne
     }
 
     // 4. Let bodyText be the result of UTF-8 decoding bodyBytes.
-    if (resource.encoding() != "UTF-8"_s) {
-        document->addConsoleMessage(MessageSource::Other, MessageLevel::Error, makeString("Invalid speculation rules encoding "_s, m_url.string()));
-        return;
-    }
-
-    String speculationRulesText = m_cachedScript->script().toString();
+    String speculationRulesText = m_cachedScript->script(CachedScript::ShouldDecodeAsUTF8Only::Yes).toString();
     if (speculationRulesText.isEmpty())
         return;
 

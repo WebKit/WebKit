@@ -39,9 +39,11 @@
 #include "JSArrayIterator.h"
 #include "JSAsyncFromSyncIterator.h"
 #include "JSAsyncFunction.h"
+#include "JSAsyncGenerator.h"
 #include "JSAsyncGeneratorFunction.h"
 #include "JSCellButterfly.h"
 #include "JSCInlines.h"
+#include "JSGenerator.h"
 #include "JSGeneratorFunction.h"
 #include "JSInternalPromise.h"
 #include "JSIteratorHelper.h"
@@ -189,6 +191,12 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalO
             break;
         case JSRegExpStringIteratorType:
             materialize(jsCast<JSRegExpStringIterator*>(target));
+            break;
+        case JSGeneratorType:
+            materialize(jsCast<JSGenerator*>(target));
+            break;
+        case JSAsyncGeneratorType:
+            materialize(jsCast<JSAsyncGenerator*>(target));
             break;
         case JSPromiseType:
             if (target->classInfo() == JSInternalPromise::info())
@@ -486,6 +494,10 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
             return create.operator()<JSAsyncFromSyncIterator>();
         case JSRegExpStringIteratorType:
             return create.operator()<JSRegExpStringIterator>();
+        case JSGeneratorType:
+            return create.operator()<JSGenerator>();
+        case JSAsyncGeneratorType:
+            return create.operator()<JSAsyncGenerator>();
         case JSPromiseType:
             if (structure->classInfoForCells() == JSInternalPromise::info())
                 return create.operator()<JSInternalPromise>();

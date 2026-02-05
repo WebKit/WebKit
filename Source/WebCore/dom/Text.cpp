@@ -67,12 +67,12 @@ ExceptionOr<Ref<Text>> Text::splitText(unsigned offset)
     dispatchModifiedEvent(oldData);
 
     if (RefPtr parent = parentNode()) {
-        auto insertResult = parent->insertBefore(newText, protectedNextSibling());
+        auto insertResult = parent->insertBefore(newText, protect(nextSibling()));
         if (insertResult.hasException())
             return insertResult.releaseException();
     }
 
-    protectedDocument()->textNodeSplit(*this);
+    protect(document())->textNodeSplit(*this);
 
     updateRendererAfterContentChange(0, oldData.length());
 
@@ -189,7 +189,7 @@ RenderPtr<RenderText> Text::createTextRenderer(const RenderStyle& style)
 
 Ref<Text> Text::virtualCreate(String&& data)
 {
-    return create(protectedDocument(), WTF::move(data));
+    return create(protect(document()), WTF::move(data));
 }
 
 void Text::updateRendererAfterContentChange(unsigned offsetOfReplacedData, unsigned lengthOfReplacedData)
@@ -200,7 +200,7 @@ void Text::updateRendererAfterContentChange(unsigned offsetOfReplacedData, unsig
     if (hasInvalidRenderer())
         return;
 
-    protectedDocument()->updateTextRenderer(*this, offsetOfReplacedData, lengthOfReplacedData);
+    protect(document())->updateTextRenderer(*this, offsetOfReplacedData, lengthOfReplacedData);
 }
 
 static void appendTextRepresentation(StringBuilder& builder, const Text& text)

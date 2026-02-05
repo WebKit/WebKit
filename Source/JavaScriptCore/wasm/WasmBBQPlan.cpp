@@ -78,7 +78,7 @@ FunctionAllowlist& BBQPlan::ensureGlobalBBQAllowlist()
 bool BBQPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffer, const TypeDefinition& signature, FunctionSpaceIndex functionIndexSpace)
 {
     if (shouldDumpDisassemblyFor(CompilationMode::BBQMode)) [[unlikely]] {
-        dataLogLn("Generated BBQ functionIndexSpace:(", functionIndexSpace, "),sig:(", signature.toString().ascii().data(), "),name:(", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data(), "),wasmSize:(", m_moduleInformation->functionWasmSizeImportSpace(functionIndexSpace), ")");
+        dataLogLn("Generated BBQ functionIndexSpace:(", functionIndexSpace, "),sig:(", signature.toString().ascii().data(), "),name:(", m_profiledCallee->nameWithHash(), "),wasmSize:(", m_moduleInformation->functionWasmSizeImportSpace(functionIndexSpace), ")");
         if (context.bbqDisassembler)
             context.bbqDisassembler->dump(linkBuffer);
         linkBuffer.didAlreadyDisassemble();
@@ -96,7 +96,7 @@ void BBQPlan::work()
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[m_functionIndex];
     const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
 
-    Ref<BBQCallee> callee = BBQCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace));
+    Ref<BBQCallee> callee = BBQCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), Ref { m_profiledCallee });
     std::unique_ptr<InternalFunction> function = compileFunction(m_functionIndex, callee.get(), context, unlinkedWasmToWasmCalls);
 
     LinkBuffer linkBuffer(*context.wasmEntrypointJIT, callee.ptr(), LinkBuffer::Profile::WasmBBQ, JITCompilationCanFail);
@@ -114,7 +114,7 @@ void BBQPlan::work()
 
     bool alreadyDumped = dumpDisassembly(context, linkBuffer, signature, functionIndexSpace);
     function->entrypoint.compilation = makeUnique<Compilation>(
-        FINALIZE_CODE_IF((!alreadyDumped && shouldDumpDisassemblyFor(CompilationMode::BBQMode)), linkBuffer, JITCompilationPtrTag, nullptr, "BBQ functionIndexSpace:(", functionIndexSpace, "),sig:(", signature.toString().ascii().data(), "),name:(", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data(), "),wasmSize:(", m_moduleInformation->functionWasmSizeImportSpace(functionIndexSpace), ")"),
+        FINALIZE_CODE_IF((!alreadyDumped && shouldDumpDisassemblyFor(CompilationMode::BBQMode)), linkBuffer, JITCompilationPtrTag, nullptr, "BBQ functionIndexSpace:(", functionIndexSpace, "),sig:(", signature.toString().ascii().data(), "),name:(", callee->nameWithHash().ascii().data(), "),wasmSize:(", m_moduleInformation->functionWasmSizeImportSpace(functionIndexSpace), ")"),
         WTF::move(context.wasmEntrypointByproducts));
 
     CodePtr<WasmEntryPtrTag> entrypoint;

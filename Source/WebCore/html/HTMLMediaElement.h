@@ -476,6 +476,7 @@ public:
     WEBCORE_EXPORT void hideCaptionDisplaySettingsPreview();
 
     WEBCORE_EXPORT bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
+    using EventTarget::addEventListener;
     WEBCORE_EXPORT bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) override;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -490,6 +491,7 @@ public:
     void isWirelessPlaybackTargetDisabledChanged();
     bool hasTargetAvailabilityListeners();
     bool hasEnabledTargetAvailabilityListeners();
+    MediaPlaybackTargetType playbackTargetType() const final;
 #endif
 
     bool isPlayingToWirelessPlaybackTarget() const override { return m_isPlayingToWirelessTarget; };
@@ -1175,6 +1177,11 @@ private:
 
     void maybeUpdatePlayerPreload() const;
     void canProduceAudioChanged();
+
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+    void scheduleRebuildMediaEngineForWirelessPlayback();
+    void rebuildMediaEngineForWirelessPlayback();
+#endif
 
     Timer m_progressEventTimer;
     Timer m_playbackProgressTimer;

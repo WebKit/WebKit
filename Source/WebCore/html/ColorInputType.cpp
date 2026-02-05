@@ -239,7 +239,7 @@ void ColorInputType::attributeChanged(const QualifiedName& name)
         updateColorSwatch();
 
         Ref input = *element();
-        if (CheckedPtr cache = input->protectedDocument()->existingAXObjectCache())
+        if (CheckedPtr cache = protect(input->document())->existingAXObjectCache())
             cache->valueChanged(input);
     }
 
@@ -311,7 +311,7 @@ void ColorInputType::didChooseColor(const Color& color)
     updateColorSwatch();
     input->dispatchFormControlChangeEvent();
 
-    if (CheckedPtr cache = input->protectedDocument()->existingAXObjectCache())
+    if (CheckedPtr cache = protect(input->document())->existingAXObjectCache())
         cache->valueChanged(input);
 }
 
@@ -355,12 +355,12 @@ IntRect ColorInputType::elementRectRelativeToRootView() const
     CheckedPtr renderer = element->renderer();
     if (!renderer)
         return IntRect();
-    return element->protectedDocument()->protectedView()->contentsToRootView(renderer->absoluteBoundingBoxRect());
+    return protect(protect(element->document())->view())->contentsToRootView(renderer->absoluteBoundingBoxRect());
 }
 
 std::optional<FrameIdentifier> ColorInputType::rootFrameID() const
 {
-    return element()->protectedDocument()->protectedView()->rootFrameID();
+    return protect(protect(element()->document())->view())->rootFrameID();
 }
 
 bool ColorInputType::supportsAlpha() const

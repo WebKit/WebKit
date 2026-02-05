@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/media-capabilities/#dictdef-audioconfiguration
 [
     EnabledBySetting=MediaCapabilitiesEnabled,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary AudioConfiguration {
   required DOMString contentType;
   DOMString channels;

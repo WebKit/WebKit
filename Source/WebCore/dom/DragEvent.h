@@ -43,7 +43,7 @@ class DragEvent final : public MouseEvent {
 public:
     using Init = DragEventInit;
 
-    static Ref<DragEvent> create(const AtomString& eventType, DragEventInit&&);
+    static Ref<DragEvent> create(const AtomString& eventType, Init&&);
     static Ref<DragEvent> createForBindings();
     static Ref<DragEvent> create(const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
         const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier>, MouseButton, unsigned short buttons,
@@ -54,7 +54,7 @@ public:
     DataTransfer* dataTransfer() const { return m_dataTransfer.get(); }
 
 private:
-    DragEvent(const AtomString& eventType, DragEventInit&&);
+    DragEvent(const AtomString& eventType, Init&&);
     DragEvent(const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
         const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier>, MouseButton, unsigned short buttons,
         EventTarget* relatedTarget, double force, SyntheticClickType, DataTransfer*, IsSimulated, IsTrusted);

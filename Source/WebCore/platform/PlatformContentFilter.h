@@ -31,6 +31,7 @@
 #include <wtf/Ref.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -77,8 +78,11 @@ public:
 #endif
 
     struct FilterParameters {
+#if HAVE(WEBCONTENTRESTRICTIONS)
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
         String webContentRestrictionsConfigurationPath { };
+#endif
+        URL mainDocumentURL;
 #endif
     };
 

@@ -2022,14 +2022,13 @@ bool Graph::canDoFastSpread(Node* node, const AbstractValue& value)
 
     JSGlobalObject* globalObject = globalObjectFor(node->child1()->origin.semantic);
     ArrayPrototype* arrayPrototype = globalObject->arrayPrototype();
-
     bool allGood = true;
     value.m_structure.forEach([&] (RegisteredStructure structure) {
-        allGood &= structure->globalObject() == globalObject
+        allGood &= structure->globalObject() == globalObject 
             && structure->hasMonoProto()
             && structure->storedPrototype() == arrayPrototype
             && !structure->isDictionary()
-            && !structure->hasSpecialProperties()
+            && structure->getConcurrently(m_vm.propertyNames->iteratorSymbol.impl()) == invalidOffset
             && !structure->mayInterceptIndexedAccesses();
     });
 

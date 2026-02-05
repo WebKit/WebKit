@@ -38,6 +38,7 @@
 #import "UIKitUtilities.h"
 #import "WKContentViewInteraction.h"
 #import "WKData.h"
+#import "WKSharedAPICast.h"
 #import "WKStringCF.h"
 #import "WKURLCF.h"
 #import "WKWebViewInternal.h"
@@ -436,8 +437,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_cancel
 {
-    if (_listener)
-        _listener->cancel();
+    if (RefPtr listener = _listener)
+        listener->cancel();
 
     [self _dispatchDidDismiss];
 }
@@ -483,10 +484,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     for (NSURL *fileURL in fileURLs)
         filenames.append(String::fromUTF8(fileURL.fileSystemRepresentation));
 
-    NSData *png = UIImagePNGRepresentation(iconImage);
+    RetainPtr png = UIImagePNGRepresentation(iconImage);
     RefPtr iconImageDataRef = adoptRef(WebKit::toImpl(WKDataCreate(static_cast<const unsigned char*>([png bytes]), [png length])));
 
-    _listener->chooseFiles(filenames, displayString, iconImageDataRef.get());
+    protect(_listener)->chooseFiles(filenames, displayString, iconImageDataRef.get());
     [self _dispatchDidDismiss];
 }
 
@@ -648,18 +649,18 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 
 - (NSArray<NSString *> *)_mediaTypesForPickerSourceType:(UIImagePickerControllerSourceType)sourceType
 {
-    NSArray<NSString *> *availableMediaTypeUTIs = [UIImagePickerController availableMediaTypesForSourceType:sourceType];
-    NSSet<NSString *> *acceptedMediaTypeUTIs = _acceptedUTIs.get();
-    if (acceptedMediaTypeUTIs.count) {
-        NSMutableArray<NSString *> *mediaTypes = [NSMutableArray array];
-        for (NSString *availableMediaTypeUTI in availableMediaTypeUTIs) {
+    RetainPtr availableMediaTypeUTIs = [UIImagePickerController availableMediaTypesForSourceType:sourceType];
+    RetainPtr acceptedMediaTypeUTIs = _acceptedUTIs.get();
+    if (acceptedMediaTypeUTIs.get().count) {
+        RetainPtr<NSMutableArray<NSString *>> mediaTypes = [NSMutableArray array];
+        for (NSString *availableMediaTypeUTI in availableMediaTypeUTIs.get()) {
             if ([acceptedMediaTypeUTIs containsObject:availableMediaTypeUTI])
                 [mediaTypes addObject:availableMediaTypeUTI];
             else {
-                UTType *availableMediaType = [UTType typeWithIdentifier:availableMediaTypeUTI];
-                for (NSString *acceptedMediaTypeUTI in acceptedMediaTypeUTIs) {
-                    UTType *acceptedMediaType = [UTType typeWithIdentifier:acceptedMediaTypeUTI];
-                    if ([acceptedMediaType conformsToType:availableMediaType]) {
+                RetainPtr availableMediaType = [UTType typeWithIdentifier:availableMediaTypeUTI];
+                for (NSString *acceptedMediaTypeUTI in acceptedMediaTypeUTIs.get()) {
+                    RetainPtr acceptedMediaType = [UTType typeWithIdentifier:acceptedMediaTypeUTI];
+                    if ([acceptedMediaType conformsToType:availableMediaType.get()]) {
                         [mediaTypes addObject:availableMediaTypeUTI];
                         break;
                     }
@@ -667,13 +668,13 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
             }
         }
 
-        ASSERT(mediaTypes.count);
-        if (mediaTypes.count)
-            return mediaTypes;
+        ASSERT(mediaTypes.get().count);
+        if (mediaTypes.get().count)
+            return mediaTypes.autorelease();
     }
 
     // Fallback to every supported media type if there is no filter.
-    return availableMediaTypeUTIs;
+    return availableMediaTypeUTIs.autorelease();
 }
 
 #if HAVE(PHOTOS_UI)
@@ -732,34 +733,34 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 
 - (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location {
 
-    UIContextMenuActionProvider actionMenuProvider = [self, weakSelf = WeakObjCPtr<WKFileUploadPanel>(self)] (NSArray<UIMenuElement *> *) -> UIMenu * {
-        NSArray *actions;
-
+    WeakObjCPtr<WKFileUploadPanel> weakSelf { self };
+    UIContextMenuActionProvider actionMenuProvider = [weakSelf] (NSArray<UIMenuElement *> *) -> UIMenu * {
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
             return nil;
 
-        self->_isPresentingSubMenu = NO;
-        UIAction *chooseAction = [UIAction actionWithTitle:[strongSelf _chooseFilesButtonLabel] image:[UIImage systemImageNamed:@"folder"] identifier:@"choose" handler:^(__kindof UIAction *action) {
-            self->_isPresentingSubMenu = YES;
-            [self showFilePickerMenu];
+        strongSelf->_isPresentingSubMenu = NO;
+        RetainPtr chooseAction = [UIAction actionWithTitle:[strongSelf _chooseFilesButtonLabel] image:[UIImage systemImageNamed:@"folder"] identifier:@"choose" handler:^(__kindof UIAction *action) {
+            strongSelf->_isPresentingSubMenu = YES;
+            [strongSelf showFilePickerMenu];
         }];
 
-        UIAction *photoAction = [UIAction actionWithTitle:[strongSelf _photoLibraryButtonLabel] image:[UIImage systemImageNamed:@"photo.on.rectangle"] identifier:@"photo" handler:^(__kindof UIAction *action) {
-            self->_isPresentingSubMenu = YES;
-            [self _showPhotoPicker];
+        RetainPtr photoAction = [UIAction actionWithTitle:[strongSelf _photoLibraryButtonLabel] image:[UIImage systemImageNamed:@"photo.on.rectangle"] identifier:@"photo" handler:^(__kindof UIAction *action) {
+            strongSelf->_isPresentingSubMenu = YES;
+            [strongSelf _showPhotoPicker];
         }];
 
+        NSArray *actions;
         if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
             NSString *cameraString = [strongSelf _cameraButtonLabel];
-            UIAction *cameraAction = [UIAction actionWithTitle:cameraString image:[UIImage systemImageNamed:@"camera"] identifier:@"camera" handler:^(__kindof UIAction *action) {
-                _usingCamera = YES;
-                self->_isPresentingSubMenu = YES;
-                [self _showCamera];
+            RetainPtr cameraAction = [UIAction actionWithTitle:cameraString image:[UIImage systemImageNamed:@"camera"] identifier:@"camera" handler:^(__kindof UIAction *action) {
+                strongSelf->_usingCamera = YES;
+                strongSelf->_isPresentingSubMenu = YES;
+                [strongSelf _showCamera];
             }];
-            actions = @[photoAction, cameraAction, chooseAction];
+            actions = @[photoAction.get(), cameraAction.get(), chooseAction.get()];
         } else
-            actions = @[photoAction, chooseAction];
+            actions = @[photoAction.get(), chooseAction.get()];
 
         return [UIMenu menuWithTitle:@"" children:actions];
     };
@@ -959,6 +960,9 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     [self _dismissDisplayAnimated:animated];
 
     _presentationViewController = [_view _wk_viewControllerForFullScreenPresentation];
+#if PLATFORM(VISION)
+    [_view page]->dispatchWillPresentModalUI();
+#endif
     [_presentationViewController presentViewController:viewController animated:animated completion:^{
         if (!_isPresentingSubMenu && [_view isFirstResponder])
             [_view resignFirstResponder];
@@ -1376,9 +1380,10 @@ static RetainPtr<NSString> displayStringForDocumentsAtURLs(NSArray<NSURL *> *url
         RetainPtr filePath = [temporaryDirectory stringByAppendingPathComponent:coordinatedOriginalURL.lastPathComponent];
         RetainPtr destinationFileURL = adoptNS([[NSURL alloc] initFileURLWithPath:filePath.get() isDirectory:NO]);
 
-        if (asCopy)
-            didMoveOrCopy = [fileManager copyItemAtURL:coordinatedOriginalURL toURL:destinationFileURL.get() error:&error];
-        else
+        if (asCopy) {
+            // This is a safer cpp false positive. Despite having `copy` in its name, this method returns a BOOL.
+            SUPPRESS_RETAINPTR_CTOR_ADOPT didMoveOrCopy = [fileManager copyItemAtURL:coordinatedOriginalURL toURL:destinationFileURL.get() error:&error];
+        } else
             didMoveOrCopy = [fileManager moveItemAtURL:coordinatedOriginalURL toURL:destinationFileURL.get() error:&error];
 
         if (!didMoveOrCopy || error) {

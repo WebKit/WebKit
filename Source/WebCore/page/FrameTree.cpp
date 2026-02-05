@@ -197,7 +197,7 @@ RefPtr<Frame> FrameTree::scopedChild(unsigned index) const
     RefPtr localFrame = dynamicDowncast<LocalFrame>(m_thisFrame.get());
     if (!localFrame)
         return nullptr;
-    return scopedChild(index, localFrame->protectedDocument().get());
+    return scopedChild(index, protect(localFrame->document()).get());
 }
 
 RefPtr<Frame> FrameTree::scopedChildByUniqueName(const AtomString& uniqueName) const
@@ -207,7 +207,7 @@ RefPtr<Frame> FrameTree::scopedChildByUniqueName(const AtomString& uniqueName) c
         return nullptr;
     return scopedChild([&](auto& frameTree) {
         return frameTree.uniqueName() == uniqueName;
-    }, localFrame->protectedDocument().get());
+    }, protect(localFrame->document()).get());
 }
 
 RefPtr<Frame> FrameTree::scopedChildBySpecifiedName(const AtomString& specifiedName) const
@@ -217,14 +217,14 @@ RefPtr<Frame> FrameTree::scopedChildBySpecifiedName(const AtomString& specifiedN
         return childBySpecifiedName(specifiedName);
     return scopedChild([&](auto& frameTree) {
         return frameTree.specifiedName() == specifiedName;
-    }, localFrame->protectedDocument().get());
+    }, protect(localFrame->document()).get());
 }
 
 unsigned FrameTree::scopedChildCount() const
 {
     if (m_scopedChildCount == invalidCount) {
         if (RefPtr localFrame = dynamicDowncast<LocalFrame>(m_thisFrame.get()))
-            m_scopedChildCount = scopedChildCount(localFrame->protectedDocument().get());
+            m_scopedChildCount = scopedChildCount(protect(localFrame->document()).get());
     }
     return m_scopedChildCount;
 }

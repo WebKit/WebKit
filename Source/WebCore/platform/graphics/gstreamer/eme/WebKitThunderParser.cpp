@@ -36,6 +36,7 @@ GST_DEBUG_CATEGORY(webkitMediaThunderParserDebugCategory);
 typedef struct _WebKitMediaThunderParserPrivate {
     GRefPtr<GstElement> decryptor;
     GRefPtr<GstElement> parser;
+    GRefPtr<GstPad> srcPad;
 } WebKitMediaThunderParserPrivate;
 
 typedef struct _WebKitMediaThunderParser {
@@ -102,6 +103,34 @@ static GRefPtr<GstCaps> createThunderParseSinkPadTemplateCaps()
     return caps;
 }
 
+static GstPadProbeReturn webkitMediaThunderParserSinkPadProbe(GstPad*, GstPadProbeInfo* info, gpointer userData)
+{
+    auto event = GST_PAD_PROBE_INFO_EVENT(info);
+    if (event->type != GST_EVENT_CAPS)
+        return GST_PAD_PROBE_OK;
+
+    auto self = WEBKIT_MEDIA_THUNDER_PARSER(userData);
+    auto parserSinkPad = adoptGRef(gst_element_get_static_pad(self->priv->parser.get(), "sink"));
+    auto caps = adoptGRef(gst_pad_get_current_caps(parserSinkPad.get()));
+    GstCaps* newCaps;
+    gst_event_parse_caps(event, &newCaps);
+
+    if (!caps || !newCaps)
+        return GST_PAD_PROBE_OK;
+
+    if (gst_caps_can_intersect(caps.get(), newCaps) && gst_pad_query_accept_caps(parserSinkPad.get(), newCaps))
+        GST_TRACE_OBJECT(self, "Keeping elements for caps: %" GST_PTR_FORMAT, newCaps);
+    else {
+        GST_DEBUG_OBJECT(self, "Resetting elements to handle caps: %" GST_PTR_FORMAT, newCaps);
+        gst_element_set_state(self->priv->decryptor.get(), GST_STATE_NULL);
+        gst_element_set_state(self->priv->parser.get(), GST_STATE_NULL);
+        gst_element_sync_state_with_parent(self->priv->decryptor.get());
+        gst_element_sync_state_with_parent(self->priv->parser.get());
+    }
+
+    return GST_PAD_PROBE_OK;
+}
+
 static void webkitMediaThunderParserConstructed(GObject* object)
 {
     G_OBJECT_CLASS(webkit_media_thunder_parser_parent_class)->constructed(object);
@@ -160,14 +189,21 @@ static void webkitMediaThunderParserConstructed(GObject* object)
     }), self);
 
     g_signal_connect(self->priv->parser.get(), "pad-added", G_CALLBACK(+[](GstElement*, GstPad* pad, gpointer userData) {
-        static unsigned counter = 0;
-        auto name = makeString("src_"_s, counter);
-        counter++;
-        gst_element_add_pad(GST_ELEMENT_CAST(userData), gst_ghost_pad_new(name.ascii().data(), pad));
+        auto self = WEBKIT_MEDIA_THUNDER_PARSER(userData);
+        GST_DEBUG_OBJECT(self, "inner-parser pad-added: %" GST_PTR_FORMAT, pad);
+
+        if (!self->priv->srcPad) {
+            self->priv->srcPad = gst_ghost_pad_new("src", pad);
+            gst_element_add_pad(GST_ELEMENT_CAST(self), self->priv->srcPad.get());
+        } else
+            gst_ghost_pad_set_target(GST_GHOST_PAD_CAST(self->priv->srcPad.get()), pad);
     }), self);
 
     auto decryptorSinkPad = adoptGRef(gst_element_get_static_pad(self->priv->decryptor.get(), "sink"));
-    gst_element_add_pad(GST_ELEMENT_CAST(self), gst_ghost_pad_new("sink", decryptorSinkPad.get()));
+    auto* ghostSink = gst_ghost_pad_new("sink", decryptorSinkPad.get());
+    gst_pad_add_probe(ghostSink, GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, webkitMediaThunderParserSinkPadProbe, self, nullptr);
+
+    gst_element_add_pad(GST_ELEMENT_CAST(self), ghostSink);
     gst_bin_sync_children_states(GST_BIN_CAST(self));
 }
 

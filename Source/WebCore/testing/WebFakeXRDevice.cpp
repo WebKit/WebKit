@@ -50,7 +50,7 @@ static constexpr Seconds FakeXRFrameTime = 15_ms;
 
 void FakeXRView::setProjection(const Vector<float>& projection)
 {
-    std::copy(std::begin(projection), std::end(projection), std::begin(m_projection));
+    std::ranges::copy(projection, std::begin(m_projection));
 }
 
 void FakeXRView::setFieldOfView(const FakeXRViewInit::FieldOfViewInit& fov)

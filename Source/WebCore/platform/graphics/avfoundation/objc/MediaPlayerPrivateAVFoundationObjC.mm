@@ -426,9 +426,14 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     , m_objcObserver(adoptNS([[WebCoreAVFMovieObserver alloc] initWithPlayer:*this]))
     , m_loaderDelegate(adoptNS([[WebCoreAVFLoaderDelegate alloc] initWithPlayer:*this]))
     , m_cachedItemStatus(MediaPlayerAVPlayerItemStatusDoesNotExist)
+    , m_mediaResourceLoader { player.mediaResourceLoader() }
+    , m_targetDispatcher { m_mediaResourceLoader->targetDispatcher() }
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     m_muted = player.muted();
+    m_volume = player.volume();
+    m_isVideoPlayer = player.isVideoPlayer();
+
 #if HAVE(SPATIAL_TRACKING_LABEL)
     m_defaultSpatialTrackingLabel = player.defaultSpatialTrackingLabel();
     m_spatialTrackingLabel = player.spatialTrackingLabel();
@@ -442,11 +447,11 @@ MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
 {
     [[m_avAsset resourceLoader] setDelegate:nil queue:0];
 
-    for (auto& pair : m_resourceLoaderMap) {
-        m_targetDispatcher->dispatch([loader = pair.value] mutable {
+    forEachResourceLoader([&] (auto& loader) {
+        m_targetDispatcher->dispatch([loader = Ref { loader }] () mutable {
             loader->stopLoading();
         });
-    }
+    });
 
     if (RefPtr videoOutput = m_videoOutput)
         videoOutput->invalidate();
@@ -1005,9 +1010,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
     AVAssetResourceLoader *resourceLoader = [m_avAsset resourceLoader];
     [resourceLoader setDelegate:m_loaderDelegate.get() queue:globalLoaderDelegateQueue()];
 
-    Ref mediaResourceLoader = player->mediaResourceLoader();
-    m_targetDispatcher = mediaResourceLoader->targetDispatcher();
-    resourceLoader.URLSession = (NSURLSession *)adoptNS([[WebCoreNSURLSession alloc] initWithResourceLoader:mediaResourceLoader delegate:resourceLoader.URLSessionDataDelegate delegateQueue:resourceLoader.URLSessionDataDelegateQueue]).get();
+    resourceLoader.URLSession = (NSURLSession *)adoptNS([[WebCoreNSURLSession alloc] initWithResourceLoader:m_mediaResourceLoader delegate:resourceLoader.URLSessionDataDelegate delegateQueue:resourceLoader.URLSessionDataDelegateQueue]).get();
 
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(chapterMetadataDidChange:) name:AVAssetChapterMetadataGroupsDidChangeNotification object:m_avAsset.get()];
 
@@ -1102,12 +1105,17 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
         m_avPlayer.get().preventsAutomaticBackgroundingDuringVideoPlayback = NO;
 #endif
 
-    if (m_muted) {
+    [m_avPlayer setVolume:m_volume];
+
+    if (m_muted)
         [m_avPlayer setMuted:m_muted];
 
-        if (player->isVideoPlayer())
-            m_avPlayer.get().suppressesAudioRendering = YES;
-    }
+    if (m_isVideoPlayer)
+        [m_avPlayer _setSuppressesAudioRendering:!m_isAudible];
+
+#if HAVE(AVPLAYER_PARTICIPATESINAUDIOSESSION)
+    [m_avPlayer setParticipatesInAudioSession:m_isAudible completionHandler:nil];
+#endif
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
     updateSpatialTrackingLabel();
@@ -1633,6 +1641,10 @@ void MediaPlayerPrivateAVFoundationObjC::setVolume(float volume)
     if (m_volumeLocked)
         return;
 
+    if (m_volume == volume)
+        return;
+    m_volume = volume;
+
     if (!m_avPlayer)
         return;
 
@@ -1649,13 +1661,12 @@ void MediaPlayerPrivateAVFoundationObjC::setMuted(bool muted)
     ALWAYS_LOG(LOGIDENTIFIER, muted);
 
     m_muted = muted;
+    updateIsAudible();
 
     if (!m_avPlayer)
         return;
 
     [m_avPlayer setMuted:m_muted];
-    if (!m_muted)
-        m_avPlayer.get().suppressesAudioRendering = NO;
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setRateDouble(double rate)
@@ -2061,6 +2072,10 @@ MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsTypeAndCod
     if (parameters.isMediaStream)
         return MediaPlayer::SupportsType::IsNotSupported;
 #endif
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    if (parameters.playbackTargetType != MediaPlaybackTargetType::None && !playbackTargetTypes().contains(parameters.playbackTargetType))
+        return MediaPlayer::SupportsType::IsNotSupported;
+#endif
 
     if (!contentTypeMeetsContainerAndCodecTypeRequirements(parameters.type, parameters.allowedMediaContainerTypes, parameters.allowedMediaCodecTypes))
         return MediaPlayer::SupportsType::IsNotSupported;
@@ -2199,11 +2214,7 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
 #endif
 #endif
 
-    auto resourceLoader = WebCoreAVFResourceLoader::create(this, avRequest, m_targetDispatcher);
-    m_resourceLoaderMap.add((__bridge CFTypeRef)avRequest, resourceLoader.copyRef());
-    resourceLoader->startLoading();
-
-    return true;
+    return false;
 }
 
 void MediaPlayerPrivateAVFoundationObjC::didCancelLoadingRequest(AVAssetResourceLoadingRequest* avRequest)
@@ -2211,8 +2222,9 @@ void MediaPlayerPrivateAVFoundationObjC::didCancelLoadingRequest(AVAssetResource
     ASSERT(isMainThread());
 
     ALWAYS_LOG(LOGIDENTIFIER);
-    if (RefPtr resourceLoader = m_resourceLoaderMap.get((__bridge CFTypeRef)avRequest)) {
-        m_targetDispatcher->dispatch([resourceLoader = WTF::move(resourceLoader)] { resourceLoader->stopLoading();
+    if (RefPtr resourceLoader = getResourceLoader(avRequest)) {
+        m_targetDispatcher->dispatch([resourceLoader = WTF::move(resourceLoader)] {
+            resourceLoader->stopLoading();
         });
     }
 }
@@ -2222,7 +2234,7 @@ void MediaPlayerPrivateAVFoundationObjC::didStopLoadingRequest(AVAssetResourceLo
     ASSERT(isMainThread());
 
     ALWAYS_LOG(LOGIDENTIFIER);
-    if (RefPtr resourceLoader = m_resourceLoaderMap.take((__bridge CFTypeRef)avRequest))
+    if (RefPtr resourceLoader = takeResourceLoader(avRequest))
         m_targetDispatcher->dispatch([resourceLoader = WTF::move(resourceLoader)] { });
 }
 
@@ -2276,6 +2288,24 @@ void MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity(ShouldAnimate s
     [CATransaction commit];
 
     syncTextTrackBounds();
+}
+
+void MediaPlayerPrivateAVFoundationObjC::updateIsAudible()
+{
+    bool isAudible = hasAudio() && !m_muted && m_volume;
+    if (m_isAudible == isAudible)
+        return;
+    m_isAudible = isAudible;
+
+    if (!m_avPlayer)
+        return;
+
+    if (m_isVideoPlayer)
+        [m_avPlayer _setSuppressesAudioRendering:!m_isAudible];
+
+#if HAVE(AVPLAYER_PARTICIPATESINAUDIOSESSION)
+    [m_avPlayer setParticipatesInAudioSession:m_isAudible completionHandler:nil];
+#endif
 }
 
 void MediaPlayerPrivateAVFoundationObjC::metadataLoaded()
@@ -3315,9 +3345,9 @@ bool MediaPlayerPrivateAVFoundationObjC::isCurrentPlaybackTargetWireless() const
 {
     bool wirelessTarget = false;
 
-#if !PLATFORM(IOS_FAMILY)
+#if !PLATFORM(IOS_FAMILY) || ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
     if (RefPtr playbackTarget = m_playbackTarget) {
-        if (playbackTarget->type() == MediaPlaybackTarget::Type::AVOutputContext)
+        if (playbackTarget->targetType() == MediaPlaybackTarget::Type::AVOutputContext)
             wirelessTarget = m_avPlayer && m_avPlayer.get().externalPlaybackActive;
         else
             wirelessTarget = m_shouldPlayToPlaybackTarget && playbackTarget->hasActiveRoute();
@@ -3358,7 +3388,7 @@ MediaPlayer::WirelessPlaybackTargetType MediaPlayerPrivateAVFoundationObjC::wire
 }
 
 #if PLATFORM(IOS_FAMILY)
-static RetainPtr<NSString> exernalDeviceDisplayNameForPlayer(AVPlayer *player)
+static RetainPtr<NSString> externalDeviceDisplayNameForPlayer(AVPlayer *player)
 {
 #if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
     if (!PAL::isAVFoundationFrameworkAvailable())
@@ -3422,11 +3452,18 @@ String MediaPlayerPrivateAVFoundationObjC::wirelessPlaybackTargetName() const
         return emptyString();
 
     String wirelessTargetName;
-#if !PLATFORM(IOS_FAMILY)
-    if (RefPtr playbackTarget = m_playbackTarget)
-        wirelessTargetName = playbackTarget->deviceName();
+
+#if !PLATFORM(IOS_FAMILY) || ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+    if (RefPtr playbackTarget = m_playbackTarget) {
+#if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
+        if (playbackTarget->targetType() == MediaPlaybackTarget::Type::AVOutputContext)
+            wirelessTargetName = externalDeviceDisplayNameForPlayer(m_avPlayer.get()).get();
+        else
+#endif
+            wirelessTargetName = playbackTarget->deviceName();
+    }
 #else
-    wirelessTargetName = exernalDeviceDisplayNameForPlayer(m_avPlayer.get()).get();
+    wirelessTargetName = externalDeviceDisplayNameForPlayer(m_avPlayer.get()).get();
 #endif
 
     return wirelessTargetName;
@@ -3455,25 +3492,35 @@ void MediaPlayerPrivateAVFoundationObjC::setWirelessVideoPlaybackDisabled(bool d
 
 OptionSet<MediaPlaybackTargetType> MediaPlayerPrivateAVFoundationObjC::supportedPlaybackTargetTypes() const
 {
+    return MediaPlayerPrivateAVFoundationObjC::playbackTargetTypes();
+}
+
+OptionSet<MediaPlaybackTargetType> MediaPlayerPrivateAVFoundationObjC::playbackTargetTypes()
+{
     return { MediaPlaybackTargetType::AVOutputContext, MediaPlaybackTargetType::Mock };
 }
 
-#if !PLATFORM(IOS_FAMILY)
-
 void MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& target)
 {
+#if !PLATFORM(IOS_FAMILY) || ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
     m_playbackTarget = target.copyRef();
 
+#if !PLATFORM(IOS_FAMILY)
     m_outputContext = is<MediaPlaybackTargetCocoa>(target) ? downcast<MediaPlaybackTargetCocoa>(target.get()).outputContext() : nullptr;
+#endif
 
     INFO_LOG(LOGIDENTIFIER);
 
     if (!target->hasActiveRoute())
         setShouldPlayToPlaybackTarget(false);
+#else
+    UNUSED_PARAM(target);
+#endif // !PLATFORM(IOS_FAMILY) || ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(bool shouldPlay)
 {
+#if !PLATFORM(IOS_FAMILY) || ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
     if (m_shouldPlayToPlaybackTarget == shouldPlay)
         return;
 
@@ -3485,7 +3532,8 @@ void MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(bool shou
 
     INFO_LOG(LOGIDENTIFIER, shouldPlay);
 
-    if (playbackTarget->type() == MediaPlaybackTarget::Type::AVOutputContext) {
+#if !PLATFORM(IOS_FAMILY)
+    if (playbackTarget->targetType() == MediaPlaybackTarget::Type::AVOutputContext) {
         RetainPtr<AVOutputContext> newContext = shouldPlay ? m_outputContext.get() : nil;
 
         if (!m_avPlayer)
@@ -3499,8 +3547,9 @@ void MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(bool shou
 
         return;
     }
+#endif
 
-    ASSERT(playbackTarget->type() == MediaPlaybackTarget::Type::Mock);
+    ASSERT(playbackTarget->type() != MediaPlaybackTarget::Type::Serialized);
 
     if (RefPtr player = this->player()) {
         player->queueTaskOnEventLoop([weakThis = ThreadSafeWeakPtr { *this }] {
@@ -3508,9 +3557,10 @@ void MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(bool shou
                 protectedThis->playbackTargetIsWirelessDidChange();
         });
     }
+#else
+    UNUSED_PARAM(shouldPlay);
+#endif // !PLATFORM(IOS_FAMILY) || ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
 }
-
-#endif // !PLATFORM(IOS_FAMILY)
 
 void MediaPlayerPrivateAVFoundationObjC::updateDisableExternalPlayback()
 {
@@ -4166,6 +4216,50 @@ void MediaPlayerPrivateAVFoundationObjC::isInFullscreenOrPictureInPictureChanged
 #endif
 }
 
+Ref<WebCoreAVFResourceLoader> MediaPlayerPrivateAVFoundationObjC::ensureAVFResourceLoader(AVAssetResourceLoadingRequest *loadingRequest)
+{
+    Locker locker { m_resourceLoaderMapLock };
+    auto addResult = m_resourceLoaderMap.ensure(loadingRequest, [&] {
+        auto resourceLoader = WebCoreAVFResourceLoader::create(this, loadingRequest, m_mediaResourceLoader.copyRef(), m_targetDispatcher);
+#if !RELEASE_LOG_DISABLED
+        resourceLoader->setLogIdentifier(childLogIdentifier(m_logIdentifier, ++m_childIdentifierSeed));
+#endif
+        m_targetDispatcher->dispatch([resourceLoader = resourceLoader.copyRef()] {
+            resourceLoader->startLoading();
+        });
+        return resourceLoader;
+    });
+    return addResult.iterator->value;
+}
+
+void MediaPlayerPrivateAVFoundationObjC::forEachResourceLoader(Function<void(WebCoreAVFResourceLoader&)>&& callable) const
+{
+    auto resourceLoaders = [&] {
+        Locker locker { m_resourceLoaderMapLock };
+        return copyToVector(m_resourceLoaderMap.values());
+    }();
+    for (auto& loader : resourceLoaders)
+        callable(loader);
+}
+
+void MediaPlayerPrivateAVFoundationObjC::addResourceLoader(AVAssetResourceLoadingRequest *key, Ref<WebCoreAVFResourceLoader>&& loader)
+{
+    Locker locker { m_resourceLoaderMapLock };
+    m_resourceLoaderMap.add(key, WTF::move(loader));
+}
+
+RefPtr<WebCoreAVFResourceLoader> MediaPlayerPrivateAVFoundationObjC::getResourceLoader(AVAssetResourceLoadingRequest *key) const
+{
+    Locker locker { m_resourceLoaderMapLock };
+    return m_resourceLoaderMap.get(key);
+}
+
+RefPtr<WebCoreAVFResourceLoader> MediaPlayerPrivateAVFoundationObjC::takeResourceLoader(AVAssetResourceLoadingRequest *key)
+{
+    Locker locker { m_resourceLoaderMapLock };
+    return m_resourceLoaderMap.take(key);
+}
+
 NSArray* assetMetadataKeyNames()
 {
     static NSArray* keys = [[NSArray alloc] initWithObjects:
@@ -4482,6 +4576,12 @@ NSArray* playerKVOProperties()
     RefPtr player = m_player.get();
     if (!player)
         return NO;
+
+    String scheme = loadingRequest.request.URL.scheme;
+    if (scheme != "skd"_s && scheme != "clearkey"_s) {
+        player->ensureAVFResourceLoader(loadingRequest);
+        return YES;
+    }
 
     ensureOnMainThread([self, strongSelf = retainPtr(self), loadingRequest = retainPtr(loadingRequest)] mutable {
         if (RefPtr player = m_player.get()) {

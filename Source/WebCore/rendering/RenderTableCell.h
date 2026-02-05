@@ -147,6 +147,8 @@ private:
 
     LayoutRect frameRectForStickyPositioning() const override;
 
+    LayoutUnit containingBlockLogicalWidthForContent() const override;
+
     static RenderPtr<RenderTableCell> createTableCellWithStyle(Document&, const RenderStyle&);
 
     ASCIILiteral renderName() const override;

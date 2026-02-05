@@ -4,7 +4,7 @@
     "git_repository": { "url": "https://github.com/WebKit/JetStream.git", "branch": "JetStream3.0" },
     "entry_point": "index.html?report=true",
     "output_file": "jetstream3.result",
-    "subtest_url_format": "test=${TEST}",
+    "subtest_url_format": "&test=${TEST}",
     "subtests": {
         "": [
             "zlib-wasm",

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -441,6 +441,8 @@ std::optional<Inspector::Protocol::CSS::PseudoId> InspectorCSSAgent::protocolVal
         return Inspector::Protocol::CSS::PseudoId::SpellingError;
     case PseudoElementType::TargetText:
         return Inspector::Protocol::CSS::PseudoId::TargetText;
+    case PseudoElementType::Checkmark:
+        return Inspector::Protocol::CSS::PseudoId::Checkmark;
     case PseudoElementType::ViewTransition:
         return Inspector::Protocol::CSS::PseudoId::ViewTransition;
     case PseudoElementType::ViewTransitionGroup:

@@ -42,6 +42,9 @@ TextStream& operator<<(TextStream& ts, StyleAppearance appearance)
     case StyleAppearance::Base:
         ts << "base"_s;
         break;
+    case StyleAppearance::BaseSelect:
+        ts << "base-select"_s;
+        break;
     case StyleAppearance::Checkbox:
         ts << "checkbox"_s;
         break;

@@ -65,14 +65,12 @@ static constexpr uint64_t s_dmabufInvalidModifier = ((1ULL << 56) - 1);
 #include <gdk/x11/gdkx.h>
 #endif
 
-#if USE(SKIA)
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/core/SkBitmap.h>
 #include <skia/core/SkColorSpace.h>
 IGNORE_CLANG_WARNINGS_END
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
-#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -137,7 +135,7 @@ static bool gtkCanUseHardwareAcceleration()
     return canUseHardwareAcceleration;
 }
 
-bool AcceleratedBackingStore::checkRequirements()
+bool AcceleratedBackingStore::canUseHardwareAcceleration()
 {
     if (!rendererBufferTransportMode().isEmpty())
         return gtkCanUseHardwareAcceleration();
@@ -192,11 +190,8 @@ Vector<RendererBufferFormat> AcceleratedBackingStore::preferredBufferFormats()
 }
 #endif
 
-RefPtr<AcceleratedBackingStore> AcceleratedBackingStore::create(WebPageProxy& webPage)
+Ref<AcceleratedBackingStore> AcceleratedBackingStore::create(WebPageProxy& webPage)
 {
-    if (!HardwareAccelerationManager::singleton().canUseHardwareAcceleration() || !checkRequirements())
-        return nullptr;
-
     return adoptRef(*new AcceleratedBackingStore(webPage));
 }
 
@@ -298,12 +293,6 @@ static RefPtr<NativeImage> nativeImageFromGdkTexture(GdkTexture* texture)
     if (!texture)
         return nullptr;
 
-#if USE(CAIRO)
-    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, gdk_texture_get_width(texture), gdk_texture_get_height(texture)));
-    gdk_texture_download(texture, cairo_image_surface_get_data(surface.get()), cairo_image_surface_get_stride(surface.get()));
-    cairo_surface_mark_dirty(surface.get());
-    return NativeImage::create(WTF::move(surface));
-#elif USE(SKIA)
     auto imageInfo = SkImageInfo::MakeN32Premul(gdk_texture_get_width(texture), gdk_texture_get_height(texture), SkColorSpace::MakeSRGB());
     SkBitmap bitmap;
     if (!bitmap.tryAllocPixels(imageInfo))
@@ -312,7 +301,6 @@ static RefPtr<NativeImage> nativeImageFromGdkTexture(GdkTexture* texture)
     gdk_texture_download(texture, reinterpret_cast<guchar*>(bitmap.getPixels()), imageInfo.minRowBytes());
     bitmap.setImmutable();
     return NativeImage::create(bitmap.asImage());
-#endif
 }
 #endif
 
@@ -619,16 +607,12 @@ AcceleratedBackingStore::BufferSHM::BufferSHM(WebPageProxy& webPage, uint64_t id
 
 void AcceleratedBackingStore::BufferSHM::didUpdateContents(Buffer*, const Rects&)
 {
-#if USE(CAIRO)
-    m_surface = m_bitmap->createCairoSurface();
-#elif USE(SKIA)
     m_surface = adoptRef(cairo_image_surface_create_for_data(m_bitmap->mutableSpan().data(), CAIRO_FORMAT_ARGB32, m_size.width(), m_size.height(), m_bitmap->bytesPerRow()));
     m_bitmap->ref();
     static cairo_user_data_key_t s_surfaceDataKey;
     cairo_surface_set_user_data(m_surface.get(), &s_surfaceDataKey, m_bitmap.get(), [](void* userData) {
         static_cast<ShareableBitmap*>(userData)->deref();
     });
-#endif
     cairo_surface_set_device_scale(m_surface.get(), deviceScaleFactor(), deviceScaleFactor());
 }
 
@@ -834,13 +818,6 @@ RefPtr<NativeImage> AcceleratedBackingStore::bufferAsNativeImageForTesting() con
 {
     if (!m_committedBuffer)
         return nullptr;
-
-#if USE(CAIRO)
-    // Scaling the surface is not supported with cairo, so in that case we will fall back to
-    // get the snapshot from the web view widget.
-    if (m_committedBuffer->deviceScaleFactor() != 1)
-        return nullptr;
-#endif
 
     return m_committedBuffer->asNativeImageForTesting();
 }

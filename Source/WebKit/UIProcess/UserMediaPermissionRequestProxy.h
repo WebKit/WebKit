@@ -107,7 +107,6 @@ protected:
     UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, std::optional<WebCore::UserMediaRequestIdentifier>, WebCore::FrameIdentifier mainFrameID, FrameInfoData&&, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&&, CompletionHandler<void(bool)>&&);
 
     UserMediaPermissionRequestManagerProxy* manager() const;
-    RefPtr<UserMediaPermissionRequestManagerProxy> protectedManager() const;
 
 private:
     WeakPtr<UserMediaPermissionRequestManagerProxy> m_manager;

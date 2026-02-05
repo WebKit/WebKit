@@ -51,9 +51,7 @@ bool MockMediaDeviceRouteController::enabled() const
 
 void MockMediaDeviceRouteController::setEnabled(bool enabled)
 {
-#if HAVE(AVROUTING_FRAMEWORK)
     MediaDeviceRouteController::singleton().setClient(enabled ? &MediaSessionHelper::sharedHelper() : nullptr);
-#endif
     setMockMediaDeviceRouteControllerEnabled(enabled);
 }
 
@@ -64,22 +62,12 @@ Ref<MockMediaDeviceRoute> MockMediaDeviceRouteController::createMockMediaDeviceR
 
 bool MockMediaDeviceRouteController::activateRoute(const MockMediaDeviceRoute& route)
 {
-#if HAVE(AVROUTING_FRAMEWORK)
     return MediaDeviceRouteController::singleton().activateRoute(route.platformRoute());
-#else
-    UNUSED_PARAM(route);
-    return false;
-#endif
 }
 
 bool MockMediaDeviceRouteController::deactivateRoute(const MockMediaDeviceRoute& route)
 {
-#if HAVE(AVROUTING_FRAMEWORK)
     return MediaDeviceRouteController::singleton().deactivateRoute(route.platformRoute());
-#else
-    UNUSED_PARAM(route);
-    return false;
-#endif
 }
 
 } // namespace WebCore

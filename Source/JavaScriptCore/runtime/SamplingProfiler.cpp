@@ -805,7 +805,7 @@ String SamplingProfiler::StackFrame::nameFromCallee(VM& vm)
     }
 
     DeferTermination deferScope(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSGlobalObject* globalObject = callee->globalObject();
     auto getPropertyIfPureOperation = [&] (const Identifier& ident) -> String {
         PropertySlot slot(callee, PropertySlot::InternalMethodType::VMInquiry, &vm);

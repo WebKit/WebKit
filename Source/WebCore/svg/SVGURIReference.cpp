@@ -142,9 +142,9 @@ bool SVGURIReference::haveLoadedRequiredResources() const
 {
     if (href().isEmpty())
         return true;
-    if (contextElement().protectedDocument()->completeURL(href()).protocolIsData())
+    if (protect(contextElement().document())->completeURL(href()).protocolIsData())
         return true;
-    if (!isExternalURIReference(href(), contextElement().protectedDocument()))
+    if (!isExternalURIReference(href(), protect(contextElement().document())))
         return true;
     return errorOccurred() || haveFiredLoadEvent();
 }

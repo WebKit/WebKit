@@ -812,7 +812,7 @@ void PDFIncrementalLoader::threadEntry(Ref<PDFIncrementalLoader>&& protectedLoad
     BinarySemaphore firstPageSemaphore;
     auto firstPageQueue = WorkQueue::create("PDF first page work queue"_s);
 
-    [m_backgroundThreadDocument preloadDataOfPagesInRange:NSMakeRange(0, 1) onQueue:firstPageQueue->protectedDispatchQueue().get() completion:[&firstPageSemaphore, protectedThis = Ref { *this }] (NSIndexSet *) mutable {
+    [m_backgroundThreadDocument preloadDataOfPagesInRange:NSMakeRange(0, 1) onQueue:protect(firstPageQueue->dispatchQueue()).get() completion:[&firstPageSemaphore, protectedThis = Ref { *this }] (NSIndexSet *) mutable {
         callOnMainRunLoop([protectedThis] {
             protectedThis->transitionToMainThreadDocument();
         });

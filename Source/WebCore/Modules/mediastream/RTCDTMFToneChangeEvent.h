@@ -43,13 +43,13 @@ public:
         String tone;
     };
 
-    static Ref<RTCDTMFToneChangeEvent> create(const AtomString& type, const Init&, IsTrusted = IsTrusted::No);
+    static Ref<RTCDTMFToneChangeEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
 
     const String& tone() const;
 
 private:
-    explicit RTCDTMFToneChangeEvent(const String& tone);
-    RTCDTMFToneChangeEvent(const AtomString& type, const Init&, IsTrusted);
+    RTCDTMFToneChangeEvent(const String& tone);
+    RTCDTMFToneChangeEvent(const AtomString& type, Init&&, IsTrusted);
 
     String m_tone;
 };

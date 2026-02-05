@@ -60,6 +60,8 @@ public:
         ForceLinearBuffer = 1 << 3,
         ForceVivanteSuperTiledBuffer = 1 << 4,
 #endif
+        UseBGRALayout = 1 << 5,
+        NearestFiltering = 1 << 6,
     };
 
     static Ref<BitmapTexture> create(const IntSize& size, OptionSet<Flags> flags = { })
@@ -119,6 +121,7 @@ private:
     void clearIfNeeded();
     void createFboIfNeeded();
 
+    GLenum textureFormat() const;
     void createTexture();
     void allocateTexture();
 #if USE(GBM)

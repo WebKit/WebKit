@@ -114,11 +114,11 @@
                 )
                 (GraphicsLayer
                   (offsetFromRenderer width=-14 height=-14)
-                  (position -264.00 167.00)
+                  (position -264.00 166.50)
                   (bounds 128.00 128.00)
                   (drawsContent 1)
                   (visible rect 0.00, 0.00 0.00 x 0.00)
-                  (coverage rect 264.00, -167.00 200.00 x 200.00)
+                  (coverage rect 264.00, -166.50 200.00 x 200.00)
                   (intersects coverage rect 0)
                   (contentsScale 2.00)
                 )

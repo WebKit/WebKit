@@ -57,7 +57,7 @@ public:
     void markAsHandled();
 
     enum class Status { Pending, Fulfilled, Rejected };
-    Status status() const;
+    WEBCORE_EXPORT Status status() const;
 
     static IsCallbackRegistered whenPromiseIsSettled(JSDOMGlobalObject*, JSC::JSPromise*, Function<void(JSDOMGlobalObject*, bool, JSC::JSValue)>&&);
 

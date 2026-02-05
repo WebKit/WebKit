@@ -38,7 +38,7 @@ using namespace Inspector;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebInjectedScriptManager);
 
-Ref<WebInjectedScriptManager> WebInjectedScriptManager::create(Inspector::InspectorEnvironment& environment, Ref<Inspector::InjectedScriptHost>&& host)
+Ref<WebInjectedScriptManager> WebInjectedScriptManager::create(InspectorEnvironment& environment, Ref<InjectedScriptHost>&& host)
 {
     return adoptRef(*new WebInjectedScriptManager(environment, WTF::move(host)));
 }

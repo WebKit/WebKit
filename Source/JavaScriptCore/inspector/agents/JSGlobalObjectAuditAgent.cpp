@@ -51,7 +51,7 @@ InjectedScript JSGlobalObjectAuditAgent::injectedScriptForEval(Protocol::ErrorSt
         return InjectedScript();
     }
 
-    InjectedScript injectedScript = injectedScriptManager().injectedScriptFor(&m_globalObject);
+    auto injectedScript = injectedScriptManager().injectedScriptFor(&m_globalObject);
     if (injectedScript.hasNoValue())
         errorString = "Internal error: main world execution context not found"_s;
 

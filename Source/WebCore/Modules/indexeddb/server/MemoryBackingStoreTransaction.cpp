@@ -227,7 +227,7 @@ void MemoryBackingStoreTransaction::abort()
 
     for (auto& index : m_deletedIndexes) {
         RELEASE_ASSERT(m_backingStore->hasObjectStore(index->info().objectStoreIdentifier()));
-        index->protectedObjectStore()->maybeRestoreDeletedIndex(index.copyRef());
+        protect(index->objectStore())->maybeRestoreDeletedIndex(index.copyRef());
     }
     m_deletedIndexes.clear();
 

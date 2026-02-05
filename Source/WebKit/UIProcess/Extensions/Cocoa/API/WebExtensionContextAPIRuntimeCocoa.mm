@@ -454,7 +454,7 @@ void WebExtensionContext::runtimeWebPageSendMessage(const String& extensionID, c
     completeSenderParameters.tabParameters = tab->parameters();
 
     auto url = completeSenderParameters.url;
-    auto validMatchPatterns = destinationExtension->protectedExtension()->externallyConnectableMatchPatterns();
+    auto validMatchPatterns = protect(destinationExtension->extension())->externallyConnectableMatchPatterns();
     if (!hasPermission(url, tab.get()) || !WebExtensionMatchPattern::patternsMatchURL(validMatchPatterns, url)) {
         callAfterRandomDelay([completionHandler = WTF::move(completionHandler)]() mutable {
             completionHandler({ });
@@ -516,7 +516,7 @@ void WebExtensionContext::runtimeWebPageConnect(const String& extensionID, WebEx
     completeSenderParameters.tabParameters = tab->parameters();
 
     auto url = completeSenderParameters.url;
-    auto validMatchPatterns = destinationExtension->protectedExtension()->externallyConnectableMatchPatterns();
+    auto validMatchPatterns = protect(destinationExtension->extension())->externallyConnectableMatchPatterns();
     if (!hasPermission(url, tab.get()) || !WebExtensionMatchPattern::patternsMatchURL(validMatchPatterns, url)) {
         callAfterRandomDelay([=, this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
             completionHandler({ });

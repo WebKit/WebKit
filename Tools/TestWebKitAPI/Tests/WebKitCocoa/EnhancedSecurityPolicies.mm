@@ -28,6 +28,7 @@
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestCocoa.h"
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
@@ -37,6 +38,7 @@
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKHTTPCookieStorePrivate.h>
+#import <WebKit/WKHistoryDelegatePrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -52,6 +54,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/Function.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/MakeString.h>
 
 using namespace TestWebKitAPI;
 
@@ -125,12 +128,44 @@ static RetainPtr<WKHTTPCookieStore> globalCookieStore;
 
 @end
 
+@interface EnhancedSecurityHistoryDelegate : NSObject <WKHistoryDelegatePrivate> {
+    @public
+    RetainPtr<WKNavigationData> lastNavigationData;
+    RetainPtr<NSString> lastUpdatedTitle;
+    RetainPtr<NSURL> lastRedirectSource;
+    RetainPtr<NSURL> lastRedirectDestination;
+}
+@end
+
+@implementation EnhancedSecurityHistoryDelegate
+
+- (void)_webView:(WKWebView *)webView didNavigateWithNavigationData:(WKNavigationData *)navigationData
+{
+    lastNavigationData = navigationData;
+}
+
+- (void)_webView:(WKWebView *)webView didUpdateHistoryTitle:(NSString *)title forURL:(NSURL *)URL
+{
+    lastUpdatedTitle = title;
+}
+
+- (void)_webView:(WKWebView *)webView didPerformServerRedirectFromURL:(NSURL *)sourceURL toURL:(NSURL *)destinationURL
+{
+    lastRedirectSource = sourceURL;
+    lastRedirectDestination = destinationURL;
+}
+
+@end
+
 static void testAlertWithEnhancedSecurity(RetainPtr<TestUIDelegate> uiDelegate, String message, BOOL enhancedSecurityEnabled)
 {
     NSArray *result = [uiDelegate waitForAlertWithEnhancedSecurity];
 
     EXPECT_WK_STREQ(result[0], message);
     EXPECT_EQ([result[1] boolValue], enhancedSecurityEnabled);
+
+    if ([result[1] boolValue] != enhancedSecurityEnabled)
+        NSLog(@"Enhanced Security state mismatch for alert: %s (expected: %s, actual: %s)", message.utf8().data() , enhancedSecurityEnabled ? "Enabled" : "Disabled", [result[1] boolValue] ? "Enabled" : "Disabled");
 }
 
 static RetainPtr<TestWKWebView> enhancedSecurityTestConfiguration(
@@ -346,6 +381,99 @@ static void runCrossSiteHttpToHttpsRedirect(bool useSiteIsolation)
 }
 TEST_WITH_AND_WITHOUT_SITE_ISOLATION(CrossSiteHttpToHttpsRedirect)
 
+static void runHttpsOnlyExplicitlyBypassedWithHttpRedirect(bool useSiteIsolation)
+{
+    HTTPServer plaintextServer({
+        { "http://site.example/secure"_s, { { }, "hi: not secure"_s } },
+        { "http://site2.example/secure2"_s, { { }, "hi: not secure"_s } },
+        { "http://site2.example/secure3"_s, { { }, "hi: not secure"_s } },
+    }, HTTPServer::Protocol::Http);
+
+    HTTPServer secureServer({
+        { "/secure"_s, { 302, {{ "Location"_s, "http://site.example/secure"_s }}, "redirecting..."_s } },
+        { "/secure2"_s, { 302, {{ "Location"_s, "http://site2.example/secure3"_s }}, "redirecting..."_s } },
+        { "/secure3"_s, { 302, {{ "Location"_s, "http://site2.example/secure2"_s }}, "redirecting..."_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, &secureServer, useSiteIsolation);
+
+    __block int errorCode { 0 };
+    __block bool finishedSuccessfully { false };
+    __block int loadCount { 0 };
+
+    RetainPtr<TestNavigationDelegate> delegate = adoptNS([webView navigationDelegate]);
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        ++loadCount;
+        completionHandler(WKNavigationActionPolicyAllow);
+    };
+
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finishedSuccessfully = true;
+    };
+
+    delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
+        EXPECT_NULL(error);
+        if (error)
+            errorCode = error.code;
+    };
+
+    [webView configuration].defaultWebpagePreferences._networkConnectionIntegrityPolicy = _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSOnly | _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSOnlyExplicitlyBypassedForDomain;
+
+    errorCode = 0;
+    finishedSuccessfully = false;
+    loadCount = 0;
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure"]]];
+    TestWebKitAPI::Util::run(&finishedSuccessfully);
+
+    EXPECT_EQ(errorCode, 0);
+    EXPECT_TRUE(finishedSuccessfully);
+    EXPECT_EQ(loadCount, 2);
+    EXPECT_WK_STREQ(@"http://site.example/secure", [webView URL].absoluteString);
+
+    errorCode = 0;
+    finishedSuccessfully = false;
+    loadCount = 0;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure2"]]];
+    TestWebKitAPI::Util::run(&finishedSuccessfully);
+
+    EXPECT_EQ(errorCode, 0);
+    EXPECT_TRUE(finishedSuccessfully);
+    EXPECT_EQ(loadCount, 3);
+    EXPECT_WK_STREQ(@"http://site2.example/secure2", [webView URL].absoluteString);
+
+    // Now use a different domain to the above to ensure a process swap happens,
+    // this ensures testing of an edge case in the HTTPS upgrade / same-site HTTP logic.
+    errorCode = 0;
+    finishedSuccessfully = false;
+    loadCount = 0;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://different.example/secure2"]]];
+    TestWebKitAPI::Util::run(&finishedSuccessfully);
+
+    EXPECT_EQ(errorCode, 0);
+    EXPECT_TRUE(finishedSuccessfully);
+    EXPECT_EQ(loadCount, 3);
+    EXPECT_WK_STREQ(@"http://site2.example/secure2", [webView URL].absoluteString);
+}
+TEST_WITHOUT_SITE_ISOLATION(HttpsOnlyExplicitlyBypassedWithHttpRedirect)
+
+static void runHttpsToSameSiteHttpExplicitRedirect(bool useSiteIsolation)
+{
+    HTTPServer plaintextServer({
+        { "http://download/redirectTarget"_s, { "<script>alert('insecure-site')</script>"_s } },
+    });
+
+    HTTPServer secureServer({
+        { "/originalRequest"_s, { 302, { { "Location"_s, "http://download/redirectTarget"_s } }, emptyString() } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, &secureServer, useSiteIsolation);
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"https://download/originalRequest", {
+        { "insecure-site"_s, ExpectedEnhancedSecurity::Enabled }
+    });
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpsToSameSiteHttpExplicitRedirect)
+
 // MARK: - Window Tests
 
 static void runHttpOpeningHttpsWindow(bool useSiteIsolation)
@@ -455,8 +583,8 @@ static void runOpenerThenSelfNavigation(bool useSiteIsolation)
         { "navigated"_s, ExpectedEnhancedSecurity::Enabled },
     });
 }
-// FIXME: rdar://164474301 (Fix SiteIsolation compatibility with EnhancedSecurity feature)
-TEST_WITHOUT_SITE_ISOLATION(OpenerThenSelfNavigation)
+
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(OpenerThenSelfNavigation)
 
 static void runHttpOpeningHttpsNoOpener(bool useSiteIsolation)
 {
@@ -618,7 +746,7 @@ static void runMultiHopThenBack(bool useSiteIsolation)
         { "tainted-https-site"_s, ExpectedEnhancedSecurity::Enabled }
     });
 
-    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"https://secure.example.internal/secure", {
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"https://secure.different.internal/secure", {
         { "secure-page"_s, ExpectedEnhancedSecurity::Disabled }
     });
 
@@ -633,9 +761,7 @@ static void runMultiHopThenBack(bool useSiteIsolation)
         { "tainted-https-site"_s, ExpectedEnhancedSecurity::Enabled }
     });
 }
-
-// FIXME: rdar://164474301 (Fix SiteIsolation compatibility with EnhancedSecurity feature)
-TEST_WITHOUT_SITE_ISOLATION(MultiHopThenBack)
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(MultiHopThenBack)
 
 static void runMultiHopThenBackJavascript(bool useSiteIsolation)
 {
@@ -654,7 +780,7 @@ static void runMultiHopThenBackJavascript(bool useSiteIsolation)
         { "tainted-https-site"_s, ExpectedEnhancedSecurity::Enabled }
     });
 
-    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"https://secure.example.internal/secure", {
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"https://secure.different.internal/secure", {
         { "secure-page"_s, ExpectedEnhancedSecurity::Disabled }
     });
 
@@ -664,9 +790,7 @@ static void runMultiHopThenBackJavascript(bool useSiteIsolation)
         { "tainted-https-site"_s, ExpectedEnhancedSecurity::Enabled }
     });
 }
-
-// FIXME: rdar://164474301 (Fix SiteIsolation compatibility with EnhancedSecurity feature)
-TEST_WITHOUT_SITE_ISOLATION(MultiHopThenBackJavascript)
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(MultiHopThenBackJavascript)
 
 static void runMultiHopThenBackToSecure(bool useSiteIsolation)
 {
@@ -739,6 +863,33 @@ static void runMultiHopThenBackToSecureJavascript(bool useSiteIsolation)
     });
 }
 TEST_WITH_AND_WITHOUT_SITE_ISOLATION(MultiHopThenBackToSecureJavascript)
+
+static void runWebViewSameSiteMainFrameNavigation(bool useSiteIsolation)
+{
+    HTTPServer plaintextServer({
+        { "http://insecure.example.internal/"_s, { "<script>alert('insecure-site');  window.location.href = 'https://secure.example.internal/tainted'; </script>"_s } },
+    });
+
+    HTTPServer secureServer({
+        { "/"_s, { "<script>alert('secure-page');</script>"_s } },
+        { "/tainted"_s, { "<script>alert('tainted-page');</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, &secureServer, useSiteIsolation);
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://insecure.example.internal/", {
+        { "insecure-site"_s, ExpectedEnhancedSecurity::Enabled },
+        { "tainted-page"_s, ExpectedEnhancedSecurity::Enabled }
+    });
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"https://secure.example.internal/", {
+        { "secure-page"_s, ExpectedEnhancedSecurity::Enabled }
+    });
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"https://secure.different.internal/", {
+        { "secure-page"_s, ExpectedEnhancedSecurity::Disabled }
+    });
+}
+TEST_WITH_SITE_ISOLATION(WebViewSameSiteMainFrameNavigation)
 
 // MARK: - Cookies / Local Storage / Meaningful Site Checks
 
@@ -908,13 +1059,15 @@ static void runHttpRedirectsHttpsWithExplicitNavigationToMeaningfulSite(bool use
     });
 
     HTTPServer secureServer({
-        { "/"_s, { "<script>alert('location-redirected-site')</script>"_s } },
+        { "/"_s, { "<script>alert('location-redirected-site'); window.location = 'https://secure.other.internal/domain';</script>"_s } },
+        { "/domain"_s, { "<script>alert(window.location);</script>"_s } },
         { "/explicit-set-cookies"_s, { "<script>document.cookie = 'CookieName=CookieValue; Path=/'; alert('explicit-navigation-set-cookies')</script>"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
 
     auto webView = enhancedSecurityTestConfiguration(&plaintextServer, &secureServer, useSiteIsolation);
     loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://insecure.example.internal/", {
-        { "location-redirected-site"_s, ExpectedEnhancedSecurity::Enabled }
+        { "location-redirected-site"_s, ExpectedEnhancedSecurity::Enabled },
+        { "https://secure.other.internal/domain"_s, ExpectedEnhancedSecurity::Enabled }
     });
 
     loadRequestAndCheckEnhancedSecurityAlerts(webView, @"https://secure.different.internal/explicit-set-cookies", {
@@ -925,8 +1078,7 @@ static void runHttpRedirectsHttpsWithExplicitNavigationToMeaningfulSite(bool use
         { "location-redirected-site"_s, ExpectedEnhancedSecurity::Disabled }
     });
 }
-// FIXME: rdar://164474301 (Fix SiteIsolation compatibility with EnhancedSecurity feature)
-TEST_WITHOUT_SITE_ISOLATION(HttpRedirectsHttpsWithExplicitNavigationToMeaningfulSite)
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpRedirectsHttpsWithExplicitNavigationToMeaningfulSite)
 
 static void runWindowOpenThenNavigateToMeaningfulSite(bool useSiteIsolation)
 {
@@ -1191,6 +1343,54 @@ TEST(EnhancedSecurityPolicies, NonPersistentDataStoreCookieNotification)
     });
 
     EXPECT_EQ(observerCallbacks, 1u);
+}
+
+TEST(EnhancedSecurityPolicies, HistoryEventsUseCorrectOriginalRequest)
+{
+    TestWebKitAPI::HTTPServer plaintextServer({
+        { "http://example.internal/"_s, { "<head><title>Page Title</title></head><body><script>alert('first-page')</script></body>"_s } },
+        { "http://example.internal/server_redirect_source"_s, { 301, { { "Location"_s, "server_redirect_destination"_s } } } },
+        { "http://example.internal/server_redirect_destination"_s, { "<head><title>Target Page</title></head><body><script>alert('target-page')</script></body>"_s } }
+    });
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, nullptr, /* useSiteIsolation */ false, /* useNonPersistentStore */ false);
+
+    RetainPtr historyDelegate = adoptNS([[EnhancedSecurityHistoryDelegate alloc] init]);
+    [webView _setHistoryDelegate:historyDelegate.get()];
+
+    auto mainURL = "http://example.internal/"_s;
+    RetainPtr url = adoptNS([[NSURL alloc] initWithString:mainURL.createNSString().get()]);
+    RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:url.get()]);
+
+    runActionAndCheckEnhancedSecurityAlerts(webView, [webView, request] {
+        [webView loadRequest:request.get()];
+    }, { { "first-page"_s, ExpectedEnhancedSecurity::Enabled } });
+
+    TestWebKitAPI::Util::waitFor([&] {
+        return historyDelegate->lastNavigationData && historyDelegate->lastUpdatedTitle;
+    });
+
+    EXPECT_NS_EQUAL([historyDelegate->lastNavigationData originalRequest], request.get());
+    EXPECT_NS_EQUAL([historyDelegate->lastNavigationData originalRequest].URL, url.get());
+    EXPECT_NS_EQUAL(historyDelegate->lastUpdatedTitle.get(), @"Page Title");
+
+    auto sourceURL = "http://example.internal/server_redirect_source"_s;
+    auto destinationURL = "http://example.internal/server_redirect_destination"_s;
+    url = adoptNS([[NSURL alloc] initWithString:sourceURL.createNSString().get()]);
+    request = adoptNS([[NSURLRequest alloc] initWithURL:url.get()]);
+
+    runActionAndCheckEnhancedSecurityAlerts(webView, [webView, request] {
+        [webView loadRequest:request.get()];
+    }, { { "target-page"_s, ExpectedEnhancedSecurity::Enabled } });
+
+    TestWebKitAPI::Util::spinRunLoop();
+
+    TestWebKitAPI::Util::waitFor([&] {
+        return historyDelegate->lastRedirectSource && historyDelegate->lastRedirectDestination;
+    });
+
+    EXPECT_WK_STREQ([historyDelegate->lastRedirectSource absoluteString], sourceURL);
+    EXPECT_WK_STREQ([historyDelegate->lastRedirectDestination absoluteString], destinationURL);
 }
 
 #endif

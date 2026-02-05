@@ -6,6 +6,7 @@ var group__zeroinit =
     [ "mi_heap_rezalloc", "group__zeroinit.html#ga8d8b7ebb24b513cd84d1a696048da60d", null ],
     [ "mi_heap_rezalloc_aligned", "group__zeroinit.html#ga5129f6dc46ee1613d918820a8a0533a7", null ],
     [ "mi_heap_rezalloc_aligned_at", "group__zeroinit.html#ga2bafa79c3f98ea74882349d44cffa5d9", null ],
+    [ "mi_recalloc", "group__zeroinit.html#ga23a0fbb452b5dce8e31fab1a1958cacc", null ],
     [ "mi_recalloc_aligned", "group__zeroinit.html#ga3e2169b48683aa0ab64f813fd68d839e", null ],
     [ "mi_recalloc_aligned_at", "group__zeroinit.html#gaae25e4ddedd4e0fb61b1a8bd5d452750", null ],
     [ "mi_rezalloc", "group__zeroinit.html#gadfd34cd7b4f2bbda7ae06367a6360756", null ],

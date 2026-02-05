@@ -139,7 +139,7 @@ void NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeede
     UNUSED_PARAM(contentEncodingSniffingPolicy);
 #endif
 
-    CheckedRef cocoaSession = static_cast<NetworkSessionCocoa&>(*networkSession());
+    CheckedRef cocoaSession = downcast<NetworkSessionCocoa>(*networkSession());
     auto& boundInterfaceIdentifier = cocoaSession->boundInterfaceIdentifier();
     if (shouldContentSniff
 #if USE(CFNETWORK_CONTENT_ENCODING_SNIFFING_OVERRIDE)
@@ -189,7 +189,7 @@ void NetworkDataTaskCocoa::updateFirstPartyInfoForSession(const URL& requestURL)
 NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataTaskClient& client, const NetworkLoadParameters& parameters)
     : NetworkDataTask(session, client, parameters.request, parameters.storedCredentialsPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect, parameters.isMainFrameNavigation, parameters.isInitiatedByDedicatedWorker)
     , NetworkTaskCocoa(session)
-    , m_sessionWrapper(static_cast<NetworkSessionCocoa&>(session).sessionWrapperForTask(parameters.webPageProxyID, parameters.request, parameters.storedCredentialsPolicy, parameters.isNavigatingToAppBoundDomain))
+    , m_sessionWrapper(downcast<NetworkSessionCocoa>(session).sessionWrapperForTask(parameters.webPageProxyID, parameters.request, parameters.storedCredentialsPolicy, parameters.isNavigatingToAppBoundDomain))
     , m_frameID(parameters.webFrameID)
     , m_pageID(parameters.webPageID)
     , m_webPageProxyID(parameters.webPageProxyID)
@@ -619,7 +619,7 @@ void NetworkDataTaskCocoa::resume()
         }
     }
 
-    CheckedRef cocoaSession = static_cast<NetworkSessionCocoa&>(*m_session);
+    CheckedRef cocoaSession = downcast<NetworkSessionCocoa>(*m_session);
     if (cocoaSession->deviceManagementRestrictionsEnabled() && m_isForMainResourceNavigationForAnyFrame) {
         auto didDetermineDeviceRestrictionPolicyForURL = makeBlockPtr([protectedThis = Ref { *this }](BOOL isBlocked) mutable {
             callOnMainRunLoop([protectedThis = WTF::move(protectedThis), isBlocked] {

@@ -12,6 +12,7 @@
 
 #include "common/aligned_memory.h"
 #include "common/hash_utils.h"
+#include "common/span.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/renderer/wgpu/ContextWgpu.h"
 
@@ -304,7 +305,7 @@ bool RenderPipelineDesc::setStencilWriteMask(uint8_t writeMask)
 
 size_t RenderPipelineDesc::hash() const
 {
-    return angle::ComputeGenericHash(this, sizeof(*this));
+    return angle::ComputeGenericHash(angle::byte_span_from_ref(*this));
 }
 
 angle::Result RenderPipelineDesc::createPipeline(ContextWgpu *context,

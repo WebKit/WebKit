@@ -70,7 +70,7 @@ bool HTMLFrameElementBase::canLoad() const
 
 bool HTMLFrameElementBase::canLoadURL(const String& relativeURL) const
 {
-    return canLoadURL(protectedDocument()->completeURL(relativeURL));
+    return canLoadURL(protect(document())->completeURL(relativeURL));
 }
 
 // Note that unlike HTMLPlugInElement::canLoadURL this uses ScriptController::canAccessFromCurrentOrigin.
@@ -78,7 +78,7 @@ bool HTMLFrameElementBase::canLoadURL(const URL& completeURL) const
 {
     if (completeURL.protocolIsJavaScript()) {
         RefPtr contentDocument = this->contentDocument();
-        if (contentDocument && !ScriptController::canAccessFromCurrentOrigin(contentDocument->protectedFrame().get(), protectedDocument().get()))
+        if (contentDocument && !ScriptController::canAccessFromCurrentOrigin(contentDocument->protectedFrame().get(), protect(document()).get()))
             return false;
     }
 
@@ -114,7 +114,7 @@ void HTMLFrameElementBase::openURL(LockHistory lockHistory, LockBackForwardList 
             return;
         }
 
-        protectedThis->protectedDocument()->willLoadFrameElement(completeURL);
+        protect(protectedThis->document())->willLoadFrameElement(completeURL);
         parentFrame->loader().subframeLoader().requestFrame(*protectedThis, protectedThis->m_frameURL, frameName, lockHistory, lockBackForwardList);
     };
 

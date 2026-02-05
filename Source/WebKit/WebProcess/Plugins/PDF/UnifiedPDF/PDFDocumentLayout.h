@@ -27,6 +27,7 @@
 
 #if ENABLE(UNIFIED_PDF)
 
+#include "PDFDisplayMode.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntDegrees.h>
 #include <wtf/RetainPtr.h>
@@ -48,13 +49,6 @@ struct PDFLayoutRow;
 class PDFDocumentLayout {
 public:
     using PageIndex = size_t; // This is a zero-based index.
-
-    enum class DisplayMode : uint8_t {
-        SinglePageDiscrete,
-        SinglePageContinuous,
-        TwoUpDiscrete,
-        TwoUpContinuous,
-    };
 
     PDFDocumentLayout();
     ~PDFDocumentLayout();
@@ -114,14 +108,14 @@ public:
     WebCore::FloatSize contentsSize() const;
     WebCore::FloatSize scaledContentsSize() const;
 
-    void setDisplayMode(DisplayMode displayMode) { m_displayMode = displayMode; }
-    DisplayMode displayMode() const { return m_displayMode; }
+    void setDisplayMode(PDFDisplayMode displayMode) { m_displayMode = displayMode; }
+    PDFDisplayMode displayMode() const { return m_displayMode; }
 
-    constexpr static bool isSinglePageDisplayMode(DisplayMode mode) { return mode == DisplayMode::SinglePageDiscrete || mode == DisplayMode::SinglePageContinuous; }
-    constexpr static bool isTwoUpDisplayMode(DisplayMode mode) { return mode == DisplayMode::TwoUpDiscrete || mode == DisplayMode::TwoUpContinuous; }
+    constexpr static bool isSinglePageDisplayMode(PDFDisplayMode mode) { return mode == PDFDisplayMode::SinglePageDiscrete || mode == PDFDisplayMode::SinglePageContinuous; }
+    constexpr static bool isTwoUpDisplayMode(PDFDisplayMode mode) { return mode == PDFDisplayMode::TwoUpDiscrete || mode == PDFDisplayMode::TwoUpContinuous; }
 
-    constexpr static bool isScrollingDisplayMode(DisplayMode mode) { return mode == DisplayMode::SinglePageContinuous || mode == DisplayMode::TwoUpContinuous; }
-    constexpr static bool isDiscreteDisplayMode(DisplayMode mode) { return mode == DisplayMode::SinglePageDiscrete || mode == DisplayMode::TwoUpDiscrete; }
+    constexpr static bool isScrollingDisplayMode(PDFDisplayMode mode) { return mode == PDFDisplayMode::SinglePageContinuous || mode == PDFDisplayMode::TwoUpContinuous; }
+    constexpr static bool isDiscreteDisplayMode(PDFDisplayMode mode) { return mode == PDFDisplayMode::SinglePageDiscrete || mode == PDFDisplayMode::TwoUpDiscrete; }
 
     bool isSinglePageDisplayMode() const { return isSinglePageDisplayMode(m_displayMode); }
     bool isTwoUpDisplayMode() const { return isTwoUpDisplayMode(m_displayMode); }
@@ -157,7 +151,7 @@ private:
     Vector<PageGeometry> m_pageGeometry;
     WebCore::FloatRect m_documentBounds;
     float m_scale { 1 };
-    DisplayMode m_displayMode { DisplayMode::SinglePageContinuous };
+    PDFDisplayMode m_displayMode { PDFDisplayMode::SinglePageContinuous };
 };
 
 struct PDFLayoutRow {

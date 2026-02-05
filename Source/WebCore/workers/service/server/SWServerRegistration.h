@@ -80,13 +80,9 @@ public:
 
     void setPreInstallationWorker(SWServerWorker*);
     SWServerWorker* preInstallationWorker() const { return m_preInstallationWorker.get(); }
-    RefPtr<SWServerWorker> protectedPreInstallationWorker() const { return m_preInstallationWorker; }
     SWServerWorker* installingWorker() const { return m_installingWorker.get(); }
-    RefPtr<SWServerWorker> protectedInstallingWorker() const { return m_installingWorker; }
     SWServerWorker* waitingWorker() const { return m_waitingWorker.get(); }
-    RefPtr<SWServerWorker> protectedWaitingWorker() const { return m_waitingWorker; }
     SWServerWorker* activeWorker() const { return m_activeWorker.get(); }
-    RefPtr<SWServerWorker> protectedActiveWorker() const { return m_activeWorker; }
 
     MonotonicTime creationTime() const { return m_creationTime; }
 

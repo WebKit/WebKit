@@ -100,7 +100,7 @@ static Ref<WebKit::WebURLSchemeTask> protectedURLSchemeTask(WKURLSchemeTaskImpl 
 
 - (BOOL)_requestOnlyIfCached
 {
-    return protectedURLSchemeTask(self)->protectedNSRequest().get().cachePolicy == NSURLRequestReturnCacheDataDontLoad;
+    return protect(protectedURLSchemeTask(self)->nsRequest()).get().cachePolicy == NSURLRequestReturnCacheDataDontLoad;
 }
 
 - (void)_willPerformRedirection:(NSURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest *))completionHandler

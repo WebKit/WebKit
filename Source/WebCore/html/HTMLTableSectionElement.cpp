@@ -68,7 +68,7 @@ ExceptionOr<Ref<HTMLTableRowElement>> HTMLTableSectionElement::insertRow(int ind
     int numRows = children->length();
     if (index > numRows)
         return Exception { ExceptionCode::IndexSizeError };
-    Ref row = HTMLTableRowElement::create(trTag, protectedDocument());
+    Ref row = HTMLTableRowElement::create(trTag, protect(document()));
     ExceptionOr<void> result;
     if (numRows == index || index == -1)
         result = appendChild(row);
@@ -101,7 +101,7 @@ int HTMLTableSectionElement::numRows() const
 
 Ref<HTMLCollection> HTMLTableSectionElement::rows()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<CollectionType::TSectionRows>::traversalType>>(*this, CollectionType::TSectionRows);
+    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLTSectionRowsCollection>(*this);
 }
 
 }

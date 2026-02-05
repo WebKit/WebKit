@@ -43,14 +43,12 @@
 #include "FontDescription.h"
 #include "FontFace.h"
 #include "FontPaletteValues.h"
-#include "Logging.h"
 #include "SVGFontFaceElement.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "StyleProperties.h"
 #include "StyleResolveForFont.h"
 #include "StyleRule.h"
-#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -65,16 +63,16 @@ static void iterateClients(WeakHashSet<CSSFontFaceClient>& clients, NOESCAPE con
 void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, ScriptExecutionContext* context, bool isInitiatingElementInUserAgentShadowTree)
 {
     bool allowDownloading = context && (context->settingsValues().downloadableBinaryFontTrustedTypes != DownloadableBinaryFontTrustedTypes::None);
-    for (auto& src : srcList) {
+    for (Ref src : srcList) {
         // An item in the list either specifies a string (local font name) or a URL (remote font to download).
-        if (auto local = dynamicDowncast<CSSFontFaceSrcLocalValue>(src)) {
+        if (RefPtr local = dynamicDowncast<CSSFontFaceSrcLocalValue>(src)) {
             if (!local->svgFontFaceElement())
                 fontFace.adoptSource(makeUniqueWithoutRefCountedCheck<CSSFontFaceSource>(fontFace, local->fontFaceName()));
             else if (allowDownloading)
                 fontFace.adoptSource(makeUniqueWithoutRefCountedCheck<CSSFontFaceSource>(fontFace, local->fontFaceName(),  CheckedRef { *local->svgFontFaceElement() }));
         } else {
             if (allowDownloading) {
-                if (auto request = downcast<CSSFontFaceSrcResourceValue>(const_cast<CSSValue&>(src)).fontLoadRequest(*context, isInitiatingElementInUserAgentShadowTree))
+                if (auto request = downcast<CSSFontFaceSrcResourceValue>(const_cast<CSSValue&>(src.get())).fontLoadRequest(*context, isInitiatingElementInUserAgentShadowTree))
                     fontFace.adoptSource(makeUniqueWithoutRefCountedCheck<CSSFontFaceSource>(fontFace, *context->cssFontSelector(), request.releaseNonNull()));
             }
         }
@@ -159,7 +157,7 @@ void CSSFontFace::setFamily(CSSValue& family)
     });
 }
 
-FontFace* CSSFontFace::existingWrapper() const
+FontFace* CSSFontFace::existingWrapper()
 {
     return m_wrapper.get();
 }
@@ -172,8 +170,8 @@ static FontSelectionRange calculateWeightRange(CSSValue& value)
             return { normalWeightValue(), normalWeightValue() };
         ASSERT(valueList->item(0)->isPrimitiveValue());
         ASSERT(valueList->item(1)->isPrimitiveValue());
-        auto& value0 = downcast<CSSPrimitiveValue>(*valueList->item(0));
-        auto& value1 = downcast<CSSPrimitiveValue>(*valueList->item(1));
+        Ref value0 = downcast<CSSPrimitiveValue>(*valueList->item(0));
+        Ref value1 = downcast<CSSPrimitiveValue>(*valueList->item(1));
         auto result0 = Style::fontWeightFromCSSValueDeprecated(value0);
         auto result1 = Style::fontWeightFromCSSValueDeprecated(value1);
         return { result0, result1 };
@@ -207,8 +205,8 @@ static FontSelectionRange calculateWidthRange(CSSValue& value)
             return { normalWidthValue(), normalWidthValue() };
         ASSERT(valueList->item(0)->isPrimitiveValue());
         ASSERT(valueList->item(1)->isPrimitiveValue());
-        auto& value0 = downcast<CSSPrimitiveValue>(*valueList->item(0));
-        auto& value1 = downcast<CSSPrimitiveValue>(*valueList->item(1));
+        Ref value0 = downcast<CSSPrimitiveValue>(*valueList->item(0));
+        Ref value1 = downcast<CSSPrimitiveValue>(*valueList->item(1));
         auto result0 = Style::fontStretchFromCSSValueDeprecated(value0);
         auto result1 = Style::fontStretchFromCSSValueDeprecated(value1);
         return { result0, result1 };
@@ -302,10 +300,10 @@ void CSSFontFace::setFeatureSettings(CSSValue& featureSettings)
     FontFeatureSettings settings;
 
     if (auto* list = dynamicDowncast<CSSValueList>(featureSettings)) {
-        for (auto& rangeValue : *list) {
-            auto& feature = downcast<CSSFontFeatureValue>(rangeValue);
-            if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(feature.value()))
-                settings.insert({ feature.tag(), primitiveValue->resolveAsIntegerDeprecated() });
+        for (Ref rangeValue : *list) {
+            Ref feature = downcast<CSSFontFeatureValue>(rangeValue);
+            if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(feature->value()))
+                settings.insert({ feature->tag(), primitiveValue->resolveAsIntegerDeprecated() });
         }
     }
 
@@ -616,9 +614,7 @@ void CSSFontFace::setStatus(Status newStatus)
 void CSSFontFace::fontLoaded(CSSFontFaceSource&)
 {
     Ref<CSSFontFace> protectedThis(*this);
-
-    LOG_WITH_STREAM(Fonts, stream << "CSSFontFace::fontLoaded - " << family() << " " << style() << " " << weight());
-
+    
     fontLoadEventOccurred();
 }
 
@@ -688,8 +684,6 @@ size_t CSSFontFace::pump(ExternalResourceDownloadPolicy policy)
 
 void CSSFontFace::load()
 {
-    LOG_WITH_STREAM(Fonts, stream << "CSSFontFace::load - " << family() << " " << style() << " " << weight());
-
     pump(ExternalResourceDownloadPolicy::Allow);
 }
 

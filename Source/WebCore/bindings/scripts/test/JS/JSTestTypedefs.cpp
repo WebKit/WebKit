@@ -502,7 +502,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_funcBody(JSC::
     UNUSED_PARAM(callFrame);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     EnsureStillAliveScope argument0 = callFrame->argument(0);
-    auto xConversionResult = convertOptionalWithDefault<IDLSequence<IDLLong>>(*lexicalGlobalObject, argument0.value(), [&]() -> ConversionResult<IDLSequence<IDLLong>> { return Converter<IDLSequence<IDLLong>>::ReturnType { }; });
+    auto xConversionResult = convertOptionalWithDefault<IDLSequence<IDLLong>>(*lexicalGlobalObject, argument0.value(), [&] -> ConversionResult<IDLSequence<IDLLong>> { return Converter<IDLSequence<IDLLong>>::ReturnType { }; });
     if (xConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.func(xConversionResult.releaseReturnValue()); })));
@@ -535,7 +535,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunction_setShadowBody(
     if (blurConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     EnsureStillAliveScope argument3 = callFrame->argument(3);
-    auto colorConversionResult = convertOptionalWithDefault<IDLDOMString>(*lexicalGlobalObject, argument3.value(), [&]() -> ConversionResult<IDLDOMString> { return typename Converter<IDLDOMString>::ReturnType { String() }; });
+    auto colorConversionResult = convertOptionalWithDefault<IDLDOMString>(*lexicalGlobalObject, argument3.value(), [&] -> ConversionResult<IDLDOMString> { return typename Converter<IDLDOMString>::ReturnType { String() }; });
     if (colorConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     EnsureStillAliveScope argument4 = callFrame->argument(4);

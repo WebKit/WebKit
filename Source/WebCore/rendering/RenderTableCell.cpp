@@ -4,7 +4,7 @@
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2016-2017 Google Inc. All rights reserved.
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
@@ -127,10 +127,10 @@ void RenderTableCell::willBeRemovedFromTree()
 unsigned RenderTableCell::parseColSpanFromDOM() const
 {
     ASSERT(element());
-    if (auto* cell = dynamicDowncast<HTMLTableCellElement>(*element()))
+    if (RefPtr cell = dynamicDowncast<HTMLTableCellElement>(*element()))
         return std::min<unsigned>(cell->colSpan(), maxColumnIndex);
 #if ENABLE(MATHML)
-    auto* mathMLElement = dynamicDowncast<MathMLElement>(*element());
+    RefPtr mathMLElement = dynamicDowncast<MathMLElement>(*element());
     if (mathMLElement && mathMLElement->hasTagName(MathMLNames::mtdTag))
         return std::min<unsigned>(mathMLElement->colSpan(), maxColumnIndex);
 #endif
@@ -140,10 +140,10 @@ unsigned RenderTableCell::parseColSpanFromDOM() const
 unsigned RenderTableCell::parseRowSpanFromDOM() const
 {
     ASSERT(element());
-    if (auto* cell = dynamicDowncast<HTMLTableCellElement>(*element()))
+    if (RefPtr cell = dynamicDowncast<HTMLTableCellElement>(*element()))
         return std::min<unsigned>(cell->rowSpan(), maxRowIndex);
 #if ENABLE(MATHML)
-    auto* mathMLElement = dynamicDowncast<MathMLElement>(*element());
+    RefPtr mathMLElement = dynamicDowncast<MathMLElement>(*element());
     if (mathMLElement && mathMLElement->hasTagName(MathMLNames::mtdTag))
         return std::min<unsigned>(mathMLElement->rowSpan(), maxRowIndex);
 #endif
@@ -591,6 +591,31 @@ auto RenderTableCell::localRectsForRepaint(RepaintOutlineBounds repaintOutlineBo
         rects.outlineBoundsRect = localOutlineBoundsRepaintRect();
 
     return rects;
+}
+
+LayoutUnit RenderTableCell::containingBlockLogicalWidthForContent() const
+{
+    // For percentage padding/width resolution in table cells, we need to resolve
+    // against the sum of column widths plus interleaved border spacing (but not
+    // the leading/trailing border spacing).
+    CheckedPtr renderTable = table();
+    if (!renderTable)
+        return RenderBlockFlow::containingBlockLogicalWidthForContent();
+
+    // The table's columnPositions() array contains the cumulative positions of columns.
+    // The last element gives us the total width including all columns and interleaved spacing.
+    // We need to subtract the leading border spacing to get the correct basis.
+    auto& columnPositions = renderTable->columnPositions();
+    if (columnPositions.isEmpty())
+        return RenderBlockFlow::containingBlockLogicalWidthForContent();
+
+    LayoutUnit totalWidth = columnPositions.last();
+
+    // Subtract the leading border spacing
+    if (totalWidth > 0)
+        totalWidth -= renderTable->hBorderSpacing();
+
+    return totalWidth;
 }
 
 auto RenderTableCell::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const -> std::optional<RepaintRects>
@@ -1090,10 +1115,15 @@ CollapsedBorderValue RenderTableCell::computeCollapsedAfterBorder(IncludeBorderC
             return result;
     }
     
-    // (3) Our row's after border. (FIXME: Deal with rowspan!)
-    result = chooseBorder(result, CollapsedBorderValue(parent()->style().borderAfter(), includeColor ? resolvedBorderColor(parent()->style(), afterColorProperty) : Color(), BorderPrecedence::Row, parent()->style().usedZoomForLength()));
-    if (!result.exists())
-        return result;
+    // (3) Our row's after border. Account for rowspan by using the last row in the span.
+    // For a cell spanning multiple rows, the after border should match with the border
+    // of the last row in the span, not the first row.
+    size_t lastRowIndex = rowIndex() + rowSpan() - 1;
+    if (CheckedPtr lastRowInSpan = section()->rowRendererAt(lastRowIndex)) {
+        result = chooseBorder(result, CollapsedBorderValue(lastRowInSpan->style().borderAfter(), includeColor ? resolvedBorderColor(lastRowInSpan->style(), afterColorProperty) : Color(), BorderPrecedence::Row, lastRowInSpan->style().usedZoomForLength()));
+        if (!result.exists())
+            return result;
+    }
     
     // (4) The next row's before border.
     if (nextCell) {
@@ -1557,7 +1587,8 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, LayoutPoi
         fillRect = LayoutRect { adjustedPaintOffset, size() };
     auto compositeOp = document().compositeOperatorForBackgroundColor(color, *this);
     BackgroundPainter painter { *this, paintInfo };
-    if (backgroundObject != this) {
+    auto hasBackgroundClipText = style.backgroundLayers().usedFirst().clip() == FillBox::Text;
+    if (backgroundObject != this && !hasBackgroundClipText) {
         painter.setOverrideClip(FillBox::BorderBox);
         painter.setOverrideOrigin(FillBox::BorderBox);
     }

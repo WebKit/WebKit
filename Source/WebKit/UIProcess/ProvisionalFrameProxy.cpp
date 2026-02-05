@@ -66,20 +66,10 @@ RefPtr<FrameProcess> ProvisionalFrameProxy::takeFrameProcess()
     return std::exchange(m_frameProcess, nullptr).releaseNonNull();
 }
 
-Ref<WebFrameProxy> ProvisionalFrameProxy::protectedFrame() const
-{
-    return m_frame.get();
-}
-
 WebProcessProxy& ProvisionalFrameProxy::process() const
 {
     ASSERT(m_frameProcess);
     return m_frameProcess->process();
-}
-
-Ref<WebProcessProxy> ProvisionalFrameProxy::protectedProcess() const
-{
-    return process();
 }
 
 } // namespace WebKit

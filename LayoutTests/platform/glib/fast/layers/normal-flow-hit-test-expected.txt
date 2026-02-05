@@ -4,10 +4,10 @@ layer at (0,0) size 800x320
   RenderBlock {HTML} at (0,0) size 800x320
     RenderBody {BODY} at (8,16) size 784x296
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 58x17
+        RenderText {#text} at (0,0) size 58x18
           text run at (0,0) width 58: "Tests for "
-        RenderInline {A} at (57,0) size 306x17 [color=#0000EE]
-          RenderText {#text} at (57,0) size 306x17
+        RenderInline {A} at (57,0) size 306x18 [color=#0000EE]
+          RenderText {#text} at (57,0) size 306x18
             text run at (57,0) width 306: "https://bugs.webkit.org/show_bug.cgi?id=24552"
       RenderBlock (anonymous) at (0,34) size 784x124
         RenderText {#text} at (120,106) size 4x17
@@ -16,8 +16,8 @@ layer at (0,0) size 800x320
           RenderText {#text} at (124,106) size 61x17
             text run at (124,106) width 61: "Link here"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,278) size 784x18
-        RenderText {#text} at (0,0) size 168x17
+      RenderBlock {DIV} at (0,277) size 784x19
+        RenderText {#text} at (0,0) size 168x18
           text run at (0,0) width 168: "Found link node, so PASS"
 layer at (18,60) size 100x100
   RenderBlock {DIV} at (10,10) size 100x100 [bgcolor=#808080]

@@ -35,9 +35,7 @@
     Promise<WebLockManagerSnapshot> query();
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary WebLockOptions {
+dictionary WebLockOptions {
     WebLockMode mode = "exclusive";
     boolean ifAvailable = false;
     boolean steal = false;

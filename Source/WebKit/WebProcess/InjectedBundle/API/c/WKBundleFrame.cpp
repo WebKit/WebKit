@@ -140,7 +140,7 @@ unsigned WKBundleFrameGetPendingUnloadCount(WKBundleFrameRef frameRef)
 
 WKBundlePageRef WKBundleFrameGetPage(WKBundleFrameRef frameRef)
 {
-    return toAPI(WebKit::toProtectedImpl(frameRef)->protectedPage().get());
+    return toAPI(protect(WebKit::toProtectedImpl(frameRef)->page()).get());
 }
 
 void WKBundleFrameStopLoading(WKBundleFrameRef frameRef)
@@ -279,7 +279,7 @@ WKSecurityOriginRef WKBundleFrameCopySecurityOrigin(WKBundleFrameRef frameRef)
     if (!coreFrame)
         return 0;
 
-    return WebKit::toCopiedAPI(coreFrame->protectedDocument()->protectedSecurityOrigin().ptr());
+    return WebKit::toCopiedAPI(protect(protect(coreFrame->document())->securityOrigin()).ptr());
 }
 
 void WKBundleFrameFocus(WKBundleFrameRef frameRef)
@@ -288,7 +288,7 @@ void WKBundleFrameFocus(WKBundleFrameRef frameRef)
     if (!coreFrame)
         return;
 
-    coreFrame->protectedPage()->focusController().setFocusedFrame(coreFrame.get());
+    protect(coreFrame->page())->focusController().setFocusedFrame(coreFrame.get());
 }
 
 void _WKBundleFrameGenerateTestReport(WKBundleFrameRef frameRef, WKStringRef message, WKStringRef group)
@@ -301,7 +301,7 @@ void _WKBundleFrameGenerateTestReport(WKBundleFrameRef frameRef, WKStringRef mes
         return;
 
     if (RefPtr document = coreFrame->document())
-        document->protectedReportingScope()->generateTestReport(WebKit::toWTFString(message), WebKit::toWTFString(group));
+        protect(document->reportingScope())->generateTestReport(WebKit::toWTFString(message), WebKit::toWTFString(group));
 }
 
 void* _WKAccessibilityRootObjectForTesting(WKBundleFrameRef frameRef)
@@ -338,6 +338,6 @@ void* _WKAccessibilityRootObjectForTesting(WKBundleFrameRef frameRef)
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
     CheckedPtr cache = getAXObjectCache();
-    RefPtr root = cache ? cache->rootObjectForFrame(*WebKit::toProtectedImpl(frameRef)->protectedCoreLocalFrame()) : nullptr;
+    RefPtr root = cache ? cache->rootObjectForFrame(*protect(WebKit::toProtectedImpl(frameRef)->coreLocalFrame())) : nullptr;
     return root ? root->wrapper() : nullptr;
 }

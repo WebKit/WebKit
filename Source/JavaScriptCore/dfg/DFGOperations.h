@@ -198,6 +198,7 @@ JSC_DECLARE_JIT_OPERATION(operationPutByIdWithThis, void, (JSGlobalObject*, Enco
 JSC_DECLARE_JIT_OPERATION(operationPutByIdWithThisStrict, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, uintptr_t));
 JSC_DECLARE_JIT_OPERATION(operationPutByValWithThis, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationPutByValWithThisStrict, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationObjectDefineProperty, void, (JSGlobalObject*, JSObject*, EncodedJSValue, JSObject*));
 JSC_DECLARE_JIT_OPERATION(operationDefineDataProperty, void, (JSGlobalObject*, JSObject*, EncodedJSValue, EncodedJSValue, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationDefineDataPropertyString, void, (JSGlobalObject*, JSObject*, JSString*, EncodedJSValue, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationDefineDataPropertyStringIdent, void, (JSGlobalObject*, JSObject*, UniquedStringImpl*, EncodedJSValue, int32_t));
@@ -292,6 +293,8 @@ JSC_DECLARE_JIT_OPERATION(operationStringIndexOf, UCPUStrictInt32, (JSGlobalObje
 JSC_DECLARE_JIT_OPERATION(operationStringIndexOfWithOneChar, UCPUStrictInt32, (JSGlobalObject*, JSString*, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationStringIndexOfWithIndex, UCPUStrictInt32, (JSGlobalObject*, JSString*, JSString*, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationStringIndexOfWithIndexWithOneChar, UCPUStrictInt32, (JSGlobalObject*, JSString*, int32_t, int32_t));
+JSC_DECLARE_JIT_OPERATION(operationStringStartsWith, bool, (JSGlobalObject*, JSString*, JSString*));
+JSC_DECLARE_JIT_OPERATION(operationStringStartsWithWithIndex, bool, (JSGlobalObject*, JSString*, JSString*, int32_t));
 
 JSC_DECLARE_JIT_OPERATION(operationStringProtoFuncReplaceGeneric, JSCell*, (JSGlobalObject*, EncodedJSValue thisValue, EncodedJSValue searchValue, EncodedJSValue replaceValue));
 JSC_DECLARE_JIT_OPERATION(operationStringProtoFuncReplaceAllGeneric, JSCell*, (JSGlobalObject*, EncodedJSValue thisValue, EncodedJSValue searchValue, EncodedJSValue replaceValue));

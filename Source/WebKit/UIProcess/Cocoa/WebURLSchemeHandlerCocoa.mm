@@ -62,9 +62,4 @@ void WebURLSchemeHandlerCocoa::platformStopTask(WebPageProxy& page, WebURLScheme
         task.suppressTaskStoppedExceptions();
 }
 
-RetainPtr<id<WKURLSchemeHandler>> WebURLSchemeHandlerCocoa::protectedAPIHandler() const
-{
-    return apiHandler();
-}
-
 } // namespace WebKit

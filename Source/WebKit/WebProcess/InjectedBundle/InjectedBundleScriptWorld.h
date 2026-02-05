@@ -56,8 +56,6 @@ public:
 
     const WebCore::DOMWrapperWorld& coreWorld() const;
     WebCore::DOMWrapperWorld& coreWorld();
-    Ref<const WebCore::DOMWrapperWorld> protectedCoreWorld() const;
-    Ref<WebCore::DOMWrapperWorld> protectedCoreWorld();
 
     void clearWrappers();
     void setAllowAutofill();

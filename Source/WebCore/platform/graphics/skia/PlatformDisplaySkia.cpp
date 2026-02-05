@@ -46,7 +46,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <EGL/eglext.h>
 #include <skia/gpu/ganesh/gl/egl/GrGLMakeEGLInterface.h>
 #endif
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -235,7 +235,14 @@ public:
         return adoptRef(*new SkiaGLContext(display));
     }
 
-    ~SkiaGLContext() = default;
+    ~SkiaGLContext()
+    {
+        if (m_skiaGLContext) {
+            m_skiaGLContext->makeContextCurrent();
+            m_skiaGrContext = nullptr;
+            m_skiaGLContext = nullptr;
+        }
+    }
 
     GLContext* skiaGLContext() const
     {

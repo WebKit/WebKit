@@ -31,7 +31,7 @@
 namespace WebCore {
 
 struct MediaStreamAudioSourceOptions {
-    RefPtr<MediaStream> mediaStream;
+    Ref<MediaStream> mediaStream;
 };
 
 } // namespace WebCore

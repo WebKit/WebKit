@@ -60,7 +60,6 @@ public:
 
     RemoteLegacyCDMFactoryProxy* factory() const { return m_factory.get(); }
     WebCore::LegacyCDMSession* session() const { return m_session.get(); }
-    RefPtr<WebCore::LegacyCDMSession> protectedSession() const;
 
     RefPtr<ArrayBuffer> getCachedKeyForKeyId(const String&);
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
@@ -68,8 +67,6 @@ public:
 private:
     friend class RemoteLegacyCDMFactoryProxy;
     RemoteLegacyCDMSessionProxy(RemoteLegacyCDMFactoryProxy&, uint64_t logIdentifier, RemoteLegacyCDMSessionIdentifier, WebCore::LegacyCDM&);
-
-    RefPtr<RemoteLegacyCDMFactoryProxy> protectedFactory() const { return m_factory.get(); }
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

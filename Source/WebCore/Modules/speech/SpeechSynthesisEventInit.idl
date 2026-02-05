@@ -27,7 +27,6 @@
 [
     EnabledBySetting=SpeechSynthesisAPIEnabled,
     Conditional=SPEECH_SYNTHESIS,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary SpeechSynthesisEventInit : EventInit {
     required SpeechSynthesisUtterance utterance;
     unsigned long charIndex = 0;

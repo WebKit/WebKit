@@ -29,23 +29,22 @@
 #include "ExtendableEvent.h"
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
-
-struct CookieListItem;
 
 class ExtendableCookieChangeEvent final : public ExtendableEvent {
     WTF_MAKE_TZONE_ALLOCATED(ExtendableCookieChangeEvent);
 public:
-    static Ref<ExtendableCookieChangeEvent> create(const AtomString& type, ExtendableCookieChangeEventInit&&, IsTrusted = IsTrusted::No);
+    using Init = ExtendableCookieChangeEventInit;
+
+    static Ref<ExtendableCookieChangeEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
     ~ExtendableCookieChangeEvent();
 
     const Vector<CookieListItem>& changed() const { return m_changed; }
     const Vector<CookieListItem>& deleted() const { return m_deleted; }
 
 private:
-    ExtendableCookieChangeEvent(const AtomString& type, ExtendableCookieChangeEventInit&&, IsTrusted);
+    ExtendableCookieChangeEvent(const AtomString& type, Init&&, IsTrusted);
 
     Vector<CookieListItem> m_changed;
     Vector<CookieListItem> m_deleted;

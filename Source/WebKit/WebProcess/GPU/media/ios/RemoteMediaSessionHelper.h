@@ -38,7 +38,7 @@ class WebProcess;
 
 class RemoteMediaSessionHelper final
     : public WebCore::MediaSessionHelper
-#if HAVE(AVROUTING_FRAMEWORK)
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteMediaSessionHelper>
 #endif
     , public IPC::MessageReceiver

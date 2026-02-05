@@ -1,6 +1,6 @@
 
 PASS start of scroll container
-FAIL right before the in-flow position of the sticky box assert_equals: expected 80 but got 180
-FAIL right after the in-flow position the sticky box assert_equals: expected 120 but got 220
+PASS right before the in-flow position of the sticky box
+PASS right after the in-flow position the sticky box
 PASS end of scroll container
 

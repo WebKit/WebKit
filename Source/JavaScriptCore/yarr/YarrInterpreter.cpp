@@ -1082,7 +1082,7 @@ public:
         unsigned matchBegin = output[(subpatternId << 1)];
         unsigned matchEnd = output[(subpatternId << 1) + 1];
 
-        if (matchBegin == offsetNoMatch)
+        if (matchBegin == offsetNoMatch || matchEnd == offsetNoMatch)
             return false;
 
         ASSERT(matchBegin <= matchEnd);
@@ -1356,8 +1356,10 @@ public:
         // We've reached the end of the parens; if they are inverted, this is failure.
         if (term.invert()) {
             if (term.containsAnyCaptures()) {
-                for (unsigned subpattern = term.subpatternId(); subpattern <= term.lastSubpatternId(); subpattern++)
+                for (unsigned subpattern = term.subpatternId(); subpattern <= term.lastSubpatternId(); subpattern++) {
                     output[subpattern << 1] = offsetNoMatch;
+                    output[(subpattern << 1) + 1] = offsetNoMatch;
+                }
             }
             context->term -= term.atom.parenthesesWidth;
             return false;
@@ -1395,8 +1397,10 @@ public:
         input.setPos(backTrack->begin);
 
         if (term.containsAnyCaptures()) {
-            for (unsigned subpattern = term.subpatternId(); subpattern <= term.lastSubpatternId(); subpattern++)
+            for (unsigned subpattern = term.subpatternId(); subpattern <= term.lastSubpatternId(); subpattern++) {
                 output[subpattern << 1] = offsetNoMatch;
+                output[(subpattern << 1) + 1] = offsetNoMatch;
+            }
         }
 
         context->term -= term.atom.parenthesesWidth;

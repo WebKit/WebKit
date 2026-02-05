@@ -53,6 +53,8 @@ ios/IOSMouseEventTestHarness.mm @nonARC
 
 Tests/WTF/cocoa/URLExtras.mm @nonARC
 
+Tests/WebCore/cocoa/WebAVPlayerControllerLeakTests.mm @nonARC
+
 Tests/WebKitCocoa/AVFoundationPreference.mm @nonARC
 Tests/WebKitCocoa/AdaptiveImageGlyph.mm @nonARC
 Tests/WebKitCocoa/AdditionalReadAccessAllowedURLs.mm @nonARC
@@ -259,6 +261,7 @@ Tests/WebKitCocoa/SafeBrowsing.mm @nonARC
 Tests/WebKitCocoa/SampledPageTopColor.mm @nonARC
 Tests/WebKitCocoa/SchemeRegistry.mm @nonARC
 Tests/WebKitCocoa/ScreenTime.mm @nonARC
+Tests/WebKitCocoa/ScreenWakeLock.mm @nonARC
 Tests/WebKitCocoa/SerializedNode.mm @nonARC
 Tests/WebKitCocoa/ScriptTrackingPrivacyTests.mm @nonARC
 Tests/WebKitCocoa/ServiceWorkerBasic.mm @nonARC

@@ -36,9 +36,9 @@ ClipboardEvent::ClipboardEvent(const AtomString& type, Ref<DataTransfer>&& dataT
 {
 }
 
-ClipboardEvent::ClipboardEvent(const AtomString& type, const Init& init)
-    : Event(EventInterfaceType::ClipboardEvent, type, init, IsTrusted::No)
-    , m_clipboardData(init.clipboardData)
+ClipboardEvent::ClipboardEvent(const AtomString& type, Init&& init)
+    : Event(EventInterfaceType::ClipboardEvent, type, WTF::move(init), IsTrusted::No)
+    , m_clipboardData(WTF::move(init.clipboardData))
 {
 }
 

@@ -33,7 +33,6 @@ class SkWStream;
 enum class SkPathConvexity;
 enum class SkResolveConvexity;
 struct SkPathRaw;
-struct SkPathVerbAnalysis;
 struct SkPathOvalInfo;
 struct SkPathRRectInfo;
 
@@ -143,7 +142,8 @@ public:
 
         example: https://fiddle.skia.org/c/@Path_copy_const_SkPath
     */
-    SkPath(const SkPath& path);
+    SkPath(const SkPath&);
+    SkPath(SkPath&&);
 
     /** Releases ownership of any shared data and deletes data if SkPath is sole owner.
 
@@ -170,7 +170,8 @@ public:
 
         example: https://fiddle.skia.org/c/@Path_copy_operator
     */
-    SkPath& operator=(const SkPath& path);
+    SkPath& operator=(const SkPath&);
+    SkPath& operator=(SkPath&&);
 
     /** Compares a and b; returns true if SkPath::FillType, verb array, SkPoint array, and weights
         are equivalent.
@@ -555,15 +556,6 @@ public:
         example: https://fiddle.skia.org/c/@Path_conservativelyContainsRect
     */
     bool conservativelyContainsRect(const SkRect& rect) const;
-
-    /** \enum SkPath::ArcSize
-        Four oval parts with radii (rx, ry) start at last SkPath SkPoint and ends at (x, y).
-        ArcSize and Direction select one of the four oval parts.
-    */
-    enum ArcSize {
-        kSmall_ArcSize, //!< smaller of arc pair
-        kLarge_ArcSize, //!< larger of arc pair
-    };
 
     /** Approximates conic with quad array. Conic is constructed from start SkPoint p0,
         control SkPoint p1, end SkPoint p2, and weight w.
@@ -1160,7 +1152,6 @@ private:
     bool              fIsVolatile;
 
     size_t writeToMemoryAsRRect(void* buffer) const;
-    size_t readAsRRect(const void*, size_t);
 
     friend class Iter;
     friend class SkPathPriv;

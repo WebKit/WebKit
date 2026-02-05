@@ -208,12 +208,7 @@ std::optional<SharedPreferencesForWebProcess> RemoteLegacyCDMSessionProxy::share
     if (!m_factory)
         return std::nullopt;
 
-    return protectedFactory()->sharedPreferencesForWebProcess();
-}
-
-RefPtr<WebCore::LegacyCDMSession> RemoteLegacyCDMSessionProxy::protectedSession() const
-{
-    return m_session;
+    return protect(factory())->sharedPreferencesForWebProcess();
 }
 
 } // namespace WebKit

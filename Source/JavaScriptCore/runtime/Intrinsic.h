@@ -105,6 +105,7 @@ namespace JSC {
     macro(RegExpSearchIntrinsic) \
     macro(ObjectAssignIntrinsic) \
     macro(ObjectCreateIntrinsic) \
+    macro(ObjectDefinePropertyIntrinsic) \
     macro(ObjectGetOwnPropertyNamesIntrinsic) \
     macro(ObjectGetOwnPropertySymbolsIntrinsic) \
     macro(ObjectGetPrototypeOfIntrinsic) \
@@ -120,6 +121,7 @@ namespace JSC {
     macro(StringPrototypeCodePointAtIntrinsic) \
     macro(StringPrototypeIndexOfIntrinsic) \
     macro(StringPrototypeIncludesIntrinsic) \
+    macro(StringPrototypeStartsWithIntrinsic) \
     macro(StringPrototypeLocaleCompareIntrinsic) \
     macro(StringPrototypeValueOfIntrinsic) \
     macro(StringPrototypeReplaceIntrinsic) \
@@ -218,6 +220,8 @@ namespace JSC {
     macro(UnderscoreProtoIntrinsic) \
     macro(SpeciesGetterIntrinsic) \
     macro(WebAssemblyInstanceExportsIntrinsic) \
+    macro(JSSetSizeIntrinsic) \
+    macro(JSMapSizeIntrinsic) \
     \
     /* Debugging intrinsics. These are meant to be used as testing hacks within jsc.cpp and should never be exposed to users.*/ \
     macro(DFGTrueIntrinsic) \

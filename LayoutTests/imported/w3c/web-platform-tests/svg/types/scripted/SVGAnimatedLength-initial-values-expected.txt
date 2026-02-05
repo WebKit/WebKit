@@ -91,10 +91,10 @@ PASS SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.cy (r
 PASS SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.cy (invalid value)
 PASS SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.r (remove)
 PASS SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.r (invalid value)
-FAIL SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.fx (remove) assert_equals: initial before expected "50%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.fx (invalid value) assert_equals: initial before expected "50%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.fy (remove) assert_equals: initial before expected "50%" but got "0"
-FAIL SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.fy (invalid value) assert_equals: initial before expected "50%" but got "0"
+PASS SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.fx (remove)
+PASS SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.fx (invalid value)
+PASS SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.fy (remove)
+PASS SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.fy (invalid value)
 PASS SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.fr (remove)
 PASS SVGAnimatedLength, initial values, SVGRadialGradientElement.prototype.fr (invalid value)
 PASS SVGAnimatedLength, initial values, SVGRectElement.prototype.x (remove)

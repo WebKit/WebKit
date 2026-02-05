@@ -62,6 +62,13 @@ static HashMap<MessagePortIdentifier, ScriptExecutionContextIdentifier>& portToC
     return map;
 }
 
+void MessagePort::setMessageHandler(MessageHandler&& messageHandler)
+{
+    ASSERT(!m_messageHandler);
+    m_messageHandler = WTF::move(messageHandler);
+    start();
+}
+
 bool MessagePort::isMessagePortAliveForTesting(const MessagePortIdentifier& identifier)
 {
     Locker locker { allMessagePortsLock };
@@ -141,12 +148,12 @@ void MessagePort::entangle()
     MessagePortChannelProvider::protectedFromContext(*protectedScriptExecutionContext())->entangleLocalPortInThisProcessToRemote(m_identifier, m_remoteIdentifier);
 }
 
-ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& state, JSC::JSValue messageValue, StructuredSerializeOptions&& options)
+ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& globalObject, JSC::JSValue messageValue, StructuredSerializeOptions&& options)
 {
     LOG(MessagePorts, "Attempting to post message to port %s (to be received by port %s)", m_identifier.logString().utf8().data(), m_remoteIdentifier.logString().utf8().data());
 
     Vector<Ref<MessagePort>> ports;
-    auto messageData = SerializedScriptValue::create(state, messageValue, WTF::move(options.transfer), ports, SerializationForStorage::No, SerializationContext::WorkerPostMessage);
+    auto messageData = SerializedScriptValue::create(globalObject, messageValue, WTF::move(options.transfer), ports, SerializationForStorage::No, SerializationContext::WorkerPostMessage);
     if (messageData.hasException())
         return messageData.releaseException();
 
@@ -174,6 +181,11 @@ ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& state, JSC::JSVa
 
     MessagePortChannelProvider::protectedFromContext(*protectedScriptExecutionContext())->postMessageToRemote(WTF::move(message), m_remoteIdentifier);
     return { };
+}
+
+ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& globalObject, JSC::JSValue messageValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
+{
+    return postMessage(globalObject, messageValue, StructuredSerializeOptions { WTF::move(transfer) });
 }
 
 TransferredMessagePort MessagePort::disentangle()
@@ -232,6 +244,7 @@ void MessagePort::close()
     });
 
     removeAllEventListeners();
+    m_messageHandler = { };
 }
 
 void MessagePort::contextDestroyed()
@@ -264,13 +277,19 @@ void MessagePort::dispatchMessages()
         ASSERT(context->isContextThread());
         auto* globalObject = context->globalObject();
         Ref vm = globalObject->vm();
-        auto scope = DECLARE_CATCH_SCOPE(vm);
+        auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
         RefPtr workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(*context);
         for (auto& message : messages) {
             // close() in Worker onmessage handler should prevent next message from dispatching.
             if (workerGlobalScope && workerGlobalScope->isClosing())
                 return;
+
+            if (pendingActivity->object().m_messageHandler) {
+                ASSERT(message.transferredPorts.isEmpty());
+                pendingActivity->object().m_messageHandler(*JSC::jsCast<JSDOMGlobalObject*>(globalObject), message.message.releaseNonNull().get());
+                continue;
+            }
 
             auto ports = MessagePort::entanglePorts(*context, WTF::move(message.transferredPorts));
             auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), { }, { }, { }, WTF::move(ports));

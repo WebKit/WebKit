@@ -1,0 +1,17 @@
+<!-- webkit-test-runner [ CSSInternalAutoBaseParsingEnabled=true HTMLEnhancedSelectPseudoElementsEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>-internal-auto-base() basic tests</title>
+</head>
+<body>
+    <style>
+        div {
+            color: -internal-auto-base(orange, blue);
+        }
+    </style>
+    <div>This text should be orange</div>
+    <div style="appearance: base-select">This text should be blue</div>
+    <div style="appearance: base">This text should be blue</div>
+</body>
+</html>

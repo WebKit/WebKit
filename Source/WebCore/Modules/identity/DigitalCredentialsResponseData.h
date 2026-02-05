@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include <WebCore/IdentityCredentialProtocol.h>
+#include <WebCore/DigitalCredentialPresentationProtocol.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct DigitalCredentialsResponseData {
-    IdentityCredentialProtocol protocol;
+    DigitalCredentialPresentationProtocol protocol;
     String responseDataJSON;
 };
 

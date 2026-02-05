@@ -45,6 +45,8 @@ public:
 
     AtomString lookupNamespaceURI(const AtomString& prefix);
 
+    virtual bool isJSCustomXPathNSResolver() const { return false; }
+
 private:
     virtual bool hasCallback() const = 0;
 };

@@ -102,13 +102,13 @@ FloatSize StyleCanvasImage::fixedSize(const RenderElement& renderer) const
 
 void StyleCanvasImage::didAddClient(RenderElement& renderer)
 {
-    if (auto* element = this->element(renderer.document()))
+    if (RefPtr element = this->element(renderer.document()))
         InspectorInstrumentation::didChangeCSSCanvasClientNodes(*element);
 }
 
 void StyleCanvasImage::didRemoveClient(RenderElement& renderer)
 {
-    if (auto* element = this->element(renderer.document()))
+    if (RefPtr element = this->element(renderer.document()))
         InspectorInstrumentation::didChangeCSSCanvasClientNodes(*element);
 }
 

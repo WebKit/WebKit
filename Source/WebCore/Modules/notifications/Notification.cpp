@@ -123,9 +123,9 @@ ExceptionOr<Ref<Notification>> Notification::createForServiceWorker(ScriptExecut
 Ref<Notification> Notification::create(ScriptExecutionContext& context, NotificationData&& data)
 {
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    Options options { data.direction, WTF::move(data.language), WTF::move(data.body), WTF::move(data.tag), WTF::move(data.iconURL), JSC::jsNull(), nullptr, nullptr, data.silent, data.navigateURL.string() };
+    Options options { data.direction, WTF::move(data.language), WTF::move(data.body), data.navigateURL.string(), WTF::move(data.tag), WTF::move(data.iconURL), data.silent, JSC::jsNull() };
 #else
-    Options options { data.direction, WTF::move(data.language), WTF::move(data.body), WTF::move(data.tag), WTF::move(data.iconURL), JSC::jsNull(), nullptr, nullptr, data.silent };
+    Options options { data.direction, WTF::move(data.language), WTF::move(data.body), WTF::move(data.tag), WTF::move(data.iconURL), data.silent, JSC::jsNull() };
 #endif
     auto notification = adoptRef(*new Notification(context, data.notificationID, WTF::move(data.title), WTF::move(options), SerializedScriptValue::createFromWireBytes(WTF::move(data.data))));
     notification->suspendIfNeeded();
@@ -139,10 +139,9 @@ Ref<Notification> Notification::create(ScriptExecutionContext& context, const UR
     Options options;
     if (payload.options) {
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-        options = { payload.options->dir, payload.options->lang, payload.options->body, payload.options->tag, payload.options->icon, JSC::jsNull(), nullptr, nullptr, payload.options->silent, { } };
-        options.navigate = payload.defaultActionURL.string();
+        options = { payload.options->dir, payload.options->lang, payload.options->body, payload.defaultActionURL.string(), payload.options->tag, payload.options->icon, payload.options->silent, JSC::jsNull() };
 #else
-        options = { payload.options->dir, payload.options->lang, payload.options->body, payload.options->tag, payload.options->icon, JSC::jsNull(), nullptr, nullptr, payload.options->silent };
+        options = { payload.options->dir, payload.options->lang, payload.options->body, payload.options->tag, payload.options->icon, payload.options->silent, JSC::jsNull() };
 #endif
     }
 
@@ -468,7 +467,7 @@ NotificationData Notification::data() const
         m_tag,
         m_lang,
         m_direction,
-        context->protectedSecurityOrigin()->toString(),
+        protect(context->securityOrigin())->toString(),
         m_serviceWorkerRegistrationURL,
         identifier(),
         context->identifier(),

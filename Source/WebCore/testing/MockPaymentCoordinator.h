@@ -159,7 +159,7 @@ private:
     uint64_t m_hideCount { 0 };
     bool m_canMakePayments { true };
     bool m_canMakePaymentsWithActiveCard { true };
-    ApplePayPaymentContact m_shippingAddress;
+    LocalizedApplePayPaymentContact m_shippingAddress;
     ApplePayLineItem m_total;
     Vector<ApplePayLineItem> m_lineItems;
     Vector<MockPaymentError> m_errors;

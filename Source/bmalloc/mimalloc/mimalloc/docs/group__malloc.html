@@ -34,7 +34,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mimalloc-logo.svg"/></td>
   <td id="projectalign">
-   <div id="projectname">mi-malloc<span id="projectnumber">&#160;3.2</span>
+   <div id="projectname">mi-malloc<span id="projectnumber">&#160;v1.9,  v2.2,  v3.2</span>
    </div>
   </td>
     <td>        <div id="MSearchBox" class="MSearchBoxInactive">
@@ -130,9 +130,6 @@ Functions</h2></td></tr>
 <tr class="memitem:ga0621af6a5e3aa384e6a1b548958bf583" id="r_ga0621af6a5e3aa384e6a1b548958bf583"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga0621af6a5e3aa384e6a1b548958bf583">mi_realloc</a> (void *p, size_t newsize)</td></tr>
 <tr class="memdesc:ga0621af6a5e3aa384e6a1b548958bf583"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-allocate memory to <em>newsize</em> bytes.  <br /></td></tr>
 <tr class="separator:ga0621af6a5e3aa384e6a1b548958bf583"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga23a0fbb452b5dce8e31fab1a1958cacc" id="r_ga23a0fbb452b5dce8e31fab1a1958cacc"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga23a0fbb452b5dce8e31fab1a1958cacc">mi_recalloc</a> (void *p, size_t count, size_t size)</td></tr>
-<tr class="memdesc:ga23a0fbb452b5dce8e31fab1a1958cacc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-allocate memory to <em>count</em> elements of <em>size</em> bytes, with extra memory initialized to zero.  <br /></td></tr>
-<tr class="separator:ga23a0fbb452b5dce8e31fab1a1958cacc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga19299856216cfbb08e2628593654dfb0" id="r_ga19299856216cfbb08e2628593654dfb0"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga19299856216cfbb08e2628593654dfb0">mi_expand</a> (void *p, size_t newsize)</td></tr>
 <tr class="memdesc:ga19299856216cfbb08e2628593654dfb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Try to re-allocate memory to <em>newsize</em> bytes <em>in place</em>.  <br /></td></tr>
 <tr class="separator:ga19299856216cfbb08e2628593654dfb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -154,6 +151,12 @@ Functions</h2></td></tr>
 <tr class="memitem:ga94c3afcc086e85d75a57e9f76b9b71dd" id="r_ga94c3afcc086e85d75a57e9f76b9b71dd"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga94c3afcc086e85d75a57e9f76b9b71dd">mi_realpath</a> (const char *fname, char *resolved_name)</td></tr>
 <tr class="memdesc:ga94c3afcc086e85d75a57e9f76b9b71dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resolve a file path name.  <br /></td></tr>
 <tr class="separator:ga94c3afcc086e85d75a57e9f76b9b71dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga089c859d9eddc5f9b4bd946cd53cebee" id="r_ga089c859d9eddc5f9b4bd946cd53cebee"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga089c859d9eddc5f9b4bd946cd53cebee">mi_usable_size</a> (void *p)</td></tr>
+<tr class="memdesc:ga089c859d9eddc5f9b4bd946cd53cebee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the available bytes in a memory block.  <br /></td></tr>
+<tr class="separator:ga089c859d9eddc5f9b4bd946cd53cebee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac057927cd06c854b45fe7847e921bd47" id="r_gac057927cd06c854b45fe7847e921bd47"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gac057927cd06c854b45fe7847e921bd47">mi_good_size</a> (size_t size)</td></tr>
+<tr class="memdesc:gac057927cd06c854b45fe7847e921bd47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the probable allocation block size for a given required size.  <br /></td></tr>
+<tr class="separator:gac057927cd06c854b45fe7847e921bd47"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>The basic allocation interface. </p>
@@ -246,6 +249,34 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="gac057927cd06c854b45fe7847e921bd47" name="gac057927cd06c854b45fe7847e921bd47"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac057927cd06c854b45fe7847e921bd47">&#9670;&#160;</a></span>mi_good_size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t mi_good_size </td>
+          <td>(</td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>size</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return the probable allocation block size for a given required size. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">size</td><td>The minimal required size in bytes. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the size <code>n</code> that will be allocated, where <code>n &gt;= size</code>.</dd></dl>
+<p>Generally, <code>mi_usable_size(mi_malloc(size)) == mi_good_size(size)</code>. This function can be used to reduce internal wasted space when allocating buffers for example.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ga089c859d9eddc5f9b4bd946cd53cebee" title="Return the available bytes in a memory block.">mi_usable_size()</a> </dd></dl>
+
+</div>
+</div>
 <a id="gae1dd97b542420c87ae085e822b1229e8" name="gae1dd97b542420c87ae085e822b1229e8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gae1dd97b542420c87ae085e822b1229e8">&#9670;&#160;</a></span>mi_malloc()</h2>
 
@@ -334,6 +365,7 @@ mi_zallocn() </dd></dl>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>pointer to the re-allocated memory of <em>newsize</em> bytes, or <em>NULL</em> if out of memory. If <em>NULL</em> is returned, the pointer <em>p</em> is not freed. Otherwise the original pointer is either freed or returned as the reallocated result (in case it fits in-place with the new size). If the pointer <em>p</em> is <em>NULL</em>, it behaves as <em>mi_malloc</em>(<em>newsize</em>). If <em>newsize</em> is larger than the original <em>size</em> allocated for <em>p</em>, the bytes after <em>size</em> are uninitialized. </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ga4dc3a4067037b151a64629fe8a332641" title="Re-allocate memory to newsize bytes,.">mi_reallocf()</a> </dd></dl>
 
 </div>
 </div>
@@ -441,46 +473,6 @@ mi_zallocn() </dd></dl>
 
 </div>
 </div>
-<a id="ga23a0fbb452b5dce8e31fab1a1958cacc" name="ga23a0fbb452b5dce8e31fab1a1958cacc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga23a0fbb452b5dce8e31fab1a1958cacc">&#9670;&#160;</a></span>mi_recalloc()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void * mi_recalloc </td>
-          <td>(</td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>p</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>count</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>size</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Re-allocate memory to <em>count</em> elements of <em>size</em> bytes, with extra memory initialized to zero. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to a previously allocated block (or <em>NULL</em>). </td></tr>
-    <tr><td class="paramname">count</td><td>The number of elements. </td></tr>
-    <tr><td class="paramname">size</td><td>The size of each element. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A pointer to a re-allocated block of <em>count</em> * <em>size</em> bytes, or <em>NULL</em> if out of memory or if <em>count</em> * <em>size</em> overflows.</dd></dl>
-<p>If there is no overflow, it behaves exactly like <code>mi_rezalloc(p,count*size)</code>. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="#ga8bddfb4a1270a0854bbcf44cb3980467" title="Re-allocate memory to count elements of size bytes.">mi_reallocn()</a> </dd>
-<dd>
-<a href="http://man.openbsd.org/reallocarray">recallocarray()</a> (on BSD). </dd></dl>
-
-</div>
-</div>
 <a id="ga245ac90ebc2cfdd17de599e5fea59889" name="ga245ac90ebc2cfdd17de599e5fea59889"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga245ac90ebc2cfdd17de599e5fea59889">&#9670;&#160;</a></span>mi_strdup()</h2>
 
@@ -537,6 +529,38 @@ mi_zallocn() </dd></dl>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>a pointer to newly allocated memory initialized to string <em>s</em> up to the first <em>n</em> bytes (and always zero terminated), or <em>NULL</em> if either out of memory or if <em>s</em> is <em>NULL</em>.</dd></dl>
 <p>Replacement for the standard <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/strndup.html">strndup()</a> such that <a class="el" href="#gaf2c7b89c327d1f60f59e68b9ea644d95" title="Free previously allocated memory.">mi_free()</a> can be used on the returned result. </p>
+
+</div>
+</div>
+<a id="ga089c859d9eddc5f9b4bd946cd53cebee" name="ga089c859d9eddc5f9b4bd946cd53cebee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga089c859d9eddc5f9b4bd946cd53cebee">&#9670;&#160;</a></span>mi_usable_size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t mi_usable_size </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>p</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return the available bytes in a memory block. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">p</td><td>Pointer to previously allocated memory (or <em>NULL</em>) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns the available bytes in the memory block, or 0 if <em>p</em> was <em>NULL</em>.</dd></dl>
+<p>The returned size can be used to call <em>mi_expand</em> successfully. The returned size is always at least equal to the allocated size of <em>p</em>.</p>
+<dl class="section see"><dt>See also</dt><dd><a href="https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/msize?view=vs-2017">_msize</a> (Windows) </dd>
+<dd>
+<a href="http://man7.org/linux/man-pages/man3/malloc_usable_size.3.html">malloc_usable_size</a> (Linux) </dd>
+<dd>
+<a class="el" href="#gac057927cd06c854b45fe7847e921bd47" title="Return the probable allocation block size for a given required size.">mi_good_size()</a> </dd></dl>
 
 </div>
 </div>

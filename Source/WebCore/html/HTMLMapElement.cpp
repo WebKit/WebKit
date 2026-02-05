@@ -111,7 +111,7 @@ void HTMLMapElement::attributeChanged(const QualifiedName& name, const AtomStrin
 
 Ref<HTMLCollection> HTMLMapElement::areas()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<CollectionType::MapAreas>::traversalType>>(*this, CollectionType::MapAreas);
+    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLMapAreasCollection>(*this);
 }
 
 Node::InsertedIntoAncestorResult HTMLMapElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

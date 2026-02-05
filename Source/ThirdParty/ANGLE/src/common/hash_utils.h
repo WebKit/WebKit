@@ -9,30 +9,24 @@
 #define COMMON_HASHUTILS_H_
 
 #include "common/debug.h"
+#include "common/span.h"
 #include "xxhash.h"
 
 namespace angle
 {
 // Computes a hash of "key". Any data passed to this function must be multiples of
 // 4 bytes, since the PMurHash32 method can only operate increments of 4-byte words.
-inline size_t ComputeGenericHash(const void *key, size_t keySize)
+inline size_t ComputeGenericHash(angle::Span<const uint8_t> key)
 {
     constexpr unsigned int kSeed = 0xABCDEF98;
 
     // We can't support "odd" alignments.  ComputeGenericHash requires aligned types
-    ASSERT(keySize % 4 == 0);
+    ASSERT(key.size() % 4 == 0);
 #if defined(ANGLE_IS_64_BIT_CPU)
-    return XXH64(key, keySize, kSeed);
+    return XXH64(key.data(), key.size(), kSeed);
 #else
-    return XXH32(key, keySize, kSeed);
+    return XXH32(key.data(), key.size(), kSeed);
 #endif  // defined(ANGLE_IS_64_BIT_CPU)
-}
-
-template <typename T>
-size_t ComputeGenericHash(const T &key)
-{
-    static_assert(sizeof(key) % 4 == 0, "ComputeGenericHash requires aligned types");
-    return ComputeGenericHash(&key, sizeof(key));
 }
 
 inline void HashCombine(size_t &seed) {}

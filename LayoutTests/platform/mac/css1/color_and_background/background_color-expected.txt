@@ -32,8 +32,8 @@ layer at (0,0) size 800x600
           text run at (746,0) width 29: "This"
           text run at (0,18) width 726: "is because the background color of the parent element (the paragraph) should \"shine through\" the SPANned word"
           text run at (0,36) width 187: "\"sentence,\" which was set to "
-        RenderInline {CODE} at (186,38) size 87x15
-          RenderText {#text} at (186,38) size 87x15
+        RenderInline {CODE} at (186,38) size 87x16
+          RenderText {#text} at (186,38) size 87x16
             text run at (186,38) width 87: "transparent"
         RenderText {#text} at (272,36) size 403x18
           text run at (272,36) width 9: ". "
@@ -70,8 +70,8 @@ layer at (0,0) size 800x600
                   text run at (738,0) width 5: "."
                   text run at (0,18) width 758: "This is because the background color of the parent element (the paragraph) should \"shine through\" the SPANned word"
                   text run at (0,36) width 187: "\"sentence,\" which was set to "
-                RenderInline {CODE} at (186,38) size 87x15
-                  RenderText {#text} at (186,38) size 87x15
+                RenderInline {CODE} at (186,38) size 87x16
+                  RenderText {#text} at (186,38) size 87x16
                     text run at (186,38) width 87: "transparent"
                 RenderText {#text} at (272,36) size 403x18
                   text run at (272,36) width 9: ". "

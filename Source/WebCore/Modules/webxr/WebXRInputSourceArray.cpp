@@ -95,12 +95,13 @@ void WebXRInputSourceArray::update(double timestamp, const InputSourceList& inpu
 
     if (!added.isEmpty() || !removed.isEmpty()) {
         // A user agent MUST dispatch an inputsourceschange event on an XRSession when the session’s list of active XR input sources has changed.
-        XRInputSourcesChangeEvent::Init init;
-        init.session = &m_session;
-        init.added = WTF::move(added);
-        init.removed = WTF::move(removed);
-
-        auto event = XRInputSourcesChangeEvent::create(eventNames().inputsourceschangeEvent, init);
+        auto init = XRInputSourcesChangeEvent::Init {
+            { false, false, false },
+            m_session,
+            WTF::move(added),
+            WTF::move(removed),
+        };
+        auto event = XRInputSourcesChangeEvent::create(eventNames().inputsourceschangeEvent, WTF::move(init));
         ActiveDOMObject::queueTaskToDispatchEvent(m_session, TaskSource::WebXR, WTF::move(event));
     }
 
@@ -125,11 +126,13 @@ void WebXRInputSourceArray::update(double timestamp, const InputSourceList& inpu
     // make sure the inputsourceschange event for the removal happen after the input source events.
     if (!removedWithInputEvents.isEmpty()) {
         // A user agent MUST dispatch an inputsourceschange event on an XRSession when the session’s list of active XR input sources has changed.
-        XRInputSourcesChangeEvent::Init init;
-        init.session = &m_session;
-        init.removed = WTF::move(removedWithInputEvents);
-
-        auto event = XRInputSourcesChangeEvent::create(eventNames().inputsourceschangeEvent, init);
+        auto init = XRInputSourcesChangeEvent::Init {
+            { false, false, false },
+            m_session,
+            { },
+            WTF::move(removedWithInputEvents),
+        };
+        auto event = XRInputSourcesChangeEvent::create(eventNames().inputsourceschangeEvent, WTF::move(init));
         ActiveDOMObject::queueTaskToDispatchEvent(m_session, TaskSource::WebXR, WTF::move(event));
     }
 }

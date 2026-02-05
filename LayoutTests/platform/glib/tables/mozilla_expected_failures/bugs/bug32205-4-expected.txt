@@ -4,16 +4,16 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 767x17
+        RenderText {#text} at (0,0) size 767x18
           text run at (0,0) width 767: "This page shows a difference between IE and Netscape 6 rendering of tables / cells with heights expressed in percentages."
       RenderBlock {P} at (0,34) size 784x36
-        RenderText {#text} at (0,0) size 735x35
+        RenderText {#text} at (0,0) size 735x36
           text run at (0,0) width 211: "The table A below has two cells. "
           text run at (210,0) width 396: "Cell A1 contains an invisible image to make the cell fairly tall. "
           text run at (605,0) width 130: "Cell A2 has a height"
           text run at (0,18) width 338: "attribute of 100%, and contains another table, table B."
       RenderBlock {P} at (0,86) size 784x36
-        RenderText {#text} at (0,0) size 784x35
+        RenderText {#text} at (0,0) size 784x36
           text run at (0,0) width 220: "Table B has two cells, B1 and B2. "
           text run at (219,0) width 256: "B1 has a fixed pixel height of 30 pixels. "
           text run at (474,0) width 165: "B2 has a height of 100%. "
@@ -27,14 +27,14 @@ layer at (0,0) size 800x600
                 RenderImage {IMG} at (1,1) size 10x200
                 RenderText {#text} at (11,187) size 50x17
                   text run at (11,187) width 50: "Cell A1"
-              RenderTableCell {TD} at (62,71) size 63x64 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-                RenderTable {TABLE} at (1,72) size 61x62 [border: (2px outset #000000)]
+              RenderTableCell {TD} at (62,70) size 63x65 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
+                RenderTable {TABLE} at (1,71) size 61x63 [border: (2px outset #000000)]
                   RenderTableSection {TBODY} at (2,2) size 57x58
                     RenderTableRow {TR} at (0,2) size 57x30
                       RenderTableCell {TD} at (2,6) size 53x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                        RenderText {#text} at (2,6) size 49x17
+                        RenderText {#text} at (2,6) size 49x18
                           text run at (2,2) width 49: "Cell B1"
                     RenderTableRow {TR} at (0,34) size 57x22
                       RenderTableCell {TD} at (2,34) size 53x22 [bgcolor=#99CC99] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-                        RenderText {#text} at (2,2) size 49x17
+                        RenderText {#text} at (2,2) size 49x18
                           text run at (2,2) width 49: "Cell B2"

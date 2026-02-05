@@ -279,6 +279,11 @@ class RewritePLSTraverser : public TIntermTraverser
                         {expr, CreateFloatNode(0, EbpLow), CreateFloatNode(0, EbpLow),
                          CreateFloatNode(1, EbpLow)});
                     break;
+                case EbtInt:
+                    expr = TIntermAggregate::CreateConstructor(  // "ivec4(r, 0, 0, 1)"
+                        TType(EbtInt, 4),
+                        {expr, CreateIndexNode(0), CreateIndexNode(0), CreateIndexNode(1)});
+                    break;
                 case EbtUInt:
                     expr = TIntermAggregate::CreateConstructor(  // "uvec4(r, 0, 0, 1)"
                         TType(EbtUInt, 4),
@@ -379,6 +384,9 @@ class RewritePLSToImagesTraverser : public RewritePLSTraverser
                 break;
             case TLayoutImageInternalFormat::EiifR32F:
                 imageType->setBasicType(EbtImage2D);
+                break;
+            case TLayoutImageInternalFormat::EiifR32I:
+                imageType->setBasicType(EbtIImage2D);
                 break;
             case TLayoutImageInternalFormat::EiifR32UI:
                 imageType->setBasicType(EbtUImage2D);
@@ -789,6 +797,9 @@ class RewritePLSToFramebufferFetchTraverser : public RewritePLSTraverser
                 case EiifR32F:
                     accessVarType = new TType(EbtFloat, 1);
                     break;
+                case EiifR32I:
+                    accessVarType = new TType(EbtInt, 1);
+                    break;
                 case EiifR32UI:
                     accessVarType = new TType(EbtUInt, 1);
                     break;
@@ -894,9 +905,16 @@ bool RewritePixelLocalStorage(TCompiler *compiler,
     // just locking the entire main() function:
     //   - Monomorphize all PLS calls into main().
     //   - Insert begin/end calls around the first/last PLS calls (and outside of flow control).
-    traverser->injectPrePLSCode(compiler, symbolTable, compileOptions, mainBody, 0);
-    traverser->injectPostPLSCode(compiler, symbolTable, compileOptions, mainBody,
-                                 mainBody->getChildCount());
+    const size_t plsBeginPos = 0;
+    traverser->injectPrePLSCode(compiler, symbolTable, compileOptions, mainBody, plsBeginPos);
+
+    size_t plsEndPos = mainBody->getChildCount();
+    if (plsEndPos > 0 && mainBody->getChildNode(plsEndPos - 1)->getAsBranchNode() != nullptr)
+    {
+        // Make sure not to add code after terminating return, if any.
+        --plsEndPos;
+    }
+    traverser->injectPostPLSCode(compiler, symbolTable, compileOptions, mainBody, plsEndPos);
 
     // Assign the global pixel coord at the beginning of main(), if used.
     traverser->injectPixelCoordInitializationCodeIfNeeded(compiler, root, mainBody);

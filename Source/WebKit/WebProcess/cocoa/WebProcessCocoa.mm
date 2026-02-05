@@ -144,7 +144,7 @@
 #if PLATFORM(IOS_FAMILY)
 #import "AccessibilityUtilitiesSPI.h"
 #import "UIKitSPI.h"
-#import <bmalloc/MemoryStatusSPI.h>
+#import <wtf/spi/darwin/MemoryStatusSPI.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -238,7 +238,7 @@ id WebProcess::accessibilityFocusedUIElement()
             RefPtr page = WebProcess::singleton().focusedWebPage();
             if (!page || !page->accessibilityRemoteObject())
                 return nil;
-            return [page->protectedAccessibilityRemoteObject() accessibilityFocusedUIElement];
+            return [protect(page->accessibilityRemoteObject()) accessibilityFocusedUIElement];
         });
     };
 
@@ -318,7 +318,7 @@ static Boolean isAXAuthenticatedCallback(audit_token_t auditToken)
     bool authenticated = false;
     // IPC must be done on the main runloop, so dispatch it to avoid crashes when the secondary AX thread handles this callback.
     callOnMainRunLoopAndWait([&authenticated, auditToken] {
-        auto sendResult = WebProcess::singleton().protectedParentProcessConnection()->sendSync(Messages::WebProcessProxy::IsAXAuthenticated(auditToken), 0);
+        auto sendResult = protect(WebProcess::singleton().parentProcessConnection())->sendSync(Messages::WebProcessProxy::IsAXAuthenticated(auditToken), 0);
         std::tie(authenticated) = sendResult.takeReplyOr(false);
     });
     return authenticated;
@@ -373,6 +373,15 @@ static void setVideoDecoderBehaviors(OptionSet<VideoDecoderBehavior> videoDecode
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
+#if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
+    // Set JSC options early, before any VM creation
+    if (parameters.shouldEnableWebAssemblyDebugger) [[unlikely]] {
+        JSC::Options::AllowUnfinalizedAccessScope scope;
+        JSC::Options::enableWasmDebugger() = true;
+        JSC::Options::notifyOptionsChanged();
+    }
+#endif
+
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
     initializeLogForwarding(parameters);
 #endif
@@ -530,9 +539,13 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     // App nap must be manually enabled when not running the NSApplication run loop.
     __CFRunLoopSetOptionsReason(__CFRunLoopOptionsEnableAppNap, CFSTR("Finished checkin as application - enable app nap"));
 
+#if ENABLE(INITIALIZE_NSAPPLICATION_ON_DEMAND)
+    _RegisterApplication(nullptr, nullptr);
+#else
     // Initialize the shared application so method calls using `NSApp` are not no-ops.
     [NSApplication sharedApplication];
-#endif
+#endif // ENABLE(INITIALIZE_NSAPPLICATION_ON_DEMAND)
+#endif // PLATFORM(MAC)
 
 #if !ENABLE(CFPREFS_DIRECT_MODE)
     WTF::listenForLanguageChangeNotifications();
@@ -547,7 +560,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         setMediaMIMETypes(parameters.mediaMIMETypes);
     else {
         AVAssetMIMETypeCache::singleton().setCacheMIMETypesCallback([protectedThis = Ref { *this }](const Vector<String>& types) {
-            protectedThis->protectedParentProcessConnection()->send(Messages::WebProcessProxy::CacheMediaMIMETypes(types), 0);
+            protect(protectedThis->parentProcessConnection())->send(Messages::WebProcessProxy::CacheMediaMIMETypes(types), 0);
         });
     }
 
@@ -600,7 +613,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     disableURLSchemeCheckInDataDetectors();
 
 #if ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
-    if (auto auditToken = parentProcessConnection()->getAuditToken()) {
+    if (auto auditToken = protect(parentProcessConnection())->getAuditToken()) {
         bool parentCanSetStateFlags = WTF::hasEntitlementValueInArray(auditToken.value(), "com.apple.private.security.enable-state-flags"_s, "EnableQuickLookSandboxResources"_s);
         if (parentCanSetStateFlags) {
             auto auditToken = auditTokenForSelf();
@@ -744,7 +757,7 @@ void WebProcess::updateProcessName(IsInProcessInitialization isInProcessInitiali
 #if PLATFORM(IOS_FAMILY)
 static NSString *webProcessLoaderAccessibilityBundlePath()
 {
-    NSString *path = (__bridge NSString *)GSSystemRootDirectory();
+    RetainPtr path = (__bridge NSString *)GSSystemRootDirectory();
 #if PLATFORM(MACCATALYST)
     path = [path stringByAppendingPathComponent:@"System/iOSSupport"];
 #endif
@@ -753,7 +766,7 @@ static NSString *webProcessLoaderAccessibilityBundlePath()
 
 static NSString *webProcessAccessibilityBundlePath()
 {
-    NSString *path = (__bridge NSString *)GSSystemRootDirectory();
+    RetainPtr path = (__bridge NSString *)GSSystemRootDirectory();
 #if PLATFORM(MACCATALYST)
     path = [path stringByAppendingPathComponent:@"System/iOSSupport"];
 #endif
@@ -768,20 +781,20 @@ static void registerWithAccessibility()
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    NSString *bundlePath = webProcessLoaderAccessibilityBundlePath();
+    RetainPtr bundlePath = webProcessLoaderAccessibilityBundlePath();
     NSError *error = nil;
-    if (![[NSBundle bundleWithPath:bundlePath] loadAndReturnError:&error])
-        LOG_ERROR("Failed to load accessibility bundle at %@: %@", bundlePath, error);
+    if (![[NSBundle bundleWithPath:bundlePath.get()] loadAndReturnError:&error])
+        LOG_ERROR("Failed to load accessibility bundle at %@: %@", bundlePath.get(), error);
 
     // This code will eagerly start the in-process AX server.
     // This enables us to revoke the Mach bootstrap sandbox extension.
-    NSString *webProcessAXBundlePath = webProcessAccessibilityBundlePath();
-    NSBundle *bundle = [NSBundle bundleWithPath:webProcessAXBundlePath];
+    RetainPtr webProcessAXBundlePath = webProcessAccessibilityBundlePath();
+    RetainPtr bundle = [NSBundle bundleWithPath:webProcessAXBundlePath.get()];
     error = nil;
     if ([bundle loadAndReturnError:&error])
         [[bundle principalClass] safeValueForKey:@"accessibilityInitializeBundle"];
     else
-        LOG_ERROR("Failed to load accessibility bundle at %@: %@", webProcessAXBundlePath, error);
+        LOG_ERROR("Failed to load accessibility bundle at %@: %@", webProcessAXBundlePath.get(), error);
 #endif
 }
 
@@ -931,7 +944,7 @@ void WebProcess::initializeLogForwarding(const WebProcessCreationParameters& par
     if (!connectionPair)
         CRASH();
     auto [connection, handle] = WTF::move(*connectionPair);
-    connection->open(*this, RunLoop::currentSingleton());
+    connection->open(protect(*this), RunLoop::currentSingleton());
     std::unique_ptr newLogClient = makeUnique<LogClient>(Ref { connection });
     parentConnection->sendWithAsyncReply(Messages::WebProcessProxy::CreateLogStream(WTF::move(handle), newLogClient->identifier()), [newLogClient = WTF::move(newLogClient), connection = WTF::move(connection), isDebugLoggingEnabled = parameters.isDebugLoggingEnabled] (IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore) mutable {
         connection->setSemaphores(WTF::move(wakeUpSemaphore), WTF::move(clientWaitSemaphore));
@@ -994,11 +1007,7 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
 #if USE(APPKIT)
 void WebProcess::stopRunLoop()
 {
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_NSRUNLOOP)
     AuxiliaryProcess::stopNSRunLoop();
-#else
-    AuxiliaryProcess::stopNSAppRunLoop();
-#endif
 }
 #endif
 
@@ -1013,7 +1022,7 @@ RetainPtr<CFDataRef> WebProcess::sourceApplicationAuditData() const
     ASSERT(parentProcessConnection());
     if (!parentProcessConnection())
         return nullptr;
-    std::optional<audit_token_t> auditToken = parentProcessConnection()->getAuditToken();
+    std::optional<audit_token_t> auditToken = protect(parentProcessConnection())->getAuditToken();
     if (!auditToken)
         return nullptr;
     return adoptCF(CFDataCreate(nullptr, (const UInt8*)&*auditToken, sizeof(*auditToken)));
@@ -1156,7 +1165,7 @@ void WebProcess::updateCPUMonitorState(CPUMonitorUpdateReason reason)
                 WEBPROCESS_RELEASE_LOG_ERROR_WITH_THIS(protectedThis.get(), ProcessSuspension, "updateCPUMonitorState: Service worker process exceeded CPU limit of %.1f%% (was using %.1f%%)", protectedThis->m_cpuLimit.value() * 100, cpuUsage * 100);
             else
                 WEBPROCESS_RELEASE_LOG_ERROR_WITH_THIS(protectedThis.get(), ProcessSuspension, "updateCPUMonitorState: WebProcess exceeded CPU limit of %.1f%% (was using %.1f%%) hasVisiblePages? %d", protectedThis->m_cpuLimit.value() * 100, cpuUsage * 100, protectedThis->hasVisibleWebPage());
-            protectedThis->protectedParentProcessConnection()->send(Messages::WebProcessProxy::DidExceedCPULimit(), 0);
+            protect(protectedThis->parentProcessConnection())->send(Messages::WebProcessProxy::DidExceedCPULimit(), 0);
         });
     } else if (reason == CPUMonitorUpdateReason::VisibilityHasChanged) {
         // If the visibility has changed, stop the CPU monitor before setting its limit. This is needed because the CPU usage can vary wildly based on visibility and we would
@@ -1544,7 +1553,7 @@ void WebProcess::didWriteToPasteboardAsynchronously(const String& pasteboardName
 void WebProcess::waitForPendingPasteboardWritesToFinish(const String& pasteboardName)
 {
     while (m_pendingPasteboardWriteCounts.contains(pasteboardName)) {
-        if (protectedParentProcessConnection()->waitForAndDispatchImmediately<Messages::WebProcess::DidWriteToPasteboardAsynchronously>(0, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives) != IPC::Error::NoError) {
+        if (protect(parentProcessConnection())->waitForAndDispatchImmediately<Messages::WebProcess::DidWriteToPasteboardAsynchronously>(0, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives) != IPC::Error::NoError) {
             m_pendingPasteboardWriteCounts.removeAll(pasteboardName);
             break;
         }

@@ -968,7 +968,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, Lay
     if (!node)
         return VisiblePosition();
     
-    node->protectedDocument()->updateLayoutIgnorePendingStylesheets();
+    protect(node->document())->updateLayoutIgnorePendingStylesheets();
     
     CheckedPtr renderer = node->renderer();
     if (!renderer)
@@ -1026,7 +1026,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, LayoutU
     if (!node)
         return VisiblePosition();
     
-    node->protectedDocument()->updateLayoutIgnorePendingStylesheets();
+    protect(node->document())->updateLayoutIgnorePendingStylesheets();
 
     if (!node->renderer())
         return VisiblePosition();
@@ -1365,7 +1365,7 @@ VisiblePosition startOfBlock(const VisiblePosition& visiblePosition, EditingBoun
 {
     Position position = visiblePosition.deepEquivalent();
     RefPtr<Node> startBlock;
-    if (!position.containerNode() || !(startBlock = enclosingBlock(position.protectedContainerNode(), rule)))
+    if (!position.containerNode() || !(startBlock = enclosingBlock(protect(position.containerNode()), rule)))
         return VisiblePosition();
     return firstPositionInNode(startBlock.get());
 }
@@ -1374,14 +1374,14 @@ VisiblePosition endOfBlock(const VisiblePosition& visiblePosition, EditingBounda
 {
     Position position = visiblePosition.deepEquivalent();
     RefPtr<Node> endBlock;
-    if (!position.containerNode() || !(endBlock = enclosingBlock(position.protectedContainerNode(), rule)))
+    if (!position.containerNode() || !(endBlock = enclosingBlock(protect(position.containerNode()), rule)))
         return VisiblePosition();
     return lastPositionInNode(endBlock.get());
 }
 
 bool inSameBlock(const VisiblePosition& a, const VisiblePosition& b)
 {
-    return !a.isNull() && enclosingBlock(a.deepEquivalent().protectedContainerNode()) == enclosingBlock(b.deepEquivalent().protectedContainerNode());
+    return !a.isNull() && enclosingBlock(protect(a.deepEquivalent().containerNode())) == enclosingBlock(protect(b.deepEquivalent().containerNode()));
 }
 
 bool isStartOfBlock(const VisiblePosition& pos)
@@ -1413,7 +1413,7 @@ VisiblePosition startOfDocument(const Node* node)
 
 VisiblePosition startOfDocument(const VisiblePosition& c)
 {
-    return startOfDocument(c.deepEquivalent().protectedDeprecatedNode().get());
+    return startOfDocument(protect(c.deepEquivalent().deprecatedNode()).get());
 }
 
 VisiblePosition endOfDocument(const Node* node)
@@ -1434,7 +1434,7 @@ VisiblePosition endOfDocument(const Node* node)
 
 VisiblePosition endOfDocument(const VisiblePosition& c)
 {
-    return endOfDocument(c.deepEquivalent().protectedDeprecatedNode().get());
+    return endOfDocument(protect(c.deepEquivalent().deprecatedNode()).get());
 }
 
 bool isStartOfDocument(const VisiblePosition& p)

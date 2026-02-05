@@ -233,7 +233,7 @@ static JSValue whenDefinedPromise(JSGlobalObject& lexicalGlobalObject, CallFrame
 
 JSValue JSCustomElementRegistry::whenDefined(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
 {
-    auto catchScope = DECLARE_CATCH_SCOPE(lexicalGlobalObject.vm());
+    auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(lexicalGlobalObject.vm());
 
     ASSERT(globalObject());
     auto* result = JSPromise::create(lexicalGlobalObject.vm(), lexicalGlobalObject.promiseStructure());

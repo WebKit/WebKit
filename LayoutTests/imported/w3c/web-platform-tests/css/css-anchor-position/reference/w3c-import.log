@@ -36,8 +36,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-to-sticky-004-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-update-005-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-update-006-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-update-008-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-update-009-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-update-010-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-vlr-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-scroll-vrl-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/anchor-size-css-zoom-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/position-area-inset-one-side-auto.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/position-area-visibility-change-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/reference/sticky-anchor-position-invalid-ref.html

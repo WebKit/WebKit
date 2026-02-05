@@ -265,7 +265,7 @@ void PointerLockController::didLosePointerLock()
     if (!m_unlockPending)
         m_documentAllowedToRelockWithoutUserGesture = nullptr;
 
-    enqueueEvent(eventNames().pointerlockchangeEvent, m_element ? m_element->protectedDocument().ptr() : RefPtr { m_documentOfRemovedElementWhileWaitingForUnlock.get() }.get());
+    enqueueEvent(eventNames().pointerlockchangeEvent, m_element ? protect(m_element->document()).ptr() : RefPtr { m_documentOfRemovedElementWhileWaitingForUnlock.get() }.get());
     clearElement();
     m_unlockPending = false;
     m_documentOfRemovedElementWhileWaitingForUnlock = nullptr;
@@ -308,7 +308,7 @@ void PointerLockController::clearElement()
 void PointerLockController::enqueueEvent(const AtomString& type, Element* element)
 {
     if (element)
-        enqueueEvent(type, element->protectedDocument().ptr());
+        enqueueEvent(type, protect(element->document()).ptr());
 }
 
 void PointerLockController::enqueueEvent(const AtomString& type, Document* document)

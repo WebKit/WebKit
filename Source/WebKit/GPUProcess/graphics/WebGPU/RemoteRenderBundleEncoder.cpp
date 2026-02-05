@@ -80,7 +80,7 @@ void RemoteRenderBundleEncoder::setPipeline(WebGPUIdentifier renderPipeline)
     protectedBacking()->setPipeline(*convertedRenderPipeline);
 }
 
-void RemoteRenderBundleEncoder::setIndexBuffer(WebGPUIdentifier buffer, WebCore::WebGPU::IndexFormat indexFormat, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)
+void RemoteRenderBundleEncoder::setIndexBuffer(WebGPUIdentifier buffer, WebCore::WebGPU::IndexFormat indexFormat, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size)
 {
     RefPtr convertedBuffer = protectedObjectHeap()->convertBufferFromBacking(buffer).get();
     ASSERT(convertedBuffer);
@@ -90,7 +90,7 @@ void RemoteRenderBundleEncoder::setIndexBuffer(WebGPUIdentifier buffer, WebCore:
     protectedBacking()->setIndexBuffer(*convertedBuffer, indexFormat, offset, size);
 }
 
-void RemoteRenderBundleEncoder::setVertexBuffer(WebCore::WebGPU::Index32 slot, WebGPUIdentifier buffer, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)
+void RemoteRenderBundleEncoder::setVertexBuffer(WebCore::WebGPU::Index32 slot, WebGPUIdentifier buffer, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size)
 {
     RefPtr convertedBuffer = protectedObjectHeap()->convertBufferFromBacking(buffer).get();
     ASSERT(convertedBuffer);
@@ -100,21 +100,21 @@ void RemoteRenderBundleEncoder::setVertexBuffer(WebCore::WebGPU::Index32 slot, W
     protectedBacking()->setVertexBuffer(slot, convertedBuffer.get(), offset, size);
 }
 
-void RemoteRenderBundleEncoder::unsetVertexBuffer(WebCore::WebGPU::Index32 slot, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)
+void RemoteRenderBundleEncoder::unsetVertexBuffer(WebCore::WebGPU::Index32 slot, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size)
 {
     protectedBacking()->setVertexBuffer(slot, nullptr, offset, size);
 }
 
-void RemoteRenderBundleEncoder::draw(WebCore::WebGPU::Size32 vertexCount, std::optional<WebCore::WebGPU::Size32> instanceCount,
-    std::optional<WebCore::WebGPU::Size32> firstVertex, std::optional<WebCore::WebGPU::Size32> firstInstance)
+void RemoteRenderBundleEncoder::draw(WebCore::WebGPU::Size32 vertexCount, WebCore::WebGPU::Size32 instanceCount,
+    WebCore::WebGPU::Size32 firstVertex, WebCore::WebGPU::Size32 firstInstance)
 {
     protectedBacking()->draw(vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
-void RemoteRenderBundleEncoder::drawIndexed(WebCore::WebGPU::Size32 indexCount, std::optional<WebCore::WebGPU::Size32> instanceCount,
-    std::optional<WebCore::WebGPU::Size32> firstIndex,
-    std::optional<WebCore::WebGPU::SignedOffset32> baseVertex,
-    std::optional<WebCore::WebGPU::Size32> firstInstance)
+void RemoteRenderBundleEncoder::drawIndexed(WebCore::WebGPU::Size32 indexCount, WebCore::WebGPU::Size32 instanceCount,
+    WebCore::WebGPU::Size32 firstIndex,
+    WebCore::WebGPU::SignedOffset32 baseVertex,
+    WebCore::WebGPU::Size32 firstInstance)
 {
     protectedBacking()->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
 }

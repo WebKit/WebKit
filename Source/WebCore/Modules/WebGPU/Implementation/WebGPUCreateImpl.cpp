@@ -72,7 +72,7 @@ RefPtr<GPU> create(ScheduleWorkFunction&& scheduleWorkFunction, const WebCore::P
     if (!instance)
         return nullptr;
     auto convertToBackingContext = DowncastConvertToBackingContext::create();
-    auto modelConvertToBackingContext = DDModel::DowncastConvertToBackingContext::create();
+    auto modelConvertToBackingContext = ModelDowncastConvertToBackingContext::create();
     return GPUImpl::create(WTF::move(instance), convertToBackingContext, modelConvertToBackingContext);
 }
 

@@ -66,7 +66,14 @@ public:
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
     FloatRect decoratedBoundingBox() const final { return SVGBoundingBoxComputation::computeDecoratedBoundingBox(*this); }
 
-    LayoutRect visualOverflowRectEquivalent() const { return SVGBoundingBoxComputation::computeVisualOverflowRect(*this); }
+    LayoutRect visualOverflowRectEquivalent() const
+    {
+        if (!m_cachedVisualOverflowRect)
+            m_cachedVisualOverflowRect = SVGBoundingBoxComputation::computeVisualOverflowRect(*this);
+        return *m_cachedVisualOverflowRect;
+    }
+
+    void invalidateCachedVisualOverflowRect() final { m_cachedVisualOverflowRect = std::nullopt; }
 
     RenderSVGViewportContainer* viewportContainer() const;
     CheckedPtr<RenderSVGViewportContainer> checkedViewportContainer() const;
@@ -117,6 +124,7 @@ private:
     FloatRect m_objectBoundingBox;
     FloatRect m_objectBoundingBoxWithoutTransformations;
     mutable Markable<FloatRect> m_strokeBoundingBox;
+    mutable std::optional<LayoutRect> m_cachedVisualOverflowRect;
 };
 
 } // namespace WebCore

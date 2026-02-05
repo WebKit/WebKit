@@ -90,8 +90,13 @@ LayoutRect AccessibilityListBoxOption::elementRect() const
         return { };
 
     CheckedPtr listBoxRenderer = dynamicDowncast<RenderListBox>(listBoxParentNode->renderer());
-    if (!listBoxRenderer)
+    if (!listBoxRenderer) {
+        // For HTMLSelectElement with arbitrary renderer use the option element's bounding box.
+        if (CheckedPtr optionRenderer = m_node->renderer())
+            return optionRenderer->absoluteBoundingBoxRect();
+
         return { };
+    }
 
     WeakPtr cache = listBoxRenderer->document().axObjectCache();
     RefPtr listbox = cache ? cache->getOrCreate(*listBoxRenderer) : nullptr;

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ExecutionHandlerTestSupport.h"
 
-#if ENABLE(WEBASSEMBLY) && ENABLE(REMOTE_INSPECTOR)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 #include "Completion.h"
 #include "Exception.h"
@@ -317,4 +317,4 @@ void workerThreadTask(const String& script)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ExecutionHandlerTestSupport::Workers);
 
-#endif // ENABLE(WEBASSEMBLY) && ENABLE(REMOTE_INSPECTOR)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

@@ -111,8 +111,8 @@ ALWAYS_INLINE void RegExp::compileIfNecessary(VM& vm, Yarr::CharSize charSize, s
     compile(&vm, charSize, sampleString);
 }
 
-template<typename VectorType, Yarr::MatchFrom matchFrom>
-ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm, StringView s, unsigned startOffset, VectorType& ovector)
+template<Yarr::MatchFrom matchFrom>
+ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm, StringView s, unsigned startOffset, std::span<int> ovector)
 {
 #if ENABLE(REGEXP_TRACING)
     m_rtMatchCallCount++;
@@ -136,8 +136,8 @@ ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm
     if (m_state == ParseError)
         return throwError();
 
-    ovector.resize(offsetVectorSize());
-    int* offsetVector = ovector.mutableSpan().data();
+    ASSERT(ovector.size() >= static_cast<size_t>(offsetVectorSize()));
+    int* offsetVector = ovector.data();
 
     if constexpr (matchFrom == Yarr::MatchFrom::VMThread) {
         if (hasValidAtom()) {

@@ -258,6 +258,14 @@
             "issue": "http://crbug.com/797243"
         },
         {
+            "name": "disable_MSAA_sample_count_1",
+            "category": "Workarounds",
+            "description": [
+                "Do not expose multisample sample count 1 to avoid driver bugs"
+            ],
+            "issue": "http://anglebug.com/467164245"
+        },
+        {
             "name": "allow_clear_for_robust_resource_init",
             "category": "Workarounds",
             "description": [
@@ -763,6 +771,14 @@
             "issue": "https://anglebug.com/41488638"
         },
         {
+            "name": "emit_max_glsl_400_for_testing",
+            "category": "Workarounds",
+            "description": [
+                "Avoid GLSL versions above 4.0 for testing purposes."
+            ],
+            "issue": "https://anglebug.com/42267207"
+        },
+        {
             "name": "use_intermediate_texture_for_generate_mipmap",
             "category": "Workarounds",
             "description": [
@@ -820,6 +836,22 @@
                 "Some Adreno drivers assume incorrect glSampleCoverage if new FBO is bound with different sample count"
             ],
             "issue": "https://crbug.com/408364831"
+        },
+        {
+            "name": "disable_passthrough_shaders",
+            "category": "Workarounds",
+            "description": [
+                "Some ES2 Mali drivers are unable to query enough information from a linked program to use passthrough shaders."
+            ],
+            "issue": "https://crbug.com/451796659"
+        },
+        {
+            "name": "disable_clear_tex_image_for_robust_init",
+            "category": "Workarounds",
+            "description": [
+                "IMG drivers are unable to handle glClearTexImage with various format combinations."
+            ],
+            "issue": "https://crbug.com/465918231"
         }
     ]
 }

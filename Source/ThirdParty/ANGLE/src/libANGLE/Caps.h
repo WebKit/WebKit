@@ -46,13 +46,6 @@ struct TextureCaps
 
     // Set of supported sample counts, only guaranteed to be valid in ES3.
     SupportedSampleSet sampleCounts;
-
-    // Get the maximum number of samples supported
-    GLuint getMaxSamples() const;
-
-    // Get the number of supported samples that is at least as many as requested.  Returns 0 if
-    // there are no sample counts available
-    GLuint getNearestSamples(GLuint requestedSamples) const;
 };
 
 TextureCaps GenerateMinimumTextureCaps(GLenum internalFormat,
@@ -148,6 +141,11 @@ struct Limitations
     // Renderer doesn't support GL_TEXTURE_COMPARE_MODE=GL_NONE on a shadow sampler.
     // TODO(http://anglebug.com/42263785): add validation code to front-end.
     bool noShadowSamplerCompareModeNone = false;
+
+    // Metal [[raster_order_group()]] does not work for read_write textures on AMD when the render
+    // pass doesn't have a color attachment on slot 0.
+    // http://anglebug.com/42266263
+    bool noRasterOrderGroupWithoutAttachmentZero = false;
 
     // PVRTC1 textures must be squares.
     bool squarePvrtc1 = false;

@@ -3,10 +3,7 @@ PASS :basic:isAsync=true
 PASS :basic:isAsync=false
 PASS :numeric_id:isAsync=true
 PASS :numeric_id:isAsync=false
-FAIL :computed: assert_unreached:
-  - EXCEPTION: GPUPipelineError: Failed to evaluate override value
-    _
- Reached unreachable code
+PASS :computed:
 PASS :precision:isAsync=true
 PASS :precision:isAsync=false
 PASS :workgroup_size:isAsync=true;type="u32";size=3;v="x"

@@ -14,17 +14,17 @@ function formatPropertyName(propertyKey, objectName = "") {
     case "symbol":
       if (Symbol.keyFor(propertyKey) !== undefined) {
         return `${objectName}[Symbol.for('${Symbol.keyFor(propertyKey)}')]`;
-      } else if (propertyKey.description.startsWith('Symbol.')) {
+      } else if (propertyKey.description.startsWith("Symbol.")) {
         return `${objectName}[${propertyKey.description}]`;
       } else {
-        return `${objectName}[Symbol('${propertyKey.description}')]`
+        return `${objectName}[Symbol('${propertyKey.description}')]`;
       }
     case "string":
       if (propertyKey !== String(Number(propertyKey))) {
         if (ASCII_IDENTIFIER.test(propertyKey)) {
           return objectName ? `${objectName}.${propertyKey}` : propertyKey;
         }
-        return `${objectName}['${propertyKey.replace(/'/g, "\\'")}']`
+        return `${objectName}['${propertyKey.replace(/'/g, "\\'")}']`;
       }
       // fall through
     default:
@@ -262,6 +262,25 @@ var TemporalHelpers = {
   },
 
   /*
+   * assertPlainDatesEqual(actual, expected[, description]):
+   *
+   * Shorthand for asserting that two Temporal.PlainDates are of the correct
+   * type, equal according to their equals() methods, and additionally that
+   * their calendar internal slots are the same value.
+   */
+  assertPlainDatesEqual(actual, expected, description = "") {
+    const prefix = description ? `${description}: ` : "";
+    assert(expected instanceof Temporal.PlainDate, `${prefix}expected value should be a Temporal.PlainDate`);
+    assert(actual instanceof Temporal.PlainDate, `${prefix}instanceof`);
+    assert(actual.equals(expected), `${prefix}equals method`);
+    assert.sameValue(
+      actual.calendarId,
+      expected.calendarId,
+      `${prefix}calendar same value:`
+    );
+  },
+
+  /*
    * assertPlainDateTimesEqual(actual, expected[, description]):
    *
    * Shorthand for asserting that two Temporal.PlainDateTimes are of the correct
@@ -334,9 +353,15 @@ var TemporalHelpers = {
    * equal to an expected value. (Except the `calendar` property, since callers
    * may want to assert either object equality with an object they put in there,
    * or the value of yearMonth.calendarId.)
+   *
+   * Pass null as the referenceISODay if you don't want to give it explicitly.
+   * In that case, the expected referenceISODay will be computed using PlainDate
+   * and only verified for consistency, not for equality with a specific value.
    */
   assertPlainYearMonth(yearMonth, year, month, monthCode, description = "", era = undefined, eraYear = undefined, referenceISODay = 1) {
     const prefix = description ? `${description}: ` : "";
+    assert(typeof referenceISODay === "number" || referenceISODay === null,
+      `TemporalHelpers.assertPlainYearMonth() referenceISODay argument should be a number or null, not ${referenceISODay}`);
     assert(yearMonth instanceof Temporal.PlainYearMonth, `${prefix}instanceof`);
     assert.sameValue(
       TemporalHelpers.canonicalizeCalendarEra(yearMonth.calendarId, yearMonth.era),
@@ -347,8 +372,9 @@ var TemporalHelpers = {
     assert.sameValue(yearMonth.year, year, `${prefix}year result:`);
     assert.sameValue(yearMonth.month, month, `${prefix}month result:`);
     assert.sameValue(yearMonth.monthCode, monthCode, `${prefix}monthCode result:`);
-    const isoDay = Number(yearMonth.toString({ calendarName: "always" }).slice(1).split('-')[2].slice(0, 2));
-    assert.sameValue(isoDay, referenceISODay, `${prefix}referenceISODay result:`);
+    const isoDay = Number(yearMonth.toString({ calendarName: "always" }).slice(1).split("-")[2].slice(0, 2));
+    const expectedISODay = referenceISODay ?? yearMonth.toPlainDate({ day: 1 }).withCalendar("iso8601").day;
+    assert.sameValue(isoDay, expectedISODay, `${prefix}referenceISODay result:`);
   },
 
   /*
@@ -442,16 +468,16 @@ var TemporalHelpers = {
    */
   checkPluralUnitsAccepted(func, validSingularUnits) {
     const plurals = {
-      year: 'years',
-      month: 'months',
-      week: 'weeks',
-      day: 'days',
-      hour: 'hours',
-      minute: 'minutes',
-      second: 'seconds',
-      millisecond: 'milliseconds',
-      microsecond: 'microseconds',
-      nanosecond: 'nanoseconds',
+      year: "years",
+      month: "months",
+      week: "weeks",
+      day: "days",
+      hour: "hours",
+      minute: "minutes",
+      second: "seconds",
+      millisecond: "milliseconds",
+      microsecond: "microseconds",
+      nanosecond: "nanoseconds",
     };
 
     validSingularUnits.forEach((unit) => {
@@ -881,18 +907,18 @@ var TemporalHelpers = {
     const zonedDateTime = new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, "UTC", "iso8601");
 
     [plainDate, plainDateTime, plainMonthDay, plainYearMonth, zonedDateTime].forEach((temporalObject) => {
-      const actual = [];
-      const expected = [];
-
       Object.defineProperty(temporalObject, "calendar", {
         get() {
-          actual.push("get calendar");
-          return calendar;
+          throw new Test262Error("should not get 'calendar' property");
+        },
+      });
+      Object.defineProperty(temporalObject, "calendarId", {
+        get() {
+          throw new Test262Error("should not get 'calendarId' property");
         },
       });
 
       func(temporalObject);
-      assert.compareArray(actual, expected, "calendar getter not called");
     });
   },
 
@@ -901,7 +927,7 @@ var TemporalHelpers = {
     const expected = [];
 
     const datetime = new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, "UTC");
-    Object.defineProperty(datetime, 'toString', {
+    Object.defineProperty(datetime, "toString", {
       get() {
         actual.push("get toString");
         return function (options) {
@@ -961,7 +987,7 @@ var TemporalHelpers = {
         calls.push(`get ${formatPropertyName(propertyName, objectName)}`);
         return value;
       },
-      set(v) {
+      set() {
         calls.push(`set ${formatPropertyName(propertyName, objectName)}`);
       }
     });
@@ -1159,7 +1185,7 @@ var TemporalHelpers = {
       ];
       // Adding a calendar annotation to one of these strings must not cause
       // disambiguation in favour of time.
-      const stringsWithCalendar = ambiguousStrings.map((s) => s + '[u-ca=iso8601]');
+      const stringsWithCalendar = ambiguousStrings.map((s) => s + "[u-ca=iso8601]");
       return ambiguousStrings.concat(stringsWithCalendar);
     },
 

@@ -109,6 +109,7 @@
 // New failures when upgrading to Ubuntu 22/newer driver.
 362486580 LINUX NVIDIA VULKAN : dEQP-EGL.functional.mutable_render_buffer.basic = FAIL
 362486580 LINUX NVIDIA VULKAN : dEQP-EGL.functional.mutable_render_buffer.querySurface = FAIL
+362486580 LINUX NVIDIA VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.*.local_array.* = SKIP
 
 // Mac failures
 42261255 MAC : dEQP-EGL.functional.negative_api.copy_buffers = FAIL

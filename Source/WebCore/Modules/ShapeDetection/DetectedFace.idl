@@ -28,7 +28,6 @@
 [
     EnabledBySetting=ShapeDetection,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary DetectedFace {
     required DOMRectReadOnly boundingBox;
     required FrozenArray<Landmark>? landmarks;

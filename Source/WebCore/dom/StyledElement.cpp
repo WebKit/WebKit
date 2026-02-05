@@ -66,7 +66,7 @@ void StyledElement::synchronizeStyleAttributeInternalImpl()
     ASSERT(elementData());
     ASSERT(elementData()->styleAttributeIsDirty());
     elementData()->setStyleAttributeIsDirty(false);
-    if (const StyleProperties* inlineStyle = this->inlineStyle())
+    if (RefPtr<const StyleProperties> inlineStyle = this->inlineStyle())
         setSynchronizedLazyAttribute(styleAttr, inlineStyle->asTextAtom(CSS::defaultSerializationContext()));
 }
 
@@ -116,7 +116,7 @@ CSSStyleProperties* StyledElement::inlineStyleCSSOMWrapper()
 {
     if (!inlineStyle() || !inlineStyle()->hasCSSOMWrapper())
         return 0;
-    auto* cssomWrapper = ensureMutableInlineStyle()->cssStyleProperties();
+    SUPPRESS_UNCOUNTED_LOCAL auto* cssomWrapper = ensureMutableInlineStyle()->cssStyleProperties();
     ASSERT(cssomWrapper && cssomWrapper->parentElement() == this);
     return cssomWrapper;
 }
@@ -137,12 +137,12 @@ void StyledElement::setInlineStyleFromString(const AtomString& newStyleString)
     // We reconstruct the property set instead of mutating if there is no CSSOM wrapper.
     // This makes wrapperless property sets immutable and so cacheable.
     if (RefPtr mutableStyleProperties = dynamicDowncast<MutableStyleProperties>(inlineStyle))
-        mutableStyleProperties->parseDeclaration(newStyleString, protectedDocument().get());
+        mutableStyleProperties->parseDeclaration(newStyleString, protect(document()).get());
     else
         inlineStyle = CSSParser::parseInlineStyleDeclaration(newStyleString, *this);
 
     if (usesStyleBasedEditability(*inlineStyle))
-        protectedDocument()->setHasElementUsingStyleBasedEditability();
+        protect(document())->setHasElementUsingStyleBasedEditability();
 }
 
 void StyledElement::styleAttributeChanged(const AtomString& newStyleString, AttributeModificationReason reason)
@@ -168,7 +168,7 @@ void StyledElement::dirtyStyleAttribute()
     elementData()->setStyleAttributeIsDirty(true);
 
     if (styleResolver().ruleSets().selectorsForStyleAttribute() != Style::SelectorsForStyleAttribute::None) {
-        if (auto* inlineStyle = this->inlineStyle()) {
+        if (RefPtr inlineStyle = this->inlineStyle()) {
             elementData()->setStyleAttributeIsDirty(false);
             auto newValue = inlineStyle->asTextAtom(CSS::defaultSerializationContext());
             Style::AttributeChangeInvalidation styleInvalidation(*this, styleAttr, attributeWithoutSynchronization(styleAttr), newValue);
@@ -181,7 +181,7 @@ void StyledElement::invalidateStyleAttribute()
 {
     if (RefPtr inlineStyle = this->inlineStyle()) {
         if (usesStyleBasedEditability(*inlineStyle))
-            protectedDocument()->setHasElementUsingStyleBasedEditability();
+            protect(document())->setHasElementUsingStyleBasedEditability();
     }
 
     elementData()->setStyleAttributeIsDirty(true);
@@ -200,18 +200,13 @@ void StyledElement::invalidateStyleAttribute()
 
     // In the rare case of selectors like "[style] ~ div" we need to synchronize immediately to invalidate.
     if (selectorsForStyleAttribute == Style::SelectorsForStyleAttribute::NonSubjectPosition) {
-        if (auto* inlineStyle = this->inlineStyle()) {
+        if (RefPtr inlineStyle = this->inlineStyle()) {
             elementData()->setStyleAttributeIsDirty(false);
             auto newValue = inlineStyle->asTextAtom(CSS::defaultSerializationContext());
             Style::AttributeChangeInvalidation styleInvalidation(*this, styleAttr, attributeWithoutSynchronization(styleAttr), newValue);
             setSynchronizedLazyAttribute(styleAttr, newValue);
         }
     }
-}
-
-RefPtr<StyleProperties> StyledElement::protectedInlineStyle() const
-{
-    return elementData() ? elementData()->m_inlineStyle : nullptr;
 }
 
 void StyledElement::inlineStyleChanged()
@@ -344,11 +339,11 @@ void StyledElement::rebuildPresentationalHintStyle()
     collectExtraStyleForPresentationalHints(style);
 
     // ShareableElementData doesn't store presentation attribute style, so make sure we have a UniqueElementData.
-    auto& elementData = ensureUniqueElementData();
+    Ref elementData = ensureUniqueElementData();
 
-    elementData.setPresentationalHintStyleIsDirty(false);
+    elementData->setPresentationalHintStyleIsDirty(false);
     if (style->isEmpty()) {
-        elementData.m_presentationalHintStyle = nullptr;
+        elementData->m_presentationalHintStyle = nullptr;
         return;
     }
 
@@ -371,7 +366,7 @@ void StyledElement::rebuildPresentationalHintStyle()
         return true;
     }();
 
-    elementData.m_presentationalHintStyle = shouldDeduplicate ? style->immutableDeduplicatedCopy() : style->immutableCopy();
+    elementData->m_presentationalHintStyle = shouldDeduplicate ? style->immutableDeduplicatedCopy() : style->immutableCopy();
 }
 
 void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties& style, CSSPropertyID propertyID, CSSValueID identifier)
@@ -386,7 +381,7 @@ void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties&
     
 void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties& style, CSSPropertyID propertyID, const String& value)
 {
-    style.setProperty(propertyID, value, protectedDocument()->cssParserContext());
+    style.setProperty(propertyID, value, protect(document())->cssParserContext());
 }
 
 void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties& style, CSSPropertyID propertyID, Ref<CSSValue>&& value)

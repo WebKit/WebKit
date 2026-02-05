@@ -21,10 +21,10 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if canImport(RealityCoreRenderer, _version: 9999)
+#if canImport(RealityCoreRenderer, _version: 6) && canImport(USDStageKit, _version: 34)
 
 import QuartzCore
-@_spi(RealityCoreRendererAPI) @_spi(Private) import RealityCoreRenderer
+@_spi(RealityCoreRendererAPI) @_spi(Private) import RealityKit
 internal import simd
 
 extension RealityCoreRenderer._Proto_LowLevelGlobalConstantsEncoder_v1 {
@@ -43,57 +43,39 @@ internal struct CameraTransform {
 nonisolated class Renderer {
     let device: MTLDevice
     let commandQueue: MTLCommandQueue
-    let renderer: _Proto_LowLevelRenderer_v1
-    let resourceContext: _Proto_LowLevelResourceContext_v1
-    let residencySet: _Proto_LowLevelResidencySet_v1
-    let globalConstants: _Proto_LowLevelBufferSpan_v1
-    let globalConstantsEncoder: _Proto_LowLevelGlobalConstantsEncoder_v1
-    let renderTargetDescriptor: _Proto_LowLevelRenderTarget_v1.Descriptor
-    var materialCompiler: _Proto_LowLevelMaterialCompiler_v1? = nil
+    var renderContext: _Proto_LowLevelRenderContext_v1?
+    var globalConstants: _Proto_LowLevelBufferSpan_v1?
+    var globalConstantsEncoder: _Proto_LowLevelGlobalConstantsEncoder_v1?
     var renderWorkload: _Proto_LowLevelCameraRenderWorkload_v1?
     var cameraPose: _Proto_Pose_v1
     var modelDistance: Float = 1.0
 
-    init(device: MTLDevice, renderTargetDescriptor: _Proto_LowLevelRenderTarget_v1.Descriptor) throws {
+    init(device: MTLDevice) throws {
         guard let commandQueue = device.makeCommandQueue() else {
             fatalError("Failed to create command queue.")
         }
         commandQueue.label = "LowLevelRenderer Command Queue"
 
-        var configuration = _Proto_LowLevelRenderer_v1.Configuration(device: device, commandQueue: commandQueue)
-        configuration.residencySetBehavior = _Proto_LowLevelRenderer_v1.Configuration.ResidencySetBehavior.disable
-        let renderer = _Proto_LowLevelRenderer_v1(configuration: configuration)
-        let resourceContext = _Proto_LowLevelResourceContext_v1(device: device)
-        let residencySet = try renderer.makeResidencySet(resourceContext: resourceContext)
-
-        let globalConstantsEncoder = renderer.makeGlobalConstantsEncoder()
-        let globalConstantsSize = (_Proto_LowLevelGlobalConstantsEncoder_v1.encodedLength + 15) / 16 * 16
-        let globalConstantsBuffer = try resourceContext.makeBufferResource(
-            descriptor: .init(capacity: globalConstantsSize, sizeMultiple: 1)
-        )
-        let globalConstants = try _Proto_LowLevelBufferSpan_v1(buffer: globalConstantsBuffer, offset: 0, size: globalConstantsSize)
-
         self.device = device
         self.commandQueue = commandQueue
-        self.renderer = renderer
-        self.resourceContext = resourceContext
-        self.residencySet = residencySet
-        self.globalConstants = globalConstants
-        self.globalConstantsEncoder = globalConstantsEncoder
         self.cameraPose = .init(translation: [0, 0, 1], rotation: .init(ix: 0, iy: 0, iz: 0, r: 1))
-        self.renderTargetDescriptor = renderTargetDescriptor
 
         prevTime = CACurrentMediaTime()
     }
 
-    func createMaterialCompiler() async throws {
-        self.materialCompiler = try await _Proto_LowLevelMaterialCompiler_v1(device: device)
-        guard let materialCompiler else { fatalError("Could not create material compiler") }
-        self.renderWorkload = try await _Proto_LowLevelCameraRenderWorkload_v1(
-            renderer: renderer,
-            resourceContext: resourceContext,
-            materialCompiler: materialCompiler,
-            residencySet: residencySet,
+    func createMaterialCompiler(renderTargetDescriptor: _Proto_LowLevelRenderTarget_v1.Descriptor) async throws {
+        var configuration = _Proto_LowLevelRenderContextStandaloneConfiguration_v1(device: device)
+        configuration.residencySetBehavior = _Proto_LowLevelRenderContextStandaloneConfiguration_v1.ResidencySetBehavior.disable
+        let renderContext = try await _Proto_makeLowLevelRenderContextStandalone_v1(configuration: configuration)
+
+        let globalConstantsSize = (_Proto_LowLevelGlobalConstantsEncoder_v1.encodedLength + 15) / 16 * 16
+        let globalConstantsBuffer = try renderContext.makeBufferResource(descriptor: .init(capacity: globalConstantsSize, sizeMultiple: 1))
+        let globalConstants = try _Proto_LowLevelBufferSpan_v1(buffer: globalConstantsBuffer, offset: 0, size: globalConstantsSize)
+
+        let meshInstances = try renderContext.makeMeshInstanceArray(renderTargets: [renderTargetDescriptor], count: 0)
+
+        let renderWorkload = try _Proto_LowLevelCameraRenderWorkload_v1(
+            renderContext: renderContext,
             renderTargetDescriptor: renderTargetDescriptor,
             camera: .mono(
                 pose: .init(
@@ -107,13 +89,13 @@ nonisolated class Renderer {
                     farZ: 1
                 )
             ),
-            meshInstances: .init(
-                renderTarget: renderTargetDescriptor,
-                resourceContext: resourceContext,
-                count: 0
-            ),
+            meshInstances: meshInstances,
             globalConstants: globalConstants
         )
+        self.globalConstantsEncoder = renderWorkload.makeGlobalConstantsEncoder()
+        self.renderContext = renderContext
+        self.renderWorkload = renderWorkload
+        self.globalConstants = globalConstants
     }
 
     var prevTime: CFTimeInterval = 0
@@ -122,9 +104,6 @@ nonisolated class Renderer {
         meshInstances: _Proto_LowLevelMeshInstanceArray_v1,
         texture: MTLTexture
     ) throws {
-        guard let materialCompiler else {
-            return
-        }
         guard let renderWorkload else {
             return
         }
@@ -143,7 +122,7 @@ nonisolated class Renderer {
 
         let target: _Proto_LowLevelRenderTarget_v1 = .texture(color: texture, sampleCount: 4)
         renderWorkload.camera = .mono(pose: cameraPose, projection: projection)
-        renderWorkload.camera.clearColor = .init(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.1)
+        renderWorkload.camera.clearColor = .init(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0)
         try renderWorkload.setMeshInstances(meshInstances)
 
         guard let renderCommandBuffer = commandQueue.makeCommandBuffer() else {
@@ -157,6 +136,12 @@ nonisolated class Renderer {
     }
 
     private func updateGlobalConstants(time: Float) throws(_Proto_LowLevelRendererError_v1) {
+        guard let globalConstantsEncoder else {
+            fatalError("globalConstantsEncoder is nil")
+        }
+        guard let globalConstants else {
+            fatalError("globalConstants is nil")
+        }
         globalConstantsEncoder.setTime(time)
         try globalConstants.buffer.replace { mutableSpan throws(_Proto_LowLevelRendererError_v1) in
             try globalConstantsEncoder.encode(to: &mutableSpan, byteOffset: globalConstants.offset)

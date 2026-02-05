@@ -607,6 +607,33 @@ bool IsMatrixType(GLenum type)
     return VariableRowCount(type) > 1;
 }
 
+bool IsFloatScalarAndVectorType(GLenum type)
+{
+    switch (type)
+    {
+        case GL_FLOAT:
+        case GL_FLOAT_VEC2:
+        case GL_FLOAT_VEC3:
+        case GL_FLOAT_VEC4:
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool IsFloatVectorType(GLenum type)
+{
+    switch (type)
+    {
+        case GL_FLOAT_VEC2:
+        case GL_FLOAT_VEC3:
+        case GL_FLOAT_VEC4:
+            return true;
+        default:
+            return false;
+    }
+}
+
 GLenum TransposeMatrixType(GLenum type)
 {
     if (!IsMatrixType(type))

@@ -73,12 +73,13 @@ namespace TextExtraction {
 struct ExtractedText;
 struct InteractionDescription;
 struct Interaction;
-struct Item;
 struct Request;
+struct Result;
 }
 
 enum class FocusDirection : uint8_t;
 enum class FoundElementInRemoteFrame : bool;
+enum class ShouldFocusElement : bool;
 
 struct FocusEventData;
 struct GlobalWindowIdentifier;
@@ -127,15 +128,12 @@ public:
     ScopeExit<Function<void()>> makeInvalidator();
 
     WebPage* page() const;
-    RefPtr<WebPage> protectedPage() const;
 
     static WebFrame* webFrame(std::optional<WebCore::FrameIdentifier>);
     static RefPtr<WebFrame> fromCoreFrame(const WebCore::Frame&);
     WebCore::LocalFrame* coreLocalFrame() const;
-    RefPtr<WebCore::LocalFrame> protectedCoreLocalFrame() const;
     WebCore::RemoteFrame* coreRemoteFrame() const;
     WebCore::Frame* coreFrame() const;
-    RefPtr<WebCore::Frame> protectedCoreFrame() const;
 
     void createProvisionalFrame(ProvisionalFrameCreationParameters&&);
     void commitProvisionalFrame();
@@ -244,7 +242,6 @@ public:
 #endif
 
     WebLocalFrameLoaderClient* localFrameLoaderClient() const;
-    RefPtr<WebLocalFrameLoaderClient> protectedLocalFrameLoaderClient() const;
 
     WebRemoteFrameClient* remoteFrameClient() const;
     WebFrameLoaderClient* frameLoaderClient() const;
@@ -290,7 +287,7 @@ public:
     void disconnectInspector();
     void sendMessageToInspectorTarget(const String& message);
 
-    void requestTextExtraction(WebCore::TextExtraction::Request&&, CompletionHandler<void(WebCore::TextExtraction::Item&&)>&&);
+    void requestTextExtraction(WebCore::TextExtraction::Request&&, CompletionHandler<void(WebCore::TextExtraction::Result&&)>&&);
     void handleTextExtractionInteraction(WebCore::TextExtraction::Interaction&&, CompletionHandler<void(bool, String&&)>&&);
     void describeTextExtractionInteraction(WebCore::TextExtraction::Interaction&&, CompletionHandler<void(WebCore::TextExtraction::InteractionDescription&&)>&&);
     void takeSnapshotOfExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&&);
@@ -312,7 +309,7 @@ private:
 
     RefPtr<WebCore::LocalFrame> localFrame();
 
-    void findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection, const WebCore::FocusEventData&, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&&);
+    void findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection, const WebCore::FocusEventData&, WebCore::ShouldFocusElement, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&&);
 
     CheckedRef<WebFrameInspectorTarget> ensureInspectorTarget();
 

@@ -35,6 +35,7 @@
 #include "RenderMeter.h"
 #include "RenderStyle+GettersInlines.h"
 #include "RenderTheme.h"
+#include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
 #include "UserAgentParts.h"
 #include "UserAgentStyleSheets.h"
@@ -211,22 +212,27 @@ void HTMLMeterElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(meterElementShadowUserAgentStyleSheet));
 
     Ref document = this->document();
-    Ref style = HTMLStyleElement::create(HTMLNames::styleTag, document, false);
+    Ref style = HTMLStyleElement::create(document);
+    ScriptDisallowedScope::EventAllowedScope styleScope { style };
     style->setTextContent(String { shadowStyle });
+    ScriptDisallowedScope::EventAllowedScope rootScope { root };
     root.appendChild(WTF::move(style));
 
     // Pseudos are set to allow author styling.
     Ref inner = HTMLDivElement::create(document);
+    ScriptDisallowedScope::EventAllowedScope innerScope { inner };
     inner->setIdAttribute("inner"_s);
     inner->setUserAgentPart(UserAgentParts::webkitMeterInnerElement());
     root.appendChild(inner);
 
     Ref bar = HTMLDivElement::create(document);
+    ScriptDisallowedScope::EventAllowedScope barScope { bar };
     bar->setIdAttribute("bar"_s);
     bar->setUserAgentPart(UserAgentParts::webkitMeterBar());
     inner->appendChild(bar);
 
     Ref valueElement = HTMLDivElement::create(document);
+    ScriptDisallowedScope::EventAllowedScope valueElementScope { valueElement };
     valueElement->setIdAttribute("value"_s);
     bar->appendChild(valueElement);
     m_valueElement = WTF::move(valueElement);

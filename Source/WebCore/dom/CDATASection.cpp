@@ -58,7 +58,7 @@ SerializedNode CDATASection::serializeNode(CloningOperation) const
 
 Ref<Text> CDATASection::virtualCreate(String&& data)
 {
-    return create(protectedDocument(), WTF::move(data));
+    return create(protect(document()), WTF::move(data));
 }
 
 } // namespace WebCore

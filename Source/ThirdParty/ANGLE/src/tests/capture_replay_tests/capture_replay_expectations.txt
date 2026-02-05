@@ -55,6 +55,9 @@
 # Fails because of unsupported combined depth/stencil GetImage.
 42263287 : DepthStencilTest.DepthOnlyEmulatedWithPacked/* = FAIL
 
+# Provoking vertex
+463966221 : ProvokingVertexTest.* = FAIL
+
 # ES3
 42264706 : BlitFramebufferTest.BlitDepthStencilPixelByPixel/* = NOT_RUN
 42264706 : GLSLTest_ES3.UnsuccessfulRelinkWithBindAttribLocation/* = NOT_RUN
@@ -255,6 +258,13 @@
 
 # Crashes in gl::JoinShaderSources during replay
 447613212 : GLSLTest.EmptyShader/* = SKIP_FOR_CAPTURE
+
+# Missing support for GL_ANGLE_translated_shader_source
+454830637 : GLSLConstantFoldingTest* = SKIP_FOR_CAPTURE
+454830637 : GLSLValidation*Test* = SKIP_FOR_CAPTURE
+454830637 : WebGLGLSLValidation*Test* = SKIP_FOR_CAPTURE
+454830637 : WebGL2GLSLValidation*Test* = SKIP_FOR_CAPTURE
+454830637 : GLSLOutput*Test* = SKIP_FOR_CAPTURE
 
 # Crashes on win and linux trace bots
 372059358 : MultisampleTestES3.CopyTexImage2DFromMsaaDefaultFbo/* = SKIP_FOR_CAPTURE

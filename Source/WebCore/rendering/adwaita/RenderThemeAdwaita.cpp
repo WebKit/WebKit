@@ -68,7 +68,7 @@ namespace WebCore {
 using namespace CSS::Literals;
 using namespace WebCore::Adwaita;
 
-RenderTheme& RenderTheme::singleton()
+RenderThemeAdwaita& RenderTheme::singleton()
 {
     static MainThreadNeverDestroyed<RenderThemeAdwaita> theme;
     return theme;

@@ -57,12 +57,14 @@
 #include "JSImageData.h"
 #include "JSMediaSourceHandle.h"
 #include "JSMediaStreamTrack.h"
+#include "JSMediaStreamTrackHandle.h"
 #include "JSMessagePort.h"
 #include "JSNavigator.h"
 #include "JSRTCCertificate.h"
 #include "JSRTCDataChannel.h"
 #include "JSRTCEncodedAudioFrame.h"
 #include "JSRTCEncodedVideoFrame.h"
+#include "JSReadableStream.h"
 #include "JSWebCodecsAudioData.h"
 #include "JSWebCodecsEncodedAudioChunk.h"
 #include "JSWebCodecsEncodedVideoChunk.h"
@@ -76,7 +78,6 @@
 #include <JavaScriptCore/ArrayConventions.h>
 #include <JavaScriptCore/BigIntObject.h>
 #include <JavaScriptCore/BooleanObject.h>
-#include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/DateInstance.h>
 #include <JavaScriptCore/Error.h>
 #include <JavaScriptCore/ErrorInstance.h>
@@ -101,6 +102,7 @@
 #include <JavaScriptCore/RegExp.h>
 #include <JavaScriptCore/RegExpObject.h>
 #include <JavaScriptCore/Strong.h>
+#include <JavaScriptCore/TopExceptionScope.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <JavaScriptCore/TypedArrays.h>
 #include <JavaScriptCore/WasmModule.h>
@@ -258,6 +260,10 @@ enum SerializationTag {
     RTCEncodedAudioFrameTag = 62,
     RTCEncodedVideoFrameTag = 63,
 #endif
+#if ENABLE(MEDIA_STREAM)
+    MediaStreamTrackHandleTag = 64,
+#endif
+    ReadableStreamTag = 65,
     ErrorTag = 255
 };
 
@@ -357,6 +363,7 @@ static ASCIILiteral name(SerializationTag tag)
 #endif
 #if ENABLE(MEDIA_STREAM)
     case MediaStreamTrackTag: return "MediaStreamTrackTag"_s;
+    case MediaStreamTrackHandleTag: return "MediaStreamTrackHandleTag"_s;
 #endif
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
     case MediaSourceHandleTransferTag: return "MediaSourceHandleTransferTag"_s;
@@ -365,6 +372,7 @@ static ASCIILiteral name(SerializationTag tag)
     case RTCEncodedAudioFrameTag: return "RTCEncodedAudioFrameTag"_s;
     case RTCEncodedVideoFrameTag: return "RTCEncodedVideoFrameTag"_s;
 #endif
+    case ReadableStreamTag: return "ReadableStreamTag"_s;
     case ErrorTag: return "ErrorTag"_s;
     }
     return "<unknown tag>"_s;
@@ -504,6 +512,7 @@ static bool isTypeExposedToGlobalObject(JSC::JSGlobalObject& globalObject, Seria
 #endif
 #if ENABLE(MEDIA_STREAM)
     case MediaStreamTrackTag:
+    case MediaStreamTrackHandleTag:
 #endif
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
     case MediaSourceHandleTransferTag:
@@ -514,6 +523,7 @@ static bool isTypeExposedToGlobalObject(JSC::JSGlobalObject& globalObject, Seria
 #if ENABLE(WEB_RTC)
     case RTCEncodedVideoFrameTag:
 #endif
+    case ReadableStreamTag:
         break;
     }
     return false;
@@ -599,9 +609,13 @@ static ErrorType toErrorType(SerializableErrorType value)
 }
 
 enum class PredefinedColorSpaceTag : uint8_t {
-    SRGB = 0
+    SRGB = 0,
 #if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
-    , DisplayP3 = 1
+    DisplayP3 = 1,
+#endif
+    SRGBLinear = 2,
+#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
+    DisplayP3Linear = 3,
 #endif
 };
 
@@ -614,6 +628,9 @@ enum DestinationColorSpaceTag {
 #if PLATFORM(COCOA)
     DestinationColorSpaceCGColorSpaceNameTag = 3,
     DestinationColorSpaceCGColorSpacePropertyListTag = 4,
+#endif
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+    DestinationColorSpaceLinearDisplayP3Tag = 5,
 #endif
 };
 
@@ -821,6 +838,7 @@ static_assert(TerminatorTag > MAX_ARRAY_INDEX);
  *    | MediaSourceHandleTransferTag <identifier:uint32_t>
  *    | RTCEncodedAudioFrameTag <identifier:uint32_t>
  *    | RTCEncodedVideoFrameTag <identifier:uint32_t>
+ *    | ReadableStreamTag <identifier:uint32_t><messagePortIdentifier:uint32_t>
  *
  * Inside certificate, data is serialized in this format as per spec:
  *
@@ -933,15 +951,25 @@ static_assert(TerminatorTag > MAX_ARRAY_INDEX);
  * DOMQuadData :-
  *      <p1:DOMPointData> <p2:DOMPointData> <p3:DOMPointData> <p4:DOMPointData>
  *
+ * PredefinedColorSpaceTag :
+ *        PredefinedColorSpaceTag::SRGB
+ *      | PredefinedColorSpaceTag::DisplayP3
+ *      | PredefinedColorSpaceTag::SRGBLinear
+ *      | PredefinedColorSpaceTag::DisplayP3Linear
+ *
  * DestinationColorSpace :-
  *        DestinationColorSpaceSRGBTag
  *      | DestinationColorSpaceLinearSRGBTag
  *      | DestinationColorSpaceDisplayP3Tag
  *      | DestinationColorSpaceCGColorSpaceNameTag <nameDataLength:uint32_t> <nameData:uint8_t>{nameDataLength}
  *      | DestinationColorSpaceCGColorSpacePropertyListTag <propertyListDataLength:uint32_t> <propertyListData:uint8_t>{propertyListDataLength}
+ *      | DestinationColorSpaceLinearDisplayP3Tag
  */
 
-using DeserializationResult = std::pair<JSC::JSValue, SerializationReturnCode>;
+struct DeserializationResult {
+    JSC::JSValue value;
+    SerializationReturnCode code;
+};
 
 class CloneBase {
     WTF_FORBID_HEAP_ALLOCATION;
@@ -1047,6 +1075,11 @@ template <> bool writeLittleEndian<uint8_t>(Vector<uint8_t>& buffer, std::span<c
     return true;
 }
 
+Ref<SerializedScriptValue> SerializedScriptValue::createFromWireBytes(Vector<uint8_t>&& data)
+{
+    return adoptRef(*new SerializedScriptValue(WTF::move(data), { }));
+}
+
 class CloneSerializer;
 #if ASSERT_ENABLED
 static void validateSerializedResult(CloneSerializer&, SerializationReturnCode, Vector<uint8_t>& result, JSGlobalObject*, Vector<Ref<MessagePort>>&, ArrayBufferContentsArray&, ArrayBufferContentsArray& sharedBuffers, Vector<Ref<MessagePort>>&);
@@ -1073,6 +1106,7 @@ public:
 #endif
 #if ENABLE(MEDIA_STREAM)
         Vector<RefPtr<MediaStreamTrack>> dummyMediaStreamTracks;
+        Vector<RefPtr<MediaStreamTrackHandle>> dummyMediaStreamTrackHandles;
 #endif
 #if ENABLE(WEBASSEMBLY)
         WasmModuleArray dummyModules;
@@ -1092,6 +1126,7 @@ public:
 #if ENABLE(WEB_RTC)
             { }, dummyRTCEncodedAudioFrames, dummyRTCEncodedVideoFrames,
 #endif
+            { },
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
             { },
 #endif
@@ -1103,6 +1138,7 @@ public:
 #endif
 #if ENABLE(MEDIA_STREAM)
             dummyMediaStreamTracks,
+            dummyMediaStreamTrackHandles,
 #endif
 #if ENABLE(WEBASSEMBLY)
             dummyModules,
@@ -1124,6 +1160,7 @@ public:
             Vector<RefPtr<RTCEncodedAudioFrame>>& serializedRTCEncodedAudioFrames,
             Vector<RefPtr<RTCEncodedVideoFrame>>& serializedRTCEncodedVideoFrames,
 #endif
+            const Vector<Ref<ReadableStream>>& readableStreams,
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
             const Vector<Ref<MediaSourceHandle>>& mediaSourceHandles,
 #endif
@@ -1135,6 +1172,7 @@ public:
 #endif
 #if ENABLE(MEDIA_STREAM)
             Vector<RefPtr<MediaStreamTrack>>& serializedMediaStreamTracks,
+            Vector<RefPtr<MediaStreamTrackHandle>>& serializedMediaStreamTrackHandles,
 #endif
 #if ENABLE(WEBASSEMBLY)
             WasmModuleArray& wasmModules,
@@ -1159,6 +1197,7 @@ public:
             serializedRTCEncodedAudioFrames,
             serializedRTCEncodedVideoFrames,
 #endif
+            readableStreams,
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
             mediaSourceHandles,
 #endif
@@ -1170,6 +1209,7 @@ public:
 #endif
 #if ENABLE(MEDIA_STREAM)
             serializedMediaStreamTracks,
+            serializedMediaStreamTrackHandles,
 #endif
 #if ENABLE(WEBASSEMBLY)
             wasmModules,
@@ -1221,6 +1261,7 @@ private:
             Vector<RefPtr<RTCEncodedAudioFrame>>& serializedRTCEncodedAudioFrames,
             Vector<RefPtr<RTCEncodedVideoFrame>>& serializedRTCEncodedVideoFrames,
 #endif
+            const Vector<Ref<ReadableStream>>& readableStreams,
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
             const Vector<Ref<MediaSourceHandle>>& mediaSourceHandles,
 #endif
@@ -1232,6 +1273,7 @@ private:
 #endif
 #if ENABLE(MEDIA_STREAM)
             Vector<RefPtr<MediaStreamTrack>>& serializedMediaStreamTracks,
+            Vector<RefPtr<MediaStreamTrackHandle>>& serializedMediaStreamTrackHandles,
 #endif
 #if ENABLE(WEBASSEMBLY)
             WasmModuleArray& wasmModules,
@@ -1263,6 +1305,7 @@ private:
 #endif
 #if ENABLE(MEDIA_STREAM)
         , m_serializedMediaStreamTracks(serializedMediaStreamTracks)
+        , m_serializedMediaStreamTrackHandles(serializedMediaStreamTrackHandles)
 #endif
         , m_forStorage(forStorage)
     {
@@ -1276,6 +1319,7 @@ private:
 #if ENABLE(WEB_RTC)
         fillTransferMap(rtcDataChannels, m_transferredRTCDataChannels);
 #endif
+        fillTransferMap(readableStreams, m_transferredReadableStreams);
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
         fillTransferMap(mediaSourceHandles, m_transferredMediaSourceHandles);
 #endif
@@ -1524,7 +1568,7 @@ private:
         auto& vm = m_lexicalGlobalObject->vm();
         auto* globalObject = m_lexicalGlobalObject;
         if (globalObject->inherits<JSDOMGlobalObject>())
-            return toJS(globalObject, jsCast<JSDOMGlobalObject*>(globalObject), &arrayBuffer);
+            return toJS(globalObject, jsCast<JSDOMGlobalObject*>(globalObject), arrayBuffer);
 
         if (auto* buffer = arrayBuffer.m_wrapper.get())
             return buffer;
@@ -1794,6 +1838,18 @@ private:
         write(static_cast<uint32_t>(index));
     }
 #endif
+    void dumpReadableStream(JSObject* obj, SerializationReturnCode& code)
+    {
+        auto index = m_transferredReadableStreams.find(obj);
+        if (index != m_transferredReadableStreams.end()) {
+            write(ReadableStreamTag);
+            write(index->value + 1);
+            write(m_transferredMessagePorts.size() + index->value);
+            return;
+        }
+
+        code = SerializationReturnCode::DataCloneError;
+    }
 #if ENABLE(WEB_CODECS)
     void dumpWebCodecsEncodedVideoChunk(JSObject* obj)
     {
@@ -1867,6 +1923,19 @@ private:
         }
 
         write(MediaStreamTrackTag);
+        write(static_cast<uint32_t>(index));
+    }
+    void dumpMediaStreamTrackHandle(JSObject* obj)
+    {
+        Ref handle = jsCast<JSMediaStreamTrackHandle*>(obj)->wrapped();
+
+        auto index = m_serializedMediaStreamTrackHandles.find(handle.ptr());
+        if (index == notFound) {
+            index = m_serializedMediaStreamTrackHandles.size();
+            m_serializedMediaStreamTrackHandles.append(WTF::move(handle));
+        }
+
+        write(MediaStreamTrackHandleTag);
         write(static_cast<uint32_t>(index));
     }
 #endif
@@ -2194,6 +2263,10 @@ private:
                 return true;
             }
 #endif
+            if (obj->inherits<JSReadableStream>()) {
+                dumpReadableStream(obj, code);
+                return true;
+            }
             if (obj->inherits<JSDOMException>()) {
                 dumpDOMException(obj, code);
                 return true;
@@ -2227,6 +2300,12 @@ private:
                 if (m_forStorage == SerializationForStorage::Yes)
                     return false;
                 dumpMediaStreamTrack(obj);
+                return true;
+            }
+            if (obj->inherits<JSMediaStreamTrackHandle>()) {
+                if (m_forStorage == SerializationForStorage::Yes)
+                    return false;
+                dumpMediaStreamTrackHandle(obj);
                 return true;
             }
 #endif
@@ -2436,9 +2515,15 @@ private:
         case PredefinedColorSpace::SRGB:
             writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(PredefinedColorSpaceTag::SRGB));
             break;
+        case PredefinedColorSpace::SRGBLinear:
+            writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(PredefinedColorSpaceTag::SRGBLinear));
+            break;
 #if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
         case PredefinedColorSpace::DisplayP3:
             writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(PredefinedColorSpaceTag::DisplayP3));
+            break;
+        case PredefinedColorSpace::DisplayP3Linear:
+            writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(PredefinedColorSpaceTag::DisplayP3Linear));
             break;
 #endif
         }
@@ -2468,6 +2553,11 @@ private:
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
         if (destinationColorSpace == DestinationColorSpace::DisplayP3()) {
             write(DestinationColorSpaceDisplayP3Tag);
+            return;
+        }
+
+        if (destinationColorSpace == DestinationColorSpace::LinearDisplayP3()) {
+            write(DestinationColorSpaceLinearDisplayP3Tag);
             return;
         }
 #endif
@@ -2735,6 +2825,7 @@ private:
     Vector<RefPtr<RTCEncodedAudioFrame>>& m_serializedRTCEncodedAudioFrames;
     Vector<RefPtr<RTCEncodedVideoFrame>>& m_serializedRTCEncodedVideoFrames;
 #endif
+    ObjectPoolMap m_transferredReadableStreams;
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
     ObjectPoolMap m_transferredMediaSourceHandles;
 #endif
@@ -2760,6 +2851,7 @@ private:
 #endif
 #if ENABLE(MEDIA_STREAM)
     Vector<RefPtr<MediaStreamTrack>>& m_serializedMediaStreamTracks;
+    Vector<RefPtr<MediaStreamTrackHandle>>& m_serializedMediaStreamTrackHandles;
 #endif
     SerializationForStorage m_forStorage;
 
@@ -3056,7 +3148,7 @@ public:
         return str;
     }
 
-    static DeserializationResult deserialize(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, const Vector<Ref<MessagePort>>& messagePorts, Vector<std::optional<DetachedImageBitmap>>&& detachedImageBitmaps
+    static DeserializationResult deserialize(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, Vector<Ref<MessagePort>>& messagePorts, Vector<std::optional<DetachedImageBitmap>>&& detachedImageBitmaps
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& detachedOffscreenCanvases
         , const Vector<Ref<OffscreenCanvas>>& inMemoryOffscreenCanvases
@@ -3083,11 +3175,13 @@ public:
 #endif
 #if ENABLE(MEDIA_STREAM)
         , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& serializedMediaStreamTracks
+        , Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>>&& serializedMediaStreamTrackHandles
 #endif
+        , uint64_t exposedMessagePortCount
         )
     {
         if (!buffer.size())
-            return std::make_pair(jsNull(), SerializationReturnCode::UnspecifiedError);
+            return { jsNull(), SerializationReturnCode::UnspecifiedError };
         CloneDeserializer deserializer(lexicalGlobalObject, globalObject, messagePorts, arrayBufferContentsArray, buffer, blobURLs, blobFilePaths, sharedBuffers, WTF::move(detachedImageBitmaps)
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
             , WTF::move(detachedOffscreenCanvases)
@@ -3114,14 +3208,15 @@ public:
 #endif
 #if ENABLE(MEDIA_STREAM)
             , WTF::move(serializedMediaStreamTracks)
+            , WTF::move(serializedMediaStreamTrackHandles)
 #endif
             );
         if (!deserializer.isValid())
-            return std::make_pair(JSValue(), SerializationReturnCode::ValidationError);
-        
+            return { JSValue(), SerializationReturnCode::ValidationError };
+
         auto result = deserializer.deserialize();
         // Deserialize again if data may have wrong version number, see rdar://118775332.
-        if (result.second != SerializationReturnCode::SuccessfullyCompleted && deserializer.shouldRetryWithVersionUpgrade()) [[unlikely]] {
+        if (result.code != SerializationReturnCode::SuccessfullyCompleted && deserializer.shouldRetryWithVersionUpgrade()) [[unlikely]] {
         CloneDeserializer newDeserializer(lexicalGlobalObject, globalObject, messagePorts, arrayBufferContentsArray, buffer, blobURLs, blobFilePaths, sharedBuffers, deserializer.takeDetachedImageBitmaps()
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
             , deserializer.takeDetachedOffscreenCanvases()
@@ -3148,11 +3243,16 @@ public:
 #endif
 #if ENABLE(MEDIA_STREAM)
             , deserializer.takeSerializedMediaStreamTracks()
+            , deserializer.takeSerializedMediaStreamTrackHandles()
 #endif
             );
             newDeserializer.upgradeVersion();
             result = newDeserializer.deserialize();
         }
+
+        if (messagePorts.size() > exposedMessagePortCount)
+            messagePorts.resize(exposedMessagePortCount);
+
         return result;
     }
 
@@ -3222,6 +3322,7 @@ private:
 #endif
 #if ENABLE(MEDIA_STREAM)
         , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& serializedMediaStreamTracks = { }
+        , Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>>&& serializedMediaStreamTrackHandles = { }
 #endif
         )
         : CloneBase(lexicalGlobalObject)
@@ -3271,6 +3372,8 @@ private:
 #if ENABLE(MEDIA_STREAM)
         , m_serializedMediaStreamTracks(WTF::move(serializedMediaStreamTracks))
         , m_mediaStreamTracks(m_serializedMediaStreamTracks.size())
+        , m_serializedMediaStreamTrackHandles(WTF::move(serializedMediaStreamTrackHandles))
+        , m_mediaStreamTrackHandles(m_serializedMediaStreamTrackHandles.size())
 #endif
     {
         unsigned version;
@@ -3306,6 +3409,7 @@ private:
 #endif
 #if ENABLE(MEDIA_STREAM)
         , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& serializedMediaStreamTracks = { }
+        , Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>>&& serializedMediaStreamTrackHandles = { }
 #endif
         )
         : CloneBase(lexicalGlobalObject)
@@ -3358,6 +3462,8 @@ private:
 #if ENABLE(MEDIA_STREAM)
         , m_serializedMediaStreamTracks(WTF::move(serializedMediaStreamTracks))
         , m_mediaStreamTracks(m_serializedMediaStreamTracks.size())
+        , m_serializedMediaStreamTrackHandles(WTF::move(serializedMediaStreamTrackHandles))
+        , m_mediaStreamTrackHandles(m_serializedMediaStreamTrackHandles.size())
 #endif
     {
         unsigned version;
@@ -3437,6 +3543,7 @@ private:
 #endif
 #if ENABLE(MEDIA_STREAM)
     Vector<std::unique_ptr<MediaStreamTrackDataHolder>> takeSerializedMediaStreamTracks() { return std::exchange(m_serializedMediaStreamTracks, { }); }
+    Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>> takeSerializedMediaStreamTrackHandles() { return std::exchange(m_serializedMediaStreamTrackHandles, { }); }
 #endif
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
     Vector<RefPtr<DetachedMediaSourceHandle>> takeDetachedMediaSourceHandles() { return std::exchange(m_detachedMediaSourceHandles, { }); }
@@ -3834,45 +3941,43 @@ private:
                 return false;
         }
 
-        auto makeArrayBufferView = [&] (auto view) -> bool {
-            if (!view)
-                return false;
-            arrayBufferView = toJS(m_lexicalGlobalObject, m_globalObject, WTF::move(view));
-            if (!arrayBufferView)
-                return false;
-            return true;
-        };
-
         if (!ArrayBufferView::verifySubRangeLength(arrayBuffer->byteLength(), byteOffset, length.value_or(0), 1))
             return false;
 
+        auto makeArrayBufferView = [&](auto&& view) -> bool {
+            if (!view)
+                return false;
+            arrayBufferView = toJS(m_lexicalGlobalObject, jsCast<JSDOMGlobalObject*>(m_globalObject), view.releaseNonNull());
+            return true;
+        };
+
         switch (arrayBufferViewSubtag) {
         case DataViewTag:
-            return makeArrayBufferView(DataView::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length).get());
+            return makeArrayBufferView(DataView::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length));
         case Int8ArrayTag:
-            return makeArrayBufferView(Int8Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length).get());
+            return makeArrayBufferView(Int8Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length));
         case Uint8ArrayTag:
-            return makeArrayBufferView(Uint8Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length).get());
+            return makeArrayBufferView(Uint8Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length));
         case Uint8ClampedArrayTag:
-            return makeArrayBufferView(Uint8ClampedArray::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length).get());
+            return makeArrayBufferView(Uint8ClampedArray::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length));
         case Int16ArrayTag:
-            return makeArrayBufferView(Int16Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length).get());
+            return makeArrayBufferView(Int16Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length));
         case Uint16ArrayTag:
-            return makeArrayBufferView(Uint16Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length).get());
+            return makeArrayBufferView(Uint16Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length));
         case Int32ArrayTag:
-            return makeArrayBufferView(Int32Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length).get());
+            return makeArrayBufferView(Int32Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length));
         case Uint32ArrayTag:
-            return makeArrayBufferView(Uint32Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length).get());
+            return makeArrayBufferView(Uint32Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length));
         case Float16ArrayTag:
-            return makeArrayBufferView(Float16Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length).get());
+            return makeArrayBufferView(Float16Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length));
         case Float32ArrayTag:
-            return makeArrayBufferView(Float32Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length).get());
+            return makeArrayBufferView(Float32Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length));
         case Float64ArrayTag:
-            return makeArrayBufferView(Float64Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length).get());
+            return makeArrayBufferView(Float64Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length));
         case BigInt64ArrayTag:
-            return makeArrayBufferView(BigInt64Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length).get());
+            return makeArrayBufferView(BigInt64Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length));
         case BigUint64ArrayTag:
-            return makeArrayBufferView(BigUint64Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length).get());
+            return makeArrayBufferView(BigUint64Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length));
         default:
             return false;
         }
@@ -3909,9 +4014,15 @@ private:
         case PredefinedColorSpaceTag::SRGB:
             result = PredefinedColorSpace::SRGB;
             return true;
+        case PredefinedColorSpaceTag::SRGBLinear:
+            result = PredefinedColorSpace::SRGBLinear;
+            return true;
 #if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
         case PredefinedColorSpaceTag::DisplayP3:
             result = PredefinedColorSpace::DisplayP3;
+            return true;
+        case PredefinedColorSpaceTag::DisplayP3Linear:
+            result = PredefinedColorSpace::DisplayP3Linear;
             return true;
 #endif
         default:
@@ -3959,6 +4070,9 @@ private:
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
         case DestinationColorSpaceDisplayP3Tag:
             destinationColorSpace = DestinationColorSpace::DisplayP3();
+            return true;
+        case DestinationColorSpaceLinearDisplayP3Tag:
+            destinationColorSpace = DestinationColorSpace::LinearDisplayP3();
             return true;
 #endif
 #if PLATFORM(COCOA)
@@ -4706,6 +4820,33 @@ private:
         return getJSValue(*m_rtcEncodedVideoFrames[index]);
     }
 #endif
+    JSValue readReadableStream()
+    {
+        uint32_t readableStreamIndex;
+        if (!read(readableStreamIndex) || !readableStreamIndex) {
+            SERIALIZE_TRACE("FAIL deserialize");
+            fail();
+            return JSValue();
+        }
+        uint32_t messagePortIndex;
+        if (!read(messagePortIndex) || messagePortIndex >= m_messagePorts.size()) {
+            SERIALIZE_TRACE("FAIL deserialize");
+            fail();
+            return JSValue();
+        }
+
+        auto addResult = m_readableStreams.add(readableStreamIndex, nullptr);
+        if (addResult.isNewEntry) {
+            auto readableStreamOrError = ReadableStream::runTransferReceivingSteps(*jsCast<JSDOMGlobalObject*>(m_lexicalGlobalObject), { m_messagePorts.at(messagePortIndex).get() });
+            if (readableStreamOrError.hasException()) {
+                SERIALIZE_TRACE("FAIL creating readable stream");
+                fail();
+                return JSValue();
+            }
+            addResult.iterator->value = readableStreamOrError.releaseReturnValue();
+        }
+        return getJSValue(*addResult.iterator->value);
+    }
 
 #if ENABLE(WEB_CODECS)
     JSValue readWebCodecsEncodedVideoChunk()
@@ -4779,6 +4920,20 @@ private:
         if (!m_mediaStreamTracks[index])
             m_mediaStreamTracks[index] = MediaStreamTrack::create(*protectedExecutionContext(m_lexicalGlobalObject), makeUniqueRefFromNonNullUniquePtr(std::exchange(m_serializedMediaStreamTracks.at(index), { })));
         return getJSValue(*m_mediaStreamTracks[index]);
+    }
+    JSValue readMediaStreamTrackHandle()
+    {
+        uint32_t index;
+        bool indexSuccessfullyRead = read(index);
+        if (!indexSuccessfullyRead || index >= m_serializedMediaStreamTrackHandles.size()) {
+            fail();
+            return JSValue();
+        }
+
+        if (!m_mediaStreamTrackHandles[index])
+            m_mediaStreamTrackHandles[index] = MediaStreamTrackHandle::create(WTF::move(*std::exchange(m_serializedMediaStreamTrackHandles.at(index), { })));
+
+        return getJSValue(*m_mediaStreamTrackHandles[index]);
     }
 #endif
 
@@ -5344,8 +5499,7 @@ private:
 
             if (!m_arrayBuffers[index])
                 m_arrayBuffers[index] = ArrayBuffer::create(WTF::move(m_arrayBufferContents->at(index)));
-
-            return getJSValue(m_arrayBuffers[index].get());
+            return getJSValue(*m_arrayBuffers[index]);
         }
         case SharedArrayBufferTag: {
             // https://html.spec.whatwg.org/multipage/structured-data.html#structureddeserialize
@@ -5436,6 +5590,8 @@ private:
         case RTCEncodedVideoFrameTag:
             return readRTCEncodedVideoFrame();
 #endif
+        case ReadableStreamTag:
+            return readReadableStream();
 #if ENABLE(WEB_CODECS)
         case WebCodecsEncodedVideoChunkTag:
             return readWebCodecsEncodedVideoChunk();
@@ -5449,6 +5605,8 @@ private:
 #if ENABLE(MEDIA_STREAM)
         case MediaStreamTrackTag:
             return readMediaStreamTrack();
+        case MediaStreamTrackHandleTag:
+            return readMediaStreamTrackHandle();
 #endif
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
         case MediaSourceHandleTransferTag:
@@ -5504,6 +5662,7 @@ private:
     Vector<Ref<RTCRtpTransformableFrame>> m_serializedRTCEncodedVideoFrames;
     Vector<RefPtr<RTCEncodedVideoFrame>> m_rtcEncodedVideoFrames;
 #endif
+    HashMap<uint32_t, RefPtr<ReadableStream>> m_readableStreams;
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
     Vector<RefPtr<DetachedMediaSourceHandle>> m_detachedMediaSourceHandles;
     Vector<RefPtr<MediaSourceHandle>> m_mediaSourceHandles;
@@ -5525,6 +5684,8 @@ private:
 #if ENABLE(MEDIA_STREAM)
     Vector<std::unique_ptr<MediaStreamTrackDataHolder>> m_serializedMediaStreamTracks;
     Vector<RefPtr<MediaStreamTrack>> m_mediaStreamTracks;
+    Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>> m_serializedMediaStreamTrackHandles;
+    Vector<RefPtr<MediaStreamTrackHandle>> m_mediaStreamTrackHandles;
 #endif
 
     String blobFilePathForBlobURL(const String& blobURL)
@@ -5546,7 +5707,7 @@ private:
 DeserializationResult CloneDeserializer::deserialize()
 {
     VM& vm = m_lexicalGlobalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     Vector<uint32_t, 16> indexStack;
     Vector<Identifier, 16> propertyNameStack;
@@ -5680,7 +5841,7 @@ DeserializationResult CloneDeserializer::deserialize()
         objectStartState:
         case ObjectStartState: {
             if (outputObjectStack.size() > maximumFilterRecursion)
-                return std::make_pair(JSValue(), SerializationReturnCode::StackOverflowError);
+                return { JSValue(), SerializationReturnCode::StackOverflowError };
             JSObject* outObject = constructEmptyObject(m_lexicalGlobalObject, m_globalObject->objectPrototype());
             addToObjectPool<ObjectTag>(outObject);
             outputObjectStack.append(outObject);
@@ -5718,7 +5879,7 @@ DeserializationResult CloneDeserializer::deserialize()
         mapStartState: {
             if (outputObjectStack.size() > maximumFilterRecursion) {
                 SERIALIZE_TRACE("FAIL deserialize");
-                return std::make_pair(JSValue(), SerializationReturnCode::StackOverflowError);
+                return { JSValue(), SerializationReturnCode::StackOverflowError };
             }
             JSMap* map = JSMap::create(m_lexicalGlobalObject->vm(), m_globalObject->mapStructure());
             addToObjectPool<MapObjectTag>(map);
@@ -5754,7 +5915,7 @@ DeserializationResult CloneDeserializer::deserialize()
         setStartState: {
             if (outputObjectStack.size() > maximumFilterRecursion) {
                 SERIALIZE_TRACE("FAIL deserialize");
-                return std::make_pair(JSValue(), SerializationReturnCode::StackOverflowError);
+                return { JSValue(), SerializationReturnCode::StackOverflowError };
             }
             JSSet* set = JSSet::create(m_lexicalGlobalObject->vm(), m_globalObject->setStructure());
             addToObjectPool<SetObjectTag>(set);
@@ -5813,10 +5974,10 @@ DeserializationResult CloneDeserializer::deserialize()
     }
     ASSERT(outValue);
     ASSERT(!m_failed);
-    return std::make_pair(outValue, SerializationReturnCode::SuccessfullyCompleted);
+    return { outValue, SerializationReturnCode::SuccessfullyCompleted };
 error:
     fail();
-    return std::make_pair(JSValue(), SerializationReturnCode::ValidationError);
+    return { JSValue(), SerializationReturnCode::ValidationError };
 }
 
 #if ASSERT_ENABLED
@@ -5832,7 +5993,7 @@ void validateSerializedResult(CloneSerializer& serializer, SerializationReturnCo
     SERIALIZE_TRACE("validation start");
 
     VM& vm = lexicalGlobalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSGlobalObject* globalObject = lexicalGlobalObject;
     Vector<String> blobURLs;
@@ -5893,7 +6054,7 @@ void validateSerializedResult(CloneSerializer& serializer, SerializationReturnCo
         return;
     }
 
-    if (deserializationResult.second != SerializationReturnCode::SuccessfullyCompleted) {
+    if (deserializationResult.code != SerializationReturnCode::SuccessfullyCompleted) {
         SERIALIZE_TRACE("validation abort due to deserialization failure");
         return;
     }
@@ -5940,7 +6101,8 @@ void validateSerializedResult(CloneSerializer& serializer, SerializationReturnCo
 
 SerializedScriptValue::~SerializedScriptValue() = default;
 
-SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, std::unique_ptr<ArrayBufferContentsArray>&& arrayBufferContentsArray
+SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer
+    , std::unique_ptr<ArrayBufferContentsArray>&& arrayBufferContentsArray
 #if ENABLE(WEB_RTC)
     , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& detachedRTCDataChannels
     , Vector<Ref<RTCRtpTransformableFrame>>&& serializedRTCEncodedAudioFrames
@@ -5957,7 +6119,9 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, std::uniq
 #endif
 #if ENABLE(MEDIA_STREAM)
     , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& serializedMediaStreamTracks
+    , Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>>&& serializedMediaStreamTrackHandles
 #endif
+    , uint64_t exposedMessagePortCount
         )
     : m_internals {
         .data = WTF::move(buffer)
@@ -5968,6 +6132,9 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, std::uniq
 #if ENABLE(WEB_CODECS)
         , .serializedVideoChunks = WTF::move(serializedVideoChunks)
         , .serializedAudioChunks = WTF::move(serializedAudioChunks)
+#endif
+        , .exposedMessagePortCount = exposedMessagePortCount
+#if ENABLE(WEB_CODECS)
         , .serializedVideoFrames = WTF::move(serializedVideoFrames)
         , .serializedAudioData = WTF::move(serializedAudioData)
 #endif
@@ -5980,13 +6147,18 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, std::uniq
 #endif
 #if ENABLE(MEDIA_STREAM)
         , .serializedMediaStreamTracks = WTF::move(serializedMediaStreamTracks)
+        , .serializedMediaStreamTrackHandles = WTF::move(serializedMediaStreamTrackHandles)
 #endif
     }
 {
     m_internals.memoryCost = computeMemoryCost();
 }
 
-SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, Vector<URLKeepingBlobAlive>&& blobHandles, std::unique_ptr<ArrayBufferContentsArray> arrayBufferContentsArray, std::unique_ptr<ArrayBufferContentsArray> sharedBufferContentsArray, Vector<std::optional<DetachedImageBitmap>>&& detachedImageBitmaps
+SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer
+        , Vector<URLKeepingBlobAlive>&& blobHandles
+        , std::unique_ptr<ArrayBufferContentsArray> arrayBufferContentsArray
+        , std::unique_ptr<ArrayBufferContentsArray> sharedBufferContentsArray
+        , Vector<std::optional<DetachedImageBitmap>>&& detachedImageBitmaps
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& detachedOffscreenCanvases
         , Vector<Ref<OffscreenCanvas>>&& inMemoryOffscreenCanvases
@@ -6012,7 +6184,9 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, Vector<UR
 #endif
 #if ENABLE(MEDIA_STREAM)
         , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& serializedMediaStreamTracks
+        , Vector<std::unique_ptr<MediaStreamTrackHandle::DataHolder>>&& serializedMediaStreamTrackHandles
 #endif
+        , uint64_t exposedMessagePortCount
         )
     : m_internals {
         .data = WTF::move(buffer)
@@ -6023,6 +6197,9 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, Vector<UR
 #if ENABLE(WEB_CODECS)
         , .serializedVideoChunks = WTF::move(serializedVideoChunks)
         , .serializedAudioChunks = WTF::move(serializedAudioChunks)
+#endif
+        , .exposedMessagePortCount = exposedMessagePortCount
+#if ENABLE(WEB_CODECS)
         , .serializedVideoFrames = WTF::move(serializedVideoFrames)
         , .serializedAudioData = WTF::move(serializedAudioData)
 #endif
@@ -6035,6 +6212,7 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, Vector<UR
 #endif
 #if ENABLE(MEDIA_STREAM)
         , .serializedMediaStreamTracks = WTF::move(serializedMediaStreamTracks)
+        , .serializedMediaStreamTrackHandles = WTF::move(serializedMediaStreamTrackHandles)
 #endif
         , .sharedBufferContentsArray = WTF::move(sharedBufferContentsArray)
         , .detachedImageBitmaps = WTF::move(detachedImageBitmaps)
@@ -6217,12 +6395,35 @@ static bool canDetachRTCDataChannels(const Vector<Ref<RTCDataChannel>>& channels
 }
 #endif
 
+static bool canTransferReadableStreams(const Vector<Ref<ReadableStream>>& streams)
+{
+    HashSet<Ref<ReadableStream>> visited;
+    for (auto& stream : streams) {
+        if (!stream->canTransfer())
+            return false;
+        // Check the return value of add, we should not encounter duplicates.
+        if (!visited.add(stream.get()))
+            return false;
+    }
+    return true;
+}
+
 #if ENABLE(MEDIA_STREAM)
 static bool canDetachMediaStreamTracks(const Vector<Ref<MediaStreamTrack>>& tracks)
 {
     HashSet<Ref<MediaStreamTrack>> visited;
     for (auto& track : tracks) {
         if (!visited.add(track.get()))
+            return false;
+    }
+    return true;
+}
+
+static bool canDetachMediaStreamTrackHandles(const Vector<Ref<MediaStreamTrackHandle>>& handles)
+{
+    HashSet<RefPtr<MediaStreamTrackHandle>> visited;
+    for (auto& handle : handles) {
+        if (!visited.add(handle.ptr()))
             return false;
     }
     return true;
@@ -6271,6 +6472,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
 #if ENABLE(WEB_RTC)
     Vector<Ref<RTCDataChannel>> dataChannels;
 #endif
+    Vector<Ref<ReadableStream>> readableStreams;
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
     Vector<Ref<MediaSourceHandle>> mediaSourceHandles;
 #endif
@@ -6280,6 +6482,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
 #endif
 #if ENABLE(MEDIA_STREAM)
     Vector<Ref<MediaStreamTrack>> transferredMediaStreamTracks;
+    Vector<Ref<MediaStreamTrackHandle>> transferredMediaStreamTrackHandles;
 #endif
 
     HashSet<JSC::Strong<JSC::JSObject>> visited;
@@ -6328,7 +6531,10 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
             continue;
         }
 #endif
-
+        if (RefPtr readableStream = JSReadableStream::toWrapped(vm, transferable.get())) {
+            readableStreams.append(readableStream.releaseNonNull());
+            continue;
+        }
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
         if (RefPtr handle = JSMediaSourceHandle::toWrapped(vm, transferable.get())) {
             if (handle->isDetached())
@@ -6360,6 +6566,12 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
             transferredMediaStreamTracks.append(track.releaseNonNull());
             continue;
         }
+        if (RefPtr handle = JSMediaStreamTrackHandle::toWrapped(vm, transferable.get())) {
+            if (handle->isDetached())
+                return Exception { ExceptionCode::DataCloneError };
+            transferredMediaStreamTrackHandles.append(handle.releaseNonNull());
+            continue;
+        }
 #endif
 
         return Exception { ExceptionCode::DataCloneError };
@@ -6375,12 +6587,16 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     if (!canDetachRTCDataChannels(dataChannels))
         return Exception { ExceptionCode::DataCloneError };
 #endif
+    if (!canTransferReadableStreams(readableStreams))
+        return Exception { ExceptionCode::DataCloneError };
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
     if (!canDetachMediaSourceHandles(mediaSourceHandles))
         return Exception { ExceptionCode::DataCloneError };
 #endif
 #if ENABLE(MEDIA_STREAM)
     if (!canDetachMediaStreamTracks(transferredMediaStreamTracks))
+        return Exception { ExceptionCode::DataCloneError };
+    if (!canDetachMediaStreamTrackHandles(transferredMediaStreamTrackHandles))
         return Exception { ExceptionCode::DataCloneError };
 #endif
 
@@ -6407,8 +6623,10 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
 #endif
 #if ENABLE(MEDIA_STREAM)
     Vector<RefPtr<MediaStreamTrack>> serializedMediaStreamTracks;
+    Vector<RefPtr<MediaStreamTrackHandle>> serializedMediaStreamTrackHandles;
 #endif
 
+    auto exposedMessagePortsCount = messagePorts.size();
     auto code = CloneSerializer::serialize(&lexicalGlobalObject, value, messagePorts, arrayBuffers, imageBitmaps,
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         offscreenCanvases,
@@ -6420,6 +6638,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
         serializedRTCEncodedAudioFrames,
         serializedRTCEncodedVideoFrames,
 #endif
+        readableStreams,
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
         mediaSourceHandles,
 #endif
@@ -6431,6 +6650,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
 #endif
 #if ENABLE(MEDIA_STREAM)
         serializedMediaStreamTracks,
+        serializedMediaStreamTrackHandles,
 #endif
 #if ENABLE(WEBASSEMBLY)
         wasmModules,
@@ -6476,6 +6696,12 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
         return frame->serialize();
     });
 #endif
+    for (auto& readableStream : readableStreams) {
+        auto detachedOrException = readableStream->runTransferSteps(*JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject));
+        if (detachedOrException.hasException())
+            return detachedOrException.releaseException();
+        messagePorts.append(detachedOrException.releaseReturnValue().readableStreamPort);
+    }
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
     Vector<RefPtr<DetachedMediaSourceHandle>> detachedMediaSourceHandles;
     for (auto& handle : mediaSourceHandles)
@@ -6496,6 +6722,9 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     });
     for (auto& track : transferredMediaStreamTracks)
         track->stopTrack();
+    auto serializedMediaStreamTrackHandleStorages = map(serializedMediaStreamTrackHandles, [](auto& handle) -> std::unique_ptr<MediaStreamTrackHandle::DataHolder> {
+        return handle->detach().moveToUniquePtr();
+    });
 #endif
 
     return adoptRef(*new SerializedScriptValue(WTF::move(buffer), WTF::move(blobHandles), arrayBufferContentsArray.releaseReturnValue(), context == SerializationContext::WorkerPostMessage ? WTF::move(sharedBuffers) : nullptr, WTF::move(detachedImageBitmaps)
@@ -6524,7 +6753,9 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
 #endif
 #if ENABLE(MEDIA_STREAM)
                 , WTF::move(serializedMediaStreamTrackStorages)
+                , WTF::move(serializedMediaStreamTrackHandleStorages)
 #endif
+                , exposedMessagePortsCount
                 ));
 }
 
@@ -6533,7 +6764,7 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::create(StringView string)
     Vector<uint8_t> buffer;
     if (!CloneSerializer::serialize(string, buffer))
         return nullptr;
-    return adoptRef(*new SerializedScriptValue(WTF::move(buffer)));
+    return adoptRef(*new SerializedScriptValue(WTF::move(buffer), { }));
 }
 
 RefPtr<SerializedScriptValue> SerializedScriptValue::create(JSContextRef originContext, JSValueRef apiValue, JSValueRef* exception)
@@ -6541,7 +6772,7 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::create(JSContextRef originC
     JSGlobalObject* lexicalGlobalObject = toJS(originContext);
     VM& vm = lexicalGlobalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSValue value = toJS(lexicalGlobalObject, apiValue);
     auto serializedValue = SerializedScriptValue::create(*lexicalGlobalObject, value);
@@ -6567,20 +6798,21 @@ String SerializedScriptValue::toString() const
 
 JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, JSGlobalObject* globalObject, SerializationErrorMode throwExceptions, bool* didFail)
 {
-    return deserialize(lexicalGlobalObject, globalObject, { }, throwExceptions, didFail);
+    Vector<Ref<MessagePort>> messagePorts;
+    return deserialize(lexicalGlobalObject, globalObject, messagePorts, throwExceptions, didFail);
 }
 
-JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, JSGlobalObject* globalObject, const Vector<Ref<MessagePort>>& messagePorts, SerializationErrorMode throwExceptions, bool* didFail)
+JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, JSGlobalObject* globalObject, Vector<Ref<MessagePort>>& messagePorts, SerializationErrorMode throwExceptions, bool* didFail)
 {
     Vector<String> dummyBlobs;
     Vector<String> dummyPaths;
     return deserialize(lexicalGlobalObject, globalObject, messagePorts, dummyBlobs, dummyPaths, throwExceptions, didFail);
 }
 
-JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, JSGlobalObject* globalObject, const Vector<Ref<MessagePort>>& messagePorts, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths, SerializationErrorMode throwExceptions, bool* didFail)
+JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, JSGlobalObject* globalObject, Vector<Ref<MessagePort>>& messagePorts, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths, SerializationErrorMode throwExceptions, bool* didFail)
 {
     VM& vm = lexicalGlobalObject.vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     DeserializationResult result = CloneDeserializer::deserialize(&lexicalGlobalObject, globalObject, messagePorts, WTF::move(m_internals.detachedImageBitmaps)
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
@@ -6609,24 +6841,26 @@ JSValue SerializedScriptValue::deserialize(JSGlobalObject& lexicalGlobalObject, 
 #endif
 #if ENABLE(MEDIA_STREAM)
         , WTF::move(m_internals.serializedMediaStreamTracks)
+        , WTF::move(m_internals.serializedMediaStreamTrackHandles)
 #endif
+        , m_internals.exposedMessagePortCount
         );
     if (didFail)
-        *didFail = result.second != SerializationReturnCode::SuccessfullyCompleted;
+        *didFail = result.code != SerializationReturnCode::SuccessfullyCompleted;
 
     // Deserialize may throw an exception. Similar to serialize (SerializedScriptValue::create),
     // we'll ensure that we raise this.
     if (scope.exception()) [[unlikely]]
-        result.second = SerializationReturnCode::ValidationError;
+        result.code = SerializationReturnCode::ValidationError;
 
     if (scope.exception()) [[unlikely]]
-        maybeThrowExceptionIfSerializationFailed(lexicalGlobalObject, result.second);
+        maybeThrowExceptionIfSerializationFailed(lexicalGlobalObject, result.code);
     if (throwExceptions == SerializationErrorMode::Throwing)
-        maybeThrowExceptionIfSerializationFailed(lexicalGlobalObject, result.second);
+        maybeThrowExceptionIfSerializationFailed(lexicalGlobalObject, result.code);
 
     // Handling newly thrown exceptions is a bit simpler here since we don't deal with return codes.
     RETURN_IF_EXCEPTION(scope, jsNull());
-    return result.first ? result.first : jsNull();
+    return result.value ? result.value : jsNull();
 }
 
 JSValueRef SerializedScriptValue::deserialize(JSContextRef destinationContext, JSValueRef* exception)
@@ -6634,7 +6868,7 @@ JSValueRef SerializedScriptValue::deserialize(JSContextRef destinationContext, J
     JSGlobalObject* lexicalGlobalObject = toJS(destinationContext);
     VM& vm = lexicalGlobalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSValue value = deserialize(*lexicalGlobalObject, lexicalGlobalObject);
     if (scope.exception()) [[unlikely]] {
@@ -6649,7 +6883,7 @@ JSValueRef SerializedScriptValue::deserialize(JSContextRef destinationContext, J
 
 Ref<SerializedScriptValue> SerializedScriptValue::nullValue()
 {
-    return adoptRef(*new SerializedScriptValue(Vector<uint8_t>()));
+    return adoptRef(*new SerializedScriptValue(Vector<uint8_t>(), { }));
 }
 
 Vector<String> SerializedScriptValue::blobURLs() const
@@ -6821,6 +7055,7 @@ auto SerializedScriptValue::deserializationBehavior(JSC::JSObject& object) -> De
 #endif
 #if ENABLE(MEDIA_STREAM)
         || object.inherits<JSMediaStreamTrack>()
+        || object.inherits<JSMediaStreamTrackHandle>()
 #endif
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
         || object.inherits<JSMediaSourceHandle>()

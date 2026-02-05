@@ -139,7 +139,7 @@ static void decidePolicyForNavigationAction(WKPageRef pageRef, WKNavigationActio
     toImpl(listenerRef)->ignore();
 
     // And instead load it in the inspected page.
-    inspector->protectedInspectedPage()->loadRequest(WTF::move(request));
+    protect(inspector->inspectedPage())->loadRequest(WTF::move(request));
 }
 
 static void getContextMenuFromProposedMenu(WKPageRef pageRef, WKArrayRef proposedMenuRef, WKArrayRef* newMenuRef, WKHitTestResultRef, WKTypeRef, const void*)
@@ -191,11 +191,11 @@ RefPtr<WebPageProxy> WebInspectorUIProxy::platformCreateFrontendPage()
     });
     if (m_underTest)
         preferences->setHiddenPageDOMTimerThrottlingEnabled(false);
-    Ref inspectedPagePreferences = protectedInspectedPage()->preferences();
+    Ref inspectedPagePreferences = protect(inspectedPage())->preferences();
     preferences->setAcceleratedCompositingEnabled(inspectedPagePreferences->acceleratedCompositingEnabled());
     preferences->setForceCompositingMode(inspectedPagePreferences->forceCompositingMode());
     preferences->setThreadedScrollingEnabled(inspectedPagePreferences->threadedScrollingEnabled());
-    auto pageGroup = WebPageGroup::create(WebKit::defaultInspectorPageGroupIdentifierForPage(protectedInspectedPage().get()));
+    auto pageGroup = WebPageGroup::create(WebKit::defaultInspectorPageGroupIdentifierForPage(protect(inspectedPage()).get()));
     auto websiteDataStore = inspectorWebsiteDataStore();
     auto& processPool = WebKit::defaultInspectorProcessPool(inspectionLevel());
 
@@ -456,11 +456,11 @@ void WebInspectorUIProxy::platformAttach()
     }
 
     if (m_attachmentSide == AttachmentSide::Bottom) {
-        unsigned inspectedWindowHeight = gtk_widget_get_allocated_height(protectedInspectedPage()->viewWidget());
+        unsigned inspectedWindowHeight = gtk_widget_get_allocated_height(protect(inspectedPage())->viewWidget());
         unsigned maximumAttachedHeight = inspectedWindowHeight * 3 / 4;
         platformSetAttachedWindowHeight(std::max(s_minimumAttachedHeight, std::min(s_defaultAttachedSize, maximumAttachedHeight)));
     } else {
-        unsigned inspectedWindowWidth = gtk_widget_get_allocated_width(protectedInspectedPage()->viewWidget());
+        unsigned inspectedWindowWidth = gtk_widget_get_allocated_width(protect(inspectedPage())->viewWidget());
         unsigned maximumAttachedWidth = inspectedWindowWidth * 3 / 4;
         platformSetAttachedWindowWidth(std::max(s_minimumAttachedWidth, std::min(s_defaultAttachedSize, maximumAttachedWidth)));
     }
@@ -468,13 +468,13 @@ void WebInspectorUIProxy::platformAttach()
     if (m_client && m_client->attach(*this))
         return;
 
-    webkitWebViewBaseAddWebInspector(WEBKIT_WEB_VIEW_BASE(protectedInspectedPage()->viewWidget()), m_inspectorView.get(), m_attachmentSide);
+    webkitWebViewBaseAddWebInspector(WEBKIT_WEB_VIEW_BASE(protect(inspectedPage())->viewWidget()), m_inspectorView.get(), m_attachmentSide);
     gtk_widget_show(m_inspectorView.get());
 }
 
 void WebInspectorUIProxy::platformDetach()
 {
-    if (!protectedInspectedPage()->hasRunningProcess())
+    if (!protect(inspectedPage())->hasRunningProcess())
         return;
 
     GRefPtr<GtkWidget> inspectorView = m_inspectorView.get();
@@ -506,7 +506,7 @@ void WebInspectorUIProxy::platformSetAttachedWindowHeight(unsigned height)
 
     if (m_client)
         m_client->didChangeAttachedHeight(*this, height);
-    webkitWebViewBaseSetInspectorViewSize(WEBKIT_WEB_VIEW_BASE(protectedInspectedPage()->viewWidget()), height);
+    webkitWebViewBaseSetInspectorViewSize(WEBKIT_WEB_VIEW_BASE(protect(inspectedPage())->viewWidget()), height);
 }
 
 void WebInspectorUIProxy::platformSetAttachedWindowWidth(unsigned width)
@@ -516,7 +516,7 @@ void WebInspectorUIProxy::platformSetAttachedWindowWidth(unsigned width)
 
     if (m_client)
         m_client->didChangeAttachedWidth(*this, width);
-    webkitWebViewBaseSetInspectorViewSize(WEBKIT_WEB_VIEW_BASE(protectedInspectedPage()->viewWidget()), width);
+    webkitWebViewBaseSetInspectorViewSize(WEBKIT_WEB_VIEW_BASE(protect(inspectedPage())->viewWidget()), width);
 }
 
 void WebInspectorUIProxy::platformSetSheetRect(const WebCore::FloatRect&)
@@ -578,7 +578,7 @@ void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::
     GRefPtr<GFile> file = adoptGRef(gtk_file_chooser_get_file(chooser));
     GUniquePtr<char> path(g_file_get_path(file.get()));
     g_file_replace_contents_async(file.get(), data, dataLength, nullptr, false,
-        G_FILE_CREATE_REPLACE_DESTINATION, nullptr, fileReplaceContentsCallback, protectedInspectorPage().get());
+        G_FILE_CREATE_REPLACE_DESTINATION, nullptr, fileReplaceContentsCallback, protect(inspectorPage()).get());
 }
 
 void WebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler)

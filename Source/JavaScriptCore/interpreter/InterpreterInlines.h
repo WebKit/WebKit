@@ -227,7 +227,7 @@ ALWAYS_INLINE void UnwindFunctorBase::notifyDebuggerOfUnwinding(JSGlobalObject* 
         return;
 
     DeferTermination deferScope(m_vm);
-    auto catchScope = DECLARE_CATCH_SCOPE(m_vm);
+    auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(m_vm);
 
     SuspendExceptionScope scope(m_vm);
     if (callFrame->isNativeCalleeFrame()

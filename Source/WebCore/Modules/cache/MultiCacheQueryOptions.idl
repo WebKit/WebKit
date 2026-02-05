@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary MultiCacheQueryOptions : CacheQueryOptions{
+dictionary MultiCacheQueryOptions : CacheQueryOptions {
     DOMString cacheName;
 };

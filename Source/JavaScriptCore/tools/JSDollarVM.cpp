@@ -2305,7 +2305,7 @@ JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCrash, NO_RETURN_DUE_TO_CRASH, 
     DollarVMAssertScope assertScope;
 
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     if (callFrame->argumentCount()) {
         dataLogLn("Dumping ", callFrame->argumentCount(), " values before crashing:");
         const bool addLineFeed = true;
@@ -2327,7 +2327,7 @@ JSC_DEFINE_HOST_FUNCTION(functionBreakpoint, (JSGlobalObject* globalObject, Call
     DollarVMAssertScope assertScope;
     // Nothing should throw here but we might as well double check...
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     UNUSED_PARAM(scope);
     if (!callFrame->argumentCount() || callFrame->argument(0).toBoolean(globalObject))
         WTFBreakpointTrap();

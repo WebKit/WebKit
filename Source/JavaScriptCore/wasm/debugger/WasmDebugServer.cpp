@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmDebugServer.h"
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -98,9 +98,8 @@ bool DebugServer::start()
     m_moduleManager = makeUnique<ModuleManager>();
     m_executionHandler = makeUnique<ExecutionHandler>(*this, *m_moduleManager);
 
-    startAcceptThread();
-
     setState(State::Running);
+    startAcceptThread();
     return true;
 }
 
@@ -569,4 +568,4 @@ bool DebugServer::isConnected() const
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

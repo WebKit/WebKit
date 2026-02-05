@@ -111,7 +111,7 @@ public:
     void clearMarks(const String& markName);
 
     using StartOrMeasureOptions = Variant<String, PerformanceMeasureOptions>;
-    ExceptionOr<Ref<PerformanceMeasure>> measure(JSC::JSGlobalObject&, const String& measureName, std::optional<StartOrMeasureOptions>&&, const String& endMark);
+    ExceptionOr<Ref<PerformanceMeasure>> measure(JSC::JSGlobalObject&, const String& measureName, StartOrMeasureOptions&&, const String& endMark);
     void clearMeasures(const String& measureName);
 
     void addNavigationTiming(DocumentLoader&, Document&, CachedResource&, const DocumentLoadTiming&, const NetworkLoadMetrics&);

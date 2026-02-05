@@ -171,6 +171,16 @@ String contextMenuItemTagCapitalize()
     return WEB_UI_STRING("Capitalize", "Capitalize context menu item");
 }
 
+String contextMenuItemTagConvertToTraditionalChinese()
+{
+    return WEB_UI_STRING("Convert to Traditional Chinese", "Convert to Traditional Chinese context menu item");
+}
+
+String contextMenuItemTagConvertToSimplifiedChinese()
+{
+    return WEB_UI_STRING("Convert to Simplified Chinese", "Convert to Simplified Chinese context menu item");
+}
+
 String contextMenuItemTagChangeBack(const String& replacedString)
 {
     notImplemented();

@@ -67,22 +67,12 @@ WebCredential* AuthenticationChallengeProxy::proposedCredential() const
     return m_webCredential.get();
 }
 
-RefPtr<WebCredential> AuthenticationChallengeProxy::protectedProposedCredential() const
-{
-    return proposedCredential();
-}
-
 WebProtectionSpace* AuthenticationChallengeProxy::protectionSpace() const
 {
     if (!m_webProtectionSpace)
         m_webProtectionSpace = WebProtectionSpace::create(m_coreAuthenticationChallenge.protectionSpace());
 
     return m_webProtectionSpace.get();
-}
-
-RefPtr<WebProtectionSpace> AuthenticationChallengeProxy::protectedProtectionSpace() const
-{
-    return protectionSpace();
 }
 
 } // namespace WebKit

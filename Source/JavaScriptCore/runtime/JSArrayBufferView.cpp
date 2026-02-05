@@ -242,7 +242,7 @@ JSArrayBuffer* JSArrayBufferView::unsharedJSBuffer(JSGlobalObject* globalObject)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (ArrayBuffer* buffer = unsharedBuffer())
-        return vm.m_typedArrayController->toJS(globalObject, this->globalObject(), buffer);
+        return vm.m_typedArrayController->toJS(globalObject, this->globalObject(), *buffer);
     scope.throwException(globalObject, createOutOfMemoryError(globalObject));
     return nullptr;
 }
@@ -252,7 +252,7 @@ JSArrayBuffer* JSArrayBufferView::possiblySharedJSBuffer(JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (ArrayBuffer* buffer = possiblySharedBuffer())
-        return vm.m_typedArrayController->toJS(globalObject, this->globalObject(), buffer);
+        return vm.m_typedArrayController->toJS(globalObject, this->globalObject(), *buffer);
     scope.throwException(globalObject, createOutOfMemoryError(globalObject));
     return nullptr;
 }
@@ -366,6 +366,7 @@ bool JSArrayBufferView::isIteratorProtocolFastAndNonObservable()
     if (!globalObject->isTypedArrayPrototypeIteratorProtocolFastAndNonObservable(typedArrayType))
         return false;
 
+    VM& vm = globalObject->vm();
     Structure* structure = this->structure();
     // This is the fast case. Many TypedArrays will be an original typed array structure.
     if (globalObject->isOriginalTypedArrayStructure(structure, true) || globalObject->isOriginalTypedArrayStructure(structure, false))
@@ -374,7 +375,10 @@ bool JSArrayBufferView::isIteratorProtocolFastAndNonObservable()
     if (getPrototypeDirect() != globalObject->typedArrayPrototype(typedArrayType))
         return false;
 
-    return !structure->hasSpecialProperties();
+    if (getDirectOffset(vm, vm.propertyNames->iteratorSymbol) != invalidOffset)
+        return false;
+
+    return true;
 }
 
 } // namespace JSC

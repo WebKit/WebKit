@@ -27,6 +27,5 @@
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPURenderBundleDescriptor : GPUObjectDescriptorBase {
 };

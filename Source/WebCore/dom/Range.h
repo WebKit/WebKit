@@ -49,10 +49,8 @@ public:
     WEBCORE_EXPORT ~Range();
 
     Node& startContainer() const final { return m_start.container(); }
-    WEBCORE_EXPORT Ref<Node> protectedStartContainer() const;
     unsigned startOffset() const final { return m_start.offset(); }
     Node& endContainer() const final { return m_end.container(); }
-    WEBCORE_EXPORT Ref<Node> protectedEndContainer() const;
     unsigned endOffset() const final { return m_end.offset(); }
     bool collapsed() const final { return m_start == m_end; }
     WEBCORE_EXPORT Node* commonAncestorContainer() const;
@@ -144,7 +142,6 @@ private:
     void updateAssociatedSelection();
     void updateAssociatedHighlight();
     ExceptionOr<RefPtr<DocumentFragment>> processContents(ActionType);
-    Ref<Document> protectedOwnerDocument();
 
     Ref<Document> m_ownerDocument;
     RangeBoundaryPoint m_start;

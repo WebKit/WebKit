@@ -37,11 +37,9 @@
 #include "CSSValuePool.h"
 #include "FontCache.h"
 #include "FontSelectionValueInlines.h"
-#include "Logging.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StyleProperties.h"
 #include <ranges>
-#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -77,6 +75,7 @@ void CSSFontFaceSet::incrementActiveCount()
 {
     ++m_activeCount;
     if (m_activeCount == 1) {
+        m_status = Status::Loading;
         m_fontEventClients.forEach([] (auto& client) {
             client.startedLoading();
         });
@@ -87,6 +86,7 @@ void CSSFontFaceSet::decrementActiveCount()
 {
     --m_activeCount;
     if (!m_activeCount) {
+        m_status = Status::Loaded;
         m_fontEventClients.forEach([] (auto& client) {
             client.completedLoading();
         });
@@ -211,10 +211,6 @@ void CSSFontFaceSet::add(CSSFontFace& face)
 
     addToFacesLookupTable(face);
 
-    m_fontEventClients.forEach([&] (auto& client) {
-        client.didAddFace(face);
-    });
-
     if (face.status() == CSSFontFace::Status::Loading || face.status() == CSSFontFace::Status::TimedOut)
         incrementActiveCount();
 
@@ -250,7 +246,7 @@ void CSSFontFaceSet::removeFromFacesLookupTable(const CSSFontFace& face, const C
         m_facesLookupTable.remove(iterator);
 }
 
-void CSSFontFaceSet::remove(CSSFontFace& face)
+void CSSFontFaceSet::remove(const CSSFontFace& face)
 {
     Ref protect { face };
 
@@ -267,10 +263,6 @@ void CSSFontFaceSet::remove(CSSFontFace& face)
         ASSERT(m_constituentCSSConnections.get(face.cssConnection()) == &face);
         m_constituentCSSConnections.remove(face.cssConnection());
     }
-
-    m_fontEventClients.forEach([&] (auto& client) {
-        client.didDeletedFace(face);
-    });
 
     for (size_t i = 0; i < m_faces.size(); ++i) {
         if (m_faces[i].ptr() == &face) {
@@ -312,14 +304,13 @@ void CSSFontFaceSet::clear()
 {
     for (auto& face : m_faces)
         face->removeClient(*this);
-
-    // FIXME: The spec says to only remove non-CSS-connected items from the set.
     m_faces.clear();
     m_facesLookupTable.clear();
     m_locallyInstalledFacesLookupTable.clear();
     m_cache.clear();
     m_constituentCSSConnections.clear();
     m_facesPartitionIndex = 0;
+    m_status = Status::Loaded;
 }
 
 CSSFontFace& CSSFontFaceSet::operator[](size_t i)
@@ -553,22 +544,15 @@ CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontSelectionRequest request, con
 
 void CSSFontFaceSet::fontStateChanged(CSSFontFace& face, CSSFontFace::Status oldState, CSSFontFace::Status newState)
 {
-    LOG_WITH_STREAM(Fonts, stream << "CSSFontFaceSet " << this << " fontStateChanged " << face.family() << " old state " << (unsigned)oldState << " new state " << (unsigned)newState);
     ASSERT(hasFace(face));
     if (oldState == CSSFontFace::Status::Pending) {
         ASSERT(newState == CSSFontFace::Status::Loading);
-
-        m_fontEventClients.forEach([&] (auto& client) {
-            client.faceDidStartLoading(face);
-        });
-
         incrementActiveCount();
     }
-
     if (newState == CSSFontFace::Status::Success || newState == CSSFontFace::Status::Failure) {
         ASSERT(oldState == CSSFontFace::Status::Loading || oldState == CSSFontFace::Status::TimedOut);
         m_fontEventClients.forEach([&] (auto& client) {
-            client.faceDidFinishLoading(face, newState);
+            client.faceFinished(face, newState);
         });
         decrementActiveCount();
     }

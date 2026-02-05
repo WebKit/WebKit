@@ -133,7 +133,7 @@ void HTMLIFrameElement::attributeChanged(const QualifiedName& name, const AtomSt
         String invalidTokens;
         setSandboxFlags(newValue.isNull() ? SandboxFlags { } : SecurityContext::parseSandboxPolicy(newValue, invalidTokens));
         if (!invalidTokens.isNull())
-            protectedDocument()->addConsoleMessage(MessageSource::Other, MessageLevel::Error, makeString("Error while parsing the 'sandbox' attribute: "_s, invalidTokens));
+            protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Error, makeString("Error while parsing the 'sandbox' attribute: "_s, invalidTokens));
         break;
     }
     case AttributeNames::allowAttr:
@@ -186,7 +186,7 @@ String HTMLIFrameElement::srcdoc() const
 
 ExceptionOr<void> HTMLIFrameElement::setSrcdoc(Variant<RefPtr<TrustedHTML>, String>&& value, SubstituteData::SessionHistoryVisibility sessionHistoryVisibility)
 {
-    auto stringValueHolder = trustedTypeCompliantString(protectedDocument()->protectedContextDocument(), WTF::move(value), "HTMLIFrameElement srcdoc"_s);
+    auto stringValueHolder = trustedTypeCompliantString(protect(protect(document())->contextDocument()), WTF::move(value), "HTMLIFrameElement srcdoc"_s);
 
     if (stringValueHolder.hasException())
         return stringValueHolder.releaseException();

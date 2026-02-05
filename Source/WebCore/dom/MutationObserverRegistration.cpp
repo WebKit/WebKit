@@ -76,7 +76,7 @@ void MutationObserverRegistration::observedSubtreeNodeWillDetach(Node& node)
         return;
 
     node.registerTransientMutationObserver(*this);
-    m_observer->setHasTransientRegistration(node.protectedDocument());
+    m_observer->setHasTransientRegistration(protect(node.document()));
 
     if (m_transientRegistrationNodes.isEmpty()) {
         ASSERT(!m_nodeKeptAlive);

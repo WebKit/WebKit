@@ -210,17 +210,17 @@ void WebAutomationSession::platformSimulateTouchInteraction(WebPageProxy& page, 
     });
 
     _WKTouchEventGenerator *generator = [_WKTouchEventGenerator sharedTouchEventGenerator];
-    UIWindow *window = [page.cocoaView() window];
+    RetainPtr window = [page.cocoaView() window];
 
     switch (interaction) {
     case TouchInteraction::TouchDown:
-        [generator touchDown:locationOnScreen window:window completionBlock:interactionFinished.get()];
+        [generator touchDown:locationOnScreen window:window.get() completionBlock:interactionFinished.get()];
         break;
     case TouchInteraction::LiftUp:
-        [generator liftUp:locationOnScreen window:window completionBlock:interactionFinished.get()];
+        [generator liftUp:locationOnScreen window:window.get() completionBlock:interactionFinished.get()];
         break;
     case TouchInteraction::MoveTo:
-        [generator moveToPoint:locationOnScreen duration:duration.value_or(0_s).seconds() window:window completionBlock:interactionFinished.get()];
+        [generator moveToPoint:locationOnScreen duration:duration.value_or(0_s).seconds() window:window.get() completionBlock:interactionFinished.get()];
         break;
     }
 }

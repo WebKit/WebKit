@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (1,1) size 68x388
             RenderTableRow {TR} at (0,2) size 68x384
               RenderTableCell {TD} at (2,2) size 64x384 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 60x379
+                RenderText {#text} at (2,2) size 60x380
                   text run at (2,2) width 55: "This is a"
                   text run at (2,22) width 54: "test case"
                   text run at (2,42) width 19: "for"

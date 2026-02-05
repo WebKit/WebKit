@@ -51,7 +51,7 @@ SVGGeometryElement::SVGGeometryElement(const QualifiedName& tagName, Document& d
 
 float SVGGeometryElement::getTotalLength() const
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
+    protect(document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
 
     auto* renderer = this->renderer();
     if (!renderer)
@@ -69,7 +69,7 @@ float SVGGeometryElement::getTotalLength() const
 
 ExceptionOr<Ref<SVGPoint>> SVGGeometryElement::getPointAtLength(float distance) const
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
+    protect(document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
 
     auto* renderer = this->renderer();
     // Spec: If current element is a non-rendered element, throw an InvalidStateError.
@@ -92,7 +92,7 @@ ExceptionOr<Ref<SVGPoint>> SVGGeometryElement::getPointAtLength(float distance) 
 
 bool SVGGeometryElement::isPointInFill(DOMPointInit&& pointInit)
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
+    protect(document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
 
     auto* renderer = this->renderer();
     if (!renderer)
@@ -111,7 +111,7 @@ bool SVGGeometryElement::isPointInFill(DOMPointInit&& pointInit)
 
 bool SVGGeometryElement::isPointInStroke(DOMPointInit&& pointInit)
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
+    protect(document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
 
     auto* renderer = this->renderer();
     if (!renderer)
@@ -134,7 +134,7 @@ void SVGGeometryElement::attributeChanged(const QualifiedName& name, const AtomS
         Ref pathLength = m_pathLength;
         pathLength->setBaseValInternal(newValue.toFloat());
         if (pathLength->baseVal() < 0)
-            protectedDocument()->checkedSVGExtensions()->reportError("A negative value for path attribute <pathLength> is not allowed"_s);
+            protect(document())->checkedSVGExtensions()->reportError("A negative value for path attribute <pathLength> is not allowed"_s);
     }
 
     SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);

@@ -66,7 +66,6 @@ private:
 
     WebPage* page() { return m_page.get(); }
     WebCore::ModelPlayerClient* client() { return m_client.get(); }
-    RefPtr<WebCore::ModelPlayerClient> protectedClient() { return m_client.get(); }
 
     template<typename T> void send(T&& message);
     template<typename T, typename C> void sendWithAsyncReply(T&& message, C&& completionHandler);

@@ -448,13 +448,61 @@ void RenderTable::distributeExtraLogicalHeight(LayoutUnit extraLogicalHeight)
     if (extraLogicalHeight <= 0)
         return;
 
-    // FIXME: Distribute the extra logical height between all table sections instead of giving it all to the first one.
-    if (RenderTableSection* section = firstBody())
-        extraLogicalHeight -= section->distributeExtraLogicalHeightToRows(extraLogicalHeight);
+    // Collect tbody sections separately from thead/tfoot
+    Vector<RenderTableSection*> tbodySections;
+    for (CheckedPtr section = topSection(); section; section = sectionBelow(section)) {
+        // A section is a tbody if it's not the header or footer.
+        if (section != m_head.get() && section != m_foot.get())
+            tbodySections.append(section);
+    }
 
-    // FIXME: We really would like to enable this ASSERT to ensure that all the extra space has been distributed.
-    // However our current distribution algorithm does not round properly and thus we can have some remaining height.
-    // ASSERT(!topSection() || !extraLogicalHeight);
+    // If we have tbody sections, distribute all extra height to them only.
+    // This matches the expected behavior where thead/tfoot keep their intrinsic size.
+    if (!tbodySections.isEmpty()) {
+        LayoutUnit totalTBodyHeight = 0;
+        for (auto& section : tbodySections)
+            totalTBodyHeight += section->logicalHeight();
+
+        if (totalTBodyHeight > 0) {
+            // Distribute proportionally among tbodies based on their intrinsic heights
+            LayoutUnit remainingHeight = extraLogicalHeight;
+            for (size_t sectionIndex = 0; sectionIndex < tbodySections.size(); ++sectionIndex) {
+                CheckedPtr section = tbodySections[sectionIndex];
+                LayoutUnit sectionHeight = section->logicalHeight();
+
+                LayoutUnit extraHeightForSection;
+                if (sectionIndex == tbodySections.size() - 1)
+                    extraHeightForSection = remainingHeight;
+                else {
+                    extraHeightForSection = (extraLogicalHeight * sectionHeight) / totalTBodyHeight;
+                    remainingHeight -= extraHeightForSection;
+                }
+
+                section->distributeExtraLogicalHeightToRows(extraHeightForSection);
+            }
+        } else {
+            // All tbodies are empty - distribute equally among them
+            LayoutUnit remainingHeight = extraLogicalHeight;
+            LayoutUnit heightPerSection = extraLogicalHeight / tbodySections.size();
+
+            for (size_t sectionIndex = 0; sectionIndex < tbodySections.size(); ++sectionIndex) {
+                LayoutUnit extraHeightForSection;
+                if (sectionIndex == tbodySections.size() - 1)
+                    extraHeightForSection = remainingHeight;
+                else {
+                    extraHeightForSection = heightPerSection;
+                    remainingHeight -= extraHeightForSection;
+                }
+
+                tbodySections[sectionIndex]->distributeExtraLogicalHeightToRows(extraHeightForSection);
+            }
+        }
+        return;
+    }
+
+    // No tbody sections - fall back to distributing to thead or tfoot.
+    if (CheckedPtr section = topSection())
+        section->distributeExtraLogicalHeightToRows(extraLogicalHeight);
 }
 
 void RenderTable::simplifiedNormalFlowLayout()

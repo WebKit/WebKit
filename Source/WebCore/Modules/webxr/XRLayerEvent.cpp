@@ -40,8 +40,8 @@ Ref<XRLayerEvent> XRLayerEvent::create(const AtomString& type, Init&& initialize
 }
 
 XRLayerEvent::XRLayerEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::XRLayerEvent, type, initializer, isTrusted)
-    , m_layer(initializer.layer.releaseNonNull())
+    : Event(EventInterfaceType::XRLayerEvent, type, WTF::move(initializer), isTrusted)
+    , m_layer(WTF::move(initializer.layer))
 {
 }
 

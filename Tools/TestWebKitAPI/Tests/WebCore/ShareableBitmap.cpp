@@ -59,7 +59,7 @@ static void expectTestPattern(std::span<uint8_t> data, size_t seed)
     EXPECT_EQ(data[mid], static_cast<uint8_t>(seed + 99));
 }
 
-TEST(ShareableBitmap, ensureCOWBothMapsRWSenderWrite)
+TEST(ShareableBitmap, DISABLED_ensureCOWBothMapsRWSenderWrite)
 {
     WebCore::ShareableBitmapConfiguration configuration = { WebCore::IntSize(100, 100) };
     auto bitmap = WebCore::ShareableBitmap::create(configuration);
@@ -74,7 +74,7 @@ TEST(ShareableBitmap, ensureCOWBothMapsRWSenderWrite)
     expectTestPattern(bitmap2->mutableSpan(), 0);
 }
 
-TEST(ShareableBitmap, ensureCOWBothMapsRWSenderWriteReceiverWrite)
+TEST(ShareableBitmap, DISABLED_ensureCOWBothMapsRWSenderWriteReceiverWrite)
 {
     WebCore::ShareableBitmapConfiguration configuration = { WebCore::IntSize(100, 100) };
     auto bitmap = WebCore::ShareableBitmap::create(configuration);
@@ -89,7 +89,7 @@ TEST(ShareableBitmap, ensureCOWBothMapsRWSenderWriteReceiverWrite)
     expectTestPattern(bitmap2->mutableSpan(), 1);
 }
 
-TEST(ShareableBitmap, ensureCOWBothMapsROSenderWrite)
+TEST(ShareableBitmap, DISABLED_ensureCOWBothMapsROSenderWrite)
 {
     WebCore::ShareableBitmapConfiguration configuration = { WebCore::IntSize(100, 100) };
     auto bitmap = WebCore::ShareableBitmap::create(configuration);

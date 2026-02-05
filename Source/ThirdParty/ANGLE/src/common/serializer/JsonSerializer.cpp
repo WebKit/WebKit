@@ -50,18 +50,17 @@ void JsonSerializer::endGroup()
     addValue(name, std::move(group));
 }
 
-void JsonSerializer::addBlob(const std::string &name, const uint8_t *blob, size_t length)
+void JsonSerializer::addBlob(const std::string &name, angle::Span<const uint8_t> blob)
 {
-    addBlobWithMax(name, blob, length, 16);
+    addBlobWithMax(name, blob, 16);
 }
 
 void JsonSerializer::addBlobWithMax(const std::string &name,
-                                    const uint8_t *blob,
-                                    size_t length,
+                                    angle::Span<const uint8_t> blob,
                                     size_t maxSerializedLength)
 {
     unsigned char hash[angle::base::kSHA1Length];
-    angle::base::SHA1HashBytes(blob, length, hash);
+    angle::base::SHA1HashBytes(blob.data(), blob.size(), hash);
     std::ostringstream os;
 
     // Since we don't want to de-serialize the data we just store a checksum of the blob
@@ -76,10 +75,11 @@ void JsonSerializer::addBlobWithMax(const std::string &name,
     hashName << name << "-hash";
     addString(hashName.str(), os.str());
 
-    std::vector<uint8_t> data(
-        (length < maxSerializedLength) ? length : static_cast<size_t>(maxSerializedLength));
-    std::copy(blob, blob + data.size(), data.begin());
-
+    if (blob.size() > maxSerializedLength)
+    {
+        blob = blob.first(maxSerializedLength);
+    }
+    std::vector<uint8_t> data(blob.begin(), blob.end());
     std::ostringstream rawName;
     rawName << name << "-raw[0-" << data.size() - 1 << ']';
     addVector(rawName.str(), data);
@@ -87,7 +87,6 @@ void JsonSerializer::addBlobWithMax(const std::string &name,
 
 void JsonSerializer::addCString(const std::string &name, const char *value)
 {
-    rapidjson::Value tag(name.c_str(), mAllocator);
     rapidjson::Value val(value, mAllocator);
     addValue(name, std::move(val));
 }

@@ -34,15 +34,18 @@ namespace WebCore {
 
 class MockPayment final : public Payment {
 public:
-    explicit MockPayment(ApplePayPayment&& applePayPayment)
+    explicit MockPayment(ApplePayPayment&& applePayPayment, LocalizedApplePayPayment&& localizedApplePayPayment)
         : m_applePayPayment { WTF::move(applePayPayment) }
+        , m_localizedApplePayPayment { WTF::move(localizedApplePayPayment) }
     {
     }
 
     ApplePayPayment toApplePayPayment(unsigned) const final { return m_applePayPayment; }
+    LocalizedApplePayPayment toLocalizedApplePayPayment(unsigned) const final { return m_localizedApplePayPayment; }
 
 private:
     ApplePayPayment m_applePayPayment;
+    LocalizedApplePayPayment m_localizedApplePayPayment;
 };
 
 } // namespace WebCore

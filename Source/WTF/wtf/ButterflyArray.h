@@ -48,9 +48,9 @@ protected:
     {
         static_assert(std::is_final_v<Derived>);
         auto leadingSpan = this->leadingSpan();
-        VectorTypeOperations<LeadingType>::initializeIfNonPOD(leadingSpan.data(), leadingSpan.data() + leadingSpan.size());
+        VectorTypeOperations<LeadingType>::initializeIfNonPOD(leadingSpan.data(), std::to_address(leadingSpan.end()));
         auto trailingSpan = this->trailingSpan();
-        VectorTypeOperations<TrailingType>::initializeIfNonPOD(trailingSpan.data(), trailingSpan.data() + trailingSpan.size());
+        VectorTypeOperations<TrailingType>::initializeIfNonPOD(trailingSpan.data(), std::to_address(trailingSpan.end()));
     }
 
     template<typename... Args>
@@ -108,9 +108,9 @@ public:
     ~ButterflyArray()
     {
         auto leadingSpan = this->leadingSpan();
-        VectorTypeOperations<LeadingType>::destruct(leadingSpan.data(), leadingSpan.data() + leadingSpan.size());
+        VectorTypeOperations<LeadingType>::destruct(leadingSpan.data(), std::to_address(leadingSpan.end()));
         auto trailingSpan = this->trailingSpan();
-        VectorTypeOperations<TrailingType>::destruct(trailingSpan.data(), trailingSpan.data() + trailingSpan.size());
+        VectorTypeOperations<TrailingType>::destruct(trailingSpan.data(), std::to_address(trailingSpan.end()));
     }
 
 protected:

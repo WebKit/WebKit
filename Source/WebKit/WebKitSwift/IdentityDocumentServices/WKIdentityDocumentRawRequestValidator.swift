@@ -32,7 +32,9 @@ import UIKit
 import AppKit
 #endif
 
-@objc @implementation extension WKISO18013Request {
+@objc
+@implementation
+extension WKISO18013Request {
     var encryptionInfo: String?
     var deviceRequest: String?
 
@@ -42,25 +44,33 @@ import AppKit
     }
 }
 
-@objc @implementation extension WKIdentityDocumentRawRequestValidator {
+@objc
+@implementation
+extension WKIdentityDocumentRawRequestValidator {
     private static let isoMdocProtocol = "org.iso.mdoc"
 
     private static let logger = Logger(subsystem: "com.apple.WebKit", category: "DigitalCredentials")
 
     // Used to workaround the fact that `@objc @implementation does not support stored properties whose size can change
     // due to Library Evolution. Do not use this property directly.
-    @nonobjc private let _unsafeValidator = IdentityDocumentWebPresentmentRawRequestValidator() as Any
+    @nonobjc
+    private let unsafeValidator = IdentityDocumentWebPresentmentRawRequestValidator() as Any
 
-    @nonobjc private final var validator: IdentityDocumentWebPresentmentRawRequestValidator {
-        _unsafeValidator as! IdentityDocumentWebPresentmentRawRequestValidator
+    @nonobjc
+    private final var validator: IdentityDocumentWebPresentmentRawRequestValidator {
+        // This is safe because `unsafeValidator` is always the correct type.
+        // swift-format-ignore: NeverForceUnwrap
+        unsafeValidator as! IdentityDocumentWebPresentmentRawRequestValidator
     }
 
     @objc(validateISO18013Request:origin:error:)
     func validate(_ iso18013Request: WKISO18013Request, origin: URL) throws -> WKIdentityDocumentPresentmentMobileDocumentRequest {
         do {
+            // FIXME: rdar://168899773
+            // swift-format-ignore: NeverForceUnwrap
             let requestToEncode = [
                 "deviceRequest": iso18013Request.deviceRequest!,
-                "encryptionInfo": iso18013Request.encryptionInfo!
+                "encryptionInfo": iso18013Request.encryptionInfo!,
             ]
 
             let encodedRequestData = try JSONSerialization.data(withJSONObject: requestToEncode)
@@ -94,11 +104,12 @@ import AppKit
                 throw WKIdentityDocumentPresentmentError(.unknown, userInfo: userInfo)
             }
         } catch {
-            Self.logger.debug("WKIdentityDocumentRawRequestValidator encountered error while validating request \(String(describing: iso18013Request)). Error: \(error)")
+            Self.logger.debug(
+                "WKIdentityDocumentRawRequestValidator encountered error while validating request \(String(describing: iso18013Request)). Error: \(error)"
+            )
 
             throw WKIdentityDocumentPresentmentError(.invalidRequest)
         }
     }
-
 }
 #endif

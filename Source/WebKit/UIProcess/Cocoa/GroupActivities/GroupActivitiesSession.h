@@ -69,7 +69,6 @@ private:
     friend class GroupActivitiesCoordinator;
     GroupActivitiesSession(RetainPtr<WKGroupSession>&&);
     WKGroupSession* groupSession() { return m_groupSession.get(); }
-    RetainPtr<WKGroupSession> protectedGroupSession() { return m_groupSession; }
 
     RetainPtr<WKGroupSession> m_groupSession;
     WeakHashSet<StateChangeObserver> m_stateChangeObservers;

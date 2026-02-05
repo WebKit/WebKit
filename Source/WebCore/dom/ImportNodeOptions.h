@@ -25,11 +25,11 @@
 
 #pragma once
 
+#include <WebCore/CustomElementRegistry.h>
+
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-
-class CustomElementRegistry;
 
 struct ImportNodeOptions {
     bool selfOnly { false };

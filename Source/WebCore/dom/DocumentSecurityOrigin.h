@@ -32,12 +32,7 @@ namespace WebCore {
 
 inline bool Document::isSameOriginAsTopDocument() const
 {
-    return protectedSecurityOrigin()->isSameOriginAs(protectedTopOrigin());
-}
-
-inline Ref<SecurityOrigin> Document::protectedSecurityOrigin() const
-{
-    return SecurityContext::protectedSecurityOrigin().releaseNonNull();
+    return protect(securityOrigin())->isSameOriginAs(protect(topOrigin()));
 }
 
 }

@@ -80,7 +80,6 @@ protected:
 
     bool isAlwaysOnLoggingAllowed() const { return m_isAlwaysOnLoggingAllowed; }
     virtual NSURLSessionTask* task() const = 0;
-    RetainPtr<NSURLSessionTask> protectedTask() const;
     virtual WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const = 0;
 
 private:

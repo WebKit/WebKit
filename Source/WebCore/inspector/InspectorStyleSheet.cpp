@@ -612,12 +612,12 @@ static RefPtr<CSSRuleList> asCSSRuleList(CSSRule* rule)
 
 static String sourceURLForCSSRule(CSSRule& rule)
 {
-    if (auto* parentStyleSheet = rule.parentStyleSheet()) {
+    if (RefPtr parentStyleSheet = rule.parentStyleSheet()) {
         if (auto sourceURL = parentStyleSheet->contents().baseURL().string(); !sourceURL.isEmpty())
             return sourceURL;
 
-        if (auto* ownerDocument = parentStyleSheet->ownerDocument())
-            return InspectorDOMAgent::documentURLString(ownerDocument);
+        if (RefPtr ownerDocument = parentStyleSheet->ownerDocument())
+            return InspectorDOMAgent::documentURLString(ownerDocument.get());
     }
 
     return nullString();
@@ -657,15 +657,15 @@ Ref<JSON::ArrayOf<Inspector::Protocol::CSS::Grouping>> InspectorStyleSheet::buil
 {
     auto groupingsPayload = JSON::ArrayOf<Inspector::Protocol::CSS::Grouping>::create();
 
-    auto* parentRule = &rule;
+    RefPtr parentRule = &rule;
 
     while (parentRule) {
         // The rule for which we are building groupings should not be included in the array of groupings, otherwise
         // every CSSStyleRule will have itself as its first grouping.
-        if (parentRule != &rule) {
-            if (auto groupingRule = buildObjectForGrouping(parentRule))
+        if (parentRule.get() != &rule) {
+            if (auto groupingRule = buildObjectForGrouping(parentRule.get()))
                 groupingsPayload->addItem(groupingRule.releaseNonNull());
-            else if (auto* importRule = dynamicDowncast<CSSImportRule>(parentRule)) {
+            else if (RefPtr importRule = dynamicDowncast<CSSImportRule>(parentRule.get())) {
                 // FIXME: <webkit.org/b/246958> Show import rule as a single rule, instead of two rules for media and layer.
                 auto sourceURL = sourceURLForCSSRule(*importRule);
                 if (auto layerName = importRule->layerName(); !layerName.isNull()) {
@@ -678,11 +678,11 @@ Ref<JSON::ArrayOf<Inspector::Protocol::CSS::Grouping>> InspectorStyleSheet::buil
                     groupingsPayload->addItem(WTF::move(layerRulePayload));
                 }
 
-                if (auto& media = importRule->media(); media.length() && media.mediaText() != "all"_s) {
+                if (Ref media = importRule->media(); media->length() && media->mediaText() != "all"_s) {
                     auto mediaRulePayload = Inspector::Protocol::CSS::Grouping::create()
                         .setType(Inspector::Protocol::CSS::Grouping::Type::MediaImportRule)
                         .release();
-                    mediaRulePayload->setText(media.mediaText());
+                    mediaRulePayload->setText(media->mediaText());
                     if (!sourceURL.isEmpty())
                         mediaRulePayload->setSourceURL(sourceURL);
                     groupingsPayload->addItem(WTF::move(mediaRulePayload));
@@ -695,9 +695,9 @@ Ref<JSON::ArrayOf<Inspector::Protocol::CSS::Grouping>> InspectorStyleSheet::buil
             continue;
         }
 
-        auto* styleSheet = parentRule->parentStyleSheet();
+        RefPtr styleSheet = parentRule->parentStyleSheet();
         while (styleSheet) {
-            auto* media = styleSheet->media();
+            RefPtr media = styleSheet->media();
             // FIXME: <webkit.org/b/246959> Support editing `style` and `link` node media queries.
             if (media && media->length() && media->mediaText() != "all"_s) {
                 auto sheetGroupingPayload = Inspector::Protocol::CSS::Grouping::create()
@@ -706,7 +706,7 @@ Ref<JSON::ArrayOf<Inspector::Protocol::CSS::Grouping>> InspectorStyleSheet::buil
                 sheetGroupingPayload->setText(media->mediaText());
 
                 String sourceURL;
-                if (auto* ownerDocument = styleSheet->ownerDocument())
+                if (RefPtr ownerDocument = styleSheet->ownerDocument())
                     sourceURL = ownerDocument->url().string();
                 else if (!styleSheet->contents().baseURL().isEmpty())
                     sourceURL = styleSheet->contents().baseURL().string();
@@ -1088,14 +1088,14 @@ ExceptionOr<void> InspectorStyleSheet::setText(const String& text)
 
 ExceptionOr<String> InspectorStyleSheet::ruleHeaderText(const InspectorCSSId& id)
 {
-    auto* rule = ruleForId(id);
+    RefPtr rule = ruleForId(id);
     if (!rule)
         return Exception { ExceptionCode::NotFoundError };
 
-    if (auto* cssStyleRule = dynamicDowncast<CSSStyleRule>(rule))
+    if (RefPtr cssStyleRule = dynamicDowncast<CSSStyleRule>(rule.get()))
         return cssStyleRule->selectorText();
 
-    auto sourceData = ruleSourceDataFor(rule);
+    auto sourceData = ruleSourceDataFor(rule.get());
     if (!sourceData)
         return Exception { ExceptionCode::NotFoundError };
 
@@ -1108,25 +1108,25 @@ ExceptionOr<void> InspectorStyleSheet::setRuleHeaderText(const InspectorCSSId& i
     if (!m_pageStyleSheet)
         return Exception { ExceptionCode::NotSupportedError };
 
-    auto* rule = ruleForId(id);
+    RefPtr rule = ruleForId(id);
     if (!rule)
         return Exception { ExceptionCode::NotFoundError };
 
     if (!isValidRuleHeaderText(newHeaderText, rule->styleRuleType(), m_pageStyleSheet->ownerDocument(), rule->nestedContext()))
         return Exception { ExceptionCode::SyntaxError };
 
-    CSSStyleSheet* styleSheet = rule->parentStyleSheet();
+    RefPtr styleSheet = rule->parentStyleSheet();
     if (!styleSheet || !ensureParsedDataReady())
         return Exception { ExceptionCode::NotFoundError };
 
     auto correctedHeaderText = newHeaderText;
 
     // Fast-path the editing of `CSSStyleRules` by using its built-in CSSOM support for editing instead of reparsing the entire style sheet.
-    auto* cssStyleRule = dynamicDowncast<CSSStyleRule>(rule);
+    RefPtr cssStyleRule = dynamicDowncast<CSSStyleRule>(rule.get());
     if (cssStyleRule)
         cssStyleRule->setSelectorText(correctedHeaderText);
 
-    auto sourceData = ruleSourceDataFor(rule);
+    auto sourceData = ruleSourceDataFor(rule.get());
     if (!sourceData)
         return Exception { ExceptionCode::NotFoundError };
 
@@ -1193,10 +1193,10 @@ ExceptionOr<CSSStyleRule*> InspectorStyleSheet::addRule(const String& selector)
 
     ASSERT(m_pageStyleSheet->length());
     unsigned lastRuleIndex = m_pageStyleSheet->length() - 1;
-    CSSRule* rule = m_pageStyleSheet->item(lastRuleIndex);
+    RefPtr rule = m_pageStyleSheet->item(lastRuleIndex);
     ASSERT(rule);
 
-    CSSStyleRule* styleRule = dynamicDowncast<CSSStyleRule>(rule);
+    RefPtr styleRule = dynamicDowncast<CSSStyleRule>(rule.get());
     if (!styleRule) {
         // What we just added has to be a CSSStyleRule - we cannot handle other types of rules yet.
         // If it is not a style rule, pretend we never touched the stylesheet.
@@ -1204,7 +1204,7 @@ ExceptionOr<CSSStyleRule*> InspectorStyleSheet::addRule(const String& selector)
         return Exception { ExceptionCode::SyntaxError };
     }
 
-    return styleRule;
+    return styleRule.get();
 }
 
 ExceptionOr<void> InspectorStyleSheet::deleteRule(const InspectorCSSId& id)
@@ -1215,7 +1215,7 @@ ExceptionOr<void> InspectorStyleSheet::deleteRule(const InspectorCSSId& id)
     RefPtr<CSSStyleRule> rule = dynamicDowncast<CSSStyleRule>(ruleForId(id));
     if (!rule)
         return Exception { ExceptionCode::NotFoundError };
-    CSSStyleSheet* styleSheet = rule->parentStyleSheet();
+    RefPtr styleSheet = rule->parentStyleSheet();
     if (!styleSheet || !ensureParsedDataReady())
         return Exception { ExceptionCode::NotFoundError };
 
@@ -1247,11 +1247,11 @@ CSSRule* InspectorStyleSheet::ruleForId(const InspectorCSSId& id) const
 
 RefPtr<Inspector::Protocol::CSS::CSSStyleSheetBody> InspectorStyleSheet::buildObjectForStyleSheet()
 {
-    CSSStyleSheet* styleSheet = pageStyleSheet();
+    RefPtr styleSheet = pageStyleSheet();
     if (!styleSheet)
         return nullptr;
 
-    RefPtr<CSSRuleList> cssRuleList = asCSSRuleList(styleSheet);
+    RefPtr<CSSRuleList> cssRuleList = asCSSRuleList(styleSheet.get());
 
     auto result = Inspector::Protocol::CSS::CSSStyleSheetBody::create()
         .setStyleSheetId(id())
@@ -1267,19 +1267,19 @@ RefPtr<Inspector::Protocol::CSS::CSSStyleSheetBody> InspectorStyleSheet::buildOb
 
 RefPtr<Inspector::Protocol::CSS::CSSStyleSheetHeader> InspectorStyleSheet::buildObjectForStyleSheetInfo()
 {
-    auto* styleSheet = pageStyleSheet();
+    RefPtr styleSheet = pageStyleSheet();
     if (!styleSheet)
         return nullptr;
 
-    auto* document = styleSheet->ownerDocument();
-    auto* frame = document ? document->frame() : nullptr;
+    RefPtr document = styleSheet->ownerDocument();
+    RefPtr frame = document ? document->frame() : nullptr;
     return Inspector::Protocol::CSS::CSSStyleSheetHeader::create()
         .setStyleSheetId(id())
         .setOrigin(m_origin)
         .setDisabled(styleSheet->disabled())
         .setSourceURL(finalURL())
         .setTitle(styleSheet->title())
-        .setFrameId(m_pageAgent->frameId(frame))
+        .setFrameId(m_pageAgent->frameId(frame.get()))
         .setIsInline(styleSheet->isInline() && styleSheet->startPosition() != TextPosition())
         .setStartLine(styleSheet->startPosition().m_line.zeroBasedInt())
         .setStartColumn(styleSheet->startPosition().m_column.zeroBasedInt())
@@ -1353,7 +1353,7 @@ Vector<Ref<CSSStyleRule>> InspectorStyleSheet::cssStyleRulesSplitFromSameRule(CS
     }
 
     for (auto i = firstIndexOfSplitRule; i < m_flatRules.size(); ++i) {
-        auto* rule = dynamicDowncast<CSSStyleRule>(m_flatRules.at(i).get());
+        RefPtr rule = dynamicDowncast<CSSStyleRule>(m_flatRules.at(i).get());
         if (!rule)
             break;
 
@@ -1416,7 +1416,7 @@ Ref<Inspector::Protocol::CSS::SelectorList> InspectorStyleSheet::buildObjectForS
 
 RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorStyleSheet::buildObjectForRule(CSSStyleRule* rule)
 {
-    CSSStyleSheet* styleSheet = pageStyleSheet();
+    RefPtr styleSheet = pageStyleSheet();
     if (!styleSheet)
         return nullptr;
 
@@ -1534,18 +1534,18 @@ static String computeCanonicalRuleText(const String& styleSheetText, const Strin
 // full style sheet text.
 ExceptionOr<void> InspectorStyleSheet::setRuleStyleText(const InspectorCSSId& id, const String& newStyleDeclarationText, String* outOldStyleDeclarationText, const String* newRuleText, String* outOldRuleText)
 {
-    auto* cssStyleDeclaration = styleForId(id);
+    RefPtr cssStyleDeclaration = styleForId(id);
     if (!cssStyleDeclaration)
         return Exception { ExceptionCode::NotFoundError };
 
-    auto* cssRule = ruleForId(id);
+    RefPtr cssRule = ruleForId(id);
     if (!cssRule)
         return Exception { ExceptionCode::NotFoundError };
 
     if (!ensureParsedDataReady())
         return Exception { ExceptionCode::NotFoundError };
 
-    RefPtr<CSSRuleSourceData> sourceData = ruleSourceDataFor(cssRule);
+    RefPtr<CSSRuleSourceData> sourceData = ruleSourceDataFor(cssRule.get());
     if (!sourceData)
         return Exception { ExceptionCode::NotFoundError };
 
@@ -1586,7 +1586,7 @@ ExceptionOr<String> InspectorStyleSheet::text()
 
 CSSStyleDeclaration* InspectorStyleSheet::styleForId(const InspectorCSSId& id) const
 {
-    auto* rule = dynamicDowncast<CSSStyleRule>(ruleForId(id));
+    RefPtr rule = dynamicDowncast<CSSStyleRule>(ruleForId(id));
     if (!rule)
         return nullptr;
 
@@ -1601,7 +1601,7 @@ void InspectorStyleSheet::fireStyleSheetChanged()
 
 RefPtr<InspectorStyle> InspectorStyleSheet::inspectorStyleForId(const InspectorCSSId& id)
 {
-    CSSStyleDeclaration* style = styleForId(id);
+    RefPtr style = styleForId(id);
     if (!style)
         return nullptr;
 
@@ -1646,7 +1646,7 @@ unsigned InspectorStyleSheet::ruleIndexByStyle(StyleDeclarationOrCSSRule ruleOrD
     ensureFlatRules();
     unsigned index = 0;
     for (auto& rule : m_flatRules) {
-        auto* cssStyleRule = dynamicDowncast<CSSStyleRule>(rule.get());
+        RefPtr cssStyleRule = dynamicDowncast<CSSStyleRule>(rule.get());
 
         auto matches = WTF::switchOn(ruleOrDeclaration,
             [&] (const CSSStyleDeclaration* styleDeclaration) { return cssStyleRule && &cssStyleRule->style() == styleDeclaration; },
@@ -1714,7 +1714,7 @@ bool InspectorStyleSheet::ensureSourceData()
 
     // FIXME: <webkit.org/b/161747> Media control CSS uses out-of-spec selectors in inline user agent shadow root style
     // element. See corresponding workaround in `CSSSelectorParser::extractCompoundFlags`.
-    if (auto* ownerNode = m_pageStyleSheet->ownerNode(); ownerNode && ownerNode->isInUserAgentShadowTree())
+    if (RefPtr ownerNode = m_pageStyleSheet->ownerNode(); ownerNode && ownerNode->isInUserAgentShadowTree())
         context.setUASheetMode();
 
     StyleSheetHandler handler(m_parsedStyleSheet->text(), m_pageStyleSheet->ownerDocument(), ruleSourceDataResult.get());
@@ -1750,15 +1750,15 @@ bool InspectorStyleSheet::resourceStyleSheetText(String* result) const
 
 bool InspectorStyleSheet::inlineStyleSheetText(String* result) const
 {
-    auto* ownerNode = m_pageStyleSheet->ownerNode();
-    if (!is<Element>(ownerNode))
+    RefPtr ownerNode = m_pageStyleSheet->ownerNode();
+    if (!is<Element>(ownerNode.get()))
         return false;
 
-    auto& ownerElement = downcast<Element>(*ownerNode);
-    if (!is<HTMLStyleElement>(ownerElement) && !is<SVGStyleElement>(ownerElement))
+    Ref ownerElement = downcast<Element>(*ownerNode);
+    if (!is<HTMLStyleElement>(ownerElement.ptr()) && !is<SVGStyleElement>(ownerElement.ptr()))
         return false;
 
-    *result = ownerElement.textContent();
+    *result = ownerElement->textContent();
     return true;
 }
 
@@ -1800,8 +1800,8 @@ Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSRule>> InspectorStyleSheet::build
     collectFlatRules(WTF::move(refRuleList), &rules);
 
     for (auto& rule : rules) {
-        if (auto* styleRule = dynamicDowncast<CSSStyleRule>(rule.get())) {
-            if (auto ruleObject = buildObjectForRule(styleRule))
+        if (RefPtr styleRule = dynamicDowncast<CSSStyleRule>(rule.get())) {
+            if (auto ruleObject = buildObjectForRule(styleRule.get()))
                 result->addItem(ruleObject.releaseNonNull());
         }
     }
@@ -1815,7 +1815,7 @@ void InspectorStyleSheet::collectFlatRules(RefPtr<CSSRuleList>&& ruleList, Vecto
         return;
 
     for (unsigned i = 0, size = ruleList->length(); i < size; ++i) {
-        CSSRule* rule = ruleList->item(i);
+        RefPtr rule = ruleList->item(i);
         if (!rule)
             continue;
 
@@ -1823,7 +1823,7 @@ void InspectorStyleSheet::collectFlatRules(RefPtr<CSSRuleList>&& ruleList, Vecto
         case RuleFlatteningStrategy::CommitSelfThenChildren: {
             result->append(rule);
 
-            auto childRuleList = asCSSRuleList(rule);
+            auto childRuleList = asCSSRuleList(rule.get());
             ASSERT(childRuleList);
             collectFlatRules(WTF::move(childRuleList), result);
             break;

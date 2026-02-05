@@ -1,19 +1,19 @@
-layer at (0,0) size 785x844
+layer at (0,0) size 785x843
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x844
-  RenderBlock {HTML} at (0,0) size 785x844
-    RenderBody {BODY} at (8,8) size 769x828
+layer at (0,0) size 785x843
+  RenderBlock {HTML} at (0,0) size 785x843
+    RenderBody {BODY} at (8,8) size 769x827
       RenderBlock {P} at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 283x17
+        RenderText {#text} at (0,0) size 283x18
           text run at (0,0) width 283: "150% zoom, with width and height attributes"
       RenderBlock (anonymous) at (0,34) size 769x372
         RenderText {#text} at (0,354) size 4x17
           text run at (0,354) width 4: " "
         RenderBR {BR} at (492,354) size 0x17
-      RenderBlock {P} at (0,422) size 769x18
-        RenderText {#text} at (0,0) size 303x17
+      RenderBlock {P} at (0,421) size 769x19
+        RenderText {#text} at (0,0) size 303x18
           text run at (0,0) width 303: "150% zoom, without width and height attributes"
-      RenderBlock (anonymous) at (0,456) size 769x372
+      RenderBlock (anonymous) at (0,455) size 769x372
         RenderText {#text} at (0,354) size 4x17
           text run at (0,354) width 4: " "
         RenderBR {BR} at (492,354) size 0x17

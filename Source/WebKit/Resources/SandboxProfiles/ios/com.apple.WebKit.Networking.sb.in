@@ -155,10 +155,12 @@
 
 (with-filter (system-attribute apple-internal)
     (allow mach-lookup
-        (global-name "com.apple.aggregated")
-        (global-name "com.apple.analyticsd")
-        (global-name "com.apple.hangtracerd")
-        (global-name "com.apple.osanalytics.osanalyticshelper")))
+        (global-name
+            "com.apple.aggregated"
+            "com.apple.analyticsd"
+            "com.apple.hangtracerd"
+            "com.apple.networkscored"
+            "com.apple.osanalytics.osanalyticshelper")))
 
 (allow system-sched
     (require-entitlement "com.apple.private.kernel.override-cpumon"))

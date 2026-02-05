@@ -138,27 +138,22 @@ Node::InsertedIntoAncestorResult ShadowRoot::insertedIntoAncestor(InsertionType 
         }
     }
     if (insertionType.connectedToDocument) {
-        protectedDocument()->didInsertInDocumentShadowRoot(*this);
+        protect(document())->didInsertInDocumentShadowRoot(*this);
         if (m_hasScopedCustomElementRegistry) {
             if (RefPtr registry = customElementRegistry())
-                registry->didAssociateWithDocument(protectedDocument());
+                registry->didAssociateWithDocument(protect(document()));
         }
     }
     if (!adoptedStyleSheets().empty() && document().frame())
-        checkedStyleScope()->didChangeActiveStyleSheetCandidates();
+        protect(styleScope())->didChangeActiveStyleSheetCandidates();
     return InsertedIntoAncestorResult::Done;
-}
-
-CheckedRef<Style::Scope> ShadowRoot::checkedStyleScope() const
-{
-    return *m_styleScope;
 }
 
 void ShadowRoot::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     DocumentFragment::removedFromAncestor(removalType, oldParentOfRemovedTree);
     if (removalType.disconnectedFromDocument)
-        protectedDocument()->didRemoveInDocumentShadowRoot(*this);
+        protect(document())->didRemoveInDocumentShadowRoot(*this);
 }
 
 void ShadowRoot::childrenChanged(const ChildChange& childChange)
@@ -219,7 +214,7 @@ CustomElementRegistry* ShadowRoot::registryForBindings() const
 {
     if (usesNullCustomElementRegistry())
         return nullptr;
-    auto* registry = customElementRegistry();
+    SUPPRESS_UNCOUNTED_LOCAL auto* registry = customElementRegistry();
     if (RefPtr window = document().window(); window && !registry)
         registry = &window->ensureCustomElementRegistry();
     return registry;
@@ -235,13 +230,13 @@ ExceptionOr<void> ShadowRoot::replaceChildrenWithMarkup(const String& markup, Op
         return { };
     }
 
-    auto fragment = createFragmentForInnerOuterHTML(*protectedHost(), markup, policy, customElementRegistry());
+    auto fragment = createFragmentForInnerOuterHTML(*protect(host()), markup, policy, customElementRegistry());
     if (fragment.hasException())
         return fragment.releaseException();
     bool usedFastPath = fragment.returnValue()->hasWasParsedWithFastPath();
     auto result = replaceChildrenWithFragment(*this, fragment.releaseReturnValue());
     if (!result.hasException() && usedFastPath)
-        document().updateCachedSetInnerHTML(markup, *this, *protectedHost());
+        document().updateCachedSetInnerHTML(markup, *this, *protect(host()));
     return result;
 }
 
@@ -484,7 +479,7 @@ void ShadowRoot::invalidatePartMappings()
 Vector<Ref<ShadowRoot>> assignedShadowRootsIfSlotted(const Node& node)
 {
     Vector<Ref<ShadowRoot>> result;
-    for (auto* slot = node.assignedSlot(); slot; slot = slot->assignedSlot()) {
+    for (CheckedPtr slot = node.assignedSlot(); slot; slot = slot->assignedSlot()) {
         ASSERT(slot->containingShadowRoot());
         result.append(*slot->containingShadowRoot());
     }

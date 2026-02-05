@@ -36,12 +36,7 @@ class XRLayerEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(XRLayerEvent);
 public:
     struct Init : EventInit {
-        Init() = default;
-        Init(RefPtr<WebXRLayer>&& layer)
-            : EventInit()
-            , layer(WTF::move(layer))
-        { }
-        RefPtr<WebXRLayer> layer;
+        Ref<WebXRLayer> layer;
     };
 
     static Ref<XRLayerEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);

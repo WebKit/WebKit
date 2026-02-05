@@ -58,7 +58,7 @@ static const Document* blobOwner(const SecurityOrigin& blobOrigin)
         return nullptr;
 
     for (auto& document : Document::allDocuments()) {
-        if (document->protectedSecurityOrigin()->isSameOriginAs(blobOrigin))
+        if (protect(document->securityOrigin())->isSameOriginAs(blobOrigin))
             return document.ptr();
     }
     return nullptr;

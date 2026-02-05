@@ -31,7 +31,6 @@ typedef [EnforceRange] long GPUDepthBias;
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUDepthStencilState {
     required GPUTextureFormat format;
 

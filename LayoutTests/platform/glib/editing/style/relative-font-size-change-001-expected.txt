@@ -32,25 +32,25 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x82 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 721x53
+        RenderText {#text} at (14,14) size 721x54
           text run at (14,14) width 721: "Size check should say: 30px. All text in the red boxes should appear to be "
           text run at (14,41) width 54: "30px."
       RenderBlock {DIV} at (0,106) size 784x27
-        RenderText {#text} at (0,0) size 118x26
+        RenderText {#text} at (0,0) size 118x27
           text run at (0,0) width 118: "Size check: "
-        RenderInline {SPAN} at (118,0) size 48x26
-          RenderText {#text} at (118,0) size 48x26
+        RenderInline {SPAN} at (118,0) size 48x27
+          RenderText {#text} at (118,0) size 48x27
             text run at (118,0) width 48: "30px"
       RenderBlock {DIV} at (0,149) size 784x158
         RenderBlock {DIV} at (0,0) size 784x158 [border: (2px solid #FF0000)]
           RenderBlock (anonymous) at (14,14) size 756x34
-            RenderText {#text} at (0,0) size 170x33
+            RenderText {#text} at (0,0) size 170x34
               text run at (0,0) width 170: "There is a tide"
           RenderBlock {DIV} at (14,48) size 756x62 [border: (2px solid #FF0000)]
-            RenderText {#text} at (14,14) size 245x33
+            RenderText {#text} at (14,14) size 245x34
               text run at (14,14) width 245: "In the affairs of men"
           RenderBlock (anonymous) at (14,110) size 756x34
-            RenderText {#text} at (0,0) size 295x33
+            RenderText {#text} at (0,0) size 295x34
               text run at (0,0) width 295: "Which taken at the flood"
 selection start: position 1 of child 0 {#text} of child 1 {DIV} of child 5 {DIV} of body
 selection end:   position 25 of child 2 {#text} of child 1 {DIV} of child 5 {DIV} of body

@@ -60,6 +60,7 @@ static_assert(IsIncreasing<
     , offsetof(DictionaryImplName, stringMember)
     , offsetof(DictionaryImplName, enumMember)
     , offsetof(DictionaryImplName, permissiveEnumMember)
+    , offsetof(DictionaryImplName, permissiveEnumMemberWithDefault)
     , offsetof(DictionaryImplName, callbackMember)
     , offsetof(DictionaryImplName, unionMemberWithDefaultValue)
     , offsetof(DictionaryImplName, nullableUnionWithNullDefaultValue)
@@ -79,7 +80,7 @@ static_assert(IsIncreasing<
     , offsetof(DictionaryImplName, partialCallbackMember)
 #endif
 #if ENABLE(Conditional13) || ENABLE(Conditional14)
-    , offsetof(DictionaryImplName, partialUnsignedLongMemberWithImplementedAs)
+    , offsetof(DictionaryImplName, partialUnsignedLongMember)
 #endif
 #if ENABLE(Conditional13) || ENABLE(Conditional14)
     , offsetof(DictionaryImplName, partialBooleanMemberWithIgnoredConditional)
@@ -138,7 +139,7 @@ template<> ConversionResult<IDLDictionary<DictionaryImplName>> convertDictionary
         nullableUnionWithNullDefaultValueValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "nullableUnionWithNullDefaultValue"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto nullableUnionWithNullDefaultValueConversionResult = convertOptionalWithDefault<IDLNullable<IDLUnion<IDLDOMString, IDLBoolean>>>(lexicalGlobalObject, nullableUnionWithNullDefaultValueValue, [&]() -> ConversionResult<IDLNullable<IDLUnion<IDLDOMString, IDLBoolean>>> { return typename Converter<IDLNullable<IDLUnion<IDLDOMString, IDLBoolean>>>::ReturnType { std::nullopt }; });
+    auto nullableUnionWithNullDefaultValueConversionResult = convertOptionalWithDefault<IDLNullable<IDLUnion<IDLDOMString, IDLBoolean>>>(lexicalGlobalObject, nullableUnionWithNullDefaultValueValue, [&] -> ConversionResult<IDLNullable<IDLUnion<IDLDOMString, IDLBoolean>>> { return typename Converter<IDLNullable<IDLUnion<IDLDOMString, IDLBoolean>>>::ReturnType { std::nullopt }; });
     if (nullableUnionWithNullDefaultValueConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
 #if ENABLE(Conditional13) || ENABLE(Conditional14)
@@ -254,8 +255,30 @@ template<> ConversionResult<IDLDictionary<DictionaryImplName>> convertDictionary
         permissiveEnumMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "permissiveEnumMember"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto permissiveEnumMemberConversionResult = convert<IDLOptional<IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>>>(lexicalGlobalObject, permissiveEnumMemberValue);
+    auto permissiveEnumMemberConversionResult = [&]() -> ConversionResult<IDLOptional<IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>>> {
+        if (permissiveEnumMemberValue.isUndefined())
+            return std::nullopt;
+        auto parseResult = parseEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>(lexicalGlobalObject, permissiveEnumMemberValue);
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
+        return parseResult;
+    }();
     if (permissiveEnumMemberConversionResult.hasException(throwScope)) [[unlikely]]
+        return ConversionResultException { };
+    JSValue permissiveEnumMemberWithDefaultValue;
+    if (isNullOrUndefined)
+        permissiveEnumMemberWithDefaultValue = jsUndefined();
+    else {
+        permissiveEnumMemberWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "permissiveEnumMemberWithDefault"_s));
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
+    }
+    auto permissiveEnumMemberWithDefaultConversionResult = [&]() -> ConversionResult<IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>> {
+        if (permissiveEnumMemberWithDefaultValue.isUndefined())
+            return TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue1;
+        auto parseResult = parseEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>(lexicalGlobalObject, permissiveEnumMemberWithDefaultValue);
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
+        return parseResult.value_or(TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue1);
+    }();
+    if (permissiveEnumMemberWithDefaultConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
     JSValue stringMemberValue;
     if (isNullOrUndefined)
@@ -274,7 +297,7 @@ template<> ConversionResult<IDLDictionary<DictionaryImplName>> convertDictionary
         unionMemberWithDefaultValueValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "unionMemberWithDefaultValue"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto unionMemberWithDefaultValueConversionResult = convertOptionalWithDefault<IDLUnion<IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>, IDLDouble>>(lexicalGlobalObject, unionMemberWithDefaultValueValue, [&]() -> ConversionResult<IDLUnion<IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>, IDLDouble>> { return Converter<IDLUnion<IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>, IDLDouble>>::ReturnType { TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue1 }; });
+    auto unionMemberWithDefaultValueConversionResult = convertOptionalWithDefault<IDLUnion<IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>, IDLDouble>>(lexicalGlobalObject, unionMemberWithDefaultValueValue, [&] -> ConversionResult<IDLUnion<IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>, IDLDouble>> { return Converter<IDLUnion<IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>, IDLDouble>>::ReturnType { TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue1 }; });
     if (unionMemberWithDefaultValueConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
     return DictionaryImplName {
@@ -282,6 +305,7 @@ template<> ConversionResult<IDLDictionary<DictionaryImplName>> convertDictionary
         stringMemberConversionResult.releaseReturnValue(),
         enumMemberConversionResult.releaseReturnValue(),
         permissiveEnumMemberConversionResult.releaseReturnValue(),
+        permissiveEnumMemberWithDefaultConversionResult.releaseReturnValue(),
         callbackMemberConversionResult.releaseReturnValue(),
         unionMemberWithDefaultValueConversionResult.releaseReturnValue(),
         nullableUnionWithNullDefaultValueConversionResult.releaseReturnValue(),
@@ -398,6 +422,9 @@ JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, J
         RETURN_IF_EXCEPTION(throwScope, { });
         result->putDirect(vm, JSC::Identifier::fromString(vm, "permissiveEnumMember"_s), permissiveEnumMemberValue);
     }
+    auto permissiveEnumMemberWithDefaultValue = toJS<IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>>(lexicalGlobalObject, throwScope, dictionary.permissiveEnumMemberWithDefault);
+    RETURN_IF_EXCEPTION(throwScope, { });
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "permissiveEnumMemberWithDefault"_s), permissiveEnumMemberWithDefaultValue);
     if (!IDLDOMString::isNullValue(dictionary.stringMember)) {
         auto stringMemberValue = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, IDLDOMString::extractValueFromNullable(dictionary.stringMember));
         RETURN_IF_EXCEPTION(throwScope, { });

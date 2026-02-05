@@ -83,7 +83,7 @@ inline const AtomString& Element::attributeWithDefaultARIA(const QualifiedName& 
     if (!value.isNull())
         return value;
 
-    auto* defaultARIA = customElementDefaultARIAIfExists();
+    CheckedPtr defaultARIA = customElementDefaultARIAIfExists();
     return defaultARIA ? defaultARIA->valueForAttribute(*this, name) : nullAtom();
 }
 
@@ -113,7 +113,7 @@ inline const URL& Document::maskedURLForBindingsIfNeeded(const URL& url) const
 
 inline URL Element::getURLAttributeForBindings(const QualifiedName& name) const
 {
-    return protectedDocument()->maskedURLForBindingsIfNeeded(getURLAttribute(name));
+    return protect(document())->maskedURLForBindingsIfNeeded(getURLAttribute(name));
 }
 
 inline bool Element::hasAttributesWithoutUpdate() const

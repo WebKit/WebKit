@@ -30,12 +30,12 @@ partial interface Element {
 
     boolean checkVisibility(optional CheckVisibilityOptions options = {});
 
-    undefined scrollIntoView(optional (boolean or ScrollIntoViewOptions) arg);
-    [ImplementedAs=scrollTo] undefined scroll(optional ScrollToOptions options);
+    undefined scrollIntoView(optional (boolean or ScrollIntoViewOptions) arg = {});
+    [ImplementedAs=scrollTo] undefined scroll(optional ScrollToOptions options = {});
     [ImplementedAs=scrollTo] undefined scroll(unrestricted double x, unrestricted double y);
-    undefined scrollTo(optional ScrollToOptions options);
+    undefined scrollTo(optional ScrollToOptions options = {});
     undefined scrollTo(unrestricted double x, unrestricted double y);
-    undefined scrollBy(optional ScrollToOptions options);
+    undefined scrollBy(optional ScrollToOptions options = {});
     undefined scrollBy(unrestricted double x, unrestricted double y);
     attribute long scrollTop; // FIXME(webkit.org/b/188045): should be unrestricted double.
     attribute long scrollLeft; // FIXME(webkit.org/b/188045): should be unrestricted double.

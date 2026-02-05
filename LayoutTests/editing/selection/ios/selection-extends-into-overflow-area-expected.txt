@@ -24,4 +24,4 @@ line
 line
 line
 line
-Selection rects: (left = 9, top = 386, width = 32, height = 19)
+Selection rects: (left = 9, top = 396, width = 32, height = 20)

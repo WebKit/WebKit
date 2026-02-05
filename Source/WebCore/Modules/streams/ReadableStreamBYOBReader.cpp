@@ -156,7 +156,7 @@ void ReadableStreamBYOBReader::initialize(JSDOMGlobalObject& globalObject, Reada
 }
 
 // https://streams.spec.whatwg.org/#readable-stream-byob-reader-read
-void ReadableStreamBYOBReader::read(JSDOMGlobalObject& globalObject, JSC::ArrayBufferView& view, size_t optionMin, Ref<ReadableStreamReadIntoRequest>&& readRequest)
+void ReadableStreamBYOBReader::read(JSDOMGlobalObject& globalObject, JSC::ArrayBufferView& view, uint64_t optionMin, Ref<ReadableStreamReadIntoRequest>&& readRequest)
 {
     ASSERT(m_stream);
     Ref stream = *m_stream;

@@ -11,7 +11,7 @@ function test()
         name: "Console.setConsoleClearAPIEnabled.API.Disabled",
         description: "Check that console.clear() doesn't clear the console when disallowed.",
         async test() {
-            await WI.mainFrameTarget.ConsoleAgent.setConsoleClearAPIEnabled(false);
+            await ConsoleAgent.setConsoleClearAPIEnabled(false);
 
             let cleared = false;
             let clearedListener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.Cleared, (event) => {
@@ -34,7 +34,7 @@ function test()
         name: "Console.setConsoleClearAPIEnabled.API.Enabled",
         description: "Check that console.clear() does clear the console when allowed.",
         async test() {
-            await WI.mainFrameTarget.ConsoleAgent.setConsoleClearAPIEnabled(true);
+            await ConsoleAgent.setConsoleClearAPIEnabled(true);
 
             let cleared = false;
             let clearedListener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.Cleared, (event) => {
@@ -57,7 +57,7 @@ function test()
         name: "Console.setConsoleClearAPIEnabled.Frontend.Disabled",
         description: "Check that the frontend can still clear the console when console.clear() is disallowed.",
         async test() {
-            await WI.mainFrameTarget.ConsoleAgent.setConsoleClearAPIEnabled(false);
+            await ConsoleAgent.setConsoleClearAPIEnabled(false);
 
             let messageAdded = false;
             let messageAddedListener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
@@ -78,7 +78,7 @@ function test()
         name: "Console.setConsoleClearAPIEnabled.Frontend.Enabled",
         description: "Check that the frontend can still clear the console when console.clear() is allowed.",
         async test() {
-            await WI.mainFrameTarget.ConsoleAgent.setConsoleClearAPIEnabled(true);
+            await ConsoleAgent.setConsoleClearAPIEnabled(true);
 
             let messageAdded = false;
             let messageAddedListener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {

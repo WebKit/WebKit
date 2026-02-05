@@ -171,6 +171,7 @@ private:
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) final;
     RefPtr<VideoFrame> videoFrameForCurrentTime() final;
     DestinationColorSpace colorSpace() final;
+    Ref<BitmapImagePromise> bitmapImageForCurrentTime() final;
 
     void setNaturalSize(FloatSize);
     void effectiveRateChanged();

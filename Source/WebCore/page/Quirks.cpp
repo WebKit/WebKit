@@ -143,6 +143,7 @@ static inline bool needsDesktopUserAgentInternal(const URL&) { return false; }
 static inline bool shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeInternal(const URL&) { return false; }
 static inline bool shouldNotAutoUpgradeToHTTPSNavigationInternal(const URL&) { return false; }
 static inline bool shouldDisableBlobFileAccessEnforcementInternal() { return false; }
+static inline bool needsConsistentQueryParameterFilteringInternal(const URL&) { return false; }
 #if PLATFORM(COCOA)
 static inline String standardUserAgentWithApplicationNameIncludingCompatOverridesInternal(const String&, const String&, UserAgentType) { return { }; }
 #endif
@@ -219,7 +220,7 @@ bool Quirks::needsAutoplayPlayPauseEvents() const
     if (allowedAutoplayQuirks(document).contains(AutoplayQuirk::SynthesizedPauseEvents))
         return true;
 
-    return allowedAutoplayQuirks(document->protectedMainFrameDocument().get()).contains(AutoplayQuirk::SynthesizedPauseEvents);
+    return allowedAutoplayQuirks(protect(document->mainFrameDocument()).get()).contains(AutoplayQuirk::SynthesizedPauseEvents);
 }
 
 // netflix.com https://bugs.webkit.org/show_bug.cgi?id=173030
@@ -244,7 +245,7 @@ bool Quirks::needsPerDocumentAutoplayBehavior() const
     ASSERT(document->isTopDocument());
     return allowedAutoplayQuirks(document).contains(AutoplayQuirk::PerDocumentAutoplayBehavior);
 #else
-    return m_quirksData.isNetflix;
+    return m_quirksData.isNetflix || m_quirksData.isNBA;
 #endif
 }
 
@@ -1040,8 +1041,6 @@ Ref<NodeList> Quirks::applyFacebookFlagQuirk(Document& document, NodeList& nodeL
     return StaticElementList::create(WTF::move(elements));
 }
 
-// warbyparker.com rdar://72839707
-// baidu.com rdar://56421276
 bool Quirks::shouldEnableLegacyGetUserMediaQuirk() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
@@ -1241,7 +1240,7 @@ void Quirks::triggerOptionalStorageAccessIframeQuirk(const URL& frameURL, Comple
         if (document->frame() && !m_document->frame()->isMainFrame()) {
             Ref mainFrame = document->frame()->mainFrame();
             if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame); localMainFrame && localMainFrame->document()) {
-                localMainFrame->protectedDocument()->quirks().triggerOptionalStorageAccessIframeQuirk(frameURL, WTF::move(completionHandler));
+                protect(localMainFrame->document())->quirks().triggerOptionalStorageAccessIframeQuirk(frameURL, WTF::move(completionHandler));
                 return;
             }
         }
@@ -1791,6 +1790,22 @@ bool Quirks::needsLaxSameSiteCookieQuirk(const URL& requestURL) const
 
     auto url = protectedDocument()->url();
     return url.protocolIs("https"_s) && url.host() == "login.microsoftonline.com"_s && requestURL.protocolIs("https"_s) && requestURL.host() == "www.bing.com"_s;
+}
+
+bool Quirks::needsConsistentQueryParameterFilteringQuirk(const URL& url) const
+{
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    URL lowercaseURL { url.string().foldCase() };
+    if (!m_document->settings().consistentQueryParameterFilteringQuirkEnabled())
+        return false;
+
+    if (lowercaseURL.host() == "bundle-file"_s || RegistrableDomain { lowercaseURL } == "consistentqueryparameterfiltering.internal"_s)
+        return true;
+
+    if (needsConsistentQueryParameterFilteringInternal(lowercaseURL))
+        return true;
+    return false;
 }
 
 #if PLATFORM(COCOA)
@@ -2619,16 +2634,6 @@ static void handleGuardianQuirks(QuirksData& quirksData, const URL& /* quirksURL
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(MEDIA_STREAM)
-static void handleBaiduQuirks(QuirksData& quirksData, const URL& quirksURL, const String& /* quirksDomainString */, const URL& /* documentURL */)
-{
-    auto topDocumentHost = quirksURL.host();
-    if (topDocumentHost != "www.baidu.com"_s)
-        return;
-
-    // baidu.com rdar://56421276
-    quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldEnableLegacyGetUserMediaQuirk);
-}
-
 static void handleCodepenQuirks(QuirksData& quirksData, const URL& quirksURL, const String& /* quirksDomainString */, const URL& /* documentURL */)
 {
     auto topDocumentHost = quirksURL.host();
@@ -2636,14 +2641,6 @@ static void handleCodepenQuirks(QuirksData& quirksData, const URL& quirksURL, co
         return;
 
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldEnableSpeakerSelectionPermissionsPolicyQuirk);
-}
-
-static void handleWarbyParkerQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
-{
-    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("warbyparker.com"_s);
-
-    // warbyparker.com rdar://72839707
-    quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldEnableLegacyGetUserMediaQuirk);
 }
 
 static void handleACTestingQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
@@ -3045,6 +3042,8 @@ static void handleNBAQuirks(QuirksData& quirksData, const URL& /* quirksURL */, 
 #if PLATFORM(IOS)
     QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("nba.com"_s);
 
+    quirksData.isNBA = true;
+
     quirksData.setQuirkState(QuirksData::SiteSpecificQuirk::ShouldEnterNativeFullscreenWhenCallingElementRequestFullscreen, PAL::currentUserInterfaceIdiomIsSmallScreen());
 #else
     UNUSED_PARAM(quirksData);
@@ -3395,7 +3394,6 @@ void Quirks::determineRelevantQuirks()
 #endif
         { "bbc"_s, &handleBBCQuirks },
 #if ENABLE(MEDIA_STREAM)
-        { "baidu"_s, &handleBaiduQuirks },
         { "codepen"_s, &handleCodepenQuirks },
 #endif
         { "bankofamerica"_s, &handleBankOfAmericaQuirks },
@@ -3494,9 +3492,6 @@ void Quirks::determineRelevantQuirks()
         { "walmart"_s, &handleWalmartQuirks },
 #endif
         { "wikipedia"_s, &handleWikipediaQuirks },
-#if ENABLE(MEDIA_STREAM)
-        { "warbyparker"_s, &handleWarbyParkerQuirks },
-#endif
 #if PLATFORM(MAC)
         { "weather"_s, &handleWeatherQuirks },
 #endif

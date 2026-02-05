@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <memory>
 #include <stdlib.h>
 #include <type_traits>
 

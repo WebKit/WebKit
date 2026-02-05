@@ -92,12 +92,17 @@ ExceptionOr<void> ServiceWorkerClient::postMessage(JSC::JSGlobalObject& globalOb
     MessageWithMessagePorts message = { messageData.releaseReturnValue(), portsOrException.releaseReturnValue() };
     Ref context = downcast<ServiceWorkerGlobalScope>(*scriptExecutionContext());
     auto sourceIdentifier = context->thread()->identifier();
-    callOnMainThread([message = WTF::move(message), destinationIdentifier = identifier(), sourceIdentifier, sourceOrigin = context->protectedSecurityOrigin()->data().isolatedCopy()] {
+    callOnMainThread([message = WTF::move(message), destinationIdentifier = identifier(), sourceIdentifier, sourceOrigin = protect(context->securityOrigin())->data().isolatedCopy()] {
         if (RefPtr connection = SWContextManager::singleton().connection())
             connection->postMessageToServiceWorkerClient(destinationIdentifier, message, sourceIdentifier, sourceOrigin);
     });
 
     return { };
+}
+
+ExceptionOr<void> ServiceWorkerClient::postMessage(JSC::JSGlobalObject& globalObject, JSC::JSValue messageValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
+{
+    return postMessage(globalObject, messageValue, StructuredSerializeOptions { WTF::move(transfer) });
 }
 
 } // namespace WebCore

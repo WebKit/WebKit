@@ -56,7 +56,8 @@ private:
     // ScrollingEffectsControllerClient.
     bool allowsHorizontalStretching(const PlatformWheelEvent&) const final;
     bool allowsVerticalStretching(const PlatformWheelEvent&) const final;
-    bool shouldRubberBandOnSide(BoxSide) const final;
+    bool shouldRubberBandOnSide(BoxSide, FloatSize) const final;
+    bool isScrollDeltaOpposingStretch(ScrollEventAxis, float) const final;
 };
 
 } // namespace WebCore

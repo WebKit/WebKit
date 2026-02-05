@@ -32,10 +32,17 @@
 // - select between the headers generated using built-in or custom build
 //   actions on different SDK versions
 
-// #include statements should go here when the generated header
-// file depends upon C++ types. rdar://165068038 may resolve the need for
-// this.
+// If Swift function parameters or return types depend on C++ types, the
+// relevant headers must be included here. rdar://165068038
+#include "APIArray.h"
 #include "IPCTesterReceiverMessages.h"
+#include "WebBackForwardListItem.h"
+#include "WebBackForwardListMessages.h"
+#include "WebBackForwardListSwiftUtilities.h"
+
+#ifdef __OBJC__
+#include "WKUIDelegatePrivate.h"
+#endif
 
 // rdar://165192318
 IGNORE_CLANG_WARNINGS_BEGIN("arc-bridge-casts-disallowed-in-nonarc")

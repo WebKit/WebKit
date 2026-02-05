@@ -24,11 +24,12 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
 
 #include "ArgumentCoders.h"
 #include "Connection.h"
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
 #include "GestureTypes.h"
 #endif
 #include "MessageNames.h"

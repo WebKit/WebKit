@@ -37,13 +37,14 @@ enum class ToggleState : bool {
 struct ToggleEventData {
     ToggleState oldState;
     ToggleState newState;
+    RefPtr<Element> source;
 };
 
 class ToggleEventTask final: public RefCounted<ToggleEventTask> {
 public:
     static Ref<ToggleEventTask> create(Element&);
 
-    void queue(ToggleState oldState, ToggleState newState);
+    void queue(ToggleState oldState, ToggleState newState, Element* source);
 
 private:
     ToggleEventTask(Element& element)

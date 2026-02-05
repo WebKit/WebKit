@@ -117,22 +117,24 @@ angle::Matrix<float> GetMatrix(const TConstantUnion *paramArray,
                                const unsigned int cols)
 {
     std::vector<float> elements;
+    elements.reserve(rows * cols);
     for (size_t i = 0; i < rows * cols; i++)
         elements.push_back(paramArray[i].getFConst());
     // Transpose is used since the Matrix constructor expects arguments in row-major order,
     // whereas the paramArray is in column-major order. Rows/cols parameters are also flipped below
     // so that the created matrix will have the expected dimensions after the transpose.
-    return angle::Matrix<float>(elements, cols, rows).transpose();
+    return angle::Matrix<float>(std::move(elements), cols, rows).transpose();
 }
 
 angle::Matrix<float> GetMatrix(const TConstantUnion *paramArray, const unsigned int size)
 {
     std::vector<float> elements;
+    elements.reserve(size * size);
     for (size_t i = 0; i < size * size; i++)
         elements.push_back(paramArray[i].getFConst());
     // Transpose is used since the Matrix constructor expects arguments in row-major order,
     // whereas the paramArray is in column-major order.
-    return angle::Matrix<float>(elements, size).transpose();
+    return angle::Matrix<float>(std::move(elements), size).transpose();
 }
 
 void SetUnionArrayFromMatrix(const angle::Matrix<float> &m, TConstantUnion *resultArray)
@@ -140,7 +142,7 @@ void SetUnionArrayFromMatrix(const angle::Matrix<float> &m, TConstantUnion *resu
     // Transpose is used since the input Matrix is in row-major order,
     // whereas the actual result should be in column-major order.
     angle::Matrix<float> result       = m.transpose();
-    std::vector<float> resultElements = result.elements();
+    angle::Span<const float> resultElements = result.elements();
     for (size_t i = 0; i < resultElements.size(); i++)
         resultArray[i].setFConst(resultElements[i]);
 }

@@ -1258,7 +1258,7 @@ typedef struct WGPURequiredLimits {
 } WGPURequiredLimits WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUShaderModuleDescriptor {
-    char const * wgslDescriptor;
+    WTF::String wgslDescriptor;
     WGPU_NULLABLE char const * label;
     size_t hintCount;
     WGPUShaderModuleCompilationHint const * hints;

@@ -279,7 +279,7 @@ void RenderTreeBuilder::Block::attachIgnoringContinuation(RenderBlock& parent, R
     }
 
     // No suitable existing anonymous box - create a new one.
-    auto newBox = Block::createAnonymousBlockWithStyle(parent.protectedDocument(), parent.style());
+    auto newBox = Block::createAnonymousBlockWithStyle(protect(parent.document()), parent.style());
     auto& box = *newBox;
     m_builder.attachToRenderElement(parent, WTF::move(newBox), beforeChild);
     m_builder.attach(box, WTF::move(child));

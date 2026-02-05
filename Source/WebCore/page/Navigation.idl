@@ -53,34 +53,25 @@
   attribute EventHandler oncurrententrychange;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary NavigationUpdateCurrentEntryOptions {
+dictionary NavigationUpdateCurrentEntryOptions {
   required any state;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary NavigationOptions {
+dictionary NavigationOptions {
   any info;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary NavigationNavigateOptions : NavigationOptions {
+dictionary NavigationNavigateOptions : NavigationOptions {
   any state;
   NavigationHistoryBehavior history = "auto";
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary NavigationReloadOptions : NavigationOptions {
+dictionary NavigationReloadOptions : NavigationOptions {
   any state;
 };
 
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary NavigationResult {
   [BypassDocumentFullyActiveCheck] Promise<NavigationHistoryEntry> committed;
   [BypassDocumentFullyActiveCheck] Promise<NavigationHistoryEntry> finished;

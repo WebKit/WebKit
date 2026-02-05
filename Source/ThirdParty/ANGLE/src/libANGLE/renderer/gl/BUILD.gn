@@ -18,9 +18,6 @@ config("angle_gl_backend_config") {
   if (angle_enable_gl_desktop_backend) {
     defines += [ "ANGLE_ENABLE_GL_DESKTOP_BACKEND" ]
   }
-  if (angle_enable_gl_null) {
-    defines += [ "ANGLE_ENABLE_OPENGL_NULL" ]
-  }
   if (angle_use_gbm) {
     defines += [ "ANGLE_USE_GBM" ]
   }

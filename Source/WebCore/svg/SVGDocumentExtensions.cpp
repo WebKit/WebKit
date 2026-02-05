@@ -85,7 +85,7 @@ void SVGDocumentExtensions::startAnimations()
     // In the future we should refactor the use-element to avoid this. See https://webkit.org/b/53704
     auto timeContainers = copyToVectorOf<Ref<SVGSVGElement>>(m_timeContainers);
     for (auto& element : timeContainers)
-        element->protectedTimeContainer()->begin();
+        protect(element->timeContainer())->begin();
 }
 
 void SVGDocumentExtensions::pauseAnimations()

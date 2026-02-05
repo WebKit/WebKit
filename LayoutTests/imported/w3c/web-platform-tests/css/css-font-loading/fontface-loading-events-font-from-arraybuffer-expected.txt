@@ -1,5 +1,0 @@
-Font loading test
-
-PASS The initial ready promise fired
-PASS Loading a font from an ArrayBuffer should fire a `loadingdone` event with the correct `fontfaceset`
-

@@ -32,7 +32,6 @@ typedef [EnforceRange] unsigned long long WebCodecsAudioEncoderConfigBitrate;
     Conditional=WEB_CODECS,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary WebCodecsAudioEncoderConfig {
     required DOMString codec;
     required WebCodecsAudioEncoderConfigSize sampleRate;

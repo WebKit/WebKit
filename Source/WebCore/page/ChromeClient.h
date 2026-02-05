@@ -23,6 +23,7 @@
 
 #include <WebCore/AutoplayEvent.h>
 #include <WebCore/ContactInfo.h>
+#include <WebCore/CornerRadii.h>
 #include <WebCore/DatabaseDetails.h>
 #include <WebCore/DeviceOrientationOrMotionPermissionState.h>
 #include <WebCore/DisabledAdaptations.h>
@@ -176,7 +177,6 @@ enum class AXLoadingEvent : uint8_t;
 enum class AXNotification : uint8_t;
 enum class AXTextChange : uint8_t;
 enum class BroadcastFocusedElement : bool;
-enum class CookieConsentDecisionResult : uint8_t;
 enum class DidFilterLinkDecoration : bool { No, Yes };
 enum class IsLoggedIn : uint8_t;
 enum class LinkDecorationFilteringTrigger : uint8_t;
@@ -251,10 +251,7 @@ public:
     virtual bool canRunModal() const = 0;
     virtual void runModal() = 0;
 
-    virtual bool toolbarsVisible() const = 0;
-    virtual bool statusbarVisible() const = 0;
-    virtual bool scrollbarsVisible() const = 0;
-    virtual bool menubarVisible() const = 0;
+    virtual bool isPopup() const = 0;
 
     virtual void setResizable(bool) = 0;
 
@@ -325,6 +322,8 @@ public:
 
     virtual void scrollContainingScrollViewsToRevealRect(const IntRect&) const { }; // Currently only Mac has a non empty implementation.
     virtual void scrollMainFrameToRevealRect(const IntRect&) const { };
+
+    virtual CornerRadii scrollbarAvoidanceCornerRadii() const { return { }; }
 
     virtual bool shouldUnavailablePluginMessageBeButton(PluginUnavailabilityReason) const { return false; }
     virtual void unavailablePluginButtonClicked(Element&, PluginUnavailabilityReason) const { }
@@ -587,8 +586,6 @@ public:
     virtual void postAccessibilityFrameLoadingEventNotification(AccessibilityObject*, AXLoadingEvent) = 0;
 #endif
 
-    virtual bool selectItemWritingDirectionIsNatural() = 0;
-    virtual bool selectItemAlignmentFollowsMenuWritingDirection() = 0;
     // Checks if there is an opened popup, called by RenderMenuList::showPopup().
     virtual RefPtr<PopupMenu> createPopupMenu(PopupMenuClient&) const = 0;
     virtual RefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient&) const = 0;
@@ -732,8 +729,6 @@ public:
 #endif
 
     virtual void didAddOrRemoveViewportConstrainedObjects() { }
-
-    virtual void requestCookieConsent(CompletionHandler<void(CookieConsentDecisionResult)>&&) = 0;
 
     virtual bool isUsingUISideCompositing() const { return false; }
     

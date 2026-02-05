@@ -387,8 +387,21 @@ inline void vmZeroAndPurge(void* p, size_t vmSize, VMTag usage)
     BUNUSED_PARAM(usage);
 
     vmValidate(p, vmSize);
-    DWORD result = DiscardVirtualMemory(p, vmSize);
-    RELEASE_BASSERT(result == ERROR_SUCCESS);
+
+    size_t totalSeen = 0;
+    void* currentPtr = p;
+    while (totalSeen < vmSize) {
+        MEMORY_BASIC_INFORMATION memInfo;
+        VirtualQuery(currentPtr, &memInfo, sizeof(memInfo));
+        RELEASE_BASSERT(memInfo.RegionSize > 0);
+        size_t chunkSize = std::min(memInfo.RegionSize, vmSize - totalSeen);
+        BOOL freeResult = VirtualFree(currentPtr, chunkSize, MEM_DECOMMIT);
+        RELEASE_BASSERT(freeResult);
+        void* allocResult = VirtualAlloc(currentPtr, chunkSize, MEM_COMMIT, PAGE_READWRITE);
+        RELEASE_BASSERT(allocResult == currentPtr);
+        currentPtr = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(currentPtr) + memInfo.RegionSize);
+        totalSeen += memInfo.RegionSize;
+    }
 }
 
 inline void vmDeallocatePhysicalPages(void* p, size_t vmSize)

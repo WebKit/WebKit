@@ -821,7 +821,7 @@ angle::Result ProgramExecutableVk::load(ContextVk *contextVk,
         {
             bool compressedData = false;
             stream->readBool(&compressedData);
-            stream->readBytes(compressedPipelineData.data(), compressedPipelineDataSize);
+            stream->readBytes(compressedPipelineData);
             // Initialize the pipeline cache based on cached data.
             ANGLE_TRY(initializePipelineCache(contextVk, compressedData, compressedPipelineData));
         }
@@ -878,7 +878,7 @@ void ProgramExecutableVk::save(ContextVk *contextVk,
         if (cacheData.size() > 0)
         {
             stream->writeBool(contextVk->getFeatures().enablePipelineCacheDataCompression.enabled);
-            stream->writeBytes(cacheData.data(), cacheData.size());
+            stream->writeBytes(cacheData);
         }
     }
 }
@@ -1008,7 +1008,7 @@ angle::Result ProgramExecutableVk::preparePipelineCacheForWarmUp(
                                  ? gl::PrimitiveMode::Patches
                              : mExecutable->hasLinkedShaderStage(gl::ShaderType::Geometry)
                                  ? mExecutable->getGeometryShaderInputPrimitiveType()
-                                 : gl::PrimitiveMode::TriangleStrip;
+                                 : gl::PrimitiveMode::Triangles;
     SetupDefaultPipelineState(context, *mExecutable, mode, pipelineRobustness,
                               pipelineProtectedAccess, subset, &mWarmUpGraphicsPipelineDesc);
 
@@ -2198,7 +2198,12 @@ void ProgramExecutableVk::updateShaderResourcesWithSharedCacheKey(
             // For simplicity, we do not check if uniform is active or duplicate. The worst case is
             // we unnecessarily delete the cache entry when image bound to inactive uniform is
             // destroyed.
-            activeImages[imageUnit]->onNewDescriptorSet(newSharedCacheKey);
+            TextureVk *textureVk = activeImages[imageUnit];
+            if (!textureVk)
+            {
+                continue;
+            }
+            textureVk->onNewDescriptorSet(newSharedCacheKey);
         }
     }
 }

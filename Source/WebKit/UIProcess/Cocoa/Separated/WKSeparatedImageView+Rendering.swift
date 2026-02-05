@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if HAVE_CORE_ANIMATION_SEPARATED_LAYERS && compiler(>=6.0)
+#if HAVE_CORE_ANIMATION_SEPARATED_LAYERS && compiler(>=6.2)
 
 #if canImport(CoreRE)
 @_weakLinked internal import CoreRE
@@ -74,7 +74,7 @@ extension WKSeparatedImageView {
 
         var duration = SeparatedImageViewConstants.longFadeAnimationDuration
         #if canImport(RealityFoundation, _version: 387)
-        if let imageHash, ImagePresentationCache.shared.get(for: imageHash) != nil {
+        if let imageHash, ImagePresentationCache.shared[imageHash] != nil {
             duration = SeparatedImageViewConstants.shortFadeAnimationDuration
         }
         #endif
@@ -163,8 +163,7 @@ extension WKSeparatedImageView {
 
     func updateUI() {
         #if canImport(RealityFoundation, _version: 387)
-        if isSeparated, viewMode == .portal, spatial3DImage == nil, let imageHash, ImagePresentationCache.shared.get(for: imageHash) == nil
-        {
+        if isSeparated, viewMode == .portal, spatial3DImage == nil, let imageHash, ImagePresentationCache.shared[imageHash] == nil {
             if spinner == nil {
                 spinner = WKSeparatedImageView.generationQueueSpinnerView()
                 spinner?.alpha = 0

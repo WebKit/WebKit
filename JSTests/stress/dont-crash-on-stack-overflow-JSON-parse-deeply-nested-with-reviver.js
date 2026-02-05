@@ -28,7 +28,5 @@ try {
     let parsed = JSON.parse(stringified, identityReviver);
 } catch(e) {
     if (e != "RangeError: Maximum call stack size exceeded.")
-        throw "FAILED";
-    else
-        print("Gracefully caught stack overflow error")
+        throw e;
 }

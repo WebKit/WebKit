@@ -23,9 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary GetComposedRangesOptions {
+// https://w3c.github.io/selection-api/#dom-getcomposedrangesoptions
+dictionary GetComposedRangesOptions {
     sequence<ShadowRoot> shadowRoots = [];
 };
 

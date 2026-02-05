@@ -169,7 +169,6 @@ public:
     virtual IDBClient::IDBConnectionProxy* idbConnectionProxy() = 0;
 
     virtual SocketProvider* socketProvider() = 0;
-    RefPtr<SocketProvider> protectedSocketProvider();
 
     virtual GraphicsClient* graphicsClient() { return nullptr; }
 
@@ -193,12 +192,10 @@ public:
     virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) = 0;
 
     virtual SecurityOrigin& topOrigin() const = 0;
-    Ref<SecurityOrigin> protectedTopOrigin() const;
 
     virtual bool shouldBypassMainWorldContentSecurityPolicy() const { return false; }
 
     PublicURLManager& publicURLManager();
-    Ref<PublicURLManager> protectedPublicURLManager();
 
     virtual void suspendActiveDOMObjects(ReasonForSuspension);
     virtual void resumeActiveDOMObjects(ReasonForSuspension);
@@ -299,7 +296,6 @@ public:
     inline DOMTimer* findTimeout(int timeoutId); // Defined in ScriptExecutionContextInlines.h
 
     virtual JSC::VM& vm() = 0;
-    virtual Ref<JSC::VM> protectedVM();
     virtual JSC::VM* vmIfExists() const = 0;
 
     void adjustMinimumDOMTimerInterval(Seconds oldMinimumTimerInterval);
@@ -427,7 +423,6 @@ private:
 
     void checkConsistency() const;
     WEBCORE_EXPORT GuaranteedSerialFunctionDispatcher& nativePromiseDispatcher();
-    WEBCORE_EXPORT Ref<GuaranteedSerialFunctionDispatcher> protectedNativePromiseDispatcher();
 
     WeakHashSet<MessagePort, WeakPtrImplWithEventTargetData> m_messagePorts;
     WeakHashSet<ContextDestructionObserver> m_destructionObservers;

@@ -286,7 +286,7 @@ public:
     AccessibilityObjectInclusion defaultObjectInclusion() const;
     inline bool isIgnoredByDefault() const;
     bool includeIgnoredInCoreTree() const;
-    bool isARIAHidden() const;
+    virtual bool isARIAHidden() const;
 
     bool isShowingValidationMessage() const;
     String validationMessage() const;
@@ -515,6 +515,7 @@ public:
     RetainPtr<RemoteAXObjectRef> remoteParent() const final;
     FloatRect convertRectToPlatformSpace(const FloatRect&, AccessibilityConversionSpace) const final;
     RetainPtr<id> remoteFramePlatformElement() const override { return nil; }
+    pid_t remoteFrameProcessIdentifier() const override { return 0; }
 #endif
     bool hasRemoteFrameChild() const override { return false; }
 
@@ -756,7 +757,7 @@ public:
     void mathPostscripts(AccessibilityMathMultiscriptPairs&) override { }
 
     // Visibility.
-    bool isAXHidden() const;
+    virtual bool isAXHidden() const;
     bool isRenderHidden() const;
     inline bool isHidden() const;
     bool isOnScreen() const final;

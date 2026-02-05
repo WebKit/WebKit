@@ -65,7 +65,6 @@ assembler/ProbeStack.cpp
 assembler/SecureARM64EHashPins.cpp
 
 b3/air/AirAllocateRegistersAndStackAndGenerateCode.cpp
-b3/air/AirAllocateRegistersAndStackByLinearScan.cpp
 b3/air/AirAllocateRegistersByGraphColoring.cpp
 b3/air/AirAllocateRegistersByGreedy.cpp
 b3/air/AirAllocateStackByGraphColoring.cpp
@@ -153,11 +152,9 @@ b3/B3InferSwitches.cpp
 b3/B3InsertionSet.cpp
 b3/B3Kind.cpp
 b3/B3LegalizeMemoryOffsets.cpp
-b3/B3LowerInt64.cpp
 b3/B3LowerMacros.cpp
 b3/B3LowerMacrosAfterOptimizations.cpp
 b3/B3LowerToAir.cpp
-b3/B3LowerToAir32_64.cpp
 b3/B3MathExtras.cpp
 b3/B3MemoryValue.cpp
 b3/B3MoveConstants.cpp
@@ -199,6 +196,7 @@ b3/B3WasmStructFieldValue.cpp
 b3/B3WasmStructGetValue.cpp
 b3/B3WasmStructNewValue.cpp
 b3/B3WasmStructSetValue.cpp
+b3/B3WasmRefTypeCheckValue.cpp
 b3/B3Width.cpp
 
 builtins/BuiltinExecutables.cpp
@@ -472,6 +470,7 @@ disassembler/RISCV64Disassembler.cpp
 disassembler/X86Disassembler.cpp
 
 disassembler/ARM64/A64DOpcode.cpp
+disassembler/ARM64/Binja.c @no-unify
 
 disassembler/zydis/Zydis.c
 
@@ -709,6 +708,7 @@ llint/LLIntSlowPaths.cpp
 llint/LLIntThunks.cpp
 
 parser/Lexer.cpp
+parser/LexerUnicodeProperties.cpp
 parser/ModuleAnalyzer.cpp
 parser/Nodes.cpp
 parser/NodesAnalyzeModule.cpp
@@ -775,7 +775,7 @@ runtime/CacheableIdentifier.cpp
 runtime/CachedBytecode.cpp
 runtime/CachedSpecialPropertyAdaptiveStructureWatchpoint.cpp
 runtime/CachedTypes.cpp
-runtime/CatchScope.cpp
+runtime/TopExceptionScope.cpp
 runtime/ClassInfo.cpp
 runtime/ClonedArguments.cpp
 runtime/CodeCache.cpp
@@ -878,6 +878,7 @@ runtime/IntlRelativeTimeFormatConstructor.cpp
 runtime/IntlRelativeTimeFormatPrototype.cpp
 runtime/IntlSegmentIterator.cpp
 runtime/IntlSegmentIteratorPrototype.cpp
+runtime/IntlSegmentDataObject.cpp
 runtime/IntlSegmenter.cpp
 runtime/IntlSegmenterConstructor.cpp
 runtime/IntlSegmenterPrototype.cpp
@@ -1148,10 +1149,8 @@ tools/SourceProfiler.cpp
 tools/VMInspector.cpp
 
 wasm/WasmOMGIRGenerator.cpp
-wasm/WasmOMGIRGenerator32_64.cpp
 wasm/WasmBBQDisassembler.cpp
 wasm/WasmBBQJIT.cpp @no-unify
-wasm/WasmBBQJIT32_64.cpp @no-unify
 wasm/WasmBBQJIT64.cpp @no-unify
 wasm/WasmBBQPlan.cpp
 wasm/WasmBinding.cpp

@@ -31,7 +31,6 @@ typedef [EnforceRange] unsigned long GPUShaderStageFlags;
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUBindGroupLayoutEntry {
     required GPUIndex32 binding;
     required GPUShaderStageFlags visibility;

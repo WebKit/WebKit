@@ -39,6 +39,7 @@ enum class PlatformMediaSessionMediaType : uint8_t {
     VideoAudio,
     Audio,
     WebAudio,
+    DOMMediaSession,
 };
 
 enum class PlatformMediaSessionState : uint8_t {

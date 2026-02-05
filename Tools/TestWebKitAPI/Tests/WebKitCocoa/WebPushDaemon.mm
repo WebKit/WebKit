@@ -427,16 +427,16 @@ public:
     void sendWithAsyncReplyWithoutUsingIPCConnection(M&&, CH&&) const;
 
 private:
-    XPCObjectPtr<xpc_object_t> messageDictionaryFromEncoder(TestEncoder&&) const;
+    OSObjectPtr<xpc_object_t> messageDictionaryFromEncoder(TestEncoder&&) const;
 
-    XPCObjectPtr<xpc_connection_t> m_connection;
+    OSObjectPtr<xpc_connection_t> m_connection;
     bool m_shouldIncrementProtocolVersionForTesting { false };
 };
 
-XPCObjectPtr<xpc_object_t> WebPushXPCConnectionMessageSender::messageDictionaryFromEncoder(TestEncoder&& encoder) const
+OSObjectPtr<xpc_object_t> WebPushXPCConnectionMessageSender::messageDictionaryFromEncoder(TestEncoder&& encoder) const
 {
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto dictionary = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
 
     uint64_t protocolVersion = WebKit::WebPushD::protocolVersionValue;
     if (m_shouldIncrementProtocolVersionForTesting)
@@ -449,7 +449,7 @@ XPCObjectPtr<xpc_object_t> WebPushXPCConnectionMessageSender::messageDictionaryF
         blockBytes.clear();
     }));
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto encoderData = adoptXPCObject(xpc_data_create_with_dispatch_data(dispatchData.get()));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto encoderData = adoptOSObject(xpc_data_create_with_dispatch_data(dispatchData.get()));
 
     xpc_dictionary_set_value(dictionary.get(), WebKit::WebPushD::protocolEncodedMessageKey, encoderData.get());
 
@@ -511,10 +511,10 @@ static WebKit::WebPushD::WebPushDaemonConnectionConfiguration defaultWebPushDaem
     IGNORE_CLANG_WARNINGS_END
 }
 
-XPCObjectPtr<xpc_connection_t> createAndConfigureConnectionToService(const char* serviceName, std::optional<WebKit::WebPushD::WebPushDaemonConnectionConfiguration> configuration = std::nullopt)
+OSObjectPtr<xpc_connection_t> createAndConfigureConnectionToService(const char* serviceName, std::optional<WebKit::WebPushD::WebPushDaemonConnectionConfiguration> configuration = std::nullopt)
 {
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto connection = adoptXPCObject(xpc_connection_create_mach_service(serviceName, mainDispatchQueueSingleton(), 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto connection = adoptOSObject(xpc_connection_create_mach_service(serviceName, mainDispatchQueueSingleton(), 0));
     xpc_connection_set_event_handler(connection.get(), ^(xpc_object_t) { });
     xpc_connection_activate(connection.get());
     auto sender = WebPushXPCConnectionMessageSender { connection.get() };
@@ -531,7 +531,7 @@ TEST(WebPushD, BasicCommunication)
     NSURL *tempDir = setUpTestWebPushD();
 
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto connection = adoptXPCObject(xpc_connection_create_mach_service("org.webkit.webpushtestdaemon.service", mainDispatchQueueSingleton(), 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto connection = adoptOSObject(xpc_connection_create_mach_service("org.webkit.webpushtestdaemon.service", mainDispatchQueueSingleton(), 0));
 
     __block bool done = false;
     __block bool interrupted = false;

@@ -6,11 +6,12 @@ void draw(SkCanvas* canvas) {
     const int width = 256;
     const int height = 32;
     SkImageInfo info = SkImageInfo::MakeN32Premul(width, height);
-    SkColor  gradColors[] = { 0xFFAA0055, 0xFF11CC88 };
-    SkPoint  gradPoints[] = { { 0, 0 }, { width, 0 } };
+    SkColor4f gradColors[] = {
+            SkColor4f::FromColor(0xFFAA0055), SkColor4f::FromColor(0xFF11CC88) };
+    SkPoint gradPoints[] = { { 0, 0 }, { width, 0 } };
     SkPaint gradPaint;
-    gradPaint.setShader(SkGradientShader::MakeLinear(gradPoints, gradColors, nullptr,
-                    std::size(gradColors), SkTileMode::kClamp));
+    gradPaint.setShader(SkShaders::LinearGradient(gradPoints,
+            {{gradColors, {}, SkTileMode::kClamp}, {}}));
     SkBitmap bitmap;
     bitmap.allocPixels(SkImageInfo::MakeN32(width, height, kPremul_SkAlphaType));
     SkCanvas offScreen(bitmap);
@@ -21,8 +22,9 @@ void draw(SkCanvas* canvas) {
     sRGBOffscreen.drawRect(SkRect::MakeWH(width, height), gradPaint);
     canvas->drawImage(bitmap.asImage(), 0, 48);
     SkBitmap noColorSpaceBitmap;
-    noColorSpaceBitmap.setInfo(SkImageInfo::MakeN32(width, height, kPremul_SkAlphaType));
-    noColorSpaceBitmap.setPixels(bitmap.getAddr(0, 0));
+    noColorSpaceBitmap.installPixels(SkImageInfo::MakeN32(width, height, kPremul_SkAlphaType),
+                                     bitmap.getAddr(0, 0),
+                                     bitmap.rowBytes());
     canvas->drawImage(noColorSpaceBitmap.asImage(), 0, 96);
 }
 }  // END FIDDLE

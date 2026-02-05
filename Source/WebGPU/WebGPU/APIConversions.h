@@ -33,10 +33,10 @@
 #import "CommandEncoder.h"
 #import "ComputePassEncoder.h"
 #import "ComputePipeline.h"
-#import "DDMesh.h"
 #import "Device.h"
 #import "ExternalTexture.h"
 #import "Instance.h"
+#import "Mesh.h"
 #import "PipelineLayout.h"
 #import "PresentationContext.h"
 #import "QuerySet.h"
@@ -206,14 +206,14 @@ inline String fromAPI(const char* string)
     return String::fromUTF8(string);
 }
 
-inline DDMesh& fromAPI(WGPUDDMesh mesh)
+inline WebModel::Mesh& fromAPI(WebMesh mesh)
 {
-    return static_cast<DDMesh&>(*mesh);
+    return static_cast<WebModel::Mesh&>(*mesh);
 }
 
-inline Ref<DDMesh> protectedFromAPI(WGPUDDMesh mesh)
+inline Ref<WebModel::Mesh> protectedFromAPI(WebMesh mesh)
 {
-    return static_cast<DDMesh&>(*mesh);
+    return static_cast<WebModel::Mesh&>(*mesh);
 }
 
 inline Ref<Adapter> protectedFromAPI(WGPUAdapter adapter)

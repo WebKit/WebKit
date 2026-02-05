@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['macros_0',['Typed Macros',['../group__typed.html',1,'']]]
+  ['local_20heaps_0',['Thread-local heaps',['../group__theap.html',1,'']]]
 ];

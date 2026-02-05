@@ -32,12 +32,9 @@
 #include <JavaScriptCore/RemoteInspectorServer.h>
 #include <limits>
 #include <mutex>
+#include <skia/core/SkGraphics.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
-
-#if USE(SKIA)
-#include <skia/core/SkGraphics.h>
-#endif
 
 #if USE(SYSPROF_CAPTURE)
 #include <wtf/SystemTracing.h>
@@ -115,9 +112,9 @@ void webkitInitialize()
         SysprofAnnotator::createIfNeeded("WebKit (UI)"_s);
 #endif
         InitializeWebKit2();
-#if USE(SKIA)
+
         SkGraphics::Init();
-#endif
+
 #if ENABLE(REMOTE_INSPECTOR)
         initializeRemoteInspectorServer();
 #endif

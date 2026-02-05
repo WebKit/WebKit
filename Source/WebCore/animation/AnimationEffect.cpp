@@ -148,51 +148,49 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(UseCachedCurrentTime use
     return computedTiming;
 }
 
-ExceptionOr<void> AnimationEffect::bindingsUpdateTiming(Document& document, std::optional<OptionalEffectTiming> timing)
+ExceptionOr<void> AnimationEffect::bindingsUpdateTiming(Document& document, const OptionalEffectTiming& timing)
 {
     auto retVal = updateTiming(document, timing);
-    if (!retVal.hasException() && timing) {
+    if (!retVal.hasException()) {
         if (RefPtr cssAnimation = dynamicDowncast<CSSAnimation>(animation()))
-            cssAnimation->effectTimingWasUpdatedUsingBindings(*timing);
+            cssAnimation->effectTimingWasUpdatedUsingBindings(timing);
     }
     return retVal;
 }
 
-ExceptionOr<void> AnimationEffect::updateTiming(Document& document, std::optional<OptionalEffectTiming> timing)
+ExceptionOr<void> AnimationEffect::updateTiming(Document& document, const OptionalEffectTiming& timing)
 {
     // 6.5.4. Updating the timing of an AnimationEffect
     // https://drafts.csswg.org/web-animations/#updating-animationeffect-timing
 
     // To update the timing properties of an animation effect, effect, from an EffectTiming or OptionalEffectTiming object, input, perform the following steps:
-    if (!timing)
-        return { };
 
     // 1. If the iterationStart member of input is present and less than zero, throw a TypeError and abort this procedure.
-    if (timing->iterationStart) {
-        if (timing->iterationStart.value() < 0)
+    if (timing.iterationStart) {
+        if (timing.iterationStart.value() < 0)
             return Exception { ExceptionCode::TypeError };
     }
 
     // 2. If the iterations member of input is present, and less than zero or is the value NaN, throw a TypeError and abort this procedure.
-    if (timing->iterations) {
-        if (timing->iterations.value() < 0 || std::isnan(timing->iterations.value()))
+    if (timing.iterations) {
+        if (timing.iterations.value() < 0 || std::isnan(timing.iterations.value()))
             return Exception { ExceptionCode::TypeError };
     }
 
     // 3. If the duration member of input is present, and less than zero or is the value NaN, throw a TypeError and abort this procedure.
     // FIXME: should it not throw an exception on a string other than "auto"?
-    if (timing->duration) {
-        if (std::holds_alternative<double>(timing->duration.value())) {
-            auto durationAsDouble = std::get<double>(timing->duration.value());
+    if (timing.duration) {
+        if (std::holds_alternative<double>(timing.duration.value())) {
+            auto durationAsDouble = std::get<double>(timing.duration.value());
             if (durationAsDouble < 0 || std::isnan(durationAsDouble))
                 return Exception { ExceptionCode::TypeError };
         } else {
-            if (std::get<String>(timing->duration.value()) != autoAtom())
+            if (std::get<String>(timing.duration.value()) != autoAtom())
                 return Exception { ExceptionCode::TypeError };
         }
     }
 
-    if (auto iterations = timing->iterations) {
+    if (auto iterations = timing.iterations) {
         // https://github.com/w3c/csswg-drafts/issues/11343
         if (std::isinf(*iterations)) {
             if (RefPtr animation = m_animation.get()) {
@@ -205,10 +203,10 @@ ExceptionOr<void> AnimationEffect::updateTiming(Document& document, std::optiona
     }
 
     // 4. If the easing member of input is present but cannot be parsed using the <timing-function> production [CSS-EASING-1], throw a TypeError and abort this procedure.
-    if (!timing->easing.isNull()) {
+    if (!timing.easing.isNull()) {
         CSSParserContext parsingContext(document);
         // FIXME: Determine the how calc() and relative units should be resolved and switch to the non-deprecated parsing function.
-        auto timingFunctionResult = CSSPropertyParserHelpers::parseEasingFunctionDeprecated(timing->easing, parsingContext);
+        auto timingFunctionResult = CSSPropertyParserHelpers::parseEasingFunctionDeprecated(timing.easing, parsingContext);
         if (!timingFunctionResult)
             return Exception { ExceptionCode::TypeError };
         setTimingFunction(WTF::move(timingFunctionResult));
@@ -225,29 +223,29 @@ ExceptionOr<void> AnimationEffect::updateTiming(Document& document, std::optiona
     //    direction → playback direction
     //    easing → timing function
 
-    if (auto delay = timing->delay)
+    if (auto delay = timing.delay)
         setDelay(Seconds::fromMilliseconds(*delay));
 
-    if (auto endDelay = timing->endDelay)
+    if (auto endDelay = timing.endDelay)
         setEndDelay(Seconds::fromMilliseconds(*endDelay));
 
-    if (auto fill = timing->fill)
+    if (auto fill = timing.fill)
         setFill(*fill);
 
-    if (auto iterationStart = timing->iterationStart)
+    if (auto iterationStart = timing.iterationStart)
         setIterationStart(*iterationStart);
 
-    if (auto iterations = timing->iterations)
+    if (auto iterations = timing.iterations)
         setIterations(*iterations);
 
-    if (auto duration = timing->duration) {
+    if (auto duration = timing.duration) {
         if (auto* durationDouble = std::get_if<double>(&*duration))
             setIterationDuration(Seconds::fromMilliseconds(*durationDouble));
         else
             setIterationDuration(std::nullopt);
     }
 
-    if (auto direction = timing->direction)
+    if (auto direction = timing.direction)
         setDirection(*direction);
 
     if (RefPtr animation = m_animation.get())

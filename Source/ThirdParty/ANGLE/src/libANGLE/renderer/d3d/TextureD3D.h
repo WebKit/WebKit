@@ -9,6 +9,8 @@
 #ifndef LIBANGLE_RENDERER_D3D_TEXTURED3D_H_
 #define LIBANGLE_RENDERER_D3D_TEXTURED3D_H_
 
+#include <functional>
+
 #include "common/Color.h"
 #include "libANGLE/Constants.h"
 #include "libANGLE/Stream.h"
@@ -188,6 +190,17 @@ class TextureD3D : public TextureImpl, public angle::ObserverInterface
     angle::Result commitRegion(const gl::Context *context,
                                const gl::ImageIndex &index,
                                const gl::Box &region);
+
+    angle::Result handleCopyImageSelfCopyRedefine(
+        const gl::Context *context,
+        gl::TextureType snapshotType,
+        GLenum sizedInternalFormat,
+        const gl::Rectangle &sourceArea,
+        const gl::Extents &destExtents,
+        bool outside,
+        const gl::ImageIndex &destIndex,
+        gl::Framebuffer *source,
+        const std::function<angle::Result(const gl::Extents &)> &redefineDest);
 
     angle::Result releaseTexStorage(const gl::Context *context,
                                     const gl::TexLevelMask &copyStorageToImagesMask);

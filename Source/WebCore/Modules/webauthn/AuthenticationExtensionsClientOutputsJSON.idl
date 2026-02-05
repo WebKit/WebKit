@@ -27,7 +27,6 @@
     Conditional=WEB_AUTHN,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary AuthenticationExtensionsLargeBlobOutputsJSON {
     boolean supported;
     DOMString blob;
@@ -38,7 +37,6 @@
     Conditional=WEB_AUTHN,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary AuthenticationExtensionsPRFValuesJSON {
     required DOMString first;
     DOMString second;
@@ -48,7 +46,6 @@
     Conditional=WEB_AUTHN,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary AuthenticationExtensionsPRFOutputsJSON {
     boolean enabled;
     AuthenticationExtensionsPRFValuesJSON results;
@@ -58,7 +55,6 @@
     Conditional=WEB_AUTHN,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary AuthenticationExtensionsClientOutputsJSON {
     boolean appid;
     CredentialPropertiesOutput credProps;

@@ -44,7 +44,6 @@ inspector/InspectorStyleSheet.h
 inspector/InstrumentingAgents.h
 inspector/PageInspectorController.h
 inspector/UserGestureEmulationScope.h
-inspector/agents/InspectorNetworkAgent.h
 inspector/agents/InspectorPageAgent.h
 layout/formattingContexts/inline/InlineFormattingContext.h
 layout/formattingContexts/inline/InlineItemsBuilder.cpp

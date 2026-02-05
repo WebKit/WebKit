@@ -217,7 +217,7 @@ bool ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching(const Pla
     case ScrollElasticity::Allowed: {
         auto relevantSide = ScrollableArea::targetSideForScrollDelta(-wheelEvent.delta(), ScrollEventAxis::Horizontal);
         if (relevantSide)
-            return shouldRubberBandOnSide(*relevantSide);
+            return shouldRubberBandOnSide(*relevantSide, wheelEvent.delta());
         return true;
     }
     }
@@ -240,7 +240,7 @@ bool ScrollingTreeScrollingNodeDelegateMac::allowsVerticalStretching(const Platf
     case ScrollElasticity::Allowed: {
         auto relevantSide = ScrollableArea::targetSideForScrollDelta(-wheelEvent.delta(), ScrollEventAxis::Vertical);
         if (relevantSide)
-            return shouldRubberBandOnSide(*relevantSide);
+            return shouldRubberBandOnSide(*relevantSide, wheelEvent.delta());
         return true;
     }
     }
@@ -265,6 +265,11 @@ IntSize ScrollingTreeScrollingNodeDelegateMac::stretchAmount() const
         stretch.setWidth(scrollPosition.x() - maximumScrollPosition().x());
 
     return stretch;
+}
+
+bool ScrollingTreeScrollingNodeDelegateMac::isScrollDeltaOpposingStretch(ScrollEventAxis axis, float delta) const
+{
+    return ScrollingEffectsController::isScrollDeltaOpposingStretch(stretchAmount(), axis, delta);
 }
 
 bool ScrollingTreeScrollingNodeDelegateMac::isPinnedOnSide(BoxSide side) const
@@ -295,8 +300,13 @@ RectEdges<bool> ScrollingTreeScrollingNodeDelegateMac::edgePinnedState() const
     return scrollingNode()->edgePinnedState();
 }
 
-bool ScrollingTreeScrollingNodeDelegateMac::shouldRubberBandOnSide(BoxSide side) const
+bool ScrollingTreeScrollingNodeDelegateMac::shouldRubberBandOnSide(BoxSide side, FloatSize delta) const
 {
+    const auto axis = (side == BoxSide::Left || side == BoxSide::Right) ? ScrollEventAxis::Horizontal : ScrollEventAxis::Vertical;
+    const auto deltaOnAxis = (axis == ScrollEventAxis::Horizontal) ? -delta.width() : -delta.height();
+    if (isScrollDeltaOpposingStretch(axis, deltaOnAxis))
+        return true;
+
     return scrollingNode()->shouldRubberBandOnSide(side, edgePinnedState());
 }
 

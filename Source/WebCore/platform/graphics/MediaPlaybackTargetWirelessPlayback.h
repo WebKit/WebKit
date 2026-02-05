@@ -27,7 +27,9 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
 
+#include <WebCore/MediaDeviceRouteLoadURLResult.h>
 #include <WebCore/MediaPlaybackTarget.h>
+#include <wtf/Forward.h>
 #include <wtf/UUID.h>
 
 namespace WebCore {
@@ -36,32 +38,27 @@ class MediaDeviceRoute;
 
 class MediaPlaybackTargetWirelessPlayback final : public MediaPlaybackTarget {
 public:
-    WEBCORE_EXPORT static Ref<MediaPlaybackTargetWirelessPlayback> create(std::optional<WTF::UUID> identifier);
-#if HAVE(AVROUTING_FRAMEWORK)
+    WEBCORE_EXPORT static Ref<MediaPlaybackTargetWirelessPlayback> create(std::optional<WTF::UUID> identifier, bool hasActiveRoute);
     static Ref<MediaPlaybackTargetWirelessPlayback> create(MediaDeviceRoute&);
-#endif
 
     ~MediaPlaybackTargetWirelessPlayback();
 
     WEBCORE_EXPORT std::optional<WTF::UUID> identifier() const;
 
+    MediaDeviceRoute* route() const;
+
+    void loadURL(const URL&, CompletionHandler<void(const MediaDeviceRouteLoadURLResult&)>&&);
+
 private:
-#if HAVE(AVROUTING_FRAMEWORK)
-    explicit MediaPlaybackTargetWirelessPlayback(RefPtr<MediaDeviceRoute>&&);
-#else
-    explicit MediaPlaybackTargetWirelessPlayback(std::optional<WTF::UUID> identifier);
-#endif
+    MediaPlaybackTargetWirelessPlayback(RefPtr<MediaDeviceRoute>&&, bool hasActiveRoute);
 
     // MediaPlaybackTarget
     String deviceName() const final;
-    bool hasActiveRoute() const final;
+    bool hasActiveRoute() const final { return m_hasActiveRoute; }
     bool supportsRemoteVideoPlayback() const final { return hasActiveRoute(); }
 
-#if HAVE(AVROUTING_FRAMEWORK)
     RefPtr<MediaDeviceRoute> m_route;
-#else
-    std::optional<WTF::UUID> m_identifier;
-#endif
+    bool m_hasActiveRoute;
 };
 
 } // namespace WebCore

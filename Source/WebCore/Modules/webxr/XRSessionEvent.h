@@ -36,12 +36,7 @@ class XRSessionEvent final : public Event {
     WTF_MAKE_TZONE_ALLOCATED(XRSessionEvent);
 public:
     struct Init : EventInit {
-        Init() = default;
-        Init(RefPtr<WebXRSession>&& session)
-            : EventInit()
-            , session(WTF::move(session))
-        { }
-        RefPtr<WebXRSession> session;
+        Ref<WebXRSession> session;
     };
 
     static Ref<XRSessionEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);

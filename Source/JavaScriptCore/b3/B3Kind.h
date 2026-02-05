@@ -134,6 +134,7 @@ public:
         case AtomicXchg:
         case WasmStructGet:
         case WasmStructSet:
+        case WasmRefCast:
             return true;
         default:
             return false;

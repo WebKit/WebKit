@@ -265,7 +265,7 @@ JSObject* addErrorInfo(VM& vm, JSObject* error, int line, const SourceCode& sour
 JSObject* createTypeErrorCopy(JSGlobalObject* globalObject, JSValue error)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     String errorString = "Error encountered during evaluation"_s;
 
     if (error.isPrimitive()) {

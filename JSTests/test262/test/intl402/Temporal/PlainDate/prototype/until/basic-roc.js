@@ -19,8 +19,14 @@ const date0490330 = Temporal.PlainDate.from({ year: 49, monthCode: "M03", day: 3
 const date0580724 = Temporal.PlainDate.from({ year: 58, monthCode: "M07", day: 24, calendar });
 const date0860616 = Temporal.PlainDate.from({ year: 86, monthCode: "M06", day: 16, calendar });
 const date0860716 = Temporal.PlainDate.from({ year: 86, monthCode: "M07", day: 16, calendar });
+const date0861201 = Temporal.PlainDate.from({ year: 86, monthCode: "M12", day: 1, calendar });
 const date0861216 = Temporal.PlainDate.from({ year: 86, monthCode: "M12", day: 16, calendar });
 const date0861230 = Temporal.PlainDate.from({ year: 86, monthCode: "M12", day: 30, calendar });
+const date0900101 = Temporal.PlainDate.from({ year: 90, monthCode: "M01", day: 1, calendar });
+const date0900618 = Temporal.PlainDate.from({ year: 90, monthCode: "M06", day: 18, calendar });
+const date0901008 = Temporal.PlainDate.from({ year: 90, monthCode: "M10", day: 8, calendar });
+const date0901201 = Temporal.PlainDate.from({ year: 90, monthCode: "M12", day: 1, calendar });
+const date0910601 = Temporal.PlainDate.from({ year: 91, monthCode: "M06", day: 1, calendar });
 const date1080101 = Temporal.PlainDate.from({ year: 108, monthCode: "M01", day: 1, calendar });
 const date1080201 = Temporal.PlainDate.from({ year: 108, monthCode: "M02", day: 1, calendar });
 const date1080724 = Temporal.PlainDate.from({ year: 108, monthCode: "M07", day: 24, calendar });
@@ -188,8 +194,21 @@ const tests = [
     ["years", 1, 6, 0, 16],
   ],
   [
+    date0861201, date0900618, "3 years, 6 months and 17 days",
+    ["years", 3, 6, 0, 17],
+  ],
+  [
     date1091230, date1100716, "6 months and 16 days",
     ["years", 0, 6, 0, 16],
+  ],
+  [
+    date0901201, date0910601, "6 months",
+    ["months", 0, 6, 0, 0],
+  ],
+  [
+    date0900101, date0901008, "40 weeks",
+    ["weeks", 0, 0, 40, 0],
+    ["days", 0, 0, 0, 280],
   ],
   [
     date0861230, date1100716, "23 years, 6 months and 16 days",

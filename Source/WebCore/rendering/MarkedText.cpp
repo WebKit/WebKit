@@ -128,8 +128,8 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
                 // FIXME: Potentially move this check elsewhere, to where we collect this range information.
                 auto hasRenderer = [&] {
                     IntersectingNodeRange nodes(makeSimpleRange(highlightRange->range()));
-                    for (auto& iterator : nodes) {
-                        if (iterator.renderer())
+                    for (Ref iterator : nodes) {
+                        if (iterator->renderer())
                             return true;
                     }
                     return false;

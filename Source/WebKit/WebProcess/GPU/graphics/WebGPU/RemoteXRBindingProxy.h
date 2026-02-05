@@ -60,7 +60,6 @@ public:
 
     RemoteDeviceProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
-    Ref<RemoteGPUProxy> protectedRoot() { return m_parent->root(); }
 
 private:
     friend class DowncastConvertToBackingContext;

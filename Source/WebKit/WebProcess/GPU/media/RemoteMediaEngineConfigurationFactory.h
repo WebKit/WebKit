@@ -30,7 +30,7 @@
 #include "RemoteLegacyCDMIdentifier.h"
 #include "RemoteLegacyCDMSessionIdentifier.h"
 #include "WebProcessSupplement.h"
-#include <WebCore/MediaEngineConfigurationFactory.h>
+#include <WebCore/PlatformMediaEngineConfigurationFactory.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -66,8 +66,8 @@ public:
     void didReceiveSessionMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
-    void createDecodingConfiguration(WebCore::MediaDecodingConfiguration&&, WebCore::MediaEngineConfigurationFactory::DecodingConfigurationCallback&&);
-    void createEncodingConfiguration(WebCore::MediaEncodingConfiguration&&, WebCore::MediaEngineConfigurationFactory::EncodingConfigurationCallback&&);
+    void createDecodingConfiguration(WebCore::PlatformMediaDecodingConfiguration&&, WebCore::PlatformMediaEngineConfigurationFactory::DecodingConfigurationCallback&&);
+    void createEncodingConfiguration(WebCore::PlatformMediaEncodingConfiguration&&, WebCore::PlatformMediaEngineConfigurationFactory::EncodingConfigurationCallback&&);
 
     WeakRef<WebProcess> m_webProcess;
 };

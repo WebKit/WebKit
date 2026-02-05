@@ -38,7 +38,6 @@ enum RenderingMode {
 [
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary CanvasRenderingContext2DSettings {
     // FIXME: Add support for 'alpha'.
     // boolean alpha = true;
@@ -46,5 +45,5 @@ enum RenderingMode {
     boolean willReadFrequently = false;
     [EnabledBySetting=CanvasColorSpaceEnabled] PredefinedColorSpace colorSpace = "srgb";
     [EnabledBySetting=CanvasColorTypeEnabled] CanvasColorType colorType = "unorm8";
-    [EnabledBySetting=DOMTestingAPIsEnabled] RenderingMode? renderingModeForTesting;
+    [EnabledBySetting=DOMTestingAPIsEnabled] RenderingMode renderingModeForTesting;
 };

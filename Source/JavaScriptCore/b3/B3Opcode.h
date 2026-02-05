@@ -365,6 +365,8 @@ enum Opcode : uint8_t {
     WasmStructGet,
     WasmStructSet,
     WasmStructNew,
+    WasmRefCast,
+    WasmRefTest,
 
     // SIMD instructions
     VectorExtractLane,

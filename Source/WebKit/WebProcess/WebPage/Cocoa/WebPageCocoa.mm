@@ -96,8 +96,10 @@
 #import <WebCore/PlatformMediaSessionManager.h>
 #import <WebCore/PrintContext.h>
 #import <WebCore/Range.h>
+#import <WebCore/RenderBoxInlines.h>
 #import <WebCore/RenderElement.h>
 #import <WebCore/RenderLayer.h>
+#import <WebCore/RenderObjectInlines.h>
 #import <WebCore/RenderedDocumentMarker.h>
 #import <WebCore/SVGImage.h>
 #import <WebCore/Settings.h>
@@ -265,7 +267,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     }
 #endif
     
-    RefPtr localMainFrame = protectedCorePage()->localMainFrame();
+    RefPtr localMainFrame = protect(corePage())->localMainFrame();
     if (!localMainFrame)
         return;
     // Find the frame the point is over.
@@ -317,7 +319,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
 
     IntRect rangeRect = frame.protectedView()->contentsToWindow(quads[0].enclosingBoundingBox());
 
-    const CheckedPtr style = range.protectedStartContainer()->renderStyle();
+    const CheckedPtr style = protect(range.startContainer())->renderStyle();
     float scaledAscent = style ? style->metricsOfPrimaryFont().intAscent() * pageScaleFactor() : 0;
     dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y() + scaledAscent);
 
@@ -543,7 +545,7 @@ void WebPage::resolveAccessibilityHitTestForTesting(WebCore::FrameIdentifier fra
     if (!webFrame)
         return completionHandler("NULL"_s);
 #if PLATFORM(MAC)
-    if (RetainPtr coreObject = [m_mockAccessibilityElement accessibilityRootObjectWrapper:webFrame->protectedCoreLocalFrame().get()]) {
+    if (RetainPtr coreObject = [m_mockAccessibilityElement accessibilityRootObjectWrapper:protect(webFrame->coreLocalFrame()).get()]) {
         if (RetainPtr hitTestResult = [coreObject accessibilityHitTest:point]) {
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             completionHandler([hitTestResult accessibilityAttributeValue:@"AXInfoStringForTesting"]);
@@ -568,12 +570,25 @@ void WebPage::getAccessibilityWebProcessDebugInfo(CompletionHandler<void(WebCore
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     isAXThreadInitialized = WebCore::AXObjectCache::isAXThreadInitialized();
 #endif
+    Vector<String> warnings;
 
-    if (std::optional treeData = protectedCorePage()->accessibilityTreeData(IncludeDOMInfo::No)) {
-        completionHandler({ WebCore::AXObjectCache::accessibilityEnabled(), isAXThreadInitialized, WTF::move(treeData->liveTree), WTF::move(treeData->isolatedTree), WTF::move(treeData->warnings), [m_mockAccessibilityElement remoteTokenHash], [accessibilityRemoteTokenData() hash] });
-        return;
-    }
-    completionHandler({ WebCore::AXObjectCache::accessibilityEnabled(), isAXThreadInitialized, emptyString(), emptyString(), { }, 0, 0 });
+    RefPtr focusedFrame = [m_mockAccessibilityElement focusedLocalFrame];
+    RefPtr document = focusedFrame ? focusedFrame->document() : nullptr;
+
+    if (document) {
+        if (CheckedPtr cache = document->axObjectCache()) {
+            auto treeData = cache->treeData();
+            warnings = WTF::move(treeData.warnings);
+            completionHandler({ WebCore::AXObjectCache::accessibilityEnabled(), isAXThreadInitialized, WTF::move(treeData.liveTree), WTF::move(treeData.isolatedTree), WTF::move(warnings), [m_mockAccessibilityElement remoteTokenHash], [accessibilityRemoteTokenData() hash] });
+            return;
+        }
+        warnings.append("No AXObjectCache"_s);
+    } else if (!focusedFrame)
+        warnings.append("No focused LocalFrame found"_s);
+    else
+        warnings.append("Focused LocalFrame has no document"_s);
+
+    completionHandler({ WebCore::AXObjectCache::accessibilityEnabled(), isAXThreadInitialized, emptyString(), emptyString(), WTF::move(warnings), [m_mockAccessibilityElement remoteTokenHash], [accessibilityRemoteTokenData() hash] });
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -597,7 +612,7 @@ WebPaymentCoordinator* WebPage::paymentCoordinator()
 
 void WebPage::getContentsAsAttributedString(CompletionHandler<void(const WebCore::AttributedString&)>&& completionHandler)
 {
-    RefPtr localFrame = protectedCorePage()->localMainFrame();
+    RefPtr localFrame = protect(corePage())->localMainFrame();
     completionHandler(localFrame ? attributedString(makeRangeSelectingNodeContents(*localFrame->protectedDocument()), IgnoreUserSelectNone::No) : AttributedString { });
 }
 
@@ -672,7 +687,13 @@ static bool selectionIsTransparentOrFullyClipped(const VisibleSelection& selecti
     return startRenderer == endRenderer || rendererIsTransparentOrFullyClipped(*endRenderer);
 }
 
-void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState& result) const
+static void convertContentToRootView(const LocalFrameView& view, Vector<SelectionGeometry>& geometries)
+{
+    for (auto& geometry : geometries)
+        geometry.setQuad(view.contentsToRootView(geometry.quad()));
+}
+
+void WebPage::getPlatformEditorStateCommon(LocalFrame& frame, EditorState& result) const
 {
     if (!result.hasPostLayoutAndVisualData())
         return;
@@ -682,7 +703,11 @@ void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState&
     if (selection.isNone())
         return;
 
+    ASSERT(frame.view());
+    Ref view = *frame.view();
+
     auto& postLayoutData = *result.postLayoutData;
+    auto& visualData = *result.visualData;
 
     if (result.isContentEditable) {
         if (auto editingStyle = EditingStyle::styleAtSelectionStart(selection, false, EditingStyle::PropertiesToInclude::PostLayoutProperties)) {
@@ -762,6 +787,29 @@ void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState&
     if (enclosingFormControl || !m_page->settings().selectionHonorsOverflowScrolling())
         result.visualData->selectionClipRect = result.visualData->editableRootBounds;
 #endif
+
+    bool startNodeIsInsideFixedPosition = false;
+    bool endNodeIsInsideFixedPosition = false;
+
+    if (selection.isCaret()) {
+        visualData.caretRectAtStart = view->contentsToRootView(WTF::protect(frame.selection())->absoluteCaretBounds(&startNodeIsInsideFixedPosition));
+        endNodeIsInsideFixedPosition = startNodeIsInsideFixedPosition;
+        visualData.caretRectAtEnd = visualData.caretRectAtStart;
+    } else if (selection.isRange()) {
+        visualData.caretRectAtStart = view->contentsToRootView(VisiblePosition(selection.start()).absoluteCaretBounds(&startNodeIsInsideFixedPosition));
+        visualData.caretRectAtEnd = view->contentsToRootView(VisiblePosition(selection.end()).absoluteCaretBounds(&endNodeIsInsideFixedPosition));
+
+        auto selectedRange = selection.toNormalizedRange();
+        if (selectedRange) {
+            auto [selectionGeometries, intersectingLayerIDs] = RenderObject::collectSelectionGeometries(*selectedRange);
+            convertContentToRootView(view, selectionGeometries);
+
+            visualData.selectionGeometries = WTF::move(selectionGeometries);
+            visualData.intersectingLayerIDs = WTF::move(intersectingLayerIDs);
+        }
+    }
+
+    postLayoutData.insideFixedPosition = startNodeIsInsideFixedPosition || endNodeIsInsideFixedPosition;
 }
 
 void WebPage::getPDFFirstPageSize(WebCore::FrameIdentifier frameID, CompletionHandler<void(WebCore::FloatSize)>&& completionHandler)
@@ -771,7 +819,7 @@ void WebPage::getPDFFirstPageSize(WebCore::FrameIdentifier frameID, CompletionHa
         return completionHandler({ });
 
 #if ENABLE(PDF_PLUGIN)
-    if (RefPtr pluginView = pluginViewForFrame(webFrame->protectedCoreLocalFrame().get()))
+    if (RefPtr pluginView = pluginViewForFrame(protect(webFrame->coreLocalFrame()).get()))
         return completionHandler(pluginView->pdfDocumentSizeForPrinting());
 #endif
 
@@ -941,20 +989,23 @@ std::pair<URL, DidFilterLinkDecoration> WebPage::applyLinkDecorationFilteringWit
         return isLinkDecorationFilteringEnabled(RefPtr { mainFrame->loader().policyDocumentLoader() }.get());
     }();
 
-    if (!hasOptedInToLinkDecorationFiltering && !m_page->settings().filterLinkDecorationByDefaultEnabled())
+    RefPtr document = mainFrame ? mainFrame->document() : nullptr;
+    bool isConsistentQueryParameterFilteringQuirkEnabled = document && (document->quirks().needsConsistentQueryParameterFilteringQuirk(document->url()) || document->quirks().needsConsistentQueryParameterFilteringQuirk(url));
+    if (!hasOptedInToLinkDecorationFiltering && !m_page->settings().filterLinkDecorationByDefaultEnabled() && !isConsistentQueryParameterFilteringQuirkEnabled)
         return { url, DidFilterLinkDecoration::No };
 
     if (!url.hasQuery())
         return { url, DidFilterLinkDecoration::No };
 
     auto sanitizedURL = url;
+    bool allowLowEntropyException = !(hasOptedInToLinkDecorationFiltering || isConsistentQueryParameterFilteringQuirkEnabled);
     auto removedParameters = WTF::removeQueryParameters(sanitizedURL, [&](auto& key, auto& value) {
         auto it = m_internals->linkDecorationFilteringData.find(key);
         if (it == m_internals->linkDecorationFilteringData.end())
             return false;
 
         constexpr auto base = 10;
-        if (value.length() == 3 && !hasOptedInToLinkDecorationFiltering && WTF::parseInteger<uint8_t>(value, base, WTF::ParseIntegerWhitespacePolicy::Disallow))
+        if (value.length() == 3 && allowLowEntropyException && WTF::parseInteger<uint8_t>(value, base, WTF::ParseIntegerWhitespacePolicy::Disallow))
             return false;
 
         const auto& conditionals = it->value;
@@ -1012,7 +1063,7 @@ URL WebPage::allowedQueryParametersForAdvancedPrivacyProtections(const URL& url)
 void WebPage::setMediaEnvironment(const String& mediaEnvironment)
 {
     m_mediaEnvironment = mediaEnvironment;
-    if (auto gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
+    if (RefPtr gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
         gpuProcessConnection->setMediaEnvironment(identifier(), mediaEnvironment);
 }
 #endif
@@ -1020,45 +1071,45 @@ void WebPage::setMediaEnvironment(const String& mediaEnvironment)
 #if ENABLE(WRITING_TOOLS)
 void WebPage::willBeginWritingToolsSession(const std::optional<WebCore::WritingTools::Session>& session, CompletionHandler<void(const Vector<WebCore::WritingTools::Context>&)>&& completionHandler)
 {
-    protectedCorePage()->willBeginWritingToolsSession(session, WTF::move(completionHandler));
+    protect(corePage())->willBeginWritingToolsSession(session, WTF::move(completionHandler));
 }
 
 void WebPage::didBeginWritingToolsSession(const WebCore::WritingTools::Session& session, const Vector<WebCore::WritingTools::Context>& contexts)
 {
-    protectedCorePage()->didBeginWritingToolsSession(session, contexts);
+    protect(corePage())->didBeginWritingToolsSession(session, contexts);
 }
 
 void WebPage::proofreadingSessionDidReceiveSuggestions(const WebCore::WritingTools::Session& session, const Vector<WebCore::WritingTools::TextSuggestion>& suggestions, const WebCore::CharacterRange& processedRange, const WebCore::WritingTools::Context& context, bool finished, CompletionHandler<void()>&& completionHandler)
 {
-    protectedCorePage()->proofreadingSessionDidReceiveSuggestions(session, suggestions, processedRange, context, finished);
+    protect(corePage())->proofreadingSessionDidReceiveSuggestions(session, suggestions, processedRange, context, finished);
     completionHandler();
 }
 
 void WebPage::proofreadingSessionDidUpdateStateForSuggestion(const WebCore::WritingTools::Session& session, WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion& suggestion, const WebCore::WritingTools::Context& context)
 {
-    protectedCorePage()->proofreadingSessionDidUpdateStateForSuggestion(session, state, suggestion, context);
+    protect(corePage())->proofreadingSessionDidUpdateStateForSuggestion(session, state, suggestion, context);
 }
 
 void WebPage::willEndWritingToolsSession(const WebCore::WritingTools::Session& session, bool accepted, CompletionHandler<void()>&& completionHandler)
 {
-    protectedCorePage()->willEndWritingToolsSession(session, accepted);
+    protect(corePage())->willEndWritingToolsSession(session, accepted);
     completionHandler();
 }
 
 void WebPage::didEndWritingToolsSession(const WebCore::WritingTools::Session& session, bool accepted)
 {
-    protectedCorePage()->didEndWritingToolsSession(session, accepted);
+    protect(corePage())->didEndWritingToolsSession(session, accepted);
 }
 
 void WebPage::compositionSessionDidReceiveTextWithReplacementRange(const WebCore::WritingTools::Session& session, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebCore::WritingTools::Context& context, bool finished, CompletionHandler<void()>&& completionHandler)
 {
-    protectedCorePage()->compositionSessionDidReceiveTextWithReplacementRange(session, attributedText, range, context, finished);
+    protect(corePage())->compositionSessionDidReceiveTextWithReplacementRange(session, attributedText, range, context, finished);
     completionHandler();
 }
 
 void WebPage::writingToolsSessionDidReceiveAction(const WritingTools::Session& session, WebCore::WritingTools::Action action)
 {
-    protectedCorePage()->writingToolsSessionDidReceiveAction(session, action);
+    protect(corePage())->writingToolsSessionDidReceiveAction(session, action);
 }
 
 void WebPage::proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(const WebCore::WritingTools::TextSuggestion::ID& replacementID, WebCore::IntRect rect)
@@ -1126,37 +1177,37 @@ void WebPage::updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID& 
 
 void WebPage::proofreadingSessionSuggestionTextRectsInRootViewCoordinates(const WebCore::CharacterRange& enclosingRangeRelativeToSessionRange, CompletionHandler<void(Vector<FloatRect>&&)>&& completionHandler) const
 {
-    auto rects = protectedCorePage()->proofreadingSessionSuggestionTextRectsInRootViewCoordinates(enclosingRangeRelativeToSessionRange);
+    auto rects = protect(corePage())->proofreadingSessionSuggestionTextRectsInRootViewCoordinates(enclosingRangeRelativeToSessionRange);
     completionHandler(WTF::move(rects));
 }
 
 void WebPage::updateTextVisibilityForActiveWritingToolsSession(const WebCore::CharacterRange& rangeRelativeToSessionRange, bool visible, const WTF::UUID& identifier, CompletionHandler<void()>&& completionHandler)
 {
-    protectedCorePage()->updateTextVisibilityForActiveWritingToolsSession(rangeRelativeToSessionRange, visible, identifier);
+    protect(corePage())->updateTextVisibilityForActiveWritingToolsSession(rangeRelativeToSessionRange, visible, identifier);
     completionHandler();
 }
 
 void WebPage::textPreviewDataForActiveWritingToolsSession(const WebCore::CharacterRange& rangeRelativeToSessionRange, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&& completionHandler)
 {
-    RefPtr textIndicator = protectedCorePage()->textPreviewDataForActiveWritingToolsSession(rangeRelativeToSessionRange);
+    RefPtr textIndicator = protect(corePage())->textPreviewDataForActiveWritingToolsSession(rangeRelativeToSessionRange);
     completionHandler(WTF::move(textIndicator));
 }
 
 void WebPage::decorateTextReplacementsForActiveWritingToolsSession(const WebCore::CharacterRange& rangeRelativeToSessionRange, CompletionHandler<void(void)>&& completionHandler)
 {
-    protectedCorePage()->decorateTextReplacementsForActiveWritingToolsSession(rangeRelativeToSessionRange);
+    protect(corePage())->decorateTextReplacementsForActiveWritingToolsSession(rangeRelativeToSessionRange);
     completionHandler();
 }
 
 void WebPage::setSelectionForActiveWritingToolsSession(const WebCore::CharacterRange& rangeRelativeToSessionRange, CompletionHandler<void(void)>&& completionHandler)
 {
-    protectedCorePage()->setSelectionForActiveWritingToolsSession(rangeRelativeToSessionRange);
+    protect(corePage())->setSelectionForActiveWritingToolsSession(rangeRelativeToSessionRange);
     completionHandler();
 }
 
 void WebPage::intelligenceTextAnimationsDidComplete()
 {
-    protectedCorePage()->intelligenceTextAnimationsDidComplete();
+    protect(corePage())->intelligenceTextAnimationsDidComplete();
 }
 
 void WebPage::didEndPartialIntelligenceTextAnimation()
@@ -1491,11 +1542,6 @@ WKAccessibilityWebPageObject* WebPage::accessibilityRemoteObject()
     return m_mockAccessibilityElement.get();
 }
 
-RetainPtr<WKAccessibilityWebPageObject> WebPage::protectedAccessibilityRemoteObject()
-{
-    return accessibilityRemoteObject();
-}
-
 RetainPtr<PDFDocument> WebPage::pdfDocumentForPrintingFrame(LocalFrame* coreFrame)
 {
 #if ENABLE(PDF_PLUGIN)
@@ -1745,6 +1791,9 @@ void WebPage::insertTextAsync(const String& text, const EditingRange& replacemen
         return;
 
     UserGestureIndicator gestureIndicator { options.processingUserGesture ? IsProcessingUserGesture::Yes : IsProcessingUserGesture::No, frame->document() };
+    std::optional<UserTypingGestureIndicator> userTypingGestureIndicator;
+    if (options.processingUserGesture)
+        userTypingGestureIndicator.emplace(*frame);
 
     bool replacesText = false;
     if (replacementEditingRange.location != notFound) {
@@ -1955,7 +2004,7 @@ void WebPage::removeTextPlaceholder(const ElementContext& placeholder, Completio
 
 void WebPage::setObscuredContentInsetsFenced(const FloatBoxExtent& obscuredContentInsets, const WTF::MachSendRight& machSendRight)
 {
-    protectedDrawingArea()->addFence(machSendRight);
+    protect(drawingArea())->addFence(machSendRight);
     setObscuredContentInsets(obscuredContentInsets);
 }
 
@@ -2067,12 +2116,258 @@ bool WebPage::isSpeaking() const
     return result;
 }
 
-#if ENABLE(WK_WEB_EXTENSIONS)
-RefPtr<WebExtensionControllerProxy> WebPage::protectedWebExtensionControllerProxy() const
+void WebPage::selectWithGesture(const IntPoint& point, GestureType gestureType, GestureRecognizerState gestureState, bool isInteractingWithFocusedElement, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&& completionHandler)
 {
-    return webExtensionControllerProxy();
-}
+    if (gestureState == GestureRecognizerState::Began)
+        updateFocusBeforeSelectingTextAtLocation(point);
+
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame) {
+        completionHandler({ }, gestureType, gestureState, { });
+        return;
+    }
+
+    VisiblePosition position = visiblePositionInFocusedNodeForPoint(*frame, point, isInteractingWithFocusedElement);
+
+    if (position.isNull()) {
+        completionHandler(point, gestureType, gestureState, { });
+        return;
+    }
+    std::optional<SimpleRange> range;
+    OptionSet<SelectionFlags> flags;
+    GestureRecognizerState wkGestureState = gestureState;
+    switch (gestureType) {
+    case GestureType::PhraseBoundary: {
+        if (!frame->editor().hasComposition())
+            break;
+        auto markedRange = WTF::protect(frame->editor())->compositionRange();
+        auto startPosition = VisiblePosition { makeDeprecatedLegacyPosition(markedRange->start) };
+        position = std::clamp(position, startPosition, VisiblePosition { makeDeprecatedLegacyPosition(markedRange->end) });
+        if (wkGestureState != GestureRecognizerState::Began)
+            flags = distanceBetweenPositions(startPosition, frame->selection().selection().start()) != distanceBetweenPositions(startPosition, position) ? SelectionFlags::PhraseBoundaryChanged : OptionSet<SelectionFlags> { };
+        else
+            flags = SelectionFlags::PhraseBoundaryChanged;
+        range = makeSimpleRange(position);
+        break;
+    }
+
+    case GestureType::OneFingerTap: {
+        auto [adjustedPosition, withinWordBoundary] = wordBoundaryForPositionWithoutCrossingLine(position);
+        if (withinWordBoundary == WithinWordBoundary::Yes)
+            flags = SelectionFlags::WordIsNearTap;
+        range = makeSimpleRange(adjustedPosition);
+        break;
+    }
+
+    case GestureType::Loupe:
+        if (position.rootEditableElement())
+            range = makeSimpleRange(position);
+        else {
+#if !PLATFORM(MACCATALYST)
+            range = wordRangeFromPosition(position);
+#else
+            switch (wkGestureState) {
+            case GestureRecognizerState::Began:
+                m_startingGestureRange = makeSimpleRange(position);
+                break;
+            case GestureRecognizerState::Changed:
+                if (m_startingGestureRange) {
+                    auto& start = m_startingGestureRange->start;
+                    if (makeDeprecatedLegacyPosition(start) < position)
+                        range = makeSimpleRange(start, position);
+                    else
+                        range = makeSimpleRange(position, start);
+                }
+                break;
+            case GestureRecognizerState::Ended:
+            case GestureRecognizerState::Cancelled:
+                m_startingGestureRange = std::nullopt;
+                break;
+            case GestureRecognizerState::Failed:
+            case GestureRecognizerState::Possible:
+                ASSERT_NOT_REACHED();
+                break;
+            }
 #endif
+        }
+        break;
+
+    case GestureType::TapAndAHalf:
+        switch (wkGestureState) {
+        case GestureRecognizerState::Began:
+            range = wordRangeFromPosition(position);
+            if (range)
+                m_currentWordRange = { { *range } };
+            else
+                m_currentWordRange = std::nullopt;
+            break;
+        case GestureRecognizerState::Changed:
+            if (!m_currentWordRange)
+                break;
+            range = m_currentWordRange;
+            if (position < makeDeprecatedLegacyPosition(range->start))
+                range->start = *makeBoundaryPoint(position);
+            if (position > makeDeprecatedLegacyPosition(range->end))
+                range->end = *makeBoundaryPoint(position);
+            break;
+        case GestureRecognizerState::Ended:
+        case GestureRecognizerState::Cancelled:
+            m_currentWordRange = std::nullopt;
+            break;
+        case GestureRecognizerState::Failed:
+        case GestureRecognizerState::Possible:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
+
+    case GestureType::OneFingerDoubleTap:
+        if (atBoundaryOfGranularity(position, TextGranularity::LineGranularity, SelectionDirection::Forward)) {
+            // Double-tap at end of line only places insertion point there.
+            // This helps to get the callout for pasting at ends of lines,
+            // paragraphs, and documents.
+            range = makeSimpleRange(position);
+        } else
+            range = wordRangeFromPosition(position);
+        break;
+
+    case GestureType::TwoFingerSingleTap:
+        // Single tap with two fingers selects the entire paragraph.
+        range = enclosingTextUnitOfGranularity(position, TextGranularity::ParagraphGranularity, SelectionDirection::Forward);
+        break;
+
+    case GestureType::OneFingerTripleTap:
+        if (atBoundaryOfGranularity(position, TextGranularity::LineGranularity, SelectionDirection::Forward)) {
+            // Triple-tap at end of line only places insertion point there.
+            // This helps to get the callout for pasting at ends of lines, paragraphs, and documents.
+            range = makeSimpleRange(position);
+        } else
+            range = enclosingTextUnitOfGranularity(position, TextGranularity::ParagraphGranularity, SelectionDirection::Forward);
+        break;
+
+    default:
+        break;
+    }
+    if (range)
+        WTF::protect(frame->selection())->setSelectedRange(range, position.affinity(), WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered::Yes);
+
+    completionHandler(point, gestureType, gestureState, flags);
+}
+
+void WebPage::updateFocusBeforeSelectingTextAtLocation(const IntPoint& point)
+{
+    static constexpr OptionSet hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
+    RefPtr localMainFrame = WTF::protect(m_page)->localMainFrame();
+    if (!localMainFrame)
+        return;
+
+    auto result = localMainFrame->eventHandler().hitTestResultAtPoint(point, hitType);
+    RefPtr hitNode = result.innerNode();
+    if (!hitNode || !hitNode->renderer())
+        return;
+
+    RefPtr frame = result.innerNodeFrame();
+    m_page->focusController().setFocusedFrame(frame.get());
+
+    if (!result.isOverWidget())
+        return;
+
+#if ENABLE(PDF_PLUGIN)
+    if (RefPtr pluginView = pluginViewForFrame(frame.get()))
+        pluginView->focusPluginElement();
+#endif
+}
+
+IntRect WebPage::rootViewInteractionBounds(const Node& node)
+{
+    RefPtr frame = node.document().frame();
+    if (!frame)
+        return { };
+
+    RefPtr view = frame->view();
+    if (!view)
+        return { };
+
+    return view->contentsToRootView(absoluteInteractionBounds(node));
+}
+
+IntRect WebPage::absoluteInteractionBounds(const Node& node)
+{
+    RefPtr frame = node.document().frame();
+    if (!frame)
+        return { };
+
+    RefPtr view = frame->view();
+    if (!view)
+        return { };
+
+    CheckedPtr renderer = node.renderer();
+    if (!renderer)
+        return { };
+
+    if (CheckedPtr box = dynamicDowncast<RenderBox>(*renderer)) {
+        FloatRect rect;
+        // FIXME: want borders or not?
+        if (box->style().isOverflowVisible())
+            rect = box->layoutOverflowRect();
+        else
+            rect = box->clientBoxRect();
+        return box->localToAbsoluteQuad(rect).enclosingBoundingBox();
+    }
+
+    CheckedRef style = renderer->style();
+    FloatRect boundingBox = renderer->absoluteBoundingBoxRect(true /* use transforms*/);
+    // This is wrong. It's subtracting borders after converting to absolute coords on something that probably doesn't represent a rectangular element.
+    boundingBox.move(WebCore::Style::evaluate<float>(style->usedBorderLeftWidth(), WebCore::Style::ZoomNeeded { }), WebCore::Style::evaluate<float>(style->usedBorderTopWidth(), WebCore::Style::ZoomNeeded { }));
+    boundingBox.setWidth(boundingBox.width() - WebCore::Style::evaluate<float>(style->usedBorderLeftWidth(), WebCore::Style::ZoomNeeded { }) - WebCore::Style::evaluate<float>(style->usedBorderRightWidth(), WebCore::Style::ZoomNeeded { }));
+    boundingBox.setHeight(boundingBox.height() - WebCore::Style::evaluate<float>(style->usedBorderBottomWidth(), WebCore::Style::ZoomNeeded { }) - WebCore::Style::evaluate<float>(style->usedBorderTopWidth(), WebCore::Style::ZoomNeeded { }));
+    return enclosingIntRect(boundingBox);
+}
+
+static IntRect elementBoundsInFrame(const LocalFrame& frame, const Element& focusedElement)
+{
+    WTF::protect(frame.document())->updateLayout(LayoutOptions::IgnorePendingStylesheets);
+
+    if (focusedElement.hasTagName(HTMLNames::textareaTag) || focusedElement.hasTagName(HTMLNames::inputTag) || focusedElement.hasTagName(HTMLNames::selectTag))
+        return WebPage::absoluteInteractionBounds(focusedElement);
+
+    if (RefPtr rootEditableElement = focusedElement.rootEditableElement())
+        return WebPage::absoluteInteractionBounds(*rootEditableElement);
+
+    return { };
+}
+
+IntPoint WebPage::constrainPoint(const IntPoint& point, const LocalFrame& frame, const Element& focusedElement)
+{
+    ASSERT(&focusedElement.document() == frame.document());
+    const int DEFAULT_CONSTRAIN_INSET = 2;
+    IntRect innerFrame = elementBoundsInFrame(frame, focusedElement);
+    IntPoint constrainedPoint = point;
+
+    int minX = innerFrame.x() + DEFAULT_CONSTRAIN_INSET;
+    int maxX = innerFrame.maxX() - DEFAULT_CONSTRAIN_INSET;
+    int minY = innerFrame.y() + DEFAULT_CONSTRAIN_INSET;
+    int maxY = innerFrame.maxY() - DEFAULT_CONSTRAIN_INSET;
+
+    if (point.x() < minX)
+        constrainedPoint.setX(minX);
+    else if (point.x() > maxX)
+        constrainedPoint.setX(maxX);
+
+    if (point.y() < minY)
+        constrainedPoint.setY(minY);
+    else if (point.y() >= maxY)
+        constrainedPoint.setY(maxY);
+
+    return constrainedPoint;
+}
+
+VisiblePosition WebPage::visiblePositionInFocusedNodeForPoint(const LocalFrame& frame, const IntPoint& point, bool isInteractingWithFocusedElement)
+{
+    IntPoint adjustedPoint(WTF::protect(frame.view())->rootViewToContents(point));
+    IntPoint constrainedPoint = m_focusedElement && isInteractingWithFocusedElement ? WebPage::constrainPoint(adjustedPoint, frame, WTF::protect(*m_focusedElement)) : adjustedPoint;
+    return frame.visiblePositionForPoint(constrainedPoint);
+}
 
 } // namespace WebKit
 

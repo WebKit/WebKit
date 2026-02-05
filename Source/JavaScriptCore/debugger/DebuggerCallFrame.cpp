@@ -29,7 +29,6 @@
 #include "config.h"
 #include "DebuggerCallFrame.h"
 
-#include "CatchScope.h"
 #include "CodeBlock.h"
 #include "DebuggerEvalEnabler.h"
 #include "DebuggerScope.h"
@@ -39,6 +38,7 @@
 #include "ShadowChickenInlines.h"
 #include "StackVisitor.h"
 #include "StrongInlines.h"
+#include "TopExceptionScope.h"
 #include "VMEntryScopeInlines.h"
 
 namespace JSC {
@@ -232,7 +232,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(VM& vm, const String& scri
         return jsUndefined();
 
     JSLockHolder lock(vm);
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     
     JSGlobalObject* globalObject = codeBlock->globalObject();
     DebuggerEvalEnabler evalEnabler(globalObject, DebuggerEvalEnabler::Mode::EvalOnGlobalObjectAtDebuggerEntry);

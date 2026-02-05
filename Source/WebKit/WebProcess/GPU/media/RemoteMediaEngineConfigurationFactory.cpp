@@ -31,11 +31,11 @@
 #include "GPUProcessConnection.h"
 #include "RemoteMediaEngineConfigurationFactoryProxyMessages.h"
 #include "WebProcess.h"
-#include <WebCore/MediaCapabilitiesDecodingInfo.h>
-#include <WebCore/MediaCapabilitiesEncodingInfo.h>
-#include <WebCore/MediaDecodingConfiguration.h>
-#include <WebCore/MediaEncodingConfiguration.h>
-#include <WebCore/MediaEngineConfigurationFactory.h>
+#include <WebCore/PlatformMediaCapabilitiesDecodingInfo.h>
+#include <WebCore/PlatformMediaCapabilitiesEncodingInfo.h>
+#include <WebCore/PlatformMediaDecodingConfiguration.h>
+#include <WebCore/PlatformMediaEncodingConfiguration.h>
+#include <WebCore/PlatformMediaEngineConfigurationFactory.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -52,9 +52,9 @@ RemoteMediaEngineConfigurationFactory::~RemoteMediaEngineConfigurationFactory() 
 
 void RemoteMediaEngineConfigurationFactory::registerFactory()
 {
-    MediaEngineConfigurationFactory::clearFactories();
+    PlatformMediaEngineConfigurationFactory::clearFactories();
 
-    auto createDecodingConfiguration = [weakThis = WeakPtr { *this }] (MediaDecodingConfiguration&& configuration, MediaEngineConfigurationFactory::DecodingConfigurationCallback&& callback) {
+    auto createDecodingConfiguration = [weakThis = WeakPtr { *this }](PlatformMediaDecodingConfiguration&& configuration, PlatformMediaEngineConfigurationFactory::DecodingConfigurationCallback&& callback) {
         if (!weakThis) {
             callback({{ }, WTF::move(configuration)});
             return;
@@ -64,9 +64,9 @@ void RemoteMediaEngineConfigurationFactory::registerFactory()
     };
 
 #if PLATFORM(COCOA)
-    MediaEngineConfigurationFactory::CreateEncodingConfiguration createEncodingConfiguration = nullptr;
+    PlatformMediaEngineConfigurationFactory::CreateEncodingConfiguration createEncodingConfiguration = nullptr;
 #else
-    auto createEncodingConfiguration = [weakThis = WeakPtr { *this }] (MediaEncodingConfiguration&& configuration, MediaEngineConfigurationFactory::EncodingConfigurationCallback&& callback) {
+    auto createEncodingConfiguration = [weakThis = WeakPtr { *this }](PlatformMediaEncodingConfiguration&& configuration, PlatformMediaEngineConfigurationFactory::EncodingConfigurationCallback&& callback) {
         if (!weakThis) {
             callback({{ }, WTF::move(configuration)});
             return;
@@ -76,7 +76,7 @@ void RemoteMediaEngineConfigurationFactory::registerFactory()
     };
 #endif
 
-    MediaEngineConfigurationFactory::installFactory({ WTF::move(createDecodingConfiguration), WTF::move(createEncodingConfiguration) });
+    PlatformMediaEngineConfigurationFactory::installFactory({ WTF::move(createDecodingConfiguration), WTF::move(createEncodingConfiguration) });
 }
 
 ASCIILiteral RemoteMediaEngineConfigurationFactory::supplementName()
@@ -89,22 +89,22 @@ GPUProcessConnection& RemoteMediaEngineConfigurationFactory::gpuProcessConnectio
     return WebProcess::singleton().ensureGPUProcessConnection();
 }
 
-void RemoteMediaEngineConfigurationFactory::createDecodingConfiguration(MediaDecodingConfiguration&& configuration, MediaEngineConfigurationFactory::DecodingConfigurationCallback&& callback)
+void RemoteMediaEngineConfigurationFactory::createDecodingConfiguration(PlatformMediaDecodingConfiguration&& configuration, PlatformMediaEngineConfigurationFactory::DecodingConfigurationCallback&& callback)
 {
     if (!m_webProcess->mediaPlaybackEnabled())
         return callback({ });
 
-    gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteMediaEngineConfigurationFactoryProxy::CreateDecodingConfiguration(WTF::move(configuration)), [callback = WTF::move(callback)] (MediaCapabilitiesDecodingInfo&& info) mutable {
+    gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteMediaEngineConfigurationFactoryProxy::CreateDecodingConfiguration(WTF::move(configuration)), [callback = WTF::move(callback)](PlatformMediaCapabilitiesDecodingInfo&& info) mutable {
         callback(WTF::move(info));
     });
 }
 
-void RemoteMediaEngineConfigurationFactory::createEncodingConfiguration(MediaEncodingConfiguration&& configuration, MediaEngineConfigurationFactory::EncodingConfigurationCallback&& callback)
+void RemoteMediaEngineConfigurationFactory::createEncodingConfiguration(PlatformMediaEncodingConfiguration&& configuration, PlatformMediaEngineConfigurationFactory::EncodingConfigurationCallback&& callback)
 {
     if (!m_webProcess->mediaPlaybackEnabled())
         return callback({ });
 
-    gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteMediaEngineConfigurationFactoryProxy::CreateEncodingConfiguration(WTF::move(configuration)), [callback = WTF::move(callback)] (MediaCapabilitiesEncodingInfo&& info) mutable {
+    gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteMediaEngineConfigurationFactoryProxy::CreateEncodingConfiguration(WTF::move(configuration)), [callback = WTF::move(callback)](PlatformMediaCapabilitiesEncodingInfo&& info) mutable {
         callback(WTF::move(info));
     });
 }

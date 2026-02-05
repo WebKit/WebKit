@@ -1,26 +1,26 @@
 
-FAIL "scrollbars" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "scrollbars=yes" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "scrollbars=true" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "scrollbars=no" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "status" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "status=yes" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "status=true" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "status=no" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "titlebar" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "titlebar=yes" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "titlebar=true" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "titlebar=no" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "close" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "close=yes" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "close=true" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "close=no" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "minimizable" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "minimizable=yes" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "minimizable=true" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "minimizable=no" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "personalbar" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "personalbar=yes" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "personalbar=true" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
-FAIL "personalbar=no" should set BarProp visibility to false assert_equals: window.locationbar.visible expected false but got true
+PASS "scrollbars" should set BarProp visibility to false
+PASS "scrollbars=yes" should set BarProp visibility to false
+PASS "scrollbars=true" should set BarProp visibility to false
+PASS "scrollbars=no" should set BarProp visibility to false
+PASS "status" should set BarProp visibility to false
+PASS "status=yes" should set BarProp visibility to false
+PASS "status=true" should set BarProp visibility to false
+PASS "status=no" should set BarProp visibility to false
+PASS "titlebar" should set BarProp visibility to false
+PASS "titlebar=yes" should set BarProp visibility to false
+PASS "titlebar=true" should set BarProp visibility to false
+PASS "titlebar=no" should set BarProp visibility to false
+PASS "close" should set BarProp visibility to false
+PASS "close=yes" should set BarProp visibility to false
+PASS "close=true" should set BarProp visibility to false
+PASS "close=no" should set BarProp visibility to false
+PASS "minimizable" should set BarProp visibility to false
+PASS "minimizable=yes" should set BarProp visibility to false
+PASS "minimizable=true" should set BarProp visibility to false
+PASS "minimizable=no" should set BarProp visibility to false
+PASS "personalbar" should set BarProp visibility to false
+PASS "personalbar=yes" should set BarProp visibility to false
+PASS "personalbar=true" should set BarProp visibility to false
+PASS "personalbar=no" should set BarProp visibility to false
 

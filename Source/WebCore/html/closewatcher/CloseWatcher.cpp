@@ -54,7 +54,7 @@ ExceptionOr<Ref<CloseWatcher>> CloseWatcher::create(ScriptExecutionContext& cont
     if (RefPtr signal = options.signal) {
         if (signal->aborted()) {
             watcher->m_active = false;
-            Ref manager = document->protectedWindow()->closeWatcherManager();
+            Ref manager = protect(document->window())->closeWatcherManager();
             manager->remove(watcher.get());
         } else {
             watcher->m_signal = signal;
@@ -75,7 +75,7 @@ Ref<CloseWatcher> CloseWatcher::establish(Document& document)
     Ref watcher = adoptRef(*new CloseWatcher(document));
     watcher->suspendIfNeeded();
 
-    Ref manager = document.protectedWindow()->closeWatcherManager();
+    Ref manager = protect(document.window())->closeWatcherManager();
 
     manager->add(watcher);
     return watcher;
@@ -102,14 +102,14 @@ bool CloseWatcher::requestToClose()
         return true;
 
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
-    Ref manager = document->protectedWindow()->closeWatcherManager();
-    bool canPreventClose = manager->canPreventClose() && document->protectedWindow()->hasHistoryActionActivation();
+    Ref manager = protect(document->window())->closeWatcherManager();
+    bool canPreventClose = manager->canPreventClose() && protect(document->window())->hasHistoryActionActivation();
     Ref cancelEvent = Event::create(eventNames().cancelEvent, Event::CanBubble::No, canPreventClose ? Event::IsCancelable::Yes : Event::IsCancelable::No);
     m_isRunningCancelAction = true;
     dispatchEvent(cancelEvent);
     m_isRunningCancelAction = false;
     if (cancelEvent->defaultPrevented()) {
-        document->protectedWindow()->consumeHistoryActionUserActivation();
+        protect(document->window())->consumeHistoryActionUserActivation();
         return false;
     }
 
@@ -141,8 +141,8 @@ void CloseWatcher::destroy()
         return;
 
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
-    if (document && document->protectedWindow()) {
-        Ref manager = document->protectedWindow()->closeWatcherManager();
+    if (document && document->window()) {
+        Ref manager = protect(document->window())->closeWatcherManager();
         manager->remove(*this);
     }
 

@@ -29,25 +29,19 @@
 #if ENABLE(2022_GLIB_API)
 
 #include "WebKitImagePrivate.h"
-
-#if USE(SKIA)
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
-#include <skia/core/SkData.h>
-#include <skia/core/SkImage.h>
-#include <skia/core/SkImageInfo.h>
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Skia port
-#include <skia/encode/SkPngEncoder.h>
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
-#else
-#include <WebCore/NotImplemented.h>
-#endif
 #include <wtf/Assertions.h>
 #include <wtf/Hasher.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
+
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkData.h>
+#include <skia/core/SkImage.h>
+#include <skia/core/SkImageInfo.h>
+#include <skia/encode/SkPngEncoder.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 static void webkit_image_gicon_interface_init(GIconIface*);
 static void webkit_image_gloadable_icon_interface_init(GLoadableIconIface*);
@@ -87,9 +81,7 @@ enum {
     N_PROPERTIES
 };
 
-#if USE(SKIA)
 static constexpr SkColorType WebKitImageColorType = kBGRA_8888_SkColorType;
-#endif
 static constexpr uint8_t BGRA8BytesPerPixel = 4;
 
 static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
@@ -342,7 +334,6 @@ static GInputStream* webkitImageLoad(GLoadableIcon* icon, int size, char** type,
         return nullptr;
     }
 
-#if USE(SKIA)
     gsize dataSize = 0;
     auto* data = g_bytes_get_data(bytes,  &dataSize);
     sk_sp<SkData> skData = SkData::MakeWithoutCopy(data, dataSize);
@@ -386,11 +377,6 @@ static GInputStream* webkitImageLoad(GLoadableIcon* icon, int size, char** type,
         *type = g_strdup("image/png"_s);
 
     return stream;
-#else
-    notImplemented();
-    g_set_error_literal(error, G_IO_ERROR, G_IO_ERROR_FAILED, "Operation unimplemented");
-    return nullptr;
-#endif
 }
 
 struct LoadTaskData {

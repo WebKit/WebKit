@@ -310,10 +310,15 @@ static RefPtr<Inspector::Protocol::Canvas::ContextAttributes> buildObjectForCanv
         case PredefinedColorSpace::SRGB:
             contextAttributesPayload->setColorSpace(Inspector::Protocol::Canvas::ColorSpace::SRGB);
             break;
-
+        case PredefinedColorSpace::SRGBLinear:
+            contextAttributesPayload->setColorSpace(Inspector::Protocol::Canvas::ColorSpace::SRGBLinear);
+            break;
 #if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
         case PredefinedColorSpace::DisplayP3:
             contextAttributesPayload->setColorSpace(Inspector::Protocol::Canvas::ColorSpace::DisplayP3);
+            break;
+        case PredefinedColorSpace::DisplayP3Linear:
+            contextAttributesPayload->setColorSpace(Inspector::Protocol::Canvas::ColorSpace::DisplayP3Linear);
             break;
 #endif
         }
@@ -412,7 +417,7 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(b
         .setHeight(size.height())
         .release();
 
-    if (auto* node = canvasElement()) {
+    if (RefPtr node = canvasElement()) {
         String cssCanvasName = node->document().nameForCSSCanvasElement(*node);
         if (!cssCanvasName.isEmpty())
             canvas->setCssCanvasName(cssCanvasName);
@@ -423,7 +428,7 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(b
     if (auto attributes = buildObjectForCanvasContextAttributes(m_context.get()))
         canvas->setContextAttributes(attributes.releaseNonNull());
 
-    if (size_t memoryCost = m_context->canvasBase().memoryCost())
+    if (size_t memoryCost = m_context->memoryCost())
         canvas->setMemoryCost(memoryCost);
 
     if (captureBacktrace) {
@@ -546,7 +551,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
             String dataURL = "data:,"_s;
 
             if (CachedImage* cachedImage = imageElement->cachedImage()) {
-                Image* image = cachedImage->image();
+                RefPtr<Image> image = cachedImage->image();
                 if (image && image != &Image::nullImage()) {
                     auto imageBuffer = ImageBuffer::create(image->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
                     imageBuffer->context().drawImage(*image, FloatPoint(0, 0));
@@ -624,7 +629,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
             String dataURL = "data:,"_s;
 
             if (auto* cachedImage = cssImageValue->image()) {
-                auto* image = cachedImage->image();
+                RefPtr image = cachedImage->image();
                 if (image && image != &Image::nullImage()) {
                     auto imageBuffer = ImageBuffer::create(image->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
                     imageBuffer->context().drawImage(*image, FloatPoint(0, 0));

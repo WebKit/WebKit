@@ -23,39 +23,39 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x241 [border: (4px solid #0000FF)]
         RenderBlock {DIV} at (20,20) size 744x69
-          RenderText {#text} at (0,0) size 59x26
+          RenderText {#text} at (0,0) size 59x27
             text run at (0,0) width 59: "Tests:"
-          RenderBR {BR} at (58,0) size 1x26
-          RenderText {#text} at (0,27) size 658x20
+          RenderBR {BR} at (58,0) size 1x27
+          RenderText {#text} at (0,27) size 658x21
             text run at (0,27) width 658: "Our ability to \"edit around\" content the HTML editing code does not yet handle very well."
-          RenderBR {BR} at (657,27) size 1x20
-          RenderInline {I} at (0,48) size 99x20
-            RenderText {#text} at (0,48) size 99x20
+          RenderBR {BR} at (657,27) size 1x21
+          RenderInline {I} at (0,48) size 99x21
+            RenderText {#text} at (0,48) size 99x21
               text run at (0,48) width 99: "For this test: "
-          RenderText {#text} at (99,48) size 392x20
+          RenderText {#text} at (99,48) size 392x21
             text run at (99,48) width 392: "Select and delete a list and some surrounding content."
         RenderBlock (anonymous) at (20,89) size 744x21
-          RenderBR {BR} at (0,0) size 0x20
+          RenderBR {BR} at (0,0) size 0x21
         RenderBlock {DIV} at (20,110) size 744x111
-          RenderText {#text} at (0,0) size 183x26
+          RenderText {#text} at (0,0) size 183x27
             text run at (0,0) width 183: "Expected Results:"
-          RenderBR {BR} at (183,0) size 0x26
-          RenderText {#text} at (0,27) size 709x41
+          RenderBR {BR} at (183,0) size 0x27
+          RenderText {#text} at (0,27) size 709x42
             text run at (0,27) width 709: "The content in the red box must exactly match the content in the green box (except for the border"
             text run at (0,48) width 48: "color)."
-          RenderBR {BR} at (48,48) size 0x20
-          RenderInline {I} at (0,69) size 99x20
-            RenderText {#text} at (0,69) size 99x20
+          RenderBR {BR} at (48,48) size 0x21
+          RenderInline {I} at (0,69) size 99x21
+            RenderText {#text} at (0,69) size 99x21
               text run at (0,69) width 99: "For this test: "
-          RenderText {#text} at (0,69) size 744x41
+          RenderText {#text} at (0,69) size 744x42
             text run at (99,69) width 304: "Only selected content should get deleted. "
             text run at (403,69) width 341: "Surrounding content that is not selected should"
             text run at (0,90) width 201: "(obviously) not be affected."
       RenderBlock {DIV} at (0,251) size 784x31 [border: (2px solid #008000)]
-        RenderText {#text} at (2,2) size 45x26
+        RenderText {#text} at (2,2) size 45x27
           text run at (2,2) width 45: "after"
       RenderBlock {DIV} at (0,292) size 784x31
         RenderBlock {DIV} at (0,0) size 784x31 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 45x26
+          RenderText {#text} at (2,2) size 45x27
             text run at (2,2) width 45: "after"
 caret: position 0 of child 0 {#text} of child 1 {DIV} of child 5 {DIV} of body

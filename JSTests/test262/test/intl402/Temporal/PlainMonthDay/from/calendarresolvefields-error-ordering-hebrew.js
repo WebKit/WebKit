@@ -50,3 +50,10 @@ assert.throws(
   () => Temporal.PlainMonthDay.from({ calendar: "hebrew", year: 5784, monthCode: "M01", day: 32 }, { overflow: "reject" }),
   "Out-of-range day throws RangeError when all required fields present"
 );
+
+// No RangeError if month is present and reference date has a different ordinal month.
+var pmd = Temporal.PlainMonthDay.from({ calendar: "hebrew", year: 5784, monthCode: "M06", month: 7, day: 1 });
+var pd = Temporal.PlainDate.from(pmd.toString());
+assert.sameValue(pmd.monthCode, "M06", "Temporal.PlainMonthDay monthCode");
+assert.sameValue(pd.monthCode, "M06", "Temporal.PlainDate monthCode");
+assert.sameValue(pd.month, 6, "Temporal.PlainDate ordinal month");

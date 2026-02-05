@@ -70,7 +70,7 @@ void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, NSFont *f
 
     for (int i = 0; i < size; i++) {
         if (items[i].m_type == WebPopupItem::Type::Separator)
-            [protectedMenu() addItem:[NSMenuItem separatorItem]];
+            [protect(menu()) addItem:[NSMenuItem separatorItem]];
         else {
             [m_popup addItemWithTitle:@""];
             RetainPtr menuItem = [m_popup lastItem];
@@ -222,21 +222,21 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
 
 void WebPopupMenuProxyMac::hidePopupMenu()
 {
-    [protectedMenu() cancelTracking];
+    [protect(menu()) cancelTracking];
 }
 
 void WebPopupMenuProxyMac::cancelTracking()
 {
-    [protectedMenu() cancelTracking];
+    [protect(menu()) cancelTracking];
     m_wasCanceled = true;
 }
 
-RetainPtr<NSPopUpButtonCell> WebPopupMenuProxyMac::protectedPopup() const
+NSPopUpButtonCell *WebPopupMenuProxyMac::popup() const
 {
-    return m_popup;
+    return m_popup.get();
 }
 
-RetainPtr<NSMenu> WebPopupMenuProxyMac::protectedMenu() const
+NSMenu *WebPopupMenuProxyMac::menu() const
 {
     return [m_popup menu];
 }

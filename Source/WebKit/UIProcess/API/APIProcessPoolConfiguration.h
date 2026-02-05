@@ -131,11 +131,6 @@ public:
     bool processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol() const { return m_processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol; }
     void setProcessSwapsOnNavigationWithinSameNonHTTPFamilyProtocol(bool swaps) { m_processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol = swaps; }
 
-#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
-    bool useSystemAppearanceForScrollbars() const { return m_useSystemAppearanceForScrollbars; }
-    void setUseSystemAppearanceForScrollbars(bool useSystemAppearanceForScrollbars) { m_useSystemAppearanceForScrollbars = useSystemAppearanceForScrollbars; }
-#endif
-
 #if PLATFORM(PLAYSTATION)
     const WTF::String& webProcessPath() const { return m_webProcessPath; }
     void setWebProcessPath(const WTF::String& webProcessPath) { m_webProcessPath = webProcessPath; }
@@ -196,9 +191,6 @@ private:
     bool m_shouldConfigureJSCForTesting { false };
     bool m_isJITEnabled { true };
     bool m_usesSingleWebProcess { false };
-#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
-    bool m_useSystemAppearanceForScrollbars { false };
-#endif
 #if PLATFORM(PLAYSTATION)
     WTF::String m_webProcessPath;
     WTF::String m_networkProcessPath;

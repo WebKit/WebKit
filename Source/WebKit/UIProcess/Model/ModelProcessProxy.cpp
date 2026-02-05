@@ -301,12 +301,12 @@ void ModelProcessProxy::updateProcessAssertion()
 
     if (hasAnyForegroundWebProcesses) {
         if (!ProcessThrottler::isValidForegroundActivity(m_activityFromWebProcesses.get()))
-            m_activityFromWebProcesses = protectedThrottler()->foregroundActivity("Model for foreground view(s)"_s);
+            m_activityFromWebProcesses = protect(throttler())->foregroundActivity("Model for foreground view(s)"_s);
         return;
     }
     if (hasAnyBackgroundWebProcesses) {
         if (!ProcessThrottler::isValidBackgroundActivity(m_activityFromWebProcesses.get()))
-            m_activityFromWebProcesses = protectedThrottler()->backgroundActivity("Model for background view(s)"_s);
+            m_activityFromWebProcesses = protect(throttler())->backgroundActivity("Model for background view(s)"_s);
         return;
     }
 

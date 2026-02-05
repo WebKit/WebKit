@@ -311,6 +311,8 @@ constexpr CSSValueID toCSSValueID(StyleAppearance e)
         return CSSValueAuto;
     case StyleAppearance::Base:
         return CSSValueBase;
+    case StyleAppearance::BaseSelect:
+        return CSSValueBaseSelect;
     case StyleAppearance::Checkbox:
         return CSSValueCheckbox;
     case StyleAppearance::Radio:

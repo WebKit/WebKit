@@ -238,7 +238,7 @@ String DataTransfer::readStringFromPasteboard(Document& document, const String& 
     }
 
     if (!is<StaticPasteboard>(*m_pasteboard) && lowercaseType == "text/uri-list"_s) {
-        return readURLsFromPasteboardAsString(document.protectedPage().get(), *m_pasteboard, [] (auto&) {
+        return readURLsFromPasteboardAsString(protect(document.page()).get(), *m_pasteboard, [] (auto&) {
             return true;
         });
     }
@@ -612,7 +612,7 @@ DragImageRef DataTransfer::createDragImage(const Document* document, IntPoint& l
     if (m_dragImage) {
         HostWindow* hostWindow = document && document->view() ? document->view()->hostWindow() : nullptr;
         auto deviceScaleFactor = document ? document->deviceScaleFactor() : 1.f;
-        return createDragImageFromImage(m_dragImage->protectedImage().get(), ImageOrientation::Orientation::None, hostWindow, deviceScaleFactor);
+        return createDragImageFromImage(protect(m_dragImage->image()).get(), ImageOrientation::Orientation::None, hostWindow, deviceScaleFactor);
     }
 
     if (m_dragImageElement) {

@@ -25,7 +25,10 @@
 #include "JSDOMGlobalObject.h"
 #include "JSNode.h"
 #include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSString.h>
 #include <JavaScriptCore/ObjectConstructor.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/SortedArrayMap.h>
 
 
 
@@ -55,6 +58,33 @@ template<> ConversionResult<IDLDictionary<TestDictionaryLegacyNativeDictionaryRe
         if (optionalInterfaceMemberConversionResult.hasException(throwScope)) [[unlikely]]
             return ConversionResultException { };
         result.optionalInterfaceMember = optionalInterfaceMemberConversionResult.releaseReturnValue();
+    }
+    JSValue permissiveEnumMemberValue;
+    if (isNullOrUndefined)
+        permissiveEnumMemberValue = jsUndefined();
+    else {
+        permissiveEnumMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "permissiveEnumMember"_s));
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
+    }
+    if (!permissiveEnumMemberValue.isUndefined()) {
+        auto permissiveEnumMemberParseResult = parseEnumeration<TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum>(lexicalGlobalObject, permissiveEnumMemberValue);
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
+        if (permissiveEnumMemberParseResult)
+            result.permissiveEnumMember = *permissiveEnumMemberParseResult;
+    }
+    JSValue permissiveEnumMemberWithDefaultValue;
+    if (isNullOrUndefined)
+        permissiveEnumMemberWithDefaultValue = jsUndefined();
+    else {
+        permissiveEnumMemberWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "permissiveEnumMemberWithDefault"_s));
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
+    }
+    if (permissiveEnumMemberWithDefaultValue.isUndefined())
+        result.permissiveEnumMemberWithDefault = TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum::Value1;
+    else {
+        auto permissiveEnumMemberWithDefaultParseResult = parseEnumeration<TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum>(lexicalGlobalObject, permissiveEnumMemberWithDefaultValue);
+        RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
+        result.permissiveEnumMemberWithDefault = permissiveEnumMemberWithDefaultParseResult.value_or(TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum::Value1);
     }
     JSValue requiredInterfaceMemberValue;
     if (isNullOrUndefined)
@@ -86,10 +116,56 @@ JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, J
         RETURN_IF_EXCEPTION(throwScope, { });
         result->putDirect(vm, JSC::Identifier::fromString(vm, "optionalInterfaceMember"_s), optionalInterfaceMemberValue);
     }
+    if (!IDLEnumeration<TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum>::isNullValue(dictionary.permissiveEnumMember)) {
+        auto permissiveEnumMemberValue = toJS<IDLEnumeration<TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum>>(lexicalGlobalObject, throwScope, IDLEnumeration<TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum>::extractValueFromNullable(dictionary.permissiveEnumMember));
+        RETURN_IF_EXCEPTION(throwScope, { });
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "permissiveEnumMember"_s), permissiveEnumMemberValue);
+    }
+    auto permissiveEnumMemberWithDefaultValue = toJS<IDLEnumeration<TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum>>(lexicalGlobalObject, throwScope, dictionary.permissiveEnumMemberWithDefault);
+    RETURN_IF_EXCEPTION(throwScope, { });
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "permissiveEnumMemberWithDefault"_s), permissiveEnumMemberWithDefaultValue);
     auto requiredInterfaceMemberValue = toJS<IDLNullable<IDLInterface<Node>>>(lexicalGlobalObject, globalObject, throwScope, dictionary.requiredInterfaceMember);
     RETURN_IF_EXCEPTION(throwScope, { });
     result->putDirect(vm, JSC::Identifier::fromString(vm, "requiredInterfaceMember"_s), requiredInterfaceMemberValue);
     return result;
+}
+
+String convertEnumerationToString(TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum enumerationValue)
+{
+    static const std::array<NeverDestroyed<String>, 2> values {
+        MAKE_STATIC_STRING_IMPL("value1"),
+        MAKE_STATIC_STRING_IMPL("value2"),
+    };
+    static_assert(static_cast<size_t>(TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum::Value1) == 0, "TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum::Value1 is not 0 as expected");
+    static_assert(static_cast<size_t>(TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum::Value2) == 1, "TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum::Value2 is not 1 as expected");
+    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
+    return values[static_cast<size_t>(enumerationValue)];
+}
+
+template<> JSString* convertEnumerationToJS(VM& vm, TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum enumerationValue)
+{
+    return jsStringWithCache(vm, convertEnumerationToString(enumerationValue));
+}
+
+template<> std::optional<TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum> parseEnumerationFromString<TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum>(const String& stringValue)
+{
+    static constexpr SortedArrayMap enumerationMapping { std::to_array<std::pair<ComparableASCIILiteral, TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum>>({
+        { "value1"_s, TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum::Value1 },
+        { "value2"_s, TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum::Value2 },
+    }) };
+    if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); enumerationValue) [[likely]]
+        return *enumerationValue;
+    return std::nullopt;
+}
+
+template<> std::optional<TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum> parseEnumeration<TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+{
+    return parseEnumerationFromString<TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum>(value.toWTFString(&lexicalGlobalObject));
+}
+
+template<> ASCIILiteral expectedEnumerationValues<TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum>()
+{
+    return "\"value1\", \"value2\""_s;
 }
 
 } // namespace WebCore

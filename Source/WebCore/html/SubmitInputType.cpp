@@ -81,7 +81,7 @@ void SubmitInputType::handleDOMActivateEvent(Event& event)
 
     // Update layout before processing form actions in case the style changes
     // the Form or button relationships.
-    element->protectedDocument()->updateLayoutIgnorePendingStylesheets();
+    protect(element->document())->updateLayoutIgnorePendingStylesheets();
 
     if (RefPtr currentForm = element->form())
         currentForm->submitIfPossible(&event, element.ptr()); // Event handlers can run.

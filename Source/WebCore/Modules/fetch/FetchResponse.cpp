@@ -499,7 +499,7 @@ void FetchResponse::consumeBodyReceivedByChunk(ConsumeDataByChunkCallback&& call
     m_isDisturbed = true;
 
     if (hasReadableStreamBody()) {
-        m_body->checkedConsumer()->extract(*m_body->protectedReadableStream(), [callback = WTF::move(callback), weakThis = WeakPtr { *this }](auto&& result) {
+        m_body->checkedConsumer()->extract(*protect(m_body->readableStream()), [callback = WTF::move(callback), weakThis = WeakPtr { *this }](auto&& result) {
             WTF::switchOn(WTF::move(result), [&](std::nullptr_t) {
                 callback(nullptr);
             }, [&](std::span<const uint8_t> chunk) {
@@ -519,7 +519,7 @@ void FetchResponse::consumeBodyReceivedByChunk(ConsumeDataByChunkCallback&& call
     }
 
     ASSERT(isLoading());
-    protectedLoader()->consumeDataByChunk(WTF::move(callback));
+    protect(loader())->consumeDataByChunk(WTF::move(callback));
 }
 
 void FetchResponse::setBodyData(ResponseData&& data, uint64_t bodySizeWithPadding)
@@ -555,7 +555,7 @@ void FetchResponse::consumeBodyAsStream()
     }
 
     ASSERT(m_loader);
-    auto data = protectedLoader()->startStreaming();
+    auto data = protect(loader())->startStreaming();
     if (data) {
         Ref readableStreamSource = *m_readableStreamSource;
         if (!readableStreamSource->enqueue(data->tryCreateArrayBuffer())) {
@@ -576,7 +576,7 @@ void FetchResponse::closeStream()
 void FetchResponse::cancelStream()
 {
     if (isAllowedToRunScript() && hasReadableStreamBody()) {
-        body().protectedReadableStream()->cancel(Exception { ExceptionCode::AbortError, "load is cancelled"_s });
+        protect(body().readableStream())->cancel(Exception { ExceptionCode::AbortError, "load is cancelled"_s });
         return;
     }
     cancel();

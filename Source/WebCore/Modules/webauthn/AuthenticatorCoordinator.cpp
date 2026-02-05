@@ -102,9 +102,9 @@ static ScopeAndCrossOriginParent scopeAndCrossOriginParent(const Document& docum
     auto url = document.url();
     std::optional<SecurityOriginData> crossOriginParent;
     for (RefPtr parentDocument = document.parentDocument(); parentDocument; parentDocument = parentDocument->parentDocument()) {
-        if (!origin->isSameOriginDomain(parentDocument->protectedSecurityOrigin()) && !areRegistrableDomainsEqual(url, parentDocument->url()))
+        if (!origin->isSameOriginDomain(protect(parentDocument->securityOrigin())) && !areRegistrableDomainsEqual(url, parentDocument->url()))
             isSameSite = false;
-        if (!crossOriginParent && !origin->isSameOriginAs(parentDocument->protectedSecurityOrigin()))
+        if (!crossOriginParent && !origin->isSameOriginAs(protect(parentDocument->securityOrigin())))
             crossOriginParent = parentDocument->securityOrigin().data();
     }
 
@@ -409,7 +409,7 @@ void AuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(con
     };
 
     // Async operation are dispatched and handled in the messenger.
-    m_client->isUserVerifyingPlatformAuthenticatorAvailable(document.protectedSecurityOrigin().get(), WTF::move(completionHandler));
+    m_client->isUserVerifyingPlatformAuthenticatorAvailable(protect(document.securityOrigin()).get(), WTF::move(completionHandler));
 }
 
 
@@ -424,7 +424,7 @@ void AuthenticatorCoordinator::isConditionalMediationAvailable(const Document& d
         promise.resolve(result);
     };
     // Async operations are dispatched and handled in the messenger.
-    m_client->isConditionalMediationAvailable(document.protectedSecurityOrigin().get(), WTF::move(completionHandler));
+    m_client->isConditionalMediationAvailable(protect(document.securityOrigin()).get(), WTF::move(completionHandler));
 }
 
 void AuthenticatorCoordinator::getClientCapabilities(const Document& document, DOMPromiseDeferred<PublicKeyCredentialClientCapabilities>&& promise) const
@@ -438,7 +438,7 @@ void AuthenticatorCoordinator::getClientCapabilities(const Document& document, D
         promise.resolve(result);
     };
 
-    m_client->getClientCapabilities(document.protectedSecurityOrigin().get(), WTF::move(completionHandler));
+    m_client->getClientCapabilities(protect(document.securityOrigin()).get(), WTF::move(completionHandler));
 }
 
 void AuthenticatorCoordinator::signalUnknownCredential(const Document& document, UnknownCredentialOptions&& options, DOMPromiseDeferred<void>&& promise)

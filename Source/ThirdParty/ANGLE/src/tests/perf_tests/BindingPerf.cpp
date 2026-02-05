@@ -232,7 +232,7 @@ BindingsParams D3D11Params(AllocationStyle allocationStyle)
 BindingsParams OpenGLOrGLESParams(AllocationStyle allocationStyle)
 {
     BindingsParams params;
-    params.eglParameters   = egl_platform::OPENGL_OR_GLES_NULL();
+    params.eglParameters   = egl_platform::OPENGL_OR_GLES();
     params.allocationStyle = allocationStyle;
     return params;
 }

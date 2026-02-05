@@ -57,6 +57,21 @@ RefPtr<NativeImage> RemoteResourceCache::cachedNativeImage(RenderingResourceIden
     return m_nativeImages.get(identifier);
 }
 
+bool RemoteResourceCache::cachePathImpl(RemotePathImplIdentifier identifier, Ref<PathImpl>&& path)
+{
+    return m_paths.add(identifier, WTF::move(path)).isNewEntry;
+}
+
+bool RemoteResourceCache::releasePathImpl(RemotePathImplIdentifier identifier)
+{
+    return m_paths.remove(identifier);
+}
+
+RefPtr<PathImpl> RemoteResourceCache::cachedPathImpl(RemotePathImplIdentifier identifier) const
+{
+    return m_paths.get(identifier);
+}
+
 bool RemoteResourceCache::cacheGradient(RemoteGradientIdentifier identifier, Ref<Gradient>&& gradient)
 {
     return m_gradients.add(identifier, WTF::move(gradient)).isNewEntry;
@@ -147,6 +162,7 @@ void RemoteResourceCache::releaseMemory()
     m_gradients.clear();
     m_filters.clear();
     m_fonts.clear();
+    m_paths.clear();
     m_fontCustomPlatformDatas.clear();
     m_displayLists.clear();
 }

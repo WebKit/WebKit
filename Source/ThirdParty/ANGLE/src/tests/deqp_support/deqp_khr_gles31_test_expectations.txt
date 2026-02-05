@@ -70,6 +70,7 @@
 362486580 LINUX NVIDIA VULKAN : KHR-GLES31.core.pixelstoragemodes.teximage3d.rgb10a2.16_16_1 = FAIL
 362486580 LINUX NVIDIA VULKAN : KHR-GLES31.core.tessellation_shader.tessellation_shader_tessellation.max_in_out_attributes = SKIP
 362486580 LINUX NVIDIA VULKAN : KHR-GLES31.core.texture_cube_map_array.image_op_fragment_sh = FAIL
+362486580 LINUX NVIDIA VULKAN : KHR-GLES31.core.texture_cube_map_array.image_op_compute_sh = SKIP
 
 ////
 //// SwANGLE expectations

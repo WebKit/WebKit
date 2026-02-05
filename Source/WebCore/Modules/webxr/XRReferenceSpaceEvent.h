@@ -40,7 +40,7 @@ class XRReferenceSpaceEvent : public Event {
     WTF_MAKE_TZONE_ALLOCATED(XRReferenceSpaceEvent);
 public:
     struct Init : EventInit {
-        RefPtr<WebXRReferenceSpace> referenceSpace;
+        Ref<WebXRReferenceSpace> referenceSpace;
         RefPtr<WebXRRigidTransform> transform;
     };
 

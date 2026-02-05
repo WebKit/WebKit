@@ -31,6 +31,10 @@
 #include <wtf/TypeCasts.h>
 #include <wtf/UniqueRef.h>
 
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+#include <WebCore/AXObjectCache.h>
+#endif
+
 namespace WebCore {
 
 class IntPoint;
@@ -66,6 +70,9 @@ public:
     String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>);
     void bindRemoteAccessibilityFrames(int processIdentifier, AccessibilityRemoteToken, CompletionHandler<void(AccessibilityRemoteToken, int)>&&);
     void updateRemoteFrameAccessibilityOffset(IntPoint);
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+    void updateRemoteFrameAccessibilityInheritedState(const InheritedFrameState&);
+#endif
     void unbindRemoteAccessibilityFrames(int);
 
     void setCustomUserAgent(String&& customUserAgent) { m_customUserAgent = WTF::move(customUserAgent); }
@@ -97,6 +104,7 @@ private:
     bool isRootFrame() const final { return false; }
     void documentURLForConsoleLog(CompletionHandler<void(const URL&)>&&) final;
     SecurityOrigin* frameDocumentSecurityOrigin() const final;
+    std::optional<DocumentSecurityPolicy> frameDocumentSecurityPolicy() const final;
     String frameURLProtocol() const final;
     float usedZoomForChild(const Frame&) const final;
 

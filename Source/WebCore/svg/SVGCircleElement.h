@@ -43,7 +43,7 @@ public:
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGCircleElement, SVGGeometryElement>;
 
-    SVGAnimatedProperty* propertyForAttribute(const QualifiedName&) const;
+    SVGAnimatedPropertyBase* propertyForAttribute(const QualifiedName&) const;
 
 private:
     SVGCircleElement(const QualifiedName&, Document&);

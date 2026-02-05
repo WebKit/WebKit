@@ -2456,8 +2456,8 @@ namespace JSC {
         const Identifier& ecmaName() { return m_ecmaName ? *m_ecmaName : m_name; }
         void setEcmaName(const Identifier& name) { m_ecmaName = m_name.isNull() ? &name : &m_name; }
 
-        bool hasStaticProperty(const Identifier& propName) { return m_classElements ? m_classElements->hasStaticallyNamedProperty(propName) : false; }
-        bool hasInstanceFields() const { return m_classElements ? m_classElements->hasInstanceFields() : false; }
+        bool hasStaticProperty(const Identifier& propName) { return m_classElements && m_classElements->hasStaticallyNamedProperty(propName); }
+        bool hasInstanceFields() const { return m_classElements && m_classElements->hasInstanceFields(); }
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;

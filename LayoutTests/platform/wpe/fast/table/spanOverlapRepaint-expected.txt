@@ -22,5 +22,5 @@ layer at (0,0) size 800x600
                       RenderText {#text} at (0,0) size 0x0
 layer at (26,28) size 167x18
   RenderBlock {DIV} at (3,3) size 167x18
-    RenderText {#text} at (0,0) size 31x17
+    RenderText {#text} at (0,0) size 31x18
       text run at (0,0) width 31: "hello"

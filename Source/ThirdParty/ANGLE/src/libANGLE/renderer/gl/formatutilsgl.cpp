@@ -896,12 +896,12 @@ CompressedTexSubImageFormat GetCompressedSubTexImageFormat(const FunctionsGL *fu
 
 CopyTexImageImageFormat GetCopyTexImageImageFormat(const FunctionsGL *functions,
                                                    const angle::FeaturesGL &features,
-                                                   GLenum internalFormat,
-                                                   GLenum framebufferType)
+                                                   GLenum internalFormat)
 {
     CopyTexImageImageFormat result;
-    result.internalFormat = GetTexImageNativeInternalFormat(
-        functions, features, gl::GetInternalFormatInfo(internalFormat, framebufferType));
+    const gl::InternalFormat &formatInfo =
+        gl::GetInternalFormatInfo(internalFormat, GL_UNSIGNED_BYTE);
+    result.internalFormat = GetTexImageNativeInternalFormat(functions, features, formatInfo);
     return result;
 }
 

@@ -197,7 +197,7 @@ std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(std::spa
         for (auto& audioTrack : init.audioTracks) {
             if (audioTrack.track) {
                 duration = init.duration;
-                audioTrackId = audioTrack.track->id();
+                audioTrackId = RefPtr { audioTrack.track }->id();
                 // FIXME: Use downcast instead.
                 track = unsafeRefPtrDowncast<AudioTrackPrivateWebM>(audioTrack.track);
                 return;
@@ -289,7 +289,7 @@ std::optional<size_t> AudioFileReader::decodeWebMData(AudioBufferList& bufferLis
         PAL::AudioConverterDispose(converter);
     });
     ASSERT(m_webmData && !m_webmData->m_samples.isEmpty() && m_webmData->m_samples[0]->sampleBuffer(), "Structure integrity was checked in numberOfFrames");
-    RetainPtr formatDescription = PAL::CMSampleBufferGetFormatDescription(m_webmData->m_samples[0]->sampleBuffer());
+    RetainPtr formatDescription = PAL::CMSampleBufferGetFormatDescription(RetainPtr { m_webmData->m_samples[0]->sampleBuffer() }.get());
     if (!formatDescription) {
         RELEASE_LOG_FAULT(WebAudio, "Unable to retrieve format description from first sample");
         return { };
@@ -485,7 +485,7 @@ std::optional<AudioStreamBasicDescription> AudioFileReader::fileDataFormat() con
     if (m_webmData->m_samples.isEmpty())
         return { };
 
-    RetainPtr formatDescription = PAL::CMSampleBufferGetFormatDescription(m_webmData->m_samples[0]->sampleBuffer());
+    RetainPtr formatDescription = PAL::CMSampleBufferGetFormatDescription(RetainPtr { m_webmData->m_samples[0]->sampleBuffer() }.get());
     if (!formatDescription)
         return { };
 

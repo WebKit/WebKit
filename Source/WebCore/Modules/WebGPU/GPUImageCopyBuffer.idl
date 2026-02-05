@@ -27,7 +27,6 @@
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUImageCopyBuffer : GPUImageDataLayout {
     required GPUBuffer buffer;
 };

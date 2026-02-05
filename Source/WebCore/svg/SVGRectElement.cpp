@@ -60,7 +60,7 @@ Ref<SVGRectElement> SVGRectElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGRectElement(tagName, document));
 }
 
-SVGAnimatedProperty* SVGRectElement::propertyForAttribute(const QualifiedName& name) const
+SVGAnimatedPropertyBase* SVGRectElement::propertyForAttribute(const QualifiedName& name) const
 {
     if (name == SVGNames::xAttr)
         return m_x.ptr();

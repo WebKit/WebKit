@@ -131,10 +131,10 @@ void JSTestCallbackFunctionWithVariadic::visitJSFunction(JSC::SlotVisitor& visit
 
 JSC::JSValue toJS(TestCallbackFunctionWithVariadic& impl)
 {
-    if (!static_cast<JSTestCallbackFunctionWithVariadic&>(impl).callbackData())
-        return jsNull();
+    if (auto* callbackData = downcast<JSTestCallbackFunctionWithVariadic>(impl).callbackData())
+        return callbackData->callback();
+    return jsNull();
 
-    return static_cast<JSTestCallbackFunctionWithVariadic&>(impl).callbackData()->callback();
 }
 
 ScriptExecutionContext* JSTestCallbackFunctionWithVariadic::scriptExecutionContext() const

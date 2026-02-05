@@ -42,8 +42,8 @@ Ref<PictureInPictureEvent> PictureInPictureEvent::create(const AtomString& type,
 }
 
 PictureInPictureEvent::PictureInPictureEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
-    : Event(EventInterfaceType::PictureInPictureEvent, type, init, isTrusted)
-    , m_pictureInPictureWindow(init.pictureInPictureWindow.releaseNonNull())
+    : Event(EventInterfaceType::PictureInPictureEvent, type, WTF::move(init), isTrusted)
+    , m_pictureInPictureWindow(WTF::move(init.pictureInPictureWindow))
 {
 }
 

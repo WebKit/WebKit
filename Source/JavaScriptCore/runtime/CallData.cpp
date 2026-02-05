@@ -26,11 +26,11 @@
 #include "config.h"
 #include "CallData.h"
 
-#include "CatchScope.h"
 #include "Interpreter.h"
 #include "InterpreterInlines.h"
 #include "JSObjectInlines.h"
 #include "ScriptProfilingScope.h"
+#include "TopExceptionScope.h"
 
 #if ASSERT_ENABLED
 #include "IntegrityInlines.h"
@@ -73,7 +73,7 @@ JSValue call(JSGlobalObject* globalObject, JSValue functionObject, const CallDat
 JSValue call(JSGlobalObject* globalObject, JSValue functionObject, const CallData& callData, JSValue thisValue, const ArgList& args, NakedPtr<Exception>& returnedException)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSValue result = call(globalObject, functionObject, callData, thisValue, args);
     if (scope.exception()) [[unlikely]] {
         returnedException = scope.exception();

@@ -3,51 +3,51 @@ PASS undefined (expect tab)
 PASS  (expect tab)
 PASS ,noopener (expect tab)
 PASS ,noreferrer (expect tab)
-FAIL ,popup (expect popup) assert_equals: Popup state expected true but got false
+PASS ,popup (expect popup)
 PASS ,noopener,noreferrer,popup (expect tab)
-FAIL resizable=yes,scrollbars=yes,status=yes (expect popup) assert_equals: Popup state expected true but got false
+PASS resizable=yes,scrollbars=yes,status=yes (expect popup)
 PASS resizable=yes,scrollbars=yes,status=yes,noopener (expect tab)
 PASS resizable=yes,scrollbars=yes,status=yes,noreferrer (expect tab)
-FAIL resizable=yes,scrollbars=yes,status=yes,popup (expect popup) assert_equals: Popup state expected true but got false
+PASS resizable=yes,scrollbars=yes,status=yes,popup (expect popup)
 PASS resizable=yes,scrollbars=yes,status=yes,noopener,noreferrer,popup (expect tab)
-FAIL menubar=yes,resizable=yes,scrollbars=yes (expect popup) assert_equals: Popup state expected true but got false
+PASS menubar=yes,resizable=yes,scrollbars=yes (expect popup)
 PASS menubar=yes,resizable=yes,scrollbars=yes,noopener (expect tab)
 PASS menubar=yes,resizable=yes,scrollbars=yes,noreferrer (expect tab)
-FAIL menubar=yes,resizable=yes,scrollbars=yes,popup (expect popup) assert_equals: Popup state expected true but got false
+PASS menubar=yes,resizable=yes,scrollbars=yes,popup (expect popup)
 PASS menubar=yes,resizable=yes,scrollbars=yes,noopener,noreferrer,popup (expect tab)
-FAIL toolbar=yes,resizable=yes,status=yes (expect popup) assert_equals: Popup state expected true but got false
+PASS toolbar=yes,resizable=yes,status=yes (expect popup)
 PASS toolbar=yes,resizable=yes,status=yes,noopener (expect tab)
 PASS toolbar=yes,resizable=yes,status=yes,noreferrer (expect tab)
-FAIL toolbar=yes,resizable=yes,status=yes,popup (expect popup) assert_equals: Popup state expected true but got false
+PASS toolbar=yes,resizable=yes,status=yes,popup (expect popup)
 PASS toolbar=yes,resizable=yes,status=yes,noopener,noreferrer,popup (expect tab)
-FAIL toolbar=yes,menubar=yes,resizable=yes (expect popup) assert_equals: Popup state expected true but got false
+PASS toolbar=yes,menubar=yes,resizable=yes (expect popup)
 PASS toolbar=yes,menubar=yes,resizable=yes,noopener (expect tab)
 PASS toolbar=yes,menubar=yes,resizable=yes,noreferrer (expect tab)
-FAIL toolbar=yes,menubar=yes,resizable=yes,popup (expect popup) assert_equals: Popup state expected true but got false
+PASS toolbar=yes,menubar=yes,resizable=yes,popup (expect popup)
 PASS toolbar=yes,menubar=yes,resizable=yes,noopener,noreferrer,popup (expect tab)
-FAIL location=yes,scrollbars=yes,status=yes (expect popup) assert_equals: Popup state expected true but got false
+PASS location=yes,scrollbars=yes,status=yes (expect popup)
 PASS location=yes,scrollbars=yes,status=yes,noopener (expect tab)
 PASS location=yes,scrollbars=yes,status=yes,noreferrer (expect tab)
-FAIL location=yes,scrollbars=yes,status=yes,popup (expect popup) assert_equals: Popup state expected true but got false
+PASS location=yes,scrollbars=yes,status=yes,popup (expect popup)
 PASS location=yes,scrollbars=yes,status=yes,noopener,noreferrer,popup (expect tab)
-FAIL location=yes,menubar=yes,scrollbars=yes (expect popup) assert_equals: Popup state expected true but got false
+PASS location=yes,menubar=yes,scrollbars=yes (expect popup)
 PASS location=yes,menubar=yes,scrollbars=yes,noopener (expect tab)
 PASS location=yes,menubar=yes,scrollbars=yes,noreferrer (expect tab)
-FAIL location=yes,menubar=yes,scrollbars=yes,popup (expect popup) assert_equals: Popup state expected true but got false
+PASS location=yes,menubar=yes,scrollbars=yes,popup (expect popup)
 PASS location=yes,menubar=yes,scrollbars=yes,noopener,noreferrer,popup (expect tab)
-FAIL location=yes,toolbar=yes,status=yes (expect popup) assert_equals: Popup state expected true but got false
+PASS location=yes,toolbar=yes,status=yes (expect popup)
 PASS location=yes,toolbar=yes,status=yes,noopener (expect tab)
 PASS location=yes,toolbar=yes,status=yes,noreferrer (expect tab)
-FAIL location=yes,toolbar=yes,status=yes,popup (expect popup) assert_equals: Popup state expected true but got false
+PASS location=yes,toolbar=yes,status=yes,popup (expect popup)
 PASS location=yes,toolbar=yes,status=yes,noopener,noreferrer,popup (expect tab)
-FAIL location=yes,toolbar=yes,menubar=yes (expect popup) assert_equals: Popup state expected true but got false
+PASS location=yes,toolbar=yes,menubar=yes (expect popup)
 PASS location=yes,toolbar=yes,menubar=yes,noopener (expect tab)
 PASS location=yes,toolbar=yes,menubar=yes,noreferrer (expect tab)
-FAIL location=yes,toolbar=yes,menubar=yes,popup (expect popup) assert_equals: Popup state expected true but got false
+PASS location=yes,toolbar=yes,menubar=yes,popup (expect popup)
 PASS location=yes,toolbar=yes,menubar=yes,noopener,noreferrer,popup (expect tab)
 PASS location=yes,toolbar=yes,menubar=yes,resizable=yes,scrollbars=yes,status=yes (expect tab)
 PASS location=yes,toolbar=yes,menubar=yes,resizable=yes,scrollbars=yes,status=yes,noopener (expect tab)
 PASS location=yes,toolbar=yes,menubar=yes,resizable=yes,scrollbars=yes,status=yes,noreferrer (expect tab)
-FAIL location=yes,toolbar=yes,menubar=yes,resizable=yes,scrollbars=yes,status=yes,popup (expect popup) assert_equals: Popup state expected true but got false
+PASS location=yes,toolbar=yes,menubar=yes,resizable=yes,scrollbars=yes,status=yes,popup (expect popup)
 PASS location=yes,toolbar=yes,menubar=yes,resizable=yes,scrollbars=yes,status=yes,noopener,noreferrer,popup (expect tab)
 

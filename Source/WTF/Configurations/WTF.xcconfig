@@ -54,16 +54,12 @@ WK_HEADERS_VFS_FILE = $(CPP_HEADERMAP_PRODUCT_HEADERS_VFS_FILE);
 
 GENERATE_WTF_MODULEMAP = YES;
 
-//GENERATE_WTF_MODULEMAP[sdk=macosx14*] = ;
-//GENERATE_WTF_MODULEMAP[sdk=macosx15*] = ;
-
 // The WTF module is ill-formed on bridgeOS.
 GENERATE_WTF_MODULEMAP[sdk=bridgeos*] = ;
 
 ENABLE_WK_LIBRARY_MODULE_VERIFIER = $(GENERATE_WTF_MODULEMAP);
 
 // The WTF module is ill-formed in these configurations, but are needed for backward compatibility.
-ENABLE_WK_LIBRARY_MODULE_VERIFIER[sdk=macosx14*] = ;
 ENABLE_WK_LIBRARY_MODULE_VERIFIER[sdk=macosx15*] = ;
 
 ENABLE_WK_LIBRARY_MODULE_VERIFIER[sdk=macosx26.0*] = ;

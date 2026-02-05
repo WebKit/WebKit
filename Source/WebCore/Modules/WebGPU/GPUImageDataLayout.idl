@@ -29,9 +29,10 @@
 typedef [EnforceRange] unsigned long GPUSize32;
 typedef [EnforceRange] unsigned long long GPUSize64;
 
+// FIXME: This has been rename to `GPUTexelCopyBufferLayout`
+// https://gpuweb.github.io/gpuweb/#gputexelcopybufferlayout
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUImageDataLayout {
     GPUSize64 offset = 0;
     GPUSize32 bytesPerRow;

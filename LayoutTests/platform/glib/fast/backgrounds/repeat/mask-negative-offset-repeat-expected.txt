@@ -4,35 +4,35 @@ layer at (0,0) size 800x548
   RenderBlock {HTML} at (0,0) size 800x548
     RenderBody {BODY} at (8,16) size 784x470
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 153x17
+        RenderText {#text} at (0,0) size 153x18
           text run at (0,0) width 153: "Mask version of test for "
-        RenderInline {I} at (0,0) size 750x35
-          RenderInline {A} at (153,0) size 293x17 [color=#0000EE]
-            RenderText {#text} at (153,0) size 293x17
+        RenderInline {I} at (0,0) size 750x36
+          RenderInline {A} at (153,0) size 293x18 [color=#0000EE]
+            RenderText {#text} at (153,0) size 293x18
               text run at (153,0) width 293: "http://bugs.webkit.org/show_bug.cgi?id=5399"
-          RenderText {#text} at (0,0) size 750x35
+          RenderText {#text} at (0,0) size 750x36
             text run at (445,0) width 5: " "
             text run at (449,0) width 301: "no-repeat on negatively positioned fill images is"
             text run at (0,18) width 49: "ignored"
-        RenderText {#text} at (48,18) size 5x17
+        RenderText {#text} at (48,18) size 5x18
           text run at (48,18) width 5: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 412x17
+        RenderText {#text} at (0,0) size 412x18
           text run at (0,0) width 412: "Element with mask image starting at (-13, -13) with no-repeat set:"
       RenderBlock {P} at (0,132) size 784x18
-        RenderText {#text} at (0,0) size 404x17
+        RenderText {#text} at (0,0) size 404x18
           text run at (0,0) width 404: "Element with mask image starting at (-13, -13) with repeat-y set:"
       RenderBlock {P} at (0,212) size 784x18
-        RenderText {#text} at (0,0) size 404x17
+        RenderText {#text} at (0,0) size 404x18
           text run at (0,0) width 404: "Element with mask image starting at (-13, -13) with repeat-x set:"
       RenderBlock {P} at (0,292) size 784x18
-        RenderText {#text} at (0,0) size 402x17
+        RenderText {#text} at (0,0) size 402x18
           text run at (0,0) width 402: "Element with mask image starting at (13, 13) with no-repeat set:"
       RenderBlock {P} at (0,372) size 784x18
-        RenderText {#text} at (0,0) size 394x17
+        RenderText {#text} at (0,0) size 394x18
           text run at (0,0) width 394: "Element with mask image starting at (13, 13) with repeat-y set:"
       RenderBlock {P} at (0,452) size 784x18
-        RenderText {#text} at (0,0) size 394x17
+        RenderText {#text} at (0,0) size 394x18
           text run at (0,0) width 394: "Element with mask image starting at (13, 13) with repeat-x set:"
 layer at (14,108) size 34x34
   RenderBlock (floating) {DIV} at (6,92) size 34x34 [bgcolor=#000000] [border: (1px dotted #008000)]

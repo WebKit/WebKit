@@ -42,7 +42,6 @@
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ApplePayLineItem {
     ApplePayLineItemType type = "final";
     DOMString label;

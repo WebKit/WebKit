@@ -20,10 +20,11 @@
 
 #pragma once
 
-#include "CryptoAlgorithmParameters.h"
-#include "CryptoKey.h"
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>
+#include <WebCore/CryptoAlgorithmParameters.h>
+#include <WebCore/CryptoAlgorithmX25519ParamsInit.h>
+#include <WebCore/CryptoKey.h>
 
 namespace WebCore {
 
@@ -31,6 +32,13 @@ class CryptoAlgorithmX25519Params final : public CryptoAlgorithmParameters {
     WTF_MAKE_TZONE_ALLOCATED(CryptoAlgorithmX25519Params);
 public:
     RefPtr<CryptoKey> publicKey;
+
+    CryptoAlgorithmX25519Params(CryptoAlgorithmIdentifier identifier, CryptoAlgorithmX25519ParamsInit init)
+        : CryptoAlgorithmParameters { WTF::move(identifier), WTF::move(init) }
+        , publicKey { WTF::move(init.publicKey) }
+    {
+    }
+
     Class parametersClass() const final { return Class::X25519Params; }
 };
 

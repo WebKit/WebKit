@@ -102,6 +102,7 @@ public:
     std::optional<WebAnimationTime> holdTime() const { return m_holdTime; }
 
     const OptionSet<AcceleratedEffectProperty>& disallowedProperties() const { return m_disallowedProperties; }
+    const OptionSet<AcceleratedEffectProperty>& replacedProperties() const { return m_replacedProperties; }
 
     bool animatesTransformRelatedProperty() const;
 
@@ -128,6 +129,7 @@ private:
     RefPtr<TimingFunction> m_defaultKeyframeTimingFunction;
     OptionSet<AcceleratedEffectProperty> m_animatedProperties;
     OptionSet<AcceleratedEffectProperty> m_disallowedProperties;
+    OptionSet<AcceleratedEffectProperty> m_replacedProperties;
     bool m_paused { false };
     double m_playbackRate { 1 };
     std::optional<WebAnimationTime> m_startTime;

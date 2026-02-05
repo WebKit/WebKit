@@ -66,45 +66,8 @@ class TextRun;
 namespace DisplayList {
 class DisplayList;
 }
-    
+
 struct GlyphData;
-
-struct GlyphOverflow {
-    bool isEmpty() const
-    {
-        return !left && !right && !top && !bottom;
-    }
-
-    void extendTo(const GlyphOverflow& other)
-    {
-        left = std::max(left, other.left);
-        right = std::max(right, other.right);
-        top = std::max(top, other.top);
-        bottom = std::max(bottom, other.bottom);
-    }
-
-    void extendTop(float extendTo)
-    {
-        top = std::max(top, LayoutUnit(ceilf(extendTo)));
-    }
-
-    void extendBottom(float extendTo)
-    {
-        bottom = std::max(bottom, LayoutUnit(ceilf(extendTo)));
-    }
-
-    bool operator!=(const GlyphOverflow& other)
-    {
-        // FIXME: Probably should name this rather than making it the != operator since it ignores the value of computeBounds.
-        return left != other.left || right != other.right || top != other.top || bottom != other.bottom;
-    }
-
-    LayoutUnit left;
-    LayoutUnit right;
-    LayoutUnit top;
-    LayoutUnit bottom;
-    bool computeBounds { false };
-};
 
 #if USE(CORE_TEXT)
 AffineTransform computeBaseOverallTextMatrix(const std::optional<AffineTransform>& syntheticOblique);
@@ -178,7 +141,7 @@ public:
     TextAutospace textAutospace() const { return m_fontDescription.textAutospace(); }
     bool isFixedPitch() const;
     bool canTakeFixedPitchFastContentMeasuring() const;
-    
+
     bool enableKerning() const { return m_enableKerning; }
     bool requiresShaping() const { return m_requiresShaping; }
 
@@ -228,8 +191,7 @@ public:
     WEBCORE_EXPORT static void setDisableFontSubpixelAntialiasingForTesting(bool);
     WEBCORE_EXPORT static bool shouldDisableFontSubpixelAntialiasingForTesting();
 
-    // Keep this in sync with RenderText's m_fontCodePath
-    enum class CodePath : uint8_t { Auto, Simple, Complex, SimpleWithGlyphOverflow };
+    enum class CodePath : uint8_t { Simple, Complex, SimpleWithGlyphOverflow };
     WEBCORE_EXPORT CodePath codePath(const TextRun&, std::optional<unsigned> from = std::nullopt, std::optional<unsigned> to = std::nullopt) const;
 
     static CodePath characterRangeCodePath(std::span<const Latin1Character>) { return CodePath::Simple; }
@@ -254,7 +216,7 @@ private:
     void adjustSelectionRectForSimpleText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
     void adjustSelectionRectForSimpleTextWithFixedPitch(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
     float width(CodePath, const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
-    WEBCORE_EXPORT float widthForSimpleTextSlow(StringView text, TextDirection, float*) const;
+    WEBCORE_EXPORT float widthForSimpleTextSlow(StringView text, TextDirection, FontCascadeFonts::GlyphGeometryCacheEntry*) const;
     ALWAYS_INLINE bool canHandleRunAsSimpleText(const TextRun&, unsigned from, unsigned to) const;
 
     std::optional<GlyphData> getEmphasisMarkGlyphData(const AtomString&) const;
@@ -283,12 +245,11 @@ public:
 #endif
 
     // Useful for debugging the different font rendering code paths.
-    WEBCORE_EXPORT static void setCodePath(CodePath);
-    static CodePath codePath();
-    static CodePath s_codePath;
+    WEBCORE_EXPORT static void setForcedCodePath(Markable<CodePath>);
+    static Markable<CodePath> forcedCodePath();
+    static Markable<CodePath> s_forcedCodePath;
 
     FontSelector* fontSelector() const;
-    RefPtr<FontSelector> protectedFontSelector() const;
 
     static bool isInvisibleReplacementObjectCharacter(char32_t character)
     {
@@ -391,8 +352,6 @@ private:
 #else
             return false;
 #endif
-        case CodePath::Auto:
-            break;
         }
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -419,7 +378,7 @@ private:
 inline Ref<const Font> FontCascade::primaryFont() const
 {
     ASSERT(m_fonts);
-    Ref font = protectedFonts()->primaryFont(m_fontDescription, protectedFontSelector().get());
+    Ref font = protectedFonts()->primaryFont(m_fontDescription, protect(fontSelector()).get());
     m_fontDescription.resolveFontSizeAdjustFromFontIfNeeded(font);
     return font;
 }
@@ -427,29 +386,24 @@ inline Ref<const Font> FontCascade::primaryFont() const
 inline const FontRanges& FontCascade::fallbackRangesAt(unsigned index) const
 {
     ASSERT(m_fonts);
-    return protectedFonts()->realizeFallbackRangesAt(m_fontDescription, protectedFontSelector().get(), index);
+    return protectedFonts()->realizeFallbackRangesAt(m_fontDescription, protect(fontSelector()).get(), index);
 }
 
 inline bool FontCascade::isFixedPitch() const
 {
     ASSERT(m_fonts);
-    return protectedFonts()->isFixedPitch(m_fontDescription, protectedFontSelector().get());
+    return protectedFonts()->isFixedPitch(m_fontDescription, protect(fontSelector()).get());
 }
 
 inline bool FontCascade::canTakeFixedPitchFastContentMeasuring() const
 {
     ASSERT(m_fonts);
-    return protectedFonts()->canTakeFixedPitchFastContentMeasuring(m_fontDescription, protectedFontSelector().get());
+    return protectedFonts()->canTakeFixedPitchFastContentMeasuring(m_fontDescription, protect(fontSelector()).get());
 }
 
 inline FontSelector* FontCascade::fontSelector() const
 {
     return m_fontSelector.get();
-}
-
-inline RefPtr<FontSelector> FontCascade::protectedFontSelector() const
-{
-    return m_fontSelector;
 }
 
 inline float FontCascade::tabWidth(const Font& font, const TabSize& tabSize, float position, Font::SyntheticBoldInclusion syntheticBoldInclusion) const
@@ -474,9 +428,9 @@ inline float FontCascade::widthForTextUsingSimplifiedMeasuring(StringView text, 
     if (text.isEmpty())
         return 0;
     ASSERT(codePath(TextRun(text)) != CodePath::Complex);
-    float* cacheEntry = fonts()->widthCache().add(text, std::numeric_limits<float>::quiet_NaN());
-    if (cacheEntry && !std::isnan(*cacheEntry))
-        return *cacheEntry;
+    auto* cacheEntry = fonts()->glyphGeometryCache().add(text, { });
+    if (cacheEntry && cacheEntry->width)
+        return *cacheEntry->width;
 
     return widthForSimpleTextSlow(text, textDirection, cacheEntry);
 }

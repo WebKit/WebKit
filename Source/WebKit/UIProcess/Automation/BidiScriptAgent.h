@@ -33,6 +33,7 @@
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
+#include <optional>
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
@@ -78,6 +79,16 @@ private:
     static String generateRealmIdForBrowsingContext(const String& browsingContext);
     static String originStringFromSecurityOriginData(const WebCore::SecurityOriginData&);
 
+    void finishEvaluateBidiScriptResult(const String& realmId, const String& expression, Inspector::CommandResult<String>&&, Inspector::CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&&);
+
+    // Stubbed realm registry to decouple evaluate from fabricated ids.
+    class RealmRegistryStub {
+    public:
+        String realmIdForContext(const String& contextId) const;
+        std::optional<String> contextForRealmId(const String& realmId) const;
+    };
+
+    RealmRegistryStub m_realmRegistry;
     WeakPtr<WebAutomationSession> m_session;
     Ref<Inspector::BidiScriptBackendDispatcher> m_scriptDomainDispatcher;
 

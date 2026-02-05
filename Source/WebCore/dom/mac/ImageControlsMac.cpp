@@ -103,7 +103,7 @@ bool isInsideImageControls(const Node& node)
     if (!host)
         return false;
 
-    return host->protectedUserAgentShadowRoot()->contains(node);
+    return protect(host->userAgentShadowRoot())->contains(node);
 }
 
 void createImageControls(HTMLElement& element)
@@ -120,7 +120,7 @@ void createImageControls(HTMLElement& element)
     style->setTextContent(String { shadowStyle });
     shadowRoot->appendChild(WTF::move(style));
     
-    Ref button = HTMLButtonElement::create(HTMLNames::buttonTag, element.protectedDocument(), nullptr);
+    Ref button = HTMLButtonElement::create(HTMLNames::buttonTag, protect(element.document()), nullptr);
     button->setIdAttribute(imageControlsButtonIdentifier());
     controlLayer->appendChild(button);
     controlLayer->setUserAgentPart(UserAgentParts::appleAttachmentControlsContainer());
@@ -206,7 +206,7 @@ void updateImageControls(HTMLElement& element)
     if (!element.document().settings().imageControlsEnabled())
         return;
 
-    element.protectedDocument()->checkedEventLoop()->queueTask(TaskSource::InternalAsyncTask, [weakElement = WeakPtr { element }] {
+    protect(element.document())->checkedEventLoop()->queueTask(TaskSource::InternalAsyncTask, [weakElement = WeakPtr { element }] {
         RefPtr protectedElement = weakElement.get();
         if (!protectedElement)
             return;

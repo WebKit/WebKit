@@ -29,6 +29,7 @@
 
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/Frame.h>
+#include <WebCore/HitTestRequest.h>
 #include <WebCore/ScrollbarMode.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
@@ -112,6 +113,7 @@ enum class WindowProxyProperty : uint8_t;
 using SandboxFlags = OptionSet<SandboxFlag>;
 using IntDegrees = int32_t;
 
+struct DocumentSecurityPolicy;
 struct OverrideScreenSize;
 struct SimpleRange;
 
@@ -275,6 +277,7 @@ public:
     WEBCORE_EXPORT String displayStringModifiedByEncoding(const String&) const;
 
     WEBCORE_EXPORT VisiblePosition visiblePositionForPoint(const IntPoint& framePoint) const;
+    HitTestResult hitTestResultAtPoint(IntPoint, OptionSet<HitTestRequest::Type>);
     Document* documentAtPoint(const IntPoint& windowPoint);
     WEBCORE_EXPORT std::optional<SimpleRange> rangeForPoint(const IntPoint& framePoint);
 
@@ -375,6 +378,7 @@ private:
     void loadFrameRequest(FrameLoadRequest&&, Event*) final;
     void didFinishLoadInAnotherProcess() final;
     SecurityOrigin* frameDocumentSecurityOrigin() const final;
+    std::optional<DocumentSecurityPolicy> frameDocumentSecurityPolicy() const final;
     String frameURLProtocol() const final;
 
     FrameView* virtualView() const final;

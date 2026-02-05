@@ -110,6 +110,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_EXT_multisampled_render_to_texture2](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_multisampled_render_to_texture2.txt) |  |  |  |  |  |  |  |
 | [GL_OVR_multiview](https://khronos.org/registry/OpenGL/extensions/OVR/OVR_multiview.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_OVR_multiview2](https://khronos.org/registry/OpenGL/extensions/OVR/OVR_multiview2.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| [GL_OVR_multiview_multisampled_render_to_texture](https://khronos.org/registry/OpenGL/extensions/OVR/OVR_multiview_multisampled_render_to_texture.txt) |  |  |  |  |  |  |  |
 | [GL_KHR_no_error](https://khronos.org/registry/OpenGL/extensions/KHR/KHR_no_error.txt) |  |  |  |  |  |  |  |
 | [GL_EXT_occlusion_query_boolean](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_occlusion_query_boolean.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_OES_packed_depth_stencil](https://khronos.org/registry/OpenGL/extensions/OES/OES_packed_depth_stencil.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
@@ -154,6 +155,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_EXT_shader_non_constant_global_initializers](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_shader_non_constant_global_initializers.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_NV_shader_noperspective_interpolation](https://khronos.org/registry/OpenGL/extensions/NV/NV_shader_noperspective_interpolation.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_EXT_shader_texture_lod](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_shader_texture_lod.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| [GL_EXT_shader_texture_samples](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_shader_texture_samples.txt) |  |  |  |  |  |  |  |
 | [GL_QCOM_shading_rate](https://khronos.org/registry/OpenGL/extensions/QCOM/QCOM_shading_rate.txt) |  |  |  |  |  |  |  |
 | [GL_EXT_shadow_samplers](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_shadow_samplers.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_EXT_sRGB](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_sRGB.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |

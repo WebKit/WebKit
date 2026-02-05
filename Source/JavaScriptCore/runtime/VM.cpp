@@ -69,8 +69,8 @@
 #include "JITWorklist.h"
 #include "JSAPIValueWrapper.h"
 #include "JSBigInt.h"
-#include "JSGlobalObject.h"
 #include "JSCellButterflyInlines.h"
+#include "JSGlobalObject.h"
 #include "JSIterator.h"
 #include "JSLock.h"
 #include "JSMap.h"
@@ -471,7 +471,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     if (Options::useTracePoints())
         requestEntryScopeService(EntryScopeService::TracePoints);
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
     if (Options::enableWasmDebugger()) [[unlikely]]
         m_debugState = makeUnique<Wasm::DebugState>();
 #endif
@@ -579,7 +579,7 @@ VM::~VM()
     m_sharedJITStubs = nullptr;
 #endif
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
     if (Options::enableWasmDebugger()) [[unlikely]] {
         auto& debugServer = Wasm::DebugServer::singleton();
         if (debugServer.isConnected())
@@ -1353,7 +1353,7 @@ void VM::callPromiseRejectionCallback(Strong<JSPromise>& promise)
     if (!callback)
         return;
 
-    auto scope = DECLARE_CATCH_SCOPE(*this);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(*this);
 
     auto callData = JSC::getCallDataInline(callback);
     ASSERT(callData.type != CallData::Type::None);
@@ -1405,7 +1405,7 @@ void VM::drainMicrotasks()
                     if (RefPtr dispatcher = task.dispatcher())
                         return dispatcher->run(task);
 
-                    auto catchScope = DECLARE_CATCH_SCOPE(*this);
+                    auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(*this);
                     runInternalMicrotask(globalObject, task.job(), task.payload(), task.arguments());
                     catchScope.clearExceptionExceptTermination();
                     return QueuedTask::Result::Executed;
@@ -1996,7 +1996,7 @@ void VM::DrainMicrotaskDelayScope::decrement()
     }
 }
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 Wasm::DebugState* VM::debugState()
 {
     RELEASE_ASSERT(!!m_debugState);

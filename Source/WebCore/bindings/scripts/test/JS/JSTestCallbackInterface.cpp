@@ -774,10 +774,10 @@ void JSTestCallbackInterface::visitJSFunction(JSC::SlotVisitor& visitor)
 
 JSC::JSValue toJS(TestCallbackInterface& impl)
 {
-    if (!static_cast<JSTestCallbackInterface&>(impl).callbackData())
-        return jsNull();
+    if (auto* callbackData = downcast<JSTestCallbackInterface>(impl).callbackData())
+        return callbackData->callback();
+    return jsNull();
 
-    return static_cast<JSTestCallbackInterface&>(impl).callbackData()->callback();
 }
 
 ScriptExecutionContext* JSTestCallbackInterface::scriptExecutionContext() const

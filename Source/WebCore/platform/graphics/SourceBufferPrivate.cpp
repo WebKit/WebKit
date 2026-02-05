@@ -783,7 +783,7 @@ void SourceBufferPrivate::addTrackBuffer(TrackID trackId, RefPtr<MediaDescriptio
         auto trackBuffer = TrackBuffer::create(WTF::move(description), discontinuityTolerance);
 #if !RELEASE_LOG_DISABLED
         // False positive see webkit.org/b/302520
-        SUPPRESS_UNCOUNTED_ARG trackBuffer->setLogger(buffer.protectedLogger(), buffer.logIdentifier());
+        SUPPRESS_UNCOUNTED_ARG trackBuffer->setLogger(protect(buffer.logger()), buffer.logIdentifier());
 #endif
         buffer.m_trackBufferMap.try_emplace(trackId, WTF::move(trackBuffer));
         if (RefPtr mediaSource = buffer.m_mediaSource.get()) {

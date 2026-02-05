@@ -43,6 +43,7 @@
 #include "B3UpsilonValue.h"
 #include "B3ValueKeyInlines.h"
 #include "B3ValueInlines.h"
+#include "B3WasmRefTypeCheckValue.h"
 #include "B3WasmStructGetValue.h"
 #include "B3WasmStructSetValue.h"
 #include "SIMDShuffle.h"
@@ -3434,26 +3435,138 @@ private:
         }
 
         case WasmStructGet: {
+            auto replaceWithNonTrapping = [&] {
+                WasmStructGetValue* structGet = m_value->as<WasmStructGetValue>();
+                SUPPRESS_UNCOUNTED_ARG Value* newValue = m_insertionSet.insert<WasmStructGetValue>(m_index, WasmStructGet, m_value->origin(), m_value->type(), structGet->child(0), structGet->rtt(), structGet->structType(), structGet->fieldIndex(), structGet->fieldHeapKey(), structGet->mutability());
+                newValue->as<WasmStructFieldValue>()->setRange(structGet->range());
+                m_value->replaceWithIdentity(newValue);
+                m_changed = true;
+            };
+
             if (m_value->traps()) {
-                if (m_value->child(0)->opcode() == WasmStructNew) {
-                    WasmStructGetValue* structGet = m_value->as<WasmStructGetValue>();
-                    Value* newValue = m_insertionSet.insert<WasmStructGetValue>(m_index, WasmStructGet, m_value->origin(), m_value->type(), structGet->child(0), structGet->rtt(), structGet->structType(), structGet->fieldIndex(), structGet->fieldHeapKey(), structGet->mutability());
-                    newValue->as<WasmStructFieldValue>()->setRange(structGet->range());
-                    m_value->replaceWithIdentity(newValue);
-                    m_changed = true;
+                switch (m_value->child(0)->opcode()) {
+                case WasmStructNew:
+                    replaceWithNonTrapping();
+                    break;
+                case WasmRefCast: {
+                    if (!m_value->child(0)->as<WasmRefTypeCheckValue>()->allowNull()) {
+                        replaceWithNonTrapping();
+                        break;
+                    }
+                    break;
+                }
+                default:
+                    break;
                 }
             }
             break;
         }
 
         case WasmStructSet: {
+            auto replaceWithNonTrapping = [&] {
+                WasmStructSetValue* structSet = m_value->as<WasmStructSetValue>();
+                SUPPRESS_UNCOUNTED_ARG Value* newValue = m_insertionSet.insert<WasmStructSetValue>(m_index, WasmStructSet, m_value->origin(), structSet->child(0), structSet->child(1), structSet->rtt(), structSet->structType(), structSet->fieldIndex(), structSet->fieldHeapKey());
+                newValue->as<WasmStructFieldValue>()->setRange(structSet->range());
+                m_value->replaceWithIdentity(newValue);
+                m_changed = true;
+            };
+
             if (m_value->traps()) {
-                if (m_value->child(0)->opcode() == WasmStructNew) {
-                    WasmStructSetValue* structSet = m_value->as<WasmStructSetValue>();
-                    Value* newValue = m_insertionSet.insert<WasmStructSetValue>(m_index, WasmStructSet, m_value->origin(), structSet->child(0), structSet->child(1), structSet->rtt(), structSet->structType(), structSet->fieldIndex(), structSet->fieldHeapKey());
-                    newValue->as<WasmStructFieldValue>()->setRange(structSet->range());
-                    m_value->replaceWithIdentity(newValue);
-                    m_changed = true;
+                switch (m_value->child(0)->opcode()) {
+                case WasmStructNew:
+                    replaceWithNonTrapping();
+                    break;
+                case WasmRefCast: {
+                    if (!m_value->child(0)->as<WasmRefTypeCheckValue>()->allowNull()) {
+                        replaceWithNonTrapping();
+                        break;
+                    }
+                    break;
+                }
+                default:
+                    break;
+                }
+            }
+            break;
+        }
+
+        case WasmRefCast: {
+            auto* cast = m_value->as<WasmRefTypeCheckValue>();
+            auto* child = cast->child(0);
+            if (child->opcode() == WasmStructNew) {
+                auto* structNew = child->as<WasmStructNewValue>();
+                auto rtt = structNew->rtt();
+                int32_t toHeapType = cast->targetHeapType();
+                SUPPRESS_UNCOUNTED_LOCAL const Wasm::RTT* targetRTT = cast->targetRTT();
+                if (!Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(toHeapType))) {
+                    if (targetRTT->isSubRTT(rtt)) {
+                        replaceWithIdentity(structNew);
+                        break;
+                    }
+                }
+            }
+
+            auto replaceWithNullTrapping = [&] {
+                auto flags = cast->flags();
+                flags.remove(WasmRefTypeCheckFlag::AllowNull);
+                SUPPRESS_UNCOUNTED_ARG Value* newValue = m_insertionSet.insert<WasmRefTypeCheckValue>(m_index, trapping(WasmRefCast), Int64, cast->origin(), cast->targetHeapType(), flags, cast->targetRTT(), cast->child(0));
+                replaceWithIdentity(newValue);
+            };
+
+            if (cast->allowNull()) {
+                // This is really common in JetStream3/j2cl-box2d-wasm, which uses J2CL, Java to wasm compiler.
+                // When you write a code in Java like,
+                //
+                //     ((Derived)instance).field
+                //
+                //  Cast itself does not trap even if instance is null. But field access will trap if it is null.
+                //  This will be represented as a sequence of code like,
+                //
+                //      @a: WasmRefCast<Trap>(..., allowNull = true)
+                //      @b: WasmStructGet<Trap>(@a, ...)
+                //
+                //  But if they are subsequent, we can convert them into
+                //
+                //      @a: WasmRefCast<Trap>(..., allowNull = false)
+                //      @b: WasmStructGet(@a, ...)
+                //
+                // This is more efficient since WasmRefCast can leverage signal handler based null trap.
+                constexpr unsigned maxSubsequentValues = 5;
+                for (unsigned i = 1; i < maxSubsequentValues; ++i) {
+                    if (m_index + i >= m_block->size())
+                        break;
+                    auto* value = m_block->at(m_index + i);
+                    auto effects = value->effects();
+                    if (value->opcode() == WasmStructGet) {
+                        if (value->child(0) == cast) {
+                            replaceWithNullTrapping();
+                            break;
+                        }
+                    }
+                    if (value->opcode() == WasmStructSet) {
+                        if (value->child(0) == cast) {
+                            replaceWithNullTrapping();
+                            break;
+                        }
+                    }
+                    if (effects.exitsSideways || effects.writes)
+                        break;
+                }
+            }
+            break;
+        }
+
+        case WasmRefTest: {
+            auto* cast = m_value->as<WasmRefTypeCheckValue>();
+            auto* child = cast->child(0);
+            if (child->opcode() == WasmStructNew) {
+                auto* structNew = child->as<WasmStructNewValue>();
+                auto rtt = structNew->rtt();
+                int32_t toHeapType = cast->targetHeapType();
+                SUPPRESS_UNCOUNTED_LOCAL const Wasm::RTT* targetRTT = cast->targetRTT();
+                if (!Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(toHeapType))) {
+                    replaceWithNewValue(m_proc.addIntConstant(m_value, !!targetRTT->isSubRTT(rtt)));
+                    break;
                 }
             }
             break;

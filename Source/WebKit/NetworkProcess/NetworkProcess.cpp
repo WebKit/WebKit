@@ -216,11 +216,6 @@ AuthenticationManager& NetworkProcess::authenticationManager()
     return *supplement<AuthenticationManager>();
 }
 
-Ref<AuthenticationManager> NetworkProcess::protectedAuthenticationManager()
-{
-    return authenticationManager();
-}
-
 DownloadManager& NetworkProcess::downloadManager()
 {
     return m_downloadManager;
@@ -251,7 +246,7 @@ bool NetworkProcess::dispatchMessage(IPC::Connection& connection, IPC::Decoder& 
 {
 #if ENABLE(CONTENT_EXTENSIONS)
     if (decoder.messageReceiverName() == Messages::NetworkContentRuleListManager::messageReceiverName()) {
-        protectedNetworkContentRuleListManager()->didReceiveMessage(connection, decoder);
+        protect(networkContentRuleListManager())->didReceiveMessage(connection, decoder);
         return true;
     }
 #endif
@@ -1370,7 +1365,7 @@ void NetworkProcess::didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessi
             networkStorageSession->didCommitCrossSiteLoadWithDataTransferFromPrevalentResource(toDomain, webPageID);
 
         if (navigationDataTransfer.contains(CrossSiteNavigationDataTransfer::Flag::ReferrerLinkDecoration))
-            protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::DidCommitCrossSiteLoadWithDataTransferFromPrevalentResource(webPageProxyID), 0);
+            protect(parentProcessConnection())->send(Messages::NetworkProcessProxy::DidCommitCrossSiteLoadWithDataTransferFromPrevalentResource(webPageProxyID), 0);
     } else
         ASSERT_NOT_REACHED();
 
@@ -1624,11 +1619,11 @@ void NetworkProcess::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifi
 
     NetworkLoadParameters parametersForAdditionalPreconnect = parameters;
 
-    session->protectedNetworkLoadScheduler()->startedPreconnectForMainResource(url, userAgent);
+    protect(session->networkLoadScheduler())->startedPreconnectForMainResource(url, userAgent);
     Ref task = PreconnectTask::create(*session, WTF::move(parameters));
     task->start([weakSession = WeakPtr { *session }, url, userAgent, parametersForAdditionalPreconnect = WTF::move(parametersForAdditionalPreconnect)](const WebCore::ResourceError& error, const WebCore::NetworkLoadMetrics& metrics) mutable {
         if (CheckedPtr session = weakSession.get()) {
-            session->protectedNetworkLoadScheduler()->finishedPreconnectForMainResource(url, userAgent, error);
+            protect(session->networkLoadScheduler())->finishedPreconnectForMainResource(url, userAgent, error);
 #if ENABLE(ADDITIONAL_PRECONNECT_ON_HTTP_1X)
             if (equalLettersIgnoringASCIICase(metrics.protocol, "http/1.1"_s)) {
                 auto parameters = parametersForAdditionalPreconnect;
@@ -2179,7 +2174,7 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
             for (auto& domain : domains)
                 callbackAggregator->m_domains.add(domain);
         };
-        protectedParentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::DeleteWebsiteDataInUIProcessForRegistrableDomains(sessionID, dataTypesForUIProcess, fetchOptions, domainsToDeleteAllScriptWrittenStorageFor), WTF::move(completionHandler));
+        protect(parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::DeleteWebsiteDataInUIProcessForRegistrableDomains(sessionID, dataTypesForUIProcess, fetchOptions, domainsToDeleteAllScriptWrittenStorageFor), WTF::move(completionHandler));
     }
 }
 
@@ -2409,7 +2404,7 @@ void NetworkProcess::logDiagnosticMessage(WebPageProxyIdentifier webPageProxyID,
     if (!DiagnosticLoggingClient::shouldLogAfterSampling(shouldSample))
         return;
 
-    protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::LogDiagnosticMessage(webPageProxyID, message, description, ShouldSample::No), 0);
+    protect(parentProcessConnection())->send(Messages::NetworkProcessProxy::LogDiagnosticMessage(webPageProxyID, message, description, ShouldSample::No), 0);
 }
 
 void NetworkProcess::logDiagnosticMessageWithResult(WebPageProxyIdentifier webPageProxyID, const String& message, const String& description, DiagnosticLoggingResultType result, ShouldSample shouldSample)
@@ -2417,7 +2412,7 @@ void NetworkProcess::logDiagnosticMessageWithResult(WebPageProxyIdentifier webPa
     if (!DiagnosticLoggingClient::shouldLogAfterSampling(shouldSample))
         return;
 
-    protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::LogDiagnosticMessageWithResult(webPageProxyID, message, description, result, ShouldSample::No), 0);
+    protect(parentProcessConnection())->send(Messages::NetworkProcessProxy::LogDiagnosticMessageWithResult(webPageProxyID, message, description, result, ShouldSample::No), 0);
 }
 
 void NetworkProcess::logDiagnosticMessageWithValue(WebPageProxyIdentifier webPageProxyID, const String& message, const String& description, double value, unsigned significantFigures, ShouldSample shouldSample)
@@ -2425,7 +2420,7 @@ void NetworkProcess::logDiagnosticMessageWithValue(WebPageProxyIdentifier webPag
     if (!DiagnosticLoggingClient::shouldLogAfterSampling(shouldSample))
         return;
 
-    protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::LogDiagnosticMessageWithValue(webPageProxyID, message, description, value, significantFigures, ShouldSample::No), 0);
+    protect(parentProcessConnection())->send(Messages::NetworkProcessProxy::LogDiagnosticMessageWithValue(webPageProxyID, message, description, value, significantFigures, ShouldSample::No), 0);
 }
 
 void NetworkProcess::terminate()
@@ -3224,11 +3219,6 @@ RTCDataChannelRemoteManagerProxy& NetworkProcess::rtcDataChannelProxy()
         m_rtcDataChannelProxy = RTCDataChannelRemoteManagerProxy::create(*this);
     return *m_rtcDataChannelProxy;
 }
-
-Ref<RTCDataChannelRemoteManagerProxy> NetworkProcess::protectedRTCDataChannelProxy()
-{
-    return rtcDataChannelProxy();
-}
 #endif
 
 void NetworkProcess::addWebPageNetworkParameters(PAL::SessionID sessionID, WebPageProxyIdentifier pageID, WebPageNetworkParameters&& parameters)
@@ -3278,7 +3268,7 @@ void NetworkProcess::allowFileAccessFromWebProcess(WebCore::ProcessIdentifier pr
 
 void NetworkProcess::requestBackgroundFetchPermission(PAL::SessionID sessionID, const ClientOrigin& origin, CompletionHandler<void(bool)>&& callback)
 {
-    protectedParentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::RequestBackgroundFetchPermission(sessionID, origin), WTF::move(callback));
+    protect(parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::RequestBackgroundFetchPermission(sessionID, origin), WTF::move(callback));
 }
 
 #if USE(RUNNINGBOARD)

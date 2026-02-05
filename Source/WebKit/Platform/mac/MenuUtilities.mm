@@ -249,6 +249,12 @@ static std::optional<SymbolNameWithType> symbolNameWithTypeForAction(const WebCo
     case WebCore::ContextMenuItemTagCapitalize:
     case WebCore::ContextMenuItemTagTransformationsMenu:
         return symbolForTransformationItem("textformat.characters"_s);
+    case WebCore::ContextMenuItemTagConvertToSimplifiedChinese:
+    case WebCore::ContextMenuItemTagConvertToTraditionalChinese:
+    case WebCore::ContextMenuItemTagDefaultDirection:
+    case WebCore::ContextMenuItemTagTextDirectionDefault:
+    case WebCore::ContextMenuItemTagWritingDirectionMenu:
+        return { { SymbolType::Public, "arrow.left.arrow.right"_s } };
     case WebCore::ContextMenuItemTagChangeBack:
         return { { SymbolType::Public, "arrow.uturn.backward.circle"_s } };
     case WebCore::ContextMenuItemTagCopy:
@@ -258,10 +264,6 @@ static std::optional<SymbolNameWithType> symbolNameWithTypeForAction(const WebCo
         return { { SymbolType::Public, "document.on.document"_s } };
     case WebCore::ContextMenuItemTagCut:
         return { { SymbolType::Public, "scissors"_s } };
-    case WebCore::ContextMenuItemTagDefaultDirection:
-    case WebCore::ContextMenuItemTagTextDirectionDefault:
-    case WebCore::ContextMenuItemTagWritingDirectionMenu:
-        return { { SymbolType::Public, "arrow.left.arrow.right"_s } };
     case WebCore::ContextMenuItemTagDownloadImageToDisk:
     case WebCore::ContextMenuItemTagDownloadLinkToDisk:
     case WebCore::ContextMenuItemTagDownloadMediaToDisk:

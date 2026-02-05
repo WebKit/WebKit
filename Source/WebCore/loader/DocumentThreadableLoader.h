@@ -109,14 +109,11 @@ class CachedRawResource;
 
         Ref<SecurityOrigin> topOrigin() const;
         SecurityOrigin& securityOrigin() const;
-        Ref<SecurityOrigin> protectedSecurityOrigin() const;
         const ContentSecurityPolicy& contentSecurityPolicy() const;
         CheckedRef<const ContentSecurityPolicy> checkedContentSecurityPolicy() const;
         const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy() const;
 
         Document& document() { return *m_document; }
-        Ref<Document> protectedDocument();
-        Ref<const Document> protectedDocument() const;
 
         const ThreadableLoaderOptions& options() const { return m_options; }
         const String& referrer() const { return m_referrer; }
@@ -130,8 +127,6 @@ class CachedRawResource;
 
         bool shouldSetHTTPHeadersToKeep() const;
         bool checkURLSchemeAsCORSEnabled(const URL&);
-
-        CachedResourceHandle<CachedRawResource> protectedResource() const;
 
         CachedResourceHandle<CachedRawResource> m_resource;
         WeakPtr<ThreadableLoaderClient> m_client;

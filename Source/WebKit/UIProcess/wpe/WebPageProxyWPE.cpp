@@ -35,6 +35,7 @@
 #include "WebProcessProxy.h"
 #include <WebCore/PlatformEvent.h>
 #include <wtf/CallbackAggregator.h>
+#include <wtf/glib/GSpanExtras.h>
 
 #if USE(ATK)
 #include <atk/atk.h>
@@ -168,17 +169,11 @@ Vector<RendererBufferFormat> WebPageProxy::preferredBufferFormats() const
         auto formatsCount = wpe_buffer_formats_get_group_n_formats(formats, i);
         bufferFormat.formats.reserveInitialCapacity(formatsCount);
         for (unsigned j = 0; j < formatsCount; ++j) {
-            RendererBufferFormat::Format format;
-            format.fourcc = wpe_buffer_formats_get_format_fourcc(formats, i, j);
             auto* modifiers = wpe_buffer_formats_get_format_modifiers(formats, i, j);
-            format.modifiers.reserveInitialCapacity(modifiers->len);
-            for (unsigned k = 0; k < modifiers->len; ++k) {
-                WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // WPE port
-                auto* modifier = &g_array_index(modifiers, guint64, k);
-                WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-                format.modifiers.append(*modifier);
-            }
-            bufferFormat.formats.append(WTF::move(format));
+            bufferFormat.formats.append({
+                .fourcc = wpe_buffer_formats_get_format_fourcc(formats, i, j),
+                .modifiers = unsafeMakeSpan(reinterpret_cast<uint64_t*>(modifiers->data), modifiers->len),
+            });
         }
         bufferFormats.append(WTF::move(bufferFormat));
     }

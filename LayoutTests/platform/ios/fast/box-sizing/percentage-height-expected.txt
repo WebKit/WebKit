@@ -38,28 +38,28 @@ layer at (221,111) size 568x24
     RenderBlock (anonymous) at (0,0) size 568x24
 layer at (221,111) size 568x24
   RenderBlock (relative positioned) {DIV} at (0,0) size 568x24
-    RenderText {#text} at (5,5) size 31x13
+    RenderText {#text} at (5,5) size 31x14
       text run at (5,5) width 31: "Item 1"
 layer at (221,135) size 568x24
   RenderButton {BUTTON} at (1,25) size 568x24 [color=#FFFFFF] [bgcolor=#316AC5]
     RenderBlock (anonymous) at (0,0) size 568x24
 layer at (221,135) size 568x24
   RenderBlock (relative positioned) {DIV} at (0,0) size 568x24
-    RenderText {#text} at (5,5) size 31x13
+    RenderText {#text} at (5,5) size 31x14
       text run at (5,5) width 31: "Item 2"
 layer at (221,159) size 568x24
   RenderButton {BUTTON} at (1,49) size 568x24 [color=#0088FF]
     RenderBlock (anonymous) at (0,0) size 568x24
 layer at (221,159) size 568x24
   RenderBlock (relative positioned) {DIV} at (0,0) size 568x24
-    RenderText {#text} at (5,5) size 31x13
+    RenderText {#text} at (5,5) size 31x14
       text run at (5,5) width 31: "Item 3"
 layer at (221,183) size 568x24
   RenderButton {BUTTON} at (1,73) size 568x24 [color=#0088FF]
     RenderBlock (anonymous) at (0,0) size 568x24
 layer at (221,183) size 568x24
   RenderBlock (relative positioned) {DIV} at (0,0) size 568x24
-    RenderText {#text} at (5,5) size 31x13
+    RenderText {#text} at (5,5) size 31x14
       text run at (5,5) width 31: "Item 4"
 layer at (0,550) size 800x50
   RenderBlock (positioned) zI: 1 {DIV} at (0,550) size 800x50 [bgcolor=#99CC66]

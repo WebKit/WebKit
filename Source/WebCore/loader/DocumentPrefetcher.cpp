@@ -108,10 +108,10 @@ void DocumentPrefetcher::prefetch(const URL& url, const Vector<String>& tags, st
     if (!document)
         return;
 
-    if (m_prefetchedData.contains(url))
+    if (!url.isValid())
         return;
 
-    if (!url.isValid())
+    if (m_prefetchedData.contains(url))
         return;
 
     if (!isPassingSecurityChecks(url, *document.get()))
@@ -142,7 +142,7 @@ void DocumentPrefetcher::prefetch(const URL& url, const Vector<String>& tags, st
     if (lowPriority)
         prefetchRequest.setPriority(ResourceLoadPriority::Low);
 
-    auto resourceErrorOr = document->protectedCachedResourceLoader()->requestRawResource(WTF::move(prefetchRequest));
+    auto resourceErrorOr = protect(document->cachedResourceLoader())->requestRawResource(WTF::move(prefetchRequest));
 
     if (!resourceErrorOr)
         return;

@@ -627,6 +627,9 @@ GLuint TextureState::getEnabledLevelCount() const
     const GLuint baseLevel = getEffectiveBaseLevel();
     GLuint maxLevel        = getMipmapMaxLevel();
 
+    // In edge case where base level > max level, make sure to get at least one level.
+    maxLevel = std::max(baseLevel, maxLevel);
+
     // Note: for cube textures, we only check the first face.
     TextureTarget target         = TextureTypeToTarget(mType, 0);
     const Format &expectedFormat = mImageDescs[GetImageDescIndex(target, baseLevel)].format;
@@ -1832,7 +1835,7 @@ angle::Result Texture::setStorageMultisample(Context *context,
 
     // Potentially adjust "samples" to a supported value
     const TextureCaps &formatCaps = context->getTextureCaps().get(internalFormat);
-    GLsizei samples               = formatCaps.getNearestSamples(samplesIn);
+    GLsizei samples               = formatCaps.sampleCounts.getNearestSamples(samplesIn);
 
     mState.mImmutableFormat = true;
     mState.mImmutableLevels = static_cast<GLuint>(1);

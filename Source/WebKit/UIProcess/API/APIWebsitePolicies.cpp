@@ -57,11 +57,6 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
 
 WebsitePolicies::~WebsitePolicies() = default;
 
-RefPtr<WebKit::WebsiteDataStore> WebsitePolicies::protectedWebsiteDataStore() const
-{
-    return m_websiteDataStore;
-}
-
 void WebsitePolicies::setWebsiteDataStore(RefPtr<WebKit::WebsiteDataStore>&& websiteDataStore)
 {
     m_websiteDataStore = WTF::move(websiteDataStore);

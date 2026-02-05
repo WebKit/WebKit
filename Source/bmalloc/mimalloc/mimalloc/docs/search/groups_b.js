@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['typed_20macros_0',['Typed Macros',['../group__typed.html',1,'']]]
+  ['re_20allocation_0',['Zero initialized re-allocation',['../group__zeroinit.html',1,'']]],
+  ['runtime_20options_1',['Runtime Options',['../group__options.html',1,'']]]
 ];

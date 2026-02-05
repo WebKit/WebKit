@@ -96,6 +96,11 @@ WI.CSSRule = class CSSRule extends WI.Object
             this._style.ownerRule = this;
     }
 
+    get stringId()
+    {
+        return WI.CSSStyleDeclaration.stringIdForStyleId(this._id);
+    }
+
     isEqualTo(rule)
     {
         if (!rule)

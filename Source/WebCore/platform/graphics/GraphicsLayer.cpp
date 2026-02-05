@@ -392,7 +392,7 @@ void GraphicsLayer::removeAllChildren()
 
 void GraphicsLayer::removeFromParentInternal()
 {
-    if (auto* parent = m_parent.get()) {
+    if (RefPtr parent = m_parent.get()) {
         setParent(nullptr);
         parent->m_children.removeFirstMatching([this](auto& layer) {
             return layer.ptr() == this;
@@ -894,10 +894,10 @@ void GraphicsLayer::traverse(GraphicsLayer& layer, NOESCAPE const Function<void(
     for (auto& childLayer : layer.children())
         traverse(childLayer.get(), traversalFunc);
 
-    if (auto* replicaLayer = layer.replicaLayer())
+    if (RefPtr replicaLayer = layer.replicaLayer())
         traverse(*replicaLayer, traversalFunc);
 
-    if (auto* maskLayer = layer.maskLayer())
+    if (RefPtr maskLayer = layer.maskLayer())
         traverse(*maskLayer, traversalFunc);
 }
 
@@ -1062,21 +1062,23 @@ void GraphicsLayer::dumpProperties(TextStream& ts, OptionSet<LayerTreeAsTextOpti
         ts << ")\n"_s;
     }
 
-    if (options & LayerTreeAsTextOptions::IncludeRepaintRects && repaintRectMap().contains(this) && !repaintRectMap().get(this).isEmpty() && client().shouldDumpPropertyForLayer(this, "repaintRects"_s, options)) {
-        ts << indent << "(repaint rects\n"_s;
-        for (size_t i = 0; i < repaintRectMap().get(this).size(); ++i) {
-            if (repaintRectMap().get(this)[i].isEmpty())
-                continue;
+    if (options & LayerTreeAsTextOptions::IncludeRepaintRects) {
+        if (auto it = repaintRectMap().find(this); it != repaintRectMap().end() && !it->value.isEmpty() && client().shouldDumpPropertyForLayer(this, "repaintRects"_s, options)) {
+            ts << indent << "(repaint rects\n"_s;
+            for (auto& rect : it->value) {
+                if (rect.isEmpty())
+                    continue;
 
-            TextStream::IndentScope indentScope(ts);
-            ts << indent << "(rect "_s;
-            ts << repaintRectMap().get(this)[i].x() << ' ';
-            ts << repaintRectMap().get(this)[i].y() << ' ';
-            ts << repaintRectMap().get(this)[i].width() << ' ';
-            ts << repaintRectMap().get(this)[i].height();
-            ts << ")\n"_s;
+                TextStream::IndentScope indentScope(ts);
+                ts << indent << "(rect "_s;
+                ts << rect.x() << ' ';
+                ts << rect.y() << ' ';
+                ts << rect.width() << ' ';
+                ts << rect.height();
+                ts << ")\n"_s;
+            }
+            ts << indent << ")\n"_s;
         }
-        ts << indent << ")\n"_s;
     }
 
     if (options & LayerTreeAsTextOptions::IncludeEventRegion && !m_eventRegion.isEmpty()) {

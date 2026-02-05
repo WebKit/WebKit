@@ -415,8 +415,17 @@ RetainPtr<_WKTextExtractionConfiguration> createTextExtractionConfiguration(WKWe
     if (outputFormat)
         [configuration setOutputFormat:*outputFormat];
 
-    if (auto wordLimit = options ? options->wordLimit : 0)
-        [configuration setMaxWordsPerParagraph:static_cast<NSUInteger>(wordLimit)];
+    if (options) {
+        if (auto wordLimit = options->wordLimit)
+            [configuration setMaxWordsPerParagraph:static_cast<NSUInteger>(wordLimit)];
+
+        auto policy = toWTFString(options->wordLimitPolicy);
+        if (equalLettersIgnoringASCIICase(policy, "always"_s))
+            [configuration setMaxWordsPerParagraphPolicy:_WKTextExtractionWordLimitPolicyAlways];
+        else if (equalLettersIgnoringASCIICase(policy, "discretionary"_s))
+            [configuration setMaxWordsPerParagraphPolicy:_WKTextExtractionWordLimitPolicyDiscretionary];
+    }
+
     [configuration setTargetRect:extractionRect];
     [configuration setMergeParagraphs:options && options->mergeParagraphs];
     [configuration setSkipNearlyTransparentContent:options && options->skipNearlyTransparentContent];

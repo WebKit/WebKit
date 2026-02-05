@@ -336,7 +336,7 @@ inline void BuilderCustom::applyInheritZoom(BuilderState& builderState)
 
 inline void BuilderCustom::applyValueZoom(BuilderState& builderState, CSSValue& value)
 {
-    auto primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
+    RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
     if (!primitiveValue)
         return;
 
@@ -435,7 +435,7 @@ inline void BuilderCustom::applyInitialLineHeight(BuilderState& builderState)
 static inline float computeBaseSpecifiedFontSize(const Document& document, const ComputedStyle& style, bool percentageAutosizingEnabled)
 {
     float result = style.specifiedFontSize();
-    auto* frame = document.frame();
+    RefPtr frame = document.frame();
     if (frame && style.textZoom() != TextZoom::Reset)
         result *= frame->textZoomFactor();
     result *= style.usedZoom();
@@ -509,7 +509,7 @@ inline void BuilderCustom::applyValueLineHeight(BuilderState& builderState, CSSV
 
 inline void BuilderCustom::applyValueWebkitLocale(BuilderState& builderState, CSSValue& value)
 {
-    auto primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
+    RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
     if (!primitiveValue)
         return;
 
@@ -540,7 +540,7 @@ inline void BuilderCustom::applyValueWebkitTextSizeAdjust(BuilderState& builderS
 
 inline void BuilderCustom::applyValueWebkitTextZoom(BuilderState& builderState, CSSValue& value)
 {
-    auto primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
+    RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
     if (!primitiveValue)
         return;
 
@@ -673,9 +673,9 @@ inline float BuilderCustom::determineRubyTextSizeMultiplier(BuilderState& builde
         // FIXME: This hack is to ensure tone marks are the same size as
         // the bopomofo. This code will go away if we make a special renderer
         // for the tone marks eventually.
-        if (auto* element = builderState.element()) {
-            for (auto& ancestor : ancestorsOfType<HTMLElement>(*element)) {
-                if (ancestor.hasTagName(HTMLNames::rtTag))
+        if (RefPtr element = builderState.element()) {
+            for (Ref ancestor : ancestorsOfType<HTMLElement>(*element)) {
+                if (ancestor->hasTagName(HTMLNames::rtTag))
                     return 1.0f;
             }
         }
@@ -745,7 +745,7 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
     float parentSize = builderState.parentStyle().fontDescription().specifiedSize();
     bool parentIsAbsoluteSize = builderState.parentStyle().fontDescription().isAbsoluteSize();
 
-    auto primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
+    RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
     if (!primitiveValue)
         return;
 

@@ -161,6 +161,10 @@ struct SessionState {
     bool isEqualForTesting(const SessionState&) const;
 };
 
+using RefFrameState = Ref<FrameState>;
+using RefPtrFrameState = RefPtr<FrameState>;
+using VectorRefFrameState = Vector<Ref<FrameState>>;
+
 } // namespace WebKit
 
 inline void refFrameState(WebKit::FrameState* obj)

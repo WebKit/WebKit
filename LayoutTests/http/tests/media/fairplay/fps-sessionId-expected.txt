@@ -1,0 +1,11 @@
+PROMISE: requestMediaKeySystemAccess resolved
+PROMISE: createMediaKeys resolved
+FETCH: server certificate recieved
+PROMISE: arrayBuffer resolved
+PROMISE: setServerCertificate resolved
+EVENT(message)
+PROMISE: licenseResponse resolved
+PROMISE: session.update() resolved
+EXPECTED (session.sessionId != '') OK
+END OF TEST
+

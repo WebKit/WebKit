@@ -42,6 +42,7 @@
 #include <WebCore/MediaPlayerEnums.h>
 #include <WebCore/MediaPromiseTypes.h>
 #include <WebCore/MediaSampleConverter.h>
+#include <WebCore/ShareableBitmapHandle.h>
 #include <wtf/Forward.h>
 #include <wtf/Logger.h>
 #include <wtf/MediaTime.h>
@@ -140,6 +141,7 @@ private:
     void setResourceOwner(RemoteAudioVideoRendererIdentifier, const WebCore::ProcessIdentity& resourceOwner);
     void flushAndRemoveImage(RemoteAudioVideoRendererIdentifier);
     void currentVideoFrame(RemoteAudioVideoRendererIdentifier, CompletionHandler<void(std::optional<RemoteVideoFrameProxy::Properties>)>&&) const;
+    void currentBitmapImage(RemoteAudioVideoRendererIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&) const;
 
     // VideoFullscreenInterface
 #if ENABLE(VIDEO_PRESENTATION_MODE)

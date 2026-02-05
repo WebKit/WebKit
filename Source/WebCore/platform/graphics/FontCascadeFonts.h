@@ -25,7 +25,7 @@
 #include <WebCore/FontRanges.h>
 #include <WebCore/FontSelector.h>
 #include <WebCore/GlyphPage.h>
-#include <WebCore/WidthCache.h>
+#include <WebCore/TextMeasurementCache.h>
 #include <wtf/EnumeratedArray.h>
 #include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
@@ -50,6 +50,65 @@ class GraphicsContext;
 class IntRect;
 class MixedFontGlyphPage;
 
+struct GlyphOverflow {
+    bool isEmpty() const
+    {
+        return !left && !right && !top && !bottom;
+    }
+
+    void extendTo(const GlyphOverflow& other)
+    {
+        left = std::max(left, other.left);
+        right = std::max(right, other.right);
+        top = std::max(top, other.top);
+        bottom = std::max(bottom, other.bottom);
+    }
+
+    void extendTop(float extendTo)
+    {
+        top = std::max(top, LayoutUnit(ceilf(extendTo)));
+    }
+
+    void extendBottom(float extendTo)
+    {
+        bottom = std::max(bottom, LayoutUnit(ceilf(extendTo)));
+    }
+
+    bool operator!=(const GlyphOverflow& other)
+    {
+        // FIXME: Probably should name this rather than making it the != operator since it ignores the value of computeBounds. webkit.org/b/307002
+        return left != other.left || right != other.right || top != other.top || bottom != other.bottom;
+    }
+
+    // FIXME: May need clearer&safer storage and names. See webkit.org/b/307002
+    LayoutUnit left;
+    LayoutUnit right;
+    LayoutUnit top;
+    LayoutUnit bottom;
+    bool computeBounds { false };
+};
+
+} // namespace WebCore
+
+namespace WTF {
+
+template<>
+struct MarkableTraits<WebCore::GlyphOverflow> {
+    static constexpr bool isEmptyValue(const WebCore::GlyphOverflow& value)
+    {
+        return MarkableTraits<WebCore::LayoutUnit>::isEmptyValue(value.left);
+    }
+
+    static constexpr WebCore::GlyphOverflow emptyValue()
+    {
+        return { .left = MarkableTraits<WebCore::LayoutUnit>::emptyValue(), .right = { }, .top = { }, .bottom = { }, .computeBounds = { } };
+    }
+};
+
+} // namespace WTF
+
+namespace WebCore {
+
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FontCascadeFonts);
 class FontCascadeFonts : public RefCounted<FontCascadeFonts> {
     WTF_MAKE_NONCOPYABLE(FontCascadeFonts);
@@ -73,8 +132,13 @@ public:
     // FIXME: It should be possible to combine fontSelectorVersion and generation.
     unsigned generation() const { return m_generation; }
 
-    WidthCache& widthCache() { return m_widthCache; }
-    const WidthCache& widthCache() const { return m_widthCache; }
+    struct GlyphGeometryCacheEntry {
+        Markable<float> width;
+        Markable<GlyphOverflow> glyphOverflow;
+    };
+    using GlyphGeometryCache = TextMeasurementCache<GlyphGeometryCacheEntry>;
+    GlyphGeometryCache& glyphGeometryCache() { return m_glyphGeometryCache; }
+    const GlyphGeometryCache& glyphGeometryCache() const { return m_glyphGeometryCache; }
 
     const Font& primaryFont(const FontCascadeDescription&, FontSelector*);
     WEBCORE_EXPORT const FontRanges& realizeFallbackRangesAt(const FontCascadeDescription&, FontSelector*, unsigned fallbackIndex);
@@ -106,7 +170,7 @@ private:
 
         bool isNull() const { return !m_singleFont && !m_mixedFont; }
         bool isMixedFont() const { return !!m_mixedFont; }
-    
+
     private:
         // Only one of these is non-null.
         RefPtr<GlyphPage> m_singleFont;
@@ -119,7 +183,7 @@ private:
 
     SingleThreadWeakPtr<const Font> m_cachedPrimaryFont;
 
-    WidthCache m_widthCache;
+    GlyphGeometryCache m_glyphGeometryCache;
 
     unsigned short m_generation { 0 };
     Pitch m_pitch { UnknownPitch };

@@ -50,7 +50,6 @@ public:
     SVGUnitTypes::SVGUnitType patternUnits() const { return m_patternUnits->currentValue<SVGUnitTypes::SVGUnitType>(); }
     SVGUnitTypes::SVGUnitType patternContentUnits() const { return m_patternContentUnits->currentValue<SVGUnitTypes::SVGUnitType>(); }
     const SVGTransformList& patternTransform() const { return m_patternTransform->currentValue(); }
-    Ref<const SVGTransformList> protectedPatternTransform() const;
 
     SVGAnimatedLength& xAnimated() { return m_x; }
     SVGAnimatedLength& yAnimated() { return m_y; }

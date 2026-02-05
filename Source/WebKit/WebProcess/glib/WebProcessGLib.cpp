@@ -35,6 +35,7 @@
 #include "WebProcessExtensionManager.h"
 #include "WebSystemSoundDelegate.h"
 #include <WebCore/PlatformScreen.h>
+#include <WebCore/ProcessCapabilities.h>
 #include <WebCore/RenderTheme.h>
 #include <WebCore/ScreenProperties.h>
 #include <WebCore/SystemSoundManager.h>
@@ -73,10 +74,6 @@
 #include <WebCore/PlatformDisplayDefault.h>
 #endif
 
-#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
-#include <WebCore/ScrollbarThemeGtk.h>
-#endif
-
 #if ENABLE(MEDIA_STREAM)
 #include "UserMediaCaptureManager.h"
 #endif
@@ -91,14 +88,6 @@
 
 #if USE(ATSPI)
 #include <WebCore/AccessibilityAtspi.h>
-#endif
-
-#if USE(CAIRO)
-#include <WebCore/CairoUtilities.h>
-#endif
-
-#if USE(SKIA)
-#include <WebCore/ProcessCapabilities.h>
 #endif
 
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
@@ -189,13 +178,11 @@ void WebProcess::initializePlatformDisplayIfNeeded() const
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
-#if USE(SKIA)
     const char* enableCPURendering = getenv("WEBKIT_SKIA_ENABLE_CPU_RENDERING");
     IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
     if (enableCPURendering && strcmp(enableCPURendering, "0"))
         ProcessCapabilities::setCanUseAcceleratedBuffers(false);
     IGNORE_CLANG_WARNINGS_END
-#endif
 
 #if ENABLE(MEDIA_STREAM)
     addSupplementWithoutRefCountedCheck<UserMediaCaptureManager>();
@@ -226,10 +213,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 #if USE(GSTREAMER)
     WebCore::setGStreamerOptionsFromUIProcess(WTF::move(parameters.gstreamerOptions));
-#endif
-
-#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
-    setUseSystemAppearanceForScrollbars(parameters.useSystemAppearanceForScrollbars);
 #endif
 
     if (parameters.memoryPressureHandlerConfiguration)
@@ -278,13 +261,6 @@ void WebProcess::sendMessageToWebProcessExtension(UserMessage&& message)
     if (auto* extension = WebProcessExtensionManager::singleton().extension())
         webkitWebProcessExtensionDidReceiveUserMessage(extension, WTF::move(message));
 }
-
-#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
-void WebProcess::setUseSystemAppearanceForScrollbars(bool useSystemAppearanceForScrollbars)
-{
-    static_cast<ScrollbarThemeGtk&>(ScrollbarTheme::theme()).setUseSystemAppearance(useSystemAppearanceForScrollbars);
-}
-#endif
 
 void WebProcess::grantAccessToAssetServices(Vector<WebKit::SandboxExtension::Handle>&&)
 {

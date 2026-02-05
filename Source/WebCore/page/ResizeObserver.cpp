@@ -219,7 +219,7 @@ void ResizeObserver::deliverObservations()
 bool ResizeObserver::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& visitor) const
 {
     for (auto& observation : m_observations) {
-        if (auto* target = observation->target(); target && containsWebCoreOpaqueRoot(visitor, target))
+        if (SUPPRESS_UNCOUNTED_LOCAL auto* target = observation->target(); target && containsWebCoreOpaqueRoot(visitor, target))
             return true;
     }
 
@@ -231,7 +231,7 @@ bool ResizeObserver::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& visito
             return true;
     }
     for (const auto& weakTarget : m_targetsWaitingForFirstObservation) {
-        if (auto* element = weakTarget.get(); element && containsWebCoreOpaqueRoot(visitor, element))
+        if (SUPPRESS_UNCOUNTED_LOCAL auto* element = weakTarget.get(); element && containsWebCoreOpaqueRoot(visitor, element))
             return true;
     }
     return false;

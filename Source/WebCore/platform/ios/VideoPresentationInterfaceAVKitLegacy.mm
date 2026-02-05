@@ -319,6 +319,7 @@ static void WebAVPictureInPictureContentViewController_viewWillLayoutSubviews(id
 static void WebAVPictureInPictureContentViewController_dealloc(id aSelf, SEL)
 {
     WebAVPictureInPictureContentViewController *pipController = aSelf;
+    [[pipController playerLayer] removeFromSuperlayer];
     [[pipController controller] release];
     [[pipController playerLayer] release];
     objc_super superClass { pipController, getAVPictureInPictureContentViewControllerClassSingleton() };

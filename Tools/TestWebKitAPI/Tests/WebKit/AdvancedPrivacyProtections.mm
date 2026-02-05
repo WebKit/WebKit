@@ -176,7 +176,7 @@ private:
 };
 #endif // HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
 
-static RetainPtr<TestWKWebView> createWebViewWithAdvancedPrivacyProtections(BOOL enabled = YES, RetainPtr<WKWebpagePreferences>&& preferences = { }, WKWebsiteDataStore *dataStore = nil, bool enableResourceLoadStatistics = YES)
+static RetainPtr<TestWKWebView> createWebViewWithAdvancedPrivacyProtections(BOOL enabled = YES, RetainPtr<WKWebpagePreferences>&& preferences = { }, WKWebsiteDataStore *dataStore = nil, BOOL enableResourceLoadStatistics = YES, BOOL enableLinkDecorationFiltering = NO, BOOL enableConsistentLinkDecorationFiltering = NO)
 {
     auto store = dataStore ?: WKWebsiteDataStore.nonPersistentDataStore;
     store._resourceLoadStatisticsEnabled = enableResourceLoadStatistics;
@@ -192,16 +192,39 @@ static RetainPtr<TestWKWebView> createWebViewWithAdvancedPrivacyProtections(BOOL
     [configuration setWebsiteDataStore:store];
     [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
     [configuration setDefaultWebpagePreferences:preferences.get()];
-    if (!enabled) {
+    if (!enabled || enableConsistentLinkDecorationFiltering) {
+        unsigned featuresRemaining = 2;
         for (_WKFeature *feature in [WKPreferences _features]) {
             if ([feature.key isEqualToString:@"FilterLinkDecorationByDefaultEnabled"]) {
-                [[configuration preferences] _setEnabled:YES forFeature:feature];
-                break;
+                if (!enabled && enableLinkDecorationFiltering)
+                    [[configuration preferences] _setEnabled:YES forFeature:feature];
+                featuresRemaining--;
             }
+
+            if ([feature.key isEqualToString:@"ConsistentQueryParameterFilteringQuirkEnabled"]) {
+                if (enableConsistentLinkDecorationFiltering)
+                    [[configuration preferences] _setEnabled:YES forFeature:feature];
+                featuresRemaining--;
+            }
+
+            if (!featuresRemaining)
+                break;
         }
     }
 
     return adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+}
+
+static RetainPtr<TestWKWebView> createWebViewLinkDecorationFiltering(BOOL consistentlyFilterParameters = NO, WKWebsiteDataStore *dataStore = nil)
+{
+    return createWebViewWithAdvancedPrivacyProtections(
+        NO /* advancedPrivacyProtections */
+        , { } /* preferences */
+        , dataStore
+        , YES /* enableResourceLoadStatistics */
+        , YES /* enableLinkDecorationFiltering */
+        , consistentlyFilterParameters
+    );
 }
 
 #if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
@@ -211,10 +234,21 @@ TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersWhenPrivacyProtect
     [TestProtocol registerWithScheme:@"https"];
     QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ], @[ @"", @"", @"" ], @[ @"", @"", @"" ] };
 
-    auto webView = createWebViewWithAdvancedPrivacyProtections(NO);
+    RetainPtr webView = createWebViewLinkDecorationFiltering();
     auto url = [NSURL URLWithString:@"https://bundle-file/simple.html?foo=10&garply=20&bar=30&baz=40"];
     [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:url]];
     EXPECT_WK_STREQ("https://bundle-file/simple.html?garply=20", [webView URL].absoluteString);
+}
+
+TEST(AdvancedPrivacyProtections, ConsistentlyRemoveTrackingQueryParametersWhenPrivacyProtectionsAreDisabled)
+{
+    [TestProtocol registerWithScheme:@"https"];
+    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ], @[ @"", @"", @"" ], @[ @"", @"", @"" ] };
+
+    RetainPtr webView = createWebViewLinkDecorationFiltering(YES);
+    auto url = [NSURL URLWithString:@"https://bundle-file/simple.html?foo=10&garply=20&bar=30&baz=40"];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:url]];
+    EXPECT_WK_STREQ(@"https://bundle-file/simple.html?garply=20", [webView URL].absoluteString);
 }
 
 TEST(AdvancedPrivacyProtections, DoNotRemoveTrackingQueryParametersWhenResourceLoadStatisticsAreDisabled)
@@ -468,27 +502,31 @@ TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersForMainResourcesOn
     }
 }
 
-TEST(AdvancedPrivacyProtections, DoNotRemoveTrackingQueryParametersWith8BitValues)
+TEST(AdvancedPrivacyProtections, TrackingQueryParametersWith8BitValues)
 {
     [TestProtocol registerWithScheme:@"https"];
     QueryParameterRequestSwizzler swizzler { @[ @"foo" ], @[ @"" ], @[ @"" ] };
-    RetainPtr webView = createWebViewWithAdvancedPrivacyProtections(NO);
+    RetainPtr webView = createWebViewLinkDecorationFiltering();
+    RetainPtr webViewWithFiltering = createWebViewLinkDecorationFiltering(YES);
 
-    auto testURL = [&](NSString *urlString, NSString *expectedResult) {
+    auto testURL = [&](NSString *urlString, NSString *expectedResultWith8BitValue, NSString *expectedResultWithout8BitValue) {
         [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlString]]];
-        EXPECT_WK_STREQ(expectedResult, [webView URL].absoluteString);
+        EXPECT_WK_STREQ(expectedResultWith8BitValue, [webView URL].absoluteString);
+
+        [webViewWithFiltering synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlString]]];
+        EXPECT_WK_STREQ(expectedResultWithout8BitValue, [webViewWithFiltering URL].absoluteString);
     };
 
-    testURL(@"https://bundle-file/simple.html?foo=0", @"https://bundle-file/simple.html");
-    testURL(@"https://bundle-file/simple.html?foo=256", @"https://bundle-file/simple.html");
-    testURL(@"https://bundle-file/simple.html?foo=aaa", @"https://bundle-file/simple.html");
-    testURL(@"https://bundle-file/simple.html?foo=-01", @"https://bundle-file/simple.html");
-    testURL(@"https://bundle-file/simple.html?foo=0000", @"https://bundle-file/simple.html");
-    testURL(@"https://bundle-file/simple.html?foo=1+&bar=2", @"https://bundle-file/simple.html?bar=2");
-    testURL(@"https://bundle-file/simple.html?foo=1%20&bar=2", @"https://bundle-file/simple.html?bar=2");
-    testURL(@"https://bundle-file/simple.html?foo=000", @"https://bundle-file/simple.html?foo=000");
-    testURL(@"https://bundle-file/simple.html?foo=010", @"https://bundle-file/simple.html?foo=010");
-    testURL(@"https://bundle-file/simple.html?foo=255", @"https://bundle-file/simple.html?foo=255");
+    testURL(@"https://bundle-file/simple.html?foo=0", @"https://bundle-file/simple.html", @"https://bundle-file/simple.html");
+    testURL(@"https://bundle-file/simple.html?foo=256", @"https://bundle-file/simple.html", @"https://bundle-file/simple.html");
+    testURL(@"https://bundle-file/simple.html?foo=aaa", @"https://bundle-file/simple.html", @"https://bundle-file/simple.html");
+    testURL(@"https://bundle-file/simple.html?foo=-01", @"https://bundle-file/simple.html", @"https://bundle-file/simple.html");
+    testURL(@"https://bundle-file/simple.html?foo=0000", @"https://bundle-file/simple.html", @"https://bundle-file/simple.html");
+    testURL(@"https://bundle-file/simple.html?foo=1+&bar=2", @"https://bundle-file/simple.html?bar=2", @"https://bundle-file/simple.html?bar=2");
+    testURL(@"https://bundle-file/simple.html?foo=1%20&bar=2", @"https://bundle-file/simple.html?bar=2", @"https://bundle-file/simple.html?bar=2");
+    testURL(@"https://bundle-file/simple.html?foo=000", @"https://bundle-file/simple.html?foo=000", @"https://bundle-file/simple.html");
+    testURL(@"https://bundle-file/simple.html?foo=010", @"https://bundle-file/simple.html?foo=010", @"https://bundle-file/simple.html");
+    testURL(@"https://bundle-file/simple.html?foo=255", @"https://bundle-file/simple.html?foo=255", @"https://bundle-file/simple.html");
 }
 
 TEST(AdvancedPrivacyProtections, ApplyNavigationalProtectionsAfterMultiplePSON)
@@ -1003,6 +1041,76 @@ TEST(AdvancedPrivacyProtections, DoNotHideReferrerAfterReducingPrivacyProtection
     NSString *result = [webView objectByEvaluatingJavaScript:@"window.result"];
     NSString *expectedReferrer = [NSString stringWithFormat:@"http://localhost:%d/", server.port()];
     EXPECT_WK_STREQ(expectedReferrer, result);
+}
+
+TEST(AdvancedPrivacyProtections, ConsistentlyFilterQueryParametersOnSource)
+{
+    QueryParameterRequestSwizzler swizzler { @[ @"foo" ], @[ @"" ], @[ @"" ] };
+
+    HTTPServer server({
+        { "/source.html"_s,      { "<a href='https://site.example/destination.html?foo=123'>Link</a>"_s } },
+        { "/destination.html"_s, { "<script>window.result = location.href;</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPSProxyPort: @(server.port())
+    }];
+
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+
+    RetainPtr webView = createWebViewLinkDecorationFiltering(YES, dataStore.get());
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [navigationDelegate allowAnyTLSCertificate];
+
+    [webView loadRequest:adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:@"https://consistentQueryParameterFiltering.internal/source.html"]).get()]).get()];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView evaluateJavaScript:@"document.querySelector('a').click()" completionHandler:nil];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    NSString *result = [webView objectByEvaluatingJavaScript:@"window.result"];
+    NSString *expectedDestination = @"https://site.example/destination.html";
+    EXPECT_WK_STREQ(expectedDestination, webView.get().URL.absoluteString);
+    EXPECT_WK_STREQ(expectedDestination, result);
+}
+
+TEST(AdvancedPrivacyProtections, ConsistentlyFilterQueryParametersOnDestination)
+{
+    QueryParameterRequestSwizzler swizzler { @[ @"foo" ], @[ @"" ], @[ @"" ] };
+
+    HTTPServer server({
+        { "/source.html"_s,      { "<a href='https://consistentQueryParameterFiltering.internal/destination.html?foo=123'>Link</a>"_s } },
+        { "/destination.html"_s, { "<script>window.result = location.href;</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPSProxyPort: @(server.port())
+    }];
+
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+
+    RetainPtr webView = createWebViewLinkDecorationFiltering(YES, dataStore.get());
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [navigationDelegate allowAnyTLSCertificate];
+
+    [webView loadRequest:adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:@"https://site.example/source.html"]).get()]).get()];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView evaluateJavaScript:@"document.querySelector('a').click()" completionHandler:nil];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    NSString *result = [webView objectByEvaluatingJavaScript:@"window.result"];
+    NSString *expectedDestination = @"https://consistentqueryparameterfiltering.internal/destination.html";
+    EXPECT_WK_STREQ(expectedDestination, webView.get().URL.absoluteString);
+    EXPECT_WK_STREQ(expectedDestination, result);
 }
 
 TEST(AdvancedPrivacyProtections, HideScreenMetricsFromBindings)

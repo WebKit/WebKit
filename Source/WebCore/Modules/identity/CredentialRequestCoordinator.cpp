@@ -126,7 +126,7 @@ void CredentialRequestCoordinator::prepareCredentialRequest(const Document& docu
         return promise.reject(ExceptionCode::AbortError, "Page was destroyed."_s);
 
     auto validatedRequestsOrException = m_client->validateAndParseDigitalCredentialRequests(
-        document.protectedTopOrigin(),
+        protect(document.topOrigin()),
         document,
         unvalidatedRequests);
 
@@ -152,8 +152,8 @@ void CredentialRequestCoordinator::prepareCredentialRequest(const Document& docu
     auto validatedCredentialRequests = validatedRequestsOrException.releaseReturnValue();
     DigitalCredentialsRequestData requestData {
         WTF::move(validatedCredentialRequests),
-        document.protectedTopOrigin()->data(),
-        document.protectedSecurityOrigin()->data(),
+        protect(document.topOrigin())->data(),
+        protect(document.securityOrigin())->data(),
     };
 
     m_client->showDigitalCredentialsPicker(

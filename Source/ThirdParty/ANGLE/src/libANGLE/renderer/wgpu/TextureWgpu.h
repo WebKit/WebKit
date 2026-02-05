@@ -207,6 +207,18 @@ class TextureWgpu : public TextureImpl, public angle::ObserverInterface
                                    const gl::InternalFormat &internalFormat,
                                    gl::Framebuffer *source);
 
+    angle::Result copySubTextureImpl(const gl::Context *context,
+                                     const gl::ImageIndex &index,
+                                     const gl::Offset &destOffset,
+                                     GLint sourceLevel,
+                                     const gl::Box &sourceBox,
+                                     bool unpackFlipY,
+                                     bool unpackPremultiplyAlpha,
+                                     bool unpackUnmultiplyAlpha,
+                                     const webgpu::Format &dstWebgpuFormat,
+                                     const gl::InternalFormat &internalFormat,
+                                     TextureWgpu *sourceTextureWgpu);
+
     angle::Result initializeImage(ContextWgpu *contextWgpu, ImageMipLevels mipLevels);
     angle::Result initializeImageImpl(ContextWgpu *contextWgpu,
                                       const webgpu::Format &webgpuFormat,
@@ -233,6 +245,7 @@ class TextureWgpu : public TextureImpl, public angle::ObserverInterface
 
     void setImageHelper(webgpu::ImageHelper *imageHelper, bool ownsImageHelper);
 
+    void resetImageAndReleaseViews();
     bool mOwnsImage             = false;
     webgpu::ImageHelper *mImage = nullptr;
     gl::LevelIndex mCurrentBaseLevel;

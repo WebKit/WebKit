@@ -371,7 +371,7 @@ static PermissionsPolicy::PolicyDirective parsePolicyDirective(StringView value,
 PermissionsPolicy::PolicyDirective PermissionsPolicy::processPermissionsPolicyAttribute(const HTMLIFrameElement& iframe)
 {
     auto allowAttributeValue = iframe.attributeWithoutSynchronization(allowAttr);
-    auto policyDirective = parsePolicyDirective(allowAttributeValue, iframe.protectedDocument()->securityOrigin().data(), declaredOrigin(iframe)->data());
+    auto policyDirective = parsePolicyDirective(allowAttributeValue, protect(iframe.document())->securityOrigin().data(), declaredOrigin(iframe)->data());
 
     if (iframe.hasAttributeWithoutSynchronization(allowfullscreenAttr) || iframe.hasAttributeWithoutSynchronization(webkitallowfullscreenAttr))
         policyDirective.add(Feature::Fullscreen, Allowlist::AllowAllOrigins { });

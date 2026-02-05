@@ -28,4 +28,5 @@
     EnabledBySetting=WirelessPlaybackMediaPlayerEnabled,
     LegacyNoInterfaceObject,
 ] interface MockMediaDeviceRoute {
+    undefined setURLCallback(MockMediaDeviceRouteURLCallback? callback);
 };

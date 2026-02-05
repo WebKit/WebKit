@@ -140,7 +140,7 @@ void WebPage::platformInitializeAccessibility(ShouldInitializeNSAccessibility sh
     // Get the pid for the starting process.
     pid_t pid = legacyPresentingApplicationPID();
     createMockAccessibilityElement(pid);
-    if (protectedCorePage()->localMainFrame())
+    if (protect(corePage())->localMainFrame())
         accessibilityTransferRemoteToken(accessibilityRemoteTokenData());
 
     // Close Mach connection to Launch Services.
@@ -295,7 +295,7 @@ bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressComm
                     eventWasHandled |= performedNonEditingBehavior;
                 }
             } else {
-                auto sendResult = WebProcess::singleton().protectedParentProcessConnection()->sendSync(Messages::WebPageProxy::ExecuteSavedCommandBySelector(commands[i].commandName), m_identifier);
+                auto sendResult = protect(WebProcess::singleton().parentProcessConnection())->sendSync(Messages::WebPageProxy::ExecuteSavedCommandBySelector(commands[i].commandName), m_identifier);
                 auto [commandWasHandledByUIProcess] = sendResult.takeReplyOr(false);
                 eventWasHandled |= commandWasHandledByUIProcess;
             }
@@ -435,7 +435,7 @@ bool WebPage::performNonEditingBehaviorForSelector(const String& selector, Keybo
 
 void WebPage::updateRemotePageAccessibilityOffset(WebCore::FrameIdentifier frameID, WebCore::IntPoint offset)
 {
-    [protectedAccessibilityRemoteObject() setRemoteFrameOffset:offset];
+    [protect(accessibilityRemoteObject()) setRemoteFrameOffset:offset];
 }
 
 void WebPage::registerRemoteFrameAccessibilityTokens(pid_t pid, WebCore::AccessibilityRemoteToken elementToken, WebCore::FrameIdentifier frameID)
@@ -629,7 +629,7 @@ void WebPage::setUseFormSemanticContext(bool useFormSemanticContext)
 void WebPage::semanticContextDidChange(bool useFormSemanticContext)
 {
     setUseFormSemanticContext(useFormSemanticContext);
-    protectedCorePage()->scheduleRenderingUpdate({ });
+    protect(corePage())->scheduleRenderingUpdate({ });
 }
 
 void WebPage::updateHeaderAndFooterLayersForDeviceScaleChange(float scaleFactor)
@@ -874,13 +874,13 @@ std::optional<WebCore::SimpleRange> WebPage::lookupTextAtLocation(FrameIdentifie
 
 void WebPage::immediateActionDidUpdate()
 {
-    if (RefPtr localMainFrame = protectedCorePage()->localMainFrame())
+    if (RefPtr localMainFrame = protect(corePage())->localMainFrame())
         localMainFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionUpdated);
 }
 
 void WebPage::immediateActionDidCancel()
 {
-    RefPtr localMainFrame = protectedCorePage()->localMainFrame();
+    RefPtr localMainFrame = protect(corePage())->localMainFrame();
     if (!localMainFrame)
         return;
     ImmediateActionStage lastStage = localMainFrame->eventHandler().immediateActionStage();
@@ -892,7 +892,7 @@ void WebPage::immediateActionDidCancel()
 
 void WebPage::immediateActionDidComplete()
 {
-    if (RefPtr localMainFrame = protectedCorePage()->localMainFrame())
+    if (RefPtr localMainFrame = protect(corePage())->localMainFrame())
         localMainFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCompleted);
 }
 
@@ -942,22 +942,22 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo&, Mon
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 void WebPage::playbackTargetSelected(PlaybackTargetClientContextIdentifier contextId, MediaPlaybackTargetContextSerialized&& targetContext) const
 {
-    protectedCorePage()->setPlaybackTarget(contextId, MediaPlaybackTargetSerialized::create(WTF::move(targetContext)));
+    protect(corePage())->setPlaybackTarget(contextId, MediaPlaybackTargetSerialized::create(WTF::move(targetContext)));
 }
 
 void WebPage::playbackTargetAvailabilityDidChange(PlaybackTargetClientContextIdentifier contextId, bool changed)
 {
-    protectedCorePage()->playbackTargetAvailabilityDidChange(contextId, changed);
+    protect(corePage())->playbackTargetAvailabilityDidChange(contextId, changed);
 }
 
 void WebPage::setShouldPlayToPlaybackTarget(PlaybackTargetClientContextIdentifier contextId, bool shouldPlay)
 {
-    protectedCorePage()->setShouldPlayToPlaybackTarget(contextId, shouldPlay);
+    protect(corePage())->setShouldPlayToPlaybackTarget(contextId, shouldPlay);
 }
 
 void WebPage::playbackTargetPickerWasDismissed(PlaybackTargetClientContextIdentifier contextId)
 {
-    protectedCorePage()->playbackTargetPickerWasDismissed(contextId);
+    protect(corePage())->playbackTargetPickerWasDismissed(contextId);
 }
 #endif
 
@@ -972,7 +972,7 @@ void WebPage::didBeginMagnificationGesture()
 void WebPage::didEndMagnificationGesture()
 {
 #if ENABLE(MAC_GESTURE_EVENTS)
-    if (RefPtr localMainFrame = protectedCorePage()->localMainFrame())
+    if (RefPtr localMainFrame = protect(corePage())->localMainFrame())
         localMainFrame->eventHandler().didEndMagnificationGesture();
 #endif
 #if ENABLE(PDF_PLUGIN)
@@ -1005,17 +1005,31 @@ bool WebPage::shouldAvoidComputingPostLayoutDataForEditorState() const
 
 void WebPage::setAccentColor(WebCore::Color color)
 {
-    [NSApp _setAccentColor:cocoaColorOrNil(color).get()];
+    if (!color.isValid())
+        return;
+    [NSApplication.sharedApplication _setAccentColor:cocoaColorOrNil(color).get()];
 }
 
 #if PLATFORM(MAC)
 void WebPage::setAppUsesCustomAccentColor(bool appUsesCustomAccentColor)
 {
-    protectedCorePage()->setAppUsesCustomAccentColor(appUsesCustomAccentColor);
+    protect(corePage())->setAppUsesCustomAccentColor(appUsesCustomAccentColor);
 }
 #endif
 
 #endif // HAVE(APP_ACCENT_COLORS)
+
+#if HAVE(NSVIEW_CORNER_CONFIGURATION)
+void WebPage::setScrollbarAvoidanceCornerRadii(CornerRadii&& cornerRadii)
+{
+    m_scrollbarAvoidanceCornerRadii = WTF::move(cornerRadii);
+
+    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame())) {
+        if (RefPtr frameView = localMainFrame->view())
+            frameView->updateScrollbars(frameView->scrollPosition());
+    }
+}
+#endif
 
 #if ENABLE(PDF_PLUGIN)
 

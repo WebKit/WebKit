@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pageswap/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pageswap/pageswap-cross-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pageswap/pageswap-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pageswap/pageswap-initial-navigation.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pageswap/pageswap-push-from-click.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pageswap/pageswap-push-navigation-hidden-document.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pageswap/pageswap-push-navigation.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pageswap/pageswap-push-with-cross-origin-redirect.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pageswap/pageswap-push-with-redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pageswap/pageswap-reload-navigation.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pageswap/pageswap-replace-navigation.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pageswap/pageswap-replace-with-cross-origin-redirect.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pageswap/pageswap-traverse-navigation-cross-origin-redirect-no-bfcache.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pageswap/pageswap-traverse-navigation-no-bfcache.https.html

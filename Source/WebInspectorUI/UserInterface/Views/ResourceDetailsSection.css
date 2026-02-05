@@ -30,6 +30,19 @@
 .resource-details > section > .title {
     margin-bottom: 10px;
     font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.resource-details > section > .title > .redirect-nav-link {
+    margin-inline-start: -3px;
+    margin-bottom: -1px;
+    align-self: flex-end;
+}
+
+.resource-details > section:not(:hover) > .title > .redirect-nav-link {
+    visibility: hidden;
 }
 
 .resource-details > section > .details {

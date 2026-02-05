@@ -70,10 +70,10 @@ RuleSet* ScopeRuleSets::userAgentMediaQueryStyle() const
 
 void ScopeRuleSets::updateUserAgentMediaQueryStyleIfNeeded() const
 {
-    if (!UserAgentStyle::mediaQueryStyleSheet)
+    if (!UserAgentStyle::mediaQueryStyleSheet())
         return;
 
-    auto ruleCount = UserAgentStyle::mediaQueryStyleSheet->ruleCount();
+    auto ruleCount = UserAgentStyle::mediaQueryStyleSheet()->ruleCount();
     if (m_userAgentMediaQueryStyle && ruleCount == m_userAgentMediaQueryRuleCountOnUpdate)
         return;
     m_userAgentMediaQueryRuleCountOnUpdate = ruleCount;
@@ -84,7 +84,7 @@ void ScopeRuleSets::updateUserAgentMediaQueryStyleIfNeeded() const
     m_userAgentMediaQueryStyle = RuleSet::create();
 
     RuleSetBuilder builder(*m_userAgentMediaQueryStyle, mediaQueryEvaluator, &m_styleResolver);
-    builder.addRulesFromSheet(*UserAgentStyle::mediaQueryStyleSheet);
+    builder.addRulesFromSheet(*UserAgentStyle::mediaQueryStyleSheet());
 }
 
 RuleSet* ScopeRuleSets::dynamicViewTransitionsStyle() const
@@ -278,8 +278,8 @@ void ScopeRuleSets::collectFeatures() const
     RELEASE_ASSERT(!m_isInvalidatingStyleWithRuleSets);
 
     m_features.clear();
-    if (UserAgentStyle::defaultStyle)
-        m_features.add(UserAgentStyle::defaultStyle->features());
+    if (UserAgentStyle::defaultStyle())
+        m_features.add(UserAgentStyle::defaultStyle()->features());
     m_defaultStyleVersionOnFeatureCollection = UserAgentStyle::defaultStyleVersion;
 
     if (RefPtr userAgentMediaQueryStyle = this->userAgentMediaQueryStyle())

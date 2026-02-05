@@ -246,6 +246,7 @@ public:
     virtual void didFinishLoad() = 0;
     virtual void prepareForDataSourceReplacement() = 0;
 
+    virtual Ref<DocumentLoader> createDocumentLoader(ResourceRequest&&, SubstituteData&&, ResourceRequest&&) = 0;
     virtual Ref<DocumentLoader> createDocumentLoader(ResourceRequest&&, SubstituteData&&) = 0;
     virtual void updateCachedDocumentLoader(DocumentLoader&) = 0;
     virtual void setTitle(const StringWithDirection&, const URL&) = 0;

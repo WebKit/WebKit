@@ -114,8 +114,8 @@ private:
     void scheduleDelayedRenderingUpdateDetectionTimer(Seconds) WTF_REQUIRES_LOCK(m_treeLock);
     void delayedRenderingUpdateDetectionTimerFired();
 
-    void hasNodeWithAnimatedScrollChanged(bool) final;
-    
+    void hasNodeWithAnimatedScrollChanged(bool) override;
+
     bool isScrollingSynchronizedWithMainThread() final WTF_REQUIRES_LOCK(m_treeLock);
 
     void receivedWheelEventWithPhases(PlatformWheelEventPhase, PlatformWheelEventPhase) final;

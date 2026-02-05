@@ -35,9 +35,9 @@
 #include "RenderTheme.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
-#include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/TopExceptionScope.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -126,7 +126,7 @@ bool DocumentMediaElement::setupAndCallJS(NOESCAPE const JSSetupFunction& task)
         return false;
     auto& vm = globalObject->vm();
     JSC::JSLockHolder lock(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     auto* lexicalGlobalObject = globalObject;
 
     auto reportExceptionAndReturnFalse = [&] () -> bool {

@@ -25,11 +25,10 @@
 
 #pragma once
 
-// FIXME: Remove the `__has_feature(modules)` condition when possible.
-#if !__has_feature(modules)
-
 #include <wtf/Compiler.h>
 #include <wtf/Platform.h>
+
+#if !PLATFORM(IOS_SIMULATOR) || !__has_feature(modules)
 
 DECLARE_SYSTEM_HEADER
 
@@ -335,7 +334,7 @@ NS_ASSUME_NONNULL_END
 #endif
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(IOS) || PLATFORM(VISION)
+#if PLATFORM(IOS) || PLATFORM(VISION) || PLATFORM(MACCATALYST)
 #if __has_include(<VisionKitCore/VKCImageAnalysisInteraction.h>) && !__has_feature(modules)
 #import <VisionKitCore/VKCImageAnalysisInteraction.h>
 #else
@@ -366,10 +365,10 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 #endif
-#endif // PLATFORM(IOS) || PLATFORM(VISION)
+#endif // PLATFORM(IOS) || PLATFORM(VISION) || PLATFORM(MACCATALYST)
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 #endif // HAVE(VK_IMAGE_ANALYSIS)
 
-#endif // !__has_feature(modules)
+#endif // !PLATFORM(IOS_SIMULATOR) || !__has_feature(modules)

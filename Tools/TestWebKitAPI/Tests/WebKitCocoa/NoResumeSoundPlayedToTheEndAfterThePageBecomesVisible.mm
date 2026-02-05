@@ -1,4 +1,5 @@
 /*
+
  * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,33 +36,17 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Seconds.h>
 
-// FIXME: when rdar://132766445 is resolved
-#if PLATFORM(IOS)
-TEST(WebKit, DISABLED_NoResumeSoundPlayedToTheEndAfterThePageBecomesVisible)
-#else
 TEST(WebKit, NoResumeSoundPlayedToTheEndAfterThePageBecomesVisible)
-#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 500, 500) configuration:configuration.get() addToWindow:YES]);
-
-    bool isHidden = false;
-    [webView performAfterReceivingMessage:@"hidden" action:[&] { isHidden = true; }];
-    [webView objectByEvaluatingJavaScript:@"document.addEventListener('visibilitychange', event => { if (document.hidden) window.webkit.messageHandlers.testHandler.postMessage('hidden') })"];
-
 
     bool isEnded = false;
     [webView performAfterReceivingMessage:@"audioEnded" action:[&] { isEnded = true; }];
 
     [webView synchronouslyLoadTestPageNamed:@"playable-audio"];
 
-#if PLATFORM(MAC)
-    [webView.get().window setIsVisible:NO];
-#else
-    webView.get().window.hidden = YES;
-#endif
-
-    TestWebKitAPI::Util::run(&isHidden);
+    [webView setVisibility: NO];
 
     TestWebKitAPI::Util::runFor(1_s);
 
@@ -69,18 +54,7 @@ TEST(WebKit, NoResumeSoundPlayedToTheEndAfterThePageBecomesVisible)
 
     TestWebKitAPI::Util::run(&isEnded);
 
-    bool isVisible = false;
-    [webView performAfterReceivingMessage:@"visible" action:[&] { isVisible = true; }];
-    [webView objectByEvaluatingJavaScript:@"document.addEventListener('visibilitychange', event => { if (!document.hidden) window.webkit.messageHandlers.testHandler.postMessage('visible') })"];
-
-
-#if PLATFORM(MAC)
-    [webView.get().window setIsVisible:YES];
-#else
-    webView.get().window.hidden = NO;
-#endif
-
-    TestWebKitAPI::Util::run(&isVisible);
+    [webView setVisibility: YES];
 
     ASSERT_STREQ([[webView stringByEvaluatingJavaScript:@"window.audioEl.paused"] UTF8String], "1");
 }

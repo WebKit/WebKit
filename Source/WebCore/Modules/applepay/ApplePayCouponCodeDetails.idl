@@ -27,7 +27,6 @@
     Conditional=APPLE_PAY_COUPON_CODE,
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ApplePayCouponCodeDetails {
     DOMString couponCode;
 };

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "JSGlobalObjectInspectorController.h"
 
-#include "CatchScope.h"
 #include "Completion.h"
 #include "ConsoleMessage.h"
 #include "ErrorHandlingScope.h"
@@ -47,6 +46,7 @@
 #include "JSGlobalObjectRuntimeAgent.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
+#include "TopExceptionScope.h"
 #include <wtf/StackTrace.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -182,7 +182,7 @@ void JSGlobalObjectInspectorController::reportAPIException(JSGlobalObject* globa
     if (vm.isTerminationException(exception))
         return;
 
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     ErrorHandlingScope errorScope(vm);
 
     Ref<ScriptCallStack> callStack = createScriptCallStackFromException(globalObject, exception);
@@ -301,7 +301,7 @@ JSAgentContext JSGlobalObjectInspectorController::jsAgentContext()
 {
     AgentContext baseContext = {
         *this,
-        m_injectedScriptManager,
+        m_injectedScriptManager.get(),
         m_frontendRouter.get(),
         m_backendDispatcher
     };

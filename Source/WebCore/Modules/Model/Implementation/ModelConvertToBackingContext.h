@@ -33,16 +33,16 @@
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 
-namespace WebCore::DDModel {
+namespace WebCore {
 
-class DDMesh;
+class Mesh;
 
-class ConvertToBackingContext : public RefCounted<ConvertToBackingContext> {
-    WTF_MAKE_TZONE_ALLOCATED(ConvertToBackingContext);
+class ModelConvertToBackingContext : public RefCounted<ModelConvertToBackingContext> {
+    WTF_MAKE_TZONE_ALLOCATED(ModelConvertToBackingContext);
 public:
-    virtual ~ConvertToBackingContext() = default;
+    virtual ~ModelConvertToBackingContext() = default;
 
-    virtual WGPUDDMesh convertToBacking(const DDMesh&) = 0;
+    virtual WebMesh convertToBacking(const Mesh&) = 0;
 };
 
 }

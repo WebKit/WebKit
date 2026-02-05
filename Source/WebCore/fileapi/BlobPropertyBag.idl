@@ -23,9 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary BlobPropertyBag {
+dictionary BlobPropertyBag {
     DOMString type = "";
 
     EndingType endings = "transparent";

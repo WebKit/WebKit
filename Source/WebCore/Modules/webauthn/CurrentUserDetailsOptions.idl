@@ -27,7 +27,6 @@
     Conditional=WEB_AUTHN,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary CurrentUserDetailsOptions {
     required DOMString                     rpId;
     required Base64URLString               userId;

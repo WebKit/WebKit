@@ -27,5 +27,5 @@
     EnabledBySetting=WebAudioEnabled,
     Exposed=Window
 ] interface ChannelSplitterNode : AudioNode {
-    [EnabledBySetting=WebAudioEnabled] constructor (BaseAudioContext context, optional ChannelSplitterOptions options);
+    [EnabledBySetting=WebAudioEnabled] constructor (BaseAudioContext context, optional ChannelSplitterOptions options = {});
 };

@@ -23,8 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary GetAnimationsOptions {
+// https://drafts.csswg.org/web-animations-1/#dictdef-getanimationsoptions
+dictionary GetAnimationsOptions {
     boolean subtree = false;
+    // FIXME: Add support for `pseudoElement`.
+    // CSSOMString? pseudoElement = null;
 };

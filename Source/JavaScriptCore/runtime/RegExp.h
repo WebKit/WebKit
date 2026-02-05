@@ -73,18 +73,18 @@ public:
         m_constructionErrorCode = Yarr::ErrorCode::NoError;
     }
 
-    JS_EXPORT_PRIVATE int match(JSGlobalObject*, StringView, unsigned startOffset, Vector<int>& ovector);
+    JS_EXPORT_PRIVATE int match(JSGlobalObject*, StringView, unsigned startOffset, std::span<int> ovector);
 
     // Returns false if we couldn't run the regular expression for any reason.
-    bool matchConcurrently(VM&, StringView, unsigned startOffset, int& position, Vector<int>& ovector);
+    bool matchConcurrently(VM&, StringView, unsigned startOffset, int& position, std::span<int> ovector);
     
     JS_EXPORT_PRIVATE MatchResult match(JSGlobalObject*, StringView, unsigned startOffset);
 
     bool matchConcurrently(VM&, StringView, unsigned startOffset, MatchResult&);
 
     // Call these versions of the match functions if you're desperate for performance.
-    template<typename VectorType, Yarr::MatchFrom thread = Yarr::MatchFrom::VMThread>
-    int matchInline(JSGlobalObject* nullOrGlobalObject, VM&, StringView, unsigned startOffset, VectorType& ovector);
+    template<Yarr::MatchFrom thread = Yarr::MatchFrom::VMThread>
+    int matchInline(JSGlobalObject* nullOrGlobalObject, VM&, StringView, unsigned startOffset, std::span<int> ovector);
     template<Yarr::MatchFrom thread = Yarr::MatchFrom::VMThread>
     MatchResult matchInline(JSGlobalObject* nullOrGlobalObject, VM&, StringView, unsigned startOffset);
     
@@ -95,12 +95,9 @@ public:
         return (numSubpatterns() + 1) * 2;
     }
 
-    int offsetVectorSize() const
-    {
-        if (!hasNamedCaptures())
-            return offsetVectorBaseForNamedCaptures();
-        return offsetVectorBaseForNamedCaptures() + m_rareData->m_numDuplicateNamedCaptureGroups;
-    }
+    int offsetVectorSize() const { return m_ovector.size(); }
+
+    std::span<int> ovectorSpan() { return m_ovector.mutableSpan(); }
 
     bool hasNamedCaptures() const
     {
@@ -229,6 +226,7 @@ private:
     std::unique_ptr<Yarr::YarrCodeBlock> m_regExpJITCode;
 #endif
     std::unique_ptr<RareData> m_rareData;
+    Vector<int> m_ovector;
 #if ENABLE(REGEXP_TRACING)
     double m_rtMatchOnlyTotalSubjectStringLen { 0.0 };
     double m_rtMatchTotalSubjectStringLen { 0.0 };

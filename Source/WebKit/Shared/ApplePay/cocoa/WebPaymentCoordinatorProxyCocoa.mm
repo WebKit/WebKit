@@ -508,7 +508,7 @@ void WebPaymentCoordinatorProxy::platformBeginApplePaySetup(const PaymentSetupCo
 
     auto request = adoptNS([PAL::allocPKPaymentSetupRequestInstance() init]);
     [request setConfiguration:configuration.platformConfiguration().get()];
-    [request setPaymentSetupFeatures:features.protectedPlatformFeatures().get()];
+    [request setPaymentSetupFeatures:protect(features.platformFeatures()).get()];
 
     auto completion = makeBlockPtr([reply = WTF::move(reply)](BOOL success) mutable {
         RunLoop::mainSingleton().dispatch([reply = WTF::move(reply), success]() mutable {
@@ -531,7 +531,7 @@ void WebPaymentCoordinatorProxy::platformEndApplePaySetup()
 
 void WebPaymentCoordinatorProxy::platformBeginApplePaySetup(const PaymentSetupConfiguration& configuration, const PaymentSetupFeatures& features, CompletionHandler<void(bool)>&& reply)
 {
-    UIViewController *presentingViewController = checkedClient()->paymentCoordinatorPresentingViewController(*this);
+    RetainPtr presentingViewController = checkedClient()->paymentCoordinatorPresentingViewController(*this);
     if (!presentingViewController) {
         reply(false);
         return;

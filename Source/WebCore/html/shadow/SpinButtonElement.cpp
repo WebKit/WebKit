@@ -210,7 +210,7 @@ void SpinButtonElement::releaseCapture()
 
 bool SpinButtonElement::matchesReadWritePseudoClass() const
 {
-    return protectedShadowHost()->matchesReadWritePseudoClass();
+    return protect(shadowHost())->matchesReadWritePseudoClass();
 }
 
 void SpinButtonElement::startRepeatingTimer()

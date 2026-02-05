@@ -195,7 +195,7 @@ WorkerAgentContext WorkerInspectorController::workerAgentContext()
 {
     AgentContext baseContext = {
         *this,
-        m_injectedScriptManager,
+        m_injectedScriptManager.get(),
         m_frontendRouter.get(),
         m_backendDispatcher,
     };

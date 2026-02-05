@@ -83,6 +83,9 @@ public:
     WEBCORE_EXPORT void setMouseIsOverContentArea(ScrollableArea&, bool) override;
     WEBCORE_EXPORT void setMouseMovedInContentArea(ScrollableArea&) override;
     WEBCORE_EXPORT void setLayerHostingContextIdentifierForFrameHostingNode(ScrollingNodeID, std::optional<LayerHostingContextIdentifier>) override;
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    void setScrollbarOpacity(ScrollableArea&) override;
+#endif
     LocalFrameView* frameViewForScrollingNode(LocalFrame& localMainFrame, std::optional<ScrollingNodeID>) const;
 
     WEBCORE_EXPORT ScrollingStateTree& ensureScrollingStateTreeForRootFrameID(FrameIdentifier);
@@ -189,7 +192,11 @@ private:
     void wheelEventScrollDidEndForNode(ScrollingNodeID);
     void notifyScrollableAreasForScrollEnd(ScrollingNodeID);
     
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+    void setHoveredAndPressedScrollbarParts(ScrollableArea&) override;
+#else
     WEBCORE_EXPORT void setMouseIsOverScrollbar(Scrollbar*, bool isOverScrollbar) override;
+#endif
     WEBCORE_EXPORT void setScrollbarEnabled(Scrollbar&) override;
     WEBCORE_EXPORT void setScrollbarWidth(ScrollableArea&, ScrollbarWidth) override;
 

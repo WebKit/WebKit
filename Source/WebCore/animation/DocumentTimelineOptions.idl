@@ -25,8 +25,7 @@
 
 typedef double DOMHighResTimeStamp;
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary DocumentTimelineOptions {
+// https://drafts.csswg.org/web-animations-1/#dictdef-documenttimelineoptions
+dictionary DocumentTimelineOptions {
     DOMHighResTimeStamp originTime = 0;
 };

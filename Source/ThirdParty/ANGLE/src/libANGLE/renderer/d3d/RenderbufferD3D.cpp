@@ -69,7 +69,7 @@ angle::Result RenderbufferD3D::setStorageMultisample(const gl::Context *context,
     // been validated and generated GL_INVALID_VALUE.
     const gl::TextureCaps &formatCaps = mRenderer->getNativeTextureCaps().get(creationFormat);
     ANGLE_CHECK_GL_ALLOC(GetImplAs<ContextD3D>(context),
-                         static_cast<uint32_t>(samples) <= formatCaps.getMaxSamples());
+                         static_cast<uint32_t>(samples) <= formatCaps.sampleCounts.getMaxSamples());
 
     RenderTargetD3D *newRT = nullptr;
     ANGLE_TRY(

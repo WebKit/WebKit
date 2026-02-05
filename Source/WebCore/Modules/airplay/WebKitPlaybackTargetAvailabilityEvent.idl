@@ -28,13 +28,11 @@
     Conditional=WIRELESS_PLAYBACK_TARGET_AVAILABILITY_API,
     Exposed=Window
 ] interface WebKitPlaybackTargetAvailabilityEvent : Event {
-    constructor([AtomString] DOMString type, optional WebKitPlaybackTargetAvailabilityEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional WebKitPlaybackTargetAvailabilityEventInit eventInitDict = {});
 
     readonly attribute DOMString availability;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary WebKitPlaybackTargetAvailabilityEventInit : EventInit {
+dictionary WebKitPlaybackTargetAvailabilityEventInit : EventInit {
     DOMString availability = "";
 };

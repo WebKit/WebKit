@@ -135,7 +135,7 @@ int ImmutableStyleProperties::findCustomPropertyIndex(StringView propertyName) c
     for (int n = metadataSpan.size() - 1 ; n >= 0; --n) {
         if (metadataSpan[n].m_propertyID == CSSPropertyCustom) {
             // We found a custom property. See if the name matches.
-            auto* value = valueSpan[n].get();
+            RefPtr value = valueSpan[n].get();
             if (!value)
                 continue;
             if (downcast<CSSCustomPropertyValue>(*value).name() == propertyName)

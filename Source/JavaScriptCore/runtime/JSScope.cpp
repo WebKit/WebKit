@@ -82,7 +82,7 @@ static inline bool abstractAccess(JSGlobalObject* globalObject, JSScope* scope, 
         if (scope->type() == ModuleEnvironmentType) {
             JSModuleEnvironment* moduleEnvironment = jsCast<JSModuleEnvironment*>(scope);
             AbstractModuleRecord* moduleRecord = moduleEnvironment->moduleRecord();
-            auto catchScope = DECLARE_CATCH_SCOPE(vm);
+            auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
             AbstractModuleRecord::Resolution resolution = moduleRecord->resolveImport(globalObject, ident);
             catchScope.releaseAssertNoException();
             if (resolution.type == AbstractModuleRecord::Resolution::Type::Resolved) {

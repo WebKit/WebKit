@@ -327,7 +327,7 @@ class Resource : angle::NonCopyable
     // Complete all recorded and in-flight commands involving this resource
     angle::Result waitForIdle(ContextVk *contextVk,
                               const char *debugMessage,
-                              RenderPassClosureReason reason);
+                              QueueSubmitReason reason);
 
     void setSerial(SerialIndex index, Serial serial) { mUse.setSerial(index, serial); }
 
@@ -369,7 +369,7 @@ class ReadWriteResource : public Resource
     // Complete all recorded and in-flight commands involving this resource
     angle::Result waitForIdle(ContextVk *contextVk,
                               const char *debugMessage,
-                              RenderPassClosureReason reason)
+                              QueueSubmitReason reason)
     {
         return Resource::waitForIdle(contextVk, debugMessage, reason);
     }

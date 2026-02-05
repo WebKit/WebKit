@@ -55,7 +55,6 @@ using ShaderData        = WrappedArray<uint8_t>;
 #define ANGLE_RESOURCE_TYPE_OP(NAME, OP)                                                       \
     OP(NAME, BlendState, ID3D11BlendState, D3D11_BLEND_DESC, void)                             \
     OP(NAME, Buffer, ID3D11Buffer, D3D11_BUFFER_DESC, const D3D11_SUBRESOURCE_DATA)            \
-    OP(NAME, ComputeShader, ID3D11ComputeShader, ShaderData, void)                             \
     OP(NAME, DepthStencilState, ID3D11DepthStencilState, D3D11_DEPTH_STENCIL_DESC, void)       \
     OP(NAME, DepthStencilView, ID3D11DepthStencilView, D3D11_DEPTH_STENCIL_VIEW_DESC,          \
        ID3D11Resource)                                                                         \

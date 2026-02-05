@@ -60,6 +60,14 @@ WI.ColorPicker = class ColorPicker extends WI.Object
 
         let colorInputsWrapperElement = this._element.appendChild(document.createElement("div"));
         colorInputsWrapperElement.classList.add("color-inputs-wrapper");
+
+        if (!this._preventChangingColorFormats) {
+            let formatOptionsElement = WI.ImageUtilities.useSVGSymbol("Images/Gear.svg", "format-options");
+            formatOptionsElement.role = "button";
+            WI.addMouseDownContextMenuHandlers(formatOptionsElement, this._populateFormatContextMenu.bind(this));
+            colorInputsWrapperElement.appendChild(formatOptionsElement);
+        }
+
         colorInputsWrapperElement.appendChild(this._colorInputsContainerElement);
 
         if (InspectorFrontendHost.canPickColorFromScreen()) {
@@ -139,10 +147,8 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         return WI.Color.fromStringBestMatchingSuggestedFormatAndGamut(pickedColorCSSString, {suggestedFormat, suggestedGamut, forceSuggestedFormatAndGamut});
     }
 
-    // Static
-
     static sortColorVariables(colorVariables)
-    {   
+    {
         const rotation = 2;
         const weights = [Math.E / 11.279, Math.E / 3.934, Math.E / 39.975];
 
@@ -169,6 +175,54 @@ WI.ColorPicker = class ColorPicker extends WI.Object
             let appealB = colorVariableVisualAppealScores.get(variableB);
             return appealB.hueScore - appealA.hueScore || appealB.luminosityScore - appealA.luminosityScore || appealB.lightScore - appealA.lightScore;
         });
+    }
+
+    static addContextMenuFormatItems(contextMenu, color, formatChangedCallback)
+    {
+        let isColorOutsideSRGB = color.isOutsideSRGB();
+
+        if (!isColorOutsideSRGB) {
+            if (color.isKeyword() && color.format !== WI.Color.Format.Keyword) {
+                contextMenu.appendItem(WI.UIString("Format: Keyword"), () => {
+                    formatChangedCallback(WI.Color.Format.Keyword);
+                });
+            }
+
+            let hexInfo = color.getNextValidHEXFormat();
+            if (hexInfo) {
+                contextMenu.appendItem(hexInfo.title, () => {
+                    formatChangedCallback(hexInfo.format);
+                });
+            }
+
+            if (color.simple && color.format !== WI.Color.Format.HSL) {
+                contextMenu.appendItem(WI.UIString("Format: HSL"), () => {
+                    formatChangedCallback(WI.Color.Format.HSL);
+                });
+            } else if (color.format !== WI.Color.Format.HSLA) {
+                contextMenu.appendItem(WI.UIString("Format: HSLA"), () => {
+                    formatChangedCallback(WI.Color.Format.HSLA);
+                });
+            }
+
+            if (color.simple && color.format !== WI.Color.Format.RGB) {
+                contextMenu.appendItem(WI.UIString("Format: RGB"), () => {
+                    formatChangedCallback(WI.Color.Format.RGB);
+                });
+            } else if (color.format !== WI.Color.Format.RGBA) {
+                contextMenu.appendItem(WI.UIString("Format: RGBA"), () => {
+                    formatChangedCallback(WI.Color.Format.RGBA);
+                });
+            }
+
+            if (color.format !== WI.Color.Format.ColorFunction) {
+                contextMenu.appendItem(WI.UIString("Format: Color Function"), () => {
+                    formatChangedCallback(WI.Color.Format.ColorFunction);
+                });
+            }
+
+            contextMenu.appendSeparator();
+        }
     }
 
     // Public
@@ -400,6 +454,45 @@ WI.ColorPicker = class ColorPicker extends WI.Object
     {
         this.color = resolvedColor;
         this.dispatchEventToListeners(WI.ColorPicker.Event.ColorChanged, {color: this._color, variableName});
+    }
+
+    _changeFormat(format)
+    {
+        if (this._color.format === format)
+            return;
+
+        this._color.format = format;
+        this._colorInputsFormat = null;
+        this._showColorComponentInputs();
+        this.dispatchEventToListeners(WI.ColorPicker.Event.ColorChanged, {color: this._color});
+    }
+
+    _populateFormatContextMenu(contextMenu)
+    {
+        WI.ColorPicker.addContextMenuFormatItems(contextMenu, this._color, (format) => {
+            this._changeFormat(format);
+        });
+
+        if (this._color.gamut !== WI.Color.Gamut.DisplayP3) {
+            contextMenu.appendItem(WI.UIString("Convert to Display-P3"), () => {
+                this._color.gamut = WI.Color.Gamut.DisplayP3;
+                this._colorInputsFormat = null;
+                this._showColorComponentInputs();
+                this._updateColorGamut();
+                this.dispatchEventToListeners(WI.ColorPicker.Event.ColorChanged, {color: this._color});
+            });
+        }
+
+        if (this._color.gamut !== WI.Color.Gamut.SRGB) {
+            let label = this._color.isOutsideSRGB() ? WI.UIString("Clamp to sRGB") : WI.UIString("Convert to sRGB");
+            contextMenu.appendItem(label, () => {
+                this._color.gamut = WI.Color.Gamut.SRGB;
+                this._colorInputsFormat = null;
+                this._showColorComponentInputs();
+                this._updateColorGamut();
+                this.dispatchEventToListeners(WI.ColorPicker.Event.ColorChanged, {color: this._color});
+            });
+        }
     }
 };
 

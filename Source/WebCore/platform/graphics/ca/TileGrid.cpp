@@ -190,7 +190,7 @@ void TileGrid::dropTilesInRect(const IntRect& rect)
 
 void TileGrid::setTileNeedsDisplayInRect(const TileIndex& tileIndex, TileInfo& tileInfo, const IntRect& repaintRectInTileCoords, const IntRect& coverageRectInTileCoords)
 {
-    PlatformCALayer* tileLayer = tileInfo.layer.get();
+    RefPtr tileLayer = tileInfo.layer.get();
 
     IntRect tileRect = rectForTileIndex(tileIndex);
     FloatRect tileRepaintRect = tileRect;
@@ -410,7 +410,7 @@ void TileGrid::revalidateTiles(OptionSet<ValidationPolicyFlag> validationPolicy)
         TileInfo& tileInfo = entry.value;
         TileIndex tileIndex = entry.key;
 
-        PlatformCALayer* tileLayer = tileInfo.layer.get();
+        RefPtr tileLayer = tileInfo.layer.get();
         IntRect tileRect = rectForTileIndex(tileIndex);
 
         if (tileRect.intersects(coverageRectInTileCoords)) {
@@ -707,7 +707,7 @@ void TileGrid::drawTileMapContents(CGContextRef context, CGRect layerBounds) con
     CGContextScaleCTM(context, contextScale, contextScale);
     
     for (auto& tileInfo : m_tiles.values()) {
-        PlatformCALayer* tileLayer = tileInfo.layer.get();
+        RefPtr tileLayer = tileInfo.layer.get();
 
         CGFloat red = 1;
         CGFloat green = 1;

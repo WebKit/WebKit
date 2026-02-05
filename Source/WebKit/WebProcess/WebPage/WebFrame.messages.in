@@ -29,7 +29,7 @@ messages -> WebFrame {
     GetFrameInfo() -> (struct std::optional<WebKit::FrameInfoData> data)
     CreateProvisionalFrame(struct WebKit::ProvisionalFrameCreationParameters creationParameters)
     DestroyProvisionalFrame();
-    FindFocusableElementDescendingIntoRemoteFrame(enum:uint8_t WebCore::FocusDirection direction, struct WebCore::FocusEventData focusEventData) -> (enum:bool WebCore::FoundElementInRemoteFrame foundElement)
+    FindFocusableElementDescendingIntoRemoteFrame(enum:uint8_t WebCore::FocusDirection direction, struct WebCore::FocusEventData focusEventData, enum:bool WebCore::ShouldFocusElement shouldFocusElement) -> (enum:bool WebCore::FoundElementInRemoteFrame foundElement)
     TakeSnapshotOfNode(WebCore::JSHandleIdentifier identifier) -> (std::optional<WebCore::ShareableBitmapHandle> snapshot);
 
     ConnectInspector(Inspector::FrontendChannel::ConnectionType connectionType)
@@ -37,7 +37,7 @@ messages -> WebFrame {
     SendMessageToInspectorTarget(String message)
 
     # Text extraction support
-    RequestTextExtraction(struct WebCore::TextExtraction::Request request) -> (struct WebCore::TextExtraction::Item item)
+    RequestTextExtraction(struct WebCore::TextExtraction::Request request) -> (struct WebCore::TextExtraction::Result result)
     HandleTextExtractionInteraction(struct WebCore::TextExtraction::Interaction interaction) -> (bool succeeded, String description)
     DescribeTextExtractionInteraction(struct WebCore::TextExtraction::Interaction interaction) -> (struct WebCore::TextExtraction::InteractionDescription description)
     TakeSnapshotOfExtractedText(struct WebCore::TextExtraction::ExtractedText text) -> (RefPtr<WebCore::TextIndicator> textIndicator)

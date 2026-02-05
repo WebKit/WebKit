@@ -282,9 +282,10 @@ selectors = [
 ]
 requires = ["HAVE_PASSKIT_DELEGATED_REQUEST"]
 
-[[not-web-essential]]
-request = "rdar://165006869"
+[[temporary-usage]]
+request = "rdar://168622817"
+cleanup = "rdar://169487203"
 selectors = [
-    { name = "_setDecelerationTrackingBehavior:", class = "UIScrollView" },
+    { name = "evaluateURL:mainDocumentURL:completionHandler:", class = "BEWebContentFilter" },
 ]
-requires = ["HAVE_UISCROLLVIEW_DECELERATION_TRACKING_BEHAVIOR"]
+requires = ["HAVE_WEBCONTENTRESTRICTIONS_TRANSITIVE_TRUST"]

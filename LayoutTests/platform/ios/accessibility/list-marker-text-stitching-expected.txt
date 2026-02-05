@@ -1,9 +1,9 @@
 This test ensures we handle text stitching appropriately for list markers.
 
-PASS: fooText.pageX was equal or approximately equal to 28.
+PASS: fooText.pageX was equal or approximately equal to 19.
 PASS: fooText.pageY was equal or approximately equal to 8.
-PASS: fooText.width was equal or approximately equal to 45.
-PASS: fooText.height was equal or approximately equal to 18.
+PASS: fooText.width was equal or approximately equal to 55.
+PASS: fooText.height was equal or approximately equal to 15.
 
 {StaticText AXLabel: 1. Foo}
 

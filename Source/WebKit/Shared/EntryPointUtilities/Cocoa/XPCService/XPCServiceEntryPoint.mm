@@ -41,7 +41,7 @@
 
 namespace WebKit {
 
-XPCServiceInitializerDelegate::XPCServiceInitializerDelegate(XPCObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
+XPCServiceInitializerDelegate::XPCServiceInitializerDelegate(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
     : m_connection(WTF::move(connection))
     , m_initializerMessage(initializerMessage)
 {
@@ -125,7 +125,7 @@ bool XPCServiceInitializerDelegate::getClientProcessName(String& clientProcessNa
 
 bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, String>& extraInitializationData)
 {
-    XPCObjectPtr<xpc_object_t> extraDataInitializationDataObject = xpc_dictionary_get_value(m_initializerMessage.get(), "extra-initialization-data");
+    OSObjectPtr<xpc_object_t> extraDataInitializationDataObject = xpc_dictionary_get_value(m_initializerMessage.get(), "extra-initialization-data");
 
     auto inspectorProcess = xpcDictionaryGetString(extraDataInitializationDataObject.get(), "inspector-process"_s);
     if (!inspectorProcess.isEmpty())

@@ -34,9 +34,19 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RTCErrorEvent);
 
+Ref<RTCErrorEvent> RTCErrorEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
+{
+    return adoptRef(*new RTCErrorEvent(type, WTF::move(init), isTrusted));
+}
+
+Ref<RTCErrorEvent> RTCErrorEvent::create(const AtomString& type, Ref<RTCError>&& error)
+{
+    return create(type, Init { { false, false, false }, WTF::move(error) }, IsTrusted::Yes);
+}
+
 RTCErrorEvent::RTCErrorEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::RTCErrorEvent, type, initializer, isTrusted)
-    , m_error(initializer.error.releaseNonNull())
+    : Event(EventInterfaceType::RTCErrorEvent, type, WTF::move(initializer), isTrusted)
+    , m_error(WTF::move(initializer.error))
 {
 }
 

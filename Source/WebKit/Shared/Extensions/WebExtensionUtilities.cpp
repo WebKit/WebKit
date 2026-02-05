@@ -219,9 +219,11 @@ String toErrorString(const String& callingAPIName, const String& sourceKey, Stri
     va_start(arguments, underlyingErrorString);
 
 ALLOW_NONLITERAL_FORMAT_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     String formattedUnderlyingErrorString = formatString(underlyingErrorString.utf8().data(), arguments).trim([](char16_t character) -> bool {
         return character == '.';
     });
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 ALLOW_NONLITERAL_FORMAT_END
 
     va_end(arguments);
@@ -234,13 +236,19 @@ ALLOW_NONLITERAL_FORMAT_END
     }
 
     if (!callingAPIName.isEmpty() && !source.isEmpty())
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         return formatString("Invalid call to %s. The '%s' value is invalid, because %s.", callingAPIName.utf8().data(), source.utf8().data(), lowercaseFirst(formattedUnderlyingErrorString).utf8().data());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     if (callingAPIName.isEmpty() && !source.isEmpty())
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         return formatString("The '%s' value is invalid, because %s.", source.utf8().data(), lowercaseFirst(formattedUnderlyingErrorString).utf8().data());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     if (!callingAPIName.isEmpty())
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         return formatString("Invalid call to %s. %s.", callingAPIName.utf8().data(), uppercaseFirst(formattedUnderlyingErrorString).utf8().data());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     return formattedUnderlyingErrorString;
 }

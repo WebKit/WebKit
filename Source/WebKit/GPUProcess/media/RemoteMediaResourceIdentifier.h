@@ -32,7 +32,7 @@
 namespace WebKit {
 
 struct RemoteMediaResourceIdentifierType;
-using RemoteMediaResourceIdentifier = ObjectIdentifier<RemoteMediaResourceIdentifierType>;
+using RemoteMediaResourceIdentifier = AtomicObjectIdentifier<RemoteMediaResourceIdentifierType>;
 
 } // namespace WebKit
 

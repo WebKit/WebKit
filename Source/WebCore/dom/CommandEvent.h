@@ -43,7 +43,7 @@ public:
         String command;
     };
 
-    static Ref<CommandEvent> create(const AtomString& type, const Init&, IsTrusted = IsTrusted::No);
+    static Ref<CommandEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
     static Ref<CommandEvent> createForBindings();
 
     RefPtr<Element> source() const;
@@ -52,7 +52,7 @@ public:
 
 private:
     CommandEvent();
-    CommandEvent(const AtomString& type, const Init&, IsTrusted = IsTrusted::No);
+    CommandEvent(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
 
     const RefPtr<Element> m_source;
     String m_command;

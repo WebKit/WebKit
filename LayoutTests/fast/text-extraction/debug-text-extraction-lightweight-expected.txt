@@ -13,7 +13,10 @@ root
         input,'text',placeholder='Enter text here'
         'Clickable Div'
     section
-        article,'Article Title\n\n\n                January 1, 2024\n            \n\n            \nThis is some article content…'
+        article
+            'Article Title'
+            'January 1, 2024'
+            'This is some article content…'
         'Related Links'
         list
             list-item
@@ -22,4 +25,5 @@ root
                 link,'Test Link'
         'Ready'
         button,'Update Status'
-    'The quick brown fox jumped…\n\n\n\n\n    \nFooter content with © 2024'
+    'The quick brown fox jumped…'
+    'Footer content with © 2024'

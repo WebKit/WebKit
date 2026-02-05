@@ -58,7 +58,6 @@ public:
 
     WebURLSchemeHandlerIdentifier identifier() const { return m_identifier; }
     WebPage& page() { return m_webPage.get(); }
-    Ref<WebPage> protectedPage();
 
     void taskDidPerformRedirection(WebCore::ResourceLoaderIdentifier, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void taskDidReceiveResponse(WebCore::ResourceLoaderIdentifier, WebCore::ResourceResponse&&);

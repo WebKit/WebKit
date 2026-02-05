@@ -604,7 +604,8 @@ void genericSplit(
             // a. Let nextCapture be ? Get(z, ! ToString(i)).
             // b. Perform ! CreateDataProperty(A, ! ToString(lengthA), nextCapture).
             int sub = ovector[i * 2];
-            auto result = push(sub >= 0, sub, ovector[i * 2 + 1] - sub);
+            int subEnd = ovector[i * 2 + 1];
+            auto result = push(sub >= 0 && subEnd >= sub, sub, subEnd - sub);
             RETURN_IF_EXCEPTION(scope, void());
             if (result == AbortSplit)
                 return;

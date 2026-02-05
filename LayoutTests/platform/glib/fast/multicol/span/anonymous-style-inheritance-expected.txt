@@ -6,14 +6,14 @@ layer at (0,0) size 800x498
 layer at (8,18) size 835x463
   RenderBlock {DIV} at (0,0) size 835x463 [border: (5px solid #800000)]
     RenderBlock {H2} at (5,26) size 825x32 [bgcolor=#EEEEEE]
-      RenderText {#text} at (0,0) size 740x30
+      RenderText {#text} at (0,0) size 740x31
         text run at (0,0) width 740: "This is a spanning element at the beginning of the columns block."
     RenderMultiColumnSet at (5,79) size 825x379
 layer at (13,23) size 404x756 backgroundClip at (0,0) size 843x585 clip at (0,0) size 843x585
   RenderMultiColumnFlowThread at (5,5) size 404x756
     RenderMultiColumnSpannerPlaceholder at (0,0) size 0x0
     RenderBlock (anonymous) at (0,0) size 404x756
-      RenderText {#text} at (0,0) size 403x755
+      RenderText {#text} at (0,0) size 403x756
         text run at (0,0) width 374: "Lorem ipsum dolor sit amet, consectetuer adipiscing"
         text run at (0,21) width 399: "elit. Nulla varius enim ac mi. Curabitur sollicitudin felis"
         text run at (0,42) width 403: "quis lectus. Quisque adipiscing rhoncus sem. Proin nulla"

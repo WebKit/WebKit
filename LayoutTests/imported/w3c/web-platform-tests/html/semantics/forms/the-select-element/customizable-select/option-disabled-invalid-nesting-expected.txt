@@ -1,0 +1,4 @@
+
+
+PASS options should not inherit disabledness when nested in invalid elements.
+

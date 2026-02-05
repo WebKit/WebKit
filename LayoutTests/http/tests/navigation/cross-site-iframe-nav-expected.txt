@@ -1,0 +1,28 @@
+Cross-site iframe history is preserved when the main frame navigates (back/forward cache is disabled).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Popup loaded
+Popup pageshow: not-persisted
+Same-site iframe loaded
+Same-site iframe displayed first time.
+Cross-site iframe loaded
+Cross-site iframe displayed first time.
+Other page loaded
+Other page displayed.
+Popup loaded
+Popup pageshow: not-persisted
+Cross-site iframe loaded
+PASS Cross-site iframe displayed twice.
+Same-site iframe loaded
+PASS Same-site iframe displayed twice.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Open a new window with cross-site-iframe-nav-popup.html. It has an same-site iframe initially.
+Navigate iframe to cross-site.
+Navigate main frame to other.
+Go back. (cross-site-iframe-nav-popup.html with cross-site iframe)
+Go back again. (cross-site-iframe-nav-popup.html with same-site iframe)
+... and ensures the cross-site iframe history is preserved in the BackForwardList.

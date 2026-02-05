@@ -58,10 +58,10 @@ void PageBanner::addToPage(Type type, WebPage* webPage)
 
     switch (type) {
     case Header:
-        webPage->protectedCorePage()->setHeaderHeight(m_height);
+        protect(webPage->corePage())->setHeaderHeight(m_height);
         break;
     case Footer:
-        webPage->protectedCorePage()->setFooterHeight(m_height);
+        protect(webPage->corePage())->setFooterHeight(m_height);
         break;
     case NotSet:
         ASSERT_NOT_REACHED();
@@ -100,9 +100,9 @@ void PageBanner::hide()
 {
     // We can hide the banner by removing the parent layer that hosts it.
     if (m_type == Header)
-        protectedWebPage()->protectedCorePage()->setHeaderHeight(0);
+        protect(protectedWebPage()->corePage())->setHeaderHeight(0);
     else if (m_type == Footer)
-        protectedWebPage()->protectedCorePage()->setFooterHeight(0);
+        protect(protectedWebPage()->corePage())->setFooterHeight(0);
 
     m_isHidden = true;
 }

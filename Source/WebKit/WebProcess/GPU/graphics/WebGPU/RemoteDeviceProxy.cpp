@@ -152,7 +152,7 @@ RefPtr<WebCore::WebGPU::Texture> RemoteDeviceProxy::createTexture(const WebCore:
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteTextureProxy::create(protectedRoot(), m_convertToBackingContext, identifier);
+    auto result = RemoteTextureProxy::create(protect(root()), m_convertToBackingContext, identifier);
     result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
@@ -225,7 +225,7 @@ RefPtr<WebCore::WebGPU::BindGroupLayout> RemoteDeviceProxy::createBindGroupLayou
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteBindGroupLayoutProxy::create(protectedRoot(), m_convertToBackingContext, identifier);
+    auto result = RemoteBindGroupLayoutProxy::create(protect(root()), m_convertToBackingContext, identifier);
     result->setLabel(WTF::move(convertedDescriptor->label));
     return result;
 }
@@ -367,7 +367,7 @@ RefPtr<WebCore::WebGPU::CommandEncoder> RemoteDeviceProxy::createCommandEncoder(
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteCommandEncoderProxy::create(protectedRoot(), m_convertToBackingContext, identifier);
+    auto result = RemoteCommandEncoderProxy::create(protect(root()), m_convertToBackingContext, identifier);
     if (convertedDescriptor)
         result->setLabel(WTF::move(convertedDescriptor->label));
     return result;

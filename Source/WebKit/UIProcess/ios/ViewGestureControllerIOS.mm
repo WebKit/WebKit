@@ -56,7 +56,7 @@
 
 @implementation WKSwipeTransitionController
 {
-    WebKit::ViewGestureController *_gestureController;
+    WeakPtr<WebKit::ViewGestureController> _gestureController;
     RetainPtr<_UINavigationInteractiveTransitionBase> _backTransitionController;
     RetainPtr<_UINavigationInteractiveTransitionBase> _forwardTransitionController;
     WeakObjCPtr<UIView> _gestureRecognizerView;
@@ -103,17 +103,19 @@ static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 
 - (void)startInteractiveTransition:(_UINavigationInteractiveTransitionBase *)transition
 {
-    _gestureController->beginSwipeGesture(transition, [self directionForTransition:transition]);
+    if (RefPtr gestureController = _gestureController)
+        gestureController->beginSwipeGesture(transition, [self directionForTransition:transition]);
 }
 
 - (BOOL)shouldBeginInteractiveTransition:(_UINavigationInteractiveTransitionBase *)transition
 {
-    if (_gestureController->hasActiveSwipeGesture())
+    RefPtr gestureController = _gestureController;
+    if (!gestureController || gestureController->hasActiveSwipeGesture())
         return NO;
 
     using enum WebKit::ViewGestureController::DeferToConflictingGestures;
     auto deferToConflictingGestures = transition.gestureRecognizer.state == UIGestureRecognizerStateFailed ? Yes : No;
-    return _gestureController->canSwipeInDirection([self directionForTransition:transition], deferToConflictingGestures);
+    return gestureController->canSwipeInDirection([self directionForTransition:transition], deferToConflictingGestures);
 }
 
 - (BOOL)interactiveTransition:(_UINavigationInteractiveTransitionBase *)transition gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
@@ -213,18 +215,18 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
         return;
     }
 
-    m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureDidBegin();
+    protect(m_webPageProxyForBackForwardListForCurrentSwipe)->navigationGestureDidBegin();
     if (page.get() != m_webPageProxyForBackForwardListForCurrentSwipe)
         page->navigationGestureDidBegin();
 
     // Copy the snapshot from this view to the one that owns the back forward list, so that
     // swiping forward will have the correct snapshot.
     if (m_webPageProxyForBackForwardListForCurrentSwipe != page.get()) {
-        if (auto* currentViewHistoryItem = page->backForwardList().currentItem())
+        if (RefPtr currentViewHistoryItem = page->backForwardList().currentItem())
             backForwardList.currentItem()->setSnapshot(currentViewHistoryItem->snapshot());
     }
 
-    CGRect liveSwipeViewFrame = [m_liveSwipeView frame];
+    CGRect liveSwipeViewFrame = [m_liveSwipeView.get() frame];
 
     RetainPtr<UIViewController> snapshotViewController = adoptNS([[UIViewController alloc] init]);
     m_snapshotView = adoptNS([[UIView alloc] initWithFrame:liveSwipeViewFrame]);
@@ -236,7 +238,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     [m_snapshotView layer].name = @"SwipeSnapshot";
 
     RetainPtr<UIColor> backgroundColor = [UIColor whiteColor];
-    if (ViewSnapshot* snapshot = targetItem->snapshot()) {
+    if (RefPtr snapshot = targetItem->snapshot()) {
         float deviceScaleFactor = page->deviceScaleFactor();
         WebCore::FloatSize swipeLayerSizeInDeviceCoordinates(liveSwipeViewFrame.size);
         swipeLayerSizeInDeviceCoordinates.scale(deviceScaleFactor);
@@ -257,7 +259,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
             if (!shouldRestoreScrollPosition && (currentScrollPosition != snapshot->viewScrollPosition()))
                 return false;
 
-            auto insetDelta = snapshot->computedObscuredInset() - m_webPageProxyForBackForwardListForCurrentSwipe->computedObscuredInset();
+            auto insetDelta = snapshot->computedObscuredInset() - protect(m_webPageProxyForBackForwardListForCurrentSwipe)->computedObscuredInset();
             bool insetChangedSignificantly = insetDelta.anyOf([](auto value) {
                 static constexpr auto minimumSignificantChange = 100;
                 return std::abs(value) >= minimumSignificantChange;
@@ -279,7 +281,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
 
     [m_snapshotView setBackgroundColor:backgroundColor.get()];
     [m_snapshotView layer].contentsGravity = kCAGravityTopLeft;
-    [m_snapshotView layer].contentsScale = m_liveSwipeView.window.screen.scale;
+    [m_snapshotView layer].contentsScale = [m_liveSwipeView.get() window].screen.scale;
     [snapshotViewController setView:m_snapshotView.get()];
 
     m_transitionContainerView = adoptNS([[UIView alloc] initWithFrame:liveSwipeViewFrame]);
@@ -289,9 +291,9 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
 
     [m_liveSwipeViewClippingView setClipsToBounds:YES];
 
-    [m_liveSwipeView.superview insertSubview:m_transitionContainerView.get() belowSubview:m_liveSwipeView];
+    [[m_liveSwipeView.get() superview] insertSubview:m_transitionContainerView.get() belowSubview:m_liveSwipeView.get().get()];
     [m_transitionContainerView addSubview:m_liveSwipeViewClippingView.get()];
-    [m_liveSwipeViewClippingView addSubview:m_liveSwipeView];
+    [m_liveSwipeViewClippingView addSubview:m_liveSwipeView.get().get()];
 
     RetainPtr<UIViewController> targettedViewController = adoptNS([[UIViewController alloc] init]);
     [targettedViewController setView:m_liveSwipeViewClippingView.get()];
@@ -331,19 +333,19 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
 void ViewGestureController::willEndSwipeGesture(WebBackForwardListItem& targetItem, bool cancelled)
 {
     m_didCallWillEndSwipeGesture = true;
-    m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureWillEnd(!cancelled, targetItem);
+    protect(m_webPageProxyForBackForwardListForCurrentSwipe)->navigationGestureWillEnd(!cancelled, targetItem);
 
     if (cancelled)
         return;
 
     m_snapshotRemovalTargetRenderTreeSize = 0;
-    if (ViewSnapshot* snapshot = targetItem.snapshot())
+    if (RefPtr snapshot = targetItem.snapshot())
         m_snapshotRemovalTargetRenderTreeSize = snapshot->renderTreeSize() * swipeSnapshotRemovalRenderTreeSizeTargetFraction;
 
     m_didStartProvisionalLoad = false;
-    m_pendingNavigation = m_webPageProxyForBackForwardListForCurrentSwipe->goToBackForwardItem(targetItem);
+    m_pendingNavigation = protect(m_webPageProxyForBackForwardListForCurrentSwipe)->goToBackForwardItem(targetItem);
 
-    auto* currentItem = m_webPageProxyForBackForwardListForCurrentSwipe->backForwardList().currentItem();
+    RefPtr currentItem = m_webPageProxyForBackForwardListForCurrentSwipe->backForwardList().currentItem();
     // The main frame will not be navigated so hide the snapshot right away.
     if (currentItem && currentItem->itemIsClone(targetItem)) {
         removeSwipeSnapshot();
@@ -355,11 +357,12 @@ void ViewGestureController::willEndSwipeGesture(WebBackForwardListItem& targetIt
         | SnapshotRemovalTracker::RepaintAfterNavigation
         | SnapshotRemovalTracker::MainFrameLoad
         | SnapshotRemovalTracker::SubresourceLoads
-        | SnapshotRemovalTracker::ScrollPositionRestoration, [this] {
-        this->removeSwipeSnapshot();
+        | SnapshotRemovalTracker::ScrollPositionRestoration, [weakThis = WeakPtr { *this }] {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->removeSwipeSnapshot();
     });
 
-    if (ViewSnapshot* snapshot = targetItem.snapshot()) {
+    if (RefPtr snapshot = targetItem.snapshot()) {
         m_backgroundColorForCurrentSnapshot = snapshot->backgroundColor();
         if (RefPtr page = m_webPageProxy.get())
             page->didChangeBackgroundColor();
@@ -379,7 +382,7 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     [context _setAnimator:nil];
     
     [[m_transitionContainerView superview] insertSubview:m_snapshotView.get() aboveSubview:m_transitionContainerView.get()];
-    [[m_transitionContainerView superview] insertSubview:m_liveSwipeView aboveSubview:m_transitionContainerView.get()];
+    [[m_transitionContainerView superview] insertSubview:m_liveSwipeView.get().get() aboveSubview:m_transitionContainerView.get()];
     [m_liveSwipeViewClippingView removeFromSuperview];
     m_liveSwipeViewClippingView = nullptr;
     [m_transitionContainerView removeFromSuperview];
@@ -396,7 +399,7 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
         return;
     }
 
-    m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureDidEnd(true, *targetItem);
+    protect(m_webPageProxyForBackForwardListForCurrentSwipe)->navigationGestureDidEnd(true, *targetItem);
     if (page.get() != m_webPageProxyForBackForwardListForCurrentSwipe)
         page->navigationGestureDidEnd();
 
@@ -415,11 +418,15 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     auto pageID = page->identifier();
     GestureID gestureID = m_currentGestureID;
 
-    auto doAfterLoadStart = [this, pageID, gestureID] {
-        RefPtr page = m_webPageProxy.get();
-        auto* drawingArea = page ? page->provisionalDrawingArea() : nullptr;
+    auto doAfterLoadStart = [weakThis = WeakPtr { * this }, pageID, gestureID] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        RefPtr page = protectedThis->m_webPageProxy.get();
+        RefPtr drawingArea = page ? page->provisionalDrawingArea() : nullptr;
         if (!drawingArea) {
-            removeSwipeSnapshot();
+            protectedThis->removeSwipeSnapshot();
             return;
         }
 
@@ -481,7 +488,7 @@ void ViewGestureController::resetState()
     m_snapshotRemovalTargetRenderTreeSize = 0;
 
     if (m_webPageProxyForBackForwardListForCurrentSwipe) {
-        m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureSnapshotWasRemoved();
+        protect(m_webPageProxyForBackForwardListForCurrentSwipe)->navigationGestureSnapshotWasRemoved();
         m_webPageProxyForBackForwardListForCurrentSwipe = nullptr;
     }
 

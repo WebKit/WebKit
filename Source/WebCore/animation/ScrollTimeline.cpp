@@ -75,7 +75,7 @@ Ref<ScrollTimeline> ScrollTimeline::create(Document& document, ScrollTimelineOpt
     timeline->setAxis(options.axis);
 
     if (auto source = timeline->m_source.element()) {
-        source->protectedDocument()->updateLayoutIgnorePendingStylesheets();
+        protect(source->document())->updateLayoutIgnorePendingStylesheets();
         timeline->cacheCurrentTime();
     }
 
@@ -154,7 +154,7 @@ RefPtr<Element> ScrollTimeline::source() const
         return nullptr;
     }
     case Scroller::Root:
-        return source->element.protectedDocument()->scrollingElement();
+        return protect(source->element.document())->scrollingElement();
     case Scroller::Self:
         return &source->element;
     }
@@ -186,13 +186,13 @@ void ScrollTimeline::setSource(const Styleable& styleable)
 
     removeTimelineFromDocument(previousSource.get());
 
-    styleable.element.protectedDocument()->ensureTimelinesController().addTimeline(*this);
+    protect(styleable.element.document())->ensureTimelinesController().addTimeline(*this);
 }
 
 void ScrollTimeline::removeTimelineFromDocument(Element* element)
 {
     if (element) {
-        if (CheckedPtr timelinesController = element->protectedDocument()->timelinesController())
+        if (CheckedPtr timelinesController = protect(element->document())->timelinesController())
             timelinesController->removeTimeline(*this);
     }
 }
@@ -320,7 +320,7 @@ void ScrollTimeline::updateCurrentTimeIfStale()
     }
 
     if (needsStyleUpdate)
-        source->element.protectedDocument()->updateStyleIfNeeded();
+        protect(source->element.document())->updateStyleIfNeeded();
 }
 
 void ScrollTimeline::setTimelineScopeElement(const Element& element)
@@ -401,7 +401,7 @@ void ScrollTimeline::animationTimingDidChange(WebAnimation& animation)
     if (!source || !animation.pending() || animation.isEffectInvalidationSuspended())
         return;
 
-    if (RefPtr page = source->element.protectedDocument()->page())
+    if (RefPtr page = protect(source->element.document())->page())
         page->scheduleRenderingUpdate(RenderingUpdateStep::Animations);
 }
 
@@ -421,7 +421,7 @@ bool ScrollTimeline::computeCanBeAccelerated() const
 void ScrollTimeline::scheduleAcceleratedRepresentationUpdate()
 {
     if (RefPtr source = this->source()) {
-        if (RefPtr page = source->protectedDocument()->page()) {
+        if (RefPtr page = protect(source->document())->page()) {
             if (auto* acceleratedTimelinesUpdater = page->acceleratedTimelinesUpdater())
                 acceleratedTimelinesUpdater->scrollTimelineDidChange(*this);
         }

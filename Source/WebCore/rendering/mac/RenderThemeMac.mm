@@ -148,7 +148,7 @@ enum {
     leftPadding
 };
 
-RenderTheme& RenderTheme::singleton()
+RenderThemeMac& RenderTheme::singleton()
 {
     static NeverDestroyed<RenderThemeMac> theme;
     return theme;
@@ -1288,7 +1288,7 @@ void RenderThemeMac::createColorWellSwatchSubtree(HTMLElement& swatch)
 
 void RenderThemeMac::setColorWellSwatchBackground(HTMLElement& swatch, Color color)
 {
-    Ref swatchChild = *downcast<HTMLElement>(swatch.protectedFirstChild());
+    Ref swatchChild = *downcast<HTMLElement>(swatch.firstChild());
 
     auto backgroundColor = color.isOpaque() ? color : blendSourceOver(Color::white, color);
     auto foregroundColor = color.isOpaque() ? Color::transparentBlack : blendSourceOver(Color::black, color);
@@ -1895,7 +1895,7 @@ static std::pair<RefPtr<Image>, float> createAttachmentPlaceholderImage(float de
 
 static void paintAttachmentIconPlaceholder(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
 {
-    auto [placeholderImage, imageScale] = createAttachmentPlaceholderImage(attachment.protectedDocument()->deviceScaleFactor(), layout);
+    auto [placeholderImage, imageScale] = createAttachmentPlaceholderImage(protect(attachment.document())->deviceScaleFactor(), layout);
 
     // Center the placeholder image where the icon would usually be.
     FloatRect placeholderRect(0, 0, placeholderImage->width() / imageScale, placeholderImage->height() / imageScale);
@@ -1948,7 +1948,7 @@ static void paintAttachmentProgress(const RenderAttachment& attachment, Graphics
 
         FloatRect progressRect = progressBounds;
         progressRect.setWidth(progressRect.width() * progress);
-        progressRect = encloseRectToDevicePixels(progressRect, attachment.protectedDocument()->deviceScaleFactor());
+        progressRect = encloseRectToDevicePixels(progressRect, protect(attachment.document())->deviceScaleFactor());
 
         context.fillRect(progressRect, attachmentProgressBarFillColor);
     }
@@ -2003,7 +2003,7 @@ bool RenderThemeMac::paintAttachment(const RenderElement& renderer, const PaintI
     GraphicsContextStateSaver saver(context);
 
     context.translate(toFloatSize(paintRect.location()));
-    context.translate(floorSizeToDevicePixels({ LayoutUnit((paintRect.width() - attachmentIconBackgroundSize) / 2), 0 }, renderer.protectedDocument()->deviceScaleFactor()));
+    context.translate(floorSizeToDevicePixels({ LayoutUnit((paintRect.width() - attachmentIconBackgroundSize) / 2), 0 }, protect(renderer.document())->deviceScaleFactor()));
 
     bool usePlaceholder = validProgress && !progress;
 

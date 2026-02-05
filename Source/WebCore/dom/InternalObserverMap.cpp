@@ -65,7 +65,7 @@ public:
 
             SubscribeOptions options;
             options.signal = subscriber.signal();
-            m_sourceObservable->subscribeInternal(*context, InternalObserverMap::create(*context, subscriber, m_mapper), options);
+            m_sourceObservable->subscribeInternal(*context, InternalObserverMap::create(*context, subscriber, m_mapper), WTF::move(options));
 
             return { };
         }
@@ -102,7 +102,7 @@ private:
         // error handler.
         JSC::Exception* previousException = nullptr;
         {
-            auto catchScope = DECLARE_CATCH_SCOPE(vm);
+            auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
             auto result = protectedMapper()->invokeRethrowingException(value, m_idx);
             previousException = catchScope.exception();
             if (previousException) {

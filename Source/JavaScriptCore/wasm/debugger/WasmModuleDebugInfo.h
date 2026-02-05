@@ -27,7 +27,7 @@
 
 #include <wtf/Platform.h>
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 #include <JavaScriptCore/JSExportMacros.h>
 #include <cstdint>
@@ -77,4 +77,4 @@ public:
 } // namespace Wasm
 } // namespace JSC
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

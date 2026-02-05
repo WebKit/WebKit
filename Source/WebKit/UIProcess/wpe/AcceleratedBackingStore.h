@@ -72,9 +72,7 @@ public:
 
     void updateSurfaceID(uint64_t);
 
-#if USE(SKIA)
     Expected<Ref<ViewSnapshot>, String> takeSnapshot(std::optional<WebCore::IntRect>&&);
-#endif
 
     RendererBufferDescription bufferDescription() const;
 
@@ -89,6 +87,7 @@ private:
 #if OS(ANDROID)
     void didCreateAndroidBuffer(uint64_t id, RefPtr<AHardwareBuffer>&&);
 #endif
+    void didChangeBufferConfiguration(uint32_t bufferCount);
     void didDestroyBuffer(uint64_t id);
     void frame(uint64_t bufferID, Rects&&, WTF::UnixFileDescriptor&&);
     void frameDone();
@@ -96,6 +95,8 @@ private:
     void bufferRendered();
     void bufferReleased(WPEBuffer*);
     void toplevelChanged();
+
+    void notifyBufferConfigurationIfNeeded();
 
     WeakPtr<WebPageProxy> m_webPage;
     GRefPtr<WPEView> m_wpeView;
@@ -107,6 +108,7 @@ private:
     Rects m_pendingDamageRects;
     HashMap<uint64_t, GRefPtr<WPEBuffer>> m_buffers;
     HashMap<WPEBuffer*, uint64_t> m_bufferIDs;
+    std::optional<unsigned> m_targetBufferCount;
 };
 
 } // namespace WebKit

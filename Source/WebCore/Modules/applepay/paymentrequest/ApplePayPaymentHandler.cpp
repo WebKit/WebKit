@@ -73,6 +73,7 @@
 #include "PaymentValidationErrors.h"
 #include "Settings.h"
 #include <JavaScriptCore/JSONObject.h>
+#include <JavaScriptCore/VM.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -448,7 +449,7 @@ Vector<Ref<ApplePayError>> ApplePayPaymentHandler::computeErrors(String&& error,
 
     computePayerErrors(WTF::move(payerErrors), errors);
 
-    auto scope = DECLARE_THROW_SCOPE(protectedScriptExecutionContext()->protectedVM().get());
+    auto scope = DECLARE_THROW_SCOPE(protect(protect(scriptExecutionContext())->vm()).get());
     auto exception = computePaymentMethodErrors(paymentMethodErrors, errors);
     if (exception.hasException())
         TRY_CLEAR_EXCEPTION(scope, errors);
@@ -460,7 +461,7 @@ Vector<Ref<ApplePayError>> ApplePayPaymentHandler::computeErrors(JSC::JSObject* 
 {
     Vector<Ref<ApplePayError>> errors;
 
-    auto scope = DECLARE_THROW_SCOPE(protectedScriptExecutionContext()->protectedVM().get());
+    auto scope = DECLARE_THROW_SCOPE(protect(protect(scriptExecutionContext())->vm()).get());
     auto exception = computePaymentMethodErrors(paymentMethodErrors, errors);
     if (exception.hasException())
         TRY_CLEAR_EXCEPTION(scope, errors);
@@ -995,7 +996,7 @@ void ApplePayPaymentHandler::validateMerchant(URL&& validationURL)
         m_paymentRequest->dispatchEvent(MerchantValidationEvent::create(eventNames().merchantvalidationEvent, std::get<URL>(m_identifier).string(), WTF::move(validationURL)).get());
 }
 
-static Ref<PaymentAddress> convert(const ApplePayPaymentContact& contact)
+static Ref<PaymentAddress> convert(const LocalizedApplePayPaymentContact& contact)
 {
     return PaymentAddress::create(contact.countryCode, valueOrDefault(contact.addressLines), contact.administrativeArea, contact.locality, contact.subLocality, contact.postalCode, String(), String(), contact.localizedName, contact.phoneNumber);
 }
@@ -1012,12 +1013,14 @@ void ApplePayPaymentHandler::didAuthorizePayment(const Payment& payment)
     ASSERT(m_updateState == UpdateState::None);
 
     auto applePayPayment = payment.toApplePayPayment(version());
-    auto shippingContact = valueOrDefault(applePayPayment.shippingContact);
+
+    auto localizedApplePayPayment = payment.toLocalizedApplePayPayment(version());
+    auto localizedShippingContact = valueOrDefault(localizedApplePayPayment.shippingContact);
     auto detailsFunction = [applePayPayment = WTF::move(applePayPayment)](JSC::JSGlobalObject& lexicalGlobalObject) {
         return toJSDictionary(lexicalGlobalObject, applePayPayment);
     };
 
-    m_paymentRequest->accept(std::get<URL>(m_identifier).string(), WTF::move(detailsFunction), convert(shippingContact), shippingContact.localizedName, shippingContact.emailAddress, shippingContact.phoneNumber);
+    m_paymentRequest->accept(std::get<URL>(m_identifier).string(), WTF::move(detailsFunction), convert(localizedShippingContact), localizedShippingContact.localizedName, localizedShippingContact.emailAddress, localizedShippingContact.phoneNumber);
 }
 
 void ApplePayPaymentHandler::didSelectShippingMethod(const ApplePayShippingMethod& shippingMethod)
@@ -1033,7 +1036,7 @@ void ApplePayPaymentHandler::didSelectShippingContact(const PaymentContact& ship
     ASSERT(m_updateState == UpdateState::None);
     m_updateState = UpdateState::ShippingAddress;
 
-    m_paymentRequest->shippingAddressChanged(convert(shippingContact.toApplePayPaymentContact(version())));
+    m_paymentRequest->shippingAddressChanged(convert(shippingContact.toLocalizedApplePayPaymentContact(version())));
 }
 
 void ApplePayPaymentHandler::didSelectPaymentMethod(const PaymentMethod& paymentMethod)

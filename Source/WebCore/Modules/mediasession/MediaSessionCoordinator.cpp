@@ -293,8 +293,8 @@ void MediaSessionCoordinator::setMediaSession(MediaSession* session)
     ALWAYS_LOG(LOGIDENTIFIER);
     m_session = session;
 
-    if (m_session)
-        m_session->addObserver(*this);
+    if (RefPtr session = m_session.get())
+        session->addObserver(*this);
 }
 
 void MediaSessionCoordinator::metadataChanged(const RefPtr<MediaMetadata>& metadata)
@@ -365,7 +365,13 @@ void MediaSessionCoordinator::seekSessionToTime(double time, CompletionHandler<v
         return;
     }
 
-    bool isPaused = m_session->playbackState() == MediaSessionPlaybackState::Paused;
+    RefPtr session = m_session.get();
+    if (!session) {
+        completionHandler(false);
+        return;
+    }
+
+    bool isPaused = session->playbackState() == MediaSessionPlaybackState::Paused;
 
     if (isPaused && currentPositionApproximatelyEqualTo(time)) {
         completionHandler(true);
@@ -373,9 +379,9 @@ void MediaSessionCoordinator::seekSessionToTime(double time, CompletionHandler<v
     }
 
     if (!isPaused)
-        m_session->callActionHandler({ .action = MediaSessionAction::Pause });
+        session->callActionHandler({ .action = MediaSessionAction::Pause });
 
-    m_session->callActionHandler({ .action = MediaSessionAction::Seekto, .seekTime = time });
+    session->callActionHandler({ .action = MediaSessionAction::Seekto, .seekTime = time });
     completionHandler(true);
 }
 
@@ -390,11 +396,17 @@ void MediaSessionCoordinator::playSession(std::optional<double> atTime, std::opt
         return;
     }
 
+    RefPtr session = m_session.get();
+    if (!session) {
+        completionHandler(false);
+        return;
+    }
+
     if (atTime && !currentPositionApproximatelyEqualTo(*atTime))
-        m_session->callActionHandler({ .action = MediaSessionAction::Seekto, .seekTime = *atTime });
+        session->callActionHandler({ .action = MediaSessionAction::Seekto, .seekTime = *atTime });
 
     m_currentPlaySessionCommand = { atTime, hostTime };
-    m_session->callActionHandler({ .action = MediaSessionAction::Play });
+    session->callActionHandler({ .action = MediaSessionAction::Play });
     completionHandler(true);
 }
 
@@ -407,7 +419,13 @@ void MediaSessionCoordinator::pauseSession(CompletionHandler<void(bool)>&& compl
         return;
     }
 
-    m_session->callActionHandler({ .action = MediaSessionAction::Pause });
+    RefPtr session = m_session.get();
+    if (!session) {
+        completionHandler(false);
+        return;
+    }
+
+    session->callActionHandler({ .action = MediaSessionAction::Pause });
     completionHandler(true);
 }
 
@@ -420,7 +438,13 @@ void MediaSessionCoordinator::setSessionTrack(const String& track, CompletionHan
         return;
     }
 
-    m_session->callActionHandler({ .action = MediaSessionAction::Settrack, .trackIdentifier = track });
+    RefPtr session = m_session.get();
+    if (!session) {
+        completionHandler(false);
+        return;
+    }
+
+    session->callActionHandler({ .action = MediaSessionAction::Settrack, .trackIdentifier = track });
     completionHandler(true);
 }
 
@@ -442,10 +466,11 @@ void MediaSessionCoordinator::coordinatorStateChanged(MediaSessionCoordinatorSta
 
 bool MediaSessionCoordinator::currentPositionApproximatelyEqualTo(double time) const
 {
-    if (!m_session)
+    RefPtr session = m_session.get();
+    if (!session)
         return false;
 
-    auto currentPosition = m_session->currentPosition();
+    auto currentPosition = session->currentPosition();
     if (!currentPosition)
         return false;
 

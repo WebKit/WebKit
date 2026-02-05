@@ -1,3 +1,3 @@
 
-PASS Scroll adjustments don't happen if triggered from scroll event listeners
+PASS Scroll adjustments don't keep happening with 0-length adjustments triggered by a single scroll operation
 

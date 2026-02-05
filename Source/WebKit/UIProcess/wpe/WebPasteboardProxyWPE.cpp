@@ -33,8 +33,7 @@
 #include <WebCore/PasteboardItemInfo.h>
 #include <WebCore/PlatformPasteboard.h>
 #include <WebCore/SelectionData.h>
-#include <wtf/StdLibExtras.h>
-#include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/GSpanExtras.h>
 
 #if ENABLE(WPE_PLATFORM)
 #include "WPEUtilities.h"
@@ -48,14 +47,10 @@ using namespace WebCore;
 #if ENABLE(WPE_PLATFORM)
 static Vector<String> clipboardFormats(WPEClipboard* clipboard)
 {
-    Vector<String> types;
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    if (const auto* formats = wpe_clipboard_get_formats(clipboard)) {
-        for (unsigned i = 0; formats[i]; ++i)
-            types.append(String::fromUTF8(formats[i]));
-    }
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-    return types;
+    const auto formats = span(wpe_clipboard_get_formats(clipboard));
+    return Vector<String>(formats.size(), [&formats](size_t index) {
+        return String::fromUTF8(formats[index]);
+    });
 }
 #endif
 
@@ -172,18 +167,14 @@ void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(IPC::Connection&, const S
                     domTypes.add(type);
             }
 
-            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-            if (const auto* formats = wpe_clipboard_get_formats(clipboard)) {
-                for (unsigned i = 0; formats[i]; ++i) {
-                    String format = String::fromUTF8(formats[i]);
-                    if (format == PasteboardCustomData::wpeType())
-                        continue;
+            for (const char* format : span(wpe_clipboard_get_formats(clipboard))) {
+                String formatString = String::fromUTF8(format);
+                if (formatString == PasteboardCustomData::wpeType())
+                    continue;
 
-                    if (Pasteboard::isSafeTypeForDOMToReadAndWrite(format))
-                        domTypes.add(format);
-                }
+                if (Pasteboard::isSafeTypeForDOMToReadAndWrite(formatString))
+                    domTypes.add(formatString);
             }
-            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             completionHandler(copyToVector(domTypes));
             return;
         }

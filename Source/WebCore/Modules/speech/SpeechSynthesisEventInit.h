@@ -33,25 +33,9 @@
 namespace WebCore {
 
 struct SpeechSynthesisEventInit : EventInit {
-
-    // Generated code expects a default constructor
-    SpeechSynthesisEventInit()
-        : EventInit()
-        , utterance(nullptr)
-    { }
-    
-    SpeechSynthesisEventInit(SpeechSynthesisUtterance* utterance, unsigned long charIndex, unsigned long charLength, float elapsedTime, const String& name)
-        : EventInit()
-        , utterance(utterance)
-        , charIndex(charIndex)
-        , charLength(charLength)
-        , elapsedTime(elapsedTime)
-        , name(name)
-    { }
-
-    RefPtr<SpeechSynthesisUtterance> utterance;
-    unsigned long charIndex;
-    unsigned long charLength;
+    Ref<SpeechSynthesisUtterance> utterance;
+    uint32_t charIndex;
+    uint32_t charLength;
     float elapsedTime;
     String name;
 };

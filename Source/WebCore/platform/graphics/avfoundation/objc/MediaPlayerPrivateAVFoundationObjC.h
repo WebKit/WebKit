@@ -134,6 +134,8 @@ public:
     void outputMediaDataWillChange();
     void processChapterTracks();
 
+    Ref<WebCoreAVFResourceLoader> ensureAVFResourceLoader(AVAssetResourceLoadingRequest *);
+
 private:
 #if ENABLE(ENCRYPTED_MEDIA)
     void cdmInstanceAttached(CDMInstance&) final;
@@ -241,6 +243,8 @@ private:
     void updateVideoLayerGravity() final { updateVideoLayerGravity(ShouldAnimate::No); }
     void updateVideoLayerGravity(ShouldAnimate);
 
+    void updateIsAudible() final;
+
     bool didPassCORSAccessCheck() const final;
     std::optional<bool> isCrossOrigin(const SecurityOrigin&) const final;
 
@@ -311,10 +315,11 @@ private:
     bool wirelessVideoPlaybackDisabled() const final;
     void setWirelessVideoPlaybackDisabled(bool) final;
     OptionSet<MediaPlaybackTargetType> supportedPlaybackTargetTypes() const final;
+    static OptionSet<MediaPlaybackTargetType> playbackTargetTypes();
     void updateDisableExternalPlayback();
 #endif
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && PLATFORM(MAC)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) final;
     void setShouldPlayToPlaybackTarget(bool) final;
 #endif
@@ -394,6 +399,11 @@ private:
     RefPtr<CDMInstanceFairPlayStreamingAVFObjC> protectedCDMInstance() const;
 #endif
 
+    void forEachResourceLoader(Function<void(WebCoreAVFResourceLoader&)>&&) const;
+    void addResourceLoader(AVAssetResourceLoadingRequest *, Ref<WebCoreAVFResourceLoader>&&);
+    RefPtr<WebCoreAVFResourceLoader> getResourceLoader(AVAssetResourceLoadingRequest *) const;
+    RefPtr<WebCoreAVFResourceLoader> takeResourceLoader(AVAssetResourceLoadingRequest *);
+
     RetainPtr<AVURLAsset> m_avAsset;
     RetainPtr<AVPlayer> m_avPlayer;
     RetainPtr<AVPlayerItem> m_avPlayerItem;
@@ -424,7 +434,8 @@ private:
     std::unique_ptr<PixelBufferConformerCV> m_pixelBufferConformer;
 
     friend class WebCoreAVFResourceLoader;
-    HashMap<RetainPtr<CFTypeRef>, Ref<WebCoreAVFResourceLoader>> m_resourceLoaderMap;
+    mutable Lock m_resourceLoaderMapLock;
+    HashMap<RetainPtr<AVAssetResourceLoadingRequest>, Ref<WebCoreAVFResourceLoader>> m_resourceLoaderMap;
     const RetainPtr<WebCoreAVFLoaderDelegate> m_loaderDelegate;
     MemoryCompactRobinHoodHashMap<String, RetainPtr<AVAssetResourceLoadingRequest>> m_keyURIToRequestMap;
     MemoryCompactRobinHoodHashMap<String, RetainPtr<AVAssetResourceLoadingRequest>> m_sessionIDToRequestMap;
@@ -444,9 +455,11 @@ private:
 
     MemoryCompactRobinHoodHashMap<String, Ref<InbandChapterTrackPrivateAVFObjC>> m_chapterTracks;
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && PLATFORM(MAC)
-    RetainPtr<AVOutputContext> m_outputContext;
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     RefPtr<MediaPlaybackTarget> m_playbackTarget;
+#if PLATFORM(MAC)
+    RetainPtr<AVOutputContext> m_outputContext;
+#endif
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -480,6 +493,7 @@ private:
     double m_cachedRate { 0 };
     bool m_requestedPlaying { false };
     double m_requestedRate { 1.0 };
+    double m_volume { 1 };
     int m_cachedTimeControlStatus { 0 };
     mutable long long m_cachedTotalBytes { 0 };
     unsigned m_pendingStatusChanges { 0 };
@@ -515,6 +529,8 @@ private:
     uint64_t m_sampleCount { 0 };
     RetainPtr<id> m_videoFrameMetadataGatheringObserver;
     bool m_isGatheringVideoFrameMetadata { false };
+    bool m_isAudible { false };
+    bool m_isVideoPlayer { false };
     std::optional<VideoFrameMetadata> m_videoFrameMetadata;
     mutable std::optional<NSTimeInterval> m_cachedSeekableTimeRangesLastModifiedTime;
     mutable std::optional<NSTimeInterval> m_cachedLiveUpdateInterval;
@@ -523,10 +539,14 @@ private:
     ProcessIdentity m_resourceOwner;
     PlatformTimeRanges m_buffered;
     TrackID m_currentTextTrackID { 0 };
-    Ref<GuaranteedSerialFunctionDispatcher> m_targetDispatcher { MainThreadDispatcher::singleton() };
+    const Ref<PlatformMediaResourceLoader> m_mediaResourceLoader;
+    const Ref<GuaranteedSerialFunctionDispatcher> m_targetDispatcher;
 #if HAVE(SPATIAL_TRACKING_LABEL)
     String m_defaultSpatialTrackingLabel;
     String m_spatialTrackingLabel;
+#endif
+#if !RELEASE_LOG_DISABLED
+    uint64_t m_childIdentifierSeed { 0 };
 #endif
 };
 

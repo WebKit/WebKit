@@ -190,20 +190,20 @@ void GraphicsContext::drawEmphasisMarks(const FontCascade& font, const TextRun& 
 
 void GraphicsContext::drawBidiText(const FontCascade& font, const TextRun& run, const FloatPoint& point, FontCascade::CustomFontNotReadyAction customFontNotReadyAction)
 {
-    BidiResolver<TextRunIterator, BidiCharacterRun> bidiResolver;
+    BidiResolver<TextRunIterator, SimpleBidiCharacterRun> bidiResolver;
     bidiResolver.setStatus(BidiStatus(run.direction(), run.directionalOverride()));
     bidiResolver.setPositionIgnoringNestedIsolates(TextRunIterator(&run, 0));
 
     // FIXME: This ownership should be reversed. We should pass BidiRunList
     // to BidiResolver in createBidiRunsForLine.
-    BidiRunList<BidiCharacterRun>& bidiRuns = bidiResolver.runs();
+    auto& bidiRuns = bidiResolver.runs();
     bidiResolver.createBidiRunsForLine(TextRunIterator(&run, run.length()));
 
     if (!bidiRuns.runCount())
         return;
 
     FloatPoint currPoint = point;
-    BidiCharacterRun* bidiRun = bidiRuns.firstRun();
+    auto* bidiRun = bidiRuns.firstRun();
     while (bidiRun) {
         TextRun subrun = run.subRun(bidiRun->start(), bidiRun->stop() - bidiRun->start());
         bool isRTL = bidiRun->level() % 2;
@@ -540,6 +540,11 @@ void GraphicsContext::drawPath(const Path& path)
 {
     fillPath(path);
     strokePath(path);
+}
+
+void GraphicsContext::strokeArc(const PathArc& arc)
+{
+    strokePath(Path({ PathSegment { arc } }));
 }
 
 void GraphicsContext::fillEllipseAsPath(const FloatRect& ellipse)

@@ -68,7 +68,7 @@ void NetworkConnectionToWebProcess::notifyWillPresentPaymentUI(WebPageProxyIdent
 
 void NetworkConnectionToWebProcess::getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier webPageProxyIdentifier, CompletionHandler<void(const String&)>&& completionHandler)
 {
-    networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::GetPaymentCoordinatorEmbeddingUserAgent { webPageProxyIdentifier }, WTF::move(completionHandler));
+    protect(networkProcess().parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::GetPaymentCoordinatorEmbeddingUserAgent { webPageProxyIdentifier }, WTF::move(completionHandler));
 }
 
 CocoaWindow *NetworkConnectionToWebProcess::paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) const
@@ -83,28 +83,28 @@ std::optional<SharedPreferencesForWebProcess> NetworkConnectionToWebProcess::sha
 
 const String& NetworkConnectionToWebProcess::paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&)
 {
-    if (auto* session = static_cast<NetworkSessionCocoa*>(networkSession()))
+    if (CheckedPtr session = downcast<NetworkSessionCocoa>(networkSession()))
         return session->boundInterfaceIdentifier();
     return emptyString();
 }
 
 const String& NetworkConnectionToWebProcess::paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&)
 {
-    if (auto* session = static_cast<NetworkSessionCocoa*>(networkSession()))
+    if (CheckedPtr session = downcast<NetworkSessionCocoa>(networkSession()))
         return session->dataConnectionServiceType();
     return emptyString();
 }
 
 const String& NetworkConnectionToWebProcess::paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&)
 {
-    if (auto* session = static_cast<NetworkSessionCocoa*>(networkSession()))
+    if (CheckedPtr session = downcast<NetworkSessionCocoa>(networkSession()))
         return session->sourceApplicationBundleIdentifier();
     return emptyString();
 }
 
 const String& NetworkConnectionToWebProcess::paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&)
 {
-    if (auto* session = static_cast<NetworkSessionCocoa*>(networkSession()))
+    if (CheckedPtr session = downcast<NetworkSessionCocoa>(networkSession()))
         return session->sourceApplicationSecondaryIdentifier();
     return emptyString();
 }

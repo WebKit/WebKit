@@ -67,6 +67,7 @@ public:
     Identifier identifier() const { return m_data.identifier; }
 
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, StructuredSerializeOptions&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
 
     const ServiceWorkerClientData& data() const { return m_data; }
 

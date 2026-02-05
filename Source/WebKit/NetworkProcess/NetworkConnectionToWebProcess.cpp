@@ -167,7 +167,7 @@ NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(NetworkProcess& net
     protectedConnection->setOutgoingMessageQueueIsGrowingLargeCallback([weakThis = WeakPtr { *this }] {
         ensureOnMainRunLoop([weakThis] {
             if (weakThis)
-                weakThis->m_networkProcess->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::WakeUpWebProcessForIPC(weakThis->m_webProcessIdentifier), 0);
+                protect(weakThis->m_networkProcess->parentProcessConnection())->send(Messages::NetworkProcessProxy::WakeUpWebProcessForIPC(weakThis->m_webProcessIdentifier), 0);
         });
     });
 #endif
@@ -224,7 +224,7 @@ NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess()
 void NetworkConnectionToWebProcess::hasUploadStateChanged(bool hasUpload)
 {
     CONNECTION_RELEASE_LOG(Loading, "hasUploadStateChanged: (hasUpload=%d)", hasUpload);
-    m_networkProcess->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::SetWebProcessHasUploads(m_webProcessIdentifier, hasUpload), 0);
+    protect(m_networkProcess->parentProcessConnection())->send(Messages::NetworkProcessProxy::SetWebProcessHasUploads(m_webProcessIdentifier, hasUpload), 0);
 }
 
 void NetworkConnectionToWebProcess::loadImageForDecoding(WebCore::ResourceRequest&& request, WebPageProxyIdentifier pageID, uint64_t maximumBytesFromNetwork, CompletionHandler<void(Expected<Ref<WebCore::FragmentedSharedBuffer>, WebCore::ResourceError>&&)>&& completionHandler)
@@ -302,13 +302,13 @@ bool NetworkConnectionToWebProcess::dispatchMessage(IPC::Connection& connection,
 #endif
 #if USE(LIBWEBRTC)
     if (decoder.messageReceiverName() == Messages::NetworkRTCMonitor::messageReceiverName()) {
-        protectedRTCProvider()->didReceiveNetworkRTCMonitorMessage(connection, decoder);
+        protect(rtcProvider())->didReceiveNetworkRTCMonitorMessage(connection, decoder);
         return true;
     }
 #endif
 #if ENABLE(WEB_RTC)
     if (decoder.messageReceiverName() == Messages::NetworkMDNSRegister::messageReceiverName()) {
-        protectedMDNSRegister()->didReceiveMessage(connection, decoder);
+        protect(mdnsRegister())->didReceiveMessage(connection, decoder);
         return true;
     }
 #endif
@@ -360,7 +360,7 @@ bool NetworkConnectionToWebProcess::dispatchMessage(IPC::Connection& connection,
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     if (decoder.messageReceiverName() == Messages::WebPaymentCoordinatorProxy::messageReceiverName()) {
-        paymentCoordinator().didReceiveMessage(connection, decoder);
+        protect(paymentCoordinator())->didReceiveMessage(connection, decoder);
         return true;
     }
 #endif
@@ -409,13 +409,13 @@ void NetworkConnectionToWebProcess::registerToRTCDataChannelProxy()
     if (m_isRegisteredToRTCDataChannelProxy)
         return;
     m_isRegisteredToRTCDataChannelProxy = true;
-    m_networkProcess->protectedRTCDataChannelProxy()->registerConnectionToWebProcess(*this);
+    protect(m_networkProcess->rtcDataChannelProxy())->registerConnectionToWebProcess(*this);
 }
 
 void NetworkConnectionToWebProcess::unregisterToRTCDataChannelProxy()
 {
     if (m_isRegisteredToRTCDataChannelProxy)
-        m_networkProcess->protectedRTCDataChannelProxy()->unregisterConnectionToWebProcess(*this);
+        protect(m_networkProcess->rtcDataChannelProxy())->unregisterConnectionToWebProcess(*this);
 }
 #endif
 
@@ -441,7 +441,7 @@ bool NetworkConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connect
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     if (decoder.messageReceiverName() == Messages::WebPaymentCoordinatorProxy::messageReceiverName()) {
-        paymentCoordinator().didReceiveSyncMessage(connection, decoder, reply);
+        protect(paymentCoordinator())->didReceiveSyncMessage(connection, decoder, reply);
         return true;
     }
 #endif
@@ -522,7 +522,7 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
 void NetworkConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName, const Vector<uint32_t>&)
 {
     RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, makeString("Received an invalid message '"_s, description(messageName), "' from WebContent process "_s, m_webProcessIdentifier.toUInt64(), ", requesting for it to be terminated."_s).utf8().data());
-    m_networkProcess->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::TerminateWebProcess(m_webProcessIdentifier), 0);
+    protect(m_networkProcess->parentProcessConnection())->send(Messages::NetworkProcessProxy::TerminateWebProcess(m_webProcessIdentifier), 0);
 }
 
 void NetworkConnectionToWebProcess::createSocketChannel(const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, const ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
@@ -645,7 +645,7 @@ void NetworkConnectionToWebProcess::performSynchronousLoad(NetworkResourceLoadPa
 
 void NetworkConnectionToWebProcess::testProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebPageProxyIdentifier pageID, CompletionHandler<void(bool)>&& reply)
 {
-    auto syncResult = m_networkProcess->protectedParentProcessConnection()->sendSync(Messages::NetworkProcessProxy::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(pageID), 0);
+    auto syncResult = protect(m_networkProcess->parentProcessConnection())->sendSync(Messages::NetworkProcessProxy::TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(pageID), 0);
     auto [handled] = syncResult.takeReplyOr(false);
     reply(handled);
 }
@@ -1281,7 +1281,7 @@ void NetworkConnectionToWebProcess::setCaptureExtraNetworkLoadMetricsEnabled(boo
 void NetworkConnectionToWebProcess::clearPageSpecificData(PageIdentifier pageID)
 {
     if (CheckedPtr session = networkSession())
-        session->protectedNetworkLoadScheduler()->clearPageData(pageID);
+        protect(session->networkLoadScheduler())->clearPageData(pageID);
 
     if (CheckedPtr storageSession = m_networkProcess->storageSession(m_sessionID))
         storageSession->clearPageSpecificDataForResourceLoadStatistics(pageID);
@@ -1350,6 +1350,8 @@ void NetworkConnectionToWebProcess::queryStorageAccessPermission(RegistrableDoma
             return;
         }
     }
+
+    completionHandler(PermissionState::Denied);
 }
 
 void NetworkConnectionToWebProcess::setLoginStatus(RegistrableDomain&& domain, IsLoggedIn loggedInStatus, std::optional<WebCore::LoginStatus>&& lastAuthentication, CompletionHandler<void()>&& completionHandler)
@@ -1549,7 +1551,7 @@ void NetworkConnectionToWebProcess::unregisterSharedWorkerConnection()
 void NetworkConnectionToWebProcess::sharedWorkerServerToContextConnectionIsNoLongerNeeded()
 {
     CONNECTION_RELEASE_LOG(SharedWorker, "sharedWorkerServerToContextConnectionIsNoLongerNeeded:");
-    m_networkProcess->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::RemoteWorkerContextConnectionNoLongerNeeded { RemoteWorkerType::SharedWorker, webProcessIdentifier() }, 0);
+    protect(m_networkProcess->parentProcessConnection())->send(Messages::NetworkProcessProxy::RemoteWorkerContextConnectionNoLongerNeeded { RemoteWorkerType::SharedWorker, webProcessIdentifier() }, 0);
 
     m_sharedWorkerContextConnection = nullptr;
 }
@@ -1611,7 +1613,7 @@ void NetworkConnectionToWebProcess::terminateIdleServiceWorkers()
 void NetworkConnectionToWebProcess::serviceWorkerServerToContextConnectionNoLongerNeeded()
 {
     CONNECTION_RELEASE_LOG(ServiceWorker, "serviceWorkerServerToContextConnectionNoLongerNeeded: WebProcess no longer useful for running service workers");
-    m_networkProcess->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::RemoteWorkerContextConnectionNoLongerNeeded { RemoteWorkerType::ServiceWorker, webProcessIdentifier() }, 0);
+    protect(m_networkProcess->parentProcessConnection())->send(Messages::NetworkProcessProxy::RemoteWorkerContextConnectionNoLongerNeeded { RemoteWorkerType::ServiceWorker, webProcessIdentifier() }, 0);
 
     if (RefPtr connection = std::exchange(m_swContextConnection, nullptr))
         connection->stop();
@@ -1619,7 +1621,7 @@ void NetworkConnectionToWebProcess::serviceWorkerServerToContextConnectionNoLong
 
 void NetworkConnectionToWebProcess::terminateSWContextConnectionDueToUnresponsiveness()
 {
-    m_networkProcess->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::ProcessHasUnresponseServiceWorker { webProcessIdentifier() }, 0);
+    protect(m_networkProcess->parentProcessConnection())->send(Messages::NetworkProcessProxy::ProcessHasUnresponseServiceWorker { webProcessIdentifier() }, 0);
     closeSWContextConnection();
 }
 
@@ -1711,7 +1713,7 @@ void NetworkConnectionToWebProcess::setResourceLoadSchedulingMode(WebCore::PageI
     if (!session)
         return;
 
-    session->protectedNetworkLoadScheduler()->setResourceLoadSchedulingMode(pageIdentifier, mode);
+    protect(session->networkLoadScheduler())->setResourceLoadSchedulingMode(pageIdentifier, mode);
 }
 
 void NetworkConnectionToWebProcess::prioritizeResourceLoads(const Vector<WebCore::ResourceLoaderIdentifier>& loadIdentifiers)
@@ -1730,7 +1732,7 @@ void NetworkConnectionToWebProcess::prioritizeResourceLoads(const Vector<WebCore
             loads.append(networkLoad.releaseNonNull());
     }
 
-    session->protectedNetworkLoadScheduler()->prioritizeLoads(loads);
+    protect(session->networkLoadScheduler())->prioritizeLoads(loads);
 }
 
 RefPtr<NetworkResourceLoader> NetworkConnectionToWebProcess::takeNetworkResourceLoader(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier)
@@ -1877,7 +1879,7 @@ void NetworkConnectionToWebProcess::shouldOffloadIFrameForHost(const String& hos
 {
     CONNECTION_RELEASE_LOG(ResourceMonitoring, "shouldOffloadIFrameForHost: (host=%" SENSITIVE_LOG_STRING ")", host.utf8().data());
     if (CheckedPtr session = networkSession())
-        session->protectedResourceMonitorThrottler()->tryAccess(host, ContinuousApproximateTime::now(), WTF::move(completionHandler));
+        protect(session->resourceMonitorThrottler())->tryAccess(host, ContinuousApproximateTime::now(), WTF::move(completionHandler));
     else
         completionHandler(false);
 }

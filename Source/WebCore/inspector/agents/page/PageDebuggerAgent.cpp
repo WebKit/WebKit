@@ -157,7 +157,7 @@ InjectedScript PageDebuggerAgent::injectedScriptForEval(Inspector::Protocol::Err
     if (!executionContextId)
         return injectedScriptManager().injectedScriptFor(&mainWorldGlobalObject(*localMainFrame));
 
-    InjectedScript injectedScript = injectedScriptManager().injectedScriptForId(*executionContextId);
+    auto injectedScript = injectedScriptManager().injectedScriptForId(*executionContextId);
     if (injectedScript.hasNoValue())
         errorString = "Missing injected script for given executionContextId."_s;
 

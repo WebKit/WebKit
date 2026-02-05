@@ -25,11 +25,11 @@
 
 #include "ContentType.h"
 #include "GStreamerRegistryScanner.h"
-#include "MediaCapabilitiesDecodingInfo.h"
-#include "MediaCapabilitiesEncodingInfo.h"
-#include "MediaDecodingConfiguration.h"
-#include "MediaEncodingConfiguration.h"
 #include "NotImplemented.h"
+#include "PlatformMediaCapabilitiesDecodingInfo.h"
+#include "PlatformMediaCapabilitiesEncodingInfo.h"
+#include "PlatformMediaDecodingConfiguration.h"
+#include "PlatformMediaEncodingConfiguration.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -107,10 +107,10 @@ void GStreamerWebRTCProvider::initializeVideoDecodingCapabilities()
     });
 }
 
-std::optional<MediaCapabilitiesDecodingInfo> GStreamerWebRTCProvider::videoDecodingCapabilitiesOverride(const VideoConfiguration& configuration)
+std::optional<PlatformMediaCapabilitiesDecodingInfo> GStreamerWebRTCProvider::videoDecodingCapabilitiesOverride(const PlatformMediaCapabilitiesVideoConfiguration& configuration)
 {
-    MediaCapabilitiesDecodingInfo info;
-    info.configuration.type = MediaDecodingType::WebRTC;
+    PlatformMediaCapabilitiesDecodingInfo info;
+    info.configuration.type = PlatformMediaDecodingType::WebRTC;
     ContentType contentType { configuration.contentType };
     auto containerType = contentType.containerType();
     if (equalLettersIgnoringASCIICase(containerType, "video/vp8"_s)) {

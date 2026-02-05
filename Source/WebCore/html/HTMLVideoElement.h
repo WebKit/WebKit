@@ -88,7 +88,9 @@ public:
 
     bool shouldGetNativeImageForCanvasDrawing() const;
     WEBCORE_EXPORT RefPtr<NativeImage> nativeImageForCurrentTime() const;
-    WEBCORE_EXPORT RefPtr<ShareableBitmap> bitmapImageForCurrentTime() const;
+    WEBCORE_EXPORT RefPtr<ShareableBitmap> bitmapImageForCurrentTimeSync() const;
+    using BitmapImagePromise = MediaPlayer::BitmapImagePromise;
+    WEBCORE_EXPORT Ref<BitmapImagePromise> bitmapImageForCurrentTime() const;
     std::optional<DestinationColorSpace> colorSpace() const;
 
     WEBCORE_EXPORT bool shouldDisplayPosterImage() const;

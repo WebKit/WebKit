@@ -53,7 +53,7 @@ CachedSVGFont::CachedSVGFont(CachedResourceRequest&& request, PAL::SessionID ses
 }
 
 CachedSVGFont::CachedSVGFont(CachedResourceRequest&& request, CachedSVGFont& resource)
-    : CachedSVGFont(WTF::move(request), resource.sessionID(), resource.protectedCookieJar().get(), resource.m_settings.copyRef())
+    : CachedSVGFont(WTF::move(request), resource.sessionID(), protect(resource.cookieJar()).get(), resource.m_settings.copyRef())
 {
 }
 
@@ -74,6 +74,10 @@ FontPlatformData CachedSVGFont::platformDataFromCustomData(const FontDescription
 
 bool CachedSVGFont::ensureCustomFontData()
 {
+    // SafeFontParser does not support OpenType (OTF) fonts, so we can fail early here instead of having it converted and failing later at the parsing.
+    if (m_settings->downloadableBinaryFontTrustedTypes() == DownloadableBinaryFontTrustedTypes::SafeFontParser)
+        return false;
+
     if (!m_externalSVGDocument && !errorOccurred() && !isLoading() && m_data) {
         bool sawError = false;
         {

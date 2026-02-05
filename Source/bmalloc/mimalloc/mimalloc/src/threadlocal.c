@@ -37,7 +37,8 @@ static mi_thread_locals_t* mi_thread_locals_expand(mi_thread_local_t atleast) {
   if (count_old==0) {
     tls_old = NULL; // so we allocate fresh from mi_thread_locals_empty
     count = 16;     // start with 16 slots
-  } else if (count_old >= 1024) {
+  } 
+  else if (count_old >= 1024) {
     count = count_old + 1024;  // at some point increase linearly
   }
   else {

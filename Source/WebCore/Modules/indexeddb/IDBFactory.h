@@ -58,7 +58,7 @@ public:
 
     struct DatabaseInfo {
         String name;
-        uint64_t version;
+        std::optional<uint64_t> version;
     };
 
     ExceptionOr<Ref<IDBOpenDBRequest>> open(ScriptExecutionContext&, const String& name, std::optional<uint64_t> version);

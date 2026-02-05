@@ -36,7 +36,11 @@ public:
     NodeKind kind() const override;
 
     Expression& base() { return m_base.get(); }
+    const Expression& base() const { return m_base.get(); }
+
     Identifier& fieldName() { return m_fieldName; }
+    const Identifier& fieldName() const { return m_fieldName; }
+
     const Identifier& originalFieldName() const { return m_originalFieldName; }
 
 private:

@@ -66,6 +66,7 @@
     _onlyIncludeVisibleText = onlyVisibleText;
     _targetRect = CGRectNull;
     _maxWordsPerParagraph = NSUIntegerMax;
+    _maxWordsPerParagraphPolicy = _WKTextExtractionWordLimitPolicyAlways;
     return self;
 }
 

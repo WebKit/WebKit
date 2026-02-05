@@ -15,72 +15,38 @@ features: [Temporal]
 includes: [temporalHelpers.js]
 ---*/
 
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, month: 1, day: 133}),
-    2021, 1, "M01", 31,
-    "year/month/day with day need to be constrained in Jan");
+const year = 2021;
 
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, month: 2, day: 133}),
-    2021, 2, "M02", 28,
-    "year/month/day with day need to be constrained in Feb");
+const testData = [
+  [1, 133, "Jan", 1, "M01", 31],
+  [2, 133, "Feb", 2, "M02", 28],
+  [3, 133, "March", 3, "M03", 31],
+  [4, 133, "April", 4, "M04", 30],
+  [5, 133, "May", 5, "M05", 31],
+  [6, 133, "Jun", 6, "M06", 30],
+  [7, 133, "Jul", 7, "M07", 31],
+  [8, 133, "Aug", 8, "M08", 31],
+  [9, 133, "Sept", 9, "M09", 30],
+  [10, 133, "Oct", 10, "M10", 31],
+  [11, 133, "Nov", 11, "M11", 30],
+  [12, 133, "Dec", 12, "M12", 31],
+  [13, 500, "out-of-range month 13", 12, "M12", 31],
+  [999999, 500, "out-of-range month 999999", 12, "M12", 31],
+  [3, 9033, "out-of-range day 9033", 3, "M03", 31],
+  [4, 50, "out-of-range day 50", 4, "M04", 30],
+  [5, 77, "out-of-range day 77", 5, "M05", 31],
+  [6, 33, "out-of-range date 06-33", 6, "M06", 30],
+  [7, 33, "out-of-range day 07-33", 7, "M07", 31],
+  [8, 300, "out-of-range day 300", 8, "M08", 31],
+  [9, 400, "out-of-range date 09-400", 9, "M09", 30],
+  [10, 400, "out-of-range date 10-400", 10, "M10", 31],
+  [11, 400, "out-of-range date 11-400", 11, "M11", 30],
+  [12, 500, "out-of-range day 500", 12, "M12", 31],
+];
 
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, month: 3, day: 133}),
-    2021, 3, "M03", 31,
-    "year/month/day with day need to be constrained in March");
-
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, month: 4, day: 133}),
-    2021, 4, "M04", 30,
-    "year/month/day with day need to be constrained in April");
-
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, month: 5, day: 133}),
-    2021, 5, "M05", 31,
-    "year/month/day with day need to be constrained in May");
-
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, month: 6, day: 133}),
-    2021, 6, "M06", 30,
-    "year/month/day with day need to be constrained in Jun");
-
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, month: 7, day: 133}),
-    2021, 7, "M07", 31,
-    "year/month/day with day need to be constrained in July");
-
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, month: 8, day: 133}),
-    2021, 8, "M08", 31,
-    "year/month/day with day need to be constrained in Aug");
-
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, month: 9, day: 133}),
-    2021, 9, "M09", 30,
-    "year/month/day with day need to be constrained in Sept.");
-
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, month: 10, day: 133}),
-    2021, 10, "M10", 31,
-    "year/month/day with day need to be constrained in Oct.");
-
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, month: 11, day: 133}),
-    2021, 11, "M11", 30,
-    "year/month/day with day need to be constrained in Nov.");
-
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, month: 12, day: 133}),
-    2021, 12, "M12", 31,
-    "year/month/day with day need to be constrained in Dec.");
-
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, month: 13, day: 500}),
-    2021, 12, "M12", 31,
-    "year/month/day with month and day need to be constrained");
-
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, month: 999999, day: 500}),
-    2021, 12, "M12", 31,
-    "year/month/day with month and day need to be constrained");
+for (const [month, day, descr, expectedMonth, expectedMonthCode, expectedDay] of testData) {
+  TemporalHelpers.assertPlainDate(
+    Temporal.PlainDate.from({year, month, day}),
+    year, expectedMonth, expectedMonthCode, expectedDay,
+    `year/month/day need to be constrained in ${descr}`);
+}

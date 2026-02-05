@@ -27,6 +27,7 @@ messages -> RiceBackend {
     SendData(unsigned streamId, enum:uint8_t WebCore::RTCIceProtocol protocol, String from, String to, WebCore::SharedMemory::Handle data);
     FinalizeStream(unsigned streamId);
     ResolveAddress(String address) -> (Expected<String, WebCore::ExceptionData> result)
+    SetSocketTypeOfService(unsigned streamId, unsigned value);
 }
 
 #endif

@@ -86,6 +86,7 @@ if (DEVELOPER_MODE)
 
         ../wasm/debugger/tests/BinaryTests.cpp
         ../wasm/debugger/tests/ControlFlowTests.cpp
+        ../wasm/debugger/tests/ExecutionHandlerIdleStopTest.cpp
         ../wasm/debugger/tests/ExecutionHandlerTest.cpp
         ../wasm/debugger/tests/ExecutionHandlerTestSupport.cpp
         ../wasm/debugger/tests/ExtGCTests.cpp

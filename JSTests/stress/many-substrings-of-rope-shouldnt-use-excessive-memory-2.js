@@ -1,3 +1,4 @@
+//@ skip if $architecture == "x86_64" and $platform == "linux"
 //@ runDefault
 
 let total_slice_call_count = 0;

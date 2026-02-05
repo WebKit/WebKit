@@ -550,6 +550,116 @@ private:
     uint8_t m_shift { 0 };
 };
 
+// X86ContiguousBitPattern32 detects 32-bit values with contiguous set bits that can be
+// synthesized using pcmpeqd (all-ones) + shifts on x86/x64.
+//
+// Pattern: a sequence of contiguous '1' bits surrounded by '0' bits
+//
+// Examples of encodable patterns:
+//   0x80000000 → pcmpeqd + pslld #31 (shift left to isolate sign bit)
+//   0xFF000000 → pcmpeqd + pslld #24 (shift left to isolate top byte)
+//   0x00FFFFFF → pcmpeqd + psrld #8  (shift right to clear top byte)
+//   0x7FFFFFFF → pcmpeqd + pslld #31 + psrld #1 (all ones except sign bit)
+//
+// Non-encodable patterns:
+//   0x80000001 → non-contiguous bits
+//   0xFF00FF00 → multiple separate ranges
+//
+// Usage: pcmpeqd xmm, xmm → pslld xmm, #leftShift → psrld xmm, #rightShift
+class X86ContiguousBitPattern32 {
+public:
+    static X86ContiguousBitPattern32 create(uint32_t value)
+    {
+        if (!value || value == 0xFFFFFFFFU)
+            return { }; // Zero and all-ones handled separately
+
+        // Use bit manipulation to detect contiguous pattern
+        // Technique: clz + ctz + popcount == 32 for contiguous bits
+        unsigned leadingZeros = WTF::clz(value);
+        unsigned trailingZeros = WTF::ctz(value);
+        unsigned setBits = std::popcount(value);
+
+        if (leadingZeros + trailingZeros + setBits != 32)
+            return { }; // Not a contiguous pattern
+
+        // Calculate shifts needed: shift left to position bits at top, then shift right
+        uint8_t leftShift = static_cast<uint8_t>(32 - setBits);
+        uint8_t rightShift = static_cast<uint8_t>(leadingZeros);
+
+        return X86ContiguousBitPattern32(leftShift, rightShift);
+    }
+
+    bool isValid() const { return m_leftShift.has_value(); }
+    uint8_t leftShift() const
+    {
+        ASSERT(isValid());
+        return m_leftShift.value();
+    }
+    uint8_t rightShift() const
+    {
+        ASSERT(isValid());
+        return m_rightShift;
+    }
+
+private:
+    X86ContiguousBitPattern32() = default;
+
+    X86ContiguousBitPattern32(uint8_t leftShift, uint8_t rightShift)
+        : m_leftShift(leftShift)
+        , m_rightShift(rightShift)
+    {
+    }
+
+    std::optional<uint8_t> m_leftShift;
+    uint8_t m_rightShift { 0 };
+};
+
+// X86ContiguousBitPattern64 - 64-bit version of contiguous bit pattern detection
+class X86ContiguousBitPattern64 {
+public:
+    static X86ContiguousBitPattern64 create(uint64_t value)
+    {
+        if (!value || value == 0xFFFFFFFFFFFFFFFFULL)
+            return { };
+
+        unsigned leadingZeros = WTF::clz(value);
+        unsigned trailingZeros = WTF::ctz(value);
+        unsigned setBits = std::popcount(value);
+
+        if (leadingZeros + trailingZeros + setBits != 64)
+            return { };
+
+        uint8_t leftShift = static_cast<uint8_t>(64 - setBits);
+        uint8_t rightShift = static_cast<uint8_t>(leadingZeros);
+
+        return X86ContiguousBitPattern64(leftShift, rightShift);
+    }
+
+    bool isValid() const { return m_leftShift.has_value(); }
+    uint8_t leftShift() const
+    {
+        ASSERT(isValid());
+        return m_leftShift.value();
+    }
+    uint8_t rightShift() const
+    {
+        ASSERT(isValid());
+        return m_rightShift;
+    }
+
+private:
+    X86ContiguousBitPattern64() = default;
+
+    X86ContiguousBitPattern64(uint8_t leftShift, uint8_t rightShift)
+        : m_leftShift(leftShift)
+        , m_rightShift(rightShift)
+    {
+    }
+
+    std::optional<uint8_t> m_leftShift;
+    uint8_t m_rightShift { 0 };
+};
+
 ALWAYS_INLINE bool isValidARMThumb2Immediate(int64_t value)
 {
     if (value < 0)

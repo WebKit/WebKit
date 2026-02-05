@@ -27,7 +27,6 @@
 [
     Conditional=MEDIA_STREAM,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary PhotoCapabilities {
     RedEyeReduction         redEyeReduction;
     MediaSettingsRange      imageHeight;

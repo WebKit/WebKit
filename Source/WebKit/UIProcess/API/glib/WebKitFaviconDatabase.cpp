@@ -198,13 +198,9 @@ void webkitFaviconDatabaseGetFaviconInternal(WebKitFaviconDatabase* database, co
                 return;
             }
             auto& icon = icons.last();
-#if USE(CAIRO)
-            g_task_return_pointer(task.get(), icon.leakRef(), reinterpret_cast<GDestroyNotify>(cairo_surface_destroy));
-#elif USE(SKIA)
             g_task_return_pointer(task.get(), SkRef(icon.get()), [](gpointer data) {
                 static_cast<SkImage*>(data)->unref();
             });
-#endif
         });
 }
 
@@ -255,13 +251,8 @@ cairo_surface_t* webkit_favicon_database_get_favicon_finish(WebKitFaviconDatabas
     g_return_val_if_fail(g_task_is_valid(result, database), nullptr);
 
 #if USE(GTK4)
-#if USE(CAIRO)
-    auto image = adoptRef(static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error)));
-    auto texture = image ? cairoSurfaceToGdkTexture(image.get()) : nullptr;
-#elif USE(SKIA)
     auto* image = static_cast<SkImage*>(g_task_propagate_pointer(G_TASK(result), error));
     auto texture = image ? skiaImageToGdkTexture(*image) : nullptr;
-#endif
 
     if (texture)
         return texture.leakRef();
@@ -270,12 +261,8 @@ cairo_surface_t* webkit_favicon_database_get_favicon_finish(WebKitFaviconDatabas
         g_set_error_literal(error, WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_UNKNOWN, _("Failed to create texture"));
     return nullptr;
 #else
-#if USE(SKIA)
     auto* image = static_cast<SkImage*>(g_task_propagate_pointer(G_TASK(result), error));
     return image ? skiaImageToCairoSurface(*image).leakRef() : nullptr;
-#else
-    return static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error));
-#endif
 #endif
 }
 #endif

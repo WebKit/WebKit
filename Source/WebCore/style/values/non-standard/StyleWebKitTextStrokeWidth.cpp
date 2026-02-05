@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,8 @@
 #include "config.h"
 #include "StyleWebKitTextStrokeWidth.h"
 
-#include "CSSPrimitiveValue.h"
 #include "StyleBuilderChecking.h"
+#include "StyleLengthResolution.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 
 namespace WebCore {
@@ -41,19 +41,18 @@ auto CSSValueConversion<WebkitTextStrokeWidth>::operator()(BuilderState& state, 
     if (!primitiveValue)
         return 0_css_px;
 
-    auto handleKeyword = [&](double result) -> WebkitTextStrokeWidth {
-        Ref emsValue = CSSPrimitiveValue::create(result, CSSUnitType::CSS_EM);
-        return toStyleFromCSSValue<WebkitTextStrokeWidth::Length>(state, emsValue);
+    auto convertFromEms = [&](auto ems) -> WebkitTextStrokeWidth::Length {
+        return emToPx<float>(ems, state.renderStyle());
     };
 
     if (primitiveValue->isValueID()) {
         switch (primitiveValue->valueID()) {
         case CSSValueThin:
-            return handleKeyword(1.0 / 48.0);
+            return convertFromEms(1.0 / 48.0);
         case CSSValueMedium:
-            return handleKeyword(3.0 / 48.0);
+            return convertFromEms(3.0 / 48.0);
         case CSSValueThick:
-            return handleKeyword(5.0 / 48.0);
+            return convertFromEms(5.0 / 48.0);
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
             return 0_css_px;

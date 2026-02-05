@@ -141,6 +141,8 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
     set hidden(x)
     {
+        console.assert(false, "not expected to be called");
+
         if (this._hidden === x)
             return;
 
@@ -568,7 +570,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
                         this.selectedTreeElement.parent.collapse();
                 }
             } else if (event.keyIdentifier === expandKeyIdentifier) {
-                if (!this.selectedTreeElement.revealed()) {
+                if (!this.selectedTreeElement.revealed) {
                     this.selectedTreeElement.reveal();
                     handled = true;
                 } else if (this.selectedTreeElement.expandable) {
@@ -635,7 +637,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         // this is the root, do nothing
     }
 
-    revealed()
+    get revealed()
     {
         return true;
     }
@@ -936,14 +938,13 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         const skipUnrevealed = true;
         const stayWithin = null;
         const dontPopulate = true;
-        const ignoreHidden = true;
 
         let firstChild = this.children[0];
-        if (firstChild && !firstChild.revealed(ignoreHidden))
+        if (firstChild && !firstChild.revealed)
             firstChild = firstChild.traverseNextTreeElement(skipUnrevealed, stayWithin, dontPopulate);
 
         let shouldScroll = false;
-        if (focusedTreeElement && focusedTreeElement.revealed(false)) {
+        if (focusedTreeElement?.revealed) {
             let index = 0;
             for (let child = firstChild; child && child !== focusedTreeElement; child = child.traverseNextTreeElement(skipUnrevealed, stayWithin, dontPopulate))
                 ++index;

@@ -23,13 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://wicg.github.io/cookie-store/#dictdef-extendablecookiechangeeventinit
-
+// https://cookiestore.spec.whatwg.org/#typedefdef-cookielist
 typedef sequence<CookieListItem> CookieList;
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary ExtendableCookieChangeEventInit : ExtendableEventInit {
+// https://cookiestore.spec.whatwg.org/#dictdef-extendablecookiechangeeventinit
+dictionary ExtendableCookieChangeEventInit : ExtendableEventInit {
     CookieList changed;
     CookieList deleted;
 };

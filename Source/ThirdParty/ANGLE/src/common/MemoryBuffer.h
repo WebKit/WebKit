@@ -7,20 +7,20 @@
 #ifndef COMMON_MEMORYBUFFER_H_
 #define COMMON_MEMORYBUFFER_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
+#include <stddef.h>
+#include <stdint.h>
 
 #include "common/Optional.h"
 #include "common/angleutils.h"
 #include "common/debug.h"
-
-#include <stdint.h>
-#include <cstddef>
+#include "common/span.h"
+#include "common/unsafe_buffers.h"
 
 namespace angle
 {
 
+// MemoryBuffers are used in place of std::vector<uint8_t> when an uninitialized buffer
+// as would be obtained via malloc is required.
 class MemoryBuffer final : NonCopyable
 {
   public:
@@ -30,22 +30,20 @@ class MemoryBuffer final : NonCopyable
     MemoryBuffer(MemoryBuffer &&other);
     MemoryBuffer &operator=(MemoryBuffer &&other);
 
-    // Destroy underlying memory
+    // Free underlying memory. After this call, the MemoryBuffer has zero size
+    // but can be reused given a subsequent resize()/reserve().
     void destroy();
 
-    // Updates mSize to newSize. Updates mCapacity iff newSize > mCapacity
+    // Updates mSize to newSize. May cause a reallocation iff newSize > mCapacity.
     [[nodiscard]] bool resize(size_t newSize);
 
-    // Resets mSize to 0. Reserves memory and updates mCapacity iff newSize > mCapacity
-    [[nodiscard]] bool clearAndReserve(size_t newSize);
+    // Updates mCapacity iff newCapacity > mCapacity. May cause a reallocation if
+    // newCapacity > mCapacity.
+    [[nodiscard]] bool reserve(size_t newCapacity);
 
-    // Updates mCapacity iff newSize > mCapacity
-    [[nodiscard]] bool reserve(size_t newSize);
-
-    // Appends content from "other" MemoryBuffer
-    [[nodiscard]] bool append(const MemoryBuffer &other);
-    // Appends content from "[buffer, buffer + bufferSize)"
-    [[nodiscard]] bool appendRaw(const uint8_t *buffer, const size_t bufferSize);
+    // Sets size to zero and updates mCapacity iff newCapacity > mCapacity. May cause
+    // a reallocation if newCapacity is greater than mCapacity prior to the clear.
+    [[nodiscard]] bool clearAndReserve(size_t newCapacity);
 
     // Sets size bound by capacity.
     void setSize(size_t size)
@@ -55,7 +53,7 @@ class MemoryBuffer final : NonCopyable
     }
     void setSizeToCapacity() { setSize(mCapacity); }
 
-    // Invalidate current content
+    // Sets current size to 0, but retains buffer for future use.
     void clear() { (void)resize(0); }
 
     size_t size() const { return mSize; }
@@ -69,15 +67,39 @@ class MemoryBuffer final : NonCopyable
         return mData;
     }
 
+    // Access entire buffer, although MemoryBuffer should be implicitly convertible to
+    // any span implementation because it has both data() and size() methods.
+    angle::Span<uint8_t> span()
+    {
+        // SAFETY: `mData` is valid for `mSize` bytes.
+        return ANGLE_UNSAFE_BUFFERS(angle::Span<uint8_t>(mData, mSize));
+    }
+    angle::Span<const uint8_t> span() const
+    {
+        // SAFETY: `mData` is valid for `mSize` bytes.
+        return ANGLE_UNSAFE_BUFFERS(angle::Span<uint8_t>(mData, mSize));
+    }
+
+    // Convenience methods for accessing portions of the buffer.
+    angle::Span<uint8_t> first(size_t count) { return span().first(count); }
+    angle::Span<uint8_t> last(size_t count) { return span().last(count); }
+    angle::Span<uint8_t> subspan(size_t offset) { return span().subspan(offset); }
+    angle::Span<uint8_t> subspan(size_t offset, size_t count)
+    {
+        return span().subspan(offset, count);
+    }
+
     uint8_t &operator[](size_t pos)
     {
         ASSERT(mData && pos < mSize);
-        return mData[pos];
+        // SAFETY: assert on previous line.
+        return ANGLE_UNSAFE_BUFFERS(mData[pos]);
     }
     const uint8_t &operator[](size_t pos) const
     {
         ASSERT(mData && pos < mSize);
-        return mData[pos];
+        // SAFETY: assert on previous line.
+        return ANGLE_UNSAFE_BUFFERS(mData[pos]);
     }
 
     void fill(uint8_t datum);
@@ -97,6 +119,9 @@ class MemoryBuffer final : NonCopyable
         ASSERT(totalCopiedBytes == mTotalCopiedBytes);
 #endif  // ANGLE_ENABLE_ASSERTS
     }
+    // Validate data buffer is no longer present. Needed because data() may
+    // assert a non-null buffer.
+    void assertDataBufferFreed() const { ASSERT(mData == nullptr); }
 
   private:
     size_t mSize     = 0;
@@ -112,9 +137,9 @@ class ScratchBuffer final : NonCopyable
 {
   public:
     ScratchBuffer();
-    // If we request a scratch buffer requesting a smaller size this many times, release and
-    // recreate the scratch buffer. This ensures we don't have a degenerate case where we are stuck
-    // hogging memory.
+    // If we request a scratch buffer requesting a smaller size this many times, release the
+    // scratch buffer. This ensures we don't have a degenerate case where we are stuck
+    // hogging memory. Zero means eternal lifetime.
     ScratchBuffer(uint32_t lifetime);
     ~ScratchBuffer();
 
@@ -127,10 +152,17 @@ class ScratchBuffer final : NonCopyable
     // Same as get, but ensures new values are initialized to a fixed constant.
     bool getInitialized(size_t requestedSize, MemoryBuffer **memoryBufferOut, uint8_t initValue);
 
-    // Ticks the release counter for the scratch buffer. Also done implicitly in get().
+    // Ticks the release counter for the scratch buffer. Also done implicitly in get(). Memory
+    // will be returned to the system after tick expiration.
     void tick();
 
+    // clear() the underlying MemoryBuffer, setting size to zero but retaining
+    // any allocated memory.
     void clear();
+
+    // destroy() the underlying MemoryBuffer, setting size to zero and freeing
+    // any allocated memory.
+    void destroy();
 
     MemoryBuffer *getMemoryBuffer() { return &mScratchMemory; }
 

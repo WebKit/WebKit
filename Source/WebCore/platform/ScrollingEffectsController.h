@@ -96,12 +96,13 @@ public:
     virtual bool allowsHorizontalStretching(const PlatformWheelEvent&) const = 0;
     virtual bool allowsVerticalStretching(const PlatformWheelEvent&) const = 0;
     virtual IntSize stretchAmount() const = 0;
+    virtual bool isScrollDeltaOpposingStretch(ScrollEventAxis, float) const = 0;
 
     // "Pinned" means scrolled at or beyond the edge.
     virtual bool isPinnedOnSide(BoxSide) const = 0;
     virtual RectEdges<bool> edgePinnedState() const = 0;
 
-    virtual bool shouldRubberBandOnSide(BoxSide) const = 0;
+    virtual bool shouldRubberBandOnSide(BoxSide, FloatSize) const = 0;
 
     virtual void willStartRubberBandAnimation() { }
     virtual void didStopRubberBandAnimation() { }
@@ -186,6 +187,7 @@ public:
 
 #if PLATFORM(MAC)
     static FloatSize wheelDeltaBiasingTowardsVertical(const FloatSize&);
+    static bool isScrollDeltaOpposingStretch(IntSize stretch, ScrollEventAxis, float delta);
 
     // Returns true if handled.
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&);
@@ -223,7 +225,7 @@ private:
     void willStartRubberBandAnimation();
     void didStopRubberBandAnimation();
 
-    bool shouldRubberBandOnSide(BoxSide) const;
+    bool shouldRubberBandOnSide(BoxSide, FloatSize) const;
     bool isRubberBandInProgressInternal() const;
     void updateRubberBandingState();
     void updateRubberBandingEdges(IntSize clientStretch);

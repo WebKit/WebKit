@@ -27,7 +27,6 @@
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUSamplerDescriptor : GPUObjectDescriptorBase {
     GPUAddressMode addressModeU = "clamp-to-edge";
     GPUAddressMode addressModeV = "clamp-to-edge";

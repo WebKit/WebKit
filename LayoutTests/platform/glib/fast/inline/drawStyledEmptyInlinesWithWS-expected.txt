@@ -4,14 +4,14 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 763x35
+        RenderText {#text} at (0,0) size 763x36
           text run at (0,0) width 763: "This is currently broken, and this text will have to be updated once it is fixed. There should be two boxes below, but right"
           text run at (0,18) width 143: "now, there is only one:"
       RenderBlock (anonymous) at (0,36) size 784x18
-        RenderInline {A} at (0,-3) size 15x23 [color=#0000EE] [border: (3px solid #0000EE)]
+        RenderInline {A} at (0,-3) size 15x24 [color=#0000EE] [border: (3px solid #0000EE)]
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {A} at (15,-3) size 27x23 [color=#0000EE] [border: (3px solid #0000EE)]
-          RenderText {#text} at (23,0) size 12x17
+        RenderInline {A} at (15,-3) size 27x24 [color=#0000EE] [border: (3px solid #0000EE)]
+          RenderText {#text} at (23,0) size 12x18
             text run at (23,0) width 12: "A"
         RenderText {#text} at (0,0) size 0x0

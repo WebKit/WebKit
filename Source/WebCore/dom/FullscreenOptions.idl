@@ -41,7 +41,6 @@
 
 [
     Conditional=FULLSCREEN_API,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary FullscreenOptions {
     FullscreenNavigationUI navigationUI = "auto";
     [EnabledBySetting=FullScreenKeyboardLock] FullscreenKeyboardLock keyboardLock = "none";

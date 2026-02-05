@@ -27,7 +27,6 @@
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPURenderBundleEncoderDescriptor : GPURenderPassLayout {
     boolean depthReadOnly = false;
     boolean stencilReadOnly = false;

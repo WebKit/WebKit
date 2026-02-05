@@ -4,7 +4,7 @@ layer at (0,0) size 800x352
   RenderBlock {HTML} at (0,0) size 800x352
     RenderBody {BODY} at (0,16) size 800x336
       RenderBlock {P} at (0,0) size 800x20
-        RenderText {#text} at (0,0) size 233x19
+        RenderText {#text} at (0,0) size 233x20
           text run at (0,0) width 233: "There should be no red on this page."
       RenderBlock {DIV} at (0,36) size 165x75 [color=#FFFFFF]
         RenderText {#text} at (0,0) size 165x75

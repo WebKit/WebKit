@@ -50,8 +50,11 @@ String TextExtractionURLCache::add(const String& shortenedString, const URL& ori
 
         if (type == ExtractedURLType::Link) {
             auto slashIndex = string.reverseFind('/');
-            if ((slashIndex == notFound) || (fullStopIndex != notFound && slashIndex > fullStopIndex))
+            if ((slashIndex == notFound) || (fullStopIndex != notFound && slashIndex > fullStopIndex)) {
+                if (slashIndex == notFound && fullStopIndex != notFound)
+                    return makeString(string, '/', suffix);
                 return makeString(string, suffix);
+            }
         }
 
         if (fullStopIndex == notFound)

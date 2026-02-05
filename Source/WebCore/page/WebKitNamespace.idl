@@ -33,11 +33,9 @@
     readonly attribute UserMessageHandlersNamespace? messageHandlers;
     readonly attribute WebKitBufferNamespace buffers;
     [EnabledForGlobalObject=allowsJSHandleCreation] WebKitJSHandle createJSHandle(object object);
-    [EnabledForWorld=allowNodeSerialization] WebKitSerializedNode serializeNode(Node node, optional WebKitSerializedNodeInit init);
+    [EnabledForWorld=allowNodeSerialization] WebKitSerializedNode serializeNode(Node node, optional WebKitSerializedNodeInit init = {});
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary WebKitSerializedNodeInit {
-    boolean deep;
+dictionary WebKitSerializedNodeInit {
+    boolean deep = false;
 };

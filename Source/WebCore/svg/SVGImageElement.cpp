@@ -175,12 +175,12 @@ void SVGImageElement::didAttachRenderers()
     SVGGraphicsElement::didAttachRenderers();
 
     if (CheckedPtr image = dynamicDowncast<RenderSVGImage>(renderer()); image && !image->imageResource().cachedImage()) {
-        image->imageResource().setCachedImage(m_imageLoader->protectedImage());
+        image->imageResource().setCachedImage(protect(m_imageLoader->image()));
         return;
     }
 
     if (CheckedPtr image = dynamicDowncast<LegacyRenderSVGImage>(renderer()); image && !image->imageResource().cachedImage()) {
-        image->imageResource().setCachedImage(m_imageLoader->protectedImage());
+        image->imageResource().setCachedImage(protect(m_imageLoader->image()));
         return;
     }
 }

@@ -318,6 +318,9 @@ inline API::Object* Object::unwrap(void* object)
 }
 #endif
 
+using VectorRefPtrAPIObject = Vector<RefPtr<Object>>;
+using RefPtrAPIObject = RefPtr<Object>;
+
 } // namespace API
 
 inline void refObject(API::Object* WTF_NONNULL obj)

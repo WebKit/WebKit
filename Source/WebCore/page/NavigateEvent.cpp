@@ -45,14 +45,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigateEvent);
 
-NavigateEvent::NavigateEvent(const AtomString& type, NavigateEvent::Init&& init, EventIsTrusted isTrusted, AbortController* abortController)
-    : Event(EventInterfaceType::NavigateEvent, type, init, isTrusted)
+NavigateEvent::NavigateEvent(const AtomString& type, Init&& init, EventIsTrusted isTrusted, AbortController* abortController)
+    : Event(EventInterfaceType::NavigateEvent, type, WTF::move(init), isTrusted)
     , m_navigationType(init.navigationType)
-    , m_destination(init.destination.releaseNonNull())
-    , m_signal(init.signal.releaseNonNull())
-    , m_formData(init.formData)
-    , m_downloadRequest(init.downloadRequest)
-    , m_sourceElement(init.sourceElement)
+    , m_destination(WTF::move(init.destination))
+    , m_signal(WTF::move(init.signal))
+    , m_formData(WTF::move(init.formData))
+    , m_downloadRequest(WTF::move(init.downloadRequest))
+    , m_sourceElement(WTF::move(init.sourceElement))
     , m_canIntercept(init.canIntercept)
     , m_userInitiated(init.userInitiated)
     , m_hashChange(init.hashChange)
@@ -63,14 +63,14 @@ NavigateEvent::NavigateEvent(const AtomString& type, NavigateEvent::Init&& init,
     m_info.setWeakly(init.info);
 }
 
-Ref<NavigateEvent> NavigateEvent::create(const AtomString& type, NavigateEvent::Init&& init, AbortController* abortController)
+Ref<NavigateEvent> NavigateEvent::create(const AtomString& type, Init&& init, AbortController* abortController)
 {
     return adoptRef(*new NavigateEvent(type, WTF::move(init), EventIsTrusted::Yes, abortController));
 }
 
-Ref<NavigateEvent> NavigateEvent::create(const AtomString& type, NavigateEvent::Init&& init)
+Ref<NavigateEvent> NavigateEvent::create(const AtomString& type, Init&& init)
 {
-    // FIXME: AbortController is required but JS bindings need to create it with one.
+    // FIXME: AbortController is required but JS bindings need to create it without one.
     return adoptRef(*new NavigateEvent(type, WTF::move(init), EventIsTrusted::No, nullptr));
 }
 
@@ -103,6 +103,8 @@ ExceptionOr<void> NavigateEvent::intercept(Document& document, NavigationInterce
 
     ASSERT(!m_interceptionState || m_interceptionState == InterceptionState::Intercepted);
 
+    m_interceptionState = InterceptionState::Intercepted;
+
     if (options.handler)
         m_handlers.append(options.handler.releaseNonNull());
 
@@ -115,8 +117,6 @@ ExceptionOr<void> NavigateEvent::intercept(Document& document, NavigationInterce
         // FIXME: Print warning to console if it was already set.
         m_scrollBehavior = options.scroll;
     }
-
-    m_interceptionState = InterceptionState::Intercepted;
 
     return { };
 }

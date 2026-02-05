@@ -42,7 +42,6 @@
 #include "InputTypeNames.h"
 #include "KeyboardEvent.h"
 #include "NodeRenderStyle.h"
-#include "RenderScrollbar.h"
 #include "RenderSearchField.h"
 #include "RenderStyle+GettersInlines.h"
 #include "ScriptDisallowedScope.h"
@@ -104,16 +103,6 @@ String SearchInputType::itemText(unsigned listIndex) const
     return m_recentSearches[listIndex - 1].string;
 }
 
-String SearchInputType::itemLabel(unsigned) const
-{
-    return String();
-}
-
-String SearchInputType::itemIcon(unsigned) const
-{
-    return String();
-}
-
 bool SearchInputType::itemIsEnabled(unsigned listIndex) const
 {
     if (!listIndex || itemIsSeparator(listIndex))
@@ -145,6 +134,7 @@ PopupMenuStyle SearchInputType::menuStyle() const
     );
 }
 
+#if PLATFORM(WIN)
 int SearchInputType::clientInsetLeft() const
 {
     // Inset the menu by the radius of the cap on the left so that
@@ -172,6 +162,19 @@ LayoutUnit SearchInputType::clientPaddingRight() const
     return renderer ? renderer->clientPaddingRight() : 0_lu;
 }
 
+FontSelector* SearchInputType::fontSelector() const
+{
+    return &protect(protectedElement()->document())->fontSelector();
+}
+
+HostWindow* SearchInputType::hostWindow() const
+{
+    if (CheckedPtr renderer = dynamicDowncast<RenderSearchField>(protectedElement()->renderer()))
+        return renderer->hostWindow();
+    return nullptr;
+}
+#endif
+
 int SearchInputType::listSize() const
 {
     // If there are no recent searches, then our menu will have 1 "No recent searches" item.
@@ -179,11 +182,6 @@ int SearchInputType::listSize() const
         return 1;
     // Otherwise, leave room in the menu for a header, a separator, and the "Clear recent searches" item.
     return m_recentSearches.size() + 3;
-}
-
-int SearchInputType::popupSelectedIndex() const
-{
-    return -1;
 }
 
 void SearchInputType::popupDidHide()
@@ -208,30 +206,12 @@ bool SearchInputType::itemIsSelected(unsigned) const
     return false;
 }
 
+#if !PLATFORM(COCOA)
 void SearchInputType::setTextFromItem(unsigned listIndex)
 {
     protectedElement()->setValue(itemText(listIndex));
 }
-
-FontSelector* SearchInputType::fontSelector() const
-{
-    return &protectedElement()->protectedDocument()->fontSelector();
-}
-
-HostWindow* SearchInputType::hostWindow() const
-{
-    if (CheckedPtr renderer = dynamicDowncast<RenderSearchField>(protectedElement()->renderer()))
-        return renderer->hostWindow();
-    return nullptr;
-}
-
-Ref<Scrollbar> SearchInputType::createScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarWidth widthStyle)
-{
-    CheckedPtr renderer = dynamicDowncast<RenderSearchField>(protectedElement()->renderer());
-    if (renderer && renderer->checkedStyle()->usesLegacyScrollbarStyle())
-        return RenderScrollbar::createCustomScrollbar(scrollableArea, orientation, protectedElement().get());
-    return Scrollbar::createNativeScrollbar(scrollableArea, orientation, widthStyle);
-}
+#endif
 
 void SearchInputType::addSearchResult()
 {
@@ -322,7 +302,7 @@ void SearchInputType::createShadowSubtree()
     m_resultsButton = WTF::move(resultsButton);
 
     Ref cancelButton = SearchFieldCancelButtonElement::create(document);
-    container->insertBefore(cancelButton, textWrapper->protectedNextSibling());
+    container->insertBefore(cancelButton, protect(textWrapper->nextSibling()));
     m_cancelButton = WTF::move(cancelButton);
 }
 

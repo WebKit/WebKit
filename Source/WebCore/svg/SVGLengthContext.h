@@ -73,7 +73,7 @@ public:
     float valueForLength(const Style::SVGRadiusComponent&, Style::ZoomNeeded, SVGLengthMode = SVGLengthMode::Other);
     float valueForLength(const Style::SVGStrokeDasharrayValue&, Style::ZoomNeeded, SVGLengthMode = SVGLengthMode::Other);
     float valueForLength(const Style::SVGStrokeDashoffset&, Style::ZoomNeeded, SVGLengthMode = SVGLengthMode::Other);
-    float valueForLength(const Style::StrokeWidth&, Style::ZoomNeeded, SVGLengthMode = SVGLengthMode::Other);
+    float valueForLength(const Style::StrokeWidth&, Style::ZoomFactor usedZoom, SVGLengthMode = SVGLengthMode::Other);
 
     ExceptionOr<float> resolveValueToUserUnits(float, const CSS::LengthPercentageUnit&, SVGLengthMode) const;
     ExceptionOr<CSS::LengthPercentage<>> resolveValueFromUserUnits(float, const CSS::LengthPercentageUnit&, SVGLengthMode) const;

@@ -32,6 +32,7 @@
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InspectorEnvironment.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -47,9 +48,10 @@ namespace Inspector {
 
 class InjectedScriptHost;
 
-class InjectedScriptManager {
+class InjectedScriptManager : public CanMakeThreadSafeCheckedPtr<InjectedScriptManager> {
     WTF_MAKE_NONCOPYABLE(InjectedScriptManager);
     WTF_MAKE_TZONE_ALLOCATED(InjectedScriptManager);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InjectedScriptManager);
 public:
     JS_EXPORT_PRIVATE InjectedScriptManager(InspectorEnvironment&, Ref<InjectedScriptHost>&&);
     JS_EXPORT_PRIVATE virtual ~InjectedScriptManager();

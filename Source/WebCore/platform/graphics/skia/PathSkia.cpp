@@ -43,6 +43,8 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PathSkia);
+
 Ref<PathSkia> PathSkia::create(std::span<const PathSegment> segments)
 {
     Ref pathSkia = adoptRef(*new PathSkia);

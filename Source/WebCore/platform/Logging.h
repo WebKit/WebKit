@@ -109,6 +109,7 @@ namespace WebCore {
     M(Frames) \
     M(FTP) \
     M(Fullscreen) \
+    M(GLContext) \
     M(Gamepad) \
     M(GraphicsBuffer) \
     M(HDR) \

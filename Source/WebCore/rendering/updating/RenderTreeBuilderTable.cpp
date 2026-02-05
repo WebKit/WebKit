@@ -59,7 +59,7 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTableR
     }
 
     auto createAnonymousTableCell = [&] (auto& parent) -> RenderTableCell& {
-        auto newCell = createAnonymousTableCellWithStyle(parent.protectedDocument(), parent.style());
+        auto newCell = createAnonymousTableCellWithStyle(protect(parent.document()), parent.style());
         auto& cell = *newCell;
         m_builder.attach(parent, WTF::move(newCell), beforeChild);
         beforeChild = nullptr;
@@ -120,7 +120,7 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTableS
     if (auto* tableRow = dynamicDowncast<RenderTableRow>(parentCandidate); tableRow && tableRow->isAnonymous() && !tableRow->isBeforeOrAfterContent())
         return *tableRow;
 
-    auto newRow = createAnonymousTableRowWithStyle(parent.protectedDocument(), parent.style());
+    auto newRow = createAnonymousTableRowWithStyle(protect(parent.document()), parent.style());
     auto& row = *newRow;
     m_builder.attach(parent, WTF::move(newRow), beforeChild);
     beforeChild = nullptr;
@@ -185,7 +185,7 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTable&
         && beforeChild->style().display() != DisplayType::TableColumnGroup)
         beforeChild = nullptr;
 
-    auto newSection = createAnonymousTableSectionWithStyle(parent.protectedDocument(), parent.style());
+    auto newSection = createAnonymousTableSectionWithStyle(protect(parent.document()), parent.style());
     auto& section = *newSection;
     m_builder.attach(parent, WTF::move(newSection), beforeChild);
     beforeChild = nullptr;

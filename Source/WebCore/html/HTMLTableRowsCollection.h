@@ -28,6 +28,19 @@
 
 #pragma once
 
+#include <WebCore/CollectionType.h>
+
+namespace WebCore {
+
+class HTMLTableRowsCollection;
+
+template<>
+struct CollectionClassTraits<HTMLTableRowsCollection> {
+    static constexpr CollectionType collectionType = CollectionType::TableRows;
+};
+
+} // namespace WebCore
+
 #include "CachedHTMLCollection.h"
 #include "HTMLTableElement.h"
 
@@ -35,7 +48,7 @@ namespace WebCore {
 
 class HTMLTableRowElement;
 
-class HTMLTableRowsCollection final : public CachedHTMLCollection<HTMLTableRowsCollection, CollectionTypeTraits<CollectionType::TableRows>::traversalType> {
+class HTMLTableRowsCollection final : public CachedHTMLCollection<HTMLTableRowsCollection> {
     WTF_MAKE_TZONE_ALLOCATED(HTMLTableRowsCollection);
 public:
     static Ref<HTMLTableRowsCollection> create(HTMLTableElement&, CollectionType);
@@ -54,4 +67,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLTableRowsCollection, CollectionType::TableRows)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLTableRowsCollection)

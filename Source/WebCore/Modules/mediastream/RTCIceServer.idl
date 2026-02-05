@@ -24,13 +24,11 @@
  */
 
 // https://w3c.github.io/webrtc-pc/#dom-rtciceserver
-
 [
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary RTCIceServer {
     required (DOMString or sequence<DOMString>) urls;
     DOMString username;

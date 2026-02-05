@@ -13,9 +13,9 @@ This is a link, outside the frame.
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (interaction (-4,-4) width=36.45 height=27)
+        (interaction (-4,-3.50) width=36.45 height=27)
         (cornerRadius 8.00),
-        (interaction (6,26) width=36.45 height=27)
+        (interaction (6,26.50) width=36.45 height=27)
         (cornerRadius 8.00)])
       )
     )

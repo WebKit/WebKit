@@ -122,7 +122,6 @@ public:
     void initForSynthesizedDocument(const URL&);
 
     WEBCORE_EXPORT LocalFrame& frame() const;
-    WEBCORE_EXPORT Ref<LocalFrame> protectedFrame() const;
 
     PolicyChecker& policyChecker() const { return m_policyChecker; }
 
@@ -182,12 +181,9 @@ public:
     String outgoingOrigin() const;
 
     WEBCORE_EXPORT DocumentLoader* activeDocumentLoader() const;
-    RefPtr<DocumentLoader> protectedActiveDocumentLoader() const;
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
-    WEBCORE_EXPORT RefPtr<DocumentLoader> protectedDocumentLoader() const;
     DocumentLoader* policyDocumentLoader() const { return m_policyDocumentLoader.get(); }
     DocumentLoader* provisionalDocumentLoader() const { return m_provisionalDocumentLoader.get(); }
-    RefPtr<DocumentLoader> protectedProvisionalDocumentLoader() const;
     FrameState state() const { return m_state; }
 
     enum class CanIncludeCurrentDocumentLoader : bool { No, Yes };
@@ -239,8 +235,6 @@ public:
 
     const LocalFrameLoaderClient& client() const { return m_client.get(); }
     LocalFrameLoaderClient& client() { return m_client.get(); }
-    WEBCORE_EXPORT Ref<const LocalFrameLoaderClient> protectedClient() const;
-    WEBCORE_EXPORT Ref<LocalFrameLoaderClient> protectedClient();
 
     WEBCORE_EXPORT FrameIdentifier frameID() const;
 
@@ -311,7 +305,6 @@ public:
     PageDismissalType pageDismissalEventBeingDispatched() const { return m_pageDismissalEventBeingDispatched; }
 
     WEBCORE_EXPORT NetworkingContext* networkingContext() const;
-    WEBCORE_EXPORT RefPtr<NetworkingContext> protectedNetworkingContext() const;
 
     void loadProgressingStatusChanged();
 
@@ -565,6 +558,8 @@ private:
     const Ref<DocumentPrefetcher> m_documentPrefetcher;
 
     Function<bool()> m_pendingDispatchNavigateEvent;
+
+    bool m_needsCancellationForContentRuleListCrossOriginRedirect { false };
 };
 
 // This function is called by createWindow() in JSDOMWindowBase.cpp, for example, for

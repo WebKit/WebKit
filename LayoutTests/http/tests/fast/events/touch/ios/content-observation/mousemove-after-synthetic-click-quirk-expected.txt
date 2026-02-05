@@ -1,0 +1,17 @@
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+Verifies that mousemove is dispatched after a synthetic click
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS dispatchedMouseMoveOverTarget became true
+PASS Clicked target
+PASS dispatchedMouseMoveOverWrapper became true
+PASS dispatchedMouseOutOverWrapper became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -6,8 +6,8 @@ layer at (0,0) size 800x258
       RenderBlock {P} at (20,0) size 764x105 [color=#0000FF] [border: none (10px double #0000FF)]
         RenderText {#text} at (10,4) size 364x19
           text run at (10,4) width 364: "\x{21E6} This paragraph should have two blue lines on its left. "
-        RenderInline {SPAN} at (10,4) size 752x100 [color=#C0C0C0]
-          RenderText {#text} at (10,4) size 752x100
+        RenderInline {SPAN} at (10,4) size 752x101 [color=#C0C0C0]
+          RenderText {#text} at (10,4) size 752x101
             text run at (373,4) width 373: "dummy text dummy text dummy text dummy text dummy"
             text run at (10,25) width 81: "text dummy "
             text run at (90,25) width 487: "text dummy text dummy text dummy text dummy text dummy text dummy "
@@ -22,8 +22,8 @@ layer at (0,0) size 800x258
       RenderBlock {P} at (20,121) size 764x105 [color=#0000FF] [border: none (1px solid #0000FF)]
         RenderText {#text} at (1,4) size 370x19
           text run at (1,4) width 370: "\x{21E6} This paragraph should have a thin blue line on its left. "
-        RenderInline {SPAN} at (1,4) size 752x100 [color=#C0C0C0]
-          RenderText {#text} at (1,4) size 752x100
+        RenderInline {SPAN} at (1,4) size 752x101 [color=#C0C0C0]
+          RenderText {#text} at (1,4) size 752x101
             text run at (370,4) width 373: "dummy text dummy text dummy text dummy text dummy"
             text run at (1,25) width 81: "text dummy "
             text run at (81,25) width 487: "text dummy text dummy text dummy text dummy text dummy text dummy "

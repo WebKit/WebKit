@@ -303,7 +303,7 @@ void WorkerThreadableLoader::MainThreadBridge::didFinishTiming(const ResourceTim
 
         // No need to notify clients, just add the performance timing entry.
         if (auto* globalScope = dynamicDowncast<WorkerGlobalScope>(context))
-            globalScope->protectedPerformance()->addResourceTiming(WTF::move(resourceTiming));
+            protect(globalScope->performance())->addResourceTiming(WTF::move(resourceTiming));
     }, m_taskMode);
 }
 

@@ -67,14 +67,14 @@ Ref<PseudoElement> PseudoElement::create(Element& host, PseudoElementType pseudo
 {
     Ref pseudoElement = adoptRef(*new PseudoElement(host, pseudoElementType));
 
-    InspectorInstrumentation::pseudoElementCreated(host.document().protectedPage().get(), pseudoElement.get());
+    InspectorInstrumentation::pseudoElementCreated(protect(host.document().page()).get(), pseudoElement.get());
 
     return pseudoElement;
 }
 
 void PseudoElement::clearHostElement()
 {
-    InspectorInstrumentation::pseudoElementDestroyed(document().protectedPage().get(), *this);
+    InspectorInstrumentation::pseudoElementDestroyed(protect(document().page()).get(), *this);
 
     Styleable::fromElement(*this).elementWasRemoved();
 

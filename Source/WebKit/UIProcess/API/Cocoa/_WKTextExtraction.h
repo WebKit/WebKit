@@ -66,6 +66,11 @@ typedef NS_OPTIONS(NSUInteger, _WKTextExtractionDataDetectorTypes) {
     _WKTextExtractionDataDetectorAll                = NSUIntegerMax,
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
+typedef NS_ENUM(NSInteger, _WKTextExtractionWordLimitPolicy) {
+    _WKTextExtractionWordLimitPolicyAlways,
+    _WKTextExtractionWordLimitPolicyDiscretionary,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 @interface _WKTextExtractionConfiguration : NSObject
 
@@ -130,6 +135,14 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
  The default value is `NSUIntegerMax`.
  */
 @property (nonatomic) NSUInteger maxWordsPerParagraph;
+
+/*!
+ Policy around when to enforce the max number of words to include per paragraph.
+ `.always`          Always enforce word limits per paragraph.
+ `.discretionary`   Limits may be ignored in cases where the total length of output text size is small.
+ The default value is `.always`.
+ */
+@property (nonatomic) _WKTextExtractionWordLimitPolicy maxWordsPerParagraphPolicy;
 
 /*!
  If specified, text extraction is limited to the subtree of this node.

@@ -31,6 +31,8 @@
 #include <WebCore/RenderStyleProperties+GettersInlines.h>
 #undef RENDER_STYLE_PROPERTIES_GETTERS_INLINES_INCLUDE_TRAP
 
+#include <WebCore/StylePrimitiveNumericTypes+Rounding.h>
+
 namespace WebCore {
 
 // MARK: - Comparisons
@@ -431,7 +433,7 @@ inline int adjustForAbsoluteZoom(int value, const RenderStyle& style)
             value++;
     }
 
-    return roundForImpreciseConversion<int>(value / zoomFactor);
+    return Style::roundForImpreciseConversion<int>(value / zoomFactor);
 }
 
 inline LayoutSize adjustLayoutSizeForAbsoluteZoom(LayoutSize size, const RenderStyle& style)

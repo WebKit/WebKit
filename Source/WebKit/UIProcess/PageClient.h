@@ -85,6 +85,7 @@ OBJC_CLASS NSObject;
 OBJC_CLASS NSSet;
 OBJC_CLASS NSTextAlternatives;
 OBJC_CLASS UIGestureRecognizer;
+OBJC_CLASS UIScreen;
 OBJC_CLASS UIScrollView;
 OBJC_CLASS UIView;
 OBJC_CLASS UIViewController;
@@ -395,7 +396,7 @@ public:
     virtual void selectionDidChange() = 0;
 #endif
 
-#if PLATFORM(COCOA) || PLATFORM(GTK) || (PLATFORM(WPE) && USE(SKIA))
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     virtual RefPtr<ViewSnapshot> takeViewSnapshot(std::optional<WebCore::IntRect>&&) = 0;
 #endif
 
@@ -527,12 +528,9 @@ public:
 
     virtual CGRect boundsOfLayerInLayerBackedWindowCoordinates(CALayer *) const = 0;
 
-    virtual WebCore::DestinationColorSpace colorSpace() = 0;
-
     virtual bool useFormSemanticContext() const = 0;
     
     virtual NSView *viewForPresentingRevealPopover() const = 0;
-    RetainPtr<NSView> protectedViewForPresentingRevealPopover() const;
 
     virtual void showPlatformContextMenu(NSMenu *, WebCore::IntPoint) = 0;
 
@@ -557,6 +555,8 @@ public:
     virtual void scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID) = 0;
 
     virtual CocoaWindow *platformWindow() const = 0;
+
+    virtual WebCore::DestinationColorSpace colorSpace() = 0;
 #endif
 
     virtual void reconcileEnclosingScrollViewContentOffset(EditorState&) { };
@@ -617,6 +617,8 @@ public:
     virtual bool isScreenBeingCaptured() = 0;
 
     virtual String sceneID() = 0;
+
+    virtual UIScreen *screen() = 0;
 
     virtual void beginTextRecognitionForFullscreenVideo(WebCore::ShareableBitmap::Handle&&, AVPlayerViewController *) = 0;
     virtual void cancelTextRecognitionForFullscreenVideo(AVPlayerViewController *) = 0;

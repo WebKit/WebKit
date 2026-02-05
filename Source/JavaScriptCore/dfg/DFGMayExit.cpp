@@ -81,7 +81,6 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case SetCallee:
     case GetArgumentCountIncludingThis:
     case SetArgumentCountIncludingThis:
-    case GetRestLength:
     case GetScope:
     case GetEvalScope:
     case PhantomLocal:

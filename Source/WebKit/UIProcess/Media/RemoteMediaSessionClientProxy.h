@@ -101,7 +101,6 @@ protected:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }
-    Ref<const Logger> protectedLogger() const { return logger(); }
 #endif
 
 private:

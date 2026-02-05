@@ -68,14 +68,16 @@ extension WKIdentityDocumentPresentmentController {
                 Self.logger.debug("IdentityDocumentPresentmentController build converted request \(String(describing: convertedRequests))")
 
                 let task = Task {
-                    return try await controller.performRequests(convertedRequests, origin: request.origin)
+                    try await controller.performRequests(convertedRequests, origin: request.origin)
                 }
 
                 performRequestTask = task
                 let response = try await task.value
 
                 guard let response = response as? ISO18013MobileDocumentResponse else {
-                    Self.logger.error("IdentityDocumentPresentmentController unexpectedly received a response that is not of type ISO18013MobileDocumentResponse")
+                    Self.logger.error(
+                        "IdentityDocumentPresentmentController unexpectedly received a response that is not of type ISO18013MobileDocumentResponse"
+                    )
                     throw WKIdentityDocumentPresentmentError(.invalidRequest)
                 }
 
@@ -110,12 +112,18 @@ extension WKIdentityDocumentPresentmentController {
 
 // MARK: WKIdentityDocumentPresentmentController.Base  IdentityDocumentPresentmentControllerPresentationContextProviding & IdentityDocumentWebPresentmentControllerDelegate
 
-extension WKIdentityDocumentPresentmentController.Base: IdentityDocumentPresentmentControllerPresentationContextProviding, IdentityDocumentWebPresentmentControllerDelegate {
-    func presentationAnchorForPresentmentController(_ presentmentController: any IdentityDocumentPresentmentControlling) -> IdentityDocumentPresentationAnchor? {
+extension WKIdentityDocumentPresentmentController.Base: IdentityDocumentPresentmentControllerPresentationContextProviding,
+    IdentityDocumentWebPresentmentControllerDelegate
+{
+    func presentationAnchorForPresentmentController(
+        _ presentmentController: any IdentityDocumentPresentmentControlling
+    ) -> IdentityDocumentPresentationAnchor? {
         delegate?.presentationAnchor()
     }
 
-    func rawRequestsForWebPresentmentController(_ webPresentmentController: IdentityDocumentWebPresentmentController) async -> [IdentityDocumentWebPresentmentRawRequest] {
+    func rawRequestsForWebPresentmentController(
+        _ webPresentmentController: IdentityDocumentWebPresentmentController
+    ) async -> [IdentityDocumentWebPresentmentRawRequest] {
         guard let rawRequests = await delegate?.fetchRawRequests() else {
             Self.logger.error("IdentityDocumentPresentmentController delegate is not implemented, sending no raw requests")
             return []
@@ -136,8 +144,11 @@ extension WKIdentityDocumentPresentmentController.Base: IdentityDocumentPresentm
 
 // MARK: WKIdentityDocumentPresentmentController
 
-@objc @implementation extension WKIdentityDocumentPresentmentController {
-    @nonobjc private let base = Base()
+@objc
+@implementation
+extension WKIdentityDocumentPresentmentController {
+    @nonobjc
+    private let base = Base()
 
     weak var delegate: (any WKIdentityDocumentPresentmentDelegate)? {
         get { base.delegate }

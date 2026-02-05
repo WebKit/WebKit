@@ -1045,11 +1045,6 @@ _NSHSTSStorage *NetworkSessionCocoa::hstsStorage() const
     return m_defaultSessionSet->sessionWithCredentialStorage->session.get().configuration._hstsStorage;
 }
 
-RetainPtr<_NSHSTSStorage> NetworkSessionCocoa::protectedHSTSStorage() const
-{
-    return hstsStorage();
-}
-
 NSURLCredentialStorage *NetworkSessionCocoa::nsCredentialStorage() const
 {
     return m_defaultSessionSet->sessionWithCredentialStorage->session.get().configuration.URLCredentialStorage;
@@ -1240,7 +1235,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
-    networkProcess.protectedSupplement<LegacyCustomProtocolManager>()->registerProtocolClass(configuration.get());
+    protect(networkProcess.supplement<LegacyCustomProtocolManager>())->registerProtocolClass(configuration.get());
 #endif
 
     configuration.get()._timingDataOptions = _TimingDataOptionsEnableW3CNavigationTiming;
@@ -1408,11 +1403,11 @@ SessionWrapper& NetworkSessionCocoa::sessionWrapperForTask(std::optional<WebPage
 #if ENABLE(APP_BOUND_DOMAINS)
 SessionWrapper& NetworkSessionCocoa::appBoundSession(std::optional<WebPageProxyIdentifier> webPageProxyID, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
 {
-    auto& sessionSet = sessionSetForPage(webPageProxyID);
-    
-    if (!sessionSet.appBoundSession) {
-        sessionSet.appBoundSession = makeUnique<IsolatedSession>();
-        sessionSet.appBoundSession->checkedSessionWithCredentialStorage()->initialize(sessionSet.sessionWithCredentialStorage->session.get().configuration, *this, WebCore::StoredCredentialsPolicy::Use, NavigatingToAppBoundDomain::Yes);
+    Ref sessionSet = sessionSetForPage(webPageProxyID);
+
+    if (!sessionSet->appBoundSession) {
+        sessionSet->appBoundSession = makeUnique<IsolatedSession>();
+        sessionSet->appBoundSession->checkedSessionWithCredentialStorage()->initialize(sessionSet->sessionWithCredentialStorage->session.get().configuration, *this, WebCore::StoredCredentialsPolicy::Use, NavigatingToAppBoundDomain::Yes);
     }
 
     auto& sessionWrapper = [&](auto storedCredentialsPolicy) -> SessionWrapper& {
@@ -1420,7 +1415,7 @@ SessionWrapper& NetworkSessionCocoa::appBoundSession(std::optional<WebPageProxyI
         case WebCore::StoredCredentialsPolicy::Use:
         case WebCore::StoredCredentialsPolicy::DoNotUse:
             LOG(NetworkSession, "Using app-bound NSURLSession.");
-            return sessionSet.appBoundSession->sessionWithCredentialStorage.get();
+            return sessionSet->appBoundSession->sessionWithCredentialStorage.get();
         case WebCore::StoredCredentialsPolicy::EphemeralStateless:
             return initializeEphemeralStatelessSessionIfNeeded(webPageProxyID, NavigatingToAppBoundDomain::Yes);
         }
@@ -1635,7 +1630,7 @@ void NetworkSessionCocoa::continueDidReceiveChallenge(SessionWrapper& sessionWra
     if (!networkDataTask) {
         if (RefPtr webSocketTask = sessionWrapper.webSocketDataTaskMap.get(taskIdentifier).get()) {
             auto challengeCompletionHandler = createChallengeCompletionHandler(networkProcess(), sessionID(), challenge, webSocketTask->partition(), 0, WTF::move(completionHandler));
-            networkProcess().protectedAuthenticationManager()->didReceiveAuthenticationChallenge(sessionID(), webSocketTask->webPageProxyID(), !webSocketTask->topOrigin().isNull() ? &webSocketTask->topOrigin() : nullptr, challenge, negotiatedLegacyTLS, WTF::move(challengeCompletionHandler));
+            protect(networkProcess().authenticationManager())->didReceiveAuthenticationChallenge(sessionID(), webSocketTask->webPageProxyID(), !webSocketTask->topOrigin().isNull() ? &webSocketTask->topOrigin() : nullptr, challenge, negotiatedLegacyTLS, WTF::move(challengeCompletionHandler));
             return;
         }
         if (auto downloadID = sessionWrapper.downloadMap.getOptional(taskIdentifier)) {
@@ -1866,7 +1861,7 @@ void NetworkSessionCocoa::loadImageForDecoding(WebCore::ResourceRequest&& reques
         void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&& request, RedirectCompletionHandler&& completionHandler) final { completionHandler(WTF::move(request)); }
         void didReceiveChallenge(WebCore::AuthenticationChallenge&& challenge, NegotiatedLegacyTLS negotiatedLegacyTLS, ChallengeCompletionHandler&& completionHandler) final
         {
-            m_networkProcess->protectedAuthenticationManager()->didReceiveAuthenticationChallenge(m_sessionID, m_pageID, nullptr, challenge, negotiatedLegacyTLS, WTF::move(completionHandler));
+            protect(m_networkProcess->authenticationManager())->didReceiveAuthenticationChallenge(m_sessionID, m_pageID, nullptr, challenge, negotiatedLegacyTLS, WTF::move(completionHandler));
         }
         void didReceiveResponse(WebCore::ResourceResponse&&, NegotiatedLegacyTLS, PrivateRelayed, ResponseCompletionHandler&& completionHandler) final
         {
@@ -1917,14 +1912,14 @@ void NetworkSessionCocoa::dataTaskWithRequest(WebPageProxyIdentifier pageID, Web
 {
     auto identifier = DataTaskIdentifier::generate();
     if (request.url().protocolIsBlob()) {
-        m_blobDataTasksForAPI.add(identifier, BlobDataTaskClient::create(WTF::move(request), topOrigin, *this, networkProcess().protectedParentProcessConnection().get(), identifier));
+        m_blobDataTasksForAPI.add(identifier, BlobDataTaskClient::create(WTF::move(request), topOrigin, *this, protect(networkProcess().parentProcessConnection()).get(), identifier));
         return completionHandler(identifier);
     }
 
     RetainPtr nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
     if (![nsRequest URL]) {
         completionHandler(identifier);
-        networkProcess().protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::DataTaskDidCompleteWithError(identifier, cannotShowURLError(request)), 0);
+        protect(networkProcess().parentProcessConnection())->send(Messages::NetworkProcessProxy::DataTaskDidCompleteWithError(identifier, cannotShowURLError(request)), 0);
         return;
     }
 

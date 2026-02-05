@@ -30,7 +30,6 @@ typedef [EnforceRange] unsigned long GPUSize32;
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPURenderPassLayout : GPUObjectDescriptorBase {
     required sequence<GPUTextureFormat?> colorFormats;
     GPUTextureFormat depthStencilFormat;

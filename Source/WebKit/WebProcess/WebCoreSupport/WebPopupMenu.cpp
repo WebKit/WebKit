@@ -56,6 +56,7 @@ void WebPopupMenu::disconnectClient()
     m_popupClient = nullptr;
 }
 
+#if !PLATFORM(IOS_FAMILY)
 void WebPopupMenu::didChangeSelectedIndex(int newIndex)
 {
     RefPtr popupClient = m_popupClient;
@@ -66,12 +67,15 @@ void WebPopupMenu::didChangeSelectedIndex(int newIndex)
     if (newIndex >= 0)
         popupClient->valueChanged(newIndex);
 }
+#endif
 
+#if !PLATFORM(COCOA)
 void WebPopupMenu::setTextForIndex(int index)
 {
     if (RefPtr popupClient = m_popupClient)
         popupClient->setTextFromItem(index);
 }
+#endif
 
 Vector<WebPopupItem> WebPopupMenu::populateItems()
 {
@@ -109,7 +113,7 @@ void WebPopupMenu::show(const IntRect& rect, LocalFrameView& view, int selectedI
     PlatformPopupMenuData platformData;
     setUpPlatformData(pageCoordinates, platformData);
 
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebPageProxy::ShowPopupMenuFromFrame(view.frame().frameID(), pageCoordinates, static_cast<uint64_t>(popupClient->menuStyle().textDirection()), items, selectedIndex, platformData), page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::ShowPopupMenuFromFrame(view.frame().frameID(), pageCoordinates, static_cast<uint64_t>(popupClient->menuStyle().textDirection()), items, selectedIndex, platformData), page->identifier());
 }
 
 void WebPopupMenu::hide()
@@ -119,7 +123,7 @@ void WebPopupMenu::hide()
     if (!page || !popupClient)
         return;
 
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebPageProxy::HidePopupMenu(), page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::HidePopupMenu(), page->identifier());
     page->setActivePopupMenu(nullptr);
     popupClient->popupDidHide();
 }

@@ -46,11 +46,11 @@ partial interface DOMWindow {
     [Replaceable, ImplementedAs=scrollX] readonly attribute double pageXOffset;
     [Replaceable] readonly attribute double scrollY;
     [Replaceable, ImplementedAs=scrollY] readonly attribute double pageYOffset;
-    [ImplementedAs=scrollTo] undefined scroll(optional ScrollToOptions options);
+    [ImplementedAs=scrollTo] undefined scroll(optional ScrollToOptions options = {});
     [ImplementedAs=scrollTo] undefined scroll(unrestricted double x, unrestricted double y);
-    undefined scrollTo(optional ScrollToOptions options);
+    undefined scrollTo(optional ScrollToOptions options = {});
     undefined scrollTo(unrestricted double x, unrestricted double y);
-    undefined scrollBy(optional ScrollToOptions option);
+    undefined scrollBy(optional ScrollToOptions option = {});
     undefined scrollBy(unrestricted double x, unrestricted double y);
 
     // client

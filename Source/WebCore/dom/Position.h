@@ -82,9 +82,7 @@ public:
     // These are always DOM compliant values.  Editing positions like [img, 0] (aka [img, before])
     // will return img->parentNode() and img->computeNodeIndex() from these functions.
     WEBCORE_EXPORT Node* containerNode() const; // null for a before/after position anchored to a node with no parent
-    RefPtr<Node> protectedContainerNode() const { return containerNode(); }
     Text* containerText() const;
-    RefPtr<Text> protectedContainerText() const;
     Element* containerOrParentElement() const;
 
     int computeOffsetInContainerNode() const;  // O(n) for before/after-anchored positions, O(1) for parent-anchored positions
@@ -112,13 +110,11 @@ public:
     WEBCORE_EXPORT Node* computeNodeAfterPosition() const;
 
     Node* anchorNode() const { return m_anchorNode.get(); }
-    RefPtr<Node> protectedAnchorNode() const { return m_anchorNode; }
 
     // FIXME: Callers should be moved off of node(), node() is not always the container for this position.
     // For nodes which editingIgnoresContent(node()) returns true, positions like [ignoredNode, 0]
     // will be treated as before ignoredNode (thus node() is really after the position, not containing it).
     Node* deprecatedNode() const { return m_anchorNode.get(); }
-    RefPtr<Node> protectedDeprecatedNode() const { return m_anchorNode; }
 
     inline Document* document() const; // Defined in PositionInlines.h.
     inline TreeScope* treeScope() const;

@@ -29,6 +29,19 @@
 
 #pragma once
 
+#include <WebCore/CollectionType.h>
+
+namespace WebCore {
+
+class ClassCollection;
+
+template<>
+struct CollectionClassTraits<ClassCollection> {
+    static constexpr CollectionType collectionType = CollectionType::ByClass;
+};
+
+} // namespace WebCore
+
 #include "CachedHTMLCollection.h"
 #include "Document.h"
 #include "Element.h"
@@ -36,7 +49,7 @@
 
 namespace WebCore {
 
-class ClassCollection final : public CachedHTMLCollection<ClassCollection, CollectionTypeTraits<CollectionType::ByClass>::traversalType> {
+class ClassCollection final : public CachedHTMLCollection<ClassCollection> {
     WTF_MAKE_TZONE_ALLOCATED(ClassCollection);
 public:
     static Ref<ClassCollection> create(ContainerNode&, CollectionType, const AtomString& classNames);
@@ -70,4 +83,4 @@ inline bool ClassCollection::elementMatches(Element& element) const
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(ClassCollection, CollectionType::ByClass)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(ClassCollection)

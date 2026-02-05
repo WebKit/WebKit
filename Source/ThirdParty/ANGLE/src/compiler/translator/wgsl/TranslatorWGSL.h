@@ -20,6 +20,7 @@ class TranslatorWGSL : public TCompiler
 
   protected:
     bool preTranslateTreeModifications(TIntermBlock *root,
+                                       const ShCompileOptions &compileOptions,
                                        const TVariable **defaultUniformBlockOut);
     bool translate(TIntermBlock *root,
                    const ShCompileOptions &compileOptions,

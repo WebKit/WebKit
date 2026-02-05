@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import <WebGPU/ModelTypes.h>
 #import <WebGPU/WebGPU.h>
 #import <WebGPU/WebGPUExt.h>
 #import <wtf/CompletionHandler.h>
@@ -39,6 +40,7 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WeakPtr.h>
 
+struct WebModelCreateMeshDescriptor;
 struct WGPUInstanceImpl {
 };
 
@@ -46,10 +48,13 @@ namespace WTF {
 class MachSendRight;
 }
 
+namespace WebModel {
+class Mesh;
+}
+
 namespace WebGPU {
 
 class Adapter;
-class DDMesh;
 class Device;
 class PresentationContext;
 class Texture;
@@ -77,7 +82,7 @@ public:
     using WorkItem = Function<void()>;
     void scheduleWork(WorkItem&&);
     const std::optional<const MachSendRight>& webProcessID() const;
-    Ref<DDMesh> createModelBacking(const WGPUDDCreateMeshDescriptor&);
+    Ref<WebModel::Mesh> createModelBacking(const WebModelCreateMeshDescriptor&);
     id<MTLDevice> device() const;
 
 private:

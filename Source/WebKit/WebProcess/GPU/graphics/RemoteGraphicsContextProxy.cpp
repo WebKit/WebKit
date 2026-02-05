@@ -235,6 +235,13 @@ void RemoteGraphicsContextProxy::clipOut(const Path& path)
 void RemoteGraphicsContextProxy::clipPath(const Path& path, WindRule rule)
 {
     updateStateForClipPath(path);
+    if (RefPtr impl = path.asImpl(); impl && !impl->isTransient()) {
+        if (auto identifier = recordResourceUse(*impl)) {
+            send(Messages::RemoteGraphicsContext::ClipCachedPath(*identifier, rule));
+            return;
+        }
+    }
+
     send(Messages::RemoteGraphicsContext::ClipPath(path, rule));
 }
 
@@ -337,7 +344,7 @@ void RemoteGraphicsContextProxy::drawSystemImage(SystemImage& systemImage, const
 {
     appendStateChangeItemIfNecessary();
 #if USE(SYSTEM_PREVIEW)
-    if (auto* badgeSystemImage = dynamicDowncast<ARKitBadgeSystemImage>(systemImage)) {
+    if (RefPtr badgeSystemImage = dynamicDowncast<ARKitBadgeSystemImage>(systemImage)) {
         if (auto image = badgeSystemImage->image()) {
             auto nativeImage = image->nativeImage();
             if (!nativeImage)
@@ -462,6 +469,13 @@ void RemoteGraphicsContextProxy::fillPath(const Path& path)
             send(Messages::RemoteGraphicsContext::FillPathSegment(*segment));
         });
         return;
+    }
+
+    if (RefPtr impl = path.asImpl(); impl && !impl->isTransient()) {
+        if (auto identifier = recordResourceUse(*impl)) {
+            send(Messages::RemoteGraphicsContext::FillCachedPath(*identifier));
+            return;
+        }
     }
 
     send(Messages::RemoteGraphicsContext::FillPath(path));
@@ -715,6 +729,17 @@ std::optional<RemoteGradientIdentifier> RemoteGraphicsContextProxy::recordResour
     }
 
     return renderingBackend->remoteResourceCacheProxy().recordGradientUse(gradient);
+}
+
+std::optional<RemotePathImplIdentifier> RemoteGraphicsContextProxy::recordResourceUse(const WebCore::PathImpl& path)
+{
+    RefPtr renderingBackend = m_renderingBackend.get();
+    if (!renderingBackend) [[unlikely]] {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+
+    return renderingBackend->remoteResourceCacheProxy().recordPathImplUse(path);
 }
 
 bool RemoteGraphicsContextProxy::recordResourceUse(Filter& filter)

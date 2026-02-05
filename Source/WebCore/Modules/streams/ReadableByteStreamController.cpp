@@ -648,7 +648,7 @@ void ReadableByteStreamController::error(JSDOMGlobalObject& globalObject, const 
 {
     auto& vm = globalObject.vm();
     JSC::JSLockHolder lock(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     auto value = createDOMException(&globalObject, exception.code(), exception.message());
 
     if (scope.exception()) [[unlikely]] {
@@ -674,7 +674,7 @@ void ReadableByteStreamController::clearAlgorithms()
 }
 
 // https://streams.spec.whatwg.org/#readable-byte-stream-controller-pull-into
-void ReadableByteStreamController::pullInto(JSDOMGlobalObject& globalObject, JSC::ArrayBufferView& view, size_t min, Ref<ReadableStreamReadIntoRequest>&& readIntoRequest)
+void ReadableByteStreamController::pullInto(JSDOMGlobalObject& globalObject, JSC::ArrayBufferView& view, uint64_t min, Ref<ReadableStreamReadIntoRequest>&& readIntoRequest)
 {
     Ref stream = m_stream.get();
     size_t elementSize = 1;
@@ -682,7 +682,7 @@ void ReadableByteStreamController::pullInto(JSDOMGlobalObject& globalObject, JSC
     if (viewType != JSC::TypedArrayType::TypeDataView)
         elementSize = JSC::elementSize(view.getType());
 
-    auto minimumFill = min * elementSize;
+    size_t minimumFill = min * elementSize;
     ASSERT(minimumFill <= view.byteLength());
     ASSERT(!(minimumFill % elementSize));
 

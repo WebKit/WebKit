@@ -111,15 +111,15 @@ typedef CF_ENUM(UInt32, AXTextSelectionGranularity)
 static AXTextStateChangeType platformChangeTypeForWebCoreChangeType(WebCore::AXTextStateChangeType changeType)
 {
     switch (changeType) {
-    case WebCore::AXTextStateChangeTypeUnknown:
+    case WebCore::AXTextStateChangeType::Unknown:
         return kAXTextStateChangeTypeUnknown;
-    case WebCore::AXTextStateChangeTypeEdit:
+    case WebCore::AXTextStateChangeType::Edit:
         return kAXTextStateChangeTypeEdit;
-    case WebCore::AXTextStateChangeTypeSelectionMove:
+    case WebCore::AXTextStateChangeType::SelectionMove:
         return kAXTextStateChangeTypeSelectionMove;
-    case WebCore::AXTextStateChangeTypeSelectionExtend:
+    case WebCore::AXTextStateChangeType::SelectionExtend:
         return kAXTextStateChangeTypeSelectionExtend;
-    case WebCore::AXTextStateChangeTypeSelectionBoundary:
+    case WebCore::AXTextStateChangeType::SelectionBoundary:
         return kAXTextStateChangeTypeSelectionBoundary;
     }
 }
@@ -127,23 +127,23 @@ static AXTextStateChangeType platformChangeTypeForWebCoreChangeType(WebCore::AXT
 static AXTextEditType platformEditTypeForWebCoreEditType(WebCore::AXTextEditType changeType)
 {
     switch (changeType) {
-    case WebCore::AXTextEditTypeUnknown:
+    case WebCore::AXTextEditType::Unknown:
         return kAXTextEditTypeUnknown;
-    case WebCore::AXTextEditTypeDelete:
+    case WebCore::AXTextEditType::Delete:
         return kAXTextEditTypeDelete;
-    case WebCore::AXTextEditTypeInsert:
+    case WebCore::AXTextEditType::Insert:
         return kAXTextEditTypeInsert;
-    case WebCore::AXTextEditTypeTyping:
+    case WebCore::AXTextEditType::Typing:
         return kAXTextEditTypeTyping;
-    case WebCore::AXTextEditTypeDictation:
+    case WebCore::AXTextEditType::Dictation:
         return kAXTextEditTypeDictation;
-    case WebCore::AXTextEditTypeCut:
+    case WebCore::AXTextEditType::Cut:
         return kAXTextEditTypeCut;
-    case WebCore::AXTextEditTypePaste:
+    case WebCore::AXTextEditType::Paste:
         return kAXTextEditTypePaste;
-    case WebCore::AXTextEditTypeReplace:
+    case WebCore::AXTextEditType::Replace:
         return kAXTextEditTypeUnknown; // Does not exist in platform enum.
-    case WebCore::AXTextEditTypeAttributesChange:
+    case WebCore::AXTextEditType::AttributesChange:
         return kAXTextEditTypeAttributesChange;
     }
 }
@@ -151,17 +151,17 @@ static AXTextEditType platformEditTypeForWebCoreEditType(WebCore::AXTextEditType
 static AXTextSelectionDirection platformDirectionForWebCoreDirection(WebCore::AXTextSelectionDirection direction)
 {
     switch (direction) {
-    case WebCore::AXTextSelectionDirectionUnknown:
+    case WebCore::AXTextSelectionDirection::Unknown:
         return kAXTextSelectionDirectionUnknown;
-    case WebCore::AXTextSelectionDirectionBeginning:
+    case WebCore::AXTextSelectionDirection::Beginning:
         return kAXTextSelectionDirectionBeginning;
-    case WebCore::AXTextSelectionDirectionEnd:
+    case WebCore::AXTextSelectionDirection::End:
         return kAXTextSelectionDirectionEnd;
-    case WebCore::AXTextSelectionDirectionPrevious:
+    case WebCore::AXTextSelectionDirection::Previous:
         return kAXTextSelectionDirectionPrevious;
-    case WebCore::AXTextSelectionDirectionNext:
+    case WebCore::AXTextSelectionDirection::Next:
         return kAXTextSelectionDirectionNext;
-    case WebCore::AXTextSelectionDirectionDiscontiguous:
+    case WebCore::AXTextSelectionDirection::Discontiguous:
         return kAXTextSelectionDirectionDiscontiguous;
     }
 }
@@ -169,23 +169,23 @@ static AXTextSelectionDirection platformDirectionForWebCoreDirection(WebCore::AX
 static AXTextSelectionGranularity platformGranularityForWebCoreGranularity(WebCore::AXTextSelectionGranularity granularity)
 {
     switch (granularity) {
-    case WebCore::AXTextSelectionGranularityUnknown:
+    case WebCore::AXTextSelectionGranularity::Unknown:
         return kAXTextSelectionGranularityUnknown;
-    case WebCore::AXTextSelectionGranularityCharacter:
+    case WebCore::AXTextSelectionGranularity::Character:
         return kAXTextSelectionGranularityCharacter;
-    case WebCore::AXTextSelectionGranularityWord:
+    case WebCore::AXTextSelectionGranularity::Word:
         return kAXTextSelectionGranularityWord;
-    case WebCore::AXTextSelectionGranularityLine:
+    case WebCore::AXTextSelectionGranularity::Line:
         return kAXTextSelectionGranularityLine;
-    case WebCore::AXTextSelectionGranularitySentence:
+    case WebCore::AXTextSelectionGranularity::Sentence:
         return kAXTextSelectionGranularitySentence;
-    case WebCore::AXTextSelectionGranularityParagraph:
+    case WebCore::AXTextSelectionGranularity::Paragraph:
         return kAXTextSelectionGranularityParagraph;
-    case WebCore::AXTextSelectionGranularityPage:
+    case WebCore::AXTextSelectionGranularity::Page:
         return kAXTextSelectionGranularityPage;
-    case WebCore::AXTextSelectionGranularityDocument:
+    case WebCore::AXTextSelectionGranularity::Document:
         return kAXTextSelectionGranularityDocument;
-    case WebCore::AXTextSelectionGranularityAll:
+    case WebCore::AXTextSelectionGranularity::All:
         return kAXTextSelectionGranularityAll;
     }
 }
@@ -384,7 +384,7 @@ void AXObjectCache::postPlatformAnnouncementNotification(const String& message)
 
     // To simplify monitoring of notifications in tests, repost as a simple NSNotification instead of forcing test infrastucture to setup an IPC client and do all the translation between WebCore types and platform specific IPC types and back.
     if (gShouldRepostNotificationsForTests) [[unlikely]] {
-        if (RefPtr root = getOrCreate(m_document->protectedView().get()))
+        if (RefPtr root = getOrCreate(protect(m_document->view()).get()))
             [root->wrapper() accessibilityPostedNotification:NSAccessibilityAnnouncementRequestedNotification userInfo:userInfo];
     }
 }
@@ -405,7 +405,7 @@ void AXObjectCache::postPlatformARIANotifyNotification(AccessibilityObject& obje
     NSAccessibilityPostNotificationWithUserInfo(object.wrapper(), NSAccessibilityAnnouncementRequestedNotification, userInfo);
 
     if (gShouldRepostNotificationsForTests) [[unlikely]] {
-        if (RefPtr root = getOrCreate(m_document->protectedView().get()))
+        if (RefPtr root = getOrCreate(protect(m_document->view()).get()))
             [root->wrapper() accessibilityPostedNotification:NSAccessibilityAnnouncementRequestedNotification userInfo:userInfo];
     }
 }
@@ -417,7 +417,7 @@ void AXObjectCache::postPlatformLiveRegionNotification(AccessibilityObject& obje
     NSAccessibilityPostNotificationWithUserInfo(object.wrapper(), NSAccessibilityAnnouncementRequestedNotification, userInfo.get());
 
     if (gShouldRepostNotificationsForTests) [[unlikely]] {
-        if (RefPtr root = getOrCreate(m_document->protectedView().get()))
+        if (RefPtr root = getOrCreate(protect(m_document->view()).get()))
             [root->wrapper() accessibilityPostedNotification:NSAccessibilityAnnouncementRequestedNotification userInfo:userInfo.get()];
     }
 }
@@ -474,7 +474,7 @@ AXTextStateChangeIntent AXObjectCache::inferDirectionFromIntent(AccessibilityObj
     if (!object.isTextControl() && !object.editableAncestor())
         return originalIntent;
 
-    if (originalIntent.selection.direction != AXTextSelectionDirectionDiscontiguous || object.objectID() != m_lastTextFieldAXID || m_lastSelection == selection) {
+    if (originalIntent.selection.direction != AXTextSelectionDirection::Discontiguous || object.objectID() != m_lastTextFieldAXID || m_lastSelection == selection) {
         m_lastTextFieldAXID = object.objectID();
         m_lastSelection = selection;
         return originalIntent;
@@ -484,24 +484,24 @@ AXTextStateChangeIntent AXObjectCache::inferDirectionFromIntent(AccessibilityObj
     if (m_lastSelection.isCaret() && selection.isCaret()) {
         // Cursor movement
         if (selection.visibleStart() == m_lastSelection.visibleStart().next(CannotCrossEditingBoundary)) {
-            intent.type = AXTextStateChangeTypeSelectionMove;
-            intent.selection.direction = AXTextSelectionDirectionNext;
-            intent.selection.granularity = AXTextSelectionGranularityCharacter;
+            intent.type = AXTextStateChangeType::SelectionMove;
+            intent.selection.direction = AXTextSelectionDirection::Next;
+            intent.selection.granularity = AXTextSelectionGranularity::Character;
         } else if (selection.visibleStart() == m_lastSelection.visibleStart().previous(CannotCrossEditingBoundary)) {
-            intent.type = AXTextStateChangeTypeSelectionMove;
-            intent.selection.direction = AXTextSelectionDirectionPrevious;
-            intent.selection.granularity = AXTextSelectionGranularityCharacter;
+            intent.type = AXTextStateChangeType::SelectionMove;
+            intent.selection.direction = AXTextSelectionDirection::Previous;
+            intent.selection.granularity = AXTextSelectionGranularity::Character;
         }
     } else if (selection.visibleBase() == m_lastSelection.visibleBase()) {
         // Selection
         if (selection.visibleExtent() == m_lastSelection.visibleExtent().next(CannotCrossEditingBoundary)) {
-            intent.type = AXTextStateChangeTypeSelectionExtend;
-            intent.selection.direction = AXTextSelectionDirectionNext;
-            intent.selection.granularity = AXTextSelectionGranularityCharacter;
+            intent.type = AXTextStateChangeType::SelectionExtend;
+            intent.selection.direction = AXTextSelectionDirection::Next;
+            intent.selection.granularity = AXTextSelectionGranularity::Character;
         } else if (selection.visibleExtent() == m_lastSelection.visibleExtent().previous(CannotCrossEditingBoundary)) {
-            intent.type = AXTextStateChangeTypeSelectionExtend;
-            intent.selection.direction = AXTextSelectionDirectionPrevious;
-            intent.selection.granularity = AXTextSelectionGranularityCharacter;
+            intent.type = AXTextStateChangeType::SelectionExtend;
+            intent.selection.direction = AXTextSelectionDirection::Previous;
+            intent.selection.granularity = AXTextSelectionGranularity::Character;
         }
     }
 
@@ -527,30 +527,30 @@ void AXObjectCache::postTextSelectionChangePlatformNotification(AccessibilityObj
     auto userInfo = adoptNS([[NSMutableDictionary alloc] initWithCapacity:5]);
     if (m_isSynchronizingSelection)
         [userInfo setObject:@YES forKey:NSAccessibilityTextStateSyncKey];
-    if (intent.type != AXTextStateChangeTypeUnknown) {
+    if (intent.type != AXTextStateChangeType::Unknown) {
         [userInfo setObject:@(platformChangeTypeForWebCoreChangeType(intent.type)) forKey:NSAccessibilityTextStateChangeTypeKey];
         switch (intent.type) {
-        case AXTextStateChangeTypeSelectionMove:
-        case AXTextStateChangeTypeSelectionExtend:
-        case AXTextStateChangeTypeSelectionBoundary:
+        case AXTextStateChangeType::SelectionMove:
+        case AXTextStateChangeType::SelectionExtend:
+        case AXTextStateChangeType::SelectionBoundary:
             [userInfo setObject:@(platformDirectionForWebCoreDirection(intent.selection.direction)) forKey:NSAccessibilityTextSelectionDirection];
             switch (intent.selection.direction) {
-            case AXTextSelectionDirectionUnknown:
+            case AXTextSelectionDirection::Unknown:
                 break;
-            case AXTextSelectionDirectionBeginning:
-            case AXTextSelectionDirectionEnd:
-            case AXTextSelectionDirectionPrevious:
-            case AXTextSelectionDirectionNext:
+            case AXTextSelectionDirection::Beginning:
+            case AXTextSelectionDirection::End:
+            case AXTextSelectionDirection::Previous:
+            case AXTextSelectionDirection::Next:
                 [userInfo setObject:@(platformGranularityForWebCoreGranularity(intent.selection.granularity)) forKey:NSAccessibilityTextSelectionGranularity];
                 break;
-            case AXTextSelectionDirectionDiscontiguous:
+            case AXTextSelectionDirection::Discontiguous:
                 break;
             }
             if (intent.selection.focusChange)
                 [userInfo setObject:@(intent.selection.focusChange) forKey:NSAccessibilityTextSelectionChangedFocus];
             break;
-        case AXTextStateChangeTypeUnknown:
-        case AXTextStateChangeTypeEdit:
+        case AXTextStateChangeType::Unknown:
+        case AXTextStateChangeType::Edit:
             break;
         }
     }
@@ -613,13 +613,13 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
     if (!text.length())
         return;
 
-    postTextReplacementPlatformNotification(object, AXTextEditTypeUnknown, emptyString(), type, text, position);
+    postTextReplacementPlatformNotification(object, AXTextEditType::Unknown, emptyString(), type, text, position);
 }
 
 void AXObjectCache::postUserInfoForChanges(AccessibilityObject& rootWebArea, AccessibilityObject& object, RetainPtr<NSMutableArray> changes)
 {
     auto userInfo = adoptNS([[NSMutableDictionary alloc] initWithCapacity:4]);
-    [userInfo setObject:@(platformChangeTypeForWebCoreChangeType(AXTextStateChangeTypeEdit)) forKey:NSAccessibilityTextStateChangeTypeKey];
+    [userInfo setObject:@(platformChangeTypeForWebCoreChangeType(AXTextStateChangeType::Edit)) forKey:NSAccessibilityTextStateChangeTypeKey];
     auto changesArray = changes.autorelease();
     if (changesArray.count)
         [userInfo setObject:changesArray forKey:NSAccessibilityTextChangeValues];
@@ -667,9 +667,9 @@ void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(Access
     processQueuedIsolatedNodeUpdates();
 
     auto changes = adoptNS([[NSMutableArray alloc] initWithCapacity:2]);
-    if (NSDictionary *change = textReplacementChangeDictionary(*this, *axObject, AXTextEditTypeDelete, deletedText, { }))
+    if (NSDictionary *change = textReplacementChangeDictionary(*this, *axObject, AXTextEditType::Delete, deletedText, { }))
         [changes addObject:change];
-    if (NSDictionary *change = textReplacementChangeDictionary(*this, *axObject, AXTextEditTypeInsert, insertedText, { }))
+    if (NSDictionary *change = textReplacementChangeDictionary(*this, *axObject, AXTextEditType::Insert, insertedText, { }))
         [changes addObject:change];
 
     if (RefPtr root = rootWebArea())

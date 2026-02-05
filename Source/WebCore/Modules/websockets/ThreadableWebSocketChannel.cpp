@@ -37,6 +37,7 @@
 #include "DocumentPage.h"
 #include "DocumentQuirks.h"
 #include "DocumentSecurityOrigin.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "HTTPHeaderValues.h"
 #include "ScriptExecutionContext.h"
@@ -112,7 +113,7 @@ std::optional<ResourceRequest> ThreadableWebSocketChannel::webSocketConnectReque
     request.setDomainForCachePartition(document.domainForCachePartition());
     request.setAllowCookies(validatedURL->areCookiesAllowed);
     request.setFirstPartyForCookies(document.firstPartyForCookies());
-    request.setHTTPHeaderField(HTTPHeaderName::Origin, document.protectedSecurityOrigin()->toString());
+    request.setHTTPHeaderField(HTTPHeaderName::Origin, protect(document.securityOrigin())->toString());
 
     if (RefPtr documentLoader = document.loader())
         request.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
@@ -133,9 +134,9 @@ std::optional<ResourceRequest> ThreadableWebSocketChannel::webSocketConnectReque
         request.addHTTPHeaderField(HTTPHeaderName::SecFetchDest, "websocket"_s);
         request.addHTTPHeaderField(HTTPHeaderName::SecFetchMode, "websocket"_s);
 
-        if (document.protectedSecurityOrigin()->isSameOriginAs(requestOrigin.get()))
+        if (protect(document.securityOrigin())->isSameOriginAs(requestOrigin.get()))
             request.addHTTPHeaderField(HTTPHeaderName::SecFetchSite, "same-origin"_s);
-        else if (document.protectedSecurityOrigin()->isSameSiteAs(requestOrigin))
+        else if (protect(document.securityOrigin())->isSameSiteAs(requestOrigin))
             request.addHTTPHeaderField(HTTPHeaderName::SecFetchSite, "same-site"_s);
         else
             request.addHTTPHeaderField(HTTPHeaderName::SecFetchSite, "cross-site"_s);

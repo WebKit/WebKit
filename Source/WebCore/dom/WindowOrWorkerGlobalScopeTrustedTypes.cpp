@@ -78,7 +78,7 @@ DOMWindowTrustedTypes* DOMWindowTrustedTypes::from(LocalDOMWindow& window)
 TrustedTypePolicyFactory* DOMWindowTrustedTypes::trustedTypes() const
 {
     if (!m_trustedTypes)
-        m_trustedTypes = TrustedTypePolicyFactory::create(*window()->protectedDocument());
+        m_trustedTypes = TrustedTypePolicyFactory::create(*protect(window()->document()));
     return m_trustedTypes.get();
 }
 

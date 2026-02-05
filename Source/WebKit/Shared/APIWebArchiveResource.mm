@@ -62,7 +62,7 @@ WebArchiveResource::~WebArchiveResource() = default;
 
 Ref<API::Data> WebArchiveResource::data()
 {
-    RetainPtr cfData = m_archiveResource->protectedData()->makeContiguous()->createCFData();
+    RetainPtr cfData = protect(m_archiveResource->data())->makeContiguous()->createCFData();
     auto cfDataSpan = span(cfData.get());
     return API::Data::createWithoutCopying(cfDataSpan, [cfData = WTF::move(cfData)] { });
 }

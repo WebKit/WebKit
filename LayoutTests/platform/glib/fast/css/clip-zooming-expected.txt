@@ -4,11 +4,11 @@ layer at (0,0) size 800x126
   RenderBlock {HTML} at (0,0) size 800x126
     RenderBody {BODY} at (0,24) size 800x78
       RenderBlock {P} at (0,0) size 800x27
-        RenderInline {A} at (0,0) size 468x26 [color=#0000EE]
-          RenderText {#text} at (0,0) size 468x26
+        RenderInline {A} at (0,0) size 468x27 [color=#0000EE]
+          RenderText {#text} at (0,0) size 468x27
             text run at (0,0) width 468: "https://bugs.webkit.org/show_bug.cgi?id=24753"
       RenderBlock {P} at (0,51) size 800x27
-        RenderText {#text} at (0,0) size 609x26
+        RenderText {#text} at (0,0) size 609x27
           text run at (0,0) width 609: "Test CSS clip with zooming. You should not see any red below"
 layer at (75,150) size 150x150
   RenderBlock (positioned) {DIV} at (75,150) size 150x150 [bgcolor=#FF0000]

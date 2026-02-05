@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x220
-  RenderBlock {HTML} at (0,0) size 800x220
-    RenderBody {BODY} at (8,16) size 784x196
+layer at (0,0) size 800x221
+  RenderBlock {HTML} at (0,0) size 800x222
+    RenderBody {BODY} at (8,16) size 784x198
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 333x17
+        RenderText {#text} at (0,0) size 333x18
           text run at (0,0) width 333: "Tests border-radius and box-shadow on a split inline."
-      RenderBlock {DIV} at (0,34) size 200x162
-        RenderInline {SPAN} at (0,7) size 199x148 [border: (2px solid #008000)]
-          RenderText {#text} at (0,9) size 197x144
+      RenderBlock {DIV} at (0,34) size 200x164
+        RenderInline {SPAN} at (0,7) size 199x149 [border: (2px solid #008000)]
+          RenderText {#text} at (0,9) size 197x145
             text run at (2,9) width 146: "I am a span"
             text run at (0,63) width 170: "which is split"
-            text run at (0,117) width 197: "over three lines"
+            text run at (0,118) width 197: "over three lines"
         RenderText {#text} at (0,0) size 0x0

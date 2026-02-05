@@ -272,6 +272,7 @@ enum class AXProperty : uint16_t {
     RemoteFrameOffset,
     RemoteFramePlatformElement,
 #if PLATFORM(COCOA)
+    RemoteFrameProcessIdentifier,
     RemoteParent,
 #endif
     RevealableText,
@@ -476,48 +477,14 @@ public:
 
     void objectBecameIgnored(const AccessibilityObject& object)
     {
-#if !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
-        // When an object becomes ignored, we should immediately remove it from the nodemap.
-        // This is critical because objects can become ignored at any point, including in the
-        // middle of AXObjectCache::handleChildrenChanged(). Consider this tree structure:
-        //   <main> (not ignored)
-        //   ++<div> (not ignored)
-        // Imagine <div> gains new children, and we run handleChildrenChanged() for it. However,
-        // it becomes ignored in the middle of handleChildrenChanged(). We will still call
-        // AXIsolatedTree::updateChildren for this <div>, and because it isn't yet removed from
-        // the nodemap, we will run the children update on the <div> rather than the <main>.
-        // Eagerly removing <div> from the nodemap when it becomes ignored prevents this by
-        // allowing us to ascend up the nodemap to the <main>, which can properly scoop up <div>s children.
-
-        // Note that this problem is only relevant in a world where !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE),
-        // because when that flag is on, is-ignored doesn't matter when building the core-tree.
-
-        // Normally, when removing things from the nodemap, we want to use removeSubtreeFromNodeMap because
-        // it removes both the given object, and all its descendants, as the descendants should not be in the
-        // tree without some parent. However, when something becomes ignored, those descendants still exist,
-        // just with a different parent (the next unignored ancestor). So we can safely only remove the given
-        // object from the nodemap, and rely on the normal updateChildren flow to repair parent relationships
-        // as needed.
-        m_nodeMap.remove(object.objectID());
-        // Any queued parent updates no longer need to happen (and if we do try to process them, we'll crash,
-        // since this object is no longer in the node map).
-        m_needsParentUpdate.remove(object.objectID());
-#endif // !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
-
-#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
         objectChangedIgnoredState(object);
         queueNodeUpdate(object.objectID(), { { AXProperty::IsIgnored, AXProperty::RevealableText } });
-#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     }
     void objectBecameUnignored(const AccessibilityObject& object)
     {
-#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
         // We only cache minimal properties for ignored objects, so do a full node update to ensure all properties are cached.
         queueNodeUpdate(object.objectID(), NodeUpdateOptions::nodeUpdate());
         objectChangedIgnoredState(object);
-#else
-        UNUSED_PARAM(object);
-#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     }
 
     // Both setPendingRootNodeLocked and setFocusedNodeID are called during the generation

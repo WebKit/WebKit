@@ -84,18 +84,13 @@ AffineTransform SVGGraphicsElement::getScreenCTM(StyleUpdateStrategy styleUpdate
     return SVGLocatable::computeCTM(this, CTMScope::ScreenScope, styleUpdateStrategy);
 }
 
-Ref<const SVGTransformList> SVGGraphicsElement::protectedTransform() const
-{
-    return m_transform->currentValue();
-}
-
 AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 {
     // LBSE handles transforms via RenderLayer, no need to handle CSS transforms here.
     if (document().settings().layerBasedSVGEngineEnabled()) {
         if (m_supplementalTransform)
             return *m_supplementalTransform * transform().concatenate();
-        return protectedTransform()->concatenate();
+        return protect(transform())->concatenate();
     }
 
     AffineTransform matrix;

@@ -35,7 +35,13 @@
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
-namespace JSC { namespace B3 {
+namespace JSC {
+
+namespace Wasm {
+class RTT;
+}
+
+namespace B3 {
 
 class Procedure;
 class Value;
@@ -100,6 +106,9 @@ public:
     ValueKey(Kind, Type, SIMDInfo, Value*, Value*, Value*);
     ValueKey(Kind, Type, SIMDInfo, Value*, uint8_t);
     ValueKey(Kind, Type, SIMDInfo, Value*, Value*, uint8_t);
+
+    ValueKey(Kind, Type, Value* child, unsigned packedFlags, const Wasm::RTT*);
+    ValueKey(Kind, Type, Value* child, unsigned packedFlags, int32_t targetHeapType);
 
     static ValueKey intConstant(Type type, int64_t value);
 
@@ -197,7 +206,8 @@ private:
 };
 
 
-} } // namespace JSC::B3
+} // namespace B3
+} // namespace JSC
 
 namespace WTF {
 

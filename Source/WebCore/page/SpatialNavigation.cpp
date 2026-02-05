@@ -287,7 +287,7 @@ bool hasOffscreenRect(const Node& node, FocusDirection direction)
     // Get the FrameView in which |node| is (which means the current viewport if |node|
     // is not in an inner document), so we can check if its content rect is visible
     // before we actually move the focus to it.
-    auto* frameView = node.document().view();
+    RefPtr frameView = node.document().view();
     if (!frameView)
         return true;
 
@@ -332,7 +332,7 @@ bool scrollInDirection(LocalFrame* frame, FocusDirection direction)
 {
     ASSERT(frame);
 
-    if (frame && canScrollInDirection(*frame->protectedDocument(), direction)) {
+    if (frame && canScrollInDirection(*protect(frame->document()), direction)) {
         LayoutUnit dx;
         LayoutUnit dy;
         switch (direction) {
@@ -697,7 +697,7 @@ void distanceDataForNode(FocusDirection direction, const FocusCandidate& current
 
     float distance = euclidianDistance + sameAxisDistance + 2 * otherAxisDistance;
     candidate.distance = roundf(distance);
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(candidate.visibleNode->document().page()->mainFrame());
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(candidate.visibleNode->document().page()->mainFrame());
     if (!localMainFrame)
         return;
     LayoutSize viewSize = localMainFrame->view()->visibleContentRect().size();
@@ -708,7 +708,7 @@ bool canBeScrolledIntoView(FocusDirection direction, const FocusCandidate& candi
 {
     ASSERT(candidate.visibleNode && candidate.isOffscreen);
     LayoutRect candidateRect = candidate.rect;
-    for (ContainerNode* parentNode = candidate.visibleNode->parentNode(); parentNode; parentNode = parentNode->parentNode()) {
+    for (RefPtr<ContainerNode> parentNode = candidate.visibleNode->parentNode(); parentNode; parentNode = parentNode->parentNode()) {
         if (!parentNode->renderer())
             continue;
         LayoutRect parentRect = nodeRectInAbsoluteCoordinates(*parentNode);

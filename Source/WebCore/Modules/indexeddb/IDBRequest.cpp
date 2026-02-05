@@ -197,10 +197,16 @@ void IDBRequest::setVersionChangeTransaction(IDBTransaction& transaction)
     m_transaction = transaction;
 }
 
-RefPtr<WebCore::IDBTransaction> IDBRequest::transaction() const
+IDBTransaction* IDBRequest::transactionForBindings() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
-    return m_shouldExposeTransactionToDOM ? m_transaction : nullptr;
+    return m_shouldExposeTransactionToDOM ? m_transaction.get() : nullptr;
+}
+
+IDBTransaction* IDBRequest::transaction() const
+{
+    ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
+    return m_transaction.get();
 }
 
 std::optional<IDBObjectStoreIdentifier> IDBRequest::sourceObjectStoreIdentifier() const
@@ -326,7 +332,7 @@ void IDBRequest::dispatchEvent(Event& event)
         shouldDispatchOnTransaction = true;
 
     {
-        TransactionActivator activator(transaction().get());
+        TransactionActivator activator(transaction());
         if (shouldDispatchOnTransaction)
             EventDispatcher::dispatchEvent(std::initializer_list<EventTarget*>({ this, m_transaction.get(), &m_transaction->database() }), event);
         else
@@ -364,7 +370,7 @@ void IDBRequest::uncaughtExceptionInEventHandler()
         return;
     }
     if (m_transaction && m_idbError.code() != ExceptionCode::AbortError)
-        protectedTransaction()->abortDueToFailedRequest(DOMException::create(ExceptionCode::AbortError, "IDBTransaction will abort due to uncaught exception in an event handler"_s));
+        protect(transaction())->abortDueToFailedRequest(DOMException::create(ExceptionCode::AbortError, "IDBTransaction will abort due to uncaught exception in an event handler"_s));
 }
 
 void IDBRequest::setResult(const IDBKeyData& keyData)
@@ -598,11 +604,6 @@ void IDBRequest::transactionTransitionedToFinishing()
         return;
 
     m_pendingActivity = PendingActivityType::None;
-}
-
-RefPtr<IDBTransaction> IDBRequest::protectedTransaction() const
-{
-    return m_transaction;
 }
 
 } // namespace WebCore

@@ -139,15 +139,12 @@ test/built-ins/Temporal/Duration/prototype/round/relative-to-required-to-round-c
 test/built-ins/Temporal/Duration/prototype/round/relativeTo-ignores-incorrect-properties.js:
   default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
-test/built-ins/Temporal/Duration/prototype/round/options-read-before-algorithmic-validation.js:
-  default: 'Test262Error: Actual [get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] and expected [get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.relativeTo, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. all options should be read first'
-  strict mode: 'Test262Error: Actual [get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] and expected [get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.relativeTo, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. all options should be read first'
 test/built-ins/Temporal/Duration/prototype/round/relativeTo-required-properties.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-calendar-invalid-iso-string.js:
-  default: 'Test262Error: empty string is not a valid calendar ID Expected a RangeError but got a Error'
-  strict mode: 'Test262Error: empty string is not a valid calendar ID Expected a RangeError but got a Error'
+test/built-ins/Temporal/Duration/prototype/round/relativeto-date-limits.js:
+  default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+  strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
 test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-optional-properties.js:
   default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
   strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
@@ -181,6 +178,9 @@ test/built-ins/Temporal/Duration/prototype/round/throws-on-wrong-offset-for-zone
 test/built-ins/Temporal/Duration/prototype/round/valid-increments.js:
   default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
   strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+test/built-ins/Temporal/Duration/prototype/round/zero-duration.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, 'UTC')')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, 'UTC')')"
 test/built-ins/Temporal/Duration/prototype/toString/options-read-before-algorithmic-validation.js:
   default: 'Test262Error: Actual [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and expected [get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. all options should be read first'
   strict mode: 'Test262Error: Actual [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and expected [get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. all options should be read first'
@@ -202,6 +202,12 @@ test/built-ins/Temporal/Duration/prototype/total/no-dst-day-length.js:
 test/built-ins/Temporal/Duration/prototype/total/options-read-before-algorithmic-validation.js:
   default: 'Test262Error: Actual [get options.unit, get options.unit.toString, call options.unit.toString] and expected [get options.relativeTo, get options.unit, get options.unit.toString, call options.unit.toString] should have the same contents. all options should be read first'
   strict mode: 'Test262Error: Actual [get options.unit, get options.unit.toString, call options.unit.toString] and expected [get options.relativeTo, get options.unit, get options.unit.toString, call options.unit.toString] should have the same contents. all options should be read first'
+test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-values-5.js:
+  default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/total/relativeto-date-limits.js:
+  default: 'Test262Error: +275760-09-12T00:00:01+00:00[UTC] is out of range as a relativeTo argument for total Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: +275760-09-12T00:00:01+00:00[UTC] is out of range as a relativeTo argument for total Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-invalid-offset-string.js:
   default: 'Test262Error: "0" is not a valid offset string Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: "0" is not a valid offset string Expected a TypeError but got a RangeError'
@@ -223,6 +229,9 @@ test/built-ins/Temporal/Duration/prototype/total/throws-if-target-nanoseconds-ou
 test/built-ins/Temporal/Duration/prototype/total/total-of-each-unit-relativeto.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(63072000_000_000_000n /* = 1972-01-01T00Z */, \"UTC\")')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(63072000_000_000_000n /* = 1972-01-01T00Z */, \"UTC\")')"
+test/built-ins/Temporal/Duration/prototype/total/zero-duration.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, 'UTC')')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, 'UTC')')"
 test/built-ins/Temporal/Instant/prototype/toString/options-read-before-algorithmic-validation.js:
   default: 'Test262Error: Actual [get options.timeZone, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] and expected [get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.timeZone] should have the same contents. all options should be read first'
   strict mode: 'Test262Error: Actual [get options.timeZone, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] and expected [get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.timeZone] should have the same contents. all options should be read first'
@@ -241,9 +250,18 @@ test/built-ins/Temporal/PlainDate/compare/argument-propertybag-calendar-case-ins
 test/built-ins/Temporal/PlainDate/compare/argument-propertybag-calendar-iso-string.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
+test/built-ins/Temporal/PlainDate/compare/argument-string-calendar-invalid-iso-string.js:
+  default: 'Test262Error: Unknown calendar is not a valid calendar ID (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Unknown calendar is not a valid calendar ID (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDate/from/argument-propertybag-calendar-iso-string.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
+test/built-ins/Temporal/PlainDate/from/argument-string-calendar-invalid-iso-string.js:
+  default: 'Test262Error: Unknown calendar is not a valid calendar ID Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Unknown calendar is not a valid calendar ID Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDate/from/month-code-wrong-type.js:
+  default: 'Test262Error: month code 5 should be rejected Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: month code 5 should be rejected Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/PlainDate/from/observable-get-overflow-argument-primitive.js:
   default: 'Test262Error: Actual [get options.overflow, get options.overflow.toString, call options.overflow.toString] and expected [] should have the same contents. Failing call before options is processed'
   strict mode: 'Test262Error: Actual [get options.overflow, get options.overflow.toString, call options.overflow.toString] and expected [] should have the same contents. Failing call before options is processed'
@@ -259,6 +277,9 @@ test/built-ins/Temporal/PlainDate/from/order-of-operations.js:
 test/built-ins/Temporal/PlainDate/prototype/equals/argument-propertybag-calendar-iso-string.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
+test/built-ins/Temporal/PlainDate/prototype/equals/argument-string-calendar-invalid-iso-string.js:
+  default: 'Test262Error: Unknown calendar is not a valid calendar ID Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Unknown calendar is not a valid calendar ID Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDate/prototype/era/branding.js:
   default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDate.prototype, \"era\").get')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDate.prototype, \"era\").get')"
@@ -274,6 +295,9 @@ test/built-ins/Temporal/PlainDate/prototype/eraYear/prop-desc.js:
 test/built-ins/Temporal/PlainDate/prototype/since/argument-propertybag-calendar-iso-string.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
+test/built-ins/Temporal/PlainDate/prototype/since/argument-string-calendar-invalid-iso-string.js:
+  default: 'Test262Error: Unknown calendar is not a valid calendar ID Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Unknown calendar is not a valid calendar ID Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDate/prototype/since/calendar-id-match.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
@@ -283,6 +307,9 @@ test/built-ins/Temporal/PlainDate/prototype/toString/order-of-operations.js:
 test/built-ins/Temporal/PlainDate/prototype/until/argument-propertybag-calendar-iso-string.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
+test/built-ins/Temporal/PlainDate/prototype/until/argument-string-calendar-invalid-iso-string.js:
+  default: 'Test262Error: Unknown calendar is not a valid calendar ID Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Unknown calendar is not a valid calendar ID Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDate/prototype/until/calendar-id-match.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
@@ -295,15 +322,27 @@ test/built-ins/Temporal/PlainDate/prototype/yearOfWeek/branding.js:
 test/built-ins/Temporal/PlainDate/prototype/yearOfWeek/prop-desc.js:
   default: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
   strict mode: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
+test/built-ins/Temporal/PlainDateTime/argument-convert.js:
+  default: 'Test262Error: year undefined Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: year undefined Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDateTime/compare/argument-propertybag-calendar-case-insensitive.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
 test/built-ins/Temporal/PlainDateTime/compare/argument-propertybag-calendar-iso-string.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
+test/built-ins/Temporal/PlainDateTime/compare/argument-string-calendar-invalid-iso-string.js:
+  default: 'Test262Error: Unknown calendar is not a valid calendar ID (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Unknown calendar is not a valid calendar ID (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDateTime/from/argument-propertybag-calendar-iso-string.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
+test/built-ins/Temporal/PlainDateTime/from/argument-string-calendar-invalid-iso-string.js:
+  default: 'Test262Error: Unknown calendar is not a valid calendar ID Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Unknown calendar is not a valid calendar ID Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainDateTime/from/month-code-wrong-type.js:
+  default: 'Test262Error: month code 5 should be rejected Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: month code 5 should be rejected Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/PlainDateTime/from/observable-get-overflow-argument-string-invalid.js:
   default: 'Test262Error: Actual [get options.overflow, get options.overflow.toString, call options.overflow.toString] and expected [] should have the same contents. options read after string parsing'
   strict mode: 'Test262Error: Actual [get options.overflow, get options.overflow.toString, call options.overflow.toString] and expected [] should have the same contents. options read after string parsing'
@@ -316,6 +355,9 @@ test/built-ins/Temporal/PlainDateTime/from/order-of-operations.js:
 test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-propertybag-calendar-iso-string.js:
   default: 'RangeError: invalid calendar ID'
   strict mode: 'RangeError: invalid calendar ID'
+test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-string-calendar-invalid-iso-string.js:
+  default: 'Test262Error: Unknown calendar is not a valid calendar ID Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Unknown calendar is not a valid calendar ID Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDateTime/prototype/era/branding.js:
   default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDateTime.prototype, \"era\").get')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDateTime.prototype, \"era\").get')"
@@ -349,6 +391,9 @@ test/built-ins/Temporal/PlainDateTime/prototype/yearOfWeek/branding.js:
 test/built-ins/Temporal/PlainDateTime/prototype/yearOfWeek/prop-desc.js:
   default: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
   strict mode: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
+test/built-ins/Temporal/PlainTime/argument-convert.js:
+  default: 'Test262Error: hour string Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: hour string Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainTime/from/observable-get-overflow-argument-string-invalid.js:
   default: 'Test262Error: Actual [get overflow, get overflow.toString, call overflow.toString] and expected [] should have the same contents. options read after ISO string parsing'
   strict mode: 'Test262Error: Actual [get overflow, get overflow.toString, call overflow.toString] and expected [] should have the same contents. options read after ISO string parsing'
@@ -364,12 +409,36 @@ test/built-ins/Temporal/PlainTime/prototype/toString/options-read-before-algorit
 test/built-ins/Temporal/PlainTime/prototype/toString/order-of-operations.js:
   default: 'Test262Error: Actual [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and expected [get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
   strict mode: 'Test262Error: Actual [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and expected [get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
+test/built-ins/Temporal/PlainYearMonth/from/month-code-wrong-type.js:
+  default: 'Test262Error: month code 5 should be rejected Expected a TypeError but got a RangeError'
+  strict mode: 'Test262Error: month code 5 should be rejected Expected a TypeError but got a RangeError'
+test/built-ins/Temporal/PlainYearMonth/prototype/add/argument-lower-units.js:
+  default: 'Test262Error: adding a unit lower than months should throw, no options Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: adding a unit lower than months should throw, no options Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainYearMonth/prototype/add/options-read-before-algorithmic-validation.js:
+  default: 'Test262Error: exception thrown when attempting to add too-low unit Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: exception thrown when attempting to add too-low unit Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainYearMonth/prototype/add/overflow.js:
+  default: 'RangeError: date time is out of range of ECMAScript representation'
+  strict mode: 'RangeError: date time is out of range of ECMAScript representation'
+test/built-ins/Temporal/PlainYearMonth/prototype/add/subtract-from-last-representable-month.js:
+  default: 'RangeError: date time is out of range of ECMAScript representation'
+  strict mode: 'RangeError: date time is out of range of ECMAScript representation'
+test/built-ins/Temporal/PlainYearMonth/prototype/subtract/argument-lower-units.js:
+  default: 'Test262Error: subtracting a unit lower than months should throw, no options Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: subtracting a unit lower than months should throw, no options Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainYearMonth/prototype/subtract/options-read-before-algorithmic-validation.js:
+  default: 'Test262Error: exception thrown when attempting to add too-low unit Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: exception thrown when attempting to add too-low unit Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/PlainYearMonth/prototype/subtract/overflow.js:
+  default: 'RangeError: date time is out of range of ECMAScript representation'
+  strict mode: 'RangeError: date time is out of range of ECMAScript representation'
+test/built-ins/Temporal/PlainYearMonth/prototype/subtract/subtract-from-last-representable-month.js:
+  default: 'RangeError: date time is out of range of ECMAScript representation'
+  strict mode: 'RangeError: date time is out of range of ECMAScript representation'
 test/built-ins/Temporal/getOwnPropertyNames.js:
   default: 'Test262Error: ZonedDateTime'
   strict mode: 'Test262Error: ZonedDateTime'
-test/built-ins/TypedArray/prototype/set/array-arg-value-conversion-resizes-array-buffer.js:
-  default: 'Test262Error: Actual [shrink, shrink, shrink] and expected [shrink, shrink, shrink, grow, grow] should have the same contents. '
-  strict mode: 'Test262Error: Actual [shrink, shrink, shrink] and expected [shrink, shrink, shrink, grow, grow] should have the same contents. '
 test/built-ins/TypedArray/prototype/slice/speciesctor-return-same-buffer-with-offset.js:
   default: 'Test262Error: Actual [20, 30, 40, 60] and expected [20, 20, 20, 60] should have the same contents.  (Testing with Float64Array.)'
   strict mode: 'Test262Error: Actual [20, 30, 40, 60] and expected [20, 20, 20, 60] should have the same contents.  (Testing with Float64Array.)'
@@ -430,12 +499,27 @@ test/intl402/DateTimeFormat/prototype/format/temporal-objects-not-overlapping-op
 test/intl402/DateTimeFormat/prototype/format/temporal-plaindate-formatting-datetime-style.js:
   default: 'TypeError: Temporal.PlainDate.prototype.valueOf must not be called. To compare PlainDate values, use Temporal.PlainDate.compare'
   strict mode: 'TypeError: Temporal.PlainDate.prototype.valueOf must not be called. To compare PlainDate values, use Temporal.PlainDate.compare'
+test/intl402/DateTimeFormat/prototype/format/temporal-plaindate-formatting-timezonename.js:
+  default: 'TypeError: Temporal.PlainDate.prototype.valueOf must not be called. To compare PlainDate values, use Temporal.PlainDate.compare'
+  strict mode: 'TypeError: Temporal.PlainDate.prototype.valueOf must not be called. To compare PlainDate values, use Temporal.PlainDate.compare'
 test/intl402/DateTimeFormat/prototype/format/temporal-plaindatetime-formatting-datetime-style.js:
   default: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
   strict mode: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
+test/intl402/DateTimeFormat/prototype/format/temporal-plaindatetime-formatting-timezonename.js:
+  default: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
+  strict mode: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
+test/intl402/DateTimeFormat/prototype/format/temporal-plainmonthday-formatting-timezonename.js:
+  default: 'TypeError: Temporal.PlainMonthDay.prototype.valueOf must not be called. To compare PlainMonthDay values, use Temporal.PlainDate.compare on the corresponding PlainDate objects.'
+  strict mode: 'TypeError: Temporal.PlainMonthDay.prototype.valueOf must not be called. To compare PlainMonthDay values, use Temporal.PlainDate.compare on the corresponding PlainDate objects.'
 test/intl402/DateTimeFormat/prototype/format/temporal-plaintime-formatting-datetime-style.js:
   default: 'TypeError: Temporal.PlainTime.prototype.valueOf must not be called. To compare PlainTime values, use Temporal.PlainTime.compare'
   strict mode: 'TypeError: Temporal.PlainTime.prototype.valueOf must not be called. To compare PlainTime values, use Temporal.PlainTime.compare'
+test/intl402/DateTimeFormat/prototype/format/temporal-plaintime-formatting-timezonename.js:
+  default: 'TypeError: Temporal.PlainTime.prototype.valueOf must not be called. To compare PlainTime values, use Temporal.PlainTime.compare'
+  strict mode: 'TypeError: Temporal.PlainTime.prototype.valueOf must not be called. To compare PlainTime values, use Temporal.PlainTime.compare'
+test/intl402/DateTimeFormat/prototype/format/temporal-plainyearmonth-formatting-timezonename.js:
+  default: 'TypeError: Temporal.PlainYearMonth.prototype.valueOf must not be called. To compare PlainYearMonth values, use Temporal.PlainYearMonth.compare'
+  strict mode: 'TypeError: Temporal.PlainYearMonth.prototype.valueOf must not be called. To compare PlainYearMonth values, use Temporal.PlainYearMonth.compare'
 test/intl402/DateTimeFormat/prototype/format/temporal-zoneddatetime-not-supported.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
@@ -448,6 +532,21 @@ test/intl402/DateTimeFormat/prototype/formatRange/temporal-objects-format-with-e
 test/intl402/DateTimeFormat/prototype/formatRange/temporal-objects-not-overlapping-options.js:
   default: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
   strict mode: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
+test/intl402/DateTimeFormat/prototype/formatRange/temporal-plaindate-formatting-timezonename.js:
+  default: 'TypeError: Temporal.PlainDate.prototype.valueOf must not be called. To compare PlainDate values, use Temporal.PlainDate.compare'
+  strict mode: 'TypeError: Temporal.PlainDate.prototype.valueOf must not be called. To compare PlainDate values, use Temporal.PlainDate.compare'
+test/intl402/DateTimeFormat/prototype/formatRange/temporal-plaindatetime-formatting-timezonename.js:
+  default: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
+  strict mode: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
+test/intl402/DateTimeFormat/prototype/formatRange/temporal-plainmonthday-formatting-timezonename.js:
+  default: 'TypeError: Temporal.PlainMonthDay.prototype.valueOf must not be called. To compare PlainMonthDay values, use Temporal.PlainDate.compare on the corresponding PlainDate objects.'
+  strict mode: 'TypeError: Temporal.PlainMonthDay.prototype.valueOf must not be called. To compare PlainMonthDay values, use Temporal.PlainDate.compare on the corresponding PlainDate objects.'
+test/intl402/DateTimeFormat/prototype/formatRange/temporal-plaintime-formatting-timezonename.js:
+  default: 'TypeError: Temporal.PlainTime.prototype.valueOf must not be called. To compare PlainTime values, use Temporal.PlainTime.compare'
+  strict mode: 'TypeError: Temporal.PlainTime.prototype.valueOf must not be called. To compare PlainTime values, use Temporal.PlainTime.compare'
+test/intl402/DateTimeFormat/prototype/formatRange/temporal-plainyearmonth-formatting-timezonename.js:
+  default: 'TypeError: Temporal.PlainYearMonth.prototype.valueOf must not be called. To compare PlainYearMonth values, use Temporal.PlainYearMonth.compare'
+  strict mode: 'TypeError: Temporal.PlainYearMonth.prototype.valueOf must not be called. To compare PlainYearMonth values, use Temporal.PlainYearMonth.compare'
 test/intl402/DateTimeFormat/prototype/formatRange/temporal-zoneddatetime-not-supported.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
@@ -463,21 +562,48 @@ test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-objects-format
 test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-objects-not-overlapping-options.js:
   default: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
   strict mode: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
+test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-plaindate-formatting-timezonename.js:
+  default: 'TypeError: Temporal.PlainDate.prototype.valueOf must not be called. To compare PlainDate values, use Temporal.PlainDate.compare'
+  strict mode: 'TypeError: Temporal.PlainDate.prototype.valueOf must not be called. To compare PlainDate values, use Temporal.PlainDate.compare'
+test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-plaindatetime-formatting-timezonename.js:
+  default: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
+  strict mode: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
+test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-plainmonthday-formatting-timezonename.js:
+  default: 'TypeError: Temporal.PlainMonthDay.prototype.valueOf must not be called. To compare PlainMonthDay values, use Temporal.PlainDate.compare on the corresponding PlainDate objects.'
+  strict mode: 'TypeError: Temporal.PlainMonthDay.prototype.valueOf must not be called. To compare PlainMonthDay values, use Temporal.PlainDate.compare on the corresponding PlainDate objects.'
+test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-plaintime-formatting-timezonename.js:
+  default: 'TypeError: Temporal.PlainTime.prototype.valueOf must not be called. To compare PlainTime values, use Temporal.PlainTime.compare'
+  strict mode: 'TypeError: Temporal.PlainTime.prototype.valueOf must not be called. To compare PlainTime values, use Temporal.PlainTime.compare'
+test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-plainyearmonth-formatting-timezonename.js:
+  default: 'TypeError: Temporal.PlainYearMonth.prototype.valueOf must not be called. To compare PlainYearMonth values, use Temporal.PlainYearMonth.compare'
+  strict mode: 'TypeError: Temporal.PlainYearMonth.prototype.valueOf must not be called. To compare PlainYearMonth values, use Temporal.PlainYearMonth.compare'
 test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-zoneddatetime-not-supported.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
 test/intl402/DateTimeFormat/prototype/formatRangeToParts/to-datetime-formattable-with-different-arg-kinds.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\")')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\")')"
-test/intl402/DateTimeFormat/prototype/formatToParts/dangi-calendar-dates.js:
-  default: "ReferenceError: Can't find variable: Temporal"
-  strict mode: "ReferenceError: Can't find variable: Temporal"
 test/intl402/DateTimeFormat/prototype/formatToParts/temporal-objects-format-with-era.js:
   default: 'TypeError: Temporal.PlainDate.prototype.valueOf must not be called. To compare PlainDate values, use Temporal.PlainDate.compare'
   strict mode: 'TypeError: Temporal.PlainDate.prototype.valueOf must not be called. To compare PlainDate values, use Temporal.PlainDate.compare'
 test/intl402/DateTimeFormat/prototype/formatToParts/temporal-objects-not-overlapping-options.js:
   default: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
   strict mode: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
+test/intl402/DateTimeFormat/prototype/formatToParts/temporal-plaindate-formatting-timezonename.js:
+  default: 'TypeError: Temporal.PlainDate.prototype.valueOf must not be called. To compare PlainDate values, use Temporal.PlainDate.compare'
+  strict mode: 'TypeError: Temporal.PlainDate.prototype.valueOf must not be called. To compare PlainDate values, use Temporal.PlainDate.compare'
+test/intl402/DateTimeFormat/prototype/formatToParts/temporal-plaindatetime-formatting-timezonename.js:
+  default: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
+  strict mode: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
+test/intl402/DateTimeFormat/prototype/formatToParts/temporal-plainmonthday-formatting-timezonename.js:
+  default: 'TypeError: Temporal.PlainMonthDay.prototype.valueOf must not be called. To compare PlainMonthDay values, use Temporal.PlainDate.compare on the corresponding PlainDate objects.'
+  strict mode: 'TypeError: Temporal.PlainMonthDay.prototype.valueOf must not be called. To compare PlainMonthDay values, use Temporal.PlainDate.compare on the corresponding PlainDate objects.'
+test/intl402/DateTimeFormat/prototype/formatToParts/temporal-plaintime-formatting-timezonename.js:
+  default: 'TypeError: Temporal.PlainTime.prototype.valueOf must not be called. To compare PlainTime values, use Temporal.PlainTime.compare'
+  strict mode: 'TypeError: Temporal.PlainTime.prototype.valueOf must not be called. To compare PlainTime values, use Temporal.PlainTime.compare'
+test/intl402/DateTimeFormat/prototype/formatToParts/temporal-plainyearmonth-formatting-timezonename.js:
+  default: 'TypeError: Temporal.PlainYearMonth.prototype.valueOf must not be called. To compare PlainYearMonth values, use Temporal.PlainYearMonth.compare'
+  strict mode: 'TypeError: Temporal.PlainYearMonth.prototype.valueOf must not be called. To compare PlainYearMonth values, use Temporal.PlainYearMonth.compare'
 test/intl402/DateTimeFormat/prototype/formatToParts/temporal-zoneddatetime-not-supported.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
@@ -547,6 +673,9 @@ test/intl402/Temporal/Instant/prototype/toLocaleString/default-includes-time-not
 test/intl402/Temporal/Instant/prototype/toLocaleString/era.js:
   default: 'Test262Error: toLocaleString on an Instant with era option should return the same results as toLocaleString on the same Date with the same options Expected SameValue(«"12/31/1969 A"», «"12/31/1969 A, 4:00:00 PM"») to be true'
   strict mode: 'Test262Error: toLocaleString on an Instant with era option should return the same results as toLocaleString on the same Date with the same options Expected SameValue(«"12/31/1969 A"», «"12/31/1969 A, 4:00:00 PM"») to be true'
+test/intl402/Temporal/Instant/prototype/toLocaleString/hourcycle.js:
+  default: 'Test262Error: output for hour12: false should include 00:00:00 Expected SameValue(«false», «true») to be true'
+  strict mode: 'Test262Error: output for hour12: false should include 00:00:00 Expected SameValue(«false», «true») to be true'
 test/intl402/Temporal/Instant/prototype/toLocaleString/lone-options-accepted.js:
   default: 'Test262Error: Instant.toLocaleString should format lone option {"timeZoneName":"short"} Expected SameValue(«"12/26/2024, PST"», «"12/26/2024, 3:46:40 AM PST"») to be true'
   strict mode: 'Test262Error: Instant.toLocaleString should format lone option {"timeZoneName":"short"} Expected SameValue(«"12/26/2024, PST"», «"12/26/2024, 3:46:40 AM PST"») to be true'

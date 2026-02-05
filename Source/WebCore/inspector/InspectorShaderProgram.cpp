@@ -89,7 +89,7 @@ bool InspectorShaderProgram::updateShader(Inspector::Protocol::Canvas::ShaderTyp
     RefPtr shader = shaderForType(m_program.get(), shaderType);
     if (!shader)
         return false;
-    auto* context = dynamicDowncast<WebGLRenderingContextBase>(m_canvas->canvasContext());
+    RefPtr context = dynamicDowncast<WebGLRenderingContextBase>(m_canvas->canvasContext());
     if (!context)
         return false;
     context->shaderSource(*shader, source);

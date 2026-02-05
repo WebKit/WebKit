@@ -53,22 +53,27 @@ enum MediaStreamTrackState { "live", "ended" };
     MediaTrackCapabilities getCapabilities();
     MediaTrackConstraints getConstraints();
     MediaTrackSettings getSettings();
-    Promise<undefined> applyConstraints(optional MediaTrackConstraints constraints);
+    Promise<undefined> applyConstraints(optional MediaTrackConstraints constraints = {});
 };
 
+// https://w3c.github.io/mediacapture-main/#dom-mediatracksettings
 [
     Conditional=MEDIA_STREAM,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary MediaTrackSettings {
+    // FIXME: `width` should be of type `unsigned long`.
     long width;
+    // FIXME: `height` should be of type `unsigned long`.
     long height;
     double aspectRatio;
     double frameRate;
     DOMString facingMode;
     double volume;
+    // FIXME: `sampleRate` should be of type `unsigned long`.
     long sampleRate;
+    // FIXME: `sampleSize` should be of type `unsigned long`.
     long sampleSize;
+    // FIXME: `echoCancellation` should be of type `(boolean or DOMString)`.
     boolean echoCancellation;
     // FIXME 169871: add latency
     // FIXME 169871: add channelCount

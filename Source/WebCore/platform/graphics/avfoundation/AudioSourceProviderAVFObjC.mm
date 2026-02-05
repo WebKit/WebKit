@@ -262,14 +262,14 @@ void AudioSourceProviderAVFObjC::initCallback(MTAudioProcessingTapRef tap, void*
 void AudioSourceProviderAVFObjC::finalizeCallback(MTAudioProcessingTapRef tap)
 {
     ASSERT(tap);
-    TapStorage* tapStorage = static_cast<TapStorage*>(PAL::MTAudioProcessingTapGetStorage(tap));
+    RefPtr tapStorage = static_cast<TapStorage*>(PAL::MTAudioProcessingTapGetStorage(tap));
     tapStorage->deref();
 }
 
 void AudioSourceProviderAVFObjC::prepareCallback(MTAudioProcessingTapRef tap, CMItemCount maxFrames, const AudioStreamBasicDescription *processingFormat)
 {
     ASSERT(tap);
-    TapStorage* tapStorage = static_cast<TapStorage*>(PAL::MTAudioProcessingTapGetStorage(tap));
+    RefPtr tapStorage = static_cast<TapStorage*>(PAL::MTAudioProcessingTapGetStorage(tap));
 
     Locker locker { tapStorage->lock };
 
@@ -280,7 +280,7 @@ void AudioSourceProviderAVFObjC::prepareCallback(MTAudioProcessingTapRef tap, CM
 void AudioSourceProviderAVFObjC::unprepareCallback(MTAudioProcessingTapRef tap)
 {
     ASSERT(tap);
-    TapStorage* tapStorage = static_cast<TapStorage*>(PAL::MTAudioProcessingTapGetStorage(tap));
+    RefPtr tapStorage = static_cast<TapStorage*>(PAL::MTAudioProcessingTapGetStorage(tap));
 
     Locker locker { tapStorage->lock };
 
@@ -291,7 +291,7 @@ void AudioSourceProviderAVFObjC::unprepareCallback(MTAudioProcessingTapRef tap)
 void AudioSourceProviderAVFObjC::processCallback(MTAudioProcessingTapRef tap, CMItemCount numberFrames, MTAudioProcessingTapFlags flags, AudioBufferList *bufferListInOut, CMItemCount *numberFramesOut, MTAudioProcessingTapFlags *flagsOut)
 {
     ASSERT(tap);
-    TapStorage* tapStorage = static_cast<TapStorage*>(PAL::MTAudioProcessingTapGetStorage(tap));
+    RefPtr tapStorage = static_cast<TapStorage*>(PAL::MTAudioProcessingTapGetStorage(tap));
 
     Locker locker { tapStorage->lock };
 
@@ -332,7 +332,7 @@ void AudioSourceProviderAVFObjC::prepare(CMItemCount maxFrames, const AudioStrea
 
     m_list = PAL::createAudioBufferList(numberOfChannels, PAL::ShouldZeroMemory::Yes);
     callOnMainThread([weakThis = m_weakFactory.createWeakPtr(*this), numberOfChannels, sampleRate] {
-        auto* self = weakThis.get();
+        RefPtr self = weakThis.get();
         if (!self)
             return;
         if (RefPtr client = self->m_client.get())

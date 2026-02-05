@@ -31,7 +31,7 @@
     SecureContext
 ]
 interface GPUTexture {
-    GPUTextureView createView(optional GPUTextureViewDescriptor descriptor);
+    GPUTextureView createView(optional GPUTextureViewDescriptor descriptor = {});
 
     undefined destroy();
 

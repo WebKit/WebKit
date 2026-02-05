@@ -24,11 +24,9 @@
 */
 
 // https://drafts.css-houdini.org/css-properties-values-api/#registering-custom-properties
-
 [
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary DOMCSSCustomPropertyDescriptor {
     required [AtomString] DOMString name;
              DOMString syntax       = "*";

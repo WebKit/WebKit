@@ -216,6 +216,7 @@ public:
     virtual void fillPath(const Path&) = 0;
     virtual void strokePath(const Path&) = 0;
     WEBCORE_EXPORT virtual void drawPath(const Path&);
+    WEBCORE_EXPORT virtual void strokeArc(const PathArc&);
 
     virtual void fillEllipse(const FloatRect& ellipse) { fillEllipseAsPath(ellipse); }
     virtual void strokeEllipse(const FloatRect& ellipse) { strokeEllipseAsPath(ellipse); }

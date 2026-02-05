@@ -28,8 +28,8 @@ void GL_APIENTRY GL_ActiveTexture(GLenum texture)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLActiveTexture, "context = %d, texture = %s", CID(context),
-          GLenumToString(GLESEnum::TextureUnit, texture));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLActiveTexture, "context = %d, texture = %s", CID(context),
+                            GLenumToString(GLESEnum::TextureUnit, texture)));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -67,8 +67,8 @@ void GL_APIENTRY GL_AttachShader(GLuint program, GLuint shader)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLAttachShader, "context = %d, program = %u, shader = %u", CID(context), program,
-          shader);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLAttachShader, "context = %d, program = %u, shader = %u",
+                            CID(context), program, shader));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -111,9 +111,9 @@ void GL_APIENTRY GL_BindAttribLocation(GLuint program, GLuint index, const GLcha
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLBindAttribLocation,
-          "context = %d, program = %u, index = %u, name = 0x%016" PRIxPTR "", CID(context), program,
-          index, (uintptr_t)name);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLBindAttribLocation,
+                            "context = %d, program = %u, index = %u, name = 0x%016" PRIxPTR "",
+                            CID(context), program, index, (uintptr_t)name));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -155,8 +155,9 @@ void GL_APIENTRY GL_BindBuffer(GLenum target, GLuint buffer)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLBindBuffer, "context = %d, target = %s, buffer = %u", CID(context),
-          GLenumToString(GLESEnum::BufferTargetARB, target), buffer);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLBindBuffer, "context = %d, target = %s, buffer = %u",
+                            CID(context), GLenumToString(GLESEnum::BufferTargetARB, target),
+                            buffer));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -195,8 +196,9 @@ void GL_APIENTRY GL_BindFramebuffer(GLenum target, GLuint framebuffer)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLBindFramebuffer, "context = %d, target = %s, framebuffer = %u", CID(context),
-          GLenumToString(GLESEnum::FramebufferTarget, target), framebuffer);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLBindFramebuffer,
+                            "context = %d, target = %s, framebuffer = %u", CID(context),
+                            GLenumToString(GLESEnum::FramebufferTarget, target), framebuffer));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -242,8 +244,9 @@ void GL_APIENTRY GL_BindRenderbuffer(GLenum target, GLuint renderbuffer)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLBindRenderbuffer, "context = %d, target = %s, renderbuffer = %u", CID(context),
-          GLenumToString(GLESEnum::RenderbufferTarget, target), renderbuffer);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLBindRenderbuffer,
+                            "context = %d, target = %s, renderbuffer = %u", CID(context),
+                            GLenumToString(GLESEnum::RenderbufferTarget, target), renderbuffer));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -285,8 +288,9 @@ void GL_APIENTRY GL_BindTexture(GLenum target, GLuint texture)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLBindTexture, "context = %d, target = %s, texture = %u", CID(context),
-          GLenumToString(GLESEnum::TextureTarget, target), texture);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLBindTexture, "context = %d, target = %s, texture = %u",
+                            CID(context), GLenumToString(GLESEnum::TextureTarget, target),
+                            texture));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -325,8 +329,9 @@ void GL_APIENTRY GL_BlendColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLBlendColor, "context = %d, red = %f, green = %f, blue = %f, alpha = %f",
-          CID(context), red, green, blue, alpha);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLBlendColor,
+                            "context = %d, red = %f, green = %f, blue = %f, alpha = %f",
+                            CID(context), red, green, blue, alpha));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -369,8 +374,8 @@ void GL_APIENTRY GL_BlendEquation(GLenum mode)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLBlendEquation, "context = %d, mode = %s", CID(context),
-          GLenumToString(GLESEnum::BlendEquationModeEXT, mode));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLBlendEquation, "context = %d, mode = %s", CID(context),
+                            GLenumToString(GLESEnum::BlendEquationModeEXT, mode)));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -412,9 +417,10 @@ void GL_APIENTRY GL_BlendEquationSeparate(GLenum modeRGB, GLenum modeAlpha)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLBlendEquationSeparate, "context = %d, modeRGB = %s, modeAlpha = %s",
-          CID(context), GLenumToString(GLESEnum::BlendEquationModeEXT, modeRGB),
-          GLenumToString(GLESEnum::BlendEquationModeEXT, modeAlpha));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLBlendEquationSeparate,
+                            "context = %d, modeRGB = %s, modeAlpha = %s", CID(context),
+                            GLenumToString(GLESEnum::BlendEquationModeEXT, modeRGB),
+                            GLenumToString(GLESEnum::BlendEquationModeEXT, modeAlpha)));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -457,9 +463,9 @@ void GL_APIENTRY GL_BlendFunc(GLenum sfactor, GLenum dfactor)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLBlendFunc, "context = %d, sfactor = %s, dfactor = %s", CID(context),
-          GLenumToString(GLESEnum::BlendingFactor, sfactor),
-          GLenumToString(GLESEnum::BlendingFactor, dfactor));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLBlendFunc, "context = %d, sfactor = %s, dfactor = %s",
+                            CID(context), GLenumToString(GLESEnum::BlendingFactor, sfactor),
+                            GLenumToString(GLESEnum::BlendingFactor, dfactor)));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -500,12 +506,13 @@ void GL_APIENTRY GL_BlendFuncSeparate(GLenum sfactorRGB,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLBlendFuncSeparate,
-          "context = %d, sfactorRGB = %s, dfactorRGB = %s, sfactorAlpha = %s, dfactorAlpha = %s",
-          CID(context), GLenumToString(GLESEnum::BlendingFactor, sfactorRGB),
-          GLenumToString(GLESEnum::BlendingFactor, dfactorRGB),
-          GLenumToString(GLESEnum::BlendingFactor, sfactorAlpha),
-          GLenumToString(GLESEnum::BlendingFactor, dfactorAlpha));
+    ANGLE_UNSAFE_TODO(EVENT(
+        context, GLBlendFuncSeparate,
+        "context = %d, sfactorRGB = %s, dfactorRGB = %s, sfactorAlpha = %s, dfactorAlpha = %s",
+        CID(context), GLenumToString(GLESEnum::BlendingFactor, sfactorRGB),
+        GLenumToString(GLESEnum::BlendingFactor, dfactorRGB),
+        GLenumToString(GLESEnum::BlendingFactor, sfactorAlpha),
+        GLenumToString(GLESEnum::BlendingFactor, dfactorAlpha)));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -550,11 +557,12 @@ void GL_APIENTRY GL_BufferData(GLenum target, GLsizeiptr size, const void *data,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLBufferData,
-          "context = %d, target = %s, size = %llu, data = 0x%016" PRIxPTR ", usage = %s",
-          CID(context), GLenumToString(GLESEnum::BufferTargetARB, target),
-          static_cast<unsigned long long>(size), (uintptr_t)data,
-          GLenumToString(GLESEnum::BufferUsageARB, usage));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLBufferData,
+                            "context = %d, target = %s, size = %llu, data = 0x%016" PRIxPTR
+                            ", usage = %s",
+                            CID(context), GLenumToString(GLESEnum::BufferTargetARB, target),
+                            static_cast<unsigned long long>(size), (uintptr_t)data,
+                            GLenumToString(GLESEnum::BufferUsageARB, usage)));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -593,11 +601,12 @@ void GL_APIENTRY GL_BufferSubData(GLenum target, GLintptr offset, GLsizeiptr siz
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLBufferSubData,
-          "context = %d, target = %s, offset = %llu, size = %llu, data = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLESEnum::BufferTargetARB, target),
-          static_cast<unsigned long long>(offset), static_cast<unsigned long long>(size),
-          (uintptr_t)data);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLBufferSubData,
+              "context = %d, target = %s, offset = %llu, size = %llu, data = 0x%016" PRIxPTR "",
+              CID(context), GLenumToString(GLESEnum::BufferTargetARB, target),
+              static_cast<unsigned long long>(offset), static_cast<unsigned long long>(size),
+              (uintptr_t)data));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -635,8 +644,8 @@ GLenum GL_APIENTRY GL_CheckFramebufferStatus(GLenum target)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLCheckFramebufferStatus, "context = %d, target = %s", CID(context),
-          GLenumToString(GLESEnum::FramebufferTarget, target));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLCheckFramebufferStatus, "context = %d, target = %s",
+                            CID(context), GLenumToString(GLESEnum::FramebufferTarget, target)));
 
     GLenum returnValue;
     if (ANGLE_LIKELY(context != nullptr))
@@ -685,8 +694,8 @@ void GL_APIENTRY GL_Clear(GLbitfield mask)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLClear, "context = %d, mask = %s", CID(context),
-          GLbitfieldToString(GLESEnum::ClearBufferMask, mask).c_str());
+    ANGLE_UNSAFE_TODO(EVENT(context, GLClear, "context = %d, mask = %s", CID(context),
+                            GLbitfieldToString(GLESEnum::ClearBufferMask, mask).c_str()));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -722,8 +731,9 @@ void GL_APIENTRY GL_ClearColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLClearColor, "context = %d, red = %f, green = %f, blue = %f, alpha = %f",
-          CID(context), red, green, blue, alpha);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLClearColor,
+                            "context = %d, red = %f, green = %f, blue = %f, alpha = %f",
+                            CID(context), red, green, blue, alpha));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -762,7 +772,7 @@ void GL_APIENTRY GL_ClearDepthf(GLfloat d)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLClearDepthf, "context = %d, d = %f", CID(context), d);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLClearDepthf, "context = %d, d = %f", CID(context), d));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -800,7 +810,7 @@ void GL_APIENTRY GL_ClearStencil(GLint s)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLClearStencil, "context = %d, s = %d", CID(context), s);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLClearStencil, "context = %d, s = %d", CID(context), s));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -838,9 +848,10 @@ void GL_APIENTRY GL_ColorMask(GLboolean red, GLboolean green, GLboolean blue, GL
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLColorMask, "context = %d, red = %s, green = %s, blue = %s, alpha = %s",
-          CID(context), GLbooleanToString(red), GLbooleanToString(green), GLbooleanToString(blue),
-          GLbooleanToString(alpha));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLColorMask,
+                            "context = %d, red = %s, green = %s, blue = %s, alpha = %s",
+                            CID(context), GLbooleanToString(red), GLbooleanToString(green),
+                            GLbooleanToString(blue), GLbooleanToString(alpha)));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -879,7 +890,8 @@ void GL_APIENTRY GL_CompileShader(GLuint shader)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLCompileShader, "context = %d, shader = %u", CID(context), shader);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLCompileShader, "context = %d, shader = %u", CID(context), shader));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -928,12 +940,13 @@ void GL_APIENTRY GL_CompressedTexImage2D(GLenum target,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLCompressedTexImage2D,
-          "context = %d, target = %s, level = %d, internalformat = %s, width = %d, height = %d, "
-          "border = %d, imageSize = %d, data = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLESEnum::TextureTarget, target), level,
-          GLenumToString(GLESEnum::InternalFormat, internalformat), width, height, border,
-          imageSize, (uintptr_t)data);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLCompressedTexImage2D,
+                            "context = %d, target = %s, level = %d, internalformat = %s, width = "
+                            "%d, height = %d, border = %d, imageSize = %d, data = 0x%016" PRIxPTR
+                            "",
+                            CID(context), GLenumToString(GLESEnum::TextureTarget, target), level,
+                            GLenumToString(GLESEnum::InternalFormat, internalformat), width, height,
+                            border, imageSize, (uintptr_t)data));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -982,12 +995,13 @@ void GL_APIENTRY GL_CompressedTexSubImage2D(GLenum target,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLCompressedTexSubImage2D,
-          "context = %d, target = %s, level = %d, xoffset = %d, yoffset = %d, width = %d, height = "
-          "%d, format = %s, imageSize = %d, data = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLESEnum::TextureTarget, target), level, xoffset, yoffset,
-          width, height, GLenumToString(GLESEnum::InternalFormat, format), imageSize,
-          (uintptr_t)data);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLCompressedTexSubImage2D,
+              "context = %d, target = %s, level = %d, xoffset = %d, yoffset = %d, width = %d, "
+              "height = %d, format = %s, imageSize = %d, data = 0x%016" PRIxPTR "",
+              CID(context), GLenumToString(GLESEnum::TextureTarget, target), level, xoffset,
+              yoffset, width, height, GLenumToString(GLESEnum::InternalFormat, format), imageSize,
+              (uintptr_t)data));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -1036,11 +1050,12 @@ void GL_APIENTRY GL_CopyTexImage2D(GLenum target,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLCopyTexImage2D,
-          "context = %d, target = %s, level = %d, internalformat = %s, x = %d, y = %d, width = %d, "
-          "height = %d, border = %d",
-          CID(context), GLenumToString(GLESEnum::TextureTarget, target), level,
-          GLenumToString(GLESEnum::InternalFormat, internalformat), x, y, width, height, border);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLCopyTexImage2D,
+                            "context = %d, target = %s, level = %d, internalformat = %s, x = %d, y "
+                            "= %d, width = %d, height = %d, border = %d",
+                            CID(context), GLenumToString(GLESEnum::TextureTarget, target), level,
+                            GLenumToString(GLESEnum::InternalFormat, internalformat), x, y, width,
+                            height, border));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -1092,11 +1107,11 @@ void GL_APIENTRY GL_CopyTexSubImage2D(GLenum target,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLCopyTexSubImage2D,
-          "context = %d, target = %s, level = %d, xoffset = %d, yoffset = %d, x = %d, y = %d, "
-          "width = %d, height = %d",
-          CID(context), GLenumToString(GLESEnum::TextureTarget, target), level, xoffset, yoffset, x,
-          y, width, height);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLCopyTexSubImage2D,
+                            "context = %d, target = %s, level = %d, xoffset = %d, yoffset = %d, x "
+                            "= %d, y = %d, width = %d, height = %d",
+                            CID(context), GLenumToString(GLESEnum::TextureTarget, target), level,
+                            xoffset, yoffset, x, y, width, height));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -1140,7 +1155,7 @@ GLuint GL_APIENTRY GL_CreateProgram()
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLCreateProgram, "context = %d", CID(context));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLCreateProgram, "context = %d", CID(context)));
 
     GLuint returnValue;
     if (ANGLE_LIKELY(context != nullptr))
@@ -1187,8 +1202,8 @@ GLuint GL_APIENTRY GL_CreateShader(GLenum type)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLCreateShader, "context = %d, type = %s", CID(context),
-          GLenumToString(GLESEnum::ShaderType, type));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLCreateShader, "context = %d, type = %s", CID(context),
+                            GLenumToString(GLESEnum::ShaderType, type)));
 
     GLuint returnValue;
     if (ANGLE_LIKELY(context != nullptr))
@@ -1237,8 +1252,8 @@ void GL_APIENTRY GL_CullFace(GLenum mode)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLCullFace, "context = %d, mode = %s", CID(context),
-          GLenumToString(GLESEnum::TriangleFace, mode));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLCullFace, "context = %d, mode = %s", CID(context),
+                            GLenumToString(GLESEnum::TriangleFace, mode)));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -1277,8 +1292,9 @@ void GL_APIENTRY GL_DeleteBuffers(GLsizei n, const GLuint *buffers)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLDeleteBuffers, "context = %d, n = %d, buffers = 0x%016" PRIxPTR "",
-          CID(context), n, (uintptr_t)buffers);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLDeleteBuffers,
+                            "context = %d, n = %d, buffers = 0x%016" PRIxPTR "", CID(context), n,
+                            (uintptr_t)buffers));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -1316,8 +1332,9 @@ void GL_APIENTRY GL_DeleteFramebuffers(GLsizei n, const GLuint *framebuffers)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLDeleteFramebuffers, "context = %d, n = %d, framebuffers = 0x%016" PRIxPTR "",
-          CID(context), n, (uintptr_t)framebuffers);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLDeleteFramebuffers,
+                            "context = %d, n = %d, framebuffers = 0x%016" PRIxPTR "", CID(context),
+                            n, (uintptr_t)framebuffers));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -1359,7 +1376,8 @@ void GL_APIENTRY GL_DeleteProgram(GLuint program)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLDeleteProgram, "context = %d, program = %u", CID(context), program);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLDeleteProgram, "context = %d, program = %u", CID(context), program));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -1401,8 +1419,9 @@ void GL_APIENTRY GL_DeleteRenderbuffers(GLsizei n, const GLuint *renderbuffers)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLDeleteRenderbuffers, "context = %d, n = %d, renderbuffers = 0x%016" PRIxPTR "",
-          CID(context), n, (uintptr_t)renderbuffers);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLDeleteRenderbuffers,
+                            "context = %d, n = %d, renderbuffers = 0x%016" PRIxPTR "", CID(context),
+                            n, (uintptr_t)renderbuffers));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -1445,7 +1464,8 @@ void GL_APIENTRY GL_DeleteShader(GLuint shader)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLDeleteShader, "context = %d, shader = %u", CID(context), shader);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLDeleteShader, "context = %d, shader = %u", CID(context), shader));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -1487,8 +1507,9 @@ void GL_APIENTRY GL_DeleteTextures(GLsizei n, const GLuint *textures)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLDeleteTextures, "context = %d, n = %d, textures = 0x%016" PRIxPTR "",
-          CID(context), n, (uintptr_t)textures);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLDeleteTextures,
+                            "context = %d, n = %d, textures = 0x%016" PRIxPTR "", CID(context), n,
+                            (uintptr_t)textures));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -1526,8 +1547,8 @@ void GL_APIENTRY GL_DepthFunc(GLenum func)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLDepthFunc, "context = %d, func = %s", CID(context),
-          GLenumToString(GLESEnum::DepthFunction, func));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLDepthFunc, "context = %d, func = %s", CID(context),
+                            GLenumToString(GLESEnum::DepthFunction, func)));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -1565,7 +1586,8 @@ void GL_APIENTRY GL_DepthMask(GLboolean flag)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLDepthMask, "context = %d, flag = %s", CID(context), GLbooleanToString(flag));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLDepthMask, "context = %d, flag = %s", CID(context),
+                            GLbooleanToString(flag)));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -1603,7 +1625,8 @@ void GL_APIENTRY GL_DepthRangef(GLfloat n, GLfloat f)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLDepthRangef, "context = %d, n = %f, f = %f", CID(context), n, f);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLDepthRangef, "context = %d, n = %f, f = %f", CID(context), n, f));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -1641,8 +1664,8 @@ void GL_APIENTRY GL_DetachShader(GLuint program, GLuint shader)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLDetachShader, "context = %d, program = %u, shader = %u", CID(context), program,
-          shader);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLDetachShader, "context = %d, program = %u, shader = %u",
+                            CID(context), program, shader));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -1685,8 +1708,8 @@ void GL_APIENTRY GL_Disable(GLenum cap)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLDisable, "context = %d, cap = %s", CID(context),
-          GLenumToString(GLESEnum::EnableCap, cap));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLDisable, "context = %d, cap = %s", CID(context),
+                            GLenumToString(GLESEnum::EnableCap, cap)));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -1724,7 +1747,8 @@ void GL_APIENTRY GL_DisableVertexAttribArray(GLuint index)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLDisableVertexAttribArray, "context = %d, index = %u", CID(context), index);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLDisableVertexAttribArray, "context = %d, index = %u",
+                            CID(context), index));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -1767,8 +1791,9 @@ void GL_APIENTRY GL_DrawArrays(GLenum mode, GLint first, GLsizei count)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLDrawArrays, "context = %d, mode = %s, first = %d, count = %d", CID(context),
-          GLenumToString(GLESEnum::PrimitiveType, mode), first, count);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLDrawArrays,
+                            "context = %d, mode = %s, first = %d, count = %d", CID(context),
+                            GLenumToString(GLESEnum::PrimitiveType, mode), first, count));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -1806,10 +1831,11 @@ void GL_APIENTRY GL_DrawElements(GLenum mode, GLsizei count, GLenum type, const 
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLDrawElements,
-          "context = %d, mode = %s, count = %d, type = %s, indices = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLESEnum::PrimitiveType, mode), count,
-          GLenumToString(GLESEnum::DrawElementsType, type), (uintptr_t)indices);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLDrawElements,
+              "context = %d, mode = %s, count = %d, type = %s, indices = 0x%016" PRIxPTR "",
+              CID(context), GLenumToString(GLESEnum::PrimitiveType, mode), count,
+              GLenumToString(GLESEnum::DrawElementsType, type), (uintptr_t)indices));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -1849,8 +1875,8 @@ void GL_APIENTRY GL_Enable(GLenum cap)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLEnable, "context = %d, cap = %s", CID(context),
-          GLenumToString(GLESEnum::EnableCap, cap));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLEnable, "context = %d, cap = %s", CID(context),
+                            GLenumToString(GLESEnum::EnableCap, cap)));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -1888,7 +1914,8 @@ void GL_APIENTRY GL_EnableVertexAttribArray(GLuint index)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLEnableVertexAttribArray, "context = %d, index = %u", CID(context), index);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLEnableVertexAttribArray, "context = %d, index = %u", CID(context), index));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -1931,7 +1958,7 @@ void GL_APIENTRY GL_Finish()
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLFinish, "context = %d", CID(context));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLFinish, "context = %d", CID(context)));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -1967,7 +1994,7 @@ void GL_APIENTRY GL_Flush()
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLFlush, "context = %d", CID(context));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLFlush, "context = %d", CID(context)));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -2006,11 +2033,12 @@ void GL_APIENTRY GL_FramebufferRenderbuffer(GLenum target,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLFramebufferRenderbuffer,
-          "context = %d, target = %s, attachment = %s, renderbuffertarget = %s, renderbuffer = %u",
-          CID(context), GLenumToString(GLESEnum::FramebufferTarget, target),
-          GLenumToString(GLESEnum::FramebufferAttachment, attachment),
-          GLenumToString(GLESEnum::RenderbufferTarget, renderbuffertarget), renderbuffer);
+    ANGLE_UNSAFE_TODO(EVENT(
+        context, GLFramebufferRenderbuffer,
+        "context = %d, target = %s, attachment = %s, renderbuffertarget = %s, renderbuffer = %u",
+        CID(context), GLenumToString(GLESEnum::FramebufferTarget, target),
+        GLenumToString(GLESEnum::FramebufferAttachment, attachment),
+        GLenumToString(GLESEnum::RenderbufferTarget, renderbuffertarget), renderbuffer));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -2064,11 +2092,12 @@ void GL_APIENTRY GL_FramebufferTexture2D(GLenum target,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLFramebufferTexture2D,
-          "context = %d, target = %s, attachment = %s, textarget = %s, texture = %u, level = %d",
-          CID(context), GLenumToString(GLESEnum::FramebufferTarget, target),
-          GLenumToString(GLESEnum::FramebufferAttachment, attachment),
-          GLenumToString(GLESEnum::TextureTarget, textarget), texture, level);
+    ANGLE_UNSAFE_TODO(EVENT(
+        context, GLFramebufferTexture2D,
+        "context = %d, target = %s, attachment = %s, textarget = %s, texture = %u, level = %d",
+        CID(context), GLenumToString(GLESEnum::FramebufferTarget, target),
+        GLenumToString(GLESEnum::FramebufferAttachment, attachment),
+        GLenumToString(GLESEnum::TextureTarget, textarget), texture, level));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -2118,8 +2147,8 @@ void GL_APIENTRY GL_FrontFace(GLenum mode)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLFrontFace, "context = %d, mode = %s", CID(context),
-          GLenumToString(GLESEnum::FrontFaceDirection, mode));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLFrontFace, "context = %d, mode = %s", CID(context),
+                            GLenumToString(GLESEnum::FrontFaceDirection, mode)));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -2157,8 +2186,9 @@ void GL_APIENTRY GL_GenBuffers(GLsizei n, GLuint *buffers)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGenBuffers, "context = %d, n = %d, buffers = 0x%016" PRIxPTR "", CID(context),
-          n, (uintptr_t)buffers);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGenBuffers,
+                            "context = %d, n = %d, buffers = 0x%016" PRIxPTR "", CID(context), n,
+                            (uintptr_t)buffers));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -2196,8 +2226,9 @@ void GL_APIENTRY GL_GenFramebuffers(GLsizei n, GLuint *framebuffers)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGenFramebuffers, "context = %d, n = %d, framebuffers = 0x%016" PRIxPTR "",
-          CID(context), n, (uintptr_t)framebuffers);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGenFramebuffers,
+                            "context = %d, n = %d, framebuffers = 0x%016" PRIxPTR "", CID(context),
+                            n, (uintptr_t)framebuffers));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -2239,8 +2270,9 @@ void GL_APIENTRY GL_GenRenderbuffers(GLsizei n, GLuint *renderbuffers)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGenRenderbuffers, "context = %d, n = %d, renderbuffers = 0x%016" PRIxPTR "",
-          CID(context), n, (uintptr_t)renderbuffers);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGenRenderbuffers,
+                            "context = %d, n = %d, renderbuffers = 0x%016" PRIxPTR "", CID(context),
+                            n, (uintptr_t)renderbuffers));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -2282,8 +2314,9 @@ void GL_APIENTRY GL_GenTextures(GLsizei n, GLuint *textures)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGenTextures, "context = %d, n = %d, textures = 0x%016" PRIxPTR "",
-          CID(context), n, (uintptr_t)textures);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGenTextures,
+                            "context = %d, n = %d, textures = 0x%016" PRIxPTR "", CID(context), n,
+                            (uintptr_t)textures));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -2321,8 +2354,8 @@ void GL_APIENTRY GL_GenerateMipmap(GLenum target)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGenerateMipmap, "context = %d, target = %s", CID(context),
-          GLenumToString(GLESEnum::TextureTarget, target));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGenerateMipmap, "context = %d, target = %s", CID(context),
+                            GLenumToString(GLESEnum::TextureTarget, target)));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -2370,11 +2403,12 @@ void GL_APIENTRY GL_GetActiveAttrib(GLuint program,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetActiveAttrib,
-          "context = %d, program = %u, index = %u, bufSize = %d, length = 0x%016" PRIxPTR
-          ", size = 0x%016" PRIxPTR ", type = 0x%016" PRIxPTR ", name = 0x%016" PRIxPTR "",
-          CID(context), program, index, bufSize, (uintptr_t)length, (uintptr_t)size,
-          (uintptr_t)type, (uintptr_t)name);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLGetActiveAttrib,
+              "context = %d, program = %u, index = %u, bufSize = %d, length = 0x%016" PRIxPTR
+              ", size = 0x%016" PRIxPTR ", type = 0x%016" PRIxPTR ", name = 0x%016" PRIxPTR "",
+              CID(context), program, index, bufSize, (uintptr_t)length, (uintptr_t)size,
+              (uintptr_t)type, (uintptr_t)name));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -2424,11 +2458,12 @@ void GL_APIENTRY GL_GetActiveUniform(GLuint program,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetActiveUniform,
-          "context = %d, program = %u, index = %u, bufSize = %d, length = 0x%016" PRIxPTR
-          ", size = 0x%016" PRIxPTR ", type = 0x%016" PRIxPTR ", name = 0x%016" PRIxPTR "",
-          CID(context), program, index, bufSize, (uintptr_t)length, (uintptr_t)size,
-          (uintptr_t)type, (uintptr_t)name);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLGetActiveUniform,
+              "context = %d, program = %u, index = %u, bufSize = %d, length = 0x%016" PRIxPTR
+              ", size = 0x%016" PRIxPTR ", type = 0x%016" PRIxPTR ", name = 0x%016" PRIxPTR "",
+              CID(context), program, index, bufSize, (uintptr_t)length, (uintptr_t)size,
+              (uintptr_t)type, (uintptr_t)name));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -2475,10 +2510,10 @@ void GL_APIENTRY GL_GetAttachedShaders(GLuint program,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetAttachedShaders,
-          "context = %d, program = %u, maxCount = %d, count = 0x%016" PRIxPTR
-          ", shaders = 0x%016" PRIxPTR "",
-          CID(context), program, maxCount, (uintptr_t)count, (uintptr_t)shaders);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGetAttachedShaders,
+                            "context = %d, program = %u, maxCount = %d, count = 0x%016" PRIxPTR
+                            ", shaders = 0x%016" PRIxPTR "",
+                            CID(context), program, maxCount, (uintptr_t)count, (uintptr_t)shaders));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -2523,8 +2558,9 @@ GLint GL_APIENTRY GL_GetAttribLocation(GLuint program, const GLchar *name)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetAttribLocation, "context = %d, program = %u, name = 0x%016" PRIxPTR "",
-          CID(context), program, (uintptr_t)name);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGetAttribLocation,
+                            "context = %d, program = %u, name = 0x%016" PRIxPTR "", CID(context),
+                            program, (uintptr_t)name));
 
     GLint returnValue;
     if (ANGLE_LIKELY(context != nullptr))
@@ -2573,8 +2609,9 @@ void GL_APIENTRY GL_GetBooleanv(GLenum pname, GLboolean *data)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetBooleanv, "context = %d, pname = %s, data = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLESEnum::GetPName, pname), (uintptr_t)data);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGetBooleanv,
+                            "context = %d, pname = %s, data = 0x%016" PRIxPTR "", CID(context),
+                            GLenumToString(GLESEnum::GetPName, pname), (uintptr_t)data));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -2611,10 +2648,10 @@ void GL_APIENTRY GL_GetBufferParameteriv(GLenum target, GLenum pname, GLint *par
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetBufferParameteriv,
-          "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLESEnum::BufferTargetARB, target),
-          GLenumToString(GLESEnum::AllEnums, pname), (uintptr_t)params);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGetBufferParameteriv,
+                            "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "",
+                            CID(context), GLenumToString(GLESEnum::BufferTargetARB, target),
+                            GLenumToString(GLESEnum::AllEnums, pname), (uintptr_t)params));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -2653,7 +2690,7 @@ GLenum GL_APIENTRY GL_GetError()
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetGlobalContext();
-    EVENT(context, GLGetError, "context = %d", CID(context));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGetError, "context = %d", CID(context)));
 
     GLenum returnValue;
     if (ANGLE_LIKELY(context != nullptr))
@@ -2696,8 +2733,9 @@ void GL_APIENTRY GL_GetFloatv(GLenum pname, GLfloat *data)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetFloatv, "context = %d, pname = %s, data = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLESEnum::GetPName, pname), (uintptr_t)data);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGetFloatv,
+                            "context = %d, pname = %s, data = 0x%016" PRIxPTR "", CID(context),
+                            GLenumToString(GLESEnum::GetPName, pname), (uintptr_t)data));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -2737,11 +2775,12 @@ void GL_APIENTRY GL_GetFramebufferAttachmentParameteriv(GLenum target,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetFramebufferAttachmentParameteriv,
-          "context = %d, target = %s, attachment = %s, pname = %s, params = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLESEnum::FramebufferTarget, target),
-          GLenumToString(GLESEnum::FramebufferAttachment, attachment),
-          GLenumToString(GLESEnum::FramebufferAttachmentParameterName, pname), (uintptr_t)params);
+    ANGLE_UNSAFE_TODO(EVENT(
+        context, GLGetFramebufferAttachmentParameteriv,
+        "context = %d, target = %s, attachment = %s, pname = %s, params = 0x%016" PRIxPTR "",
+        CID(context), GLenumToString(GLESEnum::FramebufferTarget, target),
+        GLenumToString(GLESEnum::FramebufferAttachment, attachment),
+        GLenumToString(GLESEnum::FramebufferAttachmentParameterName, pname), (uintptr_t)params));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -2786,8 +2825,9 @@ void GL_APIENTRY GL_GetIntegerv(GLenum pname, GLint *data)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetIntegerv, "context = %d, pname = %s, data = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLESEnum::GetPName, pname), (uintptr_t)data);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGetIntegerv,
+                            "context = %d, pname = %s, data = 0x%016" PRIxPTR "", CID(context),
+                            GLenumToString(GLESEnum::GetPName, pname), (uintptr_t)data));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -2827,10 +2867,10 @@ void GL_APIENTRY GL_GetProgramInfoLog(GLuint program,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetProgramInfoLog,
-          "context = %d, program = %u, bufSize = %d, length = 0x%016" PRIxPTR
-          ", infoLog = 0x%016" PRIxPTR "",
-          CID(context), program, bufSize, (uintptr_t)length, (uintptr_t)infoLog);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGetProgramInfoLog,
+                            "context = %d, program = %u, bufSize = %d, length = 0x%016" PRIxPTR
+                            ", infoLog = 0x%016" PRIxPTR "",
+                            CID(context), program, bufSize, (uintptr_t)length, (uintptr_t)infoLog));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -2874,9 +2914,10 @@ void GL_APIENTRY GL_GetProgramiv(GLuint program, GLenum pname, GLint *params)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetGlobalContext();
-    EVENT(context, GLGetProgramiv,
-          "context = %d, program = %u, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
-          program, GLenumToString(GLESEnum::ProgramPropertyARB, pname), (uintptr_t)params);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLGetProgramiv,
+              "context = %d, program = %u, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
+              program, GLenumToString(GLESEnum::ProgramPropertyARB, pname), (uintptr_t)params));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -2917,10 +2958,11 @@ void GL_APIENTRY GL_GetRenderbufferParameteriv(GLenum target, GLenum pname, GLin
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetRenderbufferParameteriv,
-          "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLESEnum::RenderbufferTarget, target),
-          GLenumToString(GLESEnum::RenderbufferParameterName, pname), (uintptr_t)params);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGetRenderbufferParameteriv,
+                            "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "",
+                            CID(context), GLenumToString(GLESEnum::RenderbufferTarget, target),
+                            GLenumToString(GLESEnum::RenderbufferParameterName, pname),
+                            (uintptr_t)params));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -2966,10 +3008,10 @@ void GL_APIENTRY GL_GetShaderInfoLog(GLuint shader,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetShaderInfoLog,
-          "context = %d, shader = %u, bufSize = %d, length = 0x%016" PRIxPTR
-          ", infoLog = 0x%016" PRIxPTR "",
-          CID(context), shader, bufSize, (uintptr_t)length, (uintptr_t)infoLog);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGetShaderInfoLog,
+                            "context = %d, shader = %u, bufSize = %d, length = 0x%016" PRIxPTR
+                            ", infoLog = 0x%016" PRIxPTR "",
+                            CID(context), shader, bufSize, (uintptr_t)length, (uintptr_t)infoLog));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -3016,12 +3058,13 @@ void GL_APIENTRY GL_GetShaderPrecisionFormat(GLenum shadertype,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetShaderPrecisionFormat,
-          "context = %d, shadertype = %s, precisiontype = %s, range = 0x%016" PRIxPTR
-          ", precision = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLESEnum::ShaderType, shadertype),
-          GLenumToString(GLESEnum::PrecisionType, precisiontype), (uintptr_t)range,
-          (uintptr_t)precision);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLGetShaderPrecisionFormat,
+              "context = %d, shadertype = %s, precisiontype = %s, range = 0x%016" PRIxPTR
+              ", precision = 0x%016" PRIxPTR "",
+              CID(context), GLenumToString(GLESEnum::ShaderType, shadertype),
+              GLenumToString(GLESEnum::PrecisionType, precisiontype), (uintptr_t)range,
+              (uintptr_t)precision));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -3065,10 +3108,10 @@ void GL_APIENTRY GL_GetShaderSource(GLuint shader, GLsizei bufSize, GLsizei *len
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetShaderSource,
-          "context = %d, shader = %u, bufSize = %d, length = 0x%016" PRIxPTR
-          ", source = 0x%016" PRIxPTR "",
-          CID(context), shader, bufSize, (uintptr_t)length, (uintptr_t)source);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGetShaderSource,
+                            "context = %d, shader = %u, bufSize = %d, length = 0x%016" PRIxPTR
+                            ", source = 0x%016" PRIxPTR "",
+                            CID(context), shader, bufSize, (uintptr_t)length, (uintptr_t)source));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -3111,9 +3154,10 @@ void GL_APIENTRY GL_GetShaderiv(GLuint shader, GLenum pname, GLint *params)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetGlobalContext();
-    EVENT(context, GLGetShaderiv,
-          "context = %d, shader = %u, pname = %s, params = 0x%016" PRIxPTR "", CID(context), shader,
-          GLenumToString(GLESEnum::ShaderParameterName, pname), (uintptr_t)params);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLGetShaderiv,
+              "context = %d, shader = %u, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
+              shader, GLenumToString(GLESEnum::ShaderParameterName, pname), (uintptr_t)params));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -3154,8 +3198,8 @@ const GLubyte *GL_APIENTRY GL_GetString(GLenum name)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetString, "context = %d, name = %s", CID(context),
-          GLenumToString(GLESEnum::StringName, name));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGetString, "context = %d, name = %s", CID(context),
+                            GLenumToString(GLESEnum::StringName, name)));
 
     const GLubyte *returnValue;
     if (ANGLE_LIKELY(context != nullptr))
@@ -3198,10 +3242,11 @@ void GL_APIENTRY GL_GetTexParameterfv(GLenum target, GLenum pname, GLfloat *para
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetTexParameterfv,
-          "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLESEnum::TextureTarget, target),
-          GLenumToString(GLESEnum::GetTextureParameter, pname), (uintptr_t)params);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGetTexParameterfv,
+                            "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "",
+                            CID(context), GLenumToString(GLESEnum::TextureTarget, target),
+                            GLenumToString(GLESEnum::GetTextureParameter, pname),
+                            (uintptr_t)params));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -3239,10 +3284,11 @@ void GL_APIENTRY GL_GetTexParameteriv(GLenum target, GLenum pname, GLint *params
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetTexParameteriv,
-          "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLESEnum::TextureTarget, target),
-          GLenumToString(GLESEnum::GetTextureParameter, pname), (uintptr_t)params);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGetTexParameteriv,
+                            "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "",
+                            CID(context), GLenumToString(GLESEnum::TextureTarget, target),
+                            GLenumToString(GLESEnum::GetTextureParameter, pname),
+                            (uintptr_t)params));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -3280,8 +3326,9 @@ GLint GL_APIENTRY GL_GetUniformLocation(GLuint program, const GLchar *name)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetUniformLocation, "context = %d, program = %u, name = 0x%016" PRIxPTR "",
-          CID(context), program, (uintptr_t)name);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGetUniformLocation,
+                            "context = %d, program = %u, name = 0x%016" PRIxPTR "", CID(context),
+                            program, (uintptr_t)name));
 
     GLint returnValue;
     if (ANGLE_LIKELY(context != nullptr))
@@ -3331,9 +3378,9 @@ void GL_APIENTRY GL_GetUniformfv(GLuint program, GLint location, GLfloat *params
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetUniformfv,
-          "context = %d, program = %u, location = %d, params = 0x%016" PRIxPTR "", CID(context),
-          program, location, (uintptr_t)params);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGetUniformfv,
+                            "context = %d, program = %u, location = %d, params = 0x%016" PRIxPTR "",
+                            CID(context), program, location, (uintptr_t)params));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -3376,9 +3423,9 @@ void GL_APIENTRY GL_GetUniformiv(GLuint program, GLint location, GLint *params)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetUniformiv,
-          "context = %d, program = %u, location = %d, params = 0x%016" PRIxPTR "", CID(context),
-          program, location, (uintptr_t)params);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGetUniformiv,
+                            "context = %d, program = %u, location = %d, params = 0x%016" PRIxPTR "",
+                            CID(context), program, location, (uintptr_t)params));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -3421,9 +3468,10 @@ void GL_APIENTRY GL_GetVertexAttribPointerv(GLuint index, GLenum pname, void **p
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetVertexAttribPointerv,
-          "context = %d, index = %u, pname = %s, pointer = 0x%016" PRIxPTR "", CID(context), index,
-          GLenumToString(GLESEnum::AllEnums, pname), (uintptr_t)pointer);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGetVertexAttribPointerv,
+                            "context = %d, index = %u, pname = %s, pointer = 0x%016" PRIxPTR "",
+                            CID(context), index, GLenumToString(GLESEnum::AllEnums, pname),
+                            (uintptr_t)pointer));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -3465,9 +3513,10 @@ void GL_APIENTRY GL_GetVertexAttribfv(GLuint index, GLenum pname, GLfloat *param
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetVertexAttribfv,
-          "context = %d, index = %u, pname = %s, params = 0x%016" PRIxPTR "", CID(context), index,
-          GLenumToString(GLESEnum::AllEnums, pname), (uintptr_t)params);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGetVertexAttribfv,
+                            "context = %d, index = %u, pname = %s, params = 0x%016" PRIxPTR "",
+                            CID(context), index, GLenumToString(GLESEnum::AllEnums, pname),
+                            (uintptr_t)params));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -3508,9 +3557,10 @@ void GL_APIENTRY GL_GetVertexAttribiv(GLuint index, GLenum pname, GLint *params)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLGetVertexAttribiv,
-          "context = %d, index = %u, pname = %s, params = 0x%016" PRIxPTR "", CID(context), index,
-          GLenumToString(GLESEnum::AllEnums, pname), (uintptr_t)params);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLGetVertexAttribiv,
+                            "context = %d, index = %u, pname = %s, params = 0x%016" PRIxPTR "",
+                            CID(context), index, GLenumToString(GLESEnum::AllEnums, pname),
+                            (uintptr_t)params));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -3551,8 +3601,9 @@ void GL_APIENTRY GL_Hint(GLenum target, GLenum mode)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLHint, "context = %d, target = %s, mode = %s", CID(context),
-          GLenumToString(GLESEnum::HintTarget, target), GLenumToString(GLESEnum::HintMode, mode));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLHint, "context = %d, target = %s, mode = %s", CID(context),
+                            GLenumToString(GLESEnum::HintTarget, target),
+                            GLenumToString(GLESEnum::HintMode, mode)));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -3590,7 +3641,8 @@ GLboolean GL_APIENTRY GL_IsBuffer(GLuint buffer)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLIsBuffer, "context = %d, buffer = %u", CID(context), buffer);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLIsBuffer, "context = %d, buffer = %u", CID(context), buffer));
 
     GLboolean returnValue;
     if (ANGLE_LIKELY(context != nullptr))
@@ -3635,8 +3687,8 @@ GLboolean GL_APIENTRY GL_IsEnabled(GLenum cap)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLIsEnabled, "context = %d, cap = %s", CID(context),
-          GLenumToString(GLESEnum::EnableCap, cap));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLIsEnabled, "context = %d, cap = %s", CID(context),
+                            GLenumToString(GLESEnum::EnableCap, cap)));
 
     GLboolean returnValue;
     if (ANGLE_LIKELY(context != nullptr))
@@ -3681,7 +3733,8 @@ GLboolean GL_APIENTRY GL_IsFramebuffer(GLuint framebuffer)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLIsFramebuffer, "context = %d, framebuffer = %u", CID(context), framebuffer);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLIsFramebuffer, "context = %d, framebuffer = %u",
+                            CID(context), framebuffer));
 
     GLboolean returnValue;
     if (ANGLE_LIKELY(context != nullptr))
@@ -3730,7 +3783,8 @@ GLboolean GL_APIENTRY GL_IsProgram(GLuint program)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLIsProgram, "context = %d, program = %u", CID(context), program);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLIsProgram, "context = %d, program = %u", CID(context), program));
 
     GLboolean returnValue;
     if (ANGLE_LIKELY(context != nullptr))
@@ -3779,7 +3833,8 @@ GLboolean GL_APIENTRY GL_IsRenderbuffer(GLuint renderbuffer)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLIsRenderbuffer, "context = %d, renderbuffer = %u", CID(context), renderbuffer);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLIsRenderbuffer, "context = %d, renderbuffer = %u",
+                            CID(context), renderbuffer));
 
     GLboolean returnValue;
     if (ANGLE_LIKELY(context != nullptr))
@@ -3828,7 +3883,8 @@ GLboolean GL_APIENTRY GL_IsShader(GLuint shader)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLIsShader, "context = %d, shader = %u", CID(context), shader);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLIsShader, "context = %d, shader = %u", CID(context), shader));
 
     GLboolean returnValue;
     if (ANGLE_LIKELY(context != nullptr))
@@ -3877,7 +3933,8 @@ GLboolean GL_APIENTRY GL_IsTexture(GLuint texture)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLIsTexture, "context = %d, texture = %u", CID(context), texture);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLIsTexture, "context = %d, texture = %u", CID(context), texture));
 
     GLboolean returnValue;
     if (ANGLE_LIKELY(context != nullptr))
@@ -3922,7 +3979,7 @@ void GL_APIENTRY GL_LineWidth(GLfloat width)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLLineWidth, "context = %d, width = %f", CID(context), width);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLLineWidth, "context = %d, width = %f", CID(context), width));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -3960,7 +4017,8 @@ void GL_APIENTRY GL_LinkProgram(GLuint program)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLLinkProgram, "context = %d, program = %u", CID(context), program);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLLinkProgram, "context = %d, program = %u", CID(context), program));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4002,8 +4060,9 @@ void GL_APIENTRY GL_PixelStorei(GLenum pname, GLint param)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLPixelStorei, "context = %d, pname = %s, param = %d", CID(context),
-          GLenumToString(GLESEnum::PixelStoreParameter, pname), param);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLPixelStorei, "context = %d, pname = %s, param = %d",
+                            CID(context), GLenumToString(GLESEnum::PixelStoreParameter, pname),
+                            param));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4041,8 +4100,8 @@ void GL_APIENTRY GL_PolygonOffset(GLfloat factor, GLfloat units)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLPolygonOffset, "context = %d, factor = %f, units = %f", CID(context), factor,
-          units);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLPolygonOffset, "context = %d, factor = %f, units = %f",
+                            CID(context), factor, units));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4086,11 +4145,12 @@ void GL_APIENTRY GL_ReadPixels(GLint x,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLReadPixels,
-          "context = %d, x = %d, y = %d, width = %d, height = %d, format = %s, type = %s, pixels = "
-          "0x%016" PRIxPTR "",
-          CID(context), x, y, width, height, GLenumToString(GLESEnum::PixelFormat, format),
-          GLenumToString(GLESEnum::PixelType, type), (uintptr_t)pixels);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLReadPixels,
+                            "context = %d, x = %d, y = %d, width = %d, height = %d, format = %s, "
+                            "type = %s, pixels = 0x%016" PRIxPTR "",
+                            CID(context), x, y, width, height,
+                            GLenumToString(GLESEnum::PixelFormat, format),
+                            GLenumToString(GLESEnum::PixelType, type), (uintptr_t)pixels));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4132,7 +4192,7 @@ void GL_APIENTRY GL_ReleaseShaderCompiler()
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLReleaseShaderCompiler, "context = %d", CID(context));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLReleaseShaderCompiler, "context = %d", CID(context)));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4176,10 +4236,11 @@ void GL_APIENTRY GL_RenderbufferStorage(GLenum target,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLRenderbufferStorage,
-          "context = %d, target = %s, internalformat = %s, width = %d, height = %d", CID(context),
-          GLenumToString(GLESEnum::RenderbufferTarget, target),
-          GLenumToString(GLESEnum::InternalFormat, internalformat), width, height);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLRenderbufferStorage,
+              "context = %d, target = %s, internalformat = %s, width = %d, height = %d",
+              CID(context), GLenumToString(GLESEnum::RenderbufferTarget, target),
+              GLenumToString(GLESEnum::InternalFormat, internalformat), width, height));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4222,8 +4283,8 @@ void GL_APIENTRY GL_SampleCoverage(GLfloat value, GLboolean invert)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLSampleCoverage, "context = %d, value = %f, invert = %s", CID(context), value,
-          GLbooleanToString(invert));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLSampleCoverage, "context = %d, value = %f, invert = %s",
+                            CID(context), value, GLbooleanToString(invert)));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4261,8 +4322,9 @@ void GL_APIENTRY GL_Scissor(GLint x, GLint y, GLsizei width, GLsizei height)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLScissor, "context = %d, x = %d, y = %d, width = %d, height = %d", CID(context),
-          x, y, width, height);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLScissor,
+                            "context = %d, x = %d, y = %d, width = %d, height = %d", CID(context),
+                            x, y, width, height));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4304,11 +4366,12 @@ void GL_APIENTRY GL_ShaderBinary(GLsizei count,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLShaderBinary,
-          "context = %d, count = %d, shaders = 0x%016" PRIxPTR
-          ", binaryFormat = %s, binary = 0x%016" PRIxPTR ", length = %d",
-          CID(context), count, (uintptr_t)shaders,
-          GLenumToString(GLESEnum::ShaderBinaryFormat, binaryFormat), (uintptr_t)binary, length);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLShaderBinary,
+                            "context = %d, count = %d, shaders = 0x%016" PRIxPTR
+                            ", binaryFormat = %s, binary = 0x%016" PRIxPTR ", length = %d",
+                            CID(context), count, (uintptr_t)shaders,
+                            GLenumToString(GLESEnum::ShaderBinaryFormat, binaryFormat),
+                            (uintptr_t)binary, length));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4355,10 +4418,10 @@ void GL_APIENTRY GL_ShaderSource(GLuint shader,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLShaderSource,
-          "context = %d, shader = %u, count = %d, string = 0x%016" PRIxPTR
-          ", length = 0x%016" PRIxPTR "",
-          CID(context), shader, count, (uintptr_t)string, (uintptr_t)length);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLShaderSource,
+                            "context = %d, shader = %u, count = %d, string = 0x%016" PRIxPTR
+                            ", length = 0x%016" PRIxPTR "",
+                            CID(context), shader, count, (uintptr_t)string, (uintptr_t)length));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4400,8 +4463,9 @@ void GL_APIENTRY GL_StencilFunc(GLenum func, GLint ref, GLuint mask)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLStencilFunc, "context = %d, func = %s, ref = %d, mask = %u", CID(context),
-          GLenumToString(GLESEnum::StencilFunction, func), ref, mask);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLStencilFunc, "context = %d, func = %s, ref = %d, mask = %u",
+                            CID(context), GLenumToString(GLESEnum::StencilFunction, func), ref,
+                            mask));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4439,9 +4503,10 @@ void GL_APIENTRY GL_StencilFuncSeparate(GLenum face, GLenum func, GLint ref, GLu
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLStencilFuncSeparate, "context = %d, face = %s, func = %s, ref = %d, mask = %u",
-          CID(context), GLenumToString(GLESEnum::TriangleFace, face),
-          GLenumToString(GLESEnum::StencilFunction, func), ref, mask);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLStencilFuncSeparate,
+                            "context = %d, face = %s, func = %s, ref = %d, mask = %u", CID(context),
+                            GLenumToString(GLESEnum::TriangleFace, face),
+                            GLenumToString(GLESEnum::StencilFunction, func), ref, mask));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4484,7 +4549,7 @@ void GL_APIENTRY GL_StencilMask(GLuint mask)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLStencilMask, "context = %d, mask = %u", CID(context), mask);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLStencilMask, "context = %d, mask = %u", CID(context), mask));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4522,8 +4587,8 @@ void GL_APIENTRY GL_StencilMaskSeparate(GLenum face, GLuint mask)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLStencilMaskSeparate, "context = %d, face = %s, mask = %u", CID(context),
-          GLenumToString(GLESEnum::TriangleFace, face), mask);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLStencilMaskSeparate, "context = %d, face = %s, mask = %u",
+                            CID(context), GLenumToString(GLESEnum::TriangleFace, face), mask));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4565,9 +4630,10 @@ void GL_APIENTRY GL_StencilOp(GLenum fail, GLenum zfail, GLenum zpass)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLStencilOp, "context = %d, fail = %s, zfail = %s, zpass = %s", CID(context),
-          GLenumToString(GLESEnum::StencilOp, fail), GLenumToString(GLESEnum::StencilOp, zfail),
-          GLenumToString(GLESEnum::StencilOp, zpass));
+    ANGLE_UNSAFE_TODO(EVENT(context, GLStencilOp, "context = %d, fail = %s, zfail = %s, zpass = %s",
+                            CID(context), GLenumToString(GLESEnum::StencilOp, fail),
+                            GLenumToString(GLESEnum::StencilOp, zfail),
+                            GLenumToString(GLESEnum::StencilOp, zpass)));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4605,10 +4671,11 @@ void GL_APIENTRY GL_StencilOpSeparate(GLenum face, GLenum sfail, GLenum dpfail, 
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLStencilOpSeparate,
-          "context = %d, face = %s, sfail = %s, dpfail = %s, dppass = %s", CID(context),
-          GLenumToString(GLESEnum::TriangleFace, face), GLenumToString(GLESEnum::StencilOp, sfail),
-          GLenumToString(GLESEnum::StencilOp, dpfail), GLenumToString(GLESEnum::StencilOp, dppass));
+    ANGLE_UNSAFE_TODO(EVENT(
+        context, GLStencilOpSeparate,
+        "context = %d, face = %s, sfail = %s, dpfail = %s, dppass = %s", CID(context),
+        GLenumToString(GLESEnum::TriangleFace, face), GLenumToString(GLESEnum::StencilOp, sfail),
+        GLenumToString(GLESEnum::StencilOp, dpfail), GLenumToString(GLESEnum::StencilOp, dppass)));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4659,12 +4726,13 @@ void GL_APIENTRY GL_TexImage2D(GLenum target,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLTexImage2D,
-          "context = %d, target = %s, level = %d, internalformat = %d, width = %d, height = %d, "
-          "border = %d, format = %s, type = %s, pixels = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLESEnum::TextureTarget, target), level, internalformat,
-          width, height, border, GLenumToString(GLESEnum::PixelFormat, format),
-          GLenumToString(GLESEnum::PixelType, type), (uintptr_t)pixels);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLTexImage2D,
+              "context = %d, target = %s, level = %d, internalformat = %d, width = %d, height = "
+              "%d, border = %d, format = %s, type = %s, pixels = 0x%016" PRIxPTR "",
+              CID(context), GLenumToString(GLESEnum::TextureTarget, target), level, internalformat,
+              width, height, border, GLenumToString(GLESEnum::PixelFormat, format),
+              GLenumToString(GLESEnum::PixelType, type), (uintptr_t)pixels));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4705,9 +4773,10 @@ void GL_APIENTRY GL_TexParameterf(GLenum target, GLenum pname, GLfloat param)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLTexParameterf, "context = %d, target = %s, pname = %s, param = %f",
-          CID(context), GLenumToString(GLESEnum::TextureTarget, target),
-          GLenumToString(GLESEnum::TextureParameterName, pname), param);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLTexParameterf,
+                            "context = %d, target = %s, pname = %s, param = %f", CID(context),
+                            GLenumToString(GLESEnum::TextureTarget, target),
+                            GLenumToString(GLESEnum::TextureParameterName, pname), param));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4745,10 +4814,11 @@ void GL_APIENTRY GL_TexParameterfv(GLenum target, GLenum pname, const GLfloat *p
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLTexParameterfv,
-          "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLESEnum::TextureTarget, target),
-          GLenumToString(GLESEnum::TextureParameterName, pname), (uintptr_t)params);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLTexParameterfv,
+                            "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "",
+                            CID(context), GLenumToString(GLESEnum::TextureTarget, target),
+                            GLenumToString(GLESEnum::TextureParameterName, pname),
+                            (uintptr_t)params));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4786,9 +4856,10 @@ void GL_APIENTRY GL_TexParameteri(GLenum target, GLenum pname, GLint param)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLTexParameteri, "context = %d, target = %s, pname = %s, param = %d",
-          CID(context), GLenumToString(GLESEnum::TextureTarget, target),
-          GLenumToString(GLESEnum::TextureParameterName, pname), param);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLTexParameteri,
+                            "context = %d, target = %s, pname = %s, param = %d", CID(context),
+                            GLenumToString(GLESEnum::TextureTarget, target),
+                            GLenumToString(GLESEnum::TextureParameterName, pname), param));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4826,10 +4897,11 @@ void GL_APIENTRY GL_TexParameteriv(GLenum target, GLenum pname, const GLint *par
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLTexParameteriv,
-          "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLESEnum::TextureTarget, target),
-          GLenumToString(GLESEnum::TextureParameterName, pname), (uintptr_t)params);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLTexParameteriv,
+                            "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "",
+                            CID(context), GLenumToString(GLESEnum::TextureTarget, target),
+                            GLenumToString(GLESEnum::TextureParameterName, pname),
+                            (uintptr_t)params));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4875,12 +4947,13 @@ void GL_APIENTRY GL_TexSubImage2D(GLenum target,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLTexSubImage2D,
-          "context = %d, target = %s, level = %d, xoffset = %d, yoffset = %d, width = %d, height = "
-          "%d, format = %s, type = %s, pixels = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLESEnum::TextureTarget, target), level, xoffset, yoffset,
-          width, height, GLenumToString(GLESEnum::PixelFormat, format),
-          GLenumToString(GLESEnum::PixelType, type), (uintptr_t)pixels);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLTexSubImage2D,
+              "context = %d, target = %s, level = %d, xoffset = %d, yoffset = %d, width = %d, "
+              "height = %d, format = %s, type = %s, pixels = 0x%016" PRIxPTR "",
+              CID(context), GLenumToString(GLESEnum::TextureTarget, target), level, xoffset,
+              yoffset, width, height, GLenumToString(GLESEnum::PixelFormat, format),
+              GLenumToString(GLESEnum::PixelType, type), (uintptr_t)pixels));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4921,7 +4994,8 @@ void GL_APIENTRY GL_Uniform1f(GLint location, GLfloat v0)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLUniform1f, "context = %d, location = %d, v0 = %f", CID(context), location, v0);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLUniform1f, "context = %d, location = %d, v0 = %f",
+                            CID(context), location, v0));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -4963,9 +5037,9 @@ void GL_APIENTRY GL_Uniform1fv(GLint location, GLsizei count, const GLfloat *val
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLUniform1fv,
-          "context = %d, location = %d, count = %d, value = 0x%016" PRIxPTR "", CID(context),
-          location, count, (uintptr_t)value);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLUniform1fv,
+                            "context = %d, location = %d, count = %d, value = 0x%016" PRIxPTR "",
+                            CID(context), location, count, (uintptr_t)value));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5007,7 +5081,8 @@ void GL_APIENTRY GL_Uniform1i(GLint location, GLint v0)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLUniform1i, "context = %d, location = %d, v0 = %d", CID(context), location, v0);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLUniform1i, "context = %d, location = %d, v0 = %d",
+                            CID(context), location, v0));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5049,9 +5124,9 @@ void GL_APIENTRY GL_Uniform1iv(GLint location, GLsizei count, const GLint *value
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLUniform1iv,
-          "context = %d, location = %d, count = %d, value = 0x%016" PRIxPTR "", CID(context),
-          location, count, (uintptr_t)value);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLUniform1iv,
+                            "context = %d, location = %d, count = %d, value = 0x%016" PRIxPTR "",
+                            CID(context), location, count, (uintptr_t)value));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5093,8 +5168,8 @@ void GL_APIENTRY GL_Uniform2f(GLint location, GLfloat v0, GLfloat v1)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLUniform2f, "context = %d, location = %d, v0 = %f, v1 = %f", CID(context),
-          location, v0, v1);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLUniform2f, "context = %d, location = %d, v0 = %f, v1 = %f",
+                            CID(context), location, v0, v1));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5136,9 +5211,9 @@ void GL_APIENTRY GL_Uniform2fv(GLint location, GLsizei count, const GLfloat *val
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLUniform2fv,
-          "context = %d, location = %d, count = %d, value = 0x%016" PRIxPTR "", CID(context),
-          location, count, (uintptr_t)value);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLUniform2fv,
+                            "context = %d, location = %d, count = %d, value = 0x%016" PRIxPTR "",
+                            CID(context), location, count, (uintptr_t)value));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5180,8 +5255,8 @@ void GL_APIENTRY GL_Uniform2i(GLint location, GLint v0, GLint v1)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLUniform2i, "context = %d, location = %d, v0 = %d, v1 = %d", CID(context),
-          location, v0, v1);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLUniform2i, "context = %d, location = %d, v0 = %d, v1 = %d",
+                            CID(context), location, v0, v1));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5223,9 +5298,9 @@ void GL_APIENTRY GL_Uniform2iv(GLint location, GLsizei count, const GLint *value
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLUniform2iv,
-          "context = %d, location = %d, count = %d, value = 0x%016" PRIxPTR "", CID(context),
-          location, count, (uintptr_t)value);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLUniform2iv,
+                            "context = %d, location = %d, count = %d, value = 0x%016" PRIxPTR "",
+                            CID(context), location, count, (uintptr_t)value));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5267,8 +5342,9 @@ void GL_APIENTRY GL_Uniform3f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLUniform3f, "context = %d, location = %d, v0 = %f, v1 = %f, v2 = %f",
-          CID(context), location, v0, v1, v2);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLUniform3f,
+                            "context = %d, location = %d, v0 = %f, v1 = %f, v2 = %f", CID(context),
+                            location, v0, v1, v2));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5310,9 +5386,9 @@ void GL_APIENTRY GL_Uniform3fv(GLint location, GLsizei count, const GLfloat *val
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLUniform3fv,
-          "context = %d, location = %d, count = %d, value = 0x%016" PRIxPTR "", CID(context),
-          location, count, (uintptr_t)value);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLUniform3fv,
+                            "context = %d, location = %d, count = %d, value = 0x%016" PRIxPTR "",
+                            CID(context), location, count, (uintptr_t)value));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5354,8 +5430,9 @@ void GL_APIENTRY GL_Uniform3i(GLint location, GLint v0, GLint v1, GLint v2)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLUniform3i, "context = %d, location = %d, v0 = %d, v1 = %d, v2 = %d",
-          CID(context), location, v0, v1, v2);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLUniform3i,
+                            "context = %d, location = %d, v0 = %d, v1 = %d, v2 = %d", CID(context),
+                            location, v0, v1, v2));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5397,9 +5474,9 @@ void GL_APIENTRY GL_Uniform3iv(GLint location, GLsizei count, const GLint *value
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLUniform3iv,
-          "context = %d, location = %d, count = %d, value = 0x%016" PRIxPTR "", CID(context),
-          location, count, (uintptr_t)value);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLUniform3iv,
+                            "context = %d, location = %d, count = %d, value = 0x%016" PRIxPTR "",
+                            CID(context), location, count, (uintptr_t)value));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5441,8 +5518,9 @@ void GL_APIENTRY GL_Uniform4f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLUniform4f, "context = %d, location = %d, v0 = %f, v1 = %f, v2 = %f, v3 = %f",
-          CID(context), location, v0, v1, v2, v3);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLUniform4f,
+                            "context = %d, location = %d, v0 = %f, v1 = %f, v2 = %f, v3 = %f",
+                            CID(context), location, v0, v1, v2, v3));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5484,9 +5562,9 @@ void GL_APIENTRY GL_Uniform4fv(GLint location, GLsizei count, const GLfloat *val
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLUniform4fv,
-          "context = %d, location = %d, count = %d, value = 0x%016" PRIxPTR "", CID(context),
-          location, count, (uintptr_t)value);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLUniform4fv,
+                            "context = %d, location = %d, count = %d, value = 0x%016" PRIxPTR "",
+                            CID(context), location, count, (uintptr_t)value));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5528,8 +5606,9 @@ void GL_APIENTRY GL_Uniform4i(GLint location, GLint v0, GLint v1, GLint v2, GLin
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLUniform4i, "context = %d, location = %d, v0 = %d, v1 = %d, v2 = %d, v3 = %d",
-          CID(context), location, v0, v1, v2, v3);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLUniform4i,
+                            "context = %d, location = %d, v0 = %d, v1 = %d, v2 = %d, v3 = %d",
+                            CID(context), location, v0, v1, v2, v3));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5571,9 +5650,9 @@ void GL_APIENTRY GL_Uniform4iv(GLint location, GLsizei count, const GLint *value
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLUniform4iv,
-          "context = %d, location = %d, count = %d, value = 0x%016" PRIxPTR "", CID(context),
-          location, count, (uintptr_t)value);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLUniform4iv,
+                            "context = %d, location = %d, count = %d, value = 0x%016" PRIxPTR "",
+                            CID(context), location, count, (uintptr_t)value));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5618,9 +5697,10 @@ void GL_APIENTRY GL_UniformMatrix2fv(GLint location,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLUniformMatrix2fv,
-          "context = %d, location = %d, count = %d, transpose = %s, value = 0x%016" PRIxPTR "",
-          CID(context), location, count, GLbooleanToString(transpose), (uintptr_t)value);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLUniformMatrix2fv,
+              "context = %d, location = %d, count = %d, transpose = %s, value = 0x%016" PRIxPTR "",
+              CID(context), location, count, GLbooleanToString(transpose), (uintptr_t)value));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5667,9 +5747,10 @@ void GL_APIENTRY GL_UniformMatrix3fv(GLint location,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLUniformMatrix3fv,
-          "context = %d, location = %d, count = %d, transpose = %s, value = 0x%016" PRIxPTR "",
-          CID(context), location, count, GLbooleanToString(transpose), (uintptr_t)value);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLUniformMatrix3fv,
+              "context = %d, location = %d, count = %d, transpose = %s, value = 0x%016" PRIxPTR "",
+              CID(context), location, count, GLbooleanToString(transpose), (uintptr_t)value));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5716,9 +5797,10 @@ void GL_APIENTRY GL_UniformMatrix4fv(GLint location,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLUniformMatrix4fv,
-          "context = %d, location = %d, count = %d, transpose = %s, value = 0x%016" PRIxPTR "",
-          CID(context), location, count, GLbooleanToString(transpose), (uintptr_t)value);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLUniformMatrix4fv,
+              "context = %d, location = %d, count = %d, transpose = %s, value = 0x%016" PRIxPTR "",
+              CID(context), location, count, GLbooleanToString(transpose), (uintptr_t)value));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5762,7 +5844,8 @@ void GL_APIENTRY GL_UseProgram(GLuint program)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLUseProgram, "context = %d, program = %u", CID(context), program);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLUseProgram, "context = %d, program = %u", CID(context), program));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5804,7 +5887,8 @@ void GL_APIENTRY GL_ValidateProgram(GLuint program)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLValidateProgram, "context = %d, program = %u", CID(context), program);
+    ANGLE_UNSAFE_TODO(
+        EVENT(context, GLValidateProgram, "context = %d, program = %u", CID(context), program));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5846,7 +5930,8 @@ void GL_APIENTRY GL_VertexAttrib1f(GLuint index, GLfloat x)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLVertexAttrib1f, "context = %d, index = %u, x = %f", CID(context), index, x);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLVertexAttrib1f, "context = %d, index = %u, x = %f",
+                            CID(context), index, x));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5888,8 +5973,9 @@ void GL_APIENTRY GL_VertexAttrib1fv(GLuint index, const GLfloat *v)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLVertexAttrib1fv, "context = %d, index = %u, v = 0x%016" PRIxPTR "",
-          CID(context), index, (uintptr_t)v);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLVertexAttrib1fv,
+                            "context = %d, index = %u, v = 0x%016" PRIxPTR "", CID(context), index,
+                            (uintptr_t)v));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5931,8 +6017,8 @@ void GL_APIENTRY GL_VertexAttrib2f(GLuint index, GLfloat x, GLfloat y)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLVertexAttrib2f, "context = %d, index = %u, x = %f, y = %f", CID(context),
-          index, x, y);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLVertexAttrib2f, "context = %d, index = %u, x = %f, y = %f",
+                            CID(context), index, x, y));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -5974,8 +6060,9 @@ void GL_APIENTRY GL_VertexAttrib2fv(GLuint index, const GLfloat *v)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLVertexAttrib2fv, "context = %d, index = %u, v = 0x%016" PRIxPTR "",
-          CID(context), index, (uintptr_t)v);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLVertexAttrib2fv,
+                            "context = %d, index = %u, v = 0x%016" PRIxPTR "", CID(context), index,
+                            (uintptr_t)v));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -6017,8 +6104,9 @@ void GL_APIENTRY GL_VertexAttrib3f(GLuint index, GLfloat x, GLfloat y, GLfloat z
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLVertexAttrib3f, "context = %d, index = %u, x = %f, y = %f, z = %f",
-          CID(context), index, x, y, z);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLVertexAttrib3f,
+                            "context = %d, index = %u, x = %f, y = %f, z = %f", CID(context), index,
+                            x, y, z));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -6060,8 +6148,9 @@ void GL_APIENTRY GL_VertexAttrib3fv(GLuint index, const GLfloat *v)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLVertexAttrib3fv, "context = %d, index = %u, v = 0x%016" PRIxPTR "",
-          CID(context), index, (uintptr_t)v);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLVertexAttrib3fv,
+                            "context = %d, index = %u, v = 0x%016" PRIxPTR "", CID(context), index,
+                            (uintptr_t)v));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -6103,8 +6192,9 @@ void GL_APIENTRY GL_VertexAttrib4f(GLuint index, GLfloat x, GLfloat y, GLfloat z
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLVertexAttrib4f, "context = %d, index = %u, x = %f, y = %f, z = %f, w = %f",
-          CID(context), index, x, y, z, w);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLVertexAttrib4f,
+                            "context = %d, index = %u, x = %f, y = %f, z = %f, w = %f",
+                            CID(context), index, x, y, z, w));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -6146,8 +6236,9 @@ void GL_APIENTRY GL_VertexAttrib4fv(GLuint index, const GLfloat *v)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLVertexAttrib4fv, "context = %d, index = %u, v = 0x%016" PRIxPTR "",
-          CID(context), index, (uintptr_t)v);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLVertexAttrib4fv,
+                            "context = %d, index = %u, v = 0x%016" PRIxPTR "", CID(context), index,
+                            (uintptr_t)v));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -6194,11 +6285,12 @@ void GL_APIENTRY GL_VertexAttribPointer(GLuint index,
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLVertexAttribPointer,
-          "context = %d, index = %u, size = %d, type = %s, normalized = %s, stride = %d, pointer = "
-          "0x%016" PRIxPTR "",
-          CID(context), index, size, GLenumToString(GLESEnum::VertexAttribPointerType, type),
-          GLbooleanToString(normalized), stride, (uintptr_t)pointer);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLVertexAttribPointer,
+                            "context = %d, index = %u, size = %d, type = %s, normalized = %s, "
+                            "stride = %d, pointer = 0x%016" PRIxPTR "",
+                            CID(context), index, size,
+                            GLenumToString(GLESEnum::VertexAttribPointerType, type),
+                            GLbooleanToString(normalized), stride, (uintptr_t)pointer));
 
     if (ANGLE_LIKELY(context != nullptr))
     {
@@ -6242,8 +6334,9 @@ void GL_APIENTRY GL_Viewport(GLint x, GLint y, GLsizei width, GLsizei height)
 {
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLViewport, "context = %d, x = %d, y = %d, width = %d, height = %d",
-          CID(context), x, y, width, height);
+    ANGLE_UNSAFE_TODO(EVENT(context, GLViewport,
+                            "context = %d, x = %d, y = %d, width = %d, height = %d", CID(context),
+                            x, y, width, height));
 
     if (ANGLE_LIKELY(context != nullptr))
     {

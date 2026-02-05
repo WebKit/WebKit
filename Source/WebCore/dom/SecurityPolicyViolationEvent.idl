@@ -48,10 +48,7 @@
 };
 
 // https://w3c.github.io/webappsec-csp/#dictdef-securitypolicyviolationeventinit
-
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary SecurityPolicyViolationEventInit : EventInit {
+dictionary SecurityPolicyViolationEventInit : EventInit {
     USVString documentURI = "";
     USVString referrer = "";
     USVString blockedURI = "";

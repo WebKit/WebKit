@@ -202,7 +202,7 @@ static void dispatchDidClickNotification(WebNotification* notification)
 
     if (notification->isPersistentNotification()) {
         if (RefPtr dataStore = WebsiteDataStore::existingDataStoreForSessionID(notification->sessionID()))
-            dataStore->protectedNetworkProcess()->processNotificationEvent(notification->data(), NotificationEventType::Click, [](bool) { });
+            protect(dataStore->networkProcess())->processNotificationEvent(notification->data(), NotificationEventType::Click, [](bool) { });
         else
             RELEASE_LOG_ERROR(Notifications, "WebsiteDataStore not found from sessionID %" PRIu64 ", dropping notification click", notification->sessionID().toUInt64());
         return;
@@ -263,7 +263,7 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
 
         if (notification->isPersistentNotification()) {
             if (RefPtr dataStore = WebsiteDataStore::existingDataStoreForSessionID(notification->sessionID()))
-                dataStore->protectedNetworkProcess()->processNotificationEvent(notification->data(), NotificationEventType::Close, [](bool) { });
+                protect(dataStore->networkProcess())->processNotificationEvent(notification->data(), NotificationEventType::Close, [](bool) { });
             else
                 RELEASE_LOG_ERROR(Notifications, "WebsiteDataStore not found from sessionID %" PRIu64 ", dropping notification close", notification->sessionID().toUInt64());
             return;
@@ -286,7 +286,7 @@ static void setPushesAndNotificationsEnabledForOrigin(const WebCore::SecurityOri
 {
     WebsiteDataStore::forEachWebsiteDataStore([&origin, enabled](WebsiteDataStore& dataStore) {
         if (dataStore.isPersistent())
-            dataStore.protectedNetworkProcess()->setPushAndNotificationsEnabledForOrigin(dataStore.sessionID(), origin, enabled, []() { });
+            protect(dataStore.networkProcess())->setPushAndNotificationsEnabledForOrigin(dataStore.sessionID(), origin, enabled, []() { });
     });
 }
 
@@ -295,7 +295,7 @@ static void removePushSubscriptionsForOrigins(const Vector<WebCore::SecurityOrig
     WebsiteDataStore::forEachWebsiteDataStore([&origins](WebsiteDataStore& dataStore) {
         if (dataStore.isPersistent()) {
             for (auto& origin : origins)
-                dataStore.protectedNetworkProcess()->removePushSubscriptionsForOrigin(dataStore.sessionID(), origin, [originString = origin.toString()](auto&&) { });
+                protect(dataStore.networkProcess())->removePushSubscriptionsForOrigin(dataStore.sessionID(), origin, [originString = origin.toString()](auto&&) { });
         }
     });
 }

@@ -173,7 +173,7 @@ EventLoopTimerHandle::~EventLoopTimerHandle()
     RefPtr timer = std::exchange(m_timer, nullptr);
     if (!timer)
         return;
-    if (auto* group = timer->group(); group && timer->refCount() == 1) {
+    if (CheckedPtr group = timer->group(); group && timer->refCount() == 1) {
         if (timer->type() == EventLoopTimer::Type::OneShot)
             group->removeScheduledTimer(*timer);
         else
@@ -287,13 +287,13 @@ void EventLoop::unregisterGroup(EventLoopTaskGroup& group)
 void EventLoop::stopAssociatedGroupsIfNecessary()
 {
     ASSERT(isContextThread());
-    for (auto& group : m_associatedGroups) {
-        if (!group.isReadyToStop())
+    for (CheckedRef group : m_associatedGroups) {
+        if (!group->isReadyToStop())
             return;
     }
     auto associatedGroups = std::exchange(m_associatedGroups, { });
-    for (auto& group : associatedGroups)
-        group.stopAndDiscardAllTasks();
+    for (CheckedRef group : associatedGroups)
+        group->stopAndDiscardAllTasks();
 }
 
 void EventLoop::stopGroup(EventLoopTaskGroup& group)
@@ -323,15 +323,17 @@ void EventLoop::run(std::optional<ApproximateTime> deadline)
         TaskVector remainingTasks;
         bool hasReachedDeadline = false;
         for (auto& task : tasks) {
-            auto* group = task->group();
-            if (!group || group->isStoppedPermanently())
-                continue;
+            {
+                CheckedPtr group = task->group();
+                if (!group || group->isStoppedPermanently())
+                    continue;
 
-            hasReachedDeadline = hasReachedDeadline || (deadline && ApproximateTime::now() > *deadline);
-            if (group->isSuspended() || hasReachedDeadline) {
-                m_groupsWithSuspendedTasks.add(*group);
-                remainingTasks.append(WTF::move(task));
-                continue;
+                hasReachedDeadline = hasReachedDeadline || (deadline && ApproximateTime::now() > *deadline);
+                if (group->isSuspended() || hasReachedDeadline) {
+                    m_groupsWithSuspendedTasks.add(*group);
+                    remainingTasks.append(WTF::move(task));
+                    continue;
+                }
             }
 
             task->execute();

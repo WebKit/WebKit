@@ -53,10 +53,6 @@
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
-#if PLATFORM(IOS_FAMILY)
-#include "RenderThemeIOS.h"
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -108,7 +104,7 @@ void RenderTextControlSingleLine::layout()
 
     CheckedPtr innerTextRenderer = this->innerTextRenderer();
     RenderBox* innerBlockRenderer = innerBlockElement() ? innerBlockElement()->renderBox() : nullptr;
-    HTMLElement* container = containerElement();
+    RefPtr container = containerElement();
     RenderBox* containerRenderer = container ? container->renderBox() : nullptr;
 
     // To ensure consistency between layouts, we need to reset any conditionally overridden height.
@@ -225,7 +221,7 @@ void RenderTextControlSingleLine::layout()
 
     bool innerTextSizeChanged = innerTextRenderer && innerTextRenderer->size() != oldInnerTextSize;
 
-    HTMLElement* placeholderElement = inputElement().placeholderElement();
+    RefPtr placeholderElement = inputElement().placeholderElement();
     if (RenderBox* placeholderBox = placeholderElement ? placeholderElement->renderBox() : 0) {
         auto innerTextWidth = LayoutUnit { };
         auto usedZoomForLength = placeholderBox->style().usedZoomForLength().value;
@@ -293,7 +289,7 @@ bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, Hit
     //  - we hit a node inside the inner text element,
     //  - we hit the <input> element (e.g. we're over the border or padding), or
     //  - we hit regions not in any decoration buttons.
-    HTMLElement* container = containerElement();
+    RefPtr container = containerElement();
     if (result.innerNode()->isDescendantOf(innerTextElement().get()) || result.innerNode() == &inputElement() || (container && container == result.innerNode())) {
         LayoutPoint pointInParent = locationInContainer.point();
         if (container && innerBlockElement()) {
@@ -313,12 +309,12 @@ void RenderTextControlSingleLine::styleDidChange(Style::Difference diff, const R
 
     // We may have set the width and the height in the old style in layout().
     // Reset them now to avoid getting a spurious layout hint.
-    HTMLElement* innerBlock = innerBlockElement();
+    RefPtr innerBlock = innerBlockElement();
     if (auto* innerBlockRenderer = innerBlock ? innerBlock->renderer() : nullptr) {
         innerBlockRenderer->mutableStyle().setHeight(CSS::Keyword::Auto { });
         innerBlockRenderer->mutableStyle().setWidth(CSS::Keyword::Auto { });
     }
-    HTMLElement* container = containerElement();
+    RefPtr container = containerElement();
     if (auto* containerRenderer = container ? container->renderer() : nullptr) {
         containerRenderer->mutableStyle().setHeight(CSS::Keyword::Auto { });
         containerRenderer->mutableStyle().setWidth(CSS::Keyword::Auto { });
@@ -326,7 +322,7 @@ void RenderTextControlSingleLine::styleDidChange(Style::Difference diff, const R
     if (diff == Style::DifferenceResult::Layout) {
         if (CheckedPtr innerTextRenderer = this->innerTextRenderer())
             innerTextRenderer->setNeedsLayout(MarkContainingBlockChain);
-        if (auto* placeholder = inputElement().placeholderElement()) {
+        if (RefPtr placeholder = inputElement().placeholderElement()) {
             if (placeholder->renderer())
                 placeholder->renderer()->setNeedsLayout(MarkContainingBlockChain);
         }

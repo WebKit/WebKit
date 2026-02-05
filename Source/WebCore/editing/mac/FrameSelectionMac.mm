@@ -65,7 +65,7 @@ void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChan
     auto* renderView = m_document->renderView();
     if (!renderView)
         return;
-    auto* frameView = m_document->view();
+    RefPtr frameView = m_document->view();
     if (!frameView)
         return;
 

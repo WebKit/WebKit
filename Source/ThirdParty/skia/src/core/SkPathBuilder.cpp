@@ -52,6 +52,12 @@ SkPathBuilder::SkPathBuilder() {
     this->reset();
 }
 
+SkPathBuilder::SkPathBuilder(const SkPathBuilder&) = default;
+SkPathBuilder& SkPathBuilder::operator=(const SkPathBuilder&) = default;
+SkPathBuilder::SkPathBuilder(SkPathBuilder&&) = default;
+SkPathBuilder& SkPathBuilder::operator=(SkPathBuilder&&) = default;
+SkPathBuilder::~SkPathBuilder() = default;
+
 SkPathBuilder::SkPathBuilder(SkPathFillType ft) {
     this->reset();
     fFillType = ft;
@@ -59,9 +65,6 @@ SkPathBuilder::SkPathBuilder(SkPathFillType ft) {
 
 SkPathBuilder::SkPathBuilder(const SkPath& src) {
     *this = src;
-}
-
-SkPathBuilder::~SkPathBuilder() {
 }
 
 SkPathBuilder& SkPathBuilder::reset() {
@@ -731,9 +734,10 @@ SkPathBuilder& SkPathBuilder::addRRect(const SkRRect& rrect, SkPathDirection dir
     return *this;
 }
 
-SkPathBuilder& SkPathBuilder::addCircle(SkScalar x, SkScalar y, SkScalar r, SkPathDirection dir) {
+SkPathBuilder& SkPathBuilder::addCircle(SkPoint center, float r, SkPathDirection dir) {
     if (r >= 0) {
-        this->addOval(SkRect::MakeLTRB(x - r, y - r, x + r, y + r), dir);
+        this->addOval(SkRect::MakeLTRB(center.fX - r, center.fY - r, center.fX + r, center.fY + r),
+                      dir);
     }
     return *this;
 }
@@ -786,7 +790,7 @@ SkPathBuilder& SkPathBuilder::addPath(const SkPath& src, const SkMatrix& matrix,
     }
 
     const bool canReplaceThis = (mode == SkPath::AddPathMode::kAppend_AddPathMode &&
-                                 SkPathPriv::IsEffectivelyEmpty(*this))
+                                 this->verbs().size() <= 1)
                               || this->verbs().empty();
     if (canReplaceThis && matrix.isIdentity()) {
         const SkPathFillType fillType = fFillType;
@@ -946,22 +950,23 @@ SkPathBuilder& SkPathBuilder::privateReverseAddPath(const SkPath& src) {
 }
 
 std::optional<SkPoint> SkPathBuilder::getLastPt() const {
-    int count = this->fPts.size();
+    size_t count = this->fPts.size();
     if (count > 0) {
         return this->fPts.at(count - 1);
     }
     return std::nullopt;
 }
 
-void SkPathBuilder::setLastPt(SkScalar x, SkScalar y) {
-    int count = fPts.size();
+#ifdef SK_SUPPORT_LEGACY_PATHBUILDER_SETLASTPT
+void SkPathBuilder::setLastPt(SkPoint pt) {
+    size_t count = fPts.size();
     if (count == 0) {
-        this->moveTo(x, y);
+        this->moveTo(pt);
     } else {
-        fPts.at(count-1).set(x, y);
-        fType = SkPathIsAType::kGeneral;
+        this->setPoint(count - 1, pt);
     }
 }
+#endif
 
 void SkPathBuilder::setPoint(size_t index, SkPoint p) {
     if (index < (size_t)fPts.size()) {

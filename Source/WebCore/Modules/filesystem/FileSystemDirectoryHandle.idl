@@ -23,21 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary FileSystemGetFileOptions {
+dictionary FileSystemGetFileOptions {
     boolean create = false;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary FileSystemGetDirectoryOptions {
+dictionary FileSystemGetDirectoryOptions {
     boolean create = false;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary FileSystemRemoveOptions {
+dictionary FileSystemRemoveOptions {
     boolean recursive = false;
 };
 
@@ -46,10 +40,10 @@
     Exposed=(Window,Worker),
     SecureContext
 ] interface FileSystemDirectoryHandle : FileSystemHandle {
-    async iterable<USVString, FileSystemHandle>;
+    async_iterable<USVString, FileSystemHandle>;
 
-    Promise<FileSystemFileHandle> getFileHandle(USVString name, optional FileSystemGetFileOptions options);
-    Promise<FileSystemDirectoryHandle> getDirectoryHandle(USVString name, optional FileSystemGetDirectoryOptions options);
-    Promise<undefined> removeEntry(USVString name, optional FileSystemRemoveOptions options);
+    Promise<FileSystemFileHandle> getFileHandle(USVString name, optional FileSystemGetFileOptions options = {});
+    Promise<FileSystemDirectoryHandle> getDirectoryHandle(USVString name, optional FileSystemGetDirectoryOptions options = {});
+    Promise<undefined> removeEntry(USVString name, optional FileSystemRemoveOptions options = {});
     Promise<sequence<USVString>?> resolve(FileSystemHandle possibleDescendant);
 };

@@ -24,7 +24,6 @@
 
 [
     Conditional=WEB_AUDIO,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary DynamicsCompressorOptions : AudioNodeOptions {
     float attack = 0.003;
     float knee = 30;

@@ -11,8 +11,8 @@ layer at (10,10) size 316x282
     RenderBlock {DIV} at (0,0) size 110x282
     RenderBlock {DIV} at (158,0) size 158x379 [bgcolor=#00FF00] [border: (2px solid #000000)]
       RenderBlock {DIV} at (2,12) size 154x355 [bgcolor=#008000] [border: (2px solid #0000FF)]
-        RenderInline {SPAN} at (3,2) size 147x192
-          RenderText {#text} at (4,2) size 147x192
-            text run at (4,2) width 166: "In 2nd"
-            text run at (79,2) width 192: "column"
+        RenderInline {SPAN} at (3,2) size 148x192
+          RenderText {#text} at (3,2) size 148x192
+            text run at (3,2) width 166: "In 2nd"
+            text run at (78,2) width 193: "column"
         RenderText {#text} at (0,0) size 0x0

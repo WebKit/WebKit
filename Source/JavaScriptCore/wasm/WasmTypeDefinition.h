@@ -840,10 +840,11 @@ class alignas(16) RTT final : public ThreadSafeRefCounted<RTT>, private Trailing
     friend TrailingArrayType;
 public:
     static_assert(sizeof(const RTT*) == sizeof(RefPtr<const RTT>));
+    static constexpr unsigned inlinedDisplaySize = 6;
     RTT() = delete;
 
-    static RefPtr<RTT> tryCreate(RTTKind, StructFieldCount fieldCount = 0);
-    static RefPtr<RTT> tryCreate(RTTKind, const RTT&, StructFieldCount fieldCount = 0);
+    static RefPtr<RTT> tryCreate(RTTKind, bool isFinalType, StructFieldCount fieldCount);
+    static RefPtr<RTT> tryCreate(RTTKind, const RTT&, bool isFinalType, StructFieldCount fieldCount);
 
     RTTKind kind() const { return m_kind; }
     DisplayCount displaySizeExcludingThis() const { return m_displaySizeExcludingThis; }
@@ -878,18 +879,20 @@ public:
 
     bool isSubRTT(const RTT& other) const;
     bool isStrictSubRTT(const RTT& other) const;
+    bool isFinalType() const { return m_isFinalType; }
 
     static constexpr ptrdiff_t offsetOfKind() { return OBJECT_OFFSETOF(RTT, m_kind); }
     static constexpr ptrdiff_t offsetOfDisplaySizeExcludingThis() { return OBJECT_OFFSETOF(RTT, m_displaySizeExcludingThis); }
     using TrailingArrayType::offsetOfData;
 
 private:
-    explicit RTT(RTTKind kind, StructFieldCount fieldCount);
-    RTT(RTTKind, const RTT& supertype, StructFieldCount fieldCount);
+    explicit RTT(RTTKind kind, bool isFinalType, StructFieldCount fieldCount);
+    RTT(RTTKind, const RTT& supertype, bool isFinalType, StructFieldCount fieldCount);
 
     const RTTKind m_kind;
-    StructFieldCount m_fieldCount { 0 };
-    unsigned m_displaySizeExcludingThis { };
+    const bool m_isFinalType { false };
+    const unsigned m_displaySizeExcludingThis { };
+    const StructFieldCount m_fieldCount { 0 };
 };
 
 inline void Type::dump(PrintStream& out) const

@@ -100,7 +100,6 @@ public:
     static void applySandboxProfileForDaemon(const String& profilePath, const String& userDirectorySuffix);
 
     IPC::Connection* parentProcessConnection() const { return m_connection.get(); }
-    RefPtr<IPC::Connection> protectedParentProcessConnection() const { return parentProcessConnection(); }
 
     IPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }
 
@@ -137,11 +136,7 @@ protected:
     virtual RetainPtr<NSDictionary> additionalStateForDiagnosticReport() const { return { }; }
 #endif // USE(OS_STATE)
 
-#if USE(APPKIT)
-    static void stopNSAppRunLoop();
-#endif
-    
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_NSRUNLOOP)
+#if PLATFORM(MAC)
     static void stopNSRunLoop();
 #endif
 

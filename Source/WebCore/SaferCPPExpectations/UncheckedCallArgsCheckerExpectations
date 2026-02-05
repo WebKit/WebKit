@@ -1,4 +1,4 @@
-Modules/credentialmanagement/CredentialsContainer.cpp
+Modules/mediacapabilities/MediaCapabilities.cpp
 Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp
 Modules/push-api/PushDatabase.cpp
 Modules/push-api/PushManager.cpp
@@ -368,7 +368,6 @@ platform/DragImage.cpp
 platform/ScrollView.cpp
 platform/ScrollingEffectsController.cpp
 platform/Widget.cpp
-platform/audio/PlatformMediaSession.cpp
 [ Mac ] platform/cocoa/DragImageCocoa.mm
 platform/cocoa/LowPowerModeNotifier.mm
 platform/cocoa/VideoPresentationModelVideoElement.mm
@@ -606,7 +605,6 @@ style/ChildChangeInvalidation.h
 style/ClassChangeInvalidation.cpp
 style/ContainerQueryEvaluator.cpp
 style/ElementRuleCollector.cpp
-style/IdChangeInvalidation.cpp
 style/InlineTextBoxStyle.cpp
 style/MatchResultCache.cpp
 style/MatchedDeclarationsCache.cpp

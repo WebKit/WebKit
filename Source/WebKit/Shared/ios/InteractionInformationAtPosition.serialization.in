@@ -49,7 +49,6 @@ struct WebKit::InteractionInformationAtPosition {
     bool isAttachment;
     bool isAnimatedImage;
     bool isAnimating;
-    bool canShowAnimationControls;
     bool isPausedVideo;
     bool isElement;
     bool isContentEditable;

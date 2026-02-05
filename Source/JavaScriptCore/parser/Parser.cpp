@@ -2244,8 +2244,8 @@ template <class TreeBuilder> TreeFunctionBody Parser<LexerType>::parseFunctionBo
     TreeBuilder& context, SyntaxChecker& syntaxChecker, const JSTokenLocation& startLocation, int startColumn, unsigned functionStart, int functionNameStart, int parametersStart,
     ConstructorKind constructorKind, SuperBinding superBinding, FunctionBodyType bodyType, unsigned parameterCount)
 {
-    SetForScope overrideParsingClassFieldInitializer(m_parserState.isParsingClassFieldInitializer, bodyType == StandardFunctionBodyBlock ? false : m_parserState.isParsingClassFieldInitializer);
-    SetForScope maybeUnmaskAsync(m_parserState.classFieldInitMasksAsync, isAsyncFunctionParseMode(m_parseMode) ? false : m_parserState.classFieldInitMasksAsync);
+    SetForScope overrideParsingClassFieldInitializer(m_parserState.isParsingClassFieldInitializer, bodyType != StandardFunctionBodyBlock && m_parserState.isParsingClassFieldInitializer);
+    SetForScope maybeUnmaskAsync(m_parserState.classFieldInitMasksAsync, !isAsyncFunctionParseMode(m_parseMode) && m_parserState.classFieldInitMasksAsync);
     bool isArrowFunctionBodyExpression = bodyType == ArrowFunctionBodyExpression;
     if (!isArrowFunctionBodyExpression) {
         next();

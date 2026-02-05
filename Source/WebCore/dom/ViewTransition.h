@@ -203,7 +203,6 @@ public:
     const OrderedNamedElementsMap& namedElements() const { return m_namedElements; };
 
     Document* document() const;
-    RefPtr<Document> protectedDocument() const { return document(); }
 
     bool documentElementIsCaptured() const;
 

@@ -183,7 +183,7 @@ void FormAssociatedCustomElement::didUpgrade()
 
     setDataListAncestorState(TriState::Indeterminate);
     updateWillValidateAndValidity();
-    syncWithFieldsetAncestors(element->protectedParentNode().get());
+    syncWithFieldsetAncestors(protect(element->parentNode()).get());
     invalidateElementsCollectionCachesInAncestors();
     restoreFormControlStateIfNecessary();
 }
@@ -270,7 +270,7 @@ void FormAssociatedCustomElement::restoreFormControlState(const FormControlState
     if (savedState.size() == 1)
         restoredState.emplace<String>(savedState[0]);
     else {
-        auto formData = DOMFormData::create(&element->protectedDocument().get(), PAL::UTF8Encoding());
+        auto formData = DOMFormData::create(&protect(element->document()).get(), PAL::UTF8Encoding());
         for (size_t i = 0; i < savedState.size(); i += 2)
             formData->append(savedState[i], savedState[i + 1]);
         restoredState.emplace<RefPtr<DOMFormData>>(formData.ptr());

@@ -173,7 +173,13 @@ void MemoryPressureHandler::platformReleaseMemory(Critical)
 
 std::optional<MemoryPressureHandler::ReliefLogger::MemoryUsage> MemoryPressureHandler::ReliefLogger::platformMemoryUsage()
 {
+#if OS(LINUX) || OS(HAIKU)
+    ProcessMemoryStatus memoryStatus;
+    currentProcessMemoryStatus(memoryStatus);
+    return MemoryUsage { memoryStatus.resident - memoryStatus.shared, memoryStatus.resident };
+#else
     return MemoryUsage {processMemoryUsage(), memoryFootprint()};
+#endif
 }
 
 } // namespace WTF

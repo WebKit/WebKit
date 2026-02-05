@@ -71,7 +71,7 @@ CachedResourceHandle<CachedScript> CachedScriptFetcher::requestScriptWithCache(D
     if (!m_initiatorType.isNull())
         request.setInitiatorType(m_initiatorType);
 
-    return document.protectedCachedResourceLoader()->requestScript(WTF::move(request)).value_or(nullptr);
+    return protect(document.cachedResourceLoader())->requestScript(WTF::move(request)).value_or(nullptr);
 }
 
 }

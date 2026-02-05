@@ -242,7 +242,7 @@ bool selectionAllowsSmartLists(const String& text, const VisibleSelection& selec
     if (!document)
         return false;
 
-    if (!document->protectedEditor()->isSmartListsEnabled())
+    if (!protect(document->editor())->isSmartListsEnabled())
         return false;
 
     if (text != " "_s) {
@@ -255,7 +255,7 @@ bool selectionAllowsSmartLists(const String& text, const VisibleSelection& selec
         return false;
     }
 
-    if (enclosingList(selection.base().protectedAnchorNode().get())) {
+    if (enclosingList(protect(selection.base().anchorNode()).get())) {
         // Smart Lists can not be "activated" if the selection is already within a list.
         return false;
     }

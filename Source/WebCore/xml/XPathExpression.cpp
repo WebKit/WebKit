@@ -65,7 +65,7 @@ ExceptionOr<Ref<XPathResult>> XPathExpression::evaluate(Node& contextNode, unsig
     evaluationContext.size = 1;
     evaluationContext.position = 1;
     evaluationContext.hadTypeConversionError = false;
-    auto result = XPathResult::create(contextNode.protectedDocument().get(), m_topExpression->evaluate());
+    auto result = XPathResult::create(protect(contextNode.document()).get(), m_topExpression->evaluate());
     evaluationContext.node = nullptr; // Do not hold a reference to the context node, as this may prevent the whole document from being destroyed in time.
 
     if (evaluationContext.hadTypeConversionError)

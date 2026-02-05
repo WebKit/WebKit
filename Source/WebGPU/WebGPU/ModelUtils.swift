@@ -21,15 +21,14 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if canImport(RealityCoreRenderer, _version: 9999)
+#if canImport(RealityCoreRenderer, _version: 6) && canImport(USDStageKit, _version: 34)
 
 import DirectResource
 import Metal
-@_spi(RealityCoreRendererAPI) import RealityCoreRenderer
-import RealityKit
-@_spi(SGInternal) import ShaderGraph
-internal import WebGPU_Private.DDModelTypes
-@_spi(UsdLoaderAPI) import _USDStageKit_SwiftUI
+@_spi(RealityCoreRendererAPI) import RealityKit
+@_spi(SGInternal) import RealityKit
+internal import WebGPU_Private.ModelTypes
+@_spi(UsdLoaderAPI) import _RealityKit_SwiftUI
 
 nonisolated func mapSemantic(_ semantic: LowLevelMesh.VertexSemantic) -> _Proto_LowLevelMeshResource_v1.VertexSemantic {
     switch semantic {
@@ -79,6 +78,7 @@ extension _Proto_LowLevelMeshResource_v1 {
             let bufferSizeInByte = vertexData.bytes.byteCount
             self.replaceVertices(at: vertexBufferIndex) { vertexBytes in
                 vertexBytes.withUnsafeMutableBytes { ptr in
+                    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
                     // swift-format-ignore: NeverForceUnwrap
                     vertexData.copyBytes(to: ptr.baseAddress!.assumingMemoryBound(to: UInt8.self), count: bufferSizeInByte)
                 }
@@ -90,6 +90,7 @@ extension _Proto_LowLevelMeshResource_v1 {
         if let indexData = indexData {
             self.replaceIndices { indicesBytes in
                 indicesBytes.withUnsafeMutableBytes { ptr in
+                    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
                     // swift-format-ignore: NeverForceUnwrap
                     indexData.copyBytes(to: ptr.baseAddress!.assumingMemoryBound(to: UInt8.self), count: ptr.count)
                 }
@@ -107,6 +108,21 @@ extension _Proto_LowLevelMeshResource_v1 {
 }
 
 extension _Proto_LowLevelTextureResource_v1.Descriptor {
+    static func from(_ textureDescriptor: MTLTextureDescriptor) -> _Proto_LowLevelTextureResource_v1.Descriptor {
+        var descriptor = _Proto_LowLevelTextureResource_v1.Descriptor()
+        descriptor.width = textureDescriptor.width
+        descriptor.height = textureDescriptor.height
+        descriptor.depth = textureDescriptor.depth
+        descriptor.mipmapLevelCount = textureDescriptor.mipmapLevelCount
+        descriptor.arrayLength = textureDescriptor.arrayLength
+        descriptor.pixelFormat = textureDescriptor.pixelFormat
+        descriptor.textureType = textureDescriptor.textureType
+        descriptor.textureUsage = textureDescriptor.usage
+        descriptor.swizzle = textureDescriptor.swizzle
+
+        return descriptor
+    }
+
     static func from(_ texture: MTLTexture, swizzle: MTLTextureSwizzleChannels) -> _Proto_LowLevelTextureResource_v1.Descriptor {
         var descriptor = _Proto_LowLevelTextureResource_v1.Descriptor()
         descriptor.width = texture.width

@@ -22,9 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary MediaRecorderErrorEventInit : EventInit {
+dictionary MediaRecorderErrorEventInit : EventInit {
     required DOMException error;
 };
 

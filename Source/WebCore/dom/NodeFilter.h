@@ -45,6 +45,7 @@ public:
     virtual CallbackResult<unsigned short> acceptNodeRethrowingException(Node&) = 0;
 
     virtual bool hasCallback() const = 0;
+    virtual bool isJSNodeFilter() const { return false; }
 
     /*
      * The following constants are returned by the acceptNode()

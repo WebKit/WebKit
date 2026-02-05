@@ -123,7 +123,6 @@ class RemoteWCLayerTreeHost;
 #if ENABLE(VIDEO)
 class RemoteAudioVideoRendererProxyManager;
 class RemoteMediaPlayerManagerProxy;
-class RemoteMediaResourceManager;
 class RemoteVideoFrameObjectHeap;
 #endif
 
@@ -169,9 +168,6 @@ public:
 
 #if ENABLE(VIDEO)
     RemoteAudioVideoRendererProxyManager& remoteAudioVideoRendererProxyManager();
-    Ref<RemoteAudioVideoRendererProxyManager> protectedRemoteAudioVideoRendererProxyManager();
-    RemoteMediaResourceManager& remoteMediaResourceManager();
-    Ref<RemoteMediaResourceManager> protectedRemoteMediaResourceManager();
 #endif
 
     PAL::SessionID sessionID() const { return m_sessionID; }
@@ -215,17 +211,13 @@ public:
     const WebCore::ProcessIdentity& webProcessIdentity() const { return m_webProcessIdentity; }
 #if ENABLE(ENCRYPTED_MEDIA)
     RemoteCDMFactoryProxy& cdmFactoryProxy();
-    Ref<RemoteCDMFactoryProxy> protectedCdmFactoryProxy();
 #endif
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RemoteLegacyCDMFactoryProxy& legacyCdmFactoryProxy();
-    Ref<RemoteLegacyCDMFactoryProxy> protectedLegacyCdmFactoryProxy();
 #endif
     RemoteMediaEngineConfigurationFactoryProxy& mediaEngineConfigurationFactoryProxy();
-    Ref<RemoteMediaEngineConfigurationFactoryProxy> protectedMediaEngineConfigurationFactoryProxy();
 #if ENABLE(VIDEO)
     RemoteMediaPlayerManagerProxy& remoteMediaPlayerManagerProxy() { return m_remoteMediaPlayerManagerProxy.get(); }
-    Ref<RemoteMediaPlayerManagerProxy> protectedRemoteMediaPlayerManagerProxy();
 #endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     VideoReceiverEndpointManager& videoReceiverEndpointManager();
@@ -236,7 +228,6 @@ public:
 
 #if HAVE(AVASSETREADER)
     RemoteImageDecoderAVFProxy& imageDecoderAVFProxy();
-    Ref<RemoteImageDecoderAVFProxy> protectedImageDecoderAVFProxy();
 #endif
 
     void updateSupportedRemoteCommands();
@@ -268,7 +259,6 @@ public:
 #endif
 
 #if ENABLE(VIDEO)
-    Ref<RemoteVideoFrameObjectHeap> protectedVideoFrameObjectHeap();
     void performWithMediaPlayerOnMainThread(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&);
 #endif
 
@@ -300,13 +290,10 @@ private:
 
 #if ENABLE(WEB_AUDIO)
     RemoteAudioDestinationManager& remoteAudioDestinationManager();
-    Ref<RemoteAudioDestinationManager> protectedRemoteAudioDestinationManager();
 #endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     UserMediaCaptureManagerProxy& userMediaCaptureManagerProxy();
-    Ref<UserMediaCaptureManagerProxy> protectedUserMediaCaptureManagerProxy();
     RemoteAudioMediaStreamTrackRendererInternalUnitManager& audioMediaStreamTrackRendererInternalUnitManager();
-    Ref<RemoteAudioMediaStreamTrackRendererInternalUnitManager> protectedAudioMediaStreamTrackRendererInternalUnitManager();
 #endif
 
     void createRenderingBackend(RemoteRenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
@@ -336,7 +323,6 @@ private:
 #endif
 
 #if USE(AUDIO_SESSION)
-    Ref<RemoteAudioSessionProxy> protectedAudioSessionProxy();
     using EnsureAudioSessionCompletion = CompletionHandler<void(const RemoteAudioSessionConfiguration&)>;
     void ensureAudioSession(EnsureAudioSessionCompletion&&);
 #endif
@@ -390,7 +376,6 @@ private:
     RefPtr<RemoteSharedResourceCache> m_sharedResourceCache;
 #if ENABLE(VIDEO)
     const std::unique_ptr<RemoteAudioVideoRendererProxyManager> m_remoteAudioVideoRendererProxyManager;
-    RefPtr<RemoteMediaResourceManager> m_remoteMediaResourceManager WTF_GUARDED_BY_CAPABILITY(mainThread);
     Ref<RemoteMediaPlayerManagerProxy> m_remoteMediaPlayerManagerProxy;
 #endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)

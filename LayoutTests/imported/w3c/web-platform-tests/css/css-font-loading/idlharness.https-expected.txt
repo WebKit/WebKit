@@ -1,5 +1,5 @@
 
-PASS idl_test setup
+FAIL idl_test setup promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: FontFaceSetLoadEvent"
 PASS idl_test validation
 PASS Partial interface FontFace: original interface defined
 PASS Partial interface FontFace: member names are unique
@@ -97,16 +97,16 @@ FAIL FontFacePalettes interface: existence and properties of interface prototype
 FAIL FontFacePalettes interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "FontFacePalettes" expected property "FontFacePalettes" missing
 FAIL FontFacePalettes interface: iterable<FontFacePalette> undefined is not an object (evaluating 'this.get_interface_object().prototype')
 FAIL FontFacePalettes interface: attribute length assert_own_property: self does not have own property "FontFacePalettes" expected property "FontFacePalettes" missing
-PASS FontFaceSetLoadEvent interface: existence and properties of interface object
-PASS FontFaceSetLoadEvent interface object length
-PASS FontFaceSetLoadEvent interface object name
-PASS FontFaceSetLoadEvent interface: existence and properties of interface prototype object
-PASS FontFaceSetLoadEvent interface: existence and properties of interface prototype object's "constructor" property
-PASS FontFaceSetLoadEvent interface: existence and properties of interface prototype object's @@unscopables property
-PASS FontFaceSetLoadEvent interface: attribute fontfaces
-PASS FontFaceSetLoadEvent must be primary interface of fontFaceSetLoadEvent
-PASS Stringification of fontFaceSetLoadEvent
-PASS FontFaceSetLoadEvent interface: fontFaceSetLoadEvent must inherit property "fontfaces" with the proper type
+FAIL FontFaceSetLoadEvent interface: existence and properties of interface object assert_own_property: self does not have own property "FontFaceSetLoadEvent" expected property "FontFaceSetLoadEvent" missing
+FAIL FontFaceSetLoadEvent interface object length assert_own_property: self does not have own property "FontFaceSetLoadEvent" expected property "FontFaceSetLoadEvent" missing
+FAIL FontFaceSetLoadEvent interface object name assert_own_property: self does not have own property "FontFaceSetLoadEvent" expected property "FontFaceSetLoadEvent" missing
+FAIL FontFaceSetLoadEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "FontFaceSetLoadEvent" expected property "FontFaceSetLoadEvent" missing
+FAIL FontFaceSetLoadEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "FontFaceSetLoadEvent" expected property "FontFaceSetLoadEvent" missing
+FAIL FontFaceSetLoadEvent interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "FontFaceSetLoadEvent" expected property "FontFaceSetLoadEvent" missing
+FAIL FontFaceSetLoadEvent interface: attribute fontfaces assert_own_property: self does not have own property "FontFaceSetLoadEvent" expected property "FontFaceSetLoadEvent" missing
+FAIL FontFaceSetLoadEvent must be primary interface of fontFaceSetLoadEvent assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: fontFaceSetLoadEvent"
+FAIL Stringification of fontFaceSetLoadEvent assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: fontFaceSetLoadEvent"
+FAIL FontFaceSetLoadEvent interface: fontFaceSetLoadEvent must inherit property "fontfaces" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: fontFaceSetLoadEvent"
 PASS FontFaceSet interface: existence and properties of interface object
 FAIL FontFaceSet interface object length assert_equals: wrong value for FontFaceSet.length expected 0 but got 1
 PASS FontFaceSet interface object name

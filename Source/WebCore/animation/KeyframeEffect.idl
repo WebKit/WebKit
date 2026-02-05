@@ -30,7 +30,7 @@ typedef (double? or TimelineRangeOffset or DOMString) KeyframeOffset;
     Exposed=Window,
     JSGenerateToNativeObject,
 ] interface KeyframeEffect : AnimationEffect {
-    [CallWith=CurrentGlobalObject&CurrentDocument] constructor(Element? target, object? keyframes, optional (unrestricted double or KeyframeEffectOptions) options);
+    [CallWith=CurrentGlobalObject&CurrentDocument] constructor(Element? target, object? keyframes, optional (unrestricted double or KeyframeEffectOptions) options = {});
     constructor(KeyframeEffect source);
 
     attribute Element? target;
@@ -41,28 +41,21 @@ typedef (double? or TimelineRangeOffset or DOMString) KeyframeOffset;
     [CallWith=CurrentGlobalObject&CurrentDocument, ImplementedAs=setBindingsKeyframes] undefined setKeyframes(object? keyframes);
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary BasePropertyIndexedKeyframe {
+dictionary BasePropertyIndexedKeyframe {
     (sequence<KeyframeOffset> or KeyframeOffset) offset = [];
     (sequence<DOMString> or DOMString) easing = [];
     (sequence<CompositeOperationOrAuto> or CompositeOperationOrAuto) composite = [];
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary BaseKeyframe {
+dictionary BaseKeyframe {
     KeyframeOffset offset = null;
     DOMString easing = "linear";
     CompositeOperationOrAuto composite = "auto";
 };
 
+// FIXME: The inheritance below is not yet standardized: https://github.com/w3c/csswg-drafts/issues/13423.
 [
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary BaseComputedKeyframe {
-     KeyframeOffset offset = null;
+] dictionary BaseComputedKeyframe : BaseKeyframe {
      unrestricted double computedOffset;
-     DOMString easing = "linear";
-     CompositeOperationOrAuto composite = "auto";
 };

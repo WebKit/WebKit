@@ -76,3 +76,12 @@ private:
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct MarkableTraits<WebCore::ResourceRequest> {
+    static bool isEmptyValue(const WebCore::ResourceRequest& request) { return request.isNull(); };
+    static WebCore::ResourceRequest emptyValue() { return WebCore::ResourceRequest { }; };
+};
+
+} // namespace WTF

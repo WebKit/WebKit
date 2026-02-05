@@ -72,7 +72,6 @@ private:
     URL completeURL(const String&) const;
 
     bool shouldConvertInvalidURLsToBlank() const;
-    Ref<LocalFrame> protectedFrame() const;
 
     bool canCreateSubFrame() const;
 

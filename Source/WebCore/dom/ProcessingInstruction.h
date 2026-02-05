@@ -50,7 +50,6 @@ public:
 
     const String& localHref() const { return m_localHref; }
     StyleSheet* sheet() const { return m_sheet.get(); }
-    RefPtr<StyleSheet> protectedSheet() const;
 
     bool isCSS() const { return m_isCSS; }
 #if ENABLE(XSLT)

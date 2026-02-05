@@ -30,6 +30,8 @@ typedef (HTMLCanvasElement) ImageBitmapCanvas;
 #endif
 
 [
+    ReportExtraMemoryCost,
+    ReportExternalMemoryCost,
     Exposed=(Window,Worker),
     CallTracer=InspectorCanvasCallTracer,
 ] interface ImageBitmapRenderingContext {

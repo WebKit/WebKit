@@ -550,57 +550,11 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             return;
 
         let contextMenu = WI.ContextMenu.createFromEvent(event);
-        let isColorOutsideSRGB = value.isOutsideSRGB();
 
-        if (!isColorOutsideSRGB) {
-            if (value.isKeyword() && value.format !== WI.Color.Format.Keyword) {
-                contextMenu.appendItem(WI.UIString("Format: Keyword"), () => {
-                    value.format = WI.Color.Format.Keyword;
-                    this._updateSwatch();
-                });
-            }
-
-            let hexInfo = this._getNextValidHEXFormat();
-            if (hexInfo) {
-                contextMenu.appendItem(hexInfo.title, () => {
-                    value.format = hexInfo.format;
-                    this._updateSwatch();
-                });
-            }
-
-            if (value.simple && value.format !== WI.Color.Format.HSL) {
-                contextMenu.appendItem(WI.UIString("Format: HSL"), () => {
-                    value.format = WI.Color.Format.HSL;
-                    this._updateSwatch();
-                });
-            } else if (value.format !== WI.Color.Format.HSLA) {
-                contextMenu.appendItem(WI.UIString("Format: HSLA"), () => {
-                    value.format = WI.Color.Format.HSLA;
-                    this._updateSwatch();
-                });
-            }
-
-            if (value.simple && value.format !== WI.Color.Format.RGB) {
-                contextMenu.appendItem(WI.UIString("Format: RGB"), () => {
-                    value.format = WI.Color.Format.RGB;
-                    this._updateSwatch();
-                });
-            } else if (value.format !== WI.Color.Format.RGBA) {
-                contextMenu.appendItem(WI.UIString("Format: RGBA"), () => {
-                    value.format = WI.Color.Format.RGBA;
-                    this._updateSwatch();
-                });
-            }
-
-            if (value.format !== WI.Color.Format.ColorFunction) {
-                contextMenu.appendItem(WI.UIString("Format: Color Function"), () => {
-                    value.format = WI.Color.Format.ColorFunction;
-                    this._updateSwatch();
-                });
-            }
-
-            contextMenu.appendSeparator();
-        }
+        WI.ColorPicker.addContextMenuFormatItems(contextMenu, value, (format) => {
+            value.format = format;
+            this._updateSwatch();
+        });
 
         if (value.gamut !== WI.Color.Gamut.DisplayP3) {
             contextMenu.appendItem(WI.UIString("Convert to Display-P3"), () => {
@@ -610,66 +564,12 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         }
 
         if (value.gamut !== WI.Color.Gamut.SRGB) {
-            let label = isColorOutsideSRGB ? WI.UIString("Clamp to sRGB") : WI.UIString("Convert to sRGB");
+            let label = value.isOutsideSRGB() ? WI.UIString("Clamp to sRGB") : WI.UIString("Convert to sRGB");
             contextMenu.appendItem(label, () => {
                 value.gamut = WI.Color.Gamut.SRGB;
                 this._updateSwatch();
             });
         }
-    }
-
-    _getNextValidHEXFormat()
-    {
-        if (this._type !== WI.InlineSwatch.Type.Color)
-            return false;
-
-        let value = this.value;
-
-        function hexMatchesCurrentColor(hexInfo) {
-            let nextIsSimple = hexInfo.format === WI.Color.Format.ShortHEX || hexInfo.format === WI.Color.Format.HEX;
-            if (nextIsSimple && !value.simple)
-                return false;
-
-            let nextIsShort = hexInfo.format === WI.Color.Format.ShortHEX || hexInfo.format === WI.Color.Format.ShortHEXAlpha;
-            if (nextIsShort && !value.canBeSerializedAsShortHEX())
-                return false;
-
-            return true;
-        }
-
-        const hexFormats = [
-            {
-                format: WI.Color.Format.ShortHEX,
-                title: WI.UIString("Format: Short Hex")
-            },
-            {
-                format: WI.Color.Format.ShortHEXAlpha,
-                title: WI.UIString("Format: Short Hex with Alpha")
-            },
-            {
-                format: WI.Color.Format.HEX,
-                title: WI.UIString("Format: Hex")
-            },
-            {
-                format: WI.Color.Format.HEXAlpha,
-                title: WI.UIString("Format: Hex with Alpha")
-            }
-        ];
-
-        let currentColorIsHEX = hexFormats.some((info) => info.format === value.format);
-
-        for (let i = 0; i < hexFormats.length; ++i) {
-            if (currentColorIsHEX && value.format !== hexFormats[i].format)
-                continue;
-
-            for (let j = ~~currentColorIsHEX; j < hexFormats.length; ++j) {
-                let nextIndex = (i + j) % hexFormats.length;
-                if (hexMatchesCurrentColor(hexFormats[nextIndex]))
-                    return hexFormats[nextIndex];
-            }
-            return null;
-        }
-        return hexFormats[0];
     }
 
     _findMatchingColorVariable(variableName)

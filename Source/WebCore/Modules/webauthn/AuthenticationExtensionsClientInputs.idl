@@ -48,7 +48,6 @@
     Conditional=WEB_AUTHN,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary AuthenticationExtensionsPRFInputs {
     AuthenticationExtensionsPRFValues eval;
     record<USVString, AuthenticationExtensionsPRFValues> evalByCredential;
@@ -58,7 +57,6 @@
     Conditional=WEB_AUTHN,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary AuthenticationExtensionsClientInputs {
     USVString appid;
     // For Google to turn off the legacy AppID support.

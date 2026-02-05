@@ -34,18 +34,24 @@ namespace WebCore {
 struct BarcodeDetectorOptions {
     ShapeDetection::BarcodeDetectorOptions convertToBacking() const
     {
+        if (!formats)
+            return { };
+
         return {
-            formats.map([] (auto format) {
+            formats->map([](auto format) {
                 return WebCore::convertToBacking(format);
-            }),
+            })
         };
     }
 
-    Vector<BarcodeFormat> formats;
+    std::optional<Vector<BarcodeFormat>> formats;
 };
 
 inline BarcodeDetectorOptions convertFromBacking(const ShapeDetection::BarcodeDetectorOptions& barcodeDetectorOptions)
 {
+    if (barcodeDetectorOptions.formats.isEmpty())
+        return { std::nullopt };
+
     return {
         barcodeDetectorOptions.formats.map([] (auto format) {
             return WebCore::convertFromBacking(format);

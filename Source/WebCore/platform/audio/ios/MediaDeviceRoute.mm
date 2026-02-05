@@ -26,7 +26,7 @@
 #import "config.h"
 #import "MediaDeviceRoute.h"
 
-#if HAVE(AVROUTING_FRAMEWORK)
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
 
 #import <WebKitAdditions/MediaDeviceRouteAdditions.mm>
 #import <wtf/TZoneMallocInlines.h>
@@ -362,4 +362,4 @@ NS_ASSUME_NONNULL_END
 #undef DEFINE_GETTER
 #undef DEFINE_SETTER
 
-#endif // HAVE(AVROUTING_FRAMEWORK)
+#endif // ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)

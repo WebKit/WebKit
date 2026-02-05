@@ -80,18 +80,15 @@ public:
     void updateForFrameLoadCompleted();
 
     HistoryItem* currentItem() const { return m_currentItem.get(); }
-    WEBCORE_EXPORT RefPtr<HistoryItem> protectedCurrentItem() const;
     WEBCORE_EXPORT void setCurrentItem(Ref<HistoryItem>&&);
     void setCurrentItemTitle(const StringWithDirection&);
     bool currentItemShouldBeReplaced() const;
     WEBCORE_EXPORT void replaceCurrentItem(RefPtr<HistoryItem>&&);
 
     HistoryItem* previousItem() const { return m_previousItem.get(); }
-    RefPtr<HistoryItem> protectedPreviousItem() const;
     void clearPreviousItem();
 
     HistoryItem* provisionalItem() const { return m_provisionalItem.get(); }
-    RefPtr<HistoryItem> protectedProvisionalItem() const;
     void setProvisionalItem(RefPtr<HistoryItem>&&);
 
     void pushState(RefPtr<SerializedScriptValue>&&, const String& url);
@@ -130,7 +127,6 @@ private:
 
     struct FrameToNavigate;
     static void recursiveGatherFramesToNavigate(LocalFrame&, Vector<FrameToNavigate>&, HistoryItem& targetItem, HistoryItem* fromItem);
-    Ref<LocalFrame> protectedFrame() const;
 
     const WeakRef<LocalFrame> m_frame;
 

@@ -4,7 +4,7 @@ layer at (0,0) size 800x292
   RenderBlock {html} at (0,0) size 800x292
     RenderBody {body} at (8,10) size 784x272
       RenderBlock {p} at (0,0) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 454x17
+        RenderText {#text} at (0,0) size 454x18
           text run at (0,0) width 454: "The word \"TEST \" should appear twice below, the same size each time."
       RenderBlock (anonymous) at (0,28) size 784x124
         RenderSVGRoot {svg} at (18,48) size 390x110
@@ -15,7 +15,7 @@ layer at (0,0) size 800x292
                 text run at (0,0) width 24: "TEST"
         RenderText {#text} at (0,0) size 0x0
 layer at (18,182) size 390x110
-  RenderBlock (relative positioned) {div} at (0,162) size 390x110 [color=#000080] [bgcolor=#D3D3D3]
+  RenderBlock (relative positioned) {div} at (0,161) size 390x111 [color=#000080] [bgcolor=#D3D3D3]
     RenderBlock {div} at (0,0) size 390x115
       RenderText {#text} at (0,2) size 239x111
         text run at (0,2) width 239: "TEST"

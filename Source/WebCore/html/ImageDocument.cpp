@@ -25,7 +25,6 @@
 #include "config.h"
 #include "ImageDocument.h"
 
-#include "AddEventListenerOptionsInlines.h"
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -160,7 +159,7 @@ void ImageDocument::updateDuringParsing()
     if (!frame())
         return;
 
-    if (RefPtr buffer = protectedLoader()->mainResourceData()) {
+    if (RefPtr buffer = protect(loader())->mainResourceData()) {
         if (CachedResourceHandle cachedImage = Ref { *m_imageElement }->cachedImage())
             cachedImage->updateBuffer(*buffer);
     }
@@ -285,7 +284,7 @@ void ImageDocument::createDocumentStructure()
         processViewport("width=device-width,viewport-fit=cover"_s, ViewportArguments::Type::ImageDocument);
 #else
         Ref listener = ImageEventListener::create(*this);
-        imageElement->addEventListener(eventNames().clickEvent, WTF::move(listener), false);
+        imageElement->addEventListener(eventNames().clickEvent, WTF::move(listener));
 #endif
     }
 

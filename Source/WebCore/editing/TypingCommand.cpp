@@ -345,7 +345,7 @@ void TypingCommand::postTextStateChangeNotificationForDeletion(const VisibleSele
 {
     if (!AXObjectCache::accessibilityEnabled())
         return;
-    postTextStateChangeNotification(AXTextEditTypeDelete, AccessibilityObject::stringForVisiblePositionRange(selection), selection.start());
+    postTextStateChangeNotification(AXTextEditType::Delete, AccessibilityObject::stringForVisiblePositionRange(selection), selection.start());
     VisiblePositionIndexRange range;
     range.startIndex.value = indexForVisiblePosition(selection.visibleStart(), range.startIndex.scope);
     range.endIndex.value = indexForVisiblePosition(selection.visibleEnd(), range.endIndex.scope);
@@ -546,7 +546,7 @@ void TypingCommand::insertTextAndNotifyAccessibility(const String& text, bool se
 
     AccessibilityReplacedText replacedText(document().selection().selection());
     insertText(text, selectInsertedText);
-    replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditTypeTyping, text, document().selection().selection());
+    replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditType::Typing, text, document().selection().selection());
     protectedComposition()->setRangeDeletedByUnapply(replacedText.replacedRange());
 }
 
@@ -579,7 +579,7 @@ void TypingCommand::insertLineBreakAndNotifyAccessibility()
 {
     AccessibilityReplacedText replacedText(document().selection().selection());
     insertLineBreak();
-    replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditTypeTyping, "\n"_s, document().selection().selection());
+    replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditType::Typing, "\n"_s, document().selection().selection());
     protectedComposition()->setRangeDeletedByUnapply(replacedText.replacedRange());
 }
 
@@ -599,7 +599,7 @@ void TypingCommand::insertParagraphSeparatorAndNotifyAccessibility()
 {
     AccessibilityReplacedText replacedText(document().selection().selection());
     insertParagraphSeparator();
-    replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditTypeTyping, "\n"_s, document().selection().selection());
+    replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditType::Typing, "\n"_s, document().selection().selection());
     protectedComposition()->setRangeDeletedByUnapply(replacedText.replacedRange());
 }
 
@@ -623,7 +623,7 @@ void TypingCommand::insertParagraphSeparatorInQuotedContentAndNotifyAccessibilit
 {
     AccessibilityReplacedText replacedText(document().selection().selection());
     insertParagraphSeparatorInQuotedContent();
-    replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditTypeTyping, "\n"_s, document().selection().selection());
+    replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditType::Typing, "\n"_s, document().selection().selection());
     protectedComposition()->setRangeDeletedByUnapply(replacedText.replacedRange());
 }
 

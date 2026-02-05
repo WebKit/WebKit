@@ -39,7 +39,6 @@
 #include "B3HoistLoopInvariantValues.h"
 #include "B3InferSwitches.h"
 #include "B3LegalizeMemoryOffsets.h"
-#include "B3LowerInt64.h"
 #include "B3LowerMacros.h"
 #include "B3LowerMacrosAfterOptimizations.h"
 #include "B3LowerToAir.h"
@@ -113,9 +112,6 @@ void generateToAir(Procedure& procedure)
         // FIXME: Add more optimizations here.
         // https://bugs.webkit.org/show_bug.cgi?id=150507
     }
-#if USE(JSVALUE32_64)
-    lowerInt64(procedure);
-#endif
 
     lowerMacrosAfterOptimizations(procedure);
     legalizeMemoryOffsets(procedure);
@@ -147,4 +143,3 @@ void generateToAir(Procedure& procedure)
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
-

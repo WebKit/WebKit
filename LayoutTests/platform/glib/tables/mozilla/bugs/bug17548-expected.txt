@@ -11,12 +11,12 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (202,2) size 578x4 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
           RenderTableRow {TR} at (0,8) size 782x43
             RenderTableCell {TD} at (202,18) size 578x23 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,12) size 78x18
-                text run at (2,2) width 78: "Information "
-              RenderImage {IMG} at (80,19) size 4x8
-              RenderText {#text} at (84,12) size 82x18
-                text run at (84,2) width 4: " "
-                text run at (88,2) width 78: "Student Life"
+              RenderText {#text} at (2,13) size 78x17
+                text run at (2,3) width 78: "Information "
+              RenderImage {IMG} at (80,20) size 4x7
+              RenderText {#text} at (84,13) size 82x17
+                text run at (84,3) width 4: " "
+                text run at (88,3) width 78: "Student Life"
           RenderTableRow {TR} at (0,53) size 782x21
             RenderTableCell {TD} at (2,53) size 778x21 [border: (1px inset #000000)] [r=2 c=0 rs=1 cs=2]
 layer at (13,72) size 774x1 clip at (0,0) size 0x0

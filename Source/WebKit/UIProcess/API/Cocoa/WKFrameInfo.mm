@@ -110,7 +110,10 @@ static Ref<API::FrameInfo> protectedFrameInfo(WKFrameInfo *frameInfo)
 
 - (NSUUID *)_documentIdentifier
 {
-    return _frameInfo->documentID()->object().createNSUUID().autorelease();
+    auto documentID = _frameInfo->documentID();
+    if (!documentID)
+        return nil;
+    return documentID->object().createNSUUID().autorelease();
 }
 
 - (pid_t)_processIdentifier

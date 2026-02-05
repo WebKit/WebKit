@@ -704,8 +704,6 @@ localizedStrings["Enable Program"] = "Enable Program";
 localizedStrings["Enable Rule"] = "Enable Rule";
 localizedStrings["Enable all breakpoints (%s)"] = "Enable all breakpoints (%s)";
 localizedStrings["Enable paint flashing"] = "Enable paint flashing";
-/* Label for checkbox that controls whether timeline recordings can capture activity in Worker contexts. */
-localizedStrings["Enable recording in Workers"] = "Enable recording in Workers";
 localizedStrings["Enable source maps"] = "Enable source maps";
 localizedStrings["Enabled"] = "Enabled";
 /* Label for column showing the list of enabled timelines. */
@@ -996,9 +994,9 @@ localizedStrings["Latency"] = "Latency";
 localizedStrings["Layer Count: %d"] = "Layer Count: %d";
 localizedStrings["Layer Info"] = "Layer Info";
 localizedStrings["Layers"] = "Layers";
-localizedStrings["Layers:"] = "Layers:";
 /* Name of Layers Tab */
 localizedStrings["Layers Tab Name"] = "Layers";
+localizedStrings["Layers:"] = "Layers:";
 localizedStrings["Layout & Rendering"] = "Layout & Rendering";
 /* Title of the CSS style panel. */
 localizedStrings["Layout @ Styles Sidebar"] = "Layout";
@@ -1011,7 +1009,6 @@ localizedStrings["Ligatures @ Font Details Sidebar Property"] = "Ligatures";
 localizedStrings["Light @ Settings General Appearance"] = "Light";
 /* Label for the light color scheme preference. */
 localizedStrings["Light @ User Preferences Overrides"] = "Light";
-localizedStrings["Limit number of resources in navigation sidebar"] = "Limit number of resources in navigation sidebar";
 localizedStrings["Limit syntax highlighting on long lines of code"] = "Limit syntax highlighting on long lines of code";
 localizedStrings["Line %d"] = "Line %d";
 localizedStrings["Line %d:%d"] = "Line %d:%d";
@@ -1021,7 +1018,11 @@ localizedStrings["Line names @ Layout Panel Overlay Options"] = "Line Names";
 /* Label for option to toggle the line numbers setting for CSS grid overlays */
 localizedStrings["Line numbers @ Layout Panel Overlay Options"] = "Line Numbers";
 localizedStrings["Line wrapping:"] = "Line wrapping:";
+/* Label for a canvas that uses the linear Display P3 color space. */
+localizedStrings["Linear Display P3 @ Color Space"] = "Linear Display P3";
 localizedStrings["Linear Gradient"] = "Linear Gradient";
+/* Label for a canvas that uses the linear sRGB color space. */
+localizedStrings["Linear sRGB @ Color Space"] = "Linear sRGB";
 /* Property value for `font-variant-numeric: lining-nums`. */
 localizedStrings["Lining Numerals @ Font Details Sidebar Property Value"] = "Lining Numerals";
 localizedStrings["Live"] = "Live";
@@ -1234,7 +1235,7 @@ localizedStrings["Option-click to show source"] = "Option-click to show source";
 /* Tooltip with instructions on how to show all hidden CSS variables */
 localizedStrings["Option-click to show unused CSS variables from all rules @ Styles Sidebar Panel Tooltip"] = "Option-click to show unused CSS variables from all rules";
 localizedStrings["Options"] = "Options";
-/* Label for option to toggle the order numbers setting for CSS grid and flex overlays */
+/* Label for option to toggle the order numbers setting for CSS grid overlays */
 localizedStrings["Order Numbers @ Layout Panel Overlay Options"] = "Order Numbers";
 /* Property value for `font-variant-numeric: ordinal`. */
 localizedStrings["Ordinal Letter Forms @ Font Details Sidebar Property Value"] = "Ordinal Letter Forms";
@@ -1260,7 +1261,6 @@ localizedStrings["PDF"] = "PDF";
 localizedStrings["PNG"] = "PNG";
 localizedStrings["Page"] = "Page";
 localizedStrings["Page Issue"] = "Page Issue";
-localizedStrings["Page navigated to %s at %s"] = "Page navigated to %s at %s";
 /* Heading for list of flex overlay options */
 localizedStrings["Page Overlay Options @ Layout Panel Flex Section Header"] = "Page Overlay Options";
 /* Heading for list of grid overlay options */
@@ -1269,6 +1269,7 @@ localizedStrings["Page Overlay Options @ Layout Panel Grid Section Header"] = "P
 localizedStrings["Page Overlays @ Layout Sidebar Section Header"] = "Grid Overlays";
 /* Heading for list of flex container nodes */
 localizedStrings["Page Overlays for Flex containers @ Layout Sidebar Section Header"] = "Flexbox Overlays";
+localizedStrings["Page navigated to %s at %s"] = "Page navigated to %s at %s";
 localizedStrings["Page reloaded at %s"] = "Page reloaded at %s";
 /* Paint (render) phase timeline records */
 localizedStrings["Paint @ Timeline record"] = "Paint";
@@ -1607,13 +1608,12 @@ localizedStrings["Show property syntax in documentation popover"] = "Show proper
 localizedStrings["Show rulers"] = "Show rulers";
 localizedStrings["Show the details sidebar (%s)"] = "Show the details sidebar (%s)";
 localizedStrings["Show the navigation sidebar (%s)"] = "Show the navigation sidebar (%s)";
-/* Settings tab checkbox label for whether the User Agent styles should be shown */
-localizedStrings["Show user agent styles"] = "Show user agent styles";
 /* Settings tab checkbox label for whether the transparency grid is shown by default */
 localizedStrings["Show transparency grid (settings label)"] = "Show transparency grid";
 /* Tooltip for showing the checkered transparency grid under images and canvases */
 localizedStrings["Show transparency grid (tooltip)"] = "Show transparency grid";
 localizedStrings["Show type information"] = "Show type information";
+localizedStrings["Show user agent styles"] = "Show user agent styles";
 localizedStrings["Show:"] = "Show:";
 /* Property value for `font-variant-alternates: simplified`. */
 localizedStrings["Simplified Forms @ Font Details Sidebar Property Value"] = "Simplified Forms";
@@ -1722,6 +1722,8 @@ localizedStrings["Subscript @ Font Details Sidebar Property Value"] = "Subscript
 localizedStrings["Subtree Modified @ DOM Breakpoint"] = "Subtree Modified";
 localizedStrings["Suggest property names based on usage"] = "Suggest property names based on usage";
 localizedStrings["Summary"] = "Summary";
+/* Section header for network redirect details. */
+localizedStrings["Summary @ Network Redirect Headers"] = "Summary";
 /* Property value for `font-variant-position: super`. */
 localizedStrings["Superscript @ Font Details Sidebar Property Value"] = "Superscript";
 localizedStrings["Symbol"] = "Symbol";
@@ -1820,8 +1822,6 @@ localizedStrings["Timeline Recording %d"] = "Timeline Recording %d";
 localizedStrings["Timeline Recording Import Error: %s"] = "Timeline Recording Import Error: %s";
 /* Name of Timelines Tab */
 localizedStrings["Timelines Tab Name"] = "Timelines";
-/* Category label for experimental settings related to the Timelines Tab. */
-localizedStrings["Timelines: @ Experimental Settings"] = "Timelines:";
 /* Text indicating that the local override will block the network activity with an timeout error. */
 localizedStrings["Timeout @ Local Override Type"] = "Timeout";
 localizedStrings["Timer %d Fired"] = "Timer %d Fired";
@@ -1923,6 +1923,8 @@ localizedStrings["Video Details @ Media Sidebar"] = "Video Details";
 localizedStrings["Video Format @ Media Sidebar"] = "Video Format";
 /* Value string for Video Range color in the Media Sidebar */
 localizedStrings["Video range @ Media Sidebar"] = "Video range";
+localizedStrings["View Redirect"] = "View Redirect";
+localizedStrings["View Response"] = "View Response";
 localizedStrings["View Image"] = "View Image";
 localizedStrings["View Recording"] = "View Recording";
 localizedStrings["View Shader"] = "View Shader";
@@ -2056,6 +2058,8 @@ localizedStrings["\u0022%s\u0022 must be an %s"] = "\u0022%s\u0022 must be an %s
 localizedStrings["\u0022%s\u0022 threw an error"] = "\u0022%s\u0022 threw an error";
 localizedStrings["\u201C%s\u201D Event Fired"] = "\u201C%s\u201D Event Fired";
 localizedStrings["\u201C%s\u201D Profile Recorded"] = "\u201C%s\u201D Profile Recorded";
+/* Value for 'immersive' in the Media Sidebar */
+localizedStrings["apple-immersive-video @ Media Sidebar"] = "Apple Immersive Video";
 /* Shown in the 'Type' column of the Network Table for resources loaded via the Beacon API. */
 localizedStrings["beacon @ Network Tab Resource Type Column Value"] = "beacon";
 /* Part of the 'Blackboxed - %d call frame' label shown in the debugger call stack when paused instead of subsequent call frames that have been blackboxed. */
@@ -2076,8 +2080,6 @@ localizedStrings["equirectangular @ Media Sidebar"] = "Equirectangular";
 localizedStrings["eventsource @ Network Tab Resource Type Column Value"] = "eventsource";
 /* Shown in the 'Type' column of the Network Table for resources loaded via the 'fetch' method. */
 localizedStrings["fetch @ Network Tab Resource Type Column Value"] = "fetch";
-/* Value for 'fisheye' in the Media Sidebar */
-localizedStrings["fisheye @ Media Sidebar"] = "Fisheye";
 /* Shown in the 'Type' column of the Network Table for font resources. */
 localizedStrings["font @ Network Tab Resource Type Column Value"] = "font";
 localizedStrings["for changes to take effect"] = "for changes to take effect";

@@ -25,9 +25,7 @@
 
 [
     Conditional=APPLE_PAY,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ApplePayShippingContactUpdate : ApplePayDetailsUpdateBase {
-    sequence<ApplePayError> errors;
-
-    sequence<ApplePayShippingMethod> newShippingMethods;
+    sequence<ApplePayError> errors = [];
+    sequence<ApplePayShippingMethod> newShippingMethods = [];
 };

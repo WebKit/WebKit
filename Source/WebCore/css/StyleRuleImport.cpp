@@ -80,7 +80,7 @@ void StyleRuleImport::setCSSStyleSheet(const String& href, const URL& baseURL, A
     if (!baseURL.isNull())
         context.baseURL = baseURL;
 
-    Document* document = m_parentStyleSheet ? m_parentStyleSheet->singleOwnerDocument() : nullptr;
+    CheckedPtr<Document> document = m_parentStyleSheet ? m_parentStyleSheet->singleOwnerDocument() : nullptr;
     m_styleSheet = StyleSheetContents::create(this, href, context);
     if ((m_parentStyleSheet && m_parentStyleSheet->loadedFromOpaqueSource() == LoadedFromOpaqueSource::Yes) || !cachedStyleSheet->isCORSSameOrigin())
         m_styleSheet->setAsLoadedFromOpaqueSource();
@@ -107,10 +107,10 @@ void StyleRuleImport::requestStyleSheet()
 {
     if (!m_parentStyleSheet)
         return;
-    auto* document = m_parentStyleSheet->singleOwnerDocument();
+    CheckedPtr document = m_parentStyleSheet->singleOwnerDocument();
     if (!document)
         return;
-    auto* page = document->page();
+    RefPtr page = document->page();
     if (!page)
         return;
 
@@ -123,8 +123,8 @@ void StyleRuleImport::requestStyleSheet()
 
     // Check for a cycle in our import chain.  If we encounter a stylesheet
     // in our parent chain with the same URL, then just bail.
-    StyleSheetContents* rootSheet = m_parentStyleSheet;
-    for (StyleSheetContents* sheet = m_parentStyleSheet; sheet; sheet = sheet->parentStyleSheet()) {
+    RefPtr rootSheet = m_parentStyleSheet;
+    for (RefPtr sheet = m_parentStyleSheet; sheet; sheet = sheet->parentStyleSheet()) {
         if (equalIgnoringFragmentIdentifier(absURL, sheet->baseURL())
             || equalIgnoringFragmentIdentifier(absURL, document->completeURL(sheet->originalURL())))
             return;
@@ -156,12 +156,12 @@ void StyleRuleImport::requestStyleSheet()
 
         request.setOptions(WTF::move(options));
 
-        m_cachedSheet = document->protectedCachedResourceLoader()->requestUserCSSStyleSheet(*page, WTF::move(request));
+        m_cachedSheet = protect(document->cachedResourceLoader())->requestUserCSSStyleSheet(*page, WTF::move(request));
     } else {
         auto options = request.options();
         options.loadedFromOpaqueSource = m_parentStyleSheet->loadedFromOpaqueSource();
         request.setOptions(WTF::move(options));
-        m_cachedSheet = document->protectedCachedResourceLoader()->requestCSSStyleSheet(WTF::move(request)).value_or(nullptr);
+        m_cachedSheet = protect(document->cachedResourceLoader())->requestCSSStyleSheet(WTF::move(request)).value_or(nullptr);
     }
     if (m_cachedSheet) {
         // if the import rule is issued dynamically, the sheet may be

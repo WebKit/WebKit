@@ -70,6 +70,7 @@ enum class MultiviewOption
     NoAcceleration,
     InstancedMultiviewVertexShader,
     InstancedMultiviewGeometryShader,
+    InstancedMultiviewMultisampledVertexShader,
 
     Unspecified
 };
@@ -113,6 +114,9 @@ struct MultiviewPerfParams final : public RenderTestParams
             case MultiviewOption::InstancedMultiviewGeometryShader:
                 name += "_instanced_multiview_geometry_shader";
                 break;
+            case MultiviewOption::InstancedMultiviewMultisampledVertexShader:
+                name += "_instanced_multiview_multisampled_vertex_shader";
+                break;
             default:
                 name += "_error";
                 break;
@@ -132,6 +136,10 @@ struct MultiviewPerfParams final : public RenderTestParams
         }
         name += "_" + ext;
         name += "_" + ToString(numViews) + "_views";
+        if (multiviewOption == MultiviewOption::InstancedMultiviewMultisampledVertexShader)
+        {
+            name += "_4_samples";
+        }
         return name;
     }
 
@@ -164,6 +172,12 @@ class MultiviewBenchmark : public ANGLERenderTest,
             default:
                 // Unknown extension.
                 break;
+        }
+
+        if (GetParam().multiviewOption ==
+            MultiviewOption::InstancedMultiviewMultisampledVertexShader)
+        {
+            addExtensionPrerequisite("GL_OVR_multiview_multisampled_render_to_texture");
         }
     }
 
@@ -216,7 +230,17 @@ class MultiviewCPUBoundBenchmark : public MultiviewBenchmark
 class MultiviewGPUBoundBenchmark : public MultiviewBenchmark
 {
   public:
-    MultiviewGPUBoundBenchmark() : MultiviewBenchmark("MultiviewGPUBoundBenchmark") {}
+    MultiviewGPUBoundBenchmark() : MultiviewBenchmark("MultiviewGPUBoundBenchmark")
+    {
+        if (IsPixel6() &&
+            GetParam().eglParameters.renderer == EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE &&
+            GetParam().multiviewOption == MultiviewOption::NoAcceleration)
+        {
+            skipTest(
+                "http://anglebug.com/463416137 Fails on Pixel 6 Vulkan with no "
+                "acceleration.");
+        }
+    }
 
     void initializeBenchmark() override;
 
@@ -265,6 +289,24 @@ void MultiviewBenchmark::initializeBenchmark()
                                              0, params->numViews);
             break;
         }
+        case MultiviewOption::InstancedMultiviewMultisampledVertexShader:
+        {
+            // Multiview texture arrays
+            glBindTexture(GL_TEXTURE_2D_ARRAY, mColorTexture);
+            glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA8, params->windowWidth,
+                         params->windowHeight, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+            glBindTexture(GL_TEXTURE_2D_ARRAY, mDepthTexture);
+            glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT32F, params->windowWidth,
+                         params->windowHeight, 2, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+
+            glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
+            glFramebufferTextureMultisampleMultiviewOVR(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                                                        mColorTexture, 0, 4, 0, params->numViews);
+            glFramebufferTextureMultisampleMultiviewOVR(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                                        mDepthTexture, 0, 4, 0, params->numViews);
+            break;
+        }
         case MultiviewOption::Unspecified:
             // implementation error.
             break;
@@ -296,6 +338,7 @@ void MultiviewBenchmark::drawBenchmark()
             break;
         case MultiviewOption::InstancedMultiviewVertexShader:
         case MultiviewOption::InstancedMultiviewGeometryShader:
+        case MultiviewOption::InstancedMultiviewMultisampledVertexShader:
             glViewport(0, 0, viewWidth, viewHeight);
             glScissor(0, 0, viewWidth, viewHeight);
             renderScene();
@@ -565,6 +608,15 @@ MultiviewPerfParams SelectViewInVertexShader(const EGLPlatformParameters &eglPar
                                MultiviewOption::InstancedMultiviewVertexShader,
                                multiviewExtensionIn);
 }
+
+MultiviewPerfParams SelectMultisampledViewInVertexShader(const EGLPlatformParameters &eglParameters,
+                                                         const MultiviewPerfWorkload &workload,
+                                                         ExtensionName multiviewExtensionIn)
+{
+    return MultiviewPerfParams(eglParameters, workload,
+                               MultiviewOption::InstancedMultiviewMultisampledVertexShader,
+                               multiviewExtensionIn);
+}
 }  // namespace
 
 TEST_P(MultiviewCPUBoundBenchmark, Run)
@@ -576,18 +628,28 @@ ANGLE_INSTANTIATE_TEST(
     MultiviewCPUBoundBenchmark,
     NoAcceleration(egl_platform::OPENGL_OR_GLES(), SmallWorkload(), ExtensionName::multiview),
     NoAcceleration(egl_platform::D3D11(), SmallWorkload(), ExtensionName::multiview),
+    NoAcceleration(egl_platform::VULKAN(), SmallWorkload(), ExtensionName::multiview),
     SelectViewInGeometryShader(SmallWorkload(), ExtensionName::multiview),
     SelectViewInVertexShader(egl_platform::OPENGL_OR_GLES(),
                              SmallWorkload(),
                              ExtensionName::multiview),
     SelectViewInVertexShader(egl_platform::D3D11(), SmallWorkload(), ExtensionName::multiview),
+    SelectViewInVertexShader(egl_platform::VULKAN(), SmallWorkload(), ExtensionName::multiview),
+    SelectMultisampledViewInVertexShader(egl_platform::VULKAN(),
+                                         SmallWorkload(),
+                                         ExtensionName::multiview),
     NoAcceleration(egl_platform::OPENGL_OR_GLES(), SmallWorkload(), ExtensionName::multiview2),
     NoAcceleration(egl_platform::D3D11(), SmallWorkload(), ExtensionName::multiview2),
+    NoAcceleration(egl_platform::VULKAN(), SmallWorkload(), ExtensionName::multiview2),
     SelectViewInGeometryShader(SmallWorkload(), ExtensionName::multiview2),
     SelectViewInVertexShader(egl_platform::OPENGL_OR_GLES(),
                              SmallWorkload(),
                              ExtensionName::multiview2),
-    SelectViewInVertexShader(egl_platform::D3D11(), SmallWorkload(), ExtensionName::multiview2));
+    SelectViewInVertexShader(egl_platform::D3D11(), SmallWorkload(), ExtensionName::multiview2),
+    SelectViewInVertexShader(egl_platform::VULKAN(), SmallWorkload(), ExtensionName::multiview2),
+    SelectMultisampledViewInVertexShader(egl_platform::VULKAN(),
+                                         SmallWorkload(),
+                                         ExtensionName::multiview2));
 
 TEST_P(MultiviewGPUBoundBenchmark, Run)
 {
@@ -598,17 +660,27 @@ ANGLE_INSTANTIATE_TEST(
     MultiviewGPUBoundBenchmark,
     NoAcceleration(egl_platform::OPENGL_OR_GLES(), BigWorkload(), ExtensionName::multiview),
     NoAcceleration(egl_platform::D3D11(), BigWorkload(), ExtensionName::multiview),
+    NoAcceleration(egl_platform::VULKAN(), BigWorkload(), ExtensionName::multiview),
     SelectViewInGeometryShader(BigWorkload(), ExtensionName::multiview),
     SelectViewInVertexShader(egl_platform::OPENGL_OR_GLES(),
                              BigWorkload(),
                              ExtensionName::multiview),
     SelectViewInVertexShader(egl_platform::D3D11(), BigWorkload(), ExtensionName::multiview),
+    SelectViewInVertexShader(egl_platform::VULKAN(), BigWorkload(), ExtensionName::multiview),
+    SelectMultisampledViewInVertexShader(egl_platform::VULKAN(),
+                                         BigWorkload(),
+                                         ExtensionName::multiview),
     NoAcceleration(egl_platform::OPENGL_OR_GLES(), BigWorkload(), ExtensionName::multiview2),
     NoAcceleration(egl_platform::D3D11(), BigWorkload(), ExtensionName::multiview2),
+    NoAcceleration(egl_platform::VULKAN(), BigWorkload(), ExtensionName::multiview2),
     SelectViewInGeometryShader(BigWorkload(), ExtensionName::multiview2),
     SelectViewInVertexShader(egl_platform::OPENGL_OR_GLES(),
                              BigWorkload(),
                              ExtensionName::multiview2),
-    SelectViewInVertexShader(egl_platform::D3D11(), BigWorkload(), ExtensionName::multiview2));
+    SelectViewInVertexShader(egl_platform::D3D11(), BigWorkload(), ExtensionName::multiview2),
+    SelectViewInVertexShader(egl_platform::VULKAN(), BigWorkload(), ExtensionName::multiview2),
+    SelectMultisampledViewInVertexShader(egl_platform::VULKAN(),
+                                         BigWorkload(),
+                                         ExtensionName::multiview2));
 
 }  // anonymous namespace

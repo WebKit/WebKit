@@ -45,8 +45,6 @@ private:
     String browserName() const override { return "MiniBrowser"_s; }
     String browserVersion() const override { return "1.0"_s; }
 
-    RefPtr<WebProcessPool> protectedProcessPool() const;
-
     void requestAutomationSession(const String&, const Inspector::RemoteInspector::Client::SessionCapabilities&) override;
     void closeAutomationSession() override;
 

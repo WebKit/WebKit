@@ -124,11 +124,11 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestLegacyFactoryFunctionLe
     if (str1ConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     EnsureStillAliveScope argument1 = callFrame->argument(1);
-    auto str2ConversionResult = convertOptionalWithDefault<IDLDOMString>(*lexicalGlobalObject, argument1.value(), [&]() -> ConversionResult<IDLDOMString> { return Converter<IDLDOMString>::ReturnType { "defaultString"_s }; });
+    auto str2ConversionResult = convertOptionalWithDefault<IDLDOMString>(*lexicalGlobalObject, argument1.value(), [&] -> ConversionResult<IDLDOMString> { return Converter<IDLDOMString>::ReturnType { "defaultString"_s }; });
     if (str2ConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     EnsureStillAliveScope argument2 = callFrame->argument(2);
-    auto str3ConversionResult = convertOptionalWithDefault<IDLDOMString>(*lexicalGlobalObject, argument2.value(), [&]() -> ConversionResult<IDLDOMString> { return typename Converter<IDLDOMString>::ReturnType { String() }; });
+    auto str3ConversionResult = convertOptionalWithDefault<IDLDOMString>(*lexicalGlobalObject, argument2.value(), [&] -> ConversionResult<IDLDOMString> { return typename Converter<IDLDOMString>::ReturnType { String() }; });
     if (str3ConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     auto object = TestLegacyFactoryFunction::createForLegacyFactoryFunction(document.get(), str1ConversionResult.releaseReturnValue(), str2ConversionResult.releaseReturnValue(), str3ConversionResult.releaseReturnValue());

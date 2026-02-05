@@ -224,7 +224,7 @@ void SimulatedInputDispatcher::resolveLocation(const WebCore::IntPoint& currentL
         break;
     }
     case MouseMoveOrigin::Element: {
-        m_client.viewportInViewCenterPointOfElement(protectedPage(), m_frameID, nodeHandle.value(), [destination = location.value(), completionHandler = WTF::move(completionHandler)](std::optional<WebCore::IntPoint> inViewCenterPoint, std::optional<AutomationCommandError> error) mutable {
+        m_client.viewportInViewCenterPointOfElement(protect(m_page), m_frameID, nodeHandle.value(), [destination = location.value(), completionHandler = WTF::move(completionHandler)](std::optional<WebCore::IntPoint> inViewCenterPoint, std::optional<AutomationCommandError> error) mutable {
             if (error) {
                 completionHandler(std::nullopt, error);
                 return;
@@ -241,11 +241,6 @@ void SimulatedInputDispatcher::resolveLocation(const WebCore::IntPoint& currentL
         break;
     }
     }
-}
-
-Ref<WebPageProxy> SimulatedInputDispatcher::protectedPage() const
-{
-    return m_page.get();
 }
 
 void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource& inputSource, SimulatedInputSourceState& newState, AutomationCompletionHandler&& completionHandler)
@@ -308,7 +303,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
                     String mouseButtonName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(b.pressedMouseButton.value_or(MouseButton::None));
                     LOG(Automation, "SimulatedInputDispatcher[%p]: simulating %s[button=%s] @ (%d, %d) for transition to %d.%d", this, interactionName.utf8().data(), mouseButtonName.utf8().data(), b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
 #endif
-                    m_client.simulateMouseInteraction(protectedPage(), b.mouseInteraction.value(), b.pressedMouseButton.value_or(MouseButton::None), b.location.value(), pointerType, WTF::move(eventDispatchFinished));
+                    m_client.simulateMouseInteraction(protect(m_page), b.mouseInteraction.value(), b.pressedMouseButton.value_or(MouseButton::None), b.location.value(), pointerType, WTF::move(eventDispatchFinished));
                 } else
                     eventDispatchFinished({ });
             } else
@@ -336,13 +331,13 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
             // The "dispatch a pointer{Down,Up,Move} action" algorithms (§17.4 Dispatching Actions).
             if (!a.pressedMouseButton && b.pressedMouseButton) {
                 LOG(Automation, "SimulatedInputDispatcher[%p]: simulating TouchDown @ (%d, %d) for transition to %d.%d", this, b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
-                m_client.simulateTouchInteraction(protectedPage(), TouchInteraction::TouchDown, b.location.value(), std::nullopt, WTF::move(eventDispatchFinished));
+                m_client.simulateTouchInteraction(protect(m_page), TouchInteraction::TouchDown, b.location.value(), std::nullopt, WTF::move(eventDispatchFinished));
             } else if (a.pressedMouseButton && !b.pressedMouseButton) {
                 LOG(Automation, "SimulatedInputDispatcher[%p]: simulating LiftUp @ (%d, %d) for transition to %d.%d", this, b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
-                m_client.simulateTouchInteraction(protectedPage(), TouchInteraction::LiftUp, b.location.value(), std::nullopt, WTF::move(eventDispatchFinished));
+                m_client.simulateTouchInteraction(protect(m_page), TouchInteraction::LiftUp, b.location.value(), std::nullopt, WTF::move(eventDispatchFinished));
             } else if (a.location != b.location) {
                 LOG(Automation, "SimulatedInputDispatcher[%p]: simulating MoveTo from (%d, %d) to (%d, %d) for transition to %d.%d", this, a.location.value().x(), a.location.value().y(), b.location.value().x(), b.location.value().y(), m_keyframeIndex, m_inputSourceStateIndex);
-                m_client.simulateTouchInteraction(protectedPage(), TouchInteraction::MoveTo, b.location.value(), a.duration.value_or(0_s), WTF::move(eventDispatchFinished));
+                m_client.simulateTouchInteraction(protect(m_page), TouchInteraction::MoveTo, b.location.value(), a.duration.value_or(0_s), WTF::move(eventDispatchFinished));
             } else
                 eventDispatchFinished(std::nullopt);
         });
@@ -381,7 +376,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
 #else
                     LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyPress[key=%c] for transition to %d.%d", this, charKey, m_keyframeIndex, m_inputSourceStateIndex);
 #endif
-                    m_client.simulateKeyboardInteraction(protectedPage(), KeyboardInteraction::KeyPress, charKey, WTF::move(eventDispatchFinished));
+                    m_client.simulateKeyboardInteraction(protect(m_page), KeyboardInteraction::KeyPress, charKey, WTF::move(eventDispatchFinished));
                 }
             }
 
@@ -399,7 +394,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
 #else
                     LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyRelease[key=%c] for transition to %d.%d", this, charKey, m_keyframeIndex, m_inputSourceStateIndex);
 #endif
-                    m_client.simulateKeyboardInteraction(protectedPage(), KeyboardInteraction::KeyRelease, charKey, WTF::move(eventDispatchFinished));
+                    m_client.simulateKeyboardInteraction(protect(m_page), KeyboardInteraction::KeyRelease, charKey, WTF::move(eventDispatchFinished));
                 }
             }
         } else if (a.pressedVirtualKeys != b.pressedVirtualKeys) {
@@ -414,7 +409,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
                     String virtualKeyName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(iter.value);
                     LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyPress[key=%s] for transition to %d.%d", this, virtualKeyName.utf8().data(), m_keyframeIndex, m_inputSourceStateIndex);
 #endif
-                    m_client.simulateKeyboardInteraction(protectedPage(), KeyboardInteraction::KeyPress, iter.value, WTF::move(eventDispatchFinished));
+                    m_client.simulateKeyboardInteraction(protect(m_page), KeyboardInteraction::KeyPress, iter.value, WTF::move(eventDispatchFinished));
                 }
             }
 
@@ -428,7 +423,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
                     String virtualKeyName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(iter.value);
                     LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyRelease[key=%s] for transition to %d.%d", this, virtualKeyName.utf8().data(), m_keyframeIndex, m_inputSourceStateIndex);
 #endif
-                    m_client.simulateKeyboardInteraction(protectedPage(), KeyboardInteraction::KeyRelease, iter.value, WTF::move(eventDispatchFinished));
+                    m_client.simulateKeyboardInteraction(protect(m_page), KeyboardInteraction::KeyRelease, iter.value, WTF::move(eventDispatchFinished));
                 }
             }
         } else
@@ -462,7 +457,7 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
             if (!usedScrollDelta.isZero()) {
                 LOG(Automation, "SimulatedInputDispatcher[%p]: simulating Wheel from (%d, %d) to (%d, %d) for transition to %d.%d", this, aScrollDelta.width(), aScrollDelta.height(), bScrollDelta.width(), bScrollDelta.height(), m_keyframeIndex, m_inputSourceStateIndex);
                 // FIXME: This does not interpolate mouse scrolls per the "perform a scroll" algorithm (§15.4.4 Wheel actions).
-                m_client.simulateWheelInteraction(protectedPage(), b.location.value(), usedScrollDelta, WTF::move(eventDispatchFinished));
+                m_client.simulateWheelInteraction(protect(m_page), b.location.value(), usedScrollDelta, WTF::move(eventDispatchFinished));
             } else
                 eventDispatchFinished(std::nullopt);
         });

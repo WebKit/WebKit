@@ -341,6 +341,15 @@ void RemoteGraphicsContext::clipPath(const Path& path, WindRule rule)
     context().clipPath(path, rule);
 }
 
+void RemoteGraphicsContext::clipCachedPath(RemotePathImplIdentifier identifier, WebCore::WindRule rule)
+{
+    RefPtr pathImpl = resourceCache().cachedPathImpl(identifier);
+    MESSAGE_CHECK(pathImpl);
+
+    Path path(pathImpl.releaseNonNull());
+    context().clipPath(path, rule);
+}
+
 void RemoteGraphicsContext::resetClip()
 {
     context().resetClip();
@@ -577,6 +586,15 @@ void RemoteGraphicsContext::fillPath(const Path& path)
     context().fillPath(path);
 }
 
+void RemoteGraphicsContext::fillCachedPath(RemotePathImplIdentifier identifier)
+{
+    RefPtr pathImpl = resourceCache().cachedPathImpl(identifier);
+    MESSAGE_CHECK(pathImpl);
+
+    Path path(pathImpl.releaseNonNull());
+    context().fillPath(path);
+}
+
 void RemoteGraphicsContext::fillPathSegment(const PathSegment& segment)
 {
     context().fillPath(Path({ segment }));
@@ -644,7 +662,7 @@ void RemoteGraphicsContext::strokeLineWithColorAndThickness(const PathDataLine& 
 
 void RemoteGraphicsContext::strokeArc(const PathArc& arc)
 {
-    context().strokePath(Path({ PathSegment { arc } }));
+    context().strokeArc(arc);
 }
 
 void RemoteGraphicsContext::strokeClosedArc(const PathClosedArc& closedArc)

@@ -27,7 +27,6 @@
 
 [
     EnabledBySetting=ShapeDetection,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary BarcodeDetectorOptions {
     sequence<BarcodeFormat> formats;
 };

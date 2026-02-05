@@ -134,7 +134,7 @@ void HTMLVideoElement::didAttachRenderers()
             lazyInitialize(m_imageLoader, makeUniqueWithoutRefCountedCheck<HTMLImageLoader>(*this));
         m_imageLoader->updateFromElement();
         if (CheckedPtr renderer = this->renderer())
-            renderer->checkedImageResource()->setCachedImage(m_imageLoader->protectedImage());
+            renderer->checkedImageResource()->setCachedImage(protect(m_imageLoader->image()));
     }
 }
 
@@ -349,7 +349,7 @@ void HTMLVideoElement::mediaPlayerFirstVideoFrameAvailable()
 
     if (CheckedPtr renderer = this->renderer()) {
         renderer->updateFromElement();
-        protectedDocument()->didPaintImage(*this, nullptr, renderer->videoBox());
+        protect(document())->didPaintImage(*this, nullptr, renderer->videoBox());
     }
 }
 
@@ -413,24 +413,22 @@ RefPtr<NativeImage> HTMLVideoElement::nativeImageForCurrentTime() const
     return player ? player->nativeImageForCurrentTime() : nullptr;
 }
 
-RefPtr<ShareableBitmap> HTMLVideoElement::bitmapImageForCurrentTime() const
+RefPtr<ShareableBitmap> HTMLVideoElement::bitmapImageForCurrentTimeSync() const
 {
-    RefPtr image = nativeImageForCurrentTime();
-    if (!image)
+    RefPtr player = this->player();
+    if (!player)
         return { };
 
-    auto imageSize = image->size();
-    auto bitmap = ShareableBitmap::create({ imageSize, colorSpace() });
-    if (!bitmap)
-        return { };
+    return player->bitmapImageForCurrentTimeSync();
+}
 
-    auto context = bitmap->createGraphicsContext();
-    if (!context)
-        return { };
+Ref<HTMLVideoElement::BitmapImagePromise> HTMLVideoElement::bitmapImageForCurrentTime() const
+{
+    RefPtr player = this->player();
+    if (!player)
+        return BitmapImagePromise::createAndReject();
 
-    context->drawNativeImage(*image, FloatRect { { }, imageSize }, FloatRect { { }, imageSize });
-
-    return bitmap;
+    return player->bitmapImageForCurrentTime();
 }
 
 ExceptionOr<void> HTMLVideoElement::webkitEnterFullscreen()
@@ -516,7 +514,7 @@ URL HTMLVideoElement::posterImageURL() const
     auto url = imageSourceURL().string().trim(isASCIIWhitespace);
     if (url.isEmpty())
         return URL();
-    return protectedDocument()->completeURL(url);
+    return protect(document())->completeURL(url);
 }
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
@@ -851,9 +849,9 @@ void HTMLVideoElement::setVideoFullscreenStandby(bool value)
         return;
 
     if (videoFullscreenStandby())
-        document().protectedPage()->chrome().client().enterVideoFullscreenForVideoElement(*this, VideoFullscreenModeNone, true);
+        protect(document().page())->chrome().client().enterVideoFullscreenForVideoElement(*this, VideoFullscreenModeNone, true);
     else {
-        document().protectedPage()->chrome().client().exitVideoFullscreenForVideoElement(*this, [this, protectedThis = Ref { *this }](auto success) mutable {
+        protect(document().page())->chrome().client().exitVideoFullscreenForVideoElement(*this, [this, protectedThis = Ref { *this }](auto success) mutable {
             setVideoFullscreenStandbyInternal(!success);
         });
     }

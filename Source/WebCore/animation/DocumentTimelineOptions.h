@@ -30,7 +30,7 @@
 namespace WebCore {
 
 struct DocumentTimelineOptions {
-    DOMHighResTimeStamp originTime;
+    DOMHighResTimeStamp originTime { 0 };
 };
 
 } // namespace WebCore

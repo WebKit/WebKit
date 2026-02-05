@@ -21,6 +21,7 @@
 #pragma once
 
 #include "JSDOMConvertDictionary.h"
+#include "JSDOMConvertEnumeration.h"
 #include "TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability.h"
 
 namespace WebCore {
@@ -28,5 +29,12 @@ namespace WebCore {
 template<> ConversionResult<IDLDictionary<TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability>> convertDictionary<TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability>(JSC::JSGlobalObject&, JSC::JSValue);
 
 JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject&, JSDOMGlobalObject&, const TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability&);
+
+String convertEnumerationToString(TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum);
+template<> JSC::JSString* convertEnumerationToJS(JSC::VM&, TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum);
+
+template<> std::optional<TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum> parseEnumerationFromString<TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum>(const String&);
+template<> std::optional<TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum> parseEnumeration<TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> ASCIILiteral expectedEnumerationValues<TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability::LegacyEnum>();
 
 } // namespace WebCore

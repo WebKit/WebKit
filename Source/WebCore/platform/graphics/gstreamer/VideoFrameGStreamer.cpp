@@ -21,7 +21,6 @@
 #include "config.h"
 
 #include "VideoFrameGStreamer.h"
-#include "VideoFrameContentHint.h"
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
@@ -34,11 +33,15 @@
 #include "ImageOrientation.h"
 #include "PixelBuffer.h"
 #include "PlatformDisplay.h"
+#include "VideoFrameContentHint.h"
 #include "VideoPixelFormat.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
+#include <skia/core/SkData.h>
+#include <skia/core/SkImage.h>
 
 #if USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
+#include <drm_fourcc.h>
 #include <gst/video/video-info-dma.h>
 #endif
 
@@ -47,18 +50,12 @@
 #include <gst/gl/gl.h>
 #endif
 
-#if USE(CAIRO)
-#include <cairo.h>
-#elif USE(SKIA)
-#include <skia/core/SkData.h>
-#include <skia/core/SkImage.h>
-
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkPixmap.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
-#endif
 
 GST_DEBUG_CATEGORY(webkit_video_frame_debug);
+GST_DEBUG_CATEGORY_STATIC(GST_CAT_PERFORMANCE);
 #define GST_CAT_DEFAULT webkit_video_frame_debug
 
 namespace WebCore {
@@ -68,6 +65,7 @@ static void ensureVideoFrameDebugCategoryInitialized()
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_video_frame_debug, "webkitvideoframe", 0, "WebKit Video Frame");
+        GST_DEBUG_CATEGORY_GET(GST_CAT_PERFORMANCE, "GST_PERFORMANCE");
     });
 }
 
@@ -117,21 +115,11 @@ static RefPtr<ImageGStreamer> convertSampleToImage(const GRefPtr<GstSample>& sam
 RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
 {
     ensureVideoFrameDebugCategoryInitialized();
-    GST_TRACE("Creating VideoFrame from native image");
+    GST_CAT_DEBUG(GST_CAT_PERFORMANCE, "Creating VideoFrame from native image");
 
     size_t offsets[GST_VIDEO_MAX_PLANES] = { 0, };
     int strides[GST_VIDEO_MAX_PLANES] = { 0, };
 
-#if USE(CAIRO)
-    auto surface = image.platformImage();
-    strides[0] = cairo_image_surface_get_stride(surface.get());
-    auto width = cairo_image_surface_get_width(surface.get());
-    auto height = cairo_image_surface_get_height(surface.get());
-    auto size = height * strides[0];
-    auto format = G_BYTE_ORDER == G_LITTLE_ENDIAN ? GST_VIDEO_FORMAT_BGRA : GST_VIDEO_FORMAT_ARGB;
-
-    auto buffer = adoptGRef(gst_buffer_new_wrapped_full(GST_MEMORY_FLAG_READONLY, cairo_image_surface_get_data(surface.get()), size, 0, size, cairo_surface_reference(surface.get()), reinterpret_cast<GDestroyNotify>(cairo_surface_destroy)));
-#elif USE(SKIA)
     auto platformImage = image.platformImage();
     const auto& imageInfo = platformImage->imageInfo();
     strides[0] = imageInfo.minRowBytes();
@@ -177,7 +165,6 @@ RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
     default:
         return nullptr;
     }
-#endif
 
     gst_buffer_add_video_meta_full(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, format, width, height, 1, offsets, strides);
 
@@ -339,18 +326,21 @@ Ref<VideoFrameGStreamer> VideoFrameGStreamer::create(GRefPtr<GstSample>&& sample
     return adoptRef(*new VideoFrameGStreamer(WTF::move(sample), newOptions, WTF::move(colorSpace)));
 }
 
-Ref<VideoFrameGStreamer> VideoFrameGStreamer::createWrappedSample(const GRefPtr<GstSample>& sample, const MediaTime& presentationTime, Rotation videoRotation)
+Ref<VideoFrameGStreamer> VideoFrameGStreamer::createWrappedSample(const GRefPtr<GstSample>& sample, std::optional<CreateOptions> options)
 {
-    auto* caps = gst_sample_get_caps(sample.get());
-    auto size = getVideoResolutionFromCaps(caps);
-    RELEASE_ASSERT(size);
-    CreateOptions options({ static_cast<int>(size->width()), static_cast<int>(size->height()) }, infoFromCaps(GRefPtr(caps)));
-    options.presentationTime = presentationTime;
-    if (options.presentationTime.isInvalid())
-        options.presentationTime = presentationTimeFromSample(sample);
+    auto createOptions = options.value_or(CreateOptions { });
+    auto caps = gst_sample_get_caps(sample.get());
+    if (createOptions.presentationSize.isEmpty()) {
+        auto size = getVideoResolutionFromCaps(caps);
+        RELEASE_ASSERT(size);
+        createOptions.presentationSize = { static_cast<int>(size->width()), static_cast<int>(size->height()) };
+    }
+    if (!createOptions.info)
+        createOptions.info = infoFromCaps(GRefPtr(caps));
+    if (createOptions.presentationTime.isInvalid())
+        createOptions.presentationTime = presentationTimeFromSample(sample);
 
-    options.rotation = videoRotation;
-    return adoptRef(*new VideoFrameGStreamer(sample, options, videoColorSpaceFromCaps(caps)));
+    return adoptRef(*new VideoFrameGStreamer(sample, createOptions, videoColorSpaceFromCaps(caps)));
 }
 
 RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuffer, const IntSize& destinationSize, double frameRate, const CreateOptions& options, PlatformVideoColorSpace&& colorSpace)
@@ -385,7 +375,7 @@ RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<Pixel
     auto height = size.height();
 
     auto formatName = CStringView::unsafeFromUTF8(gst_video_format_to_string(format));
-    GST_TRACE("Creating %s VideoFrame from pixel buffer", formatName.utf8());
+    GST_CAT_DEBUG(GST_CAT_PERFORMANCE, "Creating %s VideoFrame from pixel buffer", formatName.utf8());
 
     int frameRateNumerator, frameRateDenominator;
     gst_util_double_to_fraction(frameRate, &frameRateNumerator, &frameRateDenominator);
@@ -406,7 +396,7 @@ RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<Pixel
 
         width = destinationSize.width();
         height = destinationSize.height();
-        GST_TRACE("Resizing frame from %dx%d to %dx%d", size.width(), size.height(), width, height);
+        GST_CAT_DEBUG(GST_CAT_PERFORMANCE, "Resizing frame from %dx%d to %dx%d", size.width(), size.height(), width, height);
         auto outputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, formatName.utf8(), "width", G_TYPE_INT, width,
             "height", G_TYPE_INT, height, nullptr));
         if (frameRate)
@@ -538,7 +528,7 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
     }
 
 #ifndef GST_DISABLE_GST_DEBUG
-    GST_TRACE("Copying frame data to %s pixel format", convertVideoPixelFormatToString(pixelFormat).ascii().data());
+    GST_CAT_DEBUG(GST_CAT_PERFORMANCE, "Copying frame data to %s pixel format", convertVideoPixelFormatToString(pixelFormat).ascii().data());
 #endif
     if (pixelFormat == VideoPixelFormat::NV12) {
         auto spanPlaneLayoutY = computedPlaneLayout[GST_VIDEO_COMP_Y];
@@ -626,6 +616,8 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
 
 RefPtr<NativeImage> VideoFrame::copyNativeImage() const
 {
+    ensureVideoFrameDebugCategoryInitialized();
+    GST_CAT_DEBUG(GST_CAT_PERFORMANCE, "Copying native image");
     auto& gstFrame = downcast<VideoFrameGStreamer>(*this);
     auto image = convertSampleToImage(gstFrame.sample(), gstFrame.info());
     if (!image)
@@ -676,12 +668,18 @@ RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::resizeTo(const IntSize& destina
 
 RefPtr<ImageGStreamer> VideoFrameGStreamer::convertToImage()
 {
+    ensureVideoFrameDebugCategoryInitialized();
+    GST_CAT_DEBUG(GST_CAT_PERFORMANCE, "Converting sample to image");
     return convertSampleToImage(m_sample, m_info.info);
 }
 
 Ref<VideoFrame> VideoFrameGStreamer::clone()
 {
-    return createWrappedSample(m_sample, presentationTime(), rotation());
+    CreateOptions options;
+    options.info = m_info;
+    options.presentationTime = presentationTime();
+    options.rotation = rotation();
+    return createWrappedSample(m_sample, options);
 }
 
 void VideoFrameGStreamer::setMemoryTypeFromCaps()
@@ -707,6 +705,97 @@ void VideoFrameGStreamer::setMemoryTypeFromCaps()
     m_memoryType = MemoryType::Unsupported;
 #endif // USE(GSTREAMER_GL)
 }
+
+#if USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
+static uint32_t videoFormatToDRMFourcc(GstVideoFormat format)
+{
+    switch (format) {
+    case GST_VIDEO_FORMAT_BGRx:
+        return DRM_FORMAT_XRGB8888;
+    case GST_VIDEO_FORMAT_RGBx:
+        return DRM_FORMAT_XBGR8888;
+    case GST_VIDEO_FORMAT_BGRA:
+        return DRM_FORMAT_ARGB8888;
+    case GST_VIDEO_FORMAT_RGBA:
+        return DRM_FORMAT_ABGR8888;
+    case GST_VIDEO_FORMAT_I420:
+        return DRM_FORMAT_YUV420;
+    case GST_VIDEO_FORMAT_YV12:
+        return DRM_FORMAT_YVU420;
+    case GST_VIDEO_FORMAT_NV12:
+        return DRM_FORMAT_NV12;
+    case GST_VIDEO_FORMAT_NV21:
+        return DRM_FORMAT_NV21;
+    case GST_VIDEO_FORMAT_Y444:
+        return DRM_FORMAT_YUV444;
+    case GST_VIDEO_FORMAT_Y41B:
+        return DRM_FORMAT_YUV411;
+    case GST_VIDEO_FORMAT_Y42B:
+        return DRM_FORMAT_YUV422;
+    case GST_VIDEO_FORMAT_P010_10LE:
+        return DRM_FORMAT_P010;
+    default:
+        break;
+    }
+
+    return 0;
+}
+
+RefPtr<DMABufBuffer> VideoFrameGStreamer::getDMABuf()
+{
+    if (m_memoryType != MemoryType::DMABuf)
+        return nullptr;
+
+    auto buffer = gst_sample_get_buffer(m_sample.get());
+    const auto* videoMeta = gst_buffer_get_video_meta(buffer);
+    if (!videoMeta) [[unlikely]] {
+        GST_WARNING("Unable to retrieve DMABuf information due to missing video meta");
+        return nullptr;
+    }
+
+    Vector<UnixFileDescriptor> fds;
+    Vector<uint32_t> offsets;
+    Vector<uint32_t> strides;
+    for (unsigned i = 0; i < videoMeta->n_planes; ++i) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN; // GLib port
+        guint index, length;
+        gsize skip;
+        if (!gst_buffer_find_memory(buffer, videoMeta->offset[i], 1, &index, &length, &skip)) {
+            GST_WARNING("Unable to retrieve DMABuf information due to incorrect video meta");
+            return nullptr;
+        }
+
+        auto* planeMemory = gst_buffer_peek_memory(buffer, index);
+        fds.append(UnixFileDescriptor { gst_dmabuf_memory_get_fd(planeMemory), UnixFileDescriptor::Duplicate });
+        offsets.append(planeMemory->offset + skip);
+        strides.append(videoMeta->stride[i]);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END;
+    }
+
+    IntSize size(videoMeta->width, videoMeta->height);
+    const auto& videoInfo = info();
+    auto dmabufFormat = this->dmaBufFormat();
+    uint32_t fourcc = dmabufFormat ? dmabufFormat->first : videoFormatToDRMFourcc(GST_VIDEO_INFO_FORMAT(&videoInfo));
+    uint64_t modifier = dmabufFormat ? dmabufFormat->second : DRM_FORMAT_MOD_INVALID;
+    RefPtr dmabuf = DMABufBuffer::create(size, fourcc, WTF::move(fds), WTF::move(offsets), WTF::move(strides), modifier);
+
+    DMABufBuffer::ColorSpace colorSpace = DMABufBuffer::ColorSpace::Bt601;
+    DMABufBuffer::TransferFunction transferFunction = DMABufBuffer::TransferFunction::Bt709;
+    if (gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(&videoInfo), GST_VIDEO_COLORIMETRY_BT709))
+        colorSpace = DMABufBuffer::ColorSpace::Bt709;
+    else if (gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(&videoInfo), GST_VIDEO_COLORIMETRY_BT2020))
+        colorSpace = DMABufBuffer::ColorSpace::Bt2020;
+    else if (gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(&videoInfo), GST_VIDEO_COLORIMETRY_BT2100_PQ)) {
+        colorSpace = DMABufBuffer::ColorSpace::Bt2020;
+        transferFunction = DMABufBuffer::TransferFunction::Pq;
+    } else if (gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(&videoInfo), GST_VIDEO_COLORIMETRY_SMPTE240M))
+        colorSpace = DMABufBuffer::ColorSpace::Smpte240M;
+    dmabuf->setColorSpace(colorSpace);
+    dmabuf->setTransferFunction(transferFunction);
+
+    return dmabuf;
+}
+#endif
 
 VideoFrameContentHint VideoFrameGStreamer::contentHint() const
 {

@@ -69,7 +69,7 @@ ExceptionOr<void> PerformanceObserver::observe(Init&& init)
     bool isBuffered = false;
     OptionSet<PerformanceEntry::Type> filter;
     if (init.entryTypes) {
-        if (init.type)
+        if (!init.type.isNull())
             return Exception { ExceptionCode::TypeError, "either entryTypes or type must be provided"_s };
         if (m_registered && m_isTypeObserver)
             return Exception { ExceptionCode::InvalidModificationError, "observer type can't be changed once registered"_s };
@@ -81,19 +81,19 @@ ExceptionOr<void> PerformanceObserver::observe(Init&& init)
             return { };
         m_typeFilter = filter;
     } else {
-        if (!init.type)
+        if (init.type.isNull())
             return Exception { ExceptionCode::TypeError, "no type or entryTypes were provided"_s };
         if (m_registered && !m_isTypeObserver)
             return Exception { ExceptionCode::InvalidModificationError, "observer type can't be changed once registered"_s };
         m_isTypeObserver = true;
-        if (auto type = PerformanceEntry::parseEntryTypeString(*init.type))
+        if (auto type = PerformanceEntry::parseEntryTypeString(init.type))
             filter.add(*type);
         else
             return { };
         if (init.buffered) {
             isBuffered = true;
             auto oldSize = m_entriesToDeliver.size();
-            protectedPerformance()->appendBufferedEntriesByType(*init.type, m_entriesToDeliver, *this);
+            protectedPerformance()->appendBufferedEntriesByType(init.type, m_entriesToDeliver, *this);
             auto entriesToDeliver = m_entriesToDeliver.mutableSpan();
             auto begin = entriesToDeliver.begin();
             auto oldEnd = entriesToDeliver.subspan(oldSize).begin();

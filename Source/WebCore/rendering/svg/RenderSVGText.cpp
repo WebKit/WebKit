@@ -937,7 +937,7 @@ FloatRect RenderSVGText::strokeBoundingBox() const
 
     Ref textElement = this->textElement();
     SVGLengthContext lengthContext(textElement.ptr());
-    strokeBoundaries.inflate(lengthContext.valueForLength(style().strokeWidth(), Style::ZoomNeeded { }));
+    strokeBoundaries.inflate(lengthContext.valueForLength(style().strokeWidth(), style().usedZoomForLength()));
     return strokeBoundaries;
 }
 
@@ -972,6 +972,7 @@ void RenderSVGText::updatePositionAndOverflow(const FloatRect& boundaries)
         clearOverflow();
 
         m_objectBoundingBox = boundaries;
+        m_cachedVisualOverflowRect = std::nullopt;
 
         auto boundingRect = enclosingLayoutRect(m_objectBoundingBox);
         setLocation(boundingRect.location());

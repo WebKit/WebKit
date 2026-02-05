@@ -27,26 +27,24 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "DDModelIdentifier.h"
+#include "WebModelIdentifier.h"
 #include <wtf/RefCounted.h>
 
-namespace WebCore::DDModel {
+namespace WebCore {
 
-class DDMesh;
+class Mesh;
 struct ObjectDescriptorBase;
 
 }
 
-namespace WebKit::DDModel {
+namespace WebKit {
 
 struct ObjectDescriptorBase;
 
-class ConvertFromBackingContext {
+class ModelConvertFromBackingContext {
 public:
-    virtual ~ConvertFromBackingContext() = default;
-
-    std::optional<WebCore::DDModel::ObjectDescriptorBase> convertFromBacking(const ObjectDescriptorBase&);
-    virtual WeakPtr<WebCore::DDModel::DDMesh> convertDDMeshFromBacking(DDModelIdentifier) = 0;
+    virtual ~ModelConvertFromBackingContext() = default;
+    virtual WeakPtr<WebCore::Mesh> convertMeshFromBacking(WebModelIdentifier) = 0;
 };
 
 }

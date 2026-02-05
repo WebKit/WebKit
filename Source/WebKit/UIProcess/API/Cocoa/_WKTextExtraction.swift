@@ -24,15 +24,10 @@
 #if USE_APPLE_INTERNAL_SDK || (!os(tvOS) && !os(watchOS))
 
 import Foundation
-#if compiler(>=6.0)
 internal import WebKit_Internal
-#else
-@_implementationOnly import WebKit_Internal
-#endif
 
-// FIXME: Adopt `@objc @implementation` when support for macOS Sonoma is no longer needed.
-// FIXME: (rdar://110719676) Remove all `@objc deinit`s when support for macOS Sonoma is no longer needed.
-@_objcImplementation
+@objc
+@implementation
 extension WKTextExtractionItem {
     let rectInWebView: CGRect
     let children: [WKTextExtractionItem]
@@ -57,14 +52,10 @@ extension WKTextExtractionItem {
         self.ariaAttributes = ariaAttributes
         self.accessibilityRole = accessibilityRole
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKTextExtractionFormItem {
     let autocomplete: String
     let name: String
@@ -91,14 +82,10 @@ extension WKTextExtractionFormItem {
                 nodeIdentifier: nodeIdentifier
             )
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKTextExtractionContainerItem {
     let container: WKTextExtractionContainer
 
@@ -122,16 +109,12 @@ extension WKTextExtractionContainerItem {
                 nodeIdentifier: nodeIdentifier
             )
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKTextExtractionContentEditableItem {
-    fileprivate let contentEditableType: WKTextExtractionEditableType
+    let contentEditableType: WKTextExtractionEditableType
 
     @nonobjc
     private let backingIsFocused: Bool
@@ -163,14 +146,10 @@ extension WKTextExtractionContentEditableItem {
                 nodeIdentifier: nodeIdentifier
             )
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKTextExtractionTextFormControlItem {
     fileprivate let editable: WKTextExtractionEditable
 
@@ -251,14 +230,10 @@ extension WKTextExtractionTextFormControlItem {
                 nodeIdentifier: nodeIdentifier
             )
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKTextExtractionEditable {
     let label: String
     let placeholder: String
@@ -287,14 +262,10 @@ extension WKTextExtractionEditable {
         self.backingIsSecure = isSecure
         self.backingIsFocused = isFocused
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKTextExtractionLinkItem {
     let target: String
     @nonobjc
@@ -324,16 +295,12 @@ extension WKTextExtractionLinkItem {
                 nodeIdentifier: nodeIdentifier
             )
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKTextExtractionLink {
-    // Used to workaround the fact that `@_objcImplementation` does not support stored properties whose size can change
+    // Used to workaround the fact that `@objc @implementation` does not support stored properties whose size can change
     // due to Library Evolution. Do not use this property directly.
     @nonobjc
     private let backingURL: NSURL
@@ -347,14 +314,10 @@ extension WKTextExtractionLink {
         self.backingURL = url as NSURL
         self.range = range
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKTextExtractionIFrameItem {
     let origin: String
 
@@ -378,14 +341,10 @@ extension WKTextExtractionIFrameItem {
                 nodeIdentifier: nodeIdentifier
             )
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKTextExtractionTextItem {
     var content: String
     var selectedRange: NSRange
@@ -418,14 +377,10 @@ extension WKTextExtractionTextItem {
                 nodeIdentifier: nodeIdentifier
             )
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKTextExtractionScrollableItem {
     let contentSize: CGSize
 
@@ -449,14 +404,10 @@ extension WKTextExtractionScrollableItem {
                 nodeIdentifier: nodeIdentifier
             )
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKTextExtractionSelectItem {
     let selectedValues: [String]
     let supportsMultiple: Bool
@@ -483,14 +434,10 @@ extension WKTextExtractionSelectItem {
                 nodeIdentifier: nodeIdentifier
             )
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
-@_objcImplementation
+@objc
+@implementation
 extension WKTextExtractionImageItem {
     let name: String
     let altText: String
@@ -517,11 +464,6 @@ extension WKTextExtractionImageItem {
                 nodeIdentifier: nodeIdentifier
             )
     }
-
-    #if compiler(<6.0)
-    @objc
-    deinit {}
-    #endif
 }
 
 #endif // USE_APPLE_INTERNAL_SDK || (!os(tvOS) && !os(watchOS))

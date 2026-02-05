@@ -111,11 +111,11 @@ ExceptionOr<void> GPUQueue::writeBuffer(
     const GPUBuffer& buffer,
     GPUSize64 bufferOffset,
     BufferSource&& data,
-    std::optional<GPUSize64> optionalDataOffset,
+    GPUSize64 optionalDataOffset,
     std::optional<GPUSize64> optionalSize)
 {
     auto elementSize = computeElementSize(data);
-    auto dataOffset = elementSize * optionalDataOffset.value_or(0);
+    auto dataOffset = elementSize * optionalDataOffset;
     auto dataSize = data.length();
     auto contentSize = optionalSize.has_value() ? (elementSize * optionalSize.value()) : (dataSize - dataOffset);
 
@@ -160,9 +160,7 @@ static size_t requiredBytesInCopy(const GPUImageCopyTexture& destination, const 
 {
     using namespace WebGPU;
 
-    auto texture = destination.texture;
-    if (!texture)
-        return 0;
+    Ref texture = destination.texture;
 
     auto aspectSpecificFormat = GPUTexture::aspectSpecificFormat(texture->format(), destination.aspect);
     uint32_t blockWidth = GPUTexture::texelBlockWidth(aspectSpecificFormat);
@@ -661,10 +659,10 @@ static bool isOriginClean(const auto& source, ScriptExecutionContext& context)
     }, [&](const RefPtr<ImageData>) -> ResultType {
         return true;
     }, [&](const RefPtr<HTMLImageElement> imageElement) -> ResultType {
-        return imageElement->originClean(*context.protectedSecurityOrigin().get());
+        return imageElement->originClean(*protect(context.securityOrigin()).get());
     }, [&](const RefPtr<HTMLVideoElement> videoElement) -> ResultType {
 #if PLATFORM(COCOA)
-        return !videoElement->taintsOrigin(*context.protectedSecurityOrigin().get());
+        return !videoElement->taintsOrigin(*protect(context.securityOrigin()).get());
 #else
         UNUSED_PARAM(videoElement);
 #endif
@@ -1151,7 +1149,7 @@ ExceptionOr<void> GPUQueue::copyExternalImageToTexture(ScriptExecutionContext& c
         RELEASE_ASSERT(callbackScopeIsSafe);
         auto destinationTexture = destination.texture;
         auto sizeInBytes = imageBytes.size();
-        if (!imageBytes.data() || !sizeInBytes || !destinationTexture || (imageBytes.size() % 4))
+        if (!imageBytes.data() || !sizeInBytes || (imageBytes.size() % 4))
             return;
 
         bool supportedFormat;

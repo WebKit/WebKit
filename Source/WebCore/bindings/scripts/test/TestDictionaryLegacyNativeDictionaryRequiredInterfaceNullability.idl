@@ -22,6 +22,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+enum TestLegacyEnum { "value1", "value2" };
+
 [
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
@@ -29,4 +31,6 @@
 ] dictionary TestDictionaryLegacyNativeDictionaryRequiredInterfaceNullability {
     required Node requiredInterfaceMember;
     Node optionalInterfaceMember;
+    [PermissiveInvalidValue] TestLegacyEnum permissiveEnumMember;
+    [PermissiveInvalidValue] TestLegacyEnum permissiveEnumMemberWithDefault = "value1";
 };

@@ -59,7 +59,6 @@ private:
     ~IPCStreamTester();
     void initialize();
     IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }
-    Ref<IPC::StreamConnectionWorkQueue> protectedWorkQueue() const { return m_workQueue; }
 
     // IPC::StreamServerConnection::Client overrides.
     void didReceiveInvalidMessage(IPC::StreamServerConnection&, IPC::MessageName, const Vector<uint32_t>&) final;

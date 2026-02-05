@@ -235,4 +235,8 @@
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
     bool isDebugLoggingEnabled;
 #endif
+
+#if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
+    bool shouldEnableWebAssemblyDebugger;
+#endif
 };

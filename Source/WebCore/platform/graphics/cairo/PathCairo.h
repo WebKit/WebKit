@@ -38,8 +38,10 @@ class GraphicsContext;
 class PathStream;
 
 class PathCairo final : public PathImpl {
+    WTF_MAKE_TZONE_ALLOCATED(PathCairo);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PathCairo);
 public:
-    static Ref<PathCairo> create(std::span<const PathSegment> = { });
+    WEBCORE_EXPORT static Ref<PathCairo> create(std::span<const PathSegment> = { });
     static Ref<PathCairo> create(RefPtr<cairo_t>&&, RefPtr<PathStream>&& = nullptr);
     static PlatformPathPtr emptyPlatformPath();
 

@@ -35,9 +35,7 @@
 #include <WebCore/WritingDirection.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS_FAMILY)
 #include <WebCore/SelectionGeometry.h>
-#endif
 
 #if USE(DICTATION_ALTERNATIVES)
 #include <WebCore/DictationContext.h>
@@ -100,6 +98,7 @@ struct EditorState {
         WebCore::WritingDirection baseWritingDirection { WebCore::WritingDirection::Natural };
         bool selectionIsTransparentOrFullyClipped { false };
         bool canEnableWritingSuggestions { false };
+        bool insideFixedPosition { false };
 #endif
 #if PLATFORM(IOS_FAMILY)
         String markedText;
@@ -113,7 +112,6 @@ struct EditorState {
         bool isReplaceAllowed { false };
         bool hasContent { false };
         bool isStableStateUpdate { false };
-        bool insideFixedPosition { false };
         bool hasPlainText { false };
         WebCore::Color caretColor; // FIXME: Maybe this should be on VisualData?
         bool hasCaretColorAuto { false };
@@ -144,19 +142,21 @@ struct EditorState {
 
     // Visual data is only updated in sync with rendering updates.
     struct VisualData {
-#if PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || PLATFORM(WPE)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
         WebCore::IntRect caretRectAtStart;
+#endif
+#if PLATFORM(COCOA)
+        Vector<WebCore::SelectionGeometry> selectionGeometries;
+        Vector<WebCore::PlatformLayerIdentifier> intersectingLayerIDs;
+        WebCore::IntRect caretRectAtEnd;
 #endif
 #if PLATFORM(IOS_FAMILY)
         WebCore::IntRect selectionClipRect;
         WebCore::IntRect editableRootBounds;
-        WebCore::IntRect caretRectAtEnd;
-        Vector<WebCore::SelectionGeometry> selectionGeometries;
         Vector<WebCore::SelectionGeometry> markedTextRects;
         WebCore::IntRect markedTextCaretRectAtStart;
         WebCore::IntRect markedTextCaretRectAtEnd;
         std::optional<WebCore::PlatformLayerIdentifier> enclosingLayerID;
-        Vector<WebCore::PlatformLayerIdentifier> intersectingLayerIDs;
         std::optional<WebCore::ScrollingNodeID> enclosingScrollingNodeID;
         std::optional<WebCore::ScrollingNodeID> scrollingNodeIDAtStart;
         std::optional<WebCore::ScrollingNodeID> scrollingNodeIDAtEnd;

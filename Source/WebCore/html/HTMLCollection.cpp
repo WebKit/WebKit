@@ -127,7 +127,7 @@ HTMLCollection::HTMLCollection(ContainerNode& ownerNode, CollectionType type)
 HTMLCollection::~HTMLCollection()
 {
     if (hasNamedElementCache())
-        protectedDocument()->collectionWillClearIdNameMap(*this);
+        protect(document())->collectionWillClearIdNameMap(*this);
 
     // HTMLNameCollection & ClassCollection remove cache by themselves.
     // FIXME: We need a cleaner way to handle this.

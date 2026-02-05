@@ -77,10 +77,10 @@ void ScrollbarsController::mayBeginScrollGesture()
 void ScrollbarsController::updateScrollbarsThickness()
 {
     CheckedRef scrollableArea = this->scrollableArea();
-    if (auto verticalScrollbar = scrollableArea->verticalScrollbar())
+    if (RefPtr verticalScrollbar = scrollableArea->verticalScrollbar())
         verticalScrollbar->updateScrollbarThickness();
 
-    if (auto horizontalScrollbar = scrollableArea->horizontalScrollbar())
+    if (RefPtr horizontalScrollbar = scrollableArea->horizontalScrollbar())
         horizontalScrollbar->updateScrollbarThickness();
 }
 

@@ -39,8 +39,8 @@ inline CustomEvent::CustomEvent(IsTrusted isTrusted)
 {
 }
 
-inline CustomEvent::CustomEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::CustomEvent, type, initializer, isTrusted)
+inline CustomEvent::CustomEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+    : Event(EventInterfaceType::CustomEvent, type, WTF::move(initializer), isTrusted)
     , m_detail(initializer.detail)
 {
 }
@@ -52,9 +52,9 @@ Ref<CustomEvent> CustomEvent::create(IsTrusted isTrusted)
     return adoptRef(*new CustomEvent(isTrusted));
 }
 
-Ref<CustomEvent> CustomEvent::create(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+Ref<CustomEvent> CustomEvent::create(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
 {
-    return adoptRef(*new CustomEvent(type, initializer, isTrusted));
+    return adoptRef(*new CustomEvent(type, WTF::move(initializer), isTrusted));
 }
 
 void CustomEvent::initCustomEvent(const AtomString& type, bool canBubble, bool cancelable, JSC::JSValue detail)

@@ -5,44 +5,44 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,10) size 784x580
       RenderBlock {DIV} at (10,0) size 764x124 [border: (2px solid #000000)]
         RenderBlock {P} at (12,28) size 740x80
-          RenderInline {B} at (0,0) size 715x39
-            RenderText {#text} at (0,0) size 715x39
+          RenderInline {B} at (0,0) size 715x40
+            RenderText {#text} at (0,0) size 715x40
               text run at (0,0) width 715: "This text shouldn't autosize. Usually this appears to be a designer's fault, when the new text is added, but"
               text run at (0,20) width 585: "block height is not changed. Or an overflow was made intentionally for some purpose."
-          RenderText {#text} at (0,20) size 739x59
+          RenderText {#text} at (0,20) size 739x60
             text run at (584,20) width 148: " Lorem ipsum dolor sit"
             text run at (0,40) width 739: "amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat"
             text run at (0,60) width 57: "volutpat."
         RenderBlock {P} at (12,124) size 740x80
-          RenderText {#text} at (0,0) size 738x79
+          RenderText {#text} at (0,0) size 738x80
             text run at (0,0) width 686: "Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea"
             text run at (0,20) width 720: "commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel"
             text run at (0,40) width 738: "illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum"
             text run at (0,60) width 346: "zzril delenit augue duis dolore te feugait nulla facilisi."
         RenderBlock {DIV} at (22,220) size 720x1342 [border: (2px solid #000000)]
           RenderBlock (anonymous) at (12,12) size 696x40
-            RenderInline {B} at (0,0) size 108x19
-              RenderText {#text} at (0,0) size 108x19
+            RenderInline {B} at (0,0) size 108x20
+              RenderText {#text} at (0,0) size 108x20
                 text run at (0,0) width 108: "Still should not."
-            RenderText {#text} at (0,0) size 696x39
+            RenderText {#text} at (0,0) size 696x40
               text run at (107,0) width 589: " Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod"
               text run at (0,20) width 357: "tincidunt ut laoreet dolore magna aliquam erat volutpat."
           RenderBlock {P} at (12,68) size 696x80
-            RenderText {#text} at (0,0) size 686x79
+            RenderText {#text} at (0,0) size 686x80
               text run at (0,0) width 686: "Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea"
               text run at (0,20) width 625: "commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie"
               text run at (0,40) width 667: "consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui"
               text run at (0,60) width 512: "blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi."
           RenderBlock {DIV} at (22,164) size 676x1156 [border: (2px solid #000000)]
             RenderBlock (anonymous) at (12,12) size 652x40
-              RenderInline {B} at (0,0) size 108x19
-                RenderText {#text} at (0,0) size 108x19
+              RenderInline {B} at (0,0) size 108x20
+                RenderText {#text} at (0,0) size 108x20
                   text run at (0,0) width 108: "Still should not."
-              RenderText {#text} at (0,0) size 638x39
+              RenderText {#text} at (0,0) size 638x40
                 text run at (107,0) width 531: " Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh"
                 text run at (0,20) width 415: "euismod tincidunt ut laoreet dolore magna aliquam erat volutpat."
             RenderBlock {P} at (12,68) size 652x80
-              RenderText {#text} at (0,0) size 648x79
+              RenderText {#text} at (0,0) size 648x80
                 text run at (0,0) width 648: "Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip"
                 text run at (0,20) width 604: "ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse"
                 text run at (0,40) width 635: "molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio"

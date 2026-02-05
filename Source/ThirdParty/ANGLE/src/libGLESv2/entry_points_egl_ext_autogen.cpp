@@ -31,9 +31,10 @@ void EGLAPIENTRY EGL_SetBlobCacheFuncsANDROID(EGLDisplay dpy,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(SetBlobCacheFuncsANDROID,
-                  "dpy = 0x%016" PRIxPTR ", set = 0x%016" PRIxPTR ", get = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)set, (uintptr_t)get);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(SetBlobCacheFuncsANDROID,
+                                    "dpy = 0x%016" PRIxPTR ", set = 0x%016" PRIxPTR
+                                    ", get = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)set, (uintptr_t)get));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
@@ -65,8 +66,8 @@ EGLClientBuffer EGLAPIENTRY EGL_CreateNativeClientBufferANDROID(const EGLint *at
     EGLClientBuffer returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(CreateNativeClientBufferANDROID, "attrib_list = 0x%016" PRIxPTR "",
-                  (uintptr_t)attrib_list);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(CreateNativeClientBufferANDROID,
+                                    "attrib_list = 0x%016" PRIxPTR "", (uintptr_t)attrib_list));
 
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
@@ -103,9 +104,10 @@ EGLBoolean EGLAPIENTRY EGL_GetCompositorTimingSupportedANDROID(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(GetCompositorTimingSupportedANDROID,
-                  "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR ", name = %d", (uintptr_t)dpy,
-                  (uintptr_t)surface, name);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(GetCompositorTimingSupportedANDROID,
+                                    "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
+                                    ", name = %d",
+                                    (uintptr_t)dpy, (uintptr_t)surface, name));
 
         egl::Display *dpyPacked     = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked     = PackParam<SurfaceID>(surface);
@@ -146,11 +148,12 @@ EGLBoolean EGLAPIENTRY EGL_GetCompositorTimingANDROID(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(GetCompositorTimingANDROID,
-                  "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
-                  ", numTimestamps = %d, names = 0x%016" PRIxPTR ", values = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)surface, numTimestamps, (uintptr_t)names,
-                  (uintptr_t)values);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(GetCompositorTimingANDROID,
+                                    "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
+                                    ", numTimestamps = %d, names = 0x%016" PRIxPTR
+                                    ", values = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)surface, numTimestamps,
+                                    (uintptr_t)names, (uintptr_t)values));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
@@ -188,10 +191,10 @@ EGLBoolean EGLAPIENTRY EGL_GetNextFrameIdANDROID(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(GetNextFrameIdANDROID,
-                  "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR ", frameId = 0x%016" PRIxPTR
-                  "",
-                  (uintptr_t)dpy, (uintptr_t)surface, (uintptr_t)frameId);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(GetNextFrameIdANDROID,
+                                    "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
+                                    ", frameId = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)surface, (uintptr_t)frameId));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
@@ -227,9 +230,10 @@ EGLBoolean EGLAPIENTRY EGL_GetFrameTimestampSupportedANDROID(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(GetFrameTimestampSupportedANDROID,
-                  "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR ", timestamp = %d",
-                  (uintptr_t)dpy, (uintptr_t)surface, timestamp);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(GetFrameTimestampSupportedANDROID,
+                                    "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
+                                    ", timestamp = %d",
+                                    (uintptr_t)dpy, (uintptr_t)surface, timestamp));
 
         egl::Display *dpyPacked   = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked   = PackParam<SurfaceID>(surface);
@@ -271,12 +275,13 @@ EGLBoolean EGLAPIENTRY EGL_GetFrameTimestampsANDROID(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(GetFrameTimestampsANDROID,
-                  "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
-                  ", frameId = %llu, numTimestamps = %d, timestamps = 0x%016" PRIxPTR
-                  ", values = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)surface, static_cast<unsigned long long>(frameId),
-                  numTimestamps, (uintptr_t)timestamps, (uintptr_t)values);
+        ANGLE_UNSAFE_TODO(
+            EGL_EVENT(GetFrameTimestampsANDROID,
+                      "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
+                      ", frameId = %llu, numTimestamps = %d, timestamps = 0x%016" PRIxPTR
+                      ", values = 0x%016" PRIxPTR "",
+                      (uintptr_t)dpy, (uintptr_t)surface, static_cast<unsigned long long>(frameId),
+                      numTimestamps, (uintptr_t)timestamps, (uintptr_t)values));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
@@ -313,7 +318,8 @@ EGLClientBuffer EGLAPIENTRY EGL_GetNativeClientBufferANDROID(const struct AHardw
     EGLClientBuffer returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(GetNativeClientBufferANDROID, "buffer = 0x%016" PRIxPTR "", (uintptr_t)buffer);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(GetNativeClientBufferANDROID, "buffer = 0x%016" PRIxPTR "",
+                                    (uintptr_t)buffer));
 
         {
             ANGLE_EGL_SCOPED_CONTEXT_LOCK(GetNativeClientBufferANDROID, thread);
@@ -344,8 +350,9 @@ EGLint EGLAPIENTRY EGL_DupNativeFenceFDANDROID(EGLDisplay dpy, EGLSyncKHR sync)
     EGLint returnValue;
     {
         ANGLE_SCOPED_GLOBAL_EGL_SYNC_LOCK();
-        EGL_EVENT(DupNativeFenceFDANDROID, "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)sync);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(DupNativeFenceFDANDROID,
+                                    "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)sync));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
@@ -382,9 +389,10 @@ EGLBoolean EGLAPIENTRY EGL_PresentationTimeANDROID(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(PresentationTimeANDROID,
-                  "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR ", time = %llu",
-                  (uintptr_t)dpy, (uintptr_t)surface, static_cast<unsigned long long>(time));
+        ANGLE_UNSAFE_TODO(
+            EGL_EVENT(PresentationTimeANDROID,
+                      "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR ", time = %llu",
+                      (uintptr_t)dpy, (uintptr_t)surface, static_cast<unsigned long long>(time)));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
@@ -421,10 +429,10 @@ EGLDeviceEXT EGLAPIENTRY EGL_CreateDeviceANGLE(EGLint device_type,
     EGLDeviceEXT returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(CreateDeviceANGLE,
-                  "device_type = %d, native_device = 0x%016" PRIxPTR
-                  ", attrib_list = 0x%016" PRIxPTR "",
-                  device_type, (uintptr_t)native_device, (uintptr_t)attrib_list);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(CreateDeviceANGLE,
+                                    "device_type = %d, native_device = 0x%016" PRIxPTR
+                                    ", attrib_list = 0x%016" PRIxPTR "",
+                                    device_type, (uintptr_t)native_device, (uintptr_t)attrib_list));
 
         {
             ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreateDeviceANGLE, thread);
@@ -455,7 +463,8 @@ EGLBoolean EGLAPIENTRY EGL_ReleaseDeviceANGLE(EGLDeviceEXT device)
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(ReleaseDeviceANGLE, "device = 0x%016" PRIxPTR "", (uintptr_t)device);
+        ANGLE_UNSAFE_TODO(
+            EGL_EVENT(ReleaseDeviceANGLE, "device = 0x%016" PRIxPTR "", (uintptr_t)device));
 
         egl::Device *devicePacked = PackParam<egl::Device *>(device);
 
@@ -485,7 +494,7 @@ void EGLAPIENTRY EGL_LockVulkanQueueANGLE(EGLDisplay dpy)
     Thread *thread = egl::GetCurrentThread();
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 
-    EGL_EVENT(LockVulkanQueueANGLE, "dpy = 0x%016" PRIxPTR "", (uintptr_t)dpy);
+    ANGLE_UNSAFE_TODO(EGL_EVENT(LockVulkanQueueANGLE, "dpy = 0x%016" PRIxPTR "", (uintptr_t)dpy));
 
     egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
@@ -512,7 +521,7 @@ void EGLAPIENTRY EGL_UnlockVulkanQueueANGLE(EGLDisplay dpy)
     Thread *thread = egl::GetCurrentThread();
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 
-    EGL_EVENT(UnlockVulkanQueueANGLE, "dpy = 0x%016" PRIxPTR "", (uintptr_t)dpy);
+    ANGLE_UNSAFE_TODO(EGL_EVENT(UnlockVulkanQueueANGLE, "dpy = 0x%016" PRIxPTR "", (uintptr_t)dpy));
 
     egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
@@ -541,9 +550,9 @@ void EGLAPIENTRY EGL_AcquireExternalContextANGLE(EGLDisplay dpy, EGLSurface draw
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(AcquireExternalContextANGLE,
-                  "dpy = 0x%016" PRIxPTR ", drawAndRead = 0x%016" PRIxPTR "", (uintptr_t)dpy,
-                  (uintptr_t)drawAndRead);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(AcquireExternalContextANGLE,
+                                    "dpy = 0x%016" PRIxPTR ", drawAndRead = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)drawAndRead));
 
         egl::Display *dpyPacked     = PackParam<egl::Display *>(dpy);
         SurfaceID drawAndReadPacked = PackParam<SurfaceID>(drawAndRead);
@@ -574,7 +583,8 @@ void EGLAPIENTRY EGL_ReleaseExternalContextANGLE(EGLDisplay dpy)
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(ReleaseExternalContextANGLE, "dpy = 0x%016" PRIxPTR "", (uintptr_t)dpy);
+        ANGLE_UNSAFE_TODO(
+            EGL_EVENT(ReleaseExternalContextANGLE, "dpy = 0x%016" PRIxPTR "", (uintptr_t)dpy));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
@@ -606,8 +616,9 @@ const char *EGLAPIENTRY EGL_QueryStringiANGLE(EGLDisplay dpy, EGLint name, EGLin
     const char *returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(QueryStringiANGLE, "dpy = 0x%016" PRIxPTR ", name = %d, index = %d",
-                  (uintptr_t)dpy, name, index);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(QueryStringiANGLE,
+                                    "dpy = 0x%016" PRIxPTR ", name = %d, index = %d",
+                                    (uintptr_t)dpy, name, index));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
@@ -641,9 +652,10 @@ EGLBoolean EGLAPIENTRY EGL_QueryDisplayAttribANGLE(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(QueryDisplayAttribANGLE,
-                  "dpy = 0x%016" PRIxPTR ", attribute = %d, value = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, attribute, (uintptr_t)value);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(QueryDisplayAttribANGLE,
+                                    "dpy = 0x%016" PRIxPTR
+                                    ", attribute = %d, value = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, attribute, (uintptr_t)value));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
@@ -677,8 +689,9 @@ void *EGLAPIENTRY EGL_CopyMetalSharedEventANGLE(EGLDisplay dpy, EGLSyncKHR sync)
     void *returnValue;
     {
         ANGLE_SCOPED_GLOBAL_EGL_SYNC_LOCK();
-        EGL_EVENT(CopyMetalSharedEventANGLE, "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)sync);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(CopyMetalSharedEventANGLE,
+                                    "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)sync));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
@@ -712,7 +725,8 @@ void EGLAPIENTRY EGL_SetValidationEnabledANGLE(EGLBoolean validationState)
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(SetValidationEnabledANGLE, "validationState = %u", validationState);
+        ANGLE_UNSAFE_TODO(
+            EGL_EVENT(SetValidationEnabledANGLE, "validationState = %u", validationState));
 
         {
             ANGLE_EGL_SCOPED_CONTEXT_LOCK(SetValidationEnabledANGLE, thread);
@@ -741,8 +755,9 @@ void EGLAPIENTRY EGL_ReleaseHighPowerGPUANGLE(EGLDisplay dpy, EGLContext ctx)
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(ReleaseHighPowerGPUANGLE, "dpy = 0x%016" PRIxPTR ", ctx = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)ctx);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(ReleaseHighPowerGPUANGLE,
+                                    "dpy = 0x%016" PRIxPTR ", ctx = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)ctx));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         gl::ContextID ctxPacked = PackParam<gl::ContextID>(ctx);
@@ -773,8 +788,9 @@ void EGLAPIENTRY EGL_ReacquireHighPowerGPUANGLE(EGLDisplay dpy, EGLContext ctx)
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(ReacquireHighPowerGPUANGLE, "dpy = 0x%016" PRIxPTR ", ctx = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)ctx);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(ReacquireHighPowerGPUANGLE,
+                                    "dpy = 0x%016" PRIxPTR ", ctx = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)ctx));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         gl::ContextID ctxPacked = PackParam<gl::ContextID>(ctx);
@@ -805,7 +821,8 @@ void EGLAPIENTRY EGL_HandleGPUSwitchANGLE(EGLDisplay dpy)
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(HandleGPUSwitchANGLE, "dpy = 0x%016" PRIxPTR "", (uintptr_t)dpy);
+        ANGLE_UNSAFE_TODO(
+            EGL_EVENT(HandleGPUSwitchANGLE, "dpy = 0x%016" PRIxPTR "", (uintptr_t)dpy));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
@@ -835,8 +852,9 @@ void EGLAPIENTRY EGL_ForceGPUSwitchANGLE(EGLDisplay dpy, EGLint gpuIDHigh, EGLin
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(ForceGPUSwitchANGLE, "dpy = 0x%016" PRIxPTR ", gpuIDHigh = %d, gpuIDLow = %d",
-                  (uintptr_t)dpy, gpuIDHigh, gpuIDLow);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(ForceGPUSwitchANGLE,
+                                    "dpy = 0x%016" PRIxPTR ", gpuIDHigh = %d, gpuIDLow = %d",
+                                    (uintptr_t)dpy, gpuIDHigh, gpuIDLow));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
@@ -868,8 +886,9 @@ EGLBoolean EGLAPIENTRY EGL_PrepareSwapBuffersANGLE(EGLDisplay dpy, EGLSurface su
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(PrepareSwapBuffersANGLE, "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)surface);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(PrepareSwapBuffersANGLE,
+                                    "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)surface));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
@@ -904,8 +923,9 @@ EGLint EGLAPIENTRY EGL_ProgramCacheGetAttribANGLE(EGLDisplay dpy, EGLenum attrib
     EGLint returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(ProgramCacheGetAttribANGLE, "dpy = 0x%016" PRIxPTR ", attrib = 0x%X",
-                  (uintptr_t)dpy, attrib);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(ProgramCacheGetAttribANGLE,
+                                    "dpy = 0x%016" PRIxPTR ", attrib = 0x%X", (uintptr_t)dpy,
+                                    attrib));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
@@ -941,12 +961,12 @@ void EGLAPIENTRY EGL_ProgramCacheQueryANGLE(EGLDisplay dpy,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(ProgramCacheQueryANGLE,
-                  "dpy = 0x%016" PRIxPTR ", index = %d, key = 0x%016" PRIxPTR
-                  ", keysize = 0x%016" PRIxPTR ", binary = 0x%016" PRIxPTR
-                  ", binarysize = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, index, (uintptr_t)key, (uintptr_t)keysize, (uintptr_t)binary,
-                  (uintptr_t)binarysize);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(ProgramCacheQueryANGLE,
+                                    "dpy = 0x%016" PRIxPTR ", index = %d, key = 0x%016" PRIxPTR
+                                    ", keysize = 0x%016" PRIxPTR ", binary = 0x%016" PRIxPTR
+                                    ", binarysize = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, index, (uintptr_t)key, (uintptr_t)keysize,
+                                    (uintptr_t)binary, (uintptr_t)binarysize));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
@@ -982,10 +1002,11 @@ void EGLAPIENTRY EGL_ProgramCachePopulateANGLE(EGLDisplay dpy,
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(ProgramCachePopulateANGLE,
-                  "dpy = 0x%016" PRIxPTR ", key = 0x%016" PRIxPTR
-                  ", keysize = %d, binary = 0x%016" PRIxPTR ", binarysize = %d",
-                  (uintptr_t)dpy, (uintptr_t)key, keysize, (uintptr_t)binary, binarysize);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(ProgramCachePopulateANGLE,
+                                    "dpy = 0x%016" PRIxPTR ", key = 0x%016" PRIxPTR
+                                    ", keysize = %d, binary = 0x%016" PRIxPTR ", binarysize = %d",
+                                    (uintptr_t)dpy, (uintptr_t)key, keysize, (uintptr_t)binary,
+                                    binarysize));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
@@ -1018,8 +1039,9 @@ EGLint EGLAPIENTRY EGL_ProgramCacheResizeANGLE(EGLDisplay dpy, EGLint limit, EGL
     EGLint returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(ProgramCacheResizeANGLE, "dpy = 0x%016" PRIxPTR ", limit = %d, mode = %d",
-                  (uintptr_t)dpy, limit, mode);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(ProgramCacheResizeANGLE,
+                                    "dpy = 0x%016" PRIxPTR ", limit = %d, mode = %d",
+                                    (uintptr_t)dpy, limit, mode));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
@@ -1056,10 +1078,11 @@ EGLBoolean EGLAPIENTRY EGL_QuerySurfacePointerANGLE(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(QuerySurfacePointerANGLE,
-                  "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
-                  ", attribute = %d, value = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)surface, attribute, (uintptr_t)value);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(QuerySurfacePointerANGLE,
+                                    "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
+                                    ", attribute = %d, value = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)surface, attribute,
+                                    (uintptr_t)value));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
@@ -1097,10 +1120,10 @@ EGLBoolean EGLAPIENTRY EGL_CreateStreamProducerD3DTextureANGLE(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(CreateStreamProducerD3DTextureANGLE,
-                  "dpy = 0x%016" PRIxPTR ", stream = 0x%016" PRIxPTR
-                  ", attrib_list = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)stream, (uintptr_t)attrib_list);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(CreateStreamProducerD3DTextureANGLE,
+                                    "dpy = 0x%016" PRIxPTR ", stream = 0x%016" PRIxPTR
+                                    ", attrib_list = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)stream, (uintptr_t)attrib_list));
 
         egl::Display *dpyPacked               = PackParam<egl::Display *>(dpy);
         egl::Stream *streamPacked             = PackParam<egl::Stream *>(stream);
@@ -1141,10 +1164,11 @@ EGLBoolean EGLAPIENTRY EGL_StreamPostD3DTextureANGLE(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(StreamPostD3DTextureANGLE,
-                  "dpy = 0x%016" PRIxPTR ", stream = 0x%016" PRIxPTR ", texture = 0x%016" PRIxPTR
-                  ", attrib_list = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)stream, (uintptr_t)texture, (uintptr_t)attrib_list);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(
+            StreamPostD3DTextureANGLE,
+            "dpy = 0x%016" PRIxPTR ", stream = 0x%016" PRIxPTR ", texture = 0x%016" PRIxPTR
+            ", attrib_list = 0x%016" PRIxPTR "",
+            (uintptr_t)dpy, (uintptr_t)stream, (uintptr_t)texture, (uintptr_t)attrib_list));
 
         egl::Display *dpyPacked               = PackParam<egl::Display *>(dpy);
         egl::Stream *streamPacked             = PackParam<egl::Stream *>(stream);
@@ -1186,10 +1210,11 @@ EGLBoolean EGLAPIENTRY EGL_GetMscRateANGLE(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(GetMscRateANGLE,
-                  "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR ", numerator = 0x%016" PRIxPTR
-                  ", denominator = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)surface, (uintptr_t)numerator, (uintptr_t)denominator);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(
+            GetMscRateANGLE,
+            "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR ", numerator = 0x%016" PRIxPTR
+            ", denominator = 0x%016" PRIxPTR "",
+            (uintptr_t)dpy, (uintptr_t)surface, (uintptr_t)numerator, (uintptr_t)denominator));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
@@ -1227,11 +1252,12 @@ EGLBoolean EGLAPIENTRY EGL_ExportVkImageANGLE(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(ExportVkImageANGLE,
-                  "dpy = 0x%016" PRIxPTR ", image = 0x%016" PRIxPTR ", vk_image = 0x%016" PRIxPTR
-                  ", vk_image_create_info = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)image, (uintptr_t)vk_image,
-                  (uintptr_t)vk_image_create_info);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(ExportVkImageANGLE,
+                                    "dpy = 0x%016" PRIxPTR ", image = 0x%016" PRIxPTR
+                                    ", vk_image = 0x%016" PRIxPTR
+                                    ", vk_image_create_info = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)image, (uintptr_t)vk_image,
+                                    (uintptr_t)vk_image_create_info));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         ImageID imagePacked     = PackParam<ImageID>(image);
@@ -1267,7 +1293,8 @@ void EGLAPIENTRY EGL_WaitUntilWorkScheduledANGLE(EGLDisplay dpy)
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(WaitUntilWorkScheduledANGLE, "dpy = 0x%016" PRIxPTR "", (uintptr_t)dpy);
+        ANGLE_UNSAFE_TODO(
+            EGL_EVENT(WaitUntilWorkScheduledANGLE, "dpy = 0x%016" PRIxPTR "", (uintptr_t)dpy));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
@@ -1303,11 +1330,11 @@ EGLBoolean EGLAPIENTRY EGL_GetSyncValuesCHROMIUM(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(GetSyncValuesCHROMIUM,
-                  "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR ", ust = 0x%016" PRIxPTR
-                  ", msc = 0x%016" PRIxPTR ", sbc = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)surface, (uintptr_t)ust, (uintptr_t)msc,
-                  (uintptr_t)sbc);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(
+            GetSyncValuesCHROMIUM,
+            "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR ", ust = 0x%016" PRIxPTR
+            ", msc = 0x%016" PRIxPTR ", sbc = 0x%016" PRIxPTR "",
+            (uintptr_t)dpy, (uintptr_t)surface, (uintptr_t)ust, (uintptr_t)msc, (uintptr_t)sbc));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
@@ -1344,9 +1371,10 @@ EGLBoolean EGLAPIENTRY EGL_QueryDeviceAttribEXT(EGLDeviceEXT device,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(QueryDeviceAttribEXT,
-                  "device = 0x%016" PRIxPTR ", attribute = %d, value = 0x%016" PRIxPTR "",
-                  (uintptr_t)device, attribute, (uintptr_t)value);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(QueryDeviceAttribEXT,
+                                    "device = 0x%016" PRIxPTR
+                                    ", attribute = %d, value = 0x%016" PRIxPTR "",
+                                    (uintptr_t)device, attribute, (uintptr_t)value));
 
         egl::Device *devicePacked = PackParam<egl::Device *>(device);
 
@@ -1379,8 +1407,8 @@ const char *EGLAPIENTRY EGL_QueryDeviceStringEXT(EGLDeviceEXT device, EGLint nam
     const char *returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(QueryDeviceStringEXT, "device = 0x%016" PRIxPTR ", name = %d", (uintptr_t)device,
-                  name);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(QueryDeviceStringEXT, "device = 0x%016" PRIxPTR ", name = %d",
+                                    (uintptr_t)device, name));
 
         egl::Device *devicePacked = PackParam<egl::Device *>(device);
 
@@ -1412,9 +1440,10 @@ EGLBoolean EGLAPIENTRY EGL_QueryDisplayAttribEXT(EGLDisplay dpy, EGLint attribut
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(QueryDisplayAttribEXT,
-                  "dpy = 0x%016" PRIxPTR ", attribute = %d, value = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, attribute, (uintptr_t)value);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(QueryDisplayAttribEXT,
+                                    "dpy = 0x%016" PRIxPTR
+                                    ", attribute = %d, value = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, attribute, (uintptr_t)value));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
@@ -1451,10 +1480,11 @@ EGLBoolean EGLAPIENTRY EGL_QueryDmaBufFormatsEXT(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(QueryDmaBufFormatsEXT,
-                  "dpy = 0x%016" PRIxPTR ", max_formats = %d, formats = 0x%016" PRIxPTR
-                  ", num_formats = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, max_formats, (uintptr_t)formats, (uintptr_t)num_formats);
+        ANGLE_UNSAFE_TODO(
+            EGL_EVENT(QueryDmaBufFormatsEXT,
+                      "dpy = 0x%016" PRIxPTR ", max_formats = %d, formats = 0x%016" PRIxPTR
+                      ", num_formats = 0x%016" PRIxPTR "",
+                      (uintptr_t)dpy, max_formats, (uintptr_t)formats, (uintptr_t)num_formats));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
@@ -1493,12 +1523,12 @@ EGLBoolean EGLAPIENTRY EGL_QueryDmaBufModifiersEXT(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(QueryDmaBufModifiersEXT,
-                  "dpy = 0x%016" PRIxPTR
-                  ", format = %d, max_modifiers = %d, modifiers = 0x%016" PRIxPTR
-                  ", external_only = 0x%016" PRIxPTR ", num_modifiers = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, format, max_modifiers, (uintptr_t)modifiers,
-                  (uintptr_t)external_only, (uintptr_t)num_modifiers);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(
+            QueryDmaBufModifiersEXT,
+            "dpy = 0x%016" PRIxPTR ", format = %d, max_modifiers = %d, modifiers = 0x%016" PRIxPTR
+            ", external_only = 0x%016" PRIxPTR ", num_modifiers = 0x%016" PRIxPTR "",
+            (uintptr_t)dpy, format, max_modifiers, (uintptr_t)modifiers, (uintptr_t)external_only,
+            (uintptr_t)num_modifiers));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
@@ -1537,11 +1567,11 @@ EGLSurface EGLAPIENTRY EGL_CreatePlatformPixmapSurfaceEXT(EGLDisplay dpy,
     EGLSurface returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(CreatePlatformPixmapSurfaceEXT,
-                  "dpy = 0x%016" PRIxPTR ", config = 0x%016" PRIxPTR
-                  ", native_pixmap = 0x%016" PRIxPTR ", attrib_list = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)config, (uintptr_t)native_pixmap,
-                  (uintptr_t)attrib_list);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(
+            CreatePlatformPixmapSurfaceEXT,
+            "dpy = 0x%016" PRIxPTR ", config = 0x%016" PRIxPTR ", native_pixmap = 0x%016" PRIxPTR
+            ", attrib_list = 0x%016" PRIxPTR "",
+            (uintptr_t)dpy, (uintptr_t)config, (uintptr_t)native_pixmap, (uintptr_t)attrib_list));
 
         egl::Display *dpyPacked               = PackParam<egl::Display *>(dpy);
         egl::Config *configPacked             = PackParam<egl::Config *>(config);
@@ -1582,11 +1612,11 @@ EGLSurface EGLAPIENTRY EGL_CreatePlatformWindowSurfaceEXT(EGLDisplay dpy,
     EGLSurface returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(CreatePlatformWindowSurfaceEXT,
-                  "dpy = 0x%016" PRIxPTR ", config = 0x%016" PRIxPTR
-                  ", native_window = 0x%016" PRIxPTR ", attrib_list = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)config, (uintptr_t)native_window,
-                  (uintptr_t)attrib_list);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(
+            CreatePlatformWindowSurfaceEXT,
+            "dpy = 0x%016" PRIxPTR ", config = 0x%016" PRIxPTR ", native_window = 0x%016" PRIxPTR
+            ", attrib_list = 0x%016" PRIxPTR "",
+            (uintptr_t)dpy, (uintptr_t)config, (uintptr_t)native_window, (uintptr_t)attrib_list));
 
         egl::Display *dpyPacked               = PackParam<egl::Display *>(dpy);
         egl::Config *configPacked             = PackParam<egl::Config *>(config);
@@ -1626,10 +1656,10 @@ EGLDisplay EGLAPIENTRY EGL_GetPlatformDisplayEXT(EGLenum platform,
     EGLDisplay returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(GetPlatformDisplayEXT,
-                  "platform = 0x%X, native_display = 0x%016" PRIxPTR
-                  ", attrib_list = 0x%016" PRIxPTR "",
-                  platform, (uintptr_t)native_display, (uintptr_t)attrib_list);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(GetPlatformDisplayEXT,
+                                    "platform = 0x%X, native_display = 0x%016" PRIxPTR
+                                    ", attrib_list = 0x%016" PRIxPTR "",
+                                    platform, (uintptr_t)native_display, (uintptr_t)attrib_list));
 
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
@@ -1670,12 +1700,12 @@ EGLBoolean EGLAPIENTRY EGL_QuerySupportedCompressionRatesEXT(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(QuerySupportedCompressionRatesEXT,
-                  "dpy = 0x%016" PRIxPTR ", config = 0x%016" PRIxPTR
-                  ", attrib_list = 0x%016" PRIxPTR ", rates = 0x%016" PRIxPTR
-                  ", rate_size = %d, num_rates = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)config, (uintptr_t)attrib_list, (uintptr_t)rates,
-                  rate_size, (uintptr_t)num_rates);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(QuerySupportedCompressionRatesEXT,
+                                    "dpy = 0x%016" PRIxPTR ", config = 0x%016" PRIxPTR
+                                    ", attrib_list = 0x%016" PRIxPTR ", rates = 0x%016" PRIxPTR
+                                    ", rate_size = %d, num_rates = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)config, (uintptr_t)attrib_list,
+                                    (uintptr_t)rates, rate_size, (uintptr_t)num_rates));
 
         egl::Display *dpyPacked   = PackParam<egl::Display *>(dpy);
         egl::Config *configPacked = PackParam<egl::Config *>(config);
@@ -1713,9 +1743,9 @@ EGLint EGLAPIENTRY EGL_DebugMessageControlKHR(EGLDEBUGPROCKHR callback,
     EGLint returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(DebugMessageControlKHR,
-                  "callback = 0x%016" PRIxPTR ", attrib_list = 0x%016" PRIxPTR "",
-                  (uintptr_t)callback, (uintptr_t)attrib_list);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(DebugMessageControlKHR,
+                                    "callback = 0x%016" PRIxPTR ", attrib_list = 0x%016" PRIxPTR "",
+                                    (uintptr_t)callback, (uintptr_t)attrib_list));
 
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
@@ -1752,10 +1782,11 @@ EGLint EGLAPIENTRY EGL_LabelObjectKHR(EGLDisplay display,
     EGLint returnValue;
     {
         ANGLE_SCOPED_GLOBAL_EGL_AND_EGL_SYNC_LOCK();
-        EGL_EVENT(LabelObjectKHR,
-                  "display = 0x%016" PRIxPTR ", objectType = 0x%X, object = 0x%016" PRIxPTR
-                  ", label = 0x%016" PRIxPTR "",
-                  (uintptr_t)display, objectType, (uintptr_t)object, (uintptr_t)label);
+        ANGLE_UNSAFE_TODO(
+            EGL_EVENT(LabelObjectKHR,
+                      "display = 0x%016" PRIxPTR ", objectType = 0x%X, object = 0x%016" PRIxPTR
+                      ", label = 0x%016" PRIxPTR "",
+                      (uintptr_t)display, objectType, (uintptr_t)object, (uintptr_t)label));
 
         egl::Display *displayPacked = PackParam<egl::Display *>(display);
         ObjectType objectTypePacked = PackParam<ObjectType>(objectType);
@@ -1789,8 +1820,8 @@ EGLBoolean EGLAPIENTRY EGL_QueryDebugKHR(EGLint attribute, EGLAttrib *value)
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(QueryDebugKHR, "attribute = %d, value = 0x%016" PRIxPTR "", attribute,
-                  (uintptr_t)value);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(QueryDebugKHR, "attribute = %d, value = 0x%016" PRIxPTR "",
+                                    attribute, (uintptr_t)value));
 
         {
             ANGLE_EGL_SCOPED_CONTEXT_LOCK(QueryDebugKHR, thread, attribute);
@@ -1823,9 +1854,10 @@ EGLint EGLAPIENTRY EGL_ClientWaitSyncKHR(EGLDisplay dpy,
     EGLint returnValue;
     {
         ANGLE_SCOPED_GLOBAL_EGL_SYNC_LOCK();
-        EGL_EVENT(ClientWaitSyncKHR,
-                  "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR ", flags = %d, timeout = %llu",
-                  (uintptr_t)dpy, (uintptr_t)sync, flags, static_cast<unsigned long long>(timeout));
+        ANGLE_UNSAFE_TODO(EGL_EVENT(
+            ClientWaitSyncKHR,
+            "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR ", flags = %d, timeout = %llu",
+            (uintptr_t)dpy, (uintptr_t)sync, flags, static_cast<unsigned long long>(timeout)));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
@@ -1859,9 +1891,9 @@ EGLSyncKHR EGLAPIENTRY EGL_CreateSyncKHR(EGLDisplay dpy, EGLenum type, const EGL
     EGLSyncKHR returnValue;
     {
         ANGLE_SCOPED_GLOBAL_EGL_SYNC_LOCK();
-        EGL_EVENT(CreateSyncKHR,
-                  "dpy = 0x%016" PRIxPTR ", type = 0x%X, attrib_list = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, type, (uintptr_t)attrib_list);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(
+            CreateSyncKHR, "dpy = 0x%016" PRIxPTR ", type = 0x%X, attrib_list = 0x%016" PRIxPTR "",
+            (uintptr_t)dpy, type, (uintptr_t)attrib_list));
 
         egl::Display *dpyPacked               = PackParam<egl::Display *>(dpy);
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
@@ -1896,8 +1928,9 @@ EGLBoolean EGLAPIENTRY EGL_DestroySyncKHR(EGLDisplay dpy, EGLSyncKHR sync)
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_EGL_SYNC_LOCK();
-        EGL_EVENT(DestroySyncKHR, "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)sync);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(DestroySyncKHR,
+                                    "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)sync));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
@@ -1933,10 +1966,10 @@ EGLBoolean EGLAPIENTRY EGL_GetSyncAttribKHR(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_EGL_SYNC_LOCK();
-        EGL_EVENT(GetSyncAttribKHR,
-                  "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR
-                  ", attribute = %d, value = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)sync, attribute, (uintptr_t)value);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(GetSyncAttribKHR,
+                                    "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR
+                                    ", attribute = %d, value = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)sync, attribute, (uintptr_t)value));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
@@ -1975,11 +2008,11 @@ EGLImageKHR EGLAPIENTRY EGL_CreateImageKHR(EGLDisplay dpy,
     EGLImageKHR returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(CreateImageKHR,
-                  "dpy = 0x%016" PRIxPTR ", ctx = 0x%016" PRIxPTR
-                  ", target = 0x%X, buffer = 0x%016" PRIxPTR ", attrib_list = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)ctx, target, (uintptr_t)buffer,
-                  (uintptr_t)attrib_list);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(
+            CreateImageKHR,
+            "dpy = 0x%016" PRIxPTR ", ctx = 0x%016" PRIxPTR
+            ", target = 0x%X, buffer = 0x%016" PRIxPTR ", attrib_list = 0x%016" PRIxPTR "",
+            (uintptr_t)dpy, (uintptr_t)ctx, target, (uintptr_t)buffer, (uintptr_t)attrib_list));
 
         egl::Display *dpyPacked               = PackParam<egl::Display *>(dpy);
         gl::ContextID ctxPacked               = PackParam<gl::ContextID>(ctx);
@@ -2017,8 +2050,9 @@ EGLBoolean EGLAPIENTRY EGL_DestroyImageKHR(EGLDisplay dpy, EGLImageKHR image)
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(DestroyImageKHR, "dpy = 0x%016" PRIxPTR ", image = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)image);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(DestroyImageKHR,
+                                    "dpy = 0x%016" PRIxPTR ", image = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)image));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         ImageID imagePacked     = PackParam<ImageID>(image);
@@ -2054,10 +2088,10 @@ EGLBoolean EGLAPIENTRY EGL_LockSurfaceKHR(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(LockSurfaceKHR,
-                  "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
-                  ", attrib_list = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)surface, (uintptr_t)attrib_list);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(LockSurfaceKHR,
+                                    "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
+                                    ", attrib_list = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)surface, (uintptr_t)attrib_list));
 
         egl::Display *dpyPacked               = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked               = PackParam<SurfaceID>(surface);
@@ -2099,10 +2133,11 @@ EGLBoolean EGLAPIENTRY EGL_QuerySurface64KHR(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(QuerySurface64KHR,
-                  "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
-                  ", attribute = %d, value = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)surface, attribute, (uintptr_t)value);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(QuerySurface64KHR,
+                                    "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
+                                    ", attribute = %d, value = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)surface, attribute,
+                                    (uintptr_t)value));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
@@ -2136,8 +2171,9 @@ EGLBoolean EGLAPIENTRY EGL_UnlockSurfaceKHR(EGLDisplay dpy, EGLSurface surface)
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(UnlockSurfaceKHR, "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)surface);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(UnlockSurfaceKHR,
+                                    "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)surface));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
@@ -2174,10 +2210,10 @@ EGLBoolean EGLAPIENTRY EGL_SetDamageRegionKHR(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(SetDamageRegionKHR,
-                  "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR ", rects = 0x%016" PRIxPTR
-                  ", n_rects = %d",
-                  (uintptr_t)dpy, (uintptr_t)surface, (uintptr_t)rects, n_rects);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(SetDamageRegionKHR,
+                                    "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
+                                    ", rects = 0x%016" PRIxPTR ", n_rects = %d",
+                                    (uintptr_t)dpy, (uintptr_t)surface, (uintptr_t)rects, n_rects));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
@@ -2212,8 +2248,9 @@ EGLBoolean EGLAPIENTRY EGL_SignalSyncKHR(EGLDisplay dpy, EGLSyncKHR sync, EGLenu
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_EGL_SYNC_LOCK();
-        EGL_EVENT(SignalSyncKHR, "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR ", mode = 0x%X",
-                  (uintptr_t)dpy, (uintptr_t)sync, mode);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(
+            SignalSyncKHR, "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR ", mode = 0x%X",
+            (uintptr_t)dpy, (uintptr_t)sync, mode));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
@@ -2255,8 +2292,9 @@ EGLStreamKHR EGLAPIENTRY EGL_CreateStreamKHR(EGLDisplay dpy, const EGLint *attri
     EGLStreamKHR returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(CreateStreamKHR, "dpy = 0x%016" PRIxPTR ", attrib_list = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)attrib_list);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(CreateStreamKHR,
+                                    "dpy = 0x%016" PRIxPTR ", attrib_list = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)attrib_list));
 
         egl::Display *dpyPacked               = PackParam<egl::Display *>(dpy);
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
@@ -2290,8 +2328,9 @@ EGLBoolean EGLAPIENTRY EGL_DestroyStreamKHR(EGLDisplay dpy, EGLStreamKHR stream)
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(DestroyStreamKHR, "dpy = 0x%016" PRIxPTR ", stream = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)stream);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(DestroyStreamKHR,
+                                    "dpy = 0x%016" PRIxPTR ", stream = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)stream));
 
         egl::Display *dpyPacked   = PackParam<egl::Display *>(dpy);
         egl::Stream *streamPacked = PackParam<egl::Stream *>(stream);
@@ -2327,10 +2366,11 @@ EGLBoolean EGLAPIENTRY EGL_QueryStreamKHR(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(QueryStreamKHR,
-                  "dpy = 0x%016" PRIxPTR ", stream = 0x%016" PRIxPTR
-                  ", attribute = 0x%X, value = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)stream, attribute, (uintptr_t)value);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(QueryStreamKHR,
+                                    "dpy = 0x%016" PRIxPTR ", stream = 0x%016" PRIxPTR
+                                    ", attribute = 0x%X, value = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)stream, attribute,
+                                    (uintptr_t)value));
 
         egl::Display *dpyPacked   = PackParam<egl::Display *>(dpy);
         egl::Stream *streamPacked = PackParam<egl::Stream *>(stream);
@@ -2367,10 +2407,11 @@ EGLBoolean EGLAPIENTRY EGL_QueryStreamu64KHR(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(QueryStreamu64KHR,
-                  "dpy = 0x%016" PRIxPTR ", stream = 0x%016" PRIxPTR
-                  ", attribute = 0x%X, value = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)stream, attribute, (uintptr_t)value);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(QueryStreamu64KHR,
+                                    "dpy = 0x%016" PRIxPTR ", stream = 0x%016" PRIxPTR
+                                    ", attribute = 0x%X, value = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)stream, attribute,
+                                    (uintptr_t)value));
 
         egl::Display *dpyPacked   = PackParam<egl::Display *>(dpy);
         egl::Stream *streamPacked = PackParam<egl::Stream *>(stream);
@@ -2407,10 +2448,10 @@ EGLBoolean EGLAPIENTRY EGL_StreamAttribKHR(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(StreamAttribKHR,
-                  "dpy = 0x%016" PRIxPTR ", stream = 0x%016" PRIxPTR
-                  ", attribute = 0x%X, value = %d",
-                  (uintptr_t)dpy, (uintptr_t)stream, attribute, value);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(StreamAttribKHR,
+                                    "dpy = 0x%016" PRIxPTR ", stream = 0x%016" PRIxPTR
+                                    ", attribute = 0x%X, value = %d",
+                                    (uintptr_t)dpy, (uintptr_t)stream, attribute, value));
 
         egl::Display *dpyPacked   = PackParam<egl::Display *>(dpy);
         egl::Stream *streamPacked = PackParam<egl::Stream *>(stream);
@@ -2445,8 +2486,9 @@ EGLBoolean EGLAPIENTRY EGL_StreamConsumerAcquireKHR(EGLDisplay dpy, EGLStreamKHR
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(StreamConsumerAcquireKHR, "dpy = 0x%016" PRIxPTR ", stream = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)stream);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(StreamConsumerAcquireKHR,
+                                    "dpy = 0x%016" PRIxPTR ", stream = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)stream));
 
         egl::Display *dpyPacked   = PackParam<egl::Display *>(dpy);
         egl::Stream *streamPacked = PackParam<egl::Stream *>(stream);
@@ -2480,9 +2522,9 @@ EGLBoolean EGLAPIENTRY EGL_StreamConsumerGLTextureExternalKHR(EGLDisplay dpy, EG
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(StreamConsumerGLTextureExternalKHR,
-                  "dpy = 0x%016" PRIxPTR ", stream = 0x%016" PRIxPTR "", (uintptr_t)dpy,
-                  (uintptr_t)stream);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(StreamConsumerGLTextureExternalKHR,
+                                    "dpy = 0x%016" PRIxPTR ", stream = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)stream));
 
         egl::Display *dpyPacked   = PackParam<egl::Display *>(dpy);
         egl::Stream *streamPacked = PackParam<egl::Stream *>(stream);
@@ -2517,8 +2559,9 @@ EGLBoolean EGLAPIENTRY EGL_StreamConsumerReleaseKHR(EGLDisplay dpy, EGLStreamKHR
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(StreamConsumerReleaseKHR, "dpy = 0x%016" PRIxPTR ", stream = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)stream);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(StreamConsumerReleaseKHR,
+                                    "dpy = 0x%016" PRIxPTR ", stream = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)stream));
 
         egl::Display *dpyPacked   = PackParam<egl::Display *>(dpy);
         egl::Stream *streamPacked = PackParam<egl::Stream *>(stream);
@@ -2556,10 +2599,10 @@ EGLBoolean EGLAPIENTRY EGL_SwapBuffersWithDamageKHR(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(SwapBuffersWithDamageKHR,
-                  "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR ", rects = 0x%016" PRIxPTR
-                  ", n_rects = %d",
-                  (uintptr_t)dpy, (uintptr_t)surface, (uintptr_t)rects, n_rects);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(SwapBuffersWithDamageKHR,
+                                    "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
+                                    ", rects = 0x%016" PRIxPTR ", n_rects = %d",
+                                    (uintptr_t)dpy, (uintptr_t)surface, (uintptr_t)rects, n_rects));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
@@ -2595,8 +2638,9 @@ EGLint EGLAPIENTRY EGL_WaitSyncKHR(EGLDisplay dpy, EGLSyncKHR sync, EGLint flags
     EGLint returnValue;
     {
         ANGLE_SCOPED_GLOBAL_EGL_SYNC_LOCK();
-        EGL_EVENT(WaitSyncKHR, "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR ", flags = %d",
-                  (uintptr_t)dpy, (uintptr_t)sync, flags);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(WaitSyncKHR,
+                                    "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR ", flags = %d",
+                                    (uintptr_t)dpy, (uintptr_t)sync, flags));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
@@ -2635,10 +2679,10 @@ EGLBoolean EGLAPIENTRY EGL_PostSubBufferNV(EGLDisplay dpy,
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(PostSubBufferNV,
-                  "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
-                  ", x = %d, y = %d, width = %d, height = %d",
-                  (uintptr_t)dpy, (uintptr_t)surface, x, y, width, height);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(PostSubBufferNV,
+                                    "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR
+                                    ", x = %d, y = %d, width = %d, height = %d",
+                                    (uintptr_t)dpy, (uintptr_t)surface, x, y, width, height));
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
@@ -2675,10 +2719,10 @@ EGLBoolean EGLAPIENTRY EGL_StreamConsumerGLTextureExternalAttribsNV(EGLDisplay d
     EGLBoolean returnValue;
     {
         ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(StreamConsumerGLTextureExternalAttribsNV,
-                  "dpy = 0x%016" PRIxPTR ", stream = 0x%016" PRIxPTR
-                  ", attrib_list = 0x%016" PRIxPTR "",
-                  (uintptr_t)dpy, (uintptr_t)stream, (uintptr_t)attrib_list);
+        ANGLE_UNSAFE_TODO(EGL_EVENT(StreamConsumerGLTextureExternalAttribsNV,
+                                    "dpy = 0x%016" PRIxPTR ", stream = 0x%016" PRIxPTR
+                                    ", attrib_list = 0x%016" PRIxPTR "",
+                                    (uintptr_t)dpy, (uintptr_t)stream, (uintptr_t)attrib_list));
 
         egl::Display *dpyPacked               = PackParam<egl::Display *>(dpy);
         egl::Stream *streamPacked             = PackParam<egl::Stream *>(stream);

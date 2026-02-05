@@ -28,7 +28,6 @@
 
 #include "AggregateError.h"
 #include "BuiltinNames.h"
-#include "CatchScope.h"
 #include "Debugger.h"
 #include "DeferTermination.h"
 #include "FunctionCodeBlock.h"
@@ -53,6 +52,7 @@
 #include "Microtask.h"
 #include "ObjectConstructor.h"
 #include "ThrowScope.h"
+#include "TopExceptionScope.h"
 #include "VMTrapsInlines.h"
 #include <wtf/NoTailCalls.h>
 
@@ -166,7 +166,7 @@ static JSValue callMicrotask(JSGlobalObject* globalObject, JSValue functionObjec
 static void promiseResolveThenableJobFastSlow(JSGlobalObject* globalObject, JSPromise* promise, JSPromise* promiseToResolve)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSObject* constructor = promiseSpeciesConstructor(globalObject, promise);
     if (scope.exception()) [[unlikely]]
@@ -195,7 +195,7 @@ static void promiseResolveThenableJobFastSlow(JSGlobalObject* globalObject, JSPr
 static void promiseResolveThenableJobWithInternalMicrotaskFastSlow(JSGlobalObject* globalObject, JSPromise* promise, InternalMicrotask task, JSValue context)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSObject* constructor = promiseSpeciesConstructor(globalObject, promise);
     if (scope.exception()) [[unlikely]]
@@ -224,7 +224,7 @@ static void promiseResolveThenableJobWithInternalMicrotaskFastSlow(JSGlobalObjec
 static void promiseResolveThenableJob(JSGlobalObject* globalObject, JSValue promise, JSValue then, JSValue resolve, JSValue reject)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     {
         callMicrotask(globalObject, then, promise, dynamicCastToCell(then), "|then| is not a function"_s, resolve, reject);
@@ -262,7 +262,7 @@ static void asyncFromSyncIteratorContinueOrDone(JSGlobalObject* globalObject, VM
             JSValue returnMethod;
             JSValue error;
             {
-                auto catchScope = DECLARE_CATCH_SCOPE(vm);
+                auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
                 returnMethod = asObject(syncIterator)->get(globalObject, vm.propertyNames->returnKeyword);
                 if (catchScope.exception()) [[unlikely]] {
                     error = catchScope.exception()->value();
@@ -533,7 +533,7 @@ static bool asyncGeneratorBodyCall(JSGlobalObject* globalObject, JSAsyncGenerato
     JSValue value;
     JSValue error;
     {
-        auto scope = DECLARE_CATCH_SCOPE(vm);
+        auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         value = callMicrotask(globalObject, generatorFunction, generatorThis, generator, "handler is not a function"_s,
             generator, jsNumber(state >> JSAsyncGenerator::reasonShift), resumeValue, jsNumber(resumeMode), generatorFrame);
         if (scope.exception()) [[unlikely]] {
@@ -716,7 +716,7 @@ static void promiseFinallyReactionJob(JSGlobalObject* globalObject, VM& vm, JSPr
     JSValue result;
     JSValue error;
     {
-        auto catchScope = DECLARE_CATCH_SCOPE(vm);
+        auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         result = callMicrotask(globalObject, onFinally, jsUndefined(), dynamicCastToCell(onFinally), "onFinally is not a function"_s);
         if (catchScope.exception()) {
             error = catchScope.exception()->value();
@@ -759,7 +759,7 @@ static void promiseFinallyReactionJob(JSGlobalObject* globalObject, VM& vm, JSPr
 
     JSValue then;
     {
-        auto catchScope = DECLARE_CATCH_SCOPE(vm);
+        auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         then = resolutionObject->get(globalObject, vm.propertyNames->then);
         if (catchScope.exception()) [[unlikely]] {
             error = catchScope.exception()->value();
@@ -796,7 +796,7 @@ void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, 
         auto* promise = jsCast<JSPromise*>(arguments[0]);
         auto* promiseToResolve = jsCast<JSPromise*>(arguments[1]);
 
-        if (!promiseSpeciesWatchpointIsValid(promise)) [[unlikely]]
+        if (!promiseSpeciesWatchpointIsValid(vm, promise)) [[unlikely]]
             RELEASE_AND_RETURN(scope, promiseResolveThenableJobFastSlow(globalObject, promise, promiseToResolve));
 
         scope.release();
@@ -809,7 +809,7 @@ void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, 
         JSValue context = arguments[1];
         auto task = static_cast<InternalMicrotask>(payload);
 
-        if (!promiseSpeciesWatchpointIsValid(promise)) [[unlikely]]
+        if (!promiseSpeciesWatchpointIsValid(vm, promise)) [[unlikely]]
             RELEASE_AND_RETURN(scope, promiseResolveThenableJobWithInternalMicrotaskFastSlow(globalObject, promise, task, context));
 
         switch (promise->status()) {
@@ -896,7 +896,7 @@ void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, 
         JSValue result;
         JSValue error;
         {
-            auto catchScope = DECLARE_CATCH_SCOPE(vm);
+            auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
             result = callMicrotask(globalObject, handler, jsUndefined(), dynamicCastToCell(handler), "handler is not a function"_s, arguments[2]);
             if (catchScope.exception()) {
                 if (promiseOrCapability.isUndefinedOrNull()) {
@@ -979,7 +979,7 @@ void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, 
         JSValue value;
         JSValue error;
         {
-            auto catchScope = DECLARE_CATCH_SCOPE(vm);
+            auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
             value = callMicrotask(globalObject, next, thisValue, generator, "handler is not a function"_s,
                 generator, jsNumber(state), resolution, jsNumber(static_cast<int32_t>(resumeMode)), frame);
             if (catchScope.exception()) {

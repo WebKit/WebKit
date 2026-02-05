@@ -193,7 +193,7 @@ HTMLLegendElement* HTMLFieldSetElement::legend() const
 
 Ref<HTMLCollection> HTMLFieldSetElement::elements()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<CollectionType::FieldSetElements>::traversalType>>(*this, CollectionType::FieldSetElements);
+    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLFieldSetElementsCollection>(*this);
 }
 
 void HTMLFieldSetElement::addInvalidDescendant(const HTMLElement& invalidFormControlElement)

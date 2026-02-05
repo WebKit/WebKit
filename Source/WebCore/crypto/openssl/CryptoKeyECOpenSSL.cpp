@@ -368,14 +368,14 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier i
     if (!verifyCurve(EC_KEY_get0_group(ecKey), curve))
         return nullptr;
 
-    EC_KEY_set_asn1_flag(ecKey, OPENSSL_EC_NAMED_CURVE);
+    EC_KEY_set_asn1_flag(const_cast<EC_KEY*>(ecKey), OPENSSL_EC_NAMED_CURVE);
 
     return adoptRef(new CryptoKeyEC(identifier, curve, CryptoKeyType::Private, WTF::move(pkey), extractable, usages));
 }
 
 Vector<uint8_t> CryptoKeyEC::platformExportRaw() const
 {
-    EC_KEY* key = EVP_PKEY_get0_EC_KEY(platformKey().get());
+    const EC_KEY* key = EVP_PKEY_get0_EC_KEY(platformKey().get());
     if (!key)
         return { };
     
@@ -396,7 +396,7 @@ bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
 {
     size_t keySizeInBytes = (keySizeInBits() + 7) / 8;
 
-    EC_KEY* key = EVP_PKEY_get0_EC_KEY(platformKey().get());
+    const EC_KEY* key = EVP_PKEY_get0_EC_KEY(platformKey().get());
     if (!key)
         return false;
 

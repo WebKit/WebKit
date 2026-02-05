@@ -398,7 +398,7 @@ void HTMLLinkElement::process()
         request.setInitiator(*this);
 
         ASSERT_WITH_SECURITY_IMPLICATION(!m_cachedSheet);
-        m_cachedSheet = document->protectedCachedResourceLoader()->requestCSSStyleSheet(WTF::move(request)).value_or(nullptr);
+        m_cachedSheet = protect(document->cachedResourceLoader())->requestCSSStyleSheet(WTF::move(request)).value_or(nullptr);
 
         if (CachedResourceHandle cachedSheet = m_cachedSheet)
             cachedSheet->addClient(*this);
@@ -495,7 +495,7 @@ void HTMLLinkElement::potentiallyBlockRendering()
 {
     bool explicitRenderBlocking = m_blockingList && m_blockingList->contains("render"_s);
     if (explicitRenderBlocking || isImplicitlyPotentiallyRenderBlocking()) {
-        protectedDocument()->blockRenderingOn(*this, explicitRenderBlocking ? Document::ImplicitRenderBlocking::No : Document::ImplicitRenderBlocking::Yes);
+        protect(document())->blockRenderingOn(*this, explicitRenderBlocking ? Document::ImplicitRenderBlocking::No : Document::ImplicitRenderBlocking::Yes);
         m_isRenderBlocking = true;
     }
 }
@@ -503,7 +503,7 @@ void HTMLLinkElement::potentiallyBlockRendering()
 void HTMLLinkElement::unblockRendering()
 {
     if (m_isRenderBlocking) {
-        protectedDocument()->unblockRenderingOn(*this);
+        protect(document())->unblockRenderingOn(*this);
         m_isRenderBlocking = false;
     }
 }
@@ -753,7 +753,7 @@ bool HTMLLinkElement::isURLAttribute(const Attribute& attribute) const
 
 URL HTMLLinkElement::href() const
 {
-    return protectedDocument()->completeURL(attributeWithoutSynchronization(hrefAttr));
+    return protect(document())->completeURL(attributeWithoutSynchronization(hrefAttr));
 }
 
 const AtomString& HTMLLinkElement::rel() const

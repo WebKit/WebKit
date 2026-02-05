@@ -26,10 +26,10 @@
 #include "config.h"
 #include "DeferredWorkTimer.h"
 
-#include "CatchScope.h"
 #include "DeferredWorkTimerInlines.h"
 #include "GlobalObjectMethodTable.h"
 #include "JSGlobalObject.h"
+#include "TopExceptionScope.h"
 #include "VM.h"
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
@@ -148,7 +148,7 @@ void DeferredWorkTimer::doWork(VM& vm)
             // This is the start of a runloop turn, we can release any weakrefs here.
             vm.finalizeSynchronousJSExecution();
 
-            auto scope = DECLARE_CATCH_SCOPE(vm);
+            auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
             task(ticket);
             ticketData = nullptr;
             if (Exception* exception = scope.exception()) {

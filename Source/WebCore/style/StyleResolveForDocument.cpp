@@ -31,6 +31,7 @@
 
 #include "CSSFontSelector.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "FontCascade.h"
 #include "HTMLIFrameElement.h"
 #include "LocalFrame.h"
@@ -106,7 +107,7 @@ RenderStyle resolveForDocument(const Document& document)
     auto fontCascade = FontCascade { WTF::move(fontDescription), documentStyle.fontCascade() };
 
     // We don't just call setFontDescription() because we need to provide the fontSelector to the FontCascade.
-    RefPtr fontSelector = document.protectedFontSelector();
+    RefPtr fontSelector = document.fontSelector();
     fontCascade.update(WTF::move(fontSelector));
     documentStyle.setFontCascade(WTF::move(fontCascade));
 

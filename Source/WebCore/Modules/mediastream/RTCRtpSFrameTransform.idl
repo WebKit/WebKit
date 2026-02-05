@@ -34,9 +34,7 @@ enum RTCRtpSFrameTransformCompatibilityMode {
     "VP8"
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary RTCRtpSFrameTransformOptions {
+dictionary RTCRtpSFrameTransformOptions {
     RTCRtpSFrameTransformRole role = "encrypt";
     unsigned long authenticationSize = 10;
     RTCRtpSFrameTransformCompatibilityMode compatibilityMode = "none";
@@ -51,7 +49,7 @@ enum RTCRtpSFrameTransformCompatibilityMode {
     InterfaceName=SFrameTransform,
     JSGenerateToNativeObject,
 ] interface RTCRtpSFrameTransform : EventTarget {
-    [CallWith=CurrentScriptExecutionContext] constructor(optional RTCRtpSFrameTransformOptions options);
+    [CallWith=CurrentScriptExecutionContext] constructor(optional RTCRtpSFrameTransformOptions options = {});
 
     [Custom] Promise<undefined> setEncryptionKey(CryptoKey key, optional any keyID);
     // FIXME: Add support for missing methods.

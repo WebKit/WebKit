@@ -142,7 +142,7 @@ void initializeWithOptionsCustomization(const ScopedLambda<void()>& optionsCusto
                 VMTraps::initializeSignals();
             if (Wasm::isSupported()) {
                 Wasm::prepareSignalingMemory();
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
                 VMManager::setWasmDebuggerOnStop(Wasm::wasmDebuggerOnStopCallback);
                 VMManager::setWasmDebuggerOnResume(Wasm::wasmDebuggerOnResumeCallback);
 #endif

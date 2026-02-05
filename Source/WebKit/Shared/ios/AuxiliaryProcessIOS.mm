@@ -78,11 +78,11 @@ void AuxiliaryProcess::populateMobileGestaltCache(std::optional<SandboxExtension
         MGGetBoolAnswer(kMGQSupportsForceTouch);
 
         auto answer = adoptCF(MGCopyAnswer(kMGQBluetoothCapability, nullptr));
-        answer = MGCopyAnswer(kMGQDeviceProximityCapability, nullptr);
-        answer = MGCopyAnswer(kMGQDeviceSupportsARKit, nullptr);
-        answer = MGCopyAnswer(kMGQTimeSyncCapability, nullptr);
-        answer = MGCopyAnswer(kMGQWAPICapability, nullptr);
-        answer = MGCopyAnswer(kMGQMainDisplayRotation, nullptr);
+        answer = adoptCF(MGCopyAnswer(kMGQDeviceProximityCapability, nullptr));
+        answer = adoptCF(MGCopyAnswer(kMGQDeviceSupportsARKit, nullptr));
+        answer = adoptCF(MGCopyAnswer(kMGQTimeSyncCapability, nullptr));
+        answer = adoptCF(MGCopyAnswer(kMGQWAPICapability, nullptr));
+        answer = adoptCF(MGCopyAnswer(kMGQMainDisplayRotation, nullptr));
 
         ok = extension->revoke();
         ASSERT_UNUSED(ok, ok);

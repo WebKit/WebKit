@@ -29,7 +29,7 @@
     Conditional=TOUCH_EVENTS,
     Exposed=Window
 ] interface TouchEvent : UIEvent {
-    constructor([AtomString] DOMString type, optional TouchEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional TouchEventInit eventInitDict = {});
 
     // FIXME: `touches` should not be nullable.
     readonly attribute TouchList? touches;

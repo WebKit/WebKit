@@ -52,9 +52,9 @@ public:
         RefPtr<EventTarget> relatedTarget;
     };
 
-    static Ref<FocusEvent> create(const AtomString& type, const Init& initializer)
+    static Ref<FocusEvent> create(const AtomString& type, Init&& initializer)
     {
-        return adoptRef(*new FocusEvent(type, initializer));
+        return adoptRef(*new FocusEvent(type, WTF::move(initializer)));
     }
 
     EventTarget* relatedTarget() const final { return m_relatedTarget.get(); }
@@ -63,7 +63,7 @@ public:
 private:
     FocusEvent();
     FocusEvent(const AtomString& type, CanBubble, IsCancelable, RefPtr<WindowProxy>&&, int, RefPtr<EventTarget>&&);
-    FocusEvent(const AtomString& type, const Init&);
+    FocusEvent(const AtomString& type, Init&&);
 
     void setRelatedTarget(RefPtr<EventTarget>&& relatedTarget) final { m_relatedTarget = WTF::move(relatedTarget); }
 

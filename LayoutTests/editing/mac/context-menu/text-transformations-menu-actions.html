@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="../../../resources/js-test.js"></script>
+    <style>
+        .test-field {
+            font-size: 20px;
+            padding: 10px;
+            margin: 10px;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <p id="description"></p>
+    <div id="editable" class="test-field" contenteditable>test</div>
+    <div id="console"></div>
+    <script>
+        description("This test verifies that the Transformations context menu items correctly transform the selected text.");
+
+        window.jsTestIsAsync = true;
+
+        var actualText;
+
+        function findMenuItem(items, title) {
+            for (let item of items) {
+                if (item.title === title)
+                    return item;
+            }
+            return null;
+        }
+
+        function findTransformationsSubmenu(items) {
+            return findMenuItem(items, "Transformations");
+        }
+
+        function getTransformationItems(items) {
+            let menu = findTransformationsSubmenu(items);
+            if (!menu)
+                return null;
+            return menu.children;
+        }
+
+        async function selectAllAndContextClick(elementId) {
+            let element = document.getElementById(elementId);
+            let range = document.createRange();
+            range.selectNodeContents(element);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+
+            let rect = element.getBoundingClientRect();
+            eventSender.mouseMoveTo(rect.left + 2, rect.top + 2);
+            return eventSender.contextClick();
+        }
+
+        async function selectFirstCharacterAndContextClick(elementId) {
+            let element = document.getElementById(elementId);
+            let textNode = element.firstChild;
+            let range = document.createRange();
+            range.setStart(textNode, 0);
+            range.setEnd(textNode, 1);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+
+            let rect = element.getBoundingClientRect();
+            eventSender.mouseMoveTo(rect.left + 2, rect.top + 2);
+            return eventSender.contextClick();
+        }
+
+        async function runTests() {
+            if (!window.eventSender || !window.testRunner) {
+                debug("This test requires eventSender and testRunner.");
+                finishJSTest();
+                return;
+            }
+
+            debug("Test 1: Make Upper Case transforms text to uppercase");
+            editable.innerText = "hello world";
+            let items = await selectAllAndContextClick("editable");
+            let transformItems = getTransformationItems(items);
+            if (!transformItems) {
+                testFailed("Transformations submenu not found");
+            } else {
+                let menuItem = findMenuItem(transformItems, "Make Upper Case");
+                if (!menuItem) {
+                    testFailed("Make Upper Case menu item not found");
+                } else {
+                    menuItem.click();
+                    actualText = editable.innerText;
+                    shouldBeEqualToString("actualText", "HELLO WORLD");
+                }
+            }
+            debug("");
+
+            debug("Test 2: Make Lower Case transforms text to lowercase");
+            editable.innerText = "HELLO WORLD";
+            items = await selectAllAndContextClick("editable");
+            transformItems = getTransformationItems(items);
+            if (!transformItems) {
+                testFailed("Transformations submenu not found");
+            } else {
+                let menuItem = findMenuItem(transformItems, "Make Lower Case");
+                if (!menuItem) {
+                    testFailed("Make Lower Case menu item not found");
+                } else {
+                    menuItem.click();
+                    actualText = editable.innerText;
+                    shouldBeEqualToString("actualText", "hello world");
+                }
+            }
+            debug("");
+
+            debug("Test 3: Capitalize transforms text to title case");
+            editable.innerText = "hello world";
+            items = await selectAllAndContextClick("editable");
+            transformItems = getTransformationItems(items);
+            if (!transformItems) {
+                testFailed("Transformations submenu not found");
+            } else {
+                let menuItem = findMenuItem(transformItems, "Capitalize");
+                if (!menuItem) {
+                    testFailed("Capitalize menu item not found");
+                } else {
+                    menuItem.click();
+                    actualText = editable.innerText;
+                    shouldBeEqualToString("actualText", "Hello World");
+                }
+            }
+            debug("");
+
+            debug("Test 4: Convert to Traditional Chinese transforms simplified to traditional");
+            editable.innerText = "图书馆";
+            items = await selectAllAndContextClick("editable");
+            transformItems = getTransformationItems(items);
+            if (!transformItems) {
+                testFailed("Transformations submenu not found");
+            } else {
+                let menuItem = findMenuItem(transformItems, "Convert to Traditional Chinese");
+                if (!menuItem) {
+                    testFailed("Convert to Traditional Chinese menu item not found");
+                } else {
+                    menuItem.click();
+                    actualText = editable.innerText;
+                    shouldBeEqualToString("actualText", "圖書館");
+                }
+            }
+            debug("");
+
+            debug("Test 5: Convert to Simplified Chinese transforms traditional to simplified");
+            editable.innerText = "圖書館";
+            items = await selectAllAndContextClick("editable");
+            transformItems = getTransformationItems(items);
+            if (!transformItems) {
+                testFailed("Transformations submenu not found");
+            } else {
+                let menuItem = findMenuItem(transformItems, "Convert to Simplified Chinese");
+                if (!menuItem) {
+                    testFailed("Convert to Simplified Chinese menu item not found");
+                } else {
+                    menuItem.click();
+                    actualText = editable.innerText;
+                    shouldBeEqualToString("actualText", "图书馆");
+                }
+            }
+
+            editable.innerText = "";
+            finishJSTest();
+        }
+
+        window.addEventListener("load", runTests);
+    </script>
+</body>
+</html>

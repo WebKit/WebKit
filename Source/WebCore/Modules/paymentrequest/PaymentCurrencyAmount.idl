@@ -25,7 +25,6 @@
 
 [
     Conditional=PAYMENT_REQUEST,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary PaymentCurrencyAmount {
     required DOMString currency;
     required DOMString value;

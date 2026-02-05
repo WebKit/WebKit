@@ -75,7 +75,7 @@ void WebServiceWorkerProvider::updateThrottleState(bool isThrottleable)
 
 void WebServiceWorkerProvider::terminateWorkerForTesting(WebCore::ServiceWorkerIdentifier identifier, CompletionHandler<void()>&& callback)
 {
-    WebProcess::singleton().ensureProtectedNetworkProcessConnection()->protectedServiceWorkerConnection()->terminateWorkerForTesting(identifier, WTF::move(callback));
+    protect(WebProcess::singleton().ensureProtectedNetworkProcessConnection()->serviceWorkerConnection())->terminateWorkerForTesting(identifier, WTF::move(callback));
 }
 
 } // namespace WebKit

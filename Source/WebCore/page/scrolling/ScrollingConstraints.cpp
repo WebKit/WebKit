@@ -153,6 +153,16 @@ TextStream& operator<<(TextStream& ts, const AbsolutePositionConstraints& constr
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, const ViewportConstraints& constraints)
+{
+    if (auto fixedConstraints = dynamicDowncast<FixedPositionViewportConstraints>(constraints))
+        return ts << *fixedConstraints;
+    if (auto stickyConstraints = dynamicDowncast<StickyPositionViewportConstraints>(constraints))
+        return ts << *stickyConstraints;
+    ASSERT_NOT_REACHED();
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, const FixedPositionViewportConstraints& constraints)
 {
     ts.dumpProperty("viewport-rect-at-last-layout"_s, constraints.viewportRectAtLastLayout());

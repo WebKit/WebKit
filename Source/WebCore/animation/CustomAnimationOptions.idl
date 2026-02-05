@@ -25,9 +25,7 @@
 
 typedef unsigned long FramesPerSecond;
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary CustomAnimationOptions : EffectTiming {
+dictionary CustomAnimationOptions : EffectTiming {
     DOMString id = "";
     [EnabledBySetting=WebAnimationsCustomFrameRateEnabled] (FramesPerSecond or AnimationFrameRatePreset) frameRate = "auto";
 };

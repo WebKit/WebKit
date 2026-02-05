@@ -84,7 +84,7 @@ bool DaemonConnectionSet::debugModeEnabled() const
 void DaemonConnectionSet::broadcastConsoleMessage(JSC::MessageLevel messageLevel, const String& message)
 {
     // FIXME: This is a false positive. <rdar://164843889>
-    SUPPRESS_RETAINPTR_CTOR_ADOPT auto dictionary = adoptXPCObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    SUPPRESS_RETAINPTR_CTOR_ADOPT auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_uint64(dictionary.get(), protocolDebugMessageLevelKey, static_cast<uint64_t>(messageLevel));
     xpc_dictionary_set_string(dictionary.get(), protocolDebugMessageKey, message.utf8().data());
     for (auto& connection : m_connections.keys())

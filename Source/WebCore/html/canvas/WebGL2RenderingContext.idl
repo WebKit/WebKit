@@ -63,6 +63,8 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement
     GenerateIsReachable=ImplCanvasBase,
     JSCustomMarkFunction,
     DoNotCheckConstants,
+    ReportExtraMemoryCost,
+    ReportExternalMemoryCost,
     Exposed=(Window,Worker),
     CallTracer=InspectorCanvasCallTracer,
 ] interface WebGL2RenderingContext {

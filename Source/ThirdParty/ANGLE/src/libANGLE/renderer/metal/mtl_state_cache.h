@@ -280,23 +280,6 @@ struct alignas(4) RenderPipelineDesc
     RenderPipelineRasterization rasterizationType;
 };
 
-struct alignas(4) ProvokingVertexComputePipelineDesc
-{
-    ProvokingVertexComputePipelineDesc();
-    ProvokingVertexComputePipelineDesc(const ProvokingVertexComputePipelineDesc &src);
-    ProvokingVertexComputePipelineDesc(ProvokingVertexComputePipelineDesc &&src);
-
-    ProvokingVertexComputePipelineDesc &operator=(const ProvokingVertexComputePipelineDesc &src);
-
-    bool operator==(const ProvokingVertexComputePipelineDesc &rhs) const;
-    bool operator!=(const ProvokingVertexComputePipelineDesc &rhs) const;
-    size_t hash() const;
-
-    gl::PrimitiveMode primitiveMode;
-    uint8_t elementType;
-    bool primitiveRestartEnabled;
-    bool generateIndices;
-};
 
 ANGLE_DISABLE_STRUCT_PADDING_WARNINGS
 
@@ -430,14 +413,6 @@ struct hash<rx::mtl::RenderPipelineDesc>
     size_t operator()(const rx::mtl::RenderPipelineDesc &key) const { return key.hash(); }
 };
 
-template <>
-struct hash<rx::mtl::ProvokingVertexComputePipelineDesc>
-{
-    size_t operator()(const rx::mtl::ProvokingVertexComputePipelineDesc &key) const
-    {
-        return key.hash();
-    }
-};
 }  // namespace std
 
 namespace rx

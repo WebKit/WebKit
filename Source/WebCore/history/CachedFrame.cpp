@@ -133,7 +133,7 @@ void CachedFrameBase::restore()
         // Reconstruct the FrameTree. And open the child CachedFrames in their respective FrameLoaders.
         for (auto& childFrame : m_childFrames) {
             ASSERT(childFrame->view()->frame().page());
-            frame->tree().appendChild(childFrame->protectedView()->protectedFrame());
+            frame->tree().appendChild(protect(childFrame->view())->protectedFrame());
             childFrame->open();
             if (localFrame)
                 RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_document == localFrame->document());
@@ -155,7 +155,7 @@ void CachedFrameBase::restore()
 #endif
 
     if (localFrame)
-        localFrame->protectedView()->didRestoreFromBackForwardCache();
+        protect(localFrame->view())->didRestoreFromBackForwardCache();
 }
 
 CachedFrame::CachedFrame(Frame& frame)
@@ -184,7 +184,7 @@ CachedFrame::CachedFrame(Frame& frame)
     m_cachedFrameScriptData = localFrame ? makeUnique<ScriptCachedFrameData>(*localFrame) : nullptr;
 
     if (document)
-        document->protectedWindow()->suspendForBackForwardCache();
+        protect(document->window())->suspendForBackForwardCache();
 
     // Clear FrameView to reset flags such as 'firstVisuallyNonEmptyLayoutCallbackPending' so that the
     // 'DidFirstVisuallyNonEmptyLayout' callback gets called against when restoring from the BackForwardCache.
@@ -280,7 +280,7 @@ void CachedFrame::destroy()
     ASSERT(m_view);
     ASSERT(!document->frame());
 
-    document->protectedWindow()->willDestroyCachedFrame();
+    protect(document->window())->willDestroyCachedFrame();
 
     RefPtr view = m_view;
     Ref frame = view->frame();

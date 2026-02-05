@@ -37,7 +37,11 @@ namespace WTF {
 SequesteredImmortalHeap& SequesteredImmortalHeap::instance()
 {
     // FIXME: this storage is not contained within the sequestered region
-    static NeverDestroyed<SequesteredImmortalHeap> instance;
+    static LazyNeverDestroyed<SequesteredImmortalHeap> instance;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        instance.construct();
+    });
     return instance.get();
 }
 
@@ -85,13 +89,9 @@ bool SequesteredImmortalHeap::scavengeImpl(void* /*userdata*/)
     dataLogLnIf(verbose, "SequesteredImmortalHeap: scavenging");
     {
         Locker listLocker { m_scavengerLock };
-        auto bound = m_nextFreeIndex;
-        ASSERT(bound <= m_allocatorSlots.size());
+        auto bound = m_slotManager.allocatedCount();
         for (size_t i = 0; i < bound; i++) {
-            // FIXME: Refactor the SeqImmortalHeap <-> SeqArenaAllocator
-            // relationship so that we don't have to assume data layouts
-            // here
-            auto& queue = *reinterpret_cast<ConcurrentDecommitQueue*>(&m_allocatorSlots[i]);
+            auto& queue = *reinterpret_cast<ConcurrentDecommitQueue*>(&m_slotManager[i]);
             queue.decommit();
         }
     }

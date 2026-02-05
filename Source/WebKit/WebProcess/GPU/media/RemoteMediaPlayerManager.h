@@ -57,7 +57,6 @@ public:
     void setUseGPUProcess(bool);
 
     GPUProcessConnection& gpuProcessConnection();
-    Ref<GPUProcessConnection> protectedGPUProcessConnection();
 
     void didReceivePlayerMessage(IPC::Connection&, IPC::Decoder&);
 

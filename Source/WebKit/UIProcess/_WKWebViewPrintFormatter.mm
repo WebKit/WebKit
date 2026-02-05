@@ -68,9 +68,7 @@
 
 - (WKWebView *)_webView
 {
-    UIView *view = self.view;
-    ASSERT([view isKindOfClass:[WKWebView class]]);
-    return static_cast<WKWebView *>(view);
+    return checked_objc_cast<WKWebView>(self.view);
 }
 
 - (BOOL)_shouldDrawUsingBitmap
@@ -191,27 +189,27 @@
     if (!self.pageCount)
         return;
 
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSaveGState(context);
+    RetainPtr context = UIGraphicsGetCurrentContext();
+    CGContextSaveGState(context.get());
 
-    CGImageRef documentImage = _printPreviewImage.get();
+    RetainPtr documentImage = _printPreviewImage.get();
 
-    CGFloat pageImageWidth = CGImageGetWidth(documentImage);
-    CGFloat pageImageHeight = CGImageGetHeight(documentImage) / self.pageCount;
+    CGFloat pageImageWidth = CGImageGetWidth(documentImage.get());
+    CGFloat pageImageHeight = CGImageGetHeight(documentImage.get()) / self.pageCount;
 
     if (!pageImageWidth || !pageImageHeight) {
-        CGContextRestoreGState(context);
+        CGContextRestoreGState(context.get());
         return;
     }
 
-    RetainPtr pageImage = adoptCF(CGImageCreateWithImageInRect(documentImage, CGRectMake(0, pageIndex * pageImageHeight, pageImageWidth, pageImageHeight)));
+    RetainPtr pageImage = adoptCF(CGImageCreateWithImageInRect(documentImage.get(), CGRectMake(0, pageIndex * pageImageHeight, pageImageWidth, pageImageHeight)));
 
-    CGContextTranslateCTM(context, CGRectGetMinX(rect), CGRectGetMaxY(rect));
-    CGContextScaleCTM(context, 1, -1);
-    CGContextScaleCTM(context, CGRectGetWidth(rect) / pageImageWidth, CGRectGetHeight(rect) / pageImageHeight);
-    CGContextDrawImage(context, CGRectMake(0, 0, pageImageWidth, pageImageHeight), pageImage.get());
+    CGContextTranslateCTM(context.get(), CGRectGetMinX(rect), CGRectGetMaxY(rect));
+    CGContextScaleCTM(context.get(), 1, -1);
+    CGContextScaleCTM(context.get(), CGRectGetWidth(rect) / pageImageWidth, CGRectGetHeight(rect) / pageImageHeight);
+    CGContextDrawImage(context.get(), CGRectMake(0, 0, pageImageWidth, pageImageHeight), pageImage.get());
 
-    CGContextRestoreGState(context);
+    CGContextRestoreGState(context.get());
 }
 
 - (void)_drawInRectUsingPDF:(CGRect)rect forPageAtIndex:(NSInteger)pageIndex
@@ -228,20 +226,20 @@
     if (offsetFromStartPage < 0)
         return;
 
-    CGPDFPageRef page = CGPDFDocumentGetPage(printedDocument.get(), offsetFromStartPage + 1);
+    RetainPtr page = CGPDFDocumentGetPage(printedDocument.get(), offsetFromStartPage + 1);
     if (!page)
         return;
 
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSaveGState(context);
+    RetainPtr context = UIGraphicsGetCurrentContext();
+    CGContextSaveGState(context.get());
 
-    CGContextTranslateCTM(context, CGRectGetMinX(rect), CGRectGetMaxY(rect));
-    CGContextScaleCTM(context, 1, -1);
-    CGContextConcatCTM(context, CGPDFPageGetDrawingTransform(page, kCGPDFCropBox, CGRectMake(0, 0, CGRectGetWidth(rect), CGRectGetHeight(rect)), 0, true));
-    CGContextClipToRect(context, CGPDFPageGetBoxRect(page, kCGPDFCropBox));
-    CGContextDrawPDFPage(context, page);
+    CGContextTranslateCTM(context.get(), CGRectGetMinX(rect), CGRectGetMaxY(rect));
+    CGContextScaleCTM(context.get(), 1, -1);
+    CGContextConcatCTM(context.get(), CGPDFPageGetDrawingTransform(page.get(), kCGPDFCropBox, CGRectMake(0, 0, CGRectGetWidth(rect), CGRectGetHeight(rect)), 0, true));
+    CGContextClipToRect(context.get(), CGPDFPageGetBoxRect(page.get(), kCGPDFCropBox));
+    CGContextDrawPDFPage(context.get(), page.get());
 
-    CGContextRestoreGState(context);
+    CGContextRestoreGState(context.get());
 }
 
 @end

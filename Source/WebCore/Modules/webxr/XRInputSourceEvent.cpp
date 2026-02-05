@@ -43,9 +43,9 @@ Ref<XRInputSourceEvent> XRInputSourceEvent::create(const AtomString& type, Init&
 }
 
 XRInputSourceEvent::XRInputSourceEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::XRInputSourceEvent, type, initializer, isTrusted)
-    , m_frame(initializer.frame.releaseNonNull())
-    , m_inputSource(initializer.inputSource.releaseNonNull())
+    : Event(EventInterfaceType::XRInputSourceEvent, type, WTF::move(initializer), isTrusted)
+    , m_frame(WTF::move(initializer.frame))
+    , m_inputSource(WTF::move(initializer.inputSource))
 {
 }
 

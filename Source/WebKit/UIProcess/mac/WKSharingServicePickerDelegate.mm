@@ -176,7 +176,7 @@
 
     // FIXME: We should adopt replaceSelectionWithAttributedString instead of bouncing through the (fake) pasteboard.
     if (RefPtr menuProxy = _menuProxy.get())
-        menuProxy->protectedPage()->replaceSelectionWithPasteboardData(types, dataReference);
+        protect(menuProxy->page())->replaceSelectionWithPasteboardData(types, dataReference);
 }
 
 - (NSWindow *)sharingService:(NSSharingService *)sharingService sourceWindowForShareItems:(NSArray *)items sharingContentScope:(NSSharingContentScope *)sharingContentScope

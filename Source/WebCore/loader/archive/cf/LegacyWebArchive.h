@@ -67,8 +67,8 @@ public:
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(const SimpleRange&, ArchiveOptions&&);
 
     WEBCORE_EXPORT RetainPtr<CFDataRef> rawDataRepresentation();
+    Ref<ArchiveResource> mainResourceForSerialization() const { return *mainResource(); }
 
-    Ref<ArchiveResource> protectedMainResource() const { return *mainResource(); }
     std::optional<FrameIdentifier> frameIdentifier() const { return m_frameIdentifier; }
     Vector<FrameIdentifier> subframeIdentifiers() const { return m_subframeIdentifiers; }
     void appendSubframeArchive(Ref<Archive>&& subframeArchive) { addSubframeArchive(WTF::move(subframeArchive)); }

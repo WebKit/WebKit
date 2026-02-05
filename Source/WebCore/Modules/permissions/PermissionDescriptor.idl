@@ -27,7 +27,6 @@
 
 [
     EnabledBySetting=PermissionsAPIEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary PermissionDescriptor {
     required PermissionName name;
 };

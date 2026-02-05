@@ -194,7 +194,7 @@ set(WebKit_MESSAGES_IN_FILES
     GPUProcess/graphics/RemoteImageBufferSet
     GPUProcess/graphics/RemoteRenderingBackend
 
-    GPUProcess/graphics/Model/RemoteDDMesh
+    GPUProcess/graphics/Model/RemoteMesh
 
     GPUProcess/graphics/WebGPU/RemoteAdapter
     GPUProcess/graphics/WebGPU/RemoteBindGroup
@@ -238,7 +238,7 @@ set(WebKit_MESSAGES_IN_FILES
     GPUProcess/media/RemoteMediaEngineConfigurationFactoryProxy
     GPUProcess/media/RemoteMediaPlayerManagerProxy
     GPUProcess/media/RemoteMediaPlayerProxy
-    GPUProcess/media/RemoteMediaResourceManager
+    GPUProcess/media/RemoteMediaResourceLoader
     GPUProcess/media/RemoteMediaSourceProxy
     GPUProcess/media/RemoteRemoteCommandListenerProxy
     GPUProcess/media/RemoteSourceBufferProxy
@@ -354,6 +354,7 @@ set(WebKit_MESSAGES_IN_FILES
 
     WebProcess/GPU/media/AudioVideoRendererRemoteMessageReceiver
     WebProcess/GPU/media/RemoteAudioHardwareListener
+    WebProcess/GPU/media/RemoteMediaResourceLoaderProxy
     WebProcess/GPU/media/MediaPlayerPrivateRemote
     WebProcess/GPU/media/MediaSourcePrivateRemoteMessageReceiver
     WebProcess/GPU/media/RemoteAudioSession
@@ -482,6 +483,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/DebuggableInfoData.serialization.in
     Shared/DocumentEditingContext.serialization.in
     Shared/DragControllerAction.serialization.in
+    Shared/DragEventForwardingData.serialization.in
     Shared/DrawingAreaInfo.serialization.in
     Shared/EditingRange.serialization.in
     Shared/EditorState.serialization.in
@@ -526,6 +528,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/ScriptTrackingPrivacyFilter.serialization.in
     Shared/ScrollingAccelerationCurve.serialization.in
     Shared/SerializedNode.serialization.in
+    Shared/ServiceWorkerTimingInfo.serialization.in
     Shared/SessionState.serialization.in
     Shared/SyntheticEditingCommandType.serialization.in
     Shared/TextFlags.serialization.in
@@ -610,8 +613,6 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/Extensions/WebExtensionWindow.serialization.in
 
     Shared/Gamepad/GamepadData.serialization.in
-
-    Shared/Model/ModelObjectDescriptorBase.serialization.in
 
     Shared/WebGPU/WebGPUBindGroupDescriptor.serialization.in
     Shared/WebGPU/WebGPUBindGroupEntry.serialization.in
@@ -728,7 +729,7 @@ set(WebCore_GENERATED_SERIALIZATION_IN_FILES
 
 set(WebCore_SERIALIZATION_IN_FILES
     ActivityState.serialization.in
-    DDModel.serialization.in
+    WebModel.serialization.in
     DocumentSyncData.serialization.in
     DragActions.serialization.in
     FrameTreeSyncData.serialization.in
@@ -1075,7 +1076,7 @@ set_source_files_properties(${WebKit_WEB_PREFERENCES} PROPERTIES GENERATED TRUE)
 add_custom_command(
     OUTPUT ${WebKit_DERIVED_SOURCES_DIR}/SharedPreferencesForWebProcess.h ${WebKit_DERIVED_SOURCES_DIR}/SharedPreferencesForWebProcess.cpp ${WebKit_DERIVED_SOURCES_DIR}/SharedPreferencesForWebProcess.serialization.in ${WebKit_DERIVED_SOURCES_DIR}/WebPageUpdatePreferences.cpp ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesDefinitions.h ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesFeatures.cpp ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesGetterSetters.cpp ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesKeys.cpp ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesKeys.h ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesStoreDefaultsMap.cpp
     DEPENDS ${WebKit_WEB_PREFERENCES_TEMPLATES} ${WebKit_WEB_PREFERENCES} WTF_CopyPreferences
-    COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/GeneratePreferences.rb --frontend WebKit --outputDir "${WebKit_DERIVED_SOURCES_DIR}" --template "$<JOIN:${WebKit_WEB_PREFERENCES_TEMPLATES},;--template;>" ${WebKit_WEB_PREFERENCES}
+    COMMAND ${Ruby_EXECUTABLE} ${WTF_SCRIPTS_DIR}/GeneratePreferences.rb --frontend WebKit --outputDir "${WebKit_DERIVED_SOURCES_DIR}" --template "$<JOIN:${WebKit_WEB_PREFERENCES_TEMPLATES},;--template;>" ${WebKit_WEB_PREFERENCES}
     COMMAND_EXPAND_LISTS
     VERBATIM)
 

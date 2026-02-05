@@ -16,7 +16,10 @@ const years1 = new Temporal.Duration(1);
 const years1n = new Temporal.Duration(-1);
 const years4 = new Temporal.Duration(4);
 const years4n = new Temporal.Duration(-4);
+const years3months6days17 = new Temporal.Duration(3, 6, 0, 17);
+const years3months6days17n = new Temporal.Duration(-3, -6, 0, -17);
 
+const date19971201 = Temporal.PlainDate.from({ year: 1997, monthCode: "M12", day: 1, calendar });
 const date20210716 = Temporal.PlainDate.from({ year: 2021, monthCode: "M07", day: 16, calendar });
 
 TemporalHelpers.assertPlainDate(
@@ -37,6 +40,15 @@ TemporalHelpers.assertPlainDate(
   2017, 7, "M07", 16, "subtract 4y",
   "ce", 2017);
 
+TemporalHelpers.assertPlainDate(
+  date19971201.add(years3months6days17),
+  2001, 6, "M06", 18, "Adding 3 years, 6 months and 17 days to day 1 of a month", "ce", 2001
+);
+var calculatedStart = date19971201.add(years3months6days17).add(years3months6days17n);
+TemporalHelpers.assertPlainDate(
+  calculatedStart,
+  1997, 12, "M12", 1, "Subtracting 3 years, 6 months and 17 days from day 18 of a month", "ce", 1997
+);
 
 // Months
 
@@ -44,6 +56,10 @@ const months5 = new Temporal.Duration(0, 5);
 const months5n = new Temporal.Duration(0, -5);
 const years1months2 = new Temporal.Duration(1, 2);
 const years1months2n = new Temporal.Duration(-1, -2);
+const months6 = new Temporal.Duration(0, 6);
+const months6n = new Temporal.Duration(0, -6);
+
+const date20001201 = Temporal.PlainDate.from({ year: 2000, monthCode: "M12", day: 1, calendar });
 
 TemporalHelpers.assertPlainDate(
   date20210716.add(months5),
@@ -97,6 +113,16 @@ TemporalHelpers.assertPlainDate(
   2019, 12, "M12", 17, "subtract 1y 2mo with result in the previous year",
   "ce", 2019);
 
+TemporalHelpers.assertPlainDate(
+  date20001201.add(months6),
+  2001, 6, "M06", 1, "Adding 6 months, with result in next year", "ce", 2001
+);
+calculatedStart = date20001201.add(months6).add(months6n);
+TemporalHelpers.assertPlainDate(
+  calculatedStart,
+  2000, 12, "M12", 1, "Subtracting 6 months, with result in previous year", "ce", 2000
+);
+
 // Weeks
 
 const weeks1 = new Temporal.Duration(0, 0, 1);
@@ -107,7 +133,10 @@ const years1weeks2 = new Temporal.Duration(1, 0, 2);
 const years1weeks2n = new Temporal.Duration(-1, 0, -2);
 const months2weeks3 = new Temporal.Duration(0, 2, 3);
 const months2weeks3n = new Temporal.Duration(0, -2, -3);
+const weeks40 = new Temporal.Duration(0, 0, 40);
+const weeks40n = new Temporal.Duration(0, 0, -40);
 
+const date20000101 = Temporal.PlainDate.from({ year: 2000, monthCode: "M01", day: 1, calendar });
 const date20201228 = Temporal.PlainDate.from({ year: 2020, monthCode: "M12", day: 28, calendar });
 const date20210127 = Temporal.PlainDate.from({ year: 2021, monthCode: "M01", day: 27, calendar });
 const date20210219 = Temporal.PlainDate.from({ year: 2021, monthCode: "M02", day: 19, calendar });
@@ -219,8 +248,17 @@ TemporalHelpers.assertPlainDate(
 
 TemporalHelpers.assertPlainDate(
   Temporal.PlainDate.from({ year: 2019, monthCode: "M03", day: 2, calendar }).add(months2weeks3n),
-  2018, 12, "M12", 12, "subtract 2mo 3w with result in the previous year",
-  "ce", 2018);
+  2018, 12, "M12", 12, "subtract 2mo 3w with result in the previous year", "ce", 2018);
+
+TemporalHelpers.assertPlainDate(
+  date20000101.add(weeks40),
+  2000, 10, "M10", 7, "Adding 40 weeks, with result in same year", "ce", 2000
+);
+calculatedStart = date20000101.add(weeks40).add(weeks40n);
+TemporalHelpers.assertPlainDate(
+  calculatedStart,
+  2000, 1, "M01", 1, "Subtracting 40 weeks, with result in same year", "ce", 2000
+);
 
 // Days
 
@@ -230,6 +268,8 @@ const weeks2days3 = new Temporal.Duration(0, 0, 2, 3);
 const weeks2days3n = new Temporal.Duration(0, 0, -2, -3);
 const years1months2days4 = new Temporal.Duration(1, 2, 0, 4);
 const years1months2days4n = new Temporal.Duration(-1, -2, 0, -4);
+const days280 = new Temporal.Duration(0, 0, 0, /* days = */ 280);
+const days280n = new Temporal.Duration(0, 0, 0, -280);
 
 TemporalHelpers.assertPlainDate(
   date20210716.add(days10),
@@ -300,3 +340,13 @@ TemporalHelpers.assertPlainDate(
   date20210604.add(years1months2days4n),
   2020, 3, "M03", 31, "subtract 1y 2mo 4d with result in a 31-day month",
   "ce", 2020);
+
+TemporalHelpers.assertPlainDate(
+  date20000101.add(days280),
+  2000, 10, "M10", 7, "Adding 280 days, with result in same year", "ce", 2000
+);
+calculatedStart = date20000101.add(days280).add(weeks40n);
+TemporalHelpers.assertPlainDate(
+  calculatedStart,
+  2000, 1, "M01", 1, "Subtracting 280 days, with result in same year", "ce", 2000
+);

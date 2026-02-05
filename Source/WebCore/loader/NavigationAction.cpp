@@ -69,7 +69,7 @@ NavigationAction& NavigationAction::operator=(NavigationAction&&) = default;
 
 static bool shouldTreatAsSameOriginNavigation(const Document& document, const URL& url)
 {
-    return url.protocolIsAbout() || url.protocolIsData() || (url.protocolIsBlob() && document.protectedSecurityOrigin()->canRequest(url, OriginAccessPatternsForWebProcess::singleton()));
+    return url.protocolIsAbout() || url.protocolIsData() || (url.protocolIsBlob() && protect(document.securityOrigin())->canRequest(url, OriginAccessPatternsForWebProcess::singleton()));
 }
 
 static bool shouldTreatAsSameOriginNavigation(const NavigationRequester& requester, const URL& url)
@@ -142,12 +142,12 @@ NavigationAction::NavigationAction(Document& requester, const ResourceRequest& o
 
 NavigationAction::NavigationAction(FrameLoadRequest& request, NavigationType type, Event* event)
     : FrameLoadRequestBase(request)
-    , m_requester { NavigationRequester::from(request.protectedRequester().get()) }
+    , m_requester { NavigationRequester::from(protect(request.requester()).get()) }
     , m_originalRequest { request.resourceRequest() }
     , m_keyStateEventData { keyStateDataForFirstEventWithKeyState(event) }
     , m_mouseEventData { mouseEventDataForFirstMouseEvent(event) }
     , m_type { type }
-    , m_treatAsSameOriginNavigation { shouldTreatAsSameOriginNavigation(request.protectedRequester().get(), request.resourceRequest().url()) }
+    , m_treatAsSameOriginNavigation { shouldTreatAsSameOriginNavigation(protect(request.requester()).get(), request.resourceRequest().url()) }
 {
 }
 

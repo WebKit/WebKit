@@ -29,8 +29,16 @@
 
 #include "ArgumentCodersCocoa.h"
 #include "CoreIPCPKDateComponentsRange.h"
-#if USE(PASSKIT) && HAVE(WK_SECURE_CODING_PKPAYMENTMERCHANTSESSION)
+#if USE(PASSKIT)
+#if HAVE(WK_SECURE_CODING_PKPAYMENTMERCHANTSESSION)
 #include "CoreIPCPKPaymentMerchantSession.h"
+#endif
+#if HAVE(WK_SECURE_CODING_PKPAYMENTTOKEN)
+#include "CoreIPCPKPaymentToken.h"
+#endif
+#if HAVE(WK_SECURE_CODING_PKPAYMENTSETUPFEATURE)
+#include "CoreIPCPKPaymentSetupFeature.h"
+#endif
 #endif
 #include <wtf/RetainPtr.h>
 #include <wtf/UniqueRef.h>
@@ -45,11 +53,15 @@ class CoreIPCPKPaymentMethod;
 #if !HAVE(WK_SECURE_CODING_PKPAYMENTMERCHANTSESSION)
 class CoreIPCPKPaymentMerchantSession;
 #endif
+#if !HAVE(WK_SECURE_CODING_PKPAYMENTSETUPFEATURE)
 class CoreIPCPKPaymentSetupFeature;
+#endif
 class CoreIPCPKContact;
 class CoreIPCPKSecureElementPass;
 class CoreIPCPKPayment;
+#if !HAVE(WK_SECURE_CODING_PKPAYMENTTOKEN)
 class CoreIPCPKPaymentToken;
+#endif
 class CoreIPCPKShippingMethod;
 class CoreIPCCNContact;
 class CoreIPCCNPhoneNumber;

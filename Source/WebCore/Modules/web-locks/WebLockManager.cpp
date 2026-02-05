@@ -263,27 +263,28 @@ void WebLockManager::didCompleteLockRequest(WebLockIdentifier lockIdentifier, bo
 
             Ref lock = WebLock::create(*request.lockIdentifier, request.name, request.mode);
             auto result = request.grantedCallback->invoke(lock.ptr());
-            RefPtr<DOMPromise> waitingPromise = result.type() == CallbackResultType::Success ? result.releaseReturnValue() : nullptr;
-            if (!waitingPromise || waitingPromise->isSuspended()) {
+            if (result.type() != CallbackResultType::Success || result.returnValue()->isSuspended()) {
                 manager.m_mainThreadBridge->releaseLock(*request.lockIdentifier, request.name);
                 manager.settleReleasePromise(*request.lockIdentifier, Exception { ExceptionCode::ExistingExceptionError });
                 return;
             }
 
+            Ref waitingPromise = result.releaseReturnValue();
             waitingPromise->whenSettled([weakThis = WeakPtr { manager }, lockIdentifier = *request.lockIdentifier, name = request.name, waitingPromise] {
                 RefPtr protectedThis = weakThis.get();
-                if (!protectedThis)
+                if (!protectedThis || waitingPromise->isSuspended())
                     return;
                 protectedThis->m_mainThreadBridge->releaseLock(lockIdentifier, name);
                 protectedThis->settleReleasePromise(lockIdentifier, static_cast<JSC::JSValue>(waitingPromise->promise()));
             });
         } else {
             auto result = request.grantedCallback->invoke(nullptr);
-            RefPtr<DOMPromise> waitingPromise = result.type() == CallbackResultType::Success ? result.releaseReturnValue() : nullptr;
-            if (!waitingPromise || waitingPromise->isSuspended()) {
+            if (result.type() != CallbackResultType::Success || result.returnValue()->isSuspended()) {
                 manager.settleReleasePromise(*request.lockIdentifier, Exception { ExceptionCode::ExistingExceptionError });
                 return;
             }
+
+            Ref waitingPromise = result.releaseReturnValue();
             manager.settleReleasePromise(*request.lockIdentifier, static_cast<JSC::JSValue>(waitingPromise->promise()));
         }
     });

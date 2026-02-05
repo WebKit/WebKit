@@ -21,6 +21,7 @@ const years2n = new Temporal.Duration(-2);
 const leap1AdarI = Temporal.PlainDateTime.from({ year: 5782, monthCode: "M05L", day: 1, hour: 12, minute: 34, calendar }, options);
 const leap1AdarII = Temporal.PlainDateTime.from({ year: 5782, monthCode: "M06", day: 1, hour: 12, minute: 34, calendar }, options);
 const common1Adar = Temporal.PlainDateTime.from({ year: 5783, monthCode: "M06", day: 1, hour: 12, minute: 34, calendar }, options);
+const common = Temporal.PlainDateTime.from({ year: 5783, monthCode: "M08", day: 2, hour: 12, minute: 34, calendar }, options);
 const leap2AdarI = Temporal.PlainDateTime.from({ year: 5784, monthCode: "M05L", day: 1, hour: 12, minute: 34, calendar }, options);
 const leap2AdarII = Temporal.PlainDateTime.from({ year: 5784, monthCode: "M06", day: 1, hour: 12, minute: 34, calendar }, options);
 const common2Adar = Temporal.PlainDateTime.from({ year: 5785, monthCode: "M06", day: 1, hour: 12, minute: 34, calendar }, options);
@@ -51,6 +52,12 @@ TemporalHelpers.assertPlainDateTime(
   leap2AdarII.add(years1, options),
   5785, 6, "M06", 1, 12, 34, 0, 0, 0, 0, "Adding 1 year to Adar II (M06) lands in common-year Adar (M06) even with reject",
   "am", 5785
+);
+
+TemporalHelpers.assertPlainDateTime(
+  common.add(years1, options),
+  5784, 9, "M08", 2, 12, 34, 0, 0, 0, 0, "Adding 1 year across Adar I (M05L)",
+  "am", 5784
 );
 
 TemporalHelpers.assertPlainDateTime(
@@ -91,6 +98,12 @@ TemporalHelpers.assertPlainDateTime(
   leap2AdarII.add(years1n, options),
   5783, 6, "M06", 1, 12, 34, 0, 0, 0, 0, "Subtracting 1 year from Adar II (M06) lands in common-year Adar (M06) even with reject",
   "am", 5783
+);
+
+TemporalHelpers.assertPlainDateTime(
+  common.add(years2n, options),
+  5781, 8, "M08", 2, 12, 34, 0, 0, 0, 0, "Subtracting 2 years across Adar I (M05L)",
+  "am", 5781
 );
 
 TemporalHelpers.assertPlainDateTime(
@@ -179,6 +192,24 @@ TemporalHelpers.assertPlainDateTime(
   leap2AdarII.add(months12),
   5785, 6, "M06", 1, 12, 34, 0, 0, 0, 0, "Adding 12 months to leap-year Adar II lands in Adar (M06)",
   "am", 5785
+);
+
+TemporalHelpers.assertPlainDateTime(
+  common.add(months13, options),
+  5784, 9, "M08", 2, 12, 34, 0, 0, 0, 0, "Adding 13 months across Adar I (M05L) lands in same month code",
+  "am", 5784
+);
+
+TemporalHelpers.assertPlainDateTime(
+  common.add(new Temporal.Duration(1, 12), options),
+  5785, 8, "M08", 2, 12, 34, 0, 0, 0, 0, "Adding 1y 12mo across Adar I (M05L) in the years part lands in same month code",
+  "am", 5785
+);
+
+TemporalHelpers.assertPlainDateTime(
+  date3.add(new Temporal.Duration(2, 13), options),
+  5787, 8, "M07", 1, 12, 34, 0, 0, 0, 0, "Adding 2y 13mo across Adar I (M05L) in the months part lands in same month code",
+  "am", 5787
 );
 
 TemporalHelpers.assertPlainDateTime(
@@ -275,6 +306,18 @@ TemporalHelpers.assertPlainDateTime(
   common2Adar.add(months24n),
   5783, 7, "M07", 1, 12, 34, 0, 0, 0, 0, "Subtracting 24 months from common-year Adar crossing a leap year lands in common-year Nisan (M07)",
   "am", 5783
+);
+
+TemporalHelpers.assertPlainDateTime(
+  date1.add(new Temporal.Duration(-2, -12), options),
+  5781, 4, "M04", 1, 12, 34, 0, 0, 0, 0, "Subtracting 2y 12mo across Adar I (M05L) in the years part lands in same month code",
+  "am", 5781
+);
+
+TemporalHelpers.assertPlainDateTime(
+  date1.add(new Temporal.Duration(-1, -13), options),
+  5782, 4, "M04", 1, 12, 34, 0, 0, 0, 0, "Subtracting 1y 13mo across Adar I (M05L) in the months part lands in same month code",
+  "am", 5782
 );
 
 TemporalHelpers.assertPlainDateTime(

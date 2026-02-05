@@ -24,8 +24,6 @@
  */
 // https://github.com/WICG/observable
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary SubscribeOptions {
+dictionary SubscribeOptions {
   AbortSignal signal;
 };

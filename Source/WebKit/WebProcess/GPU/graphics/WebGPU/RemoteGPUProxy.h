@@ -36,23 +36,25 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
+namespace WebModel {
+struct ImageAsset;
+struct MeshDescriptor;
+}
+
 namespace WebCore {
 class IntSize;
 class GraphicsContext;
+class Mesh;
 class NativeImage;
-namespace DDModel {
-class DDMesh;
-struct DDMeshDescriptor;
-}
+class Mesh;
+class ModelConvertToBackingContext;
 }
 
 namespace WebKit {
+class ConvertToBackingContext;
+class ModelConvertToBackingContext;
 class RemoteRenderingBackendProxy;
 class WebPage;
-
-namespace DDModel {
-class ConvertToBackingContext;
-}
 
 namespace WebGPU {
 class ConvertToBackingContext;
@@ -63,8 +65,8 @@ class RemoteGPUProxy final : public WebCore::WebGPU::GPU, private IPC::Connectio
     WTF_MAKE_TZONE_ALLOCATED(RemoteGPUProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteGPUProxy);
 public:
-    static RefPtr<RemoteGPUProxy> create(WebGPU::ConvertToBackingContext&, DDModel::ConvertToBackingContext&, WebPage&);
-    static RefPtr<RemoteGPUProxy> create(WebGPU::ConvertToBackingContext&, DDModel::ConvertToBackingContext&, RemoteRenderingBackendProxy&, SerialFunctionDispatcher&);
+    static RefPtr<RemoteGPUProxy> create(WebGPU::ConvertToBackingContext&, ModelConvertToBackingContext&, WebPage&);
+    static RefPtr<RemoteGPUProxy> create(WebGPU::ConvertToBackingContext&, ModelConvertToBackingContext&, RemoteRenderingBackendProxy&, SerialFunctionDispatcher&);
 
     virtual ~RemoteGPUProxy();
 
@@ -82,7 +84,7 @@ public:
 private:
     friend class WebGPU::DowncastConvertToBackingContext;
 
-    RemoteGPUProxy(WebGPU::ConvertToBackingContext&, DDModel::ConvertToBackingContext&, SerialFunctionDispatcher&);
+    RemoteGPUProxy(WebGPU::ConvertToBackingContext&, ModelConvertToBackingContext&, SerialFunctionDispatcher&);
     void initializeIPC(Ref<IPC::StreamClientConnection>&&, RemoteRenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
 
     RemoteGPUProxy(const RemoteGPUProxy&) = delete;
@@ -119,7 +121,7 @@ private:
     }
 
     void requestAdapter(const WebCore::WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<WebCore::WebGPU::Adapter>&&)>&&) final;
-    RefPtr<WebCore::DDModel::DDMesh> createModelBacking(unsigned width, unsigned height, const WebCore::DDModel::DDImageAsset& diffuseTexture, const WebCore::DDModel::DDImageAsset& specularTexture, CompletionHandler<void(Vector<MachSendRight>&&)>&&) final;
+    RefPtr<WebCore::Mesh> createModelBacking(unsigned width, unsigned height, const WebModel::ImageAsset& diffuseTexture, const WebModel::ImageAsset& specularTexture, CompletionHandler<void(Vector<MachSendRight>&&)>&&) final;
 
     RefPtr<WebCore::WebGPU::PresentationContext> createPresentationContext(const WebCore::WebGPU::PresentationContextDescriptor&) final;
 
@@ -162,7 +164,7 @@ private:
     RefPtr<IPC::StreamClientConnection> protectedStreamConnection() const { return m_streamConnection; }
 
     const Ref<WebGPU::ConvertToBackingContext> m_convertToBackingContext;
-    const Ref<DDModel::ConvertToBackingContext> m_modelConvertToBackingContext;
+    const Ref<ModelConvertToBackingContext> m_modelConvertToBackingContext;
     ThreadSafeWeakPtr<SerialFunctionDispatcher> m_dispatcher;
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     RefPtr<IPC::StreamClientConnection> m_streamConnection;

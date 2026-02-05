@@ -42,7 +42,6 @@ public:
     virtual ~FrameTreeNode();
 
     WebKit::WebPageProxy& page() { return m_page.get(); }
-    Ref<WebKit::WebPageProxy> protectedPage();
     const WebKit::FrameInfoData& info() const { return m_data.info; }
     const Vector<WebKit::FrameTreeNodeData>& childFrames() const { return m_data.children; }
 

@@ -310,7 +310,7 @@ void AnimationTimelinesController::resumeAnimations()
 
 ReducedResolutionSeconds AnimationTimelinesController::liveCurrentTime() const
 {
-    return protectedDocument()->protectedWindow()->nowTimestamp();
+    return protect(protectedDocument()->window())->nowTimestamp();
 }
 
 std::optional<Seconds> AnimationTimelinesController::currentTime(UseCachedCurrentTime useCachedCurrentTime)

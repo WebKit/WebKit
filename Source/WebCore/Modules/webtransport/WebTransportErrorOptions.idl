@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/webtransport/#dictdef-webtransporterroroptions
 [
     EnabledBySetting=WebTransportEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary WebTransportErrorOptions {
     WebTransportErrorSource source = "stream";
     [Clamp] unsigned long? streamErrorCode = null;

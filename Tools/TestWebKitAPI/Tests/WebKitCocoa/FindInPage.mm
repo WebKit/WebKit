@@ -560,14 +560,14 @@ TEST(WebKit, FindAndHighlightDifferentWebViews)
 
     __block bool retrievedRect = false;
     [webViewForHighlight _requestRectForFoundTextRange:[ranges objectAtIndex:0] completionHandler:^(CGRect rect) {
-        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(8, 8, 27, 19)));
+        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(8, 8, 27, 20)));
         retrievedRect = true;
     }];
     TestWebKitAPI::Util::run(&retrievedRect);
 
     retrievedRect = false;
     [webViewForHighlight _requestRectForFoundTextRange:[ranges objectAtIndex:1] completionHandler:^(CGRect rect) {
-        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(18, 54, 27, 19)));
+        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(18, 54, 27, 20)));
         retrievedRect = true;
     }];
     TestWebKitAPI::Util::run(&retrievedRect);
@@ -582,7 +582,7 @@ TEST(WebKit, RequestRectForFoundTextRange)
 
     __block bool done = false;
     [webView _requestRectForFoundTextRange:[ranges firstObject] completionHandler:^(CGRect rect) {
-        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(252, 146, 44, 19)));
+        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(252, 146, 44, 20)));
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -591,7 +591,7 @@ TEST(WebKit, RequestRectForFoundTextRange)
 
     done = false;
     [webView _requestRectForFoundTextRange:[ranges firstObject] completionHandler:^(CGRect rect) {
-        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(229, 646, 72, 19)));
+        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(229, 646, 72, 20)));
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -599,7 +599,7 @@ TEST(WebKit, RequestRectForFoundTextRange)
     [webView scrollRangeToVisible:[ranges firstObject] inDocument:nil];
     done = false;
     [webView _requestRectForFoundTextRange:[ranges firstObject] completionHandler:^(CGRect rect) {
-        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(229, 104, 72, 19)));
+        EXPECT_TRUE(CGRectEqualToRect(rect, CGRectMake(229, 104, 72, 20)));
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);

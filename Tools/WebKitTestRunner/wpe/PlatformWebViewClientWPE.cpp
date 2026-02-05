@@ -30,14 +30,10 @@
 #include <wpe/wpe-platform.h>
 #include <wtf/glib/GUniquePtr.h>
 
-#if USE(CAIRO)
-#include <cairo.h>
-#elif USE(SKIA)
 IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/core/SkColorSpace.h>
 #include <skia/core/SkPixmap.h>
 IGNORE_CLANG_WARNINGS_END
-#endif
 
 namespace WTR {
 
@@ -132,24 +128,11 @@ PlatformImage PlatformWebViewClientWPE::snapshot()
 
     auto width = wpe_buffer_get_width(m_buffer.get());
     auto height = wpe_buffer_get_height(m_buffer.get());
-#if USE(CAIRO)
-    auto stride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, width);
-    auto* data = static_cast<unsigned char*>(const_cast<void*>(g_bytes_get_data(bytes.get(), nullptr)));
-    cairo_surface_t* surface = cairo_image_surface_create_for_data(data, CAIRO_FORMAT_ARGB32, width, height, stride);
-    static cairo_user_data_key_t s_surfaceDataKey;
-    cairo_surface_set_user_data(surface, &s_surfaceDataKey, bytes.leakRef(), [](void* data) {
-        g_bytes_unref(static_cast<GBytes*>(data));
-    });
-    cairo_surface_mark_dirty(surface);
-
-    return surface;
-#elif USE(SKIA)
     auto info = SkImageInfo::MakeN32Premul(width, height, SkColorSpace::MakeSRGB());
     SkPixmap pixmap(info, g_bytes_get_data(bytes.get(), nullptr), info.minRowBytes());
     return SkImages::RasterFromPixmap(pixmap, [](const void*, void* context) {
         g_bytes_unref(static_cast<GBytes*>(context));
     }, bytes.leakRef()).release();
-#endif
 }
 
 } // namespace WTR

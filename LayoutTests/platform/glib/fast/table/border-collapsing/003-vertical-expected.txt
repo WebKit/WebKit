@@ -4,22 +4,22 @@ layer at (396,0) size 404x600
   RenderBlock {HTML} at (0,0) size 404x600
     RenderBody {BODY} at (16,8) size 356x584
       RenderBlock {P} at (0,0) size 54x584
-        RenderText {#text} at (0,0) size 17x201
-          text run at (0,0) width 201: "The black border below should "
-        RenderInline {I} at (0,201) size 17x20
-          RenderText {#text} at (0,201) size 17x20
-            text run at (0,201) width 20: "not"
-        RenderText {#text} at (0,0) size 35x545
-          text run at (0,221) width 212: " cut through the top left corner of "
+        RenderText {#text} at (0,0) size 18x201
+          text run at (0,0) width 202: "The black border below should "
+        RenderInline {I} at (0,201) size 18x20
+          RenderText {#text} at (0,201) size 18x20
+            text run at (0,201) width 21: "not"
+        RenderText {#text} at (0,0) size 36x545
+          text run at (0,221) width 213: " cut through the top left corner of "
           text run at (0,433) width 112: "the blue border. It"
           text run at (18,0) width 288: "would cut through with our old behavior, but "
-        RenderInline {A} at (18,287) size 17x23 [color=#0000EE]
-          RenderText {#text} at (18,287) size 17x23
-            text run at (18,287) width 22: "this"
-        RenderText {#text} at (18,0) size 35x581
-          text run at (18,309) width 4: " "
-          text run at (18,313) width 267: "bug fix changed our behavior to match the"
-          text run at (36,0) width 32: "spec."
+        RenderInline {A} at (18,287) size 18x23 [color=#0000EE]
+          RenderText {#text} at (18,287) size 18x23
+            text run at (18,287) width 23: "this"
+        RenderText {#text} at (18,0) size 36x581
+          text run at (18,309) width 5: " "
+          text run at (18,313) width 268: "bug fix changed our behavior to match the"
+          text run at (36,0) width 33: "spec."
       RenderBlock {DIV} at (86,32) size 270x520 [border: (1px solid #0000FF)]
         RenderTable {DIV} at (1,1) size 220x115 [border: (1px none #000000)]
           RenderTableSection (anonymous) at (10,1) size 200x104

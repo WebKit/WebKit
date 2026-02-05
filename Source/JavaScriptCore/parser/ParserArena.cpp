@@ -26,10 +26,10 @@
 #include "config.h"
 #include "ParserArena.h"
 
-#include "CatchScope.h"
 #include "JSBigInt.h"
 #include "JSCInlines.h"
 #include "Nodes.h"
+#include "TopExceptionScope.h"
 #include "VMTrapsInlines.h"
 #include <wtf/text/MakeString.h>
 
@@ -88,7 +88,7 @@ const Identifier* IdentifierArena::makeBigIntDecimalIdentifier(VM& vm, const Ide
         return &identifier;
 
     DeferTermination deferScope(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSValue bigInt = JSBigInt::parseInt(nullptr, vm, identifier.string(), radix, JSBigInt::ErrorParseMode::ThrowExceptions, JSBigInt::ParseIntSign::Unsigned);
     scope.assertNoException();
 

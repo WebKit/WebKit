@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TestUtilities.h"
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 #include <wtf/DataLog.h>
 #include <wtf/text/MakeString.h>
@@ -151,4 +151,4 @@ void testAllUnaryOps()
 
 } // namespace WasmDebugInfoTest
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WEBASSEMBLY_DEBUGGER)

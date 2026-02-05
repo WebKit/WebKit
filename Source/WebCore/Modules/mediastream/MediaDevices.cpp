@@ -82,7 +82,7 @@ void MediaDevices::stop()
 {
     if (m_deviceChangeToken) {
         RefPtr document = this->document();
-        auto* controller = document ? UserMediaController::from(document->protectedPage().get()) : nullptr;
+        auto* controller = document ? UserMediaController::from(protect(document->page()).get()) : nullptr;
         if (controller)
             controller->removeDeviceChangeObserver(*m_deviceChangeToken);
     }
@@ -430,7 +430,7 @@ void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise)
     if (!document)
         return;
 
-    auto* controller = UserMediaController::from(document->protectedPage().get());
+    auto* controller = UserMediaController::from(protect(document->page()).get());
     if (!controller) {
         promise.resolve({ });
         return;
@@ -484,7 +484,7 @@ ScriptExecutionContext* MediaDevices::scriptExecutionContext() const
 void MediaDevices::listenForDeviceChanges()
 {
     RefPtr document = this->document();
-    auto* controller = document ? UserMediaController::from(document->protectedPage().get()) : nullptr;
+    auto* controller = document ? UserMediaController::from(protect(document->page()).get()) : nullptr;
     if (!controller)
         return;
 

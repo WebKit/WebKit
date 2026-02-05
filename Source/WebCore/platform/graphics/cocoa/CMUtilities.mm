@@ -532,7 +532,7 @@ Expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(const MediaSamp
                 CFDictionarySetValue(attachments, PAL::kCMSampleAttachmentKey_DoNotDisplay, kCFBooleanTrue);
 
             // Attach HDR10+ (aka SMPTE ST 2094-40) metadata, if present:
-            if (samples[i].hdrMetadataType == HdrMetadataType::SmpteSt209440 && samples[i].hdrMetadata)
+            if (samples[i].hdrMetadataType == PlatformMediaCapabilitiesHdrMetadataType::SmpteSt209440 && samples[i].hdrMetadata)
                 CFDictionarySetValue(attachments, PAL::kCMSampleAttachmentKey_HDR10PlusPerFrameData, Ref { *samples[i].hdrMetadata }->createCFData().get());
         }
     } else if (samples.isAudio() && samples.discontinuity())

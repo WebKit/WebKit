@@ -160,8 +160,8 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
 
     HashSet<mach_port_t> knownWebKitThreads;
     {
-        for (auto& thread : Thread::allThreads()) {
-            mach_port_t machThread = thread.machThread();
+        for (Ref thread : Thread::allThreads()) {
+            mach_port_t machThread = thread->machThread();
             if (MACH_PORT_VALID(machThread))
                 knownWebKitThreads.add(machThread);
         }
@@ -169,13 +169,13 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
 
     HashMap<mach_port_t, String> knownWorkerThreads;
     {
-        for (auto& thread : WorkerOrWorkletThread::workerOrWorkletThreads()) {
+        for (Ref thread : WorkerOrWorkletThread::workerOrWorkletThreads()) {
             // Ignore worker threads that have not been fully started yet.
-            if (!thread.thread())
+            if (!thread->thread())
                 continue;
-            mach_port_t machThread = thread.thread()->machThread();
+            mach_port_t machThread = thread->thread()->machThread();
             if (MACH_PORT_VALID(machThread))
-                knownWorkerThreads.set(machThread, thread.inspectorIdentifier().isolatedCopy());
+                knownWorkerThreads.set(machThread, thread->inspectorIdentifier().isolatedCopy());
         }
     }
 

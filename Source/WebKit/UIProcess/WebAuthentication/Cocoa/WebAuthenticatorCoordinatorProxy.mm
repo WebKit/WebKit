@@ -585,7 +585,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
 {
 #if HAVE(UNIFIED_ASC_AUTH_UI)
     RefPtr webPageProxy = m_webPageProxy.get();
-    if (!webPageProxy || !webPageProxy->protectedPreferences()->webAuthenticationASEnabled()) {
+    if (!webPageProxy || !protect(webPageProxy->preferences())->webAuthenticationASEnabled()) {
         auto context = contextForRequest(WTF::move(requestData));
         if (context.get() == nullptr) {
             handler({ }, (AuthenticatorAttachment)0, ExceptionData { ExceptionCode::NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
@@ -667,7 +667,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                     if (credential.get().prf.second)
                         second = toArrayBuffer(retainPtr(credential.get().prf.second).get());
                     if (first)
-                        extensionOutputs.prf = { credential.get().prf.isSupported, { { first, second } } };
+                        extensionOutputs.prf = { credential.get().prf.isSupported, { { first.releaseNonNull(), WTF::move(second) } } };
                     else
                         extensionOutputs.prf = { credential.get().prf.isSupported, std::nullopt };
                 }
@@ -702,7 +702,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                     RefPtr<ArrayBuffer> second = nullptr;
                     if (credential.get().prf.second)
                         second = toArrayBuffer(retainPtr(credential.get().prf.second).get());
-                    extensionOutputs.prf = { std::nullopt, { { first, second } } };
+                    extensionOutputs.prf = { std::nullopt, { { first.releaseNonNull(), WTF::move(second) } } };
                 }
 #endif
 
@@ -725,7 +725,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                     if (credential.get().prf.second)
                         second = toArrayBuffer(retainPtr(credential.get().prf.second).get());
                     if (first)
-                        extensionOutputs.prf = { credential.get().prf.isSupported, { { first, second } } };
+                        extensionOutputs.prf = { credential.get().prf.isSupported, { { first.releaseNonNull(), WTF::move(second) } } };
                     else
                         extensionOutputs.prf = { credential.get().prf.isSupported, std::nullopt };
                 }
@@ -755,7 +755,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                     RefPtr<ArrayBuffer> second = nullptr;
                     if (credential.get().prf.second)
                         second = toArrayBuffer(retainPtr(credential.get().prf.second).get());
-                    extensionOutputs.prf = { std::nullopt, { { first, second } } };
+                    extensionOutputs.prf = { std::nullopt, { { first.releaseNonNull(), WTF::move(second) } } };
                 }
 #endif
 

@@ -166,11 +166,11 @@ static void postTextStateChangeNotification(AXObjectCache* cache, const VisibleP
     if (!node)
         return;
     if (insertedText.length() && deletedText.length())
-        cache->postTextReplacementNotification(node.get(), AXTextEditTypeDelete, insertedText, AXTextEditTypeInsert, deletedText, position);
+        cache->postTextReplacementNotification(node.get(), AXTextEditType::Delete, insertedText, AXTextEditType::Insert, deletedText, position);
     else if (deletedText.length())
-        cache->postTextStateChangeNotification(node.get(), AXTextEditTypeInsert, deletedText, position);
+        cache->postTextStateChangeNotification(node.get(), AXTextEditType::Insert, deletedText, position);
     else if (insertedText.length())
-        cache->postTextStateChangeNotification(node.get(), AXTextEditTypeDelete, insertedText, position);
+        cache->postTextStateChangeNotification(node.get(), AXTextEditType::Delete, insertedText, position);
 }
 
 void AccessibilityUndoReplacedText::postTextStateChangeNotificationForUnapply(AXObjectCache* cache)
@@ -913,7 +913,7 @@ RefPtr<Text> CompositeEditCommand::textNodeForRebalance(const Position& position
     if (!textNode || !textNode->length())
         return nullptr;
 
-    textNode->protectedDocument()->updateStyleIfNeeded();
+    protect(textNode->document())->updateStyleIfNeeded();
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
@@ -988,7 +988,7 @@ void CompositeEditCommand::prepareWhitespaceAtPositionForSplit(Position& positio
     if (!isRichlyEditablePosition(position))
         return;
 
-    auto textNode = dynamicDowncast<Text>(position.protectedDeprecatedNode());
+    auto textNode = dynamicDowncast<Text>(protect(position.deprecatedNode()));
     if (!textNode || !textNode->length())
         return;
     
@@ -1018,7 +1018,7 @@ void CompositeEditCommand::replaceCollapsibleWhitespaceWithNonBreakingSpaceIfNee
     Position pos = visiblePosition.deepEquivalent().downstream();
     if (!pos.containerNode() || !is<Text>(*pos.containerNode()) || is<HTMLBRElement>(*pos.deprecatedNode()))
         return;
-    replaceTextInNodePreservingMarkers(*pos.protectedContainerText(), pos.offsetInContainerNode(), 1, nonBreakingSpaceString());
+    replaceTextInNodePreservingMarkers(*protect(pos.containerText()), pos.offsetInContainerNode(), 1, nonBreakingSpaceString());
 }
 
 void CompositeEditCommand::rebalanceWhitespace()
@@ -1237,7 +1237,7 @@ RefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(co
         return nullptr;
 
     // Perform some checks to see if we need to perform work in this function.
-    if (upstreamStart.deprecatedNode() && isBlock(*upstreamStart.protectedDeprecatedNode())) {
+    if (upstreamStart.deprecatedNode() && isBlock(*protect(upstreamStart.deprecatedNode()))) {
         // If the block is the root editable element, always move content to a new block,
         // since it is illegal to modify attributes on the root editable element for editing.
         if (upstreamStart.deprecatedNode() == editableRootForPosition(upstreamStart)) {
@@ -1245,16 +1245,16 @@ RefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(co
             // block but don't try and move content into it, since there's nothing for moveParagraphs to move.
             if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(downcast<RenderElement>(*upstreamStart.deprecatedNode()->renderer())))
                 return insertNewDefaultParagraphElementAt(upstreamStart);
-        } else if (upstreamEnd.deprecatedNode() && isBlock(*upstreamEnd.protectedDeprecatedNode())) {
-            if (!upstreamEnd.protectedDeprecatedNode()->isDescendantOf(upstreamStart.protectedDeprecatedNode().get())) {
+        } else if (upstreamEnd.deprecatedNode() && isBlock(*protect(upstreamEnd.deprecatedNode()))) {
+            if (!protect(upstreamEnd.deprecatedNode())->isDescendantOf(protect(upstreamStart.deprecatedNode()).get())) {
                 // If the paragraph end is a descendant of paragraph start, then we need to run
                 // the rest of this function. If not, we can bail here.
                 return nullptr;
             }
-        } else if (enclosingBlock(upstreamEnd.protectedDeprecatedNode()) != upstreamStart.deprecatedNode()) {
+        } else if (enclosingBlock(protect(upstreamEnd.deprecatedNode())) != upstreamStart.deprecatedNode()) {
             // The visibleEnd. If it is an ancestor of the paragraph start, then
             // we can bail as we have a full block to work with.
-            if (upstreamStart.protectedDeprecatedNode()->isDescendantOf(enclosingBlock(upstreamEnd.protectedDeprecatedNode()).get()))
+            if (protect(upstreamStart.deprecatedNode())->isDescendantOf(enclosingBlock(protect(upstreamEnd.deprecatedNode())).get()))
                 return nullptr;
         } else if (isEndOfEditableOrNonEditableContent(visibleEnd)) {
             // At the end of the editable region. We can bail here as well.
@@ -1349,7 +1349,7 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(const Position& start, 
             auto clonedNode = node->cloneNode(true);
             insertNodeAfter(clonedNode.copyRef(), *lastNode);
             lastNode = WTF::move(clonedNode);
-            if (node == end.deprecatedNode() || end.protectedDeprecatedNode()->isDescendantOf(*node))
+            if (node == end.deprecatedNode() || protect(end.deprecatedNode())->isDescendantOf(*node))
                 break;
         }
     }
@@ -1441,7 +1441,7 @@ void CompositeEditCommand::moveParagraphWithClones(const VisiblePosition& startO
     beforeParagraph = VisiblePosition(beforeParagraph.deepEquivalent());
     afterParagraph = VisiblePosition(afterParagraph.deepEquivalent());
 
-    if (beforeParagraph.isNotNull() && !isRenderedTable(beforeParagraph.deepEquivalent().protectedDeprecatedNode().get())
+    if (beforeParagraph.isNotNull() && !isRenderedTable(protect(beforeParagraph.deepEquivalent().deprecatedNode()).get())
         && ((!isEndOfParagraph(beforeParagraph) && !isStartOfParagraph(beforeParagraph)) || beforeParagraph == afterParagraph)
         && isEditablePosition(beforeParagraph.deepEquivalent())) {
         // FIXME: Trim text between beforeParagraph and afterParagraph if they aren't equal.
@@ -1624,7 +1624,7 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
                 // If listNode does NOT appear at the end, then we should consider it as a regular paragraph.
                 // e.g. <ul><li> <ul><li><br></li></ul> hello</li></ul> should become <ul><li> <div><br></div> hello</li></ul> at the end
                 splitElement(*liElement, *listNode);
-                removeNodePreservingChildren(*listNode->protectedParentNode());
+                removeNodePreservingChildren(*protect(listNode->parentNode()));
                 newBlock = HTMLLIElement::create(document);
             }
             // If listNode does NOT appear at the end of the outer list item, then behave as if in a regular paragraph.
@@ -1704,7 +1704,7 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
     ASSERT(caretPos.deprecatedNode()->hasTagName(brTag) || (caretPos.deprecatedNode()->isTextNode() && caretPos.deprecatedNode()->renderer()->style().preserveNewline()));
     
     if (caretPos.deprecatedNode()->hasTagName(brTag))
-        removeNodeAndPruneAncestors(*caretPos.protectedDeprecatedNode());
+        removeNodeAndPruneAncestors(*protect(caretPos.deprecatedNode()));
     else if (RefPtr textNode = dynamicDowncast<Text>(*caretPos.deprecatedNode())) {
         ASSERT(caretPos.deprecatedEditingOffset() == 0);
         RefPtr parentNode { textNode->parentNode() };
@@ -1751,7 +1751,7 @@ Position CompositeEditCommand::positionAvoidingSpecialElementBoundary(const Posi
             // Don't insert outside an anchor if doing so would skip over a line break.  It would
             // probably be safe to move the line break so that we could still avoid the anchor here.
             Position downstream(visiblePos.deepEquivalent().downstream());
-            if (lineBreakExistsAtVisiblePosition(visiblePos) && downstream.protectedDeprecatedNode()->isDescendantOf(enclosingAnchor.get()))
+            if (lineBreakExistsAtVisiblePosition(visiblePos) && protect(downstream.deprecatedNode())->isDescendantOf(enclosingAnchor.get()))
                 return original;
             
             result = positionInParentAfterNode(enclosingAnchor.get());

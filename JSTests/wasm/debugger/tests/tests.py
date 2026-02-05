@@ -1513,3 +1513,40 @@ class MultiVMSameModuleDifferentFunctionsTestCase(BaseTestCase):
     def stepTest(self):
         # FIXME: Add tests when thread select is full supported
         return
+
+
+class DoCatchThrowTestCase(BaseTestCase):
+
+    def __init__(self, build_config: str = None, port: int = None):
+        super().__init__(build_config, port)
+
+    def execute(self):
+        self.setup_debugging_session_or_raise("resources/swift-wasm/do-catch-throw/main.js")
+
+        try:
+            for _ in range(1):
+                self.stepTest()
+
+        except Exception as e:
+            raise Exception(f"Test failed: {e}")
+
+    def stepTest(self):
+        self.send_lldb_command_or_raise("b testDoThrowCatch")
+        self.send_lldb_command_or_raise("c", patterns=["-> 14"])
+        self.send_lldb_command_or_raise("n", patterns=["-> 15"])
+        self.send_lldb_command_or_raise("n", patterns=["-> 18"])
+        self.send_lldb_command_or_raise("n", patterns=["-> 19"])
+        self.send_lldb_command_or_raise("br del -f", patterns=["All breakpoints removed. (1 breakpoint)"])
+
+        self.send_lldb_command_or_raise("b testDoThrowCatchNested")
+        self.send_lldb_command_or_raise("c", patterns=["-> 26"])
+        self.send_lldb_command_or_raise("n", patterns=["-> 31"])
+        self.send_lldb_command_or_raise("n", patterns=["-> 32"])
+        self.send_lldb_command_or_raise("n", patterns=["-> 37"])
+        self.send_lldb_command_or_raise("n", patterns=["-> 42"])
+        self.send_lldb_command_or_raise("br del -f", patterns=["All breakpoints removed. (1 breakpoint)"])
+
+        # FIXME: Swift WASM Compiler Bug Incorrect DWARF Line Numbers rdar://169306069
+        # self.send_lldb_command_or_raise("b testDoThrowCatch")
+        # self.send_lldb_command_or_raise("b testDoThrowFuncCatchNested")
+        return

@@ -40,6 +40,7 @@ ErrorInstance::ErrorInstance(VM& vm, Structure* structure, ErrorType errorType)
     , m_stackOverflowError(false)
     , m_outOfMemoryError(false)
     , m_errorInfoMaterialized(false)
+    , m_stackPropertyAlreadyMaterialized(false)
     , m_nativeGetterTypeError(false)
 #if ENABLE(WEBASSEMBLY)
     , m_catchableFromWasm(true)
@@ -281,7 +282,13 @@ void ErrorInstance::computeErrorInfo(VM& vm)
 
     if (m_stackTrace && !m_stackTrace->isEmpty()) {
         getLineColumnAndSource(vm, m_stackTrace.get(), m_lineColumn, m_sourceURL);
-        m_stackString = Interpreter::stackTraceAsString(vm, *m_stackTrace.get());
+        // If the stack property was already materialized by Error.captureStackString,
+        // use emptyString as a placeholder to materialize the other properties in
+        // materializeErrorInfoIfNeeded below.
+        if (m_stackPropertyAlreadyMaterialized)
+            m_stackString = emptyString();
+        else
+            m_stackString = Interpreter::stackTraceAsString(vm, *m_stackTrace.get());
         m_stackTrace = nullptr;
     }
 }
@@ -301,7 +308,8 @@ bool ErrorInstance::materializeErrorInfoIfNeeded(VM& vm)
         if (!m_sourceURL.isEmpty())
             putDirect(vm, vm.propertyNames->sourceURL, jsString(vm, WTF::move(m_sourceURL)), attributes);
 
-        putDirect(vm, vm.propertyNames->stack, jsString(vm, WTF::move(m_stackString)), attributes);
+        if (!m_stackPropertyAlreadyMaterialized)
+            putDirect(vm, vm.propertyNames->stack, jsString(vm, WTF::move(m_stackString)), attributes);
     }
 
     m_errorInfoMaterialized = true;

@@ -476,7 +476,7 @@ RefPtr<NativeImage> MediaControlTextTrackContainerElement::createTextTrackRepres
     if (!frame)
         return nullptr;
 
-    protectedDocument()->updateLayout();
+    protect(document())->updateLayout();
 
     CheckedPtr renderer = this->renderer();
     if (!renderer)
@@ -553,7 +553,7 @@ VTTCue& MediaControlTextTrackContainerElement::ensurePreviewCue() const
     }
 
     if (!m_previewCue) {
-        m_previewCue = VTTCue::create(protectedDocument(), 0, 0, { });
+        m_previewCue = VTTCue::create(protect(document()), 0, 0, { });
         m_previewCue->setSnapToLines(false);
         m_previewCue->setLine(25.);
         m_previewCue->setStartTime(MediaTime::zeroTime());
@@ -572,7 +572,7 @@ VTTCue& MediaControlTextTrackContainerElement::ensurePreviewCue() const
 const Logger& MediaControlTextTrackContainerElement::logger() const
 {
     if (!m_logger)
-        m_logger = protectedDocument()->logger();
+        m_logger = protect(document())->logger();
 
     return *m_logger;
 }

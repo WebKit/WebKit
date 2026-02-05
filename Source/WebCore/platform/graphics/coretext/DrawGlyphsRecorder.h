@@ -63,6 +63,8 @@ public:
     void recordDrawImage(CGRenderingStateRef, CGGStateRef, CGRect, CGImageRef);
     void recordDrawPath(CGRenderingStateRef, CGGStateRef, CGPathDrawingMode, CGPathRef);
 
+    CGColorSpaceRef colorSpace() const;
+
 private:
     UniqueRef<GraphicsContext> createInternalContext();
 

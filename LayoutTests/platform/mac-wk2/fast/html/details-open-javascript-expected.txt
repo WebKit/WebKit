@@ -11,10 +11,10 @@ layer at (0,0) size 800x600
         RenderBlock {SLOT} at (0,18) size 784x21
           RenderTextControl {INPUT} at (0,0) size 156x21 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DETAILS} at (0,39) size 784x18
-        RenderListItem {SUMMARY} at (0,0) size 784x18
-          RenderListMarker at (0,0) size 17x18: "\x{25B6}"
-          RenderText {#text} at (16,0) size 51x18
-            text run at (16,0) width 51: "details2"
+      RenderBlock {DETAILS} at (0,39) size 784x20
+        RenderListItem {SUMMARY} at (0,0) size 784x20
+          RenderListMarker at (0,1) size 17x19: "\x{25B6}"
+          RenderText {#text} at (16,1) size 51x19
+            text run at (16,1) width 51: "details2"
 layer at (15,30) size 142x13
   RenderBlock {DIV} at (7,4) size 142x13

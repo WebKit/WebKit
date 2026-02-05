@@ -640,7 +640,7 @@ UIProcess/mac/WebProcessProxyMac.mm @nonARC
 UIProcess/mac/WindowServerConnection.mm @nonARC
 UIProcess/mac/WKFullScreenWindowController.mm @nonARC
 UIProcess/mac/WKImmediateActionController.mm @nonARC
-UIProcess/mac/WKPanGestureController.mm @nonARC
+UIProcess/mac/WKAppKitGestureController.mm @nonARC
 UIProcess/mac/WKPrintingView.mm @nonARC
 UIProcess/mac/WKQuickLookPreviewController.mm @nonARC
 UIProcess/mac/WKRevealItemPresenter.mm @nonARC
@@ -972,7 +972,8 @@ RemoteLegacyCDMSessionProxyMessageReceiver.cpp
 RemoteMediaEngineConfigurationFactoryProxyMessageReceiver.cpp
 RemoteMediaPlayerManagerProxyMessageReceiver.cpp
 RemoteMediaPlayerProxyMessageReceiver.cpp
-RemoteMediaResourceManagerMessageReceiver.cpp
+RemoteMediaResourceLoaderMessageReceiver.cpp
+RemoteMediaResourceLoaderProxyMessageReceiver.cpp
 RemoteMediaSessionCoordinatorMessageReceiver.cpp
 RemoteMediaSessionCoordinatorProxyMessageReceiver.cpp
 RemoteMediaSessionHelperMessageReceiver.cpp

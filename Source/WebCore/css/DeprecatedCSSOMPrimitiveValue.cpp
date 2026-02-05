@@ -53,7 +53,7 @@ unsigned short DeprecatedCSSOMPrimitiveValue::primitiveType() const
     if (m_value->isURL())
         return CSS_URI;
 
-    auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(m_value.get());
+    RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(m_value.get());
     if (!primitiveValue)
         return CSS_UNKNOWN;
 
@@ -116,7 +116,7 @@ ExceptionOr<float> DeprecatedCSSOMPrimitiveValue::getFloatValue(unsigned short u
         }
     }();
 
-    auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(m_value.get());
+    RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(m_value.get());
     if (!numericType || !primitiveValue)
         return Exception { ExceptionCode::InvalidAccessError };
     return primitiveValue->getFloatValueDeprecated(*numericType);
@@ -137,14 +137,14 @@ ExceptionOr<String> DeprecatedCSSOMPrimitiveValue::getStringValue() const
 
 ExceptionOr<Ref<DeprecatedCSSOMCounter>> DeprecatedCSSOMPrimitiveValue::getCounterValue() const
 {
-    if (auto* value = dynamicDowncast<CSSCounterValue>(m_value.get()))
+    if (RefPtr value = dynamicDowncast<CSSCounterValue>(m_value.get()))
         return DeprecatedCSSOMCounter::create(value->identifier(), value->separator(), value->counterStyleCSSText());
     return Exception { ExceptionCode::InvalidAccessError };
 }
     
 ExceptionOr<Ref<DeprecatedCSSOMRect>> DeprecatedCSSOMPrimitiveValue::getRectValue() const
 {
-    if (auto* rectValue = dynamicDowncast<CSSRectValue>(m_value.get()))
+    if (RefPtr rectValue = dynamicDowncast<CSSRectValue>(m_value.get()))
         return DeprecatedCSSOMRect::create(rectValue->rect(), m_owner);
     return Exception { ExceptionCode::InvalidAccessError };
 }

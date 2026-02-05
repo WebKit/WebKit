@@ -56,9 +56,9 @@ void GObjectEventListener::gobjectDestroyed()
     // Protect 'this' class in case the 'm_coreTarget' holds the last reference,
     // which may cause, inside removeEventListener(), free of this object
     // and later use-after-free with the m_handler = 0; assignment.
-    RefPtr<GObjectEventListener> protectedThis(this);
+    RefPtr protectedThis { this };
 
-    m_coreTarget->removeEventListener(m_eventType, *this, m_capture);
+    m_coreTarget->removeEventListener(m_eventType, *this, { .capture = m_capture });
     m_coreTarget = nullptr;
     m_handler = nullptr;
 }

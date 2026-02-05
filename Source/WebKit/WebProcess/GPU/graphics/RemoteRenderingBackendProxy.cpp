@@ -427,6 +427,18 @@ void RemoteRenderingBackendProxy::releaseNativeImage(RenderingResourceIdentifier
     send(Messages::RemoteRenderingBackend::ReleaseNativeImage(identifier));
 }
 
+void RemoteRenderingBackendProxy::cachePathImpl(Ref<PathImpl>&& path, RemotePathImplIdentifier identifier)
+{
+    send(Messages::RemoteRenderingBackend::CachePathImpl(WTF::move(path), identifier));
+}
+
+void RemoteRenderingBackendProxy::releasePathImpl(RemotePathImplIdentifier identifier)
+{
+    if (!m_connection)
+        return;
+    send(Messages::RemoteRenderingBackend::ReleasePathImpl(identifier));
+}
+
 void RemoteRenderingBackendProxy::cacheFont(const WebCore::Font::Attributes& fontAttributes, const WebCore::FontPlatformDataAttributes& platformData, std::optional<WebCore::RenderingResourceIdentifier> ident)
 {
     send(Messages::RemoteRenderingBackend::CacheFont(fontAttributes, platformData, ident));

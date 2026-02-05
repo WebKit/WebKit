@@ -37,6 +37,7 @@
 #include <WebCore/GraphicsLayerFactory.h>
 #include <WebCore/PlatformScreen.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
 #include <wtf/OptionSet.h>

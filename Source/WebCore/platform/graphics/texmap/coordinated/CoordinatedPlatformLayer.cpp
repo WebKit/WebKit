@@ -579,6 +579,20 @@ void CoordinatedPlatformLayer::setDirtyRegion(Damage&& damage)
 #endif
 }
 
+#if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
+void CoordinatedPlatformLayer::setContentsScrollbarImageForScrolling(NativeImage* image)
+{
+    Locker locker { m_lock };
+    if (image) {
+        setContentsImage(image);
+        IntRect rect { { }, image->size() };
+        setContentsRect(rect);
+        setContentsClippingRect(FloatRoundedRect(rect));
+    } else
+        setContentsImage(nullptr);
+}
+#endif
+
 #if ENABLE(DAMAGE_TRACKING)
 void CoordinatedPlatformLayer::addDamage(Damage&& damage)
 {
@@ -907,6 +921,21 @@ void CoordinatedPlatformLayer::flushCompositingState(const OptionSet<Composition
             layer.setBoundsOrigin(m_boundsOrigin);
             m_pendingChanges.remove(Change::BoundsOrigin);
         }
+
+        if (m_pendingChanges.contains(Change::ContentsRect)) {
+            layer.setContentsRect(m_contentsRect);
+            m_pendingChanges.remove(Change::ContentsRect);
+        }
+
+        if (m_pendingChanges.contains(Change::ContentsClippingRect)) {
+            layer.setContentsClippingRect(m_contentsClippingRect);
+            m_pendingChanges.remove(Change::ContentsClippingRect);
+        }
+
+        if (m_pendingChanges.contains(Change::ContentsImage)) {
+            m_imageBackingStore.committed = m_imageBackingStore.current;
+            m_pendingChanges.remove(Change::ContentsImage);
+        }
     }
 
     if (reasons.contains(CompositionReason::RenderingUpdate)) {
@@ -976,11 +1005,6 @@ void CoordinatedPlatformLayer::flushCompositingState(const OptionSet<Composition
             m_pendingChanges.remove(Change::ContentsOpaque);
         }
 
-        if (m_pendingChanges.contains(Change::ContentsRect)) {
-            layer.setContentsRect(m_contentsRect);
-            m_pendingChanges.remove(Change::ContentsRect);
-        }
-
         if (m_pendingChanges.contains(Change::ContentsRectClipsDescendants)) {
             layer.setContentsRectClipsDescendants(m_contentsRectClipsDescendants);
             m_pendingChanges.remove(Change::ContentsRectClipsDescendants);
@@ -990,16 +1014,6 @@ void CoordinatedPlatformLayer::flushCompositingState(const OptionSet<Composition
             layer.setContentsTileSize(m_contentsTileSize);
             layer.setContentsTilePhase(m_contentsTilePhase);
             m_pendingChanges.remove(Change::ContentsTiling);
-        }
-
-        if (m_pendingChanges.contains(Change::ContentsClippingRect)) {
-            layer.setContentsClippingRect(m_contentsClippingRect);
-            m_pendingChanges.remove(Change::ContentsClippingRect);
-        }
-
-        if (m_pendingChanges.contains(Change::ContentsImage)) {
-            m_imageBackingStore.committed = m_imageBackingStore.current;
-            m_pendingChanges.remove(Change::ContentsImage);
         }
 
         if (m_pendingChanges.contains(Change::ContentsColor)) {
@@ -1077,7 +1091,7 @@ void CoordinatedPlatformLayer::flushCompositingState(const OptionSet<Composition
         }
     }
 
-    if (reasons.containsAny({ CompositionReason::RenderingUpdate, CompositionReason::VideoFrame })) {
+    if (reasons.containsAny({ CompositionReason::RenderingUpdate, CompositionReason::VideoFrame, CompositionReason::AsyncScrolling })) {
         if (m_pendingChanges.contains(Change::ContentsBuffer)) {
             m_contentsBuffer.committed = WTF::move(m_contentsBuffer.pending);
             m_pendingChanges.remove(Change::ContentsBuffer);
@@ -1086,7 +1100,7 @@ void CoordinatedPlatformLayer::flushCompositingState(const OptionSet<Composition
         if (m_contentsBuffer.committed)
             layer.setContentsLayer(m_contentsBuffer.committed.get());
         else if (m_imageBackingStore.committed) {
-            if (reasons.contains(CompositionReason::RenderingUpdate))
+            if (reasons.containsAny({ CompositionReason::RenderingUpdate, CompositionReason::AsyncScrolling }))
                 layer.setContentsLayer(m_imageBackingStore.committed->buffer());
         } else
             layer.setContentsLayer(nullptr);

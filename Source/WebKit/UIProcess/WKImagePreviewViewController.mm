@@ -99,12 +99,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 {
     NSMutableArray<UIPreviewAction *> *previewActions = [NSMutableArray array];
     for (_WKElementAction *imageAction in _imageActions.get()) {
-        UIPreviewAction *previewAction = [UIPreviewAction actionWithTitle:imageAction.title style:UIPreviewActionStyleDefault handler:^(UIPreviewAction *action, UIViewController *previewViewController) {
+        RetainPtr previewAction = [UIPreviewAction actionWithTitle:imageAction.title style:UIPreviewActionStyleDefault handler:^(UIPreviewAction *action, UIViewController *previewViewController) {
             [imageAction runActionWithElementInfo:_activatedElementInfo.get()];
         }];
-        previewAction.image = [_WKElementAction imageForElementActionType:imageAction.type];
+        previewAction.get().image = [_WKElementAction imageForElementActionType:imageAction.type];
 
-        [previewActions addObject:previewAction];
+        [previewActions addObject:previewAction.get()];
     }
 
     return previewActions;

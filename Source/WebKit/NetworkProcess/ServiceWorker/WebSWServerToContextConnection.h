@@ -71,7 +71,6 @@ public:
 
     void stop();
 
-    RefPtr<IPC::Connection> protectedIPCConnection() const;
     IPC::Connection* ipcConnection() const;
 
     // IPC::MessageReceiver
@@ -92,7 +91,6 @@ public:
 
     WebCore::ProcessIdentifier webProcessIdentifier() const final { return m_webProcessIdentifier; }
     NetworkProcess* networkProcess();
-    RefPtr<NetworkProcess> protectedNetworkProcess();
 
     void didFinishInstall(const std::optional<WebCore::ServiceWorkerJobDataIdentifier>&, WebCore::ServiceWorkerIdentifier, bool wasSuccessful);
     void didFinishActivation(WebCore::ServiceWorkerIdentifier);

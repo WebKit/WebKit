@@ -219,7 +219,7 @@ class GitHubEWS(GitHub):
     STATUS_BUBBLE_ROWS = [['style', 'ios', 'mac', 'wpe', 'win'],  # FIXME: generate this list dynamically to have merge queue show up on top
                           ['bindings', 'ios-sim', 'mac-AS-debug', 'wpe-wk2', 'win-tests'],
                           ['webkitperl', 'ios-wk2', 'api-mac', 'api-wpe', ''],
-                          ['webkitpy', 'ios-wk2-wpt', 'api-mac-debug', 'wpe-cairo-libwebrtc', ''],
+                          ['webkitpy', 'ios-wk2-wpt', 'api-mac-debug', 'wpe-libwebrtc', ''],
                           ['jsc', 'api-ios', 'mac-wk1', 'gtk', ''],
                           ['jsc-debug-arm64', 'vision', 'mac-wk2', 'gtk-wk2', ''],
                           ['services', 'vision-sim', 'mac-AS-debug-wk2', 'api-gtk', ''],
@@ -298,7 +298,7 @@ class GitHubEWS(GitHub):
 
     @classmethod
     def escape_github_markdown(cls, string):
-        return string.replace('|', '\\|')
+        return string.replace('\n', ' ').replace('"', ' ').replace('|', '\\|')
 
     def should_include_apple_internal_builds(self, pr_author, pr_project):
         return (pr_author in self.approved_user_list_for_apple_internal_builds) and (pr_project in GITHUB_PROJECTS)
@@ -421,7 +421,7 @@ class GitHubEWS(GitHub):
             icon = GitHubEWS.ICON_BUILD_ERROR
             hover_over_text = 'An unexpected error occured. Recent messages:' + self._steps_messages(build)
 
-        # Hover-over text comes from buildbot and can conceivable contain a |, escape it
+        # Hover-over text comes from buildbot and can contain special characters (newlines, quotes, pipes) that break markdown, sanitize it
         hover_over_text = self.escape_github_markdown(hover_over_text)
         return u'| [{icon} {name}]({url} "{hover_over_text}") '.format(icon=icon, name=name, url=url, hover_over_text=hover_over_text)
 

@@ -441,7 +441,7 @@ gl::Version DisplayMtl::getMaxSupportedESVersion() const
     // FIXME: None of the feature conditions are checked for simulator support.
     return gl::Version(3, 0);
 #else
-    if (supportsEitherGPUFamily(3, 1))
+    if (supportsEitherGPUFamily(4, 1))
     {
         return mtl::kMaxSupportedGLVersion;
     }
@@ -868,6 +868,7 @@ void DisplayMtl::ensureCapsInitialized() const
 
     // Fill in additional limits for UBOs and SSBOs.
     mNativeCaps.maxUniformBufferBindings = mNativeCaps.maxCombinedUniformBlocks;
+    static_assert(mtl::kMaxUBOSize <= gl::IMPLEMENTATION_MAX_UNIFORM_BLOCK_SIZE);
     mNativeCaps.maxUniformBlockSize      = mtl::kMaxUBOSize;  // Default according to GLES 3.0 spec.
     if (supportsAppleGPUFamily(1))
     {
@@ -913,6 +914,21 @@ void DisplayMtl::ensureCapsInitialized() const
 
     // Apple platforms require PVRTC1 textures to be squares.
     mNativeLimitations.squarePvrtc1 = true;
+
+    if (mFeatures.disableProgrammableBlending.enabled || !supportsAppleGPUFamily(1))
+    {
+        const MTLReadWriteTextureTier readWriteTextureTier = [mMetalDevice readWriteTextureSupport];
+        if (readWriteTextureTier != MTLReadWriteTextureTierNone)
+        {
+            const bool rasterOrderGroupsSupported = !mFeatures.disableRasterOrderGroups.enabled &&
+                                                    [mMetalDevice areRasterOrderGroupsSupported];
+
+            if (rasterOrderGroupsSupported && isAMD())
+            {
+                mNativeLimitations.noRasterOrderGroupWithoutAttachmentZero = true;
+            }
+        }
+    }
 }
 
 void DisplayMtl::initializeExtensions() const
@@ -953,12 +969,6 @@ void DisplayMtl::initializeExtensions() const
     mNativeExtensions.multiDrawIndirectEXT        = true;
     mNativeExtensions.translatedShaderSourceANGLE = true;
     mNativeExtensions.discardFramebufferEXT       = true;
-    // TODO(anglebug.com/42264909): Apple's implementation exposed
-    // mNativeExtensions.textureRectangle = true here and
-    // EGL_TEXTURE_RECTANGLE_ANGLE as the eglBindTexImage texture target on
-    // macOS. This no longer seems necessary as IOSurfaces can be bound to
-    // regular 2D textures with Metal, and causes other problems such as
-    // breaking the SPIR-V Metal compiler.
 
     mNativeExtensions.multisampledRenderToTextureEXT =
         (supportsAppleGPUFamily(1) ||
@@ -1116,15 +1126,6 @@ void DisplayMtl::initializeExtensions() const
             mNativePLSOptions.supportsNativeRGBA8ImageFormats =
                 !mFeatures.disableRWTextureTier2Support.enabled &&
                 readWriteTextureTier == MTLReadWriteTextureTier2;
-
-            if (rasterOrderGroupsSupported && isAMD())
-            {
-                // anglebug.com/42266263 -- [[raster_order_group()]] does not work for read_write
-                // textures on AMD when the render pass doesn't have a color attachment on slot 0.
-                // To work around this we attach one of the PLS textures to GL_COLOR_ATTACHMENT0, if
-                // there isn't one already.
-                mNativePLSOptions.renderPassNeedsAMDRasterOrderGroupsWorkaround = true;
-            }
 
             mNativeExtensions.shaderPixelLocalStorageANGLE         = true;
             mNativeExtensions.shaderPixelLocalStorageCoherentANGLE = rasterOrderGroupsSupported;
@@ -1332,15 +1333,8 @@ void DisplayMtl::initializeFeatures()
            mFeatures.allowSamplerCompareGradient.enabled);
 
     // Metal compiler optimizations may remove infinite loops causing crashes later in shader
-    // execution. http://crbug.com/1513738
-    ANGLE_FEATURE_CONDITION((&mFeatures), ensureLoopForwardProgress, false);
-
-    // Once not used, injectAsmStatementIntoLoopBodies should be removed and
-    // ensureLoopForwardProgress should default to true.
-    // http://crbug.com/1522730
-    bool shouldUseInjectAsmIntoLoopBodies = !mFeatures.ensureLoopForwardProgress.enabled;
-    ANGLE_FEATURE_CONDITION((&mFeatures), injectAsmStatementIntoLoopBodies,
-                            shouldUseInjectAsmIntoLoopBodies);
+    // execution. http://crbug.com/41486305
+    ANGLE_FEATURE_CONDITION((&mFeatures), ensureLoopForwardProgress, true);
 }
 
 angle::Result DisplayMtl::initializeShaderLibrary()

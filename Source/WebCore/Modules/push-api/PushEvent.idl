@@ -30,7 +30,7 @@
     JSGenerateToNativeObject,
     SecureContext
 ] interface PushEvent : ExtendableEvent {
-    constructor([AtomString] DOMString type, optional PushEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional PushEventInit eventInitDict = {});
     readonly attribute PushMessageData? data;
     [Conditional=DECLARATIVE_WEB_PUSH&NOTIFICATIONS, EnabledBySetting=DeclarativeWebPush] readonly attribute Notification? notification;
     [Conditional=DECLARATIVE_WEB_PUSH&NOTIFICATIONS, EnabledBySetting=DeclarativeWebPush] readonly attribute unsigned long long? appBadge;

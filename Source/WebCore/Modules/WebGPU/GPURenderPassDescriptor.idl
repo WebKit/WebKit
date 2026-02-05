@@ -29,7 +29,6 @@
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPURenderPassDescriptor : GPUObjectDescriptorBase {
     required sequence<GPURenderPassColorAttachment?> colorAttachments;
     GPURenderPassDepthStencilAttachment depthStencilAttachment;

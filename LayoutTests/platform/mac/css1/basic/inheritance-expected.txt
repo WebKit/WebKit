@@ -57,8 +57,8 @@ layer at (0,0) size 785x730
       RenderBlock {P} at (0,331) size 769x19
         RenderText {#text} at (0,0) size 299x18
           text run at (0,0) width 299: "This sentence should be underlined, including "
-        RenderInline {TT} at (298,2) size 71x15
-          RenderText {#text} at (298,2) size 71x15
+        RenderInline {TT} at (298,2) size 71x16
+          RenderText {#text} at (298,2) size 71x16
             text run at (298,2) width 71: "this part"
         RenderText {#text} at (368,0) size 9x18
           text run at (368,0) width 9: ", "
@@ -80,8 +80,8 @@ layer at (0,0) size 785x730
       RenderBlock {P} at (0,365) size 769x19 [color=#000080]
         RenderText {#text} at (0,0) size 444x18
           text run at (0,0) width 444: "This sentence should also be underlined, as well as dark blue (navy), "
-        RenderInline {TT} at (443,2) size 149x15
-          RenderText {#text} at (443,2) size 149x15
+        RenderInline {TT} at (443,2) size 149x16
+          RenderText {#text} at (443,2) size 149x16
             text run at (443,2) width 149: "including this part"
         RenderText {#text} at (591,0) size 5x18
           text run at (591,0) width 5: "."
@@ -145,8 +145,8 @@ layer at (0,0) size 785x730
               RenderBlock {P} at (4,162) size 596x19
                 RenderText {#text} at (0,0) size 299x18
                   text run at (0,0) width 299: "This sentence should be underlined, including "
-                RenderInline {TT} at (298,2) size 71x15
-                  RenderText {#text} at (298,2) size 71x15
+                RenderInline {TT} at (298,2) size 71x16
+                  RenderText {#text} at (298,2) size 71x16
                     text run at (298,2) width 71: "this part"
                 RenderText {#text} at (368,0) size 9x18
                   text run at (368,0) width 9: ", "
@@ -168,8 +168,8 @@ layer at (0,0) size 785x730
               RenderBlock {P} at (4,196) size 596x19 [color=#000080]
                 RenderText {#text} at (0,0) size 444x18
                   text run at (0,0) width 444: "This sentence should also be underlined, as well as dark blue (navy), "
-                RenderInline {TT} at (443,2) size 149x15
-                  RenderText {#text} at (443,2) size 149x15
+                RenderInline {TT} at (443,2) size 149x16
+                  RenderText {#text} at (443,2) size 149x16
                     text run at (443,2) width 149: "including this part"
                 RenderText {#text} at (591,0) size 5x18
                   text run at (591,0) width 5: "."

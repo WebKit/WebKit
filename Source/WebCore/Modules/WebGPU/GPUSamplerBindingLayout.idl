@@ -27,7 +27,6 @@
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUSamplerBindingLayout {
     GPUSamplerBindingType type = "filtering";
 };

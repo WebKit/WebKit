@@ -9,13 +9,13 @@ layer at (0,0) size 800x600
           RenderText {#text} at (16,0) size 63x18
             text run at (16,0) width 63: "Summary"
         RenderBlock {SLOT} at (0,18) size 784x18
-          RenderBlock {SPAN} at (0,2) size 63x15
+          RenderBlock {SPAN} at (0,2) size 63x16
             RenderText {#text} at (0,0) size 63x15
               text run at (0,0) width 63: "Details1"
           RenderText {#text} at (62,0) size 5x18
             text run at (62,0) width 5: " "
           RenderText {#text} at (0,0) size 0x0
-          RenderBlock {SPAN} at (66,2) size 63x15
+          RenderBlock {SPAN} at (66,2) size 63x16
             RenderText {#text} at (0,0) size 63x15
               text run at (0,0) width 63: "Details2"
           RenderText {#text} at (0,0) size 0x0

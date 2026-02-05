@@ -261,24 +261,9 @@ void Chrome::runModal()
     m_client->runModal();
 }
 
-bool Chrome::toolbarsVisible() const
+bool Chrome::isPopup() const
 {
-    return m_client->toolbarsVisible();
-}
-
-bool Chrome::statusbarVisible() const
-{
-    return m_client->statusbarVisible();
-}
-
-bool Chrome::scrollbarsVisible() const
-{
-    return m_client->scrollbarsVisible();
-}
-
-bool Chrome::menubarVisible() const
-{
-    return m_client->menubarVisible();
+    return m_client->isPopup();
 }
 
 void Chrome::setResizable(bool b)
@@ -413,7 +398,7 @@ bool Chrome::print(LocalFrame& frame)
     // FIXME: This should have PageGroupLoadDeferrer, like runModal() or runJavaScriptAlert(), because it's no different from those.
 
     if (frame.document()->isSandboxed(SandboxFlag::Modals)) {
-        frame.document()->protectedWindow()->printErrorMessage("Use of window.print is not allowed in a sandboxed frame when the allow-modals flag is not set."_s);
+        protect(frame.document()->window())->printErrorMessage("Use of window.print is not allowed in a sandboxed frame when the allow-modals flag is not set."_s);
         return false;
     }
 
@@ -593,16 +578,6 @@ PlatformDisplayID Chrome::displayID() const
 void Chrome::windowScreenDidChange(PlatformDisplayID displayID, std::optional<FramesPerSecond> nominalFrameInterval)
 {
     protectedPage()->windowScreenDidChange(displayID, nominalFrameInterval);
-}
-
-bool Chrome::selectItemWritingDirectionIsNatural()
-{
-    return m_client->selectItemWritingDirectionIsNatural();
-}
-
-bool Chrome::selectItemAlignmentFollowsMenuWritingDirection()
-{
-    return m_client->selectItemAlignmentFollowsMenuWritingDirection();
 }
 
 RefPtr<PopupMenu> Chrome::createPopupMenu(PopupMenuClient& client) const

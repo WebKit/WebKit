@@ -79,6 +79,7 @@ public:
     void fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect& roundedHoleRect, const Color&) final;
     void clearRect(const FloatRect&) final;
     void strokeRect(const FloatRect&, float lineWidth) final;
+    void strokeArc(const PathArc&) final;
 
     void fillEllipse(const FloatRect& ellipse) final;
     void strokeEllipse(const FloatRect& ellipse) final;

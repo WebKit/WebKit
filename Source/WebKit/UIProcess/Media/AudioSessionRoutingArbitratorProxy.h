@@ -79,8 +79,6 @@ protected:
     WTFLogChannel& logChannel() const;
 
 private:
-    Ref<WebProcessProxy> protectedProcess();
-
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 

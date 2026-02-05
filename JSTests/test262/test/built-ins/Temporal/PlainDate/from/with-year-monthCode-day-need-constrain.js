@@ -15,62 +15,36 @@ features: [Temporal]
 includes: [temporalHelpers.js]
 ---*/
 
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, monthCode: "M01", day: 133}),
-    2021, 1, "M01", 31,
-    "year/monthCode/day with day need to be constrained in Jan");
+const year = 2021;
 
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, monthCode: "M02", day: 133}),
-    2021, 2, "M02", 28,
-    "year/monthCode/day with day need to be constrained in Feb");
+const testData = [
+  ["M01", 133, "Jan", 1, "M01", 31],
+  ["M02", 133, "Feb", 2, "M02", 28],
+  ["M03", 133, "March", 3, "M03", 31],
+  ["M04", 133, "April", 4, "M04", 30],
+  ["M05", 133, "May", 5, "M05", 31],
+  ["M06", 133, "Jun", 6, "M06", 30],
+  ["M07", 133, "Jul", 7, "M07", 31],
+  ["M08", 133, "Aug", 8, "M08", 31],
+  ["M09", 133, "Sept", 9, "M09", 30],
+  ["M10", 133, "Oct", 10, "M10", 31],
+  ["M11", 133, "Nov", 11, "M11", 30],
+  ["M12", 133, "Dec", 12, "M12", 31],
+  ["M03", 9033, "out-of-range day 9033", 3, "M03", 31],
+  ["M04", 50, "out-of-range day 50", 4, "M04", 30],
+  ["M05", 77, "out-of-range day 77", 5, "M05", 31],
+  ["M06", 33, "out-of-range date 06-33", 6, "M06", 30],
+  ["M07", 33, "out-of-range day 07-33", 7, "M07", 31],
+  ["M08", 300, "out-of-range day 300", 8, "M08", 31],
+  ["M09", 400, "out-of-range date 09-400", 9, "M09", 30],
+  ["M10", 400, "out-of-range date 10-400", 10, "M10", 31],
+  ["M11", 400, "out-of-range date 11-400", 11, "M11", 30],
+  ["M12", 500, "out-of-range day 500", 12, "M12", 31],
+];
 
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, monthCode: "M03", day: 133}),
-    2021, 3, "M03", 31,
-    "year/monthCode/day with day need to be constrained in March");
-
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, monthCode: "M04", day: 133}),
-    2021, 4, "M04", 30,
-    "year/monthCode/day with day need to be constrained in April");
-
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, monthCode: "M05", day: 133}),
-    2021, 5, "M05", 31,
-    "year/monthCode/day with day need to be constrained in May");
-
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, monthCode: "M06", day: 133}),
-    2021, 6, "M06", 30,
-    "year/monthCode/day with day need to be constrained in Jun");
-
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, monthCode: "M07", day: 133}),
-    2021, 7, "M07", 31,
-    "year/monthCode/day with day need to be constrained in July");
-
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, monthCode: "M08", day: 133}),
-    2021, 8, "M08", 31,
-    "year/monthCode/day with day need to be constrained in Aug");
-
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, monthCode: "M09", day: 133}),
-    2021, 9, "M09", 30,
-    "year/monthCode/day with day need to be constrained in Sept.");
-
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, monthCode: "M10", day: 133}),
-    2021, 10, "M10", 31,
-    "year/monthCode/day with day need to be constrained in Oct.");
-
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, monthCode: "M11", day: 133}),
-    2021, 11, "M11", 30,
-    "year/monthCode/day with day need to be constrained in Nov.");
-
-TemporalHelpers.assertPlainDate(
-    Temporal.PlainDate.from({year: 2021, monthCode: "M12", day: 133}),
-    2021, 12, "M12", 31,
-    "year/monthCode/day with day need to be constrained in Dec.");
+for (const [monthCode, day, descr, expectedMonth, expectedMonthCode, expectedDay] of testData) {
+  TemporalHelpers.assertPlainDate(
+    Temporal.PlainDate.from({year, monthCode, day}),
+    year, expectedMonth, expectedMonthCode, expectedDay,
+    `year/month code/day need to be constrained in ${descr}`);
+}

@@ -117,7 +117,7 @@ ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
         bool hadElementChild = false;
         while (RefPtr child = m_firstChild.get()) {
             hadElementChild |= is<Element>(*child);
-            removeBetween(nullptr, child->protectedNextSibling().get(), *child);
+            removeBetween(nullptr, protect(child->nextSibling()).get(), *child);
         }
         document().incDOMTreeVersion();
         return { 0, hadElementChild ? DidRemoveElements::Yes : DidRemoveElements::No, CanDelayNodeDeletion::Unknown };
@@ -172,7 +172,7 @@ ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
             if (is<Element>(*child))
                 hadElementChild = true;
 
-            removeBetween(nullptr, child->protectedNextSibling().get(), *child);
+            removeBetween(nullptr, protect(child->nextSibling()).get(), *child);
             auto [subTreeSize, subtreeObservability, subtreeCanDelayNodeDeletion] = notifyChildNodeRemoved(*this, *child);
             treeSize += subTreeSize;
             ASSERT(subtreeCanDelayNodeDeletion != CanDelayNodeDeletion::Unknown);
@@ -579,7 +579,7 @@ ExceptionOr<void> ContainerNode::insertBefore(Node& newChild, RefPtr<Node>&& ref
         }
     }
 
-    InspectorInstrumentation::willInsertDOMNode(protectedDocument(), *this);
+    InspectorInstrumentation::willInsertDOMNode(protect(document()), *this);
 
     ChildListMutationScope mutation(*this);
     for (auto& child : targets) {
@@ -716,7 +716,7 @@ ExceptionOr<void> ContainerNode::replaceChild(Node& newChild, Node& oldChild)
         }
     }
 
-    InspectorInstrumentation::willInsertDOMNode(protectedDocument(), *this);
+    InspectorInstrumentation::willInsertDOMNode(protect(document()), *this);
 
     // Add the new child(ren).
     for (auto& child : targets) {
@@ -839,7 +839,7 @@ void ContainerNode::replaceAll(Node* node)
         ? ReplacedAllChildren::YesIncludingElements : ReplacedAllChildren::YesNotIncludingElements;
 
     executeNodeInsertionWithScriptAssertion(*this, *node, nullptr, ChildChange::Source::API, replacedAllChildren, [&] {
-        InspectorInstrumentation::willInsertDOMNode(protectedDocument(), *this);
+        InspectorInstrumentation::willInsertDOMNode(protect(document()), *this);
         node->setTreeScopeRecursively(treeScope());
         appendChildCommon(*node);
     });
@@ -913,7 +913,7 @@ ExceptionOr<void> ContainerNode::appendChildWithoutPreInsertionValidityCheck(Nod
         }
     }
 
-    InspectorInstrumentation::willInsertDOMNode(protectedDocument(), *this);
+    InspectorInstrumentation::willInsertDOMNode(protect(document()), *this);
 
     // Now actually add the child(ren)
     ChildListMutationScope mutation(*this);
@@ -958,7 +958,7 @@ ExceptionOr<void> ContainerNode::insertChildrenBeforeWithoutPreInsertionValidity
         }
     }
 
-    InspectorInstrumentation::willInsertDOMNode(protectedDocument(), *this);
+    InspectorInstrumentation::willInsertDOMNode(protect(document()), *this);
 
     ChildListMutationScope mutation(*this);
     for (auto& child : newChildren) {
@@ -1158,7 +1158,7 @@ static void dispatchChildInsertionEvents(Node& child)
 
     RefPtr c = child;
     if (c->parentNode() && document->hasListenerType(Document::ListenerType::DOMNodeInserted))
-        c->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeInsertedEvent, Event::CanBubble::Yes, c->protectedParentNode().get()));
+        c->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeInsertedEvent, Event::CanBubble::Yes, protect(c->parentNode()).get()));
 
     // dispatch the DOMNodeInsertedIntoDocument event to all descendants
     if (c->isConnected() && document->hasListenerType(Document::ListenerType::DOMNodeInsertedIntoDocument)) {
@@ -1178,7 +1178,7 @@ static void dispatchChildRemovalEvents(Ref<Node>& child)
 
     // dispatch pre-removal mutation events
     if (child->parentNode() && document->hasListenerType(Document::ListenerType::DOMNodeRemoved))
-        child->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeRemovedEvent, Event::CanBubble::Yes, child->protectedParentNode().get()));
+        child->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeRemovedEvent, Event::CanBubble::Yes, protect(child->parentNode()).get()));
 
     // dispatch the DOMNodeRemovedFromDocument event to all descendants
     if (child->isConnected() && document->hasListenerType(Document::ListenerType::DOMNodeRemovedFromDocument)) {
@@ -1189,7 +1189,7 @@ static void dispatchChildRemovalEvents(Ref<Node>& child)
 
 ExceptionOr<Element*> ContainerNode::querySelector(const String& selectors)
 {
-    auto query = protectedDocument()->selectorQueryForString(selectors);
+    auto query = protect(document())->selectorQueryForString(selectors);
     if (query.hasException())
         return query.releaseException();
     return query.releaseReturnValue().queryFirst(*this);
@@ -1222,11 +1222,11 @@ Ref<HTMLCollection> ContainerNode::getElementsByTagName(const AtomString& qualif
     ASSERT(!qualifiedName.isNull());
 
     if (qualifiedName == starAtom())
-        return ensureRareData().ensureNodeLists().addCachedCollection<AllDescendantsCollection>(*this, CollectionType::AllDescendants);
+        return ensureRareData().ensureNodeLists().addCachedCollection<AllDescendantsCollection>(*this);
 
     if (document().isHTMLDocument())
-        return ensureRareData().ensureNodeLists().addCachedCollection<HTMLTagCollection>(*this, CollectionType::ByHTMLTag, qualifiedName);
-    return ensureRareData().ensureNodeLists().addCachedCollection<TagCollection>(*this, CollectionType::ByTag, qualifiedName);
+        return ensureRareData().ensureNodeLists().addCachedCollection<HTMLTagCollection>(*this, qualifiedName);
+    return ensureRareData().ensureNodeLists().addCachedCollection<TagCollection>(*this, qualifiedName);
 }
 
 Ref<HTMLCollection> ContainerNode::getElementsByTagNameNS(const AtomString& namespaceURI, const AtomString& localName)
@@ -1237,7 +1237,7 @@ Ref<HTMLCollection> ContainerNode::getElementsByTagNameNS(const AtomString& name
 
 Ref<HTMLCollection> ContainerNode::getElementsByClassName(const AtomString& classNames)
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<ClassCollection>(*this, CollectionType::ByClass, classNames);
+    return ensureRareData().ensureNodeLists().addCachedCollection<ClassCollection>(*this, classNames);
 }
 
 Ref<RadioNodeList> ContainerNode::radioNodeList(const AtomString& name)
@@ -1248,7 +1248,7 @@ Ref<RadioNodeList> ContainerNode::radioNodeList(const AtomString& name)
 
 Ref<HTMLCollection> ContainerNode::children()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<CollectionType::NodeChildren>::traversalType>>(*this, CollectionType::NodeChildren);
+    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLNodeChildrenCollection>(*this);
 }
 
 Element* ContainerNode::firstElementChild() const

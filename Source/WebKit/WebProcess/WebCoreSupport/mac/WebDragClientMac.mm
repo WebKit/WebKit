@@ -111,7 +111,7 @@ void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, Frame& frame, co
 void WebDragClient::didConcludeEditDrag()
 {
 #if PLATFORM(IOS_FAMILY)
-    m_page->didConcludeEditDrag();
+    protect(m_page)->didConcludeEditDrag();
 #endif
 }
 
@@ -136,7 +136,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
 
     String extension;
     if (image) {
-        extension = image->protectedImage()->filenameExtension();
+        extension = protect(image->image())->filenameExtension();
         if (extension.isEmpty())
             return;
     }
@@ -182,7 +182,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
             filename = downloadFilename;
     }
 
-    m_page->send(Messages::WebPageProxy::SetPromisedDataForImage(pasteboardName, WTF::move(*imageHandle), filename, extension, title, String([[response URL] absoluteString]), WTF::userVisibleString(url.createNSURL().get()), WTF::move(*archiveHandle), element.protectedDocument()->originIdentifierForPasteboard()));
+    m_page->send(Messages::WebPageProxy::SetPromisedDataForImage(pasteboardName, WTF::move(*imageHandle), filename, extension, title, String([[response URL] absoluteString]), WTF::userVisibleString(url.createNSURL().get()), WTF::move(*archiveHandle), protect(element.document())->originIdentifierForPasteboard()));
 }
 
 #else
@@ -190,7 +190,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
 void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, LocalFrame*)
 {
     if (RefPtr frame = element.document().frame())
-        frame->editor().writeImageToPasteboard(*Pasteboard::createForDragAndDrop(PagePasteboardContext::create(frame->pageID())), element, url, label);
+        protect(frame->editor())->writeImageToPasteboard(*Pasteboard::createForDragAndDrop(PagePasteboardContext::create(frame->pageID())), element, url, label);
 }
 
 #endif // USE(APPKIT)

@@ -75,7 +75,7 @@ private:
 
     void newConnectionWasInitialized() const final;
 #if PLATFORM(COCOA)
-    XPCObjectPtr<xpc_object_t> dictionaryFromMessage(MessageType, Daemon::EncodedMessage&&) const final { return nullptr; }
+    OSObjectPtr<xpc_object_t> dictionaryFromMessage(MessageType, Daemon::EncodedMessage&&) const final { return nullptr; }
     void connectionReceivedEvent(xpc_object_t) final { }
 #endif
 

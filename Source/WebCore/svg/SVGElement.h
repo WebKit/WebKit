@@ -35,7 +35,7 @@ namespace WebCore {
 
 class AffineTransform;
 class Document;
-class SVGAnimatedProperty;
+class SVGAnimatedPropertyBase;
 class SVGAnimatedString;
 class SVGAttributeAnimator;
 class SVGConditionalProcessingAttributes;
@@ -170,7 +170,7 @@ public:
     void synchronizeAllAttributes();
 
     void commitPropertyChange(SVGProperty*) override;
-    void commitPropertyChange(SVGAnimatedProperty&);
+    void commitPropertyChange(SVGAnimatedPropertyBase&);
 
     const SVGElement* attributeContextElement() const override { return this; }
     SVGPropertyAnimatorFactory& propertyAnimatorFactory() { return m_propertyAnimatorFactory; }

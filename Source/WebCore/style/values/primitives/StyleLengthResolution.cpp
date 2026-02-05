@@ -477,5 +477,15 @@ bool equalForLengthResolution(const RenderStyle& styleA, const RenderStyle& styl
     return true;
 }
 
+double emToPxDouble(double value, const CSSToLengthConversionData& conversionData)
+{
+    return computeNonCalcLengthDouble(value, CSS::LengthUnit::Em, conversionData);
+}
+
+double emToPxDouble(double value, const RenderStyle& style)
+{
+    return computeNonCalcLengthDouble(value, CSS::LengthUnit::Em, CSSToLengthConversionData(style, nullptr, nullptr, nullptr));
+}
+
 } // namespace Style
 } // namespace WebCore

@@ -58,7 +58,7 @@ Ref<PublicKeyCredential> PublicKeyCredential::create(Ref<AuthenticatorResponse>&
     return adoptRef(*new PublicKeyCredential(WTF::move(response)));
 }
 
-ArrayBuffer* PublicKeyCredential::rawId() const
+ArrayBuffer& PublicKeyCredential::rawId() const
 {
     return m_response->rawId();
 }
@@ -74,7 +74,7 @@ AuthenticatorAttachment PublicKeyCredential::authenticatorAttachment() const
 }
 
 PublicKeyCredential::PublicKeyCredential(Ref<AuthenticatorResponse>&& response)
-    : BasicCredential(base64URLEncodeToString(response->rawId()->span()), Type::PublicKey, Discovery::Remote)
+    : BasicCredential(base64URLEncodeToString(response->rawId().span()), Type::PublicKey, Discovery::Remote)
     , m_response(WTF::move(response))
 {
 }

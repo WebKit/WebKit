@@ -50,7 +50,6 @@ TEST(WebKit, PlayAllPauseAllAnimationSupport)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
 
     [webView synchronouslyLoadHTMLString:@"<img id='imgOne' src='test-mse.mp4'><img id='imgTwo' src='test-without-audio-track.mp4'>"];
-    [webView stringByEvaluatingJavaScript:@"window.internals.settings.setImageAnimationControlEnabled(true)"];
 
     // Wait for the animations to become paused (explicitly exercising the completionHandler).
     static bool isDone = false;
@@ -76,7 +75,6 @@ TEST(WebKit, IsAnyAnimationAllowedToPlayBehaviorWithIndividualAnimationControl)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
 
     [webView synchronouslyLoadHTMLString:@"<img id='imgOne' src='test-mse.mp4'><img id='imgTwo' src='test-without-audio-track.mp4'>"];
-    [webView stringByEvaluatingJavaScript:@"window.internals.settings.setImageAnimationControlEnabled(true)"];
     [webView stringByEvaluatingJavaScript:@"window.internals.setImageAnimationEnabled(false)"];
 
     while (isAnimating(@"imgOne", webView) || isAnimating(@"imgTwo", webView))

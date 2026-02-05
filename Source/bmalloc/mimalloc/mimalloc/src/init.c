@@ -136,7 +136,7 @@ mi_decl_cache_align const mi_theap_t _mi_theap_empty = {
   MI_SMALL_PAGES_EMPTY,
   MI_PAGE_QUEUES_EMPTY,
   MI_MEMID_STATIC,
-  { MI_STAT_VERSION, MI_STATS_NULL },      // stats
+  { sizeof(mi_stats_t), MI_STAT_VERSION, MI_STATS_NULL },      // stats
 };
 
 mi_decl_cache_align const mi_theap_t _mi_theap_empty_wrong = {
@@ -159,7 +159,7 @@ mi_decl_cache_align const mi_theap_t _mi_theap_empty_wrong = {
   MI_SMALL_PAGES_EMPTY,
   MI_PAGE_QUEUES_EMPTY,
   MI_MEMID_STATIC,
-  { MI_STAT_VERSION, MI_STATS_NULL },      // stats
+  { sizeof(mi_stats_t), MI_STAT_VERSION, MI_STATS_NULL },      // stats
 };
 
 // Heap for the main thread
@@ -198,7 +198,7 @@ mi_decl_cache_align mi_theap_t theap_main = {
   MI_SMALL_PAGES_EMPTY,
   MI_PAGE_QUEUES_EMPTY,
   MI_MEMID_STATIC,
-  { MI_STAT_VERSION, MI_STATS_NULL },      // stats
+  { sizeof(mi_stats_t), MI_STAT_VERSION, MI_STATS_NULL },      // stats
 };
 
 mi_decl_cache_align mi_heap_t heap_main
@@ -224,7 +224,7 @@ mi_decl_hidden mi_decl_thread mi_theap_t* __mi_theap_cached = (mi_theap_t*)&_mi_
 
 bool _mi_process_is_initialized = false;  // set to `true` in `mi_process_init`.
 
-mi_stats_t _mi_stats_main = { MI_STAT_VERSION, MI_STATS_NULL };
+mi_stats_t _mi_stats_main = { sizeof(mi_stats_t), MI_STAT_VERSION, MI_STATS_NULL };
 
 #if MI_GUARDED
 mi_decl_export void mi_theap_guarded_set_sample_rate(mi_theap_t* theap, size_t sample_rate, size_t seed) {
@@ -568,7 +568,6 @@ static mi_theap_t* _mi_thread_init_theap_default(void) {
   // associate the theap with this thread
   // (this is safe, on macOS for example, the theap is set in a dedicated TLS slot and thus does not cause recursive allocation)
   _mi_theap_default_set(theap);
-  mi_assert_internal(_mi_theap_main()==theap);
   return theap;
 }
 
@@ -632,13 +631,14 @@ void mi_thread_init(void) mi_attr_noexcept
 {
   // ensure our process has started already
   mi_process_init();
-  if (mi_theap_is_initialized(_mi_theap_default())) return;
+  // if the theap_default is already set we have already initialized
+  if (_mi_thread_is_initialized()) return;
 
   // initialize the default theap
   _mi_thread_init_theap_default();
 
   mi_heap_stat_increase(mi_heap_main(), threads, 1);
-  //_mi_verbose_message("thread init: 0x%zx\n", _mi_thread_id());
+  // _mi_verbose_message("thread init: 0x%zx\n", _mi_thread_id());
 }
 
 void mi_thread_done(void) mi_attr_noexcept {
@@ -683,29 +683,76 @@ mi_decl_cold mi_decl_noinline mi_theap_t* _mi_theap_empty_get(void) {
 
 #if MI_TLS_MODEL_DYNAMIC_WIN32
 
-// only for win32 for now
+// If we can, we use one of the 64 direct TLS slots (but fall back to expansion slots if needed)
+// See <https://en.wikipedia.org/wiki/Win32_Thread_Information_Block> for the offsets.
 #if MI_SIZE_SIZE==4
-#define MI_TLS_USER_BASE  (0x0E10 / MI_SIZE_SIZE)
+#define MI_TLS_DIRECT_FIRST             (0x0E10 / MI_SIZE_SIZE)
 #else
-#define MI_TLS_USER_BASE  (0x1480 / MI_SIZE_SIZE)
+#define MI_TLS_DIRECT_FIRST             (0x1480 / MI_SIZE_SIZE)
 #endif
-#define MI_TLS_USER_LAST_SLOT  (MI_TLS_USER_BASE + 63)
+#define MI_TLS_DIRECT_SLOTS             (64)
+#define MI_TLS_EXPANSION_SLOTS          (1024)
 
-// we initially use the last user slot so NULL is returned
-// when allocating a slot, we check we get a slot before the last one (so it wasn't used yet)
-mi_decl_hidden size_t _mi_theap_default_slot = MI_TLS_USER_LAST_SLOT;
-mi_decl_hidden size_t _mi_theap_cached_slot  = MI_TLS_USER_LAST_SLOT;
+#if !MI_WIN_DIRECT_TLS
+#define MI_TLS_INITIAL_SLOT             MI_TLS_EXPANSION_SLOT
+#define MI_TLS_INITIAL_EXPANSION_SLOT   (MI_TLS_EXPANSION_SLOTS-1)
+#else
+// with only direct entries, use the "arbitrary user data" field 
+// and assume it is NULL (see also <http://www.nynaeve.net/?p=98>)
+#define MI_TLS_INITIAL_EXPANSION_SLOT   (0)
+#define MI_TLS_INITIAL_SLOT             (5)
+#endif
 
-mi_decl_cold mi_theap_t* _mi_tls_slots_init(void) {
+// we initially use the last of the expansion slots as the default NULL.
+// note: this will fail if the program allocates exactly 1024+64 slots with TlsAlloc (which is quite unlikely)
+mi_decl_hidden mi_decl_cache_align size_t _mi_theap_default_slot = MI_TLS_INITIAL_SLOT;
+mi_decl_hidden size_t _mi_theap_default_expansion_slot = MI_TLS_INITIAL_EXPANSION_SLOT;
+mi_decl_hidden size_t _mi_theap_cached_slot            = MI_TLS_INITIAL_SLOT;
+mi_decl_hidden size_t _mi_theap_cached_expansion_slot  = MI_TLS_INITIAL_EXPANSION_SLOT;
+
+static size_t mi_win_tls_slot_alloc(size_t* extended) {
+  const DWORD slot = TlsAlloc();
+  if (slot==TLS_OUT_OF_INDEXES || slot >= MI_TLS_DIRECT_SLOTS + MI_TLS_EXPANSION_SLOTS - 1) {
+    // note: we also fail if the program already allocated the maximum number of expansion slots (as we use the last one as the default)
+    *extended = 0;
+    return 0;
+  }
+  else if (slot<MI_TLS_DIRECT_SLOTS) {
+    *extended = 0;
+    return (slot + MI_TLS_DIRECT_FIRST);
+  }
+  else {
+    #if MI_WIN_DIRECT_TLS
+    *extended = 0;
+    return 0;
+    #else
+    *extended = (slot - MI_TLS_DIRECT_SLOTS);
+    return MI_TLS_EXPANSION_SLOT;
+    #endif
+  }
+}
+
+mi_decl_cold mi_theap_t* _mi_win_tls_slots_init(void) {
   static mi_atomic_once_t tls_slots_init;
   if (mi_atomic_once(&tls_slots_init)) {
-    _mi_theap_default_slot = TlsAlloc() + MI_TLS_USER_BASE;
-    _mi_theap_cached_slot  = TlsAlloc() + MI_TLS_USER_BASE;
-    if (_mi_theap_cached_slot >= MI_TLS_USER_LAST_SLOT) {
+    _mi_theap_default_slot = mi_win_tls_slot_alloc(&_mi_theap_default_expansion_slot);
+    _mi_theap_cached_slot = mi_win_tls_slot_alloc(&_mi_theap_cached_expansion_slot);
+    if (_mi_theap_cached_slot==0) {
       _mi_error_message(EFAULT, "unable to allocate fast TLS user slot (0x%zx)\n", _mi_theap_cached_slot);
     }
   }
   return (mi_theap_t*)&_mi_theap_empty;
+}
+
+static void mi_win_tls_slot_set(size_t slot, size_t extended_slot, void* value) {
+  mi_assert_internal((slot >= MI_TLS_DIRECT_FIRST && slot < MI_TLS_DIRECT_FIRST + MI_TLS_DIRECT_SLOTS) || slot == MI_TLS_EXPANSION_SLOT);
+  if (slot < MI_TLS_DIRECT_FIRST + MI_TLS_DIRECT_SLOTS) {
+    mi_prim_tls_slot_set(slot, value);
+  }
+  else {
+    mi_assert_internal(extended_slot < MI_TLS_EXPANSION_SLOTS);
+    TlsSetValue((DWORD)(extended_slot + MI_TLS_DIRECT_SLOTS), value);  // use TlsSetValue to initialize the TlsExpansion array if needed
+  }
 }
 
 #elif MI_TLS_MODEL_DYNAMIC_PTHREADS
@@ -731,8 +778,8 @@ void _mi_theap_cached_set(mi_theap_t* theap) {
   #elif MI_TLS_MODEL_FIXED_SLOT
     mi_prim_tls_slot_set(MI_TLS_MODEL_FIXED_SLOT_CACHED, theap);
   #elif MI_TLS_MODEL_DYNAMIC_WIN32
-    _mi_tls_slots_init();
-    mi_prim_tls_slot_set(_mi_theap_cached_slot, theap);
+    _mi_win_tls_slots_init();
+    mi_win_tls_slot_set(_mi_theap_cached_slot, _mi_theap_cached_expansion_slot, theap);
   #elif MI_TLS_MODEL_DYNAMIC_PTHREADS
     _mi_tls_keys_init();
     if (_mi_theap_cached_key!=0) pthread_setspecific(_mi_theap_cached_key, theap);
@@ -747,8 +794,8 @@ void _mi_theap_default_set(mi_theap_t* theap)  {
   #elif MI_TLS_MODEL_FIXED_SLOT
     mi_prim_tls_slot_set(MI_TLS_MODEL_FIXED_SLOT_DEFAULT, theap);
   #elif MI_TLS_MODEL_DYNAMIC_WIN32
-    _mi_tls_slots_init();
-    mi_prim_tls_slot_set(_mi_theap_default_slot, theap);
+    _mi_win_tls_slots_init();
+    mi_win_tls_slot_set(_mi_theap_default_slot, _mi_theap_default_expansion_slot, theap);
   #elif MI_TLS_MODEL_DYNAMIC_PTHREADS
     _mi_tls_keys_init();
     if (_mi_theap_default_key!=0) pthread_setspecific(_mi_theap_default_key, theap);
@@ -892,7 +939,6 @@ void mi_process_init(void) mi_attr_noexcept {
 	// mi_heap_main_init(); // vs2017 can dynamically re-initialize theap_main
 	// #endif
   if (!mi_atomic_once(&process_init)) return;
-  _mi_process_is_initialized = true;
   _mi_verbose_message("process init: 0x%zx\n", _mi_thread_id());
 
   mi_detect_cpu_features();
@@ -904,6 +950,7 @@ void mi_process_init(void) mi_attr_noexcept {
   mi_heap_main_init(); // before page_map_init so stats are working
   _mi_page_map_init(); // todo: this could fail.. should we abort in that case?
   mi_thread_init();
+  _mi_process_is_initialized = true;
 
   #if defined(_WIN32) && defined(MI_WIN_USE_FLS)
   // On windows, when building as a static lib the FLS cleanup happens to early for the main thread.

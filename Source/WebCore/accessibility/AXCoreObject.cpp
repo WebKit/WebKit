@@ -677,7 +677,7 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::contents()
     if (isTabList())
         return tabChildren();
 
-    if (isScrollView()) {
+    if (isScrollArea()) {
         // A scroll view's contents are everything except the scroll bars.
         AccessibilityChildrenVector nonScrollbarChildren;
         for (const auto& child : stitchedUnignoredChildren()) {

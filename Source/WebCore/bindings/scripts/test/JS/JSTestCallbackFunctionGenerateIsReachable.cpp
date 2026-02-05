@@ -118,10 +118,10 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunction
 
 JSC::JSValue toJS(TestCallbackFunctionGenerateIsReachable& impl)
 {
-    if (!static_cast<JSTestCallbackFunctionGenerateIsReachable&>(impl).callbackData())
-        return jsNull();
+    if (auto* callbackData = downcast<JSTestCallbackFunctionGenerateIsReachable>(impl).callbackData())
+        return callbackData->callback();
+    return jsNull();
 
-    return static_cast<JSTestCallbackFunctionGenerateIsReachable&>(impl).callbackData()->callback();
 }
 
 ScriptExecutionContext* JSTestCallbackFunctionGenerateIsReachable::scriptExecutionContext() const

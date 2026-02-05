@@ -77,7 +77,6 @@ public:
 
     RefPtr<MediaPlayer> mediaPlayer() const;
     CDMPrivateInterface* cdmPrivate() const { return m_private.get(); }
-    RefPtr<CDMPrivateInterface> protectedCDMPrivate() const;
 
 private:
     explicit LegacyCDM(const String& keySystem);

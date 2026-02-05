@@ -33,6 +33,7 @@
 #include "DatabaseTracker.h"
 #include "Document.h"
 #include "DocumentEventLoop.h"
+#include "DocumentPage.h"
 #include "ExceptionOr.h"
 #include "Logging.h"
 #include "Page.h"

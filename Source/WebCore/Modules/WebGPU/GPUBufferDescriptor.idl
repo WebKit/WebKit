@@ -31,7 +31,6 @@ typedef [EnforceRange] unsigned long GPUBufferUsageFlags;
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUBufferDescriptor : GPUObjectDescriptorBase {
     required GPUSize64 size;
     required GPUBufferUsageFlags usage;

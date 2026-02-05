@@ -50,9 +50,7 @@ public:
 #endif
 
     CFRunLoopRef runLoop() const { return m_runLoop.get(); }
-    RetainPtr<CFRunLoopRef> protectedRunLoop() const { return m_runLoop; }
     CFStringRef mode() const { return m_mode.get(); }
-    RetainPtr<CFStringRef> protectedMode() const { return m_mode; }
 
     WTF_EXPORT_PRIVATE bool operator==(const SchedulePair& other) const;
 

@@ -105,15 +105,14 @@ public:
 
     ProcessThrottler& throttler() { return m_throttler; }
     const ProcessThrottler& throttler() const { return m_throttler; }
-    Ref<ProcessThrottler> protectedThrottler() { return m_throttler; }
-    Ref<const ProcessThrottler> protectedThrottler() const { return m_throttler; }
 
     template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions = { });
 
-    template<typename T> using SendSyncResult = IPC::Connection::SendSyncResult<T>;
-    template<typename T> SendSyncResult<T> sendSync(T&& message, uint64_t destinationID, IPC::Timeout = 1_s, OptionSet<IPC::SendSyncOption> sendSyncOptions = { });
-
     enum class ShouldStartProcessThrottlerActivity : bool { No, Yes };
+
+    template<typename T> using SendSyncResult = IPC::Connection::SendSyncResult<T>;
+    template<typename T> SendSyncResult<T> sendSync(T&& message, uint64_t destinationID, IPC::Timeout = 1_s, OptionSet<IPC::SendSyncOption> sendSyncOptions = { }, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
+
     using AsyncReplyID = IPC::Connection::AsyncReplyID;
     template<typename T, typename C> std::optional<AsyncReplyID> sendWithAsyncReply(T&&, C&&, uint64_t destinationID = 0, OptionSet<IPC::SendOption> = { }, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
 
@@ -130,9 +129,9 @@ public:
     }
 
     template<typename T, typename RawValue>
-    SendSyncResult<T> sendSync(T&& message, const ObjectIdentifierGenericBase<RawValue>& destinationID, IPC::Timeout timeout = 1_s, OptionSet<IPC::SendSyncOption> sendSyncOptions = { })
+    SendSyncResult<T> sendSync(T&& message, const ObjectIdentifierGenericBase<RawValue>& destinationID, IPC::Timeout timeout = 1_s, OptionSet<IPC::SendSyncOption> sendSyncOptions = { }, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes)
     {
-        return sendSync<T>(std::forward<T>(message), destinationID.toUInt64(), timeout, sendSyncOptions);
+        return sendSync<T>(std::forward<T>(message), destinationID.toUInt64(), timeout, sendSyncOptions, shouldStartProcessThrottlerActivity);
     }
 
     IPC::Connection& connection() const
@@ -141,7 +140,6 @@ public:
         return *m_connection;
     }
 
-    Ref<IPC::Connection> protectedConnection() const { return connection(); }
 
     bool hasConnection() const
     {
@@ -209,7 +207,6 @@ public:
     void checkForResponsiveness(CompletionHandler<void()>&& = nullptr, UseLazyStop = UseLazyStop::No);
 
     ResponsivenessTimer& responsivenessTimer() const { return m_responsivenessTimer.get(); }
-    Ref<ResponsivenessTimer> protectedResponsivenessTimer() const { return m_responsivenessTimer; }
 
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }
@@ -360,7 +357,7 @@ bool AuxiliaryProcessProxy::send(T&& message, uint64_t destinationID, OptionSet<
 }
 
 template<typename T>
-AuxiliaryProcessProxy::SendSyncResult<T> AuxiliaryProcessProxy::sendSync(T&& message, uint64_t destinationID, IPC::Timeout timeout, OptionSet<IPC::SendSyncOption> sendSyncOptions)
+AuxiliaryProcessProxy::SendSyncResult<T> AuxiliaryProcessProxy::sendSync(T&& message, uint64_t destinationID, IPC::Timeout timeout, OptionSet<IPC::SendSyncOption> sendSyncOptions, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity)
 {
     static_assert(T::isSync, "Sync message expected");
 
@@ -369,6 +366,10 @@ AuxiliaryProcessProxy::SendSyncResult<T> AuxiliaryProcessProxy::sendSync(T&& mes
         return { IPC::Error::InvalidConnection };
 
     TraceScope scope(SyncMessageStart, SyncMessageEnd);
+
+    RefPtr<ProcessThrottlerActivity> activity;
+    if (shouldStartProcessThrottlerActivity == ShouldStartProcessThrottlerActivity::Yes)
+        activity = protect(throttler())->quietBackgroundActivity(description(T::name()));
 
     return connection->sendSync(std::forward<T>(message), destinationID, timeout, sendSyncOptions);
 }

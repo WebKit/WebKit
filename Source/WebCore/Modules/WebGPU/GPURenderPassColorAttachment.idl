@@ -31,7 +31,6 @@ typedef [EnforceRange] unsigned long GPUIntegerCoordinate;
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPURenderPassColorAttachment {
     required (GPUTexture or GPUTextureView) view;
     GPUIntegerCoordinate depthSlice;

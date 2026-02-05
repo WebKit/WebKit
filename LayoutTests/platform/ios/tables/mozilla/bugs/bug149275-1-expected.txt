@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,2) size 782x50
             RenderTableCell {TD} at (2,2) size 778x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {CENTER} at (2,2) size 774x20
-                RenderText {#text} at (365,0) size 44x19
+                RenderText {#text} at (365,0) size 44x20
                   text run at (365,0) width 44: "abcdef"
           RenderTableRow {TR} at (0,54) size 782x526
             RenderTableCell {TD} at (2,54) size 778x526 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
@@ -19,27 +19,27 @@ layer at (13,65) size 756x522 clip at (16,68) size 750x501 scrollWidth 900
         RenderTableSection {TBODY} at (0,0) size 900x166
           RenderTableRow {TR} at (0,2) size 900x162
             RenderTableCell {TD} at (2,2) size 896x162 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 42x19
+              RenderText {#text} at (1,1) size 42x20
                 text run at (1,1) width 42: "Line 1"
-              RenderBR {BR} at (42,1) size 1x19
-              RenderText {#text} at (1,21) size 42x19
+              RenderBR {BR} at (42,1) size 1x20
+              RenderText {#text} at (1,21) size 42x20
                 text run at (1,21) width 42: "Line 2"
-              RenderBR {BR} at (42,21) size 1x19
-              RenderText {#text} at (1,41) size 42x19
+              RenderBR {BR} at (42,21) size 1x20
+              RenderText {#text} at (1,41) size 42x20
                 text run at (1,41) width 42: "Line 3"
-              RenderBR {BR} at (42,41) size 1x19
-              RenderText {#text} at (1,61) size 42x19
+              RenderBR {BR} at (42,41) size 1x20
+              RenderText {#text} at (1,61) size 42x20
                 text run at (1,61) width 42: "Line 4"
-              RenderBR {BR} at (42,61) size 1x19
-              RenderText {#text} at (1,81) size 42x19
+              RenderBR {BR} at (42,61) size 1x20
+              RenderText {#text} at (1,81) size 42x20
                 text run at (1,81) width 42: "Line 5"
-              RenderBR {BR} at (42,81) size 1x19
-              RenderText {#text} at (1,101) size 42x19
+              RenderBR {BR} at (42,81) size 1x20
+              RenderText {#text} at (1,101) size 42x20
                 text run at (1,101) width 42: "Line 6"
-              RenderBR {BR} at (42,101) size 1x19
-              RenderText {#text} at (1,121) size 42x19
+              RenderBR {BR} at (42,101) size 1x20
+              RenderText {#text} at (1,121) size 42x20
                 text run at (1,121) width 42: "Line 7"
-              RenderBR {BR} at (42,121) size 1x19
-              RenderText {#text} at (1,141) size 42x19
+              RenderBR {BR} at (42,121) size 1x20
+              RenderText {#text} at (1,141) size 42x20
                 text run at (1,141) width 42: "Line 8"
-              RenderBR {BR} at (42,141) size 1x19
+              RenderBR {BR} at (42,141) size 1x20

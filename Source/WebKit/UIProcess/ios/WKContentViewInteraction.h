@@ -71,6 +71,7 @@
 #import <WebCore/FloatQuad.h>
 #import <WebCore/MediaControlsContextMenuItem.h>
 #import <WebCore/PointerID.h>
+#import <WebCore/TextGranularity.h>
 #import <pal/spi/cocoa/WritingToolsSPI.h>
 #import <pal/spi/ios/BrowserEngineKitSPI.h>
 #import <wtf/BlockPtr.h>
@@ -102,9 +103,11 @@ class SelectionRect;
 struct ContactInfo;
 struct ContactsRequestData;
 struct DigitalCredentialsRequestData;
+struct DigitalCredentialsResponseData;
 struct MediaPlayerClientIdentifierType;
 struct PromisedAttachmentInfo;
 struct ShareDataWithParsedURL;
+struct TextAnimationData;
 struct TextRecognitionResult;
 enum class DOMPasteAccessCategory : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
@@ -133,6 +136,7 @@ enum class PickerDismissalReason : uint8_t;
 }
 
 @class AVPlayerViewController;
+@class BETextSuggestion;
 @class QLPreviewController;
 @class VKCImageAnalysisInteraction;
 @class WebEvent;
@@ -166,6 +170,10 @@ enum class PickerDismissalReason : uint8_t;
 @class UIPointerRegion;
 @class UITargetedPreview;
 @class _UILookupGestureRecognizer;
+
+@protocol BEDragInteractionDelegate;
+@protocol BETextInteractionDelegate;
+@protocol BETextInputDelegate;
 
 #if HAVE(PEPPER_UI_CORE)
 @class PUICQuickboardViewController;
@@ -1021,6 +1029,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 - (BOOL)_shouldIgnoreTouchEvent:(UIEvent *)event;
 - (void)_touchEventsRecognized;
+- (void)_touchEventsGestureRecognizerReset;
 
 - (BOOL)_hasEnclosingScrollView:(UIView *)firstView matchingCriteria:(Function<BOOL(UIScrollView *)>&&)matchFunction;
 

@@ -32,16 +32,31 @@ class LayoutUnit;
 namespace Layout {
 
 class PlacedGridItem;
+struct GridItemSizingFunctions;
 
 namespace GridLayoutUtils {
 
 LayoutUnit computeGapValue(const Style::GapGutter&);
 
-LayoutUnit usedInlineSizeForGridItem(const PlacedGridItem&, LayoutUnit borderAndPadding, const TrackSizes& usedColumnSizes,
-    LayoutUnit columnsGap);
-LayoutUnit usedBlockSizeForGridItem(const PlacedGridItem&);
+LayoutUnit usedInlineSizeForGridItem(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit columnsSize);
+LayoutUnit usedBlockSizeForGridItem(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit rowsSize);
+
+LayoutUnit usedInlineMinimumSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit columnsSize, const IntegrationUtils&);
+LayoutUnit usedBlockMinimumSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit rowsSize, const IntegrationUtils&);
 
 LayoutUnit computeGridLinePosition(size_t gridLineIndex, const TrackSizes&, LayoutUnit gap);
+LayoutUnit gridAreaDimensionSize(size_t startLine, size_t endLine, const TrackSizes&, LayoutUnit gap);
+
+LayoutUnit inlineAxisMinContentContribution(const ElementBox& gridItem, const IntegrationUtils&);
+LayoutUnit inlineAxisMaxContentContribution(const ElementBox& gridItem, const IntegrationUtils&);
+GridItemSizingFunctions inlineAxisGridItemSizingFunctions();
+
+LayoutUnit blockAxisMinContentContribution(const ElementBox& gridItem, const IntegrationUtils&);
+LayoutUnit blockAxisMaxContentContribution(const ElementBox& gridItem, const IntegrationUtils&);
+GridItemSizingFunctions blockAxisGridItemSizingFunctions();
+
+bool preferredSizeBehavesAsAuto(const Style::PreferredSize&);
+bool preferredSizeDependsOnContainingBlockSize(const Style::PreferredSize&);
 
 } // namespace GridLayoutUtils
 } // namespace Layout

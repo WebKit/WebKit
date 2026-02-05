@@ -7,49 +7,49 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 88x78
           RenderTableRow {TR} at (0,0) size 88x39
             RenderTableCell {TD} at (0,0) size 45x39 [border: (2px none #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 40x34
-                text run at (3,3) width 40: "foo"
+              RenderText {#text} at (3,4) size 40x33
+                text run at (3,4) width 40: "foo"
             RenderTableCell {TD} at (45,0) size 43x39 [border: (2px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 38x33
+              RenderText {#text} at (3,3) size 38x34
                 text run at (3,3) width 38: "bar"
           RenderTableRow {TR} at (0,39) size 88x39
             RenderTableCell {TD} at (0,40) size 45x37 [border: none] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (3,2) size 40x33
+              RenderText {#text} at (3,2) size 40x34
                 text run at (3,1) width 40: "foo"
             RenderTableCell {TD} at (45,39) size 43x39 [border: (2px solid #000000)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 38x33
+              RenderText {#text} at (3,3) size 38x34
                 text run at (3,3) width 38: "bar"
       RenderBlock {P} at (0,97) size 784x125
         RenderTable {TABLE} at (0,0) size 135x125 [border: (12px solid #000000)]
           RenderTableSection {TBODY} at (12,12) size 110x100
             RenderTableRow {TR} at (0,0) size 110x50
               RenderTableCell {TD} at (0,0) size 56x50 [border: (13px none #000000)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (14,14) size 40x34
-                  text run at (14,14) width 40: "foo"
+                RenderText {#text} at (14,15) size 40x33
+                  text run at (14,15) width 40: "foo"
               RenderTableCell {TD} at (56,0) size 54x50 [border: (13px solid #000000)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (3,14) size 38x33
+                RenderText {#text} at (3,14) size 38x34
                   text run at (3,14) width 38: "bar"
             RenderTableRow {TR} at (0,50) size 110x50
               RenderTableCell {TD} at (0,51) size 56x48 [border: none] [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (14,2) size 40x33
+                RenderText {#text} at (14,2) size 40x34
                   text run at (14,1) width 40: "foo"
               RenderTableCell {TD} at (56,50) size 54x50 [border: (2px solid #000000)] [r=1 c=1 rs=1 cs=1]
-                RenderText {#text} at (3,3) size 38x33
+                RenderText {#text} at (3,3) size 38x34
                   text run at (3,3) width 38: "bar"
       RenderBlock {P} at (0,238) size 784x175
         RenderTable {TABLE} at (0,0) size 185x175 [border: (25px solid #000000)]
           RenderTableSection {TBODY} at (25,25) size 135x125
             RenderTableRow {TR} at (0,0) size 135x62
               RenderTableCell {TD} at (0,0) size 68x62 [border: (25px none #000000)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (26,26) size 40x34
-                  text run at (26,26) width 40: "foo"
+                RenderText {#text} at (26,27) size 40x33
+                  text run at (26,27) width 40: "foo"
               RenderTableCell {TD} at (68,0) size 67x62 [border: (25px solid #000000)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (3,26) size 38x33
+                RenderText {#text} at (3,26) size 38x34
                   text run at (3,26) width 38: "bar"
             RenderTableRow {TR} at (0,62) size 135x63
               RenderTableCell {TD} at (0,63) size 68x61 [border: none] [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (26,2) size 40x33
+                RenderText {#text} at (26,2) size 40x34
                   text run at (26,1) width 40: "foo"
               RenderTableCell {TD} at (68,62) size 67x63 [border: (2px solid #000000)] [r=1 c=1 rs=1 cs=1]
-                RenderText {#text} at (3,3) size 38x33
+                RenderText {#text} at (3,3) size 38x34
                   text run at (3,3) width 38: "bar"

@@ -25,10 +25,12 @@
 
 typedef double DOMHighResTimeStamp;
 
+// https://w3c.github.io/webcodecs/#dictdef-videoframemetadata
+//   with members defined in
+// https://w3c.github.io/webcodecs/video_frame_metadata_registry.html
 [
     Conditional=VIDEO,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary VideoFrameMetadata {
     required DOMHighResTimeStamp presentationTime;
     required DOMHighResTimeStamp expectedDisplayTime;

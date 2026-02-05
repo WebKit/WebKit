@@ -45,9 +45,9 @@ FocusEvent::FocusEvent(const AtomString& type, CanBubble canBubble, IsCancelable
 {
 }
 
-FocusEvent::FocusEvent(const AtomString& type, const Init& initializer)
-    : UIEvent(EventInterfaceType::FocusEvent, type, initializer)
-    , m_relatedTarget(initializer.relatedTarget)
+FocusEvent::FocusEvent(const AtomString& type, Init&& initializer)
+    : UIEvent(EventInterfaceType::FocusEvent, type, WTF::move(initializer))
+    , m_relatedTarget(WTF::move(initializer.relatedTarget))
 {
 }
 

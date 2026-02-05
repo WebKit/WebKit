@@ -8795,6 +8795,8 @@ FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
   - (in subcase: a=0.062469482421875;b=-65504;c=5.960464477539063e-8) INFO: subcase ran
   - (in subcase: a=0.062469482421875;b=-65504;c=0.00006103515625) INFO: subcase ran
   - (in subcase: a=0.062469482421875;b=-65504;c=0.062469482421875) INFO: subcase ran
+  - (in subcase: a=0.062469482421875;b=-65504;c=63.96875) EXPECTATION FAILED: Expected validation error
+      at (elided: below max severity)
   - (in subcase: a=0.062469482421875;b=-65504;c=63.96875) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 
 
@@ -8802,8 +8804,6 @@ FAIL :values:stage="constant";type="vec2%3Cf16%3E" assert_unreached:
     enable f16;
     const v  = faceForward(vec2(0.062469482421875h, 0.062469482421875h), vec2(-65504.0h, -65504.0h), vec2(63.96875h, 63.96875h));
       at (elided: only 2 shown)
-  - (in subcase: a=0.062469482421875;b=-65504;c=63.96875) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
   - (in subcase: a=0.062469482421875;b=-65504;c=63.96875) INFO: subcase ran
   - (in subcase: a=0.062469482421875;b=-65504;c=65504) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
 

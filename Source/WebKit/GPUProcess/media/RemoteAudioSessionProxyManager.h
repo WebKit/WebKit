@@ -69,8 +69,6 @@ public:
 
     WebCore::AudioSession& session() { return WebCore::AudioSession::singleton(); }
     const WebCore::AudioSession& session() const { return WebCore::AudioSession::singleton(); }
-    Ref<WebCore::AudioSession> protectedSession() { return WebCore::AudioSession::singleton(); }
-    Ref<const WebCore::AudioSession> protectedSession() const { return WebCore::AudioSession::singleton(); }
 
     void updatePresentingProcesses();
 

@@ -17,6 +17,7 @@ class Timer final
     // duration.  If getElapsedWallClockTime() is called in between, it will report the elapsed time
     // since start().
     void start();
+    void restart();
     void stop();
     double getElapsedWallClockTime() const;
     double getElapsedCpuTime() const;

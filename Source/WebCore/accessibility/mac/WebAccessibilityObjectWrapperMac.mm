@@ -950,7 +950,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
         objectAttributes = groupAttrs.get().get();
     else if (backingObject->isTabList())
         objectAttributes = tabListAttrs.get().get();
-    else if (backingObject->isScrollView())
+    else if (backingObject->isScrollArea())
         objectAttributes = scrollViewAttrs.get().get();
     else if (backingObject->isSpinButton()) {
         if (backingObject->spinButtonType() == SpinButtonType::Composite)
@@ -1101,7 +1101,7 @@ static NSArray *transformSpecialChildrenCases(AXCoreObject& backingObject, const
 
 static NSArray *children(AXCoreObject& backingObject)
 {
-    const auto& unignoredChildren = backingObject.stitchedUnignoredChildren();
+    const auto& unignoredChildren = backingObject.crossFrameUnignoredChildren();
     RetainPtr<NSArray> specialChildren = transformSpecialChildrenCases(backingObject, unignoredChildren);
     if ([specialChildren count])
         return specialChildren.unsafeGet();
@@ -1155,7 +1155,7 @@ static RetainPtr<NSString> roleDescription(AXCoreObject& backingObject)
 
 static id scrollViewParent(AXCoreObject& axObject)
 {
-    if (!axObject.isScrollView())
+    if (!axObject.isScrollArea())
         return nil;
 
 #if ENABLE_ACCESSIBILITY_LOCAL_FRAME
@@ -2452,7 +2452,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (frameView) {
         // Find the appropriate scroll view to convert the coordinates to window space.
         RefPtr axScrollView = Accessibility::findAncestor(*backingObject, false, [] (const auto& ancestor) {
-            return ancestor.isScrollView() && ancestor.scrollView();
+            return ancestor.isScrollArea() && ancestor.scrollView();
         });
 
         if (RefPtr scrollView = axScrollView ? axScrollView->scrollView() : nullptr) {
@@ -2652,7 +2652,7 @@ static RenderObject* rendererForView(NSView* view)
     if (!frame)
         return nullptr;
 
-    RefPtr<Node> node = frame->protectedDocument()->ownerElement();
+    RefPtr<Node> node = protect(frame->document())->ownerElement();
     if (!node)
         return nullptr;
 
@@ -2665,7 +2665,7 @@ static RenderObject* rendererForView(NSView* view)
     if (!renderer)
         return nil;
 
-    CheckedPtr cache = renderer->protectedDocument()->axObjectCache();
+    CheckedPtr cache = protect(renderer->document())->axObjectCache();
     RefPtr object = cache ? cache->getOrCreate(*renderer) : nil;
     RefPtr parent = object ? object->parentObjectUnignored() : nil;
     return parent ? parent->wrapper() : nil;
@@ -3678,7 +3678,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!backingObject)
         return nil;
 
-    const auto& unignoredChildren = backingObject->stitchedUnignoredChildren();
+    const auto& unignoredChildren = backingObject->crossFrameUnignoredChildren();
     if (unignoredChildren.isEmpty()) {
         RetainPtr<NSArray> children = transformSpecialChildrenCases(*backingObject, unignoredChildren);
         if (!children)

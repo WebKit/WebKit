@@ -313,7 +313,7 @@ private:
         if (!message)
             return;
 
-        WebProcess::singleton().protectedParentProcessConnection()->sendWithAsyncReply(Messages::WebProcessProxy::DidPostMessage(webPage->webPageProxyIdentifier(), m_controller->identifier(), webFrame->info(), m_identifier, *message), [completionHandler = WTF::move(completionHandler), context](Expected<WebKit::JavaScriptEvaluationResult, String>&& result) {
+        protect(WebProcess::singleton().parentProcessConnection())->sendWithAsyncReply(Messages::WebProcessProxy::DidPostMessage(webPage->webPageProxyIdentifier(), m_controller->identifier(), webFrame->info(), m_identifier, *message), [completionHandler = WTF::move(completionHandler), context](Expected<WebKit::JavaScriptEvaluationResult, String>&& result) {
             if (!result)
                 return completionHandler(JSC::jsUndefined(), result.error());
             completionHandler(toJS(toJS(context.get()), result->toJS(context.get()).get()), { });
@@ -339,7 +339,7 @@ private:
         if (!message)
             return JSC::jsUndefined();
 
-        auto sendResult = WebProcess::singleton().protectedParentProcessConnection()->sendSync(Messages::WebProcessProxy::DidPostLegacySynchronousMessage(webPage->webPageProxyIdentifier(), m_controller->identifier(), webFrame->info(), m_identifier, *message), 0);
+        auto sendResult = protect(WebProcess::singleton().parentProcessConnection())->sendSync(Messages::WebProcessProxy::DidPostLegacySynchronousMessage(webPage->webPageProxyIdentifier(), m_controller->identifier(), webFrame->info(), m_identifier, *message), 0);
         auto [result] = sendResult.takeReplyOr(makeUnexpected(String()));
         if (!result)
             return JSC::jsUndefined();

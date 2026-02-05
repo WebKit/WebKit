@@ -242,34 +242,33 @@ ExceptionOr<Ref<PerformanceMeasure>> PerformanceUserTiming::measure(JSC::JSGloba
     return measure.releaseReturnValue();
 }
 
-static bool isNonEmptyDictionary(const PerformanceMeasureOptions& measureOptions)
+static bool isEmptyDictionary(const PerformanceMeasureOptions& measureOptions)
 {
-    return !measureOptions.detail.isUndefined() || measureOptions.start || measureOptions.duration || measureOptions.end;
+    return measureOptions.detail.isUndefined()
+        && !measureOptions.start
+        && !measureOptions.duration
+        && !measureOptions.end;
 }
 
-ExceptionOr<Ref<PerformanceMeasure>> PerformanceUserTiming::measure(JSC::JSGlobalObject& globalObject, const String& measureName, std::optional<StartOrMeasureOptions>&& startOrMeasureOptions, const String& endMark)
+ExceptionOr<Ref<PerformanceMeasure>> PerformanceUserTiming::measure(JSC::JSGlobalObject& globalObject, const String& measureName, StartOrMeasureOptions&& startOrMeasureOptions, const String& endMark)
 {
-    if (startOrMeasureOptions) {
-        return WTF::switchOn(*startOrMeasureOptions,
-            [&] (const PerformanceMeasureOptions& measureOptions) -> ExceptionOr<Ref<PerformanceMeasure>> {
-                if (isNonEmptyDictionary(measureOptions)) {
-                    if (!endMark.isNull())
-                        return Exception { ExceptionCode::TypeError };
-                    if (!measureOptions.start && !measureOptions.end)
-                        return Exception { ExceptionCode::TypeError };
-                    if (measureOptions.start && measureOptions.duration && measureOptions.end)
-                        return Exception { ExceptionCode::TypeError };
-                }
+    return WTF::switchOn(startOrMeasureOptions,
+        [&](const PerformanceMeasureOptions& measureOptions) -> ExceptionOr<Ref<PerformanceMeasure>> {
+            if (isEmptyDictionary(measureOptions))
+                return measure(measureName, { }, endMark);
 
-                return measure(globalObject, measureName, measureOptions);
-            },
-            [&] (const String& startMark) {
-                return measure(measureName, startMark, endMark);
-            }
-        );
-    }
-
-    return measure(measureName, { }, endMark);
+            if (!endMark.isNull())
+                return Exception { ExceptionCode::TypeError };
+            if (!measureOptions.start && !measureOptions.end)
+                return Exception { ExceptionCode::TypeError };
+            if (measureOptions.start && measureOptions.duration && measureOptions.end)
+                return Exception { ExceptionCode::TypeError };
+            return measure(globalObject, measureName, measureOptions);
+        },
+        [&](const String& startMark) {
+            return measure(measureName, startMark, endMark);
+        }
+    );
 }
 
 void PerformanceUserTiming::clearMeasures(const String& measureName)

@@ -30,7 +30,6 @@ typedef [EnforceRange] unsigned long long GPUSize64;
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUBufferBindingLayout {
     GPUBufferBindingType type = "uniform";
     boolean hasDynamicOffset = false;

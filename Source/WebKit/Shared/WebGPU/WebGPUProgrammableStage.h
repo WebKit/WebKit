@@ -39,7 +39,7 @@ using PipelineConstantValue = double; // May represent WGSL’s bool, f32, i32, 
 
 struct ProgrammableStage {
     WebGPUIdentifier module;
-    std::optional<String> entryPoint;
+    String entryPoint;
     Vector<KeyValuePair<String, PipelineConstantValue>> constants;
 };
 

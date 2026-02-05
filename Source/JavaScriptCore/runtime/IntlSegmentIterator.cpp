@@ -26,6 +26,7 @@
 #include "config.h"
 #include "IntlSegmentIterator.h"
 
+#include "IntlSegmentDataObject.h"
 #include "IteratorOperations.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
@@ -77,7 +78,7 @@ JSObject* IntlSegmentIterator::next(JSGlobalObject* globalObject)
     int32_t endIndex = ubrk_next(m_segmenter.get());
     if (endIndex == UBRK_DONE)
         return createIteratorResultObject(globalObject, jsUndefined(), true);
-    JSObject* object = IntlSegmenter::createSegmentDataObject(globalObject, m_string.get(), startIndex, endIndex, *m_segmenter, m_granularity);
+    JSObject* object = createSegmentDataObject(globalObject, m_string.get(), startIndex, endIndex, *m_segmenter, m_granularity);
     RETURN_IF_EXCEPTION(scope, { });
     return createIteratorResultObject(globalObject, object, false);
 }

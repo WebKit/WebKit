@@ -513,7 +513,7 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
 std::pair<const RenderBox&, const RenderLayer*> RenderBoxModelObject::enclosingClippingBoxForStickyPosition() const
 {
     ASSERT(isStickilyPositioned());
-    RenderLayer* clipLayer = hasLayer() ? layer()->enclosingOverflowClipLayer(ExcludeSelf) : nullptr;
+    CheckedPtr clipLayer = hasLayer() ? layer()->enclosingOverflowClipLayer(ExcludeSelf) : nullptr;
     const RenderBox& box = clipLayer ? downcast<RenderBox>(clipLayer->renderer()) : view();
     return { box, clipLayer };
 }
@@ -629,7 +629,7 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
         float availableSpace = constrainingRect.width() - constraints.leftOffset() - constraints.rightOffset();
         if (constraints.stickyBoxRect().width() > availableSpace) {
             float delta = constraints.stickyBoxRect().width() - availableSpace;
-            if (writingMode().isAnyLeftToRight())
+            if (containingBlock->writingMode().isAnyLeftToRight())
                 constraints.setRightOffset(constraints.rightOffset() - delta);
             else
                 constraints.setLeftOffset(constraints.leftOffset() - delta);
@@ -640,7 +640,7 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
         float availableSpace = constrainingRect.height() - constraints.topOffset() - constraints.bottomOffset();
         if (constraints.stickyBoxRect().height() > availableSpace) {
             float delta = constraints.stickyBoxRect().height() - availableSpace;
-            if (writingMode().isAnyTopToBottom())
+            if (containingBlock->writingMode().isAnyTopToBottom())
                 constraints.setBottomOffset(constraints.bottomOffset() - delta);
             else
                 constraints.setTopOffset(constraints.topOffset() - delta);
@@ -650,7 +650,7 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
 
 FloatRect RenderBoxModelObject::constrainingRectForStickyPosition() const
 {
-    RenderLayer* enclosingClippingLayer = hasLayer() ? layer()->enclosingOverflowClipLayer(ExcludeSelf) : nullptr;
+    CheckedPtr enclosingClippingLayer = hasLayer() ? layer()->enclosingOverflowClipLayer(ExcludeSelf) : nullptr;
 
     if (enclosingClippingLayer) {
         RenderBox& enclosingClippingBox = downcast<RenderBox>(enclosingClippingLayer->renderer());
@@ -833,7 +833,7 @@ bool RenderBoxModelObject::fixedBackgroundPaintsInLocalCoordinates() const
     if (view().frameView().paintBehavior().contains(PaintBehavior::FlattenCompositingLayers))
         return false;
 
-    RenderLayer* rootLayer = view().layer();
+    CheckedPtr rootLayer = view().layer();
     if (!rootLayer || !rootLayer->isComposited())
         return false;
 

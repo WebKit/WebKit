@@ -186,8 +186,6 @@ webkit.org/b/298588 fast/media/mq-pointer.html [ Skip ]
 # Pending to create bug.
 [ Release ] fast/events/prevent-default-prevents-interaction-with-scrollbars.html [ Failure Pass ]
 media/video-background-tab-playback.html [ Failure ]
-media/video-muted-holds-sleep-assertion.html [ Failure ]
-media/video-unmuted-after-play-holds-sleep-assertion.html [ Failure ]
 svg/hixie/viewbox/002.xml [ Failure ]
 
 webkit.org/b/298919 imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-reportValidity-delegatesFocus.html [ Skip ]
@@ -610,6 +608,8 @@ webkit.org/b/257624 fast/mediastream/MediaStream-video-element-enter-background.
 webkit.org/b/257624 fast/mediastream/MediaStream-video-element-track-stop.html [ Failure ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html?include=loading [ Failure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/media-source/mediasource-play.html [ Failure Pass ]
+webkit.org/b/257624 imported/w3c/web-platform-tests/media-source/mediasource-redundant-seek.html [ Failure Pass ]
+
 webkit.org/b/257624 webgl/1.0.x/conformance/rendering/texture-switch-performance.html [ Failure Pass ]
 webkit.org/b/257624 webgl/2.0.y/conformance/rendering/texture-switch-performance.html [ Failure Pass ]
 
@@ -876,12 +876,12 @@ webkit.org/b/251107 webgl/2.0.y/conformance2/rendering/blitframebuffer-filter-ou
 webkit.org/b/251107 webgl/2.0.y/conformance/context/premultiplyalpha-test.html [ Failure ]
 webkit.org/b/251107 webgl/2.0.y/conformance2/extensions/ext-render-snorm.html [ Failure ]
 webkit.org/b/251107 webgl/2.0.y/conformance2/extensions/ext-texture-norm16.html [ Failure ]
-webkit.org/b/251107 webgl/2.0.y/conformance2/extensions/webgl-clip-cull-distance.html [ Failure ]
 webgl/1.0.x/conformance/textures/misc/texture-corner-case-videos.html [ Crash Pass ]
 
 # WEBGL2 flakies
 webkit.org/b/251107 webgl/2.0.y/conformance2/rendering/blitframebuffer-test.html [ Pass Failure ]
 webkit.org/b/251107 webgl/2.0.0/conformance2/textures/image_bitmap_from_video/tex-2d-r8-red-unsigned_byte.html [ Pass Failure ]
+webkit.org/b/251107 webgl/2.0.0/conformance2/textures/video/tex-2d-rgba8ui-rgba_integer-unsigned_byte.html [ Pass Failure ]
 webkit.org/b/251107 webgl/2.0.y/conformance/rendering/gl-scissor-test.html [ Failure ]
 
 webkit.org/b/212147 http/tests/xmlhttprequest/url-with-credentials.html [ Failure ]
@@ -924,7 +924,6 @@ webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/
 webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-005.xht [ ImageOnlyFailure ]
 
 Bug(WPE) media/media-playback-page-visibility.html [ Timeout ]
-Bug(WPE) media/video-canvas-createPattern.html [ Failure ]
 
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-hidden-006.html [ ImageOnlyFailure ]
 webkit.org/b/262893 imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-hidden-005.html [ ImageOnlyFailure ]
@@ -1064,10 +1063,8 @@ compositing/video/video-border-radius-clipping.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-blended-element-overflow-scroll.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-element-overflow-scroll.html [ ImageOnlyFailure ]
 
-
-webkit.org/b/272224 imported/w3c/web-platform-tests/selection/textcontrols/selectionchange.html [ Failure ]
-
-webkit.org/b/272225 media/media-source/media-managedmse-resume-after-stall.html [ Failure ]
+# This is expected to fail in all platforms but it rarely passes in WPE
+imported/w3c/web-platform-tests/css/compositing/background-blending/background-blend-mode-plus-lighter.html [ ImageOnlyFailure Pass ]
 
 media/media-source/media-detachablemse-append.html [ Timeout Crash Pass ]
 
@@ -1254,6 +1251,7 @@ imported/w3c/web-platform-tests/digital-credentials/ [ Skip ]
 
 media/adopt-node-after-showing-picker-crash.html [ Skip ]
 
+webkit.org/b/306017 imported/w3c/web-platform-tests/css/css-view-transitions/content-smaller-than-box-size.html [ ImageOnlyFailure Pass ]
 imported/w3c/web-platform-tests/css/css-view-transitions/start-skip-start.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/start-view-transtion-skips-active.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/table-caption.html [ ImageOnlyFailure ]
@@ -1294,3 +1292,17 @@ webkit.org/b/305201 fast/forms/datalist/data-list-search-input-with-appearance-n
 webkit.org/b/305501 platform/glib/non-compositing/simple-dom.html [ Pass ImageOnlyFailure ]
 webkit.org/b/305511 imported/w3c/web-platform-tests/event-timing/crossiframe.html [ Failure Pass ]
 webkit.org/b/305512 imported/w3c/web-platform-tests/focus/focus-large-element-in-overflow-hidden-container.html [ ImageOnlyFailure Pass ]
+
+# AVFoundation-specific audio description functionality not available on GStreamer platforms
+http/tests/media/hls/hls-audio-description-track-kind.html [ Skip ]
+
+webkit.org/b/306384 fast/lists/overlapping-nested-list-markers.html [ ImageOnlyFailure ]
+webkit.org/b/306384 imported/blink/compositing/overflow/selection-gaps.html [ ImageOnlyFailure ]
+webkit.org/b/306384 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-rendering.html [ ImageOnlyFailure ]
+webkit.org/b/306384 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-002.html [ ImageOnlyFailure ]
+webkit.org/b/306384 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-004.html [ ImageOnlyFailure ]
+webkit.org/b/306384 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-002.html [ ImageOnlyFailure ]
+
+webkit.org/b/306469 imported/w3c/web-platform-tests/encrypted-media/clearkey-update-non-ascii-input.https.html [ Pass Failure ]
+
+webkit.org/b/306758 media/event-attributes.html [ Pass Failure ]

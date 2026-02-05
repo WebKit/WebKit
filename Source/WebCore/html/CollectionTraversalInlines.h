@@ -162,7 +162,7 @@ inline auto CollectionTraversal<CollectionTraversalType::ChildrenOnly>::begin(co
 template <typename CollectionClass>
 inline auto CollectionTraversal<CollectionTraversalType::ChildrenOnly>::last(const CollectionClass& collection, ContainerNode& rootNode) -> Iterator
 {
-    auto* lastElement = childrenOfType<Element>(rootNode).last();
+    RefPtr lastElement = childrenOfType<Element>(rootNode).last();
     if (!lastElement)
         return childrenOfType<Element>(rootNode).begin();
     auto it = childrenOfType<Element>(rootNode).beginAt(*lastElement);
@@ -217,7 +217,7 @@ inline Element* CollectionTraversal<CollectionTraversalType::CustomForwardOnly>:
 template <typename CollectionClass>
 inline void CollectionTraversal<CollectionTraversalType::CustomForwardOnly>::traverseForward(const CollectionClass& collection, Element*& current, unsigned count, unsigned& traversedCount)
 {
-    Element* element = current;
+    RefPtr element = current;
     for (traversedCount = 0; traversedCount < count; ++traversedCount) {
         element = collection.customElementAfter(element);
         if (!element) {

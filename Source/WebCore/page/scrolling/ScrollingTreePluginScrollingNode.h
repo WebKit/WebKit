@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
 #if ENABLE(ASYNC_SCROLLING)
 
 #include <WebCore/ScrollingTreeScrollingNode.h>
@@ -39,6 +41,10 @@ class WEBCORE_EXPORT ScrollingTreePluginScrollingNode : public ScrollingTreeScro
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingTreePluginScrollingNode, WEBCORE_EXPORT);
 public:
     virtual ~ScrollingTreePluginScrollingNode();
+
+#if PLATFORM(IOS_FAMILY)
+    virtual bool isScrollingTreePluginScrollingNodeIOS() const { return false; }
+#endif
 
 protected:
     ScrollingTreePluginScrollingNode(ScrollingTree&, ScrollingNodeID);

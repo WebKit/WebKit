@@ -13,3 +13,4 @@ const result = instance.add("P3D");
 TemporalHelpers.assertPlainDate(result, 2000, 5, "M05", 5);
 
 TemporalHelpers.assertPlainDate(instance.add("P1M1W"), 2000, 6, "M06", 9, "calendar units");
+TemporalHelpers.assertPlainDate(instance.add("-P1M1D"), 2000, 4, "M04", 1, "calendar units");

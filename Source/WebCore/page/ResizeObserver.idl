@@ -32,7 +32,7 @@
 ] interface ResizeObserver {
     [CallWith=CurrentDocument] constructor(ResizeObserverCallback callback);
 
-    undefined observe(Element target, optional ResizeObserverOptions options);
+    undefined observe(Element target, optional ResizeObserverOptions options = {});
     undefined unobserve(Element target);
     undefined disconnect();
 };

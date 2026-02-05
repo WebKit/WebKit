@@ -450,7 +450,7 @@ void ContentChangeObserver::didAddMouseMoveRelatedEventListener(const AtomString
     if (!isObservingContentChanges())
         return;
 
-    if (!node.protectedDocument()->quirks().shouldTreatAddingMouseOutEventListenerAsContentChange())
+    if (!protect(node.document())->quirks().shouldTreatAddingMouseOutEventListenerAsContentChange())
         return;
 
     if (eventType != eventNames().mouseoutEvent)

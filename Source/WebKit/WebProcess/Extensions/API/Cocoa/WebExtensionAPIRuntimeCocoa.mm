@@ -457,7 +457,7 @@ void WebExtensionAPIWebPageRuntime::sendMessage(WebPage& page, WebFrame& frame, 
         documentIdentifier.value(),
     };
 
-    RefPtr destinationExtensionContext = page.protectedWebExtensionControllerProxy()->extensionContext(extensionID);
+    RefPtr destinationExtensionContext = protect(page.webExtensionControllerProxy())->extensionContext(extensionID);
     if (!destinationExtensionContext) {
         // Respond after a random delay to prevent the page from easily detecting if extensions are not installed.
         callAfterRandomDelay([callback = WTF::move(callback)]() {
@@ -503,7 +503,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIWebPageRuntime::connect(WebPage& page
         documentIdentifier.value(),
     };
 
-    RefPtr destinationExtensionContext = page.protectedWebExtensionControllerProxy()->extensionContext(extensionID);
+    RefPtr destinationExtensionContext = protect(page.webExtensionControllerProxy())->extensionContext(extensionID);
     if (!destinationExtensionContext) {
         // Return a port that cant send messages, and disconnect after a random delay to prevent the page from easily detecting if extensions are not installed.
         Ref port = WebExtensionAPIPort::create(*this, resolvedName);
@@ -620,7 +620,7 @@ static bool matches(WebFrame& frame, const std::optional<WebExtensionMessageTarg
 
     // Skip all pages / frames / documents that don't match the target parameters.
     auto& pageProxyIdentifier = targetParameters.value().pageProxyIdentifier;
-    if (pageProxyIdentifier && pageProxyIdentifier != frame.protectedPage()->webPageProxyIdentifier())
+    if (pageProxyIdentifier && pageProxyIdentifier != protect(frame.page())->webPageProxyIdentifier())
         return false;
 
     auto& frameIdentifier = targetParameters.value().frameIdentifier;
@@ -675,7 +675,7 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionC
     bool anyListenerHandledMessage = false;
     enumerateFramesAndNamespaceObjects([&, callbackAggregatorWrapper = RetainPtr { callbackAggregatorWrapper }](WebFrame& frame, WebExtensionAPINamespace& namespaceObject) {
         // Don't send the message to any listeners in the sender's page.
-        if (senderParameters.pageProxyIdentifier == frame.protectedPage()->webPageProxyIdentifier())
+        if (senderParameters.pageProxyIdentifier == protect(frame.page())->webPageProxyIdentifier())
             return;
 
         // Skip all frames that don't match the target parameters.
@@ -780,7 +780,7 @@ void WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebExtensionC
 
         auto globalContext = frame.jsContextForWorld(toDOMWrapperWorld(contentWorldType));
         for (auto& listener : listeners) {
-            Ref port = WebExtensionAPIPort::create(namespaceObject, frame.protectedPage()->webPageProxyIdentifier(), sourceContentWorldType, channelIdentifier, name, senderParameters);
+            Ref port = WebExtensionAPIPort::create(namespaceObject, protect(frame.page())->webPageProxyIdentifier(), sourceContentWorldType, channelIdentifier, name, senderParameters);
             listener->call(toJS(globalContext, port.ptr()));
         }
     }, toDOMWrapperWorld(contentWorldType));

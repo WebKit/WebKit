@@ -1,0 +1,4 @@
+
+
+FAIL base appearance should not propagate to nested elements which support appearance. assert_equals: outer select should have base appearance. expected "inline-flex" but got "inline-block"
+

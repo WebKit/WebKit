@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['options_0',['Runtime Options',['../group__options.html',1,'']]]
+  ['macros_0',['Typed Macros',['../group__typed.html',1,'']]]
 ];

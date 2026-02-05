@@ -41,8 +41,8 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto firstResponder = [[[UIApplication sharedApplication] keyWindow] firstResponder];
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-    if (auto *view = dynamic_objc_cast<WKContentView>(firstResponder))
-        return view.page;
+    if (RetainPtr view = dynamic_objc_cast<WKContentView>(firstResponder))
+        return view.get().page;
 
 #if ENABLE(WEBXR) && !USE(OPENXR)
     if (auto* page = WebProcessProxy::webPageWithActiveXRSession())

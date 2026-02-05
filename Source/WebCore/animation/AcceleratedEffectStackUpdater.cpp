@@ -59,7 +59,7 @@ void AcceleratedEffectStackUpdater::update()
         Styleable target { *element, pseudoElementIdentifier };
 
         if (!page)
-            page = element->protectedDocument()->page();
+            page = protect(element->document())->page();
 
         CheckedPtr renderer = dynamicDowncast<RenderLayerModelObject>(target.renderer());
         if (!renderer || !renderer->isComposited())

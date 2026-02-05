@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IDBCursorInfo.h"
+#include "MemoryBackingStoreTransaction.h"
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 
 namespace WebCore {

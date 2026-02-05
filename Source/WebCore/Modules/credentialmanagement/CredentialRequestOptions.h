@@ -42,7 +42,9 @@ struct CredentialRequestOptions {
     MediationRequirement mediation;
     RefPtr<AbortSignal> signal;
     std::optional<PublicKeyCredentialRequestOptions> publicKey;
+#if ENABLE(WEB_AUTHN)
     std::optional<DigitalCredentialRequestOptions> digital;
+#endif
 };
 
 } // namespace WebCore

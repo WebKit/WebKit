@@ -68,8 +68,6 @@ protected:
     {
     }
 
-    bool isHolePunchBuffer() const final { return m_type == Type::HolePunch; }
-
     Type m_type;
     IntSize m_size;
     OptionSet<TextureMapperFlags> m_flags;

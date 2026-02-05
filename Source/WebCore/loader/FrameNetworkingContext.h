@@ -49,7 +49,6 @@ protected:
     }
 
     LocalFrame* frame() const { return m_frame; }
-    RefPtr<LocalFrame> protectedFrame() const { return m_frame; }
 
 private:
     bool isValid() const override { return !!m_frame; }

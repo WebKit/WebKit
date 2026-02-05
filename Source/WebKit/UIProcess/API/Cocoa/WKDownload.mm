@@ -119,7 +119,7 @@ private:
         if (!delegate)
             return completionHandler(WebKit::AllowOverwrite::No, { });
 
-        [delegate download:protectedWrapper(download).get() decideDestinationUsingResponse:response.protectedNSURLResponse().get() suggestedFilename:suggestedFilename.createNSString().get() completionHandler:makeBlockPtr([download = Ref { download }, completionHandler = WTF::move(completionHandler), checker = WebKit::CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(download:decideDestinationUsingResponse:suggestedFilename:completionHandler:))] (NSURL *destination) mutable {
+        [delegate download:protectedWrapper(download).get() decideDestinationUsingResponse:protect(response.nsURLResponse()).get() suggestedFilename:suggestedFilename.createNSString().get() completionHandler:makeBlockPtr([download = Ref { download }, completionHandler = WTF::move(completionHandler), checker = WebKit::CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(download:decideDestinationUsingResponse:suggestedFilename:completionHandler:))] (NSURL *destination) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
@@ -206,7 +206,7 @@ private:
         if (!delegate || !m_respondsToDidFailWithError)
             return;
 
-        [delegate download:protectedWrapper(download).get() didFailWithError:error.protectedNSError().get() resumeData:protectedWrapper(resumeData).get()];
+        [delegate download:protectedWrapper(download).get() didFailWithError:protect(error.nsError()).get() resumeData:protectedWrapper(resumeData).get()];
     }
 
     void processDidCrash(WebKit::DownloadProxy& download) final
@@ -301,7 +301,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (NSURLRequest *)originalRequest
 {
-    return _download->request().protectedNSURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody).autorelease();
+    return protect(_download->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody)).autorelease();
 }
 
 - (WKWebView *)webView

@@ -33,7 +33,6 @@ typedef [EnforceRange] unsigned long GPUTextureUsageFlags;
 
 [
     EnabledBySetting=WebGPUEnabled,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUTextureDescriptor : GPUObjectDescriptorBase {
     required GPUExtent3D size;
     GPUIntegerCoordinate mipLevelCount = 1;

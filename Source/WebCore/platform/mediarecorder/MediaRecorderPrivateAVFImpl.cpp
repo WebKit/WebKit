@@ -141,7 +141,7 @@ MediaRecorderPrivateAVFImpl::~MediaRecorderPrivateAVFImpl()
 
 void MediaRecorderPrivateAVFImpl::startRecording(StartRecordingCallback&& callback)
 {
-    // FIMXE: In case of of audio recording, we should wait for the audio compression to start to give back the exact bit rate.
+    // FIXME: In case of of audio recording, we should wait for the audio compression to start to give back the exact bit rate.
     callback(String(m_encoder->mimeType()), m_encoder->audioBitRate(), m_encoder->videoBitRate());
 }
 

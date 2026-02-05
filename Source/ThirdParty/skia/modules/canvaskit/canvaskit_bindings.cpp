@@ -50,7 +50,7 @@
 #include "include/effects/SkCornerPathEffect.h"
 #include "include/effects/SkDashPathEffect.h"
 #include "include/effects/SkDiscretePathEffect.h"
-#include "include/effects/SkGradientShader.h"
+#include "include/effects/SkGradient.h"
 #include "include/effects/SkImageFilters.h"
 #include "include/effects/SkLumaColorFilter.h"
 #include "include/effects/SkPerlinNoiseShader.h"
@@ -134,6 +134,7 @@
 
 #ifndef CK_NO_FONTS
 #include "include/ports/SkFontMgr_data.h"
+#include "include/ports/SkFontMgr_empty.h"
 #endif
 
 #if defined(CK_EMBED_FONT)
@@ -1062,6 +1063,58 @@ static Uint8Array encodeImage(GrDirectContext* dContext,
     return toBytes(data);
 }
 
+static bool supported_for_gradients(SkColorType ct) {
+    return ct == SkColorType::kRGBA_8888_SkColorType || ct == SkColorType::kRGBA_F32_SkColorType;
+}
+
+struct GradientBuilder {
+    GradientBuilder(WASMPointerF32 cPtr,
+                    SkColorType colorType,
+                    WASMPointerF32 pPtr,
+                    size_t count,
+                    SkTileMode mode,
+                    uint32_t legacyGradFlags,
+                    WASMPointerF32 mPtr,
+                    sk_sp<SkColorSpace> colorSpace) : fLocalMatrix(mPtr)
+    {
+        SkASSERT(supported_for_gradients(colorType));
+
+        const float* positions = reinterpret_cast<const float*>(pPtr);
+        const SkColor4f* colors;
+
+        if (colorType == SkColorType::kRGBA_8888_SkColorType) {
+            const SkColor* c32 = reinterpret_cast<const SkColor*>(cPtr);
+            fC4Storage.resize(count);
+            std::transform(c32, c32 + count, fC4Storage.begin(), [](SkColor c) {
+                return SkColor4f::FromColor(c);
+            });
+            colors = fC4Storage.data();
+        } else {
+            colors = reinterpret_cast<const SkColor4f*>(cPtr);
+        }
+
+        SkSpan<const float> pos;
+        if (positions) {
+            pos = {positions, count};
+        }
+
+        auto premul = (legacyGradFlags & 1) ? SkGradient::Interpolation::InPremul::kYes
+                                            : SkGradient::Interpolation::InPremul::kNo;
+
+        fLM = mPtr ? &fLocalMatrix : nullptr;
+        fGrad = {{{colors, count}, pos, mode, std::move(colorSpace)}, {premul}};
+    }
+
+    const SkGradient& grad() const { return fGrad; }
+    const SkMatrix* lm() const { return fLM; }
+
+private:
+    std::vector<SkColor4f> fC4Storage;
+    OptionalMatrix         fLocalMatrix;
+    SkGradient             fGrad;
+    const SkMatrix*        fLM;
+};
+
 EMSCRIPTEN_BINDINGS(Skia) {
 #ifdef ENABLE_GPU
     constant("gpu", true);
@@ -1169,26 +1222,28 @@ EMSCRIPTEN_BINDINGS(Skia) {
                  });
 #endif
 
-                 SkDeserialProcs dp;
-                 dp.fImageDataProc = [](sk_sp<SkData> bytes,
-                                        std::optional<SkAlphaType> at,
-                                        void* ctx) -> sk_sp<SkImage> {
+                 SkDeserialProcs dProcs;
+                 dProcs.fImageDataProc = [](sk_sp<SkData> bytes,
+                                            std::optional<SkAlphaType> at,
+                                            void*) -> sk_sp<SkImage> {
                      auto codec = DecodeImageData(bytes);
                      if (codec == nullptr) {
                          return nullptr;
                      }
-                     SkImageInfo info = codec->getInfo();
-                     if (at.has_value()) {
-                         info = info.makeAlphaType(*at);
-                     } else if (kUnpremul_SkAlphaType == info.alphaType()) {
-                         // Otherwise, prefer premul over unpremul (this produces better filtering
-                         // in general)
-                         info = info.makeAlphaType(kPremul_SkAlphaType);
-                     }
-                     return std::get<0>(codec->getImage(info));
+                     // Force the decode to happen instead of returning a lazy image.
+                     return SkCodecs::DeferredImage(std::move(codec), at)->makeRasterImage(nullptr);
                  };
 
-                 return SkPicture::MakeFromData(data.get(), nullptr);
+#ifndef CK_NO_FONTS
+                 sk_sp<SkFontMgr> fallback = SkFontMgr_New_Custom_Empty();
+                 dProcs.fTypefaceCtx = &fallback;
+                 dProcs.fTypefaceStreamProc = [](SkStream& stream, void* ctx) -> sk_sp<SkTypeface> {
+                    return SkTypeface::MakeDeserialize(&stream,
+                                                       *static_cast<sk_sp<SkFontMgr>*>(ctx));
+                 };
+#endif
+
+                 return SkPicture::MakeFromData(data.get(), &dProcs);
              }),
              allow_raw_pointers());
 #endif
@@ -1725,10 +1780,10 @@ EMSCRIPTEN_BINDINGS(Skia) {
                                            float startD,
                                            float stopD,
                                            bool startWithMoveTo) -> SkPath {
-                          SkPath p;
+                          SkPathBuilder p;
                           bool ok = self.getSegment(startD, stopD, &p, startWithMoveTo);
                           if (ok) {
-                              return p;
+                              return p.detach();
                           }
                           return SkPath();
                       }))
@@ -2524,32 +2579,14 @@ EMSCRIPTEN_BINDINGS(Skia) {
                                          uint32_t flags,
                                          WASMPointerF32 mPtr,
                                          sk_sp<SkColorSpace> colorSpace) -> sk_sp<SkShader> {
-                        const SkPoint* points = reinterpret_cast<const SkPoint*>(fourFloatsPtr);
-                        const float* positions = reinterpret_cast<const float*>(pPtr);
-                        OptionalMatrix localMatrix(mPtr);
-
-                        if (colorType == SkColorType::kRGBA_F32_SkColorType) {
-                            const SkColor4f* colors = reinterpret_cast<const SkColor4f*>(cPtr);
-                            return SkGradientShader::MakeLinear(points,
-                                                                colors,
-                                                                colorSpace,
-                                                                positions,
-                                                                count,
-                                                                mode,
-                                                                flags,
-                                                                mPtr ? &localMatrix : nullptr);
-                        } else if (colorType == SkColorType::kRGBA_8888_SkColorType) {
-                            const SkColor* colors = reinterpret_cast<const SkColor*>(cPtr);
-                            return SkGradientShader::MakeLinear(points,
-                                                                colors,
-                                                                positions,
-                                                                count,
-                                                                mode,
-                                                                flags,
-                                                                mPtr ? &localMatrix : nullptr);
+                        if (!supported_for_gradients(colorType)) {
+                            SkDebugf("%d is not an accepted colorType\n", colorType);
+                            return nullptr;
                         }
-                        SkDebugf("%d is not an accepted colorType\n", colorType);
-                        return nullptr;
+                        const SkPoint* points = reinterpret_cast<const SkPoint*>(fourFloatsPtr);
+                        GradientBuilder bu(cPtr, colorType, pPtr, count, mode,
+                                           flags, mPtr, std::move(colorSpace));
+                        return SkShaders::LinearGradient(points, bu.grad(), bu.lm());
                     }),
                     allow_raw_pointers())
             .class_function(
@@ -2565,32 +2602,14 @@ EMSCRIPTEN_BINDINGS(Skia) {
                                          uint32_t flags,
                                          WASMPointerF32 mPtr,
                                          sk_sp<SkColorSpace> colorSpace) -> sk_sp<SkShader> {
-                        const float* positions = reinterpret_cast<const float*>(pPtr);
-                        OptionalMatrix localMatrix(mPtr);
-                        if (colorType == SkColorType::kRGBA_F32_SkColorType) {
-                            const SkColor4f* colors = reinterpret_cast<const SkColor4f*>(cPtr);
-                            return SkGradientShader::MakeRadial({cx, cy},
-                                                                radius,
-                                                                colors,
-                                                                colorSpace,
-                                                                positions,
-                                                                count,
-                                                                mode,
-                                                                flags,
-                                                                mPtr ? &localMatrix : nullptr);
-                        } else if (colorType == SkColorType::kRGBA_8888_SkColorType) {
-                            const SkColor* colors = reinterpret_cast<const SkColor*>(cPtr);
-                            return SkGradientShader::MakeRadial({cx, cy},
-                                                                radius,
-                                                                colors,
-                                                                positions,
-                                                                count,
-                                                                mode,
-                                                                flags,
-                                                                mPtr ? &localMatrix : nullptr);
+                        if (!supported_for_gradients(colorType)) {
+                            SkDebugf("%d is not an accepted colorType\n", colorType);
+                            return nullptr;
                         }
-                        SkDebugf("%d is not an accepted colorType\n", colorType);
-                        return nullptr;
+                        GradientBuilder bu(cPtr, colorType, pPtr, count, mode,
+                                           flags, mPtr, std::move(colorSpace));
+
+                        return SkShaders::RadialGradient({cx, cy}, radius, bu.grad(), bu.lm());
                     }),
                     allow_raw_pointers())
             .class_function(
@@ -2607,36 +2626,14 @@ EMSCRIPTEN_BINDINGS(Skia) {
                                          uint32_t flags,
                                          WASMPointerF32 mPtr,
                                          sk_sp<SkColorSpace> colorSpace) -> sk_sp<SkShader> {
-                        const float* positions = reinterpret_cast<const float*>(pPtr);
-                        OptionalMatrix localMatrix(mPtr);
-                        if (colorType == SkColorType::kRGBA_F32_SkColorType) {
-                            const SkColor4f* colors = reinterpret_cast<const SkColor4f*>(cPtr);
-                            return SkGradientShader::MakeSweep(cx,
-                                                               cy,
-                                                               colors,
-                                                               colorSpace,
-                                                               positions,
-                                                               count,
-                                                               mode,
-                                                               startAngle,
-                                                               endAngle,
-                                                               flags,
-                                                               mPtr ? &localMatrix : nullptr);
-                        } else if (colorType == SkColorType::kRGBA_8888_SkColorType) {
-                            const SkColor* colors = reinterpret_cast<const SkColor*>(cPtr);
-                            return SkGradientShader::MakeSweep(cx,
-                                                               cy,
-                                                               colors,
-                                                               positions,
-                                                               count,
-                                                               mode,
-                                                               startAngle,
-                                                               endAngle,
-                                                               flags,
-                                                               mPtr ? &localMatrix : nullptr);
+                        if (!supported_for_gradients(colorType)) {
+                            SkDebugf("%d is not an accepted colorType\n", colorType);
+                            return nullptr;
                         }
-                        SkDebugf("%d is not an accepted colorType\n", colorType);
-                        return nullptr;
+                        GradientBuilder bu(cPtr, colorType, pPtr, count, mode,
+                                           flags, mPtr, std::move(colorSpace));
+                        return SkShaders::SweepGradient({cx, cy}, startAngle, endAngle,
+                                                        bu.grad(), bu.lm());
                     }),
                     allow_raw_pointers())
             .class_function("MakeTurbulence",
@@ -2665,41 +2662,18 @@ EMSCRIPTEN_BINDINGS(Skia) {
                                          uint32_t flags,
                                          WASMPointerF32 mPtr,
                                          sk_sp<SkColorSpace> colorSpace) -> sk_sp<SkShader> {
+                        if (!supported_for_gradients(colorType)) {
+                            SkDebugf("%d is not an accepted colorType\n", colorType);
+                            return nullptr;
+                        }
                         const SkPoint* startAndEnd =
                                 reinterpret_cast<const SkPoint*>(fourFloatsPtr);
-                        const float* positions = reinterpret_cast<const float*>(pPtr);
-                        OptionalMatrix localMatrix(mPtr);
-
-                        if (colorType == SkColorType::kRGBA_F32_SkColorType) {
-                            const SkColor4f* colors = reinterpret_cast<const SkColor4f*>(cPtr);
-                            return SkGradientShader::MakeTwoPointConical(
-                                    startAndEnd[0],
-                                    startRadius,
-                                    startAndEnd[1],
-                                    endRadius,
-                                    colors,
-                                    colorSpace,
-                                    positions,
-                                    count,
-                                    mode,
-                                    flags,
-                                    mPtr ? &localMatrix : nullptr);
-                        } else if (colorType == SkColorType::kRGBA_8888_SkColorType) {
-                            const SkColor* colors = reinterpret_cast<const SkColor*>(cPtr);
-                            return SkGradientShader::MakeTwoPointConical(
-                                    startAndEnd[0],
-                                    startRadius,
-                                    startAndEnd[1],
-                                    endRadius,
-                                    colors,
-                                    positions,
-                                    count,
-                                    mode,
-                                    flags,
-                                    mPtr ? &localMatrix : nullptr);
-                        }
-                        SkDebugf("%d is not an accepted colorType\n", colorType);
-                        return nullptr;
+                        GradientBuilder bu(cPtr, colorType, pPtr, count, mode,
+                                           flags, mPtr, std::move(colorSpace));
+                        return SkShaders::TwoPointConicalGradient(
+                                startAndEnd[0], startRadius,
+                                startAndEnd[1], endRadius,
+                                bu.grad(), bu.lm());
                     }),
                     allow_raw_pointers());
 

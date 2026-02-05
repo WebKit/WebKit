@@ -124,7 +124,8 @@ public:
 private:
     ServiceWorkerContainer(ScriptExecutionContext*, NavigatorBase&);
 
-    bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions& = { }) final;
+    bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
+    using EventTarget::addEventListener;
 
     void scheduleJob(Ref<ServiceWorkerJob>&&);
 

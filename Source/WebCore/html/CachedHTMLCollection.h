@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/CollectionTraversal.h>
+#include <WebCore/CollectionType.h>
 #include <WebCore/Document.h>
 #include <WebCore/HTMLCollection.h>
 #include <WebCore/HTMLElement.h>
@@ -33,10 +34,12 @@
 
 namespace WebCore {
 
-template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
+template <typename HTMLCollectionClass>
 class CachedHTMLCollection : public HTMLCollection {
     WTF_MAKE_TZONE_NON_HEAP_ALLOCATABLE(CachedHTMLCollection);
 public:
+    static constexpr auto traversalType = CollectionTypeTraits<CollectionClassTraits<HTMLCollectionClass>::collectionType>::traversalType;
+
     CachedHTMLCollection(ContainerNode& base, CollectionType);
     
     virtual ~CachedHTMLCollection();
@@ -67,14 +70,14 @@ private:
     mutable CollectionIndexCache<HTMLCollectionClass, Iterator> m_indexCache;
 };
 
-template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
-CachedHTMLCollection<HTMLCollectionClass, traversalType>::CachedHTMLCollection(ContainerNode& base, CollectionType collectionType)
+template <typename HTMLCollectionClass>
+CachedHTMLCollection<HTMLCollectionClass>::CachedHTMLCollection(ContainerNode& base, CollectionType collectionType)
     : HTMLCollection(base, collectionType)
 {
 }
 
-template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
-bool CachedHTMLCollection<HTMLCollectionClass, traversalType>::elementMatches(Element&) const
+template <typename HTMLCollectionClass>
+bool CachedHTMLCollection<HTMLCollectionClass>::elementMatches(Element&) const
 {
     // We call the elementMatches() method directly on the subclass instead for performance.
     ASSERT_NOT_REACHED();

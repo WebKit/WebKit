@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2023, 2024 Igalia S.L.
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -163,9 +164,10 @@ inline Color SVGPaintServerHandling::resolveColorFromStyle(const RenderStyle& st
     auto color = colorResolver.colorResolvingCurrentColor(paint.colorDisregardingType());
     if (style.insideLink() == InsideLink::InsideVisited) {
         // FIXME: This code doesn't support the uri component of the visited link paint, https://bugs.webkit.org/show_bug.cgi?id=70006
-        // FIXME: This code is resolving the visit link paint color with RenderStyle::color(), rather than the more commonly used RenderStyle::visitedLinkColor(). If this is intentional, we should document that, otherwise, we should use RenderStyle::visitedLinkColor().
         if (auto visitedLinkPaintColor = visitedLinkPaint.tryColor()) {
-            if (auto visitedColor = colorResolver.colorResolvingCurrentColor(*visitedLinkPaintColor); visitedColor.isValid())
+            if (visitedLinkPaintColor->isCurrentColor())
+                color = style.visitedLinkColor();
+            else if (auto visitedColor = colorResolver.colorResolvingCurrentColor(*visitedLinkPaintColor); visitedColor.isValid())
                 color = visitedColor.colorWithAlpha(color.alphaAsFloat());
         }
     }

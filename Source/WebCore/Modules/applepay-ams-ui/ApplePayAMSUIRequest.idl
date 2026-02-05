@@ -25,7 +25,6 @@
 
 [
     Conditional=APPLE_PAY_AMS_UI&PAYMENT_REQUEST,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary ApplePayAMSUIRequest {
     required JSON engagementRequest;
 };

@@ -68,11 +68,6 @@ HTMLInputElement& RenderSlider::element() const
     return downcast<HTMLInputElement>(nodeForNonAnonymous());
 }
 
-Ref<HTMLInputElement> RenderSlider::protectedElement() const
-{
-    return downcast<HTMLInputElement>(nodeForNonAnonymous());
-}
-
 void RenderSlider::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
     if (shouldApplySizeOrInlineSizeContainment()) {
@@ -107,7 +102,7 @@ void RenderSlider::computePreferredLogicalWidths()
 
 bool RenderSlider::inDragMode() const
 {
-    return protectedElement()->protectedSliderThumbElement()->active();
+    return protect(element())->protectedSliderThumbElement()->active();
 }
 
 double RenderSlider::valueRatio() const

@@ -42,8 +42,8 @@ private:
 
     // WritableStreamSink
     void write(ScriptExecutionContext&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
-    void close() final;
-    void abort(JSC::JSValue) final;
+    void close(JSDOMGlobalObject&) final;
+    void abort(JSDOMGlobalObject&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
 
     FileSystemWritableFileStreamIdentifier m_identifier;
     const Ref<FileSystemFileHandle> m_source;

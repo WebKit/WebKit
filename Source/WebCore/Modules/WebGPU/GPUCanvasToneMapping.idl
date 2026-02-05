@@ -29,7 +29,6 @@
     EnabledBySetting=WebGPUEnabled,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary GPUCanvasToneMapping {
-  GPUCanvasToneMappingMode mode = "standard";
+    GPUCanvasToneMappingMode mode = "standard";
 };

@@ -4093,7 +4093,7 @@ RegisterID* ShortCircuitReadModifyResolveNode::emitBytecode(BytecodeGenerator& g
 
     generator.emitNode(uncheckedResult.get(), m_right); // Execute side effects first.
 
-    bool threwException = isReadOnly ? generator.emitReadOnlyExceptionIfNeeded(var) : false;
+    bool threwException = isReadOnly && generator.emitReadOnlyExceptionIfNeeded(var);
 
     if (!threwException)
         generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
@@ -5358,7 +5358,7 @@ static void emitProgramNodeBytecode(BytecodeGenerator& generator, ScopeNode& sco
     scopeNode.emitStatementsBytecode(generator, dstRegister.get());
 
     generator.emitDebugHook(DidExecuteProgram, JSTextPosition(scopeNode.lastLine(), scopeNode.startOffset(), scopeNode.lineStartOffset()));
-    generator.emitEnd(dstRegister.get());
+    generator.emitReturn(dstRegister.get());
 }
 
 // ------------------------------ ProgramNode -----------------------------
@@ -5386,7 +5386,7 @@ void EvalNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
     emitStatementsBytecode(generator, dstRegister.get());
 
     generator.emitDebugHook(DidExecuteProgram, JSTextPosition(lastLine(), startOffset(), lineStartOffset()));
-    generator.emitEnd(dstRegister.get());
+    generator.emitReturn(dstRegister.get());
 }
 
 // ------------------------------ FunctionNode -----------------------------

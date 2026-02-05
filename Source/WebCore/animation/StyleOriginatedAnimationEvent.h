@@ -41,7 +41,7 @@ public:
 
 protected:
     StyleOriginatedAnimationEvent(enum EventInterfaceType, const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double, const std::optional<Style::PseudoElementIdentifier>&);
-    StyleOriginatedAnimationEvent(enum EventInterfaceType, const AtomString&, const EventInit&, IsTrusted, double, const String&);
+    StyleOriginatedAnimationEvent(enum EventInterfaceType, const AtomString&, EventInit&&, IsTrusted, double, String&&);
 
 private:
     double m_elapsedTime;

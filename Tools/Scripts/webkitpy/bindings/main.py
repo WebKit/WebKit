@@ -37,6 +37,10 @@ from webkitpy.common.system.executive import ScriptError
 
 
 class BindingsTests:
+    generator_env = dict(os.environ,
+                         ARCHS='arm64',
+                         LLVM_TARGET_TRIPLE_VENDOR='apple',
+                         LLVM_TARGET_TRIPLE_OS_VERSION='macos26.0')
 
     def __init__(self, reset_results, generators, executive, verbose, patterns, json_file_name):
         self.reset_results = reset_results
@@ -63,7 +67,7 @@ class BindingsTests:
 
         exit_code = 0
         try:
-            output = self.executive.run_command(cmd)
+            output = self.executive.run_command(cmd, env=self.generator_env)
             if output:
                 print(output)
         except ScriptError as e:
@@ -110,7 +114,7 @@ class BindingsTests:
 
         exit_code = 0
         try:
-            output = self.executive.run_command(cmd)
+            output = self.executive.run_command(cmd, env=self.generator_env)
             if output:
                 print(output)
         except ScriptError as e:

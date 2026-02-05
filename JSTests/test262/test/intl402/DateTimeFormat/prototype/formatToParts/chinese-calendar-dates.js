@@ -5,7 +5,7 @@
 esid: sec-partitiondatetimepattern
 description: >
   Check that Intl.DateTimeFormat.formatToParts output matches snapshot data
-locale: en-US-u-ca-chinese
+locale: [en-US-u-ca-chinese]
 ---*/
 
 const calendar = "chinese";
@@ -18,8 +18,13 @@ function compareFormatToPartsSnapshot(isoString, expectedComponents) {
   for (let [expectedType, expectedValue] of Object.entries(expectedComponents)) {
     const part = actualComponents.find(({type}) => type === expectedType);
     const contextMessage = `${expectedType} component of ${isoString} formatted in ${calendar}`;
-    assert.notSameValue(part, undefined, contextMessage);
-    assert.sameValue(part.value, `${expectedValue}`, contextMessage);
+    assert.notSameValue(part, undefined, `${contextMessage} is missing`);
+    assert.sameValue(typeof part.value, "string", `${contextMessage} is not a string`);
+    assert(
+      part.value === String(expectedValue) ||
+        part.value === String(expectedValue).padStart(2, "0"),
+      `${contextMessage} has unexpected value`
+    );
   }
 }
 

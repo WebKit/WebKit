@@ -32,7 +32,6 @@
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
 #include "PseudoClassChangeInvalidation.h"
-#include "RenderMenuList.h"
 #include "NodeRenderStyle.h"
 #include "StyleResolver.h"
 #include "TypedElementDescendantIteratorInlines.h"
@@ -63,7 +62,7 @@ auto HTMLOptGroupElement::insertedIntoAncestor(InsertionType insertionType, Cont
     if (!document().settings().htmlEnhancedSelectParsingEnabled() || m_ownerSelect)
         return result;
 
-    if (RefPtr select = HTMLSelectElement::findOwnerSelect(protectedParentNode().get(), HTMLSelectElement::ExcludeOptGroup::Yes)) {
+    if (RefPtr select = HTMLSelectElement::findOwnerSelect(protect(parentNode()).get(), HTMLSelectElement::ExcludeOptGroup::Yes)) {
         m_ownerSelect = select.get();
         select->setRecalcListItems();
     }
@@ -78,7 +77,7 @@ void HTMLOptGroupElement::removedFromAncestor(RemovalType removalType, Container
     if (!document().settings().htmlEnhancedSelectParsingEnabled() || !m_ownerSelect)
         return;
 
-    if (RefPtr select = HTMLSelectElement::findOwnerSelect(protectedParentNode().get(), HTMLSelectElement::ExcludeOptGroup::Yes)) {
+    if (RefPtr select = HTMLSelectElement::findOwnerSelect(protect(parentNode()).get(), HTMLSelectElement::ExcludeOptGroup::Yes)) {
         ASSERT_UNUSED(select, select == m_ownerSelect.get());
         return;
     }
@@ -155,7 +154,7 @@ void HTMLOptGroupElement::recalcSelectOptions()
 
 String HTMLOptGroupElement::groupLabelText() const
 {
-    String itemText = protectedDocument()->displayStringModifiedByEncoding(attributeWithoutSynchronization(labelAttr));
+    String itemText = protect(document())->displayStringModifiedByEncoding(attributeWithoutSynchronization(labelAttr));
     
     // In WinIE, leading and trailing whitespace is ignored in options and optgroups. We match this behavior.
     itemText = itemText.trim(deprecatedIsSpaceOrNewline);

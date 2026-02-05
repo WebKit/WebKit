@@ -320,7 +320,7 @@ Result SerializeFramebufferAttachment(const gl::Context *context,
             MemoryBuffer *pixelsPtr = nullptr;
             ANGLE_TRY(ReadPixelsFromAttachment(context, framebuffer, framebufferAttachment,
                                                scratchBuffer, &pixelsPtr));
-            json->addBlob("Data", pixelsPtr->data(), pixelsPtr->size());
+            json->addBlob("Data", *pixelsPtr);
         }
         else
         {
@@ -729,7 +729,7 @@ Result SerializeBuffer(const gl::Context *context,
             const_cast<gl::Context *>(context),
             scratchBuffer->getInitialized(static_cast<size_t>(buffer->getSize()), &dataPtr, 0));
         ANGLE_TRY(buffer->getSubData(context, 0, dataPtr->size(), dataPtr->data()));
-        json->addBlob("data", dataPtr->data(), dataPtr->size());
+        json->addBlob("data", *dataPtr);
     }
     else
     {
@@ -847,7 +847,7 @@ Result SerializeRenderbuffer(const gl::Context *context,
 
             ANGLE_TRY(renderbuffer->getImplementation()->getRenderbufferImage(
                 context, packState, nullptr, readFormat, readType, pixelsPtr->data()));
-            json->addBlob("Pixels", pixelsPtr->data(), pixelsPtr->size());
+            json->addBlob("Pixels", *pixelsPtr);
         }
     }
     else
@@ -1308,7 +1308,7 @@ Result SerializeTextureData(JsonSerializer *json,
                 ANGLE_TRY(texture->getTexImage(context, packState, nullptr, index.getTarget(),
                                                index.getLevelIndex(), glFormat, glType,
                                                texelsPtr->data()));
-                json->addBlob(label.str(), texelsPtr->data(), texelsPtr->size());
+                json->addBlob(label.str(), *texelsPtr);
             }
         }
         else

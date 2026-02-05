@@ -69,7 +69,7 @@
 #import "WebKitSwiftSoftLink.h"
 
 using WebCore::ExceptionCode;
-using WebCore::IdentityCredentialProtocol;
+using WebCore::DigitalCredentialPresentationProtocol;
 
 #pragma mark - WKDigitalCredentialsPickerDelegate
 
@@ -99,15 +99,15 @@ using WebCore::IdentityCredentialProtocol;
 @interface WKRequestDataResult : NSObject
 
 @property (nonatomic, strong) NSData *requestDataBytes;
-@property (nonatomic, assign) IdentityCredentialProtocol protocol;
+@property (nonatomic, assign) DigitalCredentialPresentationProtocol protocol;
 
-- (instancetype)initWithRequestDataBytes:(NSData *)requestDataBytes protocol:(IdentityCredentialProtocol)protocol;
+- (instancetype)initWithRequestDataBytes:(NSData *)requestDataBytes protocol:(DigitalCredentialPresentationProtocol)protocol;
 
 @end
 
 @implementation WKRequestDataResult
 
-- (instancetype)initWithRequestDataBytes:(NSData *)requestDataBytes protocol:(IdentityCredentialProtocol)protocol
+- (instancetype)initWithRequestDataBytes:(NSData *)requestDataBytes protocol:(DigitalCredentialPresentationProtocol)protocol
 {
     self = [super init];
     if (self) {
@@ -372,7 +372,7 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
         if ([protocol isEqualToString:@"org.iso.mdoc"]) {
             Ref object = JSON::Object::create();
             object->setString("response"_s, responseData);
-            auto responseObject = WebCore::DigitalCredentialsResponseData(IdentityCredentialProtocol::OrgIsoMdoc, object->toJSONString());
+            WebCore::DigitalCredentialsResponseData responseObject { DigitalCredentialPresentationProtocol::OrgIsoMdoc, object->toJSONString() };
             [self completeWith:WTF::move(responseObject)];
         } else {
             LOG(DigitalCredentials, "Unknown protocol response from document provider. Can't convert it %s.", [protocol UTF8String]);

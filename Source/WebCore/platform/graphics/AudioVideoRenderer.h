@@ -29,6 +29,7 @@
 #include <WebCore/MediaPlayerEnums.h>
 #include <WebCore/MediaPromiseTypes.h>
 #include <WebCore/PlatformLayer.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/TrackInfo.h>
 #include <WebCore/VideoPlaybackQualityMetrics.h>
 #include <WebCore/VideoTarget.h>
@@ -86,6 +87,8 @@ public:
     virtual RefPtr<VideoFrame> currentVideoFrame() const = 0;
     virtual void paintCurrentVideoFrameInContext(GraphicsContext&, const FloatRect&) { }
     virtual RefPtr<NativeImage> currentNativeImage() const { return nullptr; }
+    using BitmapImagePromise = NativePromise<Ref<ShareableBitmap>, void>;
+    virtual Ref<BitmapImagePromise> currentBitmapImage() const { return BitmapImagePromise::createAndReject(); }
 #if ENABLE(VIDEO)
     virtual std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() = 0;
 #endif

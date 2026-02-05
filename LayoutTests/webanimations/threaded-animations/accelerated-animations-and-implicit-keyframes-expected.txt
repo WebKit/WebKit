@@ -1,0 +1,6 @@
+
+PASS Two replacing animations with explicit keyframes for the same accelerated property yield only a single accelerated animation.
+PASS An animation with an implicit keyframe for an accelerated property can run accelerated.
+PASS Two animations with implicit keyframes for the same accelerated property prevents acceleration throughout the stack.
+PASS Dynamically adding an animation with an implicit keyframe for an accelerated property with an accelerated animation targeting that same property lower down the stack prevents the stack from being accelerated.
+

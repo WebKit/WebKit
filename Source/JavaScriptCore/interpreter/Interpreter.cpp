@@ -37,7 +37,6 @@
 #include "BuiltinNames.h"
 #include "Bytecodes.h"
 #include "CallLinkInfo.h"
-#include "CatchScope.h"
 #include "CheckpointOSRExitSideState.h"
 #include "CodeBlock.h"
 #include "Debugger.h"
@@ -78,6 +77,7 @@
 #include "StackFrame.h"
 #include "StackVisitor.h"
 #include "StrictEvalActivation.h"
+#include "TopExceptionScope.h"
 #include "VMEntryScopeInlines.h"
 #include "VMInlines.h"
 #include "VMTrapsInlines.h"
@@ -449,7 +449,7 @@ bool Interpreter::isOpcode(Opcode opcode)
         && !HashTraits<Opcode>::isDeletedValue(opcode)
         && opcodeIDTable().contains(opcode);
 #else
-    return opcode >= 0 && opcode <= op_end;
+    return opcode >= 0 && opcode <= op_bitnot;
 #endif
 }
 #endif // ASSERT_ENABLED
@@ -938,7 +938,7 @@ NEVER_INLINE CatchInfo Interpreter::unwind(VM& vm, CallFrame*& callFrame, Except
     std::optional<DeferTerminationForAWhile> deferScope;
     if (!vm.isTerminationException(exception))
         deferScope.emplace(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     ASSERT(reinterpret_cast<void*>(callFrame) != vm.topEntryFrame);
     CodeBlock* codeBlock = callFrame->isNativeCalleeFrame() ? nullptr : callFrame->codeBlock();
@@ -1710,7 +1710,7 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookType debugHo
 {
     VM& vm = this->vm();
     DeferTermination deferScope(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     if (Options::debuggerTriggersBreakpointException()) [[unlikely]] {
         if (debugHookType == DidReachDebuggerStatement)

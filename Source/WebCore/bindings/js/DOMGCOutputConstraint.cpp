@@ -65,10 +65,12 @@ void DOMGCOutputConstraint::executeImplImpl(Visitor& visitor)
     m_lastExecutionVersion = heap.mutatorExecutionVersion();
     
     m_heapData.forEachOutputConstraintSpace(
-        [&] (Subspace& subspace) {
-            auto func = [] (Visitor& visitor, HeapCell* heapCell, HeapCell::Kind) {
+        [&](Subspace& subspace) {
+            auto func = [](Visitor& visitor, HeapCell* heapCell, HeapCell::Kind kind) {
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::DOMGCOutput);
-                JSCell* cell = static_cast<JSCell*>(heapCell);
+                RELEASE_ASSERT(kind == HeapCell::Kind::JSCell || kind == HeapCell::Kind::JSCellWithIndexingHeader);
+                // This cast is guaranteed safe by the RELEASE_ASSERT above.
+                SUPPRESS_MEMORY_UNSAFE_CAST auto* cell = static_cast<JSCell*>(heapCell);
                 cell->methodTable()->visitOutputConstraints(cell, visitor);
             };
             

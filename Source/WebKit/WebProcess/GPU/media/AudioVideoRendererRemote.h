@@ -131,6 +131,7 @@ private:
     RefPtr<WebCore::VideoFrame> currentVideoFrame() const final;
     void paintCurrentVideoFrameInContext(WebCore::GraphicsContext&, const WebCore::FloatRect&) final;
     RefPtr<WebCore::NativeImage> currentNativeImage() const final;
+    Ref<BitmapImagePromise> currentBitmapImage() const final;
     std::optional<WebCore::VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
     PlatformLayer* platformVideoLayer() const final;
 
@@ -204,7 +205,6 @@ private:
     // Logger
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
-    Ref<const Logger> protectedLogger() const { return logger(); }
     ASCIILiteral logClassName() const final { return "AudioVideoRendererRemote"_s; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;

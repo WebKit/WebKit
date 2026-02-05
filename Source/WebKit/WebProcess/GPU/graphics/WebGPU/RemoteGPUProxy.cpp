@@ -33,10 +33,10 @@
 #include "ModelConvertToBackingContext.h"
 #include "RemoteAdapterProxy.h"
 #include "RemoteCompositorIntegrationProxy.h"
-#include "RemoteDDMeshProxy.h"
 #include "RemoteGPU.h"
 #include "RemoteGPUMessages.h"
 #include "RemoteGPUProxyMessages.h"
+#include "RemoteMeshProxy.h"
 #include "RemotePresentationContextProxy.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "WebGPUConvertToBackingContext.h"
@@ -51,12 +51,12 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteGPUProxy);
 
-RefPtr<RemoteGPUProxy> RemoteGPUProxy::create(WebGPU::ConvertToBackingContext& convertToBackingContext, DDModel::ConvertToBackingContext& modelConvertToBackingContext, WebPage& page)
+RefPtr<RemoteGPUProxy> RemoteGPUProxy::create(WebGPU::ConvertToBackingContext& convertToBackingContext, ModelConvertToBackingContext& modelConvertToBackingContext, WebPage& page)
 {
     return RemoteGPUProxy::create(convertToBackingContext, modelConvertToBackingContext, page.ensureProtectedRemoteRenderingBackendProxy(), RunLoop::mainSingleton());
 }
 
-RefPtr<RemoteGPUProxy> RemoteGPUProxy::create(WebGPU::ConvertToBackingContext& convertToBackingContext, DDModel::ConvertToBackingContext& modelConvertToBackingContext, RemoteRenderingBackendProxy& renderingBackend, SerialFunctionDispatcher& dispatcher)
+RefPtr<RemoteGPUProxy> RemoteGPUProxy::create(WebGPU::ConvertToBackingContext& convertToBackingContext, ModelConvertToBackingContext& modelConvertToBackingContext, RemoteRenderingBackendProxy& renderingBackend, SerialFunctionDispatcher& dispatcher)
 {
     constexpr size_t connectionBufferSizeLog2 = 21;
     auto connectionPair = IPC::StreamClientConnection::create(connectionBufferSizeLog2, WebProcess::singleton().gpuProcessTimeoutDuration());
@@ -72,7 +72,7 @@ RefPtr<RemoteGPUProxy> RemoteGPUProxy::create(WebGPU::ConvertToBackingContext& c
 }
 
 
-RemoteGPUProxy::RemoteGPUProxy(WebGPU::ConvertToBackingContext& convertToBackingContext, DDModel::ConvertToBackingContext& modelConvertToBackingContext, SerialFunctionDispatcher& dispatcher)
+RemoteGPUProxy::RemoteGPUProxy(WebGPU::ConvertToBackingContext& convertToBackingContext, ModelConvertToBackingContext& modelConvertToBackingContext, SerialFunctionDispatcher& dispatcher)
     : m_convertToBackingContext(convertToBackingContext)
     , m_modelConvertToBackingContext(modelConvertToBackingContext)
     , m_dispatcher(dispatcher)
@@ -221,10 +221,10 @@ void RemoteGPUProxy::requestAdapter(const WebCore::WebGPU::RequestAdapterOptions
     callback(WebGPU::RemoteAdapterProxy::create(WTF::move(response->name), WTF::move(resultSupportedFeatures), WTF::move(resultSupportedLimits), response->isFallbackAdapter, options.xrCompatible, *this, m_convertToBackingContext, identifier));
 }
 
-RefPtr<WebCore::DDModel::DDMesh> RemoteGPUProxy::createModelBacking(unsigned width, unsigned height, const WebCore::DDModel::DDImageAsset& diffuseTexture, const WebCore::DDModel::DDImageAsset& specularTexture, CompletionHandler<void(Vector<MachSendRight>&&)>&& callback)
+RefPtr<WebCore::Mesh> RemoteGPUProxy::createModelBacking(unsigned width, unsigned height, const WebModel::ImageAsset& diffuseTexture, const WebModel::ImageAsset& specularTexture, CompletionHandler<void(Vector<MachSendRight>&&)>&& callback)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
-    auto identifier = DDModelIdentifier::generate();
+    auto identifier = WebModelIdentifier::generate();
 
     auto sendResult = sendSync(Messages::RemoteGPU::CreateModelBacking(width, height, diffuseTexture, specularTexture, identifier));
     if (!sendResult.succeeded())
@@ -235,7 +235,7 @@ RefPtr<WebCore::DDModel::DDMesh> RemoteGPUProxy::createModelBacking(unsigned wid
 
     UNUSED_PARAM(sendResult);
 
-    auto result = DDModel::RemoteDDMeshProxy::create(root(), m_modelConvertToBackingContext, identifier);
+    auto result = RemoteMeshProxy::create(root(), m_modelConvertToBackingContext, identifier);
     result->setLabel("Placeholder model label"_s);
     return result;
 #else

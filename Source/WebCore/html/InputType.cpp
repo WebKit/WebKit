@@ -108,9 +108,8 @@ template<typename T> static Ref<InputType> createInputType(HTMLInputElement& ele
 }
 
 template<typename DowncastedType>
-ALWAYS_INLINE bool isInvalidInputType(const InputType& baseInputType, const String& value)
+ALWAYS_INLINE bool isInvalidInputType(const DowncastedType& inputType, const String& value)
 {
-    auto& inputType = static_cast<const DowncastedType&>(baseInputType);
     return inputType.typeMismatch()
         || inputType.stepMismatch(value)
         || inputType.rangeUnderflow(value)
@@ -367,49 +366,49 @@ bool InputType::isInvalid(const String& value) const
 {
     switch (m_type) {
     case Type::Button:
-        return isInvalidInputType<ButtonInputType>(*this, value);
+        return isInvalidInputType(uncheckedDowncast<ButtonInputType>(*this), value);
     case Type::Checkbox:
-        return isInvalidInputType<CheckboxInputType>(*this, value);
+        return isInvalidInputType(uncheckedDowncast<CheckboxInputType>(*this), value);
     case Type::Color:
-        return isInvalidInputType<ColorInputType>(*this, value);
+        return isInvalidInputType(uncheckedDowncast<ColorInputType>(*this), value);
     case Type::Date:
-        return isInvalidInputType<DateInputType>(*this, value);
+        return isInvalidInputType(uncheckedDowncast<DateInputType>(*this), value);
     case Type::DateTimeLocal:
-        return isInvalidInputType<DateTimeLocalInputType>(*this, value);
+        return isInvalidInputType(uncheckedDowncast<DateTimeLocalInputType>(*this), value);
     case Type::Email:
-        return isInvalidInputType<EmailInputType>(*this, value);
+        return isInvalidInputType(uncheckedDowncast<EmailInputType>(*this), value);
     case Type::File:
-        return isInvalidInputType<FileInputType>(*this, value);
+        return isInvalidInputType(uncheckedDowncast<FileInputType>(*this), value);
     case Type::Hidden:
-        return isInvalidInputType<HiddenInputType>(*this, value);
+        return isInvalidInputType(uncheckedDowncast<HiddenInputType>(*this), value);
     case Type::Image:
-        return isInvalidInputType<ImageInputType>(*this, value);
+        return isInvalidInputType(uncheckedDowncast<ImageInputType>(*this), value);
     case Type::Month:
-        return isInvalidInputType<MonthInputType>(*this, value);
+        return isInvalidInputType(uncheckedDowncast<MonthInputType>(*this), value);
     case Type::Number:
-        return isInvalidInputType<NumberInputType>(*this, value);
+        return isInvalidInputType(uncheckedDowncast<NumberInputType>(*this), value);
     case Type::Password:
-        return isInvalidInputType<PasswordInputType>(*this, value);
+        return isInvalidInputType(uncheckedDowncast<PasswordInputType>(*this), value);
     case Type::Radio:
-        return isInvalidInputType<RadioInputType>(*this, value);
+        return isInvalidInputType(uncheckedDowncast<RadioInputType>(*this), value);
     case Type::Range:
-        return isInvalidInputType<RangeInputType>(*this, value);
+        return isInvalidInputType(uncheckedDowncast<RangeInputType>(*this), value);
     case Type::Reset:
-        return isInvalidInputType<ResetInputType>(*this, value);
+        return isInvalidInputType(uncheckedDowncast<ResetInputType>(*this), value);
     case Type::Search:
-        return isInvalidInputType<SearchInputType>(*this, value);
+        return isInvalidInputType(uncheckedDowncast<SearchInputType>(*this), value);
     case Type::Submit:
-        return isInvalidInputType<SubmitInputType>(*this, value);
+        return isInvalidInputType(uncheckedDowncast<SubmitInputType>(*this), value);
     case Type::Telephone:
-        return isInvalidInputType<TelephoneInputType>(*this, value);
+        return isInvalidInputType(uncheckedDowncast<TelephoneInputType>(*this), value);
     case Type::Time:
-        return isInvalidInputType<TimeInputType>(*this, value);
+        return isInvalidInputType(uncheckedDowncast<TimeInputType>(*this), value);
     case Type::URL:
-        return isInvalidInputType<URLInputType>(*this, value);
+        return isInvalidInputType(uncheckedDowncast<URLInputType>(*this), value);
     case Type::Week:
-        return isInvalidInputType<WeekInputType>(*this, value);
+        return isInvalidInputType(uncheckedDowncast<WeekInputType>(*this), value);
     case Type::Text:
-        return isInvalidInputType<TextInputType>(*this, value);
+        return isInvalidInputType(uncheckedDowncast<TextInputType>(*this), value);
     }
     ASSERT_NOT_REACHED();
     return false;
@@ -701,7 +700,7 @@ void InputType::handleBlurEvent()
 bool InputType::accessKeyAction(bool)
 {
     ASSERT(element());
-    protectedElement()->focus({ SelectionRestorationMode::SelectAll });
+    protectedElement()->focus({ { }, { }, SelectionRestorationMode::SelectAll });
     return false;
 }
 
@@ -792,7 +791,7 @@ void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFi
         break;
     }
 
-    if (CheckedPtr cache = element->protectedDocument()->existingAXObjectCache())
+    if (CheckedPtr cache = protect(element->document())->existingAXObjectCache())
         cache->valueChanged(*element);
 }
 
@@ -1014,7 +1013,7 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
     if (result.hasException() || !this->element())
         return result;
 
-    if (CheckedPtr cache = element->protectedDocument()->existingAXObjectCache())
+    if (CheckedPtr cache = protect(element->document())->existingAXObjectCache())
         cache->valueChanged(element);
 
     return result;

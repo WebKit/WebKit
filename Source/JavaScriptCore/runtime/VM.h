@@ -181,7 +181,9 @@ class Signature;
 class JSWebAssemblyInstance;
 namespace Wasm {
 class IPIntCallee;
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
 struct DebugState;
+#endif
 }
 #endif
 
@@ -1164,7 +1166,7 @@ public:
     void notifyDebuggerHookInjected() { m_isDebuggerHookInjected = true; }
     bool isDebuggerHookInjected() const { return m_isDebuggerHookInjected; }
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
     JS_EXPORT_PRIVATE Wasm::DebugState* debugState();
 #endif
 
@@ -1299,7 +1301,7 @@ private:
     bool m_executionForbiddenOnTermination { false };
     bool m_isDebuggerHookInjected { false };
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
     std::unique_ptr<Wasm::DebugState> m_debugState;
 #endif
 
@@ -1322,12 +1324,12 @@ private:
     void checkStaticAsserts(); // Not for calling.
 
     friend class Heap;
-    friend class CatchScope; // Friend for exception checking purpose only.
     friend class ExceptionScope; // Friend for exception checking purpose only.
+    friend class TopExceptionScope; // Friend for exception checking purpose only.
+    friend class ThrowScope; // Friend for exception checking purpose only.
     friend class JSDollarVMHelper;
     friend class LLIntOffsetsExtractor;
     friend class SuspendExceptionScope;
-    friend class ThrowScope; // Friend for exception checking purpose only.
     friend class VMTraps;
 };
 
@@ -1366,6 +1368,8 @@ namespace WTF {
 // lifetime threaded from JSC entrance. Until that, we explicitly suppress
 // Ref<VM> lifetime checking by using ThreadSafeRefCountedWithSuppressingSaferCPPChecking.
 template<> struct DefaultRefDerefTraits<JSC::VM> {
+    static constexpr bool isDefaultImplementation = false;
+
     static ALWAYS_INLINE JSC::VM* refIfNotNull(JSC::VM* ptr)
     {
         if (ptr) [[likely]]

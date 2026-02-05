@@ -110,9 +110,9 @@ void WebExtensionContext::fetchCookies(WebsiteDataStore& dataStore, const URL& u
     };
 
     if (url.isValid())
-        dataStore.protectedCookieStore()->cookiesForURL(url.isolatedCopy(), WTF::move(internalCompletionHandler));
+        protect(dataStore.cookieStore())->cookiesForURL(url.isolatedCopy(), WTF::move(internalCompletionHandler));
     else
-        dataStore.protectedCookieStore()->cookies(WTF::move(internalCompletionHandler));
+        protect(dataStore.cookieStore())->cookies(WTF::move(internalCompletionHandler));
 }
 
 void WebExtensionContext::cookiesGet(std::optional<PAL::SessionID> sessionID, const String& name, const URL& url, CompletionHandler<void(Expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
@@ -225,7 +225,7 @@ void WebExtensionContext::cookiesGetAllCookieStores(CompletionHandler<void(Expec
 {
     HashMap<PAL::SessionID, Vector<WebExtensionTabIdentifier>> stores;
 
-    auto defaultSessionID = extensionController()->protectedConfiguration()->defaultWebsiteDataStore().sessionID();
+    auto defaultSessionID = protect(extensionController()->configuration())->defaultWebsiteDataStore().sessionID();
     stores.set(defaultSessionID, Vector<WebExtensionTabIdentifier> { });
 
     for (Ref tab : openTabs()) {

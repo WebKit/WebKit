@@ -22,7 +22,6 @@ window.addEventListener("load", () => {
   window.jsTestIsAsync = true;
   if (!window.internals)
     return;
-  internals.settings.setImageAnimationControlEnabled(true);
   internals.settings.setAllowAnimationControlsOverride(true);
 
   shouldBecomeEqual("internals.isImageAnimating(img)", "true", () => {
@@ -36,7 +35,6 @@ window.addEventListener("load", () => {
       internals.settings.setAllowAnimationControlsOverride(false);
 
       shouldBecomeEqual("internals.isImageAnimating(img)", "true", () => {
-        internals.settings.setImageAnimationControlEnabled(false);
         internals.clearMemoryCache();
         finishJSTest();
       });

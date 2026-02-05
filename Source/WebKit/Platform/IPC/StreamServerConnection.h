@@ -98,7 +98,6 @@ public:
     void stopReceivingMessages(ReceiverName, uint64_t destinationID);
 
     Connection& connection() { return m_connection; }
-    Ref<Connection> protectedConnection() { return m_connection; }
 
     enum DispatchResult : bool {
         HasNoMessages,

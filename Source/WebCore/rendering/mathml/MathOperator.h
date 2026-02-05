@@ -71,13 +71,13 @@ private:
         void initialize();
     };
     enum class StretchType { Unstretched, SizeVariant, GlyphAssembly };
-    enum GlyphPaintTrimming {
-        TrimTop,
-        TrimBottom,
-        TrimTopAndBottom,
-        TrimLeft,
-        TrimRight,
-        TrimLeftAndRight
+    enum class GlyphPaintTrimming : uint8_t {
+        Top,
+        Bottom,
+        TopAndBottom,
+        Left,
+        Right,
+        LeftAndRight
     };
 
     LayoutUnit stretchSize() const;

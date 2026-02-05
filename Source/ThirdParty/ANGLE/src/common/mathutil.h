@@ -46,7 +46,7 @@ inline constexpr bool isPow2(T x)
 }
 
 template <typename T>
-inline int log2(T x)
+inline constexpr int log2(T x)
 {
     static_assert(std::is_integral<T>::value, "log2 must be called on an integer type.");
     int r = 0;
@@ -1505,7 +1505,7 @@ template <typename T>
 constexpr T roundUpPow2(const T value, const T alignment)
 {
     ASSERT(gl::isPow2(alignment));
-    return (value + alignment - 1) & ~(alignment - 1);
+    return (value + (alignment - 1)) & ~(alignment - 1);
 }
 
 template <typename T>

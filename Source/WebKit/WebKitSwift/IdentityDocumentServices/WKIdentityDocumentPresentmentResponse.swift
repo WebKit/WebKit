@@ -25,7 +25,9 @@
 
 import Foundation
 
-@objc @implementation extension WKIdentityDocumentPresentmentResponse {
+@objc
+@implementation
+extension WKIdentityDocumentPresentmentResponse {
     let protocolString: String
     let responseData: Data
 

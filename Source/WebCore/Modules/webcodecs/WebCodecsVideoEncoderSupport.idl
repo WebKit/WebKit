@@ -26,7 +26,6 @@
 [
     Conditional=WEB_CODECS,
     JSGenerateToJSObject,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary WebCodecsVideoEncoderSupport {
   boolean supported;
   WebCodecsVideoEncoderConfig config;

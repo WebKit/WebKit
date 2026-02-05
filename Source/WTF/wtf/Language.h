@@ -68,6 +68,10 @@ WTF_EXPORT_PRIVATE void listenForLanguageChangeNotifications();
 RetainPtr<CFArrayRef> minimizedLanguagesFromLanguages(CFArrayRef);
 #endif
 
+#if PLATFORM(HAIKU)
+WTF_EXPORT_PRIVATE void listenForLanguageChangeNotifications();
+#endif
+
 } // namespace WTF
 
 using WTF::ShouldMinimizeLanguages;

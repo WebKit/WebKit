@@ -44,6 +44,7 @@ GridData::GridData()
     , gridTemplateAreas(ComputedStyle::initialGridTemplateAreas())
     , gridTemplateColumns(ComputedStyle::initialGridTemplateColumns())
     , gridTemplateRows(ComputedStyle::initialGridTemplateRows())
+    , flowTolerance(ComputedStyle::initialFlowTolerance())
 {
 }
 
@@ -55,6 +56,7 @@ inline GridData::GridData(const GridData& o)
     , gridTemplateAreas(o.gridTemplateAreas)
     , gridTemplateColumns(o.gridTemplateColumns)
     , gridTemplateRows(o.gridTemplateRows)
+    , flowTolerance(o.flowTolerance)
 {
 }
 
@@ -65,7 +67,8 @@ bool GridData::operator==(const GridData& o) const
         && gridAutoRows == o.gridAutoRows
         && gridTemplateAreas == o.gridTemplateAreas
         && gridTemplateColumns == o.gridTemplateColumns
-        && gridTemplateRows == o.gridTemplateRows;
+        && gridTemplateRows == o.gridTemplateRows
+        && flowTolerance == o.flowTolerance;
 }
 
 Ref<GridData> GridData::copy() const
@@ -82,6 +85,7 @@ void GridData::dumpDifferences(TextStream& ts, const GridData& other) const
     LOG_IF_DIFFERENT(gridTemplateAreas);
     LOG_IF_DIFFERENT(gridTemplateColumns);
     LOG_IF_DIFFERENT(gridTemplateRows);
+    LOG_IF_DIFFERENT(flowTolerance);
 }
 #endif // !LOG_DISABLED
 

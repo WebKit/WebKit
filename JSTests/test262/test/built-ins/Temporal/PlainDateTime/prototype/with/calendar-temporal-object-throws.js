@@ -16,6 +16,9 @@ const values = [
   Temporal.PlainTime.from("15:19:45"),
   Temporal.PlainYearMonth.from("2022-04"),
   Temporal.ZonedDateTime.from("2022-04-12T15:19:45[UTC]"),
+  Temporal.Now.plainDateTimeISO(),
+  Temporal.Now.plainDateISO(),
+  Temporal.Now.plainTimeISO(),
 ];
 
 for (const value of values) {

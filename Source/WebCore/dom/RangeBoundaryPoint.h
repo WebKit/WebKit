@@ -35,7 +35,6 @@ public:
     explicit RangeBoundaryPoint(Node& container);
 
     Node& container() const;
-    Ref<Node> protectedContainer() const { return container(); }
     unsigned offset() const;
     Node* childBefore() const;
 

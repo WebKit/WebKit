@@ -44,7 +44,7 @@ public:
         WriteCommandType type;
         std::optional<uint64_t> size { };
         std::optional<uint64_t> position { };
-        std::optional<DataVariant> data { RefPtr<JSC::ArrayBufferView> { nullptr } };
+        std::optional<std::optional<DataVariant>> data { };
     };
 
     using ChunkType = Variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, RefPtr<Blob>, String, WriteParams>;

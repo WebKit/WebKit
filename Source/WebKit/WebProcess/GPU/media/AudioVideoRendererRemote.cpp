@@ -35,6 +35,7 @@
 #include "RemoteCDMInstance.h"
 #include "RemoteLegacyCDMFactory.h"
 #include "RemoteLegacyCDMSession.h"
+#include "RemoteVideoFrameObjectHeapProxy.h"
 #include "RemoteVideoFrameProxy.h"
 #include "RemoteVideoFrameProxyProperties.h"
 #include "WebProcess.h"
@@ -45,6 +46,7 @@
 #include <WebCore/MediaSamplesBlock.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformLayer.h>
+#include <WebCore/ShareableBitmap.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/WorkQueue.h>
@@ -279,7 +281,7 @@ RefPtr<VideoFrame> AudioVideoRendererRemote::currentVideoFrame() const
         auto [result] = sendResult.takeReply();
         if (!result)
             return;
-        videoFrame = RemoteVideoFrameProxy::create(gpuProcessConnection->connection(), gpuProcessConnection->protectedVideoFrameObjectHeapProxy(), WTF::move(*result));
+        videoFrame = RemoteVideoFrameProxy::create(gpuProcessConnection->connection(), protect(gpuProcessConnection->videoFrameObjectHeapProxy()), WTF::move(*result));
     });
     return videoFrame;
 }
@@ -302,11 +304,28 @@ RefPtr<NativeImage> AudioVideoRendererRemote::currentNativeImage() const
         return nullptr;
     ASSERT(gpuProcessConnection);
 
-    return gpuProcessConnection->protectedVideoFrameObjectHeapProxy()->getNativeImage(*videoFrame);
+    return protect(gpuProcessConnection->videoFrameObjectHeapProxy())->getNativeImage(*videoFrame);
 #else
     ASSERT_NOT_REACHED();
     return nullptr;
 #endif
+}
+
+Ref<AudioVideoRenderer::BitmapImagePromise> AudioVideoRendererRemote::currentBitmapImage() const
+{
+    RefPtr gpuProcessConnection = m_gpuProcessConnection.get();
+    if (!isGPURunning() || !gpuProcessConnection)
+        return BitmapImagePromise::createAndReject();
+
+    return gpuProcessConnection->connection().sendWithPromisedReply(Messages::RemoteAudioVideoRendererProxyManager::CurrentBitmapImage(m_identifier))->whenSettled(queueSingleton(), [weakThis = ThreadSafeWeakPtr { *this }](auto&& result) -> Ref<BitmapImagePromise> {
+        RefPtr protectedThis = weakThis.get();
+        if (!result || !result.value() || !protectedThis)
+            return BitmapImagePromise::createAndReject();
+
+        if (auto bitmap = ShareableBitmap::create(WTF::move(**result)))
+            return BitmapImagePromise::createAndResolve(bitmap.releaseNonNull());
+        return BitmapImagePromise::createAndReject();
+    });
 }
 
 std::optional<VideoPlaybackQualityMetrics> AudioVideoRendererRemote::videoPlaybackQualityMetrics()

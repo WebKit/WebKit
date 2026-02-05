@@ -137,7 +137,6 @@ private:
     RefPtr<IPC::Connection> serviceWorkerConnection();
     template<typename Message> bool sendToClient(Message&&);
 
-    RefPtr<NetworkResourceLoader> protectedLoader() const;
     void sendNavigationPreloadUpdate();
 
     RefPtr<ServiceWorkerNavigationPreloader> protectedPreloader();

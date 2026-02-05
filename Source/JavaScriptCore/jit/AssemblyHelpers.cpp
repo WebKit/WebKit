@@ -119,6 +119,7 @@ void AssemblyHelpers::jitAssertIsInt32(GPRReg gpr)
     if (!Options::useJITAsserts())
         return;
 #if CPU(X86_64) || CPU(ARM64)
+    JIT_COMMENT(*this, "ASSERT is unboxed int32");
     Jump checkInt32 = branch64(BelowOrEqual, gpr, TrustedImm64(static_cast<uintptr_t>(0xFFFFFFFFu)));
     abortWithReason(AHIsNotInt32);
     checkInt32.link(this);
@@ -131,6 +132,7 @@ void AssemblyHelpers::jitAssertIsJSInt32(GPRReg gpr)
 {
     if (!Options::useJITAsserts())
         return;
+    JIT_COMMENT(*this, "ASSERT is JS boxed int32");
     Jump checkJSInt32 = branch64(AboveOrEqual, gpr, GPRInfo::numberTagRegister);
     abortWithReason(AHIsNotJSInt32);
     checkJSInt32.link(this);
@@ -140,6 +142,7 @@ void AssemblyHelpers::jitAssertIsJSNumber(GPRReg gpr)
 {
     if (!Options::useJITAsserts())
         return;
+    JIT_COMMENT(*this, "ASSERT is JS boxed number");
     Jump checkJSNumber = branchTest64(MacroAssembler::NonZero, gpr, GPRInfo::numberTagRegister);
     abortWithReason(AHIsNotJSNumber);
     checkJSNumber.link(this);
@@ -149,6 +152,7 @@ void AssemblyHelpers::jitAssertIsJSDouble(GPRReg gpr)
 {
     if (!Options::useJITAsserts())
         return;
+    JIT_COMMENT(*this, "ASSERT is JS boxed double (non-int32 number)");
     Jump checkJSInt32 = branch64(AboveOrEqual, gpr, GPRInfo::numberTagRegister);
     Jump checkJSNumber = branchTest64(MacroAssembler::NonZero, gpr, GPRInfo::numberTagRegister);
     checkJSInt32.link(this);
@@ -160,6 +164,7 @@ void AssemblyHelpers::jitAssertIsCell(GPRReg gpr)
 {
     if (!Options::useJITAsserts())
         return;
+    JIT_COMMENT(*this, "ASSERT is JSCell");
     Jump checkCell = branchTest64(MacroAssembler::Zero, gpr, GPRInfo::notCellMaskRegister);
     abortWithReason(AHIsNotCell);
     checkCell.link(this);

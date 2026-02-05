@@ -39,9 +39,14 @@ RemoteWorkerFrameLoaderClient::RemoteWorkerFrameLoaderClient(WebCore::FrameLoade
     RELEASE_LOG(Worker, "RemoteWorkerFrameLoaderClient::RemoteWorkerFrameLoaderClient webPageProxyID %" PRIu64 ", pageID %" PRIu64, webPageProxyID.toUInt64(), pageID.toUInt64());
 }
 
+Ref<WebCore::DocumentLoader> RemoteWorkerFrameLoaderClient::createDocumentLoader(WebCore::ResourceRequest&& request, WebCore::SubstituteData&& substituteData, WebCore::ResourceRequest&& originalRequest)
+{
+    return WebCore::DocumentLoader::create(WTF::move(request), WTF::move(substituteData), WTF::move(originalRequest));
+}
+
 Ref<WebCore::DocumentLoader> RemoteWorkerFrameLoaderClient::createDocumentLoader(WebCore::ResourceRequest&& request, WebCore::SubstituteData&& substituteData)
 {
-    return WebCore::DocumentLoader::create(WTF::move(request), WTF::move(substituteData));
+    return createDocumentLoader(WTF::move(request), WTF::move(substituteData), { });
 }
 
 } // namespace WebKit

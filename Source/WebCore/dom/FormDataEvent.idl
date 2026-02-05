@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#formdataevent
 [
     Exposed=Window
 ] interface FormDataEvent : Event {
@@ -31,8 +32,7 @@
     readonly attribute DOMFormData formData;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary FormDataEventInit : EventInit {
+// https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#formdataeventinit
+dictionary FormDataEventInit : EventInit {
     required DOMFormData formData;
 };

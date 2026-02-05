@@ -200,7 +200,7 @@ void EventHandler::focusDocumentView()
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)
 {
     // Figure out which view to send the event to.
-    auto* target = event.targetNode() ? dynamicDowncast<RenderWidget>(event.targetNode()->renderer()) : nullptr;
+    RefPtr target = event.targetNode() ? dynamicDowncast<RenderWidget>(event.targetNode()->renderer()) : nullptr;
     if (!target)
         return false;
 
@@ -343,7 +343,7 @@ RetainPtr<NSView> EventHandler::mouseDownViewIfStillGood()
     if (!mouseDownView) {
         return nil;
     }
-    auto* topFrameView = m_frame->view();
+    RefPtr topFrameView = m_frame->view();
     RetainPtr<NSView> topView = topFrameView ? topFrameView->platformWidget() : nil;
     if (!topView || !findViewInSubviews(topView.get(), mouseDownView.get())) {
         m_mouseDownView = nil;
@@ -524,7 +524,7 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, 
 
 void EventHandler::mouseDown(NSEvent *event, NSEvent *correspondingPressureEvent)
 {
-    auto* v = m_frame->view();
+    RefPtr v = m_frame->view();
     if (!v || m_sendingEventToSubview)
         return;
 
@@ -541,7 +541,7 @@ void EventHandler::mouseDown(NSEvent *event, NSEvent *correspondingPressureEvent
 
 void EventHandler::mouseDragged(NSEvent *event, NSEvent *correspondingPressureEvent)
 {
-    auto* v = m_frame->view();
+    RefPtr v = m_frame->view();
     if (!v || m_sendingEventToSubview)
         return;
 
@@ -555,7 +555,7 @@ void EventHandler::mouseDragged(NSEvent *event, NSEvent *correspondingPressureEv
 
 void EventHandler::mouseUp(NSEvent *event, NSEvent *correspondingPressureEvent)
 {
-    auto* v = m_frame->view();
+    RefPtr v = m_frame->view();
     if (!v || m_sendingEventToSubview)
         return;
 
@@ -592,7 +592,7 @@ void EventHandler::mouseUp(NSEvent *event, NSEvent *correspondingPressureEvent)
  */
 void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
 {
-    auto* view = m_frame->view();
+    RefPtr view = m_frame->view();
     if (!view)
         return;
 
@@ -688,7 +688,7 @@ void EventHandler::passMouseMovedEventToScrollbars(NSEvent *event, NSEvent* corr
 
 static bool frameHasPlatformWidget(const LocalFrame& frame)
 {
-    if (auto* frameView = frame.view()) {
+    if (RefPtr frameView = frame.view()) {
         if (frameView->platformWidget())
             return true;
     }
@@ -782,7 +782,7 @@ static ContainerNode* findEnclosingScrollableContainer(ContainerNode* node, cons
 {
     // Find the first node with a valid scrollable area starting with the current
     // node and traversing its parents (or shadow hosts).
-    for (auto* candidate = node; candidate; candidate = candidate->parentInComposedTree()) {
+    for (SUPPRESS_UNCOUNTED_LOCAL auto* candidate = node; candidate; candidate = candidate->parentInComposedTree()) {
         if (is<HTMLIFrameElement>(*candidate))
             continue;
 
@@ -792,14 +792,14 @@ static ContainerNode* findEnclosingScrollableContainer(ContainerNode* node, cons
         RenderBox* box = candidate->renderBox();
         if (!box || !box->canBeScrolledAndHasScrollableArea())
             continue;
-        
+
         auto* scrollableArea = scrollableAreaForBox(*box);
         if (!scrollableArea)
             continue;
-        
+
         if (scrollableArea->shouldBlockScrollPropagation(wheelEvent.delta()))
             return candidate;
-        
+
         if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin || wheelEvent.phase() == PlatformWheelEventPhase::Cancelled)
             return candidate;
 
@@ -817,7 +817,7 @@ static WeakPtr<ScrollableArea> scrollableAreaForEventTarget(Element* eventTarget
     
 static bool eventTargetIsPlatformWidget(Element* eventTarget)
 {
-    auto* widget = EventHandler::widgetForEventTarget(eventTarget);
+    RefPtr widget = EventHandler::widgetForEventTarget(eventTarget);
     return widget && widget->platformWidget();
 }
 
@@ -840,14 +840,14 @@ void EventHandler::determineWheelEventTarget(const PlatformWheelEvent& wheelEven
     if (!page)
         return;
 
-    auto* view = m_frame->view();
+    RefPtr view = m_frame->view();
     if (!view)
         return;
 
     if (eventTargetIsPlatformWidget(wheelEventTarget.get()))
         scrollableArea = scrollableAreaForEventTarget(wheelEventTarget.get());
     else {
-        auto* scrollableContainer = findEnclosingScrollableContainer(wheelEventTarget.get(), wheelEvent);
+        RefPtr scrollableContainer = findEnclosingScrollableContainer(wheelEventTarget.get(), wheelEvent);
         if (scrollableContainer)
             scrollableArea = scrollableAreaForContainerNode(*scrollableContainer);
         else

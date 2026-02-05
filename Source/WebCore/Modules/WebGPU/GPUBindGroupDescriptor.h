@@ -36,7 +36,6 @@ namespace WebCore {
 struct GPUBindGroupDescriptor : public GPUObjectDescriptorBase {
     WebGPU::BindGroupDescriptor convertToBacking() const
     {
-        ASSERT(layout);
         return {
             { label },
             layout->backing(),
@@ -72,7 +71,7 @@ struct GPUBindGroupDescriptor : public GPUObjectDescriptorBase {
         return matched ? result : nullptr;
     }
 
-    WeakPtr<GPUBindGroupLayout> layout;
+    Ref<GPUBindGroupLayout> layout;
     Vector<GPUBindGroupEntry> entries;
 };
 

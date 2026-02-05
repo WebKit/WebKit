@@ -113,6 +113,11 @@ void RiceBackendProxy::finalizeStream(unsigned streamId)
     MessageSender::send(Messages::RiceBackend::FinalizeStream { streamId });
 }
 
+void RiceBackendProxy::setSocketTypeOfService(unsigned streamId, unsigned value)
+{
+    MessageSender::send(Messages::RiceBackend::SetSocketTypeOfService { streamId, value });
+}
+
 } // namespace WebKit
 
 #endif // USE(LIBRICE)

@@ -43,19 +43,6 @@
             100% { transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); }
         }
     </style>
-    <script>
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
-
-        function dumpLayers()
-        {
-            var layersResult = document.getElementById('layers');
-            if (window.testRunner)
-                layersResult.innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
-        }
-    </script>
 </head>
 <body>
 
@@ -67,15 +54,21 @@
 
 <pre id="layers">Layer tree goes here in DRT</pre>
 
+<script src="../../webanimations/threaded-animations/threaded-animations-utils.js"></script>
 <script>
-    let animator = document.getElementById('target');
-    animator.addEventListener('animationstart', () => {
-        requestAnimationFrame(() => {
-            dumpLayers();
-            if (window.testRunner)
-                testRunner.notifyDone();
-        });
-    });
+
+(async function () {
+    window.testRunner?.dumpAsText();
+    window.testRunner?.waitUntilDone();
+
+    const animation = document.getElementById('target').getAnimations()[0];
+    await animationAcceleration(animation);
+
+    document.getElementById('layers').innerText = window.internals?.layerTreeAsText(document, window.internals?.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+
+    window.testRunner?.notifyDone();
+})();
+
 </script>
 </body>
 </html>

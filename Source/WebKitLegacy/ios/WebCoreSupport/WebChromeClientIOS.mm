@@ -298,16 +298,6 @@ void WebChromeClientIOS::elementDidBlur(WebCore::Element& element)
         [[webView() _UIKitDelegateForwarder] webView:webView() elementDidBlurNode:kit(&element)];
 }
 
-bool WebChromeClientIOS::selectItemWritingDirectionIsNatural()
-{
-    return false;
-}
-
-bool WebChromeClientIOS::selectItemAlignmentFollowsMenuWritingDirection()
-{
-    return true;
-}
-
 RefPtr<WebCore::PopupMenu> WebChromeClientIOS::createPopupMenu(WebCore::PopupMenuClient& client) const
 {
     return adoptRef(new PopupMenuIOS(&client));

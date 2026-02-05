@@ -58,7 +58,10 @@ struct DragState;
 struct PromisedAttachmentInfo;
 struct RemoteUserInputEventData;
 
-class DragController {
+enum class DragEventHandled : bool;
+using DragEventTargetData = Variant<DragEventHandled, FrameIdentifier>;
+
+class DragController : public CanMakeSingleThreadWeakPtr<DragController> {
     WTF_MAKE_TZONE_ALLOCATED(DragController);
     WTF_MAKE_NONCOPYABLE(DragController);
 public:
@@ -69,7 +72,7 @@ public:
 
     WEBCORE_EXPORT Variant<std::optional<DragOperation>, RemoteUserInputEventData> dragEnteredOrUpdated(LocalFrame&, DragData&&);
     WEBCORE_EXPORT void dragExited(LocalFrame&, DragData&&);
-    WEBCORE_EXPORT bool performDragOperation(DragData&&);
+    WEBCORE_EXPORT DragEventTargetData performDragOperation(DragData&&, LocalFrame&);
     WEBCORE_EXPORT void dragCancelled();
 
     bool mouseIsOverFileInput() const { return m_fileInputElementUnderMouse; }

@@ -34,6 +34,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class WKFrameInfo;
+@class WKNavigation;
 
 /*! @enum WKNavigationType
  @abstract The type of action triggering a navigation.
@@ -84,6 +85,11 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 /*! @abstract Whether or not the navigation is a redirect from a content rule list.
  */
 @property (nonatomic, readonly) BOOL isContentRuleListRedirect WK_API_AVAILABLE(macos(16.0), ios(19.0), visionos(3.0));
+
+/*! @abstract The most recent main frame navigation that took place that encompasses this navigation action.
+@discussion If this WKNavigationAction represents a request to open a new WKWebView or it represents a frame load that is not in the main frame of an existing WKWebView, then mainFrameNavigation will be nil.
+ */
+@property (nonatomic, readonly, nullable) WKNavigation *mainFrameNavigation WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 #if TARGET_OS_IPHONE
 

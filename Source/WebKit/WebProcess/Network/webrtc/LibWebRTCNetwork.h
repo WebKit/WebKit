@@ -54,7 +54,6 @@ public:
     void setAsActive() final;
 
     WebRTCMonitor& monitor() { return m_webNetworkMonitor; }
-    Ref<WebRTCMonitor> protectedMonitor() { return m_webNetworkMonitor; }
     LibWebRTCSocketFactory& socketFactory() { return m_socketFactory; }
     CheckedRef<LibWebRTCSocketFactory> checkedSocketFactory() { return m_socketFactory; }
 

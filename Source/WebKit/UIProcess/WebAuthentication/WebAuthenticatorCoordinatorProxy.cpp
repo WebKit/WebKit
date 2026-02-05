@@ -58,7 +58,7 @@ Ref<WebAuthenticatorCoordinatorProxy> WebAuthenticatorCoordinatorProxy::create(W
 WebAuthenticatorCoordinatorProxy::WebAuthenticatorCoordinatorProxy(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
 {
-    webPageProxy.protectedLegacyMainFrameProcess()->addMessageReceiver(Messages::WebAuthenticatorCoordinatorProxy::messageReceiverName(), webPageProxy.webPageIDInMainFrameProcess(), *this);
+    protect(webPageProxy.legacyMainFrameProcess())->addMessageReceiver(Messages::WebAuthenticatorCoordinatorProxy::messageReceiverName(), webPageProxy.webPageIDInMainFrameProcess(), *this);
 }
 
 WebAuthenticatorCoordinatorProxy::~WebAuthenticatorCoordinatorProxy()
@@ -67,13 +67,13 @@ WebAuthenticatorCoordinatorProxy::~WebAuthenticatorCoordinatorProxy()
     cancel([]() { });
 #endif // HAVE(UNIFIED_ASC_AUTH_UI)
     if (RefPtr webPageProxy = m_webPageProxy.get())
-        webPageProxy->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::WebAuthenticatorCoordinatorProxy::messageReceiverName(), webPageProxy->webPageIDInMainFrameProcess());
+        protect(webPageProxy->legacyMainFrameProcess())->removeMessageReceiver(Messages::WebAuthenticatorCoordinatorProxy::messageReceiverName(), webPageProxy->webPageIDInMainFrameProcess());
 }
 
 std::optional<SharedPreferencesForWebProcess> WebAuthenticatorCoordinatorProxy::sharedPreferencesForWebProcess() const
 {
     RefPtr webPageProxy = m_webPageProxy.get();
-    return webPageProxy ? webPageProxy->protectedLegacyMainFrameProcess()->sharedPreferencesForWebProcess() : std::nullopt;
+    return webPageProxy ? protect(webPageProxy->legacyMainFrameProcess())->sharedPreferencesForWebProcess() : std::nullopt;
 }
 
 void WebAuthenticatorCoordinatorProxy::makeCredential(FrameIdentifier frameId, FrameInfoData&& frameInfo, PublicKeyCredentialCreationOptions&& options, MediationRequirement mediation, RequestCompletionHandler&& handler)

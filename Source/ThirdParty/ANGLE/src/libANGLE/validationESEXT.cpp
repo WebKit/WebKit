@@ -1889,6 +1889,7 @@ bool ValidatePLSInternalformat(const Context *context,
         case GL_RGBA8I:
         case GL_RGBA8UI:
         case GL_R32F:
+        case GL_R32I:
         case GL_R32UI:
             return true;
         default:
@@ -2028,6 +2029,13 @@ bool ValidateFramebufferMemorylessPixelLocalStorageANGLE(const Context *context,
         {
             return false;
         }
+
+        // INVALID_OPERATION is generated if <internalformat> is not NONE and not color-renderable.
+        if (!context->getTextureCaps().get(internalformat).textureAttachment)
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kFormatNotRenderable);
+            return false;
+        }
     }
 
     return true;
@@ -2107,6 +2115,14 @@ bool ValidateFramebufferTexturePixelLocalStorageANGLE(const Context *context,
         GLenum internalformat = tex->getState().getBaseLevelDesc().format.info->internalFormat;
         if (!ValidatePLSInternalformat(context, entryPoint, internalformat))
         {
+            return false;
+        }
+
+        // INVALID_OPERATION is generated if <backingtexture> is nonzero and its internalformat
+        // is not color-renderable.
+        if (!context->getTextureCaps().get(internalformat).textureAttachment)
+        {
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kFormatNotRenderable);
             return false;
         }
     }
@@ -3771,7 +3787,7 @@ bool ValidateGetPerfMonitorCounterInfoAMD(const Context *context,
                                           GLenum pname,
                                           const void *data)
 {
-    const angle::PerfMonitorCounterGroups &groups = context->getPerfMonitorCounterGroups();
+    const angle::PerfMonitorCounterGroupsInfo &groups = context->getPerfMonitorCounterGroups();
 
     if (group >= groups.size())
     {
@@ -3807,7 +3823,7 @@ bool ValidateGetPerfMonitorCounterStringAMD(const Context *context,
                                             const GLsizei *length,
                                             const GLchar *counterString)
 {
-    const angle::PerfMonitorCounterGroups &groups = context->getPerfMonitorCounterGroups();
+    const angle::PerfMonitorCounterGroupsInfo &groups = context->getPerfMonitorCounterGroups();
 
     if (group >= groups.size())
     {
@@ -3832,7 +3848,7 @@ bool ValidateGetPerfMonitorCountersAMD(const Context *context,
                                        GLsizei counterSize,
                                        const GLuint *counters)
 {
-    const angle::PerfMonitorCounterGroups &groups = context->getPerfMonitorCounterGroups();
+    const angle::PerfMonitorCounterGroupsInfo &groups = context->getPerfMonitorCounterGroups();
 
     if (group >= groups.size())
     {
@@ -3850,7 +3866,7 @@ bool ValidateGetPerfMonitorGroupStringAMD(const Context *context,
                                           const GLsizei *length,
                                           const GLchar *groupString)
 {
-    const angle::PerfMonitorCounterGroups &groups = context->getPerfMonitorCounterGroups();
+    const angle::PerfMonitorCounterGroupsInfo &groups = context->getPerfMonitorCounterGroups();
 
     if (group >= groups.size())
     {

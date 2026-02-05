@@ -1,0 +1,24 @@
+<script type="speculationrules">
+    {"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/*"}]},"eagerness":"conservative"}]}
+</script>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    function clickElement(id) {
+        if (window.eventSender) {
+            let r = document.getElementById(id).getBoundingClientRect();
+            window.eventSender.mouseMoveTo((r.right + r.left) / 2, (r.top + r.bottom) / 2);
+            window.eventSender.mouseDown();
+            window.eventSender.mouseUp();
+        }
+    }
+    onload = () => {
+        clickElement('firstanchor');
+        clickElement('secondanchor');
+        setTimeout(()=>{ testRunner.notifyDone() }, 50);
+    }
+</script>
+<a id="firstanchor" href="resources/pass.html" onclick="event.preventDefault();">Clicking this prefetches something.</a><br/>
+<a id="secondanchor" >Clicking this link without an href therafter should not crash.</a>

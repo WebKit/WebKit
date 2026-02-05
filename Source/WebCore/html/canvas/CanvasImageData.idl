@@ -26,9 +26,9 @@
 // https://html.spec.whatwg.org/multipage/canvas.html#canvasimagedata
 interface mixin CanvasImageData {
     // pixel manipulation
-    ImageData createImageData([EnforceRange] long sw, [EnforceRange] long sh, optional ImageDataSettings settings);
+    ImageData createImageData([EnforceRange] long sw, [EnforceRange] long sh, optional ImageDataSettings settings = {});
     ImageData createImageData(ImageData imagedata);
-    ImageData getImageData([EnforceRange] long sx, [EnforceRange] long sy, [EnforceRange] long sw, [EnforceRange] long sh, optional ImageDataSettings settings);
+    ImageData getImageData([EnforceRange] long sx, [EnforceRange] long sy, [EnforceRange] long sw, [EnforceRange] long sh, optional ImageDataSettings settings = {});
     undefined putImageData(ImageData imagedata, [EnforceRange] long dx, [EnforceRange] long dy);
     undefined putImageData(ImageData imagedata, [EnforceRange] long dx, [EnforceRange] long dy, [EnforceRange] long dirtyX, [EnforceRange] long dirtyY, [EnforceRange] long dirtyWidth, [EnforceRange] long dirtyHeight);
 };

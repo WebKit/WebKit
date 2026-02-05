@@ -35,8 +35,11 @@
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
+
+class MediaPlaybackTarget;
 
 class MediaPlayerPrivateWirelessPlayback final
     : public MediaPlayerPrivateInterface
@@ -59,8 +62,14 @@ private:
 
     explicit MediaPlayerPrivateWirelessPlayback(MediaPlayer&);
 
+    void updateURLIfNeeded();
+
+    void setNetworkState(MediaPlayer::NetworkState);
+    void setReadyState(MediaPlayer::ReadyState);
+
     // MediaPlayerPrivateInterface
     constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::WirelessPlayback; }
+    void load(const String&) final;
 #if ENABLE(MEDIA_SOURCE)
     void load(const URL&, const LoadOptions&, MediaSourcePrivateClient&) final { }
 #endif
@@ -77,12 +86,24 @@ private:
     void seekToTarget(const SeekTarget&) final { }
     bool seeking() const final { return false; }
     bool paused() const final { return true; }
-    MediaPlayer::NetworkState networkState() const final { return MediaPlayer::NetworkState::Empty; }
-    MediaPlayer::ReadyState readyState() const final { return MediaPlayer::ReadyState::HaveNothing; }
+    MediaPlayer::NetworkState networkState() const final { return m_networkState; }
+    MediaPlayer::ReadyState readyState() const final { return m_readyState; }
     const PlatformTimeRanges& buffered() const final { return m_buffered; }
     bool didLoadingProgress() const final { return false; }
     void paint(GraphicsContext&, const FloatRect&) final { }
     DestinationColorSpace colorSpace() final { return DestinationColorSpace::SRGB(); }
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    static OptionSet<MediaPlaybackTargetType> playbackTargetTypes();
+    String wirelessPlaybackTargetName() const final;
+    MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const final;
+    bool wirelessVideoPlaybackDisabled() const final { return !m_allowsWirelessVideoPlayback; }
+    void setWirelessVideoPlaybackDisabled(bool disabled) final { m_allowsWirelessVideoPlayback = !disabled; }
+    OptionSet<MediaPlaybackTargetType> supportedPlaybackTargetTypes() const final;
+    bool isCurrentPlaybackTargetWireless() const final;
+    void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) final;
+    void setShouldPlayToPlaybackTarget(bool) final;
+#endif
 
 #if !RELEASE_LOG_DISABLED
     // LoggerHelper
@@ -94,6 +115,14 @@ private:
 
     ThreadSafeWeakPtr<MediaPlayer> m_player;
     PlatformTimeRanges m_buffered;
+    URL m_url;
+    MediaPlayer::NetworkState m_networkState { MediaPlayer::NetworkState::Empty };
+    MediaPlayer::ReadyState m_readyState { MediaPlayer::ReadyState::HaveNothing };
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    bool m_allowsWirelessVideoPlayback { true };
+    bool m_shouldPlayToTarget { false };
+    RefPtr<MediaPlaybackTarget> m_playbackTarget;
+#endif
 #if !RELEASE_LOG_DISABLED
     const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;

@@ -35,6 +35,7 @@
 #include "HTMLEmbedElement.h"
 #include "HTMLHeadElement.h"
 #include "HTMLHtmlElement.h"
+#include "HTMLMetaElement.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "LocalFrame.h"
@@ -110,7 +111,15 @@ void PluginDocumentParser::createDocumentStructure()
     headElement->appendChild(styleElement);
     rootElement->appendChild(headElement);
 
-    if (RefPtr frame = document->frame())
+    RefPtr frame = document->frame();
+    if (frame && frame->isMainFrame()) {
+        Ref metaElement = HTMLMetaElement::create(document);
+        metaElement->setAttributeWithoutSynchronization(nameAttr, "color-scheme"_s);
+        metaElement->setAttributeWithoutSynchronization(contentAttr, "light dark"_s);
+        headElement->appendChild(metaElement);
+    }
+
+    if (frame)
         frame->injectUserScripts(UserScriptInjectionTime::DocumentStart);
 
     Ref body = HTMLBodyElement::create(document);
@@ -150,7 +159,7 @@ void PluginDocumentParser::appendBytes(DocumentWriter&, std::span<const uint8_t>
     // recurse too many times and delay its post-layout tasks (such as creating
     // the widget). Here we kick off the pending post-layout tasks so that we
     // can synchronously redirect data to the plugin.
-    frame->protectedView()->flushAnyPendingPostLayoutTasks();
+    protect(frame->view())->flushAnyPendingPostLayoutTasks();
 
     if (CheckedPtr renderer = Ref { *m_embedElement }->renderWidget()) {
         if (RefPtr widget = renderer->widget()) {

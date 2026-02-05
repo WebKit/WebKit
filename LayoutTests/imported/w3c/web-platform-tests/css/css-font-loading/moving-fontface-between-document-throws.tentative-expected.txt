@@ -1,5 +1,0 @@
-Hello
-
-
-PASS Adding a FontFace to the FontFaceSet in a different document throws
-

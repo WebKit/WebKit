@@ -60,7 +60,7 @@ void WebSearchPopupMenu::saveRecentSearches(const AtomString& name, const Vector
     if (!page)
         return;
 
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebPageProxy::SaveRecentSearches(name, searchItems), page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::SaveRecentSearches(name, searchItems), page->identifier());
 }
 
 void WebSearchPopupMenu::loadRecentSearches(const AtomString& name, Vector<RecentSearch>& resultItems)
@@ -72,7 +72,7 @@ void WebSearchPopupMenu::loadRecentSearches(const AtomString& name, Vector<Recen
     if (!page)
         return;
 
-    auto sendResult = WebProcess::singleton().protectedParentProcessConnection()->sendSync(Messages::WebPageProxy::LoadRecentSearches(name), page->identifier());
+    auto sendResult = protect(WebProcess::singleton().parentProcessConnection())->sendSync(Messages::WebPageProxy::LoadRecentSearches(name), page->identifier());
     if (sendResult.succeeded())
         std::tie(resultItems) = sendResult.takeReply();
 }

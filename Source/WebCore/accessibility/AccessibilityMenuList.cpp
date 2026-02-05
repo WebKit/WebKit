@@ -32,19 +32,19 @@
 #include "AXObjectCache.h"
 #include "AccessibilityMenuListPopup.h"
 #include "FrameDestructionObserverInlines.h"
-#include "RenderMenuList.h"
+#include "HTMLSelectElement.h"
 #include "RenderObjectDocument.h"
 #include <wtf/Scope.h>
 
 namespace WebCore {
 
-AccessibilityMenuList::AccessibilityMenuList(AXID axID, RenderMenuList& renderer, AXObjectCache& cache)
+AccessibilityMenuList::AccessibilityMenuList(AXID axID, RenderObject& renderer, AXObjectCache& cache)
     : AccessibilityRenderObject(axID, renderer, cache)
     , m_popup(downcast<AccessibilityMenuListPopup>(*cache.create(AccessibilityRole::MenuListPopup)))
 {
 }
 
-Ref<AccessibilityMenuList> AccessibilityMenuList::create(AXID axID, RenderMenuList& renderer, AXObjectCache& cache)
+Ref<AccessibilityMenuList> AccessibilityMenuList::create(AXID axID, RenderObject& renderer, AXObjectCache& cache)
 {
     Ref menuList = adoptRef(*new AccessibilityMenuList(axID, renderer, cache));
     // We have to do this setup here and not in the constructor to avoid an
@@ -61,17 +61,17 @@ bool AccessibilityMenuList::press()
         return false;
 
 #if !PLATFORM(IOS_FAMILY)
-    RefPtr element = this->element();
+    RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(element());
     auto notification = AXNotification::PressDidFail;
-    if (CheckedPtr menuList = dynamicDowncast<RenderMenuList>(renderer()); menuList && element && !element->isDisabledFormControl()) {
-        if (menuList->popupIsVisible())
-            menuList->hidePopup();
+    if (selectElement && !selectElement->isDisabledFormControl()) {
+        if (selectElement->popupIsVisible())
+            selectElement->hidePopup();
         else
-            menuList->showPopup();
+            selectElement->showPopup();
         notification = AXNotification::PressDidSucceed;
     }
     if (CheckedPtr cache = axObjectCache())
-        cache->postNotification(element.get(), notification);
+        cache->postNotification(selectElement.get(), notification);
     return true;
 #endif
     return false;
@@ -108,8 +108,8 @@ bool AccessibilityMenuList::isCollapsed() const
         return true;
 
 #if !PLATFORM(IOS_FAMILY)
-    CheckedPtr menuList = dynamicDowncast<RenderMenuList>(renderer());
-    return !(menuList && menuList->popupIsVisible());
+    RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(element());
+    return !(selectElement && selectElement->usesMenuList() && selectElement->popupIsVisible());
 #else
     return true;
 #endif

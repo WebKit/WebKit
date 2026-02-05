@@ -803,12 +803,12 @@ PASS ToggleEvent interface: existence and properties of interface prototype obje
 PASS ToggleEvent interface: existence and properties of interface prototype object's @@unscopables property
 PASS ToggleEvent interface: attribute oldState
 PASS ToggleEvent interface: attribute newState
-FAIL ToggleEvent interface: attribute source assert_true: The prototype object must have a property "source" expected true got false
+PASS ToggleEvent interface: attribute source
 PASS ToggleEvent must be primary interface of new ToggleEvent("beforetoggle")
 PASS Stringification of new ToggleEvent("beforetoggle")
 PASS ToggleEvent interface: new ToggleEvent("beforetoggle") must inherit property "oldState" with the proper type
 PASS ToggleEvent interface: new ToggleEvent("beforetoggle") must inherit property "newState" with the proper type
-FAIL ToggleEvent interface: new ToggleEvent("beforetoggle") must inherit property "source" with the proper type assert_inherits: property "source" not found in prototype chain
+PASS ToggleEvent interface: new ToggleEvent("beforetoggle") must inherit property "source" with the proper type
 PASS CommandEvent interface: existence and properties of interface object
 PASS CommandEvent interface object length
 PASS CommandEvent interface object name

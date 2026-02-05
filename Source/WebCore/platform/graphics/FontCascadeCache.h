@@ -256,7 +256,7 @@ public:
     static FontCascadeCache& forCurrentThread();
 
     void invalidate();
-    void clearWidthCaches();
+    void clearMeasurementCaches();
     void pruneUnreferencedEntries();
     void pruneSystemFallbackFonts();
     Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontCascadeDescription&, FontSelector*);

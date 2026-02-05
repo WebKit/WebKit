@@ -52,7 +52,7 @@ ExceptionOr<float> SVGLength::valueForBindings()
 
     if (requiresStyleUpdate(m_value.lengthType())) {
         if (element)
-            element->protectedDocument()->updateStyleIfNeeded();
+            protect(element->document())->updateStyleIfNeeded();
     }
 
     return m_value.valueForBindings(SVGLengthContext { element.get() });

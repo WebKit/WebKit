@@ -52,8 +52,8 @@ RTCDataChannelEvent::RTCDataChannelEvent(const AtomString& type, CanBubble canBu
 }
 
 RTCDataChannelEvent::RTCDataChannelEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
-    : Event(EventInterfaceType::RTCDataChannelEvent, type, initializer, isTrusted)
-    , m_channel(initializer.channel.releaseNonNull())
+    : Event(EventInterfaceType::RTCDataChannelEvent, type, WTF::move(initializer), isTrusted)
+    , m_channel(WTF::move(initializer.channel))
 {
 }
 

@@ -12,14 +12,14 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (68,0) size 305x22 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 107x18
                 text run at (2,2) width 107: "   InspectionText"
-      RenderBlock {FORM} at (0,28) size 784x19
-        RenderButton {INPUT} at (0,1) size 87x18 [color=#000000D8] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+      RenderBlock {FORM} at (0,28) size 784x20
+        RenderButton {INPUT} at (0,1) size 87x19 [color=#000000D8] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,2) size 71x13
             RenderText at (0,0) size 71x13
               text run at (0,0) width 71: "change width"
         RenderText {#text} at (86,0) size 5x18
           text run at (86,0) width 5: " "
-        RenderButton {INPUT} at (90,1) size 177x18 [color=#000000D8] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {INPUT} at (90,1) size 177x19 [color=#000000D8] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,2) size 161x13
             RenderText at (0,0) size 161x13
               text run at (0,0) width 161: "change width with table reflow"

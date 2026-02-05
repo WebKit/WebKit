@@ -637,7 +637,7 @@ bool WebContentMarkupReader::readWebArchive(SharedBuffer& buffer)
         return true;
     }
 
-    m_markup = sanitizeMarkupWithArchive(frame, *frame->protectedDocument(), *result, msoListQuirksForMarkup(), [&] (const String& type) {
+    m_markup = sanitizeMarkupWithArchive(frame, *protect(frame->document()), *result, msoListQuirksForMarkup(), [&] (const String& type) {
         return frame->loader().client().canShowMIMETypeAsHTML(type);
     });
 

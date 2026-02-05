@@ -27,6 +27,7 @@ import Foundation
 import WebKit
 import PDFKit
 import CoreGraphics
+private import pal.spi.cg.CoreGraphicsSPI
 
 #if canImport(UIKit)
 import UIKit
@@ -36,8 +37,11 @@ import AppKit
 typealias CocoaColor = NSColor
 #endif
 
-@_objcImplementation extension TestPDFAnnotation {
-    @nonobjc private var annotation: PDFAnnotation
+@objc
+@implementation
+extension TestPDFAnnotation {
+    @nonobjc
+    private var annotation: PDFAnnotation
 
     var isLink: Bool {
         let link = annotation.type == "Link"
@@ -63,8 +67,11 @@ typealias CocoaColor = NSColor
     }
 }
 
-@_objcImplementation extension TestPDFPage {
-    @nonobjc private var page: PDFPage
+@objc
+@implementation
+extension TestPDFPage {
+    @nonobjc
+    private var page: PDFPage
 
     lazy var text: String = {
         page.string?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
@@ -73,7 +80,7 @@ typealias CocoaColor = NSColor
     var bounds: CGRect {
         page.bounds(for: .mediaBox)
     }
-    
+
     var characterCount: Int {
         text.count
     }
@@ -86,7 +93,7 @@ typealias CocoaColor = NSColor
     func characterIndex(at point: CGPoint) -> Int {
         page.characterIndex(at: point)
     }
-    
+
     @objc(colorAtPoint:)
     func color(at point: CGPoint) -> CocoaColor {
         let boundsRect = bounds
@@ -176,21 +183,25 @@ typealias CocoaColor = NSColor
 
         return CocoaColor(red: red, green: green, blue: blue, alpha: alpha)
     }
-    
+
     @objc(rectForCharacterAtIndex:)
     func rectForCharacter(at index: Int) -> CGRect {
         page.characterBounds(at: index)
     }
-    
+
     @objc(initWithPDFPage:)
     init(pdfPage: PDFPage) {
         self.page = pdfPage
     }
 }
 
-@_objcImplementation extension TestPDFDocument {
-    @nonobjc private let document: PDFDocument
-    @nonobjc private var pages: [TestPDFPage?]
+@objc
+@implementation
+extension TestPDFDocument {
+    @nonobjc
+    private let document: PDFDocument
+    @nonobjc
+    private var pages: [TestPDFPage?]
 
     var pageCount: Int {
         document.pageCount

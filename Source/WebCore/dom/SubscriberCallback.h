@@ -41,6 +41,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
+    virtual bool isJSSubscriberCallback() const { return false; }
+
     virtual CallbackResult<void> invoke(Subscriber&) = 0;
     virtual CallbackResult<void> invokeRethrowingException(Subscriber&) = 0;
 

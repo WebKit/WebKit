@@ -310,7 +310,7 @@ bool Builder::applyRollbackCascadeProperty(const PropertyCascade& rollbackCascad
     if (!rollbackProperty)
         return false;
 
-    if (auto* value = rollbackProperty->cssValue[linkMatchMask]) {
+    if (RefPtr value = rollbackProperty->cssValue[linkMatchMask]) {
         SetForScope levelScope(m_state->m_currentProperty, rollbackProperty);
         applyProperty(propertyID, *value, linkMatchMask, rollbackProperty->origin);
     }
@@ -324,7 +324,7 @@ bool Builder::applyRollbackCascadeCustomProperty(const PropertyCascade& rollback
         return false;
 
     auto& rollbackProperty = iterator->value;
-    if (auto* value = rollbackProperty.cssValue[SelectorChecker::MatchDefault]) {
+    if (RefPtr value = rollbackProperty.cssValue[SelectorChecker::MatchDefault]) {
         Ref customPropertyValue = downcast<CSSCustomPropertyValue>(*value);
 
         SetForScope levelScope(m_state->m_currentProperty, &rollbackProperty);
@@ -406,9 +406,9 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     if (valueType == ApplyValueType::Inherit && !isInheritedProperty())
         style.setHasExplicitlyInheritedProperties();
 
-    if (auto* paintImageValue = dynamicDowncast<CSSPaintImageValue>(valueToApply.get())) {
+    if (RefPtr paintImageValue = dynamicDowncast<CSSPaintImageValue>(valueToApply.get())) {
         auto& name = paintImageValue->name();
-        if (auto* paintWorklet = const_cast<Document&>(m_state->document()).paintWorkletGlobalScopeForName(name)) {
+        if (RefPtr paintWorklet = const_cast<Document&>(m_state->document()).paintWorkletGlobalScopeForName(name)) {
             Locker locker { paintWorklet->paintDefinitionLock() };
             if (auto* registration = paintWorklet->paintDefinitionMap().get(name)) {
                 for (auto& property : registration->inputProperties)
@@ -457,12 +457,12 @@ void Builder::applyCustomProperty(const AtomString& name, Variant<Ref<const Styl
     };
 
     auto applyInherit = [&] {
-        auto* parentValue = state().parentStyle().inheritedCustomProperties().get(name);
+        RefPtr parentValue = state().parentStyle().inheritedCustomProperties().get(name);
         if (parentValue && !(registeredCustomProperty && !registeredCustomProperty->inherits)) {
             applyValue(*parentValue);
             return;
         }
-        if (auto* nonInheritedParentValue = state().parentStyle().nonInheritedCustomProperties().get(name)) {
+        if (RefPtr nonInheritedParentValue = state().parentStyle().nonInheritedCustomProperties().get(name)) {
             applyValue(*nonInheritedParentValue);
             return;
         }
@@ -560,7 +560,9 @@ Ref<CSSValue> Builder::resolveInternalAutoBaseFunction(CSSValue& value)
     if (functionValue->name() != CSSValueInternalAutoBase)
         return value;
 
-    RefPtr result = const_cast<CSSValue*>(m_state->style().appearance() == StyleAppearance::Base ? functionValue->item(1) : functionValue->item(0));
+    // usedAppearance() is inaccurate at this stage of style resolution, check against both `appearance: base-select` & `appearance: base`.
+    bool isAppearanceBase = m_state->style().appearance() == StyleAppearance::Base || m_state->style().appearance() == StyleAppearance::BaseSelect;
+    RefPtr result = const_cast<CSSValue*>(isAppearanceBase ? functionValue->item(1) : functionValue->item(0));
 
     if (!result)
         return value;
@@ -608,7 +610,7 @@ RefPtr<const CustomProperty> Builder::resolveCustomPropertyForContainerQueries(c
             };
 
             auto inherit = [&]() -> RefPtr<const CustomProperty> {
-                auto parentValue = isInherited
+                RefPtr parentValue = isInherited
                     ? m_state->parentStyle().inheritedCustomProperties().get(name)
                     : m_state->parentStyle().nonInheritedCustomProperties().get(name);
                 if (parentValue)

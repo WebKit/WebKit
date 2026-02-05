@@ -1051,7 +1051,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPITabs::connect(WebFrame& frame, JSCont
         documentIdentifier.value(),
     };
 
-    Ref port = WebExtensionAPIPort::create(*this, frame.protectedPage()->webPageProxyIdentifier(), WebExtensionContentWorldType::ContentScript, resolvedName);
+    Ref port = WebExtensionAPIPort::create(*this, protect(frame.page())->webPageProxyIdentifier(), WebExtensionContentWorldType::ContentScript, resolvedName);
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsConnect(tabIdentifer.value(), port->channelIdentifier(), resolvedName, targetParameters, senderParameters), [=, this, protectedThis = Ref { *this }, globalContext = JSRetainPtr { JSContextGetGlobalContext(context) }](Expected<void, WebExtensionError>&& result) {
         if (result)

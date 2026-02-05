@@ -15,6 +15,7 @@
 #include "compiler/translator/Common.h"
 #include "compiler/translator/ImmutableString.h"
 #include "compiler/translator/SymbolUniqueId.h"
+#include "compiler/translator/ir/src/builder.h"
 
 namespace sh
 {
@@ -366,6 +367,10 @@ class TType
     bool isImage() const { return IsImage(type); }
     bool isPixelLocal() const { return IsPixelLocal(type); }
 
+    void setTypeId(ir::TypeId typeId) { mTypeId = typeId; }
+    ir::TypeId typeId() const { return mTypeId; }
+    bool isTypeIdSet() const { return ir::IsTypeIdValid(mTypeId); }
+
   private:
     constexpr void invalidateMangledName() { mMangledName = nullptr; }
     const char *buildMangledName() const;
@@ -411,6 +416,8 @@ class TType
     size_t mInterfaceBlockFieldIndex;
 
     mutable const char *mMangledName;
+
+    ir::TypeId mTypeId = ir::kInvalidTypeId;
 };
 
 // TTypeSpecifierNonArray stores all of the necessary fields for type_specifier_nonarray from the

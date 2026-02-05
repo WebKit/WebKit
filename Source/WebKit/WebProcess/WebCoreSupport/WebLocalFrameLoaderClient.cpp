@@ -239,7 +239,7 @@ void WebLocalFrameLoaderClient::assignIdentifierToInitialRequest(ResourceLoaderI
     webPage->send(Messages::WebPageProxy::DidInitiateLoadForResource(identifier, m_frame->frameID(), request));
 #endif
 
-    webPage->addResourceRequest(identifier, request, loader, frameLoader ? frameLoader->protectedFrame().ptr() : nullptr);
+    webPage->addResourceRequest(identifier, request, loader, frameLoader ? protect(frameLoader->frame()).ptr() : nullptr);
 }
 
 void WebLocalFrameLoaderClient::dispatchWillSendRequest(DocumentLoader*, ResourceLoaderIdentifier identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
@@ -330,7 +330,7 @@ void WebLocalFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader* loader,
     webPage->send(Messages::WebPageProxy::DidFinishLoadForResource(identifier, m_frame->frameID(), { }));
 #endif
 
-    webPage->removeResourceRequest(identifier, loader && loader->frameLoader() ? loader->protectedFrameLoader()->protectedFrame().ptr() : nullptr);
+    webPage->removeResourceRequest(identifier, loader && loader->frameLoader() ? protect(protect(loader->frameLoader())->frame()).ptr() : nullptr);
 }
 
 void WebLocalFrameLoaderClient::dispatchDidFailLoading(DocumentLoader* loader, ResourceLoaderIdentifier identifier, const ResourceError& error)
@@ -345,7 +345,7 @@ void WebLocalFrameLoaderClient::dispatchDidFailLoading(DocumentLoader* loader, R
     webPage->send(Messages::WebPageProxy::DidFinishLoadForResource(identifier, m_frame->frameID(), error));
 #endif
 
-    webPage->removeResourceRequest(identifier, loader && loader->frameLoader() ? loader->protectedFrameLoader()->protectedFrame().ptr() : nullptr);
+    webPage->removeResourceRequest(identifier, loader && loader->frameLoader() ? protect(protect(loader->frameLoader())->frame()).ptr() : nullptr);
 }
 
 bool WebLocalFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int /*length*/)
@@ -568,12 +568,12 @@ void WebLocalFrameLoaderClient::dispatchDidStartProvisionalLoad()
 
 #if ENABLE(FULLSCREEN_API)
     RefPtr document = m_localFrame->document();
-    if (document && document->protectedFullscreen()->fullscreenElement()) {
+    if (document && protect(document->fullscreen())->fullscreenElement()) {
         Ref fullScreenManager = webPage->fullScreenManager();
         RefPtr element = fullScreenManager->element();
         fullScreenManager->exitFullScreenForElement(element.get(), [element] {
             if (element)
-                element->protectedDocument()->protectedFullscreen()->didExitFullscreen([](auto) { });
+                protect(protect(element->document())->fullscreen())->didExitFullscreen([](auto) { });
         });
     }
 #endif
@@ -660,8 +660,9 @@ void WebLocalFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureC
 
     frame->commitProvisionalFrame();
 
+    RefPtr<Frame> coreLocalFrame = m_localFrame.ptr();
     // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(frame->frameID(), frame->info(), documentLoader->request(), documentLoader->navigationID(), documentLoader->response().mimeType(), m_frameHasCustomContentProvider, m_localFrame->loader().loadType(), certificateInfo, usedLegacyTLS, wasPrivateRelayed, documentLoader->response().proxyName(), documentLoader->response().source(), m_localFrame->document()->isPluginDocument(), *hasInsecureContent, documentLoader->mouseEventPolicy(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(frame->frameID(), frame->info(), documentLoader->request(), documentLoader->navigationID(), documentLoader->response().mimeType(), m_frameHasCustomContentProvider, m_localFrame->loader().loadType(), certificateInfo, usedLegacyTLS, wasPrivateRelayed, documentLoader->response().proxyName(), documentLoader->response().source(), m_localFrame->document()->isPluginDocument(), *hasInsecureContent, documentLoader->mouseEventPolicy(), *coreLocalFrame->frameDocumentSecurityPolicy(),  UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
     webPage->didCommitLoad(m_frame.ptr());
 }
 
@@ -1427,7 +1428,7 @@ void WebLocalFrameLoaderClient::saveViewStateToItem(HistoryItem& historyItem)
 {
 #if PLATFORM(IOS_FAMILY)
     if (m_frame->isMainFrame())
-        m_frame->page()->savePageState(historyItem);
+        protect(m_frame->page())->savePageState(historyItem);
 #else
     UNUSED_PARAM(historyItem);
 #endif
@@ -1436,16 +1437,16 @@ void WebLocalFrameLoaderClient::saveViewStateToItem(HistoryItem& historyItem)
 void WebLocalFrameLoaderClient::restoreViewState()
 {
 #if PLATFORM(IOS_FAMILY)
-    auto* currentItem = m_localFrame->loader().history().currentItem();
-    if (auto* view =  m_localFrame->view()) {
+    RefPtr currentItem = m_localFrame->loader().history().currentItem();
+    if (RefPtr view = m_localFrame->view()) {
         if (m_frame->isMainFrame())
-            m_frame->page()->restorePageState(*currentItem);
+            protect(m_frame->page())->restorePageState(*currentItem);
         else if (!view->wasScrolledByUser())
             view->setScrollPosition(currentItem->scrollPosition());
     }
 #else
     // Inform the UI process of the scale factor.
-    double scaleFactor = m_localFrame->loader().history().protectedCurrentItem()->pageScaleFactor();
+    double scaleFactor = protect(m_localFrame->loader().history().currentItem())->pageScaleFactor();
 
     // A scale factor of 0 means the history item has the default scale factor, thus we do not need to update it.
     RefPtr page = m_frame->page();
@@ -1455,7 +1456,7 @@ void WebLocalFrameLoaderClient::restoreViewState()
     // FIXME: This should not be necessary. WebCore should be correctly invalidating
     // the view on restores from the back/forward cache.
     if (page && m_frame.ptr() == &page->mainWebFrame())
-        page->protectedDrawingArea()->setNeedsDisplay();
+        protect(page->drawingArea())->setNeedsDisplay();
 #endif
 }
 
@@ -1480,14 +1481,19 @@ void WebLocalFrameLoaderClient::prepareForDataSourceReplacement()
     notImplemented();
 }
 
+Ref<DocumentLoader> WebLocalFrameLoaderClient::createDocumentLoader(ResourceRequest&& request, SubstituteData&& substituteData, ResourceRequest&& originalRequest)
+{
+    return protect(m_frame->page())->createDocumentLoader(protectedLocalFrame(), WTF::move(request), WTF::move(substituteData), WTF::move(originalRequest));
+}
+
 Ref<DocumentLoader> WebLocalFrameLoaderClient::createDocumentLoader(ResourceRequest&& request, SubstituteData&& substituteData)
 {
-    return m_frame->protectedPage()->createDocumentLoader(protectedLocalFrame(), WTF::move(request), WTF::move(substituteData));
+    return createDocumentLoader(WTF::move(request), WTF::move(substituteData), { });
 }
 
 void WebLocalFrameLoaderClient::updateCachedDocumentLoader(WebCore::DocumentLoader& loader)
 {
-    m_frame->protectedPage()->updateCachedDocumentLoader(loader, protectedLocalFrame());
+    protect(m_frame->page())->updateCachedDocumentLoader(loader, protectedLocalFrame());
 }
 
 void WebLocalFrameLoaderClient::setTitle(const StringWithDirection& title, const URL& url)
@@ -1532,7 +1538,7 @@ void WebLocalFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame*)
 void WebLocalFrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame*)
 {
     const ResourceResponse& response = m_localFrame->loader().documentLoader()->response();
-    m_frameHasCustomContentProvider = m_frame->isMainFrame() && m_frame->protectedPage()->shouldUseCustomContentProviderForResponse(response);
+    m_frameHasCustomContentProvider = m_frame->isMainFrame() && protect(m_frame->page())->shouldUseCustomContentProviderForResponse(response);
     m_frameCameFromBackForwardCache = true;
 }
 
@@ -1609,7 +1615,7 @@ void WebLocalFrameLoaderClient::transitionToCommittedForNewPage(InitializingIfra
     if (isMainFrame)
         view->setDelegatedScrollingMode(drawingArea->delegatedScrollingMode());
 
-    webPage->protectedCorePage()->setDelegatesScaling(drawingArea->usesDelegatedPageScaling());
+    protect(webPage->corePage())->setDelegatesScaling(drawingArea->usesDelegatedPageScaling());
 #endif
 
     if (webPage->scrollPinningBehavior() != ScrollPinningBehavior::DoNotPin)
@@ -1701,7 +1707,7 @@ ObjectContentType WebLocalFrameLoaderClient::objectContentType(const URL& url, c
         if (mimeType.isEmpty()) {
             // Check if there's a plug-in around that can handle the extension.
             if (RefPtr webPage = m_frame->page()) {
-                if (pluginSupportsExtension(webPage->protectedCorePage()->protectedPluginData(), extension))
+                if (pluginSupportsExtension(protect(webPage->corePage())->protectedPluginData(), extension))
                     return ObjectContentType::PlugIn;
             }
             return ObjectContentType::Frame;
@@ -1718,7 +1724,7 @@ ObjectContentType WebLocalFrameLoaderClient::objectContentType(const URL& url, c
 
     if (RefPtr webPage = m_frame->page()) {
         auto allowedPluginTypes = PluginData::OnlyApplicationPlugins;
-        if (webPage->protectedCorePage()->protectedPluginData()->supportsMimeType(mimeType, allowedPluginTypes))
+        if (protect(webPage->corePage())->protectedPluginData()->supportsMimeType(mimeType, allowedPluginTypes))
             return ObjectContentType::PlugIn;
     }
 

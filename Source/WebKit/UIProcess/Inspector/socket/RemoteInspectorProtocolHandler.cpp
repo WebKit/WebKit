@@ -141,11 +141,6 @@ void RemoteInspectorProtocolHandler::inspect(const String& hostAndPort, Connecti
         m_inspectorClient->inspect(connectionID, targetID, debuggableType.value());
 }
 
-Ref<WebPageProxy> RemoteInspectorProtocolHandler::protectedPage() const
-{
-    return m_page.get();
-}
-
 void RemoteInspectorProtocolHandler::runScript(const String& script)
 {
     constexpr bool wantsResult = true;
@@ -154,7 +149,7 @@ void RemoteInspectorProtocolHandler::runScript(const String& script)
         LOG_ERROR("Out of memory running script");
         return;
     }
-    protectedPage()->runJavaScriptInMainFrame(WebKit::RunJavaScriptParameters {
+    protect(m_page)->runJavaScriptInMainFrame(WebKit::RunJavaScriptParameters {
         WTF::move(*scriptString),
         JSC::SourceTaintedOrigin::Untainted,
         URL { },
@@ -213,7 +208,7 @@ void RemoteInspectorProtocolHandler::platformStartTask(WebPageProxy& pageProxy, 
     pageProxy.configuration().userContentController().addUserScriptMessageHandler(handler.get());
 
     // Setup loader client to get notified of page load
-    protectedPage()->setLoaderClient(makeUnique<LoaderClient>([this] {
+    protect(m_page)->setLoaderClient(makeUnique<LoaderClient>([this] {
         m_pageLoaded = true;
         updateTargetList();
     }));

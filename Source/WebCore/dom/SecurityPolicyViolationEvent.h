@@ -31,9 +31,6 @@
 namespace WebCore {
 
 struct SecurityPolicyViolationEventInit : EventInit {
-    SecurityPolicyViolationEventInit() = default;
-    WEBCORE_EXPORT SecurityPolicyViolationEventInit(EventInit&&, String&& documentURI, String&& referrer, String&& blockedURI, String&& violatedDirective, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition, unsigned short statusCode, unsigned lineNumber, unsigned columnNumber);
-
     String documentURI;
     String referrer;
     String blockedURI;
@@ -54,9 +51,9 @@ public:
     using Disposition = SecurityPolicyViolationEventDisposition;
     using Init = SecurityPolicyViolationEventInit;
 
-    static Ref<SecurityPolicyViolationEvent> create(const AtomString& type, const Init& initializer = { }, IsTrusted isTrusted = IsTrusted::No)
+    static Ref<SecurityPolicyViolationEvent> create(const AtomString& type, Init&& initializer = { }, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new SecurityPolicyViolationEvent(type, initializer, isTrusted));
+        return adoptRef(*new SecurityPolicyViolationEvent(type, WTF::move(initializer), isTrusted));
     }
 
     const String& documentURI() const { return m_documentURI; }
@@ -78,16 +75,16 @@ private:
     {
     }
 
-    SecurityPolicyViolationEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-        : Event(EventInterfaceType::SecurityPolicyViolationEvent, type, initializer, isTrusted)
-        , m_documentURI(initializer.documentURI)
-        , m_referrer(initializer.referrer)
-        , m_blockedURI(initializer.blockedURI)
-        , m_violatedDirective(initializer.violatedDirective)
-        , m_effectiveDirective(initializer.effectiveDirective)
-        , m_originalPolicy(initializer.originalPolicy)
-        , m_sourceFile(initializer.sourceFile)
-        , m_sample(initializer.sample)
+    SecurityPolicyViolationEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+        : Event(EventInterfaceType::SecurityPolicyViolationEvent, type, WTF::move(initializer), isTrusted)
+        , m_documentURI(WTF::move(initializer.documentURI))
+        , m_referrer(WTF::move(initializer.referrer))
+        , m_blockedURI(WTF::move(initializer.blockedURI))
+        , m_violatedDirective(WTF::move(initializer.violatedDirective))
+        , m_effectiveDirective(WTF::move(initializer.effectiveDirective))
+        , m_originalPolicy(WTF::move(initializer.originalPolicy))
+        , m_sourceFile(WTF::move(initializer.sourceFile))
+        , m_sample(WTF::move(initializer.sample))
         , m_disposition(initializer.disposition)
         , m_statusCode(initializer.statusCode)
         , m_lineNumber(initializer.lineNumber)

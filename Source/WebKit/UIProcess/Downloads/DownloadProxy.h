@@ -110,7 +110,6 @@ public:
     API::FrameInfo& frameInfo() { return m_frameInfo.get(); }
 
     API::DownloadClient& client() { return m_client.get(); }
-    Ref<API::DownloadClient> protectedClient() const;
 
     void setClient(Ref<API::DownloadClient>&&);
     void setDidStartCallback(CompletionHandler<void(DownloadProxy*)>&& callback) { m_didStartCallback = WTF::move(callback); }
@@ -139,7 +138,6 @@ public:
 private:
     explicit DownloadProxy(DownloadProxyMap&, WebsiteDataStore&, API::DownloadClient&, const WebCore::ResourceRequest&, const std::optional<FrameInfoData>&, WebPageProxy*);
 
-    RefPtr<WebsiteDataStore> protectedDataStore() { return m_dataStore; }
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

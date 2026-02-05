@@ -42,7 +42,7 @@ div { height: 100px; }
 
 <script>
 
-// Tests that a focused element doesn't become the 
+// Tests that a focused element doesn't become the
 // priority candidate of the main frame if it is
 // in an excluded subtree
 
@@ -52,7 +52,7 @@ promise_test(async function() {
   focusElement.focus();
   scroller.scrollBy(0,150);
   document.scrollingElement.scrollBy(0,100);
-  
+
   await new Promise(resolve => {
      document.addEventListener("scroll", () => step_timeout(resolve, 0));
    });

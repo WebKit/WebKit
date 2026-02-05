@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://wicg.github.io/ua-client-hints/#idl-index
+// https://wicg.github.io/ua-client-hints/#dictdef-ualowentropyjson
 [
   JSGenerateToJSObject,
   EnabledBySetting=NavigatorUserAgentDataJavaScriptAPIEnabled,

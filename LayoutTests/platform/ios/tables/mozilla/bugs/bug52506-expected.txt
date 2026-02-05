@@ -16,15 +16,15 @@ layer at (0,0) size 800x122
         RenderTableSection {TBODY} at (0,0) size 42x66
           RenderTableRow {TR} at (0,2) size 42x30
             RenderTableCell {TD} at (2,2) size 18x30 [border: (4px solid #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (5,5) size 8x19
+              RenderText {#text} at (5,5) size 8x20
                 text run at (5,5) width 8: "1"
             RenderTableCell {TD} at (22,2) size 18x30 [border: (4px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (5,5) size 8x19
+              RenderText {#text} at (5,5) size 8x20
                 text run at (5,5) width 8: "2"
           RenderTableRow {TR} at (0,34) size 42x30
             RenderTableCell {TD} at (2,34) size 18x30 [border: (4px solid #000000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (5,5) size 8x19
+              RenderText {#text} at (5,5) size 8x20
                 text run at (5,5) width 8: "2"
             RenderTableCell {TD} at (22,34) size 18x30 [border: (4px solid #000000)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (5,5) size 8x19
+              RenderText {#text} at (5,5) size 8x20
                 text run at (5,5) width 8: "2"

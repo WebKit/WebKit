@@ -24,7 +24,6 @@
 
 [
     Conditional=WEB_AUDIO&VIDEO,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary MediaElementAudioSourceOptions {
     required HTMLMediaElement mediaElement;
 };

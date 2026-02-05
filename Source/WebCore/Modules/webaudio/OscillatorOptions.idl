@@ -25,7 +25,6 @@
  
 [
     Conditional=WEB_AUDIO,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary OscillatorOptions : AudioNodeOptions {
     OscillatorType type = "sine";
     float frequency = 440;

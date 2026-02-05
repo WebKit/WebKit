@@ -95,6 +95,10 @@ public:
     MonotonicTime responseStart;
     MonotonicTime responseEnd;
     MonotonicTime workerStart;
+    MonotonicTime workerRouterEvaluationStart;
+    MonotonicTime workerCacheLookupStart;
+    String workerMatchedRouterSource;
+    String workerFinalRouterSource;
 
     // https://github.com/w3c/resource-timing/pull/408
     // Timing for interim (1xx) vs final (2xx/3xx/4xx/5xx) responses

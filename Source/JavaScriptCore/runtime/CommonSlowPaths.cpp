@@ -1156,11 +1156,11 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_rest)
 {
     BEGIN();
     auto bytecode = pc->as<OpCreateRest>();
-    unsigned arraySize = GET_C(bytecode.m_arraySize).jsValue().asUInt32AsAnyInt();
+    unsigned argumentCount = callFrame->argumentCount();
     Structure* structure = globalObject->restParameterStructure();
     unsigned numParamsToSkip = bytecode.m_numParametersToSkip;
     JSValue* argumentsToCopyRegion = callFrame->addressOfArgumentsStart() + numParamsToSkip;
-    RETURN(constructArray(globalObject, structure, argumentsToCopyRegion, arraySize));
+    RETURN(constructArray(globalObject, structure, argumentsToCopyRegion, argumentCount > numParamsToSkip ? argumentCount - numParamsToSkip : 0));
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_get_by_val_with_this)

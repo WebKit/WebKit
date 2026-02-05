@@ -271,7 +271,7 @@ void NetworkRTCMonitor::stopUpdating()
 void NetworkRTCMonitor::onNetworksChanged(const Vector<RTCNetwork>& networkList, const RTCNetwork::IPAddress& ipv4, const RTCNetwork::IPAddress& ipv6)
 {
     RTC_RELEASE_LOG("onNetworksChanged sent");
-    m_rtcProvider->protectedConnection()->send(Messages::WebRTCMonitor::NetworksChanged(networkList, ipv4, ipv6), 0);
+    protect(m_rtcProvider->connection())->send(Messages::WebRTCMonitor::NetworksChanged(networkList, ipv4, ipv6), 0);
 }
 
 

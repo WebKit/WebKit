@@ -86,9 +86,8 @@ public:
 
     void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const final;
     Vector<IntRect> absoluteRectsForRange(unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false, bool* wasFixed = nullptr) const;
-#if PLATFORM(IOS_FAMILY)
+
     void collectSelectionGeometries(Vector<SelectionGeometry>&, unsigned startOffset = 0, unsigned endOffset = std::numeric_limits<unsigned>::max()) final;
-#endif
 
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const final;
     Vector<FloatQuad> absoluteQuadsForRange(unsigned startOffset = 0, unsigned endOffset = UINT_MAX, OptionSet<RenderObject::BoundingRectBehavior> = { }, bool* wasFixed = nullptr) const;
@@ -162,7 +161,7 @@ public:
 
     bool containsOnlyCollapsibleWhitespace() const;
 
-    FontCascade::CodePath fontCodePath() const { return static_cast<FontCascade::CodePath>(m_fontCodePath); }
+    FontCascade::CodePath fontCodePath() const { return m_fontCodePath; }
     bool canUseSimpleFontCodePath() const { return fontCodePath() == FontCascade::CodePath::Simple; }
     bool shouldUseSimpleGlyphOverflowCodePath() const { return fontCodePath() == FontCascade::CodePath::SimpleWithGlyphOverflow; }
 
@@ -218,8 +217,6 @@ private:
 
     void computePreferredLogicalWidths(float leadWidth, SingleThreadWeakHashSet<const Font>& fallbackFonts, GlyphOverflow&, bool forcedMinMaxWidthComputation = false);
 
-    void computeFontCodePath();
-    
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) final { ASSERT_NOT_REACHED(); return false; }
 
     float widthFromCache(const FontCascade&, unsigned start, unsigned len, float xPos, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow*, const RenderStyle&) const;
@@ -265,7 +262,7 @@ private:
     unsigned m_originalTextDiffersFromRendered : 1 { false };
     unsigned m_hasInlineWrapperForDisplayContents : 1 { false };
     unsigned m_hasSecureTextTimer : 1 { false };
-    unsigned m_fontCodePath : 2 { 0 };
+    FontCascade::CodePath m_fontCodePath : 2;
 };
 
 String applyTextTransform(const RenderStyle&, const String&, Vector<char16_t> previousCharacter);

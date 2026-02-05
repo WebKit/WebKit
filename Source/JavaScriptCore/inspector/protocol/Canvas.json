@@ -18,7 +18,7 @@
         {
             "id": "ColorSpace",
             "type": "string",
-            "enum": ["srgb", "display-p3"]
+            "enum": ["srgb", "srgb-linear", "display-p3", "display-p3-linear"]
         },
         {
             "id": "ContextType",

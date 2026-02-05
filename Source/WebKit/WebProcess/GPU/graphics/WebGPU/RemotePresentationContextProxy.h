@@ -55,7 +55,6 @@ public:
 
     RemoteGPUProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
-    Ref<RemoteGPUProxy> protectedRoot() { return m_parent->root(); }
 
     void present(uint32_t frameIndex, bool = false) final;
 

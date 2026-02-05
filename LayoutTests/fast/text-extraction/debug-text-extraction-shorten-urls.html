@@ -9,6 +9,10 @@ body {
     white-space: pre-wrap;
 }
 
+.text-representation {
+    white-space: pre-wrap;
+}
+
 .test-section {
     margin: 20px 0;
     padding: 10px;
@@ -18,6 +22,10 @@ body {
 img {
     width: 50px;
     height: 50px;
+}
+
+a, img {
+    display: block;
 }
 </style>
 <script src="../../resources/ui-helper.js"></script>
@@ -32,11 +40,15 @@ img {
         <a href="javascript:alert('Hello World')">JavaScript link</a>
         <a href="data:text/html;charset=utf-8,%3Ch1%3EHello%3C%2Fh1%3E">HTML data URL</a>
         <a href="mailto:test@example.com">Email with params</a>
+        <a href="mailto:test@example.com">mailto:test@example.com</a>
         <a href="tel:+1-555-123-4567">Phone number</a>
         <a href="blob:https://example.com/550e8400-e29b-41d4-a716-446655440000">Blob URL</a>
         <a href="https://example.com/docs/guide.html?version=latest#installation-steps">Path, query, and fragment</a>
         <a href="https://example.com/docs/guide.html?version=2025">Query parameter</a>
         <a href="https://example.com/docs/guide.html?version=2025">Query parameter (duplicate)</a>
+        <a href="https://example.com/d2fb0de6-daf3-42d7-b219-1a243d872156?cid=b3029797">Plain link</a>
+        <a href="https://example.com/7e61b3f7-8d81-4225-8d68-f646f977ce33?cid=63e3d9fb0bf5">Plain link (2)</a>
+        <a href="https://example.com/b3029797-1fb8-4edf-97bd-63e3d9fb0bf5?cid=4edf97bd">Plain link (3)</a>
     </section>
     <section class="test-section" title="Images">
         <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Ccircle cx='50' cy='50' r='40' fill='red'/%3E%3C/svg%3E" alt="SVG data URL">
@@ -58,10 +70,26 @@ addEventListener("load", async () => {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
 
-    document.body.textContent = await UIHelper.requestDebugText({
-        includeURLs: true,
-        shortenURLs: true,
-    });
+    const results = [];
+    for (let outputFormat of ["texttree", "markdown"]) {
+        const heading = document.createElement("h1");
+        heading.textContent = `-- ${outputFormat}`;
+
+        const container = document.createElement("pre");
+        container.classList.add("text-representation");
+        let textContent = await UIHelper.requestDebugText({
+            includeURLs: true,
+            shortenURLs: true,
+            outputFormat,
+        });
+
+        container.textContent = textContent;
+        results.push(heading);
+        results.push(container);
+        results.push(document.createElement("br"));
+    }
+
+    document.body.replaceChildren(...results);
 
     testRunner.notifyDone();
 });

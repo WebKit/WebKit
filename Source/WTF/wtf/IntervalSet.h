@@ -858,7 +858,8 @@ private:
     NodeType* allocNode()
     {
         ASSERT(++assertOnlyNumNodes);
-        return static_cast<NodeType*>(fastAlignedMalloc(cpuCacheLineSize, sizeof(NodeType)));
+        static_assert(sizeof(NodeType) <= targetNodeSize);
+        return static_cast<NodeType*>(fastAlignedMalloc(cpuCacheLineSize, targetNodeSize));
     }
 
     template<typename NodeType>

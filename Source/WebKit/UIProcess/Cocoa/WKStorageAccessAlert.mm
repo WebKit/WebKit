@@ -36,6 +36,7 @@
 #if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
 #import "WKWebViewInternal.h"
+#import "WebPageProxy.h"
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/RegistrableDomain.h>
@@ -237,17 +238,20 @@ void displayStorageAccessAlert(WKWebView *webView, NSString *alertTitle, NSStrin
 #else
     auto alert = WebKit::createUIAlertController(alertTitle, informativeText);
 
-    UIAlertAction* allowAction = [UIAlertAction actionWithTitle:allowButtonString.get() style:UIAlertActionStyleCancel handler:[completionBlock](UIAlertAction *action) {
+    RetainPtr allowAction = [UIAlertAction actionWithTitle:allowButtonString.get() style:UIAlertActionStyleCancel handler:[completionBlock](UIAlertAction *action) {
         completionBlock(true);
     }];
 
-    UIAlertAction* doNotAllowAction = [UIAlertAction actionWithTitle:doNotAllowButtonString.get() style:UIAlertActionStyleDefault handler:[completionBlock](UIAlertAction *action) {
+    RetainPtr doNotAllowAction = [UIAlertAction actionWithTitle:doNotAllowButtonString.get() style:UIAlertActionStyleDefault handler:[completionBlock](UIAlertAction *action) {
         completionBlock(false);
     }];
 
-    [alert addAction:doNotAllowAction];
-    [alert addAction:allowAction];
+    [alert addAction:doNotAllowAction.get()];
+    [alert addAction:allowAction.get()];
 
+#if PLATFORM(VISION)
+    [webView _page]->dispatchWillPresentModalUI();
+#endif
     [webView._wk_viewControllerForFullScreenPresentation presentViewController:alert.get() animated:YES completion:nil];
 #endif
 }

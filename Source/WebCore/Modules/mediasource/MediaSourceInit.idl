@@ -25,7 +25,6 @@
 
 [
     Conditional=MEDIA_SOURCE,
-    LegacyNativeDictionaryRequiredInterfaceNullability,
 ] dictionary MediaSourceInit {
     boolean detachable = false;
 };

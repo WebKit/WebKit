@@ -318,7 +318,7 @@ void LinkLoader::preconnectIfNeeded(const LinkLoadParameters& params, Document& 
 
     ASSERT(document.settings().linkPreconnectEnabled());
     StoredCredentialsPolicy storageCredentialsPolicy = StoredCredentialsPolicy::Use;
-    if (equalLettersIgnoringASCIICase(params.crossOrigin, "anonymous"_s) && !document.protectedSecurityOrigin()->isSameOriginDomain(SecurityOrigin::create(params.href)))
+    if (equalLettersIgnoringASCIICase(params.crossOrigin, "anonymous"_s) && !protect(document.securityOrigin())->isSameOriginDomain(SecurityOrigin::create(params.href)))
         storageCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
     ASSERT(document.frame()->loader().networkingContext());
     platformStrategies()->loaderStrategy()->preconnectTo(document.protectedFrame()->loader(), WTF::move(request), storageCredentialsPolicy, LoaderStrategy::ShouldPreconnectAsFirstParty::No, [weakDocument = WeakPtr { document }, href = params.href](ResourceError error) {
@@ -401,7 +401,7 @@ RefPtr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkLoadPara
     linkRequest.setIgnoreForRequestCount(true);
     linkRequest.setIsLinkPreload();
 
-    auto cachedLinkResource = document.protectedCachedResourceLoader()->preload(type.value(), WTF::move(linkRequest)).value_or(nullptr);
+    auto cachedLinkResource = protect(document.cachedResourceLoader())->preload(type.value(), WTF::move(linkRequest)).value_or(nullptr);
 
     if (cachedLinkResource && cachedLinkResource->type() != *type)
         return nullptr;
@@ -440,7 +440,7 @@ void LinkLoader::prefetchIfNeeded(const LinkLoadParameters& params, Document& do
     options.cachingPolicy = CachingPolicy::DisallowCaching;
     options.referrerPolicy = params.referrerPolicy;
     options.nonce = params.nonce;
-    m_cachedLinkResource = document.protectedCachedResourceLoader()->requestLinkResource(type, CachedResourceRequest(ResourceRequest { document.completeURL(params.href.string()) }, options, priority)).value_or(nullptr);
+    m_cachedLinkResource = protect(document.cachedResourceLoader())->requestLinkResource(type, CachedResourceRequest(ResourceRequest { document.completeURL(params.href.string()) }, options, priority)).value_or(nullptr);
     if (CachedResourceHandle cachedLinkResource = m_cachedLinkResource)
         cachedLinkResource->addClient(*this);
 }

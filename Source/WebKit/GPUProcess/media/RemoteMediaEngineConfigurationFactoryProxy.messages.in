@@ -29,8 +29,8 @@
     EnabledBy=UseGPUProcessForMediaEnabled && MediaPlaybackEnabled
 ]
 messages -> RemoteMediaEngineConfigurationFactoryProxy {
-    CreateDecodingConfiguration(struct WebCore::MediaDecodingConfiguration configuration) -> (struct WebCore::MediaCapabilitiesDecodingInfo decodingInfo)
-    CreateEncodingConfiguration(struct WebCore::MediaEncodingConfiguration configuration) -> (struct WebCore::MediaCapabilitiesEncodingInfo decodingInfo)
+    CreateDecodingConfiguration(struct WebCore::PlatformMediaDecodingConfiguration configuration) -> (struct WebCore::PlatformMediaCapabilitiesDecodingInfo decodingInfo)
+    CreateEncodingConfiguration(struct WebCore::PlatformMediaEncodingConfiguration configuration) -> (struct WebCore::PlatformMediaCapabilitiesEncodingInfo decodingInfo)
 }
 
 #endif

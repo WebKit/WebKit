@@ -345,6 +345,7 @@ void MediaPlayerPrivateAVFoundation::setHasAudio(bool b)
     if (m_cachedHasAudio != b) {
         m_cachedHasAudio = b;
         characteristicsChanged();
+        updateIsAudible();
     }
 }
 

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WGSL.h"
 
-#include "ASTIdentifierExpression.h"
+#include "AST.h"
 #include "AttributeValidator.h"
 #include "BoundsCheck.h"
 #include "CallGraph.h"
@@ -122,9 +122,11 @@ inline Variant<PrepareResult, Error> prepareImpl(ShaderModule& shaderModule, con
 
 Variant<String, Error> generate(ShaderModule& shaderModule, PrepareResult& prepareResult, HashMap<String, ConstantValue>& constantValues, DeviceState&& deviceState)
 {
+    CompilationScope generationScope(shaderModule);
+
     PhaseTimes phaseTimes;
     String result;
-    if (auto maybeError = shaderModule.validateOverrides(constantValues))
+    if (auto maybeError = shaderModule.validateOverrides(prepareResult, constantValues))
         return { *maybeError };
     {
         PhaseTimer phaseTimer("generateMetalCode", phaseTimes);
@@ -146,19 +148,162 @@ Variant<PrepareResult, Error> prepare(ShaderModule& ast, const String& entryPoin
     return prepareImpl(ast, pipelineLayouts);
 }
 
-std::optional<ConstantValue> evaluate(const AST::Expression& expression, const HashMap<String, ConstantValue>& constants)
+std::optional<ConstantValue> evaluate(const ShaderModule& module, const AST::Expression& expression, const HashMap<String, ConstantValue>& overrideValues)
 {
     std::optional<ConstantValue> result;
     if (auto constantValue = expression.constantValue())
         result = *constantValue;
-    auto* maybeIdentifierExpression = dynamicDowncast<const AST::IdentifierExpression>(expression);
-    if (!maybeIdentifierExpression)
-        return result;
-    auto it = constants.find(maybeIdentifierExpression->identifier());
-    if (it == constants.end())
-        return result;
-    const_cast<AST::Expression&>(expression).setConstantValue(it->value);
-    return it->value;
+
+    auto call = [&](const String& function, auto&& callArguments) -> std::optional<ConstantValue> {
+        unsigned argumentCount = callArguments.size();
+        FixedVector<ConstantValue> arguments(argumentCount);
+        for (unsigned i = 0; i < argumentCount; ++i) {
+            auto& argument = callArguments[i];
+            auto value = evaluate(module, argument, overrideValues);
+            if (!value)
+                return std::nullopt;
+
+            arguments[i] = *value;
+        }
+
+        if (function == "array"_s)
+            return ConstantArray(WTF::move(arguments));
+
+        if (auto* structType = std::get_if<Types::Struct>(expression.inferredType())) {
+            HashMap<String, ConstantValue> constantFields;
+            for (unsigned i = 0; i < argumentCount; ++i) {
+                auto& argument = arguments[i];
+                auto& member = structType->structure.members()[i];
+                constantFields.set(member.originalName(), argument);
+            }
+            return ConstantStruct { WTF::move(constantFields) };
+        }
+
+        if (!function)
+            return std::nullopt;
+
+        auto* overload = module.lookupOverload(function);
+        if (!overload || !overload->constantFunction)
+            return std::nullopt;
+
+        auto result = overload->constantFunction(expression.inferredType(), WTF::move(arguments));
+        if (!result)
+            return std::nullopt;
+        return *result;
+    };
+
+    switch (expression.kind()) {
+    case AST::NodeKind::BinaryExpression: {
+        auto& binary = uncheckedDowncast<AST::BinaryExpression>(expression);
+        auto operation = toASCIILiteral(binary.operation());
+        result = call(operation, ReferenceWrapperVector<const AST::Expression, 2> { binary.leftExpression(), binary.rightExpression() });
+        break;
+    }
+
+    case AST::NodeKind::UnaryExpression: {
+        auto& unary = uncheckedDowncast<AST::UnaryExpression>(expression);
+        auto operation = toASCIILiteral(unary.operation());
+        result = call(operation, ReferenceWrapperVector<const AST::Expression, 1> { unary.expression() });
+        break;
+    }
+
+    case AST::NodeKind::IdentifierExpression: {
+        auto it = overrideValues.find(uncheckedDowncast<AST::IdentifierExpression>(expression).identifier());
+        if (it != overrideValues.end())
+            result = it->value;
+        break;
+    }
+
+    case AST::NodeKind::CallExpression: {
+        auto& callExpression = uncheckedDowncast<AST::CallExpression>(expression);
+        result = call(callExpression.resolvedTarget(), callExpression.arguments());
+        break;
+    }
+
+    case AST::NodeKind::IndexAccessExpression: {
+        auto& access = uncheckedDowncast<AST::IndexAccessExpression>(expression);
+        auto baseValue = evaluate(module, access.base(), overrideValues);
+        auto indexValue = evaluate(module, access.index(), overrideValues);
+
+        if (!baseValue || !indexValue)
+            return std::nullopt;
+
+        auto size = baseValue->upperBound();
+        auto index = indexValue->integerValue();
+        if (index < 0 || static_cast<size_t>(index) >= size) [[unlikely]]
+            return std::nullopt;
+
+        result = baseValue.value()[index];
+        break;
+    }
+
+    case AST::NodeKind::FieldAccessExpression: {
+        auto& access = uncheckedDowncast<AST::FieldAccessExpression>(expression);
+        auto base = evaluate(module, access.base(), overrideValues);
+        const auto& fieldName = access.originalFieldName().id();
+        auto length = fieldName.length();
+
+        if (!base)
+            break;
+
+        if (auto* constantStruct = std::get_if<ConstantStruct>(&*base)) {
+            result = constantStruct->fields.get(fieldName);
+            break;
+        }
+
+        auto constantVector = std::get<ConstantVector>(*base);
+        const auto& constAccess = [&](const ConstantVector& vector, char field) -> ConstantValue {
+            switch (field) {
+            case 'r':
+            case 'x':
+                return vector.elements[0];
+            case 'g':
+            case 'y':
+                return vector.elements[1];
+            case 'b':
+            case 'z':
+                return vector.elements[2];
+            case 'a':
+            case 'w':
+                return vector.elements[3];
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            };
+        };
+
+        if (length == 1) {
+            result = constAccess(constantVector, fieldName[0]);
+            break;
+        }
+
+        ConstantVector resultVector(length);
+        for (unsigned i = 0; i < length; ++i)
+            resultVector.elements[i] = constAccess(constantVector, fieldName[i]);
+        result = resultVector;
+        break;
+    }
+
+    // Literals
+    case AST::NodeKind::AbstractFloatLiteral:
+    case AST::NodeKind::AbstractIntegerLiteral:
+    case AST::NodeKind::BoolLiteral:
+    case AST::NodeKind::Float32Literal:
+    case AST::NodeKind::Float16Literal:
+    case AST::NodeKind::Signed32Literal:
+    case AST::NodeKind::Unsigned32Literal:
+        RELEASE_ASSERT(result);
+        break;
+
+    default:
+        return std::nullopt;
+    }
+
+    if (result) {
+        if (!convertValueImpl(expression.span(), expression.inferredType(), *result))
+            return std::nullopt;
+        const_cast<AST::Expression&>(expression).setConstantValue(*result);
+    }
+    return result;
 }
 
 }

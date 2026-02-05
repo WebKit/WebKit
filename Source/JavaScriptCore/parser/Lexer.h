@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/LexerUnicodeProperties.h>
 #include <JavaScriptCore/Lookup.h>
 #include <JavaScriptCore/ParserArena.h>
 #include <JavaScriptCore/ParserModes.h>
@@ -258,7 +259,12 @@ ALWAYS_INLINE bool Lexer<Latin1Character>::isWhiteSpace(Latin1Character ch)
 template <>
 ALWAYS_INLINE bool Lexer<char16_t>::isWhiteSpace(char16_t ch)
 {
-    return isLatin1(ch) ? Lexer<Latin1Character>::isWhiteSpace(static_cast<Latin1Character>(ch)) : (u_charType(ch) == U_SPACE_SEPARATOR || ch == byteOrderMark);
+    if (isLatin1(ch))
+        return Lexer<Latin1Character>::isWhiteSpace(static_cast<Latin1Character>(ch));
+
+    // Non-Latin1 Zs category (Space_Separator) + BOM
+    // Generated from UnicodeData.txt by generateLexerUnicodePropertyTables.py
+    return isNonLatin1WhiteSpace(ch);
 }
 
 template <>

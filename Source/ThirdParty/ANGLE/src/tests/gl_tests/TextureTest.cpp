@@ -5574,7 +5574,7 @@ TEST_P(Texture2DTestES3, ChangeTexSizeWithTexStorage)
 
 // Regression test for http://crbug.com/949985 to make sure dirty bits are propagated up from
 // TextureImpl and the texture is synced before being used in a draw call.
-TEST_P(Texture2DTestES3, TextureImplPropogatesDirtyBits)
+TEST_P(Texture2DTestES3, TextureImplPropagatesDirtyBits)
 {
     ANGLE_SKIP_TEST_IF(IsIntel() && IsOpenGL());
     // Flaky hangs on Win10 AMD RX 550 GL. http://anglebug.com/42262039
@@ -6372,6 +6372,90 @@ TEST_P(Texture2DBaseMaxTestES3, RedefineIncompatibleLevelBeyondMaxLevel)
             EXPECT_PIXEL_COLOR_EQ(w, h, kMipColors[lod]);
         }
     }
+}
+
+// Test that rendering to a framebuffer succeeds when base level > max level and the attachment
+// level equals the base level. This verifies that the framebuffer is complete and can be rendered
+// to without crashing.
+TEST_P(Texture2DBaseMaxTestES3, BaseExceedsMaxFboAttachAtBase)
+{
+    // Use simple shader that outputs green
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+    // Set up mutable texture with mipmap filter
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Fill texture with red initially
+    std::vector<GLColor> redPixels0(4, GLColor::red);  // 2x2 = 4 pixels for level 0
+    std::vector<GLColor> redPixels1(1, GLColor::red);  // 1x1 = 1 pixel for level 1
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, redPixels0.data());
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, redPixels1.data());
+
+    // Base level > max level
+    const GLint baseLevel = 1;
+    const GLint maxLevel  = 0;
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, baseLevel);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, maxLevel);
+
+    // Set up framebuffer object and attach texture at same level as base
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    const GLint attachmentLevel = baseLevel;
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture,
+                           attachmentLevel);
+
+    // Framebuffer is complete (attachment == base, even though base > max)
+    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+
+    // Render green to the framebuffer
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5, 1.0f, true);
+    EXPECT_GL_NO_ERROR();
+
+    // Verify green was written
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test that the framebuffer is incomplete when base level > max level and the attachment level
+// does not equal the base level. Drawing to an incomplete framebuffer should fail.
+TEST_P(Texture2DBaseMaxTestES3, BaseExceedsMaxFboAttachNotAtBase)
+{
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+    // Set up mutable texture with mipmap filter
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Fill texture with red
+    std::vector<GLColor> redPixels0(4, GLColor::red);  // 2x2 = 4 pixels for level 0
+    std::vector<GLColor> redPixels1(1, GLColor::red);  // 1x1 = 1 pixel for level 1
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, redPixels0.data());
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, redPixels1.data());
+
+    // Base level > max level
+    const GLint baseLevel = 1;
+    const GLint maxLevel  = 0;
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, baseLevel);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, maxLevel);
+
+    // Set up framebuffer object and attach texture at different level than base
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    const GLint attachmentLevel = 0;
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture,
+                           attachmentLevel);
+
+    // Framebuffer is incomplete (attachment != base when base > max)
+    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT,
+                     glCheckFramebufferStatus(GL_FRAMEBUFFER));
+
+    // Drawing to an incomplete framebuffer should generate an error
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5, 1.0f, true);
+    EXPECT_GL_ERROR(GL_INVALID_FRAMEBUFFER_OPERATION);
 }
 
 // Port test from web_gl/conformance2/textures/misc/fuzz-545-immutable-tex-render-feedback.html.
@@ -16684,10 +16768,6 @@ TEST_P(TextureBufferTestES31, TexBufferDrawTwice)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_buffer"));
 
-    // TODO(http://anglebug.com/42264369): Claims to support GL_OES_texture_buffer, but fails
-    // compilation of shader because "extension 'GL_OES_texture_buffer' is not supported".
-    ANGLE_SKIP_TEST_IF(IsQualcomm() && IsOpenGLES());
-
     const std::array<GLColor, 1> kTexData = {GLColor::red};
 
     GLBuffer buffer;
@@ -16975,10 +17055,6 @@ TEST_P(TextureBufferTestES31, UseAsUBOThenUpdateThenAsTextureBuffer)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_buffer"));
 
-    // Claims to support GL_OES_texture_buffer, but fails compilation of shader because "extension
-    // 'GL_OES_texture_buffer' is not supported".  http://anglebug.com/42264369
-    ANGLE_SKIP_TEST_IF(IsQualcomm() && IsOpenGLES());
-
     const std::array<GLColor, 4> kInitialData = {GLColor::red, GLColor::red, GLColor::red,
                                                  GLColor::red};
     const std::array<GLColor, 4> kUpdateData  = {GLColor::blue, GLColor::blue, GLColor::blue,
@@ -17045,9 +17121,6 @@ TEST_P(TextureBufferTestES31, MapTextureBufferInvalidateThenWrite)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_buffer"));
 
-    // TODO(http://anglebug.com/42264369): Claims to support GL_OES_texture_buffer, but fails
-    // compilation of shader because "extension 'GL_OES_texture_buffer' is not supported".
-    ANGLE_SKIP_TEST_IF(IsQualcomm() && IsOpenGLES());
     // TODO(http://anglebug.com/42264910): The OpenGL backend doesn't correctly handle texture
     // buffers being invalidated when mapped.
     ANGLE_SKIP_TEST_IF(IsOpenGL());
@@ -18742,11 +18815,10 @@ void main()
 #define ES3_EMULATE_COPY_TEX_IMAGE()                                      \
     ES3_OPENGL().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers), \
         ES3_OPENGLES().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers)
-ANGLE_INSTANTIATE_TEST(Texture2DTest,
-                       ANGLE_ALL_TEST_PLATFORMS_ES2,
-                       ES2_EMULATE_COPY_TEX_IMAGE_VIA_SUB(),
-                       ES2_EMULATE_COPY_TEX_IMAGE(),
-                       ES2_OPENGLES().enable(Feature::ForcePassthroughShaders));
+ANGLE_INSTANTIATE_TEST_ES2_AND(Texture2DTest,
+                               ES2_EMULATE_COPY_TEX_IMAGE_VIA_SUB(),
+                               ES2_EMULATE_COPY_TEX_IMAGE(),
+                               ES2_OPENGLES().enable(Feature::ForcePassthroughShaders));
 ANGLE_INSTANTIATE_TEST_ES2(TextureCubeTest);
 ANGLE_INSTANTIATE_TEST_ES2(Texture2DTestWithDrawScale);
 ANGLE_INSTANTIATE_TEST_ES2(Sampler2DAsFunctionParameterTest);
@@ -18842,13 +18914,11 @@ ANGLE_INSTANTIATE_TEST_ES2(TextureLimitsTest);
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Texture2DNorm16TestES3);
 ANGLE_INSTANTIATE_TEST_ES3(Texture2DNorm16TestES3);
 
-ANGLE_INSTANTIATE_TEST(Texture2DRGTest,
-                       ANGLE_ALL_TEST_PLATFORMS_ES2,
-                       ANGLE_ALL_TEST_PLATFORMS_ES3,
-                       ES2_EMULATE_COPY_TEX_IMAGE_VIA_SUB(),
-                       ES3_EMULATE_COPY_TEX_IMAGE_VIA_SUB(),
-                       ES2_EMULATE_COPY_TEX_IMAGE(),
-                       ES3_EMULATE_COPY_TEX_IMAGE());
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(Texture2DRGTest,
+                                       ES2_EMULATE_COPY_TEX_IMAGE_VIA_SUB(),
+                                       ES3_EMULATE_COPY_TEX_IMAGE_VIA_SUB(),
+                                       ES2_EMULATE_COPY_TEX_IMAGE(),
+                                       ES3_EMULATE_COPY_TEX_IMAGE());
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Texture2DFloatTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(Texture2DFloatTestES3);

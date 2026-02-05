@@ -40,6 +40,7 @@
 #include "JSAudioWorkletProcessor.h"
 #include "JSAudioWorkletProcessorConstructor.h"
 #include "JSDOMConvert.h"
+#include "SerializedScriptValue.h"
 #include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/JSLock.h>
 #include <wtf/CrossThreadCopier.h>

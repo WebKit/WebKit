@@ -74,6 +74,11 @@ EncodedDataStatus BitmapImage::dataChanged(bool allDataReceived)
     return m_source->dataChanged(data(), allDataReceived);
 }
 
+void BitmapImage::dataReplaced()
+{
+    return m_source->dataReplaced(data());
+}
+
 void BitmapImage::destroyDecodedData(bool destroyAll)
 {
     m_source->destroyDecodedData(destroyAll);

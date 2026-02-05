@@ -78,15 +78,12 @@ class RenderTreeBuilder;
 class RenderView;
 class RenderHighlight;
 class ScrollAnchoringController;
+class SelectionGeometry;
 class Settings;
 class TransformState;
 class TreeScope;
 class VisiblePosition;
 class WeakPtrImplWithEventTargetData;
-
-#if PLATFORM(IOS_FAMILY)
-class SelectionGeometry;
-#endif
 
 struct InlineBoxAndOffset;
 struct PaintInfo;
@@ -162,6 +159,7 @@ public:
         Replica,
         ScrollbarPart,
         SearchField,
+        SelectFallbackButton,
         Slider,
         SliderContainer,
         Table,
@@ -423,6 +421,7 @@ public:
 #if ENABLE(TREE_DEBUGGING)
     void showNodeTreeForThis() const;
     void showRenderTreeForThis() const;
+    void showSubtreeForThis() const;
     void showLineTreeForThis() const;
 
     void outputRenderObject(WTF::TextStream&, bool mark, int depth) const;
@@ -481,6 +480,7 @@ public:
     bool isRenderTextControlMultiLine() const { return type() == Type::TextControlMultiLine; }
     bool isRenderTextControlSingleLine() const { return isRenderTextControl() && !isRenderTextControlMultiLine(); }
     bool isRenderSearchField() const { return type() == Type::SearchField; }
+    bool isRenderSelectFallbackButton() const { return type() == Type::SelectFallbackButton; }
     bool isRenderTextControlInnerBlock() const { return type() == Type::TextControlInnerBlock; }
     bool isRenderTextControlInnerContainer() const { return type() == Type::TextControlInnerContainer; }
     bool isRenderVideo() const { return type() == Type::Video; }
@@ -835,7 +835,6 @@ public:
     // Return the offset from an object up the container() chain. Asserts that none of the intermediate objects have transforms.
     LayoutSize offsetFromAncestorContainer(const RenderElement&) const;
 
-#if PLATFORM(IOS_FAMILY)
     virtual void collectSelectionGeometries(Vector<SelectionGeometry>&, unsigned startOffset = 0, unsigned endOffset = std::numeric_limits<unsigned>::max());
     virtual void absoluteQuadsForSelection(Vector<FloatQuad>& quads) const { absoluteQuads(quads); }
     struct SelectionGeometries {
@@ -844,7 +843,6 @@ public:
     };
     WEBCORE_EXPORT static SelectionGeometries collectSelectionGeometries(const SimpleRange&);
     WEBCORE_EXPORT static Vector<SelectionGeometry> collectSelectionGeometriesWithoutUnionInteriorLines(const SimpleRange&);
-#endif
 
     virtual void boundingRects(Vector<LayoutRect>&, const LayoutPoint& /* offsetFromRoot */) const { }
 
@@ -1180,15 +1178,13 @@ private:
 
     void invalidateContainerPreferredLogicalWidths();
 
-#if PLATFORM(IOS_FAMILY)
     struct SelectionGeometriesInternal {
         Vector<SelectionGeometry> geometries;
         int maxLineNumber { 0 };
         bool hasBidirectionalText { false };
         Vector<PlatformLayerIdentifier> intersectingLayerIDs;
     };
-    WEBCORE_EXPORT static SelectionGeometriesInternal collectSelectionGeometriesInternal(const SimpleRange&);
-#endif
+    static SelectionGeometriesInternal collectSelectionGeometriesInternal(const SimpleRange&);
 
     void propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderLayerModelObject& repaintContainer, const LayoutRect& repaintRect) const;
 

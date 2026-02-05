@@ -32,9 +32,9 @@
 #include "config.h"
 #include "ScriptArguments.h"
 
-#include "CatchScope.h"
 #include "ProxyObject.h"
 #include "StrongInlines.h"
+#include "TopExceptionScope.h"
 
 namespace Inspector {
 
@@ -43,7 +43,7 @@ static inline String argumentAsString(JSC::JSGlobalObject* globalObject, JSC::JS
     if (JSC::jsDynamicCast<JSC::ProxyObject*>(argument))
         return "[object Proxy]"_s;
 
-    auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(globalObject->vm());
     auto result = argument.toWTFString(globalObject);
     scope.clearException();
     return result;
@@ -130,7 +130,7 @@ bool ScriptArguments::isEqual(const ScriptArguments& other) const
             if (a != b)
                 return false;
         } else {
-            auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
+            auto scope = DECLARE_TOP_EXCEPTION_SCOPE(globalObject->vm());
             bool result = JSC::JSValue::strictEqual(globalObject, a, b);
             scope.clearException();
             if (!result)

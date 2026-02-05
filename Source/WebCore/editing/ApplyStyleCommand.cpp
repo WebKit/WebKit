@@ -252,7 +252,7 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle& style)
     while (paragraphStart.isNotNull() && paragraphStart != beyondEnd) {
         StyleChange styleChange(&style, paragraphStart.deepEquivalent());
         if (styleChange.cssStyle() || m_removeOnly) {
-            RefPtr<Node> block = enclosingBlock(paragraphStart.deepEquivalent().protectedDeprecatedNode());
+            RefPtr<Node> block = enclosingBlock(protect(paragraphStart.deepEquivalent().deprecatedNode()));
             if (!m_removeOnly) {
                 RefPtr<Node> newBlock = moveParagraphContentsToNewBlockIfNecessary(paragraphStart.deepEquivalent());
                 if (newBlock)
@@ -507,7 +507,7 @@ RefPtr<HTMLElement> ApplyStyleCommand::splitAncestorsWithUnicodeBidi(Node* node,
     while (currentNode) {
         RefPtr parent = downcast<Element>(currentNode->parentNode());
         if (before ? currentNode->previousSibling() : currentNode->nextSibling())
-            splitElement(*parent, before ? *currentNode : *currentNode->protectedNextSibling());
+            splitElement(*parent, before ? *currentNode : *protect(currentNode->nextSibling()));
         if (parent == highestAncestorWithUnicodeBidi)
             break;
         currentNode = parent;
@@ -1009,7 +1009,7 @@ RefPtr<HTMLElement> ApplyStyleCommand::highestAncestorWithConflictingInlineStyle
 
 void ApplyStyleCommand::applyInlineStyleToPushDown(Node& node, EditingStyle* style)
 {
-    node.protectedDocument()->updateStyleIfNeeded();
+    protect(node.document())->updateStyleIfNeeded();
 
     if (!style || style->isEmpty() || !node.renderer() || is<HTMLIFrameElement>(node))
         return;
@@ -1181,7 +1181,7 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle& style, const Position& s
 bool ApplyStyleCommand::nodeFullySelected(Element& element, const Position& start, const Position& end) const
 {
     // The tree may have changed and Position::upstream() relies on an up-to-date layout.
-    element.protectedDocument()->updateLayoutIgnorePendingStylesheets();
+    protect(element.document())->updateLayoutIgnorePendingStylesheets();
     return firstPositionInOrBeforeNode(&element) >= start && lastPositionInOrAfterNode(&element).upstream() <= end;
 }
 
@@ -1226,8 +1226,8 @@ void ApplyStyleCommand::splitTextElementAtStart(const Position& start, const Pos
     else
         newEnd = end;
 
-    splitTextNodeContainingElement(*start.protectedContainerText(), start.offsetInContainerNode());
-    updateStartEnd(positionBeforeNode(start.protectedContainerNode().get()), newEnd);
+    splitTextNodeContainingElement(*protect(start.containerText()), start.offsetInContainerNode());
+    updateStartEnd(positionBeforeNode(protect(start.containerNode()).get()), newEnd);
 }
 
 void ApplyStyleCommand::splitTextElementAtEnd(const Position& start, const Position& end)
@@ -1235,7 +1235,7 @@ void ApplyStyleCommand::splitTextElementAtEnd(const Position& start, const Posit
     ASSERT(is<Text>(end.containerNode()));
 
     bool shouldUpdateStart = start.containerNode() == end.containerNode();
-    splitTextNodeContainingElement(*end.protectedContainerText(), end.offsetInContainerNode());
+    splitTextNodeContainingElement(*protect(end.containerText()), end.offsetInContainerNode());
 
     RefPtr parentElement = end.containerNode()->parentNode();
     if (!parentElement || !parentElement->previousSibling())
@@ -1299,7 +1299,7 @@ bool ApplyStyleCommand::mergeStartWithPreviousIfIdentical(const Position& start,
     unsigned startOffset = startChild->computeNodeIndex();
     unsigned endOffset = end.deprecatedEditingOffset() + (startNode == end.deprecatedNode() ? startOffset : 0);
     updateStartEnd({ startNode.get(), startOffset, Position::PositionIsOffsetInAnchor },
-        { end.protectedDeprecatedNode(), endOffset, Position::PositionIsOffsetInAnchor });
+        { protect(end.deprecatedNode()), endOffset, Position::PositionIsOffsetInAnchor });
     return true;
 }
 

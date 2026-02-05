@@ -72,7 +72,7 @@ void injectInternalsObject(JSContextRef context)
 {
     JSGlobalObject* lexicalGlobalObject = toJS(context);
     VM& vm = lexicalGlobalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSLockHolder lock(vm);
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject);
     if (RefPtr document = dynamicDowncast<Document>(*globalObject->scriptExecutionContext())) {

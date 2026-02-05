@@ -204,7 +204,7 @@ Protocol::ErrorStringOr<std::tuple<String, RefPtr<Protocol::Debugger::FunctionDe
     if (!globalObject)
         return makeUnexpected("Unable to get object details - GlobalObject"_s);
 
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(globalObject);
+    auto injectedScript = m_injectedScriptManager->injectedScriptFor(globalObject);
     if (injectedScript.hasNoValue())
         return makeUnexpected("Unable to get object details - InjectedScript"_s);
 
@@ -244,7 +244,7 @@ Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorHeapAgent
     if (!globalObject)
         return makeUnexpected("Unable to get object details - GlobalObject"_s);
 
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(globalObject);
+    auto injectedScript = m_injectedScriptManager->injectedScriptFor(globalObject);
     if (injectedScript.hasNoValue())
         return makeUnexpected("Unable to get object details - InjectedScript"_s);
 

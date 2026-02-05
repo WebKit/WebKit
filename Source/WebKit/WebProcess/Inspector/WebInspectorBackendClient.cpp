@@ -105,7 +105,7 @@ void WebInspectorBackendClient::frontendCountChanged(unsigned count)
 Inspector::FrontendChannel* WebInspectorBackendClient::openLocalFrontend(PageInspectorController* controller)
 {
     if (RefPtr page = m_page.get())
-        page->protectedInspector()->openLocalInspectorFrontend();
+        protect(page->inspector())->openLocalInspectorFrontend();
     return nullptr;
 }
 
@@ -205,7 +205,7 @@ void WebInspectorBackendClient::showPaintRect(const FloatRect& rect)
     if (!m_paintIndicatorLayerClient)
         m_paintIndicatorLayerClient = makeUnique<RepaintIndicatorLayerClient>(*this);
 
-    Ref paintLayer = GraphicsLayer::create(page->protectedDrawingArea()->graphicsLayerFactory(), *m_paintIndicatorLayerClient);
+    Ref paintLayer = GraphicsLayer::create(protect(page->drawingArea())->graphicsLayerFactory(), *m_paintIndicatorLayerClient);
 
     paintLayer->setName(MAKE_STATIC_STRING_IMPL("paint rect"));
     paintLayer->setAnchorPoint(FloatPoint3D());

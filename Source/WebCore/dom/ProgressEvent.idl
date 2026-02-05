@@ -26,16 +26,14 @@
 [
     Exposed=(Window,Worker),
 ] interface ProgressEvent : Event {
-    constructor([AtomString] DOMString type, optional ProgressEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional ProgressEventInit eventInitDict = {});
 
     readonly attribute boolean lengthComputable;
     readonly attribute double loaded;
     readonly attribute double total;
 };
 
-[
-    LegacyNativeDictionaryRequiredInterfaceNullability,
-] dictionary ProgressEventInit : EventInit {
+dictionary ProgressEventInit : EventInit {
     boolean lengthComputable = false;
     double loaded = 0;
     double total = 0;

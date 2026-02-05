@@ -35,6 +35,7 @@ void WGSLLanguageFeatures::initializeSetLike(DOMSetAdapter& set) const
     set.add<IDLDOMString>("packed_4x8_integer_dot_product"_s);
     set.add<IDLDOMString>("pointer_composite_access"_s);
     set.add<IDLDOMString>("readonly_and_readwrite_storage_textures"_s);
+    set.add<IDLDOMString>("texture_formats_tier1"_s);
     set.add<IDLDOMString>("unrestricted_pointer_parameters"_s);
 }
 

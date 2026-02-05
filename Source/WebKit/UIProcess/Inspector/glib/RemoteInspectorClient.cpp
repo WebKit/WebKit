@@ -299,7 +299,7 @@ void RemoteInspectorClient::sendMessageToFrontend(uint64_t connectionID, uint64_
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
 
-void RemoteInspectorClient::appendTargertList(GString* html, InspectorType inspectorType, ShouldEscapeSingleQuote escapeSingleQuote) const
+void RemoteInspectorClient::appendTargetList(GString* html, InspectorType inspectorType, ShouldEscapeSingleQuote escapeSingleQuote) const
 {
     if (m_targets.isEmpty())
         g_string_append(html, "<p>No targets found</p>");
@@ -363,7 +363,7 @@ GString* RemoteInspectorClient::buildTargetListPage(InspectorType inspectorType)
         "</style>"
         "</head><body><h1>Inspectable targets</h1>"
         "<div id='targetlist'>");
-    appendTargertList(html, inspectorType, ShouldEscapeSingleQuote::No);
+    appendTargetList(html, inspectorType, ShouldEscapeSingleQuote::No);
     g_string_append(html, "</div></body></html>");
 
     return html;
