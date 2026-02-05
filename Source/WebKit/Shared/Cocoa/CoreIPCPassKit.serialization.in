@@ -53,6 +53,10 @@ webkit_platform_headers: "CoreIPCPKSecureElementPass.h"
     ampEnrollmentPinning: Data
     operationalAnalyticsIdentifier: String
     signedFields: Array<String>?
+#if ENABLE(APPLE_PAY_DELEGATED_REQUEST)
+    isDelegatedSession: Number
+    delegateDisplayName: String
+#endif
 }
 
 [WebKitSecureCodingClass=PAL::getPKPaymentClassSingleton(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPayment {

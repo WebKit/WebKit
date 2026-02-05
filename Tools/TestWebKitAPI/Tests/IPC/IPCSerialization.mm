@@ -1767,6 +1767,21 @@ TEST(IPCSerialization, DDScannerResultPlist)
                                displayName:(NSString *)displayName
             operationalAnalyticsIdentifier:(NSString *)operationalAnalyticsIdentifier
                                  signature:(NSData *)signature;
+
+#if HAVE(PASSKIT_DELEGATED_REQUEST)
+- (instancetype)initWithDelegateDisplayName:(NSString *)delegateDisplayName
+                         merchantIdentifier:(NSString *)merchantIdentifier
+                                displayName:(NSString *)displayName
+                                 initiative:(NSString *)initiative
+                          initiativeContext:(NSString *)initiativeContext
+                  merchantSessionIdentifier:(NSString *)merchantSessionIdentifier
+                                      nonce:(NSString *)nonce
+                             epochTimestamp:(NSUInteger)epochTimestamp
+                                  expiresAt:(NSUInteger)expiresAt
+             operationalAnalyticsIdentifier:(NSString *)operationalAnalyticsIdentifier
+                               signedFields:(NSArray<NSString *> *)signedFields
+                                  signature:(NSData *)signature;
+#endif
 @end
 
 TEST(IPCSerialization, DataDetectors)
@@ -1818,6 +1833,24 @@ TEST(IPCSerialization, SecureCoding)
         operationalAnalyticsIdentifier:@"WebKitOperations42"
         signature:[NSData new]]);
     runTestNS({ session.get() });
+
+#if HAVE(PASSKIT_DELEGATED_REQUEST)
+    // This initializer adopts delegate fields, but retryNonce and domain are unexercised
+    session = adoptNS([[PAL::getPKPaymentMerchantSessionClassSingleton() alloc]
+        initWithDelegateDisplayName:@"WebKit (Delegate)"
+        merchantIdentifier:@"WebKit Open Source Project"
+        displayName:@"WebKit"
+        initiative:@"WebKit Regression Test Suite"
+        initiativeContext:@"WebKit IPC Testing"
+        merchantSessionIdentifier:@"WebKitMerchantSession"
+        nonce:@"WebKitNonce"
+        epochTimestamp:1000000000
+        expiresAt:2000000000
+        operationalAnalyticsIdentifier:@"WebKitOperations42"
+        signedFields:@[ @"FirstField", @"AndTheSecond" ]
+        signature:[NSData new]]);
+    runTestNS({ session.get() });
+#endif
 
     RetainPtr<CNPostalAddress> address = postalAddressForTesting();
     RetainPtr<CNLabeledValue> labeledPostalAddress = adoptNS([[PAL::getCNLabeledValueClassSingleton() alloc] initWithLabel:@"Work" value:address.get()]);
