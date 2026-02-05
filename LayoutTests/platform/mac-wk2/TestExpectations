@@ -2446,3 +2446,6 @@ webkit.org/b/306379 [ Tahoe Debug ] webrtc/addICECandidate-closed.html [ Skip ]
 
 webkit.org/b/307084 [ Tahoe Release ] webgl/smell-test.html [ ImageOnlyFailure Pass ]
 
+
+webkit.org/b/307088 [ Tahoe Release ] webgl/webgl-and-dom-in-gpup.html [ ImageOnlyFailure Pass ]
+
