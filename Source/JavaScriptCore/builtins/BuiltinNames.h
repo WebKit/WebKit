@@ -150,11 +150,6 @@ namespace JSC {
     macro(isFinite) \
     macro(makeTypeError) \
     macro(AggregateError) \
-    macro(mapStorage) \
-    macro(mapIterationNext) \
-    macro(mapIterationEntry) \
-    macro(mapIterationEntryKey) \
-    macro(mapIterationEntryValue) \
     macro(mapIteratorNext) \
     macro(mapIteratorKey) \
     macro(mapIteratorValue) \

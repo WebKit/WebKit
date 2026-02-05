@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Tetsuharu Ohzeki <tetsuharu.ohzeki@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +31,11 @@
 #include "CachedCallInlines.h"
 #include "GetterSetter.h"
 #include "InterpreterInlines.h"
+#include "JSCellButterfly.h"
 #include "JSCInlines.h"
+#include "JSCJSValue.h"
+#include "JSGlobalObject.h"
+#include "JSMap.h"
 #include "JSMapInlines.h"
 #include "JSMapIterator.h"
 #include "VMEntryScopeInlines.h"
@@ -49,6 +54,7 @@ static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncGetOrInsertComputed);
 static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncValues);
 static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncKeys);
 static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncEntries);
+static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncForEach);
 
 static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncSize);
     
@@ -69,7 +75,7 @@ void MapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().entriesPublicName(), entries, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().entriesPrivateName(), entries, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    JSFunction* forEachFunc = JSFunction::create(vm, globalObject, mapPrototypeForEachCodeGenerator(vm), globalObject);
+    JSFunction* forEachFunc = JSFunction::create(vm, globalObject, 1, vm.propertyNames->forEach.string(), mapProtoFuncForEach, ImplementationVisibility::Public);
     putDirectWithoutTransition(vm, vm.propertyNames->forEach, forEachFunc, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().forEachPrivateName(), forEachFunc, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
@@ -271,6 +277,73 @@ JSC_DEFINE_HOST_FUNCTION(mapProtoFuncSize, (JSGlobalObject* globalObject, CallFr
     RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
 
     return JSValue::encode(jsNumber(map->size()));
+}
+
+JSC_DEFINE_HOST_FUNCTION(mapProtoFuncForEach, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
+
+    JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
+
+    JSMap* map = getMap(globalObject, thisValue);
+    RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
+
+    JSValue callback = callFrame->argument(0);
+    if (!callback.isCallable()) [[unlikely]] {
+        throwTypeError(globalObject, scope, "Map.prototype.forEach callback must be a function"_s);
+        return JSValue::encode(jsUndefined());
+    }
+
+    auto callData = JSC::getCallDataInline(callback);
+    ASSERT(callData.type != CallData::Type::None);
+
+    JSValue thisArgs = callFrame->argument(1);
+    JSCell* storageCell = map->storageOrSentinel(vm);
+    if (storageCell == vm.orderedHashTableSentinel())
+        return JSValue::encode(jsUndefined());
+
+    JSMap::Helper::Entry nextEntry = 0;
+    JSCellButterfly* storage = jsCast<JSMap::Storage*>(storageCell);
+
+    std::optional<CachedCall> cachedHasCall;
+    if (callData.type == CallData::Type::JS) [[likely]] {
+        cachedHasCall.emplace(globalObject, jsCast<JSFunction*>(callback), 3);
+        RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
+    }
+
+    while (true) {
+        storageCell = JSMap::Helper::nextAndUpdateIterationEntry(vm, *storage, nextEntry);
+        if (storageCell == vm.orderedHashTableSentinel())
+            break;
+
+        JSCellButterfly* currentStorage = jsCast<JSMap::Storage*>(storageCell);
+
+        JSMap::Helper::TableSize currentEntry = JSMap::Helper::iterationEntry(*currentStorage);
+        JSValue key = JSMap::Helper::getKey(*currentStorage, currentEntry);
+        JSValue value = JSMap::Helper::getValue(*currentStorage, currentEntry);
+
+        nextEntry = currentEntry + 1;
+
+        if (cachedHasCall) [[likely]]
+            cachedHasCall->callWithArguments(globalObject, thisArgs, value, key, thisValue);
+        else {
+            MarkedArgumentBuffer arguments;
+            arguments.append(value);
+            arguments.append(key);
+            arguments.append(thisValue);
+            ASSERT(!arguments.hasOverflowed());
+
+            call(globalObject, callback, callData, thisArgs, arguments);
+        }
+        RETURN_IF_EXCEPTION(scope, JSValue::encode(jsUndefined()));
+
+        storage = currentStorage;
+    }
+
+    scope.release();
+    return JSValue::encode(jsUndefined());
 }
 
 }
