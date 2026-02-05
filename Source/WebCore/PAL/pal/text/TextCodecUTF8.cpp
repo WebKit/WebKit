@@ -27,6 +27,7 @@
 #include "TextCodecUTF8.h"
 
 #include "TextCodecASCIIFastPath.h"
+#include <wtf/SIMDHelpers.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
@@ -334,6 +335,20 @@ String TextCodecUTF8::decode(std::span<const uint8_t> bytes, bool flush, bool st
         while (!source.empty()) {
             if (isASCII(source[0])) {
                 // Fast path for ASCII. Most UTF-8 text will be ASCII.
+                constexpr size_t simdStride = SIMD::stride<uint8_t>;
+                constexpr auto asciiHighBitMask = SIMD::splat<uint8_t>(0x80);
+                while (source.size() >= simdStride && destination.size() >= simdStride) {
+                    auto chunk = SIMD::load(source.data());
+                    if (SIMD::isNonZero(SIMD::bitAnd2(chunk, asciiHighBitMask)))
+                        break;
+                    SIMD::store(chunk, reinterpret_cast<uint8_t*>(destination.data()));
+                    skip(source, simdStride);
+                    skip(destination, simdStride);
+                }
+                if (source.empty())
+                    break;
+                if (!isASCII(source[0]))
+                    continue;
                 if (WTF::isAlignedToMachineWord(source.data())) {
                     while (source.data() < alignedEnd) {
                         auto chunk = reinterpretCastSpanStartTo<const WTF::MachineWord>(source);
@@ -419,6 +434,25 @@ upConvertTo16Bit:
         while (!source.empty()) {
             if (isASCII(source[0])) {
                 // Fast path for ASCII. Most UTF-8 text will be ASCII.
+                constexpr size_t simdStride = SIMD::stride<uint8_t>;
+                constexpr auto asciiHighBitMask = SIMD::splat<uint8_t>(0x80);
+                while (source.size() >= simdStride && destination16.size() >= simdStride) {
+                    auto chunk = SIMD::load(source.data());
+                    if (SIMD::isNonZero(SIMD::bitAnd2(chunk, asciiHighBitMask)))
+                        break;
+                    auto low8 = simde_vget_low_u8(chunk);
+                    auto high8 = simde_vget_high_u8(chunk);
+                    auto low16 = simde_vmovl_u8(low8);
+                    auto high16 = simde_vmovl_u8(high8);
+                    simde_vst1q_u16(reinterpret_cast<uint16_t*>(destination16.data()), low16);
+                    simde_vst1q_u16(reinterpret_cast<uint16_t*>(destination16.subspan(8).data()), high16);
+                    skip(source, simdStride);
+                    skip(destination16, simdStride);
+                }
+                if (source.empty())
+                    break;
+                if (!isASCII(source[0]))
+                    continue;
                 if (WTF::isAlignedToMachineWord(source.data())) {
                     while (source.data() < alignedEnd) {
                         auto chunk = reinterpretCastSpanStartTo<const WTF::MachineWord>(source);
