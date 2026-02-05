@@ -30,6 +30,8 @@
 
 #import "UIKitSPI.h"
 #import "UIKitUtilities.h"
+#import "WKContentView.h"
+#import "WebPageProxy.h"
 #import <WebCore/AudioSession.h>
 #import <pal/spi/ios/MediaPlayerSPI.h>
 #import <wtf/RetainPtr.h>
@@ -97,6 +99,10 @@ typedef NSInteger WKAirPlayRoutePickerRouteSharingPolicy;
         _actionSheet = nil;
     };
 
+#if PLATFORM(VISION)
+    if (auto* contentView = dynamic_objc_cast<WKContentView>(view))
+        contentView->_page->dispatchWillPresentModalUI();
+#endif
     auto viewControllerForPresentation = view._wk_viewControllerForFullScreenPresentation;
     [viewControllerForPresentation presentViewController:_actionSheet.get() animated:YES completion:nil];
 }
