@@ -320,9 +320,9 @@ class LayoutTestFinder(object):
         it = self.fs.scandir(current_layout_tests_path)
         try:
             for entry in it:
-                if entry.is_dir(follow_symlinks=False):
+                if entry.is_dir():
                     dirs.add(entry.name)
-                elif entry.is_file(follow_symlinks=False):
+                elif entry.is_file():
                     if self.is_test_file(path, entry.name):
                         test_files.append(entry.name)
                     else:
@@ -338,7 +338,7 @@ class LayoutTestFinder(object):
             it = self.fs.scandir(search_path)
             try:
                 for entry in it:
-                    if entry.is_file(follow_symlinks=False):
+                    if entry.is_file():
                         non_test_files[search_path].add(entry.name)
             finally:
                 it.close()

@@ -140,6 +140,11 @@ static bool shouldEnableEnhancedSecurity(const std::string& pathOrURL)
     return pathContains(pathOrURL, "enhanced-security/");
 }
 
+static bool shouldEnableSiteIsolation(const std::string& pathOrURL)
+{
+    return pathContains(pathOrURL, "site-isolation/inspector/");
+}
+
 static bool shouldUseBackForwardCache(const std::string& pathOrURL)
 {
     return pathContains(pathOrURL, "navigation-api/")
@@ -179,6 +184,8 @@ TestFeatures hardcodedFeaturesBasedOnPathForTest(const TestCommand& command)
         features.boolWebPreferenceFeatures.insert({ "LockdownModeEnabled", true });
     if (shouldEnableEnhancedSecurity(command.pathOrURL))
         features.boolTestRunnerFeatures.insert({ "enhancedSecurityEnabled", true });
+    if (shouldEnableSiteIsolation(command.pathOrURL))
+        features.boolWebPreferenceFeatures.insert({ "SiteIsolationEnabled", true });
     if (shouldUseBackForwardCache(command.pathOrURL))
         features.boolWebPreferenceFeatures.insert({ "UsesBackForwardCache", true });
     if (shouldDisableMutationEvents(command.pathOrURL))
