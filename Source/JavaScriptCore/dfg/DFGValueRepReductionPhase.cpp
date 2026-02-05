@@ -83,11 +83,24 @@ private:
                     case GetGlobalLexicalVariable:
                     case MultiGetByOffset:
                     case GetByOffset: {
-                        if (node->child1().useKind() == RealNumberUse || node->child1().useKind() == NumberUse) {
-                            if (node->child1()->origin.exitOK)
-                                candidates.add(node->child1().node());
+                        if (node->child1().useKind() != RealNumberUse && node->child1().useKind() != NumberUse)
                             break;
+                        if (!node->child1()->origin.exitOK)
+                            break;
+                        if (node->child1()->op() == MultiGetByOffset) {
+                            bool isCandidate = true;
+                            MultiGetByOffsetData& data = node->child1()->multiGetByOffsetData();
+                            for (unsigned i = 0; i < data.cases.size(); ++i) {
+                                GetByOffsetMethod& method = data.cases[i].method();
+                                if (method.kind() == GetByOffsetMethod::Constant && !method.constant()->value().toNumberFromPrimitive()) {
+                                    isCandidate = false;
+                                    break;
+                                }
+                            }
+                            if (!isCandidate)
+                                break;
                         }
+                        candidates.add(node->child1().node());
                         break;
                     }
                     default:
