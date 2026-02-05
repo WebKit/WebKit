@@ -3894,13 +3894,13 @@ void HTMLMediaElement::seek(const MediaTime& time)
 
 void HTMLMediaElement::seekInternal(const MediaTime& time)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, time);
+    HTMLMEDIAELEMENT_RELEASE_LOG(SEEKINTERNAL, time.toDouble());
     seekWithTolerance({ time, MediaTime::zeroTime(), MediaTime::zeroTime() }, false);
 }
 
 void HTMLMediaElement::seekWithTolerance(const SeekTarget& target, bool fromDOM)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, "SeekTarget = ", target);
+    HTMLMEDIAELEMENT_RELEASE_LOG(SEEKWITHTOLERANCE, target.toString().utf8());
     // 4.8.10.9 Seeking
 
     // 1 - Set the media element's show poster flag to false.
@@ -4077,7 +4077,7 @@ void HTMLMediaElement::finishSeek()
     // 14 - Set the seeking IDL attribute to false.
     clearSeeking();
 
-    ALWAYS_LOG(LOGIDENTIFIER, "current time = ", currentMediaTime(), ", pending seek = ", !!m_pendingSeek);
+    HTMLMEDIAELEMENT_RELEASE_LOG(FINISHSEEK, currentMediaTime().toDouble(), !!m_pendingSeek);
 
     if (!m_pendingSeek) {
         // Don't update text track cues immediately because there are frequently several seeks in quick
@@ -5896,7 +5896,8 @@ void HTMLMediaElement::mediaPlayerTimeChanged()
             // then seek to the earliest possible position of the media resource and abort these steps when the direction of
             // playback is forwards,
             if (now >= dur && (now + dur) > MediaTime::zeroTime()) {
-                ALWAYS_LOG(LOGIDENTIFIER, "current time (", now, ") is greater then duration (", dur, "), looping");
+                HTMLMEDIAELEMENT_RELEASE_LOG(MEDIAPLAYERTIMECHANGED_LOOPING, now.toDouble(), dur.toDouble());
+
                 seekInternal(MediaTime::zeroTime());
             }
         } else if ((now <= MediaTime::zeroTime() && playbackRate < 0) || (now >= dur && playbackRate > 0)) {
@@ -6027,7 +6028,7 @@ void HTMLMediaElement::mediaPlayerMuteChanged()
 
 void HTMLMediaElement::mediaPlayerSeeked(const MediaTime&)
 {
-    ALWAYS_LOG(LOGIDENTIFIER);
+    HTMLMEDIAELEMENT_RELEASE_LOG(MEDIAPLAYERSEEKED);
 
 #if ENABLE(MEDIA_SOURCE)
     if (RefPtr mediaSource = m_mediaSource)

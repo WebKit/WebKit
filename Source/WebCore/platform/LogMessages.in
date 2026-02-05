@@ -102,6 +102,7 @@ HTMLMEDIAELEMENT_REMOVEDFROMANCESTOR, "HTMLMediaElement::removedFromAncestor(%" 
 HTMLMEDIAELEMENT_DIDFINISHINSERTINGNODE, "HTMLMediaElement::didFinishInsertingNode(%" PRIX64 ")", (uint64_t), DEFAULT, Media
 HTMLMEDIAELEMENT_MEDIAPLAYERRATECHANGED, "HTMLMediaElement::mediaPlayerRateChanged(%" PRIX64 ") rate: %f", (uint64_t, double), DEFAULT, Media
 HTMLMEDIAELEMENT_MEDIAPLAYERTIMECHANGED, "HTMLMediaElement::mediaPlayerTimeChanged(%" PRIX64 ")", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_MEDIAPLAYERTIMECHANGED_LOOPING, "HTMLMediaElement::mediaPlayerTimeChanged(%" PRIX64 ") current time (%f) is greater then duration (%f), looping", (uint64_t, double, double), DEFAULT, Media
 HTMLMEDIAELEMENT_SETSHOULDDELAYLOADEVENT, "HTMLMediaElement::setShouldDelayLoadEvent(%" PRIX64 ") %" PRIu8, (uint64_t, uint8_t), DEFAULT, Media
 HTMLMEDIAELEMENT_MEDIAPLAYERENGINEUPDATED, "HTMLMediaElement::mediaPlayerEngineUpdated(%" PRIX64 ") %s", (uint64_t, CString), DEFAULT, Media
 HTMLMEDIAELEMENT_CURRENTMEDIATIME_SEEKING, "HTMLMediaElement::currentMediaTime(%" PRIX64 ") seeking, returning %f", (uint64_t, float), DEFAULT, Media
@@ -117,11 +118,13 @@ HTMLMEDIAELEMENT_CANTRANSITIONFROMAUTOPLAYTOPLAY_NOT_ENOUGH_DATA, "HTMLMediaElem
 HTMLMEDIAELEMENT_CANTRANSITIONFROMAUTOPLAYTOPLAY_NOT_AUTOPLAYING, "HTMLMediaElement::canTransitionFromAutoplayToPlay(%" PRIX64 ") not autoplaying", (uint64_t), DEFAULT, Media
 HTMLMEDIAELEMENT_CONFIGURETEXTTRACKDISPLAY, "HTMLMediaElement::configureTextTrackDisplay(%" PRIX64 ") %s", (uint64_t, CString), DEFAULT, Media
 HTMLMEDIAELEMENT_CONFIGURETEXTTRACKGROUP, "HTMLMediaElement::configureTextTrackGroup(%" PRIX64 ") %s track with language %s and BCP 47 language %s has score %d", (uint64_t, CString, CString, CString, int), DEFAULT, Media
+HTMLMEDIAELEMENT_FINISHSEEK, "HTMLMediaElement::finishSeek(%" PRIX64 ") current time = %f, pending seek = %d", (uint64_t, double, int), DEFAULT, Media
 HTMLMEDIAELEMENT_MEDIAENGINEWASUPDATED, "HTMLMediaElement::mediaEngineWasUpdated(%" PRIX64 ")", (uint64_t), DEFAULT, Media
 HTMLMEDIAELEMENT_MEDIAPLAYERCHARACTERISTICSCHANGED, "HTMLMediaElement::mediaPlayerCharacteristicChanged(%" PRIX64 ") %s", (uint64_t, CString), DEFAULT, Media
 HTMLMEDIAELEMENT_MEDIAPLAYERCHARACTERISTICSCHANGED_NO_MEDIASESSION, "HTMLMediaElement::mediaPlayerCharacteristicChanged(%" PRIX64 ") no media session", (uint64_t), DEFAULT, Media
 HTMLMEDIAELEMENT_MEDIAPLAYERDURATIONCHANGED, "HTMLMediaElement::mediaPlayerDurationChanged(%" PRIX64 ") duration = %f, current time = %f", (uint64_t, float, float), DEFAULT, Media
 HTMLMEDIAELEMENT_MEDIAPLAYERSIZECHANGED, "HTMLMediaElement::mediaPlayerSizeChanged(%" PRIX64 ") w = %f, h = %f", (uint64_t, float, float), DEFAULT, Media
+HTMLMEDIAELEMENT_MEDIAPLAYERSEEKED, "HTMLMediaElement::mediaPlayerSeeked(%" PRIX64 ")", (uint64_t), DEFAULT, Media
 HTMLMEDIAELEMENT_PAUSE, "HTMLMediaElement::pause(%" PRIX64 ")", (uint64_t), DEFAULT, Media
 HTMLMEDIAELEMENT_PAUSEINTERNAL, "HTMLMediaElement::pauseInternal(%" PRIX64 ")", (uint64_t), DEFAULT, Media
 HTMLMEDIAELEMENT_PREPAREFORLOAD, "HTMLMediaElement::prepareForLoad(%" PRIX64 ") gesture = %d", (uint64_t, int), DEFAULT, Media
@@ -131,6 +134,8 @@ HTMLMEDIAELEMENT_SCHEDULECONFIGURETEXTTRACKS_TASK_SCHEDULED, "HTMLMediaElement::
 HTMLMEDIAELEMENT_SCHEDULECONFIGURETEXTTRACKS_LAMBDA_TASK_FIRED, "HTMLMediaElement::scheduleConfigureTextTracks(%" PRIX64 ") lambda(), task fired", (uint64_t), DEFAULT, Media
 HTMLMEDIAELEMENT_SCHEDULEMEDIAENGINEWASUPDATED_TASK_SCHEDULED, "HTMLMediaElement::scheduleMediaEngineWasUpdated(%" PRIX64 ") task scheduled", (uint64_t), DEFAULT, Media
 HTMLMEDIAELEMENT_SCHEDULEMEDIAENGINEWASUPDATED_LAMBDA_TASK_FIRED, "HTMLMediaElement::scheduleMediaEngineWasUpdated(%" PRIX64 ") lambda(), task fired", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_SEEKINTERNAL, "HTMLMediaElement::seekInternal(%" PRIX64 ") %f", (uint64_t, double), DEFAULT, Media
+HTMLMEDIAELEMENT_SEEKWITHTOLERANCE, "HTMLMediaElement::seekWithTolerance(%" PRIX64 ") SeekTarget = %s", (uint64_t, CString), DEFAULT, Media
 HTMLMEDIAELEMENT_SELECTMEDIARESOURCE_LAMBDA_TASK_FIRED, "HTMLMediaElement::selectMediaResource(%" PRIX64 ") lambda(), task fired", (uint64_t), DEFAULT, Media
 HTMLMEDIAELEMENT_SELECTMEDIARESOURCE_NOTHING_TO_LOAD, "HTMLMediaElement::selectMediaResource(%" PRIX64 ") nothing to load", (uint64_t), DEFAULT, Media
 HTMLMEDIAELEMENT_SELECTMEDIARESOURCE_HAS_SRCATTR_PLAYER_NOT_CREATED, "HTMLMediaElement::selectMediaResource(%" PRIX64 ") has srcAttr but m_player is not created", (uint64_t), DEFAULT, Media
