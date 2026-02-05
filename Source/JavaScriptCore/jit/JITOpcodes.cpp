@@ -112,30 +112,6 @@ void JIT::emitSlow_op_new_object(const JSInstruction* currentInstruction, Vector
     emitPutVirtualRegister(dst, returnValueJSR);
 }
 
-
-void JIT::emit_op_overrides_has_instance(const JSInstruction* currentInstruction)
-{
-    auto bytecode = currentInstruction->as<OpOverridesHasInstance>();
-    VirtualRegister dst = bytecode.m_dst;
-    VirtualRegister constructor = bytecode.m_constructor;
-    VirtualRegister hasInstanceValue = bytecode.m_hasInstanceValue;
-
-    emitGetVirtualRegisterPayload(hasInstanceValue, regT2);
-
-    // We don't jump if we know what Symbol.hasInstance would do.
-    move(TrustedImm32(1), regT0);
-    loadGlobalObject(regT1);
-    Jump customHasInstanceValue = branchPtr(NotEqual, regT2, Address(regT1, JSGlobalObject::offsetOfFunctionProtoHasInstanceSymbolFunction()));
-    // We know that constructor is an object from the way bytecode is emitted for instanceof expressions.
-    emitGetVirtualRegisterPayload(constructor, regT2);
-    // Check that constructor 'ImplementsDefaultHasInstance' i.e. the object is not a C-API user nor a bound function.
-    test8(Zero, Address(regT2, JSCell::typeInfoFlagsOffset()), TrustedImm32(ImplementsDefaultHasInstance), regT0);
-    customHasInstanceValue.link(this);
-
-    boxBoolean(regT0, jsRegT10);
-    emitPutVirtualRegister(dst, jsRegT10);
-}
-
 void JIT::emit_op_is_empty(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpIsEmpty>();

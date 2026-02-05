@@ -426,7 +426,6 @@ namespace JSC {
         void emit_op_has_private_name(const JSInstruction*);
         void emit_op_has_private_brand(const JSInstruction*);
         void emit_op_init_lazy_reg(const JSInstruction*);
-        void emit_op_overrides_has_instance(const JSInstruction*);
         void emit_op_instanceof(const JSInstruction*);
         void emit_op_is_empty(const JSInstruction*);
         void emit_op_typeof_is_undefined(const JSInstruction*);

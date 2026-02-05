@@ -1332,35 +1332,6 @@ llintOpWithReturn(op_bitnot, OpBitnot, macro (size, get, dispatch, return)
     dispatch()
 end)
 
-llintOp(op_overrides_has_instance, OpOverridesHasInstance, macro (size, get, dispatch)
-    get(m_dst, t3)
-    storei BooleanTag, TagOffset[cfr, t3, 8]
-
-    # First check if hasInstanceValue is the one on Function.prototype[Symbol.hasInstance]
-    get(m_hasInstanceValue, t0)
-    loadConstantOrVariablePayload(size, t0, CellTag, t2, .opOverrideshasInstanceValueNotCell)
-    loadConstantOrVariable(size, t0, t1, t2)
-    bineq t1, CellTag, .opOverrideshasInstanceValueNotCell
-
-    # We don't need hasInstanceValue's tag register anymore.
-    loadp CodeBlock[cfr], t1
-    loadp CodeBlock::m_globalObject[t1], t1
-    loadp JSGlobalObject::m_functionProtoHasInstanceSymbolFunction[t1], t1
-    bineq t1, t2, .opOverrideshasInstanceValueNotDefault
-
-    # We know the constructor is a cell.
-    get(m_constructor, t0)
-    loadConstantOrVariablePayloadUnchecked(size, t0, t1)
-    tbz JSCell::m_flags[t1], ImplementsDefaultHasInstance, t0
-    storei t0, PayloadOffset[cfr, t3, 8]
-    dispatch()
-
-.opOverrideshasInstanceValueNotCell:
-.opOverrideshasInstanceValueNotDefault:
-    storei 1, PayloadOffset[cfr, t3, 8]
-    dispatch()
-end)
-
 
 llintOpWithReturn(op_is_empty, OpIsEmpty, macro (size, get, dispatch, return)
     get(m_operand, t1)

@@ -1368,13 +1368,6 @@ op :identity_with_profile,
         bottomProfile: unsigned,
     }
 
-op :overrides_has_instance,
-    args: {
-        dst: VirtualRegister,
-        constructor: VirtualRegister,
-        hasInstanceValue: VirtualRegister,
-    }
-
 op :typeof,
     args: {
         dst: VirtualRegister,
