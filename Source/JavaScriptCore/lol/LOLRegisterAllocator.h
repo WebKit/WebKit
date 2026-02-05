@@ -701,6 +701,22 @@ auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpNewRegExp& instr
     return result;
 }
 
+template<typename Backend>
+auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpInc& instruction, BytecodeIndex index)
+{
+    std::array<AllocationHint, 1> uses = { instruction.m_srcDst };
+    std::array<AllocationHint, 1> defs = { instruction.m_srcDst };
+    return allocateImpl<0>(jit, instruction, index, uses, defs);
+}
+
+template<typename Backend>
+auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpDec& instruction, BytecodeIndex index)
+{
+    std::array<AllocationHint, 1> uses = { instruction.m_srcDst };
+    std::array<AllocationHint, 1> defs = { instruction.m_srcDst };
+    return allocateImpl<0>(jit, instruction, index, uses, defs);
+}
+
 } // namespace JSC
 
 #endif

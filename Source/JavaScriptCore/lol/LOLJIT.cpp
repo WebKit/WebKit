@@ -2548,6 +2548,42 @@ void LOLJIT::emit_op_bitnot(const JSInstruction* currentInstruction)
     m_fastAllocator.releaseScratches(allocations);
 }
 
+void LOLJIT::emit_op_inc(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpInc>();
+    auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
+    auto [ srcDstRegs ] = allocations.uses;
+    auto [ dstRegs ] = allocations.defs;
+    ASSERT_UNUSED(dstRegs, srcDstRegs == dstRegs);
+
+    emitJumpSlowCaseIfNotInt(srcDstRegs);
+    addSlowCase(branchAdd32(Overflow, srcDstRegs.payloadGPR(), TrustedImm32(1), s_scratch));
+#if USE(JSVALUE64)
+    boxInt32(s_scratch, srcDstRegs);
+#else
+    move(s_scratch, srcDestRegs.payloadGPR());
+#endif
+    m_fastAllocator.releaseScratches(allocations);
+}
+
+void LOLJIT::emit_op_dec(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpDec>();
+    auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
+    auto [ srcDstRegs ] = allocations.uses;
+    auto [ dstRegs ] = allocations.defs;
+    ASSERT_UNUSED(dstRegs, srcDstRegs == dstRegs);
+
+    emitJumpSlowCaseIfNotInt(srcDstRegs);
+    addSlowCase(branchSub32(Overflow, srcDstRegs.payloadGPR(), TrustedImm32(1), s_scratch));
+#if USE(JSVALUE64)
+    boxInt32(s_scratch, srcDstRegs);
+#else
+    move(s_scratch, srcDestRegs.payloadGPR());
+#endif
+    m_fastAllocator.releaseScratches(allocations);
+}
+
 void LOLJIT::emit_op_get_from_scope(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetFromScope>();

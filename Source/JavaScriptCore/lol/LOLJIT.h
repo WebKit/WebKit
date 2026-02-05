@@ -54,6 +54,8 @@ namespace JSC::LOL {
     macro(op_mul) \
     macro(op_sub) \
     macro(op_negate) \
+    macro(op_inc) \
+    macro(op_dec) \
     macro(op_eq) \
     macro(op_neq) \
     macro(op_less) \
