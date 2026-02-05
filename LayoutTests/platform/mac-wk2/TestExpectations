@@ -2443,3 +2443,6 @@ webkit.org/b/306808 http/tests/webgpu/webgpu/shader/validation/parse/blankspace.
 webkit.org/b/306821 [ Tahoe ] fast/css-grid-layout/grid-item-display.html [ Pass Failure ]
 
 webkit.org/b/306379 [ Tahoe Debug ] webrtc/addICECandidate-closed.html [ Skip ]
+
+webkit.org/b/307084 [ Tahoe Release ] webgl/smell-test.html [ ImageOnlyFailure Pass ]
+
