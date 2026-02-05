@@ -8406,7 +8406,6 @@ webkit.org/b/303507 [ Release ] inspector/audit/basic-error.html [ Timeout ]
 webkit.org/b/303507 [ Release ] inspector/canvas/console-record-offscreen-webgl.html [ Timeout ]
 webkit.org/b/303507 [ Release ] inspector/dom/customElementState.html [ Timeout ]
 webkit.org/b/303507 [ Release ] inspector/injected-script/observable.html [ Timeout ]
-webkit.org/b/303507 inspector/network/intercept-aborted-request.html [ Timeout ]
 webkit.org/b/303507 [ Release ] inspector/page/filter-cookies-for-domain.html [ Timeout ]
 
 # webkit.org/b/303639 Mass-marking flaky tests
@@ -8481,3 +8480,5 @@ webkit.org/b/306998 [ Debug ] inspector/canvas/console-record-offscreen-webgl.ht
 webkit.org/b/306998 [ Debug ] inspector/dom/customElementState.html [ Skip ]
 webkit.org/b/306998 [ Debug ] inspector/injected-script/observable.html [ Skip ]
 webkit.org/b/306998 [ Debug ] inspector/page/filter-cookies-for-domain.html [ Skip ]
+
+webkit.org/b/307091 inspector/network/intercept-aborted-request.html [ Skip ]
