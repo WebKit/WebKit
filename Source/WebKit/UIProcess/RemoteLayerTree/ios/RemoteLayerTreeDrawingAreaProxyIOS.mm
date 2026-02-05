@@ -29,11 +29,13 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "CAFrameRateRangeUtilities.h"
+#import "PageClient.h"
 #import "RemoteScrollingCoordinatorProxyIOS.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
 #import "WebProcessProxy.h"
 #import <QuartzCore/CADisplayLink.h>
+#import <UIKit/UIScreen.h>
 #import <WebCore/DisplayUpdate.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/ScrollView.h>
@@ -45,6 +47,7 @@ constexpr WebCore::FramesPerSecond DisplayLinkFramesPerSecond = 60;
 @interface WKDisplayLinkHandler : NSObject {
     WeakPtr<WebKit::RemoteLayerTreeDrawingAreaProxy> _drawingAreaProxy;
     RetainPtr<CADisplayLink> _displayLink;
+    __weak UIScreen *_screenForDisplayLink;
     WebCore::FramesPerSecond _preferredFramesPerSecond;
     BOOL _wantsHighFrameRate;
     WebCore::DisplayUpdate _currentUpdate;
@@ -55,6 +58,7 @@ constexpr WebCore::FramesPerSecond DisplayLinkFramesPerSecond = 60;
 }
 
 - (id)initWithDrawingAreaProxy:(WebKit::RemoteLayerTreeDrawingAreaProxy*)drawingAreaProxy;
+- (void)windowScreenDidChange;
 - (void)displayLinkFired:(CADisplayLink *)sender;
 - (void)invalidate;
 - (void)schedule;
@@ -92,17 +96,32 @@ static void* displayRefreshRateObservationContext = &displayRefreshRateObservati
             createDisplayLink = false;
         }
 #endif
-        if (createDisplayLink) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            // FIXME: CoreAnimation version deprecated rdar://164090713
-            _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkFired:)];
-        ALLOW_DEPRECATED_DECLARATIONS_END
-            [_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
-            [_displayLink.get().display addObserver:self forKeyPath:@"refreshRate" options:NSKeyValueObservingOptionNew context:displayRefreshRateObservationContext];
-            _displayLink.get().paused = YES;
-        }
+        if (createDisplayLink)
+            [self _createDisplayLink];
     }
     return self;
+}
+
+- (void)windowScreenDidChange
+{
+    if (!_displayLink)
+        return;
+
+    RetainPtr screen = [self _screenForDisplayLink];
+    if (_screenForDisplayLink == screen.get())
+        return;
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    if (!_screenForDisplayLink && screen == [UIScreen mainScreen])
+        return;
+ALLOW_DEPRECATED_DECLARATIONS_END
+
+    BOOL wasPaused = [_displayLink isPaused];
+
+    [self invalidate];
+
+    [self _createDisplayLink];
+    [_displayLink setPaused:wasPaused];
 }
 
 - (void)dealloc
@@ -237,6 +256,39 @@ static void* displayRefreshRateObservationContext = &displayRefreshRateObservati
     return _currentUpdate.relevantForUpdateFrequency(_preferredFramesPerSecond);
 }
 
+- (UIScreen *)_screenForDisplayLink
+{
+    RefPtr page = _drawingAreaProxy->page();
+    if (!page)
+        return nil;
+
+    RefPtr pageClient = page->pageClient();
+    if (!pageClient)
+        return nil;
+
+    return pageClient->screen();
+}
+
+- (void)_createDisplayLink
+{
+    ASSERT(!_displayLink);
+
+    _screenForDisplayLink = [self _screenForDisplayLink];
+
+    if (_screenForDisplayLink)
+        _displayLink = [_screenForDisplayLink displayLinkWithTarget:self selector:@selector(displayLinkFired:)];
+    else {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        // FIXME: CoreAnimation version deprecated rdar://164090713
+        _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkFired:)];
+ALLOW_DEPRECATED_DECLARATIONS_END
+    }
+
+    [_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
+    [[_displayLink display] addObserver:self forKeyPath:@"refreshRate" options:NSKeyValueObservingOptionNew context:displayRefreshRateObservationContext];
+    [_displayLink setPaused:YES];
+}
+
 @end
 
 namespace WebKit {
@@ -347,6 +399,11 @@ void RemoteLayerTreeDrawingAreaProxyIOS::pauseDisplayLinkIfNeeded()
 std::optional<WebCore::FramesPerSecond> RemoteLayerTreeDrawingAreaProxyIOS::displayNominalFramesPerSecond()
 {
     return [displayLinkHandler() nominalFramesPerSecond];
+}
+
+void RemoteLayerTreeDrawingAreaProxyIOS::windowScreenDidChange(WebCore::PlatformDisplayID)
+{
+    [m_displayLinkHandler windowScreenDidChange];
 }
 
 UIView *RemoteLayerTreeDrawingAreaProxyIOS::viewWithLayerIDForTesting(WebCore::PlatformLayerIdentifier layerID) const

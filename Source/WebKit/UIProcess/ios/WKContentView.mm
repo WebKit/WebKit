@@ -243,6 +243,8 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
 #endif // !USE(EXTENSIONKIT)
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
+    __weak UIScreen *_screen;
+
     RetainPtr<WKNSUndoManager> _undoManager;
     RetainPtr<WKNSKeyEventSimulatorUndoManager> _undoManagerForSimulatingKeyEvents;
 
@@ -786,6 +788,12 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
 - (void)_updateForScreen:(UIScreen *)screen
 {
     ASSERT(screen);
+
+    _screen = screen;
+
+    if (RefPtr page = _page)
+        page->windowScreenDidChange(page->generateDisplayIDFromPageID());
+
     [self _accessibilityRegisterUIProcessTokens];
 }
 
@@ -1052,6 +1060,11 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 - (double)_targetContentZoomScaleForRect:(const WebCore::FloatRect&)targetRect currentScale:(double)currentScale fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale
 {
     return [_webView _targetContentZoomScaleForRect:targetRect currentScale:currentScale fitEntireRect:fitEntireRect minimumScale:minimumScale maximumScale:maximumScale];
+}
+
+- (UIScreen *)_screen
+{
+    return _screen;
 }
 
 #if ENABLE(MODEL_PROCESS)

@@ -63,6 +63,8 @@ private:
 
     void didRefreshDisplay() override;
 
+    void windowScreenDidChange(WebCore::PlatformDisplayID) override;
+
     std::optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() override;
 
     WKDisplayLinkHandler *displayLinkHandler();

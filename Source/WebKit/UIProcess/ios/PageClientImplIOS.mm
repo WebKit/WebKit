@@ -636,6 +636,11 @@ void PageClientImpl::doneDeferringTouchEnd(bool preventNativeGestures)
 
 #endif // ENABLE(IOS_TOUCH_EVENTS)
 
+UIScreen *PageClientImpl::screen()
+{
+    return [contentView() _screen];
+}
+
 #if ENABLE(IMAGE_ANALYSIS)
 
 void PageClientImpl::requestTextRecognition(const URL& imageURL, ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(TextRecognitionResult&&)>&& completion)

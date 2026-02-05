@@ -36,6 +36,7 @@
 #import <wtf/WeakObjCPtr.h>
 
 OBJC_CLASS PlatformTextAlternatives;
+OBJC_CLASS UIScreen;
 OBJC_CLASS WKContentView;
 OBJC_CLASS WKEditorUndoTarget;
 
@@ -147,6 +148,8 @@ private:
     void doneDeferringTouchMove(bool preventNativeGestures) override;
     void doneDeferringTouchEnd(bool preventNativeGestures) override;
 #endif
+
+    UIScreen *screen() override;
 
 #if ENABLE(IMAGE_ANALYSIS)
     void requestTextRecognition(const URL& imageURL, WebCore::ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&) final;

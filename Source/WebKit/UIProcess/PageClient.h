@@ -85,6 +85,7 @@ OBJC_CLASS NSObject;
 OBJC_CLASS NSSet;
 OBJC_CLASS NSTextAlternatives;
 OBJC_CLASS UIGestureRecognizer;
+OBJC_CLASS UIScreen;
 OBJC_CLASS UIScrollView;
 OBJC_CLASS UIView;
 OBJC_CLASS UIViewController;
@@ -616,6 +617,8 @@ public:
     virtual bool isScreenBeingCaptured() = 0;
 
     virtual String sceneID() = 0;
+
+    virtual UIScreen *screen() = 0;
 
     virtual void beginTextRecognitionForFullscreenVideo(WebCore::ShareableBitmap::Handle&&, AVPlayerViewController *) = 0;
     virtual void cancelTextRecognitionForFullscreenVideo(AVPlayerViewController *) = 0;

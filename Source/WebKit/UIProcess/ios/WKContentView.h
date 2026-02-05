@@ -91,6 +91,8 @@ enum class ViewStabilityFlag : uint8_t;
 - (WKWebView *)webView;
 - (UIView *)rootContentView;
 
+- (UIScreen *)_screen;
+
 - (Ref<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy:(WebKit::WebProcessProxy&)webProcessProxy;
 - (void)_processDidExit;
 #if ENABLE(GPU_PROCESS)
