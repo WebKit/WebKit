@@ -321,6 +321,10 @@ struct TextUnderElementMode {
     DescendIntoContainers descendIntoContainers { DescendIntoContainers::No };
     TrimWhitespace trimWhitespace { TrimWhitespace::Yes };
     CheckedPtr<Node> ignoredChildNode { nullptr };
+    // Tracks nodes that have already been referenced via aria-labelledby during
+    // the current name computation. These nodes should be skipped when encountered
+    // directly in the tree to avoid double-counting.
+    HashSet<const Node*>* nodesReferencedViaLabeledby { nullptr };
 
     bool isHidden() { return considerHiddenState && inHiddenSubtree; }
 };

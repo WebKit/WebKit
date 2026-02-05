@@ -3472,6 +3472,11 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
         if (isHeading())
             mode.includeFocusableContent = true;
 
+        // Track nodes referenced via aria-labelledby to avoid double-counting them
+        // when they're encountered again in the tree.
+        HashSet<const Node*> nodesReferencedViaLabeledby;
+        mode.nodesReferencedViaLabeledby = &nodesReferencedViaLabeledby;
+
         String text = textUnderElement(mode);
         if (!text.isEmpty())
             textOrder.append(AccessibilityText(WTF::move(text), AccessibilityTextSource::Children));
@@ -3905,6 +3910,11 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
         if (!shouldUseAccessibilityObjectInnerText(*child, mode))
             continue;
 
+        // Skip this child if it was already referenced via aria-labelledby by a sibling.
+        // This prevents double-counting elements that were already included via labelledby.
+        if (mode.nodesReferencedViaLabeledby && child->node() && mode.nodesReferencedViaLabeledby->contains(child->node()))
+            continue;
+
         if (RefPtr accessibilityNodeObject = dynamicDowncast<AccessibilityNodeObject>(*child)) {
             // We should ignore the child if it's labeled by this node.
             // This could happen when this node labels multiple child nodes and we didn't
@@ -3916,6 +3926,12 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
             Vector<AccessibilityText> textOrder;
             accessibilityNodeObject->alternativeText(textOrder);
             if (textOrder.size() > 0 && textOrder[0].text.length()) {
+                // If this child has aria-labelledby, track the referenced elements so we can
+                // skip them if encountered later in the tree (to avoid double-counting).
+                if (mode.nodesReferencedViaLabeledby && !labeledByElements.isEmpty()) {
+                    for (auto& element : labeledByElements)
+                        mode.nodesReferencedViaLabeledby->add(element.ptr());
+                }
                 appendNameToStringBuilder(builder, WTF::move(textOrder[0].text));
                 // Alternative text (e.g. from aria-label, aria-labelledby, alt, etc) requires space separation.
                 previousRequiresSpace = true;
