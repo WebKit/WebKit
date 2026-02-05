@@ -108,6 +108,22 @@ namespace JSC::LOL {
     macro(op_jnstricteq) \
     macro(op_jbelow) \
     macro(op_jbeloweq) \
+    macro(op_create_lexical_environment) \
+    macro(op_create_direct_arguments) \
+    macro(op_create_scoped_arguments) \
+    macro(op_create_cloned_arguments) \
+    macro(op_new_array) \
+    macro(op_new_array_with_size) \
+    macro(op_new_func) \
+    macro(op_new_func_exp) \
+    macro(op_new_generator_func) \
+    macro(op_new_generator_func_exp) \
+    macro(op_new_async_func) \
+    macro(op_new_async_func_exp) \
+    macro(op_new_async_generator_func) \
+    macro(op_new_async_generator_func_exp) \
+    macro(op_new_object) \
+    macro(op_new_reg_exp) \
 
 
 #define FOR_EACH_OP_WITH_SLOW_CASE(macro) \
@@ -407,6 +423,11 @@ private:
     void emitStrictEqJumpImpl(const JSInstruction*, RelationalCondition);
     template<typename Op>
     void emitStrictEqJumpSlowImpl(const JSInstruction*, ResultCondition, Vector<SlowCaseEntry>::iterator&);
+
+    template<typename Op>
+    void emitNewFuncCommon(const JSInstruction*);
+    template<typename Op>
+    void emitNewFuncExprCommon(const JSInstruction*);
 
     static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_from_scopeGenerator(VM&);
     static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_resolve_scopeGenerator(VM&);

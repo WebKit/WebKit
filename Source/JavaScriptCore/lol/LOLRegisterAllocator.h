@@ -538,6 +538,168 @@ auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpJbeloweq& instru
     return result;
 }
 
+// These ops always call C++ operations, so we just flush everything
+// TODO: Inline the allocation so there's a fast path that doesn't require flushing.
+template<typename Backend>
+auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpCreateLexicalEnvironment& instruction, BytecodeIndex index)
+{
+    std::array<AllocationHint, 2> uses = { instruction.m_scope, instruction.m_symbolTable };
+    std::array<AllocationHint, 0> defs = { };
+    auto result = allocateImpl<0>(jit, instruction, index, uses, defs);
+    m_allocator.flushAllRegisters(*this);
+    return result;
+}
+
+template<typename Backend>
+auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpCreateDirectArguments& instruction, BytecodeIndex index)
+{
+    std::array<AllocationHint, 0> uses = { };
+    std::array<AllocationHint, 0> defs = { };
+    auto result = allocateImpl<0>(jit, instruction, index, uses, defs);
+    m_allocator.flushAllRegisters(*this);
+    return result;
+}
+
+template<typename Backend>
+auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpCreateScopedArguments& instruction, BytecodeIndex index)
+{
+    std::array<AllocationHint, 1> uses = { instruction.m_scope };
+    std::array<AllocationHint, 0> defs = { };
+    auto result = allocateImpl<0>(jit, instruction, index, uses, defs);
+    m_allocator.flushAllRegisters(*this);
+    return result;
+}
+
+template<typename Backend>
+auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpCreateClonedArguments& instruction, BytecodeIndex index)
+{
+    std::array<AllocationHint, 0> uses = { };
+    std::array<AllocationHint, 0> defs = { };
+    auto result = allocateImpl<0>(jit, instruction, index, uses, defs);
+    m_allocator.flushAllRegisters(*this);
+    return result;
+}
+
+// new_* ops - these all call C++ operations and flush everything
+template<typename Backend>
+auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpNewArray& instruction, BytecodeIndex index)
+{
+    std::array<AllocationHint, 0> uses = { };
+    std::array<AllocationHint, 0> defs = { };
+    auto result = allocateImpl<0>(jit, instruction, index, uses, defs);
+    m_allocator.flushAllRegisters(*this);
+    return result;
+}
+
+template<typename Backend>
+auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpNewArrayWithSize& instruction, BytecodeIndex index)
+{
+    std::array<AllocationHint, 1> uses = { instruction.m_length };
+    std::array<AllocationHint, 0> defs = { };
+    auto result = allocateImpl<0>(jit, instruction, index, uses, defs);
+    m_allocator.flushAllRegisters(*this);
+    return result;
+}
+
+template<typename Backend>
+auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpNewFunc& instruction, BytecodeIndex index)
+{
+    std::array<AllocationHint, 1> uses = { instruction.m_scope };
+    std::array<AllocationHint, 0> defs = { };
+    auto result = allocateImpl<0>(jit, instruction, index, uses, defs);
+    m_allocator.flushAllRegisters(*this);
+    return result;
+}
+
+template<typename Backend>
+auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpNewFuncExp& instruction, BytecodeIndex index)
+{
+    std::array<AllocationHint, 1> uses = { instruction.m_scope };
+    std::array<AllocationHint, 0> defs = { };
+    auto result = allocateImpl<0>(jit, instruction, index, uses, defs);
+    m_allocator.flushAllRegisters(*this);
+    return result;
+}
+
+template<typename Backend>
+auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpNewGeneratorFunc& instruction, BytecodeIndex index)
+{
+    std::array<AllocationHint, 1> uses = { instruction.m_scope };
+    std::array<AllocationHint, 0> defs = { };
+    auto result = allocateImpl<0>(jit, instruction, index, uses, defs);
+    m_allocator.flushAllRegisters(*this);
+    return result;
+}
+
+template<typename Backend>
+auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpNewGeneratorFuncExp& instruction, BytecodeIndex index)
+{
+    std::array<AllocationHint, 1> uses = { instruction.m_scope };
+    std::array<AllocationHint, 0> defs = { };
+    auto result = allocateImpl<0>(jit, instruction, index, uses, defs);
+    m_allocator.flushAllRegisters(*this);
+    return result;
+}
+
+template<typename Backend>
+auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpNewAsyncFunc& instruction, BytecodeIndex index)
+{
+    std::array<AllocationHint, 1> uses = { instruction.m_scope };
+    std::array<AllocationHint, 0> defs = { };
+    auto result = allocateImpl<0>(jit, instruction, index, uses, defs);
+    m_allocator.flushAllRegisters(*this);
+    return result;
+}
+
+template<typename Backend>
+auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpNewAsyncFuncExp& instruction, BytecodeIndex index)
+{
+    std::array<AllocationHint, 1> uses = { instruction.m_scope };
+    std::array<AllocationHint, 0> defs = { };
+    auto result = allocateImpl<0>(jit, instruction, index, uses, defs);
+    m_allocator.flushAllRegisters(*this);
+    return result;
+}
+
+template<typename Backend>
+auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpNewAsyncGeneratorFunc& instruction, BytecodeIndex index)
+{
+    std::array<AllocationHint, 1> uses = { instruction.m_scope };
+    std::array<AllocationHint, 0> defs = { };
+    auto result = allocateImpl<0>(jit, instruction, index, uses, defs);
+    m_allocator.flushAllRegisters(*this);
+    return result;
+}
+
+template<typename Backend>
+auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpNewAsyncGeneratorFuncExp& instruction, BytecodeIndex index)
+{
+    std::array<AllocationHint, 1> uses = { instruction.m_scope };
+    std::array<AllocationHint, 0> defs = { };
+    auto result = allocateImpl<0>(jit, instruction, index, uses, defs);
+    m_allocator.flushAllRegisters(*this);
+    return result;
+}
+
+template<typename Backend>
+auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpNewObject& instruction, BytecodeIndex index)
+{
+    std::array<AllocationHint, 0> uses = { };
+    std::array<AllocationHint, 0> defs = { };
+    auto result = allocateImpl<0>(jit, instruction, index, uses, defs);
+    m_allocator.flushAllRegisters(*this);
+    return result;
+}
+
+template<typename Backend>
+auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpNewRegExp& instruction, BytecodeIndex index)
+{
+    std::array<AllocationHint, 0> uses = { };
+    std::array<AllocationHint, 0> defs = { };
+    auto result = allocateImpl<0>(jit, instruction, index, uses, defs);
+    m_allocator.flushAllRegisters(*this);
+    return result;
+}
 
 } // namespace JSC
 

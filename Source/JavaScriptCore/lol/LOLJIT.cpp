@@ -738,6 +738,21 @@ void LOLJIT::privateCompileSlowCases()
         REPLAY_ALLOCATION_FOR_OP(op_jneq_ptr, OpJneqPtr)
         REPLAY_ALLOCATION_FOR_OP(op_jbelow, OpJbelow)
         REPLAY_ALLOCATION_FOR_OP(op_jbeloweq, OpJbeloweq)
+        REPLAY_ALLOCATION_FOR_OP(op_create_lexical_environment, OpCreateLexicalEnvironment)
+        REPLAY_ALLOCATION_FOR_OP(op_create_direct_arguments, OpCreateDirectArguments)
+        REPLAY_ALLOCATION_FOR_OP(op_create_scoped_arguments, OpCreateScopedArguments)
+        REPLAY_ALLOCATION_FOR_OP(op_create_cloned_arguments, OpCreateClonedArguments)
+        REPLAY_ALLOCATION_FOR_OP(op_new_array, OpNewArray)
+        REPLAY_ALLOCATION_FOR_OP(op_new_array_with_size, OpNewArrayWithSize)
+        REPLAY_ALLOCATION_FOR_OP(op_new_func, OpNewFunc)
+        REPLAY_ALLOCATION_FOR_OP(op_new_func_exp, OpNewFuncExp)
+        REPLAY_ALLOCATION_FOR_OP(op_new_generator_func, OpNewGeneratorFunc)
+        REPLAY_ALLOCATION_FOR_OP(op_new_generator_func_exp, OpNewGeneratorFuncExp)
+        REPLAY_ALLOCATION_FOR_OP(op_new_async_func, OpNewAsyncFunc)
+        REPLAY_ALLOCATION_FOR_OP(op_new_async_func_exp, OpNewAsyncFuncExp)
+        REPLAY_ALLOCATION_FOR_OP(op_new_async_generator_func, OpNewAsyncGeneratorFunc)
+        REPLAY_ALLOCATION_FOR_OP(op_new_async_generator_func_exp, OpNewAsyncGeneratorFuncExp)
+        REPLAY_ALLOCATION_FOR_OP(op_new_reg_exp, OpNewRegExp)
 
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -1378,6 +1393,304 @@ void LOLJIT::emit_op_to_object(const JSInstruction* currentInstruction)
 
     emitValueProfilingSite(bytecode, operandRegs);
     moveValueRegs(operandRegs, dstRegs);
+}
+
+void LOLJIT::emit_op_create_lexical_environment(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpCreateLexicalEnvironment>();
+    auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
+    auto [ scopeRegs, symbolTableRegs ] = allocations.uses;
+
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister initialValue = bytecode.m_initialValue;
+
+    ASSERT(initialValue.isConstant());
+    ASSERT(m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(initialValue));
+    JSValue value = m_unlinkedCodeBlock->getConstant(initialValue);
+
+    using Operation = decltype(operationCreateLexicalEnvironmentUndefined);
+    constexpr GPRReg globalObjectGPR = preferredArgumentGPR<Operation, 0>();
+    constexpr GPRReg scopeGPR = preferredArgumentGPR<Operation, 1>();
+    constexpr GPRReg symbolTableGPR = preferredArgumentGPR<Operation, 2>();
+
+    shuffleRegisters<GPRReg, 2>({ scopeRegs.payloadGPR(), symbolTableRegs.payloadGPR() }, { scopeGPR, symbolTableGPR });
+    loadGlobalObject(globalObjectGPR);
+    callOperationNoExceptionCheck(value == jsUndefined() ? operationCreateLexicalEnvironmentUndefined : operationCreateLexicalEnvironmentTDZ, dst, globalObjectGPR, scopeGPR, symbolTableGPR);
+
+    m_fastAllocator.releaseScratches(allocations);
+}
+
+void LOLJIT::emit_op_create_direct_arguments(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpCreateDirectArguments>();
+    auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
+
+    VirtualRegister dst = bytecode.m_dst;
+
+    using Operation = decltype(operationCreateDirectArgumentsBaseline);
+    constexpr GPRReg globalObjectGPR = preferredArgumentGPR<Operation, 0>();
+
+    loadGlobalObject(globalObjectGPR);
+    callOperationNoExceptionCheck(operationCreateDirectArgumentsBaseline, dst, globalObjectGPR);
+
+    m_fastAllocator.releaseScratches(allocations);
+}
+
+void LOLJIT::emit_op_create_scoped_arguments(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpCreateScopedArguments>();
+    auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
+    auto [ scopeRegs ] = allocations.uses;
+
+    VirtualRegister dst = bytecode.m_dst;
+
+    using Operation = decltype(operationCreateScopedArgumentsBaseline);
+    constexpr GPRReg globalObjectGPR = preferredArgumentGPR<Operation, 0>();
+    constexpr GPRReg scopeGPR = preferredArgumentGPR<Operation, 1>();
+
+    move(scopeRegs.payloadGPR(), scopeGPR);
+    loadGlobalObject(globalObjectGPR);
+    callOperationNoExceptionCheck(operationCreateScopedArgumentsBaseline, dst, globalObjectGPR, scopeGPR);
+
+    m_fastAllocator.releaseScratches(allocations);
+}
+
+void LOLJIT::emit_op_create_cloned_arguments(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpCreateClonedArguments>();
+    auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
+
+    VirtualRegister dst = bytecode.m_dst;
+
+    using Operation = decltype(operationCreateClonedArgumentsBaseline);
+    constexpr GPRReg globalObjectGPR = preferredArgumentGPR<Operation, 0>();
+
+    loadGlobalObject(globalObjectGPR);
+    callOperation(operationCreateClonedArgumentsBaseline, dst, globalObjectGPR);
+
+    m_fastAllocator.releaseScratches(allocations);
+}
+
+void LOLJIT::emit_op_new_array(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpNewArray>();
+    auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
+
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister valuesStart = bytecode.m_argv;
+    int size = bytecode.m_argc;
+
+    using Operation = decltype(operationNewArrayWithProfile);
+    constexpr GPRReg globalObjectGPR = preferredArgumentGPR<Operation, 0>();
+    constexpr GPRReg profileGPR = preferredArgumentGPR<Operation, 1>();
+    constexpr GPRReg valuesGPR = preferredArgumentGPR<Operation, 2>();
+
+    addPtr(TrustedImm32(valuesStart.offset() * sizeof(Register)), callFrameRegister, valuesGPR);
+    materializePointerIntoMetadata(bytecode, OpNewArray::Metadata::offsetOfArrayAllocationProfile(), profileGPR);
+    loadGlobalObject(globalObjectGPR);
+    callOperation(operationNewArrayWithProfile, dst, globalObjectGPR, profileGPR, valuesGPR, size);
+
+    m_fastAllocator.releaseScratches(allocations);
+}
+
+void LOLJIT::emit_op_new_array_with_size(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpNewArrayWithSize>();
+    auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
+    auto [ sizeRegs ] = allocations.uses;
+
+    VirtualRegister dst = bytecode.m_dst;
+
+    using Operation = decltype(operationNewArrayWithSizeAndProfile);
+    constexpr GPRReg globalObjectGPR = preferredArgumentGPR<Operation, 0>();
+    constexpr GPRReg profileGPR = preferredArgumentGPR<Operation, 1>();
+    constexpr JSValueRegs sizeJSR = preferredArgumentJSR<Operation, 2>();
+
+    materializePointerIntoMetadata(bytecode, OpNewArrayWithSize::Metadata::offsetOfArrayAllocationProfile(), profileGPR);
+    moveValueRegs(sizeRegs, sizeJSR);
+    loadGlobalObject(globalObjectGPR);
+    callOperation(operationNewArrayWithSizeAndProfile, dst, globalObjectGPR, profileGPR, sizeJSR);
+
+    m_fastAllocator.releaseScratches(allocations);
+}
+
+template<typename Op>
+void LOLJIT::emitNewFuncCommon(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<Op>();
+    auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
+    auto [ scopeRegs ] = allocations.uses;
+
+    VirtualRegister dst = bytecode.m_dst;
+    auto* unlinkedExecutable = m_unlinkedCodeBlock->functionDecl(bytecode.m_functionDecl);
+
+    using Operation = decltype(operationNewFunction);
+    constexpr GPRReg globalObjectGPR = preferredArgumentGPR<Operation, 0>();
+    constexpr GPRReg scopeGPR = preferredArgumentGPR<Operation, 1>();
+    constexpr GPRReg functionDeclGPR = preferredArgumentGPR<Operation, 2>();
+
+    // Move allocated register first before it can be clobbered
+    move(scopeRegs.payloadGPR(), scopeGPR);
+    loadGlobalObject(globalObjectGPR);
+    auto constant = addToConstantPool(JITConstantPool::Type::FunctionDecl, std::bit_cast<void*>(static_cast<uintptr_t>(bytecode.m_functionDecl)));
+    loadConstant(constant, functionDeclGPR);
+
+    OpcodeID opcodeID = Op::opcodeID;
+    auto function = operationNewFunction;
+    if (opcodeID == op_new_func)
+        function = selectNewFunctionOperation(unlinkedExecutable);
+    else if (opcodeID == op_new_generator_func)
+        function = operationNewGeneratorFunction;
+    else if (opcodeID == op_new_async_func)
+        function = operationNewAsyncFunction;
+    else {
+        ASSERT(opcodeID == op_new_async_generator_func);
+        function = operationNewAsyncGeneratorFunction;
+    }
+    callOperationNoExceptionCheck(function, dst, globalObjectGPR, scopeGPR, functionDeclGPR);
+
+    m_fastAllocator.releaseScratches(allocations);
+}
+
+void LOLJIT::emit_op_new_func(const JSInstruction* currentInstruction)
+{
+    emitNewFuncCommon<OpNewFunc>(currentInstruction);
+}
+
+void LOLJIT::emit_op_new_generator_func(const JSInstruction* currentInstruction)
+{
+    emitNewFuncCommon<OpNewGeneratorFunc>(currentInstruction);
+}
+
+void LOLJIT::emit_op_new_async_func(const JSInstruction* currentInstruction)
+{
+    emitNewFuncCommon<OpNewAsyncFunc>(currentInstruction);
+}
+
+void LOLJIT::emit_op_new_async_generator_func(const JSInstruction* currentInstruction)
+{
+    emitNewFuncCommon<OpNewAsyncGeneratorFunc>(currentInstruction);
+}
+
+template<typename Op>
+void LOLJIT::emitNewFuncExprCommon(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<Op>();
+    auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
+    auto [ scopeRegs ] = allocations.uses;
+
+    VirtualRegister dst = bytecode.m_dst;
+    auto* unlinkedExecutable = m_unlinkedCodeBlock->functionExpr(bytecode.m_functionDecl);
+
+    using Operation = decltype(operationNewFunction);
+    constexpr GPRReg globalObjectGPR = preferredArgumentGPR<Operation, 0>();
+    constexpr GPRReg scopeGPR = preferredArgumentGPR<Operation, 1>();
+    constexpr GPRReg functionDeclGPR = preferredArgumentGPR<Operation, 2>();
+
+    // Move allocated register first before it can be clobbered
+    move(scopeRegs.payloadGPR(), scopeGPR);
+    loadGlobalObject(globalObjectGPR);
+    auto constant = addToConstantPool(JITConstantPool::Type::FunctionExpr, std::bit_cast<void*>(static_cast<uintptr_t>(bytecode.m_functionDecl)));
+    loadConstant(constant, functionDeclGPR);
+
+    OpcodeID opcodeID = Op::opcodeID;
+    auto function = operationNewFunction;
+    if (opcodeID == op_new_func_exp)
+        function = selectNewFunctionOperation(unlinkedExecutable);
+    else if (opcodeID == op_new_generator_func_exp)
+        function = operationNewGeneratorFunction;
+    else if (opcodeID == op_new_async_func_exp)
+        function = operationNewAsyncFunction;
+    else {
+        ASSERT(opcodeID == op_new_async_generator_func_exp);
+        function = operationNewAsyncGeneratorFunction;
+    }
+    callOperationNoExceptionCheck(function, dst, globalObjectGPR, scopeGPR, functionDeclGPR);
+
+    m_fastAllocator.releaseScratches(allocations);
+}
+
+void LOLJIT::emit_op_new_func_exp(const JSInstruction* currentInstruction)
+{
+    emitNewFuncExprCommon<OpNewFuncExp>(currentInstruction);
+}
+
+void LOLJIT::emit_op_new_generator_func_exp(const JSInstruction* currentInstruction)
+{
+    emitNewFuncExprCommon<OpNewGeneratorFuncExp>(currentInstruction);
+}
+
+void LOLJIT::emit_op_new_async_func_exp(const JSInstruction* currentInstruction)
+{
+    emitNewFuncExprCommon<OpNewAsyncFuncExp>(currentInstruction);
+}
+
+void LOLJIT::emit_op_new_async_generator_func_exp(const JSInstruction* currentInstruction)
+{
+    emitNewFuncExprCommon<OpNewAsyncGeneratorFuncExp>(currentInstruction);
+}
+
+void LOLJIT::emit_op_new_object(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpNewObject>();
+    auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
+
+    RegisterID resultReg = regT0;
+    RegisterID allocatorReg = regT1;
+    RegisterID scratchReg = regT2;
+    RegisterID structureReg = regT3;
+
+    loadPtrFromMetadata(bytecode, OpNewObject::Metadata::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfAllocator(), allocatorReg);
+    loadPtrFromMetadata(bytecode, OpNewObject::Metadata::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfStructure(), structureReg);
+
+    JumpList slowCases;
+    auto butterfly = TrustedImmPtr(nullptr);
+    emitAllocateJSObject(resultReg, JITAllocator::variable(), allocatorReg, structureReg, butterfly, scratchReg, slowCases, SlowAllocationResult::UndefinedBehavior);
+    load8(Address(structureReg, Structure::inlineCapacityOffset()), scratchReg);
+    emitInitializeInlineStorage(resultReg, scratchReg);
+    mutatorFence(*m_vm);
+    boxCell(resultReg, jsRegT10);
+    emitPutVirtualRegister(bytecode.m_dst, jsRegT10);
+
+    addSlowCase(slowCases);
+
+    m_fastAllocator.releaseScratches(allocations);
+}
+
+void LOLJIT::emitSlow_op_new_object(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+
+    RegisterID structureReg = regT3;
+
+    auto bytecode = currentInstruction->as<OpNewObject>();
+    auto allocations = m_replayAllocator.allocate(*this, bytecode, m_bytecodeIndex);
+
+    VirtualRegister dst = bytecode.m_dst;
+    callOperationNoExceptionCheck(operationNewObject, TrustedImmPtr(&vm()), structureReg);
+    boxCell(returnValueGPR, returnValueJSR);
+    emitPutVirtualRegister(dst, returnValueJSR);
+
+    m_replayAllocator.releaseScratches(allocations);
+}
+
+void LOLJIT::emit_op_new_reg_exp(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpNewRegExp>();
+    auto allocations = m_fastAllocator.allocate(*this, bytecode, m_bytecodeIndex);
+
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister regexp = bytecode.m_regexp;
+
+    using Operation = decltype(operationNewRegExp);
+    constexpr GPRReg globalObjectGPR = preferredArgumentGPR<Operation, 0>();
+
+    loadGlobalObject(globalObjectGPR);
+    callOperation(operationNewRegExp, globalObjectGPR, TrustedImmPtr(jsCast<RegExp*>(m_unlinkedCodeBlock->getConstant(regexp))));
+    boxCell(returnValueGPR, returnValueJSR);
+    emitPutVirtualRegister(dst, returnValueJSR);
+
+    m_fastAllocator.releaseScratches(allocations);
 }
 
 void LOLJIT::emit_op_is_empty(const JSInstruction* currentInstruction)
