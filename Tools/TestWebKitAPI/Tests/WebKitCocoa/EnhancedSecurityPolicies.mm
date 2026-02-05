@@ -457,6 +457,23 @@ static void runHttpsOnlyExplicitlyBypassedWithHttpRedirect(bool useSiteIsolation
 }
 TEST_WITHOUT_SITE_ISOLATION(HttpsOnlyExplicitlyBypassedWithHttpRedirect)
 
+static void runHttpsToSameSiteHttpExplicitRedirect(bool useSiteIsolation)
+{
+    HTTPServer plaintextServer({
+        { "http://download/redirectTarget"_s, { "<script>alert('insecure-site')</script>"_s } },
+    });
+
+    HTTPServer secureServer({
+        { "/originalRequest"_s, { 302, { { "Location"_s, "http://download/redirectTarget"_s } }, emptyString() } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, &secureServer, useSiteIsolation);
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"https://download/originalRequest", {
+        { "insecure-site"_s, ExpectedEnhancedSecurity::Enabled }
+    });
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpsToSameSiteHttpExplicitRedirect)
+
 // MARK: - Window Tests
 
 static void runHttpOpeningHttpsWindow(bool useSiteIsolation)
