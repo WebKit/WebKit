@@ -6,7 +6,7 @@ layer at (0,0) size 800x376
       RenderTable {TABLE} at (0,0) size 158x56 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 156x54
           RenderTableRow {TR} at (0,2) size 156x24
-            RenderTableCell {TD} at (2,15) size 71x24 [border: (1px inset #000000)] [r=0 c=0 rs=65534 cs=1]
+            RenderTableCell {TD} at (2,15) size 71x24 [border: (1px inset #000000)] [r=0 c=0 rs=2 cs=1]
               RenderText {#text} at (2,15) size 67x20
                 text run at (2,2) width 67: "rowspan 0"
             RenderTableCell {TD} at (74,2) size 66x24 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
@@ -81,7 +81,7 @@ layer at (0,0) size 800x376
             RenderTableCell {TD} at (2,2) size 32x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 28x20
                 text run at (2,2) width 28: "auto"
-            RenderTableCell {TD} at (35,15) size 71x24 [border: (1px inset #000000)] [r=0 c=1 rs=65534 cs=1]
+            RenderTableCell {TD} at (35,15) size 71x24 [border: (1px inset #000000)] [r=0 c=1 rs=2 cs=1]
               RenderText {#text} at (2,15) size 67x20
                 text run at (2,2) width 67: "rowspan 0"
             RenderTableCell {TD} at (107,2) size 33x24 [border: (1px inset #000000)] [r=0 c=2 rs=1 cs=1]

@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "HTMLTableCellElement.h"
 #include "RenderBlockFlow.h"
 #include "RenderTableRow.h"
 #include "RenderTableSection.h"
@@ -203,6 +204,7 @@ private:
 
     unsigned parseRowSpanFromDOM() const;
     unsigned parseColSpanFromDOM() const;
+    unsigned calculateRowSpanForRowspanZero() const;
 
     void nextSibling() const = delete;
     void previousSibling() const = delete;
@@ -245,7 +247,15 @@ inline unsigned RenderTableCell::rowSpan() const
 {
     if (!m_hasRowSpan)
         return 1;
-    return parseRowSpanFromDOM();
+
+    unsigned span = parseRowSpanFromDOM();
+
+    // Handle rowspan="0" which means "span all remaining rows in the row group"
+    // Per HTML spec: https://html.spec.whatwg.org/multipage/tables.html#attr-tdth-rowspan
+    if (!span)
+        span = calculateRowSpanForRowspanZero();
+
+    return std::min(span, maxRowIndex);
 }
 
 inline void RenderTableCell::setCol(unsigned column)
