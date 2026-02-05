@@ -61,7 +61,7 @@ struct IsIncreasingChecker<index> {
 
 template<size_t firstIndex, size_t secondIndex, size_t... remainingIndices>
 struct IsIncreasingChecker<firstIndex, secondIndex, remainingIndices...> {
-    static constexpr bool value = firstIndex > secondIndex ? false : IsIncreasingChecker<secondIndex, remainingIndices...>::value;
+    static constexpr bool value = firstIndex <= secondIndex && IsIncreasingChecker<secondIndex, remainingIndices...>::value;
 };
 
 template<size_t... indices>

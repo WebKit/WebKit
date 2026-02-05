@@ -390,11 +390,11 @@ public:
 
 template<class T, class E> constexpr bool operator==(const expected<T, E>& x, const expected<T, E>& y) { return bool(x) == bool(y) && (x ? x.value() == y.value() : x.error() == y.error()); }
 
-template<class E> constexpr bool operator==(const expected<void, E>& x, const expected<void, E>& y) { return bool(x) == bool(y) && (x ? true : x.error() == y.error()); }
+template<class E> constexpr bool operator==(const expected<void, E>& x, const expected<void, E>& y) { return bool(x) == bool(y) && (x || x.error() == y.error()); }
 
-template<class T, class E> constexpr bool operator==(const expected<T, E>& x, const T& y) { return x ? *x == y : false; }
+template<class T, class E> constexpr bool operator==(const expected<T, E>& x, const T& y) { return x && *x == y; }
 
-template<class T, class E> constexpr bool operator==(const expected<T, E>& x, const unexpected<E>& y) { return x ? false : x.error() == y.value(); }
+template<class T, class E> constexpr bool operator==(const expected<T, E>& x, const unexpected<E>& y) { return !x && x.error() == y.value(); }
 
 template<typename T, typename E> void swap(expected<T, E>& x, expected<T, E>& y) { x.swap(y); }
 
