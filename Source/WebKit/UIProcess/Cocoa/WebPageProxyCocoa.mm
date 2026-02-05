@@ -287,6 +287,7 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, API::Navigation& navig
     size_t redirectChainIndex = navigation.redirectChainIndex(url);
 
     navigation.setSafeBrowsingCheckOngoing(redirectChainIndex, true);
+    m_isSafeBrowsingCheckInProgress = true;
 
     auto performLookup = [weakThis = WeakPtr { *this }, navigation = protect(navigation), forMainFrameNavigation, url = url.isolatedCopy(), redirectChainIndex](RetainPtr<SSBLookupResult> cachedResult) mutable {
         RefPtr protectedThis = weakThis.get();
@@ -301,7 +302,7 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, API::Navigation& navig
 
             navigation->setSafeBrowsingCheckOngoing(redirectChainIndex, false);
             if (error)
-                return;
+                return protectedThis->completeSafeBrowsingCheckForModals(true);
 
             RefPtr navigationState = NavigationState::fromWebPage(*protectedThis);
             auto historyDelegate = navigationState ? navigationState->historyDelegate() : nullptr;
@@ -320,6 +321,8 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, API::Navigation& navig
 
             if (!navigation->safeBrowsingCheckOngoing() && navigation->safeBrowsingWarning() && navigation->safeBrowsingCheckTimedOut())
                 protectedThis->showBrowsingWarning(navigation->safeBrowsingWarning());
+            else if (!navigation->safeBrowsingWarning())
+                protectedThis->completeSafeBrowsingCheckForModals(true);
         });
     };
 
@@ -337,6 +340,32 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, API::Navigation& navig
     [historyDelegate _webView:webView.get() cachedSafeBrowsingResultForURL:url.createNSURL().get() completionHandler:cacheCompletionHandler.get()];
 #endif
 }
+
+#if HAVE(SAFE_BROWSING)
+void WebPageProxy::deferModalUntilSafeBrowsingCompletes(CompletionHandler<void(bool)>&& handler)
+{
+    ASSERT(isMainRunLoop());
+    ASSERT(handler);
+
+    if (!m_isSafeBrowsingCheckInProgress)
+        return handler(true);
+    m_deferredModalHandlers.append(WTF::move(handler));
+}
+
+void WebPageProxy::completeSafeBrowsingCheckForModals(bool userProceeded)
+{
+    ASSERT(isMainRunLoop());
+
+    m_isSafeBrowsingCheckInProgress = false;
+
+    auto& handlers = m_deferredModalHandlers;
+    if (handlers.isEmpty())
+        return;
+
+    for (auto& handler : std::exchange(handlers, { }))
+        handler(userProceeded);
+}
+#endif
 
 #if ENABLE(CONTENT_FILTERING)
 void WebPageProxy::contentFilterDidBlockLoadForFrame(const WebCore::ContentFilterUnblockHandler& unblockHandler, FrameIdentifier frameID)
