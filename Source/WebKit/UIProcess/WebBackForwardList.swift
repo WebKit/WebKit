@@ -564,7 +564,7 @@ final class WebBackForwardList {
     private func setBackForwardItemIdentifiers(frameState: WebKit.FrameState, itemID: WebCore.BackForwardItemIdentifier) {
         frameState.itemID = WebCore.MarkableBackForwardItemIdentifier(itemID)
         frameState.frameItemID = WebCore.MarkableBackForwardFrameItemIdentifier(generateBackForwardFrameItemIdentifier())
-        for child in frameState.children {
+        for child in CxxRefVectorIterator(vec: frameState.children) {
             setBackForwardItemIdentifiers(frameState: child.ptr(), itemID: itemID)
         }
     }
@@ -585,7 +585,7 @@ final class WebBackForwardList {
         // FIXME: Enable restoring resourceDirectoryURL.
         entries.removeAll()
         entries.reserveCapacity(backForwardListState.items.size())
-        for item in backForwardListState.items {
+        for item in CxxRefVectorIterator(vec: backForwardListState.items) {
             let stateCopy = item.ptr().copy()
             setBackForwardItemIdentifiers(frameState: stateCopy.ptr(), itemID: generateBackForwardItemIdentifier())
             // FIXME: navigatedFrameID will always be the main frame ID, causing the restored session state to be sent to an incorrect process when going back or forward with site isolation enabled.
@@ -726,7 +726,7 @@ final class WebBackForwardList {
 
     func setBackForwardItemIdentifier(frameState: WebKit.FrameState, itemID: WebCore.BackForwardItemIdentifier) {
         frameState.itemID = WebCore.MarkableBackForwardItemIdentifier(itemID)
-        for child in frameState.children {
+        for child in CxxRefVectorIterator(vec: frameState.children) {
             setBackForwardItemIdentifier(frameState: child.ptr(), itemID: itemID)
         }
     }
