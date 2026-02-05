@@ -1298,11 +1298,11 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
         auto shouldHitTestForPhase = [&] {
             switch (hitTestAction) {
             case HitTestForeground:
-                // Inline boxes around block-in-inline are hit tested in block background phase.
+                // Inline boxes around block-in-inline are hit tested in block background phases.
                 return !m_inlineContent->isInlineBoxWrapperForBlockLevelBox(box);
             case HitTestChildBlockBackground:
-                return box.isBlockLevelBox() || m_inlineContent->isInlineBoxWrapperForBlockLevelBox(box);
             case HitTestChildBlockBackgrounds:
+                return box.isBlockLevelBox() || m_inlineContent->isInlineBoxWrapperForBlockLevelBox(box);
             case HitTestFloat:
                 return box.isBlockLevelBox();
             case HitTestBlockBackground:
