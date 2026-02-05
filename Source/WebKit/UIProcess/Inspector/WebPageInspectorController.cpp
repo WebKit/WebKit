@@ -28,7 +28,9 @@
 
 #include "APIUIClient.h"
 #include "InspectorBrowserAgent.h"
+#include "ProcessTerminationReason.h"
 #include "ProvisionalPageProxy.h"
+#include "WebFrameInspectorTarget.h"
 #include "WebFrameInspectorTargetProxy.h"
 #include "WebFrameProxy.h"
 #include "WebPageInspectorAgentBase.h"
@@ -67,10 +69,12 @@ WebPageInspectorController::WebPageInspectorController(WebPageProxy& inspectedPa
 
 WebPageInspectorController::~WebPageInspectorController() = default;
 
-void WebPageInspectorController::init()
+void WebPageInspectorController::didInitializeWebPage()
 {
     String pageTargetId = WebPageInspectorTarget::toTargetID(m_inspectedPage->webPageIDInMainFrameProcess());
     createWebPageInspectorTarget(pageTargetId, Inspector::InspectorTargetType::Page);
+    if (RefPtr mainFrame = m_inspectedPage->mainFrame())
+        createWebFrameInspectorTarget(*mainFrame);
 }
 
 void WebPageInspectorController::pageClosed()
@@ -78,6 +82,15 @@ void WebPageInspectorController::pageClosed()
     disconnectAllFrontends();
 
     m_agents.discardValues();
+}
+
+void WebPageInspectorController::pageProcessDidTerminate(ProcessTerminationReason reason)
+{
+    if (reason == ProcessTerminationReason::NavigationSwap)
+        return;
+
+    String targetId = WebPageInspectorTarget::toTargetID(m_inspectedPage->webPageIDInMainFrameProcess());
+    destroyInspectorTarget(targetId);
 }
 
 bool WebPageInspectorController::hasLocalFrontend() const
@@ -168,9 +181,15 @@ void WebPageInspectorController::createWebPageInspectorTarget(const String& targ
     addTarget(WebPageInspectorTargetProxy::create(protect(m_inspectedPage), targetId, type));
 }
 
-void WebPageInspectorController::createWebFrameInspectorTarget(WebFrameProxy& frame, const String& targetId)
+void WebPageInspectorController::createWebFrameInspectorTarget(WebFrameProxy& frame)
 {
+    String targetId = WebFrameInspectorTarget::toTargetID(frame.frameID());
     addTarget(WebFrameInspectorTargetProxy::create(frame, targetId));
+}
+
+void WebPageInspectorController::destroyWebFrameInspectorTarget(WebFrameProxy& frame)
+{
+    destroyInspectorTarget(WebFrameInspectorTarget::toTargetID(frame.frameID()));
 }
 
 void WebPageInspectorController::destroyInspectorTarget(const String& targetId)
@@ -207,6 +226,8 @@ void WebPageInspectorController::setContinueLoadingCallback(const ProvisionalPag
 void WebPageInspectorController::didCreateProvisionalPage(ProvisionalPageProxy& provisionalPage)
 {
     addTarget(WebPageInspectorTargetProxy::create(provisionalPage, getTargetID(provisionalPage), Inspector::InspectorTargetType::Page));
+    if (RefPtr mainFrame = provisionalPage.mainFrame())
+        createWebFrameInspectorTarget(*mainFrame);
 }
 
 void WebPageInspectorController::willDestroyProvisionalPage(const ProvisionalPageProxy& provisionalPage)
@@ -224,6 +245,10 @@ void WebPageInspectorController::didCommitProvisionalPage(WebCore::PageIdentifie
     newTarget->didCommitProvisionalTarget();
     targetAgent->didCommitProvisionalTarget(oldID, newID);
 
+    String newMainFrameTargetID = WebFrameInspectorTarget::toTargetID(m_inspectedPage->mainFrame()->frameID());
+    auto newMainFrameTarget = m_targets.take(newMainFrameTargetID);
+    ASSERT(newMainFrameTarget);
+
     // We've disconnected from the old page and will not receive any message from it, so
     // we destroy everything but the new target here.
     // FIXME: <https://webkit.org/b/202937> do not destroy targets that belong to the committed page.
@@ -231,6 +256,7 @@ void WebPageInspectorController::didCommitProvisionalPage(WebCore::PageIdentifie
         targetAgent->targetDestroyed(*target);
     m_targets.clear();
     m_targets.set(newTarget->identifier(), WTF::move(newTarget));
+    m_targets.set(newMainFrameTarget->identifier(), WTF::move(newMainFrameTarget));
 }
 
 InspectorBrowserAgent* WebPageInspectorController::enabledBrowserAgent() const
