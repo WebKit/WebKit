@@ -3950,6 +3950,11 @@ AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
         }
     }
 
+    if (CheckedPtr style = this->style()) {
+        if (style->display() == DisplayType::None && !isImageMapLink())
+            return AccessibilityObjectInclusion::IgnoreObject;
+    }
+
     bool useParentData = !m_isIgnoredFromParentData.isNull();
     if (useParentData && (m_isIgnoredFromParentData.isAXHidden || m_isIgnoredFromParentData.isPresentationalChildOfAriaRole))
         return AccessibilityObjectInclusion::IgnoreObject;

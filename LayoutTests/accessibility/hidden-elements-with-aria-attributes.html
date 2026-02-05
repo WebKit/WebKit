@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="visible-with-controls" aria-controls="panel">Visible button with aria-controls</button>
+<button id="hidden-with-controls" hidden aria-controls="panel">Hidden button with aria-controls</button>
+<button id="hidden-with-nonexistent-controls" hidden aria-controls="nonexistent">Hidden button with aria-controls referencing nonexistent element</button>
+<button id="hidden-with-expanded" hidden aria-expanded="false">Hidden button with aria-expanded</button>
+<button id="visible-with-expanded" aria-expanded="false">Visible button with aria-expanded</button>
+<button id="dynamic-button" aria-controls="panel">Button that will become hidden</button>
+
+<div id="panel">Panel content</div>
+
+<script>
+var output = "This test ensures that elements with the HTML hidden attribute are not exposed to assistive technologies, even when they have ARIA relationship attributes like aria-controls or aria-expanded.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var visibleWithControls = accessibilityController.accessibleElementById("visible-with-controls");
+    output += expect("visibleWithControls.role.toLowerCase().includes('button')", "true");
+    output += expect("visibleWithControls.isIgnored", "false");
+
+    var hiddenWithControls = accessibilityController.accessibleElementById("hidden-with-controls");
+    output += expect("hiddenWithControls", "null");
+
+    var hiddenWithNonexistentControls = accessibilityController.accessibleElementById("hidden-with-nonexistent-controls");
+    output += expect("hiddenWithNonexistentControls", "null");
+
+    var hiddenWithExpanded = accessibilityController.accessibleElementById("hidden-with-expanded");
+    output += expect("hiddenWithExpanded", "null");
+
+    var visibleWithExpanded = accessibilityController.accessibleElementById("visible-with-expanded");
+    output += expect("visibleWithExpanded.role.toLowerCase().includes('button')", "true");
+    output += expect("visibleWithExpanded.isIgnored", "false");
+
+    var dynamicButton = accessibilityController.accessibleElementById("dynamic-button");
+    output += expect("dynamicButton.isIgnored", "false");
+
+    document.getElementById("dynamic-button").setAttribute("hidden", "");
+    setTimeout(async function() {
+        output += await expectAsync("accessibilityController.accessibleElementById('dynamic-button')", "null");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
