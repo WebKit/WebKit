@@ -65,6 +65,7 @@ list(APPEND WTF_SOURCES
 )
 
 list(APPEND WTF_PUBLIC_HEADERS
+    cf/CFTypeTraits.h
     cf/CFURLExtras.h
     cf/NotificationCenterCF.h
     cf/TypeCastsCF.h

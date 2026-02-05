@@ -299,10 +299,24 @@ ALWAYS_INLINE void lazyInitialize(const RefPtr<T>& ptr, Ref<U>&& obj)
     const_cast<RefPtr<T>&>(ptr) = WTF::move(obj);
 }
 
+template<typename T, typename PtrTraits = RawPtrTraits<T>, typename RefDerefTraits = DefaultRefDerefTraits<T>>
+    requires CanUseDefaultRefDerefTraits<T>
+ALWAYS_INLINE CLANG_POINTER_CONVERSION RefPtr<T, PtrTraits, RefDerefTraits> protect(T* ptr)
+{
+    return RefPtr<T, PtrTraits, RefDerefTraits>(ptr);
+}
+
+template<typename T, typename PtrTraits, typename RefDerefTraits>
+ALWAYS_INLINE CLANG_POINTER_CONVERSION RefPtr<T, PtrTraits, RefDerefTraits> protect(const RefPtr<T, PtrTraits, RefDerefTraits>& ptr)
+{
+    return ptr.copyRef();
+}
+
 } // namespace WTF
 
 using WTF::RefPtr;
 using WTF::adoptRef;
+using WTF::protect;
 using WTF::upcast;
 using WTF::unsafeRefPtrDowncast;
 using WTF::lazyInitialize;

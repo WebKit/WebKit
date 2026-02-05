@@ -31,6 +31,7 @@
 
 #if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>
+#include <wtf/cf/CFTypeTraits.h>
 #endif
 
 #ifdef __OBJC__
@@ -374,11 +375,36 @@ ALWAYS_INLINE void lazyInitialize(const RetainPtr<T>& ptr, RetainPtr<U>&& obj)
     const_cast<RetainPtr<T>&>(ptr) = std::move(obj);
 }
 
+#if USE(CF)
+template<typename T>
+    requires IsCFType<T>
+ALWAYS_INLINE CLANG_POINTER_CONVERSION RetainPtr<RetainPtrType<T>> protect(T ptr)
+{
+    return ptr;
+}
+#endif
+
+#ifdef __OBJC__
+template<typename T>
+    requires IsNSType<T>
+ALWAYS_INLINE CLANG_POINTER_CONVERSION RetainPtr<RetainPtrType<T>> protect(T ptr)
+{
+    return ptr;
+}
+#endif
+
+template<typename T>
+ALWAYS_INLINE CLANG_POINTER_CONVERSION RetainPtr<T> protect(const RetainPtr<T>& ptr)
+{
+    return ptr;
+}
+
 } // namespace WTF
 
 using WTF::RetainPtr;
 using WTF::adoptCF;
 using WTF::lazyInitialize;
+using WTF::protect;
 using WTF::retainPtr;
 using WTF::safeCFEqual;
 using WTF::safeCFHash;

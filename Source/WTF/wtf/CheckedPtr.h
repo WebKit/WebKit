@@ -27,6 +27,7 @@
 
 #include <wtf/CheckedRef.h>
 #include <wtf/RawPtrTraits.h>
+#include <wtf/TypeTraits.h>
 
 namespace WTF {
 
@@ -237,8 +238,22 @@ template<typename P> struct DefaultHash<CheckedPtr<P>> : PtrHash<CheckedPtr<P>> 
 template<typename> struct PackedPtrTraits;
 template<typename T> using PackedCheckedPtr = CheckedPtr<T, PackedPtrTraits<T>>;
 
+template<typename T, typename PtrTraits = RawPtrTraits<T>>
+    requires (HasCheckedPtrMemberFunctions<T>::value && !HasRefPtrMemberFunctions<T>::value)
+ALWAYS_INLINE CLANG_POINTER_CONVERSION CheckedPtr<T, PtrTraits> protect(T* ptr)
+{
+    return CheckedPtr<T, PtrTraits>(ptr);
+}
+
+template<typename T, typename PtrTraits>
+ALWAYS_INLINE CLANG_POINTER_CONVERSION CheckedPtr<T, PtrTraits> protect(const CheckedPtr<T, PtrTraits>& ptr)
+{
+    return ptr;
+}
+
 } // namespace WTF
 
 using WTF::CheckedPtr;
 using WTF::PackedCheckedPtr;
+using WTF::protect;
 

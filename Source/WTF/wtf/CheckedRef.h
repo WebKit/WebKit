@@ -31,6 +31,7 @@
 #include <wtf/HashTraits.h>
 #include <wtf/RawPtrTraits.h>
 #include <wtf/SingleThreadIntegralWrapper.h>
+#include <wtf/TypeTraits.h>
 
 #if ASSERT_ENABLED
 #include <wtf/Threading.h>
@@ -292,6 +293,19 @@ template<typename P> struct PtrHash<CheckedRef<P>> : PtrHashBase<CheckedRef<P>, 
 
 template<typename P> struct DefaultHash<CheckedRef<P>> : PtrHash<CheckedRef<P>> { };
 
+template<typename T, typename PtrTraits = RawPtrTraits<T>>
+    requires (HasCheckedPtrMemberFunctions<T>::value && !HasRefPtrMemberFunctions<T>::value)
+ALWAYS_INLINE CLANG_POINTER_CONVERSION CheckedRef<T, PtrTraits> protect(T& reference)
+{
+    return CheckedRef<T, PtrTraits>(reference);
+}
+
+template<typename T, typename PtrTraits>
+ALWAYS_INLINE CLANG_POINTER_CONVERSION CheckedRef<T, PtrTraits> protect(const CheckedRef<T, PtrTraits>& reference)
+{
+    return reference;
+}
+
 enum class DefaultedOperatorEqual : bool { No, Yes };
 
 // DO NOT make use of this enum in new code. An object which supports CanMakeCheckedPtr must be heap allocated on its own.
@@ -386,3 +400,4 @@ public:
 using WTF::CanMakeCheckedPtr;
 using WTF::CanMakeThreadSafeCheckedPtr;
 using WTF::CheckedRef;
+using WTF::protect;

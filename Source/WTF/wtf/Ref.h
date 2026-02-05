@@ -33,6 +33,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/SwiftBridging.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/TypeTraits.h>
 
 #if ASAN_ENABLED
 extern "C" void __asan_poison_memory_region(void const volatile *addr, size_t size);
@@ -45,6 +46,8 @@ namespace WTF {
 inline void adopted(const void*) { }
 
 template<typename T> struct DefaultRefDerefTraits {
+    static constexpr bool isDefaultImplementation = true;
+
     static ALWAYS_INLINE T* refIfNotNull(T* ptr)
     {
         if (ptr) [[likely]]
@@ -64,6 +67,9 @@ template<typename T> struct DefaultRefDerefTraits {
             ptr->deref();
     }
 };
+
+template<typename T>
+concept CanUseDefaultRefDerefTraits = HasRefPtrMemberFunctions<T>::value || !DefaultRefDerefTraits<T>::isDefaultImplementation;
 
 template<typename T, typename PtrTraits, typename RefDerefTraits> class Ref;
 template<typename T, typename PtrTraits = RawPtrTraits<T>, typename RefDerefTraits = DefaultRefDerefTraits<T>> Ref<T, PtrTraits, RefDerefTraits> adoptRef(T&);
@@ -319,6 +325,19 @@ inline Ref<T, _PtrTraits, RefDerefTraits> adoptRef(T& reference)
     return Ref<T, _PtrTraits, RefDerefTraits>(reference, Ref<T, _PtrTraits, RefDerefTraits>::Adopt);
 }
 
+template<typename T, typename PtrTraits = RawPtrTraits<T>, typename RefDerefTraits = DefaultRefDerefTraits<T>>
+    requires CanUseDefaultRefDerefTraits<T>
+ALWAYS_INLINE CLANG_POINTER_CONVERSION Ref<T, PtrTraits, RefDerefTraits> protect(T& reference)
+{
+    return Ref<T, PtrTraits, RefDerefTraits>(reference);
+}
+
+template<typename T, typename PtrTraits, typename RefDerefTraits>
+ALWAYS_INLINE CLANG_POINTER_CONVERSION Ref<T, PtrTraits, RefDerefTraits> protect(const Ref<T, PtrTraits, RefDerefTraits>& reference)
+{
+    return reference.copyRef();
+}
+
 template<typename ExpectedType, typename ArgType, typename PtrTraits, typename RefDerefTraits>
 inline bool is(const Ref<ArgType, PtrTraits, RefDerefTraits>& source)
 {
@@ -364,5 +383,6 @@ inline bool arePointingToEqualData(const Ref<T, PtrTraits, RefDerefTraits>& a, c
 using WTF::Ref;
 using WTF::adoptRef;
 using WTF::arePointingToEqualData;
+using WTF::protect;
 using WTF::upcast;
 using WTF::unsafeRefDowncast;
