@@ -43,7 +43,6 @@ protected:
     HTMLElement* containerElement() const;
     HTMLElement* innerBlockElement() const;
     HTMLInputElement& inputElement() const;
-    Ref<HTMLInputElement> protectedInputElement() const;
 
 private:
     void textFormControlElement() const = delete;

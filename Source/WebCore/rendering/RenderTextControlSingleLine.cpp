@@ -510,11 +510,6 @@ HTMLInputElement& RenderTextControlSingleLine::inputElement() const
     return downcast<HTMLInputElement>(RenderTextControl::textFormControlElement());
 }
 
-Ref<HTMLInputElement> RenderTextControlSingleLine::protectedInputElement() const
-{
-    return downcast<HTMLInputElement>(RenderTextControl::textFormControlElement());
-}
-
 RenderTextControlInnerBlock* RenderTextControlSingleLine::innerTextRenderer() const
 {
     return innerTextElement() ? innerTextElement()->renderer() : nullptr;
