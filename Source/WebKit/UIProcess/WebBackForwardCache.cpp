@@ -29,7 +29,7 @@
 #include "Logging.h"
 #include "SuspendedPageProxy.h"
 #include "WebBackForwardCacheEntry.h"
-#include "WebBackForwardListItem.h"
+#include "WebBackForwardListFrameItem.h"
 #include "WebPageProxy.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
@@ -107,12 +107,12 @@ void WebBackForwardCache::addEntry(WebBackForwardListItem& item, Ref<WebBackForw
 void WebBackForwardCache::addEntry(WebBackForwardListItem& item, Ref<SuspendedPageProxy>&& suspendedPage)
 {
     auto coreProcessIdentifier = suspendedPage->process().coreProcessIdentifier();
-    addEntry(item, WebBackForwardCacheEntry::create(*this, item.identifier(), coreProcessIdentifier, WTF::move(suspendedPage)));
+    addEntry(item, WebBackForwardCacheEntry::create(*this, item.identifier(), item.mainFrameItem().identifier(), coreProcessIdentifier, WTF::move(suspendedPage)));
 }
 
 void WebBackForwardCache::addEntry(WebBackForwardListItem& item, WebCore::ProcessIdentifier processIdentifier)
 {
-    addEntry(item, WebBackForwardCacheEntry::create(*this, item.identifier(), WTF::move(processIdentifier), nullptr));
+    addEntry(item, WebBackForwardCacheEntry::create(*this, item.identifier(), item.mainFrameItem().identifier(), WTF::move(processIdentifier), nullptr));
 }
 
 void WebBackForwardCache::removeEntry(WebBackForwardListItem& item)

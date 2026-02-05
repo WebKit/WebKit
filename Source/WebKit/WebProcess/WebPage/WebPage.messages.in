@@ -226,7 +226,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     SetCurrentHistoryItemForReattach(Ref<WebKit::FrameState> frameState)
 
-    DidRemoveBackForwardItem(WebCore::BackForwardItemIdentifier backForwardItemID)
+    DidRemoveBackForwardItem(WebCore::BackForwardFrameItemIdentifier backForwardFrameItemID)
 
     UpdateWebsitePolicies(struct WebKit::WebsitePoliciesData websitePolicies)
 

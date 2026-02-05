@@ -38,7 +38,7 @@
 #include "WebPageProxyIdentifier.h"
 #include "WebSocketChannelManager.h"
 #include <WebCore/ActivityState.h>
-#include <WebCore/BackForwardItemIdentifier.h>
+#include <WebCore/BackForwardFrameItemIdentifier.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PageIdentifier.h>
@@ -646,7 +646,7 @@ private:
     void setMemoryCacheDisabled(bool);
 
     void setBackForwardCacheCapacity(unsigned);
-    void clearCachedPage(WebCore::BackForwardItemIdentifier, CompletionHandler<void()>&&);
+    void clearCachedPage(WebCore::BackForwardFrameItemIdentifier, CompletionHandler<void()>&&);
 
 #if ENABLE(SERVICE_CONTROLS)
     void setEnabledServices(bool hasImageServices, bool hasSelectionServices, bool hasRichContentServices);

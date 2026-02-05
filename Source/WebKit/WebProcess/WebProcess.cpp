@@ -2201,9 +2201,9 @@ void WebProcess::setBackForwardCacheCapacity(unsigned capacity)
     BackForwardCache::singleton().setMaxSize(capacity);
 }
 
-void WebProcess::clearCachedPage(BackForwardItemIdentifier backForwardItemID, CompletionHandler<void()>&& completionHandler)
+void WebProcess::clearCachedPage(BackForwardFrameItemIdentifier backForwardFrameItemID, CompletionHandler<void()>&& completionHandler)
 {
-    BackForwardCache::singleton().remove(backForwardItemID);
+    BackForwardCache::singleton().remove(backForwardFrameItemID);
     completionHandler();
 }
 

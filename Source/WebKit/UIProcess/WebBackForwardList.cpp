@@ -498,7 +498,7 @@ void WebBackForwardList::didRemoveItem(WebBackForwardListItem& backForwardListIt
 {
     backForwardListItem.wasRemovedFromBackForwardList();
 
-    protect(m_page)->backForwardRemovedItem(backForwardListItem.identifier());
+    protect(m_page)->backForwardRemovedItem(backForwardListItem.mainFrameItem().identifier());
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     backForwardListItem.setSnapshot(nullptr);
@@ -684,9 +684,9 @@ void WebBackForwardList::backForwardUpdateItem(IPC::Connection& connection, Ref<
         Ref process = *downcast<WebProcessProxy>(AuxiliaryProcessProxy::fromConnection(connection));
         if (!!item->backForwardCacheEntry() != frameState->hasCachedPage) {
             if (frameState->hasCachedPage)
-            protect(webPageProxy->backForwardCache())->addEntry(*item, process->coreProcessIdentifier());
+                protect(webPageProxy->backForwardCache())->addEntry(*item, process->coreProcessIdentifier());
             else if (!item->suspendedPage())
-            protect(webPageProxy->backForwardCache())->removeEntry(*item);
+                protect(webPageProxy->backForwardCache())->removeEntry(*item);
         }
 
         auto oldFrameID = frameItem->frameID();

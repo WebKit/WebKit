@@ -39,15 +39,16 @@ static const Seconds expirationDelay { 30_min };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebBackForwardCacheEntry);
 
-Ref<WebBackForwardCacheEntry> WebBackForwardCacheEntry::create(WebBackForwardCache& backForwardCache, WebCore::BackForwardItemIdentifier backForwardItemID, WebCore::ProcessIdentifier processIdentifier, RefPtr<SuspendedPageProxy>&& suspendedPage)
+Ref<WebBackForwardCacheEntry> WebBackForwardCacheEntry::create(WebBackForwardCache& backForwardCache, WebCore::BackForwardItemIdentifier backForwardItemID, WebCore::BackForwardFrameItemIdentifier backForwardFrameItemID, WebCore::ProcessIdentifier processIdentifier, RefPtr<SuspendedPageProxy>&& suspendedPage)
 {
-    return adoptRef(*new WebBackForwardCacheEntry(backForwardCache, backForwardItemID, processIdentifier, WTF::move(suspendedPage)));
+    return adoptRef(*new WebBackForwardCacheEntry(backForwardCache, backForwardItemID, backForwardFrameItemID, processIdentifier, WTF::move(suspendedPage)));
 }
 
-WebBackForwardCacheEntry::WebBackForwardCacheEntry(WebBackForwardCache& backForwardCache, WebCore::BackForwardItemIdentifier backForwardItemID, WebCore::ProcessIdentifier processIdentifier, RefPtr<SuspendedPageProxy>&& suspendedPage)
+WebBackForwardCacheEntry::WebBackForwardCacheEntry(WebBackForwardCache& backForwardCache, WebCore::BackForwardItemIdentifier backForwardItemID, WebCore::BackForwardFrameItemIdentifier backForwardFrameItemID, WebCore::ProcessIdentifier processIdentifier, RefPtr<SuspendedPageProxy>&& suspendedPage)
     : m_backForwardCache(backForwardCache)
     , m_processIdentifier(processIdentifier)
     , m_backForwardItemID(backForwardItemID)
+    , m_backForwardFrameItemID(backForwardFrameItemID)
     , m_suspendedPage(WTF::move(suspendedPage))
     , m_expirationTimer(RunLoop::mainSingleton(), "WebBackForwardCacheEntry::ExpirationTimer"_s, this, &WebBackForwardCacheEntry::expirationTimerFired)
 {
@@ -56,9 +57,9 @@ WebBackForwardCacheEntry::WebBackForwardCacheEntry(WebBackForwardCache& backForw
 
 WebBackForwardCacheEntry::~WebBackForwardCacheEntry()
 {
-    if (m_backForwardItemID && !m_suspendedPage) {
+    if (m_backForwardFrameItemID && !m_suspendedPage) {
         if (auto process = this->process())
-            process->sendWithAsyncReply(Messages::WebProcess::ClearCachedPage(*m_backForwardItemID), [] { });
+            process->sendWithAsyncReply(Messages::WebProcess::ClearCachedPage(*m_backForwardFrameItemID), [] { });
     }
 }
 
@@ -71,6 +72,7 @@ Ref<SuspendedPageProxy> WebBackForwardCacheEntry::takeSuspendedPage()
 {
     ASSERT(m_suspendedPage);
     m_backForwardItemID = std::nullopt;
+    m_backForwardFrameItemID = std::nullopt;
     m_expirationTimer.stop();
     return std::exchange(m_suspendedPage, nullptr).releaseNonNull();
 }
@@ -86,11 +88,14 @@ RefPtr<WebProcessProxy> WebBackForwardCacheEntry::process() const
 void WebBackForwardCacheEntry::expirationTimerFired()
 {
     ASSERT(m_backForwardItemID);
-    RELEASE_LOG(BackForwardCache, "%p - WebBackForwardCacheEntry::expirationTimerFired backForwardItemID=%s, hasSuspendedPage=%d", this, m_backForwardItemID->toString().utf8().data(), !!m_suspendedPage);
-    RefPtr item = WebBackForwardListItem::itemForID(*m_backForwardItemID);
+    ASSERT(m_backForwardFrameItemID);
+    RELEASE_LOG(BackForwardCache, "%p - WebBackForwardCacheEntry::expirationTimerFired backForwardItemID=%s backForwardFrameItemID=%s, hasSuspendedPage=%d", this, m_backForwardItemID->toString().utf8().data(), m_backForwardFrameItemID->toString().utf8().data(), !!m_suspendedPage);
+    RefPtr item = WebBackForwardListFrameItem::itemForID(*m_backForwardItemID, *m_backForwardFrameItemID);
     ASSERT(item);
-    if (RefPtr backForwardCache = m_backForwardCache.get())
-        backForwardCache->removeEntry(*item);
+    if (RefPtr backForwardCache = m_backForwardCache.get()) {
+        if (RefPtr backForwardListItem = item->backForwardListItem())
+            backForwardCache->removeEntry(*backForwardListItem);
+    }
 }
 
 } // namespace WebKit

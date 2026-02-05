@@ -153,12 +153,12 @@ const String& HistoryItem::alternateTitle() const
 
 bool HistoryItem::isInBackForwardCache() const
 {
-    return BackForwardCache::singleton().isInBackForwardCache(m_itemID);
+    return BackForwardCache::singleton().isInBackForwardCache(m_frameItemID);
 }
 
 bool HistoryItem::hasCachedPageExpired() const
 {
-    return BackForwardCache::singleton().hasCachedPageExpired(m_itemID);
+    return BackForwardCache::singleton().hasCachedPageExpired(m_frameItemID);
 }
 
 URL HistoryItem::url() const

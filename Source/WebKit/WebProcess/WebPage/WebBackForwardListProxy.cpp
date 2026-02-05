@@ -47,10 +47,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebBackForwardListProxy::removeItem(BackForwardItemIdentifier itemID)
+void WebBackForwardListProxy::removeItem(BackForwardFrameItemIdentifier frameItemID)
 {
-    BackForwardCache::singleton().remove(itemID);
-    WebCore::Page::clearPreviousItemFromAllPages(itemID);
+    WebCore::Page::clearPreviousItemFromAllPages(frameItemID);
 }
 
 WebBackForwardListProxy::WebBackForwardListProxy(WebPage& page)

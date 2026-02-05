@@ -591,7 +591,7 @@ void Page::firstTimeInitialization()
     });
 }
 
-void Page::clearPreviousItemFromAllPages(BackForwardItemIdentifier itemID)
+void Page::clearPreviousItemFromAllPages(BackForwardFrameItemIdentifier frameItemID)
 {
     for (auto& page : allPages()) {
         RefPtr localMainFrame = page->localMainFrame();
@@ -599,7 +599,7 @@ void Page::clearPreviousItemFromAllPages(BackForwardItemIdentifier itemID)
             return;
 
         Ref controller = localMainFrame->loader().history();
-        if (controller->previousItem() && controller->previousItem()->itemID() == itemID) {
+        if (controller->previousItem() && controller->previousItem()->frameItemID() == frameItemID) {
             controller->clearPreviousItem();
             return;
         }

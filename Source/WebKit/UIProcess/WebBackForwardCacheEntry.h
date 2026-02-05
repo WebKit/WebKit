@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <WebCore/BackForwardFrameItemIdentifier.h>
+#include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/CheckedRef.h>
@@ -43,7 +45,7 @@ class WebProcessProxy;
 class WebBackForwardCacheEntry : public RefCountedAndCanMakeWeakPtr<WebBackForwardCacheEntry> {
     WTF_MAKE_TZONE_ALLOCATED(WebBackForwardCacheEntry);
 public:
-    static Ref<WebBackForwardCacheEntry> create(WebBackForwardCache&, WebCore::BackForwardItemIdentifier, WebCore::ProcessIdentifier, RefPtr<SuspendedPageProxy>&&);
+    static Ref<WebBackForwardCacheEntry> create(WebBackForwardCache&, WebCore::BackForwardItemIdentifier, WebCore::BackForwardFrameItemIdentifier, WebCore::ProcessIdentifier, RefPtr<SuspendedPageProxy>&&);
     ~WebBackForwardCacheEntry();
 
     WebBackForwardCache* backForwardCache() const;
@@ -54,13 +56,14 @@ public:
     RefPtr<WebProcessProxy> process() const;
 
 private:
-    WebBackForwardCacheEntry(WebBackForwardCache&, WebCore::BackForwardItemIdentifier, WebCore::ProcessIdentifier, RefPtr<SuspendedPageProxy>&&);
+    WebBackForwardCacheEntry(WebBackForwardCache&, WebCore::BackForwardItemIdentifier, WebCore::BackForwardFrameItemIdentifier, WebCore::ProcessIdentifier, RefPtr<SuspendedPageProxy>&&);
 
     void expirationTimerFired();
 
     WeakPtr<WebBackForwardCache> m_backForwardCache;
     WebCore::ProcessIdentifier m_processIdentifier;
     Markable<WebCore::BackForwardItemIdentifier> m_backForwardItemID;
+    Markable<WebCore::BackForwardFrameItemIdentifier> m_backForwardFrameItemID;
     RefPtr<SuspendedPageProxy> m_suspendedPage;
     RunLoop::Timer m_expirationTimer;
 } SWIFT_SHARED_REFERENCE(refWebBackForwardCacheEntry, derefWebBackForwardCacheEntry);
