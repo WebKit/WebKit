@@ -30,6 +30,7 @@
 #include "NodeList.h"
 #include "SecurityOriginData.h"
 #include "SelectorCompiler.h"
+#include "SelectorFilter.h"
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -74,6 +75,7 @@ private:
     template <typename OutputType> void executeSingleClassNameSelectorData(const ContainerNode& rootNode, const SelectorData&, OutputType&) const;
     template <typename OutputType> void executeSingleAttributeExactSelectorData(const ContainerNode& rootNode, const SelectorData&, OutputType&) const;
     template <typename OutputType> void executeSingleSelectorData(const ContainerNode& rootNode, const ContainerNode& searchRootNode, const SelectorData&, OutputType&) const;
+    template <typename OutputType> void executeSingleSelectorDataWithAncestorFilter(const ContainerNode& rootNode, const ContainerNode& searchRootNode, const SelectorData&, OutputType&) const;
     template <typename OutputType> void executeSingleMultiSelectorData(const ContainerNode& rootNode, OutputType&) const;
 #if ENABLE(CSS_SELECTOR_JIT)
     template <typename Checker, typename OutputType> void executeCompiledSimpleSelectorChecker(const ContainerNode& searchRootNode, Checker, OutputType&, const SelectorData&) const;
@@ -98,6 +100,7 @@ private:
         AttributeExactMatch,
         MultipleSelectorMatch,
     } m_matchType;
+    mutable SelectorFilter::Hashes m_ancestorHashes { };
 };
 
 class SelectorQuery {

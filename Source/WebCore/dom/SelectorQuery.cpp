@@ -36,6 +36,7 @@
 #include "HTMLNames.h"
 #include "SVGElement.h"
 #include "SelectorChecker.h"
+#include "SelectorMatchingState.h"
 #include "StaticNodeList.h"
 #include "StyledElement.h"
 #include "TreeScopeInlines.h"
@@ -484,6 +485,59 @@ ALWAYS_INLINE void SelectorDataList::executeSingleSelectorData(const ContainerNo
 }
 
 template<typename OutputType>
+ALWAYS_INLINE void SelectorDataList::executeSingleSelectorDataWithAncestorFilter(const ContainerNode& rootNode, const ContainerNode& searchRootNode, const SelectorData& selectorData, OutputType& output) const
+{
+    ASSERT(m_selectors.size() == 1);
+
+    // Skip ancestor filter optimization for disconnected trees
+    if (!searchRootNode.isConnected()) {
+        executeSingleSelectorData(rootNode, searchRootNode, selectorData, output);
+        return;
+    }
+
+    if (!m_ancestorHashes[0])
+        m_ancestorHashes = SelectorFilter::collectHashes(selectorData.selector);
+
+    if (!m_ancestorHashes[0]) {
+        executeSingleSelectorData(rootNode, searchRootNode, selectorData, output);
+        return;
+    }
+
+    Style::SelectorMatchingState selectorMatchingState;
+
+    if (RefPtr parentElement = searchRootNode.parentElement())
+        selectorMatchingState.selectorFilter.pushParentInitializingIfNeeded(*parentElement);
+    Vector<Element*, 20> parentStack;
+    RefPtr previousElement = dynamicDowncast<Element>(searchRootNode);
+
+    for (auto it = descendantsOfType<Element>(const_cast<ContainerNode&>(searchRootNode)).begin(); it; it.traverseNext()) {
+        Ref descendant = *it;
+        RefPtr parent = descendant->parentElement();
+        if (parent && (parentStack.isEmpty() || parentStack.last() != parent.get())) {
+            if (parent.get() == previousElement.get()) {
+                parentStack.append(parent.get());
+                selectorMatchingState.selectorFilter.pushParentInitializingIfNeeded(*parent);
+            } else {
+                while (!parentStack.isEmpty() && parentStack.last() != parent.get()) {
+                    parentStack.removeLast();
+                    selectorMatchingState.selectorFilter.popParent();
+                }
+            }
+        }
+
+        previousElement = descendant.ptr();
+        if (selectorMatchingState.selectorFilter.fastRejectSelector(m_ancestorHashes))
+            continue;
+
+        if (selectorMatches(selectorData, descendant, rootNode, &selectorMatchingState)) {
+            appendOutputForElement(output, descendant);
+            if constexpr (std::is_same_v<OutputType, Element*>)
+                return;
+        }
+    }
+}
+
+template<typename OutputType>
 ALWAYS_INLINE void SelectorDataList::executeSingleMultiSelectorData(const ContainerNode& rootNode, OutputType& output) const
 {
     Style::SelectorMatchingState selectorMatchingState;
@@ -653,7 +707,7 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, OutputType
         [[fallthrough]];
     case SingleSelector:
         SingleSelectorCase:
-        executeSingleSelectorData(rootNode, *searchRootNode, m_selectors.first(), output);
+        executeSingleSelectorDataWithAncestorFilter(rootNode, *searchRootNode, m_selectors.first(), output);
         break;
 
     case TagNameMatch:
