@@ -3995,6 +3995,7 @@ bool RenderBlockFlow::layoutSimpleBlockContentInInline(MarginInfo& marginInfo)
             return false;
         blockRenderer->setLogicalTop(logicalTop);
     }
+    inlineLayout()->updateOverflow();
     return true;
 }
 
