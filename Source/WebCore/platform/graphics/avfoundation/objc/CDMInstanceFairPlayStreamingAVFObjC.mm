@@ -437,8 +437,8 @@ void CDMInstanceFairPlayStreamingAVFObjC::clearClient()
 
 const String& CDMInstanceFairPlayStreamingAVFObjC::keySystem() const
 {
-    static NeverDestroyed<String> keySystem { "com.apple.fps"_s };
-    return keySystem;
+    static const NeverDestroyed<String> s_keySystem { MAKE_STATIC_STRING_IMPL("com.apple.fps") };
+    return s_keySystem;
 }
 
 static WebAVContentKeyGrouping *groupForRequest(AVContentKeyRequest *request)
