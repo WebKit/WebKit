@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/resources/abe.png because it does not appear in the img-src directive of the Content Security Policy.
+Tests that about:blank opened via window.open() inherits CSP from its cross-origin opener, not from the top-level document.
+
+The top-level page (127.0.0.1) has CSP "img-src 'self'" which allows images from same origin.
+
+The cross-origin helper (localhost) has CSP "img-src 'none'" which blocks all images.
+
+When the helper opens about:blank, about:blank should inherit the helper's CSP and block the image.
+
+PASS: Image blocked by inherited CSP from cross-origin opener
+TEST COMPLETE
+

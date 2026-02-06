@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: The page at about:blank requested insecure content from http://127.0.0.1:8443/security/resources/abe.png. This content was automatically upgraded and should be served over HTTPS.
+
+Tests that about:blank opened via window.open() inherits upgrade-insecure-requests behavior from its opener.
+
+The opener has upgrade-insecure-requests CSP directive. The about:blank window should inherit this and upgrade HTTP requests to HTTPS.
+
+
+PASS Verify that about:blank opened via window.open() inherits upgrade-insecure-requests from opener.
+

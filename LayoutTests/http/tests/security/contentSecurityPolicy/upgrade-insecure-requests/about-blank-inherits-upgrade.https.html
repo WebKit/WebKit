@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<title>Upgrade Insecure Requests: Inheritance by about:blank via window.open()</title>
+<script src="/js-test-resources/testharness.js"></script>
+<script src="/js-test-resources/testharnessreport.js"></script>
+
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+// This is a bit of a hack. UPGRADE doesn't upgrade the port number, so we
+// specify this non-existent URL ('http' over port 8443). If UPGRADE works,
+// it will be upgraded to https and load. If not, it fails.
+var insecureImage = "http://127.0.0.1:8443/security/resources/abe.png";
+
+(function() {
+    var t = async_test("Verify that about:blank opened via window.open() inherits upgrade-insecure-requests from opener.");
+    t.step(function () {
+        var popup = window.open("about:blank");
+        if (!popup) {
+            assert_unreached("Could not open popup");
+            return;
+        }
+
+        t.add_cleanup(function () { popup.close(); });
+
+        // Write content to about:blank that tries to load an insecure image
+        // If upgrade-insecure-requests is inherited, the image will be upgraded to HTTPS and load
+        // If not inherited, the image will fail to load (http on port 8443 doesn't exist)
+        var script = popup.document.createElement('script');
+        script.textContent = `
+            var img = document.createElement('img');
+            img.onload = function() {
+                window.opener.postMessage({success: true, width: img.naturalWidth, height: img.naturalHeight}, '*');
+            };
+            img.onerror = function() {
+                window.opener.postMessage({success: false}, '*');
+            };
+            img.src = "${insecureImage}";
+            document.body.appendChild(img);
+        `;
+        popup.document.body.appendChild(script);
+
+        window.addEventListener("message", t.step_func(function (event) {
+            if (event.data.success) {
+                assert_equals(event.data.height, 103, "Height of upgraded image.");
+                assert_equals(event.data.width, 76, "Width of upgraded image.");
+                t.done();
+            } else {
+                assert_unreached("The image should load successfully if upgrade-insecure-requests was inherited.");
+            }
+        }), {once: true});
+    });
+}());
+
+</script>
+<p>Tests that about:blank opened via window.open() inherits upgrade-insecure-requests behavior from its opener.</p>
+<p>The opener has upgrade-insecure-requests CSP directive. The about:blank window should inherit this and upgrade HTTP requests to HTTPS.</p>

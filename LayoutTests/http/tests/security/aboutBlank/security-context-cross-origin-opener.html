@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(msg) {
+    document.getElementById('console').appendChild(document.createTextNode(msg + '\n'));
+}
+
+window.addEventListener("message", function(event) {
+    log(event.data);
+    if (event.data.includes("TEST COMPLETE")) {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}, false);
+</script>
+</head>
+<body>
+<p>Tests that about:blank opened via window.open() from a cross-origin iframe inherits the opener's security origin, not the top-level document's origin.</p>
+<pre id="console"></pre>
+<iframe id="crossOriginFrame" src="http://localhost:8000/security/aboutBlank/resources/cross-origin-open-about-blank.html"></iframe>
+</body>
+</html>

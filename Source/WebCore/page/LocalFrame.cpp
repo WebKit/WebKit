@@ -1040,8 +1040,27 @@ DOMWindow* LocalFrame::virtualWindow() const
 
 void LocalFrame::reinitializeDocumentSecurityContext()
 {
-    if (RefPtr document = this->document())
-        document->initSecurityContext();
+    RefPtr document = this->document();
+    if (!document)
+        return;
+
+    // Compute owner security policy before calling initSecurityContext.
+    // The owner is the parent frame if available, otherwise the opener frame.
+    std::optional<DocumentSecurityPolicy> ownerSecurityPolicy;
+    RefPtr<SecurityOrigin> ownerSecurityOrigin;
+    bool ownerIsOpener = false;
+
+    RefPtr ownerFrame = tree().parent();
+    if (!ownerFrame) {
+        ownerFrame = opener();
+        ownerIsOpener = !!ownerFrame;
+    }
+    if (ownerFrame) {
+        ownerSecurityPolicy = ownerFrame->frameDocumentSecurityPolicy();
+        ownerSecurityOrigin = ownerFrame->frameDocumentSecurityOrigin();
+    }
+
+    document->initSecurityContext(WTF::move(ownerSecurityPolicy), WTF::move(ownerSecurityOrigin), ownerIsOpener);
 }
 
 void LocalFrame::disconnectView()
@@ -1685,7 +1704,29 @@ std::optional<DocumentSecurityPolicy> LocalFrame::frameDocumentSecurityPolicy() 
     if (!document)
         return std::nullopt;
 
-    return DocumentSecurityPolicy { document->crossOriginEmbedderPolicy(), document->crossOriginOpenerPolicy() };
+    ContentSecurityPolicyResponseHeaders cspHeaders;
+    HashSet<SecurityOriginData> insecureNavRequests;
+    String cspReferrer;
+    int cspHttpStatusCode = 0;
+    bool upgradeInsecureRequests = false;
+    if (CheckedPtr csp = document->contentSecurityPolicy()) {
+        cspHeaders = csp->responseHeaders();
+        insecureNavRequests = csp->insecureNavigationRequestsToUpgrade();
+        cspReferrer = csp->referrer();
+        cspHttpStatusCode = csp->httpStatusCode();
+        upgradeInsecureRequests = csp->upgradeInsecureRequests();
+    }
+
+    return DocumentSecurityPolicy {
+        document->crossOriginEmbedderPolicy(),
+        document->crossOriginOpenerPolicy(),
+        WTF::move(cspHeaders),
+        WTF::move(insecureNavRequests),
+        WTF::move(cspReferrer),
+        cspHttpStatusCode,
+        document->isSameOriginAsTopDocument(),
+        upgradeInsecureRequests
+    };
 }
 
 Ref<FrameInspectorController> LocalFrame::protectedInspectorController() const
