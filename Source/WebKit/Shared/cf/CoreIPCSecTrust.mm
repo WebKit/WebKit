@@ -412,6 +412,82 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                     ASSERT_NOT_REACHED();
                     return;
                 }
+            } else if ([value isKindOfClass:NSArray.class]) {
+                NSArray *revocationInfoArray = value;
+                CoreIPCSecTrustData::RevocationInfoArray revocationInfo;
+                revocationInfo.reserveCapacity([revocationInfoArray count]);
+
+                for (NSDictionary *entry in revocationInfoArray) {
+                    if (![entry isKindOfClass:NSDictionary.class]) {
+                        RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'RevocationInfo' array contains non-dictionary element");
+                        ASSERT_NOT_REACHED();
+                        return;
+                    }
+
+                    CoreIPCSecTrustData::RevocationInfoEntry revocationEntry;
+                    revocationEntry.reserveCapacity([entry count]);
+
+                    for (NSString *entryKey in entry) {
+                        if (![entryKey isKindOfClass:NSString.class]) {
+                            RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'RevocationInfo' entry key is not a string");
+                            ASSERT_NOT_REACHED();
+                            return;
+                        }
+
+                        NSDictionary *subDict = [entry objectForKey:entryKey];
+                        if (![subDict isKindOfClass:NSDictionary.class]) {
+                            RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'RevocationInfo' entry value is not a dictionary");
+                            ASSERT_NOT_REACHED();
+                            return;
+                        }
+
+                        CoreIPCSecTrustData::RevocationInfoSubDict revocationSubDict;
+                        revocationSubDict.reserveCapacity([subDict count]);
+
+                        for (NSString *subKey in subDict) {
+                            if (![subKey isKindOfClass:NSString.class]) {
+                                RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'RevocationInfo' sub-dictionary key is not a string");
+                                ASSERT_NOT_REACHED();
+                                return;
+                            }
+
+                            CoreIPCString subKeyString { subKey };
+                            id subValue = [subDict objectForKey:subKey];
+
+                            if ([subValue isKindOfClass:NSNumber.class]) {
+                                NSNumber *number = subValue;
+                                if ([number isEqualToNumber:@YES] || [number isEqualToNumber:@NO]) {
+                                    CoreIPCSecTrustData::RevocationInfoSubDictValue v = [number boolValue];
+                                    revocationSubDict.append(std::make_pair(WTF::move(subKeyString), WTF::move(v)));
+                                } else {
+                                    CoreIPCNumber n { number };
+                                    CoreIPCSecTrustData::RevocationInfoSubDictValue v = WTF::move(n);
+                                    revocationSubDict.append(std::make_pair(WTF::move(subKeyString), WTF::move(v)));
+                                }
+                            } else if ([subValue isKindOfClass:NSData.class]) {
+                                CoreIPCData data { subValue };
+                                CoreIPCSecTrustData::RevocationInfoSubDictValue v = WTF::move(data);
+                                revocationSubDict.append(std::make_pair(WTF::move(subKeyString), WTF::move(v)));
+                            } else if ([subValue isKindOfClass:NSDate.class]) {
+                                CoreIPCDate date { subValue };
+                                CoreIPCSecTrustData::RevocationInfoSubDictValue v = WTF::move(date);
+                                revocationSubDict.append(std::make_pair(WTF::move(subKeyString), WTF::move(v)));
+                            } else {
+                                RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'RevocationInfo' sub-dictionary value has unexpected type");
+                                ASSERT_NOT_REACHED();
+                                return;
+                            }
+                        }
+
+                        CoreIPCString entryKeyString { entryKey };
+                        revocationEntry.append(std::make_pair(WTF::move(entryKeyString), WTF::move(revocationSubDict)));
+                    }
+
+                    revocationInfo.append(WTF::move(revocationEntry));
+                }
+
+                CoreIPCSecTrustData::InfoOption v = WTF::move(revocationInfo);
+                vector.append(std::make_pair(WTF::move(k), WTF::move(v)));
             } else {
                 RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'info' dictionary contains unexpected type");
                 ASSERT_NOT_REACHED();
@@ -749,6 +825,36 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 },
                 [&] (const CoreIPCString& s) {
                     value = s.toID();
+                },
+                [&] (const CoreIPCSecTrustData::RevocationInfoArray& revocationInfoArray) {
+                    RetainPtr array = adoptNS([[NSMutableArray alloc] initWithCapacity:revocationInfoArray.size()]);
+                    for (const auto& revocationEntry : revocationInfoArray) {
+                        RetainPtr entryDict = adoptNS([[NSMutableDictionary alloc] initWithCapacity:revocationEntry.size()]);
+                        for (const auto& entryPair : revocationEntry) {
+                            RetainPtr subDict = adoptNS([[NSMutableDictionary alloc] initWithCapacity:entryPair.second.size()]);
+                            for (const auto& subPair : entryPair.second) {
+                                RetainPtr<id> subValue;
+                                WTF::switchOn(subPair.second,
+                                    [&] (const bool& b) {
+                                        subValue = @(b);
+                                    },
+                                    [&] (const CoreIPCNumber& n) {
+                                        subValue = n.toID();
+                                    },
+                                    [&] (const CoreIPCData& d) {
+                                        subValue = d.toID();
+                                    },
+                                    [&] (const CoreIPCDate& d) {
+                                        subValue = d.toID();
+                                    }
+                                );
+                                [subDict setObject:subValue.get() forKey:subPair.first.toID().get()];
+                            }
+                            [entryDict setObject:subDict.get() forKey:entryPair.first.toID().get()];
+                        }
+                        [array addObject:entryDict.get()];
+                    }
+                    value = array;
                 }
             );
             [info setObject:value.get() forKey:key.get()];

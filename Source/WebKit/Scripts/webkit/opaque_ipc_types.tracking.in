@@ -100,6 +100,12 @@
 [Legacy] AliasParam WebKit::CoreIPCCFDictionary::KeyType Variant<WebKit::CoreIPCCFArray, WebKit::CoreIPCBoolean, WebKit::CoreIPCCFCharacterSet, WebKit::CoreIPCData, WebKit::CoreIPCDate, WebKit::CoreIPCCFDictionary, WebKit::CoreIPCNull, WebKit::CoreIPCNumber, WebKit::CoreIPCString, WebKit::CoreIPCCFURL>
 [Legacy] AliasParam WebKit::CoreIPCNSURLRequestData::BodyParts Variant<WebKit::CoreIPCString, WebKit::CoreIPCData>
 [Legacy] AliasParam WebKit::CoreIPCSecTrustData::ExceptionType Vector<std::pair<WebKit::CoreIPCString, Variant<WebKit::CoreIPCNumber, WebKit::CoreIPCData, bool>>>
+[NeedsReview] AliasParam WebKit::CoreIPCSecTrustData::RevocationInfoSubDictValue Variant<WebKit::CoreIPCNumber, WebKit::CoreIPCData, WebKit::CoreIPCDate, bool>
+[NeedsReview] AliasParam WebKit::CoreIPCSecTrustData::RevocationInfoSubDict Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::RevocationInfoSubDictValue>>
+[NeedsReview] AliasParam WebKit::CoreIPCSecTrustData::RevocationInfoEntry Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::RevocationInfoSubDict>>
+[NeedsReview] AliasParam WebKit::CoreIPCSecTrustData::RevocationInfoArray Vector<WebKit::CoreIPCSecTrustData::RevocationInfoEntry>
+[NeedsReview] AliasParam WebKit::CoreIPCSecTrustData::InfoOption Variant<WebKit::CoreIPCDate, WebKit::CoreIPCString, bool, WebKit::CoreIPCSecTrustData::RevocationInfoArray>
+[NeedsReview] AliasParam WebKit::CoreIPCSecTrustData::InfoType Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::InfoOption>>
 [Legacy] AliasParam WebKit::CoreIPCSecTrustData::PolicyArrayOfData Vector<WebKit::CoreIPCData>
 [Legacy] AliasParam WebKit::CoreIPCSecTrustData::PolicyVariant Variant<bool, WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::PolicyArrayOfNumbers, WebKit::CoreIPCSecTrustData::PolicyArrayOfStrings, WebKit::CoreIPCSecTrustData::PolicyArrayOfData, WebKit::CoreIPCSecTrustData::PolicyArrayOfArrayContainingDateOrNumbers, WebKit::CoreIPCSecTrustData::PolicyDictionaryValueIsNumber>
 [Legacy] AliasParam WebKit::CoreIPCSecTrustData::PolicyOption Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::PolicyVariant>>
@@ -125,6 +131,10 @@
 [Legacy] StructureParam WebKit::NetworkSessionCreationParameters.proxyConfigData std::optional<Vector<std::pair<Vector<uint8_t>, std::optional<WTF::UUID>>>>
 [Legacy] StructureParam WebKit::ICCData.data Vector<uint8_t>
 [Legacy] StructureParam WebKit::IndexedColorSpace.table Vector<uint8_t>
+
+[UnsafeWrapper] std::optional<WebKit::CoreIPCSecTrustData::InfoType> {
+    [NeedsReview] StructureParam WebKit::CoreIPCSecTrustData.info
+}
 
 [UnsafeWrapper] std::optional<std::span<const uint8_t>> {
     [Legacy] StructureParam WebKit::CoreIPCData.dataReference() 

@@ -1493,6 +1493,42 @@ TEST(IPCSerialization, SecTrustRef)
             @"ExtendedValidation" : @(YES),
             @"Organization" : @"Apple Inc.",
             @"Revocation" : @(YES),
+            @"RevocationInfo" : @[
+                @{
+                    @"ocsp" : @{
+                        @"isDefinitive" : @(YES),
+                        @"isRevoked" : @(NO),
+                        @"nextUpdate" : @(792270694),
+                        @"thisUpdate" : @(791669495)
+                    }
+                },
+                @{
+                    @"ocsp" : @{ },
+                    @"valid" : @{
+                        @"anchorHash" : [NSData dataWithBytes:"AAAA" length:strlen("AAAA")],
+                        @"certHash" : [NSData dataWithBytes:"BBBB" length:strlen("AAAA")],
+                        @"checkOCSP" : @(NO),
+                        @"complete" : @(YES),
+                        @"format" : @(1),
+                        @"hasDateConstraints" : @(NO),
+                        @"hasNameConstraints" : @(NO),
+                        @"hasPolicyConstraints" : @(YES),
+                        @"isDefinitive" : @(YES),
+                        @"isOnList" : @(NO),
+                        @"isRevoked" : @(NO),
+                        @"issuerHash" : [NSData dataWithBytes:"CCCC" length:strlen("AAAA")],
+                        @"knownOnly" : @(NO),
+                        @"noCACheck" : @(NO),
+                        @"overridable" : @(NO),
+                        @"policyConstraints" : [NSData dataWithBytes:"DDDD" length:strlen("AAAA")],
+                        @"requireCT" : @(NO),
+                        @"valid" : @(NO)
+                    }
+                },
+                @{
+                    @"ocsp" : @{ }
+                }
+            ],
             @"RevocationValidUntil" : [dateFormatter dateFromString:@"2024-12-20 15:15:45 +0000"],
             @"TrustExpirationDate" : [dateFormatter dateFromString:@"2024-12-20 15:15:45 +0000"],
             @"TrustExtendedValidation" : @(YES),

@@ -39,7 +39,11 @@ header: "CoreIPCSecTrust.h"
 };
 
 using WebKit::CoreIPCSecTrustData::Detail = Vector<std::pair<WebKit::CoreIPCString, bool>>;
-using WebKit::CoreIPCSecTrustData::InfoOption = Variant<WebKit::CoreIPCDate, WebKit::CoreIPCString, bool>;
+using WebKit::CoreIPCSecTrustData::RevocationInfoSubDictValue = Variant<WebKit::CoreIPCNumber, WebKit::CoreIPCData, WebKit::CoreIPCDate, bool>;
+using WebKit::CoreIPCSecTrustData::RevocationInfoSubDict = Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::RevocationInfoSubDictValue>>;
+using WebKit::CoreIPCSecTrustData::RevocationInfoEntry = Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::RevocationInfoSubDict>>;
+using WebKit::CoreIPCSecTrustData::RevocationInfoArray = Vector<WebKit::CoreIPCSecTrustData::RevocationInfoEntry>;
+using WebKit::CoreIPCSecTrustData::InfoOption = Variant<WebKit::CoreIPCDate, WebKit::CoreIPCString, bool, WebKit::CoreIPCSecTrustData::RevocationInfoArray>;
 using WebKit::CoreIPCSecTrustData::InfoType = Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::InfoOption>>;
 using WebKit::CoreIPCSecTrustData::PolicyDictionaryValueIsNumber = Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCNumber>>;
 using WebKit::CoreIPCSecTrustData::PolicyArrayOfArrayContainingDateOrNumbers = Vector<Vector<Variant<WebKit::CoreIPCNumber, WebKit::CoreIPCDate>>>;
