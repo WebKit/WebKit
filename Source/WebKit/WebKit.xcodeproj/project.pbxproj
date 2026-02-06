@@ -2375,6 +2375,7 @@
 		E326F4DC2CA6C44F00182187 /* LogStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = E326F4DA2CA6C44F00182187 /* LogStream.mm */; };
 		E326F4DD2CA6C44F00182187 /* LogStream.h in Headers */ = {isa = PBXBuildFile; fileRef = E326F4D92CA6C44F00182187 /* LogStream.h */; };
 		E33E8FFD2C7FD2980002BEB3 /* UseDownloadPlaceholder.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E8FFC2C7FD2980002BEB3 /* UseDownloadPlaceholder.h */; };
+		E343ABBA2F30E75900324372 /* ProcessStartupSandboxExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = E343ABB82F30DE4000324372 /* ProcessStartupSandboxExtensions.h */; };
 		E34DAD392B753FA700FABEE2 /* ExtensionProcess.mm in Sources */ = {isa = PBXBuildFile; fileRef = E34DAD372B753FA700FABEE2 /* ExtensionProcess.mm */; };
 		E34DAD3A2B753FA700FABEE2 /* ExtensionProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = E34DAD382B753FA700FABEE2 /* ExtensionProcess.h */; };
 		E3607DEA2C7FE92200956766 /* WKDownloadDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = E3607DE92C7FE92200956766 /* WKDownloadDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2410,6 +2411,7 @@
 		E3E84BDA2AE0AAE50091B3C2 /* XPCEndpoint.h in Copy Testing Headers */ = {isa = PBXBuildFile; fileRef = C14D306724B794E700480387 /* XPCEndpoint.h */; };
 		E3E84BDB2AE0AAE50091B3C2 /* XPCEndpointClient.h in Copy Testing Headers */ = {isa = PBXBuildFile; fileRef = C14D306824B794E700480387 /* XPCEndpointClient.h */; };
 		E3E84BEE2AE1AA5A0091B3C2 /* ExtensionKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E84BED2AE1AA5A0091B3C2 /* ExtensionKitSPI.h */; };
+		E3F0F3CD2F30E98D003D51DD /* ProcessStartupSandboxExtensions.mm in Sources */ = {isa = PBXBuildFile; fileRef = E3F0F3CC2F30E98D003D51DD /* ProcessStartupSandboxExtensions.mm */; };
 		E413F59D1AC1ADC400345360 /* NetworkCacheEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = E413F59B1AC1ADB600345360 /* NetworkCacheEntry.h */; };
 		E42E06101AA7523B00B11699 /* NetworkCacheIOChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = E42E060B1AA7440D00B11699 /* NetworkCacheIOChannel.h */; };
 		E42E06121AA75ABD00B11699 /* NetworkCacheData.h in Headers */ = {isa = PBXBuildFile; fileRef = E42E06111AA75ABD00B11699 /* NetworkCacheData.h */; };
@@ -8479,6 +8481,8 @@
 		E326F4DA2CA6C44F00182187 /* LogStream.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LogStream.mm; sourceTree = "<group>"; };
 		E33E8FFC2C7FD2980002BEB3 /* UseDownloadPlaceholder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UseDownloadPlaceholder.h; sourceTree = "<group>"; };
 		E3439B632345463A0011DE0B /* NetworkProcessConnectionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NetworkProcessConnectionInfo.h; path = Network/NetworkProcessConnectionInfo.h; sourceTree = "<group>"; };
+		E343ABB82F30DE4000324372 /* ProcessStartupSandboxExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProcessStartupSandboxExtensions.h; sourceTree = "<group>"; };
+		E343ABB92F30E28B00324372 /* ProcessStartupSandboxExtensions.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ProcessStartupSandboxExtensions.serialization.in; sourceTree = "<group>"; };
 		E34B110C27C46BC6006D2F2E /* libWebCoreTestShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libWebCoreTestShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E34B110F27C46D09006D2F2E /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E34DAD372B753FA700FABEE2 /* ExtensionProcess.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ExtensionProcess.mm; sourceTree = "<group>"; };
@@ -8545,6 +8549,7 @@
 		E3E84BED2AE1AA5A0091B3C2 /* ExtensionKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionKitSPI.h; sourceTree = "<group>"; };
 		E3EFB02C2550617C003C2F96 /* WebSystemSoundDelegate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSystemSoundDelegate.cpp; sourceTree = "<group>"; };
 		E3EFB02D2550617C003C2F96 /* WebSystemSoundDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSystemSoundDelegate.h; sourceTree = "<group>"; };
+		E3F0F3CC2F30E98D003D51DD /* ProcessStartupSandboxExtensions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessStartupSandboxExtensions.mm; sourceTree = "<group>"; };
 		E404907121DE65F70037F0DB /* ScrollingTreeFrameScrollingNodeRemoteMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeFrameScrollingNodeRemoteMac.cpp; sourceTree = "<group>"; };
 		E404907321DE65F70037F0DB /* ScrollingTreeFrameScrollingNodeRemoteMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeFrameScrollingNodeRemoteMac.h; sourceTree = "<group>"; };
 		E40C1F9321F0B96E00530718 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeFrameScrollingNodeRemoteIOS.h; sourceTree = "<group>"; };
@@ -13139,6 +13144,9 @@
 				2D1087621D2C641B00B85F82 /* LoadParametersCocoa.mm */,
 				2D440B8325EF235E00A98D87 /* PDFKitSoftLink.h */,
 				2D440B8225EF235E00A98D87 /* PDFKitSoftLink.mm */,
+				E343ABB82F30DE4000324372 /* ProcessStartupSandboxExtensions.h */,
+				E3F0F3CC2F30E98D003D51DD /* ProcessStartupSandboxExtensions.mm */,
+				E343ABB92F30E28B00324372 /* ProcessStartupSandboxExtensions.serialization.in */,
 				442E7BEA27B4581300C69AC1 /* RevealItem.h */,
 				442E7BE827B4572B00C69AC1 /* RevealItem.mm */,
 				86AA5253293676AA0065399E /* RevealItem.serialization.in */,
@@ -18274,6 +18282,7 @@
 				5CB9310926E8439A0032B1C0 /* PrivateClickMeasurementXPCUtilities.h in Headers */,
 				86F9536518FF58F5001DB2EF /* ProcessAssertion.h in Headers */,
 				BC1A7C581136E19C00FB7167 /* ProcessLauncher.h in Headers */,
+				E343ABBA2F30E75900324372 /* ProcessStartupSandboxExtensions.h in Headers */,
 				93E05E40282CD560000B69EB /* ProcessStateMonitor.h in Headers */,
 				463FD4821EB94EC000A2982C /* ProcessTerminationReason.h in Headers */,
 				86E67A251910B9D100004AB7 /* ProcessThrottler.h in Headers */,
@@ -21627,6 +21636,7 @@
 				A1D4D2092B7DE6D00008C40E /* PlaybackSessionInterfaceLMK.mm in Sources */,
 				C15CBB3723F37ECB00300CC7 /* PreferenceObserver.mm in Sources */,
 				2D54C31B212F4DA60049C174 /* ProcessLauncher.cpp in Sources */,
+				E3F0F3CD2F30E98D003D51DD /* ProcessStartupSandboxExtensions.mm in Sources */,
 				517B5F7B275E97A9002DC22D /* PushClientConnection.mm in Sources */,
 				EB36B16927A7B4500050E00D /* PushService.mm in Sources */,
 				EBA8D3B727A5E33F00CB7900 /* PushServiceConnection.mm in Sources */,

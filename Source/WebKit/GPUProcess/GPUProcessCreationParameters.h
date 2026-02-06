@@ -35,6 +35,10 @@
 #include <WebCore/DRMDevice.h>
 #endif
 
+#if PLATFORM(MAC)
+#include "ProcessStartupSandboxExtensions.h"
+#endif
+
 namespace IPC {
 class Decoder;
 class Encoder;
@@ -78,6 +82,9 @@ struct GPUProcessCreationParameters {
 #if ENABLE(AV1)
     std::optional<bool> hasAV1HardwareDecoder;
 #endif
+#endif
+#if PLATFORM(MAC)
+    ProcessStartupSandboxExtensions processStartupSandboxExtensions;
 #endif
 };
 

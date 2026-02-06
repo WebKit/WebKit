@@ -297,9 +297,6 @@ private:
     WebCore::Timer m_idleExitTimer;
     std::unique_ptr<WebCore::NowPlayingManager> m_nowPlayingManager;
     String m_applicationVisibleName;
-#if PLATFORM(MAC)
-    String m_uiProcessName;
-#endif
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
     mutable RefPtr<RemoteAudioSessionProxyManager> m_audioSessionManager;
 #endif

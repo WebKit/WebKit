@@ -60,6 +60,9 @@ void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationP
 #endif
     parameters.enableMetalDebugDeviceForTesting = m_isMetalDebugDeviceEnabledForTesting;
     parameters.enableMetalShaderValidationForTesting = m_isMetalShaderValidationEnabledForTesting;
+#if PLATFORM(MAC)
+    parameters.processStartupSandboxExtensions.createSandboxExtensions("com.apple.WebKit.GPU"_s);
+#endif
 }
 
 #if HAVE(POWERLOG_TASK_MODE_QUERY)

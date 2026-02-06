@@ -57,8 +57,17 @@ void NetworkProcess::initializeProcess(const AuxiliaryProcessInitializationParam
 
 void NetworkProcess::initializeProcessName(const AuxiliaryProcessInitializationParameters& parameters)
 {
+#if PLATFORM(MAC)
+    setUIProcessName(parameters.uiProcessName);
+#else
+    UNUSED_PARAM(parameters);
+#endif
+}
+
+void NetworkProcess::updateProcessName()
+{
 #if !PLATFORM(MACCATALYST)
-    SUPPRESS_UNRETAINED_ARG RetainPtr applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Networking", "visible name of the network process. The argument is the application name."), parameters.uiProcessName.createNSString().get()]);
+    SUPPRESS_UNRETAINED_ARG RetainPtr applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Networking", "visible name of the network process. The argument is the application name."), uiProcessName().createNSString().get()]);
     _LSSetApplicationInformationItem(kLSDefaultSessionID, RetainPtr { _LSGetCurrentApplicationASN() }.get(), _kLSDisplayNameKey, (CFStringRef)applicationName.get(), nullptr);
 #endif
 }

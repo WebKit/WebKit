@@ -239,4 +239,8 @@
 #if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
     bool shouldEnableWebAssemblyDebugger;
 #endif
+
+#if PLATFORM(MAC)
+    WebKit::ProcessStartupSandboxExtensions processStartupSandboxExtensions;
+#endif
 };

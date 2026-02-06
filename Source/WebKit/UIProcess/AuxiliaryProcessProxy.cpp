@@ -568,7 +568,8 @@ AuxiliaryProcessCreationParameters AuxiliaryProcessProxy::auxiliaryProcessParame
     parameters.shouldEnableIPCSignposts = IPC::Connection::signpostsEnabled();
     parameters.shouldEnableStreamingIPCSignposts = IPC::StreamClientConnection::signpostsEnabled();
 #endif
-
+#if PLATFORM(MAC)
+#endif
     return parameters;
 }
 

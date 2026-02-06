@@ -880,7 +880,6 @@ private:
     std::unique_ptr<WebCore::CPUMonitor> m_cpuMonitor;
     std::optional<double> m_cpuLimit;
 
-    String m_uiProcessName;
     WebCore::RegistrableDomain m_registrableDomain;
 #endif
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)

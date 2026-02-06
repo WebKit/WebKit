@@ -195,10 +195,6 @@
     (subpath "/System/Library/PrivateFrameworks")
     (subpath "/usr/lib"))
 
-(if (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
-    (allow file-map-executable
-        (subpath (param "DARWIN_USER_TEMP_DIR"))))
-
 (allow file-read-metadata
     (literal "/etc")
     (literal "/tmp")
@@ -380,23 +376,11 @@
     (subpath "/Library/Frameworks")
     (subpath "/Library/Managed Preferences"))
 
-;; On-disk WebKit2 framework location, to account for debug installations
-;; outside of /System/Library/Frameworks
-(allow file-read* file-test-existence
-    (subpath (param "WEBKIT2_FRAMEWORK_DIR")))
-
 (allow file-read-data
-    (literal "/usr/local/lib/log") ; <rdar://problem/36629495>
-)
+    (literal "/usr/local/lib/log")) ; <rdar://problem/36629495>
 
 (read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
 (read-write-and-issue-extensions (extension "com.apple.app-sandbox.read-write"))
-
-(if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
-    (allow file-read* file-write* (subpath (param "DARWIN_USER_CACHE_DIR"))))
-
-(if (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
-    (allow file-read* file-write* (subpath (param "DARWIN_USER_TEMP_DIR"))))
 
 ;; IOKit user clients
 (allow IOKIT_OPEN_USER_CLIENT

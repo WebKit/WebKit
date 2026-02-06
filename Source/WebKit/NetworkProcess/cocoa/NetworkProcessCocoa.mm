@@ -89,6 +89,10 @@ static void initializeNetworkSettings()
 
 void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters& parameters)
 {
+#if PLATFORM(MAC)
+    parameters.processStartupSandboxExtensions.consumeSandboxExtensions();
+#endif
+
     m_isParentProcessFullWebBrowserOrRunningTest = parameters.isParentProcessFullWebBrowserOrRunningTest;
 
     _CFNetworkSetATSContext(parameters.networkATSContext.get());

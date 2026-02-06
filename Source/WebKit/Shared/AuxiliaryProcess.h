@@ -178,6 +178,11 @@ protected:
     static const WTF::String& increaseContrastPreferenceKey();
 #endif
 
+#if PLATFORM(MAC)
+    const String& uiProcessName() const { return m_uiProcessName; }
+    void setUIProcessName(const String& uiProcessName) { m_uiProcessName = uiProcessName; }
+#endif
+
 private:
 #if ENABLE(CFPREFS_DIRECT_MODE)
     void handleAXPreferenceChange(const String& domain, const String& key, id value);
@@ -206,6 +211,10 @@ private:
     IPC::MessageReceiverMap m_messageReceiverMap;
 
     UserActivity m_processSuppressionDisabled;
+
+#if PLATFORM(MAC)
+    String m_uiProcessName;
+#endif
 };
 
 struct AuxiliaryProcessInitializationParameters {

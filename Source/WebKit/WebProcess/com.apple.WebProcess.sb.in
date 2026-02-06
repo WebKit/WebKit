@@ -913,10 +913,6 @@
 
 (allow-reading-global-preferences)
 
-;; On-disk WebKit2 framework location, to account for debug installations outside of /System/Library/Frameworks,
-;; and to allow issuing extensions.
-(allow-read-directory-and-issue-read-extensions (param "WEBKIT2_FRAMEWORK_DIR"))
-
 ;; Allow issuing extensions to system libraries that the Network process can already read.
 ;; This is to avoid warnings attempting to create extensions for these resources.
 (allow-read-directory-and-issue-read-extensions "/System/Library/PrivateFrameworks/WebInspectorUI.framework")
@@ -943,12 +939,6 @@
     (allow mach-register
         (global-name-regex #"^_oglprof_attach_<[0-9]+>$"))
 )
-
-(if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
-    (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_CACHE_DIR")))
-
-(if (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
-    (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_TEMP_DIR")))
 
 ;; IOKit user clients
 (deny IOKIT_OPEN_USER_CLIENT (with no-report)

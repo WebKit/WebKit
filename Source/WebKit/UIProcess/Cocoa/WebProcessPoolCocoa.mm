@@ -563,6 +563,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
     parameters.isDebugLoggingEnabled = os_log_debug_enabled(OS_LOG_DEFAULT);
 #endif
+
+#if PLATFORM(MAC)
+    parameters.processStartupSandboxExtensions.createSandboxExtensions("com.apple.WebKit.WebContent"_s);
+#endif
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)

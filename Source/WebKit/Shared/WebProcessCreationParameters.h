@@ -70,6 +70,10 @@
 #include <WebCore/DRMDevice.h>
 #endif
 
+#if PLATFORM(MAC)
+#include "ProcessStartupSandboxExtensions.h"
+#endif
+
 namespace API {
 class Data;
 }
@@ -295,6 +299,10 @@ struct WebProcessCreationParameters {
 
 #if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
     bool shouldEnableWebAssemblyDebugger { false };
+#endif
+
+#if PLATFORM(MAC)
+    ProcessStartupSandboxExtensions processStartupSandboxExtensions;
 #endif
 };
 

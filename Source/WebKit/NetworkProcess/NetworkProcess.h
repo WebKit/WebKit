@@ -608,6 +608,10 @@ private:
     void performDeleteWebsiteDataTask(TaskIdentifier, TaskTrigger = TaskTrigger::Connection);
     void deleteWebsiteDataImpl(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime, CompletionHandler<void()>&&);
 
+#if PLATFORM(MAC)
+    void updateProcessName();
+#endif
+
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<NetworkConnectionToWebProcess>> m_webProcessConnections;
     HashMap<WebCore::ProcessIdentifier, Vector<CompletionHandler<void()>>> m_webProcessConnectionCloseHandlers;

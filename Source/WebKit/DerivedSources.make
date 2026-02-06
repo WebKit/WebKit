@@ -687,6 +687,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Cocoa/DataDetectionResult.serialization.in \
 	Shared/Cocoa/GestureTypes.serialization.in \
 	Shared/Cocoa/InsertTextOptions.serialization.in \
+	Shared/Cocoa/ProcessStartupSandboxExtensions.serialization.in \
 	Shared/Cocoa/RemoteObjectInvocation.serialization.in \
 	Shared/Cocoa/RevealItem.serialization.in \
 	Shared/Cocoa/SharedCARingBuffer.serialization.in \

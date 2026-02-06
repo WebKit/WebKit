@@ -41,6 +41,10 @@
 #include <wtf/MemoryPressureHandler.h>
 #endif
 
+#if PLATFORM(MAC)
+#include "ProcessStartupSandboxExtensions.h"
+#endif
+
 namespace WebKit {
 
 struct WebsiteDataStoreParameters;
@@ -86,6 +90,9 @@ struct NetworkProcessCreationParameters {
     Vector<WebCore::OrganizationStorageAccessPromptQuirk> storageAccessPromptQuirksData;
 
     Markable<double> defaultRequestTimeoutInterval;
+#if PLATFORM(MAC)
+    ProcessStartupSandboxExtensions processStartupSandboxExtensions;
+#endif
 };
 
 } // namespace WebKit

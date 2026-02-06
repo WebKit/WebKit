@@ -743,22 +743,12 @@
 
 (allow-reading-global-preferences)
 
-;; On-disk WebKit2 framework location, to account for debug installations outside of /System/Library/Frameworks,
-;; and to allow issuing extensions.
-(allow-read-directory-and-issue-read-extensions (param "WEBKIT2_FRAMEWORK_DIR"))
-
 (read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
 (read-write-and-issue-extensions (extension "com.apple.app-sandbox.read-write"))
 
 ;; Allow the OpenGL Profiler to attach.
 (with-filter (system-attribute apple-internal)
     (allow mach-register (global-name-regex #"^_oglprof_attach_<[0-9]+>$")))
-
-(if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
-    (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_CACHE_DIR")))
-
-(if (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
-    (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_TEMP_DIR")))
 
 ;; IOKit user clients
 (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")

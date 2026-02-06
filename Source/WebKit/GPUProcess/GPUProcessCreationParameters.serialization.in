@@ -62,6 +62,9 @@
     std::optional<bool> hasAV1HardwareDecoder;
 #endif
 #endif
+#if PLATFORM(MAC)
+    WebKit::ProcessStartupSandboxExtensions processStartupSandboxExtensions;
+#endif
 };
 
 #endif

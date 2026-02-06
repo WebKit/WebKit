@@ -60,7 +60,7 @@ void GPUProcess::initializeProcess(const AuxiliaryProcessInitializationParameter
 void GPUProcess::initializeProcessName(const AuxiliaryProcessInitializationParameters& parameters)
 {
 #if PLATFORM(MAC)
-    m_uiProcessName = parameters.uiProcessName;
+    setUIProcessName(parameters.uiProcessName);
 #endif
 }
 
@@ -69,7 +69,7 @@ void GPUProcess::updateProcessName()
 {
 #if !PLATFORM(MACCATALYST)
 ALLOW_NONLITERAL_FORMAT_BEGIN
-    RetainPtr applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_STRING("%@ Graphics and Media", "visible name of the GPU process. The argument is the application name.").createNSString().get(), m_uiProcessName.createNSString().get()]);
+    RetainPtr applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_STRING("%@ Graphics and Media", "visible name of the GPU process. The argument is the application name.").createNSString().get(), uiProcessName().createNSString().get()]);
 ALLOW_NONLITERAL_FORMAT_END
     RetainPtr asn = _LSGetCurrentApplicationASN();
     auto result = _LSSetApplicationInformationItem(kLSDefaultSessionID, asn.get(), _kLSDisplayNameKey, (CFStringRef)applicationName.get(), nullptr);

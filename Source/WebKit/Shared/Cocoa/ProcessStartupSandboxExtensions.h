@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,28 +25,26 @@
 
 #pragma once
 
-DECLARE_SYSTEM_HEADER
+#include "SandboxExtension.h"
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <dirhelper_priv.h>
-#else
+#include <wtf/text/ASCIILiteral.h>
 
-WTF_EXTERN_C_BEGIN
-char *_get_user_dir_suffix();
-bool _set_user_dir_suffix(const char *user_dir_suffix);
+namespace WebKit {
 
-typedef enum {
-    DIRHELPER_USER_LOCAL_TEMP = 1,
-    DIRHELPER_USER_LOCAL_CACHE = 2,
-} dirhelper_which_t;
+struct ProcessStartupSandboxExtensions {
 
-char *__user_local_dirname(uid_t, dirhelper_which_t, char *path, size_t pathlen);
-WTF_EXTERN_C_END
+    void createSandboxExtensions(ASCIILiteral processName);
+    void consumeSandboxExtensions() const;
 
-#endif
+    SandboxExtension::Handle webKitBundleDirectoryExtension;
+    SandboxExtension::Handle cacheDirectoryExtension;
+    SandboxExtension::Handle tempDirectoryExtension;
+    String userDirectorySuffix;
 
-WTF_EXTERN_C_BEGIN
+private:
+    String webKitBundlePath() const;
+    void createCacheDirectorySandboxExtension(String userDirectorySuffix);
+    void createTempDirectorySandboxExtension(String userDirectorySuffix);
+};
 
-void _CSCheckFixDisable();
-
-WTF_EXTERN_C_END
+}

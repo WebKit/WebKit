@@ -674,14 +674,6 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
     }
     setenv("TMPDIR", temporaryDirectory, 1);
 
-    String bundlePath = webKit2BundleSingleton().bundlePath;
-    if (!bundlePath.startsWith("/System/Library/Frameworks"_s))
-        bundlePath = webKit2BundleSingleton().bundlePath.stringByDeletingLastPathComponent;
-
-    sandboxParameters.addPathParameter("WEBKIT2_FRAMEWORK_DIR"_s, bundlePath.utf8().data());
-    sandboxParameters.addConfDirectoryParameter("DARWIN_USER_TEMP_DIR"_s, _CS_DARWIN_USER_TEMP_DIR);
-    sandboxParameters.addConfDirectoryParameter("DARWIN_USER_CACHE_DIR"_s, _CS_DARWIN_USER_CACHE_DIR);
-
     auto homeDirectory = getHomeDirectory();
     
     sandboxParameters.addPathParameter("HOME_DIR"_s, homeDirectory.utf8().data());

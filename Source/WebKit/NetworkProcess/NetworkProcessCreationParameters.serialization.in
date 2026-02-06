@@ -64,6 +64,9 @@ headers: "NetworkProcessCreationParameters.h" "AuxiliaryProcessCreationParameter
     Vector<WebCore::OrganizationStorageAccessPromptQuirk> storageAccessPromptQuirksData;
 
     Markable<double> defaultRequestTimeoutInterval;
+#if PLATFORM(MAC)
+    WebKit::ProcessStartupSandboxExtensions processStartupSandboxExtensions;
+#endif
 }
 
 enum class WebKit::LoadedWebArchive : bool

@@ -373,6 +373,10 @@ static void setVideoDecoderBehaviors(OptionSet<VideoDecoderBehavior> videoDecode
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
+#if PLATFORM(MAC)
+    parameters.processStartupSandboxExtensions.consumeSandboxExtensions();
+#endif
+
 #if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
     // Set JSC options early, before any VM creation
     if (parameters.shouldEnableWebAssemblyDebugger) [[unlikely]] {
@@ -672,7 +676,7 @@ void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParame
 void WebProcess::initializeProcessName(const AuxiliaryProcessInitializationParameters& parameters)
 {
 #if PLATFORM(MAC)
-    m_uiProcessName = parameters.uiProcessName;
+    setUIProcessName(parameters.uiProcessName);
 #else
     UNUSED_PARAM(parameters);
 #endif
@@ -700,19 +704,19 @@ void WebProcess::updateProcessName(IsInProcessInitialization isInProcessInitiali
     RetainPtr<NSString> applicationName;
     switch (m_processType) {
     case ProcessType::Inspector:
-        SUPPRESS_UNRETAINED_ARG applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Web Inspector", "Visible name of Web Inspector's web process. The argument is the application name."), m_uiProcessName.createNSString().get()]).get();
+        SUPPRESS_UNRETAINED_ARG applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Web Inspector", "Visible name of Web Inspector's web process. The argument is the application name."), uiProcessName().createNSString().get()]).get();
         break;
     case ProcessType::ServiceWorker:
-        SUPPRESS_UNRETAINED_ARG applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Service Worker (%@)", "Visible name of Service Worker process. The argument is the application name."), m_uiProcessName.createNSString().get(), m_registrableDomain.string().createNSString().get()]).get();
+        SUPPRESS_UNRETAINED_ARG applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Service Worker (%@)", "Visible name of Service Worker process. The argument is the application name."), uiProcessName().createNSString().get(), m_registrableDomain.string().createNSString().get()]).get();
         break;
     case ProcessType::PrewarmedWebContent:
-        SUPPRESS_UNRETAINED_ARG applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Web Content (Prewarmed)", "Visible name of the web process. The argument is the application name."), m_uiProcessName.createNSString().get()]).get();
+        SUPPRESS_UNRETAINED_ARG applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Web Content (Prewarmed)", "Visible name of the web process. The argument is the application name."), uiProcessName().createNSString().get()]).get();
         break;
     case ProcessType::CachedWebContent:
-        SUPPRESS_UNRETAINED_ARG applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Web Content (Cached)", "Visible name of the web process. The argument is the application name."), m_uiProcessName.createNSString().get()]).get();
+        SUPPRESS_UNRETAINED_ARG applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Web Content (Cached)", "Visible name of the web process. The argument is the application name."), uiProcessName().createNSString().get()]).get();
         break;
     case ProcessType::WebContent:
-        SUPPRESS_UNRETAINED_ARG applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Web Content", "Visible name of the web process. The argument is the application name."), m_uiProcessName.createNSString().get()]).get();
+        SUPPRESS_UNRETAINED_ARG applicationName = adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"%@ Web Content", "Visible name of the web process. The argument is the application name."), uiProcessName().createNSString().get()]).get();
         break;
     }
 
