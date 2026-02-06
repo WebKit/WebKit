@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Reference: Animated SVG with intrinsic dimensions and object-fit: cover</title>
+<style>
+    body {
+        margin: 0;
+    }
+    .container {
+        width: 200px;
+        height: 200px;
+        overflow: hidden;
+        background: white;
+    }
+    .image {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+</style>
+</head>
+<body>
+<p>You should see a green rectangle on white with no artifacts.</p>
+<div class="container">
+    <img class="image" src="data:image/svg+xml,
+        <svg xmlns='http://www.w3.org/2000/svg' width='500' height='200'>
+            <rect x='200' y='50' width='100' height='100' fill='green' transform='rotate(10, 250, 100)'/>
+        </svg>">
+</div>
+</body>
+</html>

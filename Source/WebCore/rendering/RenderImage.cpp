@@ -405,7 +405,7 @@ void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, co
     }
 
     if (parent()) {
-        auto repaintRect = contentBoxRect();
+        auto repaintRect = replacedContentRect();
         if (rect) {
             // The image changed rect is in source image coordinates (pre-zooming),
             // so map from the bounds of the image to the contentsBox.
