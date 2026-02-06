@@ -633,6 +633,7 @@ $isSIMDPlatform = $isWasmPlatform && ($architecture == "arm64" || $architecture 
 
 $skipLockdown = false
 $skipMiniMode = false
+$skipBytecodeCache = false
 
 if $platform == "watchos"
     $jitTests = false
@@ -647,6 +648,7 @@ if $architecture == "arm"
     $isFTLPlatform = false
     $isWasmPlatform = false
     $skipLockdown = true
+    $skipBytecodeCache = true
 end
 
 # This is meant for skipping execution of tests than require a lot of address
@@ -1593,7 +1595,7 @@ def defaultRunConfig(config, subsetOptions, *optionalTestSpecificOptions)
         defaultQuickRunConfig(config, *optionalTestSpecificOptions)
     else
         runDefaultConfig(config, *optionalTestSpecificOptions)
-        runBytecodeCacheConfig(config, *optionalTestSpecificOptions)
+        runBytecodeCacheConfig(config, *optionalTestSpecificOptions) unless $skipBytecodeCache
         runMiniModeConfig(config, *optionalTestSpecificOptions) unless $skipMiniMode
         runLockdownConfig(config, *optionalTestSpecificOptions) unless $skipLockdown or $skipModes.include?(:lockdown)
         if $jitTests

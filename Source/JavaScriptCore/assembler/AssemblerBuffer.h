@@ -123,6 +123,8 @@ namespace JSC {
             // from initialization
             poisonInlineBuffer();
 #endif
+            if constexpr (is32Bit())
+                return;
             if constexpr (type == AssemblerDataType::Code)
                 takeBufferIfLarger(*threadSpecificAssemblerData());
 #if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
@@ -185,14 +187,16 @@ namespace JSC {
 
         ~AssemblerDataImpl()
         {
-            if constexpr (type == AssemblerDataType::Code)
-                threadSpecificAssemblerData()->takeBufferIfLarger(*this);
+            if constexpr (!is32Bit()) {
+                if constexpr (type == AssemblerDataType::Code)
+                    threadSpecificAssemblerData()->takeBufferIfLarger(*this);
 #if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
-            if constexpr (type == AssemblerDataType::Hashes)
-                threadSpecificAssemblerHashes()->takeBufferIfLarger(*this);
+                if constexpr (type == AssemblerDataType::Hashes)
+                    threadSpecificAssemblerHashes()->takeBufferIfLarger(*this);
 #else
-            static_assert(type != AssemblerDataType::Hashes);
+                static_assert(type != AssemblerDataType::Hashes);
 #endif
+            }
             clear();
         }
 
