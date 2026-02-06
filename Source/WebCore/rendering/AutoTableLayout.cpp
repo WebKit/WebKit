@@ -458,39 +458,57 @@ float AutoTableLayout::calcEffectiveLogicalWidth()
                 ASSERT(allocatedMaxLogicalWidth < cellMaxLogicalWidth || WTF::areEssentiallyEqual(allocatedMaxLogicalWidth, cellMaxLogicalWidth));
                 cellMaxLogicalWidth -= allocatedMaxLogicalWidth;
             } else if (!allColsAreFixed && fixedWidth <= 0 && totalPercent > 0 && haveAuto) {
-                // By this point, the earlier code has converted auto columns to effectiveLogicalWidth percentages,
-                // so we can use the same percentage-based distribution as the allColsArePercent case.
-#if ASSERT_ENABLED
-                float allocatedMinLogicalWidth = 0;
-#endif
-                float allocatedMaxLogicalWidth = 0;
-
-                // Calculate total effective percent (includes both original percent columns and converted auto columns)
-                float totalEffectivePercent = 0;
+                // This branch handles the case where a percentage colspan cell has already
+                // converted AUTO columns to effective percentages. We need to verify that:
+                // 1. There are columns with original logicalWidth = auto.
+                // 2. Those auto columns were converted to effective percentages.
+                bool hasConvertedAutoColumns = false;
                 for (unsigned pos = effCol; pos < lastCol; ++pos) {
-                    if (auto percentageEffectiveLogicalWidth = m_layoutStruct[pos].effectiveLogicalWidth.tryPercentage())
-                        totalEffectivePercent += percentageEffectiveLogicalWidth->value;
+                    // Check if this was originally an AUTO column that got converted to percentage.
+                    if (m_layoutStruct[pos].logicalWidth.isAuto() && m_layoutStruct[pos].effectiveLogicalWidth.isPercentOrCalculated()) {
+                        hasConvertedAutoColumns = true;
+                        break;
+                    }
                 }
 
-                // If all columns now have effective percentages, distribute accordingly
-                if (totalEffectivePercent > 0) {
-                    for (unsigned pos = effCol; pos < lastCol; ++pos) {
-                        auto percentageEffectiveLogicalWidth = m_layoutStruct[pos].effectiveLogicalWidth.tryPercentage();
-                        if (percentageEffectiveLogicalWidth) {
-                            float percent = percentageEffectiveLogicalWidth->value;
-                            float columnMinLogicalWidth = percent * cellMinLogicalWidth / totalEffectivePercent;
-                            float columnMaxLogicalWidth = percent * cellMaxLogicalWidth / totalEffectivePercent;
-                            m_layoutStruct[pos].effectiveMinLogicalWidth = std::max(m_layoutStruct[pos].effectiveMinLogicalWidth, columnMinLogicalWidth);
-                            m_layoutStruct[pos].effectiveMaxLogicalWidth = columnMaxLogicalWidth;
+                // Additionally, verify the current cell is NOT a percentage cell (percentage cells are handled earlier).
+                bool currentCellIsNotPercentage = !cellLogicalWidth.isPercentOrCalculated();
+                // Only use percentage-based distribution if auto columns were actually converted AND we're processing a non-percentage colspan
+                if (hasConvertedAutoColumns && currentCellIsNotPercentage) {
+                    // By this point, the earlier code has converted auto columns to effectiveLogicalWidth percentages,
+                    // so we can use the same percentage-based distribution as the allColsArePercent case.
 #if ASSERT_ENABLED
-                            allocatedMinLogicalWidth += columnMinLogicalWidth;
+                    float allocatedMinLogicalWidth = 0;
 #endif
-                            allocatedMaxLogicalWidth += columnMaxLogicalWidth;
-                        }
+                    float allocatedMaxLogicalWidth = 0;
+
+                    // Calculate total effective percent (includes both original percent columns and converted auto columns)
+                    float totalEffectivePercent = 0;
+                    for (unsigned pos = effCol; pos < lastCol; ++pos) {
+                        if (auto percentageEffectiveLogicalWidth = m_layoutStruct[pos].effectiveLogicalWidth.tryPercentage())
+                            totalEffectivePercent += percentageEffectiveLogicalWidth->value;
                     }
-                    ASSERT(allocatedMinLogicalWidth < cellMinLogicalWidth || WTF::areEssentiallyEqual(allocatedMinLogicalWidth, cellMinLogicalWidth));
-                    ASSERT(allocatedMaxLogicalWidth < cellMaxLogicalWidth || WTF::areEssentiallyEqual(allocatedMaxLogicalWidth, cellMaxLogicalWidth));
-                    cellMaxLogicalWidth -= allocatedMaxLogicalWidth;
+
+                    // If all columns now have effective percentages, distribute accordingly
+                    if (totalEffectivePercent > 0) {
+                        for (unsigned pos = effCol; pos < lastCol; ++pos) {
+                            auto percentageEffectiveLogicalWidth = m_layoutStruct[pos].effectiveLogicalWidth.tryPercentage();
+                            if (percentageEffectiveLogicalWidth) {
+                                float percent = percentageEffectiveLogicalWidth->value;
+                                float columnMinLogicalWidth = percent * cellMinLogicalWidth / totalEffectivePercent;
+                                float columnMaxLogicalWidth = percent * cellMaxLogicalWidth / totalEffectivePercent;
+                                m_layoutStruct[pos].effectiveMinLogicalWidth = std::max(m_layoutStruct[pos].effectiveMinLogicalWidth, columnMinLogicalWidth);
+                                m_layoutStruct[pos].effectiveMaxLogicalWidth = columnMaxLogicalWidth;
+#if ASSERT_ENABLED
+                                allocatedMinLogicalWidth += columnMinLogicalWidth;
+#endif
+                                allocatedMaxLogicalWidth += columnMaxLogicalWidth;
+                            }
+                        }
+                        ASSERT(allocatedMinLogicalWidth < cellMinLogicalWidth || WTF::areEssentiallyEqual(allocatedMinLogicalWidth, cellMinLogicalWidth));
+                        ASSERT(allocatedMaxLogicalWidth < cellMaxLogicalWidth || WTF::areEssentiallyEqual(allocatedMaxLogicalWidth, cellMaxLogicalWidth));
+                        cellMaxLogicalWidth -= allocatedMaxLogicalWidth;
+                    }
                 }
             } else {
                 float remainingMaxLogicalWidth = spanMaxLogicalWidth;
