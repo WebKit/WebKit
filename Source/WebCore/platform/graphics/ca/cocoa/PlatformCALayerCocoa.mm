@@ -385,7 +385,10 @@ Ref<PlatformCALayer> PlatformCALayerCocoa::clone(PlatformCALayerClient* owner) c
     newLayer->setBackdropRootIsOpaque(backdropRootIsOpaque());
     newLayer->copyFiltersFrom(*this);
     newLayer->updateCustomAppearance(customAppearance());
-    newLayer->setShadowPath(shadowPath());
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    if (RetainPtr shadowPath = [m_layer shadowPath])
+        newLayer->setShadowPath(this->shadowPath());
+    END_BLOCK_OBJC_EXCEPTIONS
 
     if (type == PlatformCALayer::LayerType::LayerTypeAVPlayerLayer) {
         ASSERT(PAL::isAVFoundationFrameworkAvailable() && [newLayer->platformLayer() isKindOfClass:PAL::getAVPlayerLayerClassSingleton()]);
