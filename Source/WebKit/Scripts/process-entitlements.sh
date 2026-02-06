@@ -80,6 +80,12 @@ function mac_process_webcontent_enhancedsecurity_entitlements()
     plistbuddy Add :com.apple.security.fatal-exceptions array
     plistbuddy Add :com.apple.security.fatal-exceptions:0 string jit
 
+    if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 260000 ))
+    then
+        plistbuddy Add :com.apple.security.hardened-process.checked-allocations.soft-mode bool YES
+        plistbuddy Add :com.apple.security.hardened-process.checked-allocations.no-tagged-receive bool YES
+    fi
+
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
         plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
@@ -433,6 +439,12 @@ function maccatalyst_process_webcontent_enhancedsecurity_entitlements()
     plistbuddy Add :com.apple.security.fatal-exceptions:0 string jit
     plistbuddy Add :com.apple.developer.hardened-process bool YES
 
+    if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 260000 ))
+    then
+        plistbuddy Add :com.apple.security.hardened-process.checked-allocations.soft-mode bool YES
+        plistbuddy Add :com.apple.security.hardened-process.checked-allocations.no-tagged-receive bool YES
+    fi
+
     plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
     plistbuddy Add :com.apple.pac.shared_region_id string WebContent
     plistbuddy Add :com.apple.private.pac.exception bool YES
@@ -572,6 +584,8 @@ function ios_family_process_webcontent_enhancedsecurity_entitlements()
 {
     plistbuddy Add :com.apple.private.webkit.enhanced-security bool YES
     plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
+    plistbuddy Add :com.apple.security.hardened-process.checked-allocations.soft-mode bool YES
+    plistbuddy Add :com.apple.security.hardened-process.checked-allocations.no-tagged-receive bool YES
 
     ios_family_process_webcontent_shared_entitlements
 }
