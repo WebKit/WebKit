@@ -245,6 +245,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
                 alternate_dispatcher_method_parameters.append(parameter_name)
 
                 enum_args = {
+                    'errorCode': self.model().framework.setting('required_enum_invalid_value_error_code', 'ServerError'),
                     'helpersNamespace': self.helpers_namespace(),
                     'parameterKey': parameter.parameter_name,
                     'enumType': CppGenerator.cpp_protocol_type_for_type(_type),
@@ -259,7 +260,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
                     parameter_expression = 'WTF::move(%s)' % variable_name
                 else:
                     parameter_enum_resolutions.append('    if (!%(enumVariableName)s) {' % enum_args)
-                    parameter_enum_resolutions.append('        m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, makeString("Unknown %(parameterKey)s: "_s, %(stringVariableName)s));' % enum_args)
+                    parameter_enum_resolutions.append('        m_backendDispatcher->reportProtocolError(BackendDispatcher::%(errorCode)s, makeString("Unknown %(parameterKey)s: "_s, %(stringVariableName)s));' % enum_args)
                     parameter_enum_resolutions.append('        return;')
                     parameter_enum_resolutions.append('    }')
                     parameter_expression = '*' + variable_name

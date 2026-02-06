@@ -1,0 +1,23 @@
+{"domains":[
+{
+    "domain": "TypeDomain",
+    "types": [
+        {
+            "id": "Enum",
+            "type": "string",
+            "enum": ["tab", "window"]
+        }
+    ]
+},
+{
+    "domain": "CommandDomain",
+    "commands": [
+        {
+            "name": "command",
+            "parameters": [
+                { "name": "enumRequired", "$ref": "TypeDomain.Enum" }
+            ]
+        }
+    ]
+}
+]}

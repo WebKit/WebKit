@@ -78,6 +78,7 @@ _FRAMEWORK_CONFIG_MAP = {
         "cpp_protocol_group": "WebDriverBidi",
         "objc_protocol_group": "WD",
         "objc_prefix": "WD",
+        "required_enum_invalid_value_error_code": "InvalidParams",
     },
     "WebInspector": {
         "objc_protocol_group": "RWI",

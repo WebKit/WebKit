@@ -33,17 +33,25 @@ from webkitpy.common.system.executive import ScriptError
 
 
 class InspectorGeneratorTests:
+    # Most generator tests use the Test framework. Keep framework-specific
+    # coverage explicit by opting individual fixtures into another framework.
+    _framework_for_test = {
+        'required-enum-invalid-value-webdriver-bidi.json': 'WebDriverBidi',
+    }
 
     def __init__(self, reset_results, executive):
         self.reset_results = reset_results
         self.executive = executive
+
+    def framework_for_json(self, json_file):
+        return self._framework_for_test.get(os.path.basename(json_file), 'Test')
 
     def generate_from_json(self, json_file, output_directory):
         cmd = [sys.executable,
                'JavaScriptCore/inspector/scripts/generate-inspector-protocol-bindings.py',
                '--outputDir', output_directory,
                '--force',
-               '--framework', 'Test',
+               '--framework', self.framework_for_json(json_file),
                '--test',
                json_file]
 
