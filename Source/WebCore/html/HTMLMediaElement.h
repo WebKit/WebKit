@@ -240,9 +240,9 @@ public:
     void scheduleNotifyAboutPlaying();
     void notifyAboutPlaying(PlayPromiseVector&&);
     void durationChanged();
-    
+
     MediaPlayer::MovieLoadType movieLoadType() const;
-    
+
     bool inActiveDocument() const { return m_inActiveDocument; }
 
     std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier() const final;
@@ -270,6 +270,14 @@ public:
     Ref<TimeRanges> buffered() const override;
     WEBCORE_EXPORT void load();
     WEBCORE_EXPORT String canPlayType(const String& mimeType) const;
+
+// lazy loading
+    String loading() const;
+    void setLoading(const AtomString&);
+    bool isLazyLoadable() const;
+    static bool hasLazyLoadableAttributeValue(StringView);
+    virtual void loadDeferredMedia();
+    void resumeLazyLoadingIfNeeded();
 
 // ready state
     using HTMLMediaElementEnums::ReadyState;
@@ -512,7 +520,7 @@ public:
 
     bool didPassCORSAccessCheck() const { return m_player && protectedPlayer()->didPassCORSAccessCheck(); }
     bool taintsOrigin(const SecurityOrigin&) const;
-    
+
     WEBCORE_EXPORT bool isFullscreen() const override;
     bool isInFullscreenOrPictureInPicture() const;
     bool isStandardFullscreen() const;
@@ -821,7 +829,7 @@ private:
     void didFinishInsertingNode() override;
     void removedFromAncestor(RemovalType, ContainerNode&) override;
     void didRecalcStyle(OptionSet<Style::Change>) override;
-    bool canStartSelection() const override { return false; } 
+    bool canStartSelection() const override { return false; }
     bool isInteractiveContent() const override;
 
     void willStopBeingFullscreenElement() override;
@@ -833,7 +841,7 @@ private:
 
     void stopWithoutDestroyingMediaPlayer();
     void contextDestroyed() override;
-    
+
     void setReadyState(MediaPlayer::ReadyState);
     void setNetworkState(MediaPlayer::NetworkState);
 
@@ -941,7 +949,7 @@ private:
     void finishSeek();
     void clearSeeking();
     void addPlayedRange(const MediaTime& start, const MediaTime& end);
-    
+
     void scheduleTimeupdateEvent(bool periodicEvent);
     virtual void scheduleResizeEvent(const FloatSize&) { }
     virtual void scheduleResizeEventIfSizeChanged(const FloatSize&) { }
@@ -1233,7 +1241,7 @@ private:
     double m_volume { 1 };
     bool m_volumeInitialized { false };
     MediaTime m_lastSeekTime;
-    
+
     MonotonicTime m_previousProgressTime { MonotonicTime::infinity() };
     double m_playbackStartedTime { 0 };
 
@@ -1242,7 +1250,7 @@ private:
 
     // The last time a timeupdate event was sent in movie time.
     MediaTime m_lastTimeUpdateEventMovieTime;
-    
+
     // Loading state.
     enum LoadState { WaitingForSource, LoadingFromSrcAttr, LoadingFromSourceElement };
     LoadState m_loadState { WaitingForSource };
@@ -1302,6 +1310,7 @@ private:
     bool m_playing : 1;
     bool m_isWaitingUntilMediaCanStart : 1;
     bool m_shouldDelayLoadEvent : 1;
+    bool m_wasLazyLoaded : 1;
     bool m_haveFiredLoadedData : 1;
     bool m_inActiveDocument : 1;
     bool m_autoplaying : 1;

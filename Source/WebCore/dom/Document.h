@@ -193,6 +193,7 @@ class LargestContentfulPaintData;
 class LayoutPoint;
 class LayoutRect;
 class LazyLoadImageObserver;
+class LazyLoadMediaObserver;
 class LiveNodeList;
 class LocalFrame;
 class LocalFrameView;
@@ -559,7 +560,7 @@ public:
     WEBCORE_EXPORT DocumentType* doctype() const;
 
     WEBCORE_EXPORT DOMImplementation& implementation();
-    
+
     Element* documentElement() const { return m_documentElement.get(); }
     AsyncNodeDeletionQueue& asyncNodeDeletionQueue() { return m_asyncNodeDeletionQueue; };
     static constexpr ptrdiff_t documentElementMemoryOffset() { return OBJECT_OFFSETOF(Document, m_documentElement); }
@@ -935,7 +936,7 @@ public:
 
     bool usesStyleBasedEditability() const;
     void setHasElementUsingStyleBasedEditability();
-    
+
     virtual Ref<DocumentParser> createParser();
     DocumentParser* parser() const { return m_parser.get(); }
     ScriptableDocumentParser* scriptableDocumentParser() const;
@@ -945,7 +946,7 @@ public:
 
     bool paginatedForScreen() const { return m_paginatedForScreen; }
     void setPaginatedForScreen(bool p) { m_paginatedForScreen = p; }
-    
+
     bool paginated() const { return printing() || paginatedForScreen(); }
 
     void setCompatibilityMode(DocumentCompatibilityMode);
@@ -1081,7 +1082,7 @@ public:
 
     Document& contextDocument() const;
     void setContextDocument(Ref<Document>&& document) { m_contextDocument = WTF::move(document); }
-    
+
     OptionSet<ParserContentPolicy> parserContentPolicy() const { return m_parserContentPolicy; }
     void setParserContentPolicy(OptionSet<ParserContentPolicy> policy) { m_parserContentPolicy = policy; }
 
@@ -1972,6 +1973,7 @@ public:
     bool allowsContentJavaScript() const;
 
     LazyLoadImageObserver& lazyLoadImageObserver();
+    LazyLoadMediaObserver& lazyLoadMediaObserver();
 #if ENABLE(MODEL_ELEMENT)
     LazyLoadModelObserver& lazyLoadModelObserver();
 #endif
@@ -2347,7 +2349,7 @@ private:
     RefPtr<Element> m_titleElement;
 
     const std::unique_ptr<DocumentMarkerController> m_markers;
-    
+
     Timer m_styleRecalcTimer;
 
     std::unique_ptr<Style::Update> m_pendingRenderTreeUpdate;
@@ -2355,6 +2357,9 @@ private:
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_cssTarget;
 
     std::unique_ptr<LazyLoadImageObserver> m_lazyLoadImageObserver;
+
+    std::unique_ptr<LazyLoadMediaObserver> m_lazyLoadMediaObserver;
+
 #if ENABLE(MODEL_ELEMENT)
     std::unique_ptr<LazyLoadModelObserver> m_lazyLoadModelObserver;
 #endif
@@ -2471,7 +2476,7 @@ private:
     mutable std::unique_ptr<LargestContentfulPaintData> m_largestContentfulPaintData;
 
     RefPtr<MediaQueryMatcher> m_mediaQueryMatcher;
-    
+
 #if ENABLE(TOUCH_EVENTS)
     EventTargetSet m_touchEventTargets;
 #endif
@@ -2577,7 +2582,7 @@ private:
 
     RegistrableDomain m_registrableDomainRequestedPageSpecificStorageAccessWithUserInteraction { };
     String m_referrerOverride;
-    
+
     std::optional<FixedVector<CSSPropertyID>> m_exposedComputedCSSPropertyIDs;
 
     const RefPtr<PaintWorklet> m_paintWorklet;

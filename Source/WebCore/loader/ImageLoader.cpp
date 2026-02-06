@@ -64,6 +64,8 @@
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(VIDEO)
+#include "HTMLMediaElement.h"
+#include "LazyLoadMediaObserver.h"
 #include "RenderVideo.h"
 #endif
 
@@ -281,11 +283,21 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
 #if !LOG_DISABLED
             auto oldState = m_lazyImageLoadState;
 #endif
-            if (m_lazyImageLoadState == LazyImageLoadState::None && imageElement) {
-                if (imageElement->isLazyLoadable() && document->settings().lazyImageLoadingEnabled() && !canReuseFromListOfAvailableImages(request, document)) {
-                    m_lazyImageLoadState = LazyImageLoadState::Deferred;
-                    request.setIgnoreForRequestCount(true);
+            if (m_lazyImageLoadState == LazyImageLoadState::None) {
+                if (imageElement) {
+                    if (imageElement->isLazyLoadable() && document->settings().lazyImageLoadingEnabled() && !canReuseFromListOfAvailableImages(request, document)) {
+                        m_lazyImageLoadState = LazyImageLoadState::Deferred;
+                        request.setIgnoreForRequestCount(true);
+                    }
                 }
+#if ENABLE(VIDEO)
+                else if (RefPtr mediaElement = dynamicDowncast<HTMLMediaElement>(element)) {
+                    if (mediaElement->isLazyLoadable() && document->settings().lazyMediaLoadingEnabled() && !canReuseFromListOfAvailableImages(request, document)) {
+                        m_lazyImageLoadState = LazyImageLoadState::Deferred;
+                        request.setIgnoreForRequestCount(true);
+                    }
+                }
+#endif
             }
             auto imageLoading = (m_lazyImageLoadState == LazyImageLoadState::Deferred) ? ImageLoading::DeferredUntilVisible : ImageLoading::Immediate;
             newImage = protect(document->cachedResourceLoader())->requestImage(WTF::move(request), imageLoading).value_or(nullptr);
@@ -365,8 +377,14 @@ void ImageLoader::didUpdateCachedImage(RelevantMutation relevantMutation, Cached
             else
                 updateRenderer();
 
-            if (m_lazyImageLoadState == LazyImageLoadState::Deferred)
-                LazyLoadImageObserver::observe(protect(element()));
+            if (m_lazyImageLoadState == LazyImageLoadState::Deferred) {
+#if ENABLE(VIDEO)
+                if (is<HTMLMediaElement>(element()))
+                    LazyLoadMediaObserver::observe(protect(element()));
+                else
+#endif
+                    LazyLoadImageObserver::observe(protect(element()));
+                }
 
             // If newImage is cached, addClient() will result in the load event
             // being queued to fire.
@@ -467,7 +485,7 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
 
         if (hasPendingDecodePromises())
             rejectDecodePromises("Access control error."_s);
-        
+
         ASSERT(!m_hasPendingLoadEvent);
 
         // Only consider updating the protection ref-count of the Element immediately before returning
@@ -577,7 +595,7 @@ void ImageLoader::updatedHasPendingEvent()
     } else {
         ASSERT(!m_derefElementTimer.isActive());
         m_derefElementTimer.startOneShot(0_s);
-    }   
+    }
 }
 
 void ImageLoader::decode(Ref<DeferredPromise>&& promise)
@@ -602,7 +620,7 @@ void ImageLoader::decode(Ref<DeferredPromise>&& promise)
 void ImageLoader::decode()
 {
     ASSERT(hasPendingDecodePromises());
-    
+
     if (!element().document().window()) {
         rejectDecodePromises("Inactive document."_s);
         return;

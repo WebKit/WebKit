@@ -30,6 +30,7 @@
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "MouseEvent.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleAppearance.h"
 #include <wtf/TZoneMallocInlines.h>
 

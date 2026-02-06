@@ -29,6 +29,7 @@
 
 #include "Chrome.h"
 #include "ContainerNodeInlines.h"
+#include "DocumentPage.h"
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "FrameDestructionObserverInlines.h"
@@ -238,7 +239,7 @@ void SpinButtonElement::step(int amount)
 #endif
     doStepAction(amount);
 }
-    
+
 void SpinButtonElement::repeatingTimerFired()
 {
     if (m_upDownState != Indeterminate)

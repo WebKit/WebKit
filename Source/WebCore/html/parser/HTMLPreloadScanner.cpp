@@ -340,6 +340,12 @@ private:
                 m_metaIsDisabledAdaptations = equalLettersIgnoringASCIICase(attributeValue, "disabled-adaptations"_s);
             break;
         case TagId::Video:
+            if (document->settings().lazyMediaLoadingEnabled()) {
+                if (match(attributeName, loadingAttr) && m_lazyloadAttribute.isNull()) {
+                    m_lazyloadAttribute = attributeValue.toString();
+                    break;
+                }
+            }
             processVideoAttribute(attributeName, attributeValue);
             break;
         case TagId::Base:
