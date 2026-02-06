@@ -675,7 +675,7 @@ std::pair<bool, std::optional<Vector<ElementRuleCollector::ScopingRootWithDistan
             bool shadowHostCrossed = false;
             while (ancestor && !shadowHostCrossed) {
                 auto subContext = context;
-                if (ancestor->shadowRoot()) {
+                if (auto* shadowRoot = ancestor->shadowRoot(); shadowRoot && shadowRoot->mode() != ShadowRootMode::UserAgent) {
                     subContext.styleScopeOrdinal = Style::ScopeOrdinal::Shadow;
                     shadowHostCrossed = true;
                 }
