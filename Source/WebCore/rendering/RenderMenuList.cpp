@@ -144,7 +144,7 @@ LayoutRect RenderMenuList::controlClipRect(const LayoutPoint& additionalOffset) 
 
 void RenderMenuList::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    if (style().fieldSizing() == FieldSizing::Content)
+    if (style().fieldSizing() == FieldSizing::Content || style().usedAppearance() == StyleAppearance::Base)
         return RenderFlexibleBox::computeIntrinsicLogicalWidths(minLogicalWidth, maxLogicalWidth);
 
     LayoutUnit minimumSize = theme().minimumMenuListSize(style());
@@ -169,7 +169,7 @@ void RenderMenuList::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, 
 
 void RenderMenuList::computePreferredLogicalWidths()
 {
-    if (style().fieldSizing() == FieldSizing::Content) {
+    if (style().fieldSizing() == FieldSizing::Content || style().usedAppearance() == StyleAppearance::Base) {
         RenderFlexibleBox::computePreferredLogicalWidths();
         return;
     }
