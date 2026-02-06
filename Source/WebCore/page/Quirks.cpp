@@ -244,7 +244,7 @@ bool Quirks::needsPerDocumentAutoplayBehavior() const
     ASSERT(document->isTopDocument());
     return allowedAutoplayQuirks(document).contains(AutoplayQuirk::PerDocumentAutoplayBehavior);
 #else
-    return m_quirksData.isNetflix;
+    return m_quirksData.isNetflix || m_quirksData.isNBA;
 #endif
 }
 
@@ -3054,6 +3054,8 @@ static void handleNBAQuirks(QuirksData& quirksData, const URL& /* quirksURL */, 
 {
 #if PLATFORM(IOS)
     QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("nba.com"_s);
+
+    quirksData.isNBA = true;
 
     quirksData.setQuirkState(QuirksData::SiteSpecificQuirk::ShouldEnterNativeFullscreenWhenCallingElementRequestFullscreen, PAL::currentUserInterfaceIdiomIsSmallScreen());
 #else
