@@ -61,7 +61,7 @@ using BrowsingContext = Inspector::Protocol::BidiBrowsingContext::BrowsingContex
 using EvaluateResultType = Inspector::Protocol::BidiScript::EvaluateResultType;
 
 static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteValue(const JSON::Value*);
-static Ref<JSON::Value> deserializeLocalValue(const JSON::Value&);
+static RefPtr<JSON::Value> parseLocalValue(const JSON::Value&, bool* usesUnsupportedType = nullptr);
 
 static String protocolRealmIdentifierString(RealmIdentifier realmIdentifier)
 {
@@ -162,183 +162,265 @@ static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteVal
     return resultValue.setType(RemoteValueType::Undefined).release();
 }
 
-static Ref<JSON::Value> deserializeLocalValue(const JSON::Value& jsonValue)
+static RefPtr<JSON::Value> parseLocalValue(const JSON::Value& jsonValue, bool* usesUnsupportedType)
 {
-    // Deserializes a BiDi LocalValue into a JSON::Value that can be passed to evaluateJavaScriptFunction.
-    // Per WebDriver BiDi spec: https://w3c.github.io/webdriver-bidi/#type-script-LocalValue
-    // LocalValue represents primitive values (string, number, boolean, etc.) as well as structured
-    // types (array, object, map, set, date, regexp). This function converts them into a format
-    // that WebKit's script evaluation machinery can consume.
-    //
-    // FIXME: Implement RemoteReference and Channel types.
+    // Parse and deserialize together so a malformed nested value cannot be accepted and then coerced.
+    // FIXME: Implement RemoteReference and Channel types instead of using null placeholders.
     // https://bugs.webkit.org/show_bug.cgi?id=288057
-
     auto object = jsonValue.asObject();
-    if (!object) {
-        // If it's not a LocalValue object, pass it through as-is (backwards compatibility).
-        return const_cast<JSON::Value&>(jsonValue);
+    if (!object)
+        return nullptr;
+
+    // RemoteReference alternatives take precedence over the other union members. Validate both
+    // fields when both are present, even though sharedId is authoritative during deserialization.
+    if (auto sharedIdField = object->getValue("sharedId"_s)) {
+        String sharedId;
+        if (!sharedIdField->asString(sharedId))
+            return nullptr;
+
+        if (auto handleField = object->getValue("handle"_s)) {
+            String handle;
+            if (!handleField->asString(handle))
+                return nullptr;
+        }
+
+        if (usesUnsupportedType)
+            *usesUnsupportedType = true;
+        return JSON::Value::null();
     }
 
-    String typeString = object->getString("type"_s);
+    if (auto handleField = object->getValue("handle"_s)) {
+        String handle;
+        if (!handleField->asString(handle))
+            return nullptr;
+        if (usesUnsupportedType)
+            *usesUnsupportedType = true;
+        return JSON::Value::null();
+    }
 
-    // Primitive types: string, number, bigint, boolean, undefined, null
-    if (typeString == "string"_s)
-        return JSON::Value::create(object->getString("value"_s));
+    String typeString;
+    if (!object->getString("type"_s, typeString))
+        return nullptr;
+
+    if (typeString == "channel"_s) {
+        auto value = object->getObject("value"_s);
+        if (!value)
+            return nullptr;
+
+        String channel;
+        if (!value->getString("channel"_s, channel))
+            return nullptr;
+
+        if (auto ownershipField = value->getValue("ownership"_s)) {
+            String ownership;
+            if (!ownershipField->asString(ownership) || (ownership != "root"_s && ownership != "none"_s))
+                return nullptr;
+        }
+
+        if (auto serializationOptionsField = value->getValue("serializationOptions"_s)) {
+            auto serializationOptions = serializationOptionsField->asObject();
+            if (!serializationOptions || !WebDriverBidiProcessor::validateSerializationOptions(*serializationOptions))
+                return nullptr;
+        }
+
+        if (usesUnsupportedType)
+            *usesUnsupportedType = true;
+        return JSON::Value::null();
+    }
+
+    if (typeString == "string"_s || typeString == "bigint"_s || typeString == "date"_s) {
+        auto value = object->getValue("value"_s);
+        String stringValue;
+        if (!value || !value->asString(stringValue))
+            return nullptr;
+        return JSON::Value::create(stringValue);
+    }
 
     if (typeString == "number"_s) {
-        // Numbers can be represented as either a double or a special string (NaN, Infinity, -Infinity, -0).
-        if (auto num = object->getDouble("value"_s))
-            return JSON::Value::create(*num);
-        // Special number values like "NaN", "Infinity", "-Infinity", "-0" are strings in BiDi.
-        return JSON::Value::create(object->getString("value"_s));
+        auto value = object->getValue("value"_s);
+        if (!value)
+            return nullptr;
+
+        if (auto number = value->asDouble())
+            return JSON::Value::create(*number);
+
+        String specialValue;
+        if (!value->asString(specialValue) || (specialValue != "NaN"_s && specialValue != "Infinity"_s && specialValue != "-Infinity"_s && specialValue != "-0"_s))
+            return nullptr;
+        return JSON::Value::create(specialValue);
     }
 
     if (typeString == "boolean"_s) {
-        if (auto b = object->getBoolean("value"_s))
-            return JSON::Value::create(*b);
-        return JSON::Value::create(false);
+        auto value = object->getValue("value"_s);
+        if (!value)
+            return nullptr;
+        auto booleanValue = value->asBoolean();
+        if (!booleanValue)
+            return nullptr;
+        return JSON::Value::create(*booleanValue);
     }
 
-    if (typeString == "bigint"_s) {
-        // BigInt values are represented as strings in BiDi (e.g., "42n").
-        // Pass them through as strings since JSON doesn't have native bigint support.
-        return JSON::Value::create(object->getString("value"_s));
-    }
-
-    if (typeString == "undefined"_s)
-        return JSON::Value::null(); // JSON doesn't have undefined, use null as proxy.
-
-    if (typeString == "null"_s)
+    if (typeString == "undefined"_s || typeString == "null"_s)
         return JSON::Value::null();
 
-    // Date type: ISO 8601 string
-    if (typeString == "date"_s)
-        return JSON::Value::create(object->getString("value"_s));
-
-    // RegExp type: object with pattern and flags
     if (typeString == "regexp"_s) {
-        if (auto value = object->getValue("value"_s))
-            return value.releaseNonNull();
-        return JSON::Value::null();
+        auto value = object->getObject("value"_s);
+        if (!value)
+            return nullptr;
+
+        String pattern;
+        if (!value->getString("pattern"_s, pattern))
+            return nullptr;
+
+        if (auto flagsField = value->getValue("flags"_s)) {
+            String flags;
+            if (!flagsField->asString(flags))
+                return nullptr;
+        }
+
+        return value;
     }
 
-    // Array type: recursive deserialization
-    if (typeString == "array"_s) {
+    if (typeString == "array"_s || typeString == "set"_s) {
         auto valueArray = object->getArray("value"_s);
         if (!valueArray)
-            return JSON::Array::create();
+            return nullptr;
 
         auto resultArray = JSON::Array::create();
         for (unsigned i = 0; i < valueArray->length(); ++i) {
             Ref element = valueArray->get(i);
-            resultArray->pushValue(deserializeLocalValue(element.get()));
+            auto parsedElement = parseLocalValue(element.get(), usesUnsupportedType);
+            if (!parsedElement)
+                return nullptr;
+            resultArray->pushValue(parsedElement.releaseNonNull());
         }
         return resultArray;
     }
 
-    // Object type: recursive deserialization of properties
     if (typeString == "object"_s) {
         auto valueArray = object->getArray("value"_s);
         if (!valueArray)
-            return JSON::Object::create();
+            return nullptr;
 
         auto resultObject = JSON::Object::create();
-        // Per BiDi spec, object value is an array of [key, value] pairs.
         for (unsigned i = 0; i < valueArray->length(); ++i) {
-            auto pairValue = valueArray->get(i);
-            auto pairArray = pairValue->asArray();
-            if (!pairArray || pairArray->length() < 2)
-                continue;
+            auto pairArray = valueArray->get(i)->asArray();
+            if (!pairArray || pairArray->length() != 2)
+                return nullptr;
 
-            // Extract key (must be string or convertible to string)
+            Ref valueElement = pairArray->get(1);
+            auto parsedValue = parseLocalValue(valueElement.get(), usesUnsupportedType);
+            if (!parsedValue)
+                return nullptr;
+
             String key;
             Ref keyValue = pairArray->get(0);
-            if (auto keyObj = keyValue->asObject()) {
-                // If key is a LocalValue, deserialize it first
-                auto deserializedKey = deserializeLocalValue(keyValue.get());
-                key = deserializedKey->asString();
-            } else
-                key = keyValue->asString();
-
-            // Extract value
-            if (!key.isEmpty()) {
-                Ref valueElement = pairArray->get(1);
-                resultObject->setValue(key, deserializeLocalValue(valueElement.get()));
+            if (!keyValue->asString(key)) {
+                auto parsedKey = parseLocalValue(keyValue.get(), usesUnsupportedType);
+                if (!parsedKey)
+                    return nullptr;
+                if (!parsedKey->asString(key))
+                    continue;
             }
+
+            resultObject->setValue(key, parsedValue.releaseNonNull());
         }
         return resultObject;
     }
 
-    // Map type: convert to array of [key, value] pairs
     if (typeString == "map"_s) {
         auto valueArray = object->getArray("value"_s);
         if (!valueArray)
-            return JSON::Array::create();
+            return nullptr;
 
         auto resultArray = JSON::Array::create();
         for (unsigned i = 0; i < valueArray->length(); ++i) {
-            auto pairValue = valueArray->get(i);
-            auto pairArray = pairValue->asArray();
-            if (!pairArray || pairArray->length() < 2)
-                continue;
+            auto pairArray = valueArray->get(i)->asArray();
+            if (!pairArray || pairArray->length() != 2)
+                return nullptr;
 
             auto entryArray = JSON::Array::create();
             Ref keyElement = pairArray->get(0);
-            entryArray->pushValue(deserializeLocalValue(keyElement.get()));
+            String key;
+            if (keyElement->asString(key))
+                entryArray->pushValue(JSON::Value::create(key));
+            else {
+                auto parsedKey = parseLocalValue(keyElement.get(), usesUnsupportedType);
+                if (!parsedKey)
+                    return nullptr;
+                entryArray->pushValue(parsedKey.releaseNonNull());
+            }
+
             Ref valueElement = pairArray->get(1);
-            entryArray->pushValue(deserializeLocalValue(valueElement.get()));
+            auto parsedValue = parseLocalValue(valueElement.get(), usesUnsupportedType);
+            if (!parsedValue)
+                return nullptr;
+            entryArray->pushValue(parsedValue.releaseNonNull());
 
             resultArray->pushArray(WTF::move(entryArray));
         }
         return resultArray;
     }
 
-    // Set type: convert to array
-    if (typeString == "set"_s) {
-        auto valueArray = object->getArray("value"_s);
-        if (!valueArray)
-            return JSON::Array::create();
-
-        auto resultArray = JSON::Array::create();
-        for (unsigned i = 0; i < valueArray->length(); ++i) {
-            Ref element = valueArray->get(i);
-            resultArray->pushValue(deserializeLocalValue(element.get()));
-        }
-        return resultArray;
-    }
-
-    // For any unknown types or unsupported types, return null as a safe fallback.
-    return JSON::Value::null();
+    return nullptr;
 }
 
-void BidiScriptAgent::callFunction(const String& functionDeclaration, bool awaitPromise, Ref<JSON::Object>&& target, RefPtr<JSON::Array>&& arguments, std::optional<Inspector::Protocol::BidiScript::ResultOwnership>&&, RefPtr<JSON::Object>&& optionalSerializationOptions, RefPtr<JSON::Object>&& optionalThis, std::optional<bool>&& optionalUserActivation, CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&& callback)
+void BidiScriptAgent::callFunction(const String& functionDeclaration, bool awaitPromise, Ref<JSON::Object>&& target, RefPtr<JSON::Array>&& arguments, std::optional<Inspector::Protocol::BidiScript::ResultOwnership>&& resultOwnership, RefPtr<JSON::Object>&& optionalSerializationOptions, RefPtr<JSON::Object>&& optionalThis, std::optional<bool>&& optionalUserActivation, CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&& callback)
 {
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
     // FIXME: handle non-BrowsingContext obtained from `Target`.
-    std::optional<BrowsingContext> browsingContext = target->getString("context"_s);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!browsingContext, InvalidParameter);
+    // https://bugs.webkit.org/show_bug.cgi?id=304062
+    std::optional<BrowsingContext> browsingContext;
+    String sandbox;
 
+    if (auto contextJSON = target->getValue("context"_s)) {
+        String contextValue;
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!contextJSON->asString(contextValue), InvalidParameter);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(contextValue.isEmpty(), FrameNotFound);
+        browsingContext = contextValue;
+
+        if (auto sandboxValue = target->getValue("sandbox"_s))
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!sandboxValue->asString(sandbox), InvalidParameter);
+    } else if (auto realmJSON = target->getValue("realm"_s)) {
+        String realmValue;
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!realmJSON->asString(realmValue), InvalidParameter);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(realmValue.isEmpty(), FrameNotFound);
+        auto realmIdentifier = parseRealmIdentifier(realmValue);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!realmIdentifier, FrameNotFound);
+        browsingContext = browsingContextForRealm(*realmIdentifier);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!browsingContext, FrameNotFound);
+    } else
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(true, InvalidParameter);
+
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!browsingContext, InvalidParameter);
     auto pageAndFrameHandles = session->extractBrowsingContextHandles(*browsingContext);
     ASYNC_FAIL_IF_UNEXPECTED_RESULT(pageAndFrameHandles);
     auto& [topLevelContextHandle, frameHandle] = pageAndFrameHandles.value();
 
-    // FIXME: handle `awaitPromise` option.
-    // FIXME: handle `resultOwnership` option.
-    // FIXME: handle `serializationOptions` option.
-    // FIXME: handle custom `this` option.
-    // FIXME: handle `userActivation` option.
-
-    // Deserialize LocalValue arguments into plain JSON values for script evaluation.
-    // FIXME: Implement RemoteReference and Channel types for arguments <https://webkit.org/b/288057>
+    bool argumentsUseUnsupportedType = false;
     auto argumentsArray = JSON::Array::create();
     if (arguments) {
-        for (unsigned i = 0; i < arguments->length(); ++i) {
-            Ref argValue = arguments->get(i);
-            argumentsArray->pushValue(deserializeLocalValue(argValue.get()));
+        for (size_t i = 0; i < arguments->length(); ++i) {
+            auto parsedArgument = parseLocalValue(arguments->get(i).get(), &argumentsUseUnsupportedType);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!parsedArgument, InvalidParameter);
+            argumentsArray->pushValue(parsedArgument.releaseNonNull());
         }
     }
+
+    if (optionalThis)
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!parseLocalValue(*optionalThis), InvalidParameter);
+
+    if (optionalSerializationOptions) {
+        auto result = WebDriverBidiProcessor::validateSerializationOptions(*optionalSerializationOptions);
+        if (!result)
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, result.error());
+    }
+
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!sandbox.isEmpty(), NotImplemented, "Sandbox targets are not supported yet."_s);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(argumentsUseUnsupportedType, NotImplemented, "Remote references and channels are not supported yet."_s);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(optionalThis, NotImplemented, "Custom this values are not supported yet."_s);
 
     session->getBidiRealmInfo(topLevelContextHandle, frameHandle, [weakThis = WeakPtr { *this }, callback = WTF::move(callback), topLevelContextHandle = topLevelContextHandle.isolatedCopy(), frameHandle = frameHandle.isolatedCopy(), functionDeclaration = functionDeclaration.isolatedCopy(), argumentsArray = WTF::move(argumentsArray), userActivation = optionalUserActivation.value_or(false)](std::optional<RealmIdentifier>&& realmIdentifier) mutable {
         CheckedPtr protectedThis = weakThis;
@@ -811,7 +893,10 @@ void BidiScriptAgent::executePreloadScriptsForContext(const String& browsingCont
         if (scriptInfo.arguments) {
             for (unsigned i = 0; i < scriptInfo.arguments->length(); ++i) {
                 Ref argValue = scriptInfo.arguments->get(i);
-                argumentsArray->pushValue(deserializeLocalValue(argValue.get()));
+                if (auto parsedArgument = parseLocalValue(argValue.get()))
+                    argumentsArray->pushValue(parsedArgument.releaseNonNull());
+                else
+                    argumentsArray->pushValue(JSON::Value::null());
             }
         }
 
