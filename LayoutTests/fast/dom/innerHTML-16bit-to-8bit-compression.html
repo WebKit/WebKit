@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="container"></div>
+<script>
+description("Test that innerHTML 16-bit to 8-bit string compression preserves text content correctness for mixed ASCII/Latin-1 and non-Latin-1 content");
+
+function testTextContent(testDescription, html, expectedTexts) {
+    debug("");
+    debug(testDescription);
+
+    var container = document.getElementById('container');
+    container.innerHTML = html;
+
+    // Get all text nodes from the container's children
+    var walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null, false);
+    var actualTexts = [];
+    var node;
+    while (node = walker.nextNode()) {
+        var text = node.nodeValue.trim();
+        if (text.length > 0) {
+            actualTexts.push(text);
+        }
+    }
+
+    for (var i = 0; i < expectedTexts.length; i++) {
+        var found = false;
+        for (var j = 0; j < actualTexts.length; j++) {
+            if (actualTexts[j] === expectedTexts[i]) {
+                found = true;
+                break;
+            }
+        }
+        if (found) {
+            testPassed("Text node contains: " + JSON.stringify(expectedTexts[i]));
+        } else {
+            testFailed("Text node should contain: " + JSON.stringify(expectedTexts[i]) + " but got: " + JSON.stringify(actualTexts));
+        }
+    }
+    container.innerHTML = '';
+}
+testTextContent(
+    "Test 0: 16-bit source that uses scalar match",
+    '<p>H</p>日',
+    ['H']
+);
+
+// Test 1: Pure ASCII with 16-bit source
+// The trailing 日 forces JavaScript to create a 16-bit string
+testTextContent(
+    "Test 1: Pure ASCII text with 16-bit source",
+    '<div>Hello cat</div>日',
+    ['Hello cat']
+);
+
+// Test 2: Pure non-Latin-1 Cyrillic text
+// All characters > 0xFF, should not compress
+testTextContent(
+    "Test 2: Pure Cyrillic text (no compression expected)",
+    '<div>Электронная гранитная шляпа</div>',
+    ['Электронная гранитная шляпа']
+);
+
+// Test 3: Mixed ASCII and Cyrillic in same parse
+// ASCII should compress to 8-bit, Cyrillic stays 16-bit
+testTextContent(
+    "Test 3: Mixed ASCII and Cyrillic content",
+    '<div>Product:</div><div>Ноутбук</div>日',
+    ['Product:', 'Ноутбук']
+);
+
+// Test 4: Latin-1 extended characters (accented)
+// All characters 0x00-0xFF, should compress to 8-bit
+testTextContent(
+    "Test 4: Latin-1 accented characters",
+    '<div>café résumé señor naïve</div>日',
+    ['café résumé señor naïve']
+);
+
+// Test 5: CJK (Japanese) characters
+// Mixed Japanese (16-bit) and English (8-bit)
+testTextContent(
+    "Test 5: Japanese and English mixed content",
+    '<div>日本語</div><div>Test</div>',
+    ['日本語', 'Test']
+);
+
+// Test 6: CJK (Chinese) characters
+// Mixed Chinese (16-bit) and English (8-bit)
+testTextContent(
+    "Test 6: Chinese and English mixed content",
+    '<span>中文</span><span>English</span>',
+    ['中文', 'English']
+);
+
+// Test 7: Emoji and high Unicode
+// Emoji stays 16-bit, ASCII text compresses
+testTextContent(
+    "Test 7: Emoji and ASCII text",
+    '<button>Delete</button><span>😀🎉</span>',
+    ['Delete', '😀🎉']
+);
+
+// Test 8: Whitespace preservation with indentation
+// Whitespace should be preserved and compressed to 8-bit
+testTextContent(
+    "Test 8: Whitespace and indentation preservation",
+    '<ul>\n    <li>Item 1</li>\n    <li>Пункт 2</li>\n</ul>',
+    ['Item 1', 'Пункт 2']
+);
+
+// Test 9: Nested elements with multiple mixed text nodes
+// Multiple text nodes, some compress, some stay 16-bit
+testTextContent(
+    "Test 9: Nested elements with mixed text nodes",
+    '<div><span>Start</span><b>中间</b><i>End</i></div>日',
+    ['Start', '中间', 'End']
+);
+
+// Test 10: Long ASCII text with 16-bit source
+testTextContent(
+    "Test 10: Long ASCII text",
+    '<p>This is a longer piece of text that should be compressed to 8-bit storage.</p>日',
+    ['This is a longer piece of text that should be compressed to 8-bit storage.']
+);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+Test that innerHTML 16-bit to 8-bit string compression preserves text content correctness for mixed ASCII/Latin-1 and non-Latin-1 content
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Test 0: 16-bit source that uses scalar match
+PASS Text node contains: "H"
+
+Test 1: Pure ASCII text with 16-bit source
+PASS Text node contains: "Hello cat"
+
+Test 2: Pure Cyrillic text (no compression expected)
+PASS Text node contains: "Электронная гранитная шляпа"
+
+Test 3: Mixed ASCII and Cyrillic content
+PASS Text node contains: "Product:"
+PASS Text node contains: "Ноутбук"
+
+Test 4: Latin-1 accented characters
+PASS Text node contains: "café résumé señor naïve"
+
+Test 5: Japanese and English mixed content
+PASS Text node contains: "日本語"
+PASS Text node contains: "Test"
+
+Test 6: Chinese and English mixed content
+PASS Text node contains: "中文"
+PASS Text node contains: "English"
+
+Test 7: Emoji and ASCII text
+PASS Text node contains: "Delete"
+PASS Text node contains: "😀🎉"
+
+Test 8: Whitespace and indentation preservation
+PASS Text node contains: "Item 1"
+PASS Text node contains: "Пункт 2"
+
+Test 9: Nested elements with mixed text nodes
+PASS Text node contains: "Start"
+PASS Text node contains: "中间"
+PASS Text node contains: "End"
+
+Test 10: Long ASCII text
+PASS Text node contains: "This is a longer piece of text that should be compressed to 8-bit storage."
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
