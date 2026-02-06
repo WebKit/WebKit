@@ -1,0 +1,4 @@
+
+
+PASS HTMLMediaElement will not become the now playing info source if active media element is using media stream and mediaSession API is not used
+

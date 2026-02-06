@@ -1467,9 +1467,21 @@ bool MediaElementSession::hasNowPlayingInfo() const
         return false;
 
 #if ENABLE(MEDIA_STREAM)
-    RefPtr session = mediaSession();
-    if (element->hasMediaStreamSrcObject() && (!session || (!session->hasActiveActionHandlers() && !session->metadata())))
-        return false;
+    if (RefPtr session = mediaSession()) {
+        auto isActiveMediaElementPreventingNowPlayingInfo = [&] {
+            RefPtr activeMediaElement = session->activeMediaElement();
+            if (!activeMediaElement || activeMediaElement.get() == element.get())
+                return false;
+            return activeMediaElement->hasMediaStreamSrcObject() && (!session->hasActiveActionHandlers() && !session->metadata());
+        };
+        if (element->hasMediaStreamSrcObject()) {
+            if (!session->hasActiveActionHandlers() && !session->metadata())
+                return false;
+        } else if (isActiveMediaElementPreventingNowPlayingInfo()) {
+            ALWAYS_LOG(LOGIDENTIFIER, "MediaElementSession::hasNowPlayingInfo returning false due to active media element");
+            return false;
+        }
+    }
 #endif // ENABLE(MEDIA_STREAM)
 #endif // ENABLE(MEDIA_SESSION)
 
