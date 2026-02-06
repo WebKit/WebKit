@@ -1582,16 +1582,24 @@ CommandResult<void> WebAutomationSession::dismissCurrentJavaScriptDialog(const I
     auto page = webPageProxyForHandle(browsingContextHandle);
     SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
 
-    bool isShowingJavaScriptDialog = m_client->isShowingJavaScriptDialogOnPage(*this, *page);
+    return dismissCurrentJavaScriptDialog(*page);
+}
+
+CommandResult<void> WebAutomationSession::dismissCurrentJavaScriptDialog(WebPageProxy& page)
+{
+    ASSERT(m_client);
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!m_client, InternalError);
+
+    bool isShowingJavaScriptDialog = m_client->isShowingJavaScriptDialogOnPage(*this, page);
     SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!isShowingJavaScriptDialog, NoJavaScriptDialog);
 
 #if ENABLE(WEBDRIVER_BIDI)
-    auto apiDialogType = m_client->typeOfCurrentJavaScriptDialogOnPage(*this, *page);
+    auto apiDialogType = m_client->typeOfCurrentJavaScriptDialogOnPage(*this, page);
     SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!apiDialogType, InternalError);
 
-    m_bidiProcessor->browsingContextDomainNotifier().userPromptClosed(handleForWebPageProxy(*page), toProtocolUserPromptType(apiDialogType.value()), false, m_client->userInputOfCurrentJavaScriptDialogOnPage(*this, *page).value_or(emptyString()));
+    m_bidiProcessor->browsingContextDomainNotifier().userPromptClosed(handleForWebPageProxy(page), toProtocolUserPromptType(apiDialogType.value()), false, m_client->userInputOfCurrentJavaScriptDialogOnPage(*this, page).value_or(emptyString()));
 #endif
-    m_client->dismissCurrentJavaScriptDialogOnPage(*this, *page);
+    m_client->dismissCurrentJavaScriptDialogOnPage(*this, page);
 
     return { };
 }
@@ -1604,17 +1612,25 @@ CommandResult<void> WebAutomationSession::acceptCurrentJavaScriptDialog(const In
     auto page = webPageProxyForHandle(browsingContextHandle);
     SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
 
-    bool isShowingJavaScriptDialog = m_client->isShowingJavaScriptDialogOnPage(*this, *page);
+    return acceptCurrentJavaScriptDialog(*page);
+}
+
+CommandResult<void> WebAutomationSession::acceptCurrentJavaScriptDialog(WebPageProxy& page)
+{
+    ASSERT(m_client);
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!m_client, InternalError);
+
+    bool isShowingJavaScriptDialog = m_client->isShowingJavaScriptDialogOnPage(*this, page);
     SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!isShowingJavaScriptDialog, NoJavaScriptDialog);
 
 #if ENABLE(WEBDRIVER_BIDI)
-    auto apiDialogType = m_client->typeOfCurrentJavaScriptDialogOnPage(*this, *page);
+    auto apiDialogType = m_client->typeOfCurrentJavaScriptDialogOnPage(*this, page);
     SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!apiDialogType, InternalError);
 
-    m_bidiProcessor->browsingContextDomainNotifier().userPromptClosed(handleForWebPageProxy(*page), toProtocolUserPromptType(apiDialogType.value()), true, m_client->userInputOfCurrentJavaScriptDialogOnPage(*this, *page).value_or(emptyString()));
+    m_bidiProcessor->browsingContextDomainNotifier().userPromptClosed(handleForWebPageProxy(page), toProtocolUserPromptType(apiDialogType.value()), true, m_client->userInputOfCurrentJavaScriptDialogOnPage(*this, page).value_or(emptyString()));
 #endif
 
-    m_client->acceptCurrentJavaScriptDialogOnPage(*this, *page);
+    m_client->acceptCurrentJavaScriptDialogOnPage(*this, page);
 
     return { };
 }

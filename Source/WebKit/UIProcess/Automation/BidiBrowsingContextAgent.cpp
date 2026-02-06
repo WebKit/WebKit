@@ -263,15 +263,18 @@ void BidiBrowsingContextAgent::handleUserPrompt(const BrowsingContext& browsingC
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
+    RefPtr webPageProxy = session->webPageProxyForHandle(browsingContext);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!webPageProxy, FrameNotFound);
+
     // FIXME: implement `userText` option.
 
     if (optionalShouldAccept && *optionalShouldAccept) {
-        callback(session->acceptCurrentJavaScriptDialog(browsingContext));
+        callback(session->acceptCurrentJavaScriptDialog(*webPageProxy));
         return;
     }
 
     // FIXME: this should consider the session's user prompt handler. <https://webkit.org/b/291666>
-    callback(session->dismissCurrentJavaScriptDialog(browsingContext));
+    callback(session->dismissCurrentJavaScriptDialog(*webPageProxy));
 }
 
 

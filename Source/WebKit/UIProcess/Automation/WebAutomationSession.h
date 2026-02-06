@@ -261,6 +261,8 @@ public:
     Inspector::CommandResult<bool> isShowingJavaScriptDialog(const Inspector::Protocol::Automation::BrowsingContextHandle&) override;
     Inspector::CommandResult<void> dismissCurrentJavaScriptDialog(const Inspector::Protocol::Automation::BrowsingContextHandle&) override;
     Inspector::CommandResult<void> acceptCurrentJavaScriptDialog(const Inspector::Protocol::Automation::BrowsingContextHandle&) override;
+    Inspector::CommandResult<void> dismissCurrentJavaScriptDialog(WebPageProxy&);
+    Inspector::CommandResult<void> acceptCurrentJavaScriptDialog(WebPageProxy&);
     Inspector::CommandResult<String> messageOfCurrentJavaScriptDialog(const Inspector::Protocol::Automation::BrowsingContextHandle&) override;
     Inspector::CommandResult<void> setUserInputForCurrentJavaScriptPrompt(const Inspector::Protocol::Automation::BrowsingContextHandle&, const String& text) override;
     Inspector::CommandResult<void> setFilesToSelectForFileUpload(const Inspector::Protocol::Automation::BrowsingContextHandle&, Ref<JSON::Array>&& filenames, RefPtr<JSON::Array>&& fileContents) override;
