@@ -533,6 +533,25 @@ RenderPipelineDesc GetComputingVertexShaderOnlyRenderPipelineDesc(RenderCommandE
     return pipelineDesc;
 }
 
+// Find the largest power-of-two threadgroup width that won't overflow uint32_t after rounding.
+// Metal's thread_position_in_grid is uint32_t, so numGroups * width must not exceed UINT32_MAX.
+
+// FIXME: For optimal GPU efficiency, large dispatches should be broken into multiple smaller
+// dispatches rather than reducing threadgroup width.
+NSUInteger SafeThreadgroupWidth(size_t numThreads, NSUInteger maxWidth)
+{
+    NSUInteger threadgroupWidth = std::clamp<NSUInteger>(numThreads, 1u, maxWidth);
+    while (threadgroupWidth > 1)
+    {
+        size_t numGroups      = (numThreads + threadgroupWidth - 1) / threadgroupWidth;
+        size_t roundedThreads = numGroups * threadgroupWidth;
+        if (roundedThreads <= std::numeric_limits<uint32_t>::max())
+            break;
+        threadgroupWidth >>= 1;
+    }
+    return threadgroupWidth;
+}
+
 // Dispatch compute using 3D grid
 void DispatchCompute(ContextMtl *contextMtl,
                      ComputeCommandEncoder *encoder,
@@ -561,8 +580,12 @@ void DispatchCompute(ContextMtl *contextMtl,
                      size_t numThreads)
 {
     ASSERT(numThreads != 0);
-    NSUInteger w = std::clamp<NSUInteger>(numThreads, 1u, pipelineState.threadExecutionWidth);
-    MTLSize threadsPerThreadgroup = MTLSizeMake(w, 1, 1);
+
+    // Use safe threadgroup width to prevent overflow after rounding. Metal validates that
+    // the rounded grid size (numGroups * threadgroupWidth) fits in uint32_t, even for
+    // non-uniform dispatch which internally rounds up to threadgroup boundaries.
+    NSUInteger safeWidth = SafeThreadgroupWidth(numThreads, pipelineState.threadExecutionWidth);
+    MTLSize threadsPerThreadgroup = MTLSizeMake(safeWidth, 1, 1);
 
     if (contextMtl->getDisplay()->getFeatures().hasNonUniformDispatch.enabled)
     {
@@ -571,7 +594,7 @@ void DispatchCompute(ContextMtl *contextMtl,
     }
     else
     {
-        MTLSize groups = MTLSizeMake((numThreads + w - 1) / w, 1, 1);
+        MTLSize groups = MTLSizeMake((numThreads + safeWidth - 1) / safeWidth, 1, 1);
         cmdEncoder->dispatch(groups, threadsPerThreadgroup);
     }
 }

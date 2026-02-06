@@ -5562,6 +5562,159 @@ void main(void)
     EXPECT_PIXEL_COLOR_NEAR(0, 0, expected, 1);
 }
 
+// Verify that a near-max-size buffer with stride=1 completes without crashing
+// due to threadgroup rounding overflow. The fix adjusts threadgroup width to prevent overflow.
+// Note: We only verify no GL error occurs; pixel verification with a 4GB buffer is impractical.
+TEST_P(VertexAttributeTestES3, MaxSizeBufferWithByteConversionDoesNotCrash)
+{
+    constexpr char kVS[] = R"(#version 300 es
+in vec4 position;
+void main()
+{
+    gl_Position = position;
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 fragColor;
+void main()
+{
+    fragColor = vec4(0.0, 1.0, 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    GLint positionLocation = glGetAttribLocation(program, "position");
+    ASSERT_NE(-1, positionLocation);
+
+    // Create a near-max-size buffer to trigger the overflow-prone code path
+    const GLuint maxSize = 0xFFFFFFFC;  // Near UINT32_MAX, aligned to 4 bytes
+    GLBuffer buffer;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ARRAY_BUFFER, maxSize, nullptr, GL_STATIC_DRAW);
+    ANGLE_SKIP_TEST_IF(glGetError() == GL_OUT_OF_MEMORY);
+    ASSERT_GL_NO_ERROR();
+
+    // Use stride=1 with GL_BYTE to trigger vertex format conversion compute path
+    glEnableVertexAttribArray(positionLocation);
+    glVertexAttribPointer(positionLocation, 4, GL_BYTE, GL_FALSE, 1, nullptr);
+
+    // Draw a minimal number of vertices - this should not crash or produce an error
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // The key verification: no crash occurred and no GL error was generated
+    ASSERT_GL_NO_ERROR();
+}
+
+// Verify GL_BYTE with stride=4 triggers format conversion and renders correctly.
+TEST_P(VertexAttributeTestES3, ByteConversionWithSmallStrideRendersCorrectly)
+{
+    constexpr char kVS[] = R"(#version 300 es
+in vec4 position;
+in vec4 testAttrib;
+out vec4 color;
+void main()
+{
+    gl_Position = position;
+    color = testAttrib / 127.0;
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+in vec4 color;
+out vec4 fragColor;
+void main()
+{
+    fragColor = color;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    GLint positionLocation = glGetAttribLocation(program, "position");
+    GLint testAttribLocation = glGetAttribLocation(program, "testAttrib");
+    ASSERT_NE(-1, positionLocation);
+    ASSERT_NE(-1, testAttribLocation);
+
+    GLBuffer quadBuffer;
+    InitQuadVertexBuffer(&quadBuffer);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(positionLocation);
+
+    // All vertices read [127, 127, 127, 127] → 127/127 = 1.0 → white
+    std::array<GLbyte, 24> testData;
+    testData.fill(127);
+
+    GLBuffer testBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, testBuffer);
+    glBufferData(GL_ARRAY_BUFFER, testData.size(), testData.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(testAttribLocation, 4, GL_BYTE, GL_FALSE, 4, nullptr);
+    glEnableVertexAttribArray(testAttribLocation);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_NEAR(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::white, 1);
+}
+
+// Verify GL_BYTE with stride=1 (< format size) triggers conversion and renders correctly.
+TEST_P(VertexAttributeTestES3, ByteConversionSmallBufferRendersCorrectly)
+{
+    constexpr char kVS[] = R"(#version 300 es
+in vec4 position;
+in vec4 testAttrib;
+flat out vec4 color;
+void main()
+{
+    gl_Position = position;
+    // Normalize signed byte: max GLbyte (127) maps to 1.0.
+    // All components at 1.0 produce white, which is easy to verify with EXPECT_PIXEL_COLOR.
+    color = testAttrib / 127.0;
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+flat in vec4 color;
+out vec4 fragColor;
+void main()
+{
+    fragColor = color;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    GLint positionLocation = glGetAttribLocation(program, "position");
+    GLint testAttribLocation = glGetAttribLocation(program, "testAttrib");
+    ASSERT_NE(-1, positionLocation);
+    ASSERT_NE(-1, testAttribLocation);
+
+    GLBuffer quadBuffer;
+    InitQuadVertexBuffer(&quadBuffer);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(positionLocation);
+
+    // Uniform data so overlapping stride=1 reads all get [127, 127, 127, 127] → white
+    std::array<GLbyte, 32> testData;
+    testData.fill(127);
+
+    GLBuffer testBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, testBuffer);
+    glBufferData(GL_ARRAY_BUFFER, testData.size(), testData.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(testAttribLocation, 4, GL_BYTE, GL_FALSE, 1, nullptr);
+    glEnableVertexAttribArray(testAttribLocation);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor::white, 1);
+}
+
 // VAO emulation fails on Mac but is not used on Mac in the wild. http://anglebug.com/40096758
 #if !defined(__APPLE__)
 #    define EMULATED_VAO_CONFIGS                                          \
