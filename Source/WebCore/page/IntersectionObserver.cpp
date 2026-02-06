@@ -455,7 +455,6 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
     bool isFirstObservation = !registration.previousThresholdIndex;
 
     float rootUsedZoom = 1.0;
-    // Only available in explicit root situation.
     RenderBlock* rootRenderer = nullptr;
     RenderElement* targetRenderer = nullptr;
     IntersectionObservationState intersectionState;
@@ -507,7 +506,8 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
             return;
 
         intersectionState.canComputeIntersection = true;
-        // FIXME: provide this information in some way if the host frame is remote.
+        // FIXME: provide these information in some way if the host frame is remote.
+        rootRenderer = downcast<LocalFrameView>(hostFrameView).renderView();
         rootUsedZoom = downcast<LocalFrameView>(hostFrameView).renderView()->style().usedZoom();
         intersectionState.rootBounds = layoutViewportRectForIntersection();
     };
@@ -575,10 +575,9 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
         intersectionState.absoluteTargetRect = targetRenderer->localToAbsoluteQuad(FloatRect(localTargetBounds)).boundingBox();
 
     if (intersectionState.isIntersecting) {
-        // If implicit root, rootLocalIntersectionRect is already in absolute coordinates.
-        auto rootAbsoluteIntersectionRect = root() ? rootRenderer->localToAbsoluteQuad(rootLocalIntersectionRect).boundingBox() : rootLocalIntersectionRect;
+        auto rootAbsoluteIntersectionRect = rootRenderer->localToAbsoluteQuad(rootLocalIntersectionRect).boundingBox();
 
-        if (rootRenderer && &targetRenderer->frame() == &rootRenderer->frame())
+        if (root() && &targetRenderer->frame() == &rootRenderer->frame())
             intersectionState.absoluteIntersectionRect = rootAbsoluteIntersectionRect;
         else {
             auto rootViewIntersectionRect = hostFrameView.contentsToView(rootAbsoluteIntersectionRect);
@@ -607,14 +606,7 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
 
     intersectionState.observationChanged = isFirstObservation || intersectionState.thresholdIndex != registration.previousThresholdIndex;
     if (intersectionState.observationChanged) {
-        if (root()) {
-            // Explicit root in the same process, localToAbsoluteQuad can be used.
-            intersectionState.absoluteRootBounds = rootRenderer->localToAbsoluteQuad(intersectionState.rootBounds).boundingBox();
-        } else {
-            // Implicit root (the main frame's document), might be out of process due to site isolation.
-            // Regardless, intersectionState.rootBounds is already in absolute coordinate.
-            intersectionState.absoluteRootBounds = intersectionState.rootBounds;
-        }
+        intersectionState.absoluteRootBounds = rootRenderer->localToAbsoluteQuad(intersectionState.rootBounds).boundingBox();
 
         if (!intersectionState.absoluteTargetRect)
             intersectionState.absoluteTargetRect = targetRenderer->localToAbsoluteQuad(FloatRect(localTargetBounds)).boundingBox();

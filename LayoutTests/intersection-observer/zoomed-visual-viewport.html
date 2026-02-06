@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<title>Tests that intersection observer works when the visual viewport is zoomed (e.g from pinched zoom)</title>
+<style>
+    .container {
+        border: 1px black solid;
+        width: 200px;
+        height: 200px;
+        overflow: scroll;
+    }
+
+    .target {
+        width: 100px;
+        height: 100px;
+        background: green;
+    }
+
+    .spacer {
+        border: 1px black red;
+        height: 1000px;
+    }
+</style>
+
+<script src="../resources/ui-helper.js"></script>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+
+<body>
+    <p>
+        Text that needs to be here to reproduce the issue.
+    </p>
+
+    <div class="container" id="container">
+        <div class="spacer"></div>
+        <div class="target" id="target"></div>
+    </div>
+
+    <script>
+        var lastObservation = null;
+
+        var observer = new IntersectionObserver((observations) => {
+            lastObservation = observations[observations.length - 1];
+        });
+
+        observer.observe(target);
+
+        function assertRootBounds(actual, expectedX, expectedY, expectedWidth, expectedHeight) {
+            assert_equals(actual.x, expectedX);
+            assert_equals(actual.y, expectedY);
+            assert_equals(actual.width, expectedWidth);
+            assert_equals(actual.height, expectedHeight);
+        }
+
+        promise_test(async t => {
+            await UIHelper.renderingUpdate();
+            await UIHelper.renderingUpdate();
+            assert_false(lastObservation.isIntersecting, "Target is initially visible");
+            assertRootBounds(lastObservation.rootBounds, 0, 0, document.documentElement.clientWidth, document.documentElement.clientHeight);
+
+            await UIHelper.zoomToScale(2);
+            window.scrollTo(0, 0);
+
+            container.scrollTop = 1000;
+            await UIHelper.renderingUpdate();
+            await UIHelper.renderingUpdate();
+            assert_true(lastObservation.isIntersecting, "Scrolled past target, target is no longer visible");
+            assertRootBounds(lastObservation.rootBounds, 0, 0, document.documentElement.clientWidth, document.documentElement.clientHeight);
+
+            container.scrollTop = 0;
+            await UIHelper.renderingUpdate();
+            await UIHelper.renderingUpdate();
+            assert_false(lastObservation.isIntersecting, "Scrolled to top of container, target is visible again");
+            assertRootBounds(lastObservation.rootBounds, 0, 0, document.documentElement.clientWidth, document.documentElement.clientHeight);
+        });
+    </script>
+</body>
