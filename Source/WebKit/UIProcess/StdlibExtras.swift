@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if compiler(>=6.2)
+#if compiler(>=6.2.3)
 
 // FIXME (rdar://164119356): Move parts of StdLibExtras.swift into WTF
 // (those parts which are not specific to WebKit-level types) - and enable
@@ -121,4 +121,4 @@ struct CxxRefVectorIterator<Vec: CxxRefVector>: Sequence, IteratorProtocol {
 
 #endif // ENABLE_BACK_FORWARD_LIST_SWIFT
 
-#endif // compiler(>=6.2)
+#endif // compiler(>=6.2.3)
