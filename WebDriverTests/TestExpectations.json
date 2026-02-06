@@ -5052,7 +5052,7 @@
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288058"}}
     },
     "imported/w3c/webdriver/tests/bidi/script/call_function/invalid.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288058"}},
+        "expected": { "all": { "status": ["PASS"] }},
         "subtests": {
             "test_params_target_invalid_type[None]": {
                 "expected": { "all": { "status": ["PASS"] }}
@@ -5200,6 +5200,9 @@
             },
             "test_params_result_ownership_invalid_value[_UNKNOWN_]": {
                 "expected": {"mac": {"status": ["PASS"]}, "glib": {"status": ["PASS"]}}
+            },
+            "test_params_arguments_handle_unknown_value": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288058" }}
             }
         }
     },

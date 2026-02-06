@@ -96,30 +96,37 @@ void WebDriverBidiProcessor::processBidiMessage(const String& message)
 Inspector::CommandResult<void> WebDriverBidiProcessor::validateSerializationOptions(const JSON::Object& serializationOptions)
 {
     RefPtr<JSON::Value> maxDomDepthValue;
-    if (serializationOptions.getValue("maxDomDepth"_s, maxDomDepthValue)) {
-        if (auto maxDomDepth = maxDomDepthValue->asDouble()) {
-            if (*maxDomDepth < 0)
-                return makeUnexpected("serializationOptions.maxDomDepth must be non-negative"_s);
-            if (std::floor(*maxDomDepth) != *maxDomDepth)
-                return makeUnexpected("serializationOptions.maxDomDepth must be an integer"_s);
-            if (*maxDomDepth > JSC::maxSafeInteger())
-                return makeUnexpected("serializationOptions.maxDomDepth exceeds maximum safe integer"_s);
-        }
+    if (serializationOptions.getValue("maxDomDepth"_s, maxDomDepthValue) && !maxDomDepthValue->isNull()) {
+        auto maxDomDepth = maxDomDepthValue->asDouble();
+        if (!maxDomDepth)
+            return makeUnexpected("serializationOptions.maxDomDepth must be null or a number"_s);
+        if (*maxDomDepth < 0)
+            return makeUnexpected("serializationOptions.maxDomDepth must be non-negative"_s);
+        if (std::floor(*maxDomDepth) != *maxDomDepth)
+            return makeUnexpected("serializationOptions.maxDomDepth must be an integer"_s);
+        if (*maxDomDepth > JSC::maxSafeInteger())
+            return makeUnexpected("serializationOptions.maxDomDepth exceeds maximum safe integer"_s);
     }
 
     RefPtr<JSON::Value> maxObjectDepthValue;
-    if (serializationOptions.getValue("maxObjectDepth"_s, maxObjectDepthValue)) {
-        if (auto maxObjectDepth = maxObjectDepthValue->asDouble()) {
-            if (*maxObjectDepth < 0)
-                return makeUnexpected("serializationOptions.maxObjectDepth must be non-negative"_s);
-            if (std::floor(*maxObjectDepth) != *maxObjectDepth)
-                return makeUnexpected("serializationOptions.maxObjectDepth must be an integer"_s);
-            if (*maxObjectDepth > JSC::maxSafeInteger())
-                return makeUnexpected("serializationOptions.maxObjectDepth exceeds maximum safe integer"_s);
-        }
+    if (serializationOptions.getValue("maxObjectDepth"_s, maxObjectDepthValue) && !maxObjectDepthValue->isNull()) {
+        auto maxObjectDepth = maxObjectDepthValue->asDouble();
+        if (!maxObjectDepth)
+            return makeUnexpected("serializationOptions.maxObjectDepth must be null or a number"_s);
+        if (*maxObjectDepth < 0)
+            return makeUnexpected("serializationOptions.maxObjectDepth must be non-negative"_s);
+        if (std::floor(*maxObjectDepth) != *maxObjectDepth)
+            return makeUnexpected("serializationOptions.maxObjectDepth must be an integer"_s);
+        if (*maxObjectDepth > JSC::maxSafeInteger())
+            return makeUnexpected("serializationOptions.maxObjectDepth exceeds maximum safe integer"_s);
     }
 
-    // Note: includeShadowTree validation is handled by the protocol enum definition in BidiScript.json
+    RefPtr<JSON::Value> includeShadowTreeValue;
+    if (serializationOptions.getValue("includeShadowTree"_s, includeShadowTreeValue)) {
+        String includeShadowTree;
+        if (!includeShadowTreeValue->asString(includeShadowTree) || (includeShadowTree != "none"_s && includeShadowTree != "open"_s && includeShadowTree != "all"_s))
+            return makeUnexpected("serializationOptions.includeShadowTree must be none, open, or all"_s);
+    }
 
     return { };
 }
