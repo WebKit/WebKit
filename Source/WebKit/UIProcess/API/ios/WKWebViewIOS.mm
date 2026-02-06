@@ -208,10 +208,12 @@ static WebCore::IntDegrees deviceOrientationForUIInterfaceOrientation(UIInterfac
     [_scrollView setBaseScrollViewDelegate:self];
     [_scrollView setBouncesZoom:YES];
 
-#if HAVE(UISCROLLVIEW_DECELERATION_TRACKING_BEHAVIOR)
-    if ([_scrollView respondsToSelector:@selector(_setDecelerationTrackingBehavior:)])
-        [_scrollView _setDecelerationTrackingBehavior:_UIScrollViewDecelerationTrackingBehaviorAdaptive];
-#endif
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    if ([_scrollView respondsToSelector:@selector(_setAvoidsJumpOnInterruptedBounce:)]) {
+        [_scrollView setTracksImmediatelyWhileDecelerating:NO];
+        [_scrollView _setAvoidsJumpOnInterruptedBounce:YES];
+    }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     _scrollViewDefaultAllowedTouchTypes = [_scrollView panGestureRecognizer].allowedTouchTypes;
 
