@@ -697,7 +697,7 @@ void HTMLSelectElement::selectAll()
 
 void HTMLSelectElement::saveLastSelection()
 {
-    if (usesMenuListDeprecated()) {
+    if (!m_multiple) {
         m_lastOnChangeIndex = selectedIndex();
         return;
     }
