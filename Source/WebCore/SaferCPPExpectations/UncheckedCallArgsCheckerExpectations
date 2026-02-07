@@ -483,8 +483,6 @@ rendering/RenderTableCell.cpp
 rendering/RenderTableCellInlines.h
 rendering/RenderTableRow.cpp
 rendering/RenderTableSection.cpp
-rendering/RenderText.cpp
-rendering/RenderText.h
 rendering/RenderTextControl.cpp
 rendering/RenderTextControlMultiLine.cpp
 rendering/RenderTextControlSingleLine.cpp

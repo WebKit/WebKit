@@ -31,7 +31,7 @@ inline LayoutUnit RenderText::marginLeft() const { return Style::evaluateMinimum
 inline LayoutUnit RenderText::marginRight() const { return Style::evaluateMinimum<LayoutUnit>(style().marginRight(), 0_lu, style().usedZoomForLength()); }
 
 template <typename MeasureTextCallback>
-float RenderText::measureTextConsideringPossibleTrailingSpace(bool currentCharacterIsSpace, unsigned startIndex, unsigned wordLength, WordTrailingSpace& wordTrailingSpace, SingleThreadWeakHashSet<const Font>& fallbackFonts, MeasureTextCallback&& callback)
+float RenderText::measureTextConsideringPossibleTrailingSpace(bool currentCharacterIsSpace, unsigned startIndex, unsigned wordLength, WordTrailingSpace& wordTrailingSpace, SingleThreadWeakHashSet<const Font>& fallbackFonts, NOESCAPE MeasureTextCallback&& callback)
 {
     std::optional<float> wordTrailingSpaceWidth;
     if (currentCharacterIsSpace)

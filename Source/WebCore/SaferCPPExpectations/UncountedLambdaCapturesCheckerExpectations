@@ -56,7 +56,6 @@ rendering/RenderLayer.cpp
 rendering/RenderLayerCompositor.cpp
 rendering/RenderListBox.cpp
 rendering/RenderReplaced.cpp
-rendering/RenderText.cpp
 rendering/svg/RenderSVGText.cpp
 style/StyleCustomProperty.cpp
 style/Styleable.cpp
