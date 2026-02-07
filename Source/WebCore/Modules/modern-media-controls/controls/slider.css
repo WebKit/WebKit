@@ -121,10 +121,7 @@
 }
 
 .slider.default > .appearance > .fill > .knob.none {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background-color: transparent;
+    display: none;
 }
 
 /* When disabled, we only want to show the track and turn off interaction. */

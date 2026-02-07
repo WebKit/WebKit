@@ -1,0 +1,62 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing that <code>Slider</code> with <code>KnobStyle.None</code> has no visible gap.");
+
+window.jsTestIsAsync = true;
+
+const layoutDelegate = null;
+
+const slider = new Slider(layoutDelegate, "", Slider.KnobStyle.None);
+slider.width = 200;
+slider.height = 25;
+slider.value = 0.5;
+
+var knobStyle, primaryStyle, trackStyle;
+var primaryRight, trackLeft;
+
+scheduler.frameDidFire = function()
+{
+    document.body.appendChild(slider.element);
+
+    slider.layout();
+
+    const appearance = slider.element.querySelector('.appearance');
+    const fill = appearance.querySelector('.fill');
+    const knobElement = fill.querySelector('.knob.none');
+    const primaryElement = fill.querySelector('.primary');
+    const trackElement = fill.querySelector('.track');
+
+    if (knobElement) {
+        knobStyle = window.getComputedStyle(knobElement);
+        shouldBeEqualToString("knobStyle.display", "none");
+    } else {
+        testFailed("Could not find knob element");
+    }
+
+    if (primaryElement && trackElement) {
+        primaryStyle = window.getComputedStyle(primaryElement);
+        trackStyle = window.getComputedStyle(trackElement);
+
+        shouldBeEqualToString("primaryStyle.flexGrow", "50");
+        shouldBeEqualToString("trackStyle.flexGrow", "50");
+
+        const primaryRect = primaryElement.getBoundingClientRect();
+        const trackRect = trackElement.getBoundingClientRect();
+        
+        primaryRight = Math.round(primaryRect.right);
+        trackLeft = Math.round(trackRect.left);
+        shouldBe("primaryRight", "trackLeft");
+    } else {
+        testFailed("Could not find primary or track elements");
+    }
+
+    finishMediaControlsTest();
+}
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
