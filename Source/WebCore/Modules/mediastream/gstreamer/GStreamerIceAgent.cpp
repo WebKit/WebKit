@@ -66,6 +66,13 @@ using WebKitGstRiceStream = struct _WebKitGstRiceStream {
 
 using StreamHashMap = HashMap<unsigned, std::unique_ptr<WebKitGstRiceStream>, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
 
+static gboolean agentClosedTimeoutCallback(gpointer userData)
+{
+    auto agentTimeout = reinterpret_cast<bool*>(userData);
+    *agentTimeout = true;
+    return FALSE;
+};
+
 typedef struct _WebKitGstIceAgentPrivate {
     ~_WebKitGstIceAgentPrivate()
     {
@@ -77,6 +84,29 @@ typedef struct _WebKitGstIceAgentPrivate {
 
         for (const auto& [sessionId, stream] : streams)
             iceBackend->finalizeStream(stream->stream->stream_id);
+
+        auto mainContext = runLoop->mainContext();
+
+        bool agentTimeout = false;
+        auto timeoutSource = adoptGRef(g_timeout_source_new(2000));
+        g_source_set_callback(timeoutSource.get(), agentClosedTimeoutCallback, &agentTimeout, nullptr);
+        g_source_attach(timeoutSource.get(), mainContext);
+
+        auto now = WTF::MonotonicTime::now().secondsSinceEpoch();
+        rice_agent_close(agent.get(), now.nanoseconds());
+        g_main_context_wakeup(mainContext);
+
+        bool isClosed = agentIsClosed.load();
+        if (!isClosed) {
+            while (!isClosed && !agentTimeout) {
+                g_main_context_iteration(mainContext, TRUE);
+                isClosed = agentIsClosed.load();
+            }
+
+            if (agentTimeout)
+                GST_WARNING("The agent hasn't closed successfully.");
+        }
+        g_source_destroy(timeoutSource.get());
     }
 
     RefPtr<RiceBackendClient> backendClient;
@@ -632,6 +662,37 @@ void webkitGstWebRTCIceAgentClosed(WebKitGstIceAgent* agent)
 }
 
 #if GST_CHECK_VERSION(1, 28, 0)
+struct CloseData {
+    GThreadSafeWeakPtr<GstWebRTCICE> weakIce;
+    bool shouldWait { false };
+    bool agentIsClosed { false };
+};
+WEBKIT_DEFINE_ASYNC_DATA_STRUCT(CloseData);
+
+static gboolean closeAgent(gpointer userData)
+{
+    auto closeData = reinterpret_cast<CloseData*>(userData);
+    GRefPtr ice = closeData->weakIce.get();
+    if (!ice)
+        return G_SOURCE_REMOVE;
+
+    auto backend = WEBKIT_GST_WEBRTC_ICE_BACKEND(ice.get());
+    auto now = WTF::MonotonicTime::now().secondsSinceEpoch();
+    rice_agent_close(backend->priv->agent.get(), now.nanoseconds());
+    webkitGstWebRTCIceAgentWakeup(backend);
+
+    bool isClosed = backend->priv->agentIsClosed.load();
+    if (!closeData->shouldWait || isClosed)
+        return G_SOURCE_REMOVE;
+
+    while (!isClosed) {
+        g_main_context_iteration(backend->priv->runLoop->mainContext(), TRUE);
+        isClosed = backend->priv->agentIsClosed.load();
+    }
+
+    return G_SOURCE_REMOVE;
+}
+
 static void webkitGstWebRTCIceAgentClose(GstWebRTCICE* ice, GstPromise* promise)
 {
     auto backend = WEBKIT_GST_WEBRTC_ICE_BACKEND(ice);
@@ -642,18 +703,12 @@ static void webkitGstWebRTCIceAgentClose(GstWebRTCICE* ice, GstPromise* promise)
 
     bool shouldWait = promise == nullptr;
     backend->priv->closePromise = promise;
-    auto now = WTF::MonotonicTime::now().secondsSinceEpoch();
-    rice_agent_close(backend->priv->agent.get(), now.nanoseconds());
-    webkitGstWebRTCIceAgentWakeup(backend);
 
-    isClosed = backend->priv->agentIsClosed.load();
-    if (!shouldWait || isClosed)
-        return;
+    auto data = createCloseData();
+    data->weakIce.reset(ice);
+    data->shouldWait = shouldWait;
 
-    while (!isClosed) {
-        g_main_context_iteration(backend->priv->runLoop->mainContext(), FALSE);
-        isClosed = backend->priv->agentIsClosed.load();
-    }
+    g_main_context_invoke_full(backend->priv->runLoop->mainContext(), G_PRIORITY_DEFAULT, closeAgent, data, reinterpret_cast<GDestroyNotify>(destroyCloseData));
 }
 #endif
 
