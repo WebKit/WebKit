@@ -206,6 +206,9 @@ inline Ref<SpaceSplitStringData> SpaceSplitStringData::create(const AtomString& 
     ASSERT(static_cast<unsigned>(tokenInitializer.nextMemoryBucket() - tokenArray.data()) == tokenCount);
     ASSERT(reinterpret_cast<const char*>(tokenInitializer.nextMemoryBucket()) - reinterpret_cast<const char*>(spaceSplitStringData.ptr()) == static_cast<ptrdiff_t>(sizeToAllocate));
 
+    for (auto& token : spaceSplitStringData->tokenArray())
+        spaceSplitStringData->m_bloomFilter.add(token);
+
     return spaceSplitStringData;
 }
 

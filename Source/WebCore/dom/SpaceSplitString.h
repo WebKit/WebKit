@@ -21,6 +21,7 @@
 #pragma once
 
 #include <algorithm>
+#include <wtf/BloomFilter.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>
@@ -41,6 +42,8 @@ public:
 
     bool contains(const AtomString& string)
     {
+        if (!m_bloomFilter.mayContain(string))
+            return false;
         auto tokens = tokenArray();
         return std::ranges::find(tokens, string) != tokens.end();
     }
@@ -95,6 +98,7 @@ private:
     AtomString m_keyString;
     unsigned m_refCount;
     unsigned m_size;
+    BloomFilter<8> m_bloomFilter;
     AtomString m_tokens[0];
 };
 
