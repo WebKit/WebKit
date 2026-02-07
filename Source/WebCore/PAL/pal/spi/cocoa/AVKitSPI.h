@@ -622,3 +622,26 @@ NS_ASSUME_NONNULL_END
 
 #endif // HAVE(AVKIT_CONTENT_SOURCE)
 
+// CLEANUP(rdar://164667890)
+#if HAVE(AVLEGIBLEMEDIAOPTIONSMENUCONTROLLER) && USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
+#if __has_include(<AVKit/AVLegibleMediaOptionsMenuController_Private.h>)
+#import <AVKit/AVLegibleMediaOptionsMenuController_Private.h>
+#else
+// SDK does not have -menuWithContents:. Redeclare:
+#import <AVKit/AVLegibleMediaOptionsMenuController.h>
+typedef NS_OPTIONS(NSInteger, AVLegibleMediaOptionsMenuContents) {
+    AVLegibleMediaOptionsMenuContentsLegible = 1 << 0,
+    AVLegibleMediaOptionsMenuContentsCaptionAppearance = 1 << 1,
+    AVLegibleMediaOptionsMenuContentsAll = (AVLegibleMediaOptionsMenuContentsLegible | AVLegibleMediaOptionsMenuContentsCaptionAppearance)
+} API_AVAILABLE(ios(26.4), macos(26.4), visionos(26.4)) API_UNAVAILABLE(tvos, watchos);
+
+@interface AVLegibleMediaOptionsMenuController (MenuWithContents)
+#if TARGET_OS_OSX && !TARGET_OS_MACCATALYST
+- (nullable NSMenu *)menuWithContents:(AVLegibleMediaOptionsMenuContents)contents;
+#else
+- (nullable UIMenu *)menuWithContents:(AVLegibleMediaOptionsMenuContents)contents;
+#endif
+@end
+
+#endif // __has_include(<AVKit/AVLegibleMediaOptionsMenuController_Private.h>)
+#endif // HAVE(AVLEGIBLEMEDIAOPTIONSMENUCONTROLLER) && USE(APPLE_INTERNAL_SDK)

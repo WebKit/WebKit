@@ -42,6 +42,7 @@
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIAction.h>
 #if HAVE(AVLEGIBLEMEDIAOPTIONSMENUCONTROLLER)
+#import <pal/spi/cocoa/AVKitSPI.h>
 #if __has_include(<AVKit/AVLegibleMediaOptionsMenuController.h>)
 #import <AVKit/AVLegibleMediaOptionsMenuController.h>
 #endif

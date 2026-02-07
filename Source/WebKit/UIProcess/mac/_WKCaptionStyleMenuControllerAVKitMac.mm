@@ -36,6 +36,7 @@
 
 #import <AppKit/AppKit.h>
 #import <WebCore/CaptionUserPreferencesMediaAF.h>
+#import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
@@ -46,6 +47,12 @@
 
 SOFTLINK_AVKIT_FRAMEWORK()
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVLegibleMediaOptionsMenuController)
+
+// CLEANUP(rdar://164667890)
+@interface AVLegibleMediaOptionsMenuController (WebKitSPI)
+- (nullable NSMenu *)buildMenuOfType:(NSInteger)type;
+- (nullable NSMenu *)menuWithContents:(NSInteger)contents;
+@end
 
 using namespace WebCore;
 using namespace WTF;
@@ -74,7 +81,12 @@ using namespace WTF;
 
 - (void)rebuildMenu
 {
-    self.menu = [_menuController menuWithContents:AVLegibleMediaOptionsMenuContentsCaptionAppearance];
+    if ([_menuController respondsToSelector:@selector(menuWithContents:)])
+        self.menu = [_menuController menuWithContents:AVLegibleMediaOptionsMenuContentsCaptionAppearance];
+    else
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        self.menu = [_menuController buildMenuOfType:AVLegibleMediaOptionsMenuTypeCaptionAppearance];
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (NSMenu *)captionStyleMenu
