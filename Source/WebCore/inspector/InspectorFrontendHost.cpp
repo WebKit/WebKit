@@ -421,12 +421,8 @@ String InspectorFrontendHost::platform() const
 
 String InspectorFrontendHost::platformVersionName() const
 {
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-    return "monterey"_s;
-#elif PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
-    return "big-sur"_s;
-#elif PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
-    return "catalina"_s;
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 260000
+    return "tahoe"_s;
 #else
     return emptyString();
 #endif

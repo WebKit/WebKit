@@ -79,10 +79,6 @@
     height: 22px;
 }
 
-.navigation-bar > .item.find-banner.console > input[type="search"]::-webkit-textfield-decoration-container {
-    margin-inline-start: 4px;
-}
-
 .navigation-bar > .item.find-banner.console > input[type="search"]:focus,
 .navigation-bar > .item.find-banner.console > input[type="search"]:focus ~ button,
 .navigation-bar > .item.find-banner.console > input[type="search"]:not(:placeholder-shown),
