@@ -1253,6 +1253,13 @@ bool PluginView::isPresentingLockedContent() const
     return m_isInitialized && m_plugin->isLocked();
 }
 
+void PluginView::effectiveAppearanceDidChange()
+{
+    if (!m_isInitialized)
+        return;
+    m_plugin->effectiveAppearanceDidChange();
+}
+
 } // namespace WebKit
 
 #endif

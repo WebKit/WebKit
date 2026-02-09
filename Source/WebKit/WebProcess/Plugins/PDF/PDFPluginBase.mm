@@ -82,10 +82,12 @@
 #import <WebCore/RenderEmbeddedObject.h>
 #import <WebCore/RenderLayer.h>
 #import <WebCore/RenderLayerScrollableArea.h>
+#import <WebCore/RenderTheme.h>
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/ScrollAnimator.h>
 #import <WebCore/Settings.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/StyleColorOptions.h>
 #import <WebCore/VoidCallback.h>
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/StdLibExtras.h>
@@ -1631,16 +1633,18 @@ String PDFPluginBase::annotationStyle() const
     "}"_s;
 }
 
-Color PDFPluginBase::pluginBackgroundColor()
+Color PDFPluginBase::pluginBackgroundColor() const
 {
-    static NeverDestroyed color = roundAndClampToSRGBALossy(RetainPtr {
 #if HAVE(LIQUID_GLASS)
-        [CocoaColor whiteColor].CGColor
+    RefPtr element = m_element.get();
+    OptionSet<WebCore::StyleColorOptions> options;
+    if (RefPtr element = m_element.get())
+        options = element->checkedRenderer()->styleColorOptions();
+    return WebCore::RenderTheme::singleton().systemColor(CSSValueAppleSystemBackground, WTF::move(options));
 #else
-        [CocoaColor grayColor].CGColor
-#endif
-    }.get());
+    static NeverDestroyed color = roundAndClampToSRGBALossy(RetainPtr { [CocoaColor grayColor].CGColor }.get());
     return color.get();
+#endif
 }
 
 unsigned PDFPluginBase::countFindMatches(const String& target, WebCore::FindOptions options, unsigned maxMatchCount)

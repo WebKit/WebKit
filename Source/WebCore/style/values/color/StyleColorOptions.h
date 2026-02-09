@@ -36,6 +36,6 @@ enum class StyleColorOptions : uint8_t {
     UseElevatedUserInterfaceLevel   = 1 << 3
 };
 
-WTF::TextStream& operator<<(WTF::TextStream&, StyleColorOptions);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, StyleColorOptions);
 
 } // namespace WebCore

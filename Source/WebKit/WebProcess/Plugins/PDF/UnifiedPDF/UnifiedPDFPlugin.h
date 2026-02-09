@@ -238,6 +238,8 @@ public:
 
     bool hasSelection() const;
 
+    void effectiveAppearanceDidChange() final;
+
 private:
     explicit UnifiedPDFPlugin(WebCore::HTMLPlugInElement&);
     bool isUnifiedPDFPlugin() const override { return true; }

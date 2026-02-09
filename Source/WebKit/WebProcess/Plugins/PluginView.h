@@ -171,6 +171,8 @@ public:
 
     bool isPresentingLockedContent() const;
 
+    void effectiveAppearanceDidChange();
+
 private:
     PluginView(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader, WebPage&);
     virtual ~PluginView();

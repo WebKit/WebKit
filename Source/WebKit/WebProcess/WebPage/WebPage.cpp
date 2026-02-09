@@ -6423,6 +6423,11 @@ void WebPage::setUseColorAppearance(bool useDarkAppearance, bool useElevatedUser
 
     if (RefPtr inspectorUI = m_inspectorUI)
         inspectorUI->effectiveAppearanceDidChange(useDarkAppearance ? WebCore::InspectorFrontendClient::Appearance::Dark : WebCore::InspectorFrontendClient::Appearance::Light);
+
+#if ENABLE(PDF_PLUGIN)
+    for (Ref pluginView : m_pluginViews)
+        pluginView->effectiveAppearanceDidChange();
+#endif
 }
 
 void WebPage::swipeAnimationDidStart()

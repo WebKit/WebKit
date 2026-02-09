@@ -115,6 +115,7 @@ class Color;
 #endif // PLATFORM(IOS_FAMILY)
 
 - (CALayer *)firstLayerWithName:(NSString *)layerName;
+- (CALayer *)firstLayerWithNameContaining:(NSString *)layerName;
 - (void)forEachCALayer:(IterationStatus(^)(CALayer *))visitor;
 
 @property (nonatomic, readonly) CGImageRef snapshotAfterScreenUpdates;

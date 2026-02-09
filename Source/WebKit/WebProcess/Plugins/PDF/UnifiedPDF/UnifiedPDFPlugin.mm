@@ -4859,6 +4859,15 @@ RefPtr<WebCore::GraphicsLayer> UnifiedPDFPlugin::protectedOverflowControlsContai
     return m_overflowControlsContainer;
 }
 
+void UnifiedPDFPlugin::effectiveAppearanceDidChange()
+{
+    if (!isFullMainFramePlugin())
+        return;
+
+    if (RefPtr rootLayer = m_rootLayer)
+        rootLayer->setBackgroundColor(pluginBackgroundColor());
+}
+
 ViewportConfiguration::Parameters UnifiedPDFPlugin::viewportParameters()
 {
     ViewportConfiguration::Parameters parameters;
