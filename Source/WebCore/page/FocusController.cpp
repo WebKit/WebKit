@@ -959,7 +959,8 @@ Element* FocusController::previousFocusableElementOrScopeOwner(const FocusNaviga
     RefPtr<Node> last = nullptr;
     for (RefPtr node = scope.lastNodeInScope(); node; node = scope.lastChildInScope(*node))
         last = node;
-    ASSERT(last);
+    if (!last)
+        return nullptr;
 
     // First try to find the last node in the scope that comes before start and has the same tabindex as start.
     // If start is null, find the last node in the scope with a tabindex of 0.
