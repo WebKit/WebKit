@@ -5069,6 +5069,31 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
         return true;
     }
 
+    case RegExpHasIndicesIntrinsic:
+    case RegExpGlobalIntrinsic:
+    case RegExpIgnoreCaseIntrinsic:
+    case RegExpMultilineIntrinsic:
+    case RegExpDotAllIntrinsic:
+    case RegExpUnicodeIntrinsic:
+    case RegExpUnicodeSetsIntrinsic:
+    case RegExpStickyIntrinsic: {
+        Yarr::Flags flag;
+        switch (variant.intrinsic()) {
+        case RegExpHasIndicesIntrinsic: flag = Yarr::Flags::HasIndices; break;
+        case RegExpGlobalIntrinsic: flag = Yarr::Flags::Global; break;
+        case RegExpIgnoreCaseIntrinsic: flag = Yarr::Flags::IgnoreCase; break;
+        case RegExpMultilineIntrinsic: flag = Yarr::Flags::Multiline; break;
+        case RegExpDotAllIntrinsic: flag = Yarr::Flags::DotAll; break;
+        case RegExpUnicodeIntrinsic: flag = Yarr::Flags::Unicode; break;
+        case RegExpUnicodeSetsIntrinsic: flag = Yarr::Flags::UnicodeSets; break;
+        case RegExpStickyIntrinsic: flag = Yarr::Flags::Sticky; break;
+        default: RELEASE_ASSERT_NOT_REACHED(); flag = Yarr::Flags::Global; break;
+        }
+        insertChecks();
+        set(result, addToGraph(GetRegExpFlag, OpInfo(flag), Edge(thisNode, RegExpObjectUse)));
+        return true;
+    }
+
     default:
         return false;
     }

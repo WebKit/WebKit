@@ -1684,6 +1684,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setTypeForNode(node, SpecInt32Only);
         break;
 
+    case GetRegExpFlag:
+        setTypeForNode(node, SpecBoolean);
+        break;
+
     case MapGet:
         clearForNode(node);
         break;

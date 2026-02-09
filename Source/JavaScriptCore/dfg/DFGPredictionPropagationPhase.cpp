@@ -1140,6 +1140,7 @@ private:
             break;
 
         case MapIteratorNext:
+        case GetRegExpFlag:
             setPrediction(SpecBoolean);
             break;
 

@@ -57,6 +57,7 @@
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "MegamorphicCache.h"
 #include "ModuleNamespaceAccessCase.h"
+#include "RegExpObject.h"
 #include "ScopedArguments.h"
 #include "ScratchRegisterAllocator.h"
 #include "SharedJITStubSet.h"
@@ -4288,6 +4289,15 @@ bool InlineCacheCompiler::canEmitIntrinsicGetter(StructureStubInfo& stubInfo, JS
         return structure->typeInfo().type() == JSSetType;
     case JSMapSizeIntrinsic:
         return structure->typeInfo().type() == JSMapType;
+    case RegExpHasIndicesIntrinsic:
+    case RegExpGlobalIntrinsic:
+    case RegExpIgnoreCaseIntrinsic:
+    case RegExpMultilineIntrinsic:
+    case RegExpDotAllIntrinsic:
+    case RegExpUnicodeIntrinsic:
+    case RegExpUnicodeSetsIntrinsic:
+    case RegExpStickyIntrinsic:
+        return structure->typeInfo().type() == RegExpObjectType;
     default:
         return false;
     }
@@ -4470,6 +4480,43 @@ void InlineCacheCompiler::emitIntrinsicGetter(IntrinsicGetterAccessCase& accessC
         jit.load32(CCallHelpers::Address(scratchGPR, JSSet::Helper::offsetOfAliveEntryCount()), valueGPR);
         nullCase.link(&jit);
         jit.boxInt32(valueGPR, valueRegs);
+        succeed();
+        return;
+    }
+
+    case RegExpHasIndicesIntrinsic:
+    case RegExpGlobalIntrinsic:
+    case RegExpIgnoreCaseIntrinsic:
+    case RegExpMultilineIntrinsic:
+    case RegExpDotAllIntrinsic:
+    case RegExpUnicodeIntrinsic:
+    case RegExpUnicodeSetsIntrinsic:
+    case RegExpStickyIntrinsic: {
+        GPRReg scratchGPR = m_scratchGPR;
+
+        Yarr::Flags flag;
+        switch (accessCase.intrinsic()) {
+        case RegExpHasIndicesIntrinsic: flag = Yarr::Flags::HasIndices; break;
+        case RegExpGlobalIntrinsic: flag = Yarr::Flags::Global; break;
+        case RegExpIgnoreCaseIntrinsic: flag = Yarr::Flags::IgnoreCase; break;
+        case RegExpMultilineIntrinsic: flag = Yarr::Flags::Multiline; break;
+        case RegExpDotAllIntrinsic: flag = Yarr::Flags::DotAll; break;
+        case RegExpUnicodeIntrinsic: flag = Yarr::Flags::Unicode; break;
+        case RegExpUnicodeSetsIntrinsic: flag = Yarr::Flags::UnicodeSets; break;
+        case RegExpStickyIntrinsic: flag = Yarr::Flags::Sticky; break;
+        default: RELEASE_ASSERT_NOT_REACHED(); flag = Yarr::Flags::Global; break;
+        }
+
+        // Load RegExp* from RegExpObject (mask off low 2 flag bits).
+        jit.loadPtr(CCallHelpers::Address(baseGPR, RegExpObject::offsetOfRegExpAndFlags()), scratchGPR);
+        jit.andPtr(CCallHelpers::TrustedImmPtr(RegExpObject::regExpMask), scratchGPR);
+
+        // Load m_flags (uint16_t) from RegExp.
+        jit.load16(CCallHelpers::Address(scratchGPR, RegExp::offsetOfFlags()), scratchGPR);
+
+        // Test flag bit and box as boolean.
+        jit.test32(CCallHelpers::NonZero, scratchGPR, CCallHelpers::TrustedImm32(static_cast<uint16_t>(flag)), valueGPR);
+        jit.boxBoolean(valueGPR, valueRegs);
         succeed();
         return;
     }

@@ -55,6 +55,8 @@ public:
     JS_EXPORT_PRIVATE static void dumpToStream(const JSCell*, PrintStream&);
     void dumpSimpleName(PrintStream&) const;
 
+    static constexpr ptrdiff_t offsetOfFlags() { return OBJECT_OFFSETOF(RegExp, m_flags); }
+
     OptionSet<Yarr::Flags> flags() const { return m_flags; }
 #define JSC_DEFINE_REGEXP_FLAG_ACCESSOR(key, name, lowerCaseName, index) bool lowerCaseName() const { return m_flags.contains(Yarr::Flags::name); }
     JSC_REGEXP_FLAGS(JSC_DEFINE_REGEXP_FLAG_ACCESSOR)

@@ -3105,6 +3105,11 @@ private:
             break;
         }
 
+        case GetRegExpFlag: {
+            fixEdge<RegExpObjectUse>(node->child1());
+            break;
+        }
+
         case SetAdd: {
             fixEdge<SetObjectUse>(node->child1());
             fixEdge<Int32Use>(node->child3());

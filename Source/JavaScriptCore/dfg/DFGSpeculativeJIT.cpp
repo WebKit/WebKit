@@ -16017,6 +16017,31 @@ void SpeculativeJIT::compileMapOrSetSize(Node* node)
     strictInt32Result(resultGPR, node);
 }
 
+void SpeculativeJIT::compileGetRegExpFlag(Node* node)
+{
+    SpeculateCellOperand regExpObject(this, node->child1());
+    GPRTemporary regExp(this);
+    GPRTemporary result(this);
+
+    GPRReg regExpObjectGPR = regExpObject.gpr();
+    GPRReg regExpGPR = regExp.gpr();
+    GPRReg resultGPR = result.gpr();
+
+    speculateRegExpObject(node->child1(), regExpObjectGPR);
+
+    // Load RegExp* from RegExpObject (mask off low 2 flag bits).
+    loadPtr(Address(regExpObjectGPR, RegExpObject::offsetOfRegExpAndFlags()), regExpGPR);
+    andPtr(TrustedImmPtr(RegExpObject::regExpMask), regExpGPR);
+
+    // Load m_flags from RegExp.
+    load16(Address(regExpGPR, RegExp::offsetOfFlags()), resultGPR);
+
+    // Test specific flag bit and produce boolean result.
+    Yarr::Flags flag = node->regExpFlag();
+    test32(NonZero, resultGPR, TrustedImm32(static_cast<uint16_t>(flag)), resultGPR);
+    unblessedBooleanResult(resultGPR, node);
+}
+
 void SpeculativeJIT::compileSetAdd(Node* node)
 {
     SpeculateCellOperand set(this, node->child1());

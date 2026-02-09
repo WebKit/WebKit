@@ -224,6 +224,14 @@ namespace JSC {
     macro(WebAssemblyInstanceExportsIntrinsic) \
     macro(JSSetSizeIntrinsic) \
     macro(JSMapSizeIntrinsic) \
+    macro(RegExpHasIndicesIntrinsic) \
+    macro(RegExpGlobalIntrinsic) \
+    macro(RegExpIgnoreCaseIntrinsic) \
+    macro(RegExpMultilineIntrinsic) \
+    macro(RegExpDotAllIntrinsic) \
+    macro(RegExpUnicodeIntrinsic) \
+    macro(RegExpUnicodeSetsIntrinsic) \
+    macro(RegExpStickyIntrinsic) \
     \
     /* Debugging intrinsics. These are meant to be used as testing hacks within jsc.cpp and should never be exposed to users.*/ \
     macro(DFGTrueIntrinsic) \

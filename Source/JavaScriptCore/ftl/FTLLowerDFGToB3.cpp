@@ -1660,6 +1660,9 @@ private:
         case MapOrSetSize:
             compileMapOrSetSize();
             break;
+        case GetRegExpFlag:
+            compileGetRegExpFlag();
+            break;
         case SetAdd:
             compileSetAdd();
             break;
@@ -15847,6 +15850,23 @@ IGNORE_CLANG_WARNINGS_END
 
         m_out.appendTo(continuation, lastNext);
         setInt32(m_out.phi(Int32, noStorageResult, hasStorageResult));
+    }
+
+    void compileGetRegExpFlag()
+    {
+        LValue regExpObject = lowRegExpObject(m_node->child1());
+
+        // Load RegExp* from RegExpObject (mask off low 2 flag bits).
+        LValue regExpAndFlags = m_out.loadPtr(regExpObject, m_heaps.RegExpObject_regExpAndFlags);
+        LValue regExp = m_out.bitAnd(regExpAndFlags, m_out.constIntPtr(RegExpObject::regExpMask));
+
+        // Load m_flags (uint16_t) from RegExp.
+        LValue flags = m_out.load16ZeroExt32(regExp, m_heaps.RegExp_flags);
+
+        // Test specific flag bit.
+        Yarr::Flags flag = m_node->regExpFlag();
+        LValue test = m_out.bitAnd(flags, m_out.constInt32(static_cast<uint16_t>(flag)));
+        setBoolean(m_out.notZero32(test));
     }
 
     void compileSetAdd()

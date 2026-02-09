@@ -469,14 +469,13 @@ std::pair<UsedInlineSizes, UsedBlockSizes> GridLayout::layoutGridItems(const Pla
     auto& formattingContext = this->formattingContext();
     auto& integrationUtils = formattingContext.integrationUtils();
     for (auto [gridItemIndex, gridItem] : WTF::indexedRange(placedGridItems)) {
-        auto& gridItemBoxGeometry = formattingContext.geometryForGridItem(gridItem.layoutBox());
         auto& gridAreaInlineSize = gridAreaSizes.inlineSizes[gridItemIndex];
         auto& gridAreaBlockSize = gridAreaSizes.blockSizes[gridItemIndex];
 
-        auto usedInlineSizeForGridItem = GridLayoutUtils::usedInlineSizeForGridItem(gridItem, gridItemBoxGeometry.horizontalBorderAndPadding(), gridAreaInlineSize);
+        auto usedInlineSizeForGridItem = GridLayoutUtils::usedInlineSizeForGridItem(gridItem, gridItem.usedInlineBorderAndPadding(), gridAreaInlineSize);
         usedInlineSizes.append(usedInlineSizeForGridItem);
 
-        auto usedBlockSizeForGridItem = GridLayoutUtils::usedBlockSizeForGridItem(gridItem, gridItemBoxGeometry.verticalBorderAndPadding(), gridAreaBlockSize);
+        auto usedBlockSizeForGridItem = GridLayoutUtils::usedBlockSizeForGridItem(gridItem, gridItem.usedBlockBorderAndPadding(), gridAreaBlockSize);
         usedBlockSizes.append(usedBlockSizeForGridItem);
 
         auto& layoutBox = gridItem.layoutBox();

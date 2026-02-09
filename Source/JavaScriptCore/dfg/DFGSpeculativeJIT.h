@@ -1499,6 +1499,7 @@ public:
     void compileMapIterationEntryKey(Node*);
     void compileMapIterationEntryValue(Node*);
     void compileMapOrSetSize(Node*);
+    void compileGetRegExpFlag(Node*);
     void compileSetAdd(Node*);
     void compileMapSet(Node*);
     void compileMapOrSetDelete(Node*);

@@ -2420,6 +2420,12 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
     }
 
+    case GetRegExpFlag: {
+        read(MiscFields);
+        def(HeapLocation(GetRegExpFlagLoc, MiscFields, node->child1(), std::bit_cast<void*>(static_cast<uintptr_t>(node->regExpFlag()))), LazyNode(node));
+        return;
+    }
+
     case SetAdd: {
         Edge& mapEdge = node->child1();
         Edge& keyEdge = node->child2();

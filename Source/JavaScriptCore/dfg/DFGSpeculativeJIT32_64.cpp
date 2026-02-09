@@ -3963,6 +3963,10 @@ void SpeculativeJIT::compile(Node* node)
         compileMapOrSetSize(node);
         break;
 
+    case GetRegExpFlag:
+        compileGetRegExpFlag(node);
+        break;
+
     case SetAdd:
         compileSetAdd(node);
         break;

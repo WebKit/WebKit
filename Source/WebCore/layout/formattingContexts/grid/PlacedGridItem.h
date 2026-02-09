@@ -51,7 +51,8 @@ struct ComputedSizes {
 class PlacedGridItem {
 public:
     PlacedGridItem(const UnplacedGridItem&, GridAreaLines, const ComputedSizes& inlineAxisSizes, const ComputedSizes& blockAxisSizes,
-    const StyleSelfAlignmentData& inlineAxisAlignment, const StyleSelfAlignmentData& blockAxisAlignment, const Style::ZoomFactor& usedZoom);
+        const LayoutUnit& usedInlineBorderAndPadding, const LayoutUnit& usedBlockBorderAndPadding, const StyleSelfAlignmentData& inlineAxisAlignment,
+        const StyleSelfAlignmentData& blockAxisAlignment, const Style::ZoomFactor& usedZoom);
 
     const ComputedSizes& inlineAxisSizes() const { return m_inlineAxisSizes; }
     const ComputedSizes& blockAxisSizes() const { return m_blockAxisSizes; }
@@ -64,6 +65,9 @@ public:
     const ElementBox& layoutBox() const { return m_layoutBox; }
     const StyleSelfAlignmentData& inlineAxisAlignment() const { return m_inlineAxisAlignment; }
     const StyleSelfAlignmentData& blockAxisAlignment() const { return m_blockAxisAlignment; }
+
+    LayoutUnit usedInlineBorderAndPadding() const { return m_usedInlineBorderAndPadding; }
+    LayoutUnit usedBlockBorderAndPadding() const { return m_usedBlockBorderAndPadding; }
 
     // FIXME: Add support for grid item's with preferred aspect ratios.
     bool hasPreferredAspectRatio() const { return false; }
@@ -79,12 +83,15 @@ private:
     const ComputedSizes m_inlineAxisSizes;
     const ComputedSizes m_blockAxisSizes;
 
+    const LayoutUnit m_usedInlineBorderAndPadding;
+    const LayoutUnit m_usedBlockBorderAndPadding;
+
     const StyleSelfAlignmentData m_inlineAxisAlignment;
     const StyleSelfAlignmentData m_blockAxisAlignment;
 
     const Style::ZoomFactor m_usedZoom { 1.0f };
 
-    GridAreaLines m_gridAreaLines;
+    const GridAreaLines m_gridAreaLines;
 };
 
 } // namespace Layout

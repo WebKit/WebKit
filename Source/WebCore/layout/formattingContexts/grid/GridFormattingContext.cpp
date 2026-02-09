@@ -244,7 +244,10 @@ PlacedGridItems GridFormattingContext::constructPlacedGridItems(const GridAreas&
             gridItemStyle->marginBottom()
         };
 
-        placedGridItems.constructAndAppend(unplacedGridItem, gridAreaLines, inlineAxisSizes, blockAxisSizes, usedJustifySelf, usedAlignSelf, gridItemStyle->usedZoomForLength());
+        auto& boxGeometry = geometryForGridItem(unplacedGridItem.m_layoutBox);
+        placedGridItems.constructAndAppend(unplacedGridItem, gridAreaLines, inlineAxisSizes, blockAxisSizes,
+            boxGeometry.horizontalBorderAndPadding(), boxGeometry.verticalBorderAndPadding(), usedJustifySelf,
+            usedAlignSelf, gridItemStyle->usedZoomForLength());
     }
     return placedGridItems;
 }

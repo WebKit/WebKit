@@ -61,6 +61,7 @@
 #include "SpeculatedType.h"
 #include "TypeLocation.h"
 #include "ValueProfile.h"
+#include "YarrFlags.h"
 #include <type_traits>
 #include <wtf/FastMalloc.h>
 #include <wtf/ListDump.h>
@@ -1889,6 +1890,17 @@ public:
     {
         ASSERT(isEntrySwitch());
         return m_opInfo.as<EntrySwitchData*>();
+    }
+
+    bool hasRegExpFlag()
+    {
+        return op() == GetRegExpFlag;
+    }
+
+    Yarr::Flags regExpFlag()
+    {
+        ASSERT(hasRegExpFlag());
+        return m_opInfo.as<Yarr::Flags>();
     }
 
     bool hasIntrinsic()
