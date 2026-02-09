@@ -276,4 +276,11 @@ inline void collectChildNodes(Node& node, NodeVector& children)
         children.append(*child);
 }
 
+inline Node* Node::previousSibling() const
+{
+    if (hasStateFlag(StateFlag::IsFirstChild))
+        return nullptr;
+    return m_previousSibling;
+}
+
 } // namespace WebCore

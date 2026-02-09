@@ -42,10 +42,9 @@ public:
 
     Node* firstChild() const { return m_firstChild; }
     static constexpr ptrdiff_t firstChildMemoryOffset() { return OBJECT_OFFSETOF(ContainerNode, m_firstChild); }
-    Node* lastChild() const { return m_lastChild; }
-    static constexpr ptrdiff_t lastChildMemoryOffset() { return OBJECT_OFFSETOF(ContainerNode, m_lastChild); }
+    Node* lastChild() const { return m_firstChild ? m_firstChild->lastChildForParent() : nullptr; }
     bool hasChildNodes() const { return m_firstChild; }
-    bool hasOneChild() const { return m_firstChild && m_firstChild == m_lastChild; }
+    bool hasOneChild() const { return m_firstChild && m_firstChild == m_firstChild->lastChildForParent(); }
 
     bool directChildNeedsStyleRecalc() const { return hasStyleFlag(NodeStyleFlag::DirectChildNeedsStyleResolution); }
     void setDirectChildNeedsStyleRecalc() { setStyleFlag(NodeStyleFlag::DirectChildNeedsStyleResolution); }
@@ -156,8 +155,8 @@ protected:
     friend void removeDetachedChildrenInContainer(ContainerNode&);
 
     void removeDetachedChildren();
-    void setFirstChild(Node* child) { m_firstChild = child; }
-    void setLastChild(Node* child) { m_lastChild = child; }
+    inline void updateFirstChild(Node*);
+    inline void updateLastChild(Node*);
 
     HTMLCollection* cachedHTMLCollection(CollectionType);
 
@@ -187,7 +186,6 @@ private:
     bool isContainerNode() const = delete;
 
     CheckedPtr<Node> m_firstChild;
-    CheckedPtr<Node> m_lastChild;
 };
 
 inline ContainerNode::ContainerNode(Document& document, NodeType type, OptionSet<TypeFlag> typeFlags)

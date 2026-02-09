@@ -2699,6 +2699,9 @@ inline void SelectorCodeGenerator::generateWalkToNextAdjacentElement(Assembler::
 inline void SelectorCodeGenerator::generateWalkToPreviousAdjacentElement(Assembler::JumpList& failureCases, Assembler::RegisterID workRegister)
 {
     Assembler::Label loopStart = m_assembler.label();
+
+    failureCases.append(m_assembler.branchTest32(Assembler::NonZero, Assembler::Address(workRegister, Node::stateFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsFirstChild())));
+
     m_assembler.loadPtr(Assembler::Address(workRegister, Node::previousSiblingMemoryOffset()), workRegister);
     failureCases.append(m_assembler.branchTestPtr(Assembler::Zero, workRegister));
     DOMJIT::branchTestIsElementFlagOnNode(m_assembler, Assembler::Zero, workRegister).linkTo(loopStart, &m_assembler);

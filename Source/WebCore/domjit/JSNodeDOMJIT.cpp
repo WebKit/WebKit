@@ -93,8 +93,36 @@ Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileNodeFirstChildAttribute()
 
 Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileNodeLastChildAttribute()
 {
-    SUPPRESS_MEMORY_UNSAFE_CAST auto containerNodeOffset = CAST_OFFSET(Node*, ContainerNode*);
-    auto snippet = createCallDOMGetterForOffsetAccess<Node>(containerNodeOffset + ContainerNode::lastChildMemoryOffset(), DOMJIT::operationToJSNode, IsContainerGuardRequirement::Required);
+    Ref<JSC::DOMJIT::CallDOMGetterSnippet> snippet = JSC::DOMJIT::CallDOMGetterSnippet::create();
+    snippet->numGPScratchRegisters = 1;
+    snippet->setGenerator([=](CCallHelpers& jit, JSC::SnippetParams& params) {
+        JSValueRegs result = params[0].jsValueRegs();
+        GPRReg node = params[1].gpr();
+        GPRReg globalObject = params[2].gpr();
+        GPRReg scratch = params.gpScratch(0);
+        JSValue globalObjectValue = params[2].value();
+
+        CCallHelpers::JumpList nullCases;
+
+        jit.loadPtr(CCallHelpers::Address(node, JSNode::offsetOfWrapped()), scratch);
+        static_assert(!JSNode::hasCustomPtrTraits(), "Optimized JSNode wrapper access should not be using RawPtrTraits");
+
+        nullCases.append(jit.branchTest16(CCallHelpers::Zero, CCallHelpers::Address(scratch, Node::typeFlagsMemoryOffset()), CCallHelpers::TrustedImm32(Node::flagIsContainer())));
+
+        RELEASE_ASSERT_NOT_CAST_OFFSET(Node*, ContainerNode*);
+        jit.loadPtr(CCallHelpers::Address(scratch, ContainerNode::firstChildMemoryOffset()), scratch);
+        nullCases.append(jit.branchTestPtr(CCallHelpers::Zero, scratch));
+
+        jit.loadPtr(CCallHelpers::Address(scratch, Node::previousSiblingMemoryOffset()), scratch);
+
+        DOMJIT::toWrapper<Node>(jit, params, scratch, globalObject, result, DOMJIT::operationToJSNode, globalObjectValue);
+        CCallHelpers::Jump done = jit.jump();
+
+        nullCases.link(&jit);
+        jit.moveValue(jsNull(), result);
+        done.link(&jit);
+        return CCallHelpers::JumpList();
+    });
     snippet->effect = JSC::DOMJIT::Effect::forDef(DOMJIT::AbstractHeapRepository::Node_lastChild);
     return snippet;
 }
@@ -108,7 +136,36 @@ Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileNodeNextSiblingAttribute()
 
 Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileNodePreviousSiblingAttribute()
 {
-    auto snippet = createCallDOMGetterForOffsetAccess<Node>(Node::previousSiblingMemoryOffset(), DOMJIT::operationToJSNode, IsContainerGuardRequirement::NotRequired);
+    Ref<JSC::DOMJIT::CallDOMGetterSnippet> snippet = JSC::DOMJIT::CallDOMGetterSnippet::create();
+    snippet->numGPScratchRegisters = 2;
+    snippet->setGenerator([=](CCallHelpers& jit, JSC::SnippetParams& params) {
+        JSValueRegs result = params[0].jsValueRegs();
+        GPRReg node = params[1].gpr();
+        GPRReg globalObject = params[2].gpr();
+        GPRReg scratch = params.gpScratch(0);
+        GPRReg flagsReg = params.gpScratch(1);
+        JSValue globalObjectValue = params[2].value();
+
+        CCallHelpers::JumpList nullCases;
+
+        jit.loadPtr(CCallHelpers::Address(node, JSNode::offsetOfWrapped()), scratch);
+        static_assert(!JSNode::hasCustomPtrTraits(), "Optimized JSNode wrapper access should not be using RawPtrTraits");
+
+        jit.load32(CCallHelpers::Address(scratch, Node::stateFlagsMemoryOffset()), flagsReg);
+        jit.loadPtr(CCallHelpers::Address(scratch, Node::previousSiblingMemoryOffset()), scratch);
+
+        jit.moveConditionallyTest32(CCallHelpers::NonZero, flagsReg, CCallHelpers::TrustedImm32(Node::flagIsFirstChild()), CCallHelpers::TrustedImm32(0), scratch, scratch);
+
+        nullCases.append(jit.branchTestPtr(CCallHelpers::Zero, scratch));
+
+        DOMJIT::toWrapper<Node>(jit, params, scratch, globalObject, result, DOMJIT::operationToJSNode, globalObjectValue);
+        CCallHelpers::Jump done = jit.jump();
+
+        nullCases.link(&jit);
+        jit.moveValue(jsNull(), result);
+        done.link(&jit);
+        return CCallHelpers::JumpList();
+    });
     snippet->effect = JSC::DOMJIT::Effect::forDef(DOMJIT::AbstractHeapRepository::Node_previousSibling);
     return snippet;
 }

@@ -170,7 +170,12 @@ public:
     ContainerNode* parentNode() const;
     static constexpr ptrdiff_t parentNodeMemoryOffset() { return OBJECT_OFFSETOF(Node, m_parentNode); }
     inline Element* parentElement() const;
-    Node* previousSibling() const { return m_previousSibling; }
+    inline Node* previousSibling() const;
+    Node* lastChildForParent() const
+    {
+        ASSERT(hasStateFlag(StateFlag::IsFirstChild));
+        return m_previousSibling;
+    }
     static constexpr ptrdiff_t previousSiblingMemoryOffset() { return OBJECT_OFFSETOF(Node, m_previousSibling); }
     Node* nextSibling() const { return m_next; }
     static constexpr ptrdiff_t nextSiblingMemoryOffset() { return OBJECT_OFFSETOF(Node, m_next); }
@@ -375,6 +380,9 @@ public:
 
     bool isUserActionElement() const { return hasStateFlag(StateFlag::IsUserActionElement); }
     void setUserActionElement(bool flag) { setStateFlag(StateFlag::IsUserActionElement, flag); }
+
+    bool isFirstChild() const { return hasStateFlag(StateFlag::IsFirstChild); }
+    void setIsFirstChild(bool flag) { setStateFlag(StateFlag::IsFirstChild, flag); }
 
     bool inRenderedDocument() const;
     bool needsStyleRecalc() const { return styleValidity() != Style::Validity::Valid || hasInvalidRenderer(); }
@@ -622,6 +630,7 @@ public:
     static auto flagIsHTML() { return enumToUnderlyingType(TypeFlag::IsHTMLElement); }
     static auto flagIsLink() { return enumToUnderlyingType(StateFlag::IsLink); }
     static auto flagIsParsingChildren() { return enumToUnderlyingType(StateFlag::IsParsingChildren); }
+    static auto flagIsFirstChild() { return enumToUnderlyingType(StateFlag::IsFirstChild); }
 #endif // ENABLE(JIT)
 
 #if ASSERT_ENABLED
@@ -683,8 +692,9 @@ protected:
         InLargestContentfulPaintTextContentSet = 1 << 21,
         DidMutateSubtreeAfterSetInnerHTML = 1 << 22,
         WasParsedWithFastPath = 1 << 23,
-        HasShadowRoot = 1 << 24
-        // 7 bits free.
+        HasShadowRoot = 1 << 24,
+        IsFirstChild = 1 << 25
+        // 6 bits free.
     };
 
     enum class TabIndexState : uint8_t {

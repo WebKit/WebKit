@@ -31,6 +31,7 @@
 #include "CommonAtomStrings.h"
 #include "CommonVM.h"
 #include "ContainerNodeAlgorithms.h"
+#include "ContainerNodeInlines.h"
 #include "DocumentInlines.h"
 #include "DocumentQuirks.h"
 #include "Editor.h"
@@ -77,7 +78,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ContainerNode);
 
 struct SameSizeAsContainerNode : public Node {
     void* firstChild;
-    void* lastChild;
 };
 
 static_assert(sizeof(ContainerNode) == sizeof(SameSizeAsContainerNode), "ContainerNode should stay small");
@@ -612,18 +612,20 @@ void ContainerNode::insertBeforeCommon(Node& nextChild, Node& newChild)
     ASSERT(!newChild.isShadowRoot());
 
     RefPtr previousSibling = nextChild.previousSibling();
-    ASSERT(m_lastChild != previousSibling.get());
-    nextChild.setPreviousSibling(&newChild);
     if (previousSibling) {
         ASSERT(m_firstChild != &nextChild);
         ASSERT(previousSibling->nextSibling() == &nextChild);
+        nextChild.setPreviousSibling(&newChild);
         previousSibling->setNextSibling(&newChild);
+        newChild.setPreviousSibling(previousSibling.get());
     } else {
         ASSERT(m_firstChild == &nextChild);
-        m_firstChild = &newChild;
+        updateFirstChild(&newChild);
+        newChild.setIsFirstChild(true);
+        nextChild.setIsFirstChild(false);
+        nextChild.setPreviousSibling(&newChild);
     }
     newChild.setParentNode(this);
-    newChild.setPreviousSibling(previousSibling.get());
     newChild.setNextSibling(&nextChild);
 }
 
@@ -633,13 +635,15 @@ void ContainerNode::appendChildCommon(Node& child)
 
     child.setParentNode(this);
 
-    if (RefPtr lastChild = this->lastChild()) {
-        child.setPreviousSibling(lastChild.get());
-        lastChild->setNextSibling(&child);
-    } else
-        m_firstChild = &child;
+    if (RefPtr last = lastChild()) {
+        child.setPreviousSibling(last);
+        last->setNextSibling(&child);
+    } else {
+        child.setIsFirstChild(true);
+        updateFirstChild(&child);
+    }
 
-    m_lastChild = &child;
+    updateLastChild(&child);
 }
 
 void ContainerNode::parserInsertBefore(Node& newChild, Node& nextChild)
@@ -787,25 +791,26 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node& ol
     if (hasShadowRootContainingSlots()) [[unlikely]]
         shadowRoot()->willRemoveAssignedNode(oldChild);
 
-    if (nextChild) {
+    if (nextChild)
         nextChild->setPreviousSibling(previousChild);
-        oldChild.setNextSibling(nullptr);
-    } else {
-        ASSERT(m_lastChild == &oldChild);
-        m_lastChild = previousChild;
-    }
-    if (previousChild) {
+    if (previousChild)
         previousChild->setNextSibling(nextChild);
-        oldChild.setPreviousSibling(nullptr);
-    } else {
-        ASSERT(m_firstChild == &oldChild);
-        m_firstChild = nextChild;
+
+    if (m_firstChild == &oldChild) {
+        updateFirstChild(nextChild);
+        if (nextChild)
+            nextChild->setIsFirstChild(true);
     }
 
+    if (lastChild() == &oldChild)
+        updateLastChild(previousChild);
+
+    oldChild.setIsFirstChild(false);
+    oldChild.setPreviousSibling(nullptr);
+    oldChild.setNextSibling(nullptr);
+
     ASSERT(m_firstChild != &oldChild);
-    ASSERT(m_lastChild != &oldChild);
-    ASSERT(!oldChild.previousSibling());
-    ASSERT(!oldChild.nextSibling());
+    ASSERT(lastChild() != &oldChild);
     oldChild.setParentNode(nullptr);
 
     oldChild.setTreeScopeRecursively(document());

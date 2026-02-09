@@ -27,6 +27,7 @@
 #include "ContainerNodeAlgorithms.h"
 
 #include "AsyncNodeDeletionQueueInlines.h"
+#include "ContainerNodeInlines.h"
 #include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
 #include "HTMLFrameOwnerElement.h"
@@ -164,7 +165,8 @@ RemovedSubtreeResult notifyChildNodeRemoved(ContainerNode& oldParentOfRemovedTre
 
 void removeDetachedChildrenInContainer(ContainerNode& container)
 {
-    container.setLastChild(nullptr);
+    if (container.firstChild())
+        container.updateLastChild(nullptr);
 
     RefPtr<Node> next;
     for (RefPtr node = container.firstChild(); node; node = WTF::move(next)) {
@@ -173,7 +175,7 @@ void removeDetachedChildrenInContainer(ContainerNode& container)
         next = node->nextSibling();
         node->setNextSibling(nullptr);
         node->setParentNode(nullptr);
-        container.setFirstChild(next.get());
+        container.m_firstChild = next.get();
         if (next)
             next->setPreviousSibling(nullptr);
 

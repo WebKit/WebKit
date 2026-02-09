@@ -47,4 +47,17 @@ inline CheckedPtr<RenderElement> ContainerNode::checkedRenderer() const
     return renderer();
 }
 
+inline void ContainerNode::updateFirstChild(Node* child)
+{
+    if (child)
+        child->setPreviousSibling(lastChild());
+    m_firstChild = child;
+}
+
+inline void ContainerNode::updateLastChild(Node* child)
+{
+    ASSERT(m_firstChild);
+    m_firstChild->setPreviousSibling(child);
+}
+
 } // namespace WebCore

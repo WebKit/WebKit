@@ -27,6 +27,7 @@
 
 #include <WebCore/BoundaryPoint.h>
 #include <WebCore/CharacterData.h>
+#include <WebCore/ContainerNodeInlines.h>
 
 namespace WebCore {
 
