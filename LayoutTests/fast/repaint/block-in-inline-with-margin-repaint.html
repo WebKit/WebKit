@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<script src="resources/text-based-repaint.js"></script>
+<style>
+.container {
+  font-family: Ahem;
+  font-size: 20px;
+}
+.sibling {
+  margin-top: 50px;
+  height: 100px;
+  width: 100px;
+  background: blue;
+}
+</style>
+<div class=container>
+  <span>
+    <div id=change_this>some text</div>
+    <div class=sibling></div>
+  </span>
+</div>
+<script>
+function repaintTest() {
+  change_this.textContent = "some more text";
+}
+onload = runRepaintTest;
+</script>

@@ -3982,8 +3982,18 @@ bool RenderBlockFlow::layoutSimpleBlockContentInInline(MarginInfo& marginInfo)
             return false;
         }
 
-        auto logicalTop = blockRenderer->logicalTop();
-        marginInfo = layoutBlockChildFromInlineLayout(*blockRenderer, logicalTop, marginInfo).marginInfo;
+        auto borderBoxLogicalTop = blockRenderer->logicalTop();
+        auto marginBoxLogicalTop = borderBoxLogicalTop;
+
+        if (!marginInfo.canCollapseWithMarginBefore()) {
+            // Although this box is not expected to change position or size (since no self-layout is set),
+            // we treat layout as starting at the box's top margin to avoid confusion when the container performs layout on it.
+            // This logic is copied from estimateLogicalTopPosition.
+            auto marginValues = marginValuesForChild(*blockRenderer);
+            marginBoxLogicalTop -= std::max(marginInfo.positiveMargin(), marginValues.positiveMarginBefore()) - std::max(marginInfo.negativeMargin(), marginValues.negativeMarginBefore());
+        }
+
+        marginInfo = layoutBlockChildFromInlineLayout(*blockRenderer, marginBoxLogicalTop, marginInfo).marginInfo;
         auto shouldFallbackToNormalInlineLayout = [&] {
             if (logicalHeight != blockRenderer->logicalHeight())
                 return true;
@@ -3993,7 +4003,7 @@ bool RenderBlockFlow::layoutSimpleBlockContentInInline(MarginInfo& marginInfo)
         };
         if (shouldFallbackToNormalInlineLayout())
             return false;
-        blockRenderer->setLogicalTop(logicalTop);
+        blockRenderer->setLogicalTop(borderBoxLogicalTop);
     }
     inlineLayout()->updateOverflow();
     return true;

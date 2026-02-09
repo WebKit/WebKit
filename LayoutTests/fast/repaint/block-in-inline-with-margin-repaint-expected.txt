@@ -1,0 +1,6 @@
+some more text
+ (repaint rects
+  (rect 8 8 180 20)
+  (rect 8 8 784 20)
+)
+
