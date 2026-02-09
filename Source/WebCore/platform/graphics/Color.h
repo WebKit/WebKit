@@ -447,6 +447,7 @@ inline Color::~Color()
 {
     if (isOutOfLine())
         asOutOfLine().deref();
+    secureMemsetSpan(singleElementSpan(m_colorAndFlags), 0);
 }
 
 inline bool Color::isValid() const
