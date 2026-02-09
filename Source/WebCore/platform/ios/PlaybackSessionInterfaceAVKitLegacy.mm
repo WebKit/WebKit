@@ -181,7 +181,7 @@ static RetainPtr<NSArray> mediaSelectionOptions(const Vector<MediaSelectionOptio
         if (option.legibleType != MediaSelectionOption::LegibleType::Regular)
             return nil;
 #endif
-        return adoptNS([[WebAVMediaSelectionOption alloc] initWithMediaType:toAVMediaType(option.mediaType) displayName:option.displayName.createNSString().get()]);
+        return adoptNS([[WebAVMediaSelectionOption alloc] initWithMediaType:toAVMediaType(option.mediaType) displayName:option.displayName.createNSString().get() extendedLanguageTag:option.languageTag.createNSString().get()]);
     });
 }
 

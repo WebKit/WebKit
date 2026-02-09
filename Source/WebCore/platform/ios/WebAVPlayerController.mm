@@ -1142,9 +1142,12 @@ Class webAVPlayerControllerClassSingleton()
 
 @implementation WebAVMediaSelectionOption {
     RetainPtr<NSString> _localizedDisplayName;
+    RetainPtr<AVMediaType> _mediaType;
+    RetainPtr<NSString> _extendedLanguageTag;
+    RetainPtr<NSLocale> _locale;
 }
 
-- (instancetype)initWithMediaType:(AVMediaType)mediaType displayName:(NSString *)displayName
+- (instancetype)initWithMediaType:(AVMediaType)mediaType displayName:(NSString *)displayName extendedLanguageTag:(NSString *)extendedLanguageTag
 {
     self = [super init];
     if (!self)
@@ -1152,6 +1155,8 @@ Class webAVPlayerControllerClassSingleton()
 
     _mediaType = mediaType;
     _localizedDisplayName = displayName;
+    _extendedLanguageTag = extendedLanguageTag;
+    _locale = adoptNS([[NSLocale alloc] initWithLocaleIdentifier:_extendedLanguageTag.get()]);
 
     return self;
 }
@@ -1159,7 +1164,7 @@ Class webAVPlayerControllerClassSingleton()
 - (id)copyWithZone:(NSZone *)zone
 {
     RetainPtr displayName = adoptNS([_localizedDisplayName copyWithZone:zone]);
-    SUPPRESS_RETAINPTR_CTOR_ADOPT return [[WebAVMediaSelectionOption allocWithZone:zone] initWithMediaType:_mediaType displayName:displayName.get()];
+    SUPPRESS_RETAINPTR_CTOR_ADOPT return [[WebAVMediaSelectionOption allocWithZone:zone] initWithMediaType:_mediaType.get() displayName:displayName.get() extendedLanguageTag:_extendedLanguageTag.get()];
 }
 
 - (NSString *)displayName
@@ -1170,6 +1175,11 @@ Class webAVPlayerControllerClassSingleton()
 - (NSString *)localizedDisplayName
 {
     return _localizedDisplayName.get();
+}
+
+- (NSString *)mediaType
+{
+    return _mediaType.get();
 }
 
 - (NSArray<NSNumber *> *)mediaSubTypes
@@ -1195,16 +1205,12 @@ Class webAVPlayerControllerClassSingleton()
 
 - (NSString *)extendedLanguageTag
 {
-    ASSERT_NOT_REACHED();
-    WTFLogAlways("ERROR: -[WebAVMediaSelectionOption extendedLanguageTag] unimplemented");
-    return nil;
+    return _extendedLanguageTag.get();
 }
 
 - (NSLocale *)locale
 {
-    ASSERT_NOT_REACHED();
-    WTFLogAlways("ERROR: -[WebAVMediaSelectionOption locale] unimplemented");
-    return nil;
+    return _locale.get();
 }
 
 - (NSArray<AVMetadataItem *> *)commonMetadata
@@ -1279,9 +1285,7 @@ Class webAVPlayerControllerClassSingleton()
 
 - (NSString *)languageCode
 {
-    ASSERT_NOT_REACHED();
-    WTFLogAlways("ERROR: -[WebAVMediaSelectionOption languageCode] unimplemented");
-    return nil;
+    return _extendedLanguageTag.get();
 }
 
 - (AVAssetTrack *)track
