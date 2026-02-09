@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "ActiveDOMObject.h"
-#include "EventHandler.h"
-#include "EventTarget.h"
-#include "EventTargetInterfaces.h"
-#include "HistoryItem.h"
-#include "ReferrerPolicy.h"
-#include "ScriptExecutionContextIdentifier.h"
+#include <WebCore/ActiveDOMObject.h>
+#include <WebCore/EventHandler.h>
+#include <WebCore/EventTarget.h>
+#include <WebCore/EventTargetInterfaces.h>
+#include <WebCore/HistoryItem.h>
+#include <WebCore/ReferrerPolicy.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <wtf/RefCounted.h>
 
 namespace JSC {
