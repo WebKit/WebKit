@@ -1641,6 +1641,7 @@ html/InputTypeNames.cpp
 html/LabelsNodeList.cpp
 html/LazyLoadFrameObserver.cpp
 html/LazyLoadImageObserver.cpp
+html/LazyLoadMediaObserver.cpp
 html/LinkIconCollector.cpp
 html/LinkRelAttribute.cpp
 html/MediaController.cpp

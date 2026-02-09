@@ -39,6 +39,7 @@
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
 #include "JSDOMPromiseDeferred.h"
+#include "LazyLoadMediaObserver.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "Logging.h"
@@ -117,7 +118,7 @@ Ref<HTMLVideoElement> HTMLVideoElement::create(Document& document)
 
 bool HTMLVideoElement::rendererIsNeeded(const RenderStyle& style)
 {
-    return HTMLElement::rendererIsNeeded(style); 
+    return HTMLElement::rendererIsNeeded(style);
 }
 
 RenderPtr<RenderElement> HTMLVideoElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
@@ -233,7 +234,7 @@ bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreen
 {
     if (!player())
         return false;
-    
+
     if (videoFullscreenMode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) {
         if (!mediaSession().allowsPictureInPicture())
             return false;
@@ -242,7 +243,7 @@ bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreen
     }
 
     RefPtr page = document().page();
-    if (!page) 
+    if (!page)
         return false;
 
     if (!player()->supportsFullscreen())
@@ -394,7 +395,7 @@ bool HTMLVideoElement::hasAvailableVideoFrame() const
 {
     if (!player())
         return false;
-    
+
     return player()->hasVideo() && player()->hasAvailableVideoFrame();
 }
 
@@ -436,7 +437,7 @@ ExceptionOr<void> HTMLVideoElement::webkitEnterFullscreen()
     if (isFullscreen())
         return { };
 
-    // Generate an exception if this isn't called in response to a user gesture, or if the 
+    // Generate an exception if this isn't called in response to a user gesture, or if the
     // element does not support fullscreen, or the element is changing fullscreen mode.
     if (!mediaSession().fullscreenPermitted() || !supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard) || isChangingVideoFullscreenMode())
         return Exception { ExceptionCode::InvalidStateError };
@@ -860,6 +861,25 @@ ExceptionOr<void> HTMLVideoElement::enterFullscreenIgnoringPermissionsPolicy()
 {
     ignoreFullscreenPermissionPolicyOnNextCallToEnterFullscreen();
     return webkitEnterFullscreen();
+}
+
+void HTMLVideoElement::loadDeferredMedia()
+{
+    // Handle video-specific poster image loading
+    if (shouldDisplayPosterImage()) {
+        if (!m_imageLoader)
+            lazyInitialize(m_imageLoader, makeUniqueWithoutRefCountedCheck<HTMLImageLoader>(*this));
+        // Load the poster image if it was deferred
+        if (m_imageLoader->isDeferred())
+            m_imageLoader->loadDeferredImage();
+        else
+            m_imageLoader->updateFromElement();
+        if (CheckedPtr renderer = this->renderer())
+            renderer->checkedImageResource()->setCachedImage(protect(m_imageLoader->image()));
+    }
+
+    // Call base class to handle media loading
+    HTMLMediaElement::loadDeferredMedia();
 }
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)

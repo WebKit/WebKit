@@ -4530,6 +4530,20 @@ LazyImageLoadingEnabled:
     WebCore:
       default: false
 
+LazyMediaLoadingEnabled:
+  type: bool
+  status: testable
+  category: html
+  humanReadableName: "Lazy media loading"
+  humanReadableDescription: "Enable lazy loading support for video and audio elements"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 LegacyEncryptedMediaAPIEnabled:
   type: bool
   status: embedder

@@ -136,6 +136,8 @@ public:
 
     WEBCORE_EXPORT void setVideoFullscreenStandby(bool);
 
+    void loadDeferredMedia() override;
+
 #if USE(GSTREAMER)
     void enableGStreamerHolePunching() { m_enableGStreamerHolePunching = true; }
     bool isGStreamerHolePunchingEnabled() const final { return m_enableGStreamerHolePunching; }
