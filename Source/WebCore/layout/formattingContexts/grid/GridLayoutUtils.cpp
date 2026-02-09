@@ -124,7 +124,84 @@ static bool hasScrollableBlockOverflow(const PlacedGridItem&)
     return false;
 }
 
-LayoutUnit usedInlineSizeForGridItem(const PlacedGridItem& placedGridItem, LayoutUnit borderAndPadding, LayoutUnit columnsSize)
+static bool selfAlignmentCausesFitContentSizing(const ItemPosition& position)
+{
+    switch (position) {
+    case ItemPosition::Normal:
+    case ItemPosition::Stretch:
+        return false;
+    case ItemPosition::Start:
+    case ItemPosition::Legacy:
+    case ItemPosition::Baseline:
+    case ItemPosition::LastBaseline:
+    case ItemPosition::Center:
+    case ItemPosition::End:
+    case ItemPosition::SelfStart:
+    case ItemPosition::SelfEnd:
+    case ItemPosition::FlexStart:
+    case ItemPosition::FlexEnd:
+    case ItemPosition::Left:
+    case ItemPosition::Right:
+    case ItemPosition::AnchorCenter:
+        return true;
+    // Auto should have been resolved when we constructed the corresponding PlacedGridItem.
+    case ItemPosition::Auto:
+        ASSERT_NOT_REACHED();
+        return false;
+    default:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+}
+
+// https://www.w3.org/TR/css-align-3/#propdef-align-self
+// When the box’s computed width/height (as appropriate to the axis) is auto and neither of
+// its margins (in the appropriate axis) are auto, sets the box’s used size to the length
+// necessary to make its outer size as close to filling the alignment container as possible
+// while still respecting the constraints imposed by min-height/min-width/max-height/max-width.
+//
+// Also: https://www.w3.org/TR/css-sizing-4/#stretch-fit-sizing
+// Stretch-fit sizing tries to set the box’s used size to the length necessary to make its outer
+// size as close to filling the containing block as possible while still respecting the constraints
+// imposed by min-height/min-width/max-height/max-width.
+//
+// Formally, its behavior is the same as specifying an automatic size together with a self-alignment
+// property value of stretch (in the relevant axis), except that the resulting box, which can end up
+// not exactly fitting its alignment container, can be subsequently aligned by its actual
+// self-alignment property value.
+static LayoutUnit stretchFitSize(const Style::MinimumSize& computedMinimumSize, const Style::MaximumSize& computedMaximumSize, LayoutUnit availableSpace,
+    const Style::MarginEdge& marginStart, const Style::MarginEdge& marginEnd, LayoutUnit borderAndPadding, const Style::ZoomFactor& usedZoom)
+{
+    ASSERT(marginStart.isFixed() && marginEnd.isFixed());
+    ASSERT(computedMinimumSize.isFixed() && (computedMaximumSize.isFixed() || computedMaximumSize.isNone()));
+
+    auto minimumSize = LayoutUnit { computedMinimumSize.tryFixed()->resolveZoom(usedZoom) };
+    auto maximumSize = [&computedMaximumSize, &usedZoom] {
+        if (computedMaximumSize.isNone())
+            return LayoutUnit::max();
+        return LayoutUnit { computedMaximumSize.tryFixed()->resolveZoom(usedZoom) };
+    };
+
+    auto stretchedSize = availableSpace - LayoutUnit { marginStart.tryFixed()->resolveZoom(usedZoom) } - LayoutUnit { marginEnd.tryFixed()->resolveZoom(usedZoom) } - borderAndPadding;
+    return std::max(minimumSize, std::min(maximumSize(), stretchedSize));
+}
+
+// https://www.w3.org/TR/css-sizing-4/#valdef-width-fit-content
+// Essentially fit-content(stretch) i.e. min(max-content, max(min-content, stretch)).
+static LayoutUnit inlineFitContentSize(const PlacedGridItem& gridItem, LayoutUnit columnsSize, LayoutUnit borderAndPadding, const IntegrationUtils& integrationUtils)
+{
+    auto& layoutBox = gridItem.layoutBox();
+    auto minContentSize = integrationUtils.minContentWidth(layoutBox);
+    auto maxContentSize = integrationUtils.maxContentWidth(layoutBox);
+
+    auto& inlineAxisSizes = gridItem.inlineAxisSizes();
+    ASSERT(inlineAxisSizes.marginStart.isFixed() && inlineAxisSizes.marginEnd.isFixed());
+    auto& usedZoom = gridItem.usedZoom();
+    return std::min(maxContentSize, std::max(minContentSize, stretchFitSize(inlineAxisSizes.minimumSize, inlineAxisSizes.maximumSize, columnsSize,
+        inlineAxisSizes.marginStart, inlineAxisSizes.marginEnd, borderAndPadding, usedZoom)));
+}
+
+LayoutUnit usedInlineSizeForGridItem(const PlacedGridItem& placedGridItem, LayoutUnit borderAndPadding, LayoutUnit columnsSize, const IntegrationUtils& integrationUtils)
 {
     auto& inlineAxisSizes = placedGridItem.inlineAxisSizes();
     ASSERT(inlineAxisSizes.minimumSize.isFixed() && (inlineAxisSizes.maximumSize.isFixed() || inlineAxisSizes.maximumSize.isNone()));
@@ -138,29 +215,23 @@ LayoutUnit usedInlineSizeForGridItem(const PlacedGridItem& placedGridItem, Layou
         // normal:
         // If the grid item has no preferred aspect ratio, and no natural size in the relevant
         // axis (if it is a replaced element), the grid item is sized as for align-self: stretch.
-        //
-        // https://www.w3.org/TR/css-align-3/#propdef-align-self
-        //
-        // When the box’s computed width/height (as appropriate to the axis) is auto and neither of
-        // its margins (in the appropriate axis) are auto, sets the box’s used size to the length
-        // necessary to make its outer size as close to filling the alignment container as possible
-        // while still respecting the constraints imposed by min-height/min-width/max-height/max-width.
         auto& marginStart = inlineAxisSizes.marginStart;
         auto& marginEnd = inlineAxisSizes.marginEnd;
         if ((alignmentPosition == ItemPosition::Normal) && !placedGridItem.hasPreferredAspectRatio() && !placedGridItem.isReplacedElement()
             && !marginStart.isAuto() && !marginEnd.isAuto()) {
             auto& usedZoom = placedGridItem.usedZoom();
 
-            auto minimumSize = LayoutUnit { inlineAxisSizes.minimumSize.tryFixed()->resolveZoom(usedZoom) };
-            auto maximumSize = [&inlineAxisSizes, &usedZoom] {
-                auto& computedMaximumSize = inlineAxisSizes.maximumSize;
-                if (computedMaximumSize.isNone())
-                    return LayoutUnit::max();
-                return LayoutUnit { computedMaximumSize.tryFixed()->resolveZoom(usedZoom) };
-            };
-
-            auto stretchedWidth = columnsSize - LayoutUnit { marginStart.tryFixed()->resolveZoom(usedZoom) } - LayoutUnit { marginEnd.tryFixed()->resolveZoom(usedZoom) } - borderAndPadding;
-            return std::max(minimumSize, std::min(maximumSize(), stretchedWidth));
+            return stretchFitSize(inlineAxisSizes.minimumSize, inlineAxisSizes.maximumSize, columnsSize, marginStart, marginEnd, borderAndPadding, usedZoom);
+        } else if (selfAlignmentCausesFitContentSizing(alignmentPosition)) {
+            // all other values
+            // Size the item as fit-content.
+            //
+            // NOTE: The table in 6.2 shows that replaced elements are just the natural size.
+            if (placedGridItem.isReplacedElement()) {
+                ASSERT_NOT_IMPLEMENTED_YET();
+                return { };
+            }
+            return inlineFitContentSize(placedGridItem, columnsSize, borderAndPadding, integrationUtils);
         }
 
         ASSERT_NOT_IMPLEMENTED_YET();
