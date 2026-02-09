@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/StyleGridPosition.h>
+#include "StyleGridPosition.h"
 
 namespace WebCore {
 namespace Layout {
@@ -53,6 +53,7 @@ public:
     bool hasDefiniteColumnPosition() const;
     bool hasAutoColumnPosition() const;
     size_t columnSpanSize() const;
+    size_t rowSpanSize() const;
 
     std::pair<size_t, size_t> normalizedRowStartEnd() const;
     std::pair<size_t, size_t> normalizedColumnStartEnd() const;
@@ -97,7 +98,7 @@ private:
 
 // https://drafts.csswg.org/css-grid-1/#auto-placement-algo
 struct UnplacedGridItems {
-    // 1. Position anything that’s not auto-positioned.
+    // 1. Position anything that's not auto-positioned.
     Vector<UnplacedGridItem> nonAutoPositionedItems;
     // 2. Process the items locked to a given row.
     Vector<UnplacedGridItem> definiteRowPositionedItems;
@@ -105,8 +106,8 @@ struct UnplacedGridItems {
     Vector<UnplacedGridItem> autoPositionedItems;
 };
 
-}
-}
+} // namespace Layout
+} // namespace WebCore
 
 namespace WTF {
 

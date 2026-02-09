@@ -447,6 +447,12 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         auto& rowStart = gridItemStyle->gridItemRowStart();
         auto rowPositioningAvoidanceReason = WTF::switchOn(rowStart,
             [&](const CSS::Keyword::Auto&) -> std::optional<GridAvoidanceReason> {
+                // Allow auto row start if row end is also auto (fully auto-positioned item)
+                auto& rowEnd = gridItemStyle->gridItemRowEnd();
+                if (rowEnd.isAuto())
+                    return std::nullopt;
+
+                // Auto row start with definite row end not yet supported
                 return GridAvoidanceReason::GridItemHasUnsupportedRowPlacement;
             },
             [&](const Style::GridPositionExplicit& explicitPosition) -> std::optional<GridAvoidanceReason> {

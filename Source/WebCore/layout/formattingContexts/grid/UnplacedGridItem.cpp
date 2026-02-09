@@ -132,24 +132,36 @@ bool UnplacedGridItem::hasAutoColumnPosition() const
 
 size_t UnplacedGridItem::columnSpanSize() const
 {
-    auto firstPosition = m_columnPosition.first;
-    auto secondPosition = m_columnPosition.second;
+    auto& firstPosition = m_columnPosition.first;
+    auto& secondPosition = m_columnPosition.second;
 
-    // Case 1: Both positions are explicit - calculate span size
-    if (firstPosition.isExplicit() && secondPosition.isExplicit()) {
-        auto spanSize = explicitColumnEnd() - explicitColumnStart();
-        return spanSize;
-    }
+    if (firstPosition.isExplicit() && secondPosition.isExplicit())
+        return explicitColumnEnd() - explicitColumnStart();
 
-    // Case 2: One position is a span - extract its span size.
     ASSERT(!(firstPosition.isSpan() && secondPosition.isSpan()));
     if (firstPosition.isSpan())
         return firstPosition.spanPosition();
     if (secondPosition.isSpan())
         return secondPosition.spanPosition();
 
-    // Default to span 1
     ASSERT(hasAutoColumnPosition());
+    return 1;
+}
+
+size_t UnplacedGridItem::rowSpanSize() const
+{
+    auto& firstPosition = m_rowPosition.first;
+    auto& secondPosition = m_rowPosition.second;
+
+    if (firstPosition.isExplicit() && secondPosition.isExplicit())
+        return explicitRowEnd() - explicitRowStart();
+
+    ASSERT(!(firstPosition.isSpan() && secondPosition.isSpan()));
+    if (firstPosition.isSpan())
+        return firstPosition.spanPosition();
+    if (secondPosition.isSpan())
+        return secondPosition.spanPosition();
+
     return 1;
 }
 
