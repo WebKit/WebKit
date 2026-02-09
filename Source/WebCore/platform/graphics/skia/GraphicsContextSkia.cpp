@@ -366,7 +366,8 @@ void GraphicsContextSkia::drawLine(const FloatPoint& point1, const FloatPoint& p
         return;
 
     SkPaint paint = createStrokePaint();
-    paint.setColor(SkColor(strokeColor().colorWithAlphaMultipliedBy(alpha())));
+    // paint.setColor(SkColor(strokeColor().colorWithAlphaMultipliedBy(alpha())));
+    paint.setColor(SkColor4f::FromColor(SkColor(strokeColor().colorWithAlphaMultipliedBy(alpha()))), SkColorSpace::MakeSRGBLinear().get());
 
     const bool isVertical = (point1.x() + strokeThickness() == point2.x());
     float strokeWidth = isVertical ? point2.y() - point1.y() : point2.x() - point1.x();
@@ -621,7 +622,8 @@ void GraphicsContextSkia::setupFillSource(SkPaint& paint)
     } else if (auto fillGradient = fillBrush().gradient())
         paint.setShader(fillGradient->shader(alpha(), fillBrush().gradientSpaceTransform()));
     else
-        paint.setColor(SkColor(fillColor().colorWithAlphaMultipliedBy(alpha())));
+        // paint.setColor(SkColor(fillColor().colorWithAlphaMultipliedBy(alpha())));
+        paint.setColor(SkColor4f::FromColor(SkColor(fillColor().colorWithAlphaMultipliedBy(alpha()))), SkColorSpace::MakeSRGBLinear().get());
 }
 
 SkPaint GraphicsContextSkia::createStrokePaint() const
@@ -646,7 +648,8 @@ void GraphicsContextSkia::setupStrokeSource(SkPaint& paint)
     } else if (auto strokeGradient = strokeBrush().gradient())
         paint.setShader(strokeGradient->shader(alpha(), strokeBrush().gradientSpaceTransform()));
     else
-        paint.setColor(SkColor(strokeBrush().color().colorWithAlphaMultipliedBy(alpha())));
+        // paint.setColor(SkColor(strokeBrush().color().colorWithAlphaMultipliedBy(alpha())));
+        paint.setColor(SkColor4f::FromColor(SkColor(strokeBrush().color().colorWithAlphaMultipliedBy(alpha()))), SkColorSpace::MakeSRGBLinear().get());
 }
 
 void GraphicsContextSkia::drawSkiaRect(const SkRect& boundaries, SkPaint& paint)
@@ -678,7 +681,8 @@ void GraphicsContextSkia::fillRect(const FloatRect& boundaries, const Color& fil
         return;
 
     SkPaint paint = createFillPaint();
-    paint.setColor(SkColor(fillColor));
+    // paint.setColor(SkColor(fillColor));
+    paint.setColor(SkColor4f::FromColor(SkColor(fillColor)), SkColorSpace::MakeSRGBLinear().get());
     drawSkiaRect(boundaries, paint);
 }
 
@@ -829,7 +833,8 @@ void GraphicsContextSkia::drawDotsForDocumentMarker(const FloatRect& boundaries,
         return;
 
     SkPaint paint = createFillPaint();
-    paint.setColor(SkColor(style.color));
+    // paint.setColor(SkColor(style.color));
+    paint.setColor(SkColor4f::FromColor(SkColor(style.color)), SkColorSpace::MakeSRGBLinear().get());
     m_canvas.drawPath(createErrorUnderlinePath(boundaries), paint);
 }
 
@@ -1027,7 +1032,8 @@ void GraphicsContextSkia::fillRoundedRectImpl(const FloatRoundedRect& rect, cons
         return;
 
     SkPaint paint = createFillPaint();
-    paint.setColor(SkColor(color));
+    // paint.setColor(SkColor(color));
+    paint.setColor(SkColor4f::FromColor(SkColor(color)), SkColorSpace::MakeSRGBLinear().get());
     bool inExtraTransparencyLayer = false;
     if (hasDropShadow()) {
         inExtraTransparencyLayer = drawOutsetShadow(paint, [&](const SkPaint& paint) {
@@ -1048,7 +1054,8 @@ void GraphicsContextSkia::fillRectWithRoundedHole(const FloatRect& outerRect, co
         return;
 
     SkPaint paint = createFillPaint();
-    paint.setColor(SkColor(color));
+    // paint.setColor(SkColor(color));
+    paint.setColor(SkColor4f::FromColor(SkColor(color)), SkColorSpace::MakeSRGBLinear().get());
     paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Inset));
     m_canvas.drawDRRect(SkRRect::MakeRect(outerRect), innerRRect, paint);
 }
