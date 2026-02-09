@@ -573,10 +573,10 @@ void WebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(con
     completionHandler({ });
 }
 
-void WebInspectorUIProxy::platformAttachAvailabilityChanged(bool available)
+void WebInspectorUIProxy::platformAttachAvailabilityChanged()
 {
     if (m_client)
-        m_client->didChangeAttachAvailability(*this, available);
+        m_client->didChangeAttachAvailability(*this);
 }
 
 } // namespace WebKit

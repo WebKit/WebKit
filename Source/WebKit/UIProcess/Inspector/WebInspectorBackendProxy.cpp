@@ -66,9 +66,4 @@ void WebInspectorBackendProxy::setEmulatedConditions(std::optional<int64_t> byte
 }
 #endif
 
-void WebInspectorBackendProxy::attachAvailabilityChanged(bool available)
-{
-    protect(m_proxy)->attachAvailabilityChanged(available);
-}
-
 } // namespace WebKit

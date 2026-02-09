@@ -332,11 +332,6 @@ void WebInspectorUIProxy::platformSetAttachedWindowWidth(unsigned)
     notImplemented();
 }
 
-void WebInspectorUIProxy::platformAttachAvailabilityChanged(bool)
-{
-    notImplemented();
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(WPE_PLATFORM)

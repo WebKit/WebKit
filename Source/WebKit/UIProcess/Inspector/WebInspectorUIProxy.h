@@ -247,15 +247,10 @@ private:
     void platformBringInspectedPageToFront();
     void platformHide();
     bool platformIsFront();
-    void platformAttachAvailabilityChanged(bool);
     void platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
     void platformOpenURLExternally(const String&);
     void platformInspectedURLChanged(const String&);
     void platformShowCertificate(const WebCore::CertificateInfo&);
-    void platformAttach();
-    void platformDetach();
-    void platformSetAttachedWindowHeight(unsigned);
-    void platformSetAttachedWindowWidth(unsigned);
     void platformSetSheetRect(const WebCore::FloatRect&);
     void platformStartWindowDrag();
     void platformRevealFileExternally(const String&);
@@ -263,12 +258,19 @@ private:
     void platformLoad(const String& path, CompletionHandler<void(const String&)>&&);
     void platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
 
+    void platformAttach();
+    void platformDetach();
+    void platformSetAttachedWindowHeight(unsigned);
+    void platformSetAttachedWindowWidth(unsigned);
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WIN)
-    bool platformCanAttach(bool webProcessCanAttach);
-#elif PLATFORM(WPE)
-    bool platformCanAttach(bool) { return false; }
+    bool platformCanAttach();
 #else
-    bool platformCanAttach(bool webProcessCanAttach) { return webProcessCanAttach; }
+    bool platformCanAttach() { return false; }
+#endif
+#if PLATFORM(GTK)
+    void platformAttachAvailabilityChanged();
+#else
+    void platformAttachAvailabilityChanged() { }
 #endif
 
     // Called by WebInspectorBackendProxy and WebInspectorUIProxy messages
@@ -281,7 +283,7 @@ private:
     void didClose();
     void bringToFront();
     void bringInspectedPageToFront();
-    void attachAvailabilityChanged(bool);
+    void attachAvailabilityChanged();
     void setForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
     void effectiveAppearanceDidChange(WebCore::InspectorFrontendClient::Appearance);
     void inspectedURLChanged(const String&);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,10 +47,6 @@
 #include <WebCore/PageInspectorController.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/WindowFeatures.h>
-
-static const float minimumAttachedHeight = 250;
-static const float maximumAttachedHeightRatio = 0.75;
-static const float minimumAttachedWidth = 500;
 
 namespace WebKit {
 using namespace WebCore;
@@ -111,9 +107,6 @@ void WebInspectorBackend::closeFrontendConnection()
     }
 
     m_frontendConnectionActions.clear();
-
-    m_attached = false;
-    m_previousCanAttach = false;
 }
 
 void WebInspectorBackend::bringToFront()
@@ -260,44 +253,5 @@ void WebInspectorBackend::setEmulatedConditions(std::optional<int64_t>&& bytesPe
 }
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
-
-// FIXME <https://webkit.org/b/283435>: Remove this unused canAttachWindow function. Its return value is no longer used
-// or respected by the UI process.
-bool WebInspectorBackend::canAttachWindow()
-{
-    if (!m_page->corePage())
-        return false;
-
-    // Don't allow attaching to another inspector -- two inspectors in one window is too much!
-    if (m_page->isInspectorPage())
-        return false;
-
-    // If we are already attached, allow attaching again to allow switching sides.
-    if (m_attached)
-        return true;
-
-    // Don't allow the attach if the window would be too small to accommodate the minimum inspector size.
-    RefPtr localMainFrame = RefPtr { m_page.get() }->localMainFrame();
-    if (!localMainFrame)
-        return false;
-    unsigned inspectedPageHeight = protect(localMainFrame->view())->visibleHeight();
-    unsigned inspectedPageWidth = protect(localMainFrame->view())->visibleWidth();
-    unsigned maximumAttachedHeight = inspectedPageHeight * maximumAttachedHeightRatio;
-    return minimumAttachedHeight <= maximumAttachedHeight && minimumAttachedWidth <= inspectedPageWidth;
-}
-
-void WebInspectorBackend::updateDockingAvailability()
-{
-    if (m_attached)
-        return;
-
-    bool canAttachWindow = this->canAttachWindow();
-    if (m_previousCanAttach == canAttachWindow)
-        return;
-
-    m_previousCanAttach = canAttachWindow;
-
-    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorBackendProxy::AttachAvailabilityChanged(canAttachWindow), m_page->identifier());
-}
 
 } // namespace WebKit

@@ -61,10 +61,7 @@ public:
     void setEmulatedConditions(std::optional<int64_t>);
 #endif
 
-    void attachAvailabilityChanged(bool);
-
 private:
-
     const WeakRef<WebInspectorUIProxy> m_proxy;
 };
 

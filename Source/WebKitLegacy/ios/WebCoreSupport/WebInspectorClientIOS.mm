@@ -69,11 +69,6 @@ void WebInspectorClient::bringFrontendToFront()
     // iOS does not have a local inspector, nothing to do here.
 }
 
-void WebInspectorClient::didResizeMainFrame(LocalFrame*)
-{
-    // iOS does not have a local inspector, nothing to do here.
-}
-
 void WebInspectorClient::highlight()
 {
     [m_highlighter.get() highlight];

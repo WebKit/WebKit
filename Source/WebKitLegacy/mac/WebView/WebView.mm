@@ -1522,7 +1522,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #if !PLATFORM(IOS_FAMILY)
     pageConfiguration.validationMessageClient = makeUnique<WebValidationMessageClient>(self);
 #endif
-    pageConfiguration.inspectorBackendClient = makeUnique<WebInspectorClient>(self);
+    pageConfiguration.inspectorBackendClient = makeUnique<WebInspectorBackendClient>(self);
 
 #if ENABLE(DRAG_SUPPORT)
     pageConfiguration.dragClient = makeUnique<WebDragClient>(self);

@@ -56,7 +56,6 @@ public:
 
     virtual Inspector::FrontendChannel* openLocalFrontend(PageInspectorController*) = 0;
     virtual void bringFrontendToFront() = 0;
-    virtual void didResizeMainFrame(LocalFrame*) { }
 
     virtual void highlight() = 0;
     virtual void hideHighlight() = 0;

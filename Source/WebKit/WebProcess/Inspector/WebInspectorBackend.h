@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,8 +49,6 @@ public:
 
     WebPage* page() const;
 
-    void updateDockingAvailability();
-
     // Implemented in generated WebInspectorBackendMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
@@ -61,14 +59,10 @@ public:
     void show(CompletionHandler<void()>&&);
     void close();
 
-    void canAttachWindow(bool& result);
-
     void showConsole();
     void showResources();
 
     void showMainResourceForFrame(WebCore::FrameIdentifier);
-
-    void setAttached(bool attached) { m_attached = attached; }
 
     void evaluateScriptForTest(const String& script);
 
@@ -94,8 +88,6 @@ private:
 
     explicit WebInspectorBackend(WebPage&);
 
-    bool canAttachWindow();
-
     // Called from WebInspectorBackendClient
     void openLocalInspectorFrontend();
     void closeFrontendConnection();
@@ -108,9 +100,6 @@ private:
 
     RefPtr<IPC::Connection> m_frontendConnection;
     Vector<Function<void(IPC::Connection&)>> m_frontendConnectionActions;
-
-    bool m_attached { false };
-    bool m_previousCanAttach { false };
 };
 
 } // namespace WebKit
