@@ -224,7 +224,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         breakpointsContainer.classList.add("breakpoints-container");
         breakpointsContainer.appendChild(this._breakpointsSection.element);
 
-        this._localOverridesTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
+        this._localOverridesTreeOutline = this.createContentTreeOutline();
         this._localOverridesTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._handleTreeSelectionDidChange, this);
 
         this._localOverridesRow = new WI.DetailsSectionRow(WI.UIString("No Overrides"));
@@ -246,7 +246,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._localOverridesContainer.hidden = true;
         this._localOverridesContainer.appendChild(this._localOverridesSection.element);
 
-        this._consoleSnippetsTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
+        this._consoleSnippetsTreeOutline = this.createContentTreeOutline();
         this._consoleSnippetsTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._handleTreeSelectionDidChange, this);
 
         this._consoleSnippetsRow = new WI.DetailsSectionRow(WI.UIString("No Console Snippets"));
