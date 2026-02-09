@@ -2549,10 +2549,14 @@ WI.setZoomFactor = function(factor)
 
 WI.resolvedLayoutDirection = function()
 {
-    let layoutDirection = WI.settings.debugLayoutDirection.value;
-    if (layoutDirection === WI.LayoutDirection.System)
-        layoutDirection = InspectorFrontendHost.userInterfaceLayoutDirection();
-    return layoutDirection;
+    // When the value is changed from Web Inspector Settings, Web Inspector reopens automatically.
+    // When the value is changed at the system level, the user is prompted to restart the computer.
+    if (!WI._layoutDirection) {
+        let layoutDirection = WI.settings.debugLayoutDirection.value;
+        WI._layoutDirection = layoutDirection === WI.LayoutDirection.System ? InspectorFrontendHost.userInterfaceLayoutDirection() : layoutDirection;
+    }
+
+    return WI._layoutDirection;
 };
 
 WI.resolveLayoutDirectionForElement = function(element)
