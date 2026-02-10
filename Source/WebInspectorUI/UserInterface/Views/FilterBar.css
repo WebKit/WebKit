@@ -54,6 +54,10 @@
     margin-inline-start: 6px;
 }
 
+.filter-bar > input[type="search"]:focus ~ * {
+    display: none;
+}
+
 :is(.filter-bar, .search-bar) > input[type="search"] {
     height: 22px;
     padding-top: 0;
@@ -99,10 +103,6 @@
 
 :is(.filter-bar, .search-bar) > input[type="search"] + :empty {
     margin-inline-start: 6px;
-}
-
-:is(.filter-bar, .search-bar) > input[type="search"]:focus ~ * {
-    display: none;
 }
 
 :is(.filter-bar, .search-bar) > input[type="search"] + .navigation-bar > .item.scope-bar:last-child {
