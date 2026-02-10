@@ -1059,6 +1059,7 @@ http/tests/ssl/curl/certificate-and-authentication.html [ Failure ]
 
 # Needs site isolation drawing implementation
 http/tests/site-isolation [ Skip ]
+http/tests/site-isolation/inspector/unit-tests/target-manager.html [ Pass ]
 
 webkit.org/b/68278  http/tests/history/back-with-fragment-change.py [ Failure Pass ]
 
@@ -2369,6 +2370,7 @@ imported/w3c/web-platform-tests/workers [ Skip ]
 imported/w3c/web-platform-tests/worklets [ Skip ]
 imported/w3c/web-platform-tests/xhr [ Skip ]
 inspector [ Skip ]
+inspector/unit-tests/target-manager.html [ Pass ]
 inspector/cpu-profiler/ [ Pass ]
 inspector/memory/ [ Pass ]
 ipc [ Skip ]
