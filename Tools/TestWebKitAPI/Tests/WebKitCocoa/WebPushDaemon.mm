@@ -53,9 +53,9 @@
 #import <WebKit/_WKWebPushSubscriptionData.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreDelegate.h>
+#import <algorithm>
 #import <mach/mach_init.h>
 #import <mach/task.h>
-#import <ranges>
 #import <wtf/BlockPtr.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/StdLibExtras.h>
@@ -473,10 +473,10 @@ void WebPushXPCConnectionMessageSender::sendWithAsyncReplyWithoutUsingIPCConnect
     encoder.encodeHeader<M>();
     message.encode(encoder);
     auto dictionary = messageDictionaryFromEncoder(WTF::move(encoder));
-    xpc_connection_send_message_with_reply(m_connection.get(), dictionary.get(), mainDispatchQueueSingleton(), makeBlockPtr([this, completionHandler = WTF::move(completionHandler)] (xpc_object_t reply) mutable {
+    xpc_connection_send_message_with_reply(m_connection.get(), dictionary.get(), mainDispatchQueueSingleton(), makeBlockPtr([shouldIncrementProtocolVersion = m_shouldIncrementProtocolVersionForTesting, completionHandler = WTF::move(completionHandler)] (xpc_object_t reply) mutable {
         if (xpc_get_type(reply) == XPC_TYPE_ERROR) {
             // We only expect an error if we were purposefully testing the wrong protocol version.
-            RELEASE_ASSERT(m_shouldIncrementProtocolVersionForTesting);
+            RELEASE_ASSERT(shouldIncrementProtocolVersion);
             return IPC::cancelReplyWithoutUsingConnection<M>(WTF::move(completionHandler));
         }
 
@@ -1471,7 +1471,7 @@ TEST_F(WebPushDTest, SubscribeTest)
     };
     auto topics = getPushTopics();
     auto& subscribed = topics.first;
-    std::ranges::sort(subscribed, lessThan);
+    std::sort(subscribed.begin(), subscribed.end(), lessThan);
 
     Vector<String> expected {
         "com.apple.WebKit.TestWebKitAPI ds:0bf5053b-164c-4b7d-8179-832e6bf158df https://example.com/"_s,
@@ -1528,7 +1528,7 @@ TEST_F(WebPushDNavigatorTest, SubscribeTest)
     };
     auto topics = getPushTopics();
     auto& subscribed = topics.first;
-    std::ranges::sort(subscribed, lessThan);
+    std::sort(subscribed.begin(), subscribed.end(), lessThan);
 
     Vector<String> expected {
         "com.apple.WebKit.TestWebKitAPI ds:0bf5053b-164c-4b7d-8179-832e6bf158df https://example.com/"_s,
