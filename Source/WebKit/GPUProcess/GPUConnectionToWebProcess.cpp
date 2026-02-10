@@ -986,7 +986,7 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
 #endif
 #if PLATFORM(IOS_FAMILY)
     if (decoder.messageReceiverName() == Messages::RemoteMediaSessionHelperProxy::messageReceiverName()) {
-        mediaSessionHelperProxy().didReceiveMessageFromWebProcess(connection, decoder);
+        protect(mediaSessionHelperProxy())->didReceiveMessageFromWebProcess(connection, decoder);
         return true;
     }
 #endif
