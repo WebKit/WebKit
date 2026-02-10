@@ -934,8 +934,8 @@ Font::ComplexColorFormatGlyphs& Font::glyphsWithComplexColorFormat() const
                 return m_glyphsWithComplexColorFormat.value();
             }
         }
+        m_glyphsWithComplexColorFormat = ComplexColorFormatGlyphs::createWithNoRelevantTables();
     }
-    m_glyphsWithComplexColorFormat = ComplexColorFormatGlyphs::createWithNoRelevantTables();
     return m_glyphsWithComplexColorFormat.value();
 }
 
