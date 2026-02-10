@@ -423,7 +423,7 @@ Navigation::Result Navigation::navigate(const String& url, NavigateOptions&& opt
     if (serializedState.hasException())
         return createErrorResult(WTF::move(committed), WTF::move(finished), serializedState.releaseException());
 
-    if (!window->protectedDocument()->isFullyActive() || window->document()->unloadCounter())
+    if (!window->protectedDocument()->isFullyActive() || frame()->loader().isDispatchingPageSwapEvent() || window->document()->unloadCounter())
         return createErrorResult(WTF::move(committed), WTF::move(finished), ExceptionCode::InvalidStateError, "Invalid state"_s);
 
     RefPtr apiMethodTracker = maybeSetUpcomingNonTraversalTracker(WTF::move(committed), WTF::move(finished), WTF::move(options.info), serializedState.releaseReturnValue());

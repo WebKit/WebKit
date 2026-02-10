@@ -1,0 +1,21 @@
+<!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<script>
+testRunner?.dumpAsText();
+testRunner?.waitUntilDone();
+(async () => {
+  if (sessionStorage.testCompleted) {
+    delete sessionStorage.testCompleted;
+    testRunner?.notifyDone();
+  } else {
+    sessionStorage.testCompleted = true;
+    await navigation.reload();
+  }
+
+  let audio = document.createElement('audio');
+  audio.src = '/resources/foo.mp4';
+  await navigator.locks.query();
+  onpageswap = async (e) => { await navigation.navigate("foo"); };
+  await cookieStore.get("bar");
+})();
+</script>
+PASS if no crash.
