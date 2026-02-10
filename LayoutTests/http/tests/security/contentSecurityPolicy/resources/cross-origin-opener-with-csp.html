@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'; img-src 'none'">
+<script>
+// This page is opened/loaded by the main test page. It opens about:blank and tests CSP inheritance.
+// Results are posted back to window.opener or window.top.
+
+function sendResult(msg) {
+    if (window.opener) {
+        window.opener.postMessage(msg, "*");
+    } else if (window.top !== window) {
+        window.top.postMessage(msg, "*");
+    }
+}
+
+// Listen for messages from the about:blank popup and relay
+window.addEventListener("message", function(event) {
+    sendResult(event.data);
+}, false);
+
+window.onload = function() {
+    let popup = window.open("about:blank");
+    if (popup) {
+        // Write content to about:blank that tries to load an image
+        popup.document.write('<img src="http://127.0.0.1:8000/security/resources/abe.png" ' +
+            'onerror="window.opener.postMessage(\'PASS: Image blocked by inherited CSP from cross-origin opener\', \'*\')" ' +
+            'onload="window.opener.postMessage(\'FAIL: Image loaded - CSP was not inherited from cross-origin opener\', \'*\')">');
+        popup.document.close();
+        // Send completion message after a delay to allow image load/error to fire
+        setTimeout(function() {
+            sendResult("TEST COMPLETE");
+            popup.close();
+            if (window.opener) window.close();
+        }, 500);
+    } else {
+        sendResult("FAIL: Could not open popup");
+        sendResult("TEST COMPLETE");
+        if (window.opener) window.close();
+    }
+};
+</script>
+</head>
+<body>
+<p>Cross-origin helper with CSP: img-src 'none'</p>
+</body>
+</html>

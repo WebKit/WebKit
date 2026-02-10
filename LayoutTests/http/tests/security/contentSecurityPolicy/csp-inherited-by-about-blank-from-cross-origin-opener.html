@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'; img-src 'self'">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.addEventListener("message", function(event) {
+    document.getElementById("console").textContent += event.data + "\n";
+    if (event.data.includes("TEST COMPLETE")) {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}, false);
+</script>
+</head>
+<body>
+<p>Tests that about:blank opened via window.open() inherits CSP from its cross-origin opener, not from the top-level document.</p>
+<p>The top-level page (127.0.0.1) has CSP "img-src 'self'" which allows images from same origin.</p>
+<p>The cross-origin helper (localhost) has CSP "img-src 'none'" which blocks all images.</p>
+<p>When the helper opens about:blank, about:blank should inherit the helper's CSP and block the image.</p>
+<pre id="console"></pre>
+<iframe src="http://localhost:8000/security/contentSecurityPolicy/resources/cross-origin-opener-with-csp.html"></iframe>
+</body>
+</html>

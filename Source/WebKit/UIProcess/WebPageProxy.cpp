@@ -1793,6 +1793,12 @@ void WebPageProxy::initializeWebPage(const Site& site, WebCore::SandboxFlags eff
     m_mainFrame = WebFrameProxy::create(*this, browsingContextGroup->ensureProcessForSite(effectiveSite, site, process, preferences), generateFrameIdentifier(), effectiveSandboxFlags, effectiveReferrerPolicy, ScrollbarMode::Auto, WebFrameProxy::protectedWebFrame(m_openerFrameIdentifier).get(), IsMainFrame::Yes);
     if (preferences->siteIsolationEnabled())
         browsingContextGroup->addPage(*this);
+
+    // Register the cookie domain for this new page. For about:blank pages opened via window.open,
+    // effectiveSite contains the opener's origin which is the correct domain for cookie access.
+    if (!effectiveSite.domain().isEmpty())
+        protect(protect(websiteDataStore())->networkProcess())->addAllowedFirstPartyForCookies(CheckedRef { RefPtr { m_mainFrame }->process() }, effectiveSite.domain(), LoadedWebArchive::No, [] { });
+
     process->send(Messages::WebProcess::CreateWebPage(m_webPageID, creationParameters(process, *protect(drawingArea()), m_mainFrame->frameID(), std::nullopt)), 0);
 
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)

@@ -9158,6 +9158,12 @@ enum class WebCore::ShouldGoToHistoryItem : uint8_t {
 struct WebCore::DocumentSecurityPolicy {
     WebCore::CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
     WebCore::CrossOriginOpenerPolicy crossOriginOpenerPolicy;
+    WebCore::ContentSecurityPolicyResponseHeaders contentSecurityPolicyResponseHeaders;
+    HashSet<WebCore::SecurityOriginData> insecureNavigationRequestsToUpgrade;
+    String cspReferrer;
+    int cspHttpStatusCode;
+    bool isSameOriginAsTopDocument;
+    bool upgradeInsecureRequests;
 };
 
 header: <WebCore/ProcessSwapDisposition.h>

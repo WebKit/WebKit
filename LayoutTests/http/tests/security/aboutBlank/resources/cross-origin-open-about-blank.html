@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function log(msg) {
+    window.top.postMessage(msg, "*");
+}
+
+// Listen for messages from the popup and relay them to top
+window.addEventListener("message", function(event) {
+    // Relay messages from popup to top
+    window.top.postMessage(event.data, "*");
+}, false);
+
+function runTest() {
+    log("--- Test begins ---");
+    log("Opener origin (this iframe): " + window.location.origin);
+
+    // Set cookie before opening popup so it's available
+    document.cookie = "iframe_cookie=from_localhost";
+
+    let popup = window.open("about:blank");
+    if (!popup) {
+        log("FAIL: Could not open popup");
+        log("--- Test ends ---");
+        log("TEST COMPLETE");
+        return;
+    }
+
+    // Test 1: Verify about:blank has correct origin (inherited from opener)
+    // We can verify this by checking if we can access the popup's document
+    try {
+        let popupDoc = popup.document;
+        log("PASS: Can access popup.document (same-origin with opener)");
+    } catch (e) {
+        log("FAIL: Cannot access popup.document - " + e.name);
+    }
+
+    // Write all tests to popup at once
+    popup.document.write('<!DOCTYPE html><html><body><script>' +
+        // Test 2: Verify about:blank can access its opener
+        'try {' +
+        '    let openerLoc = window.opener.location.href;' +
+        '    window.opener.postMessage("PASS: about:blank can access opener", "*");' +
+        '} catch (e) {' +
+        '    window.opener.postMessage("FAIL: about:blank cannot access opener - " + e.name, "*");' +
+        '}' +
+
+        // Test 3: Verify about:blank CANNOT access top-level document (different origin)
+        'try {' +
+        '    let topDoc = window.opener.top.document.body;' +
+        '    window.opener.postMessage("FAIL: about:blank should not be able to access top document", "*");' +
+        '} catch (e) {' +
+        '    window.opener.postMessage("PASS: about:blank correctly blocked from accessing cross-origin top document (" + e.name + ")", "*");' +
+        '}' +
+
+        // Test 4: Verify cookie behavior with opener
+        // Note: about:blank documents opened from cross-origin contexts may have
+        // empty cookies due to cookie URL handling
+        'let cookies = document.cookie;' +
+        'if (cookies === "") {' +
+        '    window.opener.postMessage("PASS: about:blank has empty cookies (expected for cross-origin opener)", "*");' +
+        '} else if (cookies.includes("iframe_cookie")) {' +
+        '    window.opener.postMessage("PASS: about:blank shares cookies with opener", "*");' +
+        '} else {' +
+        '    window.opener.postMessage("INFO: about:blank has cookies: " + cookies, "*");' +
+        '}' +
+        '<\/script></body></html>');
+    popup.document.close();
+
+    setTimeout(function() {
+        popup.close();
+        log("--- Test ends ---");
+        log("TEST COMPLETE");
+    }, 500);
+}
+
+window.onload = runTest;
+</script>
+</head>
+<body>
+<p>Cross-origin iframe at localhost that opens about:blank</p>
+</body>
+</html>

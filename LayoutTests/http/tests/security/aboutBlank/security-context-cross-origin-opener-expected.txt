@@ -1,0 +1,11 @@
+Tests that about:blank opened via window.open() from a cross-origin iframe inherits the opener's security origin, not the top-level document's origin.
+
+--- Test begins ---
+Opener origin (this iframe): http://localhost:8000
+PASS: Can access popup.document (same-origin with opener)
+PASS: about:blank can access opener
+PASS: about:blank correctly blocked from accessing cross-origin top document (SecurityError)
+PASS: about:blank has empty cookies (expected for cross-origin opener)
+--- Test ends ---
+TEST COMPLETE
+

@@ -34,6 +34,7 @@
 #include <WebCore/DocumentClasses.h>
 #include <WebCore/DocumentEnums.h>
 #include <WebCore/DocumentEventTiming.h>
+#include <WebCore/DocumentSecurityPolicy.h>
 #include <WebCore/Element.h>
 #include <WebCore/ExceptionOr.h>
 #include <WebCore/FocusControllerTypes.h>
@@ -1423,7 +1424,7 @@ public:
     WEBCORE_EXPORT SVGDocumentExtensions& svgExtensions();
     WEBCORE_EXPORT CheckedRef<SVGDocumentExtensions> checkedSVGExtensions();
 
-    void initSecurityContext();
+    void initSecurityContext(std::optional<DocumentSecurityPolicy> ownerSecurityPolicy = std::nullopt, RefPtr<SecurityOrigin> ownerSecurityOrigin = nullptr, bool ownerIsOpener = false);
     void initContentSecurityPolicy();
 
     void inheritPolicyContainerFrom(const PolicyContainer&) final;

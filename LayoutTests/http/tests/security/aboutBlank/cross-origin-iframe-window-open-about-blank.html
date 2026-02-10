@@ -1,0 +1,9 @@
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    document.cookie = 'key1=value1';
+</script>
+<iframe src="http://localhost:8000/security/aboutBlank/resources/open-about-blank.html"></iframe>

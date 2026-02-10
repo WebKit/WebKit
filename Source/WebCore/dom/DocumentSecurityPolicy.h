@@ -25,14 +25,24 @@
 
 #pragma once
 
+#include <WebCore/ContentSecurityPolicyResponseHeaders.h>
 #include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/CrossOriginOpenerPolicy.h>
+#include <WebCore/SecurityOriginData.h>
+#include <wtf/HashSet.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct DocumentSecurityPolicy {
     CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
     CrossOriginOpenerPolicy crossOriginOpenerPolicy;
+    ContentSecurityPolicyResponseHeaders contentSecurityPolicyResponseHeaders;
+    HashSet<SecurityOriginData> insecureNavigationRequestsToUpgrade;
+    String cspReferrer;
+    int cspHttpStatusCode { 0 };
+    bool isSameOriginAsTopDocument { false };
+    bool upgradeInsecureRequests { false };
 };
 
 } // namespace WebCore
