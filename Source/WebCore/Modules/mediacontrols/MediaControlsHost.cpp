@@ -645,7 +645,7 @@ auto MediaControlsHost::mediaControlsContextMenuItems(String&& optionsJSONString
                     bool checked = textTrack->mode() == TextTrack::Mode::Showing || textTrack.ptr() == bestTrackToEnable;
                     languages.append(createMenuItem(textTrack, captionPreferences->displayNameForTrack(textTrack.get()), checked));
                 }
-                subtitleMenuItems.append(createSubmenu(WEB_UI_STRING_KEY("Languages", "Languages (Media Controls Menu)", "Languages media controls context menu title"), "globe"_s, WTF::move(languages)));
+                subtitleMenuItems.append(createSubmenu(WEB_UI_STRING_KEY("Languages", "Languages (Media Controls Menu)", "Languages media controls context menu title"), nullString(), WTF::move(languages)));
 
                 auto title = WEB_UI_STRING_KEY("Styles", "Styles (Media Controls Menu)", "Subtitles media controls menu title");
 #if USE(UICONTEXTMENU)
