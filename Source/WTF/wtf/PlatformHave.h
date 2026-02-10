@@ -1903,3 +1903,8 @@
     && (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 260000)
 #define HAVE_NSVIEW_CORNER_CONFIGURATION 1
 #endif
+
+#if !defined(HAVE_LIBPROC) \
+    && __has_include(<libproc.h>)
+#define HAVE_LIBPROC 1
+#endif

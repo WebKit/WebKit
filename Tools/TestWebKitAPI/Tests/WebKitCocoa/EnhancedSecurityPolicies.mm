@@ -73,14 +73,7 @@ using namespace TestWebKitAPI;
 
     self.runJavaScriptAlertPanelWithMessage = ^(WKWebView *webView, NSString *message, WKFrameInfo *frameInfo, void (^completionHandler)(void)) {
         alertMessage = message;
-
-        // FIXME: rdar://164477631 (Fix Enhanced Security tests to work on non Apple Internal builds)
-#if USE(APPLE_INTERNAL_SDK)
         childFrameVariant = [webView _webContentProcessVariantForFrame:frameInfo._handle];
-#else
-        childFrameVariant = @"unknown";
-#endif
-
         finished = true;
         completionHandler();
     };
@@ -120,11 +113,7 @@ static void testAlertWithEnhancedSecurity(RetainPtr<TestUIDelegate> uiDelegate, 
     NSArray *result = [uiDelegate waitForAlertWithEnhancedSecurity];
 
     EXPECT_WK_STREQ(result[0], message);
-
-    // FIXME: rdar://164477631 (Fix Enhanced Security tests to work on non Apple Internal builds)
-#if USE(APPLE_INTERNAL_SDK)
     EXPECT_EQ([result[1] boolValue], enhancedSecurityEnabled);
-#endif
 }
 
 static RetainPtr<TestWKWebView> enhancedSecurityTestConfiguration(
