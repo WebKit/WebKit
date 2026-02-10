@@ -2464,6 +2464,4 @@ webkit.org/b/307196 http/tests/geolocation/geolocation-get-current-position-does
 
 webkit.org/b/307351 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-requestsubmit.html [ Pass Failure ]
 
-webkit.org/b/307385 fast/events/onunload-not-on-body.html [ Pass Failure ]
-
 webkit.org/b/307377 [ Tahoe Release arm64 ] compositing/webgl/update-composited-canvas-layer.html [ ImageOnlyFailure Pass ]
