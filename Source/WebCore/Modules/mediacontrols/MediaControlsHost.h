@@ -154,6 +154,8 @@ public:
 private:
     void savePreviouslySelectedTextTrackIfNecessary();
     void restorePreviouslySelectedTextTrackIfNecessary();
+    void handleCaptionVisibilityInFullscreenAndPictureInPictureQuirk();
+    bool needsCaptionVisibilityInFullscreenAndPictureInPictureQuirk() const;
 
     MediaControlTextTrackContainerElement* ensureTextTrackContainer();
 

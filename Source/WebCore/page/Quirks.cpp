@@ -371,6 +371,17 @@ bool Quirks::isYoutubeEmbedDomain() const
     return isEmbedDomain("youtube.com"_s) || isEmbedDomain("youtube-nocookie.com"_s);
 }
 
+// apple.com rdar://154434137
+bool Quirks::ensureCaptionVisibilityInFullscreenAndPictureInPicture() const
+{
+#if PLATFORM(IOS_FAMILY)
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::EnsureCaptionVisibilityInFullscreenAndPictureInPicture);
+#else
+    return false;
+#endif
+}
+
 bool Quirks::shouldDisableElementFullscreenQuirk() const
 {
 #if PLATFORM(IOS_FAMILY)
@@ -3107,6 +3118,14 @@ static void handlePinterestQuirks(QuirksData& quirksData, const URL& /* quirksUR
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldAllowNotificationPermissionWithoutUserGesture);
 }
 
+static void handleAppleQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
+{
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("apple.com"_s);
+
+    // apple.com rdar://154434137
+    quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::EnsureCaptionVisibilityInFullscreenAndPictureInPicture);
+}
+
 static void handlePremierLeagueQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
     QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("premierleague.com"_s);
@@ -3401,6 +3420,7 @@ void Quirks::determineRelevantQuirks()
         { "actesting"_s, &handleACTestingQuirks },
 #endif
         { "amazon"_s, &handleAmazonQuirks },
+        { "apple"_s, &handleAppleQuirks },
 #if PLATFORM(IOS_FAMILY)
         { "as"_s, &handleASQuirks },
         { "att"_s, &handleATTQuirks },

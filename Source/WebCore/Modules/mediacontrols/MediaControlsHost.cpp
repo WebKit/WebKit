@@ -893,10 +893,32 @@ auto MediaControlsHost::sourceType() const -> std::optional<SourceType>
     return protectedMediaElement()->sourceType();
 }
 
+bool MediaControlsHost::needsCaptionVisibilityInFullscreenAndPictureInPictureQuirk() const
+{
+    return protect(protectedMediaElement()->document())->quirks().ensureCaptionVisibilityInFullscreenAndPictureInPicture();
+}
+
+void MediaControlsHost::handleCaptionVisibilityInFullscreenAndPictureInPictureQuirk()
+{
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    if (!needsCaptionVisibilityInFullscreenAndPictureInPictureQuirk())
+        return;
+
+    RefPtr textTrackContainer = m_textTrackContainer;
+    if (!textTrackContainer)
+        return;
+
+    if (protectedMediaElement()->isInFullscreenOrPictureInPicture())
+        textTrackContainer->setInlineStyleProperty(CSSPropertyVisibility, CSSValueVisible);
+    else
+        textTrackContainer->setInlineStyleProperty(CSSPropertyVisibility, CSSValueInherit);
+#endif
+}
 
 void MediaControlsHost::presentationModeChanged()
 {
     restorePreviouslySelectedTextTrackIfNecessary();
+    handleCaptionVisibilityInFullscreenAndPictureInPictureQuirk();
 }
 
 void MediaControlsHost::savePreviouslySelectedTextTrackIfNecessary()

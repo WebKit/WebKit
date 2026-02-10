@@ -61,6 +61,7 @@ struct QuirksData {
         BlocksEnteringStandardFullscreenFromPictureInPictureQuirk,
         BlocksReturnToFullscreenFromPictureInPictureQuirk,
 #endif
+        EnsureCaptionVisibilityInFullscreenAndPictureInPicture,
         HasBrokenEncryptedMediaAPISupportQuirk,
         ImplicitMuteWhenVolumeSetToZero,
         InputMethodUsesCorrectKeyEventOrder,
