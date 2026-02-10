@@ -972,7 +972,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     inspectorDebuggable->setPresentingApplicationPID(process.processPool().configuration().presentingApplicationPID());
     inspectorDebuggable->init();
 #endif
-    m_inspectorController->init();
 
 #if ENABLE(WEBDRIVER_BIDI)
     if (m_controlledByAutomation) {
@@ -1794,6 +1793,8 @@ void WebPageProxy::initializeWebPage(const Site& site, WebCore::SandboxFlags eff
     if (preferences->siteIsolationEnabled())
         browsingContextGroup->addPage(*this);
     process->send(Messages::WebProcess::CreateWebPage(m_webPageID, creationParameters(process, *protect(drawingArea()), m_mainFrame->frameID(), std::nullopt)), 0);
+
+    m_inspectorController->didInitializeWebPage();
 
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
     internals().frameLoadStateObserver = WebPageProxyFrameLoadStateObserver::create();
@@ -12042,6 +12043,8 @@ void WebPageProxy::dispatchProcessDidTerminate(WebProcessProxy& process, Process
         processDidBecomeResponsive(process); // Check if all other processes are responsive.
         protect(browsingContextGroup())->processDidTerminate(*this, process);
     }
+
+    m_inspectorController->pageProcessDidTerminate(reason);
 
     bool handledByClient = false;
     if (m_loaderClient)

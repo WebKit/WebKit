@@ -49,6 +49,8 @@ class InspectorBrowserAgent;
 class ProvisionalPageProxy;
 struct WebPageAgentContext;
 
+enum class ProcessTerminationReason : uint8_t;
+
 class WebPageInspectorController {
     WTF_MAKE_TZONE_ALLOCATED(WebPageInspectorController);
     WTF_MAKE_NONCOPYABLE(WebPageInspectorController);
@@ -56,8 +58,9 @@ public:
     WebPageInspectorController(WebPageProxy&);
     ~WebPageInspectorController();
 
-    void init();
+    void didInitializeWebPage();
     void pageClosed();
+    void pageProcessDidTerminate(ProcessTerminationReason);
 
     bool hasLocalFrontend() const;
 
@@ -72,7 +75,8 @@ public:
 #endif
 
     void createWebPageInspectorTarget(const String& targetId, Inspector::InspectorTargetType);
-    void createWebFrameInspectorTarget(WebFrameProxy&, const String& targetId);
+    void createWebFrameInspectorTarget(WebFrameProxy&);
+    void destroyWebFrameInspectorTarget(WebFrameProxy&);
     void destroyInspectorTarget(const String& targetId);
     void sendMessageToInspectorFrontend(const String& targetId, const String& message);
 

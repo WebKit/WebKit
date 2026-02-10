@@ -44,7 +44,6 @@
 #include "ProvisionalPageProxy.h"
 #include "RemotePageProxy.h"
 #include "WebBackForwardListFrameItem.h"
-#include "WebFrameInspectorTarget.h"
 #include "WebFrameMessages.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebNavigationState.h"
@@ -128,15 +127,13 @@ WebFrameProxy::WebFrameProxy(WebPageProxy& page, FrameProcess& process, FrameIde
     allFrames().set(frameID, *this);
     WebProcessPool::statistics().wkFrameCount++;
 
-    page.inspectorController().createWebFrameInspectorTarget(*this, WebFrameInspectorTarget::toTargetID(frameID));
-
     protect(m_frameProcess)->incrementFrameCount();
 }
 
 WebFrameProxy::~WebFrameProxy()
 {
     if (RefPtr page = m_page.get())
-        page->inspectorController().destroyInspectorTarget(WebFrameInspectorTarget::toTargetID(frameID()));
+        page->inspectorController().destroyWebFrameInspectorTarget(*this);
 
     WebProcessPool::statistics().wkFrameCount--;
 #if PLATFORM(GTK)
@@ -191,7 +188,7 @@ void WebFrameProxy::webProcessWillShutDown()
         childFrame->webProcessWillShutDown();
 
     if (RefPtr page = m_page.get())
-        page->inspectorController().destroyInspectorTarget(WebFrameInspectorTarget::toTargetID(frameID()));
+        page->inspectorController().destroyWebFrameInspectorTarget(*this);
 
     m_page = nullptr;
 
@@ -514,6 +511,8 @@ void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID, String&&
     if (RefPtr session = page->activeAutomationSession())
         session->didCreateFrame(child);
 #endif
+
+    page->inspectorController().createWebFrameInspectorTarget(child);
 }
 
 void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process, API::Navigation& navigation, BrowsingContextGroup& group, std::optional<SecurityOriginData> effectiveOrigin, CompletionHandler<void(WebCore::PageIdentifier)>&& completionHandler)
