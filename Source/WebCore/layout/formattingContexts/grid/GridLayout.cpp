@@ -451,8 +451,8 @@ UsedTrackSizes GridLayout::performGridSizingAlgorithm(const PlacedGridItems& pla
 
     // 1. First, the track sizing algorithm is used to resolve the sizes of the grid columns.
     auto columnSizes = TrackSizingAlgorithm::sizeTracks(placedGridItems, inlineAxisComputedSizesList, inlineBorderAndPaddingList, columnSpanList,
-        columnTrackSizingFunctionsList, inlineAxisAvailableSpace, blockAxisConstraintList, GridLayoutUtils::inlineAxisGridItemSizingFunctions(),
-        integrationUtils, columnFreeSpaceScenario, columnsGap, usedJustifyContent);
+        columnTrackSizingFunctionsList, inlineAxisAvailableSpace, blockAxisConstraintList, GridLayoutUtils::inlineAxisGridItemSizingFunctions(integrationUtils),
+        columnFreeSpaceScenario, columnsGap, usedJustifyContent);
 
     // To find the inline-axis available space for any items whose block-axis size contributions
     // require it, use the grid column sizes calculated in the previous step.
@@ -463,8 +463,8 @@ UsedTrackSizes GridLayout::performGridSizingAlgorithm(const PlacedGridItems& pla
 
     // 2. Next, the track sizing algorithm resolves the sizes of the grid rows.
     auto rowSizes = TrackSizingAlgorithm::sizeTracks(placedGridItems, blockAxisComputedSizesList, blockBorderAndPaddingList, rowSpanList,
-        rowTrackSizingFunctionsList, blockAxisAvailableSpace, inlineAxisConstraintList, GridLayoutUtils::blockAxisGridItemSizingFunctions(),
-        integrationUtils, rowFreeSpaceScenario, rowsGap, usedAlignContent);
+        rowTrackSizingFunctionsList, blockAxisAvailableSpace, inlineAxisConstraintList, GridLayoutUtils::blockAxisGridItemSizingFunctions(integrationUtils),
+        rowFreeSpaceScenario, rowsGap, usedAlignContent);
 
     // 3. Then, if the min-content contribution of any grid item has changed based on the
     // row sizes and alignment calculated in step 2, re-resolve the sizes of the grid

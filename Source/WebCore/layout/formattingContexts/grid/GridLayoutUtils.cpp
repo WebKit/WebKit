@@ -398,9 +398,19 @@ LayoutUnit inlineAxisMaxContentContribution(const PlacedGridItem& gridItem, Layo
     return integrationUtils.preferredMaxWidth(gridItem.layoutBox());
 }
 
-GridItemSizingFunctions inlineAxisGridItemSizingFunctions()
+GridItemSizingFunctions inlineAxisGridItemSizingFunctions(const IntegrationUtils& integrationUtils)
 {
-    return { inlineAxisMinContentContribution, inlineAxisMaxContentContribution, usedInlineMinimumSize };
+    return {
+        [&integrationUtils](const PlacedGridItem& gridItem, LayoutUnit blockAxisConstraint) {
+            return inlineAxisMinContentContribution(gridItem, blockAxisConstraint, integrationUtils);
+        },
+        [&integrationUtils](const PlacedGridItem& gridItem, LayoutUnit blockAxisConstraint) {
+            return inlineAxisMaxContentContribution(gridItem, blockAxisConstraint, integrationUtils);
+        },
+        [&integrationUtils](const PlacedGridItem& gridItem, const TrackSizingFunctionsList& trackSizingFunctions, LayoutUnit borderAndPadding, LayoutUnit availableSpace) {
+            return usedInlineMinimumSize(gridItem, trackSizingFunctions, borderAndPadding, availableSpace, integrationUtils);
+        }
+    };
 }
 
 LayoutUnit blockAxisMinContentContribution(const PlacedGridItem&, LayoutUnit inlineAxisConstraint, const IntegrationUtils&)
@@ -417,9 +427,19 @@ LayoutUnit blockAxisMaxContentContribution(const PlacedGridItem&, LayoutUnit inl
     return { };
 }
 
-GridItemSizingFunctions blockAxisGridItemSizingFunctions()
+GridItemSizingFunctions blockAxisGridItemSizingFunctions(const IntegrationUtils& integrationUtils)
 {
-    return { blockAxisMinContentContribution, blockAxisMaxContentContribution, usedBlockMinimumSize };
+    return {
+        [&integrationUtils](const PlacedGridItem& gridItem, LayoutUnit inlineAxisConstraint) {
+            return blockAxisMinContentContribution(gridItem, inlineAxisConstraint, integrationUtils);
+        },
+        [&integrationUtils](const PlacedGridItem& gridItem, LayoutUnit inlineAxisConstraint) {
+            return blockAxisMaxContentContribution(gridItem, inlineAxisConstraint, integrationUtils);
+        },
+        [&integrationUtils](const PlacedGridItem& gridItem, const TrackSizingFunctionsList& trackSizingFunctions, LayoutUnit borderAndPadding, LayoutUnit availableSpace) {
+            return usedBlockMinimumSize(gridItem, trackSizingFunctions, borderAndPadding, availableSpace, integrationUtils);
+        }
+    };
 }
 
 bool preferredSizeBehavesAsAuto(const Style::PreferredSize& preferredSize)
