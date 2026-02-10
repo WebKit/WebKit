@@ -440,14 +440,14 @@ static PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::Ps
     return makePseudoClassInvalidationKey(pseudoClass, InvalidationKeyType::Universal);
 };
 
-void RuleFeatureSet::collectFeatures(CollectionContext& collectionContext, const RuleData& ruleData, const Vector<Ref<const StyleRuleScope>>& scopeRules)
+void RuleFeatureSet::collectFeatures(CollectionContext&, const RuleData& ruleData, const Vector<Ref<const StyleRuleScope>>& scopeRules)
 {
     SelectorFeatures selectorFeatures;
 
     auto& selector = ruleData.selector();
-    bool firstSeen = collectionContext.selectorDeduplicationSet.add({ selector }).isNewEntry;
-    if (firstSeen)
-        recursivelyCollectFeaturesFromSelector(selectorFeatures, selector);
+    // FIXME: use CollectionContext to avoid dedup selectors.
+    // https://bugs.webkit.org/show_bug.cgi?id=307599
+    recursivelyCollectFeaturesFromSelector(selectorFeatures, selector);
 
     if (ruleData.canMatchPseudoElement())
         collectPseudoElementFeatures(ruleData);
