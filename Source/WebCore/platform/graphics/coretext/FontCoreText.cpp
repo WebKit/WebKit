@@ -724,6 +724,10 @@ GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned begi
     ASSERT(numberOfInputGlyphs || glyphBuffer.size() == beginningGlyphIndex);
     ASSERT(numberOfInputGlyphs || (!initialAdvance.width && !initialAdvance.height));
 
+    // auto outputGlyphCount = glyphBuffer.size() - beginningGlyphIndex;
+    // if (outputGlyphCount != numberOfInputGlyphs)
+    //     WTFLogAlways("[applyTransforms] GLYPH COUNT MUTATION: %u -> %u for font %s", numberOfInputGlyphs, outputGlyphCount, String(adoptCF(CTFontCopyPostScriptName(ctFont.get())).get()).utf8().data());
+
     for (unsigned i = 0; i < glyphBuffer.size() - beginningGlyphIndex; ++i)
         glyphBuffer.offsetsInString(beginningGlyphIndex)[i] += beginningStringIndex;
 

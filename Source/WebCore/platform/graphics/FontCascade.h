@@ -210,6 +210,7 @@ private:
 
     GlyphBuffer layoutText(CodePath, const TextRun&, unsigned from, unsigned to, ForTextEmphasisOrNot = ForTextEmphasisOrNot::NotForTextEmphasis) const;
     GlyphBuffer layoutSimpleText(const TextRun&, unsigned from, unsigned to, ForTextEmphasisOrNot = ForTextEmphasisOrNot::NotForTextEmphasis) const;
+    GlyphBuffer layoutSimpleTextForFixedPitch(const TextRun&, unsigned from, unsigned to) const;
     void drawGlyphBuffer(GraphicsContext&, const GlyphBuffer&, FloatPoint&, CustomFontNotReadyAction) const;
     void drawEmphasisMarks(GraphicsContext&, const GlyphBuffer&, const AtomString&, const FloatPoint&) const;
     int offsetForPositionForSimpleText(const TextRun&, float position, bool includePartialGlyphs) const;

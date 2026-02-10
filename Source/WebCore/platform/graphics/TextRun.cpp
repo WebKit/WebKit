@@ -42,7 +42,7 @@ struct ExpectedTextRunSize final : public CanMakeCheckedPtr<ExpectedTextRunSize>
     float float3;
     ExpansionBehavior expansionBehavior;
     TextSpacing::SpacingState spacingState;
-    unsigned bitfields : 5;
+    unsigned bitfields : 6;
 };
 
 static_assert(sizeof(TextRun) == sizeof(ExpectedTextRunSize), "TextRun should be small");

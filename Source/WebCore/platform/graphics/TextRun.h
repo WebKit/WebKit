@@ -59,6 +59,7 @@ public:
         , m_directionalOverride(directionalOverride)
         , m_characterScanForCodePath(characterScanForCodePath)
         , m_disableSpacing(false)
+        , m_canUseSimplifiedMeasuring(false)
     {
         ASSERT(!m_text.isNull());
     }
@@ -80,6 +81,7 @@ public:
         , m_directionalOverride(0)
         , m_characterScanForCodePath(0)
         , m_disableSpacing(0)
+        , m_canUseSimplifiedMeasuring(0)
     {
     }
 
@@ -95,6 +97,7 @@ public:
         , m_directionalOverride(0)
         , m_characterScanForCodePath(0)
         , m_disableSpacing(0)
+        , m_canUseSimplifiedMeasuring(0)
     {
     }
 
@@ -146,8 +149,10 @@ public:
     bool directionalOverride() const { return m_directionalOverride; }
     bool characterScanForCodePath() const { return m_characterScanForCodePath; }
     bool spacingDisabled() const { return m_disableSpacing; }
+    bool canUseSimplifiedMeasuring() const { return m_canUseSimplifiedMeasuring; }
 
     void disableSpacing() { m_disableSpacing = true; }
+    void setCanUseSimplifiedMeasuring(bool value) { m_canUseSimplifiedMeasuring = value; }
     void setDirection(TextDirection direction) { m_direction = static_cast<unsigned>(direction); }
     void setDirectionalOverride(bool override) { m_directionalOverride = override; }
     void setCharacterScanForCodePath(bool scan) { m_characterScanForCodePath = scan; }
@@ -182,6 +187,7 @@ private:
     unsigned m_directionalOverride : 1; // Was this direction set by an override character.
     unsigned m_characterScanForCodePath : 1;
     unsigned m_disableSpacing : 1;
+    unsigned m_canUseSimplifiedMeasuring : 1;
 };
 
 inline void TextRun::setTabSize(bool allow, const TabSize& size)

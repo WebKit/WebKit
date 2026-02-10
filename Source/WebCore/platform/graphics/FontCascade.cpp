@@ -167,6 +167,18 @@ void FontCascade::update(RefPtr<FontSelector>&& fontSelector) const
 
 GlyphBuffer FontCascade::layoutText(CodePath codePathToUse, const TextRun& run, unsigned from, unsigned to, ForTextEmphasisOrNot forTextEmphasis) const
 {
+    if (codePathToUse != CodePath::Complex
+        && forTextEmphasis == ForTextEmphasisOrNot::NotForTextEmphasis
+        && run.canUseSimplifiedMeasuring()
+        && canTakeFixedPitchFastContentMeasuring()
+        && !primaryFont()->syntheticBoldOffset()
+        && !run.expansion()
+        && run.horizontalGlyphStretch() == 1
+        && !wordSpacing()
+        && !letterSpacing()) {
+        return layoutSimpleTextForFixedPitch(run, from, to);
+    }
+
     if (shouldUseComplexTextController(codePathToUse))
         return layoutComplexText(run, from, to, forTextEmphasis);
 
@@ -1464,6 +1476,39 @@ float FontCascade::floatEmphasisMarkHeight(const AtomString& mark) const
     if (RefPtr font = fontForEmphasisMark(mark))
         return font->fontMetrics().height();
     return { };
+}
+
+GlyphBuffer FontCascade::layoutSimpleTextForFixedPitch(const TextRun& run, unsigned from, unsigned to) const
+{
+    GlyphBuffer glyphBuffer;
+    Ref font = primaryFont();
+    auto advance = font->spaceWidth(Font::SyntheticBoldInclusion::Exclude);
+
+    auto addGlyphs = [&](auto characters) {
+        for (size_t i = 0; i < characters.size(); ++i) {
+            auto glyph = font->glyphForCharacter(characters[i]);
+            glyphBuffer.add(glyph, font.get(), advance, from + i);
+        }
+    };
+
+    auto subText = run.text().substring(from, to - from);
+    if (subText.is8Bit())
+        addGlyphs(subText.span8());
+    else
+        addGlyphs(subText.span16());
+
+    auto initialAdvance = font->applyTransforms(glyphBuffer, 0, from,
+        enableKerning(), requiresShaping(),
+        fontDescription().computedLocale(), run.text(), run.direction());
+    glyphBuffer.setInitialAdvance(initialAdvance);
+
+    if (from > 0)
+        glyphBuffer.expandInitialAdvance(from * advance);
+
+    if (run.rtl())
+        glyphBuffer.reverse(0, glyphBuffer.size());
+
+    return glyphBuffer;
 }
 
 GlyphBuffer FontCascade::layoutSimpleText(const TextRun& run, unsigned from, unsigned to, ForTextEmphasisOrNot forTextEmphasis) const

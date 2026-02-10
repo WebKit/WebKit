@@ -46,6 +46,8 @@ inline TextRun BoxModernPath::textRun(TextRunMode mode) const
     auto characterScanForCodePath = isText() && !renderText().canUseSimpleFontCodePath();
     auto textRun = TextRun { mode == TextRunMode::Editing ? originalText() : box().text().renderedContent(), logicalLeft(), expansion.horizontalExpansion, expansion.behavior, direction(), style.rtlOrdering() == Order::Visual, characterScanForCodePath };
     textRun.setTabSize(!style.collapseWhiteSpace(), Style::toPlatform(style.tabSize()));
+    if (isText())
+        textRun.setCanUseSimplifiedMeasuring(renderText().canUseSimplifiedTextMeasuring().value_or(false));
     return textRun;
 }
 
