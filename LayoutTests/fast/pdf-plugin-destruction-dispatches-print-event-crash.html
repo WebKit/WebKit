@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<p>PASS if no crash.</p>
+<embed id="embed" style="top: 200vmin; visibility: hidden;" type="application/pdf" src="about:blank"></embed>
+<script>
+  window.testRunner?.dumpAsText();
+  window.testRunner?.waitUntilDone();
+  window.addEventListener("load", _ => {
+    embed.setAttribute("onsubmit", "");
+    window.print();
+      requestAnimationFrame(_ => requestAnimationFrame(_ => window.testRunner?.notifyDone()));
+  });
+</script>
