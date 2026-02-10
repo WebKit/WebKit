@@ -34,7 +34,6 @@ FAIL hatch[tabindex] should not be focusable. assert_not_equals: got disallowed 
 PASS linearGradient[tabindex] should not be focusable.
 PASS marker[tabindex] should not be focusable.
 PASS mask[tabindex] should not be focusable.
-FAIL meshgradient[tabindex] should not be focusable. assert_not_equals: got disallowed value Element node <meshgradient tabindex="0"></meshgradient>
 PASS metadata[tabindex] should not be focusable.
 PASS pattern[tabindex] should not be focusable.
 PASS radialGradient[tabindex] should not be focusable.

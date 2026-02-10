@@ -47,9 +47,6 @@ FAIL SVGMarkerInstance is not defined
 FAIL SVGMarkerList is not defined
 FAIL SVGMaskElement should inherit SVGDefinitionElement but got SVGElement instead
 PASS SVGMatrix inherits Object
-FAIL SVGMeshGradientElement is not defined
-FAIL SVGMeshPatchElement is not defined
-FAIL SVGMeshRowElement is not defined
 PASS SVGMetadataElement inherits SVGElement
 PASS SVGNumber inherits Object
 PASS SVGNumberList inherits Object

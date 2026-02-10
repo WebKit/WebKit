@@ -47,7 +47,6 @@
         <linearGradient tabindex="0"></linearGradient>
         <marker tabindex="0"></marker>
         <mask tabindex="0"></mask>
-        <meshgradient tabindex="0"></meshgradient>
         <metadata tabindex="0"></metadata>
         <pattern tabindex="0"></pattern>
         <radialGradient tabindex="0"></radialGradient>
@@ -101,7 +100,6 @@
         ['linearGradient[tabindex]', false],
         ['marker[tabindex]', false],
         ['mask[tabindex]', false],
-        ['meshgradient[tabindex]', false],
         ['metadata[tabindex]', false],
         ['pattern[tabindex]', false],
         ['radialGradient[tabindex]', false],
