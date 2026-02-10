@@ -48,6 +48,7 @@ public:
 private:
     JSTestCallbackFunctionGenerateIsReachable(JSC::JSObject*, JSDOMGlobalObject*);
 
+    void clearCallback() final;
     bool hasCallback() const final { return m_data && m_data->callback(); }
 
     bool isJSTestCallbackFunctionGenerateIsReachable() const final { return true; }

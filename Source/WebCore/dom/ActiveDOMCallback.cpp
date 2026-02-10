@@ -32,12 +32,15 @@
 #include "ActiveDOMCallback.h"
 
 #include "ContextDestructionObserverInlines.h"
+#include "WorkerOrWorkletGlobalScope.h"
 
 namespace WebCore {
 
 ActiveDOMCallback::ActiveDOMCallback(ScriptExecutionContext* context)
     : ContextDestructionObserver(context)
 {
+    if (RefPtr scope = dynamicDowncast<WorkerOrWorkletGlobalScope>(context))
+        scope->addActiveDOMCallback(*this);
 }
 
 ActiveDOMCallback::~ActiveDOMCallback() = default;

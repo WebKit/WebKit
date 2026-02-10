@@ -78,6 +78,8 @@ public:
         return JSCallbackData::invokeCallback(*globalObject, callback(), thisValue, args, callbackType, functionName, returnedException);
     }
 
+    void clear() { m_callback.clear(); }
+
 private:
     JSC::Weak<JSDOMGlobalObject> m_globalObject;
 

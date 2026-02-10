@@ -77,6 +77,10 @@ void WorkerOrWorkletGlobalScope::prepareForDestruction()
     removeRejectedPromiseTracker();
 
     m_inspectorController->workerTerminating();
+
+    m_activeDOMCallbacks.forEach([](auto& callback) {
+        callback.clearCallback();
+    });
 }
 
 void WorkerOrWorkletGlobalScope::clearScript()
@@ -156,6 +160,11 @@ OptionSet<NoiseInjectionPolicy> WorkerOrWorkletGlobalScope::noiseInjectionPolici
 RefPtr<WorkerOrWorkletThread> WorkerOrWorkletGlobalScope::workerOrWorkletThread() const
 {
     return m_thread.get();
+}
+
+void WorkerOrWorkletGlobalScope::addActiveDOMCallback(ActiveDOMCallback& callback)
+{
+    m_activeDOMCallbacks.add(callback);
 }
 
 } // namespace WebCore

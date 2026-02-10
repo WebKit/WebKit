@@ -131,6 +131,7 @@ private:
 
     template<typename Function>
     void invokeCallback(Element&, JSC::JSObject* callback, NOESCAPE const Function& addArguments);
+    void clearCallback() final { }
 
     QualifiedName m_name;
     JSC::Weak<JSC::JSObject> m_constructor;

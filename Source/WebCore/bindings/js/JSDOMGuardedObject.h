@@ -61,6 +61,7 @@ protected:
     JSC::Weak<JSDOMGlobalObject> m_globalObject;
 
 private:
+    void clearCallback() final { clear(); };
     void removeFromGlobalObject();
 };
 

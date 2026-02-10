@@ -53,6 +53,7 @@ public:
     WEBCORE_EXPORT virtual ~ActiveDOMCallback();
 
     WEBCORE_EXPORT bool canInvokeCallback() const;
+    virtual void clearCallback() = 0;
 
     WEBCORE_EXPORT bool activeDOMObjectsAreSuspended() const;
     WEBCORE_EXPORT bool activeDOMObjectAreStopped() const;

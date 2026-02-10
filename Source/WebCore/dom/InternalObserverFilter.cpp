@@ -83,6 +83,7 @@ public:
         { }
 
         bool hasCallback() const final { return true; }
+        void clearCallback() final { }
 
         const Ref<Observable> m_sourceObservable;
         const Ref<PredicateCallback> m_predicate;
