@@ -1450,4 +1450,24 @@ void testCCmpNegatedOr32(int32_t, int32_t);
 void testCCmpMixedWidth32And64(int32_t, int64_t, int32_t);
 void testCCmpMixedWidth64And32(int64_t, int32_t);
 
+// SCCP tests
+void testSCCPDivByZeroInt32();
+void testSCCPDivOverflowInt32();
+void testSCCPModByZeroInt32();
+void testSCCPSExt8Fold();
+void testSCCPZExt32Fold();
+void testSCCPTruncFold();
+void testSCCPClzFold();
+void testSCCPBranchNarrowNonZero();
+void testSCCPEqualNarrowToConstant();
+void testSCCPSwitchNarrowToConstant();
+void testSCCPNotEqualZeroNonZeroFolds();
+void testSCCPIToDFold();
+void testSCCPNegFold();
+void testSCCPBlockWithNoLiveValues();
+void testSCCPPhiWithMultipleEntryPoints();
+void testSCCPOpaqueNoOptimization();
+void testSCCPFloatBranchNotNarrowed();
+void testSCCPNarrowingWithMeet();
+
 #endif // ENABLE(B3_JIT)

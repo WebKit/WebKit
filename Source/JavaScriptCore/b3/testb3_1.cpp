@@ -1067,6 +1067,26 @@ void run(const TestConfig* config)
         RUN(testMemoryFillConstant());
     }
 
+    // SCCP tests
+    RUN(testSCCPDivByZeroInt32());
+    RUN(testSCCPDivOverflowInt32());
+    RUN(testSCCPModByZeroInt32());
+    RUN(testSCCPSExt8Fold());
+    RUN(testSCCPZExt32Fold());
+    RUN(testSCCPTruncFold());
+    RUN(testSCCPClzFold());
+    RUN(testSCCPBranchNarrowNonZero());
+    RUN(testSCCPEqualNarrowToConstant());
+    RUN(testSCCPSwitchNarrowToConstant());
+    RUN(testSCCPNotEqualZeroNonZeroFolds());
+    RUN(testSCCPIToDFold());
+    RUN(testSCCPNegFold());
+    RUN(testSCCPBlockWithNoLiveValues());
+    RUN(testSCCPPhiWithMultipleEntryPoints());
+    RUN(testSCCPOpaqueNoOptimization());
+    RUN(testSCCPFloatBranchNotNarrowed());
+    RUN(testSCCPNarrowingWithMeet());
+
     Lock lock;
 
     Vector<Ref<Thread>> threads;

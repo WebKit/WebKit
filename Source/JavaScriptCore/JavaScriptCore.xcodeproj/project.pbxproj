@@ -381,7 +381,7 @@
 		0F714CA516EA92F200F3EBEB /* DFGBackwardsPropagationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F714CA216EA92ED00F3EBEB /* DFGBackwardsPropagationPhase.h */; };
 		0F725CA81C503DED00AD943A /* B3EliminateCommonSubexpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F725CA41C503DED00AD943A /* B3EliminateCommonSubexpressions.h */; };
 		0F725CAA1C503DED00AD943A /* B3PureCSE.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F725CA61C503DED00AD943A /* B3PureCSE.h */; };
-		0F725CB01C506D3B00AD943A /* B3FoldPathConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F725CAE1C506D3B00AD943A /* B3FoldPathConstants.h */; };
+		5BFCCF5C2D8A5C2800112233 /* B3SparseConditionalConstantPropagation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BFCCF5A2D8A5C2800112233 /* B3SparseConditionalConstantPropagation.h */; };
 		0F74B93B1F89614800B935D3 /* PrototypeKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F74B93A1F89614500B935D3 /* PrototypeKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F75A060200D260B0038E2CF /* LocalAllocatorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F75A05A200D25F00038E2CF /* LocalAllocatorInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F75A061200D26180038E2CF /* LocalAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F75A057200D25F00038E2CF /* LocalAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3211,8 +3211,8 @@
 		0F725CA41C503DED00AD943A /* B3EliminateCommonSubexpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3EliminateCommonSubexpressions.h; path = b3/B3EliminateCommonSubexpressions.h; sourceTree = "<group>"; };
 		0F725CA51C503DED00AD943A /* B3PureCSE.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3PureCSE.cpp; path = b3/B3PureCSE.cpp; sourceTree = "<group>"; };
 		0F725CA61C503DED00AD943A /* B3PureCSE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3PureCSE.h; path = b3/B3PureCSE.h; sourceTree = "<group>"; };
-		0F725CAD1C506D3B00AD943A /* B3FoldPathConstants.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3FoldPathConstants.cpp; path = b3/B3FoldPathConstants.cpp; sourceTree = "<group>"; };
-		0F725CAE1C506D3B00AD943A /* B3FoldPathConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3FoldPathConstants.h; path = b3/B3FoldPathConstants.h; sourceTree = "<group>"; };
+		5BFCCF592D8A5C2800112233 /* B3SparseConditionalConstantPropagation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3SparseConditionalConstantPropagation.cpp; path = b3/B3SparseConditionalConstantPropagation.cpp; sourceTree = "<group>"; };
+		5BFCCF5A2D8A5C2800112233 /* B3SparseConditionalConstantPropagation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3SparseConditionalConstantPropagation.h; path = b3/B3SparseConditionalConstantPropagation.h; sourceTree = "<group>"; };
 		0F74B93A1F89614500B935D3 /* PrototypeKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrototypeKey.h; sourceTree = "<group>"; };
 		0F75A054200D25EF0038E2CF /* Allocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Allocator.h; sourceTree = "<group>"; };
 		0F75A057200D25F00038E2CF /* LocalAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalAllocator.h; sourceTree = "<group>"; };
@@ -6836,8 +6836,6 @@
 				0F6971E91D92F42100BA02A5 /* B3FenceValue.h */,
 				0F6B8AE01C4EFE1700969052 /* B3FixSSA.cpp */,
 				0F6B8AE11C4EFE1700969052 /* B3FixSSA.h */,
-				0F725CAD1C506D3B00AD943A /* B3FoldPathConstants.cpp */,
-				0F725CAE1C506D3B00AD943A /* B3FoldPathConstants.h */,
 				0FEC84CB1BDACDAC0080FF74 /* B3FrequencyClass.cpp */,
 				0FEC84CC1BDACDAC0080FF74 /* B3FrequencyClass.h */,
 				0FEC84CD1BDACDAC0080FF74 /* B3FrequentedBlock.h */,
@@ -6905,6 +6903,8 @@
 				0FEC84EA1BDACDAC0080FF74 /* B3SlotBaseValue.cpp */,
 				0FEC84EB1BDACDAC0080FF74 /* B3SlotBaseValue.h */,
 				0F2BBD911C5FF3F50023EF23 /* B3SparseCollection.h */,
+				5BFCCF592D8A5C2800112233 /* B3SparseConditionalConstantPropagation.cpp */,
+				5BFCCF5A2D8A5C2800112233 /* B3SparseConditionalConstantPropagation.h */,
 				0F6B8ADA1C4EFAC300969052 /* B3SSACalculator.cpp */,
 				0F6B8ADB1C4EFAC300969052 /* B3SSACalculator.h */,
 				0F33FCF51C136E2500323F67 /* B3StackmapGenerationParams.cpp */,
@@ -10875,7 +10875,6 @@
 				5318045C22EAAC4B004A7342 /* B3ExtractValue.h in Headers */,
 				0F6971EA1D92F42400BA02A5 /* B3FenceValue.h in Headers */,
 				0F6B8AE51C4EFE1700969052 /* B3FixSSA.h in Headers */,
-				0F725CB01C506D3B00AD943A /* B3FoldPathConstants.h in Headers */,
 				0FEC85161BDACDAC0080FF74 /* B3FrequencyClass.h in Headers */,
 				0FEC85171BDACDAC0080FF74 /* B3FrequentedBlock.h in Headers */,
 				0FEC85191BDACDAC0080FF74 /* B3Generate.h in Headers */,
@@ -10914,6 +10913,7 @@
 				4B78E09F29442801003C6682 /* B3SIMDValue.h in Headers */,
 				0FEC85351BDACDAC0080FF74 /* B3SlotBaseValue.h in Headers */,
 				0F2BBD961C5FF3F50023EF23 /* B3SparseCollection.h in Headers */,
+				5BFCCF5C2D8A5C2800112233 /* B3SparseConditionalConstantPropagation.h in Headers */,
 				0F6B8ADD1C4EFAC300969052 /* B3SSACalculator.h in Headers */,
 				0F33FCF81C136E2500323F67 /* B3StackmapGenerationParams.h in Headers */,
 				0FEC85311BDACDAC0080FF74 /* B3StackmapSpecial.h in Headers */,

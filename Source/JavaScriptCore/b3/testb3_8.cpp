@@ -2660,6 +2660,519 @@ void testCCmpMixedWidth64And32(int64_t a, int32_t b)
     CHECK_EQ(compileAndRun<int32_t>(proc, a, b), expected);
 }
 
+// SCCP Tests
+// Note: These tests require optimization level 2 where SCCP runs
+
+// Test that SCCP correctly folds integer division by zero to 0 (chill semantics)
+void testSCCPDivByZeroInt32()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    // Create: return 42 / 0
+    Value* dividend = root->appendNew<Const32Value>(proc, Origin(), 42);
+    Value* divisor = root->appendNew<Const32Value>(proc, Origin(), 0);
+    Value* result = root->appendNew<Value>(proc, Div, Origin(), dividend, divisor);
+
+    root->appendNewControlValue(proc, Return, Origin(), result);
+
+    auto code = compileProc(proc, 2);
+    CHECK_EQ(invoke<int32_t>(*code), 0);
+}
+
+// Test that SCCP correctly folds INT_MIN / -1 to INT_MIN (chill semantics)
+void testSCCPDivOverflowInt32()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    // Create: return INT_MIN / -1 (which would overflow, but chill returns INT_MIN)
+    Value* dividend = root->appendNew<Const32Value>(proc, Origin(), std::numeric_limits<int32_t>::min());
+    Value* divisor = root->appendNew<Const32Value>(proc, Origin(), -1);
+    Value* result = root->appendNew<Value>(proc, Div, Origin(), dividend, divisor);
+
+    root->appendNewControlValue(proc, Return, Origin(), result);
+
+    auto code = compileProc(proc, 2);
+    CHECK_EQ(invoke<int32_t>(*code), std::numeric_limits<int32_t>::min());
+}
+
+// Test SCCP modulo by zero returns 0 (chill semantics)
+void testSCCPModByZeroInt32()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* dividend = root->appendNew<Const32Value>(proc, Origin(), 42);
+    Value* divisor = root->appendNew<Const32Value>(proc, Origin(), 0);
+    Value* result = root->appendNew<Value>(proc, Mod, Origin(), dividend, divisor);
+
+    root->appendNewControlValue(proc, Return, Origin(), result);
+
+    auto code = compileProc(proc, 2);
+    CHECK_EQ(invoke<int32_t>(*code), 0);
+}
+
+// Test SCCP folds SExt8 constant
+void testSCCPSExt8Fold()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    // SExt8 of 0xFF (-1 as int8) should give -1 as int32
+    Value* input = root->appendNew<Const32Value>(proc, Origin(), 0xFF);
+    Value* result = root->appendNew<Value>(proc, SExt8, Origin(), input);
+
+    root->appendNewControlValue(proc, Return, Origin(), result);
+
+    auto code = compileProc(proc, 2);
+    CHECK_EQ(invoke<int32_t>(*code), -1);
+}
+
+// Test SCCP folds ZExt32 constant
+void testSCCPZExt32Fold()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    // ZExt32 of -1 should give 0xFFFFFFFF as int64
+    Value* input = root->appendNew<Const32Value>(proc, Origin(), -1);
+    Value* result = root->appendNew<Value>(proc, ZExt32, Origin(), input);
+
+    root->appendNewControlValue(proc, Return, Origin(), result);
+
+    auto code = compileProc(proc, 2);
+    CHECK_EQ(invoke<int64_t>(*code), static_cast<int64_t>(0xFFFFFFFFu));
+}
+
+// Test SCCP folds Trunc constant
+void testSCCPTruncFold()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    // Trunc of 0x123456789 should give 0x23456789
+    Value* input = root->appendNew<Const64Value>(proc, Origin(), 0x123456789LL);
+    Value* result = root->appendNew<Value>(proc, Trunc, Origin(), input);
+
+    root->appendNewControlValue(proc, Return, Origin(), result);
+
+    auto code = compileProc(proc, 2);
+    CHECK_EQ(invoke<int32_t>(*code), 0x23456789);
+}
+
+// Test SCCP folds Clz constant
+void testSCCPClzFold()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    // Clz of 1 should give 31
+    Value* input = root->appendNew<Const32Value>(proc, Origin(), 1);
+    Value* result = root->appendNew<Value>(proc, Clz, Origin(), input);
+
+    root->appendNewControlValue(proc, Return, Origin(), result);
+
+    auto code = compileProc(proc, 2);
+    CHECK_EQ(invoke<int32_t>(*code), 31);
+}
+
+// Test SCCP branch narrowing: Branch with known nonZero condition
+void testSCCPBranchNarrowNonZero()
+{
+    // Test that Branch(NotEqual(x, 0)) optimizes Equal(x, 0) in taken block to 0
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    BasicBlock* done = proc.addBlock();
+
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* x = arguments[0];
+
+    // Branch on x != 0
+    Value* cond = root->appendNew<Value>(proc, NotEqual, Origin(),
+        x, root->appendNew<Const32Value>(proc, Origin(), 0));
+    root->appendNewControlValue(proc, Branch, Origin(), cond,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    // Create Phi first in the merge block
+    Value* phi = done->appendNew<Value>(proc, Phi, Int32, Origin());
+
+    // In thenCase, x is known to be nonZero
+    // Equal(x, 0) should fold to 0
+    Value* isZero = thenCase->appendNew<Value>(proc, Equal, Origin(),
+        x, thenCase->appendNew<Const32Value>(proc, Origin(), 0));
+    // Upsilon must come BEFORE the control value
+    UpsilonValue* upsThen = thenCase->appendNew<UpsilonValue>(proc, Origin(), isZero);
+    upsThen->setPhi(phi);
+    thenCase->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(done));
+
+    // In elseCase
+    Value* oneConst = elseCase->appendNew<Const32Value>(proc, Origin(), 1);
+    UpsilonValue* upsElse = elseCase->appendNew<UpsilonValue>(proc, Origin(), oneConst);
+    upsElse->setPhi(phi);
+    elseCase->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(done));
+
+    done->appendNewControlValue(proc, Return, Origin(), phi);
+
+    auto code = compileProc(proc, 2);
+    // If x = 5 (nonZero), should return 0 from isZero check in thenCase
+    CHECK_EQ(invoke<int32_t>(*code, 5), 0);
+    // If x = 0, should return 1 from elseCase
+    CHECK_EQ(invoke<int32_t>(*code, 0), 1);
+}
+
+// Test SCCP Equal narrowing: Branch(Equal(x, constant)) narrows x to constant in taken block
+void testSCCPEqualNarrowToConstant()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* x = arguments[0];
+
+    // Branch on x == 42
+    Value* cond = root->appendNew<Value>(proc, Equal, Origin(),
+        x, root->appendNew<Const32Value>(proc, Origin(), 42));
+    root->appendNewControlValue(proc, Branch, Origin(), cond,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    // In thenCase, x is known to be 42
+    // Just return x - SCCP should prove it's 42
+    thenCase->appendNewControlValue(proc, Return, Origin(), x);
+
+    // In elseCase, x != 42
+    elseCase->appendNewControlValue(proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compileProc(proc, 2);
+    // If x = 42, returns 42; otherwise returns 0
+    CHECK_EQ(invoke<int32_t>(*code, 42), 42);
+    CHECK_EQ(invoke<int32_t>(*code, 10), 0);
+}
+
+// Test SCCP Switch narrowing: Switch case edges narrow discriminant to case value
+void testSCCPSwitchNarrowToConstant()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* case1 = proc.addBlock();
+    BasicBlock* case2 = proc.addBlock();
+    BasicBlock* defaultCase = proc.addBlock();
+
+    auto arguments = cCallArgumentValues<int64_t>(proc, root);
+    Value* x = arguments[0];
+
+    SwitchValue* switchValue = root->appendNew<SwitchValue>(proc, Origin(), x);
+    switchValue->appendCase(SwitchCase(1, FrequentedBlock(case1)));
+    switchValue->appendCase(SwitchCase(2, FrequentedBlock(case2)));
+    switchValue->setFallThrough(FrequentedBlock(defaultCase));
+
+    // In case1, x is known to be 1
+    case1->appendNewControlValue(proc, Return, Origin(), x);
+
+    // In case2, x is known to be 2
+    case2->appendNewControlValue(proc, Return, Origin(), x);
+
+    // Default returns -1
+    defaultCase->appendNewControlValue(proc, Return, Origin(),
+        defaultCase->appendNew<Const64Value>(proc, Origin(), -1));
+
+    auto code = compileProc(proc, 2);
+    CHECK_EQ(invoke<int64_t>(*code, static_cast<int64_t>(1)), 1);
+    CHECK_EQ(invoke<int64_t>(*code, static_cast<int64_t>(2)), 2);
+    CHECK_EQ(invoke<int64_t>(*code, static_cast<int64_t>(3)), -1);
+}
+
+// Test SCCP NotEqual(x, 0) with nonZero x folds to 1
+void testSCCPNotEqualZeroNonZeroFolds()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    BasicBlock* done = proc.addBlock();
+
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* x = arguments[0];
+
+    // First check: if x != 0
+    Value* cond = root->appendNew<Value>(proc, NotEqual, Origin(),
+        x, root->appendNew<Const32Value>(proc, Origin(), 0));
+    root->appendNewControlValue(proc, Branch, Origin(), cond,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    // Create Phi first in the merge block
+    Value* phi = done->appendNew<Value>(proc, Phi, Int32, Origin());
+
+    // In thenCase, x is nonZero. NotEqual(x, 0) should fold to 1.
+    Value* notEqualZero = thenCase->appendNew<Value>(proc, NotEqual, Origin(),
+        x, thenCase->appendNew<Const32Value>(proc, Origin(), 0));
+    // Upsilon must come BEFORE the control value
+    UpsilonValue* upsThen = thenCase->appendNew<UpsilonValue>(proc, Origin(), notEqualZero);
+    upsThen->setPhi(phi);
+    thenCase->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(done));
+
+    // In elseCase
+    Value* zeroConst = elseCase->appendNew<Const32Value>(proc, Origin(), 0);
+    UpsilonValue* upsElse = elseCase->appendNew<UpsilonValue>(proc, Origin(), zeroConst);
+    upsElse->setPhi(phi);
+    elseCase->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(done));
+
+    done->appendNewControlValue(proc, Return, Origin(), phi);
+
+    auto code = compileProc(proc, 2);
+    // If x = 5, NotEqual(x, 0) in thenCase should be 1
+    CHECK_EQ(invoke<int32_t>(*code, 5), 1);
+    // If x = 0, goes to elseCase, returns 0
+    CHECK_EQ(invoke<int32_t>(*code, 0), 0);
+}
+
+// Test SCCP IToD constant folding
+void testSCCPIToDFold()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* input = root->appendNew<Const32Value>(proc, Origin(), 42);
+    Value* result = root->appendNew<Value>(proc, IToD, Origin(), input);
+
+    root->appendNewControlValue(proc, Return, Origin(), result);
+
+    auto code = compileProc(proc, 2);
+    CHECK_EQ(invoke<double>(*code), 42.0);
+}
+
+// Test SCCP Neg constant folding
+void testSCCPNegFold()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* input = root->appendNew<Const32Value>(proc, Origin(), 42);
+    Value* result = root->appendNew<Value>(proc, Neg, Origin(), input);
+
+    root->appendNewControlValue(proc, Return, Origin(), result);
+
+    auto code = compileProc(proc, 2);
+    CHECK_EQ(invoke<int32_t>(*code), -42);
+}
+
+// Test SCCP correctly visits blocks with no live values
+// Regression test for bug where blocks with empty valuesAtHead weren't visited during fixpoint
+void testSCCPBlockWithNoLiveValues()
+{
+    // This test creates a CFG with a block that has no live values at head
+    // but is critical for control flow propagation
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* emptyBlock = proc.addBlock();   // Block with no live values
+    BasicBlock* path2 = proc.addBlock();
+    BasicBlock* merge = proc.addBlock();
+
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* x = arguments[0];
+
+    // root branches to emptyBlock or path2
+    Value* cond = root->appendNew<Value>(proc, NotEqual, Origin(), x, root->appendNew<Const32Value>(proc, Origin(), 0));
+    root->appendNewControlValue(proc, Branch, Origin(), cond, FrequentedBlock(emptyBlock), FrequentedBlock(path2));
+
+    // emptyBlock has no live values (just Upsilon and Jump) - this is the critical test case
+    Value* phi = merge->appendNew<Value>(proc, Phi, Int32, Origin());
+
+    UpsilonValue* upsEmpty = emptyBlock->appendNew<UpsilonValue>(proc, Origin(), emptyBlock->appendNew<Const32Value>(proc, Origin(), 10));
+    upsEmpty->setPhi(phi);
+    emptyBlock->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(merge));
+
+    // path2 also jumps to merge
+    UpsilonValue* upsPath2 = path2->appendNew<UpsilonValue>(proc, Origin(), path2->appendNew<Const32Value>(proc, Origin(), 20));
+    upsPath2->setPhi(phi);
+    path2->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(merge));
+
+    // Return phi - it should NOT be constant-folded since it has different values from two paths
+    merge->appendNewControlValue(proc, Return, Origin(), phi);
+
+    auto code = compileProc(proc, 2);
+    // When x != 0, goes through emptyBlock, phi = 10
+    CHECK_EQ(invoke<int32_t>(*code, 5), 10);
+    // When x == 0, goes through path2, phi = 20
+    CHECK_EQ(invoke<int32_t>(*code, 0), 20);
+}
+
+// Test SCCP correctly handles Phis with multiple entry points
+// This reproduces the scenario from JSTests/stress/private-in.js bug
+void testSCCPPhiWithMultipleEntryPoints()
+{
+    Procedure proc;
+    BasicBlock* entry = proc.addBlock();
+    BasicBlock* path1 = proc.addBlock();
+    BasicBlock* path2 = proc.addBlock();
+    BasicBlock* merge = proc.addBlock();
+
+    auto arguments = cCallArgumentValues<int64_t>(proc, entry);
+    Value* input = arguments[0];
+
+    // Entry branches based on input
+    Value* cond = entry->appendNew<Value>(proc, NotEqual, Origin(),
+        input, entry->appendNew<Const64Value>(proc, Origin(), 0));
+    entry->appendNewControlValue(proc, Branch, Origin(), cond,
+        FrequentedBlock(path1), FrequentedBlock(path2));
+
+    // path1 provides constant 10
+    UpsilonValue* ups1 = path1->appendNew<UpsilonValue>(proc, Origin(),
+        path1->appendNew<Const64Value>(proc, Origin(), 10));
+    path1->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(merge));
+
+    // path2 provides the input value (non-constant)
+    UpsilonValue* ups2 = path2->appendNew<UpsilonValue>(proc, Origin(), input);
+    path2->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(merge));
+
+    // Phi in merge should NOT be constant-folded
+    Value* phi = merge->appendNew<Value>(proc, Phi, Int64, Origin());
+    ups1->setPhi(phi);
+    ups2->setPhi(phi);
+
+    // Use phi in a computation to ensure it's not eliminated
+    Value* result = merge->appendNew<Value>(proc, Add, Origin(),
+        phi, merge->appendNew<Const64Value>(proc, Origin(), 100));
+
+    merge->appendNewControlValue(proc, Return, Origin(), result);
+
+    auto code = compileProc(proc, 2);
+    // When input = 5, goes through path1, phi = 10, result = 110
+    CHECK_EQ(invoke<int64_t>(*code, static_cast<int64_t>(5)), 110);
+    // When input = 0, goes through path2, phi = 0, result = 100
+    CHECK_EQ(invoke<int64_t>(*code, static_cast<int64_t>(0)), 100);
+    // When input = 20, goes through path1, phi = 10, result = 110
+    CHECK_EQ(invoke<int64_t>(*code, static_cast<int64_t>(20)), 110);
+}
+
+// Test that SCCP doesn't optimize through Opaque nodes
+// Regression test for bug where Opaque was treated like Identity
+void testSCCPOpaqueNoOptimization()
+{
+    // This test verifies that Opaque prevents constant folding during SCCP
+    // Even though we pass a constant through Opaque, SCCP should not fold the result
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* input = arguments[0];
+
+    // Create a constant
+    Value* constant = root->appendNew<Const32Value>(proc, Origin(), 10);
+
+    // Hide it with Opaque - this simulates values that must not be constant-folded
+    // (like values that might be patched at runtime)
+    Value* opaque = root->appendNew<Value>(proc, Opaque, Origin(), constant);
+
+    // Add input to the opaque value
+    // If SCCP incorrectly sees through Opaque, it might try to optimize this
+    Value* result = root->appendNew<Value>(proc, Add, Origin(), input, opaque);
+
+    root->appendNewControlValue(proc, Return, Origin(), result);
+
+    auto code = compileProc(proc, 2);
+    CHECK_EQ(invoke<int32_t>(*code, 5), 15);
+    CHECK_EQ(invoke<int32_t>(*code, 0), 10);
+    CHECK_EQ(invoke<int32_t>(*code, -3), 7);
+}
+
+// Test that SCCP doesn't try to narrow float/double branch conditions
+// Regression test for bug where float zero tracking caused incorrect optimizations
+void testSCCPFloatBranchNotNarrowed()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    BasicBlock* done = proc.addBlock();
+
+    auto arguments = cCallArgumentValues<float>(proc, root);
+    Value* x = arguments[0];
+
+    // Branch on float != 0.0
+    // SCCP should NOT narrow this because float zero tracking is disabled
+    Value* zero = root->appendNew<ConstFloatValue>(proc, Origin(), 0.0f);
+    Value* cond = root->appendNew<Value>(proc, NotEqual, Origin(), x, zero);
+    root->appendNewControlValue(proc, Branch, Origin(), cond,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    Value* phi = done->appendNew<Value>(proc, Phi, Int32, Origin());
+
+    // In thenCase, return 1
+    UpsilonValue* upsThen = thenCase->appendNew<UpsilonValue>(proc, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+    upsThen->setPhi(phi);
+    thenCase->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(done));
+
+    // In elseCase, return 0
+    UpsilonValue* upsElse = elseCase->appendNew<UpsilonValue>(proc, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+    upsElse->setPhi(phi);
+    elseCase->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(done));
+
+    done->appendNewControlValue(proc, Return, Origin(), phi);
+
+    auto code = compileProc(proc, 2);
+    CHECK_EQ(invoke<int32_t>(*code, 5.0f), 1);
+    CHECK_EQ(invoke<int32_t>(*code, 0.0f), 0);
+    CHECK_EQ(invoke<int32_t>(*code, -0.0f), 0); // -0.0 should also take else branch
+}
+
+// Test that SCCP narrowing uses meet() to detect contradictions
+// Regression test for bug where withNonZero() was used without checking for Bottom
+void testSCCPNarrowingWithMeet()
+{
+    // This test creates a scenario where narrowing with meet() prevents incorrect optimization
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    BasicBlock* merge = proc.addBlock();
+
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* x = arguments[0];
+
+    // First, compare x with 0
+    Value* zero = root->appendNew<Const32Value>(proc, Origin(), 0);
+    Value* isZero = root->appendNew<Value>(proc, Equal, Origin(), x, zero);
+
+    // Branch on isZero
+    root->appendNewControlValue(proc, Branch, Origin(), isZero,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    Value* phi = merge->appendNew<Value>(proc, Phi, Int32, Origin());
+
+    // In thenCase (x == 0), try to compute x + 1
+    // This should compute 0 + 1 = 1
+    Value* thenValue = thenCase->appendNew<Value>(proc, Add, Origin(), x,
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+    UpsilonValue* upsThen = thenCase->appendNew<UpsilonValue>(proc, Origin(), thenValue);
+    upsThen->setPhi(phi);
+    thenCase->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(merge));
+
+    // In elseCase (x != 0), try to compute x + 2
+    Value* elseValue = elseCase->appendNew<Value>(proc, Add, Origin(), x,
+        elseCase->appendNew<Const32Value>(proc, Origin(), 2));
+    UpsilonValue* upsElse = elseCase->appendNew<UpsilonValue>(proc, Origin(), elseValue);
+    upsElse->setPhi(phi);
+    elseCase->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(merge));
+
+    merge->appendNewControlValue(proc, Return, Origin(), phi);
+
+    auto code = compileProc(proc, 2);
+    // When x = 0, goes to thenCase, returns 0 + 1 = 1
+    CHECK_EQ(invoke<int32_t>(*code, 0), 1);
+    // When x = 5, goes to elseCase, returns 5 + 2 = 7
+    CHECK_EQ(invoke<int32_t>(*code, 5), 7);
+    // When x = -3, goes to elseCase, returns -3 + 2 = -1
+    CHECK_EQ(invoke<int32_t>(*code, -3), -1);
+}
+
 #endif // ENABLE(B3_JIT)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
