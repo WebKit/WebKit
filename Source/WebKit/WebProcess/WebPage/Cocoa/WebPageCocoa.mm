@@ -1694,6 +1694,12 @@ void WebPage::drawPrintingRectToSnapshot(RemoteSnapshotIdentifier snapshotIdenti
     GraphicsContext& context = m_remoteSnapshotState->recorder.get();
 
     float printingScale = static_cast<float>(imageSize.width()) / rect.width();
+
+    AffineTransform baseTransform;
+    baseTransform.scale(1, -1);
+    baseTransform.translate(0, -imageSize.height());
+    context.setCTM(baseTransform);
+
     context.scale(printingScale);
 
     Ref { *m_printContext }->spoolRect(context, rect);
