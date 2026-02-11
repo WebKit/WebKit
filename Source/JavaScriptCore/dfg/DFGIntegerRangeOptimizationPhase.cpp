@@ -45,7 +45,7 @@ namespace JSC { namespace DFG {
 namespace {
 
 namespace DFGIntegerRangeOptimizationPhaseInternal {
-static constexpr bool verbose = false;
+static constexpr bool verbose = true;
 }
 const unsigned giveUpThreshold = 50;
 
@@ -765,7 +765,7 @@ private:
                 // -1, 0, or 1.
                 
                 // First figure out what offset we'd like to use.
-                int bestOffset = std::max(m_offset, other.m_offset);
+                int bestOffset = std::min(m_offset, other.m_offset);
                 
                 // We have something like @a < @b + 2. We can't represent this under the
                 // -1,0,1 rule.
@@ -1176,7 +1176,7 @@ public:
         return provablyGreaterThanOrEqual(lhs, m_zero, canUseConditionalInferences);
     }
 
-    // In general, we don't want to store these extra relationships unless we think we might need them.
+    // In general, we don't want to store these extra relationships to avoid stopping the fixed point from converging.
     void expandedRangeFor(Node* lhs)
     {
         int64_t min = std::numeric_limits<int32_t>::min();
@@ -1198,8 +1198,48 @@ public:
         }
 
         dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "Expanded range for ", lhs, " is ", min, " to ", max);
-        setRelationship(Relationship::safeCreate(lhs, m_zero,Relationship::LessThan, max));
-        setRelationship(Relationship::safeCreate(lhs, m_zero,Relationship::GreaterThan, min));
+        if (max < std::numeric_limits<int32_t>::max())
+            setRelationship(Relationship::safeCreate(lhs, m_zero,Relationship::LessThan, max));
+        if (min > std::numeric_limits<int32_t>::min())
+            setRelationship(Relationship::safeCreate(lhs, m_zero,Relationship::GreaterThan, min));
+    }
+    
+    // Again this needs to be very careful. Any statement that it judges must be pruned when the predicates would be pruned.
+    void expandArithmeticRelationships(RelationshipMap& relationships)
+    {
+        Vector<Relationship> toAdd;
+        
+        for (auto lhsProjection : relationships.keys()) {
+            Node* lhs = lhsProjection.node();
+            switch (lhs->op()) {
+            case ArithAdd: {
+                if (!lhs->isBinaryInt32UseKind())
+                    continue;
+                if (!lhs->child2().node()->isInt32Constant())
+                    continue;
+                int32_t constant = lhs->child2().node()->asInt32();
+                auto it = relationships.find(lhs);
+                if (it == relationships.end())
+                    continue;
+                for (auto& relationship : it->value) {
+                    Node* rhs = relationship.right().node();
+                    // { @a + constant < @c + c1 } |- @a < @c + c1 - constant
+                    if (relationship.kind() == Relationship::LessThan) {
+                        if (auto offset = differenceOverflows<int32_t>(relationship.offset(), constant))
+                            toAdd.append(Relationship::safeCreate(lhs, rhs, Relationship::LessThan, relationship.offset() - offset));
+                    }
+                }
+                continue;
+            }
+            default:
+                continue;
+            }
+        }
+
+        for (Relationship relationship : toAdd) {
+            dataLogIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "Adding expanded arithmetic relationship: ", relationship, "\n");
+            setRelationship(relationships, relationship);
+        }
     }
 
     bool run()
@@ -1469,6 +1509,9 @@ public:
                             dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "Dealing with false: ", relationship);
                             setRelationship(forFalse, relationship);
                         }
+                        
+                        expandArithmeticRelationships(forTrue);
+                        expandArithmeticRelationships(forFalse);
 
                         changed |= mergeTo(forTrue, branchData->taken.block);
                         changed |= mergeTo(forFalse, branchData->notTaken.block);
@@ -1629,6 +1672,7 @@ public:
                 }
 
                 case CheckInBounds: {
+                    expandedRangeFor(node->child1().node());
                     auto iter = m_relationships.find(node->child1().node());
                     if (iter == m_relationships.end())
                         break;
@@ -1846,8 +1890,9 @@ private:
             if (node->child1().useKind() != Int32Use)
                 break;
             setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
-            auto [minValue, maxValue] = rangeFor(node->child1().node());
-            if (minValue >= 0 && maxValue <= INT32_MAX)
+            expandedRangeFor(node->child1().node());
+            auto [minValue, _] = rangeFor(node->child1().node());
+            if (minValue >= 0)
                 setRelationship(Relationship(node, node->child1().node(), Relationship::Equal));
             break;
         }
@@ -1860,6 +1905,7 @@ private:
             // If a >= 0, then b = a, b >= a still
             setRelationship(Relationship(node, node->child1().node(), Relationship::GreaterThan, -1));
             // Note that we cannot conclude that b == 0 because it won't get pruned.
+            expandedRangeFor(node->child1().node());
             if (provablyNonNegative(node->child1().node()))
                 setRelationship(Relationship(node, node->child1().node(), Relationship::Equal));
             break;
@@ -2159,12 +2205,15 @@ private:
             auto isLive = [&] (NodeFlowProjection node) {
                 if (node == m_zero)
                     return true;
-                return target->ssa->liveAtHead.contains(node);
+                if (node.kind() == NodeFlowProjection::Shadow)
+                return target->ssa->liveAtHead.contains(node) || (node.kind() == NodeFlowProjection::Shadow && target->ssa->liveAtHead.contains(node.node()->phi()));
             };
             
             for (auto& entry : relationshipMap) {
-                if (!isLive(entry.key))
+                if (!isLive(entry.key)) {
+                    dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "  Not propagating relationships for ", entry.key);
                     continue;
+                }
                 
                 Vector<Relationship> values;
                 for (Relationship relationship : entry.value) {
@@ -2172,7 +2221,8 @@ private:
                     if (isLive(relationship.right())) {
                         dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "  Propagating ", relationship);
                         values.append(relationship);
-                    }
+                    } else
+                        dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "  Not propagating ", relationship);
                 }
                 
                 std::sort(values.begin(), values.end());

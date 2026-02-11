@@ -747,4 +747,3 @@ std::unique_ptr<JITData> Plan::tryFinalizeJITData(const DFG::JITCode& jitCode)
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-

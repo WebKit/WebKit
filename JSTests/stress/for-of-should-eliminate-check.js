@@ -81,6 +81,16 @@ function after(fn) {
   afters.push({ fn })
 }
 
+// This tests that loop unrolling won't break IRO
+canElide(function fnnnnn(arr) {
+  let sum = 0|0
+  for (let i = 0; i+3 < arr.length; i+=4) {
+    sum = ((sum|0) + (arr[i+3]|0))|0
+  }
+  return sum - 8 - 4 + 36
+})
+
+/*
 canElide(function (arr) {
     let sum = 0|0
     for (const item of arr) {
@@ -431,7 +441,7 @@ cannotElide(function (arr, arg) {
   } while (true)
   return sum
 }, 1337)
-
+*/
 function getDisassembly(fn, arg) {
   const arr1 = [1, 2, 3, 4, 5, 6, 7, 8].slice(0, 8)
   let dfg = ""
@@ -459,8 +469,8 @@ noInline(getDisassembly)
 
 let test = 0
 for (let { fn, arg } of elidable) {
-  // print("*<TEST>*")
-  // print(fn, " is ", test)
+  print("*<TEST>*")
+  print(fn, " is ", test)
   let { dfg, ftl } = getDisassembly(fn, arg)
   if (!dfgHasBoundsCheck(definitions(dfg)))
     throw test
@@ -470,11 +480,11 @@ for (let { fn, arg } of elidable) {
   test++
 }
 
-// print("*<TEST>* Unelidable tests")
+print("*<TEST>* Unelidable tests")
 
 for (let { fn, arg } of unelidable) {
-  // print("*<TEST>*")
-  // print(fn, " is ", test)
+  print("*<TEST>*")
+  print(fn, " is ", test)
   let { dfg, ftl } = getDisassembly(fn, arg)
   if (!dfgHasBoundsCheck(definitions(dfg)))
     throw test
