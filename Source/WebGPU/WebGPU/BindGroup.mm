@@ -514,9 +514,9 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
         return { mtlTextures[0], mtlTextures[1], simd::float3x2(1.f), colorSpaceConversionMatrix };
     }
 
-    if (auto optionalWebProcessID = webProcessID()) {
-        if (auto webProcessID = optionalWebProcessID->sendRight())
-            IOSurfaceSetOwnershipIdentity(ioSurface, webProcessID, kIOSurfaceMemoryLedgerTagGraphics, 0);
+    if (auto resourceOwnerTaskID = this->resourceOwnerTaskID()) {
+        if (auto resourceOwnerTaskIDToken = resourceOwnerTaskID->sendRight())
+            IOSurfaceSetOwnershipIdentity(ioSurface, resourceOwnerTaskIDToken, kIOSurfaceMemoryLedgerTagGraphics, 0);
     }
 
     id<MTLTexture> baseTexture = nil;

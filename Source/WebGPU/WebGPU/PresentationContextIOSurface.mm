@@ -52,14 +52,11 @@ Ref<PresentationContextIOSurface> PresentationContextIOSurface::create(const WGP
     return presentationContextIOSurface;
 }
 
-PresentationContextIOSurface::PresentationContextIOSurface(const WGPUSurfaceDescriptor&, const Instance& instance)
+PresentationContextIOSurface::PresentationContextIOSurface(const WGPUSurfaceDescriptor&, [[maybe_unused]] const Instance& instance)
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)
-    : m_webProcessID(instance.webProcessID())
+    : m_resourceOwnerTaskID(instance.resourceOwnerTaskID())
 #endif
 {
-#if !(HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN))
-    UNUSED_PARAM(instance);
-#endif
 }
 
 PresentationContextIOSurface::~PresentationContextIOSurface() = default;
@@ -69,11 +66,10 @@ void PresentationContextIOSurface::renderBuffersWereRecreated(NSArray<IOSurface 
     m_existingRenderBuffers = WTF::move(m_renderBuffers);
     m_ioSurfaces = ioSurfaces;
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)
-    if (m_webProcessID) {
-        mach_port_t webProcessID = m_webProcessID->sendRight();
-        if (webProcessID) {
+    if (m_resourceOwnerTaskID) {
+        if (auto resourceOwnerTaskIDToken = m_resourceOwnerTaskID->sendRight()) {
             for (IOSurface *surface in ioSurfaces)
-                IOSurfaceSetOwnershipIdentity(bridge_cast(surface), webProcessID, kIOSurfaceMemoryLedgerTagGraphics, 0);
+                IOSurfaceSetOwnershipIdentity(bridge_cast(surface), resourceOwnerTaskIDToken, kIOSurfaceMemoryLedgerTagGraphics, 0);
         }
     }
 #endif

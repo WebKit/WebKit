@@ -75,7 +75,7 @@ private:
     id<MTLComputePipelineState> m_computePipelineState;
     id<MTLComputePipelineState> m_resizeComputePipelineState;
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)
-    std::optional<const MachSendRight> m_webProcessID;
+    std::optional<const MachSendRight> m_resourceOwnerTaskID;
 #endif
     WGPUColorSpace m_colorSpace { WGPUColorSpace::SRGB };
     WGPUToneMappingMode m_toneMappingMode { WGPUToneMappingMode_Standard };

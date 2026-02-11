@@ -422,7 +422,7 @@ void Device::loseTheDevice(WGPUDeviceLostReason reason)
     m_isLost = true;
 }
 
-static void setOwnerWithIdentity(id<MTLResourceSPI> resource, auto webProcessID)
+static void setOwnerWithIdentity(id<MTLResourceSPI> resource, auto resourceOwnerTaskIDToken)
 {
     if (!resource)
         return;
@@ -430,17 +430,17 @@ static void setOwnerWithIdentity(id<MTLResourceSPI> resource, auto webProcessID)
     if (![resource respondsToSelector:@selector(setOwnerWithIdentity:)])
         return;
 
-    [resource setOwnerWithIdentity:webProcessID];
+    [resource setOwnerWithIdentity:resourceOwnerTaskIDToken];
 }
 
 void Device::setOwnerWithIdentity(id<MTLResource> resource) const
 {
-    if (auto optionalWebProcessID = webProcessID()) {
-        auto webProcessID = optionalWebProcessID->sendRight();
-        if (!webProcessID)
+    if (auto resourceOwnerTaskID = this->resourceOwnerTaskID()) {
+        auto resourceOwnerTaskIDToken = resourceOwnerTaskID->sendRight();
+        if (!resourceOwnerTaskIDToken)
             return;
 
-        WebGPU::setOwnerWithIdentity((id<MTLResourceSPI>)resource, webProcessID);
+        WebGPU::setOwnerWithIdentity((id<MTLResourceSPI>)resource, resourceOwnerTaskIDToken);
     }
 }
 
@@ -650,10 +650,10 @@ void Device::setLabel(String&&)
     // Because MTLDevices are process-global, we can't set the label on it, because 2 contexts' labels would fight each other.
 }
 
-const std::optional<const MachSendRight> Device::webProcessID() const
+const std::optional<const MachSendRight> Device::resourceOwnerTaskID() const
 {
     auto scheduler = instance();
-    return scheduler ? scheduler->webProcessID() : std::nullopt;
+    return scheduler ? scheduler->resourceOwnerTaskID() : std::nullopt;
 }
 
 id<MTLBuffer> Device::dispatchCallBuffer()

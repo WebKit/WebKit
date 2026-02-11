@@ -216,7 +216,7 @@ public:
     RefPtr<XRSubImage> getXRViewSubImage(XRProjectionLayer&);
     RefPtr<XRSubImage> getXRViewSubImage() const;
     id<MTLTexture> _Nullable getXRViewSubImageDepthTexture() const;
-    const std::optional<const MachSendRight> webProcessID() const;
+    const std::optional<const MachSendRight> resourceOwnerTaskID() const;
 #if CPU(X86_64)
     bool isIntel() const { return [m_device.name localizedCaseInsensitiveContainsString:@"intel"]; }
 #else
