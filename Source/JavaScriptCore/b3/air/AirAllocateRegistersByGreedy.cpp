@@ -1591,22 +1591,23 @@ private:
                 Tmp tmp = entry.tmp();
                 ASSERT(tmp && tmp.bank() == bank);
                 TmpData& tmpData = m_map.get<bank>(tmp);
+                Stage stage = tmpData.stage;
                 if (verbose()) {
                     StringPrintStream out;
                     out.println("Pop: ", entry, " tmp: ", tmpData);
                     dumpRegRanges<bank>(out);
                     dataLog(out.toCString());
                 }
-                if (tmpData.stage == Stage::Replaced)
-                    continue; // Tmp no longer relevant
-                if (tryAllocate<bank>(tmp, tmpData))
-                    continue;
-                if (tmpData.stage != Stage::TrySplit && tryEvict<bank>(tmp, tmpData))
-                    continue;
 
                 ASSERT(&tmpData == &m_map.get<bank>(tmp)); // Verify m_map hasn't been resized on this path
-                switch (tmpData.stage) {
+                switch (stage) {
+                case Stage::Unspillable:
                 case Stage::TryAllocate: {
+                    if (tryAllocate<bank>(tmp, tmpData))
+                        continue;
+                    if (tryEvict<bank>(tmp, tmpData))
+                        continue;
+                    RELEASE_ASSERT(stage != Stage::Unspillable);
                     // If we couldn't allocate tmp, allow it to split next time.
                     Stage nextStage = Stage::TrySplit;
                     // If we already know splitting won't be profitable, skip it.
@@ -1623,8 +1624,6 @@ private:
                     ASSERT(queueContainsOnlySpills()); // FIXME: remove
                     spill(tmp, tmpData);
                     continue;
-                case Stage::Unspillable:
-                    // Unspillables must have been allocated during tryAllocate or tryEvict.
                 default:
                     dataLogLn("Invalid stage tmp = ", tmp, " tmpData = ", tmpData);
                     // Tmps in these stages should not have been enqueued.
