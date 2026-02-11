@@ -11,6 +11,7 @@ This page was requested with the HTTP method POST.
 Parameters:
 
 the-input = input value goes here
+Sec-Fetch-Site = 'same-origin'
 
 ============== Back Forward List ==============
 curr->  http://127.0.0.1:8000/navigation/post-frames-goback1.html

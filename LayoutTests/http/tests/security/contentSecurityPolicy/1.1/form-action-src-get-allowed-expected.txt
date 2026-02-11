@@ -3,6 +3,7 @@ This page was requested with the HTTP method GET.
 Parameters:
 
 fieldname = fieldvalue
+Sec-Fetch-Site = 'same-origin'
 
 ============== Back Forward List ==============
         http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/form-action-src-get-allowed.html

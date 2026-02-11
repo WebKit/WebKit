@@ -8,6 +8,7 @@ print "Content-type: text/html\r\n";
 print "\r\n";
 
 $method = $query->request_method();
+$secFetchSite = $ENV{"HTTP_SEC_FETCH_SITE"};
 
 print <<HEADER;
 <body>
@@ -26,6 +27,7 @@ foreach $paramName (@paramNames)
 
 print <<FOOTER
 </ul>
+<div id=logDiv></div>
 <script>
 var isDone = true;
 if (sessionStorage.formTargetShouldNavAndGoBack) {
@@ -51,8 +53,10 @@ if (sessionStorage.topShouldNavAndGoBack) {
   }
 }
 
-if (isDone && window.testRunner)
+if (isDone && window.testRunner) {
+    logDiv.innerHTML = "Sec-Fetch-Site = '$secFetchSite'";
     testRunner.notifyDone();
+}
 
 </script>
 </body>

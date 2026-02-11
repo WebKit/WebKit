@@ -4,6 +4,7 @@ Parameters:
 
 the-input = input value goes here
 submitwithpost = Submit with POST
+Sec-Fetch-Site = 'same-origin'
 
 ============== Back Forward List ==============
         http://127.0.0.1:8000/navigation/resources/page-that-posts.html
