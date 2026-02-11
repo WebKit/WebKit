@@ -597,23 +597,6 @@ void Adjuster::adjust(RenderStyle& style) const
             || style.display() == DisplayType::TableHeaderGroup || style.display() == DisplayType::TableRow || style.display() == DisplayType::TableRowGroup)
             style.setWritingMode(m_parentStyle.writingMode().computedWritingMode());
 
-        // FIXME: Adjust this once CSSWG clarifies exactly how the initial value should compute on other display types.
-        // For now, this gives mostly backwards-compatible behavior.
-        if (style.display() == DisplayType::Grid || style.display() == DisplayType::InlineGrid) {
-            if (auto gridAutoFlow = style.gridAutoFlow(); gridAutoFlow.direction() == GridAutoFlow::Direction::Normal) {
-                gridAutoFlow.setDirection(Style::GridAutoFlow::Direction::Row);
-                style.setGridAutoFlow(gridAutoFlow);
-            }
-        } else if (style.display() == DisplayType::GridLanes || style.display() == DisplayType::InlineGridLanes) {
-            if (auto gridAutoFlow = style.gridAutoFlow(); gridAutoFlow.direction() == GridAutoFlow::Direction::Normal) {
-                if (!style.gridTemplateRows().isNone() && style.gridTemplateColumns().isNone())
-                    gridAutoFlow.setDirection(Style::GridAutoFlow::Direction::Column);
-                else
-                    gridAutoFlow.setDirection(Style::GridAutoFlow::Direction::Row);
-                style.setGridAutoFlow(gridAutoFlow);
-            }
-        }
-
         if (style.isDisplayDeprecatedFlexibleBox()) {
             // FIXME: Since we don't support block-flow on flexible boxes yet, disallow setting
             // of block-flow to anything other than StyleWritingMode::HorizontalTb.

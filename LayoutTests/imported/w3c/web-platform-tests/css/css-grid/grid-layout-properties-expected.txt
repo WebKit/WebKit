@@ -59,7 +59,7 @@ PASS grid-auto-rows.<track-size>.<track-breadth>.max-content
 PASS grid-auto-rows.<track-size>.<track-breadth>.minmax()
 PASS grid-auto-rows.reset
 PASS grid-auto-flow
-PASS grid-auto-flow.initial
+FAIL grid-auto-flow.initial assert_equals: initial value of grid-auto-flow should be row expected "row" but got "normal"
 PASS grid-auto-flow.row
 PASS grid-auto-flow.column
 PASS grid-auto-flow.dense

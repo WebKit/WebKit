@@ -398,6 +398,21 @@ UsedFloat RenderStyle::usedFloat(const RenderElement& renderer)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+Style::GridAutoFlow::Direction RenderStyle::usedGridAutoFlowDirection() const
+{
+    // FIXME: Adjust this once CSSWG clarifies exactly how the initial value should compute on other display types.
+    // For now, this gives mostly backwards-compatible behavior.
+    auto gridFlow = gridAutoFlow();
+
+    if (gridFlow.direction() != Style::GridAutoFlow::Direction::Normal)
+        return gridFlow.direction();
+
+    if ((display() == DisplayType::GridLanes || display() == DisplayType::InlineGridLanes)
+        && (!gridTemplateRows().isNone() && gridTemplateColumns().isNone()))
+            return Style::GridAutoFlow::Direction::Column;
+    return Style::GridAutoFlow::Direction::Row;
+}
+
 UserSelect RenderStyle::usedUserSelect() const
 {
     if (effectiveInert())

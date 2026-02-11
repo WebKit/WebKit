@@ -904,8 +904,6 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyMinWidth> {
 template<> struct PropertyExtractorAdaptor<CSSPropertyGridAutoFlow> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
     {
-        // FIXME: Adjust this once CSSWG clarifies exactly how the initial value should compute.
-        // For now, this gives the most backwards-compatible behavior.
         auto gridFlow = state.style.gridAutoFlow();
         switch (gridFlow.direction()) {
         case GridAutoFlow::Direction::Column:
@@ -918,16 +916,11 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyGridAutoFlow> {
         case GridAutoFlow::Direction::Row:
             switch (gridFlow.packing()) {
             case GridAutoFlow::Packing::Dense:
-                if (!state.style.gridTemplateRows().isNone() && state.style.gridTemplateColumns().isNone()
-                    && (state.style.display() == DisplayType::GridLanes || state.style.display() == DisplayType::InlineGridLanes))
-                    return functor(SpaceSeparatedTuple { CSS::Keyword::Row { }, CSS::Keyword::Dense { } });
                 return functor(CSS::Keyword::Dense { });
             case GridAutoFlow::Packing::Sparse:
                 return functor(CSS::Keyword::Row { });
             }
         default:
-            ASSERT(state.style.display() != DisplayType::GridLanes && state.style.display() != DisplayType::InlineGridLanes
-                && state.style.display() != DisplayType::Grid && state.style.display() != DisplayType::InlineGrid);
             switch (gridFlow.packing()) {
             case GridAutoFlow::Packing::Dense:
                 return functor(CSS::Keyword::Dense { });

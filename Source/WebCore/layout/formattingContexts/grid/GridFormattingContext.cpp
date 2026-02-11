@@ -173,7 +173,8 @@ void GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
 
     GridAutoFlowOptions autoFlowOptions {
         .strategy = gridStyle->gridAutoFlow().isDense() ? PackingStrategy::Dense : PackingStrategy::Sparse,
-        .direction = gridStyle->gridAutoFlow().isRow() ? GridAutoFlowDirection::Row : GridAutoFlowDirection::Column
+        .direction = gridStyle->usedGridAutoFlowDirection() == Style::GridAutoFlow::Direction::Row
+            ? GridAutoFlowDirection::Row : GridAutoFlowDirection::Column
     };
 
     // https://drafts.csswg.org/css-grid-1/#track-sizes
