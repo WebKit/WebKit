@@ -255,7 +255,7 @@ private:
     // Build up a map of min/max sizes for each span length for use during resolving intrinsic track sizes.
     // We also need to keep track of definite items separately, since they do not contribute to every track like indefinite items do.
     void computeDefiniteAndIndefiniteItemsForMasonry(StdMap<SpanLength, MasonryMinMaxTrackSize>&, StdMap<SpanLength, Vector<MasonryMinMaxTrackSizeWithGridSpan>>&, Vector<MasonryMinMaxTrackSizeWithGridSpan>&, GridLayoutState&);
-    bool shouldExcludeGridItemForMasonryTrackSizing(const RenderBox& gridItem, unsigned trackIndex, GridSpan itemSpan) const;
+
     // Track sizing algorithm steps. Note that the "Maximize Tracks" step is done
     // entirely inside the strategies, that's why we don't need an additional
     // method at this level.
@@ -273,6 +273,12 @@ private:
     void resolveIntrinsicTrackSizesMasonry(GridLayoutState&);
     void stretchFlexibleTracks(std::optional<LayoutUnit> freeSpace, GridLayoutState&);
     void stretchAutoTracks();
+
+    // Shared stack-based traversal that visits every grid item (including those nested inside subgrids).
+    // For subgrids, it accumulates margin/border/padding into each spanned track and recurses into children.
+    // For leaf items, it invokes |handleLeafItem(gridItem, gridItemSpan)|.
+    template<typename LeafItemHandler>
+    void traverseSubgridTreeForIntrinsicSizing(LeafItemHandler&&);
 
     void aggregateGridItemsForIntrinsicSizing(Vector<GridItemWithSpan>& itemsSortedByIncreasingSpan, Vector<GridItemWithSpan>& itemsCrossingFlexibleTracks, GridLayoutState&);
 
