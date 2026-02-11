@@ -34,10 +34,6 @@ namespace WebCore {
 // in other processes using FrameTreeSyncData. Currently, it is used by
 // Intersection Observer to compute the intersection rectangle from any processes.
 struct RemoteFrameLayoutInfo {
-    // Rectangle of the visible portion of the frame in its parent frame,
-    // in the coordinate space of the document of the parent frame.
-    std::optional<LayoutRect> visibleRectInParent;
-
     // RenderStyle::usedZoom of the owner renderer of the frame.
     float usedZoom;
 };

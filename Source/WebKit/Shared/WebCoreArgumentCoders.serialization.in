@@ -2194,7 +2194,6 @@ class WebCore::LayoutRect {
 };
 
 struct WebCore::RemoteFrameLayoutInfo {
-    std::optional<WebCore::LayoutRect> visibleRectInParent;
     float usedZoom;
 };
 
