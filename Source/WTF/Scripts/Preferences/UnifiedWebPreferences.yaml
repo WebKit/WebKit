@@ -3536,17 +3536,17 @@ GridLanesEnabled:
 
 HTMLEnhancedSelectParsingEnabled:
    type: bool
-   status: stable
+   status: testable
    category: dom
    humanReadableName: "Enhanced HTML select element parsing"
    humanReadableDescription: "Enable enhanced HTML select element parsing"
    defaultValue:
      WebKitLegacy:
-       default: true
+       default: false
      WebKit:
-       default: true
+       default: false
      WebCore:
-       default: true
+       default: false
 
 HTMLEnhancedSelectSelectedContentEnabled:
    type: bool
