@@ -523,6 +523,7 @@ private:
     void layoutInlineContent(RelayoutChildren, LayoutUnit previousHeight, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
     struct InlineContentStatus {
         bool hasSimpleOutOfFlowContentOnly { false };
+        bool hasDirtyInFlowBlockLevelElement { false };
         std::optional<bool> onlyBlockContentNeedsLayout { };
     };
     InlineContentStatus markInlineContentDirtyForLayout(RelayoutChildren);

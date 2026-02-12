@@ -4069,13 +4069,16 @@ RenderBlockFlow::InlineContentStatus RenderBlockFlow::markInlineContentDirtyForL
 {
     auto contentNeedsNormalChildLayoutOnly = true;
     auto hasInFlowBlockLevelElement = false;
+    auto hasDirtyInFlowBlockLevelElement = false;
     auto hasSimpleOutOfFlowContentOnly = !hasLineIfEmpty();
     auto hasSimpleStaticPositionForInlineLevelOutOfFlowContentByStyle = hasSimpleStaticPositionForInlineLevelOutOfFlowChildrenByStyle(style());
 
     for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
         auto& renderer = *walker.current();
         auto* box = dynamicDowncast<RenderBox>(renderer);
-        hasInFlowBlockLevelElement = hasInFlowBlockLevelElement || (box && box->isBlockLevelBox() && box->isInFlow());
+        auto isInFlowBlockLevelElement = box && box->isBlockLevelBox() && box->isInFlow();
+        hasInFlowBlockLevelElement |= isInFlowBlockLevelElement;
+        hasDirtyInFlowBlockLevelElement |= (isInFlowBlockLevelElement && box->needsLayout());
         auto childNeedsLayout = relayoutChildren == RelayoutChildren::Yes || (box && box->hasRelativeDimensions() && !box->isBlockLevelBox());
         auto childNeedsPreferredWidthComputation = relayoutChildren == RelayoutChildren::Yes && box && box->shouldInvalidatePreferredWidths();
         if (childNeedsLayout)
@@ -4134,7 +4137,7 @@ RenderBlockFlow::InlineContentStatus RenderBlockFlow::markInlineContentDirtyForL
             continue;
         }
     }
-    return { hasSimpleOutOfFlowContentOnly, hasInFlowBlockLevelElement ? std::make_optional(contentNeedsNormalChildLayoutOnly) : std::nullopt };
+    return { hasSimpleOutOfFlowContentOnly, hasDirtyInFlowBlockLevelElement, hasInFlowBlockLevelElement ? std::make_optional(contentNeedsNormalChildLayoutOnly) : std::nullopt };
 }
 
 std::optional<LayoutUnit> RenderBlockFlow::updateLineClampStateAndLogicalHeightAfterLayout()
@@ -4239,7 +4242,8 @@ void RenderBlockFlow::layoutInlineContent(RelayoutChildren relayoutChildren, Lay
     inlineLayout.updateFormattingContexGeometries(containingBlock() ? containingBlockLogicalWidthForContent() : LayoutUnit());
 
     auto marginInfo = MarginInfo { *this, MarginInfo::IgnoreScrollbarForAfterMargin::No };
-    auto partialRepaintRect = inlineLayout.layout(marginInfo, relayoutChildren == RelayoutChildren::Yes ? LayoutIntegration::LineLayout::ForceFullLayout::Yes : LayoutIntegration::LineLayout::ForceFullLayout::No);
+    auto shouldForceFullLayout = relayoutChildren == RelayoutChildren::Yes || inlineContentStatus.hasDirtyInFlowBlockLevelElement ? LayoutIntegration::LineLayout::ForceFullLayout::Yes : LayoutIntegration::LineLayout::ForceFullLayout::No;
+    auto partialRepaintRect = inlineLayout.layout(marginInfo, shouldForceFullLayout);
 
     auto contentBoxHeight = [&]() -> LayoutUnit {
         if (auto clampedContentHeight = updateLineClampStateAndLogicalHeightAfterLayout())
