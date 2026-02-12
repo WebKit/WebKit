@@ -51,10 +51,18 @@
     height: 44px;
 }
 
+.media-controls.mac.fullscreen:not(.uses-ltr-user-interface-layout-direction) .buttons-container.left .mute.bar{
+    left: 80px !important;
+}
+
 .media-controls.mac.fullscreen .buttons-container.left {
     top: 16px;
     height: 16px;
     width: 100px !important;
+}
+
+.media-controls.mac.fullscreen:not(.uses-ltr-user-interface-layout-direction) .buttons-container.left {
+    left: 20px !important;
 }
 
 .media-controls.mac.fullscreen .buttons-container.center {
