@@ -4,22 +4,26 @@
     <style>
         embed {
             width: 300px;
-            height: 250px;
+            height: 100px;
         }
     </style>
     <script src="../resources/ui-helper.js"></script>
+
     <script>
         if (window.testRunner) {
             testRunner.waitUntilDone();
             testRunner.dumpAsText();
         }
         window.addEventListener('load', async () => {
-            await UIHelper.waitForPDFFadeIn();
+            if (!window.internals)
+                return;
 
-            if (window.internals)
+            let pluginElement = document.querySelector("embed");
+            window.internals.registerPDFTest(async () => {
+                await UIHelper.ensureStablePresentationUpdate();
                 document.getElementById('scrollingtree').textContent = internals.scrollingStateTreeAsText();
-
-            testRunner.notifyDone();
+                testRunner.notifyDone();
+            }, pluginElement);
         }, false);
     </script>
 </head>

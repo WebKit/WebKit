@@ -1,17 +1,16 @@
 <!DOCTYPE html> <!-- webkit-test-runner [ UnifiedPDFEnabled=true ] -->
 <html>
 <head>
-    <script src="../resources/js-test.js"></script>
     <style>
         embed {
             width: 300px;
-            height: 250px;
+            height: 100px;
         }
     </style>
     <script src="../resources/ui-helper.js"></script>
+    <script src="../resources/js-test.js"></script>
     <script>
         window.jsTestIsAsync = true;
-
         if (window.testRunner)
             testRunner.dumpAsText();
 
@@ -27,17 +26,21 @@
             pdf.src = "../fast/images/resources/green_rectangle.pdf";
 
             shouldBecomeEqual("internals.numberOfScrollableAreas()", "1", () => {
-                testOutput += "After installing PDF:\n" + internals.scrollingStateTreeAsText() + "\n";
+                let pluginElement = document.querySelector("embed");
 
-                pdf.parentElement.removeChild(pdf);
+                window.internals.registerPDFTest(async() => {
+                    await UIHelper.ensureStablePresentationUpdate();
+                    testOutput += "After installing PDF:\n" + internals.scrollingStateTreeAsText() + "\n";
 
-                shouldBecomeEqual("internals.numberOfScrollableAreas()", "0", () => {
 
-                    testOutput += "After removing PDF:\n" + internals.scrollingStateTreeAsText() + "\n";
-                    document.getElementById('scrollingtree').textContent = testOutput
+                    pdf.parentElement.removeChild(pdf);
 
-                    finishJSTest();
-                });
+                    shouldBecomeEqual("internals.numberOfScrollableAreas()", "0", () => {
+                        testOutput += "After removing PDF:\n" + internals.scrollingStateTreeAsText() + "\n";
+                        document.getElementById('scrollingtree').textContent = testOutput
+                        finishJSTest();
+                    });
+                  }, pluginElement);
             });
         }, false);
     </script>
