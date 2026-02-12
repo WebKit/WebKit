@@ -41,6 +41,7 @@
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/UnvalidatedDigitalCredentialRequest.h>
 #import <WebKit/WKIdentityDocumentPresentmentMobileDocumentRequest.h>
+#import <wtf/Box.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import "WebKitSwiftSoftLink.h"
 
@@ -86,6 +87,58 @@ static Vector<WebCore::CertificateInfo> buildRequestAuthentications(WKIdentityDo
     return requestAuthentications;
 }
 
+#if ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
+static WebCore::ISO18013Any convertObjCValueToISO18013Any(id value)
+{
+    WebCore::ISO18013Any result;
+
+    if ([value isKindOfClass:[NSString class]]) {
+        result.data = String(static_cast<NSString*>(value));
+    } else if ([value isKindOfClass:[NSNumber class]]) {
+        NSNumber* number = static_cast<NSNumber*>(value);
+        NSString* objCType = @(number.objCType);
+        if ([objCType isEqualToString:@(@encode(BOOL))] || [objCType isEqualToString:@(@encode(bool))])
+            result.data = static_cast<bool>([number boolValue]);
+        else
+            result.data = static_cast<int>([number intValue]);
+    } else if ([value isKindOfClass:[NSArray class]]) {
+        NSArray* array = static_cast<NSArray*>(value);
+        Vector<Box<WebCore::ISO18013Any>> vecArray;
+        for (id item in array) {
+            auto convertedItem = convertObjCValueToISO18013Any(item);
+            vecArray.append(Box<WebCore::ISO18013Any>::create(WTF::move(convertedItem)));
+        }
+        result.data = WTF::move(vecArray);
+    } else if ([value isKindOfClass:[NSDictionary class]]) {
+        NSDictionary* dict = static_cast<NSDictionary*>(value);
+        HashMap<String, Box<WebCore::ISO18013Any>> hashMap;
+        for (NSString* key in dict) {
+            auto convertedValue = convertObjCValueToISO18013Any(dict[key]);
+            hashMap.set(String(key), Box<WebCore::ISO18013Any>::create(WTF::move(convertedValue)));
+        }
+        result.data = WTF::move(hashMap);
+    } else
+        result.data = std::monostate();
+
+    return result;
+}
+
+static WebCore::ISO18013DocumentRequestInfoExtension convertApplicationSpecificExtensions(NSDictionary<NSString*, id> *extensions)
+{
+    WebCore::ISO18013DocumentRequestInfoExtension result;
+
+    if (!extensions)
+        return result;
+
+    for (NSString* key in extensions) {
+        auto convertedValue = convertObjCValueToISO18013Any(extensions[key]);
+        result.set(String(key), WTF::move(convertedValue));
+    }
+
+    return result;
+}
+#endif // ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
+
 static WebCore::ISO18013DocumentRequest buildDocumentRequest(WKIdentityDocumentPresentmentMobileDocumentIndividualDocumentRequest *individualDocumentRequest)
 {
     WebCore::ISO18013DocumentRequest mappedDocumentRequest;
@@ -109,6 +162,14 @@ static WebCore::ISO18013DocumentRequest buildDocumentRequest(WKIdentityDocumentP
 
         mappedDocumentRequest.namespaces.append(std::make_pair(WTF::move(mappedNamespaceKey), WTF::move(innerVector)));
     }
+
+#if ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
+    if (individualDocumentRequest.applicationSpecificExtensions) {
+        WebCore::ISO18013DocumentRequestInfo requestInfo;
+        requestInfo.extension = convertApplicationSpecificExtensions(individualDocumentRequest.applicationSpecificExtensions);
+        mappedDocumentRequest.requestInfo = WTF::move(requestInfo);
+    }
+#endif // ENABLE(ISO18013_DOCUMENT_REQUEST_INFO)
 
     return mappedDocumentRequest;
 }

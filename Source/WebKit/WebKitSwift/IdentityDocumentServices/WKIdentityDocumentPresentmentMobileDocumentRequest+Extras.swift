@@ -40,7 +40,51 @@ extension WKIdentityDocumentPresentmentMobileDocumentIndividualDocumentRequest {
                 $0.mapValues(WKIdentityDocumentPresentmentMobileDocumentElementInfo.init(_:))
             }
         )
+
+        #if ENABLE_ISO18013_DOCUMENT_REQUEST_INFO
+        if let requestInfo = source.requestInformation {
+            self.applicationSpecificExtensions = Self.convertSendableExtensions(requestInfo.applicationSpecificExtensions)
+        }
+        #endif // ENABLE_ISO18013_DOCUMENT_REQUEST_INFO
     }
+
+    #if ENABLE_ISO18013_DOCUMENT_REQUEST_INFO
+    private static func convertSendableExtensions(
+        _ extensions: [ISO18013MobileDocumentRequest.ApplicationSpecificExtensionKey: any Sendable]
+    ) -> [String: Any] {
+        var result: [String: Any] = [:]
+        for (key, value) in extensions {
+            result[key.rawValue] = convertSendableValue(value)
+        }
+        return result
+    }
+
+    private static func convertSendableValue(_ value: any Sendable) -> Any {
+        // Convert Swift types to Objective-C compatible types
+        switch value {
+        case let string as String:
+            return string as NSString
+        case let number as Int:
+            return NSNumber(value: number)
+        case let number as Double:
+            return NSNumber(value: number)
+        case let number as Float:
+            return NSNumber(value: number)
+        case let bool as Bool:
+            return NSNumber(value: bool)
+        case let array as [any Sendable]:
+            return array.map { Self.convertSendableValue($0) } as NSArray
+        case let dict as [String: any Sendable]:
+            var objcDict: [String: Any] = [:]
+            for (key, val) in dict {
+                objcDict[key] = Self.convertSendableValue(val)
+            }
+            return objcDict as NSDictionary
+        default:
+            return value as Any
+        }
+    }
+    #endif // ENABLE_ISO18013_DOCUMENT_REQUEST_INFO
 }
 
 extension WKIdentityDocumentPresentmentMobileDocumentPresentmentRequest {
