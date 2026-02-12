@@ -289,22 +289,23 @@ void VisibleSelection::adjustSelectionRespectingGranularity(TextGranularity gran
             // last word to the line break (also RightWordIfOnBoundary);
             VisiblePosition start = VisiblePosition(m_start, m_affinity);
             VisiblePosition originalEnd(m_end, m_affinity);
+            VisiblePosition lastSelectedChar = (m_start != m_end) ? originalEnd.previous() : originalEnd;
             WordSide side = WordSide::RightWordIfOnBoundary;
             if (isEndOfEditableOrNonEditableContent(start) || (isEndOfLine(start) && !isStartOfLine(start) && !isEndOfParagraph(start)))
                 side = WordSide::LeftWordIfOnBoundary;
             m_start = startOfWord(start, side).deepEquivalent();
             side = WordSide::RightWordIfOnBoundary;
-            if (isEndOfEditableOrNonEditableContent(originalEnd) || (isEndOfLine(originalEnd) && !isStartOfLine(originalEnd) && !isEndOfParagraph(originalEnd)))
+            if (isEndOfEditableOrNonEditableContent(lastSelectedChar) || (isEndOfLine(lastSelectedChar) && !isStartOfLine(lastSelectedChar) && !isEndOfParagraph(lastSelectedChar)))
                 side = WordSide::LeftWordIfOnBoundary;
 
-            VisiblePosition wordEnd(endOfWord(originalEnd, side));
+            VisiblePosition wordEnd(endOfWord(lastSelectedChar, side));
             VisiblePosition end(wordEnd);
-            
+
             if (isEndOfParagraph(originalEnd) && !isEmptyTableCell(protect(m_start.deprecatedNode()).get())) {
-                // Select the paragraph break (the space from the end of a paragraph to the start of 
+                // Select the paragraph break (the space from the end of a paragraph to the start of
                 // the next one) to match TextEdit.
                 end = wordEnd.next();
-                
+
                 if (RefPtr table = isFirstPositionAfterTable(end)) {
                     // The paragraph break after the last paragraph in the last cell of a block table ends
                     // at the start of the paragraph after the table.
@@ -313,12 +314,12 @@ void VisibleSelection::adjustSelectionRespectingGranularity(TextGranularity gran
                     else
                         end = wordEnd;
                 }
-                
+
                 if (end.isNull())
                     end = wordEnd;
-                    
+
             }
-                
+
             m_end = end.deepEquivalent();
 
             // End must not be before start.
@@ -333,7 +334,7 @@ void VisibleSelection::adjustSelectionRespectingGranularity(TextGranularity gran
         case TextGranularity::LineGranularity: {
             m_start = startOfLine(VisiblePosition(m_start, m_affinity)).deepEquivalent();
             VisiblePosition end = endOfLine(VisiblePosition(m_end, m_affinity));
-            // If the end of this line is at the end of a paragraph, include the space 
+            // If the end of this line is at the end of a paragraph, include the space
             // after the end of the line in the selection.
             if (isEndOfParagraph(end)) {
                 VisiblePosition next = end.next();
@@ -353,7 +354,7 @@ void VisibleSelection::adjustSelectionRespectingGranularity(TextGranularity gran
                 position = position.previous();
             m_start = startOfParagraph(position).deepEquivalent();
             VisiblePosition visibleParagraphEnd = endOfParagraph(VisiblePosition(m_end, m_affinity));
-            
+
             // Include the "paragraph break" (the space from the end of this paragraph to the start
             // of the next one) in the selection.
             VisiblePosition end(visibleParagraphEnd.next());
@@ -390,14 +391,13 @@ void VisibleSelection::adjustSelectionRespectingGranularity(TextGranularity gran
             ASSERT_NOT_REACHED();
             break;
     }
-    
+
     // Make sure we do not have a dangling start or end.
     if (m_start.isNull())
         m_start = m_end;
     if (m_end.isNull())
         m_end = m_start;
 }
-
 void VisibleSelection::updateSelectionType()
 {
     if (m_start.isNull()) {
