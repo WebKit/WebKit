@@ -5344,6 +5344,20 @@ MediaVideoCodecIDsAllowedInLockdownMode:
     WebKit:
       default: '"avc1,zavc,qavc,cavc"_str'
 
+MessageQueueCapacity:
+  type: uint32_t
+  status: embedder
+  condition: PLATFORM(WPE)
+  humanReadableName: "Message Queue Capacity"
+  humanReadableDescription: "Capacity of message queue for each WebSocket, MessageChannel, etc."
+  defaultValue:
+    WebKitLegacy:
+      default: 1000
+    WebKit:
+      default: 1000
+    WebCore:
+      default: 1000
+
 MetaViewportInteractiveWidgetEnabled:
   type: bool
   status: testable

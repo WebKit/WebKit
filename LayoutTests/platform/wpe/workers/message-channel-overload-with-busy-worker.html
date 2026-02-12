@@ -1,0 +1,71 @@
+<html><!-- webkit-test-runner [ MessageQueueCapacity=100 ] -->
+  <head>
+    <script id='myWorker' type='text/worker'>
+      self.onmessage = (initialMessage) => {
+          const port = initialMessage.data.port;
+          port.onmessage = (message) => {
+              if (message.data.id == 2) {
+                  function busyLoop(durationMs) {
+                      const begin = Date.now();
+                      while (true) {
+                          for (var i = 0; i < 1000000; ++i)
+                              continue;
+                          if (Date.now() - begin >= durationMs)
+                              break;
+                      }
+                  }
+                  busyLoop(2000);
+              }
+              port.postMessage(message.data);
+          };
+          postMessage('Start spamming please.');
+      };
+    </script>
+  </head>
+  <body>
+    <script>
+      if (window.testRunner) {
+          testRunner.waitUntilDone();
+          testRunner.dumpAsText();
+
+          const timeoutId = setTimeout(() => {
+              document.body.innerText = "TIMEOUT";
+              testRunner.notifyDone();
+          }, 5000);
+
+          const workerBlob = new Blob([document.getElementById('myWorker').textContent]);
+          const worker = new Worker(URL.createObjectURL(workerBlob));
+          const messageChannel = new MessageChannel();
+
+          worker.onmessage = (message) => {
+              for (let i = 1; i <= 200; i++) {
+                  messageChannel.port1.postMessage({ id: i });
+              }
+          };
+          let messagesAcknowledgedByWorker = 0;
+          let flushSent = false;
+          const flush = 999;
+          messageChannel.port1.onmessage = (message) => {
+              messagesAcknowledgedByWorker++;
+              if (message.data.id > 1 && !flushSent) {
+                  messageChannel.port1.postMessage({ id: flush });
+                  flushSent = true;
+              }
+              if (message.data.id == flush) {
+                  clearTimeout(timeoutId);
+                  if (messagesAcknowledgedByWorker < 201) {
+                      document.body.innerText = "PASS";
+                  } else {
+                      document.body.innerText = "FAIL";
+                  }
+                  testRunner.notifyDone();
+              }
+          };
+
+          worker.postMessage({
+              port: messageChannel.port2,
+          }, [ messageChannel.port2 ]);
+      }
+    </script>
+  </body>
+</html>

@@ -130,6 +130,10 @@ private:
     MessagePortIdentifier m_remoteIdentifier;
 
     MessageHandler m_messageHandler;
+
+#if PLATFORM(WPE)
+    unsigned long m_messagesInDispatchQueue { 0 };
+#endif
 };
 
 WebCoreOpaqueRoot root(MessagePort*);

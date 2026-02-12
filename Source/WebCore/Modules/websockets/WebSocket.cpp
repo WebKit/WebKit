@@ -225,6 +225,21 @@ void WebSocket::failAsynchronously()
     });
 }
 
+#if PLATFORM(WPE)
+bool WebSocket::failIfDispatchQueueSizeExceeded()
+{
+    if (m_messagesInDispatchQueue > protect(scriptExecutionContext())->settingsValues().messageQueueCapacity) {
+        m_messagesInDispatchQueue--;
+        LOG(Network, "WebSocket's message queue size exceeded - connection will be closed.");
+        protect(scriptExecutionContext())->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "WebSocket's message queue size exceeded."_s);
+        close(std::nullopt, "WebSocket's message queue size exceeded."_s);
+        return true;
+    }
+
+    return false;
+}
+#endif
+
 ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& protocols)
 {
     LOG(Network, "WebSocket %p connect() url='%s'", this, url.utf8().data());
@@ -551,7 +566,18 @@ void WebSocket::didConnect()
 void WebSocket::didReceiveMessage(String&& message)
 {
     LOG(Network, "WebSocket %p didReceiveMessage() Text message '%s'", this, message.utf8().data());
+
+#if PLATFORM(WPE)
+    m_messagesInDispatchQueue++;
+    if (failIfDispatchQueueSizeExceeded())
+        return;
+#endif
+
     queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [message = WTF::move(message)](auto& socket) mutable {
+#if PLATFORM(WPE)
+        socket.m_messagesInDispatchQueue--;
+#endif
+
         if (socket.m_state != OPEN)
             return;
 
@@ -569,7 +595,18 @@ void WebSocket::didReceiveMessage(String&& message)
 void WebSocket::didReceiveBinaryData(Vector<uint8_t>&& binaryData)
 {
     LOG(Network, "WebSocket %p didReceiveBinaryData() %u byte binary message", this, static_cast<unsigned>(binaryData.size()));
+
+#if PLATFORM(WPE)
+    m_messagesInDispatchQueue++;
+    if (failIfDispatchQueueSizeExceeded())
+        return;
+#endif
+
     queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [binaryData = WTF::move(binaryData)](auto& socket) mutable {
+#if PLATFORM(WPE)
+        socket.m_messagesInDispatchQueue--;
+#endif
+
         if (socket.m_state != OPEN)
             return;
 

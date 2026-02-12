@@ -121,6 +121,19 @@ void WebMessagePortChannelProvider::postMessageToRemote(MessageWithMessagePorts&
 {
     auto iterator = m_inProcessPortMessages.find(remoteTarget);
     if (iterator != m_inProcessPortMessages.end()) {
+#if PLATFORM(WPE)
+        if (WebPage* page = WebProcess::singleton().focusedWebPage()) {
+            if (iterator->value.size() >= page->corePage()->settings().messageQueueCapacity()) {
+                static std::once_flag onceFlag;
+                std::call_once(onceFlag, [&page] {
+                    LOG(MessagePorts, "MessageChannel's message queue size exceeded - at least one message has been dropped.");
+                    if (RefPtr localTopDocument = protect(page->corePage())->localTopDocument())
+                        localTopDocument->addConsoleMessage(MessageSource::Other, MessageLevel::Error, "MessageChannel's message queue size exceeded - at least one message has been dropped."_s);
+                });
+                return;
+            }
+        }
+#endif
         iterator->value.append(WTF::move(message));
         WebProcess::singleton().messagesAvailableForPort(remoteTarget);
         return;

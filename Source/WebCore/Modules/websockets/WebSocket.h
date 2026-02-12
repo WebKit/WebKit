@@ -134,6 +134,10 @@ private:
 
     void failAsynchronously();
 
+#if PLATFORM(WPE)
+    bool failIfDispatchQueueSizeExceeded();
+#endif
+
     static Lock s_allActiveWebSocketsLock;
     RefPtr<ThreadableWebSocketChannel> m_channel;
 
@@ -148,6 +152,10 @@ private:
 
     bool m_dispatchedErrorEvent { false };
     RefPtr<PendingActivity<WebSocket>> m_pendingActivity;
+
+#if PLATFORM(WPE)
+    unsigned long m_messagesInDispatchQueue { 0 };
+#endif
 };
 
 } // namespace WebCore

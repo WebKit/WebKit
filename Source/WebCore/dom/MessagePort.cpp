@@ -299,8 +299,24 @@ void MessagePort::dispatchMessages()
                 return;
             }
 
+#if PLATFORM(WPE)
+            pendingActivity->object().m_messagesInDispatchQueue++;
+            if (pendingActivity->object().m_messagesInDispatchQueue > context->settingsValues().messageQueueCapacity) {
+                pendingActivity->object().m_messagesInDispatchQueue--;
+                static std::once_flag onceFlag;
+                std::call_once(onceFlag, [&context] {
+                    LOG(MessagePorts, "MessageChannel's message queue size exceeded - at least one message has been dropped.");
+                    context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "MessageChannel's message queue size exceeded - at least one message has been dropped."_s);
+                });
+                return;
+            }
+#endif
+
             // Per specification, each MessagePort object has a task source called the port message queue.
             queueTaskKeepingObjectAlive(pendingActivity->object(), TaskSource::PostedMessageQueue, [event = WTF::move(event)](auto& port) {
+#if PLATFORM(WPE)
+                port.m_messagesInDispatchQueue--;
+#endif
                 port.dispatchEvent(event.event);
             });
         }

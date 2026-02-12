@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: MessageChannel's message queue size exceeded - at least one message has been dropped.
+PASS
