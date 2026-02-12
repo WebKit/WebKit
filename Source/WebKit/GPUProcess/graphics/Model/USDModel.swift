@@ -26,7 +26,7 @@ internal import OSLog
 internal import WebKit_Internal
 internal import simd
 
-#if canImport(RealityCoreRenderer, _version: 9) && (os(macOS) || (os(iOS) && canImport(SwiftUI, _version: "8.0.36"))) && canImport(_USDKit_RealityKit)
+#if canImport(RealityCoreRenderer, _version: 9) && os(macOS) && canImport(_USDKit_RealityKit)
 @_spi(RealityCoreRendererAPI) internal import RealityKit
 @_spi(RealityCoreTextureProcessingAPI) internal import RealityCoreTextureProcessing
 @_spi(UsdLoaderAPI) internal import _USDKit_RealityKit

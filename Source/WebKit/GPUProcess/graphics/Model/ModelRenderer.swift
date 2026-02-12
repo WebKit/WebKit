@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if canImport(RealityCoreRenderer, _version: 9) && (os(macOS) || (os(iOS) && canImport(SwiftUI, _version: "8.0.36"))) && canImport(_USDKit_RealityKit)
+#if canImport(RealityCoreRenderer, _version: 9) && os(macOS)
 
 internal import QuartzCore
 @_spi(RealityCoreRendererAPI) @_spi(Private) internal import RealityKit

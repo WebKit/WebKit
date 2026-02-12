@@ -24,7 +24,7 @@
 internal import Metal
 internal import WebKit_Internal
 
-#if canImport(RealityCoreRenderer, _version: 9) && (os(macOS) || (os(iOS) && canImport(SwiftUI, _version: "8.0.36"))) && canImport(_USDKit_RealityKit)
+#if canImport(RealityCoreRenderer, _version: 9) && os(macOS) && canImport(_USDKit_RealityKit)
 @_spi(RealityCoreRendererAPI) internal import RealityKit
 @_spi(UsdLoaderAPI) internal import _USDKit_RealityKit
 @_spi(SwiftAPI) internal import DirectResource
@@ -804,7 +804,7 @@ extension WKBridgeLiteral {
     }
 }
 
-#if canImport(RealityCoreRenderer, _version: 9) && (os(macOS) || (os(iOS) && canImport(SwiftUI, _version: "8.0.36"))) && canImport(_USDKit_RealityKit)
+#if canImport(RealityCoreRenderer, _version: 9) && os(macOS)
 
 internal func toData<T>(_ input: [T]) -> Data {
 #if compiler(>=6.2)
