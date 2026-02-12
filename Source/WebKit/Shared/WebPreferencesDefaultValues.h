@@ -162,6 +162,7 @@ bool defaultLinearMediaPlayerEnabled();
 
 bool defaultShouldEnableScreenOrientationAPI();
 bool defaultPopoverAttributeEnabled();
+bool defaultHTMLEnhancedSelectParsingEnabled();
 bool defaultUseGPUProcessForDOMRenderingEnabled();
 
 #if USE(LIBWEBRTC)

@@ -62,6 +62,7 @@ bool defaultAttachmentElementEnabled();
 bool defaultShouldRestrictBaseURLSchemes();
 bool defaultShouldConvertInvalidURLsToBlank();
 bool defaultPopoverAttributeEnabled();
+bool defaultHTMLEnhancedSelectParsingEnabled();
 bool defaultShowModalDialogEnabled();
 bool defaultFontFaceSetConstructorEnabled();
 

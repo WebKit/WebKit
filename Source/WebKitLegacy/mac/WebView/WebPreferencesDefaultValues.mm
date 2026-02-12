@@ -194,6 +194,12 @@ bool defaultPopoverAttributeEnabled()
     return newSDK;
 }
 
+bool defaultHTMLEnhancedSelectParsingEnabled()
+{
+    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::HTMLEnhancedSelectParsingEnabled);
+    return newSDK;
+}
+
 #if PLATFORM(MAC)
 
 bool defaultPassiveWheelListenersAsDefaultOnDocument()

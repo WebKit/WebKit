@@ -3425,9 +3425,9 @@ HTMLEnhancedSelectParsingEnabled:
    humanReadableDescription: "Enable enhanced HTML select element parsing"
    defaultValue:
      WebKitLegacy:
-       default: true
+       default: WebKit::defaultHTMLEnhancedSelectParsingEnabled()
      WebKit:
-       default: true
+       default: WebKit::defaultHTMLEnhancedSelectParsingEnabled()
      WebCore:
        default: true
 

@@ -309,6 +309,16 @@ bool defaultPopoverAttributeEnabled()
 #endif
 }
 
+bool defaultHTMLEnhancedSelectParsingEnabled()
+{
+#if PLATFORM(COCOA)
+    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::HTMLEnhancedSelectParsingEnabled);
+    return newSDK;
+#else
+    return true;
+#endif
+}
+
 bool defaultUseGPUProcessForDOMRenderingEnabled()
 {
 #if ENABLE(GPU_PROCESS_BY_DEFAULT) && ENABLE(GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)

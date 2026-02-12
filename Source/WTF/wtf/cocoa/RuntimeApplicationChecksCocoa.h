@@ -108,6 +108,7 @@ enum class SDKAlignedBehavior {
     ProgrammaticFocusDuringUserScriptShowsInputViews,
     ScreenOrientationAPIEnabled,
     PopoverAttributeEnabled,
+    HTMLEnhancedSelectParsingEnabled,
     DoesNotOverrideUAFromNSUserDefault,
     EvaluateJavaScriptWithoutTransientActivation,
     ResettingTransitionCancelsRunningTransitionQuirk,
