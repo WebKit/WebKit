@@ -578,6 +578,8 @@ bool RenderGrid::layoutUsingGridFormattingContext()
     gridLayout.updateFormattingContextGeometries();
 
     gridLayout.layout();
+    // Set the grid container's height to include content height (for height: auto grids)
+    setLogicalHeight(std::max(logicalHeight(), borderAndPaddingLogicalHeight() + gridLayout.contentBoxLogicalHeight()));
     updateLogicalHeight();
     return true;
 }

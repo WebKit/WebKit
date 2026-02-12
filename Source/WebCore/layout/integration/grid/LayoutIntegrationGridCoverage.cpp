@@ -233,8 +233,10 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
 
     CheckedRef renderGridStyle = renderGrid.style();
 
-    if (!renderGridStyle->height().isFixed())
-        ADD_REASON_AND_RETURN_IF_NEEDED(GridHasNonFixedHeight, reasons, reasonCollectionMode);
+    // [GFC] Support non-fixed container heights - use max-content constraint
+    // See: LayoutIntegrationGridLayout.cpp:121-133 (creates AxisConstraint::maxContent for indefinite heights)
+    // if (!renderGridStyle->height().isFixed())
+    //     ADD_REASON_AND_RETURN_IF_NEEDED(GridHasNonFixedHeight, reasons, reasonCollectionMode);
 
     if (renderGridStyle->display() == DisplayType::InlineGrid)
         ADD_REASON_AND_RETURN_IF_NEEDED(GridNeedsBaseline, reasons, reasonCollectionMode);

@@ -174,6 +174,19 @@ std::pair<LayoutUnit, LayoutUnit> GridLayout::computeIntrinsicWidths()
     return { intrinsicWidths.minimum, intrinsicWidths.maximum };
 }
 
+LayoutUnit GridLayout::contentBoxLogicalHeight() const
+{
+    // Compute the grid container's content height from the positioned grid items.
+    // For grids with height: auto, this determines the grid's final height.
+    // For grids with explicit height, this is computed but the explicit height takes precedence.
+    auto contentLogicalBottom = LayoutUnit { };
+    for (auto& layoutBox : Layout::formattingContextBoxes(gridBox())) {
+        auto marginBoxRect = Layout::BoxGeometry::marginBoxRect(layoutState().geometryForBox(layoutBox));
+        contentLogicalBottom = std::max(contentLogicalBottom, marginBoxRect.bottom());
+    }
+    return contentLogicalBottom;
+}
+
 void GridLayout::layout()
 {
     Layout::GridFormattingContext { gridBox(), layoutState() }.layout(constraintsForGridContent(gridBox()));
