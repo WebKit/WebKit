@@ -943,6 +943,10 @@ void EmptyFrameLoaderClient::didReplaceMultipartContent()
 {
 }
 
+void EmptyFrameLoaderClient::updateFrameTreeForCommit()
+{
+}
+
 void EmptyFrameLoaderClient::committedLoad(DocumentLoader*, const SharedBuffer&)
 {
 }

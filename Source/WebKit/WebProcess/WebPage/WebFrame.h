@@ -136,6 +136,7 @@ public:
     WebCore::Frame* coreFrame() const;
 
     void createProvisionalFrame(ProvisionalFrameCreationParameters&&);
+    void updateFrameTreeForCommit();
     void commitProvisionalFrame();
     void destroyProvisionalFrame();
     void loadDidCommitInAnotherProcess(std::optional<WebCore::LayerHostingContextIdentifier>);

@@ -219,6 +219,7 @@ public:
     virtual void willReplaceMultipartContent() = 0;
     virtual void didReplaceMultipartContent() = 0;
 
+    virtual void updateFrameTreeForCommit() = 0;
     virtual void committedLoad(DocumentLoader*, const SharedBuffer&) = 0;
     virtual void finishedLoading(DocumentLoader*) = 0;
 

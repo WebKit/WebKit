@@ -126,6 +126,7 @@ private:
     void willReplaceMultipartContent() final;
     void didReplaceMultipartContent() final;
 
+    void updateFrameTreeForCommit() final;
     void committedLoad(DocumentLoader*, const SharedBuffer&) final;
     void finishedLoading(DocumentLoader*) final;
 

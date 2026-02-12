@@ -1210,6 +1210,12 @@ void WebLocalFrameLoaderClient::didReplaceMultipartContent()
     webPage->didReplaceMultipartContent(m_frame);
 }
 
+void WebLocalFrameLoaderClient::updateFrameTreeForCommit()
+{
+    Ref frame = m_frame.get();
+    frame->updateFrameTreeForCommit();
+}
+
 void WebLocalFrameLoaderClient::committedLoad(DocumentLoader* loader, const SharedBuffer& data)
 {
     if (!hasPlugInView())
