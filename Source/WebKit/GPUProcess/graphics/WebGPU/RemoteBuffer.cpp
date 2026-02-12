@@ -70,14 +70,17 @@ void RemoteBuffer::mapAsync(WebCore::WebGPU::MapModeFlags mapModeFlags, WebCore:
     m_pendingMap = true;
 
     protectedBacking()->mapAsync(mapModeFlags, offset, size, [protectedThis = Ref<RemoteBuffer>(*this), callback = WTF::move(callback), mapModeFlags] (bool success) mutable {
+        bool mapWasPending = protectedThis->m_pendingMap;
         protectedThis->m_pendingMap = false;
         if (!success) {
             callback(false);
             return;
         }
 
-        protectedThis->m_isMapped = true;
-        protectedThis->m_mapModeFlags = mapModeFlags;
+        if (mapWasPending) {
+            protectedThis->m_isMapped = true;
+            protectedThis->m_mapModeFlags = mapModeFlags;
+        }
         callback(true);
     });
 }
@@ -92,9 +95,10 @@ void RemoteBuffer::getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<
 
 void RemoteBuffer::unmap()
 {
-    if (m_isMapped)
+    if (m_isMapped || m_pendingMap)
         protectedBacking()->unmap();
     m_isMapped = false;
+    m_pendingMap = false;
     m_mapModeFlags = { };
 }
 
