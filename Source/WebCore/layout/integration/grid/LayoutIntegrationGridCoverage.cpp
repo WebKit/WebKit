@@ -45,7 +45,6 @@ enum class ReasonCollectionMode : bool {
 };
 
 enum class GridAvoidanceReason : uint8_t {
-    GridHasNonFixedWidth,
     GridHasNonFixedHeight,
     GridHasVerticalWritingMode,
     GridHasMarginTrim,
@@ -233,9 +232,6 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         ADD_REASON_AND_RETURN_IF_NEEDED(GridFormattingContextIntegrationDisabled, reasons, reasonCollectionMode);
 
     CheckedRef renderGridStyle = renderGrid.style();
-
-    if (!renderGridStyle->width().isFixed())
-        ADD_REASON_AND_RETURN_IF_NEEDED(GridHasNonFixedWidth, reasons, reasonCollectionMode);
 
     if (!renderGridStyle->height().isFixed())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridHasNonFixedHeight, reasons, reasonCollectionMode);
@@ -586,9 +582,6 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
     switch (reason) {
     case GridAvoidanceReason::GridFormattingContextIntegrationDisabled:
         stream << "grid formatting context integration is disabled";
-        break;
-    case GridAvoidanceReason::GridHasNonFixedWidth:
-        stream << "grid has non-fixed width";
         break;
     case GridAvoidanceReason::GridHasNonFixedHeight:
         stream << "grid has non-fixed height";
