@@ -7,7 +7,7 @@ description("Tests silent WebAudio rendering in hidden pages.");
 jsTestIsAsync = true;
 
 let counter = 0;
-document.onvisibilitychange = async function() {
+document.onvisibilitychange = function() {
     if (!counter) {
          counter = 1;
          shouldBeTrue("document.hidden");
@@ -23,15 +23,15 @@ document.onvisibilitychange = async function() {
 function showPage()
 {
     debug("* Setting page visibility to visible");
-    if (window.internals)
-        internals.setPageVisibility(true);
+    if (window.testRunner)
+        testRunner.setPageVisibility("visible");
 }
 
 function hidePage()
 {
     debug("* Setting page visibility to hidden");
-    if (window.internals)
-        internals.setPageVisibility(false);
+    if (window.testRunner)
+        testRunner.setPageVisibility("hidden");
 }
 
 onload = function() {
