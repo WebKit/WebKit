@@ -275,7 +275,7 @@ bool WebExtensionAPIWindows::parseWindowCreateOptions(NSDictionary *options, Web
         tabParameters.url = URL { extensionContext().baseURL(), url };
 
         if (!tabParameters.url.value().isValid()) {
-            *outExceptionString = toErrorString(nullString(), urlKey, @"'%@' is not a valid URL", url).createNSString().autorelease();
+            *outExceptionString = toErrorString(nullString(), urlKey, makeString("'"_s, String(url), "' is not a valid URL"_s)).createNSString().autorelease();
             return false;
         }
 
@@ -289,7 +289,7 @@ bool WebExtensionAPIWindows::parseWindowCreateOptions(NSDictionary *options, Web
             tabParameters.url = URL { extensionContext().baseURL(), url };
 
             if (!tabParameters.url.value().isValid()) {
-                *outExceptionString = toErrorString(nullString(), urlKey, @"'%@' is not a valid URL", url).createNSString().autorelease();
+                *outExceptionString = toErrorString(nullString(), urlKey, makeString("'"_s, String(url), "' is not a valid URL"_s)).createNSString().autorelease();
                 return false;
             }
 
@@ -367,7 +367,7 @@ bool isValid(std::optional<WebExtensionWindowIdentifier> identifier, NSString **
         if (isNone(identifier))
             *outExceptionString = toErrorString(nullString(), @"windowId", @"'windows.WINDOW_ID_NONE' is not allowed").createNSString().autorelease();
         else if (identifier)
-            *outExceptionString = toErrorString(nullString(), @"windowId", @"'%llu' is not a window identifier", identifier.value().toUInt64()).createNSString().autorelease();
+            *outExceptionString = toErrorString(nullString(), @"windowId", makeString("'"_s, identifier.value().toUInt64(), "' is not a window identifier"_s)).createNSString().autorelease();
         else
             *outExceptionString = toErrorString(nullString(), @"windowId", @"it is not a window identifier").createNSString().autorelease();
         return false;

@@ -266,7 +266,7 @@ void WebExtensionContext::scriptingUpdateRegisteredScripts(const Vector<WebExten
         auto scriptID = parameters.identifier;
         RefPtr registeredScript = m_registeredScriptsMap.get(scriptID);
         if (!registeredScript) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"no existing script with ID '%@'", scriptID.createNSString().get()));
+            completionHandler(toWebExtensionError(apiName, nullString(), makeString("no existing script with ID '"_s, scriptID, "'"_s)));
             return;
         }
 
@@ -341,7 +341,7 @@ void WebExtensionContext::scriptingUnregisterContentScripts(const Vector<String>
 
     for (auto& scriptID : ids) {
         if (!m_registeredScriptsMap.contains(scriptID)) {
-            completionHandler(toWebExtensionError(apiName, nullString(), @"no script with ID '%@'", scriptID.createNSString().get()));
+            completionHandler(toWebExtensionError(apiName, nullString(), makeString("no script with ID '"_s, scriptID, "'"_s)));
             return;
         }
     }
@@ -415,7 +415,7 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
         auto scriptID = parameters.identifier;
 
         if (firstTimeRegistration == FirstTimeRegistration::Yes && (m_registeredScriptsMap.contains(scriptID) || idsToAdd.contains(scriptID))) {
-            *errorMessage = toErrorString(callingAPIName, nullString(), @"duplicate ID '%@'", scriptID.createNSString().get()).createNSString().autorelease();
+            *errorMessage = toErrorString(callingAPIName, nullString(), makeString("duplicate ID '"_s, scriptID, "'"_s)).createNSString().autorelease();
             return false;
         }
 
@@ -434,7 +434,7 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
         for (NSString *scriptPath in scriptPaths) {
             if (auto scriptValue = extension->resourceStringForPath(scriptPath); !scriptValue) {
                 recordErrorIfNeeded(scriptValue.error());
-                *errorMessage = toErrorString(callingAPIName, nullString(), @"invalid resource '%@'", scriptPath).createNSString().autorelease();
+                *errorMessage = toErrorString(callingAPIName, nullString(), makeString("invalid resource '"_s, String(scriptPath), "'"_s)).createNSString().autorelease();
                 return false;
             }
         }
@@ -448,7 +448,7 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
         for (NSString *styleSheetPath in styleSheetPaths) {
             if (auto styleSheetValue = extension->resourceStringForPath(styleSheetPath); !styleSheetValue) {
                 recordErrorIfNeeded(styleSheetValue.error());
-                *errorMessage = toErrorString(callingAPIName, nullString(), @"invalid resource '%@'", styleSheetPath).createNSString().autorelease();
+                *errorMessage = toErrorString(callingAPIName, nullString(), makeString("invalid resource '"_s, String(styleSheetPath), "'"_s)).createNSString().autorelease();
                 return false;
             }
         }
@@ -457,13 +457,13 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
         auto *matchesArray = parameters.matchPatterns ? createNSArray(parameters.matchPatterns.value()).get() : @[ ];
         for (NSString *matchPatternString in matchesArray) {
             if (!matchPatternString.length) {
-                *errorMessage = toErrorString(callingAPIName, nullString(), @"script with ID '%@' contains an empty match pattern", scriptID.createNSString().get()).createNSString().autorelease();
+                *errorMessage = toErrorString(callingAPIName, nullString(), makeString("script with ID '"_s, scriptID, "' contains an empty match pattern"_s)).createNSString().autorelease();
                 return false;
             }
 
             RefPtr matchPattern = WebExtensionMatchPattern::getOrCreate(matchPatternString);
             if (!matchPattern || !matchPattern->isSupported()) {
-                *errorMessage = toErrorString(callingAPIName, nullString(), @"script with ID '%@' has an invalid match pattern '%@'", scriptID.createNSString().get(), matchPatternString).createNSString().autorelease();
+                *errorMessage = toErrorString(callingAPIName, nullString(), makeString("script with ID '"_s, scriptID, "' has an invalid match pattern '"_s, String(matchPatternString), "'"_s)).createNSString().autorelease();
                 return false;
             }
 
@@ -474,13 +474,13 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
         auto *excludeMatchesArray = parameters.excludeMatchPatterns ? createNSArray(parameters.excludeMatchPatterns.value()).get() : @[ ];
         for (NSString *matchPatternString in excludeMatchesArray) {
             if (!matchPatternString.length) {
-                *errorMessage = toErrorString(callingAPIName, nullString(), @"script with ID '%@' contains an empty exclude match pattern", scriptID.createNSString().get()).createNSString().autorelease();
+                *errorMessage = toErrorString(callingAPIName, nullString(), makeString("script with ID '"_s, scriptID, "' contains an empty exclude match pattern"_s)).createNSString().autorelease();
                 return false;
             }
 
             RefPtr matchPattern = WebExtensionMatchPattern::getOrCreate(matchPatternString);
             if (!matchPattern || !matchPattern->isSupported()) {
-                *errorMessage = toErrorString(callingAPIName, nullString(), @"script with ID '%@' has an invalid exclude match pattern '%@'", scriptID.createNSString().get(), matchPatternString).createNSString().autorelease();
+                *errorMessage = toErrorString(callingAPIName, nullString(), makeString("script with ID '"_s, scriptID, "' has an invalid exclude match pattern '"_s, String(matchPatternString), "'"_s)).createNSString().autorelease();
                 return false;
             }
 

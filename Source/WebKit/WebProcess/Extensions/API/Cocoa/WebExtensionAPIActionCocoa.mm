@@ -430,7 +430,7 @@ NSMutableDictionary *WebExtensionAPIAction::parseIconPathsDictionary(NSDictionar
 
         if (!isValidDimensionKey(key)) {
             if (outExceptionString)
-                *outExceptionString = toErrorString(nullString(), inputKey, @"'%@' is not a valid dimension", key).createNSString().autorelease();
+                *outExceptionString = toErrorString(nullString(), inputKey, makeString("'"_s, String(key), "' is not a valid dimension"_s)).createNSString().autorelease();
             return nil;
         }
 
@@ -456,7 +456,7 @@ NSMutableDictionary *WebExtensionAPIAction::parseIconImageDataDictionary(NSDicti
 
         if (!isValidDimensionKey(key)) {
             if (outExceptionString)
-                *outExceptionString = toErrorString(nullString(), inputKey, @"'%@' is not a valid dimension", key).createNSString().autorelease();
+                *outExceptionString = toErrorString(nullString(), inputKey, makeString("'"_s, String(key), "' is not a valid dimension"_s)).createNSString().autorelease();
             return nil;
         }
 

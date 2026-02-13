@@ -87,7 +87,7 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
             if (tabParameters.identifier) {
                 RefPtr tab = getTab(tabParameters.identifier.value());
                 if (!tab) {
-                    completionHandler(toWebExtensionError(apiName, nullString(), @"tab '%llu' was not found", tabParameters.identifier.value().toUInt64()));
+                    completionHandler(toWebExtensionError(apiName, nullString(), makeString("tab '"_s, tabParameters.identifier.value().toUInt64(), "' was not found"_s)));
                     return;
                 }
 

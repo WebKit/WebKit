@@ -58,7 +58,7 @@ WebExtensionContext::DeclarativeNetRequestValidatedRulesets WebExtensionContext:
     for (auto& identifier : rulesetIdentifiers) {
         auto ruleset = extension->declarativeNetRequestRuleset(identifier);
         if (!ruleset)
-            return toWebExtensionError("declarativeNetRequest.updateEnabledRulesets()"_s, nullString(), "Failed to apply rules. Invalid ruleset id: %s."_s, identifier.utf8().data());
+            return toWebExtensionError("declarativeNetRequest.updateEnabledRulesets()"_s, nullString(), makeString("Failed to apply rules. Invalid ruleset id: "_s, identifier, "."_s));
 
         validatedRulesets.append(ruleset.value());
     }
