@@ -826,7 +826,7 @@ class YarrGenerator final : public YarrJITInfo {
         BitVector duplicateNamedCaptureGroups;
         bool hasNamedCaptures = m_pattern.hasDuplicateNamedCaptureGroups();
 
-        // For FixedCount saved at END, use frame.beginIndex (iteration start) instead of m_regs.index (current position).
+        // For content-backtracking patterns saved at END, use frame.beginIndex (iteration start) instead of m_regs.index (current position).
         // This is needed because content's backtrack expects beginIndex to be the iteration start.
         // Also we store m_regs.index to endOffset so we save both begin and end.
         if (useBeginIndexFromFrame) {
@@ -850,8 +850,8 @@ class YarrGenerator final : public YarrJITInfo {
                     if (duplicateNamedGroup)
                         duplicateNamedCaptureGroups.set(duplicateNamedGroup);
                 }
-                // For Greedy/NonGreedy, clear captures after saving at BEGIN (before iteration runs).
-                // For FixedCount, we save at END and should NOT clear (iteration already set them).
+                // For Greedy/NonGreedy with min == 0, clear captures after saving at BEGIN (before iteration runs).
+                // For content-backtracking patterns (FixedCount, or min > 0), we save at END and should NOT clear (iteration already set them).
                 if (clearCapturesAfterSave)
                     clearSubpattern(subpattern);
             }
@@ -1670,9 +1670,10 @@ class YarrGenerator final : public YarrJITInfo {
         BoyerMooreInfo* m_bmInfo { nullptr };
         MaskedAlternativeInfo* m_maskedAltInfo { nullptr };
 
-        // For single-alt FixedCount with backtrackable content: label for content's backtrack entry.
+        // For single-alt content-backtracking patterns: label for content's backtrack entry.
         // BEGIN.bt jumps here for within-iteration backtracking.
         MacroAssembler::Label m_contentBacktrackEntryLabel;
+
     };
 
     // BacktrackingState
@@ -3672,11 +3673,12 @@ class YarrGenerator final : public YarrJITInfo {
                     termMatchTargets.last() = alternative->m_isLastAlternative ? MatchTargets(MatchTargets::PreferredTarget::MatchSuccessFallThrough) : MatchTargets(endOp->m_jumps, op.m_jumps, MatchTargets::PreferredTarget::MatchFailFallThrough);
                 }
 
-                // For FixedCount with multiple alternatives and quantityMaxCount > 1, store a return address
-                // that will be patched later in BEGIN.bt to point to the correct target.
+                // For multi-iteration parentheses that use inter-iteration content backtracking
+                // (FixedCount, or Greedy/NonGreedy with min > 0), store a return address
+                // that will be patched later in BEGIN.bt to point to the correct backtrack target.
                 // For quantityMaxCount == 1 (ParenthesesSubpatternOnce), we use the normal returnAddress approach.
-                bool isFixedCountMultiAlt = term->quantityType == QuantifierType::FixedCount && term->quantityMaxCount > 1;
-                if (op.m_op == YarrOpCode::NestedAlternativeBegin && isFixedCountMultiAlt) {
+                bool usesContentBacktracking = shouldUseContentBacktracking(term);
+                if (op.m_op == YarrOpCode::NestedAlternativeBegin && usesContentBacktracking) {
                     unsigned parenthesesFrameLocation = term->frameLocation;
                     op.m_returnAddress = storeToFrameWithPatch(parenthesesFrameLocation + BackTrackInfoParentheses::returnAddressIndex());
                 }
@@ -3707,18 +3709,32 @@ class YarrGenerator final : public YarrJITInfo {
                     termMatchTargets.last() = alternative->m_isLastAlternative ? MatchTargets(MatchTargets::PreferredTarget::MatchSuccessFallThrough) : MatchTargets(endOp->m_jumps, op.m_jumps, MatchTargets::PreferredTarget::MatchFailFallThrough);
 
                 // In the non-simple case, store a 'return address' so we can backtrack correctly.
-                // For FixedCount with quantityMaxCount > 1, we DON'T store here - we store the return address AFTER m_reentry.
+                // For content-backtracking parentheses with quantityMaxCount > 1, we DON'T store
+                // here - we store the return address AFTER m_reentry so that inter-iteration
+                // backtracking jumps to the correct alternative.
                 // For quantityMaxCount == 1 (ParenthesesSubpatternOnce), we still use the returnAddress approach.
-                bool isFixedCountMultiAlt = term->quantityType == QuantifierType::FixedCount && term->quantityMaxCount > 1;
-                if (op.m_op == YarrOpCode::NestedAlternativeNext && !isFixedCountMultiAlt) {
+                bool usesContentBacktracking = shouldUseContentBacktracking(term);
+                if (op.m_op == YarrOpCode::NestedAlternativeNext && !usesContentBacktracking) {
                     unsigned parenthesesFrameLocation = term->frameLocation;
                     op.m_returnAddress = storeToFrameWithPatch(parenthesesFrameLocation + BackTrackInfoParentheses::returnAddressIndex());
                 }
 
                 if (term->quantityType != QuantifierType::FixedCount && !m_ops[op.m_previousOp].m_alternative->m_minimumSize) {
-                    // If the previous alternative matched without consuming characters then
-                    // backtrack to try to match while consumming some input.
-                    op.m_zeroLengthMatch = m_jit.branch32(MacroAssembler::Equal, m_regs.index, frameAddress().withOffset(term->frameLocation * sizeof(void*)));
+                    // Zero-length match check: the inner alternative matched without consuming characters.
+                    // For content-backtracking patterns with min > 0, only fire this check when
+                    // matchAmount >= min (greedy extra iterations). For forced iterations (matchAmount < min),
+                    // zero-length matches are counted per ECMAScript RepeatMatcher semantics.
+                    // For FixedCount, all iterations are "forced" (must reach exactly the fixed count),
+                    // so zero-length matches are always allowed during the forward pass. Content
+                    // backtracking will naturally handle retrying with different alternatives if needed.
+                    if (usesContentBacktracking && term->quantityMinCount) {
+                        const MacroAssembler::RegisterID countTemp = m_regs.regT0;
+                        loadFromFrame(term->frameLocation + BackTrackInfoParentheses::matchAmountIndex(), countTemp);
+                        MacroAssembler::Jump minNotSatisfied = m_jit.branch32(MacroAssembler::Below, countTemp, MacroAssembler::Imm32(term->quantityMinCount));
+                        op.m_zeroLengthMatch = m_jit.branch32(MacroAssembler::Equal, m_regs.index, frameAddress().withOffset(term->frameLocation * sizeof(void*)));
+                        minNotSatisfied.link(&m_jit);
+                    } else
+                        op.m_zeroLengthMatch = m_jit.branch32(MacroAssembler::Equal, m_regs.index, frameAddress().withOffset(term->frameLocation * sizeof(void*)));
                 }
 
                 if (op.m_op != YarrOpCode::StringListAlternativeNext) {
@@ -3737,10 +3753,11 @@ class YarrGenerator final : public YarrJITInfo {
                 op.m_reentry = m_jit.label();
                 emitTraceReentry(opIndex, op.m_op);
 
-                // For FixedCount with quantityMaxCount > 1, store a return address AFTER m_reentry, so that when we
-                // jump here for inter-iteration backtracking, the address gets stored correctly.
+                // For content-backtracking parentheses with quantityMaxCount > 1, store a return
+                // address AFTER m_reentry, so that when we jump here for inter-iteration
+                // backtracking, the address gets stored correctly.
                 // The address will be patched in BEGIN.bt to point to the correct target.
-                if (op.m_op == YarrOpCode::NestedAlternativeNext && isFixedCountMultiAlt) {
+                if (op.m_op == YarrOpCode::NestedAlternativeNext && usesContentBacktracking) {
                     unsigned parenthesesFrameLocation = term->frameLocation;
                     op.m_returnAddress = storeToFrameWithPatch(parenthesesFrameLocation + BackTrackInfoParentheses::returnAddressIndex());
                 }
@@ -3772,22 +3789,35 @@ class YarrGenerator final : public YarrJITInfo {
                 PatternTerm* term = op.m_term;
 
                 // In the non-simple case, store a 'return address' so we can backtrack correctly.
-                // For FixedCount with quantityMaxCount > 1, we DON'T store here - we preserve the returnAddress from
-                // NestedAlternativeNext (or the null marker from NestedAlternativeBegin).
+                // For content-backtracking parentheses with quantityMaxCount > 1, we DON'T store
+                // here - we preserve the returnAddress from NestedAlternativeNext (or the null
+                // marker from NestedAlternativeBegin).
                 // This is crucial for inter-iteration backtracking.
                 // For quantityMaxCount == 1 (ParenthesesSubpatternOnce), we use the normal returnAddress approach.
-                bool isFixedCountMultiAlt = term->quantityType == QuantifierType::FixedCount && term->quantityMaxCount > 1;
-                if (op.m_op == YarrOpCode::NestedAlternativeEnd && !isFixedCountMultiAlt) {
+                bool usesContentBacktracking = shouldUseContentBacktracking(term);
+                if (op.m_op == YarrOpCode::NestedAlternativeEnd && !usesContentBacktracking) {
                     unsigned parenthesesFrameLocation = term->frameLocation;
                     op.m_returnAddress = storeToFrameWithPatch(parenthesesFrameLocation + BackTrackInfoParentheses::returnAddressIndex());
                 }
 
-                // Zero-length match check: only for non-FixedCount (unchanged from original behavior).
-                // FixedCount patterns have their own backtracking handling and don't need this.
+                // Zero-length match check: for patterns where the inner
+                // alternative can match without consuming characters.
+                // Zero-length match check: for patterns where the inner
+                // alternative can match without consuming characters.
+                // For content-backtracking patterns with min > 0, only fire this check when
+                // matchAmount >= min (greedy extra iterations). For forced iterations (matchAmount < min),
+                // zero-length matches are counted per ECMAScript RepeatMatcher semantics.
+                // For FixedCount, all iterations are "forced" (must reach exactly the fixed count),
+                // so zero-length matches are always allowed during the forward pass.
                 if (term->quantityType != QuantifierType::FixedCount && !m_ops[op.m_previousOp].m_alternative->m_minimumSize) {
-                    // If the previous alternative matched without consuming characters then
-                    // backtrack to try to match while consumming some input.
-                    op.m_zeroLengthMatch = m_jit.branch32(MacroAssembler::Equal, m_regs.index, frameAddress().withOffset(term->frameLocation * sizeof(void*)));
+                    if (usesContentBacktracking && term->quantityMinCount) {
+                        const MacroAssembler::RegisterID countTemp = m_regs.regT0;
+                        loadFromFrame(term->frameLocation + BackTrackInfoParentheses::matchAmountIndex(), countTemp);
+                        MacroAssembler::Jump minNotSatisfied = m_jit.branch32(MacroAssembler::Below, countTemp, MacroAssembler::Imm32(term->quantityMinCount));
+                        op.m_zeroLengthMatch = m_jit.branch32(MacroAssembler::Equal, m_regs.index, frameAddress().withOffset(term->frameLocation * sizeof(void*)));
+                        minNotSatisfied.link(&m_jit);
+                    } else
+                        op.m_zeroLengthMatch = m_jit.branch32(MacroAssembler::Equal, m_regs.index, frameAddress().withOffset(term->frameLocation * sizeof(void*)));
                 }
 
                 // If this set of alternatives contains more than one alternative,
@@ -4023,16 +4053,23 @@ class YarrGenerator final : public YarrJITInfo {
                 //
                 // NonGreedy: Initially skip the subpattern (set beginIndex = -1 and jump to end).
                 //   On backtrack, we'll re-enter here to try matching the subpattern.
+                //   If quantityMinCount > 0, we must match at least min times first,
+                //   so we don't skip initially in that case.
                 //
-                // FixedCount: Must match exactly N times. Mark the new ParenContext as "incomplete"
-                //   (matchAmount = -1) so BEGIN.bt can skip failed iterations during backtracking.
-                //   Clear captures at start of each iteration (ECMAScript spec requirement).
+                // Content-backtracking (FixedCount, or Greedy/NonGreedy with min > 0): Mark the new
+                //   ParenContext as "incomplete" (matchAmount = -1) so BEGIN.bt can skip failed iterations
+                //   during backtracking. Clear captures at start of each iteration (ECMAScript spec requirement).
                 //
                 // FIXME: for capturing parens, could use the index in the capture array?
+                bool usesContentBacktracking = shouldUseContentBacktracking(term);
                 switch (term->quantityType) {
                 case QuantifierType::NonGreedy: {
-                    storeToFrame(MacroAssembler::TrustedImm32(-1), parenthesesFrameLocation + BackTrackInfoParentheses::beginIndex());
-                    op.m_jumps.append(m_jit.jump());
+                    // For NonGreedy with non-zero min, we can't skip initially -
+                    // we must match at least min times first.
+                    if (!usesContentBacktracking) {
+                        storeToFrame(MacroAssembler::TrustedImm32(-1), parenthesesFrameLocation + BackTrackInfoParentheses::beginIndex());
+                        op.m_jumps.append(m_jit.jump());
+                    }
                     break;
                 }
                 case QuantifierType::Greedy: {
@@ -4055,14 +4092,16 @@ class YarrGenerator final : public YarrJITInfo {
                 m_jit.storePtr(currParenContextReg, MacroAssembler::Address(newParenContextReg, ParenContext::nextOffset()));
                 storeToFrame(newParenContextReg, parenthesesFrameLocation + BackTrackInfoParentheses::parenContextHeadIndex());
 
-                // For Greedy/NonGreedy, save at BEGIN (they need pre-iteration state for "accept fewer" backtracking).
-                // For FixedCount, save at END (they need post-iteration state for inter-iteration backtracking).
-                if (term->quantityType != QuantifierType::FixedCount)
+                // For content-backtracking patterns (FixedCount, or Greedy/NonGreedy with min > 0):
+                //   Mark incomplete at BEGIN, save at END (post-iteration state for inter-iteration backtracking).
+                // For non-content-backtracking (Greedy/NonGreedy with min == 0):
+                //   Save at BEGIN (pre-iteration state for "accept fewer iterations" backtracking).
+                if (!usesContentBacktracking)
                     saveParenContext(newParenContextReg, m_regs.regT2, term->parentheses.subpatternId, term->parentheses.lastSubpatternId, parenthesesFrameLocation);
                 else {
                     // Mark the context as "incomplete" with matchAmount = -1.
                     // This marker is used by BEGIN.bt to detect contexts for failed iterations.
-                    // We store this for ALL FixedCount patterns (single-alt and multi-alt) so that
+                    // We store this for ALL content-backtracking patterns (single-alt and multi-alt) so that
                     // BEGIN.bt can skip incomplete contexts.
                     m_jit.store32(MacroAssembler::TrustedImm32(-1), MacroAssembler::Address(newParenContextReg, ParenContext::matchAmountOffset()));
 
@@ -4103,12 +4142,6 @@ class YarrGenerator final : public YarrJITInfo {
                 YarrOp& beginOp = m_ops[op.m_previousOp];
                 unsigned parenthesesFrameLocation = term->frameLocation;
 
-                // If the nested alternative matched without consuming any characters, punt this back to the interpreter.
-                // FIXME: <https://bugs.webkit.org/show_bug.cgi?id=200786> Add ability for the YARR JIT to properly
-                // handle nested expressions that can match without consuming characters
-                if (!term->parentheses.disjunction->m_minimumSize)
-                    m_abortExecution.append(m_jit.branch32(MacroAssembler::Equal, m_regs.index, frameAddress().withOffset(parenthesesFrameLocation * sizeof(void*))));
-
                 const MacroAssembler::RegisterID countTemporary = m_regs.regT1;
                 loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::matchAmountIndex(), countTemporary);
                 m_jit.add32(MacroAssembler::TrustedImm32(1), countTemporary);
@@ -4136,38 +4169,15 @@ class YarrGenerator final : public YarrJITInfo {
                     }
                 }
 
-                switch (term->quantityType) {
-                case QuantifierType::Greedy: {
-                    // If the parentheses are quantified Greedy then add a label to jump back
-                    // to if we get a failed match from after the parentheses.
-                    if (term->quantityMaxCount != quantifyInfinite)
-                        m_jit.branch32(MacroAssembler::Below, countTemporary, MacroAssembler::Imm32(term->quantityMaxCount)).linkTo(beginOp.m_reentry, &m_jit);
-                    else
-                        m_jit.jump(beginOp.m_reentry);
-
-                    op.m_reentry = m_jit.label();
-                    emitTraceReentry(opIndex, op.m_op);
-                    break;
-                }
-                case QuantifierType::NonGreedy: {
-                    // For NonGreedy parentheses, link the jump from before the subpattern to here.
-                    YarrOp& beginOp = m_ops[op.m_previousOp];
-                    beginOp.m_jumps.link(&m_jit);
-                    op.m_reentry = m_jit.label();
-                    emitTraceReentry(opIndex, op.m_op);
-                    break;
-                }
-                case QuantifierType::FixedCount: {
-                    // For FixedCount, save ParenContext at END (after iteration completes).
-                    // This captures the post-iteration state needed for "retry differently" backtracking.
+                if (shouldUseContentBacktracking(term)) {
+                    // Save ParenContext at END (after iteration completes) for inter-iteration
+                    // content backtracking. This applies to FixedCount and Greedy/NonGreedy with min > 0.
                     // Don't clear captures after saving - we want to keep the final capture values.
-
-                    // For FixedCount with multiple alternatives (NestedAlternative), we DON'T store
-                    // returnAddress here. NestedAlternativeEnd already stored its returnAddress,
-                    // and saveParenContext will capture that. This allows backtracking to jump to
-                    // NestedAlternativeEnd's backtrack entry to retry alternatives.
-                    // For FixedCount without alternatives (SimpleNestedAlternative), we store
-                    // returnAddress here for backtracking to return to.
+                    //
+                    // For multi-alternative (NestedAlternative), we DON'T store returnAddress here.
+                    // NestedAlternativeEnd already stored its returnAddress, and saveParenContext
+                    // will capture that. This allows backtracking to jump to the correct alternative.
+                    // For single-alternative (SimpleNestedAlternative), we store returnAddress here.
                     bool hasMultipleAlternatives = term->parentheses.disjunction->m_alternatives.size() != 1;
                     if (!hasMultipleAlternatives)
                         op.m_returnAddress = storeToFrameWithPatch(parenthesesFrameLocation + BackTrackInfoParentheses::returnAddressIndex());
@@ -4176,15 +4186,35 @@ class YarrGenerator final : public YarrJITInfo {
                     loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::parenContextHeadIndex(), parenContextReg);
                     saveParenContext(parenContextReg, m_regs.regT2, term->parentheses.subpatternId, term->parentheses.lastSubpatternId, parenthesesFrameLocation, false, true);
 
-                    // If we haven't matched enough times yet, loop back.
-                    // If not, we've matched the required number of times, continue to next opcode.
-                    // Set the reentry point for backtracking to propagate failure upward.
-                    m_jit.branch32(MacroAssembler::Below, countTemporary, MacroAssembler::Imm32(term->quantityMaxCount)).linkTo(beginOp.m_reentry, &m_jit);
-                    op.m_reentry = m_jit.label();
-                    emitTraceReentry(opIndex, op.m_op);
+                    // Must reach min iterations before proceeding past the loop.
+                    m_jit.branch32(MacroAssembler::Below, countTemporary, MacroAssembler::Imm32(term->quantityMinCount)).linkTo(beginOp.m_reentry, &m_jit);
+                }
+
+                switch (term->quantityType) {
+                case QuantifierType::Greedy: {
+                    // If the parentheses are quantified Greedy then add a label to jump back
+                    // to if we get a failed match from after the parentheses.
+                    // For infinite max, always loop back. The zero-length check at
+                    // SimpleNestedAlternativeEnd/Next prevents infinite loops by detecting
+                    // zero-length matches and triggering content backtracking.
+                    if (term->quantityMaxCount != quantifyInfinite)
+                        m_jit.branch32(MacroAssembler::Below, countTemporary, MacroAssembler::Imm32(term->quantityMaxCount)).linkTo(beginOp.m_reentry, &m_jit);
+                    else
+                        m_jit.jump(beginOp.m_reentry);
+                    break;
+                }
+                case QuantifierType::NonGreedy: {
+                    // For NonGreedy parentheses, link the jump from before the subpattern to here.
+                    beginOp.m_jumps.link(&m_jit);
+                    break;
+                }
+                case QuantifierType::FixedCount: {
                     break;
                 }
                 }
+
+                op.m_reentry = m_jit.label();
+                emitTraceReentry(opIndex, op.m_op);
 #else // !YARR_JIT_ALL_PARENS_EXPRESSIONS
                 RELEASE_ASSERT_NOT_REACHED();
 #endif
@@ -4553,13 +4583,32 @@ class YarrGenerator final : public YarrJITInfo {
                 // If the alternative had adjusted the input position we must link
                 // backtracking to here, correct, and then jump on. If not we can
                 // link the backtracks directly to their destination.
-                // For FixedCount multi-alt, when jumping to next alternative during inter-iteration
-                // backtracking, we need to restore the index to beginIndex (iteration start position).
-                // This is because ParenthesesSubpatternBegin.bt loads endIndex for content backtracking,
-                // but trying a different alternative requires the start position.
-                bool isFixedCountMultiAlt = op.m_term->quantityType == QuantifierType::FixedCount && op.m_term->quantityMaxCount > 1;
-
-                if (op.m_checkAdjust) {
+                //
+                // For content-backtracking multi-alt patterns, we must load beginIndex
+                // from the frame instead of using sub32(checkAdjust). During content
+                // backtracking, the inner terms' backtrack code modifies the index
+                // unpredictably, so sub32(checkAdjust) would produce a corrupted index.
+                // Loading beginIndex from the frame is correct for both normal forward
+                // failure (where index == beginIndex + checkAdjust, so loading beginIndex
+                // gives the same result) and content backtracking failure.
+                bool usesContentBacktracking = shouldUseContentBacktracking(op.m_term);
+                bool isMultiAlt = !isBegin || !isLastAlternative;
+                bool useBeginIndexForRestore = usesContentBacktracking && isMultiAlt;
+                if (useBeginIndexForRestore) {
+                    // Content-backtracking multi-alt: always load beginIndex from frame.
+                    if (!m_backtrackingState.isEmpty()) {
+                        m_backtrackingState.link(&m_jit);
+                        emitTraceBacktrack(opIndex, op.m_op);
+                        unsigned parenthesesFrameLocation = op.m_term->frameLocation;
+                        loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::beginIndex(), m_regs.index);
+                        if (!isLastAlternative)
+                            m_jit.jump(nextOp.m_reentry);
+                        else if (!isBegin)
+                            nextOp.m_jumps.append(m_jit.jump());
+                        else
+                            m_backtrackingState.fallthrough();
+                    }
+                } else if (op.m_checkAdjust) {
                     if (!m_backtrackingState.isEmpty()) {
                         // Handle the cases where we need to link the backtracks here.
                         m_backtrackingState.link(&m_jit);
@@ -4567,11 +4616,6 @@ class YarrGenerator final : public YarrJITInfo {
                         m_jit.sub32(MacroAssembler::Imm32(op.m_checkAdjust), m_regs.index);
                         if (!isLastAlternative) {
                             // An alternative that is not the last should jump to its successor.
-                            if (isFixedCountMultiAlt) {
-                                // Restore index to iteration start for trying next alternative.
-                                unsigned parenthesesFrameLocation = op.m_term->frameLocation;
-                                loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::beginIndex(), m_regs.index);
-                            }
                             m_jit.jump(nextOp.m_reentry);
                         } else if (!isBegin) {
                             // The last of more than one alternatives must jump back to the beginning.
@@ -4585,16 +4629,7 @@ class YarrGenerator final : public YarrJITInfo {
                     // Handle the cases where we can link the backtracks directly to their destinations.
                     if (!isLastAlternative) {
                         // An alternative that is not the last should jump to its successor.
-                        if (isFixedCountMultiAlt) {
-                            // For FixedCount multi-alt, we need to restore index before jumping.
-                            // Can't use linkTo directly since we need to emit code first.
-                            m_backtrackingState.link(&m_jit);
-                            emitTraceBacktrack(opIndex, op.m_op);
-                            unsigned parenthesesFrameLocation = op.m_term->frameLocation;
-                            loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::beginIndex(), m_regs.index);
-                            m_jit.jump(nextOp.m_reentry);
-                        } else
-                            m_backtrackingState.linkTo(nextOp.m_reentry, &m_jit);
+                        m_backtrackingState.linkTo(nextOp.m_reentry, &m_jit);
                     } else if (!isBegin) {
                         // The last of more than one alternatives must jump back to the beginning.
                         m_backtrackingState.takeBacktracksToJumpList(nextOp.m_jumps, &m_jit);
@@ -4603,16 +4638,26 @@ class YarrGenerator final : public YarrJITInfo {
                 }
 
                 // If there is a backtrack jump from a zero length match link it here.
-                if (op.m_zeroLengthMatch.isSet())
+                if (op.m_zeroLengthMatch.isSet()) {
+                    // Zero-length match means the alternative's content matched without consuming
+                    // characters. Per ECMAScript RepeatMatcher step 4, when the minimum is met and
+                    // the body matched empty, the body should "fail" — i.e., backtrack to try a
+                    // non-empty match. Appending to backtracking state triggers this: the content
+                    // will be retried differently. If content backtrack succeeds with a non-empty
+                    // match, the forward path continues. If all content options are exhausted,
+                    // normal failure handling takes over (Begin.bt restores state and tries fewer
+                    // iterations or exits the loop).
                     m_backtrackingState.append(op.m_zeroLengthMatch);
+                }
 
                 // At this point we've handled the backtracking back into this node.
                 // Now link any backtracks that need to jump to here.
 
                 // For non-simple alternatives, link the alternative's 'return address'
                 // so that we backtrack back out into the previous alternative.
-                // For FixedCount with quantityMaxCount > 1, we use a different approach: direct address jumping for inter-iteration backtracking.
-                if (op.m_op == YarrOpCode::NestedAlternativeNext && !isFixedCountMultiAlt)
+                // For content-backtracking parentheses with quantityMaxCount > 1, we use a
+                // different approach: direct address jumping for inter-iteration backtracking.
+                if (op.m_op == YarrOpCode::NestedAlternativeNext && !usesContentBacktracking)
                     m_backtrackingState.append(op.m_returnAddress);
 
                 // If there is more than one alternative, then the last alternative will
@@ -4636,6 +4681,7 @@ class YarrGenerator final : public YarrJITInfo {
                 PatternTerm* term = op.m_term;
 
                 // If there is a backtrack jump from a zero length match link it here.
+                // See comment in SimpleNestedAlternativeBegin/Next above.
                 if (op.m_zeroLengthMatch.isSet())
                     m_backtrackingState.append(op.m_zeroLengthMatch);
 
@@ -4647,18 +4693,24 @@ class YarrGenerator final : public YarrJITInfo {
                     m_backtrackingState.link(&m_jit);
                     emitTraceBacktrack(opIndex, op.m_op);
 
-                    // Jump to the return address stored by whichever alternative was taken.
-                    // For FixedCount multi-alt: returnAddress was stored by NestedAlternativeBegin/Next
-                    // For others: returnAddress was stored by NestedAlternativeEnd itself
-                    unsigned parenthesesFrameLocation = term->frameLocation;
-                    loadFromFrameAndJump(parenthesesFrameLocation + BackTrackInfoParentheses::returnAddressIndex());
+                    // For content-backtracking parentheses with quantityMaxCount > 1, we don't
+                    // use returnAddress here because:
+                    // 1. We didn't store it in forward code (NestedAlternativeEnd)
+                    // 2. Inter-iteration backtracking is handled by ParenthesesSubpatternBegin.bt
+                    // Just fall through to propagate failure.
+                    // For quantityMaxCount == 1 (ParenthesesSubpatternOnce), we use the normal returnAddress approach.
+                    bool usesContentBacktracking = shouldUseContentBacktracking(term);
+                    if (usesContentBacktracking)
+                        m_backtrackingState.fallthrough();
+                    else {
+                        // Plant a jump to the return address.
+                        unsigned parenthesesFrameLocation = term->frameLocation;
+                        loadFromFrameAndJump(parenthesesFrameLocation + BackTrackInfoParentheses::returnAddressIndex());
 
-                    // Link the DataLabelPtr associated with the end of the last alternative to this point.
-                    // For FixedCount multi-alt, op.m_returnAddress is not set (we preserve the one from Begin/Next),
-                    // so we skip this. For others, we need to link it for proper backtracking.
-                    bool isFixedCountMultiAlt = term->quantityType == QuantifierType::FixedCount && term->quantityMaxCount > 1;
-                    if (!isFixedCountMultiAlt)
+                        // Link the DataLabelPtr associated with the end of the last
+                        // alternative to this point.
                         m_backtrackingState.append(op.m_returnAddress);
+                    }
                 }
                 op.m_contentBacktrackEntryLabel = m_jit.label();
                 break;
@@ -4807,14 +4859,14 @@ class YarrGenerator final : public YarrJITInfo {
             // YarrOpCode::ParenthesesSubpatternBegin/End
             //
             // These handle capturing subpatterns, and non-capturing subpatterns that need
-            // ParenContext for inter-iteration backtracking (FixedCount with backtrackable
-            // content, multi-alt FixedCount, or Greedy/NonGreedy quantifiers).
+            // ParenContext for inter-iteration backtracking (content-backtracking patterns
+            // or Greedy/NonGreedy with min == 0).
             //
-            // Greedy/NonGreedy:
+            // Greedy/NonGreedy with min == 0:
             //   - Save state at BEGIN (pre-iteration) for "accept fewer iterations" backtracking
             //   - On backtrack: restore state and try with fewer iterations
             //
-            // FixedCount (capturing or with backtrackable content):
+            // Content-backtracking (FixedCount, or Greedy/NonGreedy with min > 0):
             //   - Save state at END (post-iteration) for "retry differently" backtracking
             //   - On backtrack: restore state and try different match within iteration
             //   - Uses "incomplete" marker (matchAmount=-1) to skip contexts from failed iterations
@@ -4831,18 +4883,22 @@ class YarrGenerator final : public YarrJITInfo {
 
                 loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::parenContextHeadIndex(), currParenContextReg);
 
-                // For FixedCount, we need to handle inter-iteration backtracking.
-                // Check if the current ParenContext is "incomplete" (iteration failed before END).
-                // An incomplete context has matchAmount == -1 (marker stored at BEGIN).
+                // For content-backtracking patterns (FixedCount, or Greedy/NonGreedy with min > 0),
+                // we need inter-iteration content backtracking. Check if the current ParenContext
+                // is "incomplete" (iteration failed before END). An incomplete context has matchAmount == -1.
                 // If incomplete, free it and try the previous iteration's context.
                 // If complete, restore from it and retry the iteration's content.
-                if (term->quantityType == QuantifierType::FixedCount) {
+                //
+                // For Greedy with min > 0 specifically: after content backtrack fails for all
+                // contexts, if matchAmount >= min, accept at beginIndex (which holds the start
+                // of the failed iteration = end of completed iterations).
+                if (shouldUseContentBacktracking(term)) {
                     // First, skip any incomplete contexts (failed iterations that never reached END).
                     // Incomplete contexts have matchAmount == -1 stored at BEGIN.
 
                     MacroAssembler::Label checkContext = m_jit.label();
 
-                    // If no context, propagate failure
+                    // If no context, jump to noContext
                     MacroAssembler::Jump noContext = m_jit.branchTestPtr(MacroAssembler::Zero, currParenContextReg);
 
                     // Check if this context is incomplete (matchAmount == -1 in ParenContext)
@@ -4855,6 +4911,59 @@ class YarrGenerator final : public YarrJITInfo {
                     freeParenContext(currParenContextReg);
                     storeToFrame(newParenContextReg, parenthesesFrameLocation + BackTrackInfoParentheses::parenContextHeadIndex());
                     m_jit.move(newParenContextReg, currParenContextReg);
+
+                    // For Greedy with min > 0: after skipping incomplete, check if
+                    // we can accept (matchAmount >= min) before looking for more contexts.
+                    // When accepting, we restore captures from the last completed iteration's
+                    // context, pop that context, decrement matchAmount, and jump to END.reentry.
+                    // If the rest of the pattern fails, END.bt will re-enter content backtracking
+                    // which will find the remaining contexts and try even fewer iterations.
+                    // NonGreedy doesn't use this acceptance path because fewer iterations
+                    // were already tried during the "add more iterations" phase in END.bt.
+                    if (term->quantityType == QuantifierType::Greedy) {
+                        const MacroAssembler::RegisterID countTemporary = m_regs.regT2;
+                        loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::matchAmountIndex(), countTemporary);
+                        MacroAssembler::Jump belowMin = m_jit.branch32(MacroAssembler::Below, countTemporary, MacroAssembler::Imm32(term->quantityMinCount));
+
+                        // Accept path: need to set index to end of last completed iteration.
+                        MacroAssembler::Jump noContextForCaptures = m_jit.branchTestPtr(MacroAssembler::Zero, currParenContextReg);
+
+                        // Context available: restore captures and state, then use endOffset for index.
+                        restoreParenContext(currParenContextReg, m_regs.regT2, term->parentheses.subpatternId, term->parentheses.lastSubpatternId, parenthesesFrameLocation);
+                        m_jit.load32(MacroAssembler::Address(currParenContextReg, ParenContext::endOffset()), m_regs.index);
+
+                        // Pop this context so re-entry to content backtracking can try
+                        // even fewer iterations without looping on the same context.
+                        m_jit.loadPtr(MacroAssembler::Address(currParenContextReg, ParenContext::nextOffset()), newParenContextReg);
+                        freeParenContext(currParenContextReg);
+                        storeToFrame(newParenContextReg, parenthesesFrameLocation + BackTrackInfoParentheses::parenContextHeadIndex());
+
+                        // Decrement matchAmount since we're accepting at one fewer iteration.
+                        loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::matchAmountIndex(), countTemporary);
+                        m_jit.sub32(MacroAssembler::TrustedImm32(1), countTemporary);
+                        storeToFrame(countTemporary, parenthesesFrameLocation + BackTrackInfoParentheses::matchAmountIndex());
+
+                        // Allocate a fresh incomplete context for the retry attempt.
+                        // This is needed because if END.bt re-enters content backtracking
+                        // and content backtrack succeeds, END forward expects a valid context
+                        // on the head of the linked list.
+                        allocateParenContext(currParenContextReg);
+                        m_jit.storePtr(newParenContextReg, MacroAssembler::Address(currParenContextReg, ParenContext::nextOffset()));
+                        storeToFrame(currParenContextReg, parenthesesFrameLocation + BackTrackInfoParentheses::parenContextHeadIndex());
+                        m_jit.store32(MacroAssembler::TrustedImm32(-1), MacroAssembler::Address(currParenContextReg, ParenContext::matchAmountOffset()));
+
+                        m_jit.jump(m_ops[op.m_nextOp].m_reentry);
+
+                        noContextForCaptures.link(&m_jit);
+                        loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::beginIndex(), m_regs.index);
+                        // Mark beginIndex = -1 to prevent re-acceptance when no contexts remain.
+                        // If the rest fails, END.bt will detect this marker and propagate failure.
+                        storeToFrame(MacroAssembler::TrustedImm32(-1), parenthesesFrameLocation + BackTrackInfoParentheses::beginIndex());
+                        m_jit.jump(m_ops[op.m_nextOp].m_reentry);
+
+                        belowMin.link(&m_jit);
+                    }
+
                     m_jit.jump(checkContext);
 
                     // Complete context found - restore from it
@@ -4863,14 +4972,13 @@ class YarrGenerator final : public YarrJITInfo {
                     // Restore state from ParenContext (captures, frame slots)
                     restoreParenContext(currParenContextReg, m_regs.regT2, term->parentheses.subpatternId, term->parentheses.lastSubpatternId, parenthesesFrameLocation);
 
-                    // FixedCount backtracking:
-                    //
-                    // We use a conservative approach that always treats content as backtrackable.
-                    // This simplifies the code while handling all cases correctly:
+                    // Content backtracking:
+                    // We always treat content as backtrackable (conservative approach).
+                    // This simplifies the code while handling all cases correctly.
                     //
                     // Single-alternative:
                     //   Example: /(a+){2}b/ matching "aaab"
-                    //   Restore iter1's END state (endIndex), jump to content's backtrack entry.
+                    //   Restore iter's END state (endIndex), jump to content's backtrack entry.
                     //   If content backtrack succeeds, continue forward to END.
                     //   If content backtrack exhausts options, try previous iteration.
                     //
@@ -4882,14 +4990,8 @@ class YarrGenerator final : public YarrJITInfo {
 
                     bool hasMultipleAlternatives = term->parentheses.disjunction->m_alternatives.size() != 1;
                     if (!hasMultipleAlternatives) {
-                        // Single-alternative FixedCount
-                        // Example: /(a+){2}b/ - need to backtrack into (a+) to try fewer 'a's
-                        //
-                        // We always treat this as having backtrackable content (conservative approach).
-                        // This simplifies the code and avoids special-casing.
-
-                        // Load the END position from the context. Content's backtrack expects
-                        // index at where the iteration ended.
+                        // Single-alternative content backtracking.
+                        // Load the END position from the context (where the iteration ended).
                         // Must load before freeParenContext since we need currParenContextReg.
                         m_jit.load32(MacroAssembler::Address(currParenContextReg, ParenContext::endOffset()), m_regs.index);
 
@@ -4898,7 +5000,7 @@ class YarrGenerator final : public YarrJITInfo {
                         freeParenContext(currParenContextReg);
                         storeToFrame(newParenContextReg, parenthesesFrameLocation + BackTrackInfoParentheses::parenContextHeadIndex());
 
-                        // Decrement matchAmount (we're retrying the previous iteration)
+                        // Decrement matchAmount (we're retrying this iteration's content).
                         // Use regT2 for count, NOT regT1, because newParenContextReg is regT1
                         // and we need it later when allocating fresh context.
                         const MacroAssembler::RegisterID countTemporary = m_regs.regT2;
@@ -4915,8 +5017,6 @@ class YarrGenerator final : public YarrJITInfo {
                         m_jit.store32(MacroAssembler::TrustedImm32(-1), MacroAssembler::Address(currParenContextReg, ParenContext::matchAmountOffset()));
 
                         // Jump to content's backtrack entry point.
-                        // We can't use fallthrough() here because backtrack generation runs in
-                        // reverse order, so content's backtrack code was already generated.
                         // If content backtrack succeeds, execution continues forward to END.
                         // If content backtrack fails, it falls through to try previous iteration.
                         YarrOp& endOp = m_ops[op.m_nextOp];
@@ -4924,37 +5024,29 @@ class YarrGenerator final : public YarrJITInfo {
                         ASSERT(endOp.m_contentBacktrackEntryLabel.isSet());
                         m_jit.jump(endOp.m_contentBacktrackEntryLabel);
                     } else {
-                        // Multi-alternative FixedCount
+                        // Multi-alternative content backtracking using returnAddress.
+                        // Each alternative stores a returnAddress that points to the current
+                        // alternative's content backtrack entry. We jump to the stored address
+                        // to backtrack into the correct alternative.
                         //
-                        // Multi-alt uses address-based jumping: each alternative stores a returnAddress
-                        // that points to the current alternative's content backtrack entry.
-                        // We always treat this as having backtrackable content (conservative approach).
-                        //
-                        // Example: /(a+|b+){2}c/ matching "aabc"
-                        //
-                        // Forward execution:
-                        //   iter1: (a+) greedily matches "aa", stores returnAddress -> (a+).bt
-                        //   iter2: (a+) tries but fails (only "bc"), tries (b+) matches "b"
-                        //   "c" matches -> success
-                        //
-                        // If something after fails and we backtrack here:
-                        //   1. Restore iter1's END state (index where iteration ended)
-                        //   2. Jump to stored returnAddress (current alt's content backtrack)
-                        //   3. (a+) backtracks: "aa" -> "a"
-                        //   4. If succeeds, continue forward to END
-                        //   5. If (a+) exhausts, falls through to try next alt (b+) at iter1's BEGIN
-                        //   6. If all alts exhausted at iter1, try iter0's context (previous iteration)
-                        //
-                        // returnAddress patching (at link time):
+                        // returnAddress patching chain (at link time):
                         //   Begin.returnAddress -> Next[0].m_contentBacktrackEntryLabel
                         //   Next[i].returnAddress -> Next[i+1].m_contentBacktrackEntryLabel
                         //   Last Next.returnAddress -> End.m_contentBacktrackEntryLabel
-
-                        // NestedAlternativeBegin is always at opIndex + 1
                         size_t beginOpIndex = opIndex + 1;
                         ASSERT(m_ops[beginOpIndex].m_op == YarrOpCode::NestedAlternativeBegin || m_ops[beginOpIndex].m_op == YarrOpCode::SimpleNestedAlternativeBegin);
 
-                        // Restore endIndex for content backtracking (where the iteration ended)
+                        // Fully restore state from ParenContext. This restores:
+                        // - beginIndex -> frame (iteration start position)
+                        // - matchAmount -> frame
+                        // - returnAddress -> frame (which alt matched)
+                        // - captures and frame slots (inner terms' saved state)
+                        // restoreParenContext sets index = begin, but we want index = end
+                        // for content backtracking, so we override index below.
+                        restoreParenContext(currParenContextReg, m_regs.regT2, term->parentheses.subpatternId, term->parentheses.lastSubpatternId, parenthesesFrameLocation);
+
+                        // Override index with endOffset (where the iteration ended).
+                        // Content backtracking needs to start from the end position.
                         m_jit.load32(MacroAssembler::Address(currParenContextReg, ParenContext::endOffset()), m_regs.index);
 
                         // Pop the context from list
@@ -4962,7 +5054,7 @@ class YarrGenerator final : public YarrJITInfo {
                         freeParenContext(currParenContextReg);
                         storeToFrame(newParenContextReg, parenthesesFrameLocation + BackTrackInfoParentheses::parenContextHeadIndex());
 
-                        // Decrement matchAmount (we're retrying the previous iteration)
+                        // Decrement matchAmount (we're retrying this iteration's content)
                         const MacroAssembler::RegisterID countTemporary = m_regs.regT2;
                         loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::matchAmountIndex(), countTemporary);
                         m_jit.sub32(MacroAssembler::TrustedImm32(1), countTemporary);
@@ -4974,12 +5066,12 @@ class YarrGenerator final : public YarrJITInfo {
                         storeToFrame(currParenContextReg, parenthesesFrameLocation + BackTrackInfoParentheses::parenContextHeadIndex());
                         m_jit.store32(MacroAssembler::TrustedImm32(-1), MacroAssembler::Address(currParenContextReg, ParenContext::matchAmountOffset()));
 
-                        // Jump to the stored address (content backtrack entry of current alternative)
+                        // Jump to the stored return address (content backtrack entry of current alternative)
                         loadFromFrameAndJump(parenthesesFrameLocation + BackTrackInfoParentheses::returnAddressIndex());
 
-                        // Record return addresses to be patched at link time
+                        // Record return addresses to be patched at link time.
                         // Chain: Begin -> Next[0] -> Next[1] -> ... -> End
-                        // Each points to the NEXT alternative's content backtrack entry
+                        // Each points to the NEXT alternative's content backtrack entry.
                         YarrOp* prevOp = &m_ops[beginOpIndex];
                         size_t altOpIndex = prevOp->m_nextOp;
                         while (altOpIndex != notFound) {
@@ -4989,8 +5081,8 @@ class YarrGenerator final : public YarrJITInfo {
                                 m_backtrackingState.recordReturnAddress(prevOp->m_returnAddress, altOp.m_contentBacktrackEntryLabel);
                                 prevOp = &altOp;
                             } else if (altOp.m_op == YarrOpCode::NestedAlternativeEnd) {
-                                // Last alternative's returnAddress points to End's content backtrack
-                                // When End's content backtrack fails, it tries previous iteration
+                                // Last alternative's returnAddress points to End's content backtrack.
+                                // When End's content backtrack fails, it tries previous iteration.
                                 ASSERT(altOp.m_contentBacktrackEntryLabel.isSet());
                                 m_backtrackingState.recordReturnAddress(prevOp->m_returnAddress, altOp.m_contentBacktrackEntryLabel);
                                 break;
@@ -4999,14 +5091,31 @@ class YarrGenerator final : public YarrJITInfo {
                         }
                     }
 
-                    // No context available - propagate failure
+                    // No context available - check acceptance for Greedy, or fail for FixedCount/NonGreedy
                     noContext.link(&m_jit);
+                    if (term->quantityType == QuantifierType::Greedy) {
+                        // For Greedy with min > 0: if matchAmount >= min, accept.
+                        // Mark beginIndex = -1 to prevent re-acceptance (there are no more
+                        // contexts to try, so if the rest fails, we must fail too).
+                        // NonGreedy doesn't accept here because fewer iterations were already
+                        // tried during the "add more iterations" phase in END.bt.
+                        const MacroAssembler::RegisterID countTemporary = m_regs.regT2;
+                        loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::matchAmountIndex(), countTemporary);
+                        MacroAssembler::Jump belowMin = m_jit.branch32(MacroAssembler::Below, countTemporary, MacroAssembler::Imm32(term->quantityMinCount));
+                        loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::beginIndex(), m_regs.index);
+                        storeToFrame(MacroAssembler::TrustedImm32(-1), parenthesesFrameLocation + BackTrackInfoParentheses::beginIndex());
+                        m_jit.jump(m_ops[op.m_nextOp].m_reentry);
+                        belowMin.link(&m_jit);
+                    }
+                    // Link any jumps from END.bt's wasAccepted check (for noContext acceptance case)
+                    // to this failure propagation point.
+                    op.m_jumps.link(&m_jit);
                     storeToFrame(MacroAssembler::TrustedImm32(-1), parenthesesFrameLocation + BackTrackInfoParentheses::beginIndex());
                     m_backtrackingState.fallthrough();
                     break;
                 }
 
-                // Greedy/NonGreedy path: restore from context and try fewer iterations
+                // Greedy/NonGreedy with min == 0: restore from context and try fewer iterations
                 restoreParenContext(currParenContextReg, m_regs.regT2, term->parentheses.subpatternId, term->parentheses.lastSubpatternId, parenthesesFrameLocation);
 
                 m_jit.loadPtr(MacroAssembler::Address(currParenContextReg, ParenContext::nextOffset()), newParenContextReg);
@@ -5016,7 +5125,7 @@ class YarrGenerator final : public YarrJITInfo {
                 const MacroAssembler::RegisterID countTemporary = m_regs.regT0;
                 loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::matchAmountIndex(), countTemporary);
 
-                MacroAssembler::Jump zeroLengthMatch = m_jit.branchTest32(MacroAssembler::Zero, countTemporary);
+                auto zeroLengthMatch = m_jit.branchTest32(MacroAssembler::Zero, countTemporary);
 
                 // matchAmount > 0: decrement count and try fewer iterations
                 m_jit.sub32(MacroAssembler::TrustedImm32(1), countTemporary);
@@ -5024,13 +5133,13 @@ class YarrGenerator final : public YarrJITInfo {
                 m_jit.jump(m_ops[op.m_nextOp].m_reentry);
 
                 zeroLengthMatch.link(&m_jit);
-
+                // matchAmount == 0: Accept zero matches.
                 // Clear the flag in the stackframe indicating we didn't run through the subpattern.
                 storeToFrame(MacroAssembler::TrustedImm32(-1), parenthesesFrameLocation + BackTrackInfoParentheses::beginIndex());
 
                 switch (term->quantityType) {
                 case QuantifierType::Greedy: {
-                    // If Greedy, jump to the end.
+                    // If Greedy, jump to the end to accept zero matches.
                     m_jit.jump(m_ops[op.m_nextOp].m_reentry);
                     // A backtrack from after the parentheses, when skipping the subpattern,
                     // will jump back to here.
@@ -5041,7 +5150,7 @@ class YarrGenerator final : public YarrJITInfo {
                     break;
                 }
                 case QuantifierType::FixedCount: {
-                    // This case is handled above with early break
+                    // This case is handled above with early break.
                     RELEASE_ASSERT_NOT_REACHED();
                     break;
                 }
@@ -5060,25 +5169,94 @@ class YarrGenerator final : public YarrJITInfo {
 
                 m_backtrackingState.link(&m_jit);
                 emitTraceBacktrack(opIndex, op.m_op);
+                bool usesContentBacktracking = shouldUseContentBacktracking(term);
                 switch (term->quantityType) {
                 case QuantifierType::Greedy: {
-                    // Check whether we should backtrack back into the parentheses, or if we
-                    // are currently in a state where we had skipped over the subpattern
-                    // (in which case the flag value on the stack will be -1).
+                    if (usesContentBacktracking) {
+                        // Greedy with min > 0: fall through to content backtrack (like FixedCount).
+                        // But first check if beginIndex == -1, which means we already accepted
+                        // at fewer iterations via the acceptance path in BEGIN.bt. If so, we
+                        // should propagate failure rather than re-entering content backtrack
+                        // (which would loop infinitely: accept → try rest → fail → accept again).
+                        MacroAssembler::Jump wasAccepted = m_jit.branch32(MacroAssembler::Equal, frameAddress().withOffset((parenthesesFrameLocation + BackTrackInfoParentheses::beginIndex()) * sizeof(void*)), MacroAssembler::TrustedImm32(-1));
+                        beginOp.m_jumps.append(wasAccepted);
+                        break;
+                    }
+                    // Greedy with min == 0: check whether we should backtrack back into the
+                    // parentheses, or if we are currently in a state where we had skipped over
+                    // the subpattern (in which case the flag value on the stack will be -1).
                     MacroAssembler::Jump hadSkipped = m_jit.branch32(MacroAssembler::Equal, frameAddress().withOffset((parenthesesFrameLocation  + BackTrackInfoParentheses::beginIndex()) * sizeof(void*)), MacroAssembler::TrustedImm32(-1));
-
                     // For Greedy parentheses, we skip after having already tried going
                     // through the subpattern, so if we get here we're done.
                     beginOp.m_jumps.append(hadSkipped);
                     break;
                 }
                 case QuantifierType::NonGreedy: {
-                    // For NonGreedy parentheses, we try skipping the subpattern first,
+                    if (usesContentBacktracking) {
+                        // NonGreedy with min > 0: try more iterations first.
+                        // If beginIndex == -1, the pattern has failed (no acceptance path
+                        // sets beginIndex to -1 for NonGreedy), propagate failure.
+                        const MacroAssembler::RegisterID beginTemporary = m_regs.regT0;
+                        loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::beginIndex(), beginTemporary);
+                        MacroAssembler::Jump wasAccepted = m_jit.branch32(MacroAssembler::Equal, beginTemporary, MacroAssembler::TrustedImm32(-1));
+                        beginOp.m_jumps.append(wasAccepted);
+
+                        MacroAssembler::JumpList exceededMatchLimit;
+
+                        if (term->quantityMaxCount != quantifyInfinite) {
+                            const MacroAssembler::RegisterID countTemporary = m_regs.regT1;
+                            loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::matchAmountIndex(), countTemporary);
+                            exceededMatchLimit.append(m_jit.branch32(MacroAssembler::AboveOrEqual, countTemporary, MacroAssembler::Imm32(term->quantityMaxCount)));
+                        }
+
+                        m_jit.branch32(MacroAssembler::Above, m_regs.index, beginTemporary).linkTo(beginOp.m_reentry, &m_jit);
+
+                        // Can't match more: exceeded max or no progress.
+                        // We need to content-backtrack the current iteration. The current
+                        // iteration's state was saved to a ParenContext at END forward. We
+                        // must pop that context and restore state (like BEGIN.bt does) before
+                        // jumping to the content backtrack entry via returnAddress. Without
+                        // this, matchAmount would be stale and get double-incremented when
+                        // the content backtrack retry succeeds.
+                        exceededMatchLimit.link(&m_jit);
+                        {
+                            MacroAssembler::RegisterID currParenContextReg = m_regs.regT0;
+                            MacroAssembler::RegisterID newParenContextReg = m_regs.regT1;
+
+                            loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::parenContextHeadIndex(), currParenContextReg);
+                            MacroAssembler::Jump noContextForContentBT = m_jit.branchTestPtr(MacroAssembler::Zero, currParenContextReg);
+                            beginOp.m_jumps.append(noContextForContentBT);
+
+                            // Restore state from the context (beginIndex, matchAmount, returnAddress, captures, frame slots)
+                            restoreParenContext(currParenContextReg, m_regs.regT2, term->parentheses.subpatternId, term->parentheses.lastSubpatternId, parenthesesFrameLocation);
+
+                            // Override index with endOffset for content backtracking
+                            m_jit.load32(MacroAssembler::Address(currParenContextReg, ParenContext::endOffset()), m_regs.index);
+
+                            // Pop the context
+                            m_jit.loadPtr(MacroAssembler::Address(currParenContextReg, ParenContext::nextOffset()), newParenContextReg);
+                            freeParenContext(currParenContextReg);
+                            storeToFrame(newParenContextReg, parenthesesFrameLocation + BackTrackInfoParentheses::parenContextHeadIndex());
+
+                            // Decrement matchAmount
+                            const MacroAssembler::RegisterID countTemporary2 = m_regs.regT2;
+                            loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::matchAmountIndex(), countTemporary2);
+                            m_jit.sub32(MacroAssembler::TrustedImm32(1), countTemporary2);
+                            storeToFrame(countTemporary2, parenthesesFrameLocation + BackTrackInfoParentheses::matchAmountIndex());
+
+                            // Allocate fresh incomplete context for the retry
+                            allocateParenContext(currParenContextReg);
+                            m_jit.storePtr(newParenContextReg, MacroAssembler::Address(currParenContextReg, ParenContext::nextOffset()));
+                            storeToFrame(currParenContextReg, parenthesesFrameLocation + BackTrackInfoParentheses::parenContextHeadIndex());
+                            m_jit.store32(MacroAssembler::TrustedImm32(-1), MacroAssembler::Address(currParenContextReg, ParenContext::matchAmountOffset()));
+                        }
+                        // Fall through to content backtrack dispatch (returnAddress jump)
+                        break;
+                    }
+                    // NonGreedy with min == 0: we try skipping the subpattern first,
                     // so if we get here we need to try running through the subpattern
                     // next. Jump back to the start of the parentheses in the forwards
                     // matching path.
-                    ASSERT(term->quantityType == QuantifierType::NonGreedy);
-
                     const MacroAssembler::RegisterID beginTemporary = m_regs.regT0;
                     const MacroAssembler::RegisterID countTemporary = m_regs.regT1;
 
@@ -5107,6 +5285,54 @@ class YarrGenerator final : public YarrJITInfo {
                     // m_contentBacktrackEntryLabel which BEGIN.bt will jump to.
                     break;
                 }
+                }
+
+                // For multi-alt content backtracking, we need to jump to the correct
+                // alternative's content backtrack entry using returnAddress, BUT only when
+                // alternatives have non-empty content (minimumSize > 0). For patterns with
+                // only empty alternatives, falling through avoids infinite loops while trying
+                // different alternatives.
+                //
+                // The issue: jumping to returnAddress can create infinite loops when all
+                // alternatives match zero-length (they keep retrying the same empty match).
+                // Falling through allows the backtracking mechanism to try other alternatives.
+                //
+                // However, for non-empty alternatives, falling through would operate on stale
+                // frame data (from a different alternative that matched), causing crashes.
+                // So we must jump for non-empty alternatives to ensure correct frame data.
+                if (usesContentBacktracking && term->parentheses.disjunction->m_alternatives.size() != 1) {
+                    // For multi-alt content backtracking, jump to returnAddress to retry the
+                    // alternative that matched. However, for FixedCount patterns where an iteration
+                    // matched zero-length (via empty alternative), jumping creates infinite loops.
+                    //
+                    // This issue is specific to FixedCount because:
+                    // - Greedy/NonGreedy can vary iteration count, breaking the loop
+                    // - FixedCount must match exact count, so zero-length retries loop forever
+                    //
+                    // Solution: For FixedCount with empty alternatives, detect zero-length match
+                    // by comparing current index with beginIndex. If zero-length, skip the jump
+                    // to allow trying other alternatives instead of infinite looping.
+                    bool isFixedCountWithEmptyAlternative = false;
+                    if (term->quantityType == QuantifierType::FixedCount) {
+                        for (const auto& alternative : term->parentheses.disjunction->m_alternatives) {
+                            if (alternative->m_minimumSize == 0) {
+                                isFixedCountWithEmptyAlternative = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (isFixedCountWithEmptyAlternative) {
+                        // Check if this iteration matched zero-length by comparing index with beginIndex
+                        MacroAssembler::Jump isZeroLength = m_jit.branch32(MacroAssembler::Equal, m_regs.index, frameAddress().withOffset((term->frameLocation + BackTrackInfoParentheses::beginIndex()) * sizeof(void*)));
+                        // Non-zero-length match: safe to jump to returnAddress
+                        loadFromFrameAndJump(parenthesesFrameLocation + BackTrackInfoParentheses::returnAddressIndex());
+                        // Zero-length match: fall through to try other alternatives
+                        isZeroLength.link(&m_jit);
+                    } else {
+                        // Not FixedCount with empty alternatives: always safe to jump
+                        loadFromFrameAndJump(parenthesesFrameLocation + BackTrackInfoParentheses::returnAddressIndex());
+                    }
                 }
 
                 m_backtrackingState.fallthrough();
@@ -5170,7 +5396,9 @@ class YarrGenerator final : public YarrJITInfo {
     // the parentheses.
     // Supported types of parentheses are 'Once' (quantityMaxCount == 1),
     // 'Terminal' (non-capturing parentheses quantified as greedy
-    // and infinite), and 0 based greedy / non-greedy quantified parentheses.
+    // and infinite), and greedy / non-greedy quantified parentheses
+    // (including those with non-zero minimum counts, which use
+    // inter-iteration content backtracking).
     // Alternatives will use the 'Simple' set of ops if either the
     // subpattern is terminal (in which case we will never need to
     // backtrack), or if the subpattern only contains one alternative.
@@ -5184,18 +5412,6 @@ class YarrGenerator final : public YarrJITInfo {
 
         if (!isSafeToRecurse()) [[unlikely]] {
             m_failureReason = JITFailureReason::ParenthesisNestedTooDeep;
-            return;
-        }
-
-        // We can currently only compile quantity 1 subpatterns that are
-        // not copies. We generate a copy in the case of a range quantifier,
-        // e.g. /(?:x){3,9}/, or /(?:x)+/ (These are effectively expanded to
-        // /(?:x){3,3}(?:x){0,6}/ and /(?:x)(?:x)*/ respectively). The problem
-        // comes where the subpattern is capturing, in which case we would
-        // need to restore the capture from the first subpattern upon a
-        // failure in the second.
-        if (term->quantityMinCount && term->quantityMinCount != term->quantityMaxCount) {
-            m_failureReason = JITFailureReason::VariableCountedParenthesisWithNonZeroMinimum;
             return;
         }
 
@@ -6536,6 +6752,11 @@ public:
         return m_vm->isSafeToRecurse();
     }
 
+    static bool shouldUseContentBacktracking(PatternTerm* term)
+    {
+        return !(term->quantityMaxCount <= 1 || (term->quantityType != QuantifierType::FixedCount && !term->quantityMinCount));
+    }
+
     // Check if a disjunction contains terms that could require within-iteration backtracking.
     // This includes multiple alternatives (switching between them) and backtrackable content.
     static bool disjunctionContainsBacktrackableContent(PatternDisjunction* disjunction)
@@ -7337,9 +7558,6 @@ static void dumpCompileFailure(JITFailureReason failure)
         break;
     case JITFailureReason::Lookbehind:
         dataLog("Can't JIT a pattern containing lookbehinds\n");
-        break;
-    case JITFailureReason::VariableCountedParenthesisWithNonZeroMinimum:
-        dataLog("Can't JIT a pattern containing a variable counted parenthesis with a non-zero minimum\n");
         break;
     case JITFailureReason::ParenthesizedSubpattern:
         dataLog("Can't JIT a pattern containing parenthesized subpatterns\n");

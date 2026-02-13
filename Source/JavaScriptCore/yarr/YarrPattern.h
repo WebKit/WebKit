@@ -563,7 +563,7 @@ struct YarrPattern {
         m_containsBOL = false;
         m_containsLookbehinds = false;
         m_containsUnsignedLengthPattern = false;
-        m_hasCopiedParenSubexpressions = false;
+        m_parenthesesCopyDepth = 0;
         m_hasNamedCaptureGroups = false;
         m_saveInitialStartValue = false;
 
@@ -735,7 +735,6 @@ struct YarrPattern {
     bool m_containsLookbehinds : 1;
     bool m_containsUnsignedLengthPattern : 1;
     bool m_containsModifiers : 1;
-    bool m_hasCopiedParenSubexpressions : 1;
     bool m_hasNamedCaptureGroups : 1;
     bool m_saveInitialStartValue : 1;
     OptionSet<Flags> m_flags;
@@ -743,6 +742,8 @@ struct YarrPattern {
     unsigned m_numSubpatterns { 0 };
     unsigned m_initialStartValueFrameLocation { 0 };
     unsigned m_numDuplicateNamedCaptureGroups { 0 };
+    unsigned m_parenthesesCopyDepth { 0 }; // Track nesting depth of copied parentheses for splitting decisions
+    static constexpr unsigned maxParenthesesCopyDepth = 2; // Threshold before falling back to native content backtracking
     PatternDisjunction* m_body;
     Vector<std::unique_ptr<PatternDisjunction>, 4> m_disjunctions;
     Vector<std::unique_ptr<CharacterClass>> m_userCharacterClasses;

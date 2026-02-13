@@ -1676,12 +1676,12 @@ public:
         if (auto* newDisjunction = copyDisjunction(term.parentheses.disjunction, filterStartsWithBOL)) {
             PatternTerm termCopy = term;
             termCopy.parentheses.disjunction = newDisjunction;
-            m_pattern.m_hasCopiedParenSubexpressions = true;
+            m_pattern.m_parenthesesCopyDepth++;
             return termCopy;
         }
         return std::nullopt;
     }
-    
+
     void quantifyAtom(unsigned min, unsigned max, bool greedy)
     {
         ASSERT(min <= max);
@@ -1726,24 +1726,27 @@ public:
 
         if (min == max)
             term.quantify(min, max, QuantifierType::FixedCount);
-        else if (!min || (term.type == PatternTerm::Type::ParenthesesSubpattern && m_pattern.m_hasCopiedParenSubexpressions))
+        else if (term.type == PatternTerm::Type::ParenthesesSubpattern) {
+            // For parentheses subpatterns with Greedy/NonGreedy quantifiers and min > 0,
+            // we handle variable count natively in JIT using content backtracking.
+            // No splitting is needed — the JIT handles all cases including:
+            // - Multi-alt disjunctions (via returnAddress-based content backtracking)
+            // - Inner content that can match zero characters (via zero-length match checks)
+            // - Nested subpatterns with alternatives
+            term.quantify(min, max, greedy ? QuantifierType::Greedy : QuantifierType::NonGreedy);
+        } else if (!min)
             term.quantify(min, max, greedy ? QuantifierType::Greedy : QuantifierType::NonGreedy);
         else {
+            // For non-parentheses terms (character classes, etc.), keep splitting
             if (term.matchDirection() == Forward) {
                 term.quantify(min, min, QuantifierType::FixedCount);
                 m_alternative->m_terms.append(*copyTerm(term, /* filterStartsWithBOL */ false));
                 // NOTE: this term is interesting from an analysis perspective, in that it can be ignored.....
                 m_alternative->lastTerm().quantify((max == quantifyInfinite) ? max : max - min, greedy ? QuantifierType::Greedy : QuantifierType::NonGreedy);
-                if (m_alternative->lastTerm().type == PatternTerm::Type::ParenthesesSubpattern)
-                    m_alternative->lastTerm().parentheses.isCopy = true;
             } else {
                 term.quantify((max == quantifyInfinite) ? max : max - min, greedy ? QuantifierType::Greedy : QuantifierType::NonGreedy);
-                if (term.type == PatternTerm::Type::ParenthesesSubpattern)
-                    term.parentheses.isCopy = true;
                 m_alternative->m_terms.append(*copyTerm(term, /* filterStartsWithBOL */ false));
                 m_alternative->lastTerm().quantify(min, min, QuantifierType::FixedCount);
-                if (m_alternative->lastTerm().type == PatternTerm::Type::ParenthesesSubpattern)
-                    m_alternative->lastTerm().parentheses.isCopy = false;
             }
         }
     }
@@ -2172,7 +2175,7 @@ public:
             return;
         if (m_pattern.m_containsModifiers)
             return;
-        if (m_pattern.m_hasCopiedParenSubexpressions)
+        if (m_pattern.m_parenthesesCopyDepth)
             return;
         if (m_pattern.m_hasNamedCaptureGroups)
             return;
@@ -2649,7 +2652,6 @@ YarrPattern::YarrPattern(StringView pattern, OptionSet<Flags> flags, ErrorCode& 
     , m_containsLookbehinds(false)
     , m_containsUnsignedLengthPattern(false)
     , m_containsModifiers(false)
-    , m_hasCopiedParenSubexpressions(false)
     , m_hasNamedCaptureGroups(false)
     , m_saveInitialStartValue(false)
     , m_flags(flags)
