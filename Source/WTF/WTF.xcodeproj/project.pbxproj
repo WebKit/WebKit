@@ -150,6 +150,7 @@
 		51F1752D1F3D486000C74950 /* PersistentEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F175291F3D486000C74950 /* PersistentEncoder.cpp */; };
 		52183012C99E476A84EEBEA8 /* SymbolImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F72BBDB107FA424886178B9E /* SymbolImpl.cpp */; };
 		521CC6B424A27809004377D6 /* TranslatedProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 521CC6B324A277C2004377D6 /* TranslatedProcess.cpp */; };
+		5267CF82249316B10022BF6D /* FastJITPermissions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5267CF81249316AD0022BF6D /* FastJITPermissions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5311BD531EA71CAD00525281 /* Signals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5311BD511EA71CAD00525281 /* Signals.cpp */; };
 		5311BD5C1EA822F900525281 /* ThreadMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5311BD5B1EA822F900525281 /* ThreadMessage.cpp */; };
 		53534F2A1EC0E10E00141B2F /* MachExceptions.defs in Sources */ = {isa = PBXBuildFile; fileRef = 53534F291EC0E10E00141B2F /* MachExceptions.defs */; settings = {ATTRIBUTES = (Client, Server, ); }; };
@@ -1298,6 +1299,7 @@
 		2CDED0F118115C85004DBA70 /* RunLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoop.cpp; sourceTree = "<group>"; };
 		2CDED0F218115C85004DBA70 /* RunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoop.h; sourceTree = "<group>"; };
 		2D1F2F462498F73300C63A83 /* TranslatedProcess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TranslatedProcess.h; sourceTree = "<group>"; };
+		5267CF81249316AD0022BF6D /* FastJITPermissions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FastJITPermissions.h; sourceTree = "<group>"; };
 		304CA4E41375437EBE931D03 /* Markable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Markable.h; sourceTree = "<group>"; };
 		3137E1D7DBD84AC38FAE4D34 /* IndexSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexSet.h; sourceTree = "<group>"; };
 		313EDEC9778E49C9BEA91CFC /* StackTrace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackTrace.cpp; sourceTree = "<group>"; };
@@ -2434,6 +2436,7 @@
 				0FD81AC4154FB22E00983E72 /* FastBitVector.h */,
 				E361DB512891159B00B2A2B8 /* FastFloat.cpp */,
 				E361DB522891159C00B2A2B8 /* FastFloat.h */,
+				5267CF81249316AD0022BF6D /* FastJITPermissions.h */,
 				A8A472A1151A825A004123FF /* FastMalloc.cpp */,
 				A8A472A2151A825A004123FF /* FastMalloc.h */,
 				0F79C7C31E73511800EB34D1 /* FastTLS.h */,
@@ -3587,6 +3590,7 @@
 				DD3DC8CC27A4BF8E007E5B61 /* FastBitVector.h in Headers */,
 				461229722ACF6B3100BB1CCC /* FastCharacterComparison.h in Headers */,
 				E361DB542891159C00B2A2B8 /* FastFloat.h in Headers */,
+				5267CF82249316B10022BF6D /* FastJITPermissions.h in Headers */,
 				DD3DC8A727A4BF8E007E5B61 /* FastMalloc.h in Headers */,
 				DD3DC8AF27A4BF8E007E5B61 /* FastTLS.h in Headers */,
 				468742F12D7F8A0100F4BE74 /* FileHandle.h in Headers */,

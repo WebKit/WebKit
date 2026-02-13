@@ -599,7 +599,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     assembler/CPU.h
     assembler/CodeLocation.h
     assembler/DisallowMacroScratchRegisterUsage.h
-    assembler/FastJITPermissions.h
     assembler/JITOperationList.h
     assembler/JITOperationValidation.h
     assembler/LinkBuffer.h

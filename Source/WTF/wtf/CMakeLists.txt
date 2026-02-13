@@ -93,6 +93,7 @@ set(WTF_PUBLIC_HEADERS
     FailureAction.h
     FastBitVector.h
     FastFloat.h
+    FastJITPermissions.h
     FastMalloc.h
     FastTLS.h
     FileHandle.h

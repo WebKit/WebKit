@@ -993,7 +993,6 @@
 		525C0DDA1E935847002184CD /* WasmCallee.h in Headers */ = {isa = PBXBuildFile; fileRef = 525C0DD81E935847002184CD /* WasmCallee.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52678F8F1A031009006A306D /* BasicBlockLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 52678F8D1A031009006A306D /* BasicBlockLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52678F911A04177C006A306D /* ControlFlowProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 52678F901A04177C006A306D /* ControlFlowProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5267CF82249316B10022BF6D /* FastJITPermissions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5267CF81249316AD0022BF6D /* FastJITPermissions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		526AC4B71E977C5D003500E1 /* WasmCalleeGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 526AC4B51E977C5D003500E1 /* WasmCalleeGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		527E6CEC2772B9CB005E0782 /* WasmOSREntryPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 527E6CEB2772B9C5005E0782 /* WasmOSREntryPlan.h */; };
 		52B310FB1974AE610080857C /* FunctionHasExecutedCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B310FA1974AE610080857C /* FunctionHasExecutedCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4250,7 +4249,6 @@
 		52678F8C1A031009006A306D /* BasicBlockLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicBlockLocation.cpp; sourceTree = "<group>"; };
 		52678F8D1A031009006A306D /* BasicBlockLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicBlockLocation.h; sourceTree = "<group>"; };
 		52678F901A04177C006A306D /* ControlFlowProfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ControlFlowProfiler.h; sourceTree = "<group>"; };
-		5267CF81249316AD0022BF6D /* FastJITPermissions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FastJITPermissions.h; sourceTree = "<group>"; };
 		526AC4B41E977C5D003500E1 /* WasmCalleeGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmCalleeGroup.cpp; sourceTree = "<group>"; };
 		526AC4B51E977C5D003500E1 /* WasmCalleeGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmCalleeGroup.h; sourceTree = "<group>"; };
 		5272987B235FC8BA005C982C /* GCMemoryOperations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GCMemoryOperations.h; sourceTree = "<group>"; };
@@ -9897,7 +9895,6 @@
 				0F30D7BF1D95D62F0053089D /* CPU.h */,
 				FE37C5272A99A371003EE733 /* CPUInlines.h */,
 				0F37308E1C0CD68500052BFA /* DisallowMacroScratchRegisterUsage.h */,
-				5267CF81249316AD0022BF6D /* FastJITPermissions.h */,
 				E3CA3A4B2527AB2E004802BF /* JITOperationList.cpp */,
 				E3CA3A4C2527AB2F004802BF /* JITOperationList.h */,
 				6B2360CD26C6253C0054AEEC /* JITOperationValidation.h */,
@@ -11411,7 +11408,6 @@
 				0FB105861675481200F8AB6E /* ExitKind.h in Headers */,
 				FEB21EA92AF7E596002C482C /* ExpressionInfo.h in Headers */,
 				FEF934472B4DC61500DFA7F5 /* ExpressionInfoInlines.h in Headers */,
-				5267CF82249316B10022BF6D /* FastJITPermissions.h in Headers */,
 				0FEC3C571F33A45300F59B6C /* FastMallocAlignedMemoryAllocator.h in Headers */,
 				CECFAD372372DAD400291599 /* FileBasedFuzzerAgent.h in Headers */,
 				CE20BD05237D3E230046E520 /* FileBasedFuzzerAgentBase.h in Headers */,
