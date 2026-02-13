@@ -24,8 +24,9 @@
  */
 
 #import "config.h"
-#import "_WKJSHandleInternal.h"
+#import "WKJSHandleInternal.h"
 
+#import "APIJSHandle.h"
 #import "FrameInfoData.h"
 #import "WKContentWorldInternal.h"
 #import "WKFrameInfoInternal.h"
@@ -36,11 +37,11 @@
 #import <WebCore/WebKitJSHandle.h>
 #import <wtf/BlockPtr.h>
 
-@implementation _WKJSHandle
+@implementation WKJSHandle
 
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKJSHandle.class, self))
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKJSHandle.class, self))
         return;
     SUPPRESS_UNRETAINED_ARG _ref->API::JSHandle::~JSHandle();
     [super dealloc];
@@ -56,11 +57,12 @@
     return wrapper(API::ContentWorld::worldForIdentifier(_ref->info().worldIdentifier));
 }
 
-- (void)windowFrameInfo:(void (^)(WKFrameInfo *))completionHandler
+- (void)windowProxyFrameInfo:(void (^)(WKFrameInfo *))completionHandler
 {
     RefPtr webFrame = WebKit::WebFrameProxy::webFrame(_ref->info().windowProxyFrameIdentifier);
     if (!webFrame)
         return completionHandler(nil);
+
     webFrame->getFrameInfo([completionHandler = makeBlockPtr(completionHandler)] (auto&& data) mutable {
         if (!data)
             return completionHandler(nil);
@@ -76,7 +78,7 @@
     if (![object isKindOfClass:self.class])
         return NO;
 
-    return _ref->info() == ((_WKJSHandle *)object)->_ref->info();
+    return _ref->info() == ((WKJSHandle *)object)->_ref->info();
 }
 
 - (NSUInteger)hash
@@ -92,19 +94,6 @@
 - (API::Object&)_apiObject
 {
     return *_ref;
-}
-
-// NSSecureCoding implementation.
-// This is for injected bundle transition support only.
-// Do not include this in a public API version of WKJSHandle.
-+ (BOOL)supportsSecureCoding
-{
-#if PLATFORM(MAC)
-    RELEASE_ASSERT(WTF::MacApplication::isSafari() || applicationBundleIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s);
-#else
-    RELEASE_ASSERT(WTF::IOSApplication::isMobileSafari() || applicationBundleIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s);
-#endif
-    return YES;
 }
 
 static NSString* const identifierObjectKey = @"a";
@@ -213,6 +202,38 @@ static NSString* const worldIdentifierLowBitsKey = @"h";
 
     // Remaining information is currently not needed, and this is on its way to being removed so let's not add more here.
     // This also avoids encoding any complex types.
+}
+
+@end
+
+@implementation _WKJSHandle
+
+// NSSecureCoding implementation.
+// This is for injected bundle transition support only.
+// Do not include this in a public API version of WKJSHandle.
++ (BOOL)supportsSecureCoding
+{
+#if PLATFORM(MAC)
+    return WTF::MacApplication::isSafari() || applicationBundleIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s;
+#else
+    return WTF::IOSApplication::isMobileSafari() || applicationBundleIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s;
+#endif
+    return NO;
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    return [super initWithCoder:decoder];
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    [super encodeWithCoder:coder];
+}
+
+- (void)windowFrameInfo:(void (^)(WKFrameInfo * _Nullable))completionHandler
+{
+    [self windowProxyFrameInfo:completionHandler];
 }
 
 @end

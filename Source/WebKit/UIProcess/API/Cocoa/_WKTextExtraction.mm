@@ -27,8 +27,8 @@
 #import "_WKTextExtractionInternal.h"
 
 #import "Logging.h"
+#import "WKJSHandleInternal.h"
 #import "WKWebViewInternal.h"
-#import "_WKJSHandleInternal.h"
 #import <WebKit/WKError.h>
 #import <wtf/RetainPtr.h>
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2025-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,17 +24,20 @@
  */
 
 #import "APIJSHandle.h"
+#import "WKJSHandle.h"
 #import "WKObject.h"
 #import "_WKJSHandle.h"
 #import <wtf/AlignedStorage.h>
 
 namespace WebKit {
+
 template<> struct WrapperTraits<API::JSHandle> {
     using WrapperClass = _WKJSHandle;
 };
+
 }
 
-@interface _WKJSHandle () <WKObject> {
+@interface WKJSHandle () <WKObject> {
 @package
     AlignedStorage<API::JSHandle> _ref;
 }

@@ -151,6 +151,16 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     self._protectedWorldConfiguration->setDisableLegacyBuiltinOverrides(!enabled);
 }
 
+- (BOOL)jsHandleCreationEnabled
+{
+    return self._protectedWorldConfiguration->allowJSHandleCreation();
+}
+
+- (void)setJSHandleCreationEnabled:(BOOL)allow
+{
+    self._protectedWorldConfiguration->setAllowJSHandleCreation(allow);
+}
+
 - (BOOL)isInspectable
 {
     return self._protectedWorldConfiguration->isInspectable();

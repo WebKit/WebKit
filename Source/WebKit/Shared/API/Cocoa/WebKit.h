@@ -40,6 +40,7 @@
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKFrameInfo.h>
 #import <WebKit/WKHTTPCookieStore.h>
+#import <WebKit/WKJSHandle.h>
 #import <WebKit/WKJSScriptingBuffer.h>
 #import <WebKit/WKJSSerializedNode.h>
 #import <WebKit/WKNavigation.h>

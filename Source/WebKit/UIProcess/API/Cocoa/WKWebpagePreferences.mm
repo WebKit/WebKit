@@ -844,14 +844,24 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     [self setAlternateRequest:request];
 }
 
-- (void)_setAllowsJSHandleCreationInPageWorld:(BOOL)allows
+- (void)setAllowsJSHandleCreationInPageWorld:(BOOL)allows
 {
     _websitePolicies->setAllowsJSHandleCreationInPageWorld(allows);
 }
 
-- (BOOL)_allowsJSHandleCreationInPageWorld
+- (BOOL)allowsJSHandleCreationInPageWorld
 {
     return _websitePolicies->allowsJSHandleCreationInPageWorld();
+}
+
+- (void)_setAllowsJSHandleCreationInPageWorld:(BOOL)allows
+{
+    [self setAllowsJSHandleCreationInPageWorld:allows];
+}
+
+- (BOOL)_allowsJSHandleCreationInPageWorld
+{
+    return [self allowsJSHandleCreationInPageWorld];
 }
 
 - (void)setSecurityRestrictionMode:(WKSecurityRestrictionMode)mode

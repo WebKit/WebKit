@@ -31,19 +31,19 @@
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKContentWorldPrivate.h>
+#import <WebKit/WKJSHandle.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/_WKContentWorldConfiguration.h>
 #import <WebKit/_WKFeature.h>
-#import <WebKit/_WKJSHandle.h>
 
 namespace TestWebKitAPI {
 
-static WKFrameInfo *getWindowFrameInfo(RetainPtr<_WKJSHandle> node)
+static WKFrameInfo *getWindowFrameInfo(RetainPtr<WKJSHandle> node)
 {
-    EXPECT_TRUE([node isKindOfClass:_WKJSHandle.class]);
+    EXPECT_TRUE([node isKindOfClass:WKJSHandle.class]);
     __block RetainPtr<WKFrameInfo> frame;
     __block bool done { false };
-    [node windowFrameInfo:^(WKFrameInfo *info) {
+    [node windowProxyFrameInfo:^(WKFrameInfo *info) {
         frame = info;
         done = true;
     }];
@@ -68,12 +68,12 @@ TEST(JSHandle, Basic)
     [navigationDelegate waitForDidFinishNavigation];
 
     RetainPtr worldConfiguration = adoptNS([_WKContentWorldConfiguration new]);
-    worldConfiguration.get().allowJSHandleCreation = YES;
+    worldConfiguration.get().jsHandleCreationEnabled = YES;
     RetainPtr world = [WKContentWorld _worldWithConfiguration:worldConfiguration.get()];
 
     RetainPtr<id> result = [webView objectByEvaluatingJavaScript:@"window.webkit.createJSHandle(onlyframe.contentWindow)" inFrame:nil inContentWorld:world.get()];
     EXPECT_WK_STREQ(getWindowFrameInfo(result).request.URL.absoluteString, "https://webkit.org/webkit");
-    RetainPtr<_WKJSHandle> iframeRef = [webView objectByEvaluatingJavaScript:@"window.webkit.createJSHandle(onlyframe)" inFrame:nil inContentWorld:world.get()];
+    RetainPtr<WKJSHandle> iframeRef = [webView objectByEvaluatingJavaScript:@"window.webkit.createJSHandle(onlyframe)" inFrame:nil inContentWorld:world.get()];
 
     result = [webView objectByEvaluatingJavaScript:@"window.webkit.createJSHandle(onlydiv)" inFrame:nil inContentWorld:world.get()];
     EXPECT_NULL(getWindowFrameInfo(result));
@@ -112,25 +112,25 @@ TEST(JSHandle, Basic)
 TEST(JSHandle, Equality)
 {
     RetainPtr worldConfiguration = adoptNS([_WKContentWorldConfiguration new]);
-    worldConfiguration.get().allowJSHandleCreation = YES;
+    worldConfiguration.get().jsHandleCreationEnabled = YES;
     RetainPtr world = [WKContentWorld _worldWithConfiguration:worldConfiguration.get()];
 
     RetainPtr webView = adoptNS([TestWKWebView new]);
     EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"let a = {'key':'value'}; let b = window.webkit.createJSHandle(a); let c = window.webkit.createJSHandle(a); b === c" inFrame:nil inContentWorld:world.get()] boolValue]);
 
-    _WKJSHandle *b = [webView objectByEvaluatingJavaScript:@"b" inFrame:nil inContentWorld:world.get()];
-    _WKJSHandle *c = [webView objectByEvaluatingJavaScript:@"c" inFrame:nil inContentWorld:world.get()];
-    _WKJSHandle *d = [webView objectByEvaluatingJavaScript:@"let d = {}; window.webkit.createJSHandle(d)" inFrame:nil inContentWorld:world.get()];
-    EXPECT_TRUE([b isKindOfClass:_WKJSHandle.class]);
-    EXPECT_TRUE([c isKindOfClass:_WKJSHandle.class]);
-    EXPECT_TRUE([d isKindOfClass:_WKJSHandle.class]);
+    WKJSHandle *b = [webView objectByEvaluatingJavaScript:@"b" inFrame:nil inContentWorld:world.get()];
+    WKJSHandle *c = [webView objectByEvaluatingJavaScript:@"c" inFrame:nil inContentWorld:world.get()];
+    WKJSHandle *d = [webView objectByEvaluatingJavaScript:@"let d = {}; window.webkit.createJSHandle(d)" inFrame:nil inContentWorld:world.get()];
+    EXPECT_TRUE([b isKindOfClass:WKJSHandle.class]);
+    EXPECT_TRUE([c isKindOfClass:WKJSHandle.class]);
+    EXPECT_TRUE([d isKindOfClass:WKJSHandle.class]);
     EXPECT_NE(b, c);
     EXPECT_NE(b, d);
     EXPECT_NE(c, d);
     EXPECT_TRUE([b isEqual:c]);
     EXPECT_FALSE([b isEqual:d]);
 
-    NSMutableArray<_WKJSHandle *> *array = [NSMutableArray arrayWithCapacity:2];
+    NSMutableArray<WKJSHandle *> *array = [NSMutableArray arrayWithCapacity:2];
     [array addObject:b];
     [array addObject:d];
     [array addObject:c];
@@ -138,10 +138,10 @@ TEST(JSHandle, Equality)
     [array removeObject:b];
     EXPECT_EQ(array.count, 1u);
 
-    NSSet<_WKJSHandle *> *set = [NSSet setWithObjects:b, c, d, nil];
+    NSSet<WKJSHandle *> *set = [NSSet setWithObjects:b, c, d, nil];
     EXPECT_EQ(set.count, 2u);
 
-    NSDictionary<NSString *, _WKJSHandle *> *dictionary = @{
+    NSDictionary<NSString *, WKJSHandle *> *dictionary = @{
         @"b" : b,
         @"c" : c,
         @"d" : d
@@ -209,14 +209,14 @@ TEST(JSHandle, WebpagePreferences)
 TEST(JSHandle, Reuse)
 {
     RetainPtr worldConfiguration = adoptNS([_WKContentWorldConfiguration new]);
-    worldConfiguration.get().allowJSHandleCreation = YES;
+    worldConfiguration.get().jsHandleCreationEnabled = YES;
     RetainPtr world = [WKContentWorld _worldWithConfiguration:worldConfiguration.get()];
 
     RetainPtr webView = adoptNS([TestWKWebView new]);
     @autoreleasepool {
         [webView objectByEvaluatingJavaScript:@"let f = window.webkit.createJSHandle(()=>{ return 42; }); f" inFrame:nil inContentWorld:world.get()];
     }
-    _WKJSHandle *fun = [webView objectByEvaluatingJavaScript:@"f" inFrame:nil inContentWorld:world.get()];
+    WKJSHandle *fun = [webView objectByEvaluatingJavaScript:@"f" inFrame:nil inContentWorld:world.get()];
     EXPECT_TRUE([[webView objectByCallingAsyncFunction:@"return fun()" withArguments:@{ @"fun":fun } inFrame:nil inContentWorld:world.get()] isEqual:@42]);
 }
 

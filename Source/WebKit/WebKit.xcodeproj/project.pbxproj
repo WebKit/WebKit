@@ -1325,6 +1325,8 @@
 		51D7E0AD2356555E00A67D3A /* WKPDFConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7E0AC2356555400A67D3A /* WKPDFConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		51D9342E2F3D717A00DDA950 /* WKContentWorldConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D9342C2F3D716F00DDA950 /* WKContentWorldConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		51D9342F2F3D803F00DDA950 /* WKContentWorldConfigurationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D9342D2F3D716F00DDA950 /* WKContentWorldConfigurationInternal.h */; };
+		51DB22F12F3EB16E00BDCDCE /* WKJSHandleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DB22E92F3EB13300BDCDCE /* WKJSHandleInternal.h */; };
+		51DB22F22F3EB16E00BDCDCE /* WKJSHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DB22E72F3EB13300BDCDCE /* WKJSHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		51DD9F2916367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DD9F2716367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h */; };
 		51E0BD9D2C74711A0048411B /* _WKWebPushAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E0BD9B2C7471110048411B /* _WKWebPushAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51E351CB180F2CCC00E53BE9 /* IDBUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E351C9180F2CCC00E53BE9 /* IDBUtilities.h */; };
@@ -6193,6 +6195,9 @@
 		51D9342C2F3D716F00DDA950 /* WKContentWorldConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKContentWorldConfiguration.h; sourceTree = "<group>"; };
 		51D9342D2F3D716F00DDA950 /* WKContentWorldConfigurationInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKContentWorldConfigurationInternal.h; sourceTree = "<group>"; };
 		51DAAEBF2AA198DE00DB2AA4 /* com.apple.WebKit.webpushd.relocatable.mac.sb */ = {isa = PBXFileReference; lastKnownFileType = file; path = com.apple.WebKit.webpushd.relocatable.mac.sb; sourceTree = "<group>"; };
+		51DB22E72F3EB13300BDCDCE /* WKJSHandle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKJSHandle.h; sourceTree = "<group>"; };
+		51DB22E82F3EB13300BDCDCE /* WKJSHandle.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKJSHandle.mm; sourceTree = "<group>"; };
+		51DB22E92F3EB13300BDCDCE /* WKJSHandleInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKJSHandleInternal.h; sourceTree = "<group>"; };
 		51DD9F2616367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkConnectionToWebProcessMessageReceiver.cpp; sourceTree = "<group>"; };
 		51DD9F2716367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkConnectionToWebProcessMessages.h; sourceTree = "<group>"; };
 		51E0BD9B2C7471110048411B /* _WKWebPushAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebPushAction.h; sourceTree = "<group>"; };
@@ -9085,8 +9090,6 @@
 		FA8B4F6B2E46A93500E419CD /* WKScriptMessageRef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKScriptMessageRef.h; sourceTree = "<group>"; };
 		FA8B4F6C2E46A93500E419CD /* WKScriptMessageRef.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WKScriptMessageRef.cpp; sourceTree = "<group>"; };
 		FA8B4F792E4A5F7300E419CD /* _WKJSHandle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKJSHandle.h; sourceTree = "<group>"; };
-		FA8B4F7A2E4A5F7300E419CD /* _WKJSHandle.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKJSHandle.mm; sourceTree = "<group>"; };
-		FA8B4F7B2E4A5F7300E419CD /* _WKJSHandleInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKJSHandleInternal.h; sourceTree = "<group>"; };
 		FA94F2A12D07800D006373E0 /* WebPageInternals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPageInternals.h; sourceTree = "<group>"; };
 		FA96E4AC2AA90A1E0090C5A3 /* WebHistoryItemClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebHistoryItemClient.cpp; sourceTree = "<group>"; };
 		FA96E4AD2AA90A1E0090C5A3 /* WebHistoryItemClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebHistoryItemClient.h; sourceTree = "<group>"; };
@@ -12715,8 +12718,6 @@
 				31B362922141EBAC007BFA53 /* _WKInternalDebugFeature.mm */,
 				FADAF3C32EA2E992001ACE2E /* _WKJSBuffer.h */,
 				FA8B4F792E4A5F7300E419CD /* _WKJSHandle.h */,
-				FA8B4F7A2E4A5F7300E419CD /* _WKJSHandle.mm */,
-				FA8B4F7B2E4A5F7300E419CD /* _WKJSHandleInternal.h */,
 				2D790A9C1AD7050D00AB90B3 /* _WKLayoutMode.h */,
 				51C0C9791DDD78540032CAD3 /* _WKLinkIconParameters.h */,
 				51C0C97A1DDD78540032CAD3 /* _WKLinkIconParameters.mm */,
@@ -12927,6 +12928,9 @@
 				51D124851E734AE3002B2820 /* WKHTTPCookieStore.mm */,
 				51D124861E734AE3002B2820 /* WKHTTPCookieStoreInternal.h */,
 				DF462E0E23F22F5300EFF35F /* WKHTTPCookieStorePrivate.h */,
+				51DB22E72F3EB13300BDCDCE /* WKJSHandle.h */,
+				51DB22E82F3EB13300BDCDCE /* WKJSHandle.mm */,
+				51DB22E92F3EB13300BDCDCE /* WKJSHandleInternal.h */,
 				514246BD2F3F85EE002A3AEA /* WKJSScriptingBuffer.h */,
 				514246BC2F3F85DE002A3AEA /* WKJSScriptingBuffer.mm */,
 				514246BE2F3F85EE002A3AEA /* WKJSScriptingBufferInternal.h */,
@@ -19216,6 +19220,8 @@
 				073A63CF2DC33DEC0057A3F5 /* WKIntelligenceSmartReplyTextEffectCoordinator.h in Headers */,
 				073A63CE2DC33DE30057A3F5 /* WKIntelligenceTextEffectCoordinator.h in Headers */,
 				E88885682DC914C400C572B8 /* WKISO18013Request.h in Headers */,
+				51DB22F22F3EB16E00BDCDCE /* WKJSHandle.h in Headers */,
+				51DB22F12F3EB16E00BDCDCE /* WKJSHandleInternal.h in Headers */,
 				FA84D6692E579F38004BDAA4 /* WKJSHandleRef.h in Headers */,
 				514246BF2F3F85EE002A3AEA /* WKJSScriptingBuffer.h in Headers */,
 				514246C02F3F85EE002A3AEA /* WKJSScriptingBufferInternal.h in Headers */,

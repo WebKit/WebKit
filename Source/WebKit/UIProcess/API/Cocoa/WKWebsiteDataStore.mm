@@ -41,6 +41,7 @@
 #import "WKHTTPCookieStoreInternal.h"
 #import "WKNSArray.h"
 #import "WKNSURLAuthenticationChallenge.h"
+#import "WKPreferencesInternal.h"
 #import "WKSecurityOriginInternal.h"
 #import "WKWebViewInternal.h"
 #import "WKWebsiteDataRecordInternal.h"

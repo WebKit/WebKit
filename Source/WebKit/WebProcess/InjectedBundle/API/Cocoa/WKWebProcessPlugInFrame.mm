@@ -28,6 +28,7 @@
 
 #import "APIJSHandle.h"
 #import "FrameInfoData.h"
+#import "WKJSHandleInternal.h"
 #import "WKNSArray.h"
 #import "WKNSURLExtras.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
@@ -38,7 +39,6 @@
 #import "WKWebProcessPlugInScriptWorldInternal.h"
 #import "WebProcess.h"
 #import "_WKFrameHandleInternal.h"
-#import "_WKJSHandleInternal.h"
 #import <JavaScriptCore/APICast.h>
 #import <JavaScriptCore/JSGlobalObject.h>
 #import <JavaScriptCore/JSValue.h>
