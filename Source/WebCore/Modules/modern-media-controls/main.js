@@ -25,6 +25,7 @@
 
 const MinimumSizeToShowAnyControl = 47;
 const MaximumSizeToShowSmallProminentControl = 88;
+let cachedUAStyleSheets = null;
 
 // If running outside the media element's isolated world, polyfill the MediaControlsUtils object:
 if (!window.utils) {
@@ -35,13 +36,24 @@ if (!window.utils) {
     };
 }
 
+function ensureUAStyleSheets(host)
+{
+    if (!cachedUAStyleSheets) {
+        cachedUAStyleSheets = host.shadowRootStyleSheets.map(cssText => {
+            const styleSheet = new CSSStyleSheet();
+            styleSheet.replaceSync(cssText);
+            return styleSheet;
+        });
+    }
+
+    return cachedUAStyleSheets;
+}
+
 // This is called from HTMLMediaElement::ensureMediaControls().
 function createControls(shadowRoot, media, host)
 {
-    if (host) {
-        for (let styleSheet of host.shadowRootStyleSheets)
-            shadowRoot.appendChild(document.createElement("style")).textContent = styleSheet;
-    }
+    if (host)
+        shadowRoot.adoptedStyleSheets = ensureUAStyleSheets(host);
 
     controller = new MediaController(shadowRoot, media, host);
     if (host)
