@@ -36,6 +36,7 @@
 #import "WKSeparatedImageView.h"
 #import "WKSurroundingsEffect.h"
 #import "WKUIDelegateInternal.h"
+#import "WKUIDelegatePrivate.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewInternal.h"
 #import "_WKTextExtractionInternal.h"
