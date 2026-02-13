@@ -1486,19 +1486,19 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncToReversed(VM& vm, JS
     validateTypedArray(globalObject, thisObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    size_t length = thisObject->length();
+    // Snapshot the span at this time, as SABs may grow (but never shrink) in parallel.
+    auto originalSpan = const_cast<const ViewClass*>(thisObject)->typedSpan();
+    size_t length = originalSpan.size();
 
     bool isResizableOrGrowableShared = false;
     Structure* structure = globalObject->typedArrayStructure(ViewClass::TypedArrayStorageType, isResizableOrGrowableShared);
     ViewClass* result = ViewClass::createUninitialized(globalObject, structure, length);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto from = const_cast<const ViewClass*>(thisObject)->typedSpan();
-    ASSERT(from.size() == length);
     auto to = result->typedSpan();
     ASSERT(to.size() == length);
 
-    WTF::copyElements(to, from);
+    WTF::copyElements(to, originalSpan);
     std::ranges::reverse(to);
 
     return JSValue::encode(result);
@@ -1630,18 +1630,18 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncToSorted(VM& vm, JSGl
     validateTypedArray(globalObject, thisObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    size_t length = thisObject->length();
+    // Snapshot the span at this time, as SABs may grow (but never shrink) in parallel.
+    auto originalSpan = const_cast<const ViewClass*>(thisObject)->typedSpan();
+    size_t length = originalSpan.size();
 
     bool isResizableOrGrowableShared = false;
     Structure* structure = globalObject->typedArrayStructure(ViewClass::TypedArrayStorageType, isResizableOrGrowableShared);
     ViewClass* result = ViewClass::createUninitialized(globalObject, structure, length);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto from = const_cast<const ViewClass*>(thisObject)->typedSpan();
-    ASSERT(from.size() == length);
     auto to = result->typedSpan();
 
-    WTF::copyElements(to, from);
+    WTF::copyElements(to, originalSpan);
 
     RELEASE_AND_RETURN(scope, genericTypedArrayViewProtoFuncSortImpl(vm, globalObject, result, comparatorValue));
 }
@@ -1955,12 +1955,13 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncWith(VM& vm, JSGlobal
     ViewClass* result = ViewClass::createUninitialized(globalObject, structure, thisLength);
     RETURN_IF_EXCEPTION(scope, { });
 
-    size_t updatedLength = thisObject->length();
-    if (thisLength != updatedLength) [[unlikely]] {
+    // Snapshot the span at this time, as SABs may grow (but never shrink) in parallel.
+    auto maybeUpdatedSpan = const_cast<const ViewClass*>(thisObject)->typedSpan();
+    if (thisLength != maybeUpdatedSpan.size()) [[unlikely]] {
         // If TypedArray is shrunk, remaining part will be filled with NativeValue(undefined).
         // But BigInt64Array / BigUint64Array throws a TypeError since undefined cannot be converted to BigInt.
         if constexpr (ViewClass::Adaptor::isBigInt) {
-            if (thisLength > updatedLength) [[unlikely]]
+            if (thisLength > maybeUpdatedSpan.size()) [[unlikely]]
                 return throwVMTypeError(globalObject, scope, "Cannot convert undefined to BigInt"_s);
         }
 
@@ -1975,10 +1976,8 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncWith(VM& vm, JSGlobal
             result->setIndexQuicklyToNativeValue(index, fromValue);
         }
     } else {
-        auto from = const_cast<const ViewClass*>(thisObject)->typedSpan();
-        ASSERT(from.size() == thisLength);
         auto to = result->typedSpan();
-        WTF::copyElements(to, from);
+        WTF::copyElements(to, maybeUpdatedSpan);
         to[replaceIndex] = nativeValue;
     }
 
