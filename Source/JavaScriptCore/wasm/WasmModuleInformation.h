@@ -212,7 +212,8 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
     BranchHints branchHints;
     std::optional<uint32_t> numberOfDataSegments;
     Vector<Ref<const RTT>> rtts;
-    Vector<Vector<uint8_t>> constantExpressions;
+    using ConstantExpressionAndSourceOffset = std::pair<Vector<uint8_t>, size_t>;
+    Vector<ConstantExpressionAndSourceOffset> constantExpressions;
     Name sourceMappingURL;
     std::unique_ptr<Wasm::ModuleDebugInfo> debugInfo;
 

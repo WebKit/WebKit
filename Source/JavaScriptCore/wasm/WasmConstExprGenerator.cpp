@@ -203,8 +203,9 @@ public:
         ASSERT(mode == Mode::Validate);
     }
 
-    ConstExprGenerator(Mode mode, const ModuleInformation& info, JSWebAssemblyInstance* instance)
+    ConstExprGenerator(Mode mode, size_t offsetInSource, const ModuleInformation& info, JSWebAssemblyInstance* instance)
         : m_mode(mode)
+        , m_offsetInSource(offsetInSource)
         , m_info(info)
         , m_instance(instance)
     {
@@ -728,7 +729,7 @@ public:
 private:
     FunctionParser<ConstExprGenerator>* m_parser { nullptr };
     Mode m_mode;
-    size_t m_offsetInSource;
+    size_t m_offsetInSource { 0 };
     ExpressionType m_result;
     const ModuleInformation& m_info;
     JSWebAssemblyInstance* m_instance { nullptr };
@@ -750,9 +751,11 @@ Expected<void, String> parseExtendedConstExpr(std::span<const uint8_t> source, s
     return { };
 }
 
-Expected<uint64_t, String> evaluateExtendedConstExpr(const Vector<uint8_t>& constantExpression, JSWebAssemblyInstance* instance, const ModuleInformation& info, Type expectedType)
+Expected<uint64_t, String> evaluateExtendedConstExpr(const ModuleInformation::ConstantExpressionAndSourceOffset& constantExpressionAndSourceOffset, JSWebAssemblyInstance* instance, const ModuleInformation& info, Type expectedType)
 {
-    ConstExprGenerator generator(ConstExprGenerator::Mode::Evaluate, info, instance);
+    auto constantExpression = constantExpressionAndSourceOffset.first;
+    size_t offsetInSource = constantExpressionAndSourceOffset.second;
+    ConstExprGenerator generator(ConstExprGenerator::Mode::Evaluate, offsetInSource, info, instance);
     FunctionParser<ConstExprGenerator> parser(generator, constantExpression, *TypeInformation::typeDefinitionForFunction({ expectedType }, { }), info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parseConstantExpression());
 
