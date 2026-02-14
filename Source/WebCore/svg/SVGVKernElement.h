@@ -28,12 +28,12 @@ class SVGVKernElement final : public SVGElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGVKernElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGVKernElement);
 public:
-    static Ref<SVGVKernElement> create(const QualifiedName&, Document&);
+    static Ref<SVGVKernElement> create(Document&);
 
     std::optional<SVGKerningPair> buildVerticalKerningPair() const;
 
 private:
-    SVGVKernElement(const QualifiedName&, Document&);
+    explicit SVGVKernElement(Document&);
 
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 };

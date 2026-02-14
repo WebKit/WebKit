@@ -30,12 +30,12 @@ class SVGFEMergeElement final : public SVGFilterPrimitiveStandardAttributes {
     WTF_MAKE_TZONE_ALLOCATED(SVGFEMergeElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEMergeElement);
 public:
-    static Ref<SVGFEMergeElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFEMergeElement> create(Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEMergeElement, SVGFilterPrimitiveStandardAttributes>;
 
 private:
-    SVGFEMergeElement(const QualifiedName&, Document&);
+    explicit SVGFEMergeElement(Document&);
 
     void childrenChanged(const ChildChange&) override;
 

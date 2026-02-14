@@ -31,7 +31,7 @@ class SVGLineElement final : public SVGGeometryElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGLineElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGLineElement);
 public:
-    static Ref<SVGLineElement> create(const QualifiedName&, Document&);
+    static Ref<SVGLineElement> create(Document&);
 
     const SVGLengthValue& x1() const { return m_x1->currentValue(); }
     const SVGLengthValue& y1() const { return m_y1->currentValue(); }
@@ -44,7 +44,7 @@ public:
     SVGAnimatedLength& y2Animated() { return m_y2; }
 
 private:
-    SVGLineElement(const QualifiedName&, Document&);
+    explicit SVGLineElement(Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGLineElement, SVGGeometryElement>;
 

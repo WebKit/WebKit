@@ -41,12 +41,10 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGTextPathElement);
 
-inline SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Document& document)
-    : SVGTextContentElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGTextPathElement::SVGTextPathElement(Document& document)
+    : SVGTextContentElement(SVGNames::textPathTag, document, makeUniqueRef<PropertyRegistry>(*this))
     , SVGURIReference(this)
 {
-    ASSERT(hasTagName(SVGNames::textPathTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -56,9 +54,9 @@ inline SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Docu
     }
 }
 
-Ref<SVGTextPathElement> SVGTextPathElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGTextPathElement> SVGTextPathElement::create(Document& document)
 {
-    return adoptRef(*new SVGTextPathElement(tagName, document));
+    return adoptRef(*new SVGTextPathElement(document));
 }
 
 SVGTextPathElement::~SVGTextPathElement()

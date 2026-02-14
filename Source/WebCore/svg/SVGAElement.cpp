@@ -52,12 +52,10 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGAElement);
 
-inline SVGAElement::SVGAElement(const QualifiedName& tagName, Document& document)
-    : SVGGraphicsElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGAElement::SVGAElement(Document& document)
+    : SVGGraphicsElement(SVGNames::aTag, document, makeUniqueRef<PropertyRegistry>(*this))
     , SVGURIReference(this)
 {
-    ASSERT(hasTagName(SVGNames::aTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -67,9 +65,9 @@ inline SVGAElement::SVGAElement(const QualifiedName& tagName, Document& document
 
 SVGAElement::~SVGAElement() = default;
 
-Ref<SVGAElement> SVGAElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGAElement> SVGAElement::create(Document& document)
 {
-    return adoptRef(*new SVGAElement(tagName, document));
+    return adoptRef(*new SVGAElement(document));
 }
 
 String SVGAElement::title() const

@@ -119,24 +119,23 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ListAttributeTargetObserver);
 
 static constexpr int maxSavedResults = 256;
 
-HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form, CreationType creationType)
-    : HTMLTextFormControlElement(tagName, document, form)
+HTMLInputElement::HTMLInputElement(Document& document, HTMLFormElement* form, CreationType creationType)
+    : HTMLTextFormControlElement(inputTag, document, form)
     , m_parsingInProgress(creationType == CreationType::ByParser)
     // m_inputType is lazily created when constructed by the parser to avoid constructing unnecessarily a text inputType,
     // just to destroy them when the |type| attribute gets set by the parser to something else than 'text'.
     , m_inputType(creationType != CreationType::Normal ? nullptr : RefPtr { TextInputType::create(*this) })
 {
-    ASSERT(hasTagName(inputTag));
 }
 
-Ref<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
+Ref<HTMLInputElement> HTMLInputElement::create(Document& document, HTMLFormElement* form, bool createdByParser)
 {
-    return adoptRef(*new HTMLInputElement(tagName, document, form, createdByParser ? CreationType::ByParser : CreationType::Normal));
+    return adoptRef(*new HTMLInputElement(document, form, createdByParser ? CreationType::ByParser : CreationType::Normal));
 }
 
 Ref<Element> HTMLInputElement::cloneElementWithoutAttributesAndChildren(Document& document, CustomElementRegistry*) const
 {
-    return adoptRef(*new HTMLInputElement(tagQName(), document, nullptr, CreationType::ByCloning));
+    return adoptRef(*new HTMLInputElement(document, nullptr, CreationType::ByCloning));
 }
 
 HTMLImageLoader& HTMLInputElement::ensureImageLoader()

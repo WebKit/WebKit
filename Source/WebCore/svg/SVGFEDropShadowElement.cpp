@@ -35,11 +35,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEDropShadowElement);
 
-inline SVGFEDropShadowElement::SVGFEDropShadowElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGFEDropShadowElement::SVGFEDropShadowElement(Document& document)
+    : SVGFilterPrimitiveStandardAttributes(SVGNames::feDropShadowTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::feDropShadowTag));
-    
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -50,9 +48,9 @@ inline SVGFEDropShadowElement::SVGFEDropShadowElement(const QualifiedName& tagNa
     }
 }
 
-Ref<SVGFEDropShadowElement> SVGFEDropShadowElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEDropShadowElement> SVGFEDropShadowElement::create(Document& document)
 {
-    return adoptRef(*new SVGFEDropShadowElement(tagName, document));
+    return adoptRef(*new SVGFEDropShadowElement(document));
 }
 
 void SVGFEDropShadowElement::setStdDeviation(float x, float y)

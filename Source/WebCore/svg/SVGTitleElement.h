@@ -30,10 +30,10 @@ class SVGTitleElement final : public SVGElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGTitleElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGTitleElement);
 public:
-    static Ref<SVGTitleElement> create(const QualifiedName&, Document&);
+    static Ref<SVGTitleElement> create(Document&);
 
 private:
-    SVGTitleElement(const QualifiedName&, Document&);
+    explicit SVGTitleElement(Document&);
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;

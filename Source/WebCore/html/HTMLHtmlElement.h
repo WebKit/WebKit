@@ -32,10 +32,9 @@ class HTMLHtmlElement final : public HTMLElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLHtmlElement);
 public:
     WEBCORE_EXPORT static Ref<HTMLHtmlElement> create(Document&);
-    static Ref<HTMLHtmlElement> create(const QualifiedName&, Document&);
 
 private:
-    HTMLHtmlElement(const QualifiedName&, Document&);
+    explicit HTMLHtmlElement(Document&);
 };
 
 } // namespace WebCore

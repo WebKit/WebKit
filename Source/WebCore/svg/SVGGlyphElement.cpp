@@ -34,15 +34,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGGlyphElement);
 
-inline SVGGlyphElement::SVGGlyphElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGGlyphElement::SVGGlyphElement(Document& document)
+    : SVGElement(SVGNames::glyphTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::glyphTag));
 }
 
-Ref<SVGGlyphElement> SVGGlyphElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGGlyphElement> SVGGlyphElement::create(Document& document)
 {
-    return adoptRef(*new SVGGlyphElement(tagName, document));
+    return adoptRef(*new SVGGlyphElement(document));
 }
 
 }

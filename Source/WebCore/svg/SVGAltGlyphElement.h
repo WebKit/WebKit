@@ -33,7 +33,7 @@ class SVGAltGlyphElement final : public SVGTextPositioningElement, public SVGURI
     WTF_MAKE_TZONE_ALLOCATED(SVGAltGlyphElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGAltGlyphElement);
 public:
-    static Ref<SVGAltGlyphElement> create(const QualifiedName&, Document&);
+    static Ref<SVGAltGlyphElement> create(Document&);
 
     const AtomString& glyphRef() const;
     ExceptionOr<void> setGlyphRef(const AtomString&);
@@ -45,7 +45,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGAltGlyphElement, SVGTextPositioningElement, SVGURIReference>;
 
 private:
-    SVGAltGlyphElement(const QualifiedName&, Document&);
+    explicit SVGAltGlyphElement(Document&);
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     bool childShouldCreateRenderer(const Node&) const override;

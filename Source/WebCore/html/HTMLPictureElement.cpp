@@ -38,16 +38,16 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLPictureElement);
 
-HTMLPictureElement::HTMLPictureElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+HTMLPictureElement::HTMLPictureElement(Document& document)
+    : HTMLElement(HTMLNames::pictureTag, document)
 {
 }
 
 HTMLPictureElement::~HTMLPictureElement() = default;
 
-Ref<HTMLPictureElement> HTMLPictureElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLPictureElement> HTMLPictureElement::create(Document& document)
 {
-    return adoptRef(*new HTMLPictureElement(tagName, document));
+    return adoptRef(*new HTMLPictureElement(document));
 }
 
 void HTMLPictureElement::sourcesChanged()

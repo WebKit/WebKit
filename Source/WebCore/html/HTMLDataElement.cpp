@@ -35,15 +35,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLDataElement);
 
 using namespace HTMLNames;
 
-Ref<HTMLDataElement> HTMLDataElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLDataElement> HTMLDataElement::create(Document& document)
 {
-    return adoptRef(*new HTMLDataElement(tagName, document));
+    return adoptRef(*new HTMLDataElement(document));
 }
 
-inline HTMLDataElement::HTMLDataElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+inline HTMLDataElement::HTMLDataElement(Document& document)
+    : HTMLElement(dataTag, document)
 {
-    ASSERT(hasTagName(dataTag));
 }
 
 } // namespace WebCore.

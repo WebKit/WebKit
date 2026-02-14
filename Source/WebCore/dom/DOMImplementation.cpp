@@ -144,7 +144,7 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(String&& title)
     document->open();
     document->write(nullptr, FixedVector<String> { "<!doctype html><html><head></head><body></body></html>"_s });
     if (!title.isNull()) {
-        auto titleElement = HTMLTitleElement::create(titleTag, document);
+        Ref titleElement = HTMLTitleElement::create(document);
         titleElement->appendChild(document->createTextNode(WTF::move(title)));
         ASSERT(document->head());
         protect(document->head())->appendChild(titleElement);

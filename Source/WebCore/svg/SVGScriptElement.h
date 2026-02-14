@@ -33,7 +33,7 @@ class SVGScriptElement final : public SVGElement, public SVGURIReference, public
     WTF_MAKE_TZONE_ALLOCATED(SVGScriptElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGScriptElement);
 public:
-    static Ref<SVGScriptElement> create(const QualifiedName&, Document&, bool wasInsertedByParser);
+    static Ref<SVGScriptElement> create(Document&, bool wasInsertedByParser);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGScriptElement, SVGElement, SVGURIReference>;
     using SVGElement::ref;
@@ -42,7 +42,7 @@ public:
     bool async() const;
 
 private:
-    SVGScriptElement(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted);
+    SVGScriptElement(Document&, bool wasInsertedByParser, bool alreadyStarted);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;

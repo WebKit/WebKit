@@ -79,17 +79,16 @@ HTMLTextAreaElement::HTMLTextAreaElement(Document& document, HTMLFormElement* fo
     setFormControlValueMatchesRenderer(true);
 }
 
-Ref<HTMLTextAreaElement> HTMLTextAreaElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+Ref<HTMLTextAreaElement> HTMLTextAreaElement::create(Document& document, HTMLFormElement* form)
 {
-    ASSERT_UNUSED(tagName, tagName == textareaTag);
-    auto textArea = adoptRef(*new HTMLTextAreaElement(document, form));
+    Ref textArea = adoptRef(*new HTMLTextAreaElement(document, form));
     textArea->ensureUserAgentShadowRoot();
     return textArea;
 }
 
 Ref<HTMLTextAreaElement> HTMLTextAreaElement::create(Document& document)
 {
-    return create(textareaTag, document, nullptr);
+    return create(document, nullptr);
 }
 
 void HTMLTextAreaElement::didAddUserAgentShadowRoot(ShadowRoot& root)

@@ -32,15 +32,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLDListElement);
 
 using namespace HTMLNames;
 
-inline HTMLDListElement::HTMLDListElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+inline HTMLDListElement::HTMLDListElement(Document& document)
+    : HTMLElement(dlTag, document)
 {
-    ASSERT(hasTagName(dlTag));
 }
 
-Ref<HTMLDListElement> HTMLDListElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLDListElement> HTMLDListElement::create(Document& document)
 {
-    return adoptRef(*new HTMLDListElement(tagName, document));
+    return adoptRef(*new HTMLDListElement(document));
 }
 
 }

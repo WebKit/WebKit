@@ -40,17 +40,17 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MathMLMencloseElement);
 
 using namespace MathMLNames;
 
-MathMLMencloseElement::MathMLMencloseElement(const QualifiedName& tagName, Document& document)
-    : MathMLRowElement(tagName, document)
+MathMLMencloseElement::MathMLMencloseElement(Document& document)
+    : MathMLRowElement(mencloseTag, document)
 {
     // By default we draw a longdiv.
     clearNotations();
     addNotation(LongDiv);
 }
 
-Ref<MathMLMencloseElement> MathMLMencloseElement::create(const QualifiedName& tagName, Document& document)
+Ref<MathMLMencloseElement> MathMLMencloseElement::create(Document& document)
 {
-    return adoptRef(*new MathMLMencloseElement(tagName, document));
+    return adoptRef(*new MathMLMencloseElement(document));
 }
 
 RenderPtr<RenderElement> MathMLMencloseElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

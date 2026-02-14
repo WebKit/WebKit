@@ -31,16 +31,15 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGAnimateTransformElement);
 
-inline SVGAnimateTransformElement::SVGAnimateTransformElement(const QualifiedName& tagName, Document& document)
-    : SVGAnimateElementBase(tagName, document)
+inline SVGAnimateTransformElement::SVGAnimateTransformElement(Document& document)
+    : SVGAnimateElementBase(SVGNames::animateTransformTag, document)
     , m_type(SVGTransformValue::SVG_TRANSFORM_TRANSLATE)
 {
-    ASSERT(hasTagName(SVGNames::animateTransformTag));
 }
 
-Ref<SVGAnimateTransformElement> SVGAnimateTransformElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGAnimateTransformElement> SVGAnimateTransformElement::create(Document& document)
 {
-    return adoptRef(*new SVGAnimateTransformElement(tagName, document));
+    return adoptRef(*new SVGAnimateTransformElement(document));
 }
 
 bool SVGAnimateTransformElement::hasValidAttributeType() const

@@ -35,20 +35,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLParagraphElement);
 
 using namespace HTMLNames;
 
-inline HTMLParagraphElement::HTMLParagraphElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+inline HTMLParagraphElement::HTMLParagraphElement(Document& document)
+    : HTMLElement(pTag, document)
 {
-    ASSERT(hasTagName(pTag));
 }
 
 Ref<HTMLParagraphElement> HTMLParagraphElement::create(Document& document)
 {
-    return adoptRef(*new HTMLParagraphElement(pTag, document));
-}
-
-Ref<HTMLParagraphElement> HTMLParagraphElement::create(const QualifiedName& tagName, Document& document)
-{
-    return adoptRef(*new HTMLParagraphElement(tagName, document));
+    return adoptRef(*new HTMLParagraphElement(document));
 }
 
 void HTMLParagraphElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)

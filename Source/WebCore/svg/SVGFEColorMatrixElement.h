@@ -68,7 +68,7 @@ class SVGFEColorMatrixElement final : public SVGFilterPrimitiveStandardAttribute
     WTF_MAKE_TZONE_ALLOCATED(SVGFEColorMatrixElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEColorMatrixElement);
 public:
-    static Ref<SVGFEColorMatrixElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFEColorMatrixElement> create(Document&);
 
     String in1() const { return m_in1->currentValue(); }
     ColorMatrixType type() const { return m_type->currentValue<ColorMatrixType>(); }
@@ -81,7 +81,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEColorMatrixElement, SVGFilterPrimitiveStandardAttributes>;
 
 private:
-    SVGFEColorMatrixElement(const QualifiedName&, Document&);
+    explicit SVGFEColorMatrixElement(Document&);
 
     bool isInvalidValuesLength() const;
 

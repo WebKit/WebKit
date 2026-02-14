@@ -36,11 +36,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGLineElement);
 
-inline SVGLineElement::SVGLineElement(const QualifiedName& tagName, Document& document)
-    : SVGGeometryElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGLineElement::SVGLineElement(Document& document)
+    : SVGGeometryElement(SVGNames::lineTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::lineTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -51,9 +49,9 @@ inline SVGLineElement::SVGLineElement(const QualifiedName& tagName, Document& do
     }
 }
 
-Ref<SVGLineElement> SVGLineElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGLineElement> SVGLineElement::create(Document& document)
 {
-    return adoptRef(*new SVGLineElement(tagName, document));
+    return adoptRef(*new SVGLineElement(document));
 }
 
 void SVGLineElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

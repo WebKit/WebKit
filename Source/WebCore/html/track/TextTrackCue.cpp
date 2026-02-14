@@ -519,7 +519,7 @@ void TextTrackCue::rebuildDisplayTree()
 
     if (m_fontSize) {
         if (RefPtr page = document->page()) {
-            Ref style = HTMLStyleElement::create(HTMLNames::styleTag, *document, false);
+            Ref style = HTMLStyleElement::create(*document);
             style->setTextContent(makeString(page->captionUserPreferencesStyleSheet(),
                 " ::"_s, UserAgentParts::cue(), "{font-size:"_s, m_fontSize, m_fontSizeIsImportant ? "px !important}"_s : "px}"_s));
             m_displayTree->appendChild(style);
@@ -529,7 +529,7 @@ void TextTrackCue::rebuildDisplayTree()
     if (track()) {
         if (const auto& styleSheets = track()->styleSheets()) {
             for (const auto& cssString : *styleSheets) {
-                Ref style = HTMLStyleElement::create(HTMLNames::styleTag, *document, false);
+                Ref style = HTMLStyleElement::create(*document);
                 style->setTextContent(String { cssString });
                 m_displayTree->appendChild(WTF::move(style));
             }

@@ -32,15 +32,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLDirectoryElement);
 
 using namespace HTMLNames;
 
-inline HTMLDirectoryElement::HTMLDirectoryElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+inline HTMLDirectoryElement::HTMLDirectoryElement(Document& document)
+    : HTMLElement(dirTag, document)
 {
-    ASSERT(hasTagName(dirTag));
 }
 
-Ref<HTMLDirectoryElement> HTMLDirectoryElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLDirectoryElement> HTMLDirectoryElement::create(Document& document)
 {
-    return adoptRef(*new HTMLDirectoryElement(tagName, document));
+    return adoptRef(*new HTMLDirectoryElement(document));
 }
 
 }

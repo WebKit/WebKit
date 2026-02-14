@@ -33,13 +33,13 @@ class HTMLArticleElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLArticleElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLArticleElement);
 public:
-    static Ref<HTMLArticleElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLArticleElement> create(Document&);
 
 private:
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree) final;
 
-    HTMLArticleElement(const QualifiedName&, Document&);
+    explicit HTMLArticleElement(Document&);
 };
 
 } // namespace WebCore

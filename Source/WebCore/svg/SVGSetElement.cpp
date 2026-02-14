@@ -28,16 +28,15 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGSetElement);
     
-inline SVGSetElement::SVGSetElement(const QualifiedName& tagName, Document& document)
-    : SVGAnimateElementBase(tagName, document)
+inline SVGSetElement::SVGSetElement(Document& document)
+    : SVGAnimateElementBase(SVGNames::setTag, document)
 {
     setAnimationMode(AnimationMode::To);
-    ASSERT(hasTagName(SVGNames::setTag));
 }
 
-Ref<SVGSetElement> SVGSetElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGSetElement> SVGSetElement::create(Document& document)
 {
-    return adoptRef(*new SVGSetElement(tagName, document));
+    return adoptRef(*new SVGSetElement(document));
 }
 
 void SVGSetElement::updateAnimationMode()

@@ -54,24 +54,18 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLSourceElement);
 
 using namespace HTMLNames;
 
-inline HTMLSourceElement::HTMLSourceElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document, TypeFlag::HasDidMoveToNewDocument)
+inline HTMLSourceElement::HTMLSourceElement(Document& document)
+    : HTMLElement(sourceTag, document, TypeFlag::HasDidMoveToNewDocument)
     , ActiveDOMObject(document)
 {
     LOG(Media, "HTMLSourceElement::HTMLSourceElement - %p", this);
-    ASSERT(hasTagName(sourceTag));
-}
-
-Ref<HTMLSourceElement> HTMLSourceElement::create(const QualifiedName& tagName, Document& document)
-{
-    auto sourceElement = adoptRef(*new HTMLSourceElement(tagName, document));
-    sourceElement->suspendIfNeeded();
-    return sourceElement;
 }
 
 Ref<HTMLSourceElement> HTMLSourceElement::create(Document& document)
 {
-    return create(sourceTag, document);
+    Ref sourceElement = adoptRef(*new HTMLSourceElement(document));
+    sourceElement->suspendIfNeeded();
+    return sourceElement;
 }
 
 Node::InsertedIntoAncestorResult HTMLSourceElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

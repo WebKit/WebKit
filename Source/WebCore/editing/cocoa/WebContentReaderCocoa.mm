@@ -254,7 +254,7 @@ static bool supportsClientSideAttachmentData(const LocalFrame& frame)
 static Ref<DocumentFragment> createFragmentForImageAttachment(LocalFrame& frame, Document& document, Ref<FragmentedSharedBuffer>&& buffer, const String& contentType, PresentationSize preferredSize)
 {
 #if ENABLE(ATTACHMENT_ELEMENT)
-    auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
+    Ref attachment = HTMLAttachmentElement::create(document);
     // FIXME: This fallback image name needs to be a localized string.
     constexpr ASCIILiteral defaultImageAttachmentName { "image"_s };
 
@@ -393,7 +393,7 @@ static void replaceRichContentWithAttachments(LocalFrame& frame, DocumentFragmen
             }
         }
 
-        auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, fragment.document());
+        Ref attachment = HTMLAttachmentElement::create(fragment.document());
         if (supportsClientSideAttachmentData(frame)) {
             if (RefPtr image = dynamicDowncast<HTMLImageElement>(originalElement); image && contentTypeIsSuitableForInlineImageRepresentation(info.contentType)) {
                 RefPtr document = frame.document();
@@ -800,7 +800,7 @@ static String typeForAttachmentElement(const String& contentType)
 static Ref<HTMLElement> attachmentForFilePath(LocalFrame& frame, const String& path, PresentationSize preferredSize, const String& explicitContentType)
 {
     Ref document = *frame.document();
-    auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
+    Ref attachment = HTMLAttachmentElement::create(document);
     if (!supportsClientSideAttachmentData(frame)) {
         attachment->setFile(File::create(document.ptr(), path), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
         return attachment;
@@ -845,7 +845,7 @@ static Ref<HTMLElement> attachmentForFilePath(LocalFrame& frame, const String& p
 static Ref<HTMLElement> attachmentForData(LocalFrame& frame, FragmentedSharedBuffer& buffer, const String& contentType, const AtomString& name, PresentationSize preferredSize)
 {
     Ref document = *frame.document();
-    auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
+    Ref attachment = HTMLAttachmentElement::create(document);
     auto attachmentType = typeForAttachmentElement(contentType);
 
     // FIXME: We should instead ask CoreServices for a preferred name corresponding to the given content type.

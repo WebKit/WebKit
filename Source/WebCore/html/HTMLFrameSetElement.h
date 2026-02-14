@@ -37,7 +37,7 @@ class HTMLFrameSetElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLFrameSetElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLFrameSetElement);
 public:
-    static Ref<HTMLFrameSetElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLFrameSetElement> create(Document&);
 
     bool hasFrameBorder() const { return m_frameborder; }
     bool noResize() const { return m_noresize; }
@@ -58,7 +58,7 @@ public:
     bool isSupportedPropertyName(const AtomString&);
 
 private:
-    HTMLFrameSetElement(const QualifiedName&, Document&);
+    explicit HTMLFrameSetElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;

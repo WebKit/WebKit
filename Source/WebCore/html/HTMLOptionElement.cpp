@@ -60,20 +60,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLOptionElement);
 
 using namespace HTMLNames;
 
-HTMLOptionElement::HTMLOptionElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document, TypeFlag::HasCustomStyleResolveCallbacks)
+HTMLOptionElement::HTMLOptionElement(Document& document)
+    : HTMLElement(optionTag, document, TypeFlag::HasCustomStyleResolveCallbacks)
 {
-    ASSERT(hasTagName(optionTag));
 }
 
 Ref<HTMLOptionElement> HTMLOptionElement::create(Document& document)
 {
-    return adoptRef(*new HTMLOptionElement(optionTag, document));
-}
-
-Ref<HTMLOptionElement> HTMLOptionElement::create(const QualifiedName& tagName, Document& document)
-{
-    return adoptRef(*new HTMLOptionElement(tagName, document));
+    return adoptRef(*new HTMLOptionElement(document));
 }
 
 ExceptionOr<Ref<HTMLOptionElement>> HTMLOptionElement::createForLegacyFactoryFunction(Document& document, String&& text, const AtomString& value, bool defaultSelected, bool selected)

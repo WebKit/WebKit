@@ -29,10 +29,10 @@ class SVGSetElement final : public SVGAnimateElementBase {
     WTF_MAKE_TZONE_ALLOCATED(SVGSetElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGSetElement);
 public:
-    static Ref<SVGSetElement> create(const QualifiedName&, Document&);
+    static Ref<SVGSetElement> create(Document&);
 
 private:
-    SVGSetElement(const QualifiedName&, Document&);
+    explicit SVGSetElement(Document&);
     void updateAnimationMode() override;
 };
 

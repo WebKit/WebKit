@@ -31,10 +31,9 @@ class HTMLHRElement final : public HTMLElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLHRElement);
 public:
     static Ref<HTMLHRElement> create(Document&);
-    static Ref<HTMLHRElement> create(const QualifiedName&, Document&);
 
 private:
-    HTMLHRElement(const QualifiedName&, Document&);
+    explicit HTMLHRElement(Document&);
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree) final;

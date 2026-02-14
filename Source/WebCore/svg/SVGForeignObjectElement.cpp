@@ -41,10 +41,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGForeignObjectElement);
 
-inline SVGForeignObjectElement::SVGForeignObjectElement(const QualifiedName& tagName, Document& document)
-    : SVGGraphicsElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGForeignObjectElement::SVGForeignObjectElement(Document& document)
+    : SVGGraphicsElement(SVGNames::foreignObjectTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::foreignObjectTag));
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -55,9 +54,9 @@ inline SVGForeignObjectElement::SVGForeignObjectElement(const QualifiedName& tag
     }
 }
 
-Ref<SVGForeignObjectElement> SVGForeignObjectElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGForeignObjectElement> SVGForeignObjectElement::create(Document& document)
 {
-    return adoptRef(*new SVGForeignObjectElement(tagName, document));
+    return adoptRef(*new SVGForeignObjectElement(document));
 }
 
 void SVGForeignObjectElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

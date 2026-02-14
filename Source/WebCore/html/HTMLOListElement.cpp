@@ -44,20 +44,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLOListElement);
 
 using namespace HTMLNames;
 
-inline HTMLOListElement::HTMLOListElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+inline HTMLOListElement::HTMLOListElement(Document& document)
+    : HTMLElement(olTag, document)
 {
-    ASSERT(hasTagName(olTag));
 }
 
 Ref<HTMLOListElement> HTMLOListElement::create(Document& document)
 {
-    return adoptRef(*new HTMLOListElement(olTag, document));
-}
-
-Ref<HTMLOListElement> HTMLOListElement::create(const QualifiedName& tagName, Document& document)
-{
-    return adoptRef(*new HTMLOListElement(tagName, document));
+    return adoptRef(*new HTMLOListElement(document));
 }
 
 bool HTMLOListElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const

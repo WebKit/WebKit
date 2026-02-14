@@ -37,7 +37,7 @@ class HTMLTextAreaElement final : public HTMLTextFormControlElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLTextAreaElement);
 public:
     WEBCORE_EXPORT static Ref<HTMLTextAreaElement> create(Document&);
-    static Ref<HTMLTextAreaElement> create(const QualifiedName&, Document&, HTMLFormElement*);
+    static Ref<HTMLTextAreaElement> create(Document&, HTMLFormElement*);
 
     unsigned rows() const { return m_rows; }
     WEBCORE_EXPORT void setRows(unsigned);
@@ -61,7 +61,7 @@ public:
     bool dirAutoUsesValue() const final { return true; }
 
 private:
-    HTMLTextAreaElement(Document&, HTMLFormElement*);
+    explicit HTMLTextAreaElement(Document&, HTMLFormElement*);
 
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
 

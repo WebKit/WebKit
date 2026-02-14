@@ -37,11 +37,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEGaussianBlurElement);
 
-inline SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(Document& document)
+    : SVGFilterPrimitiveStandardAttributes(SVGNames::feGaussianBlurTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::feGaussianBlurTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -51,9 +49,9 @@ inline SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(const QualifiedName& t
     }
 }
 
-Ref<SVGFEGaussianBlurElement> SVGFEGaussianBlurElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEGaussianBlurElement> SVGFEGaussianBlurElement::create(Document& document)
 {
-    return adoptRef(*new SVGFEGaussianBlurElement(tagName, document));
+    return adoptRef(*new SVGFEGaussianBlurElement(document));
 }
 
 void SVGFEGaussianBlurElement::setStdDeviation(float x, float y)

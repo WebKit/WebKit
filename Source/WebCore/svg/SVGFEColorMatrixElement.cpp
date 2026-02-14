@@ -32,11 +32,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEColorMatrixElement);
 
-inline SVGFEColorMatrixElement::SVGFEColorMatrixElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGFEColorMatrixElement::SVGFEColorMatrixElement(Document& document)
+    : SVGFilterPrimitiveStandardAttributes(SVGNames::feColorMatrixTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::feColorMatrixTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -46,9 +44,9 @@ inline SVGFEColorMatrixElement::SVGFEColorMatrixElement(const QualifiedName& tag
     }
 }
 
-Ref<SVGFEColorMatrixElement> SVGFEColorMatrixElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEColorMatrixElement> SVGFEColorMatrixElement::create(Document& document)
 {
-    return adoptRef(*new SVGFEColorMatrixElement(tagName, document));
+    return adoptRef(*new SVGFEColorMatrixElement(document));
 }
 
 bool SVGFEColorMatrixElement::isInvalidValuesLength() const

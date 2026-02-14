@@ -37,11 +37,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEConvolveMatrixElement);
 
-inline SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement(Document& document)
+    : SVGFilterPrimitiveStandardAttributes(SVGNames::feConvolveMatrixTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::feConvolveMatrixTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -58,9 +56,9 @@ inline SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement(const QualifiedNam
     }
 }
 
-Ref<SVGFEConvolveMatrixElement> SVGFEConvolveMatrixElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEConvolveMatrixElement> SVGFEConvolveMatrixElement::create(Document& document)
 {
-    return adoptRef(*new SVGFEConvolveMatrixElement(tagName, document));
+    return adoptRef(*new SVGFEConvolveMatrixElement(document));
 }
 
 void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

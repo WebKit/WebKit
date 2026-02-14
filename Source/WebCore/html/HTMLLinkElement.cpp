@@ -115,8 +115,8 @@ void ExpectIdTargetObserver::idTargetChanged(Element& element)
         link->processInternalResourceLink(&element);
 }
 
-inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document& document, bool createdByParser)
-    : HTMLElement(tagName, document)
+inline HTMLLinkElement::HTMLLinkElement(Document& document, bool createdByParser)
+    : HTMLElement(linkTag, document)
     , m_linkLoader(LinkLoader::create(*this))
     , m_disabledState(Unset)
     , m_loading(false)
@@ -126,12 +126,11 @@ inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document& 
     , m_allowPrefetchLoadAndErrorForTesting(false)
     , m_pendingSheetType(PendingSheetType::Unknown)
 {
-    ASSERT(hasTagName(linkTag));
 }
 
-Ref<HTMLLinkElement> HTMLLinkElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
+Ref<HTMLLinkElement> HTMLLinkElement::create(Document& document, bool createdByParser)
 {
-    return adoptRef(*new HTMLLinkElement(tagName, document, createdByParser));
+    return adoptRef(*new HTMLLinkElement(document, createdByParser));
 }
 
 HTMLLinkElement::~HTMLLinkElement()

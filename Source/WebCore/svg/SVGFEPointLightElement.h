@@ -28,10 +28,10 @@ class SVGFEPointLightElement final : public SVGFELightElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGFEPointLightElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEPointLightElement);
 public:
-    static Ref<SVGFEPointLightElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFEPointLightElement> create(Document&);
 
 private:
-    SVGFEPointLightElement(const QualifiedName&, Document&);
+    explicit SVGFEPointLightElement(Document&);
 
     Ref<LightSource> lightSource() const override;
 };

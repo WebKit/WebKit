@@ -35,7 +35,6 @@ class HTMLTableRowElement final : public HTMLTablePartElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLTableRowElement);
 public:
     static Ref<HTMLTableRowElement> create(Document&);
-    static Ref<HTMLTableRowElement> create(const QualifiedName&, Document&);
 
     WEBCORE_EXPORT int rowIndex() const;
     void setRowIndex(int);
@@ -49,7 +48,7 @@ public:
     WEBCORE_EXPORT Ref<HTMLCollection> cells();
 
 private:
-    HTMLTableRowElement(const QualifiedName&, Document&);
+    explicit HTMLTableRowElement(Document&);
 };
 
 } // namespace

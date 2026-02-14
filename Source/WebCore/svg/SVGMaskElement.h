@@ -35,7 +35,7 @@ class SVGMaskElement final : public SVGElement, public SVGTests {
     WTF_MAKE_TZONE_ALLOCATED(SVGMaskElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGMaskElement);
 public:
-    static Ref<SVGMaskElement> create(const QualifiedName&, Document&);
+    static Ref<SVGMaskElement> create(Document&);
 
     const SVGLengthValue& x() const { return m_x->currentValue(); }
     const SVGLengthValue& y() const { return m_y->currentValue(); }
@@ -56,7 +56,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGMaskElement, SVGElement, SVGTests>;
 
 private:
-    SVGMaskElement(const QualifiedName&, Document&);
+    explicit SVGMaskElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;

@@ -89,18 +89,17 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLVideoElement);
 
 using namespace HTMLNames;
 
-inline HTMLVideoElement::HTMLVideoElement(const QualifiedName& tagName, Document& document, bool createdByParser)
-    : HTMLMediaElement(tagName, document, createdByParser)
+inline HTMLVideoElement::HTMLVideoElement(Document& document, bool createdByParser)
+    : HTMLMediaElement(videoTag, document, createdByParser)
 {
-    ASSERT(hasTagName(videoTag));
     m_defaultPosterURL = AtomString { document.settings().defaultVideoPosterURL() };
 }
 
 HTMLVideoElement::~HTMLVideoElement() = default;
 
-Ref<HTMLVideoElement> HTMLVideoElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
+Ref<HTMLVideoElement> HTMLVideoElement::create(Document& document, bool createdByParser)
 {
-    Ref videoElement = adoptRef(*new HTMLVideoElement(tagName, document, createdByParser));
+    Ref videoElement = adoptRef(*new HTMLVideoElement(document, createdByParser));
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
     HTMLVideoElementPictureInPicture::providePictureInPictureTo(videoElement);
@@ -112,7 +111,7 @@ Ref<HTMLVideoElement> HTMLVideoElement::create(const QualifiedName& tagName, Doc
 
 Ref<HTMLVideoElement> HTMLVideoElement::create(Document& document)
 {
-    return create(videoTag, document, false);
+    return create(document, false);
 }
 
 bool HTMLVideoElement::rendererIsNeeded(const RenderStyle& style)

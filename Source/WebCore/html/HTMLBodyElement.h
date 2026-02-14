@@ -32,13 +32,12 @@ class HTMLBodyElement final : public HTMLElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLBodyElement);
 public:
     WEBCORE_EXPORT static Ref<HTMLBodyElement> create(Document&);
-    static Ref<HTMLBodyElement> create(const QualifiedName&, Document&);
     virtual ~HTMLBodyElement();
 
     static const AtomString& eventNameForWindowEventHandlerAttribute(const QualifiedName& attributeName);
 
 private:
-    HTMLBodyElement(const QualifiedName&, Document&);
+    explicit HTMLBodyElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;

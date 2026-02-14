@@ -40,15 +40,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLFrameElement);
 
 using namespace HTMLNames;
 
-inline HTMLFrameElement::HTMLFrameElement(const QualifiedName& tagName, Document& document)
-    : HTMLFrameElementBase(tagName, document)
+inline HTMLFrameElement::HTMLFrameElement(Document& document)
+    : HTMLFrameElementBase(frameTag, document)
 {
-    ASSERT(hasTagName(frameTag));
 }
 
-Ref<HTMLFrameElement> HTMLFrameElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLFrameElement> HTMLFrameElement::create(Document& document)
 {
-    return adoptRef(*new HTMLFrameElement(tagName, document));
+    return adoptRef(*new HTMLFrameElement(document));
 }
 
 bool HTMLFrameElement::rendererIsNeeded(const RenderStyle& style)

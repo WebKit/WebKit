@@ -32,15 +32,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGVKernElement);
 
-inline SVGVKernElement::SVGVKernElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGVKernElement::SVGVKernElement(Document& document)
+    : SVGElement(SVGNames::vkernTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::vkernTag));
 }
 
-Ref<SVGVKernElement> SVGVKernElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGVKernElement> SVGVKernElement::create(Document& document)
 {
-    return adoptRef(*new SVGVKernElement(tagName, document));
+    return adoptRef(*new SVGVKernElement(document));
 }
 
 std::optional<SVGKerningPair> SVGVKernElement::buildVerticalKerningPair() const

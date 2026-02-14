@@ -37,7 +37,6 @@ class HTMLOptionElement final : public HTMLElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLOptionElement);
 public:
     static Ref<HTMLOptionElement> create(Document&);
-    static Ref<HTMLOptionElement> create(const QualifiedName&, Document&);
     static ExceptionOr<Ref<HTMLOptionElement>> createForLegacyFactoryFunction(Document&, String&& text, const AtomString& value, bool defaultSelected, bool selected);
 
     void finishParsingChildren() final;
@@ -72,7 +71,7 @@ public:
     void cloneIntoSelectedContent(HTMLSelectedContentElement&);
 
 private:
-    HTMLOptionElement(const QualifiedName&, Document&);
+    explicit HTMLOptionElement(Document&);
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree) final;

@@ -42,9 +42,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGTRefElement);
 
-Ref<SVGTRefElement> SVGTRefElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGTRefElement> SVGTRefElement::create(Document& document)
 {
-    Ref element = adoptRef(*new SVGTRefElement(tagName, document));
+    Ref element = adoptRef(*new SVGTRefElement(document));
     element->ensureUserAgentShadowRoot();
     return element;
 }
@@ -118,12 +118,11 @@ void SVGTRefTargetEventListener::handleEvent(ScriptExecutionContext&, Event& eve
         protectedTRefElement()->detachTarget();
 }
 
-inline SVGTRefElement::SVGTRefElement(const QualifiedName& tagName, Document& document)
-    : SVGTextPositioningElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGTRefElement::SVGTRefElement(Document& document)
+    : SVGTextPositioningElement(SVGNames::trefTag, document, makeUniqueRef<PropertyRegistry>(*this))
     , SVGURIReference(this)
     , m_targetListener(SVGTRefTargetEventListener::create(*this))
 {
-    ASSERT(hasTagName(SVGNames::trefTag));
 }
 
 SVGTRefElement::~SVGTRefElement()

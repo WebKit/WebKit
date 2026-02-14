@@ -43,14 +43,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFilterElement);
 
-inline SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGFilterElement::SVGFilterElement(Document& document)
+    : SVGElement(SVGNames::filterTag, document, makeUniqueRef<PropertyRegistry>(*this))
     , SVGURIReference(this)
 {
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "-10%" were specified.
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "120%" were specified.
-    ASSERT(hasTagName(SVGNames::filterTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -63,9 +61,9 @@ inline SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document
     }
 }
 
-Ref<SVGFilterElement> SVGFilterElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFilterElement> SVGFilterElement::create(Document& document)
 {
-    return adoptRef(*new SVGFilterElement(tagName, document));
+    return adoptRef(*new SVGFilterElement(document));
 }
 
 void SVGFilterElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

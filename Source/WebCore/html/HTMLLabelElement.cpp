@@ -55,20 +55,14 @@ static HTMLElement* elementForAttributeIfLabelable(const HTMLLabelElement& conte
     return nullptr;
 }
 
-inline HTMLLabelElement::HTMLLabelElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+inline HTMLLabelElement::HTMLLabelElement(Document& document)
+    : HTMLElement(labelTag, document)
 {
-    ASSERT(hasTagName(labelTag));
-}
-
-Ref<HTMLLabelElement> HTMLLabelElement::create(const QualifiedName& tagName, Document& document)
-{
-    return adoptRef(*new HTMLLabelElement(tagName, document));
 }
 
 Ref<HTMLLabelElement> HTMLLabelElement::create(Document& document)
 {
-    return adoptRef(*new HTMLLabelElement(labelTag, document));
+    return adoptRef(*new HTMLLabelElement(document));
 }
 
 RefPtr<HTMLElement> HTMLLabelElement::control() const

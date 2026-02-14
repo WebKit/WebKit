@@ -33,13 +33,13 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLBDIElement);
 
-Ref<HTMLBDIElement> HTMLBDIElement::create(const QualifiedName& name, Document& document)
+Ref<HTMLBDIElement> HTMLBDIElement::create(Document& document)
 {
-    return adoptRef(*new HTMLBDIElement(name, document));
+    return adoptRef(*new HTMLBDIElement(document));
 }
 
-HTMLBDIElement::HTMLBDIElement(const QualifiedName& name, Document& document)
-    : HTMLElement(name, document)
+HTMLBDIElement::HTMLBDIElement(Document& document)
+    : HTMLElement(HTMLNames::bdiTag, document)
 {
     setSelfOrPrecedingNodesAffectDirAuto(true);
     document.setIsDirAttributeDirty();

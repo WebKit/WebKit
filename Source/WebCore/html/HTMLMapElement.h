@@ -36,18 +36,17 @@ class HTMLMapElement final : public HTMLElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLMapElement);
 public:
     static Ref<HTMLMapElement> create(Document&);
-    static Ref<HTMLMapElement> create(const QualifiedName&, Document&);
     virtual ~HTMLMapElement();
 
     const AtomString& getName() const { return m_name; }
 
     bool mapMouseEvent(LayoutPoint location, const LayoutSize&, HitTestResult&);
-    
+
     RefPtr<HTMLImageElement> imageElement();
     WEBCORE_EXPORT Ref<HTMLCollection> areas();
 
 private:
-    HTMLMapElement(const QualifiedName&, Document&);
+    explicit HTMLMapElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 

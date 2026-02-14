@@ -28,10 +28,10 @@ class SVGTextElement final : public SVGTextPositioningElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGTextElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGTextElement);
 public:
-    static Ref<SVGTextElement> create(const QualifiedName&, Document&);
+    static Ref<SVGTextElement> create(Document&);
 
 private:
-    SVGTextElement(const QualifiedName&, Document&);
+    explicit SVGTextElement(Document&);
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     bool childShouldCreateRenderer(const Node&) const override;

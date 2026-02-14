@@ -46,11 +46,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGClipPathElement);
 
-inline SVGClipPathElement::SVGClipPathElement(const QualifiedName& tagName, Document& document)
-    : SVGGraphicsElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGClipPathElement::SVGClipPathElement(Document& document)
+    : SVGGraphicsElement(SVGNames::clipPathTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::clipPathTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -58,9 +56,9 @@ inline SVGClipPathElement::SVGClipPathElement(const QualifiedName& tagName, Docu
     }
 }
 
-Ref<SVGClipPathElement> SVGClipPathElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGClipPathElement> SVGClipPathElement::create(Document& document)
 {
-    return adoptRef(*new SVGClipPathElement(tagName, document));
+    return adoptRef(*new SVGClipPathElement(document));
 }
 
 void SVGClipPathElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

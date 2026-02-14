@@ -34,7 +34,7 @@ public:
     static const double IndeterminatePosition;
     static const double InvalidPosition;
 
-    static Ref<HTMLProgressElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLProgressElement> create(Document&);
 
     double value() const;
 
@@ -46,7 +46,7 @@ public:
     bool isDevolvableWidget() const override { return true; }
 
 private:
-    HTMLProgressElement(const QualifiedName&, Document&);
+    explicit HTMLProgressElement(Document&);
     virtual ~HTMLProgressElement();
 
     bool matchesIndeterminatePseudoClass() const final;

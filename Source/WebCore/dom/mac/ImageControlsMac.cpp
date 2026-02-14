@@ -110,17 +110,17 @@ void createImageControls(HTMLElement& element)
 {
     Ref document = element.document();
     Ref shadowRoot = element.ensureUserAgentShadowRoot();
-    Ref controlLayer = HTMLDivElement::create(document.get());
+    Ref controlLayer = HTMLDivElement::create(document);
     controlLayer->setIdAttribute(imageControlsElementIdentifier());
     controlLayer->setAttributeWithoutSynchronization(HTMLNames::contenteditableAttr, falseAtom());
     shadowRoot->appendChild(controlLayer);
     
     static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(imageControlsMacUserAgentStyleSheet));
-    Ref style = HTMLStyleElement::create(HTMLNames::styleTag, document.get(), false);
+    Ref style = HTMLStyleElement::create(document);
     style->setTextContent(String { shadowStyle });
     shadowRoot->appendChild(WTF::move(style));
     
-    Ref button = HTMLButtonElement::create(HTMLNames::buttonTag, protect(element.document()), nullptr);
+    Ref button = HTMLButtonElement::create(document);
     button->setIdAttribute(imageControlsButtonIdentifier());
     controlLayer->appendChild(button);
     controlLayer->setUserAgentPart(UserAgentParts::appleAttachmentControlsContainer());

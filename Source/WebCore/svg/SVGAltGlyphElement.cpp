@@ -37,16 +37,15 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGAltGlyphElement);
 
-inline SVGAltGlyphElement::SVGAltGlyphElement(const QualifiedName& tagName, Document& document)
-    : SVGTextPositioningElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGAltGlyphElement::SVGAltGlyphElement(Document& document)
+    : SVGTextPositioningElement(SVGNames::altGlyphTag, document, makeUniqueRef<PropertyRegistry>(*this))
     , SVGURIReference(this)
 {
-    ASSERT(hasTagName(SVGNames::altGlyphTag));
 }
 
-Ref<SVGAltGlyphElement> SVGAltGlyphElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGAltGlyphElement> SVGAltGlyphElement::create(Document& document)
 {
-    return adoptRef(*new SVGAltGlyphElement(tagName, document));
+    return adoptRef(*new SVGAltGlyphElement(document));
 }
 
 ExceptionOr<void> SVGAltGlyphElement::setGlyphRef(const AtomString&)

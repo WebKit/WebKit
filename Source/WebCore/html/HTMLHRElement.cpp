@@ -39,20 +39,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLHRElement);
 
 using namespace HTMLNames;
 
-HTMLHRElement::HTMLHRElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+HTMLHRElement::HTMLHRElement(Document& document)
+    : HTMLElement(hrTag, document)
 {
-    ASSERT(hasTagName(hrTag));
 }
 
 Ref<HTMLHRElement> HTMLHRElement::create(Document& document)
 {
-    return adoptRef(*new HTMLHRElement(hrTag, document));
-}
-
-Ref<HTMLHRElement> HTMLHRElement::create(const QualifiedName& tagName, Document& document)
-{
-    return adoptRef(*new HTMLHRElement(tagName, document));
+    return adoptRef(*new HTMLHRElement(document));
 }
 
 auto HTMLHRElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree) -> InsertedIntoAncestorResult

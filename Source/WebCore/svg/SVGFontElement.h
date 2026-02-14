@@ -44,12 +44,12 @@ class SVGFontElement final : public SVGElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGFontElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFontElement);
 public:
-    static Ref<SVGFontElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFontElement> create(Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFontElement, SVGElement>;
 
 private:
-    SVGFontElement(const QualifiedName&, Document&);
+    explicit SVGFontElement(Document&);
 
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 };

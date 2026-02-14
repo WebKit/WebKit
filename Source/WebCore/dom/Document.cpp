@@ -2516,7 +2516,7 @@ void Document::setTitle(String&& title)
     RefPtr element = documentElement();
     if (RefPtr svgElement = dynamicDowncast<SVGSVGElement>(element.get())) {
         if (!m_titleElement) {
-            Ref titleElement = SVGTitleElement::create(SVGNames::titleTag, *this);
+            Ref titleElement = SVGTitleElement::create(*this);
             m_titleElement = titleElement.copyRef();
             svgElement->insertBefore(titleElement, protect(svgElement->firstChild()));
         }
@@ -2529,7 +2529,7 @@ void Document::setTitle(String&& title)
             RefPtr headElement = head();
             if (!headElement)
                 return;
-            Ref titleElement = HTMLTitleElement::create(HTMLNames::titleTag, *this);
+            Ref titleElement = HTMLTitleElement::create(*this);
             m_titleElement = titleElement.copyRef();
             headElement->appendChild(titleElement);
         } else

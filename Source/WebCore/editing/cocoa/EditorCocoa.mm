@@ -460,30 +460,30 @@ void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data,
     auto fallbackData = encodeData(fallbackImageForMultiRepresentationHEIC(data).get(), fallbackType, std::nullopt);
     Ref fallbackBuffer = SharedBuffer::create(WTF::move(fallbackData));
 
-    auto picture = HTMLPictureElement::create(HTMLNames::pictureTag, document);
+    Ref picture = HTMLPictureElement::create(document);
 
-    auto source = HTMLSourceElement::create(document);
+    Ref source = HTMLSourceElement::create(document);
     source->setAttributeWithoutSynchronization(HTMLNames::srcsetAttr, AtomString { DOMURL::createObjectURL(document, Blob::create(document.ptr(), primaryBuffer->copyData(), primaryType)) });
     source->setAttributeWithoutSynchronization(HTMLNames::typeAttr, AtomString { primaryType });
     picture->appendChild(WTF::move(source));
 
-    auto image = HTMLImageElement::create(document);
+    Ref image = HTMLImageElement::create(document);
     image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, AtomString { DOMURL::createObjectURL(document, Blob::create(document.ptr(), fallbackBuffer->copyData(), fallbackType)) });
     if (!altText.isEmpty())
         image->setAttributeWithoutSynchronization(HTMLNames::altAttr, AtomString { altText });
     picture->appendChild(WTF::move(image));
 
-    auto fragment = document->createDocumentFragment();
+    Ref fragment = document->createDocumentFragment();
     fragment->appendChild(WTF::move(picture));
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (DeprecatedGlobalSettings::attachmentElementEnabled()) {
-        auto primaryAttachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document.get());
+        Ref primaryAttachment = HTMLAttachmentElement::create(document);
         auto primaryIdentifier = primaryAttachment->ensureUniqueIdentifier();
         registerAttachmentIdentifier(primaryIdentifier, "image/heic"_s, makeString(primaryIdentifier, ".heic"_s), WTF::move(primaryBuffer));
         source->setAttachmentElement(WTF::move(primaryAttachment));
 
-        auto fallbackAttachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document.get());
+        Ref fallbackAttachment = HTMLAttachmentElement::create(document);
         auto fallbackIdentifier = fallbackAttachment->ensureUniqueIdentifier();
         registerAttachmentIdentifier(fallbackIdentifier, fallbackType, makeString(fallbackIdentifier, ".png"_s), WTF::move(fallbackBuffer));
         image->setAttachmentElement(WTF::move(fallbackAttachment));

@@ -45,12 +45,10 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGLinearGradientElement);
 
-inline SVGLinearGradientElement::SVGLinearGradientElement(const QualifiedName& tagName, Document& document)
-    : SVGGradientElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGLinearGradientElement::SVGLinearGradientElement(Document& document)
+    : SVGGradientElement(SVGNames::linearGradientTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
     // Spec: If the x2 attribute is not specified, the effect is as if a value of "100%" were specified.
-    ASSERT(hasTagName(SVGNames::linearGradientTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -61,9 +59,9 @@ inline SVGLinearGradientElement::SVGLinearGradientElement(const QualifiedName& t
     }
 }
 
-Ref<SVGLinearGradientElement> SVGLinearGradientElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGLinearGradientElement> SVGLinearGradientElement::create(Document& document)
 {
-    return adoptRef(*new SVGLinearGradientElement(tagName, document));
+    return adoptRef(*new SVGLinearGradientElement(document));
 }
 
 void SVGLinearGradientElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

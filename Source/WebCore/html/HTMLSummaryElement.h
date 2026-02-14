@@ -30,13 +30,13 @@ class HTMLSummaryElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLSummaryElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLSummaryElement);
 public:
-    static Ref<HTMLSummaryElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLSummaryElement> create(Document&);
 
     bool isActiveSummary() const;
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;
 
 private:
-    HTMLSummaryElement(const QualifiedName&, Document&);
+    explicit HTMLSummaryElement(Document&);
 
     void defaultEventHandler(Event&) final;
 

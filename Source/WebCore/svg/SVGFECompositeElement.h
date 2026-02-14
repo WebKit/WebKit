@@ -77,7 +77,7 @@ class SVGFECompositeElement final : public SVGFilterPrimitiveStandardAttributes 
     WTF_MAKE_TZONE_ALLOCATED(SVGFECompositeElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFECompositeElement);
 public:
-    static Ref<SVGFECompositeElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFECompositeElement> create(Document&);
 
     String in1() const { return m_in1->currentValue(); }
     String in2() const { return m_in2->currentValue(); }
@@ -98,7 +98,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFECompositeElement, SVGFilterPrimitiveStandardAttributes>;
 
 private:
-    SVGFECompositeElement(const QualifiedName&, Document&);
+    explicit SVGFECompositeElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

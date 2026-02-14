@@ -31,12 +31,12 @@ class SVGSymbolElement final : public SVGGraphicsElement, public SVGFitToViewBox
     WTF_MAKE_TZONE_ALLOCATED(SVGSymbolElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGSymbolElement);
 public:
-    static Ref<SVGSymbolElement> create(const QualifiedName&, Document&);
+    static Ref<SVGSymbolElement> create(Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGSymbolElement, SVGGraphicsElement, SVGFitToViewBox>;
 
 private:
-    SVGSymbolElement(const QualifiedName&, Document&);
+    explicit SVGSymbolElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;

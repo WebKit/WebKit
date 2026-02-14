@@ -43,14 +43,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MathMLFractionElement);
 
 using namespace MathMLNames;
 
-inline MathMLFractionElement::MathMLFractionElement(const QualifiedName& tagName, Document& document)
-    : MathMLRowElement(tagName, document)
+inline MathMLFractionElement::MathMLFractionElement(Document& document)
+    : MathMLRowElement(mfracTag, document)
 {
 }
 
-Ref<MathMLFractionElement> MathMLFractionElement::create(const QualifiedName& tagName, Document& document)
+Ref<MathMLFractionElement> MathMLFractionElement::create(Document& document)
 {
-    return adoptRef(*new MathMLFractionElement(tagName, document));
+    return adoptRef(*new MathMLFractionElement(document));
 }
 
 const MathMLElement::Length& MathMLFractionElement::lineThickness()
@@ -142,7 +142,6 @@ void MathMLFractionElement::attributeChanged(const QualifiedName& name, const At
 
 RenderPtr<RenderElement> MathMLFractionElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    ASSERT(hasTagName(MathMLNames::mfracTag));
     return createRenderer<RenderMathMLFraction>(*this, WTF::move(style));
 }
 

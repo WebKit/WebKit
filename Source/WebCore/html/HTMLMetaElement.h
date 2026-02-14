@@ -33,7 +33,6 @@ class HTMLMetaElement final : public HTMLElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLMetaElement);
 public:
     static Ref<HTMLMetaElement> create(Document&);
-    static Ref<HTMLMetaElement> create(const QualifiedName&, Document&);
 
     const AtomString& content() const;
     const AtomString& httpEquiv() const;
@@ -44,7 +43,7 @@ public:
     const Color& contentColor();
 
 private:
-    HTMLMetaElement(const QualifiedName&, Document&);
+    explicit HTMLMetaElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = AttributeModificationReason::Directly) final;
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;

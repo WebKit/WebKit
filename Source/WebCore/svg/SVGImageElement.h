@@ -32,7 +32,7 @@ class SVGImageElement final : public SVGGraphicsElement, public SVGURIReference 
     WTF_MAKE_TZONE_ALLOCATED(SVGImageElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGImageElement);
 public:
-    static Ref<SVGImageElement> create(const QualifiedName&, Document&);
+    static Ref<SVGImageElement> create(Document&);
 
     WEBCORE_EXPORT CachedImage* cachedImage() const;
     bool renderingTaintsOrigin() const;
@@ -58,7 +58,7 @@ public:
     void decode(Ref<DeferredPromise>&&);
 
 private:
-    SVGImageElement(const QualifiedName&, Document&);
+    explicit SVGImageElement(Document&);
     
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;

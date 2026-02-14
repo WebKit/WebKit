@@ -52,8 +52,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLFrameSetElement);
 
 using namespace HTMLNames;
 
-HTMLFrameSetElement::HTMLFrameSetElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document, TypeFlag::HasCustomStyleResolveCallbacks)
+HTMLFrameSetElement::HTMLFrameSetElement(Document& document)
+    : HTMLElement(framesetTag, document, TypeFlag::HasCustomStyleResolveCallbacks)
     , m_border(6)
     , m_borderSet(false)
     , m_borderColorSet(false)
@@ -61,12 +61,11 @@ HTMLFrameSetElement::HTMLFrameSetElement(const QualifiedName& tagName, Document&
     , m_frameborderSet(false)
     , m_noresize(false)
 {
-    ASSERT(hasTagName(framesetTag));
 }
 
-Ref<HTMLFrameSetElement> HTMLFrameSetElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLFrameSetElement> HTMLFrameSetElement::create(Document& document)
 {
-    return adoptRef(*new HTMLFrameSetElement(tagName, document));
+    return adoptRef(*new HTMLFrameSetElement(document));
 }
 
 bool HTMLFrameSetElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const

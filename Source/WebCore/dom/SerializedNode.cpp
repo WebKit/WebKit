@@ -119,7 +119,7 @@ Ref<Node> SerializedNode::deserialize(SerializedNode&& serializedNode, WebCore::
         return result;
     }, [&] (SerializedNode::HTMLTemplateElement&& element) -> Ref<Node> {
         ASSERT(!element.shadowRoot);
-        Ref result = WebCore::HTMLTemplateElement::create(WTF::move(element.name).qualifiedName(), document);
+        Ref result = WebCore::HTMLTemplateElement::create(document);
         setAttributes(result, WTF::move(element.attributes));
         if (element.content) {
             Ref content = TemplateContentDocumentFragment::create(Ref { document.ensureTemplateDocument() }.get(), result);

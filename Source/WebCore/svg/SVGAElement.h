@@ -37,7 +37,7 @@ class SVGAElement final : public SVGGraphicsElement, public SVGURIReference {
     WTF_MAKE_TZONE_ALLOCATED(SVGAElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGAElement);
 public:
-    static Ref<SVGAElement> create(const QualifiedName&, Document&);
+    static Ref<SVGAElement> create(Document&);
     ~SVGAElement();
 
     AtomString target() const final { return AtomString { m_target->currentValue() }; }
@@ -48,7 +48,7 @@ public:
     DOMTokenList& relList();
 
 private:
-    SVGAElement(const QualifiedName&, Document&);
+    explicit SVGAElement(Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGAElement, SVGGraphicsElement, SVGURIReference>;
 

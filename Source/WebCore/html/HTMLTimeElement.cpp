@@ -35,15 +35,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLTimeElement);
 
 using namespace HTMLNames;
 
-Ref<HTMLTimeElement> HTMLTimeElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLTimeElement> HTMLTimeElement::create(Document& document)
 {
-    return adoptRef(*new HTMLTimeElement(tagName, document));
+    return adoptRef(*new HTMLTimeElement(document));
 }
 
-inline HTMLTimeElement::HTMLTimeElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+inline HTMLTimeElement::HTMLTimeElement(Document& document)
+    : HTMLElement(timeTag, document)
 {
-    ASSERT(hasTagName(timeTag));
 }
 
 } // namespace WebCore.

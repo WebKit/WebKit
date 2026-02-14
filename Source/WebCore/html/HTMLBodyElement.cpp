@@ -47,20 +47,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLBodyElement);
 
 using namespace HTMLNames;
 
-HTMLBodyElement::HTMLBodyElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+HTMLBodyElement::HTMLBodyElement(Document& document)
+    : HTMLElement(bodyTag, document)
 {
-    ASSERT(hasTagName(bodyTag));
 }
 
 Ref<HTMLBodyElement> HTMLBodyElement::create(Document& document)
 {
-    return adoptRef(*new HTMLBodyElement(bodyTag, document));
-}
-
-Ref<HTMLBodyElement> HTMLBodyElement::create(const QualifiedName& tagName, Document& document)
-{
-    return adoptRef(*new HTMLBodyElement(tagName, document));
+    return adoptRef(*new HTMLBodyElement(document));
 }
 
 HTMLBodyElement::~HTMLBodyElement() = default;

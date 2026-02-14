@@ -43,15 +43,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MathMLOperatorElement);
 using namespace MathMLNames;
 using namespace MathMLOperatorDictionary;
 
-MathMLOperatorElement::MathMLOperatorElement(const QualifiedName& tagName, Document& document)
-    : MathMLTokenElement(tagName, document)
+MathMLOperatorElement::MathMLOperatorElement(Document& document)
+    : MathMLTokenElement(moTag, document)
 {
-    ASSERT(hasTagName(MathMLNames::moTag));
 }
 
-Ref<MathMLOperatorElement> MathMLOperatorElement::create(const QualifiedName& tagName, Document& document)
+Ref<MathMLOperatorElement> MathMLOperatorElement::create(Document& document)
 {
-    return adoptRef(*new MathMLOperatorElement(tagName, document));
+    return adoptRef(*new MathMLOperatorElement(document));
 }
 
 MathMLOperatorElement::OperatorChar MathMLOperatorElement::parseOperatorChar(const String& string)

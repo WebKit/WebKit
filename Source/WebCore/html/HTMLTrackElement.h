@@ -41,7 +41,7 @@ class HTMLTrackElement final : public HTMLElement, public ActiveDOMObject, publi
     WTF_MAKE_TZONE_ALLOCATED(HTMLTrackElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLTrackElement);
 public:
-    static Ref<HTMLTrackElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLTrackElement> create(Document&);
 
     // ActiveDOMObject.
     void ref() const final { HTMLElement::ref(); }
@@ -71,7 +71,7 @@ public:
     void scheduleTask(Function<void(HTMLTrackElement&)>&&);
 
 private:
-    HTMLTrackElement(const QualifiedName&, Document&);
+    HTMLTrackElement(Document&);
     virtual ~HTMLTrackElement();
 
     // ActiveDOMObject.

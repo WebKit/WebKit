@@ -38,11 +38,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGRectElement);
 
-inline SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document& document)
-    : SVGGeometryElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGRectElement::SVGRectElement(Document& document)
+    : SVGGeometryElement(SVGNames::rectTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::rectTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -55,9 +53,9 @@ inline SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document& do
     }
 }
 
-Ref<SVGRectElement> SVGRectElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGRectElement> SVGRectElement::create(Document& document)
 {
-    return adoptRef(*new SVGRectElement(tagName, document));
+    return adoptRef(*new SVGRectElement(document));
 }
 
 SVGAnimatedPropertyBase* SVGRectElement::propertyForAttribute(const QualifiedName& name) const

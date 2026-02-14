@@ -31,7 +31,7 @@ class SVGEllipseElement final : public SVGGeometryElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGEllipseElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGEllipseElement);
 public:
-    static Ref<SVGEllipseElement> create(const QualifiedName&, Document&);
+    static Ref<SVGEllipseElement> create(Document&);
 
     const SVGLengthValue& cx() const { return m_cx->currentValue(); }
     const SVGLengthValue& cy() const { return m_cy->currentValue(); }
@@ -46,7 +46,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGEllipseElement, SVGGeometryElement>;
 
 private:
-    SVGEllipseElement(const QualifiedName&, Document&);
+    explicit SVGEllipseElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;

@@ -29,15 +29,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGDescElement);
 
-inline SVGDescElement::SVGDescElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGDescElement::SVGDescElement(Document& document)
+    : SVGElement(SVGNames::descTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::descTag));
 }
 
-Ref<SVGDescElement> SVGDescElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGDescElement> SVGDescElement::create(Document& document)
 {
-    return adoptRef(*new SVGDescElement(tagName, document));
+    return adoptRef(*new SVGDescElement(document));
 }
 
 String SVGDescElement::description() const

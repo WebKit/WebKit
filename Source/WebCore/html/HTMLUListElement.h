@@ -31,10 +31,9 @@ class HTMLUListElement final : public HTMLElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLUListElement);
 public:
     static Ref<HTMLUListElement> create(Document&);
-    static Ref<HTMLUListElement> create(const QualifiedName&, Document&);
 
 private:
-    HTMLUListElement(const QualifiedName&, Document&);
+    explicit HTMLUListElement(Document&);
 
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;

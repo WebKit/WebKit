@@ -54,12 +54,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFontFaceElement);
 
 using namespace SVGNames;
 
-inline SVGFontFaceElement::SVGFontFaceElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGFontFaceElement::SVGFontFaceElement(Document& document)
+    : SVGElement(font_faceTag, document, makeUniqueRef<PropertyRegistry>(*this))
     , m_fontFaceRule(StyleRuleFontFace::create(MutableStyleProperties::create(HTMLStandardMode)))
 {
     LOG(Fonts, "SVGFontFaceElement %p ctor", this);
-    ASSERT(hasTagName(font_faceTag));
 }
 
 SVGFontFaceElement::~SVGFontFaceElement()
@@ -67,9 +66,9 @@ SVGFontFaceElement::~SVGFontFaceElement()
     LOG(Fonts, "SVGFontFaceElement %p dtor", this);
 }
 
-Ref<SVGFontFaceElement> SVGFontFaceElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFontFaceElement> SVGFontFaceElement::create(Document& document)
 {
-    return adoptRef(*new SVGFontFaceElement(tagName, document));
+    return adoptRef(*new SVGFontFaceElement(document));
 }
 
 void SVGFontFaceElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

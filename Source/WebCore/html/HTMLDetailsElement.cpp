@@ -94,17 +94,16 @@ const AtomString& DetailsSlotAssignment::slotNameForHostChild(const Node& child)
     return NamedSlotAssignment::defaultSlotName();
 }
 
-Ref<HTMLDetailsElement> HTMLDetailsElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLDetailsElement> HTMLDetailsElement::create(Document& document)
 {
-    auto details = adoptRef(*new HTMLDetailsElement(tagName, document));
+    Ref details = adoptRef(*new HTMLDetailsElement(document));
     details->addShadowRoot(ShadowRoot::create(document, makeUnique<DetailsSlotAssignment>()));
     return details;
 }
 
-HTMLDetailsElement::HTMLDetailsElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+HTMLDetailsElement::HTMLDetailsElement(Document& document)
+    : HTMLElement(detailsTag, document)
 {
-    ASSERT(hasTagName(detailsTag));
 }
 
 HTMLDetailsElement::~HTMLDetailsElement() = default;
@@ -112,11 +111,11 @@ HTMLDetailsElement::~HTMLDetailsElement() = default;
 void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 {
     Ref document = this->document();
-    Ref summarySlot = HTMLSlotElement::create(slotTag, document);
+    Ref summarySlot = HTMLSlotElement::create(document);
     ScriptDisallowedScope::EventAllowedScope summarySlotScope { summarySlot };
     summarySlot->setAttributeWithoutSynchronization(nameAttr, summarySlotName());
 
-    Ref defaultSummary = HTMLSummaryElement::create(summaryTag, document);
+    Ref defaultSummary = HTMLSummaryElement::create(document);
     ScriptDisallowedScope::EventAllowedScope defaultSummaryScope { defaultSummary };
     defaultSummary->appendChild(Text::create(document, defaultDetailsSummaryText()));
     m_defaultSummary = defaultSummary.get();
@@ -126,7 +125,7 @@ void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     root.appendChild(summarySlot);
     m_summarySlot = WTF::move(summarySlot);
 
-    Ref defaultSlot = HTMLSlotElement::create(slotTag, document);
+    Ref defaultSlot = HTMLSlotElement::create(document);
     ScriptDisallowedScope::EventAllowedScope defaultSlotScope { defaultSlot };
     defaultSlot->setUserAgentPart(UserAgentParts::detailsContent());
     ASSERT(!hasAttributeWithoutSynchronization(openAttr));

@@ -28,10 +28,10 @@ class SVGPolylineElement final : public SVGPolyElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGPolylineElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGPolylineElement);
 public:
-    static Ref<SVGPolylineElement> create(const QualifiedName&, Document&);
+    static Ref<SVGPolylineElement> create(Document&);
 
 private:
-    SVGPolylineElement(const QualifiedName&, Document&);
+    explicit SVGPolylineElement(Document&);
 };
 
 } // namespace WebCore

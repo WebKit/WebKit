@@ -36,15 +36,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLWBRElement);
 
 using namespace HTMLNames;
 
-Ref<HTMLWBRElement> HTMLWBRElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLWBRElement> HTMLWBRElement::create(Document& document)
 {
-    return adoptRef(*new HTMLWBRElement(tagName, document));
+    return adoptRef(*new HTMLWBRElement(document));
 }
 
-HTMLWBRElement::HTMLWBRElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+HTMLWBRElement::HTMLWBRElement(Document& document)
+    : HTMLElement(wbrTag, document)
 {
-    ASSERT(hasTagName(wbrTag));
 }
 
 RenderPtr<RenderElement> HTMLWBRElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

@@ -110,7 +110,7 @@ public:
 
 private:
     explicit ImageDocumentElement(ImageDocument& document)
-        : HTMLImageElement(imgTag, document)
+        : HTMLImageElement(document)
         , m_imageDocument(document)
     {
     }

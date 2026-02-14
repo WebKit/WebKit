@@ -31,10 +31,9 @@ class HTMLEmbedElement final : public HTMLPlugInElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLEmbedElement);
 public:
     static Ref<HTMLEmbedElement> create(Document&);
-    static Ref<HTMLEmbedElement> create(const QualifiedName&, Document&);
 
 private:
-    HTMLEmbedElement(const QualifiedName&, Document&);
+    HTMLEmbedElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;

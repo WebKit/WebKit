@@ -32,12 +32,11 @@ class HTMLBRElement final : public HTMLElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLBRElement);
 public:
     static Ref<HTMLBRElement> create(Document&);
-    static Ref<HTMLBRElement> create(const QualifiedName&, Document&);
 
     bool canContainRangeEndPoint() const final { return false; }
 
 private:
-    HTMLBRElement(const QualifiedName&, Document&);
+    explicit HTMLBRElement(Document&);
 
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;

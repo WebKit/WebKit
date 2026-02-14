@@ -33,7 +33,7 @@ class SVGMPathElement final : public SVGElement, public SVGURIReference {
     WTF_MAKE_TZONE_ALLOCATED(SVGMPathElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGMPathElement);
 public:
-    static Ref<SVGMPathElement> create(const QualifiedName&, Document&);
+    static Ref<SVGMPathElement> create(Document&);
 
     virtual ~SVGMPathElement();
 
@@ -44,7 +44,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGMPathElement, SVGElement, SVGURIReference>;
 
 private:
-    SVGMPathElement(const QualifiedName&, Document&);
+    explicit SVGMPathElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;

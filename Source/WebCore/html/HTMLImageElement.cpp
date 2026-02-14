@@ -83,26 +83,18 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLImageElement);
 
 using namespace HTMLNames;
 
-HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
-    : HTMLElement(tagName, document, { TypeFlag::HasCustomStyleResolveCallbacks, TypeFlag::HasDidMoveToNewDocument })
+HTMLImageElement::HTMLImageElement(Document& document, HTMLFormElement* form)
+    : HTMLElement(imgTag, document, { TypeFlag::HasCustomStyleResolveCallbacks, TypeFlag::HasDidMoveToNewDocument })
     , FormAssociatedElement(form)
     , ActiveDOMObject(document)
     , m_imageLoader(makeUniqueWithoutRefCountedCheck<HTMLImageLoader>(*this))
     , m_imageDevicePixelRatio(1.0f)
 {
-    ASSERT(hasTagName(imgTag));
 }
 
-Ref<HTMLImageElement> HTMLImageElement::create(Document& document)
+Ref<HTMLImageElement> HTMLImageElement::create(Document& document, HTMLFormElement* form)
 {
-    auto image = adoptRef(*new HTMLImageElement(imgTag, document));
-    image->suspendIfNeeded();
-    return image;
-}
-
-Ref<HTMLImageElement> HTMLImageElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
-{
-    auto image = adoptRef(*new HTMLImageElement(tagName, document, form));
+    Ref image = adoptRef(*new HTMLImageElement(document, form));
     image->suspendIfNeeded();
     return image;
 }
@@ -142,7 +134,7 @@ void HTMLImageElement::formOwnerRemovedFromTree(const Node& formRoot)
 
 Ref<HTMLImageElement> HTMLImageElement::createForLegacyFactoryFunction(Document& document, std::optional<unsigned> width, std::optional<unsigned> height)
 {
-    auto image = adoptRef(*new HTMLImageElement(imgTag, document));
+    auto image = adoptRef(*new HTMLImageElement(document));
     if (width)
         image->setUnsignedIntegralAttribute(widthAttr, width.value());
     if (height)

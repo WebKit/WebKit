@@ -33,7 +33,7 @@ class HTMLOptGroupElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLOptGroupElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLOptGroupElement);
 public:
-    static Ref<HTMLOptGroupElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLOptGroupElement> create(Document&);
 
     bool isDisabledFormControl() const final;
     WEBCORE_EXPORT HTMLSelectElement* ownerSelectElement() const;
@@ -41,7 +41,7 @@ public:
     WEBCORE_EXPORT String groupLabelText() const;
 
 private:
-    HTMLOptGroupElement(const QualifiedName&, Document&);
+    explicit HTMLOptGroupElement(Document&);
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree) final;

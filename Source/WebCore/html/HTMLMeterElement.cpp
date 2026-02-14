@@ -47,17 +47,16 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLMeterElement);
 
 using namespace HTMLNames;
 
-HTMLMeterElement::HTMLMeterElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+HTMLMeterElement::HTMLMeterElement(Document& document)
+    : HTMLElement(meterTag, document)
 {
-    ASSERT(hasTagName(meterTag));
 }
 
 HTMLMeterElement::~HTMLMeterElement() = default;
 
-Ref<HTMLMeterElement> HTMLMeterElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLMeterElement> HTMLMeterElement::create(Document& document)
 {
-    Ref meter = adoptRef(*new HTMLMeterElement(tagName, document));
+    Ref meter = adoptRef(*new HTMLMeterElement(document));
     meter->ensureUserAgentShadowRoot();
     return meter;
 }

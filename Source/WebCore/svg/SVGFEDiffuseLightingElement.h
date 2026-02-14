@@ -35,7 +35,7 @@ class SVGFEDiffuseLightingElement final : public SVGFilterPrimitiveStandardAttri
     WTF_MAKE_TZONE_ALLOCATED(SVGFEDiffuseLightingElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEDiffuseLightingElement);
 public:
-    static Ref<SVGFEDiffuseLightingElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFEDiffuseLightingElement> create(Document&);
     void lightElementAttributeChanged(const SVGFELightElement*, const QualifiedName&);
 
     String in1() const { return m_in1->currentValue(); }
@@ -53,7 +53,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEDiffuseLightingElement, SVGFilterPrimitiveStandardAttributes>;
 
 private:
-    SVGFEDiffuseLightingElement(const QualifiedName&, Document&);
+    explicit SVGFEDiffuseLightingElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

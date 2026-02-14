@@ -29,15 +29,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEDistantLightElement);
 
-inline SVGFEDistantLightElement::SVGFEDistantLightElement(const QualifiedName& tagName, Document& document)
-    : SVGFELightElement(tagName, document)
+inline SVGFEDistantLightElement::SVGFEDistantLightElement(Document& document)
+    : SVGFELightElement(SVGNames::feDistantLightTag, document)
 {
-    ASSERT(hasTagName(SVGNames::feDistantLightTag));
 }
 
-Ref<SVGFEDistantLightElement> SVGFEDistantLightElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEDistantLightElement> SVGFEDistantLightElement::create(Document& document)
 {
-    return adoptRef(*new SVGFEDistantLightElement(tagName, document));
+    return adoptRef(*new SVGFEDistantLightElement(document));
 }
 
 Ref<LightSource> SVGFEDistantLightElement::lightSource() const

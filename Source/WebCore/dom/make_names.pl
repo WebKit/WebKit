@@ -470,6 +470,17 @@ sub buildConstructorMap
     return %tagConstructorMap;
 }
 
+# Build a set of interfaces that are used by exactly one tag (single-tag interfaces).
+sub buildSingleTagInterfaces
+{
+    my %interfaceCount = ();
+    for my $elementKey (keys %allElements) {
+        next if $allElements{$elementKey}{noConstructor};
+        $interfaceCount{$allElements{$elementKey}{interfaceName}}++;
+    }
+    return map { $_ => 1 } grep { $interfaceCount{$_} == 1 } keys %interfaceCount;
+}
+
 # Helper method that print the constructor's signature avoiding
 # unneeded arguments.
 sub printConstructorSignature
@@ -491,7 +502,7 @@ sub printConstructorSignature
 # The variable names should be kept in sync with the previous method.
 sub printConstructorInterior
 {
-    my ($F, $elementKey, $interfaceName, $constructorTagName) = @_;
+    my ($F, $elementKey, $interfaceName, $constructorTagName, $singleTagInterfacesRef) = @_;
 
     # Handle media elements.
     # Note that wrapperOnlyIfMediaIsAvailable is a misnomer, because media availability
@@ -540,7 +551,15 @@ END
     }
 
     # Call the constructor with the right parameters.
-    print F "    return ${interfaceName}::create($constructorTagName, document";
+    # For single-tag interfaces, we don't need to pass the tag name.
+    my $isSingleTagInterface = $singleTagInterfacesRef->{$interfaceName};
+
+    if ($isSingleTagInterface) {
+        print F "    UNUSED_PARAM($constructorTagName);\n";
+        print F "    return ${interfaceName}::create(document";
+    } else {
+        print F "    return ${interfaceName}::create($constructorTagName, document";
+    }
     print F ", formElement" if $allElements{$elementKey}{constructorNeedsFormElement};
     print F ", createdByParser" if $allElements{$elementKey}{constructorNeedsCreatedByParser};
     print F ");\n}\n";
@@ -550,6 +569,9 @@ sub printConstructors
 {
     my ($F, $tagConstructorMapRef) = @_;
     my %tagConstructorMap = %$tagConstructorMapRef;
+
+    # Build set of single-tag interfaces.
+    my %singleTagInterfaces = buildSingleTagInterfaces();
 
     # This is to avoid generating the same constructor several times.
     my %handledInterfaces = ();
@@ -573,7 +595,7 @@ sub printConstructors
         }
 
         printConstructorSignature($F, $elementKey, $tagConstructorMap{$elementKey}, "tagName");
-        printConstructorInterior($F, $elementKey, $interfaceName, "tagName");
+        printConstructorInterior($F, $elementKey, $interfaceName, "tagName", \%singleTagInterfaces);
 
         if ($conditional) {
             print F "#endif\n";

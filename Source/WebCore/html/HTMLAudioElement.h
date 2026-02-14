@@ -38,11 +38,11 @@ class HTMLAudioElement final : public HTMLMediaElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLAudioElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLAudioElement);
 public:
-    static Ref<HTMLAudioElement> create(const QualifiedName&, Document&, bool);
+    static Ref<HTMLAudioElement> create(Document&, bool createdByParser);
     static Ref<HTMLAudioElement> createForLegacyFactoryFunction(Document&, const AtomString& src);
 
 private:
-    HTMLAudioElement(const QualifiedName&, Document&, bool);
+    HTMLAudioElement(Document&, bool createdByParser);
 
     PlatformMediaSession::MediaType presentationType() const final { return PlatformMediaSession::MediaType::Audio; }
 };

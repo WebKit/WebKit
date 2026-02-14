@@ -63,14 +63,13 @@ static String urlForLoggingTrack(const URL& url)
 
 #endif
     
-inline HTMLTrackElement::HTMLTrackElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document, TypeFlag::HasDidMoveToNewDocument)
+inline HTMLTrackElement::HTMLTrackElement(Document& document)
+    : HTMLElement(trackTag, document, TypeFlag::HasDidMoveToNewDocument)
     , ActiveDOMObject(document)
     , m_track(LoadableTextTrack::create(*this, nullAtom(), nullAtom(), nullAtom()))
 {
     m_track->addClient(*this);
     LOG(Media, "HTMLTrackElement::HTMLTrackElement - %p", this);
-    ASSERT(hasTagName(trackTag));
 }
 
 HTMLTrackElement::~HTMLTrackElement()
@@ -78,9 +77,9 @@ HTMLTrackElement::~HTMLTrackElement()
     m_track->clearClient(*this);
 }
 
-Ref<HTMLTrackElement> HTMLTrackElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLTrackElement> HTMLTrackElement::create(Document& document)
 {
-    auto trackElement = adoptRef(*new HTMLTrackElement(tagName, document));
+    Ref trackElement = adoptRef(*new HTMLTrackElement(document));
     trackElement->suspendIfNeeded();
     return trackElement;
 }

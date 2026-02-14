@@ -32,11 +32,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEDisplacementMapElement);
 
-inline SVGFEDisplacementMapElement::SVGFEDisplacementMapElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGFEDisplacementMapElement::SVGFEDisplacementMapElement(Document& document)
+    : SVGFilterPrimitiveStandardAttributes(SVGNames::feDisplacementMapTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::feDisplacementMapTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -48,9 +46,9 @@ inline SVGFEDisplacementMapElement::SVGFEDisplacementMapElement(const QualifiedN
     }
 }
 
-Ref<SVGFEDisplacementMapElement> SVGFEDisplacementMapElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEDisplacementMapElement> SVGFEDisplacementMapElement::create(Document& document)
 {
-    return adoptRef(*new SVGFEDisplacementMapElement(tagName, document));
+    return adoptRef(*new SVGFEDisplacementMapElement(document));
 }
 
 void SVGFEDisplacementMapElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

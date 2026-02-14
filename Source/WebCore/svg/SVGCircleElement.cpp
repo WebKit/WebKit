@@ -36,11 +36,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGCircleElement);
 
-inline SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document& document)
-    : SVGGeometryElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGCircleElement::SVGCircleElement(Document& document)
+    : SVGGeometryElement(SVGNames::circleTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::circleTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -50,9 +48,9 @@ inline SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document
     }
 }
 
-Ref<SVGCircleElement> SVGCircleElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGCircleElement> SVGCircleElement::create(Document& document)
 {
-    return adoptRef(*new SVGCircleElement(tagName, document));
+    return adoptRef(*new SVGCircleElement(document));
 }
 
 SVGAnimatedPropertyBase* SVGCircleElement::propertyForAttribute(const QualifiedName& name) const

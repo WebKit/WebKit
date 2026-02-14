@@ -112,7 +112,7 @@ public:
         TEXTPATH_SPACINGTYPE_EXACT = SVGTextPathSpacingExact
     };
 
-    static Ref<SVGTextPathElement> create(const QualifiedName&, Document&);
+    static Ref<SVGTextPathElement> create(Document&);
 
     const SVGLengthValue& startOffset() const { return m_startOffset->currentValue(); }
     SVGTextPathMethodType method() const { return m_method->currentValue<SVGTextPathMethodType>(); }
@@ -125,7 +125,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTextPathElement, SVGTextContentElement, SVGURIReference>;
 
 private:
-    SVGTextPathElement(const QualifiedName&, Document&);
+    explicit SVGTextPathElement(Document&);
     virtual ~SVGTextPathElement();
 
     void didFinishInsertingNode() override;

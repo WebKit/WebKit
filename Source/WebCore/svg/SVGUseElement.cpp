@@ -57,13 +57,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGUseElement);
 
-inline SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document& document)
-    : SVGGraphicsElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGUseElement::SVGUseElement(Document& document)
+    : SVGGraphicsElement(SVGNames::useTag, document, makeUniqueRef<PropertyRegistry>(*this))
     , SVGURIReference(this)
     , m_loadEventTimer(*this, &SVGElement::loadEventTimerFired)
 {
     ASSERT(hasCustomStyleResolveCallbacks());
-    ASSERT(hasTagName(SVGNames::useTag));
 
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
@@ -75,9 +74,9 @@ inline SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document& docu
     }
 }
 
-Ref<SVGUseElement> SVGUseElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGUseElement> SVGUseElement::create(Document& document)
 {
-    return adoptRef(*new SVGUseElement(tagName, document));
+    return adoptRef(*new SVGUseElement(document));
 }
 
 SVGUseElement::~SVGUseElement()

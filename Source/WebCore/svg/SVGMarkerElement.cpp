@@ -38,13 +38,11 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGMarkerElement);
 
-inline SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGMarkerElement::SVGMarkerElement(Document& document)
+    : SVGElement(SVGNames::markerTag, document, makeUniqueRef<PropertyRegistry>(*this))
     , SVGFitToViewBox(this)
 {
     // Spec: If the markerWidth/markerHeight attribute is not specified, the effect is as if a value of "3" were specified.
-    ASSERT(hasTagName(SVGNames::markerTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -57,9 +55,9 @@ inline SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document
     }
 }
 
-Ref<SVGMarkerElement> SVGMarkerElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGMarkerElement> SVGMarkerElement::create(Document& document)
 {
-    return adoptRef(*new SVGMarkerElement(tagName, document));
+    return adoptRef(*new SVGMarkerElement(document));
 }
 
 AffineTransform SVGMarkerElement::viewBoxToViewTransform(float viewWidth, float viewHeight) const

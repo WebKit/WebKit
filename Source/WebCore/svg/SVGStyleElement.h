@@ -31,7 +31,7 @@ class SVGStyleElement final : public SVGElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGStyleElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGStyleElement);
 public:
-    static Ref<SVGStyleElement> create(const QualifiedName&, Document&, bool createdByParser);
+    static Ref<SVGStyleElement> create(Document&, bool createdByParser);
     virtual ~SVGStyleElement();
 
     CSSStyleSheet* sheet() const { return m_styleSheetOwner.sheet(); }
@@ -40,7 +40,7 @@ public:
     void setDisabled(bool);
 
 private:
-    SVGStyleElement(const QualifiedName&, Document&, bool createdByParser);
+    SVGStyleElement(Document&, bool createdByParser);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;

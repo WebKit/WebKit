@@ -91,7 +91,7 @@ void YouTubePluginReplacement::installReplacement(ShadowRoot& root)
 
     root.appendChild(embedShadowElement);
 
-    Ref iframeElement = HTMLIFrameElement::create(HTMLNames::iframeTag, document);
+    Ref iframeElement = HTMLIFrameElement::create(document);
     if (m_attributes.contains<HashTranslatorASCIILiteral>("width"_s))
         iframeElement->setAttributeWithoutSynchronization(HTMLNames::widthAttr, "100%"_s);
 

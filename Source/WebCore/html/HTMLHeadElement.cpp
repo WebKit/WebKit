@@ -34,20 +34,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLHeadElement);
 
 using namespace HTMLNames;
 
-HTMLHeadElement::HTMLHeadElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+HTMLHeadElement::HTMLHeadElement(Document& document)
+    : HTMLElement(headTag, document)
 {
-    ASSERT(hasTagName(headTag));
 }
 
 Ref<HTMLHeadElement> HTMLHeadElement::create(Document& document)
 {
-    return adoptRef(*new HTMLHeadElement(headTag, document));
-}
-
-Ref<HTMLHeadElement> HTMLHeadElement::create(const QualifiedName& tagName, Document& document)
-{
-    return adoptRef(*new HTMLHeadElement(tagName, document));
+    return adoptRef(*new HTMLHeadElement(document));
 }
 
 }

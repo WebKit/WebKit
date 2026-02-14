@@ -70,7 +70,6 @@ public:
     USING_CAN_MAKE_WEAKPTR(HTMLElement);
 
     static Ref<HTMLCanvasElement> create(Document&);
-    static Ref<HTMLCanvasElement> create(const QualifiedName&, Document&);
     virtual ~HTMLCanvasElement();
 
 
@@ -151,7 +150,7 @@ public:
     void setSizeForControllingContext(IntSize) final;
 
 private:
-    HTMLCanvasElement(const QualifiedName&, Document&);
+    explicit HTMLCanvasElement(Document&);
 
     bool isHTMLCanvasElement() const final { return true; }
 

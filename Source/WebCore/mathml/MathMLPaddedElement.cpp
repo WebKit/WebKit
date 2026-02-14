@@ -41,14 +41,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MathMLPaddedElement);
 
 using namespace MathMLNames;
 
-inline MathMLPaddedElement::MathMLPaddedElement(const QualifiedName& tagName, Document& document)
-    : MathMLRowElement(tagName, document)
+inline MathMLPaddedElement::MathMLPaddedElement(Document& document)
+    : MathMLRowElement(mpaddedTag, document)
 {
 }
 
-Ref<MathMLPaddedElement> MathMLPaddedElement::create(const QualifiedName& tagName, Document& document)
+Ref<MathMLPaddedElement> MathMLPaddedElement::create(Document& document)
 {
-    return adoptRef(*new MathMLPaddedElement(tagName, document));
+    return adoptRef(*new MathMLPaddedElement(document));
 }
 
 const MathMLElement::Length& MathMLPaddedElement::width()
@@ -114,7 +114,6 @@ void MathMLPaddedElement::attributeChanged(const QualifiedName& name, const Atom
 
 RenderPtr<RenderElement> MathMLPaddedElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    ASSERT(hasTagName(MathMLNames::mpaddedTag));
     return createRenderer<RenderMathMLPadded>(*this, WTF::move(style));
 }
 

@@ -42,7 +42,7 @@ class HTMLDataListElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLDataListElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLDataListElement);
 public:
-    static Ref<HTMLDataListElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLDataListElement> create(Document&);
     ~HTMLDataListElement();
 
     Ref<HTMLCollection> options();
@@ -58,7 +58,7 @@ private:
 
     void childrenChanged(const ChildChange&) final;
 
-    HTMLDataListElement(const QualifiedName&, Document&);
+    explicit HTMLDataListElement(Document&);
 };
 
 } // namespace WebCore

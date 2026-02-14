@@ -28,15 +28,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGPolylineElement);
 
-inline SVGPolylineElement::SVGPolylineElement(const QualifiedName& tagName, Document& document)
-    : SVGPolyElement(tagName, document)
+inline SVGPolylineElement::SVGPolylineElement(Document& document)
+    : SVGPolyElement(SVGNames::polylineTag, document)
 {
-    ASSERT(hasTagName(SVGNames::polylineTag));
 }
 
-Ref<SVGPolylineElement> SVGPolylineElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGPolylineElement> SVGPolylineElement::create(Document& document)
 {
-    return adoptRef(*new SVGPolylineElement(tagName, document));
+    return adoptRef(*new SVGPolylineElement(document));
 }
 
 }

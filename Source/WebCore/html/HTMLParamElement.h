@@ -30,10 +30,10 @@ class HTMLParamElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLParamElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLParamElement);
 public:
-    static Ref<HTMLParamElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLParamElement> create(Document&);
 
 private:
-    HTMLParamElement(const QualifiedName&, Document&);
+    explicit HTMLParamElement(Document&);
 };
 
 } // namespace WebCore

@@ -31,7 +31,7 @@ class HTMLMeterElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLMeterElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLMeterElement);
 public:
-    static Ref<HTMLMeterElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLMeterElement> create(Document&);
 
     enum GaugeRegion {
         GaugeRegionOptimum,
@@ -54,7 +54,7 @@ public:
     bool isDevolvableWidget() const override { return true; }
 
 private:
-    HTMLMeterElement(const QualifiedName&, Document&);
+    explicit HTMLMeterElement(Document&);
     virtual ~HTMLMeterElement();
 
     RenderMeter* renderMeter() const;

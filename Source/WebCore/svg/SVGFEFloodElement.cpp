@@ -34,15 +34,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEFloodElement);
 
-inline SVGFEFloodElement::SVGFEFloodElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGFEFloodElement::SVGFEFloodElement(Document& document)
+    : SVGFilterPrimitiveStandardAttributes(SVGNames::feFloodTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::feFloodTag));
 }
 
-Ref<SVGFEFloodElement> SVGFEFloodElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEFloodElement> SVGFEFloodElement::create(Document& document)
 {
-    return adoptRef(*new SVGFEFloodElement(tagName, document));
+    return adoptRef(*new SVGFEFloodElement(document));
 }
 
 bool SVGFEFloodElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)

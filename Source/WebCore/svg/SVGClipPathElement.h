@@ -35,7 +35,7 @@ class SVGClipPathElement final : public SVGGraphicsElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGClipPathElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGClipPathElement);
 public:
-    static Ref<SVGClipPathElement> create(const QualifiedName&, Document&);
+    static Ref<SVGClipPathElement> create(Document&);
 
     SVGUnitTypes::SVGUnitType clipPathUnits() const { return m_clipPathUnits->currentValue<SVGUnitTypes::SVGUnitType>(); }
     SVGAnimatedEnumeration& clipPathUnitsAnimated() { return m_clipPathUnits; }
@@ -47,7 +47,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGClipPathElement, SVGGraphicsElement>;
 
 private:
-    SVGClipPathElement(const QualifiedName&, Document&);
+    explicit SVGClipPathElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;

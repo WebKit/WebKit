@@ -36,7 +36,7 @@ class SVGUseElement final : public SVGGraphicsElement, public SVGURIReference, p
     WTF_MAKE_TZONE_ALLOCATED(SVGUseElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGUseElement);
 public:
-    static Ref<SVGUseElement> create(const QualifiedName&, Document&);
+    static Ref<SVGUseElement> create(Document&);
     virtual ~SVGUseElement();
 
     // CachedResourceClient.
@@ -64,7 +64,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGUseElement, SVGGraphicsElement, SVGURIReference>;
 
 private:
-    SVGUseElement(const QualifiedName&, Document&);
+    explicit SVGUseElement(Document&);
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
     void didFinishInsertingNode() final;

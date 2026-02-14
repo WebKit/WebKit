@@ -30,7 +30,7 @@ class SVGGlyphRefElement final : public SVGElement, public SVGURIReference {
     WTF_MAKE_TZONE_ALLOCATED(SVGGlyphRefElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGGlyphRefElement);
 public:
-    static Ref<SVGGlyphRefElement> create(const QualifiedName&, Document&);
+    static Ref<SVGGlyphRefElement> create(Document&);
 
     bool hasValidGlyphElement(String& glyphName) const;
 
@@ -46,7 +46,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGGlyphRefElement, SVGElement, SVGURIReference>;
 
 private:
-    SVGGlyphRefElement(const QualifiedName&, Document&);
+    explicit SVGGlyphRefElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     bool rendererIsNeeded(const RenderStyle&) final { return false; }

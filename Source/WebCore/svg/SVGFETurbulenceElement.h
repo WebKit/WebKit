@@ -95,7 +95,7 @@ class SVGFETurbulenceElement final : public SVGFilterPrimitiveStandardAttributes
     WTF_MAKE_TZONE_ALLOCATED(SVGFETurbulenceElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFETurbulenceElement);
 public:
-    static Ref<SVGFETurbulenceElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFETurbulenceElement> create(Document&);
 
     float baseFrequencyX() const { return m_baseFrequencyX->currentValue(); }
     float baseFrequencyY() const { return m_baseFrequencyY->currentValue(); }
@@ -114,7 +114,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFETurbulenceElement, SVGFilterPrimitiveStandardAttributes>;
 
 private:
-    SVGFETurbulenceElement(const QualifiedName&, Document&);
+    explicit SVGFETurbulenceElement(Document&);
 
     static constexpr int initialOctavesValue = 1;
 

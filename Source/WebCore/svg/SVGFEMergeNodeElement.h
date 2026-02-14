@@ -31,7 +31,7 @@ class SVGFEMergeNodeElement final : public SVGElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGFEMergeNodeElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEMergeNodeElement);
 public:
-    static Ref<SVGFEMergeNodeElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFEMergeNodeElement> create(Document&);
 
     String in1() const { return m_in1->currentValue(); }
     SVGAnimatedString& in1Animated() { return m_in1; }
@@ -39,7 +39,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEMergeNodeElement, SVGElement>;
 
 private:
-    SVGFEMergeNodeElement(const QualifiedName&, Document&);
+    explicit SVGFEMergeNodeElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;

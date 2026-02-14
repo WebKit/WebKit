@@ -53,9 +53,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLDialogElement);
 
 using namespace HTMLNames;
 
-HTMLDialogElement::HTMLDialogElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+HTMLDialogElement::HTMLDialogElement(Document& document)
+    : HTMLElement(dialogTag, document)
 {
+}
+
+Ref<HTMLDialogElement> HTMLDialogElement::create(Document& document)
+{
+    return adoptRef(*new HTMLDialogElement(document));
 }
 
 ExceptionOr<void> HTMLDialogElement::show()

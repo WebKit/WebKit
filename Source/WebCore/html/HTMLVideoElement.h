@@ -51,7 +51,7 @@ class HTMLVideoElement final : public HTMLMediaElement, public Supplementable<HT
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLVideoElement);
 public:
     WEBCORE_EXPORT static Ref<HTMLVideoElement> create(Document&);
-    static Ref<HTMLVideoElement> create(const QualifiedName&, Document&, bool createdByParser);
+    static Ref<HTMLVideoElement> create(Document&, bool createdByParser);
     ~HTMLVideoElement();
 
     WEBCORE_EXPORT unsigned videoWidth() const;
@@ -151,7 +151,7 @@ public:
     void stop() final;
 
 private:
-    HTMLVideoElement(const QualifiedName&, Document&, bool createdByParser);
+    HTMLVideoElement(Document&, bool createdByParser);
 
     void scheduleResizeEvent(const FloatSize&) final;
     void scheduleResizeEventIfSizeChanged(const FloatSize&) final;

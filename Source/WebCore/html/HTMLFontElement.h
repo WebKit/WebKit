@@ -31,12 +31,12 @@ class HTMLFontElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLFontElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLFontElement);
 public:
-    static Ref<HTMLFontElement> create(const QualifiedName&, Document&);
-    
+    static Ref<HTMLFontElement> create(Document&);
+
     static bool cssValueFromFontSizeNumber(const String&, CSSValueID&);
 
 private:
-    HTMLFontElement(const QualifiedName&, Document&);
+    explicit HTMLFontElement(Document&);
 
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;

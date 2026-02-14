@@ -52,22 +52,16 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLTableElement);
 
 using namespace HTMLNames;
 
-HTMLTableElement::HTMLTableElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+HTMLTableElement::HTMLTableElement(Document& document)
+    : HTMLElement(tableTag, document)
 {
-    ASSERT(hasTagName(tableTag));
 }
 
 HTMLTableElement::~HTMLTableElement() = default;
 
 Ref<HTMLTableElement> HTMLTableElement::create(Document& document)
 {
-    return adoptRef(*new HTMLTableElement(tableTag, document));
-}
-
-Ref<HTMLTableElement> HTMLTableElement::create(const QualifiedName& tagName, Document& document)
-{
-    return adoptRef(*new HTMLTableElement(tagName, document));
+    return adoptRef(*new HTMLTableElement(document));
 }
 
 RefPtr<HTMLTableCaptionElement> HTMLTableElement::caption() const
@@ -171,7 +165,7 @@ Ref<HTMLTableCaptionElement> HTMLTableElement::createCaption()
 {
     if (RefPtr existingCaption = caption())
         return existingCaption.releaseNonNull();
-    Ref caption = HTMLTableCaptionElement::create(captionTag, protect(document()));
+    Ref caption = HTMLTableCaptionElement::create(protect(document()));
     setCaption(caption.copyRef());
     return caption;
 }

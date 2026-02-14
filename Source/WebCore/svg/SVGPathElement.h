@@ -37,7 +37,7 @@ class SVGPathElement final : public SVGGeometryElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGPathElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGPathElement);
 public:
-    static Ref<SVGPathElement> create(const QualifiedName&, Document&);
+    static Ref<SVGPathElement> create(Document&);
 
     static Ref<SVGPathSegClosePath> createSVGPathSegClosePath() { return SVGPathSegClosePath::create(); }
     static Ref<SVGPathSegMovetoAbs> createSVGPathSegMovetoAbs(float x, float y) { return SVGPathSegMovetoAbs::create(x, y); }
@@ -109,7 +109,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGPathElement, SVGGeometryElement>;
 
 private:
-    SVGPathElement(const QualifiedName&, Document&);
+    explicit SVGPathElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;

@@ -105,18 +105,18 @@ void ModelDocumentParser::createDocumentStructure()
     auto body = HTMLBodyElement::create(document);
     rootElement->appendChild(body);
 
-    auto modelElement = HTMLModelElement::create(HTMLNames::modelTag, document);
+    Ref modelElement = HTMLModelElement::create(document);
     m_modelElement = modelElement.get();
     modelElement->setAttributeWithoutSynchronization(interactiveAttr, emptyAtom());
 
-    auto sourceElement = HTMLSourceElement::create(HTMLNames::sourceTag, document);
+    Ref sourceElement = HTMLSourceElement::create(document);
     sourceElement->setAttributeWithoutSynchronization(srcAttr, AtomString { document->url().string() });
     if (RefPtr loader = document->loader())
         sourceElement->setAttributeWithoutSynchronization(typeAttr, AtomString { loader->responseMIMEType() });
 
     modelElement->appendChild(sourceElement);
 
-    body->appendChild(modelElement);
+    body->appendChild(WTF::move(modelElement));
     document->setHasVisuallyNonEmptyCustomContent();
 
     RefPtr frame = document->frame();

@@ -67,7 +67,7 @@ class SVGFEDisplacementMapElement final : public SVGFilterPrimitiveStandardAttri
     WTF_MAKE_TZONE_ALLOCATED(SVGFEDisplacementMapElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEDisplacementMapElement);
 public:
-    static Ref<SVGFEDisplacementMapElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFEDisplacementMapElement> create(Document&);
 
     static ChannelSelectorType stringToChannel(const String&);
 
@@ -86,7 +86,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEDisplacementMapElement, SVGFilterPrimitiveStandardAttributes>;
 
 private:
-    SVGFEDisplacementMapElement(const QualifiedName& tagName, Document&);
+    explicit SVGFEDisplacementMapElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

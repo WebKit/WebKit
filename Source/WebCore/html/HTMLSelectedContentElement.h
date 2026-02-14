@@ -35,7 +35,7 @@ class HTMLSelectedContentElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLSelectedContentElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLSelectedContentElement);
 public:
-    static Ref<HTMLSelectedContentElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLSelectedContentElement> create(Document&);
 
     bool isDisabled() { return m_isDisabled; }
 

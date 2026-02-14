@@ -158,7 +158,7 @@ void PDFDocument::createDocumentStructure()
     body->setAttribute(styleAttr, "margin: 0px;height: 100vh;"_s);
     rootElement->appendChild(body);
 
-    m_iframe = HTMLIFrameElement::create(HTMLNames::iframeTag, *this);
+    m_iframe = HTMLIFrameElement::create(*this);
     m_iframe->setAttribute(srcAttr, AtomString(viewerURL));
     m_iframe->setAttribute(styleAttr, "width: 100%; height: 100%; border: 0; display: block;"_s);
 
@@ -240,7 +240,7 @@ void PDFDocument::injectStyleAndContentScript()
 
     auto* contentDocument = m_iframe->contentDocument();
     ASSERT(contentDocument->head());
-    Ref link = HTMLLinkElement::create(HTMLNames::linkTag, *contentDocument, false);
+    Ref link = HTMLLinkElement::create(*contentDocument);
     link->setAttribute(relAttr, "stylesheet"_s);
 #if PLATFORM(COCOA)
     link->setAttribute(hrefAttr, "webkit-pdfjs-viewer://pdfjs/extras/cocoa/style.css"_s);
@@ -250,7 +250,7 @@ void PDFDocument::injectStyleAndContentScript()
     contentDocument->head()->appendChild(link);
 
     ASSERT(contentDocument->body());
-    m_script = HTMLScriptElement::create(scriptTag, *contentDocument, false);
+    m_script = HTMLScriptElement::create(*contentDocument);
     ASSERT(m_listener);
     m_script->addEventListener(eventNames().loadEvent, *m_listener);
     m_script->setAttribute(srcAttr, "webkit-pdfjs-viewer://pdfjs/extras/content-script.js"_s);

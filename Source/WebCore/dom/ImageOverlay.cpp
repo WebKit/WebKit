@@ -237,7 +237,7 @@ IntRect containerRect(HTMLElement& element)
 static void installImageOverlayStyleSheet(ShadowRoot& shadowRoot)
 {
     static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(imageOverlayUserAgentStyleSheet));
-    Ref style = HTMLStyleElement::create(HTMLNames::styleTag, protect(shadowRoot.document()), false);
+    Ref style = HTMLStyleElement::create(protect(shadowRoot.document()));
     style->setTextContent(String { shadowStyle });
     shadowRoot.appendChild(WTF::move(style));
 }

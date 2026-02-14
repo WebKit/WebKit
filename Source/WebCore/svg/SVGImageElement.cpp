@@ -45,13 +45,11 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGImageElement);
 
-inline SVGImageElement::SVGImageElement(const QualifiedName& tagName, Document& document)
-    : SVGGraphicsElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this), TypeFlag::HasDidMoveToNewDocument)
+inline SVGImageElement::SVGImageElement(Document& document)
+    : SVGGraphicsElement(SVGNames::imageTag, document, makeUniqueRef<PropertyRegistry>(*this), TypeFlag::HasDidMoveToNewDocument)
     , SVGURIReference(this)
     , m_imageLoader(makeUniqueRefWithoutRefCountedCheck<SVGImageLoader>(*this))
 {
-    ASSERT(hasTagName(SVGNames::imageTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -63,9 +61,9 @@ inline SVGImageElement::SVGImageElement(const QualifiedName& tagName, Document& 
     }
 }
 
-Ref<SVGImageElement> SVGImageElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGImageElement> SVGImageElement::create(Document& document)
 {
-    return adoptRef(*new SVGImageElement(tagName, document));
+    return adoptRef(*new SVGImageElement(document));
 }
 
 CachedImage* SVGImageElement::cachedImage() const

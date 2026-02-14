@@ -35,7 +35,7 @@ class HTMLSlotElement final : public HTMLElement {
 public:
     using ElementOrText = Variant<Ref<Element>, Ref<Text>>;
 
-    static Ref<HTMLSlotElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLSlotElement> create(Document&);
 
     const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* assignedNodes() const;
     struct AssignedNodesOptions {
@@ -57,7 +57,7 @@ public:
 
     void updateAccessibilityOnSlotChange() const;
 private:
-    HTMLSlotElement(const QualifiedName&, Document&);
+    explicit HTMLSlotElement(Document&);
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;

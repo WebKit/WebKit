@@ -28,7 +28,6 @@
 
 #include "ElementChildIteratorInlines.h"
 #include "GenericCachedHTMLCollection.h"
-#include "HTMLNames.h"
 #include "HTMLTableRowElement.h"
 #include "HTMLTableElement.h"
 #include "NodeList.h"
@@ -68,7 +67,7 @@ ExceptionOr<Ref<HTMLTableRowElement>> HTMLTableSectionElement::insertRow(int ind
     int numRows = children->length();
     if (index > numRows)
         return Exception { ExceptionCode::IndexSizeError };
-    Ref row = HTMLTableRowElement::create(trTag, protect(document()));
+    Ref row = HTMLTableRowElement::create(protect(document()));
     ExceptionOr<void> result;
     if (numRows == index || index == -1)
         result = appendChild(row);

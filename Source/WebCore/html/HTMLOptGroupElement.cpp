@@ -44,15 +44,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLOptGroupElement);
 
 using namespace HTMLNames;
 
-inline HTMLOptGroupElement::HTMLOptGroupElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+inline HTMLOptGroupElement::HTMLOptGroupElement(Document& document)
+    : HTMLElement(optgroupTag, document)
 {
-    ASSERT(hasTagName(optgroupTag));
 }
 
-Ref<HTMLOptGroupElement> HTMLOptGroupElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLOptGroupElement> HTMLOptGroupElement::create(Document& document)
 {
-    return adoptRef(*new HTMLOptGroupElement(tagName, document));
+    return adoptRef(*new HTMLOptGroupElement(document));
 }
 
 auto HTMLOptGroupElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree) -> InsertedIntoAncestorResult

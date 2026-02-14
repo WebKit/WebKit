@@ -47,15 +47,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLSlotElement);
 
 using namespace HTMLNames;
 
-Ref<HTMLSlotElement> HTMLSlotElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLSlotElement> HTMLSlotElement::create(Document& document)
 {
-    return adoptRef(*new HTMLSlotElement(tagName, document));
+    return adoptRef(*new HTMLSlotElement(document));
 }
 
-HTMLSlotElement::HTMLSlotElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+HTMLSlotElement::HTMLSlotElement(Document& document)
+    : HTMLElement(slotTag, document)
 {
-    ASSERT(hasTagName(slotTag));
 }
 
 HTMLSlotElement::InsertedIntoAncestorResult HTMLSlotElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

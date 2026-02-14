@@ -28,12 +28,12 @@ class SVGFEFuncBElement final : public SVGComponentTransferFunctionElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGFEFuncBElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEFuncBElement);
 public:
-    static Ref<SVGFEFuncBElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFEFuncBElement> create(Document&);
 
     ComponentTransferChannel channel() const final { return ComponentTransferChannel::Blue; }
 
 private:
-    SVGFEFuncBElement(const QualifiedName&, Document&);
+    explicit SVGFEFuncBElement(Document&);
 };
 static_assert(sizeof(SVGFEFuncBElement) == sizeof(SVGComponentTransferFunctionElement));
 

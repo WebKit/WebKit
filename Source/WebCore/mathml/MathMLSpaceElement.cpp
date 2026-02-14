@@ -41,14 +41,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MathMLSpaceElement);
 
 using namespace MathMLNames;
 
-MathMLSpaceElement::MathMLSpaceElement(const QualifiedName& tagName, Document& document)
-    : MathMLPresentationElement(tagName, document)
+MathMLSpaceElement::MathMLSpaceElement(Document& document)
+    : MathMLPresentationElement(mspaceTag, document)
 {
 }
 
-Ref<MathMLSpaceElement> MathMLSpaceElement::create(const QualifiedName& tagName, Document& document)
+Ref<MathMLSpaceElement> MathMLSpaceElement::create(Document& document)
 {
-    return adoptRef(*new MathMLSpaceElement(tagName, document));
+    return adoptRef(*new MathMLSpaceElement(document));
 }
 
 const MathMLElement::Length& MathMLSpaceElement::width()
@@ -96,7 +96,6 @@ void MathMLSpaceElement::attributeChanged(const QualifiedName& name, const AtomS
 
 RenderPtr<RenderElement> MathMLSpaceElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    ASSERT(hasTagName(MathMLNames::mspaceTag));
     return createRenderer<RenderMathMLSpace>(*this, WTF::move(style));
 }
 

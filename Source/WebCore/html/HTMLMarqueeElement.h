@@ -33,7 +33,7 @@ class HTMLMarqueeElement final : public HTMLElement, public ActiveDOMObject {
     WTF_MAKE_TZONE_ALLOCATED(HTMLMarqueeElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLMarqueeElement);
 public:
-    static Ref<HTMLMarqueeElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLMarqueeElement> create(Document&);
 
     // ActiveDOMObject.
     void ref() const final { HTMLElement::ref(); }
@@ -43,23 +43,23 @@ public:
 
     WEBCORE_EXPORT void start();
     WEBCORE_EXPORT void stop() final;
-    
+
     // Number of pixels to move on each scroll movement. Defaults to 6.
     WEBCORE_EXPORT unsigned scrollAmount() const;
     WEBCORE_EXPORT void setScrollAmount(unsigned);
-    
+
     // Interval between each scroll movement, in milliseconds. Defaults to 60.
     WEBCORE_EXPORT unsigned scrollDelay() const;
     WEBCORE_EXPORT void setScrollDelay(unsigned);
-    
+
     // Loop count. -1 means loop indefinitely.
     WEBCORE_EXPORT int loop() const;
     WEBCORE_EXPORT ExceptionOr<void> setLoop(int);
 
     bool hasRenderMarquee() const { return renderMarquee(); }
-    
+
 private:
-    HTMLMarqueeElement(const QualifiedName&, Document&);
+    explicit HTMLMarqueeElement(Document&);
 
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;

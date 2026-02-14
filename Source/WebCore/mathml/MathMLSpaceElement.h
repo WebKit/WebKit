@@ -35,12 +35,12 @@ class MathMLSpaceElement final : public MathMLPresentationElement {
     WTF_MAKE_TZONE_ALLOCATED(MathMLSpaceElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MathMLSpaceElement);
 public:
-    static Ref<MathMLSpaceElement> create(const QualifiedName& tagName, Document&);
+    static Ref<MathMLSpaceElement> create(Document&);
     const Length& width();
     const Length& height();
     const Length& depth();
 private:
-    MathMLSpaceElement(const QualifiedName& tagName, Document&);
+    explicit MathMLSpaceElement(Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 

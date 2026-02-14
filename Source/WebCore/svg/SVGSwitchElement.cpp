@@ -34,15 +34,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGSwitchElement);
 
-inline SVGSwitchElement::SVGSwitchElement(const QualifiedName& tagName, Document& document)
-    : SVGGraphicsElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGSwitchElement::SVGSwitchElement(Document& document)
+    : SVGGraphicsElement(SVGNames::switchTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::switchTag));
 }
 
-Ref<SVGSwitchElement> SVGSwitchElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGSwitchElement> SVGSwitchElement::create(Document& document)
 {
-    return adoptRef(*new SVGSwitchElement(tagName, document));
+    return adoptRef(*new SVGSwitchElement(document));
 }
 
 bool SVGSwitchElement::childShouldCreateRenderer(const Node& child) const

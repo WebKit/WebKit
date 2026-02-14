@@ -43,15 +43,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLFontElement);
 
 using namespace HTMLNames;
 
-HTMLFontElement::HTMLFontElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+HTMLFontElement::HTMLFontElement(Document& document)
+    : HTMLElement(fontTag, document)
 {
-    ASSERT(hasTagName(fontTag));
 }
 
-Ref<HTMLFontElement> HTMLFontElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLFontElement> HTMLFontElement::create(Document& document)
 {
-    return adoptRef(*new HTMLFontElement(tagName, document));
+    return adoptRef(*new HTMLFontElement(document));
 }
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/rendering.html#fonts-and-colors

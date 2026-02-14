@@ -30,12 +30,12 @@ class SVGDefsElement final : public SVGGraphicsElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGDefsElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGDefsElement);
 public:
-    static Ref<SVGDefsElement> create(const QualifiedName&, Document&);
+    static Ref<SVGDefsElement> create(Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGDefsElement, SVGGraphicsElement>;
 
 private:
-    SVGDefsElement(const QualifiedName&, Document&);
+    explicit SVGDefsElement(Document&);
 
     bool isValid() const final;
     bool supportsFocus() const final { return false; }

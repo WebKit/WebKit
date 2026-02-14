@@ -29,13 +29,13 @@ class SVGFontFaceSrcElement final : public SVGElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGFontFaceSrcElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFontFaceSrcElement);
 public:
-    static Ref<SVGFontFaceSrcElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFontFaceSrcElement> create(Document&);
 
     Ref<CSSValueList> createSrcValue() const;
-    
+
 private:
-    SVGFontFaceSrcElement(const QualifiedName&, Document&);
-    
+    explicit SVGFontFaceSrcElement(Document&);
+
     void childrenChanged(const ChildChange&) final;
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 };

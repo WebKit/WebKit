@@ -35,7 +35,7 @@ class MathMLPaddedElement final : public MathMLRowElement {
     WTF_MAKE_TZONE_ALLOCATED(MathMLPaddedElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MathMLPaddedElement);
 public:
-    static Ref<MathMLPaddedElement> create(const QualifiedName& tagName, Document&);
+    static Ref<MathMLPaddedElement> create(Document&);
     // FIXME: Pseudo-units are not supported yet (https://bugs.webkit.org/show_bug.cgi?id=85730).
     const Length& width();
     const Length& height();
@@ -43,7 +43,7 @@ public:
     const Length& lspace();
     const Length& voffset();
 private:
-    MathMLPaddedElement(const QualifiedName& tagName, Document&);
+    explicit MathMLPaddedElement(Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 

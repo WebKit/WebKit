@@ -38,7 +38,7 @@ class HTMLScriptElement final : public HTMLElement, public ScriptElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLScriptElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLScriptElement);
 public:
-    static Ref<HTMLScriptElement> create(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted = false);
+    static Ref<HTMLScriptElement> create(Document&, bool wasInsertedByParser = false, bool alreadyStarted = false);
 
     String text() const { return scriptContent(); }
     WEBCORE_EXPORT void setText(String&&);
@@ -72,7 +72,7 @@ public:
     WEBCORE_EXPORT DOMTokenList& blocking();
 
 private:
-    HTMLScriptElement(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted);
+    HTMLScriptElement(Document&, bool wasInsertedByParser, bool alreadyStarted);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;

@@ -28,10 +28,10 @@ class SVGPolygonElement final : public SVGPolyElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGPolygonElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGPolygonElement);
 public:
-    static Ref<SVGPolygonElement> create(const QualifiedName&, Document&);
+    static Ref<SVGPolygonElement> create(Document&);
 
 private:
-    SVGPolygonElement(const QualifiedName&, Document&);
+    explicit SVGPolygonElement(Document&);
 };
 
 } // namespace WebCore

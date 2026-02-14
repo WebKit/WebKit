@@ -30,12 +30,12 @@ class SVGFEFloodElement final : public SVGFilterPrimitiveStandardAttributes {
     WTF_MAKE_TZONE_ALLOCATED(SVGFEFloodElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEFloodElement);
 public:
-    static Ref<SVGFEFloodElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFEFloodElement> create(Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEFloodElement, SVGFilterPrimitiveStandardAttributes>;
 
 private:
-    SVGFEFloodElement(const QualifiedName&, Document&);
+    explicit SVGFEFloodElement(Document&);
 
     bool setFilterEffectAttribute(FilterEffect&, const QualifiedName& attrName) override;
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;

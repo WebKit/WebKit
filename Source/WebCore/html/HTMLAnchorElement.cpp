@@ -89,11 +89,6 @@ Ref<HTMLAnchorElement> HTMLAnchorElement::create(Document& document)
     return adoptRef(*new HTMLAnchorElement(aTag, document));
 }
 
-Ref<HTMLAnchorElement> HTMLAnchorElement::create(const QualifiedName& tagName, Document& document)
-{
-    return adoptRef(*new HTMLAnchorElement(tagName, document));
-}
-
 HTMLAnchorElement::~HTMLAnchorElement() = default;
 
 bool HTMLAnchorElement::supportsFocus() const

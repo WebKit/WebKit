@@ -42,10 +42,9 @@ using namespace HTMLNames;
 HTMLSelectedContentElement::HTMLSelectedContentElement(Document& document)
     : HTMLElement(selectedcontentTag, document, { })
 {
-    ASSERT(hasTagName(selectedcontentTag));
 }
 
-Ref<HTMLSelectedContentElement> HTMLSelectedContentElement::create(const QualifiedName&, Document& document)
+Ref<HTMLSelectedContentElement> HTMLSelectedContentElement::create(Document& document)
 {
     return adoptRef(*new HTMLSelectedContentElement(document));
 }

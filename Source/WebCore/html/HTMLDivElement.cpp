@@ -35,24 +35,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLDivElement);
 using namespace HTMLNames;
 
 HTMLDivElement::HTMLDivElement(Document& document, OptionSet<TypeFlag> typeFlags)
-    : HTMLDivElement(divTag, document, typeFlags)
+    : HTMLElement(divTag, document, typeFlags)
 {
-}
-
-HTMLDivElement::HTMLDivElement(const QualifiedName& tagName, Document& document, OptionSet<TypeFlag> typeFlags)
-    : HTMLElement(tagName, document, typeFlags)
-{
-    ASSERT(hasTagName(divTag));
 }
 
 Ref<HTMLDivElement> HTMLDivElement::create(Document& document)
 {
-    return adoptRef(*new HTMLDivElement(divTag, document));
-}
-
-Ref<HTMLDivElement> HTMLDivElement::create(const QualifiedName& tagName, Document& document)
-{
-    return adoptRef(*new HTMLDivElement(tagName, document));
+    return adoptRef(*new HTMLDivElement(document));
 }
 
 void HTMLDivElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)

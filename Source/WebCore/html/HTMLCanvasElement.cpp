@@ -122,24 +122,16 @@ using namespace HTMLNames;
 const int defaultWidth = 300;
 const int defaultHeight = 150;
 
-HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document, TypeFlag::HasDidMoveToNewDocument)
+HTMLCanvasElement::HTMLCanvasElement(Document& document)
+    : HTMLElement(canvasTag, document, TypeFlag::HasDidMoveToNewDocument)
     , ActiveDOMObject(document)
     , CanvasBase(IntSize(defaultWidth, defaultHeight), document)
 {
-    ASSERT(hasTagName(canvasTag));
 }
 
 Ref<HTMLCanvasElement> HTMLCanvasElement::create(Document& document)
 {
-    auto canvas = adoptRef(*new HTMLCanvasElement(canvasTag, document));
-    canvas->suspendIfNeeded();
-    return canvas;
-}
-
-Ref<HTMLCanvasElement> HTMLCanvasElement::create(const QualifiedName& tagName, Document& document)
-{
-    auto canvas = adoptRef(*new HTMLCanvasElement(tagName, document));
+    Ref canvas = adoptRef(*new HTMLCanvasElement(document));
     canvas->suspendIfNeeded();
     return canvas;
 }

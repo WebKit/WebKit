@@ -32,13 +32,13 @@ class HTMLLegendElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLLegendElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLLegendElement);
 public:
-    static Ref<HTMLLegendElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLLegendElement> create(Document&);
 
     WEBCORE_EXPORT HTMLFormElement* form() const;
     RefPtr<HTMLFormElement> formForBindings() const;
 
 private:
-    HTMLLegendElement(const QualifiedName&, Document&);
+    explicit HTMLLegendElement(Document&);
 };
 
 } // namespace WebCore

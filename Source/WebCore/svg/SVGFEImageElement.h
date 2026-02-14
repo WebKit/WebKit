@@ -33,7 +33,7 @@ class SVGFEImageElement final : public SVGFilterPrimitiveStandardAttributes, pub
     WTF_MAKE_TZONE_ALLOCATED(SVGFEImageElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEImageElement);
 public:
-    static Ref<SVGFEImageElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFEImageElement> create(Document&);
 
     virtual ~SVGFEImageElement();
 
@@ -49,7 +49,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEImageElement, SVGFilterPrimitiveStandardAttributes, SVGURIReference>;
 
 private:
-    SVGFEImageElement(const QualifiedName&, Document&);
+    explicit SVGFEImageElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

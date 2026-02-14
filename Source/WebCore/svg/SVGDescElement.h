@@ -29,12 +29,12 @@ class SVGDescElement final : public SVGElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGDescElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGDescElement);
 public:
-    static Ref<SVGDescElement> create(const QualifiedName&, Document&);
+    static Ref<SVGDescElement> create(Document&);
 
     String description() const;
 
 private:
-    SVGDescElement(const QualifiedName&, Document&);
+    explicit SVGDescElement(Document&);
 
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
     bool supportsFocus() const final { return false; }

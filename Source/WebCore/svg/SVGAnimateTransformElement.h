@@ -33,12 +33,12 @@ class SVGAnimateTransformElement final : public SVGAnimateElementBase {
     WTF_MAKE_TZONE_ALLOCATED(SVGAnimateTransformElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGAnimateTransformElement);
 public:
-    static Ref<SVGAnimateTransformElement> create(const QualifiedName&, Document&);
+    static Ref<SVGAnimateTransformElement> create(Document&);
 
     SVGTransformValue::SVGTransformType transformType() const { return m_type; }
 
 private:
-    SVGAnimateTransformElement(const QualifiedName&, Document&);
+    explicit SVGAnimateTransformElement(Document&);
     
     bool hasValidAttributeType() const final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;

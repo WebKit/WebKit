@@ -31,7 +31,6 @@ class HTMLOListElement final : public HTMLElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLOListElement);
 public:
     static Ref<HTMLOListElement> create(Document&);
-    static Ref<HTMLOListElement> create(const QualifiedName&, Document&);
 
     int startForBindings() const { return m_start.value_or(1); }
 
@@ -44,7 +43,7 @@ public:
     void itemCountChanged() { m_itemCount = std::nullopt; }
 
 private:
-    HTMLOListElement(const QualifiedName&, Document&);
+    explicit HTMLOListElement(Document&);
         
     WEBCORE_EXPORT unsigned itemCount() const;
 

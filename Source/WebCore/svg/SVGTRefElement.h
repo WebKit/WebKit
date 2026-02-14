@@ -33,14 +33,14 @@ class SVGTRefElement final : public SVGTextPositioningElement, public SVGURIRefe
     WTF_MAKE_TZONE_ALLOCATED(SVGTRefElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGTRefElement);
 public:
-    static Ref<SVGTRefElement> create(const QualifiedName&, Document&);
+    static Ref<SVGTRefElement> create(Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTRefElement, SVGTextPositioningElement, SVGURIReference>;
 
 private:
     friend class SVGTRefTargetEventListener;
 
-    SVGTRefElement(const QualifiedName&, Document&);
+    explicit SVGTRefElement(Document&);
     virtual ~SVGTRefElement();
 
     Ref<SVGTRefTargetEventListener> protectedTargetListener() const;

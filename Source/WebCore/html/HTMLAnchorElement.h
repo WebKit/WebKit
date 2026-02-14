@@ -50,7 +50,6 @@ class HTMLAnchorElement : public HTMLElement, public URLDecomposition {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLAnchorElement);
 public:
     static Ref<HTMLAnchorElement> create(Document&);
-    static Ref<HTMLAnchorElement> create(const QualifiedName&, Document&);
 
     virtual ~HTMLAnchorElement();
 

@@ -41,20 +41,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLHtmlElement);
 
 using namespace HTMLNames;
 
-HTMLHtmlElement::HTMLHtmlElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+HTMLHtmlElement::HTMLHtmlElement(Document& document)
+    : HTMLElement(htmlTag, document)
 {
-    ASSERT(hasTagName(htmlTag));
 }
 
 Ref<HTMLHtmlElement> HTMLHtmlElement::create(Document& document)
 {
-    return adoptRef(*new HTMLHtmlElement(htmlTag, document));
-}
-
-Ref<HTMLHtmlElement> HTMLHtmlElement::create(const QualifiedName& tagName, Document& document)
-{
-    return adoptRef(*new HTMLHtmlElement(tagName, document));
+    return adoptRef(*new HTMLHtmlElement(document));
 }
 
 } // namespace WebCore

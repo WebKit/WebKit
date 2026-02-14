@@ -282,7 +282,7 @@ Ref<VTTCue> VTTCue::create(Document& document, Ref<WebVTTCueData>&& data)
 VTTCue::VTTCue(Document& document, const MediaTime& start, const MediaTime& end, String&& content)
     : TextTrackCue(document, start, end)
     , m_content(WTF::move(content))
-    , m_cueHighlightBox(HTMLSpanElement::create(spanTag, document))
+    , m_cueHighlightBox(HTMLSpanElement::create(document))
     , m_cueBackdropBox(HTMLDivElement::create(document))
     , m_originalStartTime(MediaTime::zeroTime())
     , m_snapToLines(true)
@@ -974,14 +974,14 @@ void VTTCue::obtainCSSBoxes()
     Ref document = displayTree->document();
     if (RefPtr page = document->page()) {
         auto cssString = page->captionUserPreferencesStyleSheet();
-        Ref style = HTMLStyleElement::create(HTMLNames::styleTag, document.get(), false);
+        Ref style = HTMLStyleElement::create(document);
         style->setTextContent(WTF::move(cssString));
         displayTree->appendChild(WTF::move(style));
     }
 
     if (const auto& styleSheets = track()->styleSheets()) {
         for (const auto& cssString : *styleSheets) {
-            auto style = HTMLStyleElement::create(HTMLNames::styleTag, document.get(), false);
+            Ref style = HTMLStyleElement::create(document);
             style->setTextContent(String { cssString });
             displayTree->appendChild(WTF::move(style));
         }

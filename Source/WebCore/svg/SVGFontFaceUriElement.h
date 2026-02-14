@@ -31,7 +31,7 @@ class SVGFontFaceUriElement final : public SVGElement, public CachedFontClient {
     WTF_MAKE_TZONE_ALLOCATED(SVGFontFaceUriElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFontFaceUriElement);
 public:
-    static Ref<SVGFontFaceUriElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFontFaceUriElement> create(Document&);
 
     virtual ~SVGFontFaceUriElement();
 
@@ -42,7 +42,7 @@ public:
     Ref<CSSFontFaceSrcResourceValue> createSrcValue() const;
 
 private:
-    SVGFontFaceUriElement(const QualifiedName&, Document&);
+    explicit SVGFontFaceUriElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void childrenChanged(const ChildChange&) final;

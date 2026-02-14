@@ -31,11 +31,11 @@ class SVGAnimateMotionElement final : public SVGAnimationElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGAnimateMotionElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGAnimateMotionElement);
 public:
-    static Ref<SVGAnimateMotionElement> create(const QualifiedName&, Document&);
+    static Ref<SVGAnimateMotionElement> create(Document&);
     void updateAnimationPath();
 
 private:
-    SVGAnimateMotionElement(const QualifiedName&, Document&);
+    explicit SVGAnimateMotionElement(Document&);
 
     bool hasValidAttributeType() const override;
     bool hasValidAttributeName() const override;

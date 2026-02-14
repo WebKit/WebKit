@@ -65,7 +65,7 @@ class SVGFEConvolveMatrixElement final : public SVGFilterPrimitiveStandardAttrib
     WTF_MAKE_TZONE_ALLOCATED(SVGFEConvolveMatrixElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEConvolveMatrixElement);
 public:
-    static Ref<SVGFEConvolveMatrixElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFEConvolveMatrixElement> create(Document&);
 
     void setOrder(float orderX, float orderY);
     void setKernelUnitLength(float kernelUnitLengthX, float kernelUnitLengthY);
@@ -99,7 +99,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEConvolveMatrixElement, SVGFilterPrimitiveStandardAttributes>;
 
 private:
-    SVGFEConvolveMatrixElement(const QualifiedName&, Document&);
+    explicit SVGFEConvolveMatrixElement(Document&);
 
     static constexpr int initialOrderValue = 3;
     static constexpr float initialDivisorValue = 1;

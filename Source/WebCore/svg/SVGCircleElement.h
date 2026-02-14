@@ -31,7 +31,7 @@ class SVGCircleElement final : public SVGGeometryElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGCircleElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGCircleElement);
 public:
-    static Ref<SVGCircleElement> create(const QualifiedName&, Document&);
+    static Ref<SVGCircleElement> create(Document&);
 
     const SVGLengthValue& cx() const { return m_cx->currentValue(); }
     const SVGLengthValue& cy() const { return m_cy->currentValue(); }
@@ -46,7 +46,7 @@ public:
     SVGAnimatedPropertyBase* propertyForAttribute(const QualifiedName&) const;
 
 private:
-    SVGCircleElement(const QualifiedName&, Document&);
+    explicit SVGCircleElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;

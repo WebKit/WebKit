@@ -30,7 +30,7 @@ class SVGFEDropShadowElement final : public SVGFilterPrimitiveStandardAttributes
     WTF_MAKE_TZONE_ALLOCATED(SVGFEDropShadowElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEDropShadowElement);
 public:
-    static Ref<SVGFEDropShadowElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFEDropShadowElement> create(Document&);
     
     void setStdDeviation(float stdDeviationX, float stdDeviationY);
 
@@ -49,7 +49,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEDropShadowElement, SVGFilterPrimitiveStandardAttributes>;
 
 private:
-    SVGFEDropShadowElement(const QualifiedName&, Document&);
+    explicit SVGFEDropShadowElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

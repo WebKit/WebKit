@@ -38,11 +38,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFESpecularLightingElement);
 
-inline SVGFESpecularLightingElement::SVGFESpecularLightingElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGFESpecularLightingElement::SVGFESpecularLightingElement(Document& document)
+    : SVGFilterPrimitiveStandardAttributes(SVGNames::feSpecularLightingTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::feSpecularLightingTag));
-    
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -54,9 +52,9 @@ inline SVGFESpecularLightingElement::SVGFESpecularLightingElement(const Qualifie
     }
 }
 
-Ref<SVGFESpecularLightingElement> SVGFESpecularLightingElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFESpecularLightingElement> SVGFESpecularLightingElement::create(Document& document)
 {
-    return adoptRef(*new SVGFESpecularLightingElement(tagName, document));
+    return adoptRef(*new SVGFESpecularLightingElement(document));
 }
 
 void SVGFESpecularLightingElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

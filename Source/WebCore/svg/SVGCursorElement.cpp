@@ -36,13 +36,11 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGCursorElement);
 
-inline SVGCursorElement::SVGCursorElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGCursorElement::SVGCursorElement(Document& document)
+    : SVGElement(SVGNames::cursorTag, document, makeUniqueRef<PropertyRegistry>(*this))
     , SVGTests(this)
     , SVGURIReference(this)
 {
-    ASSERT(hasTagName(SVGNames::cursorTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -51,9 +49,9 @@ inline SVGCursorElement::SVGCursorElement(const QualifiedName& tagName, Document
     }
 }
 
-Ref<SVGCursorElement> SVGCursorElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGCursorElement> SVGCursorElement::create(Document& document)
 {
-    return adoptRef(*new SVGCursorElement(tagName, document));
+    return adoptRef(*new SVGCursorElement(document));
 }
 
 SVGCursorElement::~SVGCursorElement()

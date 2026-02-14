@@ -31,7 +31,7 @@ class SVGRectElement final : public SVGGeometryElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGRectElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGRectElement);
 public:
-    static Ref<SVGRectElement> create(const QualifiedName&, Document&);
+    static Ref<SVGRectElement> create(Document&);
 
     const SVGLengthValue& x() const { return m_x->currentValue(); }
     const SVGLengthValue& y() const { return m_y->currentValue(); }
@@ -52,7 +52,7 @@ public:
     SVGAnimatedPropertyBase* propertyForAttribute(const QualifiedName&) const;
 
 private:
-    SVGRectElement(const QualifiedName&, Document&);
+    explicit SVGRectElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;

@@ -50,16 +50,15 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGAnimateMotionElement);
     
 using namespace SVGNames;
 
-inline SVGAnimateMotionElement::SVGAnimateMotionElement(const QualifiedName& tagName, Document& document)
-    : SVGAnimationElement(tagName, document)
+inline SVGAnimateMotionElement::SVGAnimateMotionElement(Document& document)
+    : SVGAnimationElement(SVGNames::animateMotionTag, document)
 {
     setCalcMode(CalcMode::Paced);
-    ASSERT(hasTagName(animateMotionTag));
 }
 
-Ref<SVGAnimateMotionElement> SVGAnimateMotionElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGAnimateMotionElement> SVGAnimateMotionElement::create(Document& document)
 {
-    return adoptRef(*new SVGAnimateMotionElement(tagName, document));
+    return adoptRef(*new SVGAnimateMotionElement(document));
 }
 
 bool SVGAnimateMotionElement::hasValidAttributeType() const

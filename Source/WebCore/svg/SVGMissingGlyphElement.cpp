@@ -29,15 +29,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGMissingGlyphElement);
 
-inline SVGMissingGlyphElement::SVGMissingGlyphElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGMissingGlyphElement::SVGMissingGlyphElement(Document& document)
+    : SVGElement(SVGNames::missing_glyphTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::missing_glyphTag));
 }
 
-Ref<SVGMissingGlyphElement> SVGMissingGlyphElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGMissingGlyphElement> SVGMissingGlyphElement::create(Document& document)
 {
-    return adoptRef(*new SVGMissingGlyphElement(tagName, document));
+    return adoptRef(*new SVGMissingGlyphElement(document));
 }
 
 }

@@ -33,18 +33,17 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGScriptElement);
 
-inline SVGScriptElement::SVGScriptElement(const QualifiedName& tagName, Document& document, bool wasInsertedByParser, bool alreadyStarted)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGScriptElement::SVGScriptElement(Document& document, bool wasInsertedByParser, bool alreadyStarted)
+    : SVGElement(SVGNames::scriptTag, document, makeUniqueRef<PropertyRegistry>(*this))
     , SVGURIReference(this)
     , ScriptElement(*this, wasInsertedByParser, alreadyStarted)
     , m_loadEventTimer(*this, &SVGElement::loadEventTimerFired)
 {
-    ASSERT(hasTagName(SVGNames::scriptTag));
 }
 
-Ref<SVGScriptElement> SVGScriptElement::create(const QualifiedName& tagName, Document& document, bool insertedByParser)
+Ref<SVGScriptElement> SVGScriptElement::create(Document& document, bool insertedByParser)
 {
-    return adoptRef(*new SVGScriptElement(tagName, document, insertedByParser, false));
+    return adoptRef(*new SVGScriptElement(document, insertedByParser, false));
 }
 
 void SVGScriptElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
@@ -110,7 +109,7 @@ void SVGScriptElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 }
 Ref<Element> SVGScriptElement::cloneElementWithoutAttributesAndChildren(Document& document, CustomElementRegistry*) const
 {
-    return adoptRef(*new SVGScriptElement(tagQName(), document, false, alreadyStarted()));
+    return adoptRef(*new SVGScriptElement(document, false, alreadyStarted()));
 }
 
 void SVGScriptElement::dispatchErrorEvent()

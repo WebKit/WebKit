@@ -30,7 +30,7 @@ class SVGFEOffsetElement final : public SVGFilterPrimitiveStandardAttributes {
     WTF_MAKE_TZONE_ALLOCATED(SVGFEOffsetElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEOffsetElement);
 public:
-    static Ref<SVGFEOffsetElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFEOffsetElement> create(Document&);
 
     String in1() const { return m_in1->currentValue(); }
     float dx() const { return m_dx->currentValue(); }
@@ -43,7 +43,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEOffsetElement, SVGFilterPrimitiveStandardAttributes>;
 
 private:
-    SVGFEOffsetElement(const QualifiedName&, Document&);
+    explicit SVGFEOffsetElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

@@ -45,16 +45,15 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLScriptElement);
 
 using namespace HTMLNames;
 
-inline HTMLScriptElement::HTMLScriptElement(const QualifiedName& tagName, Document& document, bool wasInsertedByParser, bool alreadyStarted)
-    : HTMLElement(tagName, document)
+inline HTMLScriptElement::HTMLScriptElement(Document& document, bool wasInsertedByParser, bool alreadyStarted)
+    : HTMLElement(scriptTag, document)
     , ScriptElement(*this, wasInsertedByParser, alreadyStarted)
 {
-    ASSERT(hasTagName(scriptTag));
 }
 
-Ref<HTMLScriptElement> HTMLScriptElement::create(const QualifiedName& tagName, Document& document, bool wasInsertedByParser, bool alreadyStarted)
+Ref<HTMLScriptElement> HTMLScriptElement::create(Document& document, bool wasInsertedByParser, bool alreadyStarted)
 {
-    return adoptRef(*new HTMLScriptElement(tagName, document, wasInsertedByParser, alreadyStarted));
+    return adoptRef(*new HTMLScriptElement(document, wasInsertedByParser, alreadyStarted));
 }
 
 bool HTMLScriptElement::isURLAttribute(const Attribute& attribute) const
@@ -287,7 +286,7 @@ bool HTMLScriptElement::isScriptPreventedByAttributes() const
 
 Ref<Element> HTMLScriptElement::cloneElementWithoutAttributesAndChildren(Document& document, CustomElementRegistry*) const
 {
-    return adoptRef(*new HTMLScriptElement(tagQName(), document, false, alreadyStarted()));
+    return adoptRef(*new HTMLScriptElement(document, false, alreadyStarted()));
 }
 
 String HTMLScriptElement::referrerPolicyForBindings() const

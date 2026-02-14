@@ -43,17 +43,16 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLAreaElement);
 
 using namespace HTMLNames;
 
-inline HTMLAreaElement::HTMLAreaElement(const QualifiedName& tagName, Document& document)
-    : HTMLAnchorElement(tagName, document)
+inline HTMLAreaElement::HTMLAreaElement(Document& document)
+    : HTMLAnchorElement(areaTag, document)
 {
-    ASSERT(hasTagName(areaTag));
 }
 
 HTMLAreaElement::~HTMLAreaElement() = default;
 
-Ref<HTMLAreaElement> HTMLAreaElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLAreaElement> HTMLAreaElement::create(Document& document)
 {
-    return adoptRef(*new HTMLAreaElement(tagName, document));
+    return adoptRef(*new HTMLAreaElement(document));
 }
 
 void HTMLAreaElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

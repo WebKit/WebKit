@@ -44,17 +44,16 @@ using namespace HTMLNames;
 const double HTMLProgressElement::IndeterminatePosition = -1;
 const double HTMLProgressElement::InvalidPosition = -2;
 
-HTMLProgressElement::HTMLProgressElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document, TypeFlag::HasCustomStyleResolveCallbacks)
+HTMLProgressElement::HTMLProgressElement(Document& document)
+    : HTMLElement(progressTag, document, TypeFlag::HasCustomStyleResolveCallbacks)
 {
-    ASSERT(hasTagName(progressTag));
 }
 
 HTMLProgressElement::~HTMLProgressElement() = default;
 
-Ref<HTMLProgressElement> HTMLProgressElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLProgressElement> HTMLProgressElement::create(Document& document)
 {
-    Ref progress = adoptRef(*new HTMLProgressElement(tagName, document));
+    Ref progress = adoptRef(*new HTMLProgressElement(document));
     progress->ensureUserAgentShadowRoot();
     return progress;
 }

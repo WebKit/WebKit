@@ -34,7 +34,7 @@ class HTMLDialogElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLDialogElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLDialogElement);
 public:
-    template<typename... Args> static Ref<HTMLDialogElement> create(Args&&... args) { return adoptRef(*new HTMLDialogElement(std::forward<Args>(args)...)); }
+    static Ref<HTMLDialogElement> create(Document&);
 
     bool isOpen() const { return m_isOpen; }
 
@@ -58,7 +58,7 @@ public:
     void queueDialogToggleEventTask(ToggleState oldState, ToggleState newState, Element* source);
 
 private:
-    HTMLDialogElement(const QualifiedName&, Document&);
+    explicit HTMLDialogElement(Document&);
 
     void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree) final;
     void setIsModal(bool newValue);

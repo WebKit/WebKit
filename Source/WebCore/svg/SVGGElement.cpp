@@ -38,20 +38,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGGElement);
 
-SVGGElement::SVGGElement(const QualifiedName& tagName, Document& document)
-    : SVGGraphicsElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+SVGGElement::SVGGElement(Document& document)
+    : SVGGraphicsElement(SVGNames::gTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::gTag));
-}
-
-Ref<SVGGElement> SVGGElement::create(const QualifiedName& tagName, Document& document)
-{
-    return adoptRef(*new SVGGElement(tagName, document));
 }
 
 Ref<SVGGElement> SVGGElement::create(Document& document)
 {
-    return create(SVGNames::gTag, document);
+    return adoptRef(*new SVGGElement(document));
 }
 
 RenderPtr<RenderElement> SVGGElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

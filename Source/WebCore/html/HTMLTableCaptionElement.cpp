@@ -35,15 +35,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLTableCaptionElement);
 
 using namespace HTMLNames;
 
-inline HTMLTableCaptionElement::HTMLTableCaptionElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+inline HTMLTableCaptionElement::HTMLTableCaptionElement(Document& document)
+    : HTMLElement(captionTag, document)
 {
-    ASSERT(hasTagName(captionTag));
 }
 
-Ref<HTMLTableCaptionElement> HTMLTableCaptionElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLTableCaptionElement> HTMLTableCaptionElement::create(Document& document)
 {
-    return adoptRef(*new HTMLTableCaptionElement(tagName, document));
+    return adoptRef(*new HTMLTableCaptionElement(document));
 }
 
 void HTMLTableCaptionElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)

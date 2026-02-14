@@ -33,7 +33,7 @@ class SVGLinearGradientElement final : public SVGGradientElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGLinearGradientElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGLinearGradientElement);
 public:
-    static Ref<SVGLinearGradientElement> create(const QualifiedName&, Document&);
+    static Ref<SVGLinearGradientElement> create(Document&);
 
     bool collectGradientAttributes(LinearGradientAttributes&);
 
@@ -48,7 +48,7 @@ public:
     SVGAnimatedLength& y2Animated() { return m_y2; }
 
 private:
-    SVGLinearGradientElement(const QualifiedName&, Document&);
+    explicit SVGLinearGradientElement(Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGLinearGradientElement, SVGGradientElement>;
 

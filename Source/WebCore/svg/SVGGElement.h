@@ -30,13 +30,12 @@ class SVGGElement final : public SVGGraphicsElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGGElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGGElement);
 public:
-    static Ref<SVGGElement> create(const QualifiedName&, Document&);
     static Ref<SVGGElement> create(Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGGElement, SVGGraphicsElement>;
 
 private:
-    SVGGElement(const QualifiedName&, Document&);
+    explicit SVGGElement(Document&);
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 

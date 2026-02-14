@@ -46,16 +46,15 @@ using namespace HTMLNames;
 static constexpr unsigned defaultScrollAmount = 6;
 static constexpr unsigned defaultScrollDelay = 85;
 
-inline HTMLMarqueeElement::HTMLMarqueeElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document, TypeFlag::HasDidMoveToNewDocument)
+inline HTMLMarqueeElement::HTMLMarqueeElement(Document& document)
+    : HTMLElement(marqueeTag, document, TypeFlag::HasDidMoveToNewDocument)
     , ActiveDOMObject(document)
 {
-    ASSERT(hasTagName(marqueeTag));
 }
 
-Ref<HTMLMarqueeElement> HTMLMarqueeElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLMarqueeElement> HTMLMarqueeElement::create(Document& document)
 {
-    auto marqueeElement = adoptRef(*new HTMLMarqueeElement(tagName, document));
+    Ref marqueeElement = adoptRef(*new HTMLMarqueeElement(document));
     marqueeElement->suspendIfNeeded();
     return marqueeElement;
 }

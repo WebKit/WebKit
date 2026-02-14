@@ -33,7 +33,7 @@ class HTMLPictureElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLPictureElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLPictureElement);
 public:
-    static Ref<HTMLPictureElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLPictureElement> create(Document&);
     virtual ~HTMLPictureElement();
 
     void sourcesChanged();
@@ -44,7 +44,7 @@ public:
 #endif
 
 private:
-    HTMLPictureElement(const QualifiedName&, Document&);
+    explicit HTMLPictureElement(Document&);
 };
 
 } // namespace WebCore

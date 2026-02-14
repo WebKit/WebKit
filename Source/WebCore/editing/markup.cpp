@@ -1278,7 +1278,7 @@ static void restoreAttachmentElementsInFragment(DocumentFragment& fragment)
         if (attachmentIdentifier.isEmpty())
             continue;
 
-        Ref attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, *ownerDocument);
+        Ref attachment = HTMLAttachmentElement::create(*ownerDocument);
         attachment->setUniqueIdentifier(attachmentIdentifier);
         attachmentAssociatedElement->setAttachmentElement(WTF::move(attachment));
         element->removeAttribute(webkitattachmentidAttr);

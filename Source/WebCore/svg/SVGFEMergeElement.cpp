@@ -34,15 +34,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEMergeElement);
 
-inline SVGFEMergeElement::SVGFEMergeElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGFEMergeElement::SVGFEMergeElement(Document& document)
+    : SVGFilterPrimitiveStandardAttributes(SVGNames::feMergeTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::feMergeTag));
 }
 
-Ref<SVGFEMergeElement> SVGFEMergeElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEMergeElement> SVGFEMergeElement::create(Document& document)
 {
-    return adoptRef(*new SVGFEMergeElement(tagName, document));
+    return adoptRef(*new SVGFEMergeElement(document));
 }
 
 void SVGFEMergeElement::childrenChanged(const ChildChange& change)

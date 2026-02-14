@@ -31,11 +31,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFETileElement);
 
-inline SVGFETileElement::SVGFETileElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGFETileElement::SVGFETileElement(Document& document)
+    : SVGFilterPrimitiveStandardAttributes(SVGNames::feTileTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::feTileTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -43,9 +41,9 @@ inline SVGFETileElement::SVGFETileElement(const QualifiedName& tagName, Document
     }
 }
 
-Ref<SVGFETileElement> SVGFETileElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFETileElement> SVGFETileElement::create(Document& document)
 {
-    return adoptRef(*new SVGFETileElement(tagName, document));
+    return adoptRef(*new SVGFETileElement(document));
 }
 
 void SVGFETileElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

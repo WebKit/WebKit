@@ -33,7 +33,7 @@ class SVGRadialGradientElement final : public SVGGradientElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGRadialGradientElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGRadialGradientElement);
 public:
-    static Ref<SVGRadialGradientElement> create(const QualifiedName&, Document&);
+    static Ref<SVGRadialGradientElement> create(Document&);
 
     bool collectGradientAttributes(RadialGradientAttributes&);
 
@@ -54,7 +54,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGRadialGradientElement, SVGGradientElement>;
 
 private:
-    SVGRadialGradientElement(const QualifiedName&, Document&);
+    explicit SVGRadialGradientElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

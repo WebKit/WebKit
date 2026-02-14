@@ -34,7 +34,7 @@ class SVGCursorElement final : public SVGElement, public SVGTests, public SVGURI
     WTF_MAKE_TZONE_ALLOCATED(SVGCursorElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGCursorElement);
 public:
-    static Ref<SVGCursorElement> create(const QualifiedName&, Document&);
+    static Ref<SVGCursorElement> create(Document&);
 
     virtual ~SVGCursorElement();
 
@@ -50,7 +50,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGCursorElement, SVGElement, SVGTests, SVGURIReference>;
 
 private:
-    SVGCursorElement(const QualifiedName&, Document&);
+    explicit SVGCursorElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;

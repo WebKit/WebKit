@@ -27,10 +27,10 @@ class SVGFontFaceFormatElement final : public SVGElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGFontFaceFormatElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFontFaceFormatElement);
 public:
-    static Ref<SVGFontFaceFormatElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFontFaceFormatElement> create(Document&);
 
 private:
-    SVGFontFaceFormatElement(const QualifiedName&, Document&);
+    explicit SVGFontFaceFormatElement(Document&);
 
     void childrenChanged(const ChildChange&) final;
     bool rendererIsNeeded(const RenderStyle&) final { return false; }

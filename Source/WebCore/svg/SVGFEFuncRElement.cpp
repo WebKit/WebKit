@@ -29,15 +29,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEFuncRElement);
 
-inline SVGFEFuncRElement::SVGFEFuncRElement(const QualifiedName& tagName, Document& document)
-    : SVGComponentTransferFunctionElement(tagName, document)
+inline SVGFEFuncRElement::SVGFEFuncRElement(Document& document)
+    : SVGComponentTransferFunctionElement(SVGNames::feFuncRTag, document)
 {
-    ASSERT(hasTagName(SVGNames::feFuncRTag));
 }
 
-Ref<SVGFEFuncRElement> SVGFEFuncRElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEFuncRElement> SVGFEFuncRElement::create(Document& document)
 {
-    return adoptRef(*new SVGFEFuncRElement(tagName, document));
+    return adoptRef(*new SVGFEFuncRElement(document));
 }
 
 }

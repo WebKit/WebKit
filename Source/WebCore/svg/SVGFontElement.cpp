@@ -39,15 +39,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFontElement);
 
-inline SVGFontElement::SVGFontElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGFontElement::SVGFontElement(Document& document)
+    : SVGElement(SVGNames::fontTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::fontTag));
 }
 
-Ref<SVGFontElement> SVGFontElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFontElement> SVGFontElement::create(Document& document)
 {
-    return adoptRef(*new SVGFontElement(tagName, document));
+    return adoptRef(*new SVGFontElement(document));
 }
 
 }

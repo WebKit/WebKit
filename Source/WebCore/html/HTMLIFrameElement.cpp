@@ -51,11 +51,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLIFrameElement);
 
 using namespace HTMLNames;
 
-inline HTMLIFrameElement::HTMLIFrameElement(const QualifiedName& tagName, Document& document)
-    : HTMLFrameElementBase(tagName, document)
+inline HTMLIFrameElement::HTMLIFrameElement(Document& document)
+    : HTMLFrameElementBase(iframeTag, document)
 {
-    ASSERT(hasTagName(iframeTag));
-
 #if ENABLE(CONTENT_EXTENSIONS)
     if (document.settings().iFrameResourceMonitoringEnabled())
         setInitiatorSourceURL(document.currentSourceURL());
@@ -64,9 +62,9 @@ inline HTMLIFrameElement::HTMLIFrameElement(const QualifiedName& tagName, Docume
 
 HTMLIFrameElement::~HTMLIFrameElement() = default;
 
-Ref<HTMLIFrameElement> HTMLIFrameElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLIFrameElement> HTMLIFrameElement::create(Document& document)
 {
-    return adoptRef(*new HTMLIFrameElement(tagName, document));
+    return adoptRef(*new HTMLIFrameElement(document));
 }
 
 int HTMLIFrameElement::defaultTabIndex() const

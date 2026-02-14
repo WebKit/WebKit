@@ -30,10 +30,10 @@ class HTMLDirectoryElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLDirectoryElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLDirectoryElement);
 public:
-    static Ref<HTMLDirectoryElement> create(const QualifiedName& tagName, Document&);
+    static Ref<HTMLDirectoryElement> create(Document&);
 
 private:
-    HTMLDirectoryElement(const QualifiedName&, Document&);
+    explicit HTMLDirectoryElement(Document&);
 };
 
 } // namespace WebCore

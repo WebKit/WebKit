@@ -34,11 +34,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEMorphologyElement);
 
-inline SVGFEMorphologyElement::SVGFEMorphologyElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGFEMorphologyElement::SVGFEMorphologyElement(Document& document)
+    : SVGFilterPrimitiveStandardAttributes(SVGNames::feMorphologyTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::feMorphologyTag));
-    
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -48,9 +46,9 @@ inline SVGFEMorphologyElement::SVGFEMorphologyElement(const QualifiedName& tagNa
     }
 }
 
-Ref<SVGFEMorphologyElement> SVGFEMorphologyElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEMorphologyElement> SVGFEMorphologyElement::create(Document& document)
 {
-    return adoptRef(*new SVGFEMorphologyElement(tagName, document));
+    return adoptRef(*new SVGFEMorphologyElement(document));
 }
 
 void SVGFEMorphologyElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

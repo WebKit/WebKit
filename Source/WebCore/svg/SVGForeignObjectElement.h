@@ -30,7 +30,7 @@ class SVGForeignObjectElement final : public SVGGraphicsElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGForeignObjectElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGForeignObjectElement);
 public:
-    static Ref<SVGForeignObjectElement> create(const QualifiedName&, Document&);
+    static Ref<SVGForeignObjectElement> create(Document&);
 
     const SVGLengthValue& x() const { return m_x->currentValue(); }
     const SVGLengthValue& y() const { return m_y->currentValue(); }
@@ -45,7 +45,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGForeignObjectElement, SVGGraphicsElement>;
 
 private:
-    SVGForeignObjectElement(const QualifiedName&, Document&);
+    explicit SVGForeignObjectElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;

@@ -44,12 +44,10 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEImageElement);
 
-inline SVGFEImageElement::SVGFEImageElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGFEImageElement::SVGFEImageElement(Document& document)
+    : SVGFilterPrimitiveStandardAttributes(SVGNames::feImageTag, document, makeUniqueRef<PropertyRegistry>(*this))
     , SVGURIReference(this)
 {
-    ASSERT(hasTagName(SVGNames::feImageTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -57,9 +55,9 @@ inline SVGFEImageElement::SVGFEImageElement(const QualifiedName& tagName, Docume
     }
 }
 
-Ref<SVGFEImageElement> SVGFEImageElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEImageElement> SVGFEImageElement::create(Document& document)
 {
-    return adoptRef(*new SVGFEImageElement(tagName, document));
+    return adoptRef(*new SVGFEImageElement(document));
 }
 
 SVGFEImageElement::~SVGFEImageElement()

@@ -36,11 +36,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEComponentTransferElement);
 
-inline SVGFEComponentTransferElement::SVGFEComponentTransferElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGFEComponentTransferElement::SVGFEComponentTransferElement(Document& document)
+    : SVGFilterPrimitiveStandardAttributes(SVGNames::feComponentTransferTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::feComponentTransferTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -48,9 +46,9 @@ inline SVGFEComponentTransferElement::SVGFEComponentTransferElement(const Qualif
     }
 }
 
-Ref<SVGFEComponentTransferElement> SVGFEComponentTransferElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEComponentTransferElement> SVGFEComponentTransferElement::create(Document& document)
 {
-    return adoptRef(*new SVGFEComponentTransferElement(tagName, document));
+    return adoptRef(*new SVGFEComponentTransferElement(document));
 }
 
 void SVGFEComponentTransferElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

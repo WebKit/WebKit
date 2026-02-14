@@ -4891,7 +4891,7 @@ void Editor::notifyClientOfAttachmentUpdates()
 void Editor::insertAttachment(const String& identifier, std::optional<uint64_t>&& fileSize, const AtomString& fileName, const AtomString& contentType)
 {
     Ref document = this->document();
-    auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
+    Ref attachment = HTMLAttachmentElement::create(document);
     attachment->setUniqueIdentifier(identifier);
     attachment->updateAttributes(WTF::move(fileSize), contentType, fileName);
 

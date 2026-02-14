@@ -30,10 +30,10 @@ class HTMLMenuElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLMenuElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLMenuElement);
 public:
-    static Ref<HTMLMenuElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLMenuElement> create(Document&);
 
 private:
-    HTMLMenuElement(const QualifiedName&, Document&);
+    explicit HTMLMenuElement(Document&);
 };
 
 } // namespace WebCore

@@ -33,16 +33,15 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGMPathElement);
 
-inline SVGMPathElement::SVGMPathElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGMPathElement::SVGMPathElement(Document& document)
+    : SVGElement(SVGNames::mpathTag, document, makeUniqueRef<PropertyRegistry>(*this))
     , SVGURIReference(this)
 {
-    ASSERT(hasTagName(SVGNames::mpathTag));
 }
 
-Ref<SVGMPathElement> SVGMPathElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGMPathElement> SVGMPathElement::create(Document& document)
 {
-    return adoptRef(*new SVGMPathElement(tagName, document));
+    return adoptRef(*new SVGMPathElement(document));
 }
 
 SVGMPathElement::~SVGMPathElement()

@@ -45,20 +45,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLTableRowElement);
 
 using namespace HTMLNames;
 
-inline HTMLTableRowElement::HTMLTableRowElement(const QualifiedName& tagName, Document& document)
-    : HTMLTablePartElement(tagName, document)
+inline HTMLTableRowElement::HTMLTableRowElement(Document& document)
+    : HTMLTablePartElement(trTag, document)
 {
-    ASSERT(hasTagName(trTag));
 }
 
 Ref<HTMLTableRowElement> HTMLTableRowElement::create(Document& document)
 {
-    return adoptRef(*new HTMLTableRowElement(trTag, document));
-}
-
-Ref<HTMLTableRowElement> HTMLTableRowElement::create(const QualifiedName& tagName, Document& document)
-{
-    return adoptRef(*new HTMLTableRowElement(tagName, document));
+    return adoptRef(*new HTMLTableRowElement(document));
 }
 
 static inline RefPtr<HTMLTableElement> findTable(const HTMLTableRowElement& row)

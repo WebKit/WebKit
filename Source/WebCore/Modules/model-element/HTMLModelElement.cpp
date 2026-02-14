@@ -103,8 +103,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLModelElement);
 
 static const Seconds reloadModelDelay { 1_s };
 
-HTMLModelElement::HTMLModelElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document, { TypeFlag::HasCustomStyleResolveCallbacks, TypeFlag::HasDidMoveToNewDocument })
+HTMLModelElement::HTMLModelElement(Document& document)
+    : HTMLElement(modelTag, document, { TypeFlag::HasCustomStyleResolveCallbacks, TypeFlag::HasDidMoveToNewDocument })
     , ActiveDOMObject(document)
     , m_readyPromise { makeUniqueRef<ReadyPromise>(*this, &HTMLModelElement::readyPromiseResolve) }
 #if ENABLE(MODEL_ELEMENT_ENTITY_TRANSFORM)
@@ -141,9 +141,9 @@ HTMLModelElement::~HTMLModelElement()
     deleteModelPlayer();
 }
 
-Ref<HTMLModelElement> HTMLModelElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLModelElement> HTMLModelElement::create(Document& document)
 {
-    auto model = adoptRef(*new HTMLModelElement(tagName, document));
+    Ref model = adoptRef(*new HTMLModelElement(document));
     model->suspendIfNeeded();
     return model;
 }

@@ -36,11 +36,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFETurbulenceElement);
 
-inline SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGFETurbulenceElement::SVGFETurbulenceElement(Document& document)
+    : SVGFilterPrimitiveStandardAttributes(SVGNames::feTurbulenceTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::feTurbulenceTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -52,9 +50,9 @@ inline SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagNa
     }
 }
 
-Ref<SVGFETurbulenceElement> SVGFETurbulenceElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFETurbulenceElement> SVGFETurbulenceElement::create(Document& document)
 {
-    return adoptRef(*new SVGFETurbulenceElement(tagName, document));
+    return adoptRef(*new SVGFETurbulenceElement(document));
 }
 
 void SVGFETurbulenceElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

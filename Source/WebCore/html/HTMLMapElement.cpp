@@ -40,20 +40,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLMapElement);
 
 using namespace HTMLNames;
 
-HTMLMapElement::HTMLMapElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+HTMLMapElement::HTMLMapElement(Document& document)
+    : HTMLElement(mapTag, document)
 {
-    ASSERT(hasTagName(mapTag));
 }
 
 Ref<HTMLMapElement> HTMLMapElement::create(Document& document)
 {
-    return adoptRef(*new HTMLMapElement(mapTag, document));
-}
-
-Ref<HTMLMapElement> HTMLMapElement::create(const QualifiedName& tagName, Document& document)
-{
-    return adoptRef(*new HTMLMapElement(tagName, document));
+    return adoptRef(*new HTMLMapElement(document));
 }
 
 HTMLMapElement::~HTMLMapElement() = default;

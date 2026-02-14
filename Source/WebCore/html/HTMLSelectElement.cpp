@@ -125,8 +125,8 @@ const AtomString& SelectSlotAssignment::slotNameForHostChild(const Node& child) 
 // https://html.spec.whatwg.org/#dom-htmloptionscollection-length
 static constexpr unsigned maxSelectItems = 100000;
 
-HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
-    : HTMLFormControlElement(tagName, document, form)
+HTMLSelectElement::HTMLSelectElement(Document& document, HTMLFormElement* form)
+    : HTMLFormControlElement(selectTag, document, form)
     , m_typeAhead(this)
     , m_size(0)
     , m_lastOnChangeIndex(-1)
@@ -138,20 +138,13 @@ HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document& doc
     , m_allowsNonContiguousSelection(false)
     , m_shouldRecalcListItems(false)
 {
-    ASSERT(hasTagName(selectTag));
 }
 
-Ref<HTMLSelectElement> HTMLSelectElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+Ref<HTMLSelectElement> HTMLSelectElement::create(Document& document, HTMLFormElement* form)
 {
-    ASSERT(tagName.matches(selectTag));
-    Ref select = adoptRef(*new HTMLSelectElement(tagName, document, form));
+    Ref select = adoptRef(*new HTMLSelectElement(document, form));
     select->addShadowRoot(ShadowRoot::create(document, makeUnique<SelectSlotAssignment>()));
     return select;
-}
-
-Ref<HTMLSelectElement> HTMLSelectElement::create(Document& document)
-{
-    return HTMLSelectElement::create(selectTag, document, nullptr);
 }
 
 HTMLSelectElement::~HTMLSelectElement() = default;
@@ -173,7 +166,7 @@ void HTMLSelectElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 
     ScriptDisallowedScope::EventAllowedScope rootScope { root };
 
-    Ref buttonSlot = HTMLSlotElement::create(slotTag, document);
+    Ref buttonSlot = HTMLSlotElement::create(document);
     ScriptDisallowedScope::EventAllowedScope buttonSlotScope { buttonSlot };
     buttonSlot->setAttributeWithoutSynchronization(inertAttr, emptyAtom());
     buttonSlot->setAttributeWithoutSynchronization(nameAttr, buttonSlotName());
@@ -182,7 +175,7 @@ void HTMLSelectElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     m_buttonSlot = WTF::move(buttonSlot);
 
     if (!document->settings().htmlEnhancedSelectEnabled()) {
-        root.appendChild(HTMLSlotElement::create(slotTag, document));
+        root.appendChild(HTMLSlotElement::create(document));
         return;
     }
 
@@ -191,7 +184,7 @@ void HTMLSelectElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     popover->setAttributeWithoutSynchronization(popoverAttr, autoAtom());
     popover->setUserAgentPart(pickerSelectAtom());
 
-    popover->appendChild(HTMLSlotElement::create(slotTag, document));
+    popover->appendChild(HTMLSlotElement::create(document));
 
     root.appendChild(popover);
     m_popover = WTF::move(popover);

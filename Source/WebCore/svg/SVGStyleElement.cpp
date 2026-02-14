@@ -37,12 +37,11 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGStyleElement);
 
-inline SVGStyleElement::SVGStyleElement(const QualifiedName& tagName, Document& document, bool createdByParser)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGStyleElement::SVGStyleElement(Document& document, bool createdByParser)
+    : SVGElement(SVGNames::styleTag, document, makeUniqueRef<PropertyRegistry>(*this))
     , m_styleSheetOwner(document, createdByParser)
     , m_loadEventTimer(*this, &SVGElement::loadEventTimerFired)
 {
-    ASSERT(hasTagName(SVGNames::styleTag));
 }
 
 SVGStyleElement::~SVGStyleElement()
@@ -50,9 +49,9 @@ SVGStyleElement::~SVGStyleElement()
     m_styleSheetOwner.clearDocumentData(*this);
 }
 
-Ref<SVGStyleElement> SVGStyleElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
+Ref<SVGStyleElement> SVGStyleElement::create(Document& document, bool createdByParser)
 {
-    return adoptRef(*new SVGStyleElement(tagName, document, createdByParser));
+    return adoptRef(*new SVGStyleElement(document, createdByParser));
 }
 
 bool SVGStyleElement::disabled() const

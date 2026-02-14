@@ -28,12 +28,12 @@ class SVGAltGlyphItemElement final : public SVGElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGAltGlyphItemElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGAltGlyphItemElement);
 public:
-    static Ref<SVGAltGlyphItemElement> create(const QualifiedName&, Document&);
+    static Ref<SVGAltGlyphItemElement> create(Document&);
 
     bool hasValidGlyphElements(Vector<String>& glyphNames) const;
 
 private:
-    SVGAltGlyphItemElement(const QualifiedName&, Document&);
+    explicit SVGAltGlyphItemElement(Document&);
 
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 };

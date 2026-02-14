@@ -52,7 +52,7 @@ class SVGFEBlendElement final : public SVGFilterPrimitiveStandardAttributes {
     WTF_MAKE_TZONE_ALLOCATED(SVGFEBlendElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEBlendElement);
 public:
-    static Ref<SVGFEBlendElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFEBlendElement> create(Document&);
 
     String in1() const { return m_in1->currentValue(); }
     String in2() const { return m_in2->currentValue(); }
@@ -65,7 +65,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEBlendElement, SVGFilterPrimitiveStandardAttributes>;
 
 private:
-    SVGFEBlendElement(const QualifiedName&, Document&);
+    explicit SVGFEBlendElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

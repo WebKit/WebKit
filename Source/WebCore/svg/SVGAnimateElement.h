@@ -35,10 +35,10 @@ class SVGAnimateElement final : public SVGAnimateElementBase {
     WTF_MAKE_TZONE_ALLOCATED(SVGAnimateElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGAnimateElement);
 public:
-    static Ref<SVGAnimateElement> create(const QualifiedName&, Document&);
+    static Ref<SVGAnimateElement> create(Document&);
 
 private:
-    SVGAnimateElement(const QualifiedName&, Document&);
+    explicit SVGAnimateElement(Document&);
 };
 
 } // namespace WebCore

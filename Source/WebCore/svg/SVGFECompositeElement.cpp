@@ -32,11 +32,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFECompositeElement);
 
-inline SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGFECompositeElement::SVGFECompositeElement(Document& document)
+    : SVGFilterPrimitiveStandardAttributes(SVGNames::feCompositeTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::feCompositeTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -50,9 +48,9 @@ inline SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName
     }
 }
 
-Ref<SVGFECompositeElement> SVGFECompositeElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFECompositeElement> SVGFECompositeElement::create(Document& document)
 {
-    return adoptRef(*new SVGFECompositeElement(tagName, document));
+    return adoptRef(*new SVGFECompositeElement(document));
 }
 
 void SVGFECompositeElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

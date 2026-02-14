@@ -67,12 +67,11 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGSVGElement);
 
-inline SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document& document)
-    : SVGGraphicsElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this), TypeFlag::HasDidMoveToNewDocument)
+inline SVGSVGElement::SVGSVGElement(Document& document)
+    : SVGGraphicsElement(SVGNames::svgTag, document, makeUniqueRef<PropertyRegistry>(*this), TypeFlag::HasDidMoveToNewDocument)
     , SVGFitToViewBox(this)
     , m_timeContainer(SMILTimeContainer::create(*this))
 {
-    ASSERT(hasTagName(SVGNames::svgTag));
     document.registerForDocumentSuspensionCallbacks(*this);
 
     static bool didRegistration = false;
@@ -85,14 +84,9 @@ inline SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document& docu
     }
 }
 
-Ref<SVGSVGElement> SVGSVGElement::create(const QualifiedName& tagName, Document& document)
-{
-    return adoptRef(*new SVGSVGElement(tagName, document));
-}
-
 Ref<SVGSVGElement> SVGSVGElement::create(Document& document)
 {
-    return create(SVGNames::svgTag, document);
+    return adoptRef(*new SVGSVGElement(document));
 }
 
 SVGSVGElement::~SVGSVGElement()

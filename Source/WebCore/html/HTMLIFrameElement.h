@@ -38,7 +38,7 @@ class HTMLIFrameElement final : public HTMLFrameElementBase {
     WTF_MAKE_TZONE_ALLOCATED(HTMLIFrameElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLIFrameElement);
 public:
-    static Ref<HTMLIFrameElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLIFrameElement> create(Document&);
     ~HTMLIFrameElement();
 
     DOMTokenList& sandbox();
@@ -67,7 +67,7 @@ public:
 #endif
 
 private:
-    HTMLIFrameElement(const QualifiedName&, Document&);
+    explicit HTMLIFrameElement(Document&);
 
     int defaultTabIndex() const final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;

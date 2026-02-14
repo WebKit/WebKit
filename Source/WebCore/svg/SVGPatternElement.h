@@ -37,7 +37,7 @@ class SVGPatternElement final : public SVGElement, public SVGFitToViewBox, publi
     WTF_MAKE_TZONE_ALLOCATED(SVGPatternElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGPatternElement);
 public:
-    static Ref<SVGPatternElement> create(const QualifiedName&, Document&);
+    static Ref<SVGPatternElement> create(Document&);
 
     void collectPatternAttributes(PatternAttributes&) const;
 
@@ -60,7 +60,7 @@ public:
     SVGAnimatedTransformList& patternTransformAnimated() { return m_patternTransform; }
 
 private:
-    SVGPatternElement(const QualifiedName&, Document&);
+    explicit SVGPatternElement(Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGPatternElement, SVGElement, SVGFitToViewBox, SVGTests, SVGURIReference>;
 

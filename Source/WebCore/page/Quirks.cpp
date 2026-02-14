@@ -1034,7 +1034,7 @@ static Ref<Element> createFacebookFlagElement(Document& document, ASCIILiteral v
 {
     Ref text = Text::create(document, makeString("{\"require\":[[\"HasteSupportData\",\"handle\",null,[{\"gkxData\":{\""_s, value, "\":{\"result\":true,\"hash\":null}}}]]]}"_s));
 
-    Ref script = HTMLScriptElement::create(HTMLNames::scriptTag, document, false);
+    Ref script = HTMLScriptElement::create(document);
     Ref { script->dataset() }->setNamedItem("contentLen"_s, AtomString { makeString(text->length()) });
     script->appendChild(text);
 

@@ -29,10 +29,10 @@ class SVGMetadataElement final : public SVGElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGMetadataElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGMetadataElement);
 public:
-    static Ref<SVGMetadataElement> create(const QualifiedName&, Document&);
+    static Ref<SVGMetadataElement> create(Document&);
 
 private:
-    SVGMetadataElement(const QualifiedName&, Document&);
+    explicit SVGMetadataElement(Document&);
 
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
     bool supportsFocus() const final { return false; }

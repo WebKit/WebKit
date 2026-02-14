@@ -41,14 +41,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MathMLMathElement);
 
 using namespace MathMLNames;
 
-inline MathMLMathElement::MathMLMathElement(const QualifiedName& tagName, Document& document)
-    : MathMLRowElement(tagName, document, TypeFlag::HasCustomStyleResolveCallbacks)
+inline MathMLMathElement::MathMLMathElement(Document& document)
+    : MathMLRowElement(mathTag, document, TypeFlag::HasCustomStyleResolveCallbacks)
 {
 }
 
-Ref<MathMLMathElement> MathMLMathElement::create(const QualifiedName& tagName, Document& document)
+Ref<MathMLMathElement> MathMLMathElement::create(Document& document)
 {
-    return adoptRef(*new MathMLMathElement(tagName, document));
+    return adoptRef(*new MathMLMathElement(document));
 }
 
 RenderPtr<RenderElement> MathMLMathElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

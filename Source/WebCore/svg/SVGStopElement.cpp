@@ -36,12 +36,10 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGStopElement);
 
-inline SVGStopElement::SVGStopElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGStopElement::SVGStopElement(Document& document)
+    : SVGElement(SVGNames::stopTag, document, makeUniqueRef<PropertyRegistry>(*this))
     , m_offset { SVGAnimatedNumber::create(this, 0) }
 {
-    ASSERT(hasTagName(SVGNames::stopTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -49,9 +47,9 @@ inline SVGStopElement::SVGStopElement(const QualifiedName& tagName, Document& do
     }
 }
 
-Ref<SVGStopElement> SVGStopElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGStopElement> SVGStopElement::create(Document& document)
 {
-    return adoptRef(*new SVGStopElement(tagName, document));
+    return adoptRef(*new SVGStopElement(document));
 }
 
 void SVGStopElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

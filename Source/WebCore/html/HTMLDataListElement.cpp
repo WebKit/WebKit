@@ -45,8 +45,8 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLDataListElement);
 
-inline HTMLDataListElement::HTMLDataListElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document, TypeFlag::HasDidMoveToNewDocument)
+inline HTMLDataListElement::HTMLDataListElement(Document& document)
+    : HTMLElement(HTMLNames::datalistTag, document, TypeFlag::HasDidMoveToNewDocument)
 {
     document.incrementDataListElementCount();
 }
@@ -56,9 +56,9 @@ HTMLDataListElement::~HTMLDataListElement()
     document().decrementDataListElementCount();
 }
 
-Ref<HTMLDataListElement> HTMLDataListElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLDataListElement> HTMLDataListElement::create(Document& document)
 {
-    return adoptRef(*new HTMLDataListElement(tagName, document));
+    return adoptRef(*new HTMLDataListElement(document));
 }
 
 void HTMLDataListElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)

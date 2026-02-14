@@ -152,17 +152,16 @@ static CString compactStackTrace(StackTrace& stackTrace)
 }
 #endif // ATTACHMENT_LOG_DOCUMENT_TRAFFIC
 
-HTMLAttachmentElement::HTMLAttachmentElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+HTMLAttachmentElement::HTMLAttachmentElement(Document& document)
+    : HTMLElement(attachmentTag, document)
 {
-    ASSERT(hasTagName(attachmentTag));
 }
 
 HTMLAttachmentElement::~HTMLAttachmentElement() = default;
 
-Ref<HTMLAttachmentElement> HTMLAttachmentElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLAttachmentElement> HTMLAttachmentElement::create(Document& document)
 {
-    Ref attachment = adoptRef(*new HTMLAttachmentElement(tagName, document));
+    Ref attachment = adoptRef(*new HTMLAttachmentElement(document));
     if (document.settings().attachmentWideLayoutEnabled()) {
         ASSERT(attachment->m_implementation == Implementation::NarrowLayout);
         ASSERT(!attachment->renderer()); // Switch to wide-layout style *must* be done before renderer is created!
@@ -328,7 +327,7 @@ void HTMLAttachmentElement::ensureWideLayoutShadowTree(ShadowRoot& root)
         return;
 
     Ref document = this->document();
-    Ref style = HTMLStyleElement::create(HTMLNames::styleTag, document, false);
+    Ref style = HTMLStyleElement::create(document, false);
     style->setTextContent(shadowUserAgentStyleSheetText());
     root.appendChild(WTF::move(style));
 
@@ -534,7 +533,7 @@ String HTMLAttachmentElement::getAttachmentIdentifier(HTMLElement& element)
         return attachment->uniqueIdentifier();
 
     Ref document = element.document();
-    auto attachment = create(HTMLNames::attachmentTag, document);
+    Ref attachment = create(document);
     auto identifier = attachment->ensureUniqueIdentifier();
 
     document->registerAttachmentIdentifier(identifier, *attachmentAssociatedElement);

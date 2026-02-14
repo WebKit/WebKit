@@ -93,20 +93,14 @@ static FormRelAttributes parseFormRelAttributes(StringView string)
     return attributes;
 }
 
-HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document, TypeFlag::HasDidMoveToNewDocument)
+HTMLFormElement::HTMLFormElement(Document& document)
+    : HTMLElement(formTag, document, TypeFlag::HasDidMoveToNewDocument)
 {
-    ASSERT(hasTagName(formTag));
 }
 
 Ref<HTMLFormElement> HTMLFormElement::create(Document& document)
 {
-    return adoptRef(*new HTMLFormElement(formTag, document));
-}
-
-Ref<HTMLFormElement> HTMLFormElement::create(const QualifiedName& tagName, Document& document)
-{
-    return adoptRef(*new HTMLFormElement(tagName, document));
+    return adoptRef(*new HTMLFormElement(document));
 }
 
 HTMLFormElement::~HTMLFormElement()

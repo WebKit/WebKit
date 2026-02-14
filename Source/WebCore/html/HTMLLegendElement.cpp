@@ -36,15 +36,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLLegendElement);
 
-inline HTMLLegendElement::HTMLLegendElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+inline HTMLLegendElement::HTMLLegendElement(Document& document)
+    : HTMLElement(HTMLNames::legendTag, document)
 {
-    ASSERT(hasTagName(HTMLNames::legendTag));
 }
 
-Ref<HTMLLegendElement> HTMLLegendElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLLegendElement> HTMLLegendElement::create(Document& document)
 {
-    return adoptRef(*new HTMLLegendElement(tagName, document));
+    return adoptRef(*new HTMLLegendElement(document));
 }
 
 HTMLFormElement* HTMLLegendElement::form() const

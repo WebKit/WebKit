@@ -34,7 +34,7 @@ class SVGViewElement final : public SVGElement, public SVGFitToViewBox, public S
     WTF_MAKE_TZONE_ALLOCATED(SVGViewElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGViewElement);
 public:
-    static Ref<SVGViewElement> create(const QualifiedName&, Document&);
+    static Ref<SVGViewElement> create(Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGViewElement, SVGElement, SVGFitToViewBox>;
 
@@ -43,7 +43,7 @@ public:
     void resetTargetElement() { m_targetElement = nullptr; }
 
 private:
-    SVGViewElement(const QualifiedName&, Document&);
+    explicit SVGViewElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) override;

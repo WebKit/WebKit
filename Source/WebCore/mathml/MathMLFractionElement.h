@@ -35,7 +35,7 @@ class MathMLFractionElement final : public MathMLRowElement {
     WTF_MAKE_TZONE_ALLOCATED(MathMLFractionElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MathMLFractionElement);
 public:
-    static Ref<MathMLFractionElement> create(const QualifiedName& tagName, Document&);
+    static Ref<MathMLFractionElement> create(Document&);
     const Length& lineThickness();
     enum class FractionAlignment : uint8_t {
         Center,
@@ -46,7 +46,7 @@ public:
     FractionAlignment denominatorAlignment();
 
 private:
-    MathMLFractionElement(const QualifiedName& tagName, Document&);
+    explicit MathMLFractionElement(Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     bool acceptsMathVariantAttribute() final { return false; };
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;

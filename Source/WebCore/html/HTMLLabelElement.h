@@ -32,7 +32,6 @@ class HTMLLabelElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLLabelElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLLabelElement);
 public:
-    static Ref<HTMLLabelElement> create(const QualifiedName&, Document&);
     static Ref<HTMLLabelElement> create(Document&);
 
     WEBCORE_EXPORT RefPtr<HTMLElement> control() const;
@@ -44,7 +43,7 @@ public:
     void updateLabel(TreeScope&, const AtomString& oldForAttributeValue, const AtomString& newForAttributeValue);
 
 private:
-    HTMLLabelElement(const QualifiedName&, Document&);
+    HTMLLabelElement(Document&);
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode& parentOfInsertedTree) final;
     void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree) final;

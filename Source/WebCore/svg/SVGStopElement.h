@@ -31,7 +31,7 @@ class SVGStopElement final : public SVGElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGStopElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGStopElement);
 public:
-    static Ref<SVGStopElement> create(const QualifiedName&, Document&);
+    static Ref<SVGStopElement> create(Document&);
 
     Color stopColorIncludingOpacity() const;
 
@@ -41,7 +41,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGStopElement, SVGElement>;
 
 private:
-    SVGStopElement(const QualifiedName&, Document&);
+    explicit SVGStopElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;

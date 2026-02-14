@@ -33,16 +33,15 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGViewElement);
 
-inline SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGViewElement::SVGViewElement(Document& document)
+    : SVGElement(SVGNames::viewTag, document, makeUniqueRef<PropertyRegistry>(*this))
     , SVGFitToViewBox(this)
 {
-    ASSERT(hasTagName(SVGNames::viewTag));
 }
 
-Ref<SVGViewElement> SVGViewElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGViewElement> SVGViewElement::create(Document& document)
 {
-    return adoptRef(*new SVGViewElement(tagName, document));
+    return adoptRef(*new SVGViewElement(document));
 }
 
 void SVGViewElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

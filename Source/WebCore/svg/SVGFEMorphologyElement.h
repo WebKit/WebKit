@@ -60,7 +60,7 @@ class SVGFEMorphologyElement final : public SVGFilterPrimitiveStandardAttributes
     WTF_MAKE_TZONE_ALLOCATED(SVGFEMorphologyElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEMorphologyElement);
 public:
-    static Ref<SVGFEMorphologyElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFEMorphologyElement> create(Document&);
 
     String in1() const { return m_in1->currentValue(); }
     MorphologyOperatorType svgOperator() const { return m_svgOperator->currentValue<MorphologyOperatorType>(); }
@@ -75,7 +75,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEMorphologyElement, SVGFilterPrimitiveStandardAttributes>;
 
 private:
-    SVGFEMorphologyElement(const QualifiedName&, Document&);
+    explicit SVGFEMorphologyElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

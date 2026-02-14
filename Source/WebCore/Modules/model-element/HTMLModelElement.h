@@ -76,7 +76,7 @@ class HTMLModelElement final : public HTMLElement, private CachedRawResourceClie
 public:
     USING_CAN_MAKE_WEAKPTR(HTMLElement);
 
-    static Ref<HTMLModelElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLModelElement> create(Document&);
     virtual ~HTMLModelElement();
 
     // ActiveDOMObject.
@@ -203,7 +203,7 @@ public:
     WEBCORE_EXPORT String modelElementStateForTesting() const;
 
 private:
-    HTMLModelElement(const QualifiedName&, Document&);
+    HTMLModelElement(Document&);
 
     URL selectModelSource() const;
     void setSourceURL(const URL&);

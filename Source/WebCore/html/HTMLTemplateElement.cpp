@@ -53,8 +53,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLTemplateElement);
 
 using namespace HTMLNames;
 
-inline HTMLTemplateElement::HTMLTemplateElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document, TypeFlag::HasDidMoveToNewDocument)
+inline HTMLTemplateElement::HTMLTemplateElement(Document& document)
+    : HTMLElement(templateTag, document, TypeFlag::HasDidMoveToNewDocument)
 {
 }
 
@@ -64,9 +64,9 @@ HTMLTemplateElement::~HTMLTemplateElement()
         m_content->clearHost();
 }
 
-Ref<HTMLTemplateElement> HTMLTemplateElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLTemplateElement> HTMLTemplateElement::create(Document& document)
 {
-    return adoptRef(*new HTMLTemplateElement(tagName, document));
+    return adoptRef(*new HTMLTemplateElement(document));
 }
 
 DocumentFragment* HTMLTemplateElement::contentIfAvailable() const

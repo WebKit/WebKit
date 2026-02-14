@@ -58,8 +58,7 @@ public:
     void ref() const final { HTMLFormControlElement::ref(); }
     void deref() const final { HTMLFormControlElement::deref(); }
 
-    static Ref<HTMLSelectElement> create(const QualifiedName&, Document&, HTMLFormElement*);
-    static Ref<HTMLSelectElement> create(Document&);
+    static Ref<HTMLSelectElement> create(Document&, HTMLFormElement* = nullptr);
     ~HTMLSelectElement();
 
     enum class ExcludeOptGroup : bool { No, Yes };
@@ -189,7 +188,7 @@ public:
     void hidePickerPopoverElement();
 
 protected:
-    HTMLSelectElement(const QualifiedName&, Document&, HTMLFormElement*);
+    HTMLSelectElement(Document&, HTMLFormElement*);
 
 private:
     const AtomString& formControlType() const final;

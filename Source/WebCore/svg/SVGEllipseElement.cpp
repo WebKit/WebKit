@@ -35,11 +35,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGEllipseElement);
 
-inline SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Document& document)
-    : SVGGeometryElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGEllipseElement::SVGEllipseElement(Document& document)
+    : SVGGeometryElement(SVGNames::ellipseTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::ellipseTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -48,11 +46,11 @@ inline SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Docume
         PropertyRegistry::registerProperty<SVGNames::rxAttr, &SVGEllipseElement::m_rx>();
         PropertyRegistry::registerProperty<SVGNames::ryAttr, &SVGEllipseElement::m_ry>();
     }
-}    
+}
 
-Ref<SVGEllipseElement> SVGEllipseElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGEllipseElement> SVGEllipseElement::create(Document& document)
 {
-    return adoptRef(*new SVGEllipseElement(tagName, document));
+    return adoptRef(*new SVGEllipseElement(document));
 }
 
 void SVGEllipseElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

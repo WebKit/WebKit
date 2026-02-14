@@ -47,7 +47,7 @@ class HTMLAttachmentElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLAttachmentElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLAttachmentElement);
 public:
-    static Ref<HTMLAttachmentElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLAttachmentElement> create(Document&);
     WEBCORE_EXPORT static String getAttachmentIdentifier(HTMLElement&);
     static URL archiveResourceURL(const String&);
 
@@ -110,7 +110,7 @@ public:
 private:
     friend class AttachmentSaveEventListener;
 
-    HTMLAttachmentElement(const QualifiedName&, Document&);
+    explicit HTMLAttachmentElement(Document&);
     virtual ~HTMLAttachmentElement();
 
     void didAddUserAgentShadowRoot(ShadowRoot&) final;

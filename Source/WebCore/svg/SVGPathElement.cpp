@@ -96,11 +96,9 @@ void PathSegListCache::clear()
     m_sizeInBytes = 0;
 }
 
-inline SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document& document)
-    : SVGGeometryElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGPathElement::SVGPathElement(Document& document)
+    : SVGGeometryElement(SVGNames::pathTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::pathTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -108,9 +106,9 @@ inline SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document& do
     }
 }
 
-Ref<SVGPathElement> SVGPathElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGPathElement> SVGPathElement::create(Document& document)
 {
-    return adoptRef(*new SVGPathElement(tagName, document));
+    return adoptRef(*new SVGPathElement(document));
 }
 
 void SVGPathElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

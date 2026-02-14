@@ -39,7 +39,6 @@ class HTMLTableElement final : public HTMLElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLTableElement);
 public:
     static Ref<HTMLTableElement> create(Document&);
-    static Ref<HTMLTableElement> create(const QualifiedName&, Document&);
     ~HTMLTableElement();
 
     WEBCORE_EXPORT RefPtr<HTMLTableCaptionElement> caption() const;
@@ -71,7 +70,7 @@ public:
     const MutableStyleProperties* additionalGroupStyle(bool rows) const;
 
 private:
-    HTMLTableElement(const QualifiedName&, Document&);
+    explicit HTMLTableElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;

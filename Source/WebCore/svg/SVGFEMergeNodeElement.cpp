@@ -32,11 +32,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEMergeNodeElement);
 
-inline SVGFEMergeNodeElement::SVGFEMergeNodeElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGFEMergeNodeElement::SVGFEMergeNodeElement(Document& document)
+    : SVGElement(SVGNames::feMergeNodeTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::feMergeNodeTag));
-    
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -44,9 +42,9 @@ inline SVGFEMergeNodeElement::SVGFEMergeNodeElement(const QualifiedName& tagName
     }
 }
 
-Ref<SVGFEMergeNodeElement> SVGFEMergeNodeElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEMergeNodeElement> SVGFEMergeNodeElement::create(Document& document)
 {
-    return adoptRef(*new SVGFEMergeNodeElement(tagName, document));
+    return adoptRef(*new SVGFEMergeNodeElement(document));
 }
 
 void SVGFEMergeNodeElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

@@ -26,21 +26,21 @@
 #include "config.h"
 #include "SVGAnimateElement.h"
 
+#include "SVGNames.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGAnimateElement);
 
-SVGAnimateElement::SVGAnimateElement(const QualifiedName& tagName, Document& document)
-    : SVGAnimateElementBase(tagName, document)
+SVGAnimateElement::SVGAnimateElement(Document& document)
+    : SVGAnimateElementBase(SVGNames::animateTag, document)
 {
-    ASSERT(hasTagName(SVGNames::animateTag));
 }
 
-Ref<SVGAnimateElement> SVGAnimateElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGAnimateElement> SVGAnimateElement::create(Document& document)
 {
-    return adoptRef(*new SVGAnimateElement(tagName, document));
+    return adoptRef(*new SVGAnimateElement(document));
 }
 
 } // namespace WebCore

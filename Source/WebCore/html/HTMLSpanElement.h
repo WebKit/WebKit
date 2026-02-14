@@ -34,10 +34,9 @@ class HTMLSpanElement final : public HTMLElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLSpanElement);
 public:
     static Ref<HTMLSpanElement> create(Document&);
-    static Ref<HTMLSpanElement> create(const QualifiedName&, Document&);
 
 private:
-    HTMLSpanElement(const QualifiedName&, Document&);
+    explicit HTMLSpanElement(Document&);
 };
 
 } // namespace WebCore

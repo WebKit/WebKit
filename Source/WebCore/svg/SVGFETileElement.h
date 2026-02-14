@@ -30,7 +30,7 @@ class SVGFETileElement final : public SVGFilterPrimitiveStandardAttributes {
     WTF_MAKE_TZONE_ALLOCATED(SVGFETileElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFETileElement);
 public:
-    static Ref<SVGFETileElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFETileElement> create(Document&);
 
     String in1() const { return m_in1->currentValue(); }
     SVGAnimatedString& in1Animated() { return m_in1; }
@@ -38,7 +38,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFETileElement, SVGFilterPrimitiveStandardAttributes>;
 
 private:
-    SVGFETileElement(const QualifiedName&, Document&);
+    explicit SVGFETileElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

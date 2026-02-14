@@ -39,22 +39,21 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLAudioElement);
 
 using namespace HTMLNames;
 
-inline HTMLAudioElement::HTMLAudioElement(const QualifiedName& tagName, Document& document, bool createdByParser)
-    : HTMLMediaElement(tagName, document, createdByParser)
+inline HTMLAudioElement::HTMLAudioElement(Document& document, bool createdByParser)
+    : HTMLMediaElement(audioTag, document, createdByParser)
 {
-    ASSERT(hasTagName(audioTag));
 }
 
-Ref<HTMLAudioElement> HTMLAudioElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
+Ref<HTMLAudioElement> HTMLAudioElement::create(Document& document, bool createdByParser)
 {
-    Ref element = adoptRef(*new HTMLAudioElement(tagName, document, createdByParser));
+    Ref element = adoptRef(*new HTMLAudioElement(document, createdByParser));
     element->suspendIfNeeded();
     return element;
 }
 
 Ref<HTMLAudioElement> HTMLAudioElement::createForLegacyFactoryFunction(Document& document, const AtomString& src)
 {
-    Ref element = create(audioTag, document, false);
+    Ref element = create(document, false);
     element->setAttributeWithoutSynchronization(preloadAttr, autoAtom());
     element->setAttributeWithoutSynchronization(srcAttr, src);
     return element;

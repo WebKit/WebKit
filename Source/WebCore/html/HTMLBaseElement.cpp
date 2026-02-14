@@ -35,15 +35,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLBaseElement);
 
 using namespace HTMLNames;
 
-inline HTMLBaseElement::HTMLBaseElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+inline HTMLBaseElement::HTMLBaseElement(Document& document)
+    : HTMLElement(baseTag, document)
 {
-    ASSERT(hasTagName(baseTag));
 }
 
-Ref<HTMLBaseElement> HTMLBaseElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLBaseElement> HTMLBaseElement::create(Document& document)
 {
-    return adoptRef(*new HTMLBaseElement(tagName, document));
+    return adoptRef(*new HTMLBaseElement(document));
 }
 
 void HTMLBaseElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

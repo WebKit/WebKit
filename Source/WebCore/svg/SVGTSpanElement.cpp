@@ -32,15 +32,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGTSpanElement);
 
-inline SVGTSpanElement::SVGTSpanElement(const QualifiedName& tagName, Document& document)
-    : SVGTextPositioningElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGTSpanElement::SVGTSpanElement(Document& document)
+    : SVGTextPositioningElement(SVGNames::tspanTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::tspanTag));
 }
 
-Ref<SVGTSpanElement> SVGTSpanElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGTSpanElement> SVGTSpanElement::create(Document& document)
 {
-    return adoptRef(*new SVGTSpanElement(tagName, document));
+    return adoptRef(*new SVGTSpanElement(document));
 }
 
 RenderPtr<RenderElement> SVGTSpanElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

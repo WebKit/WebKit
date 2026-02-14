@@ -33,7 +33,7 @@ class SVGFEComponentTransferElement final : public SVGFilterPrimitiveStandardAtt
     WTF_MAKE_TZONE_ALLOCATED(SVGFEComponentTransferElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEComponentTransferElement);
 public:
-    static Ref<SVGFEComponentTransferElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFEComponentTransferElement> create(Document&);
 
     String in1() const { return m_in1->currentValue(); }
     SVGAnimatedString& in1Animated() { return m_in1; }
@@ -46,7 +46,7 @@ protected:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEComponentTransferElement, SVGFilterPrimitiveStandardAttributes>;
 
 private:
-    SVGFEComponentTransferElement(const QualifiedName&, Document&);
+    explicit SVGFEComponentTransferElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

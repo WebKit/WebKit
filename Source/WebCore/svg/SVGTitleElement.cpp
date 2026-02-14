@@ -31,15 +31,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGTitleElement);
 
-inline SVGTitleElement::SVGTitleElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGTitleElement::SVGTitleElement(Document& document)
+    : SVGElement(SVGNames::titleTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::titleTag));
 }
 
-Ref<SVGTitleElement> SVGTitleElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGTitleElement> SVGTitleElement::create(Document& document)
 {
-    return adoptRef(*new SVGTitleElement(tagName, document));
+    return adoptRef(*new SVGTitleElement(document));
 }
 
 Node::InsertedIntoAncestorResult SVGTitleElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

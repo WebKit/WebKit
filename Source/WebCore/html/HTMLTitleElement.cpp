@@ -44,15 +44,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLTitleElement);
 
 using namespace HTMLNames;
 
-inline HTMLTitleElement::HTMLTitleElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+inline HTMLTitleElement::HTMLTitleElement(Document& document)
+    : HTMLElement(titleTag, document)
 {
-    ASSERT(hasTagName(titleTag));
 }
 
-Ref<HTMLTitleElement> HTMLTitleElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLTitleElement> HTMLTitleElement::create(Document& document)
 {
-    return adoptRef(*new HTMLTitleElement(tagName, document));
+    return adoptRef(*new HTMLTitleElement(document));
 }
 
 Node::InsertedIntoAncestorResult HTMLTitleElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

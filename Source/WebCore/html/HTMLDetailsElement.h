@@ -32,7 +32,7 @@ class HTMLDetailsElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLDetailsElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLDetailsElement);
 public:
-    static Ref<HTMLDetailsElement> create(const QualifiedName& tagName, Document&);
+    static Ref<HTMLDetailsElement> create(Document&);
     ~HTMLDetailsElement();
 
     void toggleOpen();
@@ -44,7 +44,7 @@ public:
     bool isOpen() const;
 
 private:
-    HTMLDetailsElement(const QualifiedName&, Document&);
+    explicit HTMLDetailsElement(Document&);
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void didFinishInsertingNode() final;

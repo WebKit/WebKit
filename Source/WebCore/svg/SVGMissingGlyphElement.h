@@ -28,10 +28,10 @@ class SVGMissingGlyphElement final : public SVGElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGMissingGlyphElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGMissingGlyphElement);
 public:
-    static Ref<SVGMissingGlyphElement> create(const QualifiedName&, Document&);
+    static Ref<SVGMissingGlyphElement> create(Document&);
 
 private:
-    SVGMissingGlyphElement(const QualifiedName&, Document&);
+    explicit SVGMissingGlyphElement(Document&);
 
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 };

@@ -30,12 +30,12 @@ class HTMLBaseElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLBaseElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLBaseElement);
 public:
-    static Ref<HTMLBaseElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLBaseElement> create(Document&);
 
     WEBCORE_EXPORT String href() const;
 
 private:
-    HTMLBaseElement(const QualifiedName&, Document&);
+    explicit HTMLBaseElement(Document&);
 
     AtomString target() const final;
     bool isURLAttribute(const Attribute&) const final;

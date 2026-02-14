@@ -33,7 +33,7 @@ class HTMLFrameElement final : public HTMLFrameElementBase {
     WTF_MAKE_TZONE_ALLOCATED(HTMLFrameElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLFrameElement);
 public:
-    static Ref<HTMLFrameElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLFrameElement> create(Document&);
 
     bool hasFrameBorder() const { return m_frameBorder; }
     bool noResize() const;
@@ -41,7 +41,7 @@ public:
     RenderFrame* renderer() const;
 
 private:
-    HTMLFrameElement(const QualifiedName&, Document&);
+    explicit HTMLFrameElement(Document&);
 
     void didAttachRenderers() final;
     bool rendererIsNeeded(const RenderStyle&) final;

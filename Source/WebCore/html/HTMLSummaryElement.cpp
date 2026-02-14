@@ -42,15 +42,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLSummaryElement);
 
 using namespace HTMLNames;
 
-Ref<HTMLSummaryElement> HTMLSummaryElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLSummaryElement> HTMLSummaryElement::create(Document& document)
 {
-    return adoptRef(*new HTMLSummaryElement(tagName, document));
+    return adoptRef(*new HTMLSummaryElement(document));
 }
 
-HTMLSummaryElement::HTMLSummaryElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+HTMLSummaryElement::HTMLSummaryElement(Document& document)
+    : HTMLElement(summaryTag, document)
 {
-    ASSERT(hasTagName(summaryTag));
 }
 
 RefPtr<HTMLDetailsElement> HTMLSummaryElement::detailsElement() const

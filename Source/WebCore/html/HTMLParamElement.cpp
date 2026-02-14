@@ -32,15 +32,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLParamElement);
 
 using namespace HTMLNames;
 
-inline HTMLParamElement::HTMLParamElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+inline HTMLParamElement::HTMLParamElement(Document& document)
+    : HTMLElement(paramTag, document)
 {
-    ASSERT(hasTagName(paramTag));
 }
 
-Ref<HTMLParamElement> HTMLParamElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLParamElement> HTMLParamElement::create(Document& document)
 {
-    return adoptRef(*new HTMLParamElement(tagName, document));
+    return adoptRef(*new HTMLParamElement(document));
 }
 
 }

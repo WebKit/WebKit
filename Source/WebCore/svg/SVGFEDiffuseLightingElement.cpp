@@ -36,11 +36,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEDiffuseLightingElement);
 
-inline SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement(Document& document)
+    : SVGFilterPrimitiveStandardAttributes(SVGNames::feDiffuseLightingTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::feDiffuseLightingTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -51,9 +49,9 @@ inline SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement(const QualifiedN
     }
 }
 
-Ref<SVGFEDiffuseLightingElement> SVGFEDiffuseLightingElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEDiffuseLightingElement> SVGFEDiffuseLightingElement::create(Document& document)
 {
-    return adoptRef(*new SVGFEDiffuseLightingElement(tagName, document));
+    return adoptRef(*new SVGFEDiffuseLightingElement(document));
 }
 
 void SVGFEDiffuseLightingElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

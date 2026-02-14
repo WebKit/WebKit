@@ -32,7 +32,7 @@ class SVGFEGaussianBlurElement final : public SVGFilterPrimitiveStandardAttribut
     WTF_MAKE_TZONE_ALLOCATED(SVGFEGaussianBlurElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFEGaussianBlurElement);
 public:
-    static Ref<SVGFEGaussianBlurElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFEGaussianBlurElement> create(Document&);
 
     void setStdDeviation(float stdDeviationX, float stdDeviationY);
 
@@ -49,7 +49,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEGaussianBlurElement, SVGFilterPrimitiveStandardAttributes>;
 
 private:
-    SVGFEGaussianBlurElement(const QualifiedName&, Document&);
+    explicit SVGFEGaussianBlurElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

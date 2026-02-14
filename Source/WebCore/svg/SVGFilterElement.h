@@ -34,7 +34,7 @@ class SVGFilterElement final : public SVGElement, public SVGURIReference {
     WTF_MAKE_TZONE_ALLOCATED(SVGFilterElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFilterElement);
 public:
-    static Ref<SVGFilterElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFilterElement> create(Document&);
 
     SVGUnitTypes::SVGUnitType filterUnits() const { return m_filterUnits->currentValue<SVGUnitTypes::SVGUnitType>(); }
     SVGUnitTypes::SVGUnitType primitiveUnits() const { return m_primitiveUnits->currentValue<SVGUnitTypes::SVGUnitType>(); }
@@ -53,7 +53,7 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFilterElement, SVGElement, SVGURIReference>;
 
 private:
-    SVGFilterElement(const QualifiedName&, Document&);
+    explicit SVGFilterElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void svgAttributeChanged(const QualifiedName&) final;

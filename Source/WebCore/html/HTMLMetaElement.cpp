@@ -50,20 +50,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLMetaElement);
 
 using namespace HTMLNames;
 
-inline HTMLMetaElement::HTMLMetaElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+inline HTMLMetaElement::HTMLMetaElement(Document& document)
+    : HTMLElement(metaTag, document)
 {
-    ASSERT(hasTagName(metaTag));
 }
 
 Ref<HTMLMetaElement> HTMLMetaElement::create(Document& document)
 {
-    return adoptRef(*new HTMLMetaElement(metaTag, document));
-}
-
-Ref<HTMLMetaElement> HTMLMetaElement::create(const QualifiedName& tagName, Document& document)
-{
-    return adoptRef(*new HTMLMetaElement(tagName, document));
+    return adoptRef(*new HTMLMetaElement(document));
 }
 
 #if ENABLE(DARK_MODE_CSS)

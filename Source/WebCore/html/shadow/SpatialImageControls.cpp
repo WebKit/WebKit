@@ -154,7 +154,7 @@ void ensureSpatialControls(HTMLImageElement& imageElement)
         else if (imageHeight >= 490)
             paddingValue = 28;
 
-        Ref controlLayer = HTMLDivElement::create(document.get());
+        Ref controlLayer = HTMLDivElement::create(document);
         controlLayer->setIdAttribute(spatialImageControlsElementIdentifier());
         controlLayer->setAttributeWithoutSynchronization(HTMLNames::contenteditableAttr, falseAtom());
         controlLayer->setAttributeWithoutSynchronization(HTMLNames::dirAttr, isRTL ? "rtl"_s : "ltr"_s);
@@ -168,32 +168,32 @@ void ensureSpatialControls(HTMLImageElement& imageElement)
         shadowRoot->appendChild(controlLayer);
 
         static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(spatialImageControlsUserAgentStyleSheet));
-        Ref style = HTMLStyleElement::create(HTMLNames::styleTag, document.get(), false);
+        Ref style = HTMLStyleElement::create(document);
         style->setTextContent(String { shadowStyle });
         controlLayer->appendChild(WTF::move(style));
 
-        Ref button = HTMLButtonElement::create(HTMLNames::buttonTag, document.get(), nullptr);
+        Ref button = HTMLButtonElement::create(document);
         button->setIdAttribute(spatialImageControlsButtonIdentifier());
         button->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString(localizedMediaControlElementString("EnterFullscreenButton"_s)));
         controlLayer->appendChild(button);
 
-        Ref backgroundBlurLayer = HTMLDivElement::create(document.get());
+        Ref backgroundBlurLayer = HTMLDivElement::create(document);
         backgroundBlurLayer->setIdAttribute("background-tint"_s);
         controlLayer->appendChild(backgroundBlurLayer);
 
-        Ref blur = HTMLDivElement::create(document.get());
+        Ref blur = HTMLDivElement::create(document);
         blur->setIdAttribute("blur"_s);
         backgroundBlurLayer->appendChild(blur);
 
-        Ref tint = HTMLDivElement::create(document.get());
+        Ref tint = HTMLDivElement::create(document);
         tint->setIdAttribute("tint"_s);
         backgroundBlurLayer->appendChild(tint);
 
-        Ref bottomGradient = HTMLDivElement::create(document.get());
+        Ref bottomGradient = HTMLDivElement::create(document);
         bottomGradient->setIdAttribute("bottom-gradient"_s);
         controlLayer->appendChild(bottomGradient);
 
-        Ref bottomLabelText = HTMLDivElement::create(document.get());
+        Ref bottomLabelText = HTMLDivElement::create(document);
         bottomLabelText->setIdAttribute("label"_s);
 #if ENABLE(PANORAMA_IMAGE_CONTROLS)
         bottomLabelText->setTextContent(isSpatialImage ? imageControlsLabelSpatial() : imageControlsLabelPanorama());
@@ -202,7 +202,7 @@ void ensureSpatialControls(HTMLImageElement& imageElement)
 #endif
         controlLayer->appendChild(bottomLabelText);
 
-        Ref glyphSpan = HTMLSpanElement::create(document.get());
+        Ref glyphSpan = HTMLSpanElement::create(document);
 #if ENABLE(PANORAMA_IMAGE_CONTROLS)
         glyphSpan->setIdAttribute(isSpatialImage ? "spatial-glyph"_s : "pano-glyph"_s);
 #else

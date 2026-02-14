@@ -41,7 +41,7 @@ class HTMLTemplateElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLTemplateElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLTemplateElement);
 public:
-    static Ref<HTMLTemplateElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLTemplateElement> create(Document&);
     virtual ~HTMLTemplateElement();
 
     DocumentFragment& fragmentForInsertion() const;
@@ -55,7 +55,7 @@ public:
     void adoptDeserializedContent(Ref<TemplateContentDocumentFragment>&&);
 
 private:
-    HTMLTemplateElement(const QualifiedName&, Document&);
+    explicit HTMLTemplateElement(Document&);
 
     Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const final;
     SerializedNode serializeNode(CloningOperation) const override;

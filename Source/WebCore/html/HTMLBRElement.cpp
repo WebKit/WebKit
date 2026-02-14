@@ -36,20 +36,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLBRElement);
 
 using namespace HTMLNames;
 
-HTMLBRElement::HTMLBRElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+HTMLBRElement::HTMLBRElement(Document& document)
+    : HTMLElement(brTag, document)
 {
-    ASSERT(hasTagName(brTag));
 }
 
 Ref<HTMLBRElement> HTMLBRElement::create(Document& document)
 {
-    return adoptRef(*new HTMLBRElement(brTag, document));
-}
-
-Ref<HTMLBRElement> HTMLBRElement::create(const QualifiedName& tagName, Document& document)
-{
-    return adoptRef(*new HTMLBRElement(tagName, document));
+    return adoptRef(*new HTMLBRElement(document));
 }
 
 bool HTMLBRElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const

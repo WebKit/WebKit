@@ -34,16 +34,15 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGSymbolElement);
 
-inline SVGSymbolElement::SVGSymbolElement(const QualifiedName& tagName, Document& document)
-    : SVGGraphicsElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGSymbolElement::SVGSymbolElement(Document& document)
+    : SVGGraphicsElement(SVGNames::symbolTag, document, makeUniqueRef<PropertyRegistry>(*this))
     , SVGFitToViewBox(this)
 {
-    ASSERT(hasTagName(SVGNames::symbolTag));
 }
 
-Ref<SVGSymbolElement> SVGSymbolElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGSymbolElement> SVGSymbolElement::create(Document& document)
 {
-    return adoptRef(*new SVGSymbolElement(tagName, document));
+    return adoptRef(*new SVGSymbolElement(document));
 }
 
 void SVGSymbolElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

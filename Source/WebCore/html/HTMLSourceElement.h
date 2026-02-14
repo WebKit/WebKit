@@ -43,7 +43,6 @@ class HTMLSourceElement final
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLSourceElement);
 public:
     static Ref<HTMLSourceElement> create(Document&);
-    static Ref<HTMLSourceElement> create(const QualifiedName&, Document&);
 
     // ActiveDOMObject.
     void ref() const final { HTMLElement::ref(); }
@@ -56,7 +55,7 @@ public:
     const MQ::MediaQueryList& parsedMediaAttribute(Document&) const;
 
 private:
-    HTMLSourceElement(const QualifiedName&, Document&);
+    explicit HTMLSourceElement(Document&);
     
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;

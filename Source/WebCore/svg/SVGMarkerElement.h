@@ -46,7 +46,7 @@ public:
         SVG_MARKER_ORIENT_AUTO_START_REVERSE = SVGMarkerOrientAutoStartReverse
     };
 
-    static Ref<SVGMarkerElement> create(const QualifiedName&, Document&);
+    static Ref<SVGMarkerElement> create(Document&);
 
     AffineTransform viewBoxToViewTransform(float viewWidth, float viewHeight) const;
 
@@ -74,7 +74,7 @@ public:
     void setOrientToAutoStartReverse();
 
 private:
-    SVGMarkerElement(const QualifiedName&, Document&);
+    explicit SVGMarkerElement(Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGMarkerElement, SVGElement, SVGFitToViewBox>;
 

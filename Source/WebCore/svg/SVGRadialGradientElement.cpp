@@ -45,12 +45,10 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGRadialGradientElement);
 
-inline SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& tagName, Document& document)
-    : SVGGradientElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGRadialGradientElement::SVGRadialGradientElement(Document& document)
+    : SVGGradientElement(SVGNames::radialGradientTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
     // Spec: If the cx/cy/r/fr attribute is not specified, the effect is as if a value of "50%" were specified.
-    ASSERT(hasTagName(SVGNames::radialGradientTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -63,9 +61,9 @@ inline SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& t
     }
 }
 
-Ref<SVGRadialGradientElement> SVGRadialGradientElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGRadialGradientElement> SVGRadialGradientElement::create(Document& document)
 {
-    return adoptRef(*new SVGRadialGradientElement(tagName, document));
+    return adoptRef(*new SVGRadialGradientElement(document));
 }
 
 void SVGRadialGradientElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

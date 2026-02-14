@@ -33,11 +33,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEBlendElement);
 
-inline SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGFEBlendElement::SVGFEBlendElement(Document& document)
+    : SVGFilterPrimitiveStandardAttributes(SVGNames::feBlendTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::feBlendTag));
-    
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -47,9 +45,9 @@ inline SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Docume
     }
 }
 
-Ref<SVGFEBlendElement> SVGFEBlendElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEBlendElement> SVGFEBlendElement::create(Document& document)
 {
-    return adoptRef(*new SVGFEBlendElement(tagName, document));
+    return adoptRef(*new SVGFEBlendElement(document));
 }
 
 void SVGFEBlendElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

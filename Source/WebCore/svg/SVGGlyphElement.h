@@ -29,10 +29,10 @@ class SVGGlyphElement final : public SVGElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGGlyphElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGGlyphElement);
 public:
-    static Ref<SVGGlyphElement> create(const QualifiedName&, Document&);
+    static Ref<SVGGlyphElement> create(Document&);
 
 private:
-    SVGGlyphElement(const QualifiedName&, Document&);
+    explicit SVGGlyphElement(Document&);
 
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 };

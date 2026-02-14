@@ -36,15 +36,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLArticleElement);
 
-Ref<HTMLArticleElement> HTMLArticleElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLArticleElement> HTMLArticleElement::create(Document& document)
 {
-    return adoptRef(*new HTMLArticleElement(tagName, document));
+    return adoptRef(*new HTMLArticleElement(document));
 }
 
-HTMLArticleElement::HTMLArticleElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+HTMLArticleElement::HTMLArticleElement(Document& document)
+    : HTMLElement(HTMLNames::articleTag, document)
 {
-    ASSERT(tagName == HTMLNames::articleTag);
 }
 
 auto HTMLArticleElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree) -> InsertedIntoAncestorResult

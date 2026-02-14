@@ -36,7 +36,7 @@ class MathMLOperatorElement final : public MathMLTokenElement {
     WTF_MAKE_TZONE_ALLOCATED(MathMLOperatorElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MathMLOperatorElement);
 public:
-    static Ref<MathMLOperatorElement> create(const QualifiedName&, Document&);
+    static Ref<MathMLOperatorElement> create(Document&);
     struct OperatorChar {
         char32_t character { 0 };
         bool isVertical { true };
@@ -54,7 +54,7 @@ public:
     const Length& maxSize();
 
 private:
-    MathMLOperatorElement(const QualifiedName&, Document&);
+    explicit MathMLOperatorElement(Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     void childrenChanged(const ChildChange&) final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;

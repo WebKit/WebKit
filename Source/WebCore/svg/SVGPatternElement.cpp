@@ -50,14 +50,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGPatternElement);
 
-inline SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGPatternElement::SVGPatternElement(Document& document)
+    : SVGElement(SVGNames::patternTag, document, makeUniqueRef<PropertyRegistry>(*this))
     , SVGFitToViewBox(this)
     , SVGTests(this)
     , SVGURIReference(this)
 {
-    ASSERT(hasTagName(SVGNames::patternTag));
-
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -71,9 +69,9 @@ inline SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Docume
     }
 }
 
-Ref<SVGPatternElement> SVGPatternElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGPatternElement> SVGPatternElement::create(Document& document)
 {
-    return adoptRef(*new SVGPatternElement(tagName, document));
+    return adoptRef(*new SVGPatternElement(document));
 }
 
 void SVGPatternElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

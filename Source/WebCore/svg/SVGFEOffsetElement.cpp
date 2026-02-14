@@ -33,11 +33,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFEOffsetElement);
 
-inline SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Document& document)
-    : SVGFilterPrimitiveStandardAttributes(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGFEOffsetElement::SVGFEOffsetElement(Document& document)
+    : SVGFilterPrimitiveStandardAttributes(SVGNames::feOffsetTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::feOffsetTag));
-    
     static bool didRegistration = false;
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
@@ -47,9 +45,9 @@ inline SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Docu
     }
 }
 
-Ref<SVGFEOffsetElement> SVGFEOffsetElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEOffsetElement> SVGFEOffsetElement::create(Document& document)
 {
-    return adoptRef(*new SVGFEOffsetElement(tagName, document));
+    return adoptRef(*new SVGFEOffsetElement(document));
 }
 
 void SVGFEOffsetElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

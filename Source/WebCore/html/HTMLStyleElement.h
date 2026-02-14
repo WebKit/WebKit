@@ -39,8 +39,7 @@ class HTMLStyleElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLStyleElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLStyleElement);
 public:
-    static Ref<HTMLStyleElement> create(Document&);
-    static Ref<HTMLStyleElement> create(const QualifiedName&, Document&, bool createdByParser);
+    static Ref<HTMLStyleElement> create(Document&, bool createdByParser = false);
     virtual ~HTMLStyleElement();
 
     CSSStyleSheet* sheet() const { return m_styleSheetOwner.sheet(); }
@@ -56,7 +55,7 @@ public:
     WEBCORE_EXPORT DOMTokenList& blocking();
 
 private:
-    HTMLStyleElement(const QualifiedName&, Document&, bool createdByParser);
+    HTMLStyleElement(Document&, bool createdByParser);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;

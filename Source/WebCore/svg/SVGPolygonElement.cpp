@@ -28,15 +28,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGPolygonElement);
 
-inline SVGPolygonElement::SVGPolygonElement(const QualifiedName& tagName, Document& document)
-    : SVGPolyElement(tagName, document)
+inline SVGPolygonElement::SVGPolygonElement(Document& document)
+    : SVGPolyElement(SVGNames::polygonTag, document)
 {
-    ASSERT(hasTagName(SVGNames::polygonTag));
 }
 
-Ref<SVGPolygonElement> SVGPolygonElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGPolygonElement> SVGPolygonElement::create(Document& document)
 {
-    return adoptRef(*new SVGPolygonElement(tagName, document));
+    return adoptRef(*new SVGPolygonElement(document));
 }
 
 }

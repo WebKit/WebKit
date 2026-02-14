@@ -36,7 +36,7 @@ class HTMLAreaElement final : public HTMLAnchorElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLAreaElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLAreaElement);
 public:
-    static Ref<HTMLAreaElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLAreaElement> create(Document&);
     ~HTMLAreaElement();
 
     bool isDefault() const { return m_shape == Shape::Default; }
@@ -50,9 +50,9 @@ public:
 
     // The parent map's image.
     WEBCORE_EXPORT RefPtr<HTMLImageElement> imageElement() const;
-    
+
 private:
-    HTMLAreaElement(const QualifiedName&, Document&);
+    explicit HTMLAreaElement(Document&);
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     bool supportsFocus() const final;

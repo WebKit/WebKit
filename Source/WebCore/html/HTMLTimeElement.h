@@ -33,10 +33,10 @@ class HTMLTimeElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLTimeElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLTimeElement);
 public:
-    static Ref<HTMLTimeElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLTimeElement> create(Document&);
 
 private:
-    HTMLTimeElement(const QualifiedName&, Document&);
+    explicit HTMLTimeElement(Document&);
 };
 
 } // namespace WebCore

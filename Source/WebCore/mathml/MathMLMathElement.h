@@ -37,10 +37,10 @@ class MathMLMathElement final : public MathMLRowElement {
     WTF_MAKE_TZONE_ALLOCATED(MathMLMathElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MathMLMathElement);
 public:
-    static Ref<MathMLMathElement> create(const QualifiedName& tagName, Document&);
+    static Ref<MathMLMathElement> create(Document&);
 
 private:
-    MathMLMathElement(const QualifiedName& tagName, Document&);
+    explicit MathMLMathElement(Document&);
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void didAttachRenderers() final;
 

@@ -37,7 +37,7 @@ class MathMLMencloseElement final: public MathMLRowElement {
     WTF_MAKE_TZONE_ALLOCATED(MathMLMencloseElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MathMLMencloseElement);
 public:
-    static Ref<MathMLMencloseElement> create(const QualifiedName& tagName, Document&);
+    static Ref<MathMLMencloseElement> create(Document&);
 
     enum MencloseNotationFlag {
         LongDiv = 1 << 1,
@@ -58,7 +58,7 @@ public:
     bool hasNotation(MencloseNotationFlag);
 
 private:
-    MathMLMencloseElement(const QualifiedName&, Document&);
+    explicit MathMLMencloseElement(Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void parseNotationAttribute();

@@ -41,20 +41,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLLIElement);
 
 using namespace HTMLNames;
 
-HTMLLIElement::HTMLLIElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+HTMLLIElement::HTMLLIElement(Document& document)
+    : HTMLElement(liTag, document)
 {
-    ASSERT(hasTagName(liTag));
 }
 
 Ref<HTMLLIElement> HTMLLIElement::create(Document& document)
 {
-    return adoptRef(*new HTMLLIElement(liTag, document));
-}
-
-Ref<HTMLLIElement> HTMLLIElement::create(const QualifiedName& tagName, Document& document)
-{
-    return adoptRef(*new HTMLLIElement(tagName, document));
+    return adoptRef(*new HTMLLIElement(document));
 }
 
 bool HTMLLIElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const

@@ -46,7 +46,6 @@ class HTMLFormElement final : public HTMLElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLFormElement);
 public:
     static Ref<HTMLFormElement> create(Document&);
-    static Ref<HTMLFormElement> create(const QualifiedName&, Document&);
     virtual ~HTMLFormElement();
 
     Ref<HTMLFormControlsCollection> elements();
@@ -124,7 +123,7 @@ public:
     const FormSubmission::Attributes& attributes() const { return m_attributes; }
     
 private:
-    HTMLFormElement(const QualifiedName&, Document&);
+    explicit HTMLFormElement(Document&);
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;

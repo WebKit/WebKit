@@ -33,15 +33,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGTextElement);
 
-inline SVGTextElement::SVGTextElement(const QualifiedName& tagName, Document& document)
-    : SVGTextPositioningElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGTextElement::SVGTextElement(Document& document)
+    : SVGTextPositioningElement(SVGNames::textTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::textTag));
 }
 
-Ref<SVGTextElement> SVGTextElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGTextElement> SVGTextElement::create(Document& document)
 {
-    return adoptRef(*new SVGTextElement(tagName, document));
+    return adoptRef(*new SVGTextElement(document));
 }
 
 RenderPtr<RenderElement> SVGTextElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

@@ -40,15 +40,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGFontFaceUriElement);
     
 using namespace SVGNames;
     
-inline SVGFontFaceUriElement::SVGFontFaceUriElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGFontFaceUriElement::SVGFontFaceUriElement(Document& document)
+    : SVGElement(font_face_uriTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(font_face_uriTag));
 }
 
-Ref<SVGFontFaceUriElement> SVGFontFaceUriElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFontFaceUriElement> SVGFontFaceUriElement::create(Document& document)
 {
-    return adoptRef(*new SVGFontFaceUriElement(tagName, document));
+    return adoptRef(*new SVGFontFaceUriElement(document));
 }
 
 SVGFontFaceUriElement::~SVGFontFaceUriElement()

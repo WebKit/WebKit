@@ -31,10 +31,9 @@ class HTMLParagraphElement final : public HTMLElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLParagraphElement);
 public:
     static Ref<HTMLParagraphElement> create(Document&);
-    static Ref<HTMLParagraphElement> create(const QualifiedName&, Document&);
 
 private:
-    HTMLParagraphElement(const QualifiedName&, Document&);
+    explicit HTMLParagraphElement(Document&);
 
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
 };

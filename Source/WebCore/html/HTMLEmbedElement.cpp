@@ -49,20 +49,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLEmbedElement);
 
 using namespace HTMLNames;
 
-inline HTMLEmbedElement::HTMLEmbedElement(const QualifiedName& tagName, Document& document)
-    : HTMLPlugInElement(tagName, document)
+inline HTMLEmbedElement::HTMLEmbedElement(Document& document)
+    : HTMLPlugInElement(embedTag, document)
 {
-    ASSERT(hasTagName(embedTag));
-}
-
-Ref<HTMLEmbedElement> HTMLEmbedElement::create(const QualifiedName& tagName, Document& document)
-{
-    return adoptRef(*new HTMLEmbedElement(tagName, document));
 }
 
 Ref<HTMLEmbedElement> HTMLEmbedElement::create(Document& document)
 {
-    return create(embedTag, document);
+    return adoptRef(*new HTMLEmbedElement(document));
 }
 
 static inline RenderWidget* findWidgetRenderer(const Node* node)

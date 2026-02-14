@@ -85,7 +85,6 @@ public: // DOM
     void forceRedraw() { }
 
 public:
-    static Ref<SVGSVGElement> create(const QualifiedName&, Document&);
     static Ref<SVGSVGElement> create(Document&);
     bool scrollToFragment(StringView fragmentIdentifier);
     void resetScrollAnchor();
@@ -126,7 +125,7 @@ public:
     void inheritViewAttributes(const SVGViewElement&);
 
 private:
-    SVGSVGElement(const QualifiedName&, Document&);
+    explicit SVGSVGElement(Document&);
     virtual ~SVGSVGElement();
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;

@@ -31,15 +31,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGAltGlyphDefElement);
 
-inline SVGAltGlyphDefElement::SVGAltGlyphDefElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
+inline SVGAltGlyphDefElement::SVGAltGlyphDefElement(Document& document)
+    : SVGElement(SVGNames::altGlyphDefTag, document, makeUniqueRef<PropertyRegistry>(*this))
 {
-    ASSERT(hasTagName(SVGNames::altGlyphDefTag));
 }
 
-Ref<SVGAltGlyphDefElement> SVGAltGlyphDefElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGAltGlyphDefElement> SVGAltGlyphDefElement::create(Document& document)
 {
-    return adoptRef(*new SVGAltGlyphDefElement(tagName, document));
+    return adoptRef(*new SVGAltGlyphDefElement(document));
 }
 
 bool SVGAltGlyphDefElement::hasValidGlyphElements(Vector<String>& glyphNames) const

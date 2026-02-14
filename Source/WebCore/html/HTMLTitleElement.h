@@ -31,7 +31,7 @@ class HTMLTitleElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLTitleElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLTitleElement);
 public:
-    static Ref<HTMLTitleElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLTitleElement> create(Document&);
 
     WEBCORE_EXPORT String text() const;
     WEBCORE_EXPORT void setText(String&&);
@@ -41,7 +41,7 @@ public:
     void didFinishInsertingNode() final;
 
 private:
-    HTMLTitleElement(const QualifiedName&, Document&);
+    explicit HTMLTitleElement(Document&);
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;

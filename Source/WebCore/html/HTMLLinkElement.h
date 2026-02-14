@@ -52,7 +52,7 @@ class HTMLLinkElement final : public HTMLElement, public CachedStyleSheetClient,
 public:
     USING_CAN_MAKE_WEAKPTR(HTMLElement);
 
-    static Ref<HTMLLinkElement> create(const QualifiedName&, Document&, bool createdByParser);
+    static Ref<HTMLLinkElement> create(Document&, bool createdByParser = false);
     virtual ~HTMLLinkElement();
 
     // CachedResourceClient.
@@ -141,7 +141,7 @@ private:
 
     bool isURLAttribute(const Attribute&) const final;
 
-    HTMLLinkElement(const QualifiedName&, Document&, bool createdByParser);
+    HTMLLinkElement(Document&, bool createdByParser);
 
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 

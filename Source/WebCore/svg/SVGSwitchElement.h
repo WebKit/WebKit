@@ -30,12 +30,12 @@ class SVGSwitchElement final : public SVGGraphicsElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGSwitchElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGSwitchElement);
 public:
-    static Ref<SVGSwitchElement> create(const QualifiedName&, Document&);
+    static Ref<SVGSwitchElement> create(Document&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGSwitchElement, SVGGraphicsElement>;
 
 private:
-    SVGSwitchElement(const QualifiedName&, Document&);
+    explicit SVGSwitchElement(Document&);
 
     bool isValid() const final { return SVGTests::isValid(); }
 

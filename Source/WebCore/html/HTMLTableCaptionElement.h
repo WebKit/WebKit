@@ -33,10 +33,10 @@ class HTMLTableCaptionElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLTableCaptionElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLTableCaptionElement);
 public:
-    static Ref<HTMLTableCaptionElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLTableCaptionElement> create(Document&);
 
 private:
-    HTMLTableCaptionElement(const QualifiedName&, Document&);
+    explicit HTMLTableCaptionElement(Document&);
 
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
 };

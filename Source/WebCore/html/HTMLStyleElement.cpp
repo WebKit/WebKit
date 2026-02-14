@@ -57,11 +57,10 @@ static StyleEventSender& styleLoadEventSenderSingleton()
     return sharedLoadEventSender;
 }
 
-inline HTMLStyleElement::HTMLStyleElement(const QualifiedName& tagName, Document& document, bool createdByParser)
-    : HTMLElement(tagName, document)
+inline HTMLStyleElement::HTMLStyleElement(Document& document, bool createdByParser)
+    : HTMLElement(styleTag, document)
     , m_styleSheetOwner(document, createdByParser)
 {
-    ASSERT(hasTagName(styleTag));
 }
 
 HTMLStyleElement::~HTMLStyleElement()
@@ -71,14 +70,9 @@ HTMLStyleElement::~HTMLStyleElement()
     styleLoadEventSenderSingleton().cancelEvent(*this);
 }
 
-Ref<HTMLStyleElement> HTMLStyleElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
+Ref<HTMLStyleElement> HTMLStyleElement::create(Document& document, bool createdByParser)
 {
-    return adoptRef(*new HTMLStyleElement(tagName, document, createdByParser));
-}
-
-Ref<HTMLStyleElement> HTMLStyleElement::create(Document& document)
-{
-    return adoptRef(*new HTMLStyleElement(styleTag, document, false));
+    return adoptRef(*new HTMLStyleElement(document, createdByParser));
 }
 
 void HTMLStyleElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
