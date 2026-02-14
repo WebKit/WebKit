@@ -224,27 +224,25 @@ const aliases = {
     'GCGLenum': 'uint32_t',
     'GCGLint': 'int32_t',
     'GCGLErrorCodeSet': 'OptionSet<GCGLErrorCode>',
-    // these RetainPtr<T> should not be treated as optionnal because
-    // of the 'Ref wrapped by' in Source/WebKit/Shared/cf/CFTypes.serialization.in
-    // see generated code in WebKitBuild/Debug/DerivedSources/WebKit/WebKitPlatformGeneratedSerializers.mm
-    'RetainPtr<CFTypeRef>': 'WebKit::CoreIPCCFType',
-    'RetainPtr<CFDataRef>': 'WebKit::CoreIPCData',
-    'RetainPtr<CFStringRef>': 'String',
-    'RetainPtr<CFArrayRef>': 'WebKit::CoreIPCCFArray',
-    'RetainPtr<CFDictionaryRef>': 'WebKit::CoreIPCCFDictionary',
-    'RetainPtr<CFBooleanRef>': 'WebKit::CoreIPCBoolean',
-    'RetainPtr<CFNumberRef>': 'WebKit::CoreIPCNumber',
-    'RetainPtr<CFDateRef>': 'WebKit::CoreIPCDate',
-    'RetainPtr<CFURLRef>': 'WebKit::CoreIPCCFURL',
-    'RetainPtr<CFNullRef>': 'WebKit::CoreIPCNull',
-    'RetainPtr<SecAccessControlRef>': 'WebKit::CoreIPCSecAccessControl',
-    'RetainPtr<SecCertificateRef>': 'WebKit::CoreIPCSecCertificate',
-    'RetainPtr<SecKeychainItemRef>': 'WebKit::CoreIPCSecKeychainItem',
-    'RetainPtr<CVPixelBufferRef>': 'WebKit::CoreIPCCVPixelBufferRef',
-    'RetainPtr<SecTrustRef>': 'WebKit::CoreIPCSecTrust',
-    'RetainPtr<CFCharacterSetRef>': 'WebKit::CoreIPCCFCharacterSet',
-    'RetainPtr<CGColorRef>': 'WebCore::Color',
-    'RetainPtr<CGColorSpaceRef>': 'WebKit::CoreIPCCGColorSpace'
+    // Encoder serializes bare CF/CG/CV/Sec refs as their CoreIPC wrapper types
+    'CFTypeRef': 'WebKit::CoreIPCCFType',
+    'CFDataRef': 'WebKit::CoreIPCData',
+    'CFStringRef': 'String',
+    'CFArrayRef': 'WebKit::CoreIPCCFArray',
+    'CFDictionaryRef': 'WebKit::CoreIPCCFDictionary',
+    'CFBooleanRef': 'WebKit::CoreIPCBoolean',
+    'CFNumberRef': 'WebKit::CoreIPCNumber',
+    'CFDateRef': 'WebKit::CoreIPCDate',
+    'CFURLRef': 'WebKit::CoreIPCCFURL',
+    'CFNullRef': 'WebKit::CoreIPCNull',
+    'SecAccessControlRef': 'WebKit::CoreIPCSecAccessControl',
+    'SecCertificateRef': 'WebKit::CoreIPCSecCertificate',
+    'SecKeychainItemRef': 'WebKit::CoreIPCSecKeychainItem',
+    'CVPixelBufferRef': 'WebKit::CoreIPCCVPixelBufferRef',
+    'SecTrustRef': 'WebKit::CoreIPCSecTrust',
+    'CFCharacterSetRef': 'WebKit::CoreIPCCFCharacterSet',
+    'CGColorRef': 'WebCore::Color',
+    'CGColorSpaceRef': 'WebKit::CoreIPCCGColorSpace'
 }
 
 export function resolveAlias(argumentType) {
