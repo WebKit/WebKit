@@ -1651,13 +1651,21 @@ StyleMedia& LocalDOMWindow::styleMedia()
     return *m_media;
 }
 
-Ref<CSSStyleDeclaration> LocalDOMWindow::getComputedStyle(Element& element, const String& pseudoElt) const
+Ref<CSSStyleDeclaration> LocalDOMWindow::getComputedStyle(Element& element, const String& pseudoElement) const
 {
     if (!pseudoElt.startsWith(':'))
         return CSSComputedStyleDeclaration::create(element, std::nullopt);
 
-    // FIXME: This does not work for pseudo-elements that take arguments (webkit.org/b/264103).
-    auto [pseudoElementIsParsable, pseudoElementIdentifier] = CSSSelectorParser::parsePseudoElement(pseudoElt, CSSSelectorParserContext { protect(element.document()) });
+    // FIXME: make a more general mechanism for user agent parts.
+    if (pseudoElement == "::picker(select)") {
+        if (auto* select = dynamicDowncast<HTMLSelectElement>(element)) {
+            if (RefPtr picker = select->pickerPopoverElement())
+                return CSSComputedStyleDeclaration::create(picker, std::nullopt);
+        }
+        return CSSComputedStyleDeclaration::createEmpty(element);
+    }
+
+    auto [pseudoElementIsParsable, pseudoElementIdentifier] = CSSSelectorParser::parsePseudoElement(pseudoElement, CSSSelectorParserContext { protect(element.document()) });
     if (!pseudoElementIsParsable)
         return CSSComputedStyleDeclaration::createEmpty(element);
     return CSSComputedStyleDeclaration::create(element, pseudoElementIdentifier);
