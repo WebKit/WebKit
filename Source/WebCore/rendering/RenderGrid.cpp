@@ -1142,7 +1142,7 @@ bool RenderGrid::isMasonry(Style::GridTrackSizingDirection direction) const
         return parentGrid->isMasonry(direction);
     if (style().display() != DisplayType::GridLanes && style().display() != DisplayType::InlineGridLanes)
         return false;
-    return (direction == Style::GridTrackSizingDirection::Columns) == style().gridAutoFlow().isColumn();
+    return (direction == Style::GridTrackSizingDirection::Columns) == (style().usedGridAutoFlowDirection() == Style::GridAutoFlow::Direction::Column);
 }
 
 // Masonry Spec Section 2.3.1 repeat(auto-fit)
@@ -1470,7 +1470,8 @@ void RenderGrid::placeAutoMajorAxisItemOnGrid(RenderBox& gridItem, AutoPlacement
 
 Style::GridTrackSizingDirection RenderGrid::autoPlacementMajorAxisDirection() const
 {
-    return style().gridAutoFlow().isColumn() ? Style::GridTrackSizingDirection::Columns : Style::GridTrackSizingDirection::Rows;
+    return Style::GridAutoFlow::Direction::Column == style().usedGridAutoFlowDirection()
+        ? Style::GridTrackSizingDirection::Columns : Style::GridTrackSizingDirection::Rows;
 }
 
 Style::GridTrackSizingDirection RenderGrid::autoPlacementMinorAxisDirection() const

@@ -256,8 +256,7 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
 
     // GFC currently supports grid-auto-flow: row and row dense
     // Column auto-flow is not yet supported
-    auto gridAutoFlow = renderGridStyle->gridAutoFlow();
-    if (gridAutoFlow.isColumn())
+    if (renderGridStyle->usedGridAutoFlowDirection() == Style::GridAutoFlow::Direction::Column)
         ADD_REASON_AND_RETURN_IF_NEEDED(GridHasColumnAutoFlow, reasons, reasonCollectionMode);
 
     // Check for non-fixed gaps. GFC currently only supports fixed-length gaps.
@@ -352,7 +351,7 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
     if (renderGridStyle->usedContain().contains(Style::ContainValue::Size))
         ADD_REASON_AND_RETURN_IF_NEEDED(GridHasContainsSize, reasons, reasonCollectionMode);
 
-    ASSERT(renderGridStyle->gridAutoFlow().isRow(),
+    ASSERT(renderGridStyle->usedGridAutoFlowDirection() == Style::GridAutoFlow::Direction::Row,
         "If we end up supporting column auto flow before broader implicit grid support then the logic using explicitlyPlacedItemsInRowCount will need to be reworked to be based upon the auto flow direction");
     Vector<size_t> explicitlyPlacedItemsInRowCount;
 

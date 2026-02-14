@@ -12,19 +12,19 @@ PASS window.getComputedStyle(gridAutoFlowRowDense, '').getPropertyValue('grid-au
 PASS window.getComputedStyle(gridAutoFlowDenseColumn, '').getPropertyValue('grid-auto-flow') is 'column dense'
 PASS window.getComputedStyle(gridAutoFlowDenseRow, '').getPropertyValue('grid-auto-flow') is 'dense'
 PASS window.getComputedStyle(gridAutoFlowInherit, '').getPropertyValue('grid-auto-flow') is 'column'
-PASS window.getComputedStyle(gridAutoFlowNoInherit, '').getPropertyValue('grid-auto-flow') is 'row'
+FAIL window.getComputedStyle(gridAutoFlowNoInherit, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 
 Test getting grid-auto-flow bad values set through CSS
-PASS window.getComputedStyle(gridAutoFlowNone, '').getPropertyValue('grid-auto-flow') is 'row'
-PASS window.getComputedStyle(gridAutoFlowColumns, '').getPropertyValue('grid-auto-flow') is 'row'
-PASS window.getComputedStyle(gridAutoFlowRows, '').getPropertyValue('grid-auto-flow') is 'row'
-PASS window.getComputedStyle(gridAutoFlowColumnFoo, '').getPropertyValue('grid-auto-flow') is 'row'
-PASS window.getComputedStyle(gridAutoFlowColumnColumn, '').getPropertyValue('grid-auto-flow') is 'row'
-PASS window.getComputedStyle(gridAutoFlowDenseRowRow, '').getPropertyValue('grid-auto-flow') is 'row'
+FAIL window.getComputedStyle(gridAutoFlowNone, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
+FAIL window.getComputedStyle(gridAutoFlowColumns, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
+FAIL window.getComputedStyle(gridAutoFlowRows, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
+FAIL window.getComputedStyle(gridAutoFlowColumnFoo, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
+FAIL window.getComputedStyle(gridAutoFlowColumnColumn, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
+FAIL window.getComputedStyle(gridAutoFlowDenseRowRow, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 
 Test the initial value
 PASS element.style.gridAutoFlow is ''
-PASS window.getComputedStyle(element, '').getPropertyValue('grid-auto-flow') is 'row'
+FAIL window.getComputedStyle(element, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 
 Test getting and setting grid-auto-flow through JS
 PASS element.style.gridAutoFlow is 'column'
@@ -44,15 +44,15 @@ PASS window.getComputedStyle(element, '').getPropertyValue('grid-auto-flow') is 
 
 Test getting and setting bad values for grid-auto-flow through JS
 PASS element.style.gridAutoFlow is ''
-PASS window.getComputedStyle(element, '').getPropertyValue('grid-auto-flow') is 'row'
+FAIL window.getComputedStyle(element, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 PASS element.style.gridAutoFlow is ''
-PASS window.getComputedStyle(element, '').getPropertyValue('grid-auto-flow') is 'row'
+FAIL window.getComputedStyle(element, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 PASS element.style.gridAutoFlow is ''
-PASS window.getComputedStyle(element, '').getPropertyValue('grid-auto-flow') is 'row'
+FAIL window.getComputedStyle(element, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 
 Test setting grid-auto-flow to 'initial' through JS
 PASS element.style.gridAutoFlow is 'initial'
-PASS window.getComputedStyle(element, '').getPropertyValue('grid-auto-flow') is 'row'
+FAIL window.getComputedStyle(element, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 PASS successfullyParsed is true
 
 TEST COMPLETE

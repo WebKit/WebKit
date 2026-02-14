@@ -25,7 +25,7 @@ PASS window.getComputedStyle(gridInherit, '').getPropertyValue('grid-auto-rows')
 PASS window.getComputedStyle(gridNoInherit, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(gridNoInherit, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(gridNoInherit, '').getPropertyValue('grid-template-areas') is "none"
-PASS window.getComputedStyle(gridNoInherit, '').getPropertyValue('grid-auto-flow') is "row"
+FAIL window.getComputedStyle(gridNoInherit, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 PASS window.getComputedStyle(gridNoInherit, '').getPropertyValue('grid-auto-columns') is "auto"
 PASS window.getComputedStyle(gridNoInherit, '').getPropertyValue('grid-auto-rows') is "auto"
 PASS window.getComputedStyle(gridColumnsAndAutoFlow, '').getPropertyValue('grid-template-columns') is "10px"
@@ -105,91 +105,91 @@ Test getting wrong values for 'grid' shorthand through CSS (they should resolve 
 PASS window.getComputedStyle(gridWithMisplacedAutoColumn, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(gridWithMisplacedAutoColumn, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(gridWithMisplacedAutoColumn, '').getPropertyValue('grid-template-areas') is "none"
-PASS window.getComputedStyle(gridWithMisplacedAutoColumn, '').getPropertyValue('grid-auto-flow') is "row"
+FAIL window.getComputedStyle(gridWithMisplacedAutoColumn, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 PASS window.getComputedStyle(gridWithMisplacedAutoColumn, '').getPropertyValue('grid-auto-columns') is "auto"
 PASS window.getComputedStyle(gridWithMisplacedAutoColumn, '').getPropertyValue('grid-auto-rows') is "auto"
 PASS window.getComputedStyle(gridWithMisplacedNone1, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(gridWithMisplacedNone1, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(gridWithMisplacedNone1, '').getPropertyValue('grid-template-areas') is "none"
-PASS window.getComputedStyle(gridWithMisplacedNone1, '').getPropertyValue('grid-auto-flow') is "row"
+FAIL window.getComputedStyle(gridWithMisplacedNone1, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 PASS window.getComputedStyle(gridWithMisplacedNone1, '').getPropertyValue('grid-auto-columns') is "auto"
 PASS window.getComputedStyle(gridWithMisplacedNone1, '').getPropertyValue('grid-auto-rows') is "auto"
 PASS window.getComputedStyle(gridWithMisplacedNone2, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(gridWithMisplacedNone2, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(gridWithMisplacedNone2, '').getPropertyValue('grid-template-areas') is "none"
-PASS window.getComputedStyle(gridWithMisplacedNone2, '').getPropertyValue('grid-auto-flow') is "row"
+FAIL window.getComputedStyle(gridWithMisplacedNone2, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 PASS window.getComputedStyle(gridWithMisplacedNone2, '').getPropertyValue('grid-auto-columns') is "auto"
 PASS window.getComputedStyle(gridWithMisplacedNone2, '').getPropertyValue('grid-auto-rows') is "auto"
 PASS window.getComputedStyle(gridWithMisplacedDense, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(gridWithMisplacedDense, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(gridWithMisplacedDense, '').getPropertyValue('grid-template-areas') is "none"
-PASS window.getComputedStyle(gridWithMisplacedDense, '').getPropertyValue('grid-auto-flow') is "row"
+FAIL window.getComputedStyle(gridWithMisplacedDense, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 PASS window.getComputedStyle(gridWithMisplacedDense, '').getPropertyValue('grid-auto-columns') is "auto"
 PASS window.getComputedStyle(gridWithMisplacedDense, '').getPropertyValue('grid-auto-rows') is "auto"
 PASS window.getComputedStyle(gridWithDuplicatedDense, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(gridWithDuplicatedDense, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(gridWithDuplicatedDense, '').getPropertyValue('grid-template-areas') is "none"
-PASS window.getComputedStyle(gridWithDuplicatedDense, '').getPropertyValue('grid-auto-flow') is "row"
+FAIL window.getComputedStyle(gridWithDuplicatedDense, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 PASS window.getComputedStyle(gridWithDuplicatedDense, '').getPropertyValue('grid-auto-columns') is "auto"
 PASS window.getComputedStyle(gridWithDuplicatedDense, '').getPropertyValue('grid-auto-rows') is "auto"
 PASS window.getComputedStyle(gridWithOnlyDense, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(gridWithOnlyDense, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(gridWithOnlyDense, '').getPropertyValue('grid-template-areas') is "none"
-PASS window.getComputedStyle(gridWithOnlyDense, '').getPropertyValue('grid-auto-flow') is "row"
+FAIL window.getComputedStyle(gridWithOnlyDense, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 PASS window.getComputedStyle(gridWithOnlyDense, '').getPropertyValue('grid-auto-columns') is "auto"
 PASS window.getComputedStyle(gridWithOnlyDense, '').getPropertyValue('grid-auto-rows') is "auto"
 PASS window.getComputedStyle(gridWithoutColumnInfo, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(gridWithoutColumnInfo, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(gridWithoutColumnInfo, '').getPropertyValue('grid-template-areas') is "none"
-PASS window.getComputedStyle(gridWithoutColumnInfo, '').getPropertyValue('grid-auto-flow') is "row"
+FAIL window.getComputedStyle(gridWithoutColumnInfo, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 PASS window.getComputedStyle(gridWithoutColumnInfo, '').getPropertyValue('grid-auto-columns') is "auto"
 PASS window.getComputedStyle(gridWithoutColumnInfo, '').getPropertyValue('grid-auto-rows') is "auto"
 PASS window.getComputedStyle(gridWithTwoAutoFlow, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(gridWithTwoAutoFlow, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(gridWithTwoAutoFlow, '').getPropertyValue('grid-template-areas') is "none"
-PASS window.getComputedStyle(gridWithTwoAutoFlow, '').getPropertyValue('grid-auto-flow') is "row"
+FAIL window.getComputedStyle(gridWithTwoAutoFlow, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 PASS window.getComputedStyle(gridWithTwoAutoFlow, '').getPropertyValue('grid-auto-columns') is "auto"
 PASS window.getComputedStyle(gridWithTwoAutoFlow, '').getPropertyValue('grid-auto-rows') is "auto"
 PASS window.getComputedStyle(gridWithImplicitAndNoExplicit, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(gridWithImplicitAndNoExplicit, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(gridWithImplicitAndNoExplicit, '').getPropertyValue('grid-template-areas') is "none"
-PASS window.getComputedStyle(gridWithImplicitAndNoExplicit, '').getPropertyValue('grid-auto-flow') is "row"
+FAIL window.getComputedStyle(gridWithImplicitAndNoExplicit, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 PASS window.getComputedStyle(gridWithImplicitAndNoExplicit, '').getPropertyValue('grid-auto-columns') is "auto"
 PASS window.getComputedStyle(gridWithImplicitAndNoExplicit, '').getPropertyValue('grid-auto-rows') is "auto"
 PASS window.getComputedStyle(gridWithExtraIdBeforeAutoFlowColumn, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(gridWithExtraIdBeforeAutoFlowColumn, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(gridWithExtraIdBeforeAutoFlowColumn, '').getPropertyValue('grid-template-areas') is "none"
-PASS window.getComputedStyle(gridWithExtraIdBeforeAutoFlowColumn, '').getPropertyValue('grid-auto-flow') is "row"
+FAIL window.getComputedStyle(gridWithExtraIdBeforeAutoFlowColumn, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 PASS window.getComputedStyle(gridWithExtraIdBeforeAutoFlowColumn, '').getPropertyValue('grid-auto-columns') is "auto"
 PASS window.getComputedStyle(gridWithExtraIdBeforeAutoFlowColumn, '').getPropertyValue('grid-auto-rows') is "auto"
 PASS window.getComputedStyle(gridWithExtraIdBeforeAutoFlowRow, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(gridWithExtraIdBeforeAutoFlowRow, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(gridWithExtraIdBeforeAutoFlowRow, '').getPropertyValue('grid-template-areas') is "none"
-PASS window.getComputedStyle(gridWithExtraIdBeforeAutoFlowRow, '').getPropertyValue('grid-auto-flow') is "row"
+FAIL window.getComputedStyle(gridWithExtraIdBeforeAutoFlowRow, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 PASS window.getComputedStyle(gridWithExtraIdBeforeAutoFlowRow, '').getPropertyValue('grid-auto-columns') is "auto"
 PASS window.getComputedStyle(gridWithExtraIdBeforeAutoFlowRow, '').getPropertyValue('grid-auto-rows') is "auto"
 PASS window.getComputedStyle(gridWithExtraIdBeforeAutoColumn, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(gridWithExtraIdBeforeAutoColumn, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(gridWithExtraIdBeforeAutoColumn, '').getPropertyValue('grid-template-areas') is "none"
-PASS window.getComputedStyle(gridWithExtraIdBeforeAutoColumn, '').getPropertyValue('grid-auto-flow') is "row"
+FAIL window.getComputedStyle(gridWithExtraIdBeforeAutoColumn, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 PASS window.getComputedStyle(gridWithExtraIdBeforeAutoColumn, '').getPropertyValue('grid-auto-columns') is "auto"
 PASS window.getComputedStyle(gridWithExtraIdBeforeAutoColumn, '').getPropertyValue('grid-auto-rows') is "auto"
 PASS window.getComputedStyle(gridWithExtraIdAfterAutoColumn, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(gridWithExtraIdAfterAutoColumn, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(gridWithExtraIdAfterAutoColumn, '').getPropertyValue('grid-template-areas') is "none"
-PASS window.getComputedStyle(gridWithExtraIdAfterAutoColumn, '').getPropertyValue('grid-auto-flow') is "row"
+FAIL window.getComputedStyle(gridWithExtraIdAfterAutoColumn, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 PASS window.getComputedStyle(gridWithExtraIdAfterAutoColumn, '').getPropertyValue('grid-auto-columns') is "auto"
 PASS window.getComputedStyle(gridWithExtraIdAfterAutoColumn, '').getPropertyValue('grid-auto-rows') is "auto"
 PASS window.getComputedStyle(gridWithExtraIdBeforeAutoRow, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(gridWithExtraIdBeforeAutoRow, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(gridWithExtraIdBeforeAutoRow, '').getPropertyValue('grid-template-areas') is "none"
-PASS window.getComputedStyle(gridWithExtraIdBeforeAutoRow, '').getPropertyValue('grid-auto-flow') is "row"
+FAIL window.getComputedStyle(gridWithExtraIdBeforeAutoRow, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 PASS window.getComputedStyle(gridWithExtraIdBeforeAutoRow, '').getPropertyValue('grid-auto-columns') is "auto"
 PASS window.getComputedStyle(gridWithExtraIdBeforeAutoRow, '').getPropertyValue('grid-auto-rows') is "auto"
 PASS window.getComputedStyle(gridWithExtraIdAfterAutoRow, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(gridWithExtraIdAfterAutoRow, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(gridWithExtraIdAfterAutoRow, '').getPropertyValue('grid-template-areas') is "none"
-PASS window.getComputedStyle(gridWithExtraIdAfterAutoRow, '').getPropertyValue('grid-auto-flow') is "row"
+FAIL window.getComputedStyle(gridWithExtraIdAfterAutoRow, '').getPropertyValue('grid-auto-flow') should be row. Was normal.
 PASS window.getComputedStyle(gridWithExtraIdAfterAutoRow, '').getPropertyValue('grid-auto-columns') is "auto"
 PASS window.getComputedStyle(gridWithExtraIdAfterAutoRow, '').getPropertyValue('grid-auto-rows') is "auto"
 
@@ -337,6 +337,7 @@ PASS getComputedStyle(anotherElement, '').getPropertyValue('grid-row-gap') is "n
 PASS getComputedStyle(anotherElement, '').getPropertyValue('grid-column-gap') is "normal"
 PASS getComputedStyle(anotherElement, '').getPropertyValue('grid-row-gap') is "normal"
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
 
