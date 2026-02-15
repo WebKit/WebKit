@@ -6706,8 +6706,6 @@ public:
                 return false;
             if (m_pattern.sticky())
                 return false;
-            if (m_pattern.eitherUnicode())
-                return false;
             if (mayCall())
                 return false;
             if (m_callFrameSizeInBytes)
