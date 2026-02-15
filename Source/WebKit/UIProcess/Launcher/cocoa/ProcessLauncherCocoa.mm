@@ -78,8 +78,6 @@ static std::pair<ASCIILiteral, RetainPtr<NSString>> serviceNameAndIdentifier(Pro
     case ProcessLauncher::ProcessType::Web: {
         bool useCaptivePortal = client && client->shouldEnableLockdownMode();
         bool useEnhancedSecurity = client && client->shouldEnableEnhancedSecurity();
-        if (client && !useCaptivePortal && lockdownModeEnabledBySystem())
-            useEnhancedSecurity = true;
         if (!hasExtensionsInAppBundle) {
             if (!useCaptivePortal && !useEnhancedSecurity)
                 return { "com.apple.WebKit.WebContent"_s, @"com.apple.WebKit.WebContent" };
@@ -160,8 +158,6 @@ static ASCIILiteral webContentServiceName(const ProcessLauncher::LaunchOptions& 
 {
     bool useCaptivePortal = client && client->shouldEnableLockdownMode();
     bool useEnhancedSecurity = client && client->shouldEnableEnhancedSecurity();
-    if (client && !useCaptivePortal && lockdownModeEnabledBySystem())
-        useEnhancedSecurity = true;
 
     if (useCaptivePortal)
         return "com.apple.WebKit.WebContent.CaptivePortal"_s;
