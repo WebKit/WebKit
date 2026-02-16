@@ -75,11 +75,11 @@ public:
     // This can be called on a background thread.
     using WorkItem = Function<void()>;
     void scheduleWork(WorkItem&&);
-    const std::optional<const MachSendRight>& webProcessID() const;
+    const std::optional<const MachSendRight>& resourceOwnerTaskID() const;
     id<MTLDevice> device() const;
 
 private:
-    Instance(WGPUScheduleWorkBlock, const WTF::MachSendRight* webProcessResourceOwner);
+    Instance(WGPUScheduleWorkBlock, const WTF::MachSendRight* resourceOwnerTaskID);
     explicit Instance();
 
     // This can be called on a background thread.
@@ -89,7 +89,7 @@ private:
     Deque<WGPUWorkItem> m_pendingWork WTF_GUARDED_BY_LOCK(m_lock);
     using CommandBufferContainer = Vector<WeakObjCPtr<id<MTLCommandBuffer>>>;
     HashMap<RefPtr<Device>, CommandBufferContainer> retainedDeviceInstances WTF_GUARDED_BY_LOCK(m_lock);
-    const std::optional<const MachSendRight> m_webProcessID;
+    const std::optional<const MachSendRight> m_resourceOwnerTaskID;
     const WGPUScheduleWorkBlock m_scheduleWorkBlock;
     Lock m_lock;
     bool m_isValid { true };

@@ -903,7 +903,7 @@ typedef struct WGPUInstanceCocoaDescriptor {
     // It's fine to pass NULL here, but if you do, you must periodically call
     // wgpuInstanceProcessEvents() to synchronously run the queued callbacks.
     __unsafe_unretained WGPUScheduleWorkBlock scheduleWorkBlock;
-    const void* webProcessResourceOwner;
+    const void* resourceOwnerTaskID;
 } WGPUInstanceCocoaDescriptor;
 
 typedef struct WGPUInstanceDescriptor {
