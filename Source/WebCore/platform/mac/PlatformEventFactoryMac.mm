@@ -153,8 +153,6 @@ MouseButton mouseButtonForEvent(NSEvent *event)
         return buttonFromButtonNumber(event);
     case NSEventTypeMouseEntered:
     case NSEventTypeMouseExited:
-    case NSEventTypeMouseMoved:
-        return MouseButton::None;
     case NSEventTypePressure:
         return currentMouseButton();
     default:

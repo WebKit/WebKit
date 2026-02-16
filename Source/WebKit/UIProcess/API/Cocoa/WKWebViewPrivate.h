@@ -928,6 +928,7 @@ typedef NS_OPTIONS(NSUInteger, _WKWebViewDataType) {
 
 - (void)_simulateMouseMove:(NSEvent *)event WK_API_AVAILABLE(macos(13.0));
 - (void)_simulateMouseEnter:(NSEvent *)event WK_API_AVAILABLE(macos(15.0));
+- (void)_simulateMouseExit:(NSEvent *)event WK_API_AVAILABLE(macos(WK_MAC_TBA));
 
 - (void)_setFont:(NSFont *)font sender:(id)sender WK_API_AVAILABLE(macos(13.3));
 
