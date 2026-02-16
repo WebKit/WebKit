@@ -88,6 +88,7 @@ private:
     InlineContentBreaker::Result handleInlineContentWithClonedDecoration(const LineCandidate&, InlineContentBreaker::LineStatus);
     InlineLayoutUnit clonedDecorationAtBreakingPosition(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result::PartialTrailingContent&) const;
     InlineLayoutUnit placedClonedDecorationWidth(const InlineContentBreaker::ContinuousContent::RunList&) const;
+    bool applyMarginInBlockDirectionIfNeeded();
 
     bool isFloatLayoutSuspended() const { return !m_suspendedFloats.isEmpty(); }
     bool shouldTryToPlaceFloatBox(const Box& floatBox, LayoutUnit floatBoxMarginBoxWidth, MayOverConstrainLine) const;

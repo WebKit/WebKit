@@ -1202,6 +1202,31 @@ LineBuilder::RectAndFloatConstraints LineBuilder::adjustedLineRectWithCandidateI
     return floatAvoidingRect({ m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), candidateContentHeight }, m_lineMarginStart);
 }
 
+bool LineBuilder::applyMarginInBlockDirectionIfNeeded()
+{
+    // We don't know if margin coming from previous content should be applied or not
+    // until after we managed to put some inline content on the line.
+    // e.g.
+    // <span>text<div style="margin-bottom: 100px;"></div>more text</span> v.s
+    // <span>text<div style="margin-bottom: 100px;"></div> <div></div></span>
+    // where in the first example, the 100px gap is between the block container's edge and "more text"
+    // while in the second case, it is somewhere after the second block container (can't tell).
+    auto& marginState = blockLayoutState().marginState();
+    auto lineOffsetInBlockDirection = marginState.margin();
+    marginState.resetMarginValues();
+
+    if (marginState.atBeforeSideOfBlock) {
+        marginState.resetBeforeSideOfBlock();
+        return false;
+    }
+
+    if (!lineOffsetInBlockDirection)
+        return false;
+
+    m_lineLogicalRect = { m_lineLogicalRect.top() + lineOffsetInBlockDirection, m_lineInitialLogicalRect.left(), m_lineInitialLogicalRect.width(), m_lineInitialLogicalRect.height() };
+    return true;
+}
+
 std::optional<LineBuilder::InitialLetterOffsets> LineBuilder::adjustLineRectForInitialLetterIfApplicable(const Box& floatBox)
 {
     auto drop = floatBox.style().initialLetter().drop();
@@ -1294,6 +1319,9 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
 {
     if (isFloatLayoutSuspended())
         return false;
+
+    auto didApplyMargin = applyMarginInBlockDirectionIfNeeded();
+    ASSERT_UNUSED(didApplyMargin, !didApplyMargin || !m_line.hasContentOrListMarker());
 
     auto& floatingContext = this->floatingContext();
     auto& boxGeometry = formattingContext().geometryForBox(floatBox);
@@ -1389,55 +1417,38 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
     if (!m_line.hasContentOrListMarker())
         return result;
 
-    auto applyMarginInBlockDirection = [&]() -> LayoutUnit {
-        // We don't know if margin coming from previous content should be applied or not
-        // until after we managed to put some inline content on the line.
-        // e.g.
-        // <span>text<div style="margin-bottom: 100px;"></div>more text</span> v.s
-        // <span>text<div style="margin-bottom: 100px;"></div> <div></div></span>
-        // where in the first example, the 100px gap is between the block container's edge and "more text"
-        // while in the second case, it is somewhere after the second block container (can't tell).
-        auto& marginState = blockLayoutState().marginState();
-        auto marginValue = marginState.margin();
-        marginState.resetMarginValues();
-
-        if (marginState.atBeforeSideOfBlock) {
-            marginState.resetBeforeSideOfBlock();
-            return { };
-        }
-        return marginValue;
-    };
-    auto lineOffset = applyMarginInBlockDirection();
-    if (!lineOffset)
+    if (!applyMarginInBlockDirectionIfNeeded() || floatingContext().isEmpty())
         return result;
 
-    // This is similar to what we do in block layout when the estimated top position turns out to be incorrect
-    // and now we have to relayout the content with the adjusted vertical position to make sure we avoid floats properly.
-    m_lineLogicalRect = { m_lineLogicalRect.top() + lineOffset, m_lineInitialLogicalRect.left(), m_lineInitialLogicalRect.width(), m_lineInitialLogicalRect.height() };
-    if (floatingContext().isEmpty())
-        return result;
+    auto relayoutCanidateContent = [&] {
+        // This is similar to what we do in block layout when the estimated top position turns out to be incorrect
+        // and now we have to relayout the content with the adjusted vertical position to make sure we avoid floats properly.
+        m_line.initialize(m_lineSpanningInlineBoxes, isFirstFormattedLineCandidate());
 
-    m_line.initialize(m_lineSpanningInlineBoxes, isFirstFormattedLineCandidate());
+        auto commitPrecedingNonContentfulContent = [&] {
+            LineCandidate precedingNonContentfulContent;
+            auto& firstCandidateInlineItem = lineCandidate.inlineContent.continuousContent().runs().first().inlineItem;
+            // We should not find any inline content here, only non-contentful items like <span> or </span> or trimmed whitespace or out-of-flow content.
+            for (size_t index = layoutRange.startIndex(); index < layoutRange.endIndex(); ++index) {
+                auto& inlineItem = m_inlineItemList[index];
+                if (&inlineItem == &firstCandidateInlineItem)
+                    break;
 
-    auto commitPrecedingNonContentfulContent = [&] {
-        LineCandidate precedingNonContentfulContent;
-        auto& firstCandidateItem = lineCandidate.inlineContent.continuousContent().runs().first().inlineItem;
-        // We should not find any inline content here, only non-contentful items like <span> or </span> or trimmed whitespace or out-of-flow content.
-        for (size_t index = layoutRange.startIndex(); index < layoutRange.endIndex(); ++index) {
-            auto& inlineItem = m_inlineItemList[index];
-            if (&inlineItem == &firstCandidateItem)
-                break;
-
-            if (!inlineItem.isFloat()) {
-                auto& styleToUse = isFirstFormattedLineCandidate() ? inlineItem.firstLineStyle() : inlineItem.style();
-                precedingNonContentfulContent.inlineContent.appendInlineItem(inlineItem, styleToUse, { });
+                if (!inlineItem.isFloat()) {
+                    auto& styleToUse = isFirstFormattedLineCandidate() ? inlineItem.firstLineStyle() : inlineItem.style();
+                    precedingNonContentfulContent.inlineContent.appendInlineItem(inlineItem, styleToUse, { });
+                }
             }
-        }
-        if (!precedingNonContentfulContent.inlineContent.isEmpty())
-            commitCandidateContent(precedingNonContentfulContent, { });
+            if (!precedingNonContentfulContent.inlineContent.isEmpty()) {
+                commitCandidateContent(precedingNonContentfulContent, { });
+                // At this point we can't yet have contentful runs on the line.
+                ASSERT(!m_line.hasContentOrListMarker());
+            }
+        };
+        commitPrecedingNonContentfulContent();
+        return applyLineBreakingOnCandidateInlineContent(layoutRange, lineCandidate);
     };
-    commitPrecedingNonContentfulContent();
-    return applyLineBreakingOnCandidateInlineContent(layoutRange, lineCandidate);
+    return relayoutCanidateContent();
 }
 
 LineBuilder::Result LineBuilder::applyLineBreakingOnCandidateInlineContent(const InlineItemRange& layoutRange, LineCandidate& lineCandidate)
