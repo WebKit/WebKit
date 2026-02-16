@@ -2253,15 +2253,19 @@ private:
                 // only claim to read 32 bits from the source if only 32 bits of the destination are
                 // read. Note that we only apply this logic if this turns into a load or store, since
                 // Move is the canonical way to move data between GPRs.
-                bool canUseMove32IfDidSpill = false;
+                bool useMove32IfDidSpill = false;
                 bool didSpill = false;
                 bool needScratch = false;
                 Tmp scratchForTmp;
-                if (bank == GP && inst.kind.opcode == Move) {
-                    if ((inst.args[0].isTmp() && m_tmpWidth.width(inst.args[0].tmp()) <= Width32)
-                        || (inst.args[1].isTmp() && m_tmpWidth.width(inst.args[1].tmp()) <= Width32))
-                        canUseMove32IfDidSpill = true;
-                }
+                auto notSpilledOrHasRequiredWidth32 = [this](const Arg& arg) {
+                    if (!arg.isTmp() || !spillSlot(arg.tmp()))
+                        return true;
+                    return m_tmpWidth.requiredWidth(arg.tmp()) <= Width32;
+                };
+                if (bank == GP && inst.kind.opcode == Move
+                    && notSpilledOrHasRequiredWidth32(inst.args[0])
+                    && notSpilledOrHasRequiredWidth32(inst.args[1]))
+                    useMove32IfDidSpill = true;
 
                 bool maybeCoalescable = this->mayBeCoalescable(inst);
                 // Try to replace the register use by memory use when possible.
@@ -2340,10 +2344,7 @@ private:
                             return;
                         }
                         ASSERT(inst.kind.opcode == Move || !(Arg::isAnyUse(role) && width > spillWidth));
-                        if (spillWidth != Width32)
-                            canUseMove32IfDidSpill = false;
-
-                        spilled->ensureSize(canUseMove32IfDidSpill ? 4 : bytesForWidth(width));
+                        spilled->ensureSize(useMove32IfDidSpill ? 4 : bytesForWidth(width));
                         didSpill = true;
                         if (needScratchIfSpilledInPlace) {
                             needScratch = true;
@@ -2353,7 +2354,7 @@ private:
                         m_stats[bank].numInPlaceSpill++;
                     });
 
-                if (didSpill && canUseMove32IfDidSpill)
+                if (didSpill && useMove32IfDidSpill)
                     inst.kind.opcode = Move32;
 
                 if (needScratch) {
