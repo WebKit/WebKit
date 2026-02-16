@@ -59,8 +59,7 @@ void SVGGradientElement::attributeChanged(const QualifiedName& name, const AtomS
     switch (name.nodeName()) {
     case AttributeNames::gradientUnitsAttr: {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(*this, newValue);
-        if (propertyValue > 0)
-            Ref { m_gradientUnits }->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
+        Ref { m_gradientUnits }->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue > 0 ? propertyValue : SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
         break;
     }
     case AttributeNames::gradientTransformAttr:
@@ -68,8 +67,7 @@ void SVGGradientElement::attributeChanged(const QualifiedName& name, const AtomS
         break;
     case AttributeNames::spreadMethodAttr: {
         auto propertyValue = SVGPropertyTraits<SVGSpreadMethodType>::fromString(*this, newValue);
-        if (propertyValue > 0)
-            Ref { m_spreadMethod }->setBaseValInternal<SVGSpreadMethodType>(propertyValue);
+        Ref { m_spreadMethod }->setBaseValInternal<SVGSpreadMethodType>(propertyValue > 0 ? propertyValue : SVGSpreadMethodPad);
         break;
     }
     default:

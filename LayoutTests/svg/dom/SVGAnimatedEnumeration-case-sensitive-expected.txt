@@ -34,22 +34,22 @@ Check invalid case feFuncR 'type'
 transferFunctionElement.setAttribute('type', 'table')
 PASS transferFunctionElement.setAttribute('type', 'IDENTITY') is undefined.
 PASS transferFunctionElement.getAttribute('type') is "IDENTITY"
-PASS transferFunctionElement.type.baseVal is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_TABLE
+PASS transferFunctionElement.type.baseVal is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY
 
 transferFunctionElement.setAttribute('type', 'discrete')
 PASS transferFunctionElement.setAttribute('type', 'TABLE') is undefined.
 PASS transferFunctionElement.getAttribute('type') is "TABLE"
-PASS transferFunctionElement.type.baseVal is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_DISCRETE
+PASS transferFunctionElement.type.baseVal is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY
 
 transferFunctionElement.setAttribute('type', 'linear')
 PASS transferFunctionElement.setAttribute('type', 'DISCRETE') is undefined.
 PASS transferFunctionElement.getAttribute('type') is "DISCRETE"
-PASS transferFunctionElement.type.baseVal is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_LINEAR
+PASS transferFunctionElement.type.baseVal is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY
 
 transferFunctionElement.setAttribute('type', 'gamma')
 PASS transferFunctionElement.setAttribute('type', 'LINEAR') is undefined.
 PASS transferFunctionElement.getAttribute('type') is "LINEAR"
-PASS transferFunctionElement.type.baseVal is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_GAMMA
+PASS transferFunctionElement.type.baseVal is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY
 
 transferFunctionElement.setAttribute('type', 'identity')
 PASS transferFunctionElement.setAttribute('type', 'GAMMA') is undefined.
@@ -127,77 +127,77 @@ Check invalid case feBlend 'mode'
 feBlendElement.setAttribute('mode', 'multiply')
 PASS feBlendElement.setAttribute('mode', 'NORMAL') is undefined.
 PASS feBlendElement.getAttribute('mode') is "NORMAL"
-PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_MULTIPLY
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_NORMAL
 
 feBlendElement.setAttribute('mode', 'screen')
 PASS feBlendElement.setAttribute('mode', 'MULTIPLY') is undefined.
 PASS feBlendElement.getAttribute('mode') is "MULTIPLY"
-PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_SCREEN
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_NORMAL
 
 feBlendElement.setAttribute('mode', 'darken')
 PASS feBlendElement.setAttribute('mode', 'SCREEN') is undefined.
 PASS feBlendElement.getAttribute('mode') is "SCREEN"
-PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_DARKEN
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_NORMAL
 
 feBlendElement.setAttribute('mode', 'lighten')
 PASS feBlendElement.setAttribute('mode', 'DARKEN') is undefined.
 PASS feBlendElement.getAttribute('mode') is "DARKEN"
-PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_LIGHTEN
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_NORMAL
 
 feBlendElement.setAttribute('mode', 'overlay')
 PASS feBlendElement.setAttribute('mode', 'LIGHTEN') is undefined.
 PASS feBlendElement.getAttribute('mode') is "LIGHTEN"
-PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_OVERLAY
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_NORMAL
 
 feBlendElement.setAttribute('mode', 'color-dodge')
 PASS feBlendElement.setAttribute('mode', 'OVERLAY') is undefined.
 PASS feBlendElement.getAttribute('mode') is "OVERLAY"
-PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR_DODGE
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_NORMAL
 
 feBlendElement.setAttribute('mode', 'color-burn')
 PASS feBlendElement.setAttribute('mode', 'COLOR-DODGE') is undefined.
 PASS feBlendElement.getAttribute('mode') is "COLOR-DODGE"
-PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR_BURN
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_NORMAL
 
 feBlendElement.setAttribute('mode', 'hard-light')
 PASS feBlendElement.setAttribute('mode', 'COLOR-BURN') is undefined.
 PASS feBlendElement.getAttribute('mode') is "COLOR-BURN"
-PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_HARD_LIGHT
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_NORMAL
 
 feBlendElement.setAttribute('mode', 'soft-light')
 PASS feBlendElement.setAttribute('mode', 'HARD-LIGHT') is undefined.
 PASS feBlendElement.getAttribute('mode') is "HARD-LIGHT"
-PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_SOFT_LIGHT
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_NORMAL
 
 feBlendElement.setAttribute('mode', 'difference')
 PASS feBlendElement.setAttribute('mode', 'SOFT-LIGHT') is undefined.
 PASS feBlendElement.getAttribute('mode') is "SOFT-LIGHT"
-PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_DIFFERENCE
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_NORMAL
 
 feBlendElement.setAttribute('mode', 'exclusion')
 PASS feBlendElement.setAttribute('mode', 'DIFFERENCE') is undefined.
 PASS feBlendElement.getAttribute('mode') is "DIFFERENCE"
-PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_EXCLUSION
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_NORMAL
 
 feBlendElement.setAttribute('mode', 'hue')
 PASS feBlendElement.setAttribute('mode', 'EXCLUSION') is undefined.
 PASS feBlendElement.getAttribute('mode') is "EXCLUSION"
-PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_HUE
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_NORMAL
 
 feBlendElement.setAttribute('mode', 'saturation')
 PASS feBlendElement.setAttribute('mode', 'HUE') is undefined.
 PASS feBlendElement.getAttribute('mode') is "HUE"
-PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_SATURATION
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_NORMAL
 
 feBlendElement.setAttribute('mode', 'color')
 PASS feBlendElement.setAttribute('mode', 'SATURATION') is undefined.
 PASS feBlendElement.getAttribute('mode') is "SATURATION"
-PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_COLOR
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_NORMAL
 
 feBlendElement.setAttribute('mode', 'luminosity')
 PASS feBlendElement.setAttribute('mode', 'COLOR') is undefined.
 PASS feBlendElement.getAttribute('mode') is "COLOR"
-PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_LUMINOSITY
+PASS feBlendElement.mode.baseVal is SVGFEBlendElement.SVG_FEBLEND_MODE_NORMAL
 
 feBlendElement.setAttribute('mode', 'normal')
 PASS feBlendElement.setAttribute('mode', 'LUMINOSITY') is undefined.
@@ -227,17 +227,17 @@ Check invalid case feColorMatrix 'type'
 feColorMatrixElement.setAttribute('type', 'saturate')
 PASS feColorMatrixElement.setAttribute('type', 'MATRIX') is undefined.
 PASS feColorMatrixElement.getAttribute('type') is "MATRIX"
-PASS feColorMatrixElement.type.baseVal is SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_SATURATE
+PASS feColorMatrixElement.type.baseVal is SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_MATRIX
 
 feColorMatrixElement.setAttribute('type', 'hueRotate')
 PASS feColorMatrixElement.setAttribute('type', 'SATURATE') is undefined.
 PASS feColorMatrixElement.getAttribute('type') is "SATURATE"
-PASS feColorMatrixElement.type.baseVal is SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_HUEROTATE
+PASS feColorMatrixElement.type.baseVal is SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_MATRIX
 
 feColorMatrixElement.setAttribute('type', 'luminanceToAlpha')
 PASS feColorMatrixElement.setAttribute('type', 'HUEROTATE') is undefined.
 PASS feColorMatrixElement.getAttribute('type') is "HUEROTATE"
-PASS feColorMatrixElement.type.baseVal is SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_LUMINANCETOALPHA
+PASS feColorMatrixElement.type.baseVal is SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_MATRIX
 
 feColorMatrixElement.setAttribute('type', 'matrix')
 PASS feColorMatrixElement.setAttribute('type', 'LUMINANCETOALPHA') is undefined.
@@ -275,27 +275,27 @@ Check invalid case feComposite 'operator'
 feCompositeElement.setAttribute('operator', 'in')
 PASS feCompositeElement.setAttribute('operator', 'OVER') is undefined.
 PASS feCompositeElement.getAttribute('operator') is "OVER"
-PASS feCompositeElement.operator.baseVal is SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_IN
+PASS feCompositeElement.operator.baseVal is SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_OVER
 
 feCompositeElement.setAttribute('operator', 'out')
 PASS feCompositeElement.setAttribute('operator', 'IN') is undefined.
 PASS feCompositeElement.getAttribute('operator') is "IN"
-PASS feCompositeElement.operator.baseVal is SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_OUT
+PASS feCompositeElement.operator.baseVal is SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_OVER
 
 feCompositeElement.setAttribute('operator', 'atop')
 PASS feCompositeElement.setAttribute('operator', 'OUT') is undefined.
 PASS feCompositeElement.getAttribute('operator') is "OUT"
-PASS feCompositeElement.operator.baseVal is SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_ATOP
+PASS feCompositeElement.operator.baseVal is SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_OVER
 
 feCompositeElement.setAttribute('operator', 'xor')
 PASS feCompositeElement.setAttribute('operator', 'ATOP') is undefined.
 PASS feCompositeElement.getAttribute('operator') is "ATOP"
-PASS feCompositeElement.operator.baseVal is SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_XOR
+PASS feCompositeElement.operator.baseVal is SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_OVER
 
 feCompositeElement.setAttribute('operator', 'arithmetic')
 PASS feCompositeElement.setAttribute('operator', 'XOR') is undefined.
 PASS feCompositeElement.getAttribute('operator') is "XOR"
-PASS feCompositeElement.operator.baseVal is SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_ARITHMETIC
+PASS feCompositeElement.operator.baseVal is SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_OVER
 
 feCompositeElement.setAttribute('operator', 'over')
 PASS feCompositeElement.setAttribute('operator', 'ARITHMETIC') is undefined.
@@ -321,12 +321,12 @@ Check invalid case feConvolveMatrix 'edgeMode'
 feConvolveMatrixElement.setAttribute('edgeMode', 'wrap')
 PASS feConvolveMatrixElement.setAttribute('edgeMode', 'DUPLICATE') is undefined.
 PASS feConvolveMatrixElement.getAttribute('edgeMode') is "DUPLICATE"
-PASS feConvolveMatrixElement.edgeMode.baseVal is SVGFEConvolveMatrixElement.SVG_EDGEMODE_WRAP
+FAIL feConvolveMatrixElement.edgeMode.baseVal should be 1. Was 2.
 
 feConvolveMatrixElement.setAttribute('edgeMode', 'none')
 PASS feConvolveMatrixElement.setAttribute('edgeMode', 'WRAP') is undefined.
 PASS feConvolveMatrixElement.getAttribute('edgeMode') is "WRAP"
-PASS feConvolveMatrixElement.edgeMode.baseVal is SVGFEConvolveMatrixElement.SVG_EDGEMODE_NONE
+FAIL feConvolveMatrixElement.edgeMode.baseVal should be 1. Was 3.
 
 feConvolveMatrixElement.setAttribute('edgeMode', 'duplicate')
 PASS feConvolveMatrixElement.setAttribute('edgeMode', 'NONE') is undefined.
@@ -356,22 +356,22 @@ Check invalid case feDisplacementMap 'xChannelSelector'
 feDisplacementMapElement.setAttribute('xChannelSelector', 'G')
 PASS feDisplacementMapElement.setAttribute('xChannelSelector', 'r') is undefined.
 PASS feDisplacementMapElement.getAttribute('xChannelSelector') is "r"
-PASS feDisplacementMapElement.xChannelSelector.baseVal is SVGFEDisplacementMapElement.SVG_CHANNEL_G
+FAIL feDisplacementMapElement.xChannelSelector.baseVal should be 1. Was 4.
 
 feDisplacementMapElement.setAttribute('xChannelSelector', 'B')
 PASS feDisplacementMapElement.setAttribute('xChannelSelector', 'g') is undefined.
 PASS feDisplacementMapElement.getAttribute('xChannelSelector') is "g"
-PASS feDisplacementMapElement.xChannelSelector.baseVal is SVGFEDisplacementMapElement.SVG_CHANNEL_B
+FAIL feDisplacementMapElement.xChannelSelector.baseVal should be 1. Was 4.
 
 feDisplacementMapElement.setAttribute('xChannelSelector', 'A')
 PASS feDisplacementMapElement.setAttribute('xChannelSelector', 'b') is undefined.
 PASS feDisplacementMapElement.getAttribute('xChannelSelector') is "b"
-PASS feDisplacementMapElement.xChannelSelector.baseVal is SVGFEDisplacementMapElement.SVG_CHANNEL_A
+FAIL feDisplacementMapElement.xChannelSelector.baseVal should be 1. Was 4.
 
 feDisplacementMapElement.setAttribute('xChannelSelector', 'R')
 PASS feDisplacementMapElement.setAttribute('xChannelSelector', 'a') is undefined.
 PASS feDisplacementMapElement.getAttribute('xChannelSelector') is "a"
-PASS feDisplacementMapElement.xChannelSelector.baseVal is SVGFEDisplacementMapElement.SVG_CHANNEL_R
+FAIL feDisplacementMapElement.xChannelSelector.baseVal should be 1. Was 4.
 
 Check valid feMorphology 'operator'
 
@@ -388,7 +388,7 @@ Check invalid case feMorphology 'operator'
 feMorphologyElement.setAttribute('operator', 'dilate')
 PASS feMorphologyElement.setAttribute('operator', 'ERODE') is undefined.
 PASS feMorphologyElement.getAttribute('operator') is "ERODE"
-PASS feMorphologyElement.operator.baseVal is SVGFEMorphologyElement.SVG_MORPHOLOGY_OPERATOR_DILATE
+PASS feMorphologyElement.operator.baseVal is SVGFEMorphologyElement.SVG_MORPHOLOGY_OPERATOR_ERODE
 
 feMorphologyElement.setAttribute('operator', 'erode')
 PASS feMorphologyElement.setAttribute('operator', 'DILATE') is undefined.
@@ -410,12 +410,12 @@ Check invalid case feTurbulence 'type'
 feTurbulenceElement.setAttribute('type', 'turbulence')
 PASS feTurbulenceElement.setAttribute('type', 'FRACTALNOISE') is undefined.
 PASS feTurbulenceElement.getAttribute('type') is "FRACTALNOISE"
-PASS feTurbulenceElement.type.baseVal is SVGFETurbulenceElement.SVG_TURBULENCE_TYPE_TURBULENCE
+FAIL feTurbulenceElement.type.baseVal should be 1. Was 2.
 
 feTurbulenceElement.setAttribute('type', 'fractalNoise')
 PASS feTurbulenceElement.setAttribute('type', 'TURBULENCE') is undefined.
 PASS feTurbulenceElement.getAttribute('type') is "TURBULENCE"
-PASS feTurbulenceElement.type.baseVal is SVGFETurbulenceElement.SVG_TURBULENCE_TYPE_FRACTALNOISE
+FAIL feTurbulenceElement.type.baseVal should be 1. Was 2.
 
 Check valid feTurbulence 'stitchTiles'
 
@@ -432,12 +432,12 @@ Check invalid case feTurbulence 'stitchTiles'
 feTurbulenceElement.setAttribute('stitchTiles', 'noStitch')
 PASS feTurbulenceElement.setAttribute('stitchTiles', 'STITCH') is undefined.
 PASS feTurbulenceElement.getAttribute('stitchTiles') is "STITCH"
-PASS feTurbulenceElement.stitchTiles.baseVal is SVGFETurbulenceElement.SVG_STITCHTYPE_NOSTITCH
+FAIL feTurbulenceElement.stitchTiles.baseVal should be 1. Was 2.
 
 feTurbulenceElement.setAttribute('stitchTiles', 'stitch')
 PASS feTurbulenceElement.setAttribute('stitchTiles', 'NOSTITCH') is undefined.
 PASS feTurbulenceElement.getAttribute('stitchTiles') is "NOSTITCH"
-PASS feTurbulenceElement.stitchTiles.baseVal is SVGFETurbulenceElement.SVG_STITCHTYPE_STITCH
+FAIL feTurbulenceElement.stitchTiles.baseVal should be 1. Was 2.
 
 Check valid linearGradient 'spreadMethod'
 
@@ -458,12 +458,12 @@ Check invalid case linearGradient 'spreadMethod'
 gradientElement.setAttribute('spreadMethod', 'reflect')
 PASS gradientElement.setAttribute('spreadMethod', 'PAD') is undefined.
 PASS gradientElement.getAttribute('spreadMethod') is "PAD"
-PASS gradientElement.spreadMethod.baseVal is SVGGradientElement.SVG_SPREADMETHOD_REFLECT
+PASS gradientElement.spreadMethod.baseVal is SVGGradientElement.SVG_SPREADMETHOD_PAD
 
 gradientElement.setAttribute('spreadMethod', 'repeat')
 PASS gradientElement.setAttribute('spreadMethod', 'REFLECT') is undefined.
 PASS gradientElement.getAttribute('spreadMethod') is "REFLECT"
-PASS gradientElement.spreadMethod.baseVal is SVGGradientElement.SVG_SPREADMETHOD_REPEAT
+PASS gradientElement.spreadMethod.baseVal is SVGGradientElement.SVG_SPREADMETHOD_PAD
 
 gradientElement.setAttribute('spreadMethod', 'pad')
 PASS gradientElement.setAttribute('spreadMethod', 'REPEAT') is undefined.
@@ -485,12 +485,12 @@ Check invalid case linearGradient 'gradientUnits'
 gradientElement.setAttribute('gradientUnits', 'objectBoundingBox')
 PASS gradientElement.setAttribute('gradientUnits', 'USERSPACEONUSE') is undefined.
 PASS gradientElement.getAttribute('gradientUnits') is "USERSPACEONUSE"
-PASS gradientElement.gradientUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
+FAIL gradientElement.gradientUnits.baseVal should be 1. Was 2.
 
 gradientElement.setAttribute('gradientUnits', 'userSpaceOnUse')
 PASS gradientElement.setAttribute('gradientUnits', 'OBJECTBOUNDINGBOX') is undefined.
 PASS gradientElement.getAttribute('gradientUnits') is "OBJECTBOUNDINGBOX"
-PASS gradientElement.gradientUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE
+FAIL gradientElement.gradientUnits.baseVal should be 1. Was 2.
 
 Check valid marker 'markerUnits'
 
@@ -507,12 +507,12 @@ Check invalid case marker 'markerUnits'
 markerElement.setAttribute('markerUnits', 'strokeWidth')
 PASS markerElement.setAttribute('markerUnits', 'USERSPACEONUSE') is undefined.
 PASS markerElement.getAttribute('markerUnits') is "USERSPACEONUSE"
-PASS markerElement.markerUnits.baseVal is SVGMarkerElement.SVG_MARKERUNITS_STROKEWIDTH
+FAIL markerElement.markerUnits.baseVal should be 1. Was 2.
 
 markerElement.setAttribute('markerUnits', 'userSpaceOnUse')
 PASS markerElement.setAttribute('markerUnits', 'STROKEWIDTH') is undefined.
 PASS markerElement.getAttribute('markerUnits') is "STROKEWIDTH"
-PASS markerElement.markerUnits.baseVal is SVGMarkerElement.SVG_MARKERUNITS_USERSPACEONUSE
+FAIL markerElement.markerUnits.baseVal should be 1. Was 2.
 
 Check valid text 'lengthAdjust'
 
@@ -529,7 +529,7 @@ Check invalid case text 'lengthAdjust'
 textContentElement.setAttribute('lengthAdjust', 'spacingAndGlyphs')
 PASS textContentElement.setAttribute('lengthAdjust', 'SPACING') is undefined.
 PASS textContentElement.getAttribute('lengthAdjust') is "SPACING"
-PASS textContentElement.lengthAdjust.baseVal is SVGTextContentElement.LENGTHADJUST_SPACINGANDGLYPHS
+PASS textContentElement.lengthAdjust.baseVal is SVGTextContentElement.LENGTHADJUST_SPACING
 
 textContentElement.setAttribute('lengthAdjust', 'spacing')
 PASS textContentElement.setAttribute('lengthAdjust', 'SPACINGANDGLYPHS') is undefined.
@@ -551,7 +551,7 @@ Check invalid case textPath 'method'
 textPathElement.setAttribute('method', 'stretch')
 PASS textPathElement.setAttribute('method', 'ALIGN') is undefined.
 PASS textPathElement.getAttribute('method') is "ALIGN"
-PASS textPathElement.method.baseVal is SVGTextPathElement.TEXTPATH_METHODTYPE_STRETCH
+PASS textPathElement.method.baseVal is SVGTextPathElement.TEXTPATH_METHODTYPE_ALIGN
 
 textPathElement.setAttribute('method', 'align')
 PASS textPathElement.setAttribute('method', 'STRETCH') is undefined.
@@ -573,14 +573,15 @@ Check invalid case textPath 'spacing'
 textPathElement.setAttribute('spacing', 'exact')
 PASS textPathElement.setAttribute('spacing', 'AUTO') is undefined.
 PASS textPathElement.getAttribute('spacing') is "AUTO"
-PASS textPathElement.spacing.baseVal is SVGTextPathElement.TEXTPATH_SPACINGTYPE_EXACT
+FAIL textPathElement.spacing.baseVal should be 1. Was 2.
 
 textPathElement.setAttribute('spacing', 'auto')
 PASS textPathElement.setAttribute('spacing', 'EXACT') is undefined.
 PASS textPathElement.getAttribute('spacing') is "EXACT"
-PASS textPathElement.spacing.baseVal is SVGTextPathElement.TEXTPATH_SPACINGTYPE_AUTO
+FAIL textPathElement.spacing.baseVal should be 1. Was 2.
 
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
 

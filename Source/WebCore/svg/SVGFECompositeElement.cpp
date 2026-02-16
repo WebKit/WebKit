@@ -60,8 +60,7 @@ void SVGFECompositeElement::attributeChanged(const QualifiedName& name, const At
     switch (name.nodeName()) {
     case AttributeNames::operatorAttr: {
         CompositeOperationType propertyValue = SVGPropertyTraits<CompositeOperationType>::fromString(*this, newValue);
-        if (enumToUnderlyingType(propertyValue))
-            Ref { m_svgOperator }->setBaseValInternal<CompositeOperationType>(propertyValue);
+        Ref { m_svgOperator }->setBaseValInternal<CompositeOperationType>(enumToUnderlyingType(propertyValue) ? propertyValue : CompositeOperationType::FECOMPOSITE_OPERATOR_OVER);
         break;
     }
     case AttributeNames::inAttr:

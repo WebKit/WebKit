@@ -67,8 +67,7 @@ void SVGClipPathElement::attributeChanged(const QualifiedName& name, const AtomS
 {
     if (name == SVGNames::clipPathUnitsAttr) {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(*this, newValue);
-        if (propertyValue > 0)
-            m_clipPathUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
+        m_clipPathUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue > 0 ? propertyValue : SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
     }
 
     SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);

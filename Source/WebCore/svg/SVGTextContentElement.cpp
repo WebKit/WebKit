@@ -174,8 +174,7 @@ void SVGTextContentElement::attributeChanged(const QualifiedName& name, const At
 
     if (name == SVGNames::lengthAdjustAttr) {
         auto propertyValue = SVGPropertyTraits<SVGLengthAdjustType>::fromString(*this, newValue);
-        if (propertyValue > 0)
-            m_lengthAdjust->setBaseValInternal<SVGLengthAdjustType>(propertyValue);
+        Ref { m_lengthAdjust }->setBaseValInternal<SVGLengthAdjustType>(propertyValue > 0 ? propertyValue : SVGLengthAdjustSpacing);
     } else if (name == SVGNames::textLengthAttr)
         m_textLength->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Other, newValue, parseError, SVGLengthNegativeValuesMode::Forbid));
 

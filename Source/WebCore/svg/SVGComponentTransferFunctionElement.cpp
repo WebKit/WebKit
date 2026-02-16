@@ -55,8 +55,7 @@ void SVGComponentTransferFunctionElement::attributeChanged(const QualifiedName& 
     switch (name.nodeName()) {
     case AttributeNames::typeAttr: {
         ComponentTransferType propertyValue = SVGPropertyTraits<ComponentTransferType>::fromString(*this, newValue);
-        if (enumToUnderlyingType(propertyValue))
-            m_type->setBaseValInternal<ComponentTransferType>(propertyValue);
+        m_type->setBaseValInternal<ComponentTransferType>(enumToUnderlyingType(propertyValue) ? propertyValue : ComponentTransferType::FECOMPONENTTRANSFER_TYPE_IDENTITY);
         break;
     }
     case AttributeNames::tableValuesAttr:

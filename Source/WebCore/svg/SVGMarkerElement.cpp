@@ -73,8 +73,7 @@ void SVGMarkerElement::attributeChanged(const QualifiedName& name, const AtomStr
     switch (name.nodeName()) {
     case AttributeNames::markerUnitsAttr: {
         auto propertyValue = SVGPropertyTraits<SVGMarkerUnitsType>::fromString(*this, newValue);
-        if (propertyValue != SVGMarkerUnitsType::Unknown)
-            Ref { m_markerUnits }->setBaseValInternal<SVGMarkerUnitsType>(propertyValue);
+        Ref { m_markerUnits }->setBaseValInternal<SVGMarkerUnitsType>(propertyValue != SVGMarkerUnitsType::Unknown ? propertyValue : SVGMarkerUnitsType::StrokeWidth);
         return;
     }
     case AttributeNames::orientAttr: {

@@ -1,7 +1,7 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -146,17 +146,18 @@ function testCaseSensitivity(elementType, element, enumType)
     for (var i = 0; i < enumValues.length; i++) {
         var val = enumValues[i].id;
         var alt_val = enumValues[((i + 1) % enumValues.length)];
-    
+
         debug("");
-       
+
         debug(element.id + ".setAttribute('" + enumType + "', '" + alt_val.id + "')");
         element.setAttribute(enumType, alt_val.id);
 
         var val_check = (val.toUpperCase() == val) ? val.toLowerCase() : val.toUpperCase();
         shouldBeUndefined(element.id + ".setAttribute('" + enumType + "', '" + val_check + "')");
         shouldBeEqualToString(element.id + ".getAttribute('" + enumType + "')", val_check);
-        shouldBe(element.id + "." + enumType + ".baseVal", elementType + "." + alt_val.val);
-    } 
+        // Invalid values should reset to the default (first enum value)
+        shouldBe(element.id + "." + enumType + ".baseVal", elementType + "." + enumValues[0].val);
+    }
 }
 
 // SVGComponentTransferFunctionElement
@@ -226,6 +227,5 @@ debug("");
 
 successfullyParsed = true;
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -75,14 +75,12 @@ void SVGFilterElement::attributeChanged(const QualifiedName& name, const AtomStr
     switch (name.nodeName()) {
     case AttributeNames::filterUnitsAttr: {
         SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(*this, newValue);
-        if (propertyValue > 0)
-            Ref { m_filterUnits }->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
+        Ref { m_filterUnits }->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue > 0 ? propertyValue : SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
         break;
     }
     case AttributeNames::primitiveUnitsAttr: {
         SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(*this, newValue);
-        if (propertyValue > 0)
-            Ref { m_primitiveUnits }->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
+        Ref { m_primitiveUnits }->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue > 0 ? propertyValue : SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
         break;
     }
     case AttributeNames::xAttr:

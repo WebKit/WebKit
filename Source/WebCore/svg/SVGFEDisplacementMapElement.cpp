@@ -58,14 +58,12 @@ void SVGFEDisplacementMapElement::attributeChanged(const QualifiedName& name, co
     switch (name.nodeName()) {
     case AttributeNames::xChannelSelectorAttr: {
         auto propertyValue = SVGPropertyTraits<ChannelSelectorType>::fromString(*this, newValue);
-        if (enumToUnderlyingType(propertyValue))
-            Ref { m_xChannelSelector }->setBaseValInternal<ChannelSelectorType>(propertyValue);
+        Ref { m_xChannelSelector }->setBaseValInternal<ChannelSelectorType>(enumToUnderlyingType(propertyValue) ? propertyValue : ChannelSelectorType::CHANNEL_A);
         break;
     }
     case AttributeNames::yChannelSelectorAttr: {
         auto propertyValue = SVGPropertyTraits<ChannelSelectorType>::fromString(*this, newValue);
-        if (enumToUnderlyingType(propertyValue))
-            Ref { m_yChannelSelector }->setBaseValInternal<ChannelSelectorType>(propertyValue);
+        Ref { m_yChannelSelector }->setBaseValInternal<ChannelSelectorType>(enumToUnderlyingType(propertyValue) ? propertyValue : ChannelSelectorType::CHANNEL_A);
         break;
     }
     case AttributeNames::inAttr:

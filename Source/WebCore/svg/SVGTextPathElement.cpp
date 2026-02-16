@@ -81,14 +81,12 @@ void SVGTextPathElement::attributeChanged(const QualifiedName& name, const AtomS
         break;
     case AttributeNames::methodAttr: {
         SVGTextPathMethodType propertyValue = SVGPropertyTraits<SVGTextPathMethodType>::fromString(*this, newValue);
-        if (propertyValue > 0)
-            Ref { m_method }->setBaseValInternal<SVGTextPathMethodType>(propertyValue);
+        Ref { m_method }->setBaseValInternal<SVGTextPathMethodType>(propertyValue > 0 ? propertyValue : SVGTextPathMethodAlign);
         break;
     }
     case AttributeNames::spacingAttr: {
         SVGTextPathSpacingType propertyValue = SVGPropertyTraits<SVGTextPathSpacingType>::fromString(*this, newValue);
-        if (propertyValue > 0)
-            Ref { m_spacing }->setBaseValInternal<SVGTextPathSpacingType>(propertyValue);
+        Ref { m_spacing }->setBaseValInternal<SVGTextPathSpacingType>(propertyValue > 0 ? propertyValue : SVGTextPathSpacingExact);
         break;
     }
     default:

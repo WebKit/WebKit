@@ -1,50 +1,50 @@
 
-FAIL SVGAnimatedEnumeration, initial values, SVGClipPathElement.prototype.clipPathUnits (remove) assert_equals: initial after expected 1 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGClipPathElement.prototype.clipPathUnits (invalid value) assert_equals: initial after expected 1 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGComponentTransferFunctionElement.prototype.type (remove) assert_equals: initial after expected 1 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGComponentTransferFunctionElement.prototype.type (invalid value) assert_equals: initial after expected 1 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGFEBlendElement.prototype.mode (remove) assert_equals: initial after expected 1 but got 3
-FAIL SVGAnimatedEnumeration, initial values, SVGFEBlendElement.prototype.mode (invalid value) assert_equals: initial after expected 1 but got 3
-FAIL SVGAnimatedEnumeration, initial values, SVGFEColorMatrixElement.prototype.type (remove) assert_equals: initial after expected 1 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGFEColorMatrixElement.prototype.type (invalid value) assert_equals: initial after expected 1 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGFECompositeElement.prototype.operator (remove) assert_equals: initial after expected 1 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGFECompositeElement.prototype.operator (invalid value) assert_equals: initial after expected 1 but got 2
+PASS SVGAnimatedEnumeration, initial values, SVGClipPathElement.prototype.clipPathUnits (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGClipPathElement.prototype.clipPathUnits (invalid value)
+PASS SVGAnimatedEnumeration, initial values, SVGComponentTransferFunctionElement.prototype.type (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGComponentTransferFunctionElement.prototype.type (invalid value)
+PASS SVGAnimatedEnumeration, initial values, SVGFEBlendElement.prototype.mode (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGFEBlendElement.prototype.mode (invalid value)
+PASS SVGAnimatedEnumeration, initial values, SVGFEColorMatrixElement.prototype.type (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGFEColorMatrixElement.prototype.type (invalid value)
+PASS SVGAnimatedEnumeration, initial values, SVGFECompositeElement.prototype.operator (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGFECompositeElement.prototype.operator (invalid value)
 FAIL SVGAnimatedEnumeration, initial values, SVGFEConvolveMatrixElement.prototype.edgeMode (remove) assert_equals: initial after expected 1 but got 2
 FAIL SVGAnimatedEnumeration, initial values, SVGFEConvolveMatrixElement.prototype.edgeMode (invalid value) assert_equals: initial after expected 1 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGFEDisplacementMapElement.prototype.xChannelSelector (remove) assert_equals: initial after expected 4 but got 1
-FAIL SVGAnimatedEnumeration, initial values, SVGFEDisplacementMapElement.prototype.xChannelSelector (invalid value) assert_equals: initial after expected 4 but got 1
-FAIL SVGAnimatedEnumeration, initial values, SVGFEDisplacementMapElement.prototype.yChannelSelector (remove) assert_equals: initial after expected 4 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGFEDisplacementMapElement.prototype.yChannelSelector (invalid value) assert_equals: initial after expected 4 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGFEMorphologyElement.prototype.operator (remove) assert_equals: initial after expected 1 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGFEMorphologyElement.prototype.operator (invalid value) assert_equals: initial after expected 1 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGFETurbulenceElement.prototype.stitchTiles (remove) assert_equals: initial after expected 2 but got 1
-FAIL SVGAnimatedEnumeration, initial values, SVGFETurbulenceElement.prototype.stitchTiles (invalid value) assert_equals: initial after expected 2 but got 1
-FAIL SVGAnimatedEnumeration, initial values, SVGFETurbulenceElement.prototype.type (remove) assert_equals: initial after expected 2 but got 1
-FAIL SVGAnimatedEnumeration, initial values, SVGFETurbulenceElement.prototype.type (invalid value) assert_equals: initial after expected 2 but got 1
-FAIL SVGAnimatedEnumeration, initial values, SVGFilterElement.prototype.filterUnits (remove) assert_equals: initial after expected 2 but got 1
-FAIL SVGAnimatedEnumeration, initial values, SVGFilterElement.prototype.filterUnits (invalid value) assert_equals: initial after expected 2 but got 1
-FAIL SVGAnimatedEnumeration, initial values, SVGFilterElement.prototype.primitiveUnits (remove) assert_equals: initial after expected 1 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGFilterElement.prototype.primitiveUnits (invalid value) assert_equals: initial after expected 1 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGGradientElement.prototype.gradientUnits (remove) assert_equals: initial after expected 2 but got 1
-FAIL SVGAnimatedEnumeration, initial values, SVGGradientElement.prototype.gradientUnits (invalid value) assert_equals: initial after expected 2 but got 1
-FAIL SVGAnimatedEnumeration, initial values, SVGGradientElement.prototype.spreadMethod (remove) assert_equals: initial after expected 1 but got 3
-FAIL SVGAnimatedEnumeration, initial values, SVGGradientElement.prototype.spreadMethod (invalid value) assert_equals: initial after expected 1 but got 3
-FAIL SVGAnimatedEnumeration, initial values, SVGMarkerElement.prototype.markerUnits (remove) assert_equals: initial after expected 2 but got 1
-FAIL SVGAnimatedEnumeration, initial values, SVGMarkerElement.prototype.markerUnits (invalid value) assert_equals: initial after expected 2 but got 1
+PASS SVGAnimatedEnumeration, initial values, SVGFEDisplacementMapElement.prototype.xChannelSelector (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGFEDisplacementMapElement.prototype.xChannelSelector (invalid value)
+PASS SVGAnimatedEnumeration, initial values, SVGFEDisplacementMapElement.prototype.yChannelSelector (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGFEDisplacementMapElement.prototype.yChannelSelector (invalid value)
+PASS SVGAnimatedEnumeration, initial values, SVGFEMorphologyElement.prototype.operator (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGFEMorphologyElement.prototype.operator (invalid value)
+PASS SVGAnimatedEnumeration, initial values, SVGFETurbulenceElement.prototype.stitchTiles (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGFETurbulenceElement.prototype.stitchTiles (invalid value)
+PASS SVGAnimatedEnumeration, initial values, SVGFETurbulenceElement.prototype.type (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGFETurbulenceElement.prototype.type (invalid value)
+PASS SVGAnimatedEnumeration, initial values, SVGFilterElement.prototype.filterUnits (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGFilterElement.prototype.filterUnits (invalid value)
+PASS SVGAnimatedEnumeration, initial values, SVGFilterElement.prototype.primitiveUnits (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGFilterElement.prototype.primitiveUnits (invalid value)
+PASS SVGAnimatedEnumeration, initial values, SVGGradientElement.prototype.gradientUnits (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGGradientElement.prototype.gradientUnits (invalid value)
+PASS SVGAnimatedEnumeration, initial values, SVGGradientElement.prototype.spreadMethod (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGGradientElement.prototype.spreadMethod (invalid value)
+PASS SVGAnimatedEnumeration, initial values, SVGMarkerElement.prototype.markerUnits (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGMarkerElement.prototype.markerUnits (invalid value)
 PASS SVGAnimatedEnumeration, initial values, SVGMarkerElement.prototype.orientType (remove)
 FAIL SVGAnimatedEnumeration, initial values, SVGMarkerElement.prototype.orientType (invalid value) assert_equals: initial after expected 2 but got 0
-FAIL SVGAnimatedEnumeration, initial values, SVGMaskElement.prototype.maskUnits (remove) assert_equals: initial after expected 2 but got 1
-FAIL SVGAnimatedEnumeration, initial values, SVGMaskElement.prototype.maskUnits (invalid value) assert_equals: initial after expected 2 but got 1
-FAIL SVGAnimatedEnumeration, initial values, SVGMaskElement.prototype.maskContentUnits (remove) assert_equals: initial after expected 1 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGMaskElement.prototype.maskContentUnits (invalid value) assert_equals: initial after expected 1 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGPatternElement.prototype.patternUnits (remove) assert_equals: initial after expected 2 but got 1
-FAIL SVGAnimatedEnumeration, initial values, SVGPatternElement.prototype.patternUnits (invalid value) assert_equals: initial after expected 2 but got 1
-FAIL SVGAnimatedEnumeration, initial values, SVGPatternElement.prototype.patternContentUnits (remove) assert_equals: initial after expected 1 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGPatternElement.prototype.patternContentUnits (invalid value) assert_equals: initial after expected 1 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGTextContentElement.prototype.lengthAdjust (remove) assert_equals: initial after expected 1 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGTextContentElement.prototype.lengthAdjust (invalid value) assert_equals: initial after expected 1 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGTextPathElement.prototype.method (remove) assert_equals: initial after expected 1 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGTextPathElement.prototype.method (invalid value) assert_equals: initial after expected 1 but got 2
-FAIL SVGAnimatedEnumeration, initial values, SVGTextPathElement.prototype.spacing (remove) assert_equals: initial after expected 2 but got 1
-FAIL SVGAnimatedEnumeration, initial values, SVGTextPathElement.prototype.spacing (invalid value) assert_equals: initial after expected 2 but got 1
+PASS SVGAnimatedEnumeration, initial values, SVGMaskElement.prototype.maskUnits (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGMaskElement.prototype.maskUnits (invalid value)
+PASS SVGAnimatedEnumeration, initial values, SVGMaskElement.prototype.maskContentUnits (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGMaskElement.prototype.maskContentUnits (invalid value)
+PASS SVGAnimatedEnumeration, initial values, SVGPatternElement.prototype.patternUnits (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGPatternElement.prototype.patternUnits (invalid value)
+PASS SVGAnimatedEnumeration, initial values, SVGPatternElement.prototype.patternContentUnits (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGPatternElement.prototype.patternContentUnits (invalid value)
+PASS SVGAnimatedEnumeration, initial values, SVGTextContentElement.prototype.lengthAdjust (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGTextContentElement.prototype.lengthAdjust (invalid value)
+PASS SVGAnimatedEnumeration, initial values, SVGTextPathElement.prototype.method (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGTextPathElement.prototype.method (invalid value)
+PASS SVGAnimatedEnumeration, initial values, SVGTextPathElement.prototype.spacing (remove)
+PASS SVGAnimatedEnumeration, initial values, SVGTextPathElement.prototype.spacing (invalid value)
 

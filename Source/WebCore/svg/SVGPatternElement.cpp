@@ -82,14 +82,12 @@ void SVGPatternElement::attributeChanged(const QualifiedName& name, const AtomSt
     switch (name.nodeName()) {
     case AttributeNames::patternUnitsAttr: {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(*this, newValue);
-        if (propertyValue > 0)
-            Ref { m_patternUnits }->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
+        Ref { m_patternUnits }->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue > 0 ? propertyValue : SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
         break;
     }
     case AttributeNames::patternContentUnitsAttr: {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(*this, newValue);
-        if (propertyValue > 0)
-            Ref { m_patternContentUnits }->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
+        Ref { m_patternContentUnits }->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue > 0 ? propertyValue : SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
         break;
     }
     case AttributeNames::patternTransformAttr: {

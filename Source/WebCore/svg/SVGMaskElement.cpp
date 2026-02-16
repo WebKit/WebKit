@@ -79,14 +79,12 @@ void SVGMaskElement::attributeChanged(const QualifiedName& name, const AtomStrin
     switch (name.nodeName()) {
     case AttributeNames::maskUnitsAttr: {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(*this, newValue);
-        if (propertyValue > 0)
-            Ref { m_maskUnits }->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
+        Ref { m_maskUnits }->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue > 0 ? propertyValue : SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
         break;
     }
     case AttributeNames::maskContentUnitsAttr: {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(*this, newValue);
-        if (propertyValue > 0)
-            Ref { m_maskContentUnits }->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
+        Ref { m_maskContentUnits }->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue > 0 ? propertyValue : SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
         break;
     }
     case AttributeNames::xAttr:
