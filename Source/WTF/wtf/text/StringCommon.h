@@ -581,58 +581,15 @@ ALWAYS_INLINE static size_t findInner(std::span<const SearchCharacterType> searc
     return index + i;
 }
 
-ALWAYS_INLINE const uint8_t* find8(const uint8_t* pointer, uint8_t character, size_t length)
-{
-    constexpr size_t thresholdLength = 16;
-
-    size_t index = 0;
-    size_t runway = std::min(thresholdLength, length);
-    for (; index < runway; ++index) {
-        if (pointer[index] == character)
-            return pointer + index;
-    }
-    if (runway == length)
-        return nullptr;
-
-    ASSERT(index < length);
-    // We rely on memchr already having SIMD optimization, so we don’t have to write our own.
-    return static_cast<const uint8_t*>(memchr(pointer + index, character, length - index));
-}
-
 template<typename UnsignedType>
 ALWAYS_INLINE const UnsignedType* findImpl(const UnsignedType* pointer, UnsignedType character, size_t length)
 {
-    auto charactersVector = SIMD::splat<UnsignedType>(character);
-    auto vectorMatch = [&](auto value) ALWAYS_INLINE_LAMBDA {
-        auto mask = SIMD::equal(value, charactersVector);
-        return SIMD::findFirstNonZeroIndex(mask);
-    };
+    constexpr size_t stride = SIMD::stride<UnsignedType>;
+    // scalarThreshold must be >= stride to ensure we can safely do the tail load from (end - stride).
+    constexpr size_t scalarThreshold = stride;
+    constexpr size_t unrollFactor = 4;
+    constexpr size_t unrolledStride = stride * unrollFactor;
 
-    auto scalarMatch = [&](auto current) ALWAYS_INLINE_LAMBDA {
-        return current == character;
-    };
-
-    constexpr size_t threshold = 32;
-    auto* end = pointer + length;
-    auto* cursor = SIMD::find<UnsignedType, threshold>(std::span { pointer, end }, vectorMatch, scalarMatch);
-    if (cursor == end)
-        return nullptr;
-    return cursor;
-}
-
-ALWAYS_INLINE const uint16_t* find16(const uint16_t* pointer, uint16_t character, size_t length)
-{
-    return findImpl(pointer, character, length);
-}
-
-ALWAYS_INLINE const uint32_t* find32(const uint32_t* pointer, uint32_t character, size_t length)
-{
-    return findImpl(pointer, character, length);
-}
-
-ALWAYS_INLINE const uint64_t* find64(const uint64_t* pointer, uint64_t character, size_t length)
-{
-    constexpr size_t scalarThreshold = 4;
     size_t index = 0;
     size_t runway = std::min(scalarThreshold, length);
     for (; index < runway; ++index) {
@@ -642,11 +599,7 @@ ALWAYS_INLINE const uint64_t* find64(const uint64_t* pointer, uint64_t character
     if (runway == length)
         return nullptr;
 
-    constexpr size_t stride = SIMD::stride<uint64_t>;
-    constexpr size_t unrollFactor = 4;
-    constexpr size_t unrolledStride = stride * unrollFactor;
-
-    auto charactersVector = SIMD::splat<uint64_t>(character);
+    auto charactersVector = SIMD::splat<UnsignedType>(character);
     auto vectorMatch = [&](auto value) ALWAYS_INLINE_LAMBDA {
         auto mask = SIMD::equal(value, charactersVector);
         return SIMD::findFirstNonZeroIndex(mask);
@@ -682,6 +635,26 @@ ALWAYS_INLINE const uint64_t* find64(const uint64_t* pointer, uint64_t character
     }
 
     return nullptr;
+}
+
+ALWAYS_INLINE const uint8_t* find8(const uint8_t* pointer, uint8_t character, size_t length)
+{
+    return findImpl(pointer, character, length);
+}
+
+ALWAYS_INLINE const uint16_t* find16(const uint16_t* pointer, uint16_t character, size_t length)
+{
+    return findImpl(pointer, character, length);
+}
+
+ALWAYS_INLINE const uint32_t* find32(const uint32_t* pointer, uint32_t character, size_t length)
+{
+    return findImpl(pointer, character, length);
+}
+
+ALWAYS_INLINE const uint64_t* find64(const uint64_t* pointer, uint64_t character, size_t length)
+{
+    return findImpl(pointer, character, length);
 }
 
 ALWAYS_INLINE const Float16* findFloat16(const Float16* pointer, Float16 target, size_t length)
