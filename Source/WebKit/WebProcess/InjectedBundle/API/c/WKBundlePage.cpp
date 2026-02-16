@@ -305,6 +305,11 @@ void WKBundlePageClose(WKBundlePageRef pageRef)
     WebKit::toProtectedImpl(pageRef)->sendClose();
 }
 
+bool WKBundlePageIsClosed(WKBundlePageRef pageRef)
+{
+    return WebKit::toProtectedImpl(pageRef)->isClosed();
+}
+
 double WKBundlePageGetTextZoomFactor(WKBundlePageRef pageRef)
 {
     return WebKit::toProtectedImpl(pageRef)->textZoomFactor();
@@ -327,22 +332,26 @@ WKBundleBackForwardListRef WKBundlePageGetBackForwardList(WKBundlePageRef pageRe
 
 void WKBundlePageInstallPageOverlay(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
 {
-    WebKit::toImpl(pageRef)->corePage()->pageOverlayController().installPageOverlay(*WebKit::toImpl(pageOverlayRef)->protectedCoreOverlay(), WebCore::PageOverlay::FadeMode::DoNotFade);
+    if (RefPtr page = WebKit::toImpl(pageRef)->corePage())
+        page->pageOverlayController().installPageOverlay(*WebKit::toImpl(pageOverlayRef)->protectedCoreOverlay(), WebCore::PageOverlay::FadeMode::DoNotFade);
 }
 
 void WKBundlePageUninstallPageOverlay(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
 {
-    WebKit::toImpl(pageRef)->corePage()->pageOverlayController().uninstallPageOverlay(*WebKit::toImpl(pageOverlayRef)->protectedCoreOverlay(), WebCore::PageOverlay::FadeMode::DoNotFade);
+    if (RefPtr page = WebKit::toImpl(pageRef)->corePage())
+        page->pageOverlayController().uninstallPageOverlay(*WebKit::toImpl(pageOverlayRef)->protectedCoreOverlay(), WebCore::PageOverlay::FadeMode::DoNotFade);
 }
 
 void WKBundlePageInstallPageOverlayWithAnimation(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
 {
-    WebKit::toImpl(pageRef)->corePage()->pageOverlayController().installPageOverlay(*WebKit::toImpl(pageOverlayRef)->protectedCoreOverlay(), WebCore::PageOverlay::FadeMode::Fade);
+    if (RefPtr page = WebKit::toImpl(pageRef)->corePage())
+        page->pageOverlayController().installPageOverlay(*WebKit::toImpl(pageOverlayRef)->protectedCoreOverlay(), WebCore::PageOverlay::FadeMode::Fade);
 }
 
 void WKBundlePageUninstallPageOverlayWithAnimation(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
 {
-    WebKit::toImpl(pageRef)->corePage()->pageOverlayController().uninstallPageOverlay(*WebKit::toImpl(pageOverlayRef)->protectedCoreOverlay(), WebCore::PageOverlay::FadeMode::Fade);
+    if (RefPtr page = WebKit::toImpl(pageRef)->corePage())
+        page->pageOverlayController().uninstallPageOverlay(*WebKit::toImpl(pageOverlayRef)->protectedCoreOverlay(), WebCore::PageOverlay::FadeMode::Fade);
 }
 
 void WKBundlePageSetTopOverhangImage(WKBundlePageRef pageRef, WKImageRef imageRef)
@@ -379,7 +388,8 @@ void WKBundlePageSetFooterBanner(WKBundlePageRef pageRef, WKBundlePageBannerRef 
 
 bool WKBundlePageHasLocalDataForURL(WKBundlePageRef pageRef, WKURLRef urlRef)
 {
-    return WebKit::toProtectedImpl(pageRef)->protectedCorePage()->hasLocalDataForURL(URL { WebKit::toWTFString(urlRef) });
+    RefPtr page = WebKit::toImpl(pageRef)->corePage();
+    return page && page->hasLocalDataForURL(URL { WebKit::toWTFString(urlRef) });
 }
 
 bool WKBundlePageCanHandleRequest(WKURLRequestRef requestRef)
@@ -707,10 +717,13 @@ WKStringRef WKBundlePageCopyGroupIdentifier(WKBundlePageRef pageRef)
     return WebKit::toCopiedAPI(WebKit::toImpl(pageRef)->pageGroup()->identifier());
 }
 
-void WKBundlePageSetCaptionDisplayMode(WKBundlePageRef page, WKStringRef mode)
+void WKBundlePageSetCaptionDisplayMode(WKBundlePageRef pageRef, WKStringRef mode)
 {
 #if ENABLE(VIDEO)
-    Ref captionPreferences = WebKit::toProtectedImpl(page)->protectedCorePage()->checkedGroup()->ensureCaptionPreferences();
+    RefPtr page = WebKit::toImpl(pageRef)->corePage();
+    if (!page)
+        return;
+    Ref captionPreferences = page->checkedGroup()->ensureCaptionPreferences();
     auto displayMode = WTF::EnumTraits<WebCore::CaptionUserPreferences::CaptionDisplayMode>::fromString(WebKit::toWTFString(mode));
     if (displayMode.has_value())
         captionPreferences->setCaptionDisplayMode(displayMode.value());
@@ -720,10 +733,13 @@ void WKBundlePageSetCaptionDisplayMode(WKBundlePageRef page, WKStringRef mode)
 #endif
 }
 
-WKCaptionUserPreferencesTestingModeTokenRef WKBundlePageCreateCaptionUserPreferencesTestingModeToken(WKBundlePageRef page)
+WKCaptionUserPreferencesTestingModeTokenRef WKBundlePageCreateCaptionUserPreferencesTestingModeToken(WKBundlePageRef pageRef)
 {
 #if ENABLE(VIDEO)
-    Ref captionPreferences = WebKit::toProtectedImpl(page)->protectedCorePage()->checkedGroup()->ensureCaptionPreferences();
+    RefPtr page = WebKit::toImpl(pageRef)->corePage();
+    if (!page)
+        return { };
+    Ref captionPreferences = page->checkedGroup()->ensureCaptionPreferences();
     return WebKit::toAPILeakingRef(API::CaptionUserPreferencesTestingModeToken::create(captionPreferences.get()));
 #else
     UNUSED_PARAM(page);
