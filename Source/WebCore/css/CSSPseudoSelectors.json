@@ -119,6 +119,7 @@
             "comment": "For scrollbar styling.",
             "status": "non-standard"
         },
+        "even-less-good": {},
         "first-child": {},
         "first-of-type": {},
         "focus": {},
@@ -197,6 +198,7 @@
         "open": {
             "settings-flag": "openPseudoClassEnabled"
         },
+        "optimum": {},
         "optional": {},
         "out-of-range": {},
         "past": {
@@ -237,6 +239,7 @@
             "comment": "For scrollbar styling.",
             "status": "non-standard"
         },
+        "suboptimum": {},
         "target": {},
         "user-invalid": {},
         "user-valid": {},
@@ -536,6 +539,10 @@
             "aliases": [
                 "-webkit-file-upload-button"
             ],
+            "user-agent-part": true
+        },
+        "fill": {
+            "settings-flag": "cssAppearanceBaseEnabled",
             "user-agent-part": true
         },
         "first-letter": {

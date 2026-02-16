@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,18 +23,12 @@
 #include "HTMLMeterElement.h"
 
 #include "Attribute.h"
-#include "ContainerNodeInlines.h"
-#include "ElementInlines.h"
-#include "ElementIterator.h"
 #include "HTMLDivElement.h"
-#include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLStyleElement.h"
 #include "NodeName.h"
-#include "Page.h"
 #include "RenderMeter.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderTheme.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
@@ -84,12 +79,13 @@ void HTMLMeterElement::attributeChanged(const QualifiedName& name, const AtomStr
     case AttributeNames::lowAttr:
     case AttributeNames::highAttr:
     case AttributeNames::optimumAttr:
-        didElementStateChange();
+        didChangeElementValue();
         break;
     default:
-        HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
         break;
     }
+
+    HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 double HTMLMeterElement::min() const
@@ -189,14 +185,21 @@ static void setValueClass(HTMLElement& element, HTMLMeterElement::GaugeRegion ga
     ASSERT_NOT_REACHED();
 }
 
-void HTMLMeterElement::didElementStateChange()
+void HTMLMeterElement::didChangeElementValue()
 {
-    Ref valueElement = *m_valueElement;
-    valueElement->setInlineStyleProperty(CSSPropertyInlineSize, valueRatio() * 100, CSSUnitType::CSS_PERCENTAGE);
-    setValueClass(valueElement, gaugeRegion());
+    RefPtr shadowRoot = userAgentShadowRoot();
+    if (!shadowRoot)
+        return;
 
-    if (CheckedPtr renderer = renderMeter())
-        renderer->updateFromElement();
+    if (RefPtr valueElement = m_valueElement) {
+        valueElement->setInlineStyleProperty(CSSPropertyInlineSize, valueRatio() * 100, CSSUnitType::CSS_PERCENTAGE);
+        setValueClass(*valueElement, gaugeRegion());
+    }
+
+    if (RefPtr fillElement = m_fillElement) {
+        fillElement->setInlineStyleProperty(CSSPropertyTransform, makeString("translate(-"_s, (1 - valueRatio()) * 100, "%, 0)"_s));
+        fillElement->invalidateStyleInternal();
+    }
 }
 
 RenderMeter* HTMLMeterElement::renderMeter() const
@@ -204,39 +207,61 @@ RenderMeter* HTMLMeterElement::renderMeter() const
     return dynamicDowncast<RenderMeter>(renderer());
 }
 
-void HTMLMeterElement::didAddUserAgentShadowRoot(ShadowRoot& root)
+void HTMLMeterElement::appendShadowTreeForAutoAppearance(ShadowRoot& root)
 {
-    ASSERT(!m_valueElement);
-
     static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(meterElementShadowUserAgentStyleSheet));
 
     Ref document = this->document();
-    Ref style = HTMLStyleElement::create(document);
-    ScriptDisallowedScope::EventAllowedScope styleScope { style };
-    style->setTextContent(String { shadowStyle });
+    Ref styleElement = HTMLStyleElement::create(document);
+    ScriptDisallowedScope::EventAllowedScope styleScope { styleElement };
+    styleElement->setTextContent(String { shadowStyle });
     ScriptDisallowedScope::EventAllowedScope rootScope { root };
-    root.appendChild(WTF::move(style));
+    root.appendChild(WTF::move(styleElement));
 
     // Pseudos are set to allow author styling.
-    Ref inner = HTMLDivElement::create(document);
-    ScriptDisallowedScope::EventAllowedScope innerScope { inner };
-    inner->setIdAttribute("inner"_s);
-    inner->setUserAgentPart(UserAgentParts::webkitMeterInnerElement());
-    root.appendChild(inner);
+    Ref innerElement = HTMLDivElement::create(document);
+    ScriptDisallowedScope::EventAllowedScope innerScope { innerElement };
+    innerElement->setIdAttribute("inner"_s);
+    innerElement->setUserAgentPart(UserAgentParts::webkitMeterInnerElement());
+    innerElement->setInlineStyleProperty(CSSPropertyDisplay, "-internal-auto-base(inline-block, none) !important"_s);
+    root.appendChild(innerElement);
 
-    Ref bar = HTMLDivElement::create(document);
-    ScriptDisallowedScope::EventAllowedScope barScope { bar };
-    bar->setIdAttribute("bar"_s);
-    bar->setUserAgentPart(UserAgentParts::webkitMeterBar());
-    inner->appendChild(bar);
+    Ref barElement = HTMLDivElement::create(document);
+    ScriptDisallowedScope::EventAllowedScope barScope { barElement };
+    barElement->setIdAttribute("bar"_s);
+    barElement->setUserAgentPart(UserAgentParts::webkitMeterBar());
+    innerElement->appendChild(barElement);
 
     Ref valueElement = HTMLDivElement::create(document);
     ScriptDisallowedScope::EventAllowedScope valueElementScope { valueElement };
     valueElement->setIdAttribute("value"_s);
-    bar->appendChild(valueElement);
-    m_valueElement = WTF::move(valueElement);
-
-    didElementStateChange();
+    barElement->appendChild(valueElement);
+    m_valueElement = valueElement;
 }
 
-} // namespace
+void HTMLMeterElement::appendShadowTreeForBaseAppearance(ShadowRoot& root)
+{
+    Ref document = this->document();
+    Ref trackElement = HTMLDivElement::create(document);
+    ScriptDisallowedScope::EventAllowedScope trackScope { trackElement };
+    trackElement->setUserAgentPart(UserAgentParts::track());
+    trackElement->setInlineStyleProperty(CSSPropertyAppearance, "inherit"_s);
+    trackElement->setInlineStyleProperty(CSSPropertyDisplay, "-internal-auto-base(none, inline-block) !important"_s);
+    root.appendChild(trackElement);
+
+    Ref fillElement = HTMLDivElement::create(document);
+    ScriptDisallowedScope::EventAllowedScope fillScope { fillElement };
+    fillElement->setUserAgentPart(UserAgentParts::fill());
+    trackElement->appendChild(fillElement);
+    m_fillElement = fillElement;
+}
+
+void HTMLMeterElement::didAddUserAgentShadowRoot(ShadowRoot& root)
+{
+    appendShadowTreeForAutoAppearance(root);
+    if (document().settings().cssAppearanceBaseEnabled())
+        appendShadowTreeForBaseAppearance(root);
+    didChangeElementValue();
+}
+
+} // namespace WebCore

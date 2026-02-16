@@ -1270,6 +1270,13 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
         case CSSSelector::PseudoClass::ActiveViewTransitionType: {
             ASSERT(selector.stringList() && !selector.stringList()->isEmpty());
             return matchesActiveViewTransitionTypePseudoClass(element, *selector.stringList());
+
+        case CSSSelector::PseudoClass::EvenLessGood:
+            return matchesEvenLessGoodPseudoClass(element);
+        case CSSSelector::PseudoClass::Optimum:
+            return matchesOptimumPseudoClass(element);
+        case CSSSelector::PseudoClass::Suboptimum:
+            return matchesSuboptimumPseudoClass(element);
         }
 
         }
