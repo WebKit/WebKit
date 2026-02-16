@@ -182,10 +182,7 @@ Ref<Document> DOMImplementation::createDocument(const String& contentType, Local
         return ImageDocument::create(*frame, url);
 
 #if ENABLE(VIDEO)
-    MediaEngineSupportParameters parameters;
-    parameters.type = ContentType { contentType };
-    parameters.url = url;
-    if (MediaPlayer::supportsType(parameters) != MediaPlayer::SupportsType::IsNotSupported)
+    if (MIMETypeRegistry::isSupportedMediaMIMEType(contentType))
         return MediaDocument::create(frame, settings, url);
 #endif
 
