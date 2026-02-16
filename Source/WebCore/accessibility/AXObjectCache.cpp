@@ -3004,7 +3004,17 @@ void AXObjectCache::deferAttributeChangeIfNeeded(Element& element, const Qualifi
 {
     AXTRACE(makeString("AXObjectCache::deferAttributeChangeIfNeeded 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
 
-    if (nodeRendererIsValid(element) && rendererNeedsDeferredUpdate(*element.renderer())) {
+    // Because the |id| attribute requires dirtying relations, and this code is called directly
+    // downstream of DOM changes, we can never eagerly process attribute changes for it. Here's
+    // an example scenario where this would cause issues:
+    //
+    //  1. VoiceOver requests focus to be set on an element.
+    //  2. A JS event handler is synchronously called, changing an id.
+    //  3. We handle it eagerly, dirtying relations.
+    //  4. The event handler also does something else that would cause us to un-dirty relations,
+    //     like calling parentObject() on any object as a result of an element removal
+    //  5. We crash because we try to un-dirty relations when style / layout is dirty.
+    if (attrName == idAttr || (nodeRendererIsValid(element) && rendererNeedsDeferredUpdate(*element.renderer()))) {
         m_deferredAttributeChange.append({ element, attrName, oldValue, newValue });
         if (!m_performCacheUpdateTimer.isActive())
             m_performCacheUpdateTimer.startOneShot(0_s);
@@ -3013,8 +3023,6 @@ void AXObjectCache::deferAttributeChangeIfNeeded(Element& element, const Qualifi
     }
     Ref protectedElement { element };
     handleAttributeChange(protectedElement.ptr(), attrName, oldValue, newValue);
-    if (attrName == idAttr)
-        relationsNeedUpdate(true);
 }
 
 void AXObjectCache::handleReferenceTargetChanged()

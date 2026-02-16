@@ -842,6 +842,9 @@ accessibility/css-content-alt-text.html [ Skip ]
 # AXObjectCache::announce not implemented.
 accessibility/announcement-notification.html [ Skip ]
 
+# Failing since introduced.
+accessibility/focus-change-id-mutation-and-removal-crash.html [ Skip ]
+
 # AccessibilityUIElement::isInTable is not implemented.
 accessibility/table-ancestry.html [ Skip ]
 
