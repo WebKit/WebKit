@@ -825,7 +825,7 @@ static bool isEqual(const SharedBuffer& data, const String& value)
         return false;
 
     Ref<TextDecoder> decoder = exceptionOrDecoder.releaseReturnValue();
-    auto stringOrException = decoder->decode(BufferSource::VariantType(arrayBuffer.releaseNonNull()), TextDecoder::DecodeOptions());
+    auto stringOrException = decoder->decode(BufferSource(arrayBuffer.releaseNonNull()), TextDecoder::DecodeOptions());
     if (stringOrException.hasException())
         return false;
 

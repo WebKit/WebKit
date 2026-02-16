@@ -71,9 +71,10 @@ public:
     {
     }
 
-    const VariantType& variant() const
+    template<typename... Visitors>
+    friend decltype(auto) switchOn(const BufferSource& source, Visitors&&... visitors)
     {
-        return m_variant;
+        return WTF::switchOn(source.m_variant, std::forward<Visitors>(visitors)...);
     }
 
     size_t byteLength() const

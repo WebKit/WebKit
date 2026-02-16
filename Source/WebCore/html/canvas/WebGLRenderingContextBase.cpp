@@ -1195,7 +1195,7 @@ void WebGLRenderingContextBase::bufferData(GCGLenum target, long long size, GCGL
     graphicsContextGL()->bufferData(target, static_cast<GCGLsizeiptr>(size), usage);
 }
 
-void WebGLRenderingContextBase::bufferData(GCGLenum target, std::optional<BufferDataSource>&& data, GCGLenum usage)
+void WebGLRenderingContextBase::bufferData(GCGLenum target, std::optional<BufferSource>&& data, GCGLenum usage)
 {
     if (isContextLost())
         return;
@@ -1207,12 +1207,10 @@ void WebGLRenderingContextBase::bufferData(GCGLenum target, std::optional<Buffer
     if (!buffer)
         return;
 
-    WTF::visit([context = m_context, target, usage](auto& data) {
-        context->bufferData(target, data->span(), usage);
-    }, data.value());
+    m_context->bufferData(target, data->span(), usage);
 }
 
-void WebGLRenderingContextBase::bufferSubData(GCGLenum target, long long offset, BufferDataSource&& data)
+void WebGLRenderingContextBase::bufferSubData(GCGLenum target, long long offset, BufferSource&& data)
 {
     if (isContextLost())
         return;
@@ -1224,9 +1222,7 @@ void WebGLRenderingContextBase::bufferSubData(GCGLenum target, long long offset,
         return;
     }
 
-    WTF::visit([context = m_context, target, offset](auto& data) {
-        context->bufferSubData(target, static_cast<GCGLintptr>(offset), data->span());
-    }, data);
+    m_context->bufferSubData(target, static_cast<GCGLintptr>(offset), data.span());
 }
 
 GCGLenum WebGLRenderingContextBase::checkFramebufferStatus(GCGLenum target)

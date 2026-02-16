@@ -96,7 +96,7 @@ template<> struct JSConverter<IDLBufferSource> {
     {
         auto* jsDOMGlobalObject = JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
 
-        return WTF::switchOn(bufferSource.variant(),
+        return switchOn(bufferSource,
             [&](const Ref<JSC::ArrayBufferView>& buffer) {
                 return toJS(&lexicalGlobalObject, &lexicalGlobalObject, const_cast<Ref<JSC::ArrayBufferView>&>(buffer));
             },
@@ -104,6 +104,16 @@ template<> struct JSConverter<IDLBufferSource> {
                 return toJS(&lexicalGlobalObject, jsDOMGlobalObject, const_cast<Ref<JSC::ArrayBuffer>&>(buffer));
             }
         );
+    }
+};
+
+template<> struct JSConverter<IDLAllowSharedAdaptor<IDLBufferSource>> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const BufferSource& bufferSource)
+    {
+        return JSConverter<IDLBufferSource>::convert(lexicalGlobalObject, bufferSource);
     }
 };
 

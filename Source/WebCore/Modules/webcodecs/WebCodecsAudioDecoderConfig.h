@@ -37,7 +37,7 @@ struct WebCodecsAudioDecoderConfig {
     String codec;
     size_t sampleRate;
     size_t numberOfChannels;
-    std::optional<BufferSource::VariantType> description;
+    std::optional<BufferSource> description;
 
     WebCodecsAudioDecoderConfig isolatedCopyWithoutDescription() && { return { WTF::move(codec).isolatedCopy(), sampleRate, numberOfChannels, { } }; }
     WebCodecsAudioDecoderConfig isolatedCopyWithoutDescription() const & { return { codec.isolatedCopy(), sampleRate, numberOfChannels, { } }; }

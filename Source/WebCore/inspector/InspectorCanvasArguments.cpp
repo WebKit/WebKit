@@ -298,9 +298,9 @@ auto InspectorCanvasArgumentProcessor<IDLTexImageSourceUnion>::operator()(Inspec
     );
 }
 
-auto InspectorCanvasArgumentProcessor<IDLBufferDataSourceUnion>::operator()(InspectorCanvas& context, const WebGLRenderingContextBase::BufferDataSource& argument) -> std::optional<InspectorCanvasProcessedArgument>
+auto InspectorCanvasArgumentProcessor<IDLBufferSource>::operator()(InspectorCanvas& context, const BufferSource& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
-    return WTF::switchOn(argument,
+    return switchOn(argument,
         [&](const Ref<ArrayBuffer>& value) -> std::optional<InspectorCanvasProcessedArgument> {
             return InspectorCanvasArgumentProcessor<IDLArrayBuffer>{}(context, value);
         },

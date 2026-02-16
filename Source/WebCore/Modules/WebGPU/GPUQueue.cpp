@@ -98,7 +98,7 @@ void GPUQueue::onSubmittedWorkDone(OnSubmittedWorkDonePromise&& promise)
 
 static GPUSize64 computeElementSize(const BufferSource& data)
 {
-    return WTF::switchOn(data.variant(),
+    return switchOn(data,
         [&](const Ref<JSC::ArrayBufferView>& bufferView) {
             return static_cast<GPUSize64>(JSC::elementSize(bufferView->getType()));
         },
