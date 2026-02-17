@@ -41,6 +41,7 @@
 #include "AirTmpMap.h"
 #include "AirTmpWidthInlines.h"
 #include "AirUseCounts.h"
+#include <wtf/GenerationalSet.h>
 #include <wtf/IntervalSet.h>
 #include <wtf/IterationStatus.h>
 #include <wtf/ListDump.h>
@@ -1709,12 +1710,12 @@ private:
 
         Reg bestEvictReg;
         float minSpillCost = unspillableCost;
-        BitVector visited(m_code.numTmps(bank));
+        m_visited.resize(m_code.numTmps(bank));
         LiveRange& liveRange = tmpData.liveRange;
         Width width = widthForConflicts<bank>(tmp);
         for (Reg r : m_allowedRegistersInPriorityOrder[bank]) {
             float conflictsSpillCost = 0.0f;
-            visited.clearAll();
+            m_visited.clear();
             m_regRanges[r].forEachConflict(liveRange, width,
                 [&](auto& conflict) -> IterationStatus {
                     if (conflict.tmp.isReg()) {
@@ -1723,9 +1724,9 @@ private:
                         return IterationStatus::Done;
                     }
                     unsigned conflictTmpIndex = conflict.tmp.tmpIndex(bank);
-                    if (visited.quickGet(conflictTmpIndex))
+                    if (m_visited.contains(conflictTmpIndex))
                         return IterationStatus::Continue;
-                    visited.quickSet(conflictTmpIndex);
+                    m_visited.add(conflictTmpIndex);
                     auto cost = m_map.get<bank>(conflict.tmp).spillCost();
                     if (cost == unspillableCost) {
                         conflictsSpillCost = unspillableCost;
@@ -2553,6 +2554,7 @@ private:
     TmpMap<UseDefList> m_useDefLists;
     Vector<SplitMetadata> m_splitMetadata;
     IndexMap<Reg, RegisterRange> m_regRanges;
+    GenerationalSet<uint8_t, SaVector> m_visited;
     PriorityQueue<TmpPriority, TmpPriority::isHigherPriority> m_queue;
     IndexMap<BasicBlock*, PhaseInsertionSet> m_insertionSets;
     BlockWorklist m_fastBlocks;

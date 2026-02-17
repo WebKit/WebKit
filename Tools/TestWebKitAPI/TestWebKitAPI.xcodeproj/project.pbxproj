@@ -1306,6 +1306,7 @@
 		A1FCFF2D2C292D0D0014463B /* NowPlayingSession.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1FCFF2C2C292A600014463B /* NowPlayingSession.mm */; };
 		A310827221F296FF00C28B97 /* FileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A310827121F296EC00C28B97 /* FileSystem.cpp */; };
 		A4EC3A792E305163002E3744 /* IntervalSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A4EC3A782E305163002E3744 /* IntervalSet.cpp */; };
+		A4FA03B82F3ABEA8006EE264 /* GenerationalSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A4FA03B72F3ABEA8006EE264 /* GenerationalSet.cpp */; };
 		A57D54F31F338C3600A97AA7 /* NeverDestroyed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A57D54F21F338C3600A97AA7 /* NeverDestroyed.cpp */; };
 		A57D54F61F3395D000A97AA7 /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A57D54F41F3395D000A97AA7 /* Logger.cpp */; };
 		A57D54F91F3397B400A97AA7 /* LifecycleLogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A57D54F71F3397B400A97AA7 /* LifecycleLogger.cpp */; };
@@ -3855,6 +3856,7 @@
 		A1FDFD2E19C288BB005148A4 /* WKImageCreateCGImageCrash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKImageCreateCGImageCrash.cpp; sourceTree = "<group>"; };
 		A310827121F296EC00C28B97 /* FileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystem.cpp; sourceTree = "<group>"; };
 		A4EC3A782E305163002E3744 /* IntervalSet.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntervalSet.cpp; sourceTree = "<group>"; };
+		A4FA03B72F3ABEA8006EE264 /* GenerationalSet.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GenerationalSet.cpp; sourceTree = "<group>"; };
 		A57A34EF16AF677200C2501F /* PageVisibilityStateWithWindowChanges.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageVisibilityStateWithWindowChanges.mm; sourceTree = "<group>"; };
 		A57A34F116AF69E200C2501F /* PageVisibilityStateWithWindowChanges.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = PageVisibilityStateWithWindowChanges.html; sourceTree = "<group>"; };
 		A57D54F21F338C3600A97AA7 /* NeverDestroyed.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NeverDestroyed.cpp; sourceTree = "<group>"; };
@@ -6481,6 +6483,7 @@
 				FF910E9D297A0D1100D1A24D /* FixedBitVector.cpp */,
 				E3210518261979F300157C67 /* FixedVector.cpp */,
 				9310CD361EF708FB0050FFE0 /* Function.cpp */,
+				A4FA03B72F3ABEA8006EE264 /* GenerationalSet.cpp */,
 				7A38D7E51C752D5F004F157D /* HashCountedSet.cpp */,
 				933D631B1FCB76180032ECD6 /* Hasher.cpp */,
 				0BCD833414857CE400EA2003 /* HashMap.cpp */,
@@ -7670,6 +7673,7 @@
 				FF910EA5297A0D1100D1A24D /* FixedBitVector.cpp in Sources */,
 				E3210519261979F300157C67 /* FixedVector.cpp in Sources */,
 				9310CD381EF708FB0050FFE0 /* Function.cpp in Sources */,
+				A4FA03B82F3ABEA8006EE264 /* GenerationalSet.cpp in Sources */,
 				6BFD294C1D5E6C1D008EC968 /* HashCountedSet.cpp in Sources */,
 				933D631D1FCB76200032ECD6 /* Hasher.cpp in Sources */,
 				7C83DED21D0A590C00FEBCF3 /* HashMap.cpp in Sources */,

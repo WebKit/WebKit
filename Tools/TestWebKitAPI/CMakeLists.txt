@@ -55,6 +55,7 @@ set(TestWTF_SOURCES
     Tests/WTF/FixedBitVector.cpp
     Tests/WTF/FixedVector.cpp
     Tests/WTF/Function.cpp
+    Tests/WTF/GenerationalSet.cpp
     Tests/WTF/HashCountedSet.cpp
     Tests/WTF/HashMap.cpp
     Tests/WTF/HashSet.cpp
