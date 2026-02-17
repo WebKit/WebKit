@@ -2327,25 +2327,6 @@ private:
                             // we need to avoid placing the Tmp's stack address into the instruction.
                             return;
                         }
-                        Width spillWidth = m_tmpWidth.requiredWidth(arg.tmp());
-                        if (Arg::isAnyDef(role) && width < spillWidth) {
-                            // Either there are users of this tmp who will use more than width,
-                            // or there are producers who will produce more than width non-zero
-                            // bits.
-                            // FIXME: It's not clear why we should have to return here. We have
-                            // a ZDef fixup in allocateStack. And if this isn't a ZDef, then it
-                            // doesn't seem like it matters what happens to the high bits. Note
-                            // that this isn't the case where we're storing more than what the
-                            // spill slot can hold - we already got that covered because we
-                            // stretch the spill slot on demand. One possibility is that it's ZDefs of
-                            // smaller width than 32-bit.
-                            // https://bugs.webkit.org/show_bug.cgi?id=169823
-                            //dataLogLn("XXX inst=", inst);
-                            //ASSERT_NOT_REACHED();
-                            m_stats[bank].numInPlaceSpillGiveUpSpillWidth++;
-                            return;
-                        }
-                        ASSERT(inst.kind.opcode == Move || !(Arg::isAnyUse(role) && width > spillWidth));
                         spilled->ensureSize(useMove32IfDidSpill ? 4 : bytesForWidth(width));
                         didSpill = true;
                         if (needScratchIfSpilledInPlace) {
