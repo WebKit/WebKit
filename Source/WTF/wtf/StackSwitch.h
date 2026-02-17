@@ -29,17 +29,30 @@
 #include <wtf/ExportMacros.h>
 #include <wtf/Platform.h>
 
+// List of all stack-switching trampolines.
+// Each trampoline switches from the current stack to a new stack and calls a target function.
+// This is used to "teleport" to a sequestered stack after thread startup or other special contexts.
+//
+// Macro parameters:
+//   trampolineName: Name of the trampoline function (e.g., callThreadEntryPointFinishSetupWithNewStack)
+//   argType: Type of the context argument (e.g., void*, Heap*)
+//   argName: Parameter name for the context argument (e.g., context, heap)
+//   callExpression: Expression to invoke the target function (e.g., Thread::entryPointFinishSetup(context), heap->method())
+//
+// Trampoline signature: void trampolineName(argType argName, void* newStack)
+//   - argName: Context argument passed to the target function (or 'this' pointer for member functions)
+//   - newStack: Pointer to the top of the new stack (stacks grow down)
+//
+// When the function returns, the trampoline restores the original stack and returns to the caller.
+#define WTF_FOR_EACH_STACK_SWITCH_TRAMPOLINE(macro) \
+    macro(callThreadEntryPointFinishSetupWithNewStack, void*, context, Thread::entryPointFinishSetup(context))
+
 extern "C" {
 
-// Switches from the current stack to a new stack and calls Thread::entryPointFinishSetup.
-// This is used to "teleport" to a sequestered stack after thread startup.
-//
-// Parameters:
-//   newStack: Pointer to the top of the new stack (stacks grow down)
-//   context: Pointer passed as the first argument to Thread::entryPointFinishSetup
-//
-// When the function returns, this function restores the original stack
-// and returns to the caller.
-WTF_EXPORT_PRIVATE void callThreadEntryPointFinishSetupWithNewStack(void* context, void* newStack);
+#define DECLARE_STACK_SWITCH_TRAMPOLINE(trampolineName, argType, argName, callExpression) \
+    WTF_EXPORT_PRIVATE void trampolineName(argType argName, void* newStack);
+
+WTF_FOR_EACH_STACK_SWITCH_TRAMPOLINE(DECLARE_STACK_SWITCH_TRAMPOLINE)
+#undef DECLARE_STACK_SWITCH_TRAMPOLINE
 
 }
