@@ -776,6 +776,7 @@ public:
 
     bool isLockdownModeExplicitlySet() const { return m_isLockdownModeExplicitlySet; }
     bool shouldEnableLockdownMode() const;
+    bool shouldDisableRichWebAPIs() const;
 
     EnhancedSecurity currentEnhancedSecurityState(const API::WebsitePolicies* = nullptr) const;
 

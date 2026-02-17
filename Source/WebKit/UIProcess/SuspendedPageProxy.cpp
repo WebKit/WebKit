@@ -61,7 +61,7 @@ static WeakHashSet<SuspendedPageProxy>& allSuspendedPages()
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SuspendedPageProxy);
 
-RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(WebProcessPool& processPool, const RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const API::PageConfiguration& pageConfiguration)
+RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(WebProcessPool& processPool, const RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, WebProcessProxy::RichWebAPIs richWebAPIs, const API::PageConfiguration& pageConfiguration)
 {
     for (Ref suspendedPage : allSuspendedPages()) {
         Ref process = suspendedPage->process();
@@ -70,6 +70,7 @@ RefPtr<WebProcessProxy> SuspendedPageProxy::findReusableSuspendedPageProcess(Web
             && process->websiteDataStore() == &dataStore
             && process->crossOriginMode() != CrossOriginMode::Isolated
             && process->lockdownMode() == lockdownMode
+            && process->richWebAPIs() == richWebAPIs
             && process->enhancedSecurity() == enhancedSecurity
             && !process->wasTerminated()
             && process->hasSameGPUAndNetworkProcessPreferencesAs(pageConfiguration)) {

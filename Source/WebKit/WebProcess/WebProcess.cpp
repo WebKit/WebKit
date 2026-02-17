@@ -423,6 +423,8 @@ void WebProcess::initializeProcess(const AuxiliaryProcessInitializationParameter
 {
     m_isLockdownModeEnabled = parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-lockdown-mode"_s) == "1"_s;
     m_isEnhancedSecurityEnabled = parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-enhanced-security"_s) == "1"_s;
+    auto richWebAPIsValue = parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("rich-web-apis-enabled"_s);
+    m_isRichWebAPIsEnabled = richWebAPIsValue.isEmpty() || richWebAPIsValue != "0"_s;
 
     WTF::setProcessPrivileges({ });
 

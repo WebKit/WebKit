@@ -6765,6 +6765,22 @@ RespondToThermalPressureAggressively:
     WebCore:
       default: false
 
+RichWebAPIsTestEnabled:
+  type: bool
+  status: internal
+  humanReadableName: "Rich Web APIs Test"
+  humanReadableDescription: "Test feature for richWebAPIsEnabled API IPC blocking"
+  condition: ENABLE(IPC_TESTING_API)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+  sharedPreferenceForWebProcess: true
+  richJavaScript: true
+
 RubberBandingForSubScrollableRegionsEnabled:
   type: bool
   status: embedder

@@ -5037,7 +5037,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
         pluginView->didChangeSettings();
 #endif
 
-    WebProcess::singleton().updateSharedPreferencesForWebProcess(WebKit::sharedPreferencesForWebProcess(store, WebProcess::singleton().isLockdownModeEnabled()));
+    WebProcess::singleton().updateSharedPreferencesForWebProcess(WebKit::sharedPreferencesForWebProcess(store, WebProcess::singleton().isLockdownModeEnabled(), WebProcess::singleton().isRichWebAPIsEnabled()));
 
     protect(corePage())->settingsDidChange();
 }

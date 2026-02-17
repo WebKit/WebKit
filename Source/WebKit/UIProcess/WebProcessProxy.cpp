@@ -285,9 +285,9 @@ Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> WebPro
     return result;
 }
 
-Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode, ShouldLaunchProcess shouldLaunchProcess, EnableWebAssemblyDebugger enableWebAssemblyDebugger)
+Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, RichWebAPIs richWebAPIs, IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode, ShouldLaunchProcess shouldLaunchProcess, EnableWebAssemblyDebugger enableWebAssemblyDebugger)
 {
-    Ref proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isPrewarmed, crossOriginMode, lockdownMode, enhancedSecurity, enableWebAssemblyDebugger));
+    Ref proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isPrewarmed, crossOriginMode, lockdownMode, enhancedSecurity, richWebAPIs, enableWebAssemblyDebugger));
     if (shouldLaunchProcess == ShouldLaunchProcess::Yes) {
         if (liveProcessesLRU().computeSize() >= s_maxProcessCount) {
             for (auto& processPool : WebProcessPool::allProcessPools())
@@ -302,16 +302,16 @@ Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, Websit
     return proxy;
 }
 
-Ref<WebProcessProxy> WebProcessProxy::createForRemoteWorkers(RemoteWorkerType workerType, WebProcessPool& processPool, Site&& site, WebsiteDataStore& websiteDataStore, LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity)
+Ref<WebProcessProxy> WebProcessProxy::createForRemoteWorkers(RemoteWorkerType workerType, WebProcessPool& processPool, Site&& site, WebsiteDataStore& websiteDataStore, LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, RichWebAPIs richWebAPIs)
 {
-    Ref proxy = adoptRef(*new WebProcessProxy(processPool, &websiteDataStore, IsPrewarmed::No, CrossOriginMode::Shared, lockdownMode, enhancedSecurity));
+    Ref proxy = adoptRef(*new WebProcessProxy(processPool, &websiteDataStore, IsPrewarmed::No, CrossOriginMode::Shared, lockdownMode, enhancedSecurity, richWebAPIs, EnableWebAssemblyDebugger::No));
     proxy->m_site = WTF::move(site);
     proxy->enableRemoteWorkers(workerType, processPool.userContentControllerForRemoteWorkers());
     proxy->connect();
     return proxy;
 }
 
-WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode, LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, EnableWebAssemblyDebugger enableWebAssemblyDebugger)
+WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode, LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, RichWebAPIs richWebAPIs, EnableWebAssemblyDebugger enableWebAssemblyDebugger)
     : AuxiliaryProcessProxy(processPool.shouldTakeUIBackgroundAssertion() ? ShouldTakeUIBackgroundAssertion::Yes : ShouldTakeUIBackgroundAssertion::No
     , processPool.alwaysRunsAtBackgroundPriority() ? AlwaysRunsAtBackgroundPriority::Yes : AlwaysRunsAtBackgroundPriority::No)
     , m_backgroundResponsivenessTimer(makeUniqueRef<BackgroundProcessResponsivenessTimer>(*this))
@@ -325,6 +325,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
     , m_isPrewarmed(isPrewarmed == IsPrewarmed::Yes)
     , m_lockdownMode(lockdownMode)
     , m_enhancedSecurity(enhancedSecurity)
+    , m_richWebAPIs(richWebAPIs)
     , m_crossOriginMode(crossOriginMode)
     , m_shutdownPreventingScopeCounter([this](RefCounterEvent event) { if (event == RefCounterEvent::Decrement) maybeShutDown(); })
     , m_webLockRegistry(websiteDataStore ? makeUniqueWithoutRefCountedCheck<WebLockRegistryProxy>(*this) : nullptr)
@@ -491,7 +492,7 @@ void WebProcessProxy::initializePreferencesForGPUAndNetworkProcesses(const WebPa
     } else {
 #if ASSERT_ENABLED
         auto sharedPreferencesForWebProcess = m_sharedPreferencesForWebProcess;
-        ASSERT(!WebKit::updateSharedPreferencesForWebProcess(sharedPreferencesForWebProcess, page.preferences().store(), lockdownMode() == WebProcessProxy::LockdownMode::Enabled));
+        ASSERT(!WebKit::updateSharedPreferencesForWebProcess(sharedPreferencesForWebProcess, page.preferences().store(), lockdownMode() == WebProcessProxy::LockdownMode::Enabled, richWebAPIs() == WebProcessProxy::RichWebAPIs::Enabled));
 #endif
     }
 
@@ -501,7 +502,7 @@ bool WebProcessProxy::hasSameGPUAndNetworkProcessPreferencesAs(const API::PageCo
 {
     if (m_sharedPreferencesForWebProcess.version) {
         auto sharedPreferencesForWebProcess = m_sharedPreferencesForWebProcess;
-        if (WebKit::updateSharedPreferencesForWebProcess(sharedPreferencesForWebProcess, pageConfiguration.preferences().store(), lockdownMode() == WebProcessProxy::LockdownMode::Enabled))
+        if (WebKit::updateSharedPreferencesForWebProcess(sharedPreferencesForWebProcess, pageConfiguration.preferences().store(), lockdownMode() == WebProcessProxy::LockdownMode::Enabled, richWebAPIs() == WebProcessProxy::RichWebAPIs::Enabled))
             return false;
     }
     return true;
@@ -588,6 +589,9 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
         launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("enable-lockdown-mode"_s, "1"_s);
     else if (shouldEnableEnhancedSecurity())
         launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("enable-enhanced-security"_s, "1"_s);
+
+    if (m_richWebAPIs == RichWebAPIs::Disabled)
+        launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("rich-web-apis-enabled"_s, "0"_s);
 }
 
 #if !PLATFORM(GTK) && !PLATFORM(WPE)
@@ -2411,7 +2415,8 @@ void WebProcessProxy::sharedPreferencesDidChange()
 
 std::optional<SharedPreferencesForWebProcess> WebProcessProxy::updateSharedPreferences(const WebPreferencesStore& preferencesStore)
 {
-    if (WebKit::updateSharedPreferencesForWebProcess(m_sharedPreferencesForWebProcess, preferencesStore, lockdownMode() == WebProcessProxy::LockdownMode::Enabled)) {
+    bool isRichWebAPIsEnabled = richWebAPIs() == WebProcessProxy::RichWebAPIs::Enabled;
+    if (WebKit::updateSharedPreferencesForWebProcess(m_sharedPreferencesForWebProcess, preferencesStore, lockdownMode() == WebProcessProxy::LockdownMode::Enabled, isRichWebAPIsEnabled)) {
         ++m_sharedPreferencesForWebProcess.version;
         sharedPreferencesDidChange();
 
@@ -3256,6 +3261,13 @@ void WebProcessProxy::takeInvalidMessageStringForTesting(CompletionHandler<void(
     ASCIILiteral error = protect(connection())->takeErrorString();
     String errorString = !error.isNull() ? String::fromUTF8(error) : emptyString();
     callback(WTF::move(errorString));
+}
+#endif
+
+#if ENABLE(IPC_TESTING_API)
+void WebProcessProxy::richWebAPIsTestPing(uint32_t value, CompletionHandler<void(uint32_t)>&& completionHandler)
+{
+    completionHandler(value + 1);
 }
 #endif
 

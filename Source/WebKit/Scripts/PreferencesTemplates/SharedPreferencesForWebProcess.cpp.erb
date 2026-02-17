@@ -33,15 +33,19 @@
 
 namespace WebKit {
 
-SharedPreferencesForWebProcess sharedPreferencesForWebProcess(const WebPreferencesStore& preferencesStore, bool isLockdownModeEnabled)
+SharedPreferencesForWebProcess sharedPreferencesForWebProcess(const WebPreferencesStore& preferencesStore, bool isLockdownModeEnabled, bool isRichWebAPIsEnabled)
 {
     SharedPreferencesForWebProcess sharedPreferences;
 <% for @pref in @sharedPreferencesForWebProcess do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
-<%- if @pref.opts["disableInLockdownMode"] -%>
+<%- if @pref.opts["disableInLockdownMode"] && @pref.richJavaScript -%>
+    sharedPreferences.<%= @pref.nameLower %> = (isLockdownModeEnabled || !isRichWebAPIsEnabled) ? false : preferencesStore.getBoolValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key());
+<%- elsif @pref.opts["disableInLockdownMode"] -%>
     sharedPreferences.<%= @pref.nameLower %> = isLockdownModeEnabled ? false : preferencesStore.getBoolValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key());
+<%- elsif @pref.richJavaScript -%>
+    sharedPreferences.<%= @pref.nameLower %> = !isRichWebAPIsEnabled ? false : preferencesStore.getBoolValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key());
 <%- else -%>
     sharedPreferences.<%= @pref.nameLower %> = preferencesStore.getBoolValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key());
 <%- end -%>
@@ -52,15 +56,25 @@ SharedPreferencesForWebProcess sharedPreferencesForWebProcess(const WebPreferenc
     return sharedPreferences;
 }
 
-bool updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess& sharedPreferences, const WebPreferencesStore& preferencesStore, bool isLockdownModeEnabled)
+bool updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess& sharedPreferences, const WebPreferencesStore& preferencesStore, bool isLockdownModeEnabled, bool isRichWebAPIsEnabled)
 {
     bool didChange = false;
 <% for @pref in @sharedPreferencesForWebProcess do -%>
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
-<%- if @pref.opts["disableInLockdownMode"] -%>
+<%- if @pref.opts["disableInLockdownMode"] && @pref.richJavaScript -%>
+    if (!isLockdownModeEnabled && isRichWebAPIsEnabled && preferencesStore.getBoolValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key()) && !sharedPreferences.<%= @pref.nameLower %>) {
+        sharedPreferences.<%= @pref.nameLower %> = true;
+        didChange = true;
+    }
+<%- elsif @pref.opts["disableInLockdownMode"] -%>
     if (!isLockdownModeEnabled && preferencesStore.getBoolValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key()) && !sharedPreferences.<%= @pref.nameLower %>) {
+        sharedPreferences.<%= @pref.nameLower %> = true;
+        didChange = true;
+    }
+<%- elsif @pref.richJavaScript -%>
+    if (isRichWebAPIsEnabled && preferencesStore.getBoolValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key()) && !sharedPreferences.<%= @pref.nameLower %>) {
         sharedPreferences.<%= @pref.nameLower %> = true;
         didChange = true;
     }

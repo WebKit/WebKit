@@ -891,4 +891,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return WKSecurityRestrictionModeNone;
 }
 
+- (BOOL)richWebAPIsEnabled
+{
+    return protectedWebsitePolicies(self)->richWebAPIsEnabled();
+}
+
+- (void)setRichWebAPIsEnabled:(BOOL)richWebAPIsEnabled
+{
+    _websitePolicies->setRichWebAPIsEnabled(!!richWebAPIsEnabled);
+}
+
 @end

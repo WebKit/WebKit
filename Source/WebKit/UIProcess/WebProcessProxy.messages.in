@@ -119,5 +119,6 @@ messages -> WebProcessProxy WantsDispatchMessage {
 
 #if ENABLE(IPC_TESTING_API)
     TakeInvalidMessageStringForTesting() -> (String error) Synchronous
+    [EnabledBy=RichWebAPIsTestEnabled] RichWebAPIsTestPing(uint32_t value) -> (uint32_t nextValue) Synchronous
 #endif
 }
