@@ -62,6 +62,7 @@ inline SVGLayoutData::SVGLayoutData(const SVGLayoutData& other)
     , x(other.x)
     , y(other.y)
     , d(other.d)
+    , hasExplicitlySetD(other.hasExplicitlySetD)
 {
 }
 
@@ -79,7 +80,8 @@ bool SVGLayoutData::operator==(const SVGLayoutData& other) const
         && ry == other.ry
         && x == other.x
         && y == other.y
-        && d == other.d;
+        && d == other.d
+        && hasExplicitlySetD == other.hasExplicitlySetD;
 }
 
 #if !LOG_DISABLED
@@ -93,6 +95,7 @@ void SVGLayoutData::dumpDifferences(TextStream& ts, const SVGLayoutData& other) 
     LOG_IF_DIFFERENT(x);
     LOG_IF_DIFFERENT(y);
     LOG_IF_DIFFERENT(d);
+    LOG_IF_DIFFERENT(hasExplicitlySetD);
 }
 #endif
 
@@ -106,6 +109,7 @@ TextStream& operator<<(TextStream& ts, const SVGLayoutData& data)
     ts.dumpProperty("x"_s, data.x);
     ts.dumpProperty("y"_s, data.y);
     ts.dumpProperty("d"_s, data.d);
+    ts.dumpProperty("hasExplicitlySetD"_s, data.hasExplicitlySetD);
     return ts;
 }
 

@@ -108,6 +108,7 @@ private:
     std::pair<bool, std::optional<Vector<ScopingRootWithDistance>>> scopeRulesMatch(const RuleData&, const MatchRequest&);
 
     void sortMatchedRules();
+    bool matchedRulesContainProperty(CSSPropertyID) const;
 
     Vector<MatchedProperties>& declarationsForOrigin(DeclarationOrigin);
     void sortAndTransferMatchedRules(DeclarationOrigin);

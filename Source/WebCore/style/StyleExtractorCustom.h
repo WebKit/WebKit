@@ -60,6 +60,7 @@
 #include "RenderGrid.h"
 #include "RenderInline.h"
 #include "RenderStyle+GettersInlines.h"
+#include "SVGPathElement.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StyleExtractorState.h"
 #include "StyleInterpolation.h"
@@ -130,6 +131,7 @@ public:
     static Ref<CSSValue> extractWebkitMaskSourceType(ExtractorState&);
     static Ref<CSSValue> extractColor(ExtractorState&);
     static Ref<CSSValue> extractCaretColor(ExtractorState&);
+    static Ref<CSSValue> extractD(ExtractorState&);
 
     // MARK: Shorthands
 
@@ -228,6 +230,7 @@ public:
     static void extractWebkitMaskSourceTypeSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractColorSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractCaretColorSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractDSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
 
     static void extractAnimationShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractAnimationRangeShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
@@ -1275,6 +1278,23 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyCaretColor> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
     {
         return functor(state.style.caretColor().colorOrCurrentColor());
+    }
+};
+
+template<> struct PropertyExtractorAdaptor<CSSPropertyD> {
+    template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
+    {
+        if (!state.style.hasExplicitlySetD()) {
+            if (RefPtr pathElement = dynamicDowncast<SVGPathElement>(state.element.get())) {
+                auto& byteStream = pathElement->pathByteStream();
+                if (!byteStream.isEmpty()) {
+                    PathFunction pathFunction { Path { std::nullopt, Path::Data { byteStream }, 1.0f } };
+                    return functor(SVGPathData { WTF::move(pathFunction) });
+                }
+            }
+        }
+
+        return functor(state.style.d());
     }
 };
 
@@ -2393,6 +2413,16 @@ inline void ExtractorCustom::extractCaretColorSerialization(ExtractorState& stat
         return;
     }
     extractSerialization<CSSPropertyCaretColor>(state, builder, context);
+}
+
+inline Ref<CSSValue> ExtractorCustom::extractD(ExtractorState& state)
+{
+    return extractCSSValue<CSSPropertyD>(state);
+}
+
+inline void ExtractorCustom::extractDSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    extractSerialization<CSSPropertyD>(state, builder, context);
 }
 
 // MARK: - Shorthands

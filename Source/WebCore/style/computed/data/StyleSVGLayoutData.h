@@ -62,6 +62,7 @@ public:
     SVGCoordinateComponent x;
     SVGCoordinateComponent y;
     SVGPathData d;
+    bool hasExplicitlySetD { false };
 
 private:
     SVGLayoutData();

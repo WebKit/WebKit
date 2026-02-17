@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "MutableStyleProperties.h"
 #include "Path.h"
 #include "SVGGeometryElement.h"
 #include "SVGNames.h"
@@ -104,6 +105,8 @@ public:
 
     void pathDidChange();
 
+    RefPtr<MutableStyleProperties> presentationalHintStyleForDAttribute() const;
+
     static void clearCache();
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGPathElement, SVGGeometryElement>;
@@ -124,11 +127,11 @@ private:
 
     void invalidateMPathDependencies();
 
-    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
-    void collectExtraStyleForPresentationalHints(MutableStyleProperties&) override;
-    void collectDPresentationalHint(MutableStyleProperties&);
+    void invalidateDPresentationalHintCache();
+    Ref<MutableStyleProperties> buildDPresentationalHintStyle() const;
 
     Ref<SVGAnimatedPathSegList> m_pathSegList { SVGAnimatedPathSegList::create(this) };
+    mutable RefPtr<MutableStyleProperties> m_cachedDPresentationalHintStyle;
 };
 
 } // namespace WebCore

@@ -4634,8 +4634,11 @@
                 "computed-style-storage-path": ["m_svgData", "layoutData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::SVGPathData",
+                "computed-style-has-explicitly-set-policy": "all-author-origin",
+                "computed-style-has-explicitly-set-storage-path": ["m_svgData", "layoutData"],
                 "parser-grammar": "none | <path()>",
-                "settings-flag": "cssDPropertyEnabled"
+                "settings-flag": "cssDPropertyEnabled",
+                "style-extractor-custom": true
             },
             "specification": {
                 "category": "svg",

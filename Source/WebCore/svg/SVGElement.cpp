@@ -866,7 +866,7 @@ bool SVGElement::rendererIsNeeded(const RenderStyle& style)
     return false;
 }
 
-CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& attrName, const Settings& settings)
+CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& attrName, const Settings&)
 {
     if (!attrName.namespaceURI().isNull())
         return CSSPropertyInvalid;
@@ -896,10 +896,6 @@ CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& 
         return CSSPropertyCx;
     case AttributeNames::cyAttr:
         return CSSPropertyCy;
-    case AttributeNames::dAttr:
-        if (settings.cssDPropertyEnabled())
-            return CSSPropertyD;
-        break;
     case AttributeNames::directionAttr:
         return CSSPropertyDirection;
     case AttributeNames::displayAttr:

@@ -310,7 +310,15 @@ bool LegacyRenderSVGPath::isRenderingDisabled() const
 void LegacyRenderSVGPath::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
     if (RefPtr pathElement = dynamicDowncast<SVGPathElement>(graphicsElement())) {
-        if (!oldStyle || style().d() != oldStyle->d())
+        bool dChanged = false;
+        if (!oldStyle) {
+            dChanged = true;
+        } else if (style().hasExplicitlySetD() != oldStyle->hasExplicitlySetD()) {
+            dChanged = true;
+        } else if (style().hasExplicitlySetD() && style().d() != oldStyle->d())
+            dChanged = true;
+
+        if (dChanged)
             pathElement->pathDidChange();
     }
 

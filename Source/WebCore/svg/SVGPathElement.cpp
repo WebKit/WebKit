@@ -149,8 +149,13 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
             path->setNeedsShapeUpdate();
 
         updateSVGRendererForElementChange();
-        if (document().settings().cssDPropertyEnabled())
-            setPresentationalHintStyleIsDirty();
+
+        if (document().settings().cssDPropertyEnabled()) {
+            invalidateDPresentationalHintCache();
+            if (renderer() && renderer()->style().hasExplicitlySetD())
+                invalidateStyle();
+        }
+
         invalidateResourceImageBuffersIfNeeded();
         return;
     }
@@ -239,9 +244,11 @@ const SVGPathByteStream& SVGPathElement::pathByteStream() const
 {
     if (document().settings().cssDPropertyEnabled()) {
         if (CheckedPtr renderer = this->renderer()) {
-            if (auto& pathFunction = renderer->style().d().tryPath())
-                return pathFunction->parameters.data.byteStream;
-            return SVGPathByteStream::empty();
+            if (renderer->style().hasExplicitlySetD()) {
+                if (auto& pathFunction = renderer->style().d().tryPath())
+                    return pathFunction->parameters.data.byteStream;
+                return SVGPathByteStream::empty();
+            }
         }
     }
 
@@ -252,40 +259,40 @@ Path SVGPathElement::path() const
 {
     if (document().settings().cssDPropertyEnabled()) {
         if (CheckedPtr renderer = this->renderer()) {
-            if (auto& pathFunction = renderer->style().d().tryPath())
-                return Style::path(pathFunction->parameters, FloatRect { });
-            return { };
+            if (renderer->style().hasExplicitlySetD()) {
+                if (auto& pathFunction = renderer->style().d().tryPath())
+                    return Style::path(pathFunction->parameters, FloatRect { });
+                return { };
+            }
         }
     }
 
     return Ref { m_pathSegList }->currentPath();
 }
 
-void SVGPathElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
-{
-    if (name == SVGNames::dAttr && document().settings().cssDPropertyEnabled())
-        collectDPresentationalHint(style);
-    else
-        SVGGeometryElement::collectPresentationalHintsForAttribute(name, value, style);
-}
-
-void SVGPathElement::collectExtraStyleForPresentationalHints(MutableStyleProperties& style)
+RefPtr<MutableStyleProperties> SVGPathElement::presentationalHintStyleForDAttribute() const
 {
     if (!document().settings().cssDPropertyEnabled())
-        return;
-    if (style.findPropertyIndex(CSSPropertyD) == -1)
-        collectDPresentationalHint(style);
+        return nullptr;
+
+    if (!m_cachedDPresentationalHintStyle)
+        m_cachedDPresentationalHintStyle = buildDPresentationalHintStyle();
+
+    return m_cachedDPresentationalHintStyle;
 }
 
-void SVGPathElement::collectDPresentationalHint(MutableStyleProperties& style)
+Ref<MutableStyleProperties> SVGPathElement::buildDPresentationalHintStyle() const
 {
-    ASSERT(document().settings().cssDPropertyEnabled());
-    // In the case of the `d` property, we want to avoid providing a string value since it will require
-    // the path data to be parsed again and path data can be unwieldy.
-    auto property = cssPropertyIdForSVGAttributeName(SVGNames::dAttr, document().settings());
+    auto style = MutableStyleProperties::create(SVGAttributeMode);
     // The fill rule value passed here is not relevant for the `d` property.
     auto cssPathValue = CSSPathValue::create(CSS::PathFunction { CSS::Keyword::Nonzero { }, CSS::Path::Data { Ref { m_pathSegList }->currentPathByteStream() } });
-    addPropertyToPresentationalHintStyle(style, property, WTF::move(cssPathValue));
+    style->setProperty(CSSPropertyD, WTF::move(cssPathValue));
+    return style;
+}
+
+void SVGPathElement::invalidateDPresentationalHintCache()
+{
+    m_cachedDPresentationalHintStyle = nullptr;
 }
 
 void SVGPathElement::pathDidChange()

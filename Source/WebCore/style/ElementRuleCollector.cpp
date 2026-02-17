@@ -44,6 +44,8 @@
 #include "HTMLElement.h"
 #include "HTMLSlotElement.h"
 #include "SVGElement.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGPathElement.h"
 #include "SelectorCheckerTestFunctions.h"
 #include "SelectorCompiler.h"
 #include "SelectorMatchingState.h"
@@ -855,6 +857,15 @@ static inline bool compareRules(MatchedRule r1, MatchedRule r2)
     return r1.ruleData->position() < r2.ruleData->position();
 }
 
+bool ElementRuleCollector::matchedRulesContainProperty(CSSPropertyID propertyID) const
+{
+    for (const auto& matchedRule : m_matchedRules) {
+        if (matchedRule.ruleData->styleRule().properties().findPropertyIndex(propertyID) >= 0)
+            return true;
+    }
+    return false;
+}
+
 void ElementRuleCollector::sortMatchedRules()
 {
     std::ranges::sort(m_matchedRules, compareRules);
@@ -897,8 +908,19 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
         clearMatchedRules();
 
         collectMatchingRules(DeclarationOrigin::Author);
-        sortMatchedRules();
 
+        // If CSS uses the d property, add the d attribute presentational hint for proper cascade.
+        // This must be done BEFORE transferring author rules so that author rules can override
+        // the presentational hint. This avoids creating CSSPathValue when CSS doesn't touch
+        // the d property (which is the common case).
+        if (RefPtr pathElement = dynamicDowncast<SVGPathElement>(element())) {
+            if (matchedRulesContainProperty(CSSPropertyD)) {
+                if (RefPtr dHintStyle = pathElement->presentationalHintStyleForDAttribute())
+                    addElementStyleProperties(dHintStyle.get(), RuleSet::cascadeLayerPriorityForPresentationalHints);
+            }
+        }
+
+        sortMatchedRules();
         transferMatchedRules(DeclarationOrigin::Author, ScopeOrdinal::Element);
 
         // Inline style behaves as if it has higher specificity than any rule.
