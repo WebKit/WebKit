@@ -47,6 +47,7 @@ public:
 private:
     JSTestCallbackWithFunctionOrDict(JSC::JSObject*, JSDOMGlobalObject*);
 
+    void clearCallback() final;
     bool hasCallback() const final { return m_data && m_data->callback(); }
 
     bool isJSTestCallbackWithFunctionOrDict() const final { return true; }

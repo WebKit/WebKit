@@ -25,12 +25,14 @@
 
 #pragma once
 
+#include <WebCore/ActiveDOMCallback.h>
 #include <WebCore/EventTarget.h>
 #include <WebCore/EventTargetInlines.h>
 #include <WebCore/FetchOptions.h>
 #include <WebCore/ScriptExecutionContext.h>
 #include <WebCore/WorkerThreadType.h>
 #include <pal/SessionID.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -88,6 +90,8 @@ public:
     OptionSet<NoiseInjectionPolicy> noiseInjectionPolicies() const final;
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const final { return m_advancedPrivacyProtections; }
 
+    void addActiveDOMCallback(ActiveDOMCallback&);
+
 protected:
     WorkerOrWorkletGlobalScope(WorkerThreadType, PAL::SessionID, Ref<JSC::VM>&&, ReferrerPolicy, WorkerOrWorkletThread*, std::optional<uint64_t>, OptionSet<AdvancedPrivacyProtections>, std::optional<ScriptExecutionContextIdentifier> = std::nullopt);
 
@@ -123,6 +127,7 @@ private:
     bool m_isClosing { false };
     std::optional<uint64_t> m_noiseInjectionHashSalt;
     OptionSet<AdvancedPrivacyProtections> m_advancedPrivacyProtections;
+    WeakHashSet<ActiveDOMCallback> m_activeDOMCallbacks;
 };
 
 } // namespace WebCore

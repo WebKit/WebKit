@@ -124,6 +124,12 @@ void JSTestCallbackWithFunctionOrDict::visitJSFunction(JSC::SlotVisitor& visitor
     m_data->visitJSFunction(visitor);
 }
 
+void JSTestCallbackWithFunctionOrDict::clearCallback()
+{
+    if (m_data)
+        m_data->clear();
+}
+
 JSC::JSValue toJS(TestCallbackWithFunctionOrDict& impl)
 {
     if (auto* callbackData = downcast<JSTestCallbackWithFunctionOrDict>(impl).callbackData())

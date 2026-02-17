@@ -96,6 +96,7 @@ public:
 
     private:
         bool hasCallback() const final { return true; }
+        void clearCallback() final { }
 
         SubscriberCallbackInspect(ScriptExecutionContext& context, Ref<Observable>&& source, ObservableInspector&& inspector)
             : SubscriberCallback(&context)

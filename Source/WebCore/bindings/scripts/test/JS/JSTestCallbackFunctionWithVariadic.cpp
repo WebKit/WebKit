@@ -129,6 +129,12 @@ void JSTestCallbackFunctionWithVariadic::visitJSFunction(JSC::SlotVisitor& visit
     m_data->visitJSFunction(visitor);
 }
 
+void JSTestCallbackFunctionWithVariadic::clearCallback()
+{
+    if (m_data)
+        m_data->clear();
+}
+
 JSC::JSValue toJS(TestCallbackFunctionWithVariadic& impl)
 {
     if (auto* callbackData = downcast<JSTestCallbackFunctionWithVariadic>(impl).callbackData())

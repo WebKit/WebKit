@@ -7420,6 +7420,7 @@ sub GenerateCallbackHeaderContent
 
     push(@$contentRef, "    ${className}(JSC::JSObject*, JSDOMGlobalObject*);\n\n");
 
+    push(@$contentRef, "    void clearCallback() final;\n");
     push(@$contentRef, "    bool hasCallback() const final { return m_data && m_data->callback(); }\n\n");
     push(@$contentRef, "    bool is${className}() const final { return true; }\n\n");
 
@@ -7673,6 +7674,12 @@ sub GenerateCallbackImplementationContent
         push(@$contentRef, "    m_data->visitJSFunction(visitor);\n");
         push(@$contentRef, "}\n\n");
     }
+
+    push(@$contentRef, "void ${className}::clearCallback()\n");
+    push(@$contentRef, "{\n");
+    push(@$contentRef, "    if (m_data)\n");
+    push(@$contentRef, "        m_data->clear();\n");
+    push(@$contentRef, "}\n\n");
 
     push(@$contentRef, "JSC::JSValue toJS(${name}& impl)\n");
     push(@$contentRef, "{\n");

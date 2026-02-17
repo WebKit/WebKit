@@ -49,6 +49,7 @@ public:
 private:
     JSTestCallbackFunctionWithVariadic(JSC::JSObject*, JSDOMGlobalObject*);
 
+    void clearCallback() final;
     bool hasCallback() const final { return m_data && m_data->callback(); }
 
     bool isJSTestCallbackFunctionWithVariadic() const final { return true; }

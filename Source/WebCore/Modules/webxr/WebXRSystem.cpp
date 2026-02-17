@@ -658,6 +658,7 @@ public:
     }
 
     bool hasCallback() const final { return true; }
+    void clearCallback() final { }
 
 private:
     InlineRequestAnimationFrameCallback(ScriptExecutionContext& scriptExecutionContext, Function<void()>&& callback)

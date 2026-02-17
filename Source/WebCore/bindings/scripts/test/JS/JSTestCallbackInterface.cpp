@@ -772,6 +772,12 @@ void JSTestCallbackInterface::visitJSFunction(JSC::SlotVisitor& visitor)
     m_data->visitJSFunction(visitor);
 }
 
+void JSTestCallbackInterface::clearCallback()
+{
+    if (m_data)
+        m_data->clear();
+}
+
 JSC::JSValue toJS(TestCallbackInterface& impl)
 {
     if (auto* callbackData = downcast<JSTestCallbackInterface>(impl).callbackData())

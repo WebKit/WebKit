@@ -82,6 +82,7 @@ public:
         { }
 
         bool hasCallback() const final { return true; }
+        void clearCallback() final { }
 
         const Ref<Observable> m_sourceObservable;
         uint64_t m_amount;

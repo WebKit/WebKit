@@ -124,6 +124,12 @@ void JSTestCallbackFunctionWithTypedefs::visitJSFunction(JSC::SlotVisitor& visit
     m_data->visitJSFunction(visitor);
 }
 
+void JSTestCallbackFunctionWithTypedefs::clearCallback()
+{
+    if (m_data)
+        m_data->clear();
+}
+
 JSC::JSValue toJS(TestCallbackFunctionWithTypedefs& impl)
 {
     if (auto* callbackData = downcast<JSTestCallbackFunctionWithTypedefs>(impl).callbackData())

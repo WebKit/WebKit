@@ -363,6 +363,7 @@ private:
     }
 
     bool hasCallback() const final { return true; }
+    void clearCallback() final { }
 
     CallbackResult<void> invoke(double, const VideoFrameMetadata&) override
     {

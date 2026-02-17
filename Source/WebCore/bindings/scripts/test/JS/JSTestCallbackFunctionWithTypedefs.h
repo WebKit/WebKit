@@ -47,6 +47,7 @@ public:
 private:
     JSTestCallbackFunctionWithTypedefs(JSC::JSObject*, JSDOMGlobalObject*);
 
+    void clearCallback() final;
     bool hasCallback() const final { return m_data && m_data->callback(); }
 
     bool isJSTestCallbackFunctionWithTypedefs() const final { return true; }

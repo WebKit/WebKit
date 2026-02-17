@@ -116,6 +116,12 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunction
     return { returnValue.releaseReturnValue() };
 }
 
+void JSTestCallbackFunctionGenerateIsReachable::clearCallback()
+{
+    if (m_data)
+        m_data->clear();
+}
+
 JSC::JSValue toJS(TestCallbackFunctionGenerateIsReachable& impl)
 {
     if (auto* callbackData = downcast<JSTestCallbackFunctionGenerateIsReachable>(impl).callbackData())
