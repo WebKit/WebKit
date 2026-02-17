@@ -1544,6 +1544,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     setNavigationGesturesEnabled(false);
     
     setIgnoresViewportScaleLimits(options.ignoresViewportScaleLimits());
+    m_mainWebView->setEditable(options.editable());
 
     m_openPanelFileURLs = nullptr;
 #if PLATFORM(IOS_FAMILY)

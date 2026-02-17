@@ -358,9 +358,6 @@ void TestController::platformCreateWebView(WKPageConfigurationRef configuration,
     if (options.punchOutWhiteBackgroundsInDarkMode())
         m_mainWebView->setDrawsBackground(false);
 
-    if (options.editable())
-        m_mainWebView->setEditable(true);
-
     m_mainWebView->platformView().allowsLinkPreview = options.allowsLinkPreview();
     [m_mainWebView->platformView() _setShareSheetCompletesImmediatelyWithResolutionForTesting:YES];
 }

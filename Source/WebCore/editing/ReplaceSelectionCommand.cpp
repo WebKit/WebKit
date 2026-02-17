@@ -2044,7 +2044,8 @@ WARN_UNUSED_RETURN static IterationStatus collectStylesToRemove(Node& node, cons
         addStylesToRemove(*element);
 
     if (RefPtr container = dynamicDowncast<ContainerNode>(node)) {
-        for (Ref child : composedTreeChildren(*container)) {
+        static constexpr auto inlineCapacityToAvoidExceedingStackLimit = 0;
+        for (Ref child : composedTreeChildren<inlineCapacityToAvoidExceedingStackLimit>(*container)) {
             if (collectStylesToRemove(child, lastLeaf, backgroundLuminance, stylesToRemove) == IterationStatus::Done)
                 break;
         }
