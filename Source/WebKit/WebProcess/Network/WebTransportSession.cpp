@@ -61,7 +61,6 @@ WebTransportSession::WebTransportSession(Ref<IPC::Connection>&& connection, Thre
     , m_client(WTF::move(client))
     , m_identifier(identifier)
 {
-    RELEASE_ASSERT(WebProcess::singleton().isWebTransportEnabled());
     WebProcess::singleton().addWebTransportSession(m_identifier, *this);
 }
 

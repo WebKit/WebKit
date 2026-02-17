@@ -246,7 +246,6 @@ public:
     void removeWebPage(WebCore::PageIdentifier);
     WebPage* focusedWebPage() const;
     bool hasEverHadAnyWebPages() const { return m_hasEverHadAnyWebPages; }
-    bool isWebTransportEnabled() const { return m_isWebTransportEnabled; }
     bool isBroadcastChannelEnabled() const { return m_isBroadcastChannelEnabled; }
 
     InjectedBundle* injectedBundle() const { return m_injectedBundle.get(); }
@@ -932,7 +931,6 @@ private:
 
     HashMap<StorageAreaMapIdentifier, WeakPtr<StorageAreaMap>> m_storageAreaMaps;
 
-    void updateIsWebTransportEnabled();
     void updateIsBroadcastChannelEnabled();
     
     // Prewarmed WebProcesses do not have an associated sessionID yet, which is why this is an optional.
@@ -970,7 +968,6 @@ private:
     bool m_imageAnimationEnabled { true };
     bool m_hasEverHadAnyWebPages { false };
     bool m_hasPendingAccessibilityUnsuspension { false };
-    bool m_isWebTransportEnabled { false };
     bool m_isBroadcastChannelEnabled { false };
 
 #if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
