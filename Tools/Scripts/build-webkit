@@ -11,13 +11,13 @@
 # are met:
 #
 # 1.  Redistributions of source code must retain the above copyright
-#     notice, this list of conditions and the following disclaimer. 
+#     notice, this list of conditions and the following disclaimer.
 # 2.  Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
-#     documentation and/or other materials provided with the distribution. 
+#     documentation and/or other materials provided with the distribution.
 # 3.  Neither the name of Apple Inc. ("Apple") nor the names of
 #     its contributors may be used to endorse or promote products derived
-#     from this software without specific prior written permission. 
+#     from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 # EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -67,6 +67,8 @@ chdirWebKit();
 
 my $showHelp = 0;
 my $verbose = 0;
+my $quiet = 0;
+my $verbosity = "default";
 my $clean = 0;
 my $minimal = 0;
 my $installHeaders;
@@ -110,6 +112,8 @@ my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
   -h, --help                        Show this help message
   -v, --verbose                     Show verbose build output
+  -q, --quiet                       Filter Xcode build output to one line per task
+  --verbosity                       Filter Xcode build output according to the given filter-build-webkit format ("default", "quiet", "oneline")
   --clean                           Cleanup the build directory
   --generate-project-only           Only generate project files
   --debug                           Compile with Debug configuration
@@ -123,7 +127,7 @@ Usage: $programName [options] [options to pass to build system]
   --tvos-device                     Use "appletvos.internal" SDK if installed, else "appletvos" SDK (tvOS only)
   --tvos-simulator                  Use "appletvsimulator" (tvOS only)
   --visionos-device                 Use "xros.internal" SDK if installed, else "xros" SDK (visionOS only)
-  --visionos-simulator              Use "xrsimulator" (visionOS only) 
+  --visionos-simulator              Use "xrsimulator" (visionOS only)
   --watchos-device                  Use "watchos.internal" SDK if installed, else "watchos" SDK (watchOS only)
   --watchos-simulator               Use "watchsimulator" (watchOS only)
   --coverage                        Enable code coverage support (Mac only)
@@ -155,11 +159,16 @@ Usage: $programName [options] [options to pass to build system]
 
   --export-compile-commands         Generate compile_commands.json (Xcode builds only)
 
+On macOS, the default verbosity can be persisted using
+\`defaults write org.webkit.BuildConfiguration BuildTranscriptVerbosity <verbosity>\`.
+
 EOF
 
 my %options = (
     'h|help' => \$showHelp,
     'v|verbose' => \$verbose,
+    'q|quiet' => \$quiet,
+    'verbosity=s' => \$verbosity,
     'clean' => \$clean,
     'install-headers=s' => \$installHeaders,
     'install-libs=s' => \$installLibs,
@@ -189,6 +198,22 @@ GetOptions(%options);
 if ($showHelp) {
    print STDERR $usage;
    exit 1;
+}
+
+die "--verbose and --quiet are mutually exclusive.\n" if $verbose && $quiet;
+$verbosity = "quiet" if $quiet;
+
+if (isAppleCocoaWebKit()) {
+    my $defaultVerbosity = `defaults read org.webkit.BuildConfiguration BuildTranscriptVerbosity 2>/dev/null`;
+    chomp($defaultVerbosity);
+    $verbosity = $defaultVerbosity if $defaultVerbosity && $verbosity eq "default";
+}
+
+my @outputFilter;
+if (isAppleCocoaWebKit() && !$verbose) {
+    if ($verbosity eq "quiet" || $verbosity eq "oneline") {
+        push @outputFilter, "-f", "oneline" if $verbosity eq "oneline";
+    }
 }
 
 $ENV{'VERBOSE'} = 1 if $verbose;
@@ -322,6 +347,9 @@ if (isWin() || isPlayStation() || (isJSCOnly() && isWindows())) {
     push @local_options, XcodeStaticAnalyzerOption() if $shouldRunStaticAnalyzer;
     push @local_options, "WK_LTO_MODE=$ltoMode" if ($ltoMode ne "default");
     push @local_options, XcodeExportCompileCommandsOptions() if $exportCompileCommands;
+    if ($verbosity eq "default" && !$verbose) {
+        push @local_options, "-hideShellScriptEnvironment";
+    }
     # FIXME: Move this setting to xcconfigs once all local Xcode builds of WebKit
     # happen in the workspace. When this is only passed on the command line, it
     # invalidates build results made in the IDE (rdar://88135402).
@@ -330,12 +358,22 @@ if (isWin() || isPlayStation() || (isJSCOnly() && isWindows())) {
     ## a script phase or not) influence the actual VALIDATE_DEPENDENCIES setting
     ## recognized by the build system.
     #push @local_options, "WK_VALIDATE_DEPENDENCIES=YES_ERROR";
- 
+
     markBaseProductDirectoryAsCreatedByXcodeBuildSystem();
+
+    my $filterBuildWebKit;
+    my $oldout;
+    if (@outputFilter || $verbosity eq "quiet") {
+        open ($oldout, ">&STDOUT") or die "can't dup STDOUT: $!";
+        my $filterScript = File::Spec->catfile(sourceDir(), "Tools", "Scripts", "filter-build-webkit");
+        my $filterPID = open ($filterBuildWebKit, "|-", $filterScript, @outputFilter);
+        die "fork failed: $!" unless defined $filterPID;
+        open (STDOUT, ">&", $filterBuildWebKit) or die "can't redirect STDOUT: $!";
+    }
 
     # Build, and abort if the build fails.
     my $scheme = $xcodeScheme // "Everything up to WebKit + Tools";
-    $result = buildXcodeScheme($scheme, $clean, @local_options, @ARGV);
+    my $result = buildXcodeScheme($scheme, $clean, @local_options, @ARGV);
     if (exitStatus($result)) {
         exit exitStatus($result);
     }
@@ -362,6 +400,11 @@ if (isWin() || isPlayStation() || (isJSCOnly() && isWindows())) {
     $result = system(@command);
     if (exitStatus($result)) {
         exit exitStatus($result);
+    }
+
+    if (@outputFilter || $verbosity eq "quiet") {
+        open (STDOUT, ">&", $oldout) or die "can't restore STDOUT: $!";
+        close $filterBuildWebKit or die "wait failed: $!";
     }
 }
 
