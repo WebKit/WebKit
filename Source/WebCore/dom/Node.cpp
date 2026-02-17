@@ -728,6 +728,7 @@ ExceptionOr<void> Node::normalize()
 
     Ref document = this->document();
     RefPtr node = this;
+    Vector<Ref<Text>> textNodesToRemove;
     while (RefPtr firstChild = node->firstChild())
         node = WTF::move(firstChild);
     while (node) {
@@ -744,44 +745,73 @@ ExceptionOr<void> Node::normalize()
 
         Ref text = uncheckedDowncast<Text>(*node);
 
-        // Remove empty text nodes.
+        // Case 1: Empty text nodes.
         if (!text->length()) {
-            // Care must be taken to get the next node before removing the current node.
+            // Queue for removal.
+            textNodesToRemove.append(text);
             node = NodeTraversal::nextPostOrder(*node);
-            text->remove();
             continue;
         }
 
-        // Merge text nodes.
-        while (RefPtr nextSibling = node->nextSibling()) {
-            if (nextSibling->nodeType() != TEXT_NODE)
-                break;
-            Ref nextText = uncheckedDowncast<Text>(nextSibling.releaseNonNull());
+        // Case 2: Merge adjacent text nodes.
+        StringBuilder builder;
 
-            // Remove empty text nodes.
+        RefPtr<Node> candidateNode = node->nextSibling();
+        RefPtr<Node> lastProcessedSibling = nullptr;
+
+        while (candidateNode) {
+            if (candidateNode->nodeType() != TEXT_NODE)
+                break;
+
+            Ref nextText = uncheckedDowncast<Text>(candidateNode.releaseNonNull());
+            RefPtr nextCandidate = nextText->nextSibling();
+
+            // Handle empty sibling
             if (!nextText->length()) {
-                nextText->remove();
+                textNodesToRemove.append(nextText);
+                lastProcessedSibling = candidateNode;
+                candidateNode = nextCandidate;
                 continue;
             }
 
-            // Both non-empty text nodes. Merge them.
-            unsigned offset = text->length();
+            // Check if merging would cause overflow
+            unsigned offset = text->length() + builder.length();
 
             if (nextText->length() > StringImpl::MaxLength - offset) {
+                if (!builder.isEmpty()) {
+                    text->appendData(builder.toString());
+                    // We just deallocated a ~2GB string, plus one or two ~2GB temporary buffers
+                    // Let's explicitly try and release that memory to minimize disruption
+                    builder.clear();
+                    WTF::releaseFastMallocFreeMemory();
+                }
+
                 return Exception { ExceptionCode::InvalidModificationError,
                     "Normalized Node String representation exceeds implementation maximum length."_s };
             }
 
-            // Update start/end for any affected Ranges before appendData since modifying contents might trigger mutation events that modify ordering.
+            // Both non-empty text nodes. Merge them.
+            builder.append(nextText->data());
+            // Update start/end for any affected Ranges before setData since modifying contents might trigger mutation events that modify ordering.
             document->textNodesMerged(nextText, offset);
+            textNodesToRemove.append(nextText);
 
-            // FIXME: DOM spec requires contents to be replaced all at once (see https://dom.spec.whatwg.org/#dom-node-normalize).
-            // Appending once per sibling may trigger mutation events too many times.
-            text->appendData(nextText->data());            
-            nextText->remove();
+            lastProcessedSibling = candidateNode;
+            candidateNode = nextCandidate;
         }
 
+        if (!builder.isEmpty())
+            text->appendData(builder.toString());
+
+        if (lastProcessedSibling)
+            node = lastProcessedSibling;
+
         node = NodeTraversal::nextPostOrder(*node);
+    }
+
+    for (auto& textNode : textNodesToRemove) {
+        if (textNode->parentNode())
+            textNode->remove();
     }
 
     return { };
