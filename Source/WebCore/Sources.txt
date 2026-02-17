@@ -755,7 +755,6 @@ bindings/js/JSPaintWorkletGlobalScopeCustom.cpp
 bindings/js/JSPaymentMethodChangeEventCustom.cpp
 bindings/js/JSPaymentResponseCustom.cpp
 bindings/js/JSPerformanceObserverCustom.cpp
-bindings/js/JSPluginElementFunctions.cpp
 bindings/js/JSPopStateEventCustom.cpp
 bindings/js/JSPromiseRejectionEventCustom.cpp
 bindings/js/JSRTCRtpSFrameTransformCustom.cpp

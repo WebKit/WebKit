@@ -20,7 +20,6 @@
 
 // https://html.spec.whatwg.org/multipage/iframe-embed-object.html#htmlobjectelement
 [
-    Plugin,
     Exposed=Window
 ] interface HTMLObjectElement : HTMLElement {
     [CEReactions=NotNeeded, ReflectURL] attribute USVString data;

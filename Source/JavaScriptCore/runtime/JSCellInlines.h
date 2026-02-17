@@ -263,7 +263,7 @@ inline bool JSCell::isProxy() const
     return m_type == GlobalProxyType || m_type == ProxyObjectType;
 }
 
-// FIXME: Consider making getCallData concurrency-safe once NPAPI support is removed.
+// FIXME: Consider making getCallData concurrency-safe.
 // https://bugs.webkit.org/show_bug.cgi?id=215801
 template<Concurrency concurrency>
 ALWAYS_INLINE TriState JSCell::isCallableWithConcurrency()

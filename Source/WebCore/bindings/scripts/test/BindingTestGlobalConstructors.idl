@@ -52,7 +52,6 @@ partial interface TestGlobalObject {
     [SecureContext] attribute TestNamespaceObjectConstructor TestInterfaceName;
     [Conditional=ConditionDerived] attribute TestOperationConditionalConstructor TestOperationConditional;
     attribute TestOverloadedConstructorsWithSequenceConstructor TestOverloadedConstructorsWithSequence;
-    attribute TestPluginInterfaceConstructor TestPluginInterface;
     attribute TestReadOnlyMapLikeConstructor TestReadOnlyMapLike;
     attribute TestReadOnlySetLikeConstructor TestReadOnlySetLike;
     attribute TestReportExtraMemoryCostConstructor TestReportExtraMemoryCost;

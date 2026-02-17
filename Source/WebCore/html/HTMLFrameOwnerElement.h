@@ -42,7 +42,7 @@ public:
     Frame* contentFrame() const { return m_contentFrame.get(); }
     RefPtr<Frame> protectedContentFrame() const;
     WEBCORE_EXPORT WindowProxy* contentWindow() const;
-    WEBCORE_EXPORT Document* contentDocument() const;
+    WEBCORE_EXPORT virtual Document* contentDocument() const;
 
     WEBCORE_EXPORT void setContentFrame(Frame&);
     void clearContentFrame();

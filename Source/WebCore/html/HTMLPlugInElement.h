@@ -57,6 +57,8 @@ public:
     enum class PluginLoadingPolicy { DoNotLoad, Load };
     WEBCORE_EXPORT PluginViewBase* pluginWidget(PluginLoadingPolicy = PluginLoadingPolicy::Load) const;
 
+    WEBCORE_EXPORT Document* contentDocument() const final;
+
     enum class DisplayState : uint8_t {
         Playing,
         PreparingPluginReplacement,
