@@ -47,6 +47,7 @@
 #include "FTLWeightedTarget.h"
 #include "HeapCell.h"
 #include "JITCompilation.h"
+#include <concepts>
 #include <wtf/OrderMaker.h>
 #include <wtf/StringPrintStream.h>
 
@@ -405,7 +406,7 @@ public:
     requires (std::is_convertible_v<Args, LValue> && ...)
     LValue callWithoutSideEffects(B3::Type type, Function function, LValue arg1, Args... args)
     {
-        static_assert(!std::is_same<Function, LValue>::value);
+        static_assert(!std::same_as<Function, LValue>);
         return m_block->appendNew<B3::CCallValue>(m_proc, type, origin(), B3::Effects::none(),
             constIntPtr(tagCFunctionPtr<void*, OperationPtrTag>(function)), arg1, args...);
     }

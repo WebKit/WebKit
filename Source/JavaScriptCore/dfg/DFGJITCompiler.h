@@ -42,6 +42,7 @@
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
 #include "PCToCodeOriginMap.h"
+#include <concepts>
 #include <wtf/TZoneMalloc.h>
 
 namespace JSC {
@@ -313,7 +314,7 @@ public:
         template<typename T>
         static LinkableConstant nonCellPointer(JITCompiler& jit, T* pointer)
         {
-            static_assert(!std::is_base_of_v<JSCell, T>);
+            static_assert(!std::derived_from<T, JSCell>);
             return LinkableConstant(jit, pointer, NonCell);
         }
 

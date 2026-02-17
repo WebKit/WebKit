@@ -185,7 +185,7 @@ struct FinalTypeDispatcher</* isFinal */ true> {
     {
         static_assert(!std::same_as<JSObject*, To*>, "This ensures our overloads work");
         static_assert(std::derived_from<To, JSCell> && std::derived_from<std::remove_pointer_t<From>, JSCell>, "JS casting expects that the types you are casting to/from are subclasses of JSCell");
-        static_assert(std::is_final<To>::value, "To is a final type");
+        static_assert(std::is_final_v<To>, "To is a final type");
         bool canCast = from->JSCell::classInfo() == To::info();
         // Do not use inherits<To>() since inherits<T> depends on this function.
         ASSERT(canCast == from->JSCell::inheritsSlow(To::info()));
@@ -209,7 +209,7 @@ template<typename To>
 struct InheritsTraits {
     static constexpr std::optional<JSTypeRange> typeRange { std::nullopt };
     template<typename From>
-    static inline bool inherits(From* from) { return FinalTypeDispatcher<std::is_final<To>::value>::template inheritsGeneric<To>(from); }
+    static inline bool inherits(From* from) { return FinalTypeDispatcher<std::is_final_v<To>>::template inheritsGeneric<To>(from); }
 };
 
 #define DEFINE_TRAITS_FOR_JS_TYPE_OVERLOAD(className, firstJSType, lastJSType) \
