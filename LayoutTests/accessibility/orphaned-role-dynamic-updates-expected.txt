@@ -1,0 +1,50 @@
+This test verifies that orphaned ARIA roles are correctly updated when their parent context is added or removed dynamically.
+
+=== Tab Role ===
+Initial computed role: button
+PASS: orphanTab.computedRoleString.toLowerCase().includes('tab') === false
+After adding tablist parent: tab
+PASS: orphanTabAfter.computedRoleString.toLowerCase().includes('tab') === true
+After removing tablist parent: button
+PASS: orphanTabFinal.computedRoleString.toLowerCase().includes('tab') === false
+
+=== ListItem Role ===
+Initial computed role: paragraph
+PASS: orphanListitem.computedRoleString.toLowerCase().includes('listitem') === false
+After adding list parent: listitem
+PASS: orphanListitemAfter.computedRoleString.toLowerCase().includes('listitem') === true
+After removing list parent: paragraph
+PASS: orphanListitemFinal.computedRoleString.toLowerCase().includes('listitem') === false
+
+=== MenuItem Role ===
+Initial computed role: button
+PASS: orphanMenuitem.computedRoleString.toLowerCase().includes('menuitem') === false
+After adding menu parent: menuitem
+PASS: orphanMenuitemAfter.computedRoleString.toLowerCase().includes('menuitem') === true
+After removing menu parent: button
+PASS: orphanMenuitemFinal.computedRoleString.toLowerCase().includes('menuitem') === false
+
+=== GridCell Role ===
+Initial computed role: button
+PASS: orphanGridcell.computedRoleString.toLowerCase().includes('gridcell') === false
+After adding grid/row parent: gridcell
+PASS: orphanGridcellAfter.computedRoleString.toLowerCase().includes('gridcell') === true
+After removing grid/row parent: button
+PASS: orphanGridcellFinal.computedRoleString.toLowerCase().includes('gridcell') === false
+
+=== Option Role ===
+Initial computed role: navigation
+PASS: orphanOption.computedRoleString.toLowerCase().includes('option') === false
+After adding listbox parent: option
+PASS: orphanOptionAfter.computedRoleString.toLowerCase().includes('option') === true
+After removing listbox parent: navigation
+PASS: orphanOptionFinal.computedRoleString.toLowerCase().includes('option') === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Tab Button
+Listitem Paragraph
+
+Menuitem Button Gridcell Button
+Option Nav

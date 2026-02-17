@@ -14,9 +14,9 @@
 <div id="blockquote" role="blockquote" aria-expanded="true"></div>
 <div id="button" role="button" aria-expanded="true"></div>
 <div id="caption" role="caption" aria-expanded="true"></div>
-<div id="cell" role="cell" aria-expanded="true"></div>
+<div role="grid"><div role="row"><div id="cell" role="cell" aria-expanded="true"></div></div></div>
 <div id="checkbox" role="checkbox" aria-expanded="true"></div>
-<div id="columnheader" role="columnheader" aria-expanded="true"></div>
+<div role="grid"><div role="row"><div id="columnheader" role="columnheader" aria-expanded="true"></div></div></div>
 <div id="combobox" role="combobox" aria-expanded="true"></div>
 <div id="complementary" role="complementary" aria-expanded="true"></div>
 <div id="contentinfo" role="contentinfo" aria-expanded="true"></div>
@@ -31,7 +31,7 @@
 <div id="form" role="form" aria-expanded="true"></div>
 <div id="generic" role="generic" aria-expanded="true"></div>
 <div id="grid" role="grid" aria-expanded="true"></div>
-<div id="gridcell" role="gridcell" aria-expanded="true"></div>
+<div role="grid"><div role="row"><div id="gridcell" role="gridcell" aria-expanded="true"></div></div></div>
 <div id="group" role="group" aria-expanded="true"></div>
 <div id="heading" role="heading" aria-expanded="true"></div>
 <div id="img" role="img" aria-expanded="true"></div>
@@ -41,29 +41,29 @@
 <div id="link" role="link" aria-expanded="true"></div>
 <div id="list" role="list" aria-expanded="true"></div>
 <div id="listbox" role="listbox" aria-expanded="true"></div>
-<div id="listitem" role="listitem" aria-expanded="true"></div>
+<div role="list"><div id="listitem" role="listitem" aria-expanded="true"></div></div>
 <div id="log" role="log" aria-expanded="true"></div>
 <div id="main" role="main" aria-expanded="true"></div>
 <div id="marquee" role="marquee" aria-expanded="true"></div>
 <div id="math" role="math" aria-expanded="true"></div>
 <div id="menu" role="menu" aria-expanded="true"></div>
 <div id="menubar" role="menubar" aria-expanded="true"></div>
-<div id="menuitem" role="menuitem" aria-expanded="true"></div>
-<div id="menuitemcheckbox" role="menuitemcheckbox" aria-expanded="true"></div>
-<div id="menuitemradio" role="menuitemradio" aria-expanded="true"></div>
+<div role="menu"><div id="menuitem" role="menuitem" aria-expanded="true"></div></div>
+<div role="menu"><div id="menuitemcheckbox" role="menuitemcheckbox" aria-expanded="true"></div></div>
+<div role="menu"><div id="menuitemradio" role="menuitemradio" aria-expanded="true"></div></div>
 <div id="meter" role="meter" aria-expanded="true"></div>
 <div id="navigation" role="navigation" aria-expanded="true"></div>
 <div id="none" role="none" aria-expanded="true"></div>
 <div id="note" role="note" aria-expanded="true"></div>
-<div id="option" role="option" aria-expanded="true"></div>
+<div role="listbox"><div id="option" role="option" aria-expanded="true"></div></div>
 <div id="paragraph" role="paragraph" aria-expanded="true"></div>
 <div id="presentation" role="presentation" aria-expanded="true"></div>
 <div id="progressbar" role="progressbar" aria-expanded="true"></div>
 <div id="radio" role="radio" aria-expanded="true"></div>
 <div id="radiogroup" role="radiogroup" aria-expanded="true"></div>
 <div id="region" role="region" aria-expanded="true"></div>
-<div id="row" role="row" aria-expanded="true"></div>
-<div id="rowheader" role="rowheader" aria-expanded="true"></div>
+<div role="grid"><div id="row" role="row" aria-expanded="true"></div></div>
+<div role="grid"><div role="row"><div id="rowheader" role="rowheader" aria-expanded="true"></div></div></div>
 <div id="scrollbar" role="scrollbar" aria-expanded="true"></div>
 <div id="search" role="search" aria-expanded="true"></div>
 <div id="searchbox" role="searchbox" aria-expanded="true"></div>
@@ -76,7 +76,7 @@
 <div id="subscript" role="subscript" aria-expanded="true"></div>
 <div id="superscript" role="superscript" aria-expanded="true"></div>
 <div id="switch" role="switch" aria-expanded="true"></div>
-<div id="tab" role="tab" aria-expanded="true"></div>
+<div role="tablist"><div id="tab" role="tab" aria-expanded="true"></div></div>
 <div id="table" role="table" aria-expanded="true"></div>
 <div id="tablist" role="tablist" aria-expanded="true"></div>
 <div id="tabpanel" role="tabpanel" aria-expanded="true"></div>
@@ -88,14 +88,14 @@
 <div id="tooltip" role="tooltip" aria-expanded="true"></div>
 <div id="tree" role="tree" aria-expanded="true"></div>
 <div id="treegrid" role="treegrid" aria-expanded="true"></div>
-<div id="treeitem" role="treeitem" aria-expanded="true"></div>
+<div role="tree"><div id="treeitem" role="treeitem" aria-expanded="true"></div></div>
 </div>
 
 <script>
     if (window.accessibilityController) {
         let output = "Verify which roles support aria-expanded.\n";
 
-        Array.from(document.getElementById("content").children).forEach((element) => {
+        document.querySelectorAll("#content [id]").forEach((element) => {
             let axElement = accessibilityController.accessibleElementById(element.id);
             if (axElement && axElement.isExpanded)
                 output += `${axElement.role} is expanded\n`;

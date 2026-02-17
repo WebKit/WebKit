@@ -97,10 +97,7 @@ OptionSet<AccessibilityObjectAtspi::Interface> AccessibilityObjectAtspi::interfa
     if (coreObject.isTable())
         interfaces.add(Interface::Table);
 
-    if (coreObject.role() == AccessibilityRole::Cell
-        || coreObject.role() == AccessibilityRole::GridCell
-        || coreObject.role() == AccessibilityRole::ColumnHeader
-        || coreObject.role() == AccessibilityRole::RowHeader)
+    if (coreObject.hasCellRole())
         interfaces.add(Interface::TableCell);
 
     if (coreObject.role() == AccessibilityRole::ListMarker && renderer) {
@@ -267,6 +264,8 @@ static Atspi::Role atspiRole(AccessibilityRole role)
         return Atspi::Role::Heading;
     case AccessibilityRole::ListBox:
         return Atspi::Role::ListBox;
+    case AccessibilityRole::ListItemDocumentBiblioentry:
+    case AccessibilityRole::ListItemDocumentEndnote:
     case AccessibilityRole::ListItem:
     case AccessibilityRole::ListBoxOption:
         return Atspi::Role::ListItem;
@@ -645,7 +644,7 @@ CString AccessibilityObjectAtspi::name() const
     if (!m_coreObject)
         return "";
 
-    if (m_coreObject->role() == AccessibilityRole::ListBoxOption || m_coreObject->role() == AccessibilityRole::MenuListOption) {
+    if (m_coreObject->isListBoxOption() || m_coreObject->role() == AccessibilityRole::MenuListOption) {
         auto value = m_coreObject->stringValue();
         if (!value.isEmpty())
             return value.utf8();
@@ -1179,7 +1178,7 @@ std::optional<Atspi::Role> AccessibilityObjectAtspi::effectiveRole() const
 
     RefPtr liveObject = dynamicDowncast<AccessibilityObject>(m_coreObject);
 
-    switch (m_coreObject->role()) {
+    switch (m_coreObject->validatedRole()) {
     case AccessibilityRole::Form:
         if (liveObject && liveObject->ariaRoleAttribute() != AccessibilityRole::Unknown)
             return Atspi::Role::Landmark;
@@ -1241,7 +1240,7 @@ Atspi::Role AccessibilityObjectAtspi::role() const
     if (auto effective = effectiveRole())
         return *effective;
 
-    return atspiRole(m_coreObject->role());
+    return atspiRole(m_coreObject->validatedRole());
 }
 
 String AccessibilityObjectAtspi::effectiveRoleName() const
@@ -1414,7 +1413,7 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     // List items inheriting presentational are ignored, but their content exposed.
     // Since we expose text in the parent, we need to expose presentational list items
     // with a different role (section).
-    if (role() == AccessibilityRole::ListItem && inheritsPresentationalRole())
+    if (isListItem() && inheritsPresentationalRole())
         return AccessibilityObjectInclusion::IncludeObject;
 
     RenderObject* renderObject = renderer();

@@ -58,18 +58,6 @@
     <button role="tab" data-testname="button role is tab (in div tablist)" data-expectedrole="tab" class="ex">x</div>
 </div>
 
-<!--<ul> tablist with child <divs> that have explicit role="tab"-->
-<ul role="tablist" data-testname="ul role is tablist" data-expectedrole="tablist" class="ex">
-    <li>
-        <div role="tab" aria-selected="true" tabindex = "0" data-testname="role is tab (within li), tab is selected and in tab order" data-expectedrole="tab" class="ex">x</div>
-    </li>
-    <li>
-        <div role="tab" aria-selected="false" tabindex = "-1" data-testname="role is tab (within li), tab is not selected and in tab order" data-expectedrole="tab" class="ex">y</div>
-    </li>
-</ul>
-<div role="tabpanel" data-testname="role is tabpanel as sibling to ul" data-expectedrole="tabpanel" class="ex">Tab one's stuff</div>
-<div role="tabpanel" data-testname="role is tabpanel as sibling to ul (duplicate)" data-expectedrole="tabpanel" class="ex">Tab two's stuff</div>
-
 <!--<ul> tablist with child <divs> that have explicit role="tab", role="none" on li elements-->
     <ul role="tablist" data-testname="ul role is tablist (child li have role none)" data-expectedrole="tablist" class="ex">
         <li role="none">

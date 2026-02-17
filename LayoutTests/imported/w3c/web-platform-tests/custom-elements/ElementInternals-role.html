@@ -8,6 +8,11 @@
 <script src="/resources/testdriver-vendor.js"></script>
 
 <body>
+    <table-element id="table-row-cell-test">
+        <row-element>
+            <cell-element></cell-element>
+        </row-element>
+    </table-element>
     <table-element id="table-row-columnheader-test">
         <row-element>
             <columnheader-element></columnheader-element>
@@ -87,7 +92,6 @@ const test_roles = [
     'article',
     'banner',
     'button',
-    'cell',
     'checkbox',
     'combobox',
     'complementary',
@@ -160,6 +164,7 @@ test_roles.map((testdata) => {
 });
 
 const child_test_roles = [
+    ['table', 'row', 'cell'],
     ['table', 'row', 'columnheader'],
     ['grid', 'row', 'gridcell'],
     ['list', 'listitem'],

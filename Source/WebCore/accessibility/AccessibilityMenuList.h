@@ -44,7 +44,7 @@ private:
     explicit AccessibilityMenuList(AXID, RenderObject&, AXObjectCache&);
 
     bool isMenuList() const final { return true; }
-    AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::PopUpButton; }
+    AccessibilityRole determineAccessibilityRole(ShouldRespectARIARole = ShouldRespectARIARole::Yes) final { return AccessibilityRole::PopUpButton; }
 
     bool canSetFocusAttribute() const final;
     void addChildren() final;

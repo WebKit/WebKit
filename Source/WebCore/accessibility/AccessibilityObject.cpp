@@ -2078,7 +2078,7 @@ bool AccessibilityObject::hasContentEditableAttributeSet() const
 
 bool AccessibilityObject::dependsOnTextUnderElement() const
 {
-    switch (role()) {
+    switch (validatedRole()) {
     case AccessibilityRole::PopUpButton:
         // Native popup buttons should not use their descendant's text as a title. That value is retrieved through stringValue().
         if (hasElementName(ElementName::HTML_select))
@@ -2092,6 +2092,8 @@ bool AccessibilityObject::dependsOnTextUnderElement() const
 #if !PLATFORM(COCOA)
     // macOS does not expect native <li> elements to expose label information, it only expects leaf node elements to do that.
     case AccessibilityRole::ListItem:
+    case AccessibilityRole::ListItemDocumentBiblioentry:
+    case AccessibilityRole::ListItemDocumentEndnote:
 #endif
     case AccessibilityRole::MenuItem:
     case AccessibilityRole::MenuItemCheckbox:
@@ -2402,7 +2404,7 @@ String AccessibilityObject::localizedActionVerb() const
     static NeverDestroyed<const String> menuListPopupAction(AXMenuListPopupActionVerb());
     static NeverDestroyed<const String> listItemAction(AXListItemActionVerb());
 
-    switch (role()) {
+    switch (validatedRole()) {
     case AccessibilityRole::Button:
     case AccessibilityRole::ToggleButton:
         return buttonAction;
@@ -2434,7 +2436,7 @@ String AccessibilityObject::actionVerb() const
 {
 #if !PLATFORM(IOS_FAMILY)
     // FIXME: Need to add verbs for select elements.
-    switch (role()) {
+    switch (validatedRole()) {
     case AccessibilityRole::Button:
     case AccessibilityRole::ToggleButton:
         return "press"_s;
@@ -2733,7 +2735,7 @@ static void initializeRoleMap()
         RoleEntry { "doc-afterword"_s, AccessibilityRole::LandmarkDocRegion },
         RoleEntry { "doc-appendix"_s, AccessibilityRole::LandmarkDocRegion },
         RoleEntry { "doc-backlink"_s, AccessibilityRole::Link },
-        RoleEntry { "doc-biblioentry"_s, AccessibilityRole::ListItem },
+        RoleEntry { "doc-biblioentry"_s, AccessibilityRole::ListItemDocumentBiblioentry },
         RoleEntry { "doc-bibliography"_s, AccessibilityRole::LandmarkDocRegion },
         RoleEntry { "doc-biblioref"_s, AccessibilityRole::Link },
         RoleEntry { "doc-chapter"_s, AccessibilityRole::LandmarkDocRegion },
@@ -2743,7 +2745,7 @@ static void initializeRoleMap()
         RoleEntry { "doc-credit"_s, AccessibilityRole::TextGroup },
         RoleEntry { "doc-credits"_s, AccessibilityRole::LandmarkDocRegion },
         RoleEntry { "doc-dedication"_s, AccessibilityRole::TextGroup },
-        RoleEntry { "doc-endnote"_s, AccessibilityRole::ListItem },
+        RoleEntry { "doc-endnote"_s, AccessibilityRole::ListItemDocumentEndnote },
         RoleEntry { "doc-endnotes"_s, AccessibilityRole::LandmarkDocRegion },
         RoleEntry { "doc-epigraph"_s, AccessibilityRole::TextGroup },
         RoleEntry { "doc-epilogue"_s, AccessibilityRole::LandmarkDocRegion },
@@ -2906,7 +2908,7 @@ AccessibilityRole AccessibilityObject::ariaRoleToWebCoreRole(const String& value
 String AccessibilityObject::computedRoleString() const
 {
     // FIXME: Need a few special cases that aren't in the RoleMap: option, etc. http://webkit.org/b/128296
-    auto role = this->role();
+    auto role = this->validatedRole();
 
     if (role == AccessibilityRole::Image && isIgnored())
         return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::Presentational));
@@ -2936,6 +2938,9 @@ String AccessibilityObject::computedRoleString() const
     if (role == AccessibilityRole::LandmarkDocRegion)
         return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::LandmarkRegion));
 
+    if (role == AccessibilityRole::ListItemDocumentBiblioentry || role == AccessibilityRole::ListItemDocumentEndnote)
+        return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::ListItem));
+
     if (isColumnHeader())
         return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::ColumnHeader));
 
@@ -2943,6 +2948,11 @@ String AccessibilityObject::computedRoleString() const
         return reverseAriaRoleMap().get(enumToUnderlyingType(AccessibilityRole::RowHeader));
 
     return reverseAriaRoleMap().get(enumToUnderlyingType(role));
+}
+
+AccessibilityRole AccessibilityObject::roleBeforeAria() const
+{
+    return const_cast<AccessibilityObject*>(this)->determineAccessibilityRole(ShouldRespectARIARole::No);
 }
 
 void AccessibilityObject::updateRole()
@@ -3410,7 +3420,7 @@ bool AccessibilityObject::supportsExpanded() const
     if (isColumnHeader() || isRowHeader())
         return hasValidAriaExpandedValue();
 
-    switch (role()) {
+    switch (validatedRole()) {
     case AccessibilityRole::Details:
         return true;
     case AccessibilityRole::Button:

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- Test elements for each role type that requires parent context -->
+<button id="orphan-tab" role="tab">Tab Button</button>
+<p id="orphan-listitem" role="listitem">Listitem Paragraph</p>
+<button id="orphan-menuitem" role="menuitem">Menuitem Button</button>
+<button id="orphan-gridcell" role="gridcell">Gridcell Button</button>
+<nav id="orphan-option" role="option">Option Nav</nav>
+
+<script>
+var output = "This test verifies that orphaned ARIA roles are correctly updated when their parent context is added or removed dynamically.\n\n";
+
+// Global variables for expectAsync to access via eval.
+var orphanTab, orphanTabAfter, orphanTabFinal;
+var orphanListitem, orphanListitemAfter, orphanListitemFinal;
+var orphanMenuitem, orphanMenuitemAfter, orphanMenuitemFinal;
+var orphanGridcell, orphanGridcellAfter, orphanGridcellFinal;
+var orphanOption, orphanOptionAfter, orphanOptionFinal;
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    (async function() {
+        // ===== Test 1: Tab role =====
+        output += "=== Tab Role ===\n";
+        orphanTab = accessibilityController.accessibleElementById("orphan-tab");
+        output += "Initial computed role: " + orphanTab.computedRoleString + "\n";
+        output += expect("orphanTab.computedRoleString.toLowerCase().includes('tab')", "false");
+
+        // Add a tablist ancestor with an intermediate div.
+        var tablist = document.createElement("div");
+        tablist.setAttribute("role", "tablist");
+        var tablistInner = document.createElement("div");
+        tablist.appendChild(tablistInner);
+        document.getElementById("orphan-tab").parentNode.insertBefore(tablist, document.getElementById("orphan-tab"));
+        tablistInner.appendChild(document.getElementById("orphan-tab"));
+
+        orphanTabAfter = await waitForElementById("orphan-tab");
+        output += "After adding tablist parent: " + orphanTabAfter.computedRoleString + "\n";
+        output += await expectAsync("orphanTabAfter.computedRoleString.toLowerCase().includes('tab')", "true");
+
+        // Remove the tablist parent.
+        document.body.insertBefore(document.getElementById("orphan-tab"), tablist);
+        tablist.remove();
+
+        orphanTabFinal = await waitForElementById("orphan-tab");
+        output += "After removing tablist parent: " + orphanTabFinal.computedRoleString + "\n";
+        output += await expectAsync("orphanTabFinal.computedRoleString.toLowerCase().includes('tab')", "false");
+
+        // ===== Test 2: ListItem role =====
+        output += "\n=== ListItem Role ===\n";
+        orphanListitem = accessibilityController.accessibleElementById("orphan-listitem");
+        output += "Initial computed role: " + orphanListitem.computedRoleString + "\n";
+        output += expect("orphanListitem.computedRoleString.toLowerCase().includes('listitem')", "false");
+
+        // Add a list ancestor with an intermediate div.
+        var list = document.createElement("div");
+        list.setAttribute("role", "list");
+        var listInner = document.createElement("div");
+        list.appendChild(listInner);
+        document.getElementById("orphan-listitem").parentNode.insertBefore(list, document.getElementById("orphan-listitem"));
+        listInner.appendChild(document.getElementById("orphan-listitem"));
+
+        orphanListitemAfter = await waitForElementById("orphan-listitem");
+        output += "After adding list parent: " + orphanListitemAfter.computedRoleString + "\n";
+        output += await expectAsync("orphanListitemAfter.computedRoleString.toLowerCase().includes('listitem')", "true");
+
+        // Remove the list parent.
+        document.body.insertBefore(document.getElementById("orphan-listitem"), list);
+        list.remove();
+
+        orphanListitemFinal = await waitForElementById("orphan-listitem");
+        output += "After removing list parent: " + orphanListitemFinal.computedRoleString + "\n";
+        output += await expectAsync("orphanListitemFinal.computedRoleString.toLowerCase().includes('listitem')", "false");
+
+        // ===== Test 3: MenuItem role =====
+        output += "\n=== MenuItem Role ===\n";
+        orphanMenuitem = accessibilityController.accessibleElementById("orphan-menuitem");
+        output += "Initial computed role: " + orphanMenuitem.computedRoleString + "\n";
+        output += expect("orphanMenuitem.computedRoleString.toLowerCase().includes('menuitem')", "false");
+
+        // Add a menu ancestor with an intermediate div.
+        var menu = document.createElement("div");
+        menu.setAttribute("role", "menu");
+        var menuInner = document.createElement("div");
+        menu.appendChild(menuInner);
+        document.getElementById("orphan-menuitem").parentNode.insertBefore(menu, document.getElementById("orphan-menuitem"));
+        menuInner.appendChild(document.getElementById("orphan-menuitem"));
+
+        orphanMenuitemAfter = await waitForElementById("orphan-menuitem");
+        output += "After adding menu parent: " + orphanMenuitemAfter.computedRoleString + "\n";
+        output += await expectAsync("orphanMenuitemAfter.computedRoleString.toLowerCase().includes('menuitem')", "true");
+
+        // Remove the menu parent.
+        document.body.insertBefore(document.getElementById("orphan-menuitem"), menu);
+        menu.remove();
+
+        orphanMenuitemFinal = await waitForElementById("orphan-menuitem");
+        output += "After removing menu parent: " + orphanMenuitemFinal.computedRoleString + "\n";
+        output += await expectAsync("orphanMenuitemFinal.computedRoleString.toLowerCase().includes('menuitem')", "false");
+
+        // ===== Test 4: GridCell role =====
+        output += "\n=== GridCell Role ===\n";
+        orphanGridcell = accessibilityController.accessibleElementById("orphan-gridcell");
+        output += "Initial computed role: " + orphanGridcell.computedRoleString + "\n";
+        output += expect("orphanGridcell.computedRoleString.toLowerCase().includes('gridcell')", "false");
+
+        // Add a grid with a row ancestor, with an intermediate div between row and gridcell.
+        var grid = document.createElement("div");
+        grid.setAttribute("role", "grid");
+        var row = document.createElement("div");
+        row.setAttribute("role", "row");
+        var rowInner = document.createElement("div");
+        grid.appendChild(row);
+        row.appendChild(rowInner);
+        document.getElementById("orphan-gridcell").parentNode.insertBefore(grid, document.getElementById("orphan-gridcell"));
+        rowInner.appendChild(document.getElementById("orphan-gridcell"));
+
+        orphanGridcellAfter = await waitForElementById("orphan-gridcell");
+        output += "After adding grid/row parent: " + orphanGridcellAfter.computedRoleString + "\n";
+        output += await expectAsync("orphanGridcellAfter.computedRoleString.toLowerCase().includes('gridcell')", "true");
+
+        // Remove the grid/row parent.
+        document.body.insertBefore(document.getElementById("orphan-gridcell"), grid);
+        grid.remove();
+
+        orphanGridcellFinal = await waitForElementById("orphan-gridcell");
+        output += "After removing grid/row parent: " + orphanGridcellFinal.computedRoleString + "\n";
+        output += await expectAsync("orphanGridcellFinal.computedRoleString.toLowerCase().includes('gridcell')", "false");
+
+        // ===== Test 5: Option role =====
+        output += "\n=== Option Role ===\n";
+        orphanOption = accessibilityController.accessibleElementById("orphan-option");
+        output += "Initial computed role: " + orphanOption.computedRoleString + "\n";
+        output += expect("orphanOption.computedRoleString.toLowerCase().includes('option')", "false");
+
+        // Add a listbox ancestor with an intermediate div.
+        var listbox = document.createElement("div");
+        listbox.setAttribute("role", "listbox");
+        var listboxInner = document.createElement("div");
+        listbox.appendChild(listboxInner);
+        document.getElementById("orphan-option").parentNode.insertBefore(listbox, document.getElementById("orphan-option"));
+        listboxInner.appendChild(document.getElementById("orphan-option"));
+
+        orphanOptionAfter = await waitForElementById("orphan-option");
+        output += "After adding listbox parent: " + orphanOptionAfter.computedRoleString + "\n";
+        output += await expectAsync("orphanOptionAfter.computedRoleString.toLowerCase().includes('option')", "true");
+
+        // Remove the listbox parent.
+        document.body.insertBefore(document.getElementById("orphan-option"), listbox);
+        listbox.remove();
+
+        orphanOptionFinal = await waitForElementById("orphan-option");
+        output += "After removing listbox parent: " + orphanOptionFinal.computedRoleString + "\n";
+        output += await expectAsync("orphanOptionFinal.computedRoleString.toLowerCase().includes('option')", "false");
+
+        debug(output);
+        finishJSTest();
+    })();
+}
+</script>
+</body>
+</html>

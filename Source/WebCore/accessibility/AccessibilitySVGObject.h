@@ -55,7 +55,7 @@ private:
     String description() const final;
     String helpText() const final;
     void accessibilityText(Vector<AccessibilityText>&) const final;
-    AccessibilityRole determineAccessibilityRole() override;
+    AccessibilityRole determineAccessibilityRole(ShouldRespectARIARole = ShouldRespectARIARole::Yes) override;
     bool inheritsPresentationalRole() const final;
     bool computeIsIgnored() const final;
 

@@ -5331,8 +5331,16 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<Ref<AccessibilityO
         case AXNotification::VisitedStateChanged:
             tree->queueNodeUpdate(notification.first->objectID(), { AXProperty::IsVisited });
             break;
-        case AXNotification::ActiveDescendantChanged:
         case AXNotification::RoleChanged:
+            tree->queueNodeUpdate(notification.first->objectID(), NodeUpdateOptions::nodeUpdate());
+
+            if (notification.first->isTable()) {
+                // When the role changes to a table role, also update children so that table
+                // columns (which are mock child objects) get created.
+                tree->queueNodeUpdate(notification.first->objectID(), NodeUpdateOptions::childrenUpdate());
+            }
+            break;
+        case AXNotification::ActiveDescendantChanged:
         case AXNotification::ControlledObjectsChanged:
         case AXNotification::DescribedByChanged:
         case AXNotification::DropEffectChanged:

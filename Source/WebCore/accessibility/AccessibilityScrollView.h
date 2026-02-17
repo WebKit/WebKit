@@ -40,7 +40,7 @@ class ScrollView;
 class AccessibilityScrollView final : public AccessibilityObject {
 public:
     static Ref<AccessibilityScrollView> create(AXID, ScrollView&, AXObjectCache&);
-    AccessibilityRole determineAccessibilityRole() final;
+    AccessibilityRole determineAccessibilityRole(ShouldRespectARIARole = ShouldRespectARIARole::Yes) final;
     ScrollView* scrollView() const final { return currentScrollView(); }
 
     virtual ~AccessibilityScrollView();

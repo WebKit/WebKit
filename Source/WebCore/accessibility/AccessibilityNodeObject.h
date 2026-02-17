@@ -265,14 +265,13 @@ protected:
     bool m_initialized { false };
 #endif
 
-    AccessibilityRole determineAccessibilityRole() override;
+    AccessibilityRole determineAccessibilityRole(ShouldRespectARIARole = ShouldRespectARIARole::Yes) override;
     AccessibilityRole determineListRoleWithCleanChildren();
     enum class TreatStyleFormatGroupAsInline : bool { No, Yes };
     AccessibilityRole determineAccessibilityRoleFromNode(TreatStyleFormatGroupAsInline = TreatStyleFormatGroupAsInline::No) const;
     AccessibilityRole roleFromInputElement(const HTMLInputElement&) const;
     AccessibilityRole ariaRoleAttribute() const final { return m_ariaRole; }
     virtual AccessibilityRole determineAriaRoleAttribute() const;
-    AccessibilityRole remapAriaRoleDueToParent(AccessibilityRole) const;
 
     bool computeIsIgnored() const override;
     void addChildren() override;

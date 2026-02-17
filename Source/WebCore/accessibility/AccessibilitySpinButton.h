@@ -47,7 +47,7 @@ public:
 private:
     explicit AccessibilitySpinButton(AXID, AXObjectCache&);
 
-    AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::SpinButton; }
+    AccessibilityRole determineAccessibilityRole(ShouldRespectARIARole = ShouldRespectARIARole::Yes) final { return AccessibilityRole::SpinButton; }
     bool isNativeSpinButton() const final { return true; }
     void clearChildren() final { };
     void addChildren() final;

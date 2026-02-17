@@ -53,12 +53,12 @@ Ref<AccessibilityMathMLElement> AccessibilityMathMLElement::create(AXID axID, Re
     return adoptRef(*new AccessibilityMathMLElement(axID, renderer, cache, isAnonymousOperator));
 }
 
-AccessibilityRole AccessibilityMathMLElement::determineAccessibilityRole()
+AccessibilityRole AccessibilityMathMLElement::determineAccessibilityRole(ShouldRespectARIARole shouldRespectARIARole)
 {
     if (!m_renderer)
         return AccessibilityRole::Unknown;
 
-    if (m_ariaRole != AccessibilityRole::Unknown)
+    if (shouldRespectARIARole == ShouldRespectARIARole::Yes && m_ariaRole != AccessibilityRole::Unknown)
         return m_ariaRole;
 
     if (WebCore::elementName(protect(m_renderer->node()).get()) == ElementName::MathML_math)

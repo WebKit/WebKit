@@ -330,6 +330,10 @@ String roleToString(AccessibilityRole role)
         return "ListBoxOption"_s;
     case AccessibilityRole::ListItem:
         return "ListItem"_s;
+    case AccessibilityRole::ListItemDocumentBiblioentry:
+        return "ListItemDocumentBiblioentry"_s;
+    case AccessibilityRole::ListItemDocumentEndnote:
+        return "ListItemDocumentEndnote"_s;
     case AccessibilityRole::ListMarker:
         return "ListMarker"_s;
     case AccessibilityRole::LocalFrame:

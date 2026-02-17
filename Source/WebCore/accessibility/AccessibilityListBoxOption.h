@@ -46,7 +46,7 @@ public:
 private:
     explicit AccessibilityListBoxOption(AXID, HTMLElement&, AXObjectCache&);
 
-    AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::ListBoxOption; }
+    AccessibilityRole determineAccessibilityRole(ShouldRespectARIARole = ShouldRespectARIARole::Yes) final { return AccessibilityRole::ListBoxOption; }
     bool isEnabled() const final;
     bool isSelectedOptionActive() const final;
     String stringValue() const final;

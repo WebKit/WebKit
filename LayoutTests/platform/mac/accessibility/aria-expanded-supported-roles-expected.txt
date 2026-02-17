@@ -13,6 +13,7 @@ AXRole: AXRow is expanded
 AXRole: AXCell is expanded
 AXRole: AXCheckBox is expanded
 AXRole: AXRadioButton is expanded
+AXRole: AXRow is expanded
 
 PASS successfullyParsed is true
 

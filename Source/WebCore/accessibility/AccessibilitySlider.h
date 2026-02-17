@@ -46,7 +46,7 @@ private:
     HTMLInputElement* inputElement() const;
     RefPtr<AccessibilityObject> elementAccessibilityHitTest(const IntPoint&) const final;
 
-    AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::Slider; }
+    AccessibilityRole determineAccessibilityRole(ShouldRespectARIARole = ShouldRespectARIARole::Yes) final { return AccessibilityRole::Slider; }
 
     void addChildren() final;
 
@@ -64,7 +64,7 @@ public:
     static Ref<AccessibilitySliderThumb> create(AXID, AXObjectCache&);
     virtual ~AccessibilitySliderThumb() = default;
 
-    AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::SliderThumb; }
+    AccessibilityRole determineAccessibilityRole(ShouldRespectARIARole = ShouldRespectARIARole::Yes) final { return AccessibilityRole::SliderThumb; }
     LayoutRect elementRect() const final;
 
 private:

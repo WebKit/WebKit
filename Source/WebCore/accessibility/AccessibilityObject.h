@@ -69,6 +69,7 @@ class IntSize;
 class ScrollableArea;
 
 enum class CommandType: uint8_t;
+enum class ShouldRespectARIARole : bool { No, Yes };
 
 class AccessibilityObject : public AXCoreObject {
 public:
@@ -464,7 +465,8 @@ public:
     // Only if isColorWell()
     SRGBA<uint8_t> colorValue() const override;
 
-    virtual AccessibilityRole determineAccessibilityRole() = 0;
+    virtual AccessibilityRole determineAccessibilityRole(ShouldRespectARIARole = ShouldRespectARIARole::Yes) = 0;
+    AccessibilityRole roleBeforeAria() const override;
     String subrolePlatformString() const final;
 
     String ariaRoleDescription() const final { return getAttributeTrimmed(HTMLNames::aria_roledescriptionAttr); };

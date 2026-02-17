@@ -41,7 +41,7 @@ private:
     explicit AccessibilitySpinButtonPart(AXID, AXObjectCache&);
 
     bool press() final;
-    AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::SpinButtonPart; }
+    AccessibilityRole determineAccessibilityRole(ShouldRespectARIARole = ShouldRespectARIARole::Yes) final { return AccessibilityRole::SpinButtonPart; }
     bool isSpinButtonPart() const final { return true; }
     LayoutRect elementRect() const final;
 

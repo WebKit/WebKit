@@ -1619,17 +1619,24 @@ void AXIsolatedTree::processQueuedNodeUpdates()
         m_unresolvedPendingAppends.add(objectID);
     m_needsUpdateNode.clear();
 
-    for (const auto& propertyUpdate : m_needsPropertyUpdates) {
-        if (m_unresolvedPendingAppends.contains(propertyUpdate.key))
+    while (!m_needsPropertyUpdates.isEmpty()) {
+        // We iterate m_needsPropertyUpdates in this less traditional way because
+        // the act of processing property updates can cause more to be queued up,
+        // and this iteration style ensures we process all of them.
+        auto iterator = m_needsPropertyUpdates.begin();
+        AXID objectID = iterator->key;
+        AXPropertySet properties = WTF::move(iterator->value);
+        m_needsPropertyUpdates.remove(iterator);
+
+        if (m_unresolvedPendingAppends.contains(objectID))
             continue;
 
         if (!cache)
             break;
 
-        if (RefPtr axObject = cache->objectForID(propertyUpdate.key))
-            updateNodeProperties(*axObject, propertyUpdate.value);
+        if (RefPtr axObject = cache->objectForID(objectID))
+            updateNodeProperties(*axObject, properties);
     }
-    m_needsPropertyUpdates.clear();
 
     if (m_relationsNeedUpdate)
         updateRelations(cache->relations());
@@ -1887,6 +1894,9 @@ IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>& axOb
         if (!language.isEmpty())
             setProperty(AXProperty::Language, WTF::move(language).isolatedCopy());
         setProperty(AXProperty::IsEnabled, object.isEnabled());
+        auto roleBeforeAria = object.determineAccessibilityRole(ShouldRespectARIARole::No);
+        if (object.role() != roleBeforeAria)
+            setProperty(AXProperty::RoleBeforeAria, static_cast<int>(roleBeforeAria));
         setProperty(AXProperty::IsHiddenUntilFoundContainer, object.isHiddenUntilFoundContainer());
         if (object.isBlockFlow()) {
             setProperty(AXProperty::IsBlockFlow, true);

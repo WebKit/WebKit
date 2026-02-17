@@ -440,7 +440,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return [remoteFramePlatformElement().get() accessibilityAttributeValue:NSAccessibilityRoleAttribute];
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-    auto role = this->role();
+    auto role = this->validatedRole();
     if (role == AccessibilityRole::Label) {
         // Labels that only contain static text should just be mapped to static text.
         if (containsOnlyStaticText())
@@ -596,6 +596,8 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::Tree, NSAccessibilityOutlineRole },
         { AccessibilityRole::TreeItem, NSAccessibilityRowRole },
         { AccessibilityRole::ListItem, NSAccessibilityGroupRole },
+        { AccessibilityRole::ListItemDocumentBiblioentry, NSAccessibilityGroupRole },
+        { AccessibilityRole::ListItemDocumentEndnote, NSAccessibilityGroupRole },
         { AccessibilityRole::Paragraph, NSAccessibilityGroupRole },
         { AccessibilityRole::Label, NSAccessibilityGroupRole },
         { AccessibilityRole::Form, NSAccessibilityGroupRole },

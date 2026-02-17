@@ -5,7 +5,6 @@ x
 
 x x
 x x
-x
 x x x
 x x x
 x
@@ -20,7 +19,6 @@ x x
 PASS div role is caption (in div with table role)
 PASS orphan p role is caption
 PASS span role is cell (in div with row role, in div with rowgroup role, in div with table role)
-PASS orphan span role is cell
 PASS span role is columnheader (in div with row role, in div with rowgroup role, in div with table role)
 PASS div role is row (in div with rowgroup role, in div with table role)
 PASS div role is rowgroup (in div with table role)

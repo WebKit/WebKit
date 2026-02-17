@@ -46,7 +46,7 @@ private:
     bool isAccessibilityScrollbar() const final { return true; }
     LayoutRect elementRect() const final;
 
-    AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::ScrollBar; }
+    AccessibilityRole determineAccessibilityRole(ShouldRespectARIARole = ShouldRespectARIARole::Yes) final { return AccessibilityRole::ScrollBar; }
     std::optional<AccessibilityOrientation> explicitOrientation() const final;
     Document* document() const final;
     bool isEnabled() const final;

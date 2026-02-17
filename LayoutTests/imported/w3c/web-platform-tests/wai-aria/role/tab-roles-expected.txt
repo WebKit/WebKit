@@ -19,10 +19,6 @@ x
 y
 Tab one's stuff
 Tab two's stuff
-x
-y
-Tab one's stuff
-Tab two's stuff
 
 PASS div role is tablist
 PASS role is tab (in div tablist)
@@ -51,11 +47,6 @@ PASS role is tabpanel with aria-controls and non-empty content
 PASS role is tabpanel with aria-controls and non-empty content (duplicate)
 PASS div role for button parent container is tablist
 PASS button role is tab (in div tablist)
-PASS ul role is tablist
-PASS role is tab (within li), tab is selected and in tab order
-PASS role is tab (within li), tab is not selected and in tab order
-PASS role is tabpanel as sibling to ul
-PASS role is tabpanel as sibling to ul (duplicate)
 PASS ul role is tablist (child li have role none)
 PASS role is tab (within li with role none), tab is selected and in tab order
 PASS role is tab (within li with role none), tab is not selected and in tab order

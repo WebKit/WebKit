@@ -341,17 +341,23 @@ private:
     const String placeholderValue() const final { return stringAttributeValue(AXProperty::PlaceholderValue); }
     String abbreviation() const final { return stringAttributeValue(AXProperty::Abbreviation); }
     SRGBA<uint8_t> colorValue() const final;
+
+    // Role / subrole functions.
+    String computedRoleString() const final;
+    AccessibilityRole roleBeforeAria() const final;
     String subrolePlatformString() const final { return stringAttributeValue(AXProperty::SubrolePlatformString); }
+    String brailleRoleDescription() const final { return stringAttributeValue(AXProperty::BrailleRoleDescription); }
     String ariaRoleDescription() const final { return stringAttributeValue(AXProperty::ARIARoleDescription); };
+    bool isDescendantOfRole(AccessibilityRole) const final;
+    bool inheritsPresentationalRole() const final;
+
     LayoutRect elementRect() const final;
     IntPoint clickPoint() final;
     void accessibilityText(Vector<AccessibilityText>& texts) const final;
     String brailleLabel() const final { return stringAttributeValue(AXProperty::BrailleLabel); }
-    String brailleRoleDescription() const final { return stringAttributeValue(AXProperty::BrailleRoleDescription); }
     String embeddedImageDescription() const final { return stringAttributeValue(AXProperty::EmbeddedImageDescription); }
     std::optional<AccessibilityChildrenVector> imageOverlayElements() final { return std::nullopt; }
     String extendedDescription() const final { return stringAttributeValue(AXProperty::ExtendedDescription); }
-    String computedRoleString() const final;
     bool isValueAutofillAvailable() const final { return boolAttributeValue(AXProperty::IsValueAutofillAvailable); }
     AutoFillButtonType valueAutofillButtonType() const final { return static_cast<AutoFillButtonType>(intAttributeValue(AXProperty::ValueAutofillButtonType)); }
     URL url() const final { return urlAttributeValue(AXProperty::URL); }
@@ -536,8 +542,6 @@ private:
     bool supportsHasPopup() const final;
     bool supportsChecked() const final;
     bool isModalNode() const final;
-    bool isDescendantOfRole(AccessibilityRole) const final;
-    bool inheritsPresentationalRole() const final;
     void setAccessibleName(const AtomString&) final;
 
     String textContentPrefixFromListMarker() const final;

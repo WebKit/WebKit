@@ -1329,7 +1329,7 @@ bool AccessibilityRenderObject::computeIsIgnored() const
     if (isFigureElement() || isSummary())
         return false;
 
-    switch (role()) {
+    switch (validatedRole()) {
     case AccessibilityRole::Audio:
     case AccessibilityRole::DescriptionListTerm:
     case AccessibilityRole::DescriptionListDetail:
@@ -1337,6 +1337,8 @@ bool AccessibilityRenderObject::computeIsIgnored() const
     case AccessibilityRole::DocumentArticle:
     case AccessibilityRole::LandmarkRegion:
     case AccessibilityRole::ListItem:
+    case AccessibilityRole::ListItemDocumentBiblioentry:
+    case AccessibilityRole::ListItemDocumentEndnote:
     case AccessibilityRole::SectionFooter:
     case AccessibilityRole::SectionHeader:
     case AccessibilityRole::Time:
@@ -2435,7 +2437,7 @@ bool AccessibilityRenderObject::shouldIgnoreAttributeRole() const
     return m_ariaRole == AccessibilityRole::Document && hasContentEditableAttributeSet();
 }
 
-AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
+AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole(ShouldRespectARIARole shouldRespectARIARole)
 {
     // Handle list role determination before checking for a renderer, because we want to use the same codepath in both scenarios.
     if (isAccessibilityList()) {
@@ -2451,7 +2453,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return isValidTree() ? AccessibilityRole::Tree : AccessibilityRole::Generic;
 
     if (!m_renderer)
-        return AccessibilityNodeObject::determineAccessibilityRole();
+        return AccessibilityNodeObject::determineAccessibilityRole(shouldRespectARIARole);
 
     if (m_renderer->isRenderText())
         return AccessibilityRole::StaticText;
@@ -2468,7 +2470,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 
     // Sometimes we need to ignore the attribute role. Like if a tree is malformed,
     // we want to ignore the treeitem's attribute role.
-    if (m_ariaRole != AccessibilityRole::Unknown && !shouldIgnoreAttributeRole())
+    if (shouldRespectARIARole == ShouldRespectARIARole::Yes && m_ariaRole != AccessibilityRole::Unknown && !shouldIgnoreAttributeRole())
         return m_ariaRole;
 
     if (isExposableTable())
@@ -2619,7 +2621,7 @@ bool AccessibilityRenderObject::inheritsPresentationalRole() const
     // http://www.w3.org/WAI/PF/aria/complete#presentation
 
     std::span<decltype(aTag)* const> parentTags;
-    switch (role()) {
+    switch (validatedRole()) {
     case AccessibilityRole::ListItem:
     case AccessibilityRole::ListMarker: {
         static constexpr std::array listItemParents { &dlTag, &menuTag, &olTag, &ulTag };
@@ -2897,8 +2899,9 @@ void AccessibilityRenderObject::updateRoleAfterChildrenCreation()
             }
 
             // Per the ARIA spec, groups with menuitem children are allowed as children of menus.
+            // Also check generic elements (plain divs without semantic roles) which may contain menuitems.
             // https://w3c.github.io/aria/#menu
-            if (child->isGroup()) {
+            if (child->isGroup() || child->isGeneric()) {
                 for (const auto& grandchild : child->unignoredChildren()) {
                     if (grandchild->isMenuItem()) {
                         hasMenuItemDescendant = true;

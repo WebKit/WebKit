@@ -420,7 +420,7 @@ AccessibilityRole AccessibilityNodeObject::determineListRoleWithCleanChildren()
         RefPtr axChild = dynamicDowncast<AccessibilityObject>(child.get());
         if (axChild && axChild->ariaRoleAttribute() == AccessibilityRole::ListItem)
             listItemCount++;
-        else if (child->role() == AccessibilityRole::ListItem) {
+        else if (child->isListItem()) {
             // Rendered list items always count.
             if (CheckedPtr renderListItem = dynamicDowncast<RenderListItem>(child->renderer())) {
                 if (!hasVisibleMarkers && (!renderListItem->style().listStyleType().isNone() || !renderListItem->style().listStyleImage().isNone() || (renderListItem->element() && AXListHelpers::childHasPseudoVisibleListItemMarkers(*renderListItem->element()))))
@@ -456,10 +456,10 @@ AccessibilityRole AccessibilityNodeObject::determineListRoleWithCleanChildren()
 }
 
 
-AccessibilityRole AccessibilityNodeObject::determineAccessibilityRole()
+AccessibilityRole AccessibilityNodeObject::determineAccessibilityRole(ShouldRespectARIARole shouldRespectARIARole)
 {
     AXTRACE("AccessibilityNodeObject::determineAccessibilityRole"_s);
-    if (m_ariaRole != AccessibilityRole::Unknown)
+    if (shouldRespectARIARole == ShouldRespectARIARole::Yes && m_ariaRole != AccessibilityRole::Unknown)
         return m_ariaRole;
 
     if (isExposableTable())
@@ -872,7 +872,7 @@ bool AccessibilityNodeObject::canHaveChildren() const
     // nodes, like scroll areas and css-generated text.
 
     // Elements that should not have children.
-    switch (role()) {
+    switch (validatedRole()) {
     case AccessibilityRole::Button:
 #if !USE(ATSPI)
     // GTK/ATSPI layout tests expect popup buttons to have children.
@@ -1604,7 +1604,7 @@ Element* AccessibilityNodeObject::actionElement() const
     if (AccessibilityObject::isARIAInput(ariaRoleAttribute()))
         return downcast<Element>(node).unsafeGet();
 
-    switch (role()) {
+    switch (validatedRole()) {
     case AccessibilityRole::Button:
     case AccessibilityRole::PopUpButton:
     case AccessibilityRole::ToggleButton:
@@ -1616,7 +1616,7 @@ Element* AccessibilityNodeObject::actionElement() const
         // Check if the author is hiding the real control element inside the ARIA element.
         if (RefPtr nativeElement = nativeActionElement(node.get()))
             return nativeElement.unsafeGet();
-        return downcast<Element>(node).unsafeGet();
+        return downcast<Element>(node.get());
     default:
         break;
     }
@@ -2921,7 +2921,7 @@ bool AccessibilityNodeObject::isTableHeaderCell() const
 
 bool AccessibilityNodeObject::isColumnHeader() const
 {
-    if (role() == AccessibilityRole::ColumnHeader)
+    if (hasUsedRole(AccessibilityRole::ColumnHeader))
         return true;
     const AtomString& scope = getAttribute(scopeAttr);
     if (scope == "col"_s || scope == "colgroup"_s)
@@ -2953,7 +2953,7 @@ bool AccessibilityNodeObject::isColumnHeader() const
 
 bool AccessibilityNodeObject::isRowHeader() const
 {
-    if (role() == AccessibilityRole::RowHeader)
+    if (hasUsedRole(AccessibilityRole::RowHeader))
         return true;
     const AtomString& scope = getAttribute(scopeAttr);
     if (scope == "row"_s || scope == "rowgroup"_s)
@@ -4575,8 +4575,6 @@ AccessibilityRole AccessibilityNodeObject::determineAriaRoleAttribute() const
             role = AccessibilityRole::TextArea;
     }
 
-    role = remapAriaRoleDueToParent(role);
-
     // Presentational roles are invalidated by the presence of ARIA attributes.
     if (role == AccessibilityRole::Presentational && supportsARIAAttributes())
         role = AccessibilityRole::Unknown;
@@ -4599,31 +4597,6 @@ AccessibilityRole AccessibilityNodeObject::determineAriaRoleAttribute() const
         return role;
 
     return AccessibilityRole::Unknown;
-}
-
-AccessibilityRole AccessibilityNodeObject::remapAriaRoleDueToParent(AccessibilityRole role) const
-{
-    // Some objects change their role based on their parent.
-    // However, asking for the unignoredParent calls isIgnored(), which can trigger a loop.
-    // While inside the call stack of creating an element, we need to avoid isIgnored().
-    // https://bugs.webkit.org/show_bug.cgi?id=65174
-
-    if (role != AccessibilityRole::ListBoxOption && role != AccessibilityRole::MenuItem)
-        return role;
-
-    for (RefPtr parent = parentObject(); parent && !parent->isIgnored(); parent = parent->parentObject()) {
-        AccessibilityRole parentAriaRole = parent->ariaRoleAttribute();
-
-        // Selects and listboxes both have options as child roles, but they map to different roles within WebCore.
-        if (role == AccessibilityRole::ListBoxOption && parentAriaRole == AccessibilityRole::Menu)
-            return AccessibilityRole::MenuItem;
-
-        // If the parent had a different role, then we don't need to continue searching up the chain.
-        if (parentAriaRole != AccessibilityRole::Unknown)
-            break;
-    }
-
-    return role;
 }
 
 void AccessibilityNodeObject::setSelectedChildren(const AccessibilityChildrenVector& children)
@@ -4652,7 +4625,7 @@ bool AccessibilityNodeObject::canSetSelectedAttribute() const
         return true;
 
     // Elements that can be selected
-    switch (role()) {
+    switch (validatedRole()) {
     case AccessibilityRole::Cell:
     case AccessibilityRole::GridCell:
     case AccessibilityRole::Row:

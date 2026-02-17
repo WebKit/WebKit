@@ -577,6 +577,18 @@ SRGBA<uint8_t> AXIsolatedObject::colorValue() const
     );
 }
 
+AccessibilityRole AXIsolatedObject::roleBeforeAria() const
+{
+    size_t index = indexOfProperty(AXProperty::RoleBeforeAria);
+    if (index == notFound)
+        return role();
+
+    return WTF::switchOn(m_properties[index].second,
+        [] (const int& typedValue) -> AccessibilityRole { return static_cast<AccessibilityRole>(typedValue); },
+        [this] (auto&) -> AccessibilityRole { return role(); }
+    );
+}
+
 RefPtr<AXCoreObject> AXIsolatedObject::accessibilityHitTest(const IntPoint& point) const
 {
     auto hitTestOnMainThread = [axID = objectID(), treeID = treeID(), point] -> std::optional<AXID> {

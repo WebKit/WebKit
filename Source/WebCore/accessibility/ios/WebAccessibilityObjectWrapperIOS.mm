@@ -303,7 +303,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if (![self _prepareAccessibilityCall])
         return false;
 
-    AccessibilityRole role = self.axBackingObject->role();
+    AccessibilityRole role = self.axBackingObject->validatedRole();
     // Elements that can be returned when performing fuzzy hit testing.
     switch (role) {
     case AccessibilityRole::Button:
@@ -498,7 +498,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    return roleToString(self.axBackingObject->role()).createNSString().autorelease();
+    return roleToString(self.axBackingObject->validatedRole()).createNSString().autorelease();
 }
 
 - (BOOL)accessibilityHasPopup
@@ -573,8 +573,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if (![self _prepareAccessibilityCall])
         return NO;
 
-    AccessibilityRole roleValue = self.axBackingObject->role();
-    return roleValue == AccessibilityRole::ApplicationDialog || roleValue == AccessibilityRole::ApplicationAlertDialog;
+    return self.axBackingObject->isDialog();
 }
 
 using AccessibilityRoleSet = HashSet<AccessibilityRole, IntHash<AccessibilityRole>, WTF::StrongEnumHashTraits<AccessibilityRole>>;
@@ -675,7 +674,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     // Trait information also needs to be gathered from the parents above the object.
     // The parentObject is needed instead of the unignoredParentObject, because a table might be ignored, but information still needs to be gathered from it.
     for (auto* parent = backingObject->parentObject(); parent; parent = parent->parentObject()) {
-        auto parentRole = parent->role();
+        auto parentRole = parent->validatedRole();
         if (parentRole == AccessibilityRole::WebArea)
             break;
 
@@ -788,7 +787,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     if (![self _prepareAccessibilityCall])
         return 0;
 
-    AccessibilityRole role = self.axBackingObject->role();
+    AccessibilityRole role = self.axBackingObject->validatedRole();
     uint64_t traits = [self _axWebContentTrait];
     switch (role) {
     case AccessibilityRole::Link:
@@ -900,7 +899,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     if (backingObject->isIgnored())
         return NO;
 
-    switch (backingObject->role()) {
+    switch (backingObject->validatedRole()) {
     case AccessibilityRole::TextField:
     case AccessibilityRole::TextArea:
     case AccessibilityRole::Button:
@@ -1009,6 +1008,8 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::List:
     case AccessibilityRole::ListBox:
     case AccessibilityRole::ListItem:
+    case AccessibilityRole::ListItemDocumentBiblioentry:
+    case AccessibilityRole::ListItemDocumentEndnote:
     case AccessibilityRole::Mark:
     case AccessibilityRole::MathElement:
     case AccessibilityRole::Menu:

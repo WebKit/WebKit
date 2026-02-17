@@ -46,6 +46,125 @@
 
 namespace WebCore {
 
+// Returns whether |ancestorRole| is a valid context for |role| per CORE-AAM.
+// https://www.w3.org/TR/core-aam-1.2/#mapping_role
+static bool isValidContextRole(AccessibilityRole role, AccessibilityRole ancestorRole)
+{
+    switch (role) {
+    case AccessibilityRole::Tab:
+        return ancestorRole == AccessibilityRole::TabList;
+    case AccessibilityRole::ListBoxOption:
+        return ancestorRole == AccessibilityRole::ListBox;
+    case AccessibilityRole::ListItem:
+        return ancestorRole == AccessibilityRole::List || ancestorRole == AccessibilityRole::DescriptionList || ancestorRole == AccessibilityRole::Directory;
+    case AccessibilityRole::MenuItem:
+    case AccessibilityRole::MenuItemRadio:
+    case AccessibilityRole::MenuItemCheckbox:
+        return ancestorRole == AccessibilityRole::Menu || ancestorRole == AccessibilityRole::MenuBar;
+    case AccessibilityRole::Cell:
+    case AccessibilityRole::GridCell:
+    case AccessibilityRole::ColumnHeader:
+    case AccessibilityRole::RowHeader:
+    case AccessibilityRole::Row:
+    case AccessibilityRole::RowGroup:
+        return ancestorRole == AccessibilityRole::Table || ancestorRole == AccessibilityRole::Grid || ancestorRole == AccessibilityRole::TreeGrid;
+    case AccessibilityRole::TreeItem:
+        return ancestorRole == AccessibilityRole::Tree || ancestorRole == AccessibilityRole::TreeGrid;
+    default:
+        // This role doesn't require a specific context.
+        return true;
+    }
+}
+
+// Returns whether |ancestorRole| is a valid intermediate context for |role| that we should skip through
+// when searching for the required context per CORE-AAM.
+static bool isValidIntermediateContext(AccessibilityRole role, AccessibilityRole ancestorRole)
+{
+    // Groups and generic elements are valid intermediate contexts for most roles.
+    // Generic elements (like plain divs without semantic roles) are transparent for context validation.
+    if (ancestorRole == AccessibilityRole::Group || ancestorRole == AccessibilityRole::Generic)
+        return true;
+
+    switch (role) {
+    case AccessibilityRole::Cell:
+    case AccessibilityRole::GridCell:
+    case AccessibilityRole::ColumnHeader:
+    case AccessibilityRole::RowHeader:
+        // Cells can be inside rows, which can be inside rowgroups, which are inside tables.
+        return ancestorRole == AccessibilityRole::Row || ancestorRole == AccessibilityRole::RowGroup;
+    case AccessibilityRole::Row:
+        // Rows can be inside rowgroups.
+        return ancestorRole == AccessibilityRole::RowGroup;
+    case AccessibilityRole::MenuItem:
+    case AccessibilityRole::MenuItemRadio:
+    case AccessibilityRole::MenuItemCheckbox:
+        // Menu items can be nested in groups/menus (groups are handled at the top of the method).
+        return false;
+    case AccessibilityRole::TreeItem:
+        // Tree items can be nested inside other tree items (via groups).
+        // Lists are also valid intermediate contexts because a <ul> inside a tree
+        // may temporarily have role List during determineListRoleWithCleanChildren()
+        // before being finalized as Group.
+        return ancestorRole == AccessibilityRole::TreeItem || ancestorRole == AccessibilityRole::List;
+    default:
+        return false;
+    }
+}
+
+// Returns whether |role| requires a specific parent context per CORE-AAM.
+static bool roleRequiresContext(AccessibilityRole role)
+{
+    switch (role) {
+    case AccessibilityRole::Tab:
+    case AccessibilityRole::ListBoxOption:
+    case AccessibilityRole::ListItem:
+    case AccessibilityRole::MenuItem:
+    case AccessibilityRole::MenuItemRadio:
+    case AccessibilityRole::MenuItemCheckbox:
+    case AccessibilityRole::Cell:
+    case AccessibilityRole::GridCell:
+    case AccessibilityRole::ColumnHeader:
+    case AccessibilityRole::RowHeader:
+    case AccessibilityRole::Row:
+    case AccessibilityRole::RowGroup:
+    case AccessibilityRole::TreeItem:
+        return true;
+    default:
+        return false;
+    }
+}
+
+AccessibilityRole AXCoreObject::validatedRole() const
+{
+    auto claimedRole = role();
+
+    // If this role doesn't require context, return the claimed role.
+    if (!roleRequiresContext(claimedRole))
+        return claimedRole;
+
+    // Per CORE-AAM, we need to validate that this element is in the proper ancestor context
+    // for its claimed role. If not, we fall back to the native role (roleBeforeAria()).
+    for (RefPtr ancestor = parentObject(); ancestor; ancestor = ancestor->parentObject()) {
+        if (ancestor->isIgnored())
+            continue;
+
+        auto ancestorRole = ancestor->role();
+
+        if (isValidContextRole(claimedRole, ancestorRole))
+            return claimedRole;
+
+        // Skip over valid intermediate contexts (e.g., rows for cells, groups for menu items).
+        if (isValidIntermediateContext(claimedRole, ancestorRole))
+            continue;
+
+        // We found an ancestor that isn't a valid context or intermediate role.
+        // This means the claimed role is invalid, so fall back to the native role.
+        break;
+    }
+
+    return roleBeforeAria();
+}
+
 bool AXCoreObject::isList() const
 {
     auto role = this->role();
@@ -60,28 +179,10 @@ bool AXCoreObject::isFileUploadButton() const
 
 bool AXCoreObject::isMenuRelated() const
 {
-    switch (role()) {
-    case AccessibilityRole::Menu:
-    case AccessibilityRole::MenuBar:
-    case AccessibilityRole::MenuItem:
-    case AccessibilityRole::MenuItemCheckbox:
-    case AccessibilityRole::MenuItemRadio:
+    auto currentRole = role();
+    if (currentRole == AccessibilityRole::Menu || currentRole == AccessibilityRole::MenuBar)
         return true;
-    default:
-        return false;
-    }
-}
-
-bool AXCoreObject::isMenuItem() const
-{
-    switch (role()) {
-    case AccessibilityRole::MenuItem:
-    case AccessibilityRole::MenuItemRadio:
-    case AccessibilityRole::MenuItemCheckbox:
-        return true;
-    default:
-        return false;
-    }
+    return isMenuItem();
 }
 
 bool AXCoreObject::isInputImage() const
@@ -120,6 +221,10 @@ bool AXCoreObject::isControl() const
 
 bool AXCoreObject::isImplicitlyInteractive() const
 {
+    // First check context-requiring roles that have helper methods using validatedRole().
+    if (isListBoxOption() || isMenuItem() || isTabItem())
+        return true;
+
     switch (role()) {
     case AccessibilityRole::Button:
     case AccessibilityRole::Checkbox:
@@ -130,9 +235,6 @@ bool AXCoreObject::isImplicitlyInteractive() const
     case AccessibilityRole::LandmarkSearch:
     case AccessibilityRole::Link:
     case AccessibilityRole::ListBox:
-    case AccessibilityRole::ListBoxOption:
-    case AccessibilityRole::MenuItemCheckbox:
-    case AccessibilityRole::MenuItemRadio:
     case AccessibilityRole::MenuListOption:
     case AccessibilityRole::MenuListPopup:
     case AccessibilityRole::PopUpButton:
@@ -143,7 +245,6 @@ bool AXCoreObject::isImplicitlyInteractive() const
     case AccessibilityRole::SpinButton:
     case AccessibilityRole::SpinButtonPart:
     case AccessibilityRole::Switch:
-    case AccessibilityRole::Tab:
     case AccessibilityRole::TextArea:
     case AccessibilityRole::TextField:
     case AccessibilityRole::ToggleButton:
@@ -205,13 +306,12 @@ bool AXCoreObject::hasGridRole() const
 
 bool AXCoreObject::hasCellRole() const
 {
-    auto role = this->role();
-    return role == AccessibilityRole::Cell || role == AccessibilityRole::GridCell || role == AccessibilityRole::ColumnHeader || role == AccessibilityRole::RowHeader;
+    return hasAnyUsedRole({ AccessibilityRole::Cell, AccessibilityRole::GridCell, AccessibilityRole::ColumnHeader, AccessibilityRole::RowHeader });
 }
 
 bool AXCoreObject::hasCellOrRowRole() const
 {
-    return hasCellRole() || role() == AccessibilityRole::Row;
+    return hasCellRole() || hasUsedRole(AccessibilityRole::Row);
 }
 
 bool AXCoreObject::isButton() const
@@ -1021,7 +1121,7 @@ bool AXCoreObject::supportsRangeValue() const
 
 bool AXCoreObject::supportsRequiredAttribute() const
 {
-    switch (role()) {
+    switch (validatedRole()) {
     case AccessibilityRole::Button:
         return isFileUploadButton();
     case AccessibilityRole::Cell:
@@ -1396,6 +1496,10 @@ String AXCoreObject::ariaLandmarkRoleDescription() const
         return AXARIAContentGroupText("ARIADocument"_s);
     case AccessibilityRole::DocumentArticle:
         return AXARIAContentGroupText("ARIADocumentArticle"_s);
+    case AccessibilityRole::ListItemDocumentBiblioentry:
+        return AXARIAContentGroupText("ARIADocumentBiblioentry"_s);
+    case AccessibilityRole::ListItemDocumentEndnote:
+        return AXARIAContentGroupText("ARIADocumentEndnote"_s);
     case AccessibilityRole::DocumentMath:
         return AXARIAContentGroupText("ARIADocumentMath"_s);
     case AccessibilityRole::DocumentNote:

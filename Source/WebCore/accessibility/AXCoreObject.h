@@ -512,12 +512,17 @@ public:
     bool isListBox() const { return role() == AccessibilityRole::ListBox; }
     // For elements with role=listbox, checks its children to determine if it's actually a valid listbox, a static list, or neither.
     ListBoxInterpretation listBoxInterpretation() const;
-    bool isListBoxOption() const { return role() == AccessibilityRole::ListBoxOption; }
+    bool isListBoxOption() const { return hasUsedRole(AccessibilityRole::ListBoxOption); }
     virtual bool isAttachment() const = 0;
     bool isMenuRelated() const;
     bool isMenu() const { return role() == AccessibilityRole::Menu; }
     bool isMenuBar() const { return role() == AccessibilityRole::MenuBar; }
-    bool isMenuItem() const;
+    bool isMenuItem() const { return hasAnyUsedRole({ AccessibilityRole::MenuItem, AccessibilityRole::MenuItemRadio, AccessibilityRole::MenuItemCheckbox }); }
+    bool isDialog() const
+    {
+        auto role = this->role();
+        return role == AccessibilityRole::ApplicationDialog || role == AccessibilityRole::ApplicationAlertDialog;
+    }
     bool isInputImage() const;
     bool isProgressIndicator() const { return role() == AccessibilityRole::ProgressIndicator || role() == AccessibilityRole::Meter; }
     bool isSlider() const { return role() == AccessibilityRole::Slider; }
@@ -532,6 +537,27 @@ public:
     // is implicit in the concept of a link.
     bool isImplicitlyInteractive() const;
     bool isReplacedElement() const;
+    bool hasUsedRole(AccessibilityRole targetRole) const
+    {
+        // Only go through the expense of calling validatedRole() if our m_role
+        // matches the target role.
+        return role() == targetRole && validatedRole() == targetRole;
+    }
+    bool hasAnyUsedRole(Vector<AccessibilityRole>&& roles) const
+    {
+        auto targetRole = role();
+        bool foundMatch = false;
+
+        for (auto role : roles) {
+            if (role == targetRole) {
+                foundMatch = true;
+                break;
+            }
+        }
+
+        // validatedRole() can result in an ancestry traversal, so only do it we our "claimed" role of m_role matches any of the target roles.
+        return foundMatch && validatedRole() == targetRole;
+    }
 
     virtual std::optional<InputType::Type> inputType() const = 0;
 
@@ -600,6 +626,7 @@ public:
     virtual bool isFieldset() const = 0;
     bool isImageMapLink() const;
     bool isGroup() const;
+    bool isGeneric() const { return role() == AccessibilityRole::Generic; }
 #if PLATFORM(MAC)
     bool isEmptyGroup();
 #endif
@@ -617,7 +644,7 @@ public:
     virtual bool isEditableWebArea() const = 0;
     virtual bool isNonNativeTextControl() const = 0;
     bool isTabList() const { return role() == AccessibilityRole::TabList; }
-    bool isTabItem() const { return role() == AccessibilityRole::Tab; }
+    bool isTabItem() const { return hasUsedRole(AccessibilityRole::Tab); }
     bool isRadioGroup() const { return role() == AccessibilityRole::RadioGroup; }
     bool isComboBox() const { return role() == AccessibilityRole::ComboBox; }
     bool isDateTime() const { return role() == AccessibilityRole::DateTime; }
@@ -638,7 +665,15 @@ public:
     bool isButton() const;
     bool isMeter() const { return role() == AccessibilityRole::Meter; }
 
-    bool isListItem() const { return role() == AccessibilityRole::ListItem; }
+    bool isListItem() const
+    {
+        auto currentRole = role();
+        // DocumentBiblioentry and DocumentEndnote are allowed to be considered list items without
+        // requiring a containing list per DPUB-ARIA.
+        return currentRole == AccessibilityRole::ListItemDocumentBiblioentry
+            || currentRole == AccessibilityRole::ListItemDocumentEndnote
+            || hasUsedRole(AccessibilityRole::ListItem);
+    }
     bool isCheckboxOrRadio() const { return isCheckbox() || isRadioButton(); }
     bool isScrollArea() const { return role() == AccessibilityRole::ScrollArea; }
     bool isCanvas() const { return role() == AccessibilityRole::Canvas; }
@@ -936,6 +971,12 @@ public:
     virtual SRGBA<uint8_t> colorValue() const = 0;
 
     AccessibilityRole role() const { return m_role; }
+    // Returns the native role of this element, ignoring any ARIA role attribute.
+    // Used as a fallback when validatedRole() determines the ARIA role is in invalid context.
+    virtual AccessibilityRole roleBeforeAria() const = 0;
+    // Returns the role to expose to assistive technology. For roles requiring context (like tab, menuitem, cell, etc.),
+    // this validates that the element is in the proper ancestor context per CORE-AAM. If not, it falls back to the native role.
+    AccessibilityRole validatedRole() const;
 #if PLATFORM(MAC)
     // Non-localized string associated with the object role.
     String rolePlatformString();

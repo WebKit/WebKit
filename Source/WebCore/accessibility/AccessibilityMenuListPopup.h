@@ -49,7 +49,7 @@ private:
     bool isMenuListPopup() const final { return true; }
 
     LayoutRect elementRect() const final { return LayoutRect(); }
-    AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::MenuListPopup; }
+    AccessibilityRole determineAccessibilityRole(ShouldRespectARIARole = ShouldRespectARIARole::Yes) final { return AccessibilityRole::MenuListPopup; }
 
     bool isVisible() const final;
     bool press() final;

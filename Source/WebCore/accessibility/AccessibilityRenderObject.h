@@ -176,7 +176,7 @@ protected:
     void scrollTo(const IntPoint&) const final;
 
     bool shouldIgnoreAttributeRole() const final;
-    AccessibilityRole determineAccessibilityRole() override;
+    AccessibilityRole determineAccessibilityRole(ShouldRespectARIARole = ShouldRespectARIARole::Yes) override;
     bool computeIsIgnored() const override;
     std::optional<AccessibilityChildrenVector> imageOverlayElements() final;
 

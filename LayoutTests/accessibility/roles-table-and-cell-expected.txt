@@ -1,5 +1,8 @@
 This tests that table and cell have the correct ARIA roles.
 PASS: div[role="grid"] -> grid.
+PASS: div[role="gridcell"] -> gridcell.
+PASS: div[role="cell"] -> cell.
+PASS: div[role="cell"] -> cell.
 PASS: table[role="table"] -> table.
 PASS: td[role="gridcell"] -> gridcell.
 PASS: td -> cell.

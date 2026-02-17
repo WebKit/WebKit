@@ -277,6 +277,7 @@ enum class AXProperty : uint16_t {
     RemoteParent,
 #endif
     RevealableText,
+    RoleBeforeAria,
     RolePlatformString,
     Rows,
     RowHeaders,

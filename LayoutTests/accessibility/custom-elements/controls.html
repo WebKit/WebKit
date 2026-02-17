@@ -3,10 +3,12 @@
 <body>
 <script src="../../resources/js-test.js"></script>
 <script src="../../resources/accessibility-helper.js"></script>
+<div role="tablist">
 <custom-tab id="custom-tab-1"></custom-tab>
+<custom-tab id="custom-tab-2" aria-controls="panel3"></custom-tab>
+</div>
 <div class="control">Panel 1</div>
 <div class="control">Panel 2</div>
-<custom-tab id="custom-tab-2" aria-controls="panel3"></custom-tab>
 <div id="panel3" class="control">Panel 3</div>
 <div id="panel4" class="control">Panel 4</div>
 <script>

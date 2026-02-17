@@ -271,7 +271,7 @@ void AccessibilityScrollView::clearChildren()
     m_childrenDirty = false;
 }
 
-AccessibilityRole AccessibilityScrollView::determineAccessibilityRole()
+AccessibilityRole AccessibilityScrollView::determineAccessibilityRole(ShouldRespectARIARole)
 {
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     if (!isRoot())

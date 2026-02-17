@@ -50,7 +50,7 @@ private:
     virtual ~AXRemoteFrame() = default;
     explicit AXRemoteFrame(AXID, AXObjectCache&);
 
-    AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::RemoteFrame; }
+    AccessibilityRole determineAccessibilityRole(ShouldRespectARIARole = ShouldRespectARIARole::Yes) final { return AccessibilityRole::RemoteFrame; }
     bool computeIsIgnored() const final;
     bool isAXRemoteFrame() const final { return true; }
     LayoutRect elementRect() const final;

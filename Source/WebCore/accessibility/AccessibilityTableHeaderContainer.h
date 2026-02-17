@@ -38,7 +38,7 @@ public:
     static Ref<AccessibilityTableHeaderContainer> create(AXID, AXObjectCache&);
     virtual ~AccessibilityTableHeaderContainer();
 
-    AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::TableHeaderContainer; }
+    AccessibilityRole determineAccessibilityRole(ShouldRespectARIARole = ShouldRespectARIARole::Yes) final { return AccessibilityRole::TableHeaderContainer; }
 
     void addChildren() final;
 

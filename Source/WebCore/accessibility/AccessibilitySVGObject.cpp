@@ -303,9 +303,9 @@ AccessibilityRole AccessibilitySVGObject::determineAriaRoleAttribute() const
     return hasTitleOrDescriptionChild() ? AccessibilityRole::Unknown : role;
 }
 
-AccessibilityRole AccessibilitySVGObject::determineAccessibilityRole()
+AccessibilityRole AccessibilitySVGObject::determineAccessibilityRole(ShouldRespectARIARole shouldRespectARIARole)
 {
-    if (m_ariaRole != AccessibilityRole::Unknown)
+    if (shouldRespectARIARole == ShouldRespectARIARole::Yes && m_ariaRole != AccessibilityRole::Unknown)
         return m_ariaRole;
 
     if (!m_renderer)
@@ -337,7 +337,7 @@ AccessibilityRole AccessibilitySVGObject::determineAccessibilityRole()
     if (is<SVGAElement>(element))
         return AccessibilityRole::Link;
 
-    return AccessibilityRenderObject::determineAccessibilityRole();
+    return AccessibilityRenderObject::determineAccessibilityRole(shouldRespectARIARole);
 }
 
 AccessibilityObject* AccessibilitySVGObject::parentObject() const

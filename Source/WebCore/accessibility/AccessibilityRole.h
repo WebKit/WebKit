@@ -98,6 +98,8 @@ enum class AccessibilityRole : uint8_t {
     ListBox,
     ListBoxOption,
     ListItem,
+    ListItemDocumentBiblioentry,
+    ListItemDocumentEndnote,
     ListMarker,
     LocalFrame,
     Mark,

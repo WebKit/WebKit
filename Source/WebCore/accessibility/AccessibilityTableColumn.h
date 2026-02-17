@@ -39,7 +39,7 @@ public:
     static Ref<AccessibilityTableColumn> create(AXID, AXObjectCache&);
     virtual ~AccessibilityTableColumn();
 
-    AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::Column; }
+    AccessibilityRole determineAccessibilityRole(ShouldRespectARIARole = ShouldRespectARIARole::Yes) final { return AccessibilityRole::Column; }
 
     void setColumnIndex(unsigned);
     unsigned columnIndex() const final { return m_columnIndex; }

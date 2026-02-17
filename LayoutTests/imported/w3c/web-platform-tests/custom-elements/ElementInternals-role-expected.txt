@@ -5,7 +5,6 @@ PASS Applies "application" via Element Internals
 PASS Applies "article" via Element Internals
 PASS Applies "banner" via Element Internals
 PASS Applies "button" via Element Internals
-PASS Applies "cell" via Element Internals
 PASS Applies "checkbox" via Element Internals
 PASS Applies "combobox" via Element Internals
 PASS Applies "complementary" via Element Internals
@@ -55,6 +54,7 @@ PASS Applies "toolbar" via Element Internals
 PASS Applies "tooltip" via Element Internals
 PASS Applies "tree" via Element Internals
 PASS Applies "treegrid" via Element Internals
+PASS Applies parent/child relationship of "table"/"row"/"cell" via Element Internals
 PASS Applies parent/child relationship of "table"/"row"/"columnheader" via Element Internals
 PASS Applies parent/child relationship of "grid"/"row"/"gridcell" via Element Internals
 PASS Applies parent/child relationship of "list"/"listitem" via Element Internals

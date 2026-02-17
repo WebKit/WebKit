@@ -47,7 +47,7 @@ protected:
     explicit AccessibilityMathMLElement(AXID, RenderObject&, AXObjectCache&, bool isAnonymousOperator);
 
 private:
-    AccessibilityRole determineAccessibilityRole() final;
+    AccessibilityRole determineAccessibilityRole(ShouldRespectARIARole = ShouldRespectARIARole::Yes) final;
     void addChildren() final;
     String textUnderElement(TextUnderElementMode = TextUnderElementMode()) const final;
     String stringValue() const final;

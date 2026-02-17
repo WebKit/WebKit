@@ -48,7 +48,7 @@ private:
     virtual ~AXLocalFrame() = default;
     explicit AXLocalFrame(AXID, AXObjectCache&);
 
-    AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::LocalFrame; }
+    AccessibilityRole determineAccessibilityRole(ShouldRespectARIARole = ShouldRespectARIARole::Yes) final { return AccessibilityRole::LocalFrame; }
     bool computeIsIgnored() const final;
     bool isAXLocalFrame() const final { return true; }
     LayoutRect elementRect() const final;

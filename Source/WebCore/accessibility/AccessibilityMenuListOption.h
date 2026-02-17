@@ -42,7 +42,7 @@ private:
 
     bool isMenuListOption() const final { return true; }
 
-    AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::MenuListOption; }
+    AccessibilityRole determineAccessibilityRole(ShouldRespectARIARole = ShouldRespectARIARole::Yes) final { return AccessibilityRole::MenuListOption; }
     bool canHaveChildren() const final { return false; }
     AccessibilityObject* parentObject() const final { return m_parent.get(); }
 
