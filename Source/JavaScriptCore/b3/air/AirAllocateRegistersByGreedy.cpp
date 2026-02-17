@@ -2256,15 +2256,19 @@ private:
                 bool didSpill = false;
                 bool needScratch = false;
                 Tmp scratchForTmp;
-                auto notSpilledOrHasRequiredWidth32 = [this](const Arg& arg) {
-                    if (!arg.isTmp() || !spillSlot<bank>(arg.tmp()))
-                        return true;
-                    return m_tmpWidth.requiredWidth(arg.tmp()) <= Width32;
-                };
-                if (bank == GP && inst.kind.opcode == Move
-                    && notSpilledOrHasRequiredWidth32(inst.args[0])
-                    && notSpilledOrHasRequiredWidth32(inst.args[1]))
-                    useMove32IfDidSpill = true;
+
+                if (bank == GP && inst.kind.opcode == Move) {
+                    Arg& srcArg = inst.args[0];
+                    Arg& dstArg = inst.args[1];
+                    if (dstArg.isTmp() && spillSlot(dstArg.tmp())) {
+                        // Storing to spill. If storing to a 4-byte slot, use store32, otherwise storePtr.
+                        useMove32IfDidSpill = spillSlot(dstArg.tmp())->byteSize() == 4;
+                    } else if (srcArg.isTmp() && spillSlot(srcArg.tmp())) {
+                        // Loading from a spill slot (but not storing to a spill slot). If loading from a
+                        // 4-byte slot, then use load32, otherwise loadPtr.
+                        useMove32IfDidSpill = spillSlot(srcArg.tmp())->byteSize() == 4;
+                    }
+                }
 
                 bool maybeCoalescable = this->mayBeCoalescable(inst);
                 // Try to replace the register use by memory use when possible.
@@ -2326,13 +2330,25 @@ private:
                             // we need to avoid placing the Tmp's stack address into the instruction.
                             return;
                         }
+
+                        Arg spilledArg = Arg::stack(spilled);
+                        if (role == Arg::Role::ZDef && bytesForWidth(width) < spilled->byteSize()) {
+                            // ZDef32 to 64 slot would require two store32 (second one for zero extend), so
+                            // usually it will be better to ZDef into a register and then storePtr the register.
+                            // Unless, this move can be coalesced.
+                            ASSERT_IMPLIES(maybeCoalescable, &arg == &inst.args[1]);
+                            if (!maybeCoalescable || spilledArg != inst.args[0]) {
+                                m_stats[bank].numInPlaceSpillGiveUpSpillWidth++;
+                                return;
+                            }
+                        }
                         spilled->ensureSize(useMove32IfDidSpill ? 4 : bytesForWidth(width));
                         didSpill = true;
                         if (needScratchIfSpilledInPlace) {
                             needScratch = true;
                             scratchForTmp = arg.tmp();
                         }
-                        arg = Arg::stack(spilled);
+                        arg = spilledArg;
                         m_stats[bank].numInPlaceSpill++;
                     });
 
