@@ -192,8 +192,8 @@ TEST(ResourceLoadDelegate, ResourceType)
         _WKResourceLoadInfoResourceTypeFetch,
         _WKResourceLoadInfoResourceTypeXMLHTTPRequest,
         _WKResourceLoadInfoResourceTypeBeacon,
-        _WKResourceLoadInfoResourceTypeImage,
         _WKResourceLoadInfoResourceTypeStylesheet,
+        _WKResourceLoadInfoResourceTypeImage,
         _WKResourceLoadInfoResourceTypeFont,
     };
 

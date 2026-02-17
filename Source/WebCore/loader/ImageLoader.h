@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+class CachedResourceRequest;
 class DeferredPromise;
 class Document;
 class ImageLoader;
@@ -103,6 +104,7 @@ protected:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No) override;
 
 private:
+    void updateFromElementWithLatestAttributeValues(RelevantMutation, CachedResourceRequest&&);
     void resetLazyImageLoading(Document&);
 
     virtual void dispatchLoadEvent() = 0;
@@ -145,6 +147,7 @@ private:
     bool m_loadManually : 1;
     bool m_elementIsProtected : 1;
     bool m_elementIsUserAgentShadowRootResource : 1 { false };
+    bool m_microtaskQueued : 1 { false };
     LazyImageLoadState m_lazyImageLoadState { LazyImageLoadState::None };
 };
 

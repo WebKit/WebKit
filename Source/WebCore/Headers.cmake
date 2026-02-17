@@ -2096,6 +2096,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/WorkerClient.h
 
     page/csp/CSPViolationReportBody.h
+    page/csp/CodePosition.h
     page/csp/ContentSecurityPolicy.h
     page/csp/ContentSecurityPolicyClient.h
     page/csp/ContentSecurityPolicyHash.h

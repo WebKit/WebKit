@@ -28,6 +28,7 @@
 #pragma once
 
 #include <WebCore/AsyncNodeDeletionQueue.h>
+#include <WebCore/CodePosition.h>
 #include <WebCore/Color.h>
 #include <WebCore/ContainerNode.h>
 #include <WebCore/ContextDestructionObserver.h>
@@ -1217,6 +1218,10 @@ public:
 
     void NODELETE overrideLastModified(const std::optional<WallTime>&);
     WEBCORE_EXPORT String lastModified() const;
+
+    // CodePosition for preserving source location across async boundaries (e.g., microtasks).
+    std::optional<CodePosition> codePosition() const { return m_codePosition; }
+    void setCodePosition(std::optional<CodePosition> position) { m_codePosition = position; }
 
     // The cookieURL is used to query the cookie database for this document's
     // cookies. For example, if the cookie URL is http://example.com, we'll
@@ -2836,6 +2841,7 @@ private:
 
     mutable std::unique_ptr<CSSParserContext> m_cachedCSSParserContext;
     mutable std::unique_ptr<PermissionsPolicy> m_permissionsPolicy;
+    std::optional<CodePosition> m_codePosition;
 
     mutable std::unique_ptr<AXObjectCache> m_axObjectCache;
 #if !ENABLE_ACCESSIBILITY_LOCAL_FRAME

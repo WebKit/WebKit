@@ -29,6 +29,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ContainerNodeInlines.h"
+#include "ContentSecurityPolicy.h"
 #include "CookieJar.h"
 #include "CrossOriginAccessControl.h"
 #include "DocumentLoader.h"
@@ -266,11 +267,20 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
             // It is possible that attributes are bulk-set via Element::parserSetAttributes. In that case, it is possible that attribute vectors are already configured,
             // but corresponding attributeChanged is not called yet. This causes inconsistency in HTMLImageElement. Eventually, we will get the consistent state, but
             // if "src" attributeChanged is not called yet, imageURL can be invalid and it does not work well for ResourceRequest.
-            // In this case, we should behave same as attr.isNull().
             imageURL = imageElement->currentURL();
             if (imageURL.isNull()) {
-                didUpdateCachedImage(relevantMutation, WTF::move(newImage));
-                return;
+                // For srcset/picture and lazy-loading, keep behavior equivalent to missing/invalid src while we wait for consistent image source state.
+                if (imageElement->usesSrcsetOrPicture() || imageElement->isLazyLoadable()) {
+                    didUpdateCachedImage(relevantMutation, WTF::move(newImage));
+                    return;
+                }
+
+                // For plain src loads, fall back to attribute URL so we still issue the request.
+                imageURL = document->completeURL(attr);
+                if (imageURL.isNull()) {
+                    didUpdateCachedImage(relevantMutation, WTF::move(newImage));
+                    return;
+                }
             }
         } else
             imageURL = document->completeURL(attr);
@@ -281,6 +291,79 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
 
     auto request = createPotentialAccessControlRequest(WTF::move(resourceRequest), WTF::move(options), document, crossOriginAttribute);
     request.setInitiator(element);
+    m_imageComplete = false;
+
+    // Bypass microtask deferral for non-HTML image elements, shadow tree resources,
+    // image documents, blob/data URLs, and images already available in the memory cache,
+    // as deferral is only needed to batch attribute changes on HTML image elements.
+    if (!imageElement || loadingForElementInShadowTree || imageElement->document().isImageDocument() || request.resourceRequest().url().protocolIsBlob() || request.resourceRequest().url().protocolIsData() || (!imageElement->usesSrcsetOrPicture() && canReuseFromListOfAvailableImages(request, document))) {
+        updateFromElementWithLatestAttributeValues(relevantMutation, WTF::move(request));
+        return;
+    }
+
+    if (m_microtaskQueued)
+        return;
+
+    // Capture source location now so CSP violation reports inside the microtask
+    // can attribute the violation to the script that set the image attributes.
+    auto codePosition = ContentSecurityPolicy::currentCodePosition();
+
+    m_microtaskQueued = true;
+    // https://html.spec.whatwg.org/C#update-the-image-data step 8
+    Ref protectedThis { *this };
+    document->eventLoop().queueMicrotask(document->vm(), [imageLoader = WTF::move(protectedThis), relevantMutation, movedRequest = WTF::move(request), codePosition = WTF::move(codePosition)] mutable {
+        imageLoader->m_microtaskQueued = false;
+        Ref document = imageLoader->document();
+        if (codePosition)
+            document->setCodePosition(*codePosition);
+        imageLoader->updateFromElementWithLatestAttributeValues(relevantMutation, WTF::move(movedRequest));
+    });
+}
+
+void ImageLoader::updateFromElementWithLatestAttributeValues(RelevantMutation relevantMutation, CachedResourceRequest&& request)
+{
+    Ref element = this->element();
+    Ref document = element->document();
+    auto clearCodePosition = makeScopeExit([&] {
+        document->setCodePosition(std::nullopt);
+    });
+
+    CachedResourceHandle<CachedImage> newImage;
+
+    RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element);
+    if (imageElement) {
+        URL imageURL = imageElement->currentURL();
+        if (imageURL.isNull()) {
+            if (imageElement->usesSrcsetOrPicture() || imageElement->isLazyLoadable()) {
+                didUpdateCachedImage(relevantMutation, WTF::move(newImage));
+                return;
+            }
+            imageURL = request.resourceRequest().url();
+            if (imageURL.isNull()) {
+                didUpdateCachedImage(relevantMutation, WTF::move(newImage));
+                return;
+            }
+        }
+
+        auto loadingForElementInShadowTree = element->isInUserAgentShadowTree() || m_elementIsUserAgentShadowRootResource;
+        ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
+        options.contentSecurityPolicyImposition = loadingForElementInShadowTree ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
+        options.shouldEnableContentExtensionsCheck = loadingForElementInShadowTree ? ShouldEnableContentExtensionsCheck::No : ShouldEnableContentExtensionsCheck::Yes;
+        options.loadedFromPluginElement = LoadedFromPluginElement::No;
+        options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
+        options.serviceWorkersMode = ServiceWorkersMode::All;
+        options.referrerPolicy = imageElement->referrerPolicy();
+        options.fetchPriority = imageElement->fetchPriority();
+        if (imageElement->usesSrcsetOrPicture())
+            options.initiator = Initiator::Imageset;
+
+        auto crossOriginAttribute = element->attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
+        ResourceRequest resourceRequest(WTF::move(imageURL));
+        resourceRequest.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(element));
+
+        request = createPotentialAccessControlRequest(WTF::move(resourceRequest), WTF::move(options), document, crossOriginAttribute);
+        request.setInitiator(element);
+    }
 
     if (m_loadManually) {
         Ref cachedResourceLoader = document->cachedResourceLoader();
@@ -288,10 +371,11 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
         cachedResourceLoader->setAutoLoadImages(false);
         RefPtr page = m_element->document().page();
         // FIXME: We shouldn't do an explicit `new` here.
-        newImage = adoptRef(*new CachedImage(WTF::move(request), page->sessionID(), &page->cookieJar()));
-        newImage->setStatus(CachedResource::Pending);
-        newImage->setLoading(true);
-        cachedResourceLoader->m_documentResources.set(newImage->url().string(), *newImage);
+        Ref manualImage = adoptRef(*new CachedImage(WTF::move(request), page->sessionID(), &page->cookieJar()));
+        manualImage->setStatus(CachedResource::Pending);
+        manualImage->setLoading(true);
+        cachedResourceLoader->m_documentResources.set(manualImage->url().string(), manualImage.copyRef());
+        newImage = WTF::move(manualImage);
         cachedResourceLoader->setAutoLoadImages(autoLoadOtherImages);
     } else {
 #if !LOG_DISABLED
@@ -314,10 +398,13 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
     if (imageElement && imageElement->isMultiRepresentationHEIC()) {
         auto fallbackURL = imageElement->getURLAttribute(HTMLNames::srcAttr);
         if (!fallbackURL.isNull()) {
+            auto loadingForElementInShadowTree = element->isInUserAgentShadowTree() || m_elementIsUserAgentShadowRootResource;
             ResourceLoaderOptions fallbackOptions = CachedResourceLoader::defaultCachedResourceOptions();
             fallbackOptions.contentSecurityPolicyImposition = loadingForElementInShadowTree ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
+            fallbackOptions.shouldEnableContentExtensionsCheck = loadingForElementInShadowTree ? ShouldEnableContentExtensionsCheck::No : ShouldEnableContentExtensionsCheck::Yes;
             fallbackOptions.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
 
+            auto crossOriginAttribute = element->attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
             ResourceRequest fallbackResourceRequest(WTF::move(fallbackURL));
             fallbackResourceRequest.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(*imageElement));
 
@@ -334,6 +421,7 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
     // Security Policy, or the page is being dismissed. Trigger an
     // error event if the page is not being dismissed.
     if (!newImage && !pageIsBeingDismissed(document)) {
+        auto attr = element->imageSourceURL();
         m_failedLoadURL = attr;
         m_hasPendingErrorEvent = true;
         loadEventSender().dispatchEventSoon(*this, eventNames().errorEvent);
@@ -372,6 +460,9 @@ void ImageLoader::didUpdateCachedImage(RelevantMutation relevantMutation, RefPtr
         m_hasPendingBeforeLoadEvent = !document->isImageDocument() && newImage;
         m_hasPendingLoadEvent = newImage;
         m_imageComplete = !newImage;
+
+        if (!newImage && hasPendingDecodePromises())
+            rejectDecodePromises("Loading error."_s);
 
         if (newImage) {
             if (!document->isImageDocument())
@@ -482,7 +573,7 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
 
         if (hasPendingDecodePromises())
             rejectDecodePromises("Access control error."_s);
-        
+
         ASSERT(!m_hasPendingLoadEvent);
 
         // Only consider updating the protection ref-count of the Element immediately before returning
@@ -592,7 +683,7 @@ void ImageLoader::updatedHasPendingEvent()
     } else {
         ASSERT(!m_derefElementTimer.isActive());
         m_derefElementTimer.startOneShot(0_s);
-    }   
+    }
 }
 
 void ImageLoader::decode(Ref<DeferredPromise>&& promise)
@@ -617,7 +708,7 @@ void ImageLoader::decode(Ref<DeferredPromise>&& promise)
 void ImageLoader::decode()
 {
     ASSERT(hasPendingDecodePromises());
-    
+
     if (!element().document().window()) {
         rejectDecodePromises("Inactive document."_s);
         return;
@@ -656,7 +747,8 @@ bool ImageLoader::hasPendingActivity() const
     // We are using SUPPRESS_UNCOUNTED_ARG and not ref'ing m_image here because this function
     // may get called on the GC thread, and it would trip threading assertion in RefCounted.
     SUPPRESS_UNCOUNTED_ARG bool imageWillBeLoadedLater = m_image && !m_image->isLoading() && m_image->stillNeedsLoad();
-    return (m_hasPendingLoadEvent && !imageWillBeLoadedLater) || m_hasPendingErrorEvent;
+    // Also consider microtask queued as pending activity to prevent GC while waiting.
+    return (m_hasPendingLoadEvent && !imageWillBeLoadedLater) || m_hasPendingErrorEvent || m_microtaskQueued;
 }
 
 void ImageLoader::dispatchPendingEvent(ImageEventSender* eventSender, const AtomString& eventType)

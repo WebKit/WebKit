@@ -3967,6 +3967,7 @@
 		97BC849B12370A4B000C6161 /* HTMLInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC849A12370A4B000C6161 /* HTMLInputStream.h */; };
 		97BC84B412371180000C6161 /* TextDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC84B212371180000C6161 /* TextDocument.h */; };
 		97C078501165D5BE003A32EF /* SuffixTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 97C0784F1165D5BE003A32EF /* SuffixTree.h */; };
+		0AEF5B8A1990F165BA3EDB84 /* CodePosition.h in Headers */ = {isa = PBXBuildFile; fileRef = B25D4C610E006AF4FE140BD1 /* CodePosition.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97C471DC12F925BD0086354B /* ContentSecurityPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 97C471DA12F925BD0086354B /* ContentSecurityPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97D2AD0414B823A60093DF32 /* LocalDOMWindowProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 97D2AD0214B823A60093DF32 /* LocalDOMWindowProperty.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97DCE20210807C750057D394 /* HistoryController.h in Headers */ = {isa = PBXBuildFile; fileRef = 97DCE20010807C750057D394 /* HistoryController.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -16454,6 +16455,7 @@
 		97C1F552122855CB00EDE616 /* HTMLToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLToken.h; sourceTree = "<group>"; };
 		97C1F552122855CB00EDE617 /* AtomHTMLToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AtomHTMLToken.h; sourceTree = "<group>"; };
 		97C471D912F925BC0086354B /* ContentSecurityPolicy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ContentSecurityPolicy.cpp; path = csp/ContentSecurityPolicy.cpp; sourceTree = "<group>"; };
+		B25D4C610E006AF4FE140BD1 /* CodePosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CodePosition.h; path = csp/CodePosition.h; sourceTree = "<group>"; };
 		97C471DA12F925BD0086354B /* ContentSecurityPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContentSecurityPolicy.h; path = csp/ContentSecurityPolicy.h; sourceTree = "<group>"; };
 		97D2AD0114B823A60093DF32 /* LocalDOMWindowProperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalDOMWindowProperty.cpp; sourceTree = "<group>"; };
 		97D2AD0214B823A60093DF32 /* LocalDOMWindowProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalDOMWindowProperty.h; sourceTree = "<group>"; };
@@ -39544,6 +39546,7 @@
 			isa = PBXGroup;
 			children = (
 				97C471D912F925BC0086354B /* ContentSecurityPolicy.cpp */,
+				B25D4C610E006AF4FE140BD1 /* CodePosition.h */,
 				97C471DA12F925BD0086354B /* ContentSecurityPolicy.h */,
 				CE5FA253209E48C50051D700 /* ContentSecurityPolicyClient.h */,
 				CEF59B251CA0E11D005C3E13 /* ContentSecurityPolicyDirective.cpp */,
@@ -43652,6 +43655,7 @@
 				A1038D472AB2165900F57BA4 /* ContentKeyGroupFactoryAVFObjC.h in Headers */,
 				E7AA0A0C2E4519DF00ABEF7F /* ContentRuleListMatchedRule.h in Headers */,
 				5C9C2DB52241A67B00996B0B /* ContentRuleListResults.h in Headers */,
+				0AEF5B8A1990F165BA3EDB84 /* CodePosition.h in Headers */,
 				97C471DC12F925BD0086354B /* ContentSecurityPolicy.h in Headers */,
 				CE5FA255209E48C50051D700 /* ContentSecurityPolicyClient.h in Headers */,
 				CE799FA41C6A503A0097B518 /* ContentSecurityPolicyDirective.h in Headers */,
