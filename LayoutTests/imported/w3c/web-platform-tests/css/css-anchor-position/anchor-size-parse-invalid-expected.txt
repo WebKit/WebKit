@@ -20,4 +20,5 @@ PASS e.style['width'] = "anchor-size(--foo width, anchor(--bar top))" should not
 PASS e.style['width'] = "calc(anchor-size(foo width) + 10px + 10%)" should not set the property value
 PASS e.style['width'] = "calc(10px + 100 * anchor-size(--foo width, anchor-size(bar bottom)))" should not set the property value
 PASS e.style['width'] = "min(anchor-size(--foo width), anchor-size(--bar height), anchor(--baz top))" should not set the property value
+PASS e.style['top'] = "calc(anchor-size(--foo width, 1) + 1px)" should not set the property value
 

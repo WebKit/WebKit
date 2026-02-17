@@ -1,0 +1,15 @@
+
+
+FAIL position-area with valid anchor sets insets to zero assert_equals: expected "0px" but got "40px"
+FAIL justify-self: anchor-center  with valid anchor sets insets to zero assert_equals: expected "0px" but got "20px"
+FAIL align-self: anchor-center  with valid anchor sets insets to zero assert_equals: expected "0px" but got "20px"
+PASS position-area with invalid anchor does not set insets to zero
+PASS justify-self: anchor-center with invalid anchor does not set insets to zero
+PASS align-self: anchor-center with invalid anchor does not set insets to zero
+PASS position-area with valid anchor sets margins to zero
+PASS justify-self: anchor-center  with valid anchor sets margins to zero
+PASS align-self: anchor-center  with valid anchor sets margins to zero
+PASS position-area with invalid anchor does not set margins to zero
+PASS justify-self: anchor-center with invalid anchor does not set margins to zero
+PASS align-self: anchor-center with invalid anchor does not set margins to zero
+

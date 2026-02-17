@@ -7578,7 +7578,6 @@ imported/w3c/web-platform-tests/screen-orientation/lock-unlock-check.html [ Pass
 fast/forms/ios/time-picker-value-change.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/css/css-anchor-position/position-try-cascade-layer-reorder.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-anchor-position/position-visibility-anchors-visible-after-scroll-in-document.html [ ImageOnlyFailure ]
 
 # FAIL results are platform dependent
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-invalid-fallback.html [ Failure ]
@@ -7588,6 +7587,10 @@ imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-t
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-try-008.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-try-010.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-anchor-positioning-001.html [ Failure ]
+
+# Flaky anchor positioning tests
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-try-015.tentative.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-anchor-position/position-visibility-anchors-visible-after-scroll-in-document.html [ Pass ImageOnlyFailure ]
 
 # webkit.org/b/277901 Regression: (246931@main?) [ iOS ] imported/w3c/web-platform-tests/workers/SharedWorker_dataUrl.html is a flaky failure
 imported/w3c/web-platform-tests/workers/SharedWorker_dataUrl.html [ Pass Failure ]
