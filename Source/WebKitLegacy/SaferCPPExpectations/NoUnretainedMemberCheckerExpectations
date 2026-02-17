@@ -14,12 +14,6 @@ mac/Misc/WebElementDictionary.h
 mac/Misc/WebUserContentURLPattern.h
 [ Mac ] mac/Panels/WebAuthenticationPanel.h
 [ Mac ] mac/Panels/WebPanelAuthenticationHandler.m
-mac/Plugins/WebBasePluginPackage.h
-mac/Plugins/WebPluginContainerCheck.h
-mac/Plugins/WebPluginController.h
-mac/Plugins/WebPluginDatabase.h
-mac/Plugins/WebPluginDatabase.mm
-mac/Plugins/WebPluginPackage.h
 mac/Storage/WebDatabaseQuotaManager.h
 mac/WebCoreSupport/WebAlternativeTextClient.h
 mac/WebCoreSupport/WebDragClient.h

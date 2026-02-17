@@ -161,10 +161,7 @@ mac/DefaultDelegates/WebDefaultContextMenuDelegate.mm @nonARC
 
 mac/Misc/WebSharingServicePickerController.mm @nonARC
 
-mac/Plugins/WebBasePluginPackage.mm @nonARC
-mac/Plugins/WebPluginContainerCheck.mm @nonARC
-mac/Plugins/WebPluginController.mm @nonARC
-mac/Plugins/WebPluginDatabase.mm @nonARC
+mac/Plugins/WebPluginViewFactory.mm @nonARC
 
 mac/History/WebBackForwardList.mm @nonARC
 mac/WebCoreSupport/TextIndicatorWindow.mm @nonARC

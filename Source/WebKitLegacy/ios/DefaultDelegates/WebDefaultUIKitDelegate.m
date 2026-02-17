@@ -145,7 +145,7 @@ static WebDefaultUIKitDelegate *sharedDelegate = nil;
     
 }
 
-- (NSView *)webView:(WebView *)webView plugInViewWithArguments:(NSDictionary *)arguments fromPlugInPackage:(WebPluginPackage *)package
+- (NSView *)webView:(WebView *)webView plugInViewWithArguments:(NSDictionary *)arguments fromPlugInPackage:(id)package
 {
     return nil;
 }

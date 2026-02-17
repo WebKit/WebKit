@@ -8,7 +8,6 @@ mac/Misc/WebNSObjectExtras.mm
 [ Mac ] mac/Misc/WebNSPasteboardExtras.mm
 [ Mac ] mac/Panels/WebAuthenticationPanel.m
 [ Mac ] mac/Panels/WebPanelAuthenticationHandler.m
-mac/Plugins/WebPluginController.mm
 mac/Storage/WebDatabaseManager.mm
 mac/Storage/WebStorageManager.mm
 mac/WebView/WebDeviceOrientationProviderMock.mm

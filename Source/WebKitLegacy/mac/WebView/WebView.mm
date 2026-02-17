@@ -101,8 +101,6 @@
 #import "WebPDFView.h"
 #import "WebPaymentCoordinatorClient.h"
 #import "WebPlatformStrategies.h"
-#import "WebPluginDatabase.h"
-#import "WebPluginInfoProvider.h"
 #import "WebPolicyDelegate.h"
 #import "WebPreferenceKeysPrivate.h"
 #import "WebPreferencesInternal.h"
@@ -320,7 +318,6 @@
 #import "WebNSUserDefaultsExtras.h"
 #import "WebPDFViewIOS.h"
 #import "WebPlainWhiteView.h"
-#import "WebPluginController.h"
 #import "WebPolicyDelegatePrivate.h"
 #import "WebStorageManagerPrivate.h"
 #import "WebUIKitSupport.h"
@@ -1530,7 +1527,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
     pageConfiguration.alternativeTextClient = makeUnique<WebAlternativeTextClient>(self);
     pageConfiguration.databaseProvider = WebDatabaseProvider::singleton();
-    pageConfiguration.pluginInfoProvider = WebPluginInfoProvider::singleton();
     pageConfiguration.storageNamespaceProvider = _private->group->storageNamespaceProvider();
     pageConfiguration.visitedLinkStore = _private->group->visitedLinkStore();
     _private->page = WebCore::Page::create(WTF::move(pageConfiguration));
@@ -1672,8 +1668,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
 + (NSArray *)_supportedMIMETypes
 {
-    // Load the plug-in DB allowing plug-ins to install types.
-    [WebPluginDatabase sharedDatabase];
     return [[WebFrameView _viewTypesAllowImageTypeOmission:NO] allKeys];
 }
 
@@ -1702,7 +1696,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     static BOOL isWebThreadEnabled = NO;
     if (!isWebThreadEnabled) {
         WebCoreObjCDeallocOnWebThread([DOMObject class]);
-        WebCoreObjCDeallocOnWebThread([WebBasePluginPackage class]);
         WebCoreObjCDeallocOnWebThread([WebDataSource class]);
         WebCoreObjCDeallocOnWebThread([WebFrame class]);
         WebCoreObjCDeallocOnWebThread([WebHTMLView class]);
@@ -1785,7 +1778,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.databaseProvider = WebDatabaseProvider::singleton();
     pageConfiguration.storageNamespaceProvider = _private->group->storageNamespaceProvider();
     pageConfiguration.visitedLinkStore = _private->group->visitedLinkStore();
-    pageConfiguration.pluginInfoProvider = WebPluginInfoProvider::singleton();
 
     _private->page = WebCore::Page::create(WTF::move(pageConfiguration));
     storageProvider->setPage(*_private->page);
@@ -2171,11 +2163,6 @@ static NSMutableSet *knownPluginMIMETypes()
 #endif
         // Our optimization to avoid loading the plug-in DB and image types for the HTML case failed.
 
-        if (allowPlugins) {
-            // Load the plug-in DB allowing plug-ins to install types.
-            [WebPluginDatabase sharedDatabase];
-        }
-
         // Load the image types and get the view class and rep class. This should be the fullest picture of all handled types.
         viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:NO] _webkit_objectForMIMEType:MIMEType];
         repClass = [[WebDataSource _repTypesAllowImageTypeOmission:NO] _webkit_objectForMIMEType:MIMEType];
@@ -2209,21 +2196,7 @@ static NSMutableSet *knownPluginMIMETypes()
 
 - (BOOL)_viewClass:(Class *)vClass andRepresentationClass:(Class *)rClass forMIMEType:(NSString *)MIMEType
 {
-    if ([[self class] _viewClass:vClass andRepresentationClass:rClass forMIMEType:MIMEType allowingPlugins:NO])
-        return YES;
-#if !PLATFORM(IOS_FAMILY)
-    if (_private->pluginDatabase) {
-        WebBasePluginPackage *pluginPackage = [_private->pluginDatabase pluginForMIMEType:MIMEType];
-        if (pluginPackage) {
-            if (vClass)
-                *vClass = [WebHTMLView class];
-            if (rClass)
-                *rClass = [WebHTMLRepresentation class];
-            return YES;
-        }
-    }
-#endif
-    return NO;
+    return [[self class] _viewClass:vClass andRepresentationClass:rClass forMIMEType:MIMEType allowingPlugins:NO];
 }
 
 + (void)_setAlwaysUsesComplexTextCodePath:(BOOL)f
@@ -2359,22 +2332,6 @@ static NSMutableSet *knownPluginMIMETypes()
 
 - (void)_closePluginDatabases
 {
-    pluginDatabaseClientCount--;
-
-    // Close both sets of plug-in databases because plug-ins need an opportunity to clean up files, etc.
-
-#if !PLATFORM(IOS_FAMILY)
-    // Unload the WebView local plug-in database.
-    if (_private->pluginDatabase) {
-        [_private->pluginDatabase destroyAllPluginInstanceViews];
-        [_private->pluginDatabase close];
-        _private->pluginDatabase = nil;
-    }
-#endif
-
-    // Keep the global plug-in database active until the app terminates to avoid having to reload plug-in bundles.
-    if (!pluginDatabaseClientCount && applicationIsTerminating)
-        [WebPluginDatabase closeSharedDatabase];
 }
 
 - (void)_closeWithFastTeardown
@@ -3439,7 +3396,7 @@ IGNORE_WARNINGS_END
                         element:domElement
                             URL:linkURL ? linkURL : (NSURL *)[element objectForKey:WebElementImageURLKey]
                           title:[element objectForKey:WebElementImageAltStringKey]
-                        archive:[[element objectForKey:WebElementDOMNodeKey] webArchive]
+                        archive:[domElement webArchive]
                           types:types
                          source:nil];
 }
@@ -3654,56 +3611,25 @@ IGNORE_WARNINGS_END
 #if !PLATFORM(IOS_FAMILY)
 - (void)_setAdditionalWebPlugInPaths:(NSArray *)newPaths
 {
-    if (!_private->pluginDatabase)
-        _private->pluginDatabase = adoptNS([[WebPluginDatabase alloc] init]);
-
-    [_private->pluginDatabase setPlugInPaths:newPaths];
-    [_private->pluginDatabase refresh];
 }
 #endif
 
 #if PLATFORM(IOS_FAMILY)
 - (BOOL)_locked_plugInsAreRunningInFrame:(WebFrame *)frame
 {
-    // Ask plug-ins in this frame
-    id <WebDocumentView> documentView = [[frame frameView] documentView];
-    if (documentView && [documentView isKindOfClass:[WebHTMLView class]]) {
-        if ([[(WebHTMLView *)documentView _pluginController] plugInsAreRunning])
-            return YES;
-    }
-
-    // Ask plug-ins in child frames
-    NSArray *childFrames = [frame childFrames];
-    unsigned childCount = [childFrames count];
-    unsigned childIndex;
-    for (childIndex = 0; childIndex < childCount; childIndex++) {
-        if ([self _locked_plugInsAreRunningInFrame:[childFrames objectAtIndex:childIndex]])
-            return YES;
-    }
-
+    UNUSED_PARAM(frame);
     return NO;
 }
 
 - (BOOL)_pluginsAreRunning
 {
-    WebThreadLock();
-    return [self _locked_plugInsAreRunningInFrame:[self mainFrame]];
+    return NO;
 }
 
 - (void)_locked_recursivelyPerformPlugInSelector:(SEL)selector inFrame:(WebFrame *)frame
 {
-    // Send the message to plug-ins in this frame
-    id <WebDocumentView> documentView = [[frame frameView] documentView];
-    if (documentView && [documentView isKindOfClass:[WebHTMLView class]])
-        [[(WebHTMLView *)documentView _pluginController] performSelector:selector];
-
-    // Send the message to plug-ins in child frames
-    NSArray *childFrames = [frame childFrames];
-    unsigned childCount = [childFrames count];
-    unsigned childIndex;
-    for (childIndex = 0; childIndex < childCount; childIndex++) {
-        [self _locked_recursivelyPerformPlugInSelector:selector inFrame:[childFrames objectAtIndex:childIndex]];
-    }
+    UNUSED_PARAM(selector);
+    UNUSED_PARAM(frame);
 }
 
 - (void)_destroyAllPlugIns
@@ -5140,9 +5066,6 @@ IGNORE_WARNINGS_END
     if (fastDocumentTeardownEnabled())
         [self closeAllWebViews];
 
-    if (!pluginDatabaseClientCount)
-        [WebPluginDatabase closeSharedDatabase];
-
     WebKit::WebStorageNamespaceProvider::closeLocalStorage();
 }
 #endif // !PLATFORM(IOS_FAMILY)
@@ -5162,34 +5085,29 @@ IGNORE_WARNINGS_END
     return [[self class] _canShowMIMEType:MIMEType allowingPlugins:NO];
 }
 
-- (WebBasePluginPackage *)_pluginForMIMEType:(NSString *)MIMEType
+- (id)_pluginForMIMEType:(NSString *)MIMEType
 {
+    UNUSED_PARAM(MIMEType);
     return nil;
 }
 
-- (WebBasePluginPackage *)_pluginForExtension:(NSString *)extension
+- (id)_pluginForExtension:(NSString *)extension
 {
+    UNUSED_PARAM(extension);
     return nil;
 }
 
 #if !PLATFORM(IOS_FAMILY)
 - (void)addPluginInstanceView:(NSView *)view
 {
-    if (!_private->pluginDatabase)
-        _private->pluginDatabase = adoptNS([[WebPluginDatabase alloc] init]);
-    [_private->pluginDatabase addPluginInstanceView:view];
 }
 
 - (void)removePluginInstanceView:(NSView *)view
 {
-    if (_private->pluginDatabase)
-        [_private->pluginDatabase removePluginInstanceView:view];
 }
 
 - (void)removePluginInstanceViewsFor:(WebFrame*)webFrame
 {
-    if (_private->pluginDatabase)
-        [_private->pluginDatabase removePluginInstanceViewsFor:webFrame];
 }
 #endif
 

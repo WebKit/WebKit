@@ -40,8 +40,6 @@
 #import <WebKitLegacy/WebHistory.h>
 #import <WebKitLegacy/WebHistoryItem.h>
 #import <WebKitLegacy/WebKitErrors.h>
-#import <WebKitLegacy/WebPlugin.h>
-#import <WebKitLegacy/WebPluginContainer.h>
 #import <WebKitLegacy/WebPluginViewFactory.h>
 #import <WebKitLegacy/WebPolicyDelegate.h>
 #import <WebKitLegacy/WebPreferences.h>

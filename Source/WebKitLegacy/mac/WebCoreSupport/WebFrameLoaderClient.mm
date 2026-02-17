@@ -32,7 +32,6 @@
 #import "DOMElementInternal.h"
 #import "DOMHTMLFormElementInternal.h"
 #import "WebBackForwardList.h"
-#import "WebBasePluginPackage.h"
 #import "WebCachedFramePlatformData.h"
 #import "WebChromeClient.h"
 #import "WebDataSourceInternal.h"
@@ -59,8 +58,6 @@
 #import "WebNSURLExtras.h"
 #import "WebNavigationData.h"
 #import "WebPanelAuthenticationHandler.h"
-#import "WebPluginController.h"
-#import "WebPluginPackage.h"
 #import "WebPluginViewFactoryPrivate.h"
 #import "WebPolicyDelegate.h"
 #import "WebPolicyDelegatePrivate.h"
@@ -267,11 +264,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 void WebFrameLoaderClient::detachedFromParent2()
 {
-    //remove any NetScape plugins that are children of this frame because they are about to be detached
     RetainPtr webView = getWebView(m_webFrame.get());
-#if !PLATFORM(IOS_FAMILY)
-    [webView.get() removePluginInstanceViewsFor:(m_webFrame.get())];
-#endif
     [m_webFrame->_private->webFrameView _setWebFrame:nil]; // needed for now to be compatible w/ old behavior
 
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView.get());
@@ -1636,69 +1629,19 @@ static AtomString parameterValue(const Vector<AtomString>& paramNames, const Vec
     return nullAtom();
 }
 
-static NSView *pluginView(WebFrame *frame, WebPluginPackage *pluginPackage,
-    NSArray *attributeNames, NSArray *attributeValues, NSURL *baseURL,
-    DOMElement *element, BOOL loadManually)
-{
-    WebHTMLView *docView = (WebHTMLView *)[[frame frameView] documentView];
-    ASSERT([docView isKindOfClass:[WebHTMLView class]]);
-
-    WebPluginController *pluginController = [docView _pluginController];
-
-    // Store attributes in a dictionary so they can be passed to WebPlugins.
-    auto attributes = adoptNS([[NSMutableDictionary alloc] initWithObjects:attributeValues forKeys:attributeNames]);
-
-    [pluginPackage load];
-    Class viewFactory = [pluginPackage viewFactory];
-    
-    NSDictionary *arguments = nil;
-
-IGNORE_WARNINGS_BEGIN("undeclared-selector")
-    auto oldSelector = @selector(pluginViewWithArguments:);
-IGNORE_WARNINGS_END
-
-    if ([viewFactory respondsToSelector:@selector(plugInViewWithArguments:)]) {
-        arguments = @{
-            WebPlugInBaseURLKey: baseURL,
-            WebPlugInAttributesKey: attributes.get(),
-            WebPlugInContainerKey: pluginController,
-            WebPlugInModeKey: @(loadManually ? WebPlugInModeFull : WebPlugInModeEmbed),
-            WebPlugInShouldLoadMainResourceKey: [NSNumber numberWithBool:!loadManually],
-            WebPlugInContainingElementKey: element,
-        };
-        LOG(Plugins, "arguments:\n%@", arguments);
-    } else if ([viewFactory respondsToSelector:oldSelector]) {
-        arguments = @{
-            WebPluginBaseURLKey: baseURL,
-            WebPluginAttributesKey: attributes.get(),
-            WebPluginContainerKey: pluginController,
-            WebPlugInContainingElementKey: element,
-        };
-        LOG(Plugins, "arguments:\n%@", arguments);
-    }
-    (void)arguments;
-
-    return nil;
-}
-
 class PluginWidget : public WebCore::PluginViewBase {
 public:
     PluginWidget(NSView *view = nil)
         : WebCore::PluginViewBase(view)
     {
     }
-    
+
 private:
     virtual void invalidateRect(const WebCore::IntRect& rect)
     {
         [platformWidget() setNeedsDisplayInRect:rect];
     }
 };
-
-static bool shouldBlockPlugin(WebBasePluginPackage *)
-{
-    return true;
-}
 
 RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(WebCore::HTMLPlugInElement& element, const URL& url,
     const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, const String& mimeType, bool loadManually)
@@ -1707,11 +1650,8 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(WebCore::HTMLPlugInEl
 
     ASSERT(paramNames.size() == paramValues.size());
 
-    int errorCode = 0;
-
     RetainPtr webView = getWebView(m_webFrame.get());
     auto* document = core(m_webFrame.get())->document();
-    RetainPtr baseURL = document->baseURL().createNSURL();
     RetainPtr pluginURL = url.createNSURL();
     auto attributeKeys = createNSArray(paramNames);
 
@@ -1735,87 +1675,29 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(WebCore::HTMLPlugInEl
     }
 #endif
 
-    RetainPtr<NSString> MIMEType;
-    WebBasePluginPackage *pluginPackage;
-    if (mimeType.isEmpty())
-        pluginPackage = nil;
-    else {
-        MIMEType = mimeType.createNSString();
-        pluginPackage = [webView.get() _pluginForMIMEType:MIMEType.get()];
-    }
+    int errorCode = WebKitErrorCannotFindPlugIn;
+    RetainPtr<NSString> MIMEType = mimeType.createNSString();
 
-    NSString *extension = [[pluginURL path] pathExtension];
-
-#if PLATFORM(IOS_FAMILY)
-    if (!pluginPackage && [extension length])
-#else
-    if (!pluginPackage && [extension length] && ![MIMEType length])
-#endif
-    {
-        pluginPackage = [webView.get() _pluginForExtension:extension];
-        if (pluginPackage) {
-            RetainPtr newMIMEType = [pluginPackage MIMETypeForExtension:extension];
-            if ([newMIMEType length] != 0)
-                MIMEType = WTF::move(newMIMEType);
-        }
-    }
-
-    RetainPtr<NSView> view;
-
-    if (pluginPackage) {
-        if (shouldBlockPlugin(pluginPackage)) {
-            errorCode = WebKitErrorBlockedPlugInVersion;
-            if (is<WebCore::RenderEmbeddedObject>(element.renderer()))
-                downcast<WebCore::RenderEmbeddedObject>(*element.renderer()).setPluginUnavailabilityReason(WebCore::PluginUnavailabilityReason::InsecurePluginVersion);
-        } else {
-            if ([pluginPackage isKindOfClass:[WebPluginPackage class]])
-                view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, attributeKeys.get(), createNSArray(paramValues).get(), baseURL.get(), kit(&element), loadManually);
-        }
-    } else
-        errorCode = WebKitErrorCannotFindPlugIn;
-
-    if (!errorCode && !view)
-        errorCode = WebKitErrorCannotLoadPlugIn;
-
-    if (errorCode && m_webFrame) {
+    if (m_webFrame) {
         WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView.get());
         if (implementations->plugInFailedWithErrorFunc) {
             URL pluginPageURL = document->completeURL(parameterValue(paramNames, paramValues, "pluginspage"_s));
             if (!pluginPageURL.protocolIsInHTTPFamily())
                 pluginPageURL = URL();
-            RetainPtr pluginName = pluginPackage ? [pluginPackage pluginInfo].name.createNSString() : nil;
 
-            RetainPtr error = adoptNS([[NSError alloc] _initWithPluginErrorCode:errorCode contentURL:pluginURL.get() pluginPageURL:pluginPageURL.createNSURL().get() pluginName:pluginName.get() MIMEType:MIMEType.get()]);
+            RetainPtr error = adoptNS([[NSError alloc] _initWithPluginErrorCode:errorCode contentURL:pluginURL.get() pluginPageURL:pluginPageURL.createNSURL().get() pluginName:nil MIMEType:MIMEType.get()]);
             CallResourceLoadDelegate(implementations->plugInFailedWithErrorFunc, [m_webFrame.get() webView],
                                      @selector(webView:plugInFailedWithError:dataSource:), error.get(), [m_webFrame.get() _dataSource]);
         }
-
-        return nullptr;
     }
-
-    ASSERT(view);
-    return adoptRef(new PluginWidget(view.get()));
 
     END_BLOCK_OBJC_EXCEPTIONS
 
     return nullptr;
 }
 
-void WebFrameLoaderClient::redirectDataToPlugin(WebCore::Widget& pluginWidget)
+void WebFrameLoaderClient::redirectDataToPlugin(WebCore::Widget&)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-
-    WebHTMLRepresentation *representation = (WebHTMLRepresentation *)[[m_webFrame.get() _dataSource] representation];
-
-    RetainPtr pluginView = pluginWidget.platformWidget();
-
-    {
-        WebHTMLView *documentView = (WebHTMLView *)[[m_webFrame.get() frameView] documentView];
-        ASSERT([documentView isKindOfClass:[WebHTMLView class]]);
-        [representation _redirectDataToManualLoader:[documentView _pluginController] forPluginView:pluginView.get()];
-    }
-
-    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void WebFrameLoaderClient::sendH2Ping(const URL& url, CompletionHandler<void(Expected<Seconds, WebCore::ResourceError>&&)>&& completionHandler)

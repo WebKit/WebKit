@@ -62,7 +62,6 @@
 #import "WebNSURLExtras.h"
 #import "WebNSViewExtras.h"
 #import "WebNodeHighlight.h"
-#import "WebPluginController.h"
 #import "WebPreferences.h"
 #import "WebPreferencesPrivate.h"
 #import "WebResourcePrivate.h"
@@ -997,8 +996,6 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     NSPoint lastScrollPosition;
     BOOL inScrollPositionChanged;
 
-    RetainPtr<WebPluginController> pluginController;
-    
 #if PLATFORM(MAC)
     RetainPtr<NSString> toolTip;
     NSToolTipTag lastToolTipTag;
@@ -1112,7 +1109,6 @@ static NSControlStateValue kit(TriState state)
 
     mouseDownEvent = nil;
     keyDownEvent = nil;
-    pluginController = nil;
 #if PLATFORM(MAC)
     toolTip = nil;
     completionController = nil;
@@ -2273,9 +2269,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     [self _removeSuperviewObservers];
 #endif
 
-    [_private->pluginController destroyAllPlugins];
-    [_private->pluginController setDataSource:nil];
-
 #if PLATFORM(MAC)
     // remove tooltips before clearing _private so removeTrackingRect: will work correctly
     [self removeAllToolTips];
@@ -2582,8 +2575,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     [self _setDrawsOwnDescendants:YES];
     
     _private = [[WebHTMLViewPrivate alloc] init];
-
-    _private->pluginController = adoptNS([[WebPluginController alloc] initWithDocumentView:self]);
 
 #if PLATFORM(IOS_FAMILY)
     [[NSNotificationCenter defaultCenter] 
@@ -3219,10 +3210,6 @@ IGNORE_WARNINGS_END
     [self _removeWindowObservers];
     [self _removeSuperviewObservers];
 #endif
-
-    // FIXME: This accomplishes the same thing as the call to setCanStartMedia(false) in
-    // WebView. It would be nice to have a single mechanism instead of two.
-    [[self _pluginController] stopAllPlugins];
 }
 
 - (void)viewDidMoveToWindow
@@ -3241,10 +3228,6 @@ IGNORE_WARNINGS_END
         [self addWindowObservers];
         [self addSuperviewObservers];
 #endif
-
-        // FIXME: This accomplishes the same thing as the call to setCanStartMedia(true) in
-        // WebView. It would be nice to have a single mechanism instead of two.
-        [[self _pluginController] startAllPlugins];
 
         _private->lastScrollPosition = NSZeroPoint;
 
@@ -3274,23 +3257,10 @@ IGNORE_WARNINGS_END
 - (void)addSubview:(NSView *)view
 {
     [super addSubview:view];
-
-    if ([WebPluginController isPlugInView:view]) {
-
-#if PLATFORM(IOS_FAMILY)
-        WebView *webView = [self _webView];
-        [[webView _UIKitDelegateForwarder] webView:webView willAddPlugInView:view];
-#endif
-
-        [[self _pluginController] addPlugin:view];
-    }
 }
 
 - (void)willRemoveSubview:(NSView *)subview
 {
-    if ([WebPluginController isPlugInView:subview])
-        [[self _pluginController] destroyPlugin:subview];
-
     [super willRemoveSubview:subview];
 }
 
@@ -4044,7 +4014,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     [_private->completionController endRevertingChange:NO moveLeft:NO];
-    [[self _pluginController] destroyAllPlugins];
 }
 
 #endif // PLATFORM(MAC)
@@ -4654,7 +4623,6 @@ static RefPtr<WebCore::KeyboardEvent> currentKeyboardEvent(WebCore::LocalFrame* 
     ASSERT(!_private->closed);
 
     _private->dataSource = dataSource;
-    [_private->pluginController setDataSource:dataSource];
 
 #if PLATFORM(MAC)
     if (!_private->installedTrackingArea) {
@@ -6118,11 +6086,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         coreFrame->view()->updateLayoutAndStyleIfNeededRecursive(WebCore::LayoutOptions::UpdateCompositingLayers);
 }
 
-- (void) _destroyAllWebPlugins
-{
-    [[self _pluginController] destroyAllPlugins];
-}
-
 - (BOOL)_needsLayout
 {
     return [[self _frame] _needsLayout];
@@ -6237,11 +6200,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _private->autoscrollTimer = nil;
     _private->autoscrollTriggerEvent = nil;
 #endif
-}
-
-- (WebPluginController *)_pluginController
-{
-    return _private->pluginController.get();
 }
 
 - (WebCore::ScrollbarWidth)_scrollbarWidthStyle

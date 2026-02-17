@@ -196,7 +196,6 @@ NSString *WebPageCacheDataSourceKey = @"WebPageCacheDataSourceKey";
 NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 NSString *WebFrameMainDocumentError = @"WebFrameMainDocumentErrorKey";
-NSString *WebFrameHasPlugins = @"WebFrameHasPluginsKey";
 NSString *WebFrameHasUnloadListener = @"WebFrameHasUnloadListenerKey";
 NSString *WebFrameUsesDatabases = @"WebFrameUsesDatabasesKey";
 NSString *WebFrameUsesGeolocation = @"WebFrameUsesGeolocationKey";
@@ -2069,10 +2068,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     auto* documentLoader = frameLoader.documentLoader();
     if (documentLoader && !documentLoader->mainDocumentError().isNull())
         [result setObject:(NSError *)documentLoader->mainDocumentError() forKey:WebFrameMainDocumentError];
-        
-    if (frameLoader.subframeLoader().containsPlugins())
-        [result setObject:@YES forKey:WebFrameHasPlugins];
-    
+
     if (auto* window = _private->coreFrame->document()->window()) {
         if (window->hasEventListeners(WebCore::eventNames().unloadEvent))
             [result setObject:@YES forKey:WebFrameHasUnloadListener];

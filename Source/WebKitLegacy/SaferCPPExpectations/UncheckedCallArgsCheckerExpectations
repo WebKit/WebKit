@@ -87,8 +87,6 @@ mac/DOM/WebDOMOperations.mm
 mac/Misc/WebElementDictionary.mm
 [ Mac ] mac/Misc/WebNSPasteboardExtras.mm
 [ Mac ] mac/Misc/WebStringTruncator.mm
-mac/Plugins/WebPluginContainerCheck.mm
-[ Mac ] mac/Plugins/WebPluginController.mm
 [ Mac ] mac/WebCoreSupport/PopupMenuMac.mm
 mac/WebCoreSupport/WebChromeClient.mm
 [ Mac ] mac/WebCoreSupport/WebContextMenuClient.mm

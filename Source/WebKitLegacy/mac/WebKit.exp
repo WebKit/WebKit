@@ -139,7 +139,6 @@
 .objc_class_name_WebKitStatistics
 .objc_class_name_WebNavigationData
 .objc_class_name_WebNotification
-.objc_class_name_WebPluginDatabase
 .objc_class_name_WebPolicyDecisionListener
 .objc_class_name_WebPreferences
 .objc_class_name_WebResource
@@ -201,7 +200,6 @@ _WebElementMediaURLKey
 _WebElementSpellingToolTipKey
 _WebElementTitleKey
 _WebFrameCanSuspendActiveDOMObjects
-_WebFrameHasPlugins
 _WebFrameHasUnloadListener
 _WebFrameMainDocumentError
 _WebFrameUsesDatabases

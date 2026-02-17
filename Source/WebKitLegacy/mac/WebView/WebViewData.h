@@ -63,7 +63,6 @@ class PlaybackSessionModelMediaElement;
 @class WebImmediateActionController;
 @class WebInspector;
 @class WebNodeHighlight;
-@class WebPluginDatabase;
 @class WebPreferences;
 @class WebTextCompletionController;
 @protocol WebFormDelegate;
@@ -95,7 +94,6 @@ class WebMediaPlaybackTargetPicker;
 #endif
 
 extern BOOL applicationIsTerminating;
-extern int pluginDatabaseClientCount;
 
 class TextIndicatorWindow;
 class WebViewGroup;
@@ -258,11 +256,6 @@ class WebSelectionServiceController;
     RetainPtr<NSString> draggedLinkTitle;
 #endif
 
-#if !PLATFORM(IOS_FAMILY)
-    // WebKit has both a global plug-in database and a separate, per WebView plug-in database.
-    RetainPtr<WebPluginDatabase> pluginDatabase;
-#endif
-    
     HashMap<unsigned long, RetainPtr<id>> identifierMap;
 
     BOOL _keyboardUIModeAccessed;

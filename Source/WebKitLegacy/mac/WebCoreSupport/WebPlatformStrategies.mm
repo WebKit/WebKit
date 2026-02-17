@@ -26,7 +26,6 @@
 #import "WebPlatformStrategies.h"
 
 #import "WebFrameNetworkingContext.h"
-#import "WebPluginPackage.h"
 #import "WebResourceLoadScheduler.h"
 #import <WebCore/AudioDestination.h>
 #import <WebCore/BlobRegistryImpl.h>

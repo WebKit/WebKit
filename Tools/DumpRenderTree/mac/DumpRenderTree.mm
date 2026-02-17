@@ -87,7 +87,6 @@
 #import <WebKit/WebInspector.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNSURLExtras.h>
-#import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPreferenceKeysPrivate.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPreferencesPrivate.h>
@@ -1039,11 +1038,6 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
 
 static void addTestPluginsToPluginSearchPath(const char* executablePath)
 {
-#if !PLATFORM(IOS_FAMILY)
-    NSString *pwd = [[NSString stringWithUTF8String:executablePath] stringByDeletingLastPathComponent];
-    [WebPluginDatabase setAdditionalWebPlugInPaths:@[pwd]];
-    [[WebPluginDatabase sharedDatabase] refresh];
-#endif
 }
 
 static bool useLongRunningServerMode(int argc, const char *argv[])
