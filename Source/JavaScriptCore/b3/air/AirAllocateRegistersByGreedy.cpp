@@ -2140,6 +2140,11 @@ private:
         return 16;
     }
 
+    unsigned stackSlotMinimumWidth(Tmp tmp)
+    {
+        return stackSlotMinimumWidth(m_tmpWidth.requiredWidth(tmp));
+    }
+
     void spill(Tmp tmp, TmpData& tmpData)
     {
         RELEASE_ASSERT(tmpData.spillCost() != unspillableCost);
@@ -2182,26 +2187,20 @@ private:
         return true;
     }
 
-    Opcode moveOpcode(Tmp tmp)
+    Opcode moveOpcode(Bank bank, unsigned byteWidth)
     {
-        Opcode move = Oops;
-        Width width = m_tmpWidth.requiredWidth(tmp);
-        switch (stackSlotMinimumWidth(width)) {
+        ASSERT(bank == GP || bank == FP);
+        switch (byteWidth) {
         case 4:
-            move = tmp.bank() == GP ? Move32 : MoveFloat;
-            break;
+            return bank == GP ? Move32 : MoveFloat;
         case 8:
-            move = tmp.bank() == GP ? Move : MoveDouble;
-            break;
+            return bank == GP ? Move : MoveDouble;
         case 16:
-            ASSERT(tmp.bank() == FP);
-            move = MoveVector;
-            break;
+            ASSERT(bank == FP);
+            return MoveVector;
         default:
             RELEASE_ASSERT_NOT_REACHED();
-            break;
         }
-        return move;
     }
 
     template<Bank bank>
@@ -2374,7 +2373,6 @@ private:
                     if (!spilled)
                         return;
 
-                    Opcode move = moveOpcode(tmp);
                     auto originalTmp = tmp;
                     auto tmpIndex = AbsoluteTmpMapper<bank>::absoluteIndex(tmp);
 
@@ -2405,7 +2403,8 @@ private:
                                 dataLogLnIf(verbose(), "Rematerialized (bigImm) BB", *block, " ", originalTmp, ": ", tmp, " <- ", WTF::RawHex(value));
                             }
                         } else {
-                            m_insertionSets[block].insert(instIndex, spillLoad, move, inst.origin, arg, tmp);
+                            Opcode loadOp = moveOpcode(bank, stackSlotMinimumWidth(tmp));
+                            m_insertionSets[block].insert(instIndex, spillLoad, loadOp, inst.origin, arg, tmp);
                             m_stats[bank].numLoadSpill++;
                         }
                     }
@@ -2417,7 +2416,8 @@ private:
                             dataLogLnIf(verbose(), "Rematerialized BB", *block, " removing def inst: ", inst);
                         } else {
                             ASSERT(!doKillInst);
-                            m_insertionSets[block].insert(instIndex + 1, spillStore, move, inst.origin, tmp, arg);
+                            Opcode storeOp = moveOpcode(bank, arg.stackSlot()->byteSize());
+                            m_insertionSets[block].insert(instIndex + 1, spillStore, storeOp, inst.origin, tmp, arg);
                             m_stats[bank].numStoreSpill++;
                         }
                     }
@@ -2467,13 +2467,19 @@ private:
                 unsigned instIndex = this->instIndex(positionOfHead(block), lastPoint);
                 Inst& inst = block->at(instIndex);
 
-                Arg arg = gapTmp;
+                Arg arg;
+                unsigned byteWidth;
                 StackSlot* spilled = spillSlot(gapTmp);
-                if (spilled)
+                if (spilled) {
                     arg = Arg::stack(spilled);
-                Opcode move = moveOpcode(gapTmp);
-                m_insertionSets[block].insert(instIndex, splitMoveFrom, move, inst.origin, metadata.originalTmp, arg);
-                m_insertionSets[block].insert(instIndex + 1, splitMoveTo, move, inst.origin, arg, metadata.originalTmp);
+                    byteWidth = spilled->byteSize();
+                } else {
+                    arg = gapTmp;
+                    byteWidth = stackSlotMinimumWidth(gapTmp);
+                }
+                Opcode moveOp = moveOpcode(gapTmp.bank(), byteWidth);
+                m_insertionSets[block].insert(instIndex, splitMoveFrom, moveOp, inst.origin, metadata.originalTmp, arg);
+                m_insertionSets[block].insert(instIndex + 1, splitMoveTo, moveOp, inst.origin, arg, metadata.originalTmp);
                 dataLogLnIf(verbose(), "Inserted Moves around clobber tmp=", metadata.originalTmp, " gapTmp=", gapTmp, " gapReg = ", assignedReg(gapTmp), " block=", *block, " index=", instIndex, " inst = ", inst);
             }
         }
@@ -2485,9 +2491,11 @@ private:
 
         Tmp originalTmp = metadata.originalTmp;
         Bank bank = originalTmp.bank();
-        Opcode move = moveOpcode(originalTmp);
         StackSlot* spilled = spillSlot(originalTmp);
         ASSERT(spilled);
+
+        Opcode loadOp = moveOpcode(originalTmp.bank(), stackSlotMinimumWidth(originalTmp));
+        Opcode storeOp = moveOpcode(originalTmp.bank(), spilled->byteSize());
 
         for (auto& split : metadata.splits) {
             Tmp clusterTmp = split.tmp;
@@ -2507,7 +2515,7 @@ private:
             // trySplitIntraBlock includes the Pre point in the cluster interval iff the original Tmp is live into the cluster.
             if (pointAtOffset(clusterInterval.begin(), PointOffsets::Pre) == clusterInterval.begin()) {
                 unsigned instIndex = this->instIndex(positionOfHead, clusterInterval.begin());
-                m_insertionSets[block].insert(instIndex, splitMoveFrom, move, block->at(instIndex).origin, Arg::stack(spilled), clusterTmp);
+                m_insertionSets[block].insert(instIndex, splitMoveFrom, loadOp, block->at(instIndex).origin, Arg::stack(spilled), clusterTmp);
                 m_stats[bank].numSplitIntraBlockLoad++;
             } else
                 ASSERT(split.lastDefPoint);
@@ -2515,7 +2523,7 @@ private:
             // Need to store back into the original Tmp's spill slot only if the cluster def'ed the Tmp
             if (split.lastDefPoint) {
                 unsigned instIndex = this->instIndex(positionOfHead, split.lastDefPoint);
-                m_insertionSets[block].insert(instIndex + 1, splitMoveTo, move, block->at(instIndex).origin, clusterTmp, Arg::stack(spilled));
+                m_insertionSets[block].insert(instIndex + 1, splitMoveTo, storeOp, block->at(instIndex).origin, clusterTmp, Arg::stack(spilled));
                 m_stats[bank].numSplitIntraBlockStore++;
             }
         }
