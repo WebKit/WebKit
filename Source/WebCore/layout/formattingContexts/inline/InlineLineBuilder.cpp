@@ -380,6 +380,7 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Inl
     m_partialLeadingTextItem = { };
     m_initialLetterClearGap = { };
     m_candidateContentMaximumHeight = { };
+    m_hasAdjustedLineRectWithBlockMargin = false;
     inlineContentBreaker().setHyphenationDisabled(layoutState().isHyphenationDisabled());
 
     auto createLineSpanningInlineBoxes = [&] {
@@ -1202,7 +1203,7 @@ LineBuilder::RectAndFloatConstraints LineBuilder::adjustedLineRectWithCandidateI
     return floatAvoidingRect({ m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), candidateContentHeight }, m_lineMarginStart);
 }
 
-bool LineBuilder::applyMarginInBlockDirectionIfNeeded()
+bool LineBuilder::applyMarginInBlockDirectionIfNeeded(ShouldResetMarginValues shouldResetMarginValues)
 {
     // We don't know if margin coming from previous content should be applied or not
     // until after we managed to put some inline content on the line.
@@ -1213,16 +1214,19 @@ bool LineBuilder::applyMarginInBlockDirectionIfNeeded()
     // while in the second case, it is somewhere after the second block container (can't tell).
     auto& marginState = blockLayoutState().marginState();
     auto lineOffsetInBlockDirection = marginState.margin();
-    marginState.resetMarginValues();
+    if (shouldResetMarginValues == ShouldResetMarginValues::Yes)
+        marginState.resetMarginValues();
 
     if (marginState.atBeforeSideOfBlock) {
-        marginState.resetBeforeSideOfBlock();
+        if (shouldResetMarginValues == ShouldResetMarginValues::Yes)
+            marginState.resetBeforeSideOfBlock();
         return false;
     }
 
-    if (!lineOffsetInBlockDirection)
+    if (!lineOffsetInBlockDirection || m_hasAdjustedLineRectWithBlockMargin)
         return false;
 
+    m_hasAdjustedLineRectWithBlockMargin = true;
     m_lineLogicalRect = { m_lineLogicalRect.top() + lineOffsetInBlockDirection, m_lineInitialLogicalRect.left(), m_lineInitialLogicalRect.width(), m_lineInitialLogicalRect.height() };
     return true;
 }
@@ -1320,7 +1324,7 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
     if (isFloatLayoutSuspended())
         return false;
 
-    auto didApplyMargin = applyMarginInBlockDirectionIfNeeded();
+    auto didApplyMargin = applyMarginInBlockDirectionIfNeeded(ShouldResetMarginValues::No);
     ASSERT_UNUSED(didApplyMargin, !didApplyMargin || !m_line.hasContentOrListMarker());
 
     auto& floatingContext = this->floatingContext();
@@ -1417,7 +1421,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
     if (!m_line.hasContentOrListMarker())
         return result;
 
-    if (!applyMarginInBlockDirectionIfNeeded() || floatingContext().isEmpty())
+    if (!applyMarginInBlockDirectionIfNeeded(ShouldResetMarginValues::Yes) || floatingContext().isEmpty())
         return result;
 
     auto relayoutCanidateContent = [&] {
