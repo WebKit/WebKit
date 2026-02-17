@@ -43,7 +43,6 @@ bindings/js/JSMessagePortCustom.cpp
 bindings/js/JSNavigateEventCustom.cpp
 bindings/js/JSNodeCustom.cpp
 bindings/js/JSObservableArray.cpp
-bindings/js/JSPluginElementFunctions.cpp
 bindings/js/JSPopStateEventCustom.cpp
 bindings/js/JSResizeObserverCustom.cpp
 bindings/js/JSStylePropertyMapReadOnlyCustom.cpp

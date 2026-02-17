@@ -21,7 +21,6 @@
 // https://html.spec.whatwg.org/multipage/iframe-embed-object.html#htmlembedelement
 
 [
-    Plugin,
     Exposed=Window,
     EnabledBySetting=EmbedElementEnabled
 ] interface HTMLEmbedElement : HTMLElement {

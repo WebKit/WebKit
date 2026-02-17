@@ -31,8 +31,6 @@
 #import "JSDOMWindow.h"
 #import "JSDOMWindowCustom.h"
 #import "JSExecState.h"
-#import "JSHTMLElement.h"
-#import "JSPluginElementFunctions.h"
 #import "LocalFrame.h"
 #import "ObjCRuntimeObject.h"
 #import "WebCoreJITOperations.h"
@@ -568,11 +566,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
         JSC::VM& vm = rootObject->globalObject()->vm();
         JSLockHolder lock(vm);
 
-        if (auto* jsHTMLElement = JSC::jsDynamicCast<JSHTMLElement*>(object)) {
-            // Plugin elements cache the instance internally.
-            if (RefPtr instance = downcast<ObjcInstance>(pluginInstance(jsHTMLElement->wrapped())))
-                return instance->getObject();
-        } else if (auto* runtimeObject = JSC::jsDynamicCast<ObjCRuntimeObject*>(object)) {
+        if (auto* runtimeObject = JSC::jsDynamicCast<ObjCRuntimeObject*>(object)) {
             RefPtr instance = runtimeObject->getInternalObjCInstance();
             if (!instance)
                 return nil;

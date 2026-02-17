@@ -27,8 +27,6 @@
 #include "runtime_method.h"
 
 #include "JSDOMBinding.h"
-#include "JSHTMLElement.h"
-#include "JSPluginElementFunctions.h"
 #include "WebCoreJSClientData.h"
 #include "runtime_object.h"
 #include <JavaScriptCore/Error.h>
@@ -95,21 +93,14 @@ JSC_DEFINE_HOST_FUNCTION(callRuntimeMethod, (JSGlobalObject* globalObject, CallF
     if (!method->method())
         return JSValue::encode(jsUndefined());
 
-    RefPtr<Instance> instance;
-
     JSValue thisValue = callFrame->thisValue();
-    if (auto* runtimeObject = jsDynamicCast<RuntimeObject*>(thisValue)) {
-        instance = runtimeObject->getInternalInstance();
-        if (!instance) 
-            return JSValue::encode(throwRuntimeObjectInvalidAccessError(globalObject, scope));
-    } else {
-        // Calling a runtime object of a plugin element?
-        if (auto* jsHTMLElement = jsDynamicCast<JSHTMLElement*>(thisValue))
-            instance = pluginInstance(jsHTMLElement->wrapped());
-        if (!instance)
-            return throwVMTypeError(globalObject, scope);
-    }
-    ASSERT(instance);
+    auto* runtimeObject = jsDynamicCast<RuntimeObject*>(thisValue);
+    if (!runtimeObject)
+        return throwVMTypeError(globalObject, scope);
+
+    RefPtr instance = runtimeObject->getInternalInstance();
+    if (!instance)
+        return JSValue::encode(throwRuntimeObjectInvalidAccessError(globalObject, scope));
 
     instance->begin();
     JSValue result = instance->invokeMethod(globalObject, callFrame, method);

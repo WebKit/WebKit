@@ -103,7 +103,6 @@ JSTestOperationBase.h:
 JSTestOperationConditional.h: TestOperationBase.idl
 TestOperationBase.idl:
 JSTestOverloadedConstructorsWithSequence.h: 
-JSTestPluginInterface.h: 
 JSTestPromiseRejectionEvent.h: 
 JSTestReadOnlyMapLike.h: 
 JSTestReadOnlySetLike.h: 

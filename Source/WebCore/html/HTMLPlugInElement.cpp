@@ -171,6 +171,17 @@ PluginViewBase* HTMLPlugInElement::pluginWidget(PluginLoadingPolicy loadPolicy) 
     return dynamicDowncast<PluginViewBase>(renderWidget->widget());
 }
 
+Document* HTMLPlugInElement::contentDocument() const
+{
+    // Force a synchronous layout to ensure the plugin is loaded before
+    // returning contentDocument. This restores behavior that was previously
+    // provided by the [Plugin] bindings. Only do this when not in a render
+    // tree update, as forcing layout during that time would cause re-entrancy.
+    if (!document().inRenderTreeUpdate())
+        renderWidgetLoadingPlugin();
+    return HTMLFrameOwnerElement::contentDocument();
+}
+
 CheckedPtr<RenderWidget> HTMLPlugInElement::renderWidgetLoadingPlugin() const
 {
     Ref document = this->document();
@@ -596,6 +607,11 @@ void HTMLPlugInElement::updateAfterStyleResolution()
         } else {
             if (needsWidgetUpdate() && renderEmbeddedObject() && !renderEmbeddedObject()->isPluginUnavailable())
                 updateWidget(CreatePlugins::No);
+            // Force a synchronous layout to ensure the plugin is loaded. This
+            // restores behavior that was previously provided by the [Plugin]
+            // bindings which would force layout on any JavaScript property access.
+            if (renderEmbeddedObject() && !renderEmbeddedObject()->isPluginUnavailable())
+                renderWidgetLoadingPlugin();
         }
     }
 
