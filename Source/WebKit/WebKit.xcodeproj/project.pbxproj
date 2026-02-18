@@ -1159,6 +1159,7 @@
 		46F38E8C2416E6730059375A /* RunningBoardServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F38E8B2416E66D0059375A /* RunningBoardServicesSPI.h */; };
 		46F6117F2B955232005F1C4C /* WebNotificationIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F6117E2B955232005F1C4C /* WebNotificationIdentifier.h */; };
 		46F9B26323526EF3006FE5FA /* WebBackForwardCacheEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 46F9B26223526ED0006FE5FA /* WebBackForwardCacheEntry.h */; };
+		48E0172E2F36AEC50065AFB5 /* StreamConnectionBufferRingWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 48E0172D2F36AEC50065AFB5 /* StreamConnectionBufferRingWrapper.h */; };
 		493102BD2683F3D0002BB885 /* AppPrivacyReport.h in Headers */ = {isa = PBXBuildFile; fileRef = 493102BC2683F3A5002BB885 /* AppPrivacyReport.h */; };
 		4955A6E628076D4D00BB91C4 /* ArrayReferenceTuple.h in Headers */ = {isa = PBXBuildFile; fileRef = 4955A6E528076D4C00BB91C4 /* ArrayReferenceTuple.h */; };
 		4973DF482422941F00E4C26A /* NavigatingToAppBoundDomain.h in Headers */ = {isa = PBXBuildFile; fileRef = 4973DF472422941F00E4C26A /* NavigatingToAppBoundDomain.h */; };
@@ -5876,6 +5877,7 @@
 		46F9B26223526ED0006FE5FA /* WebBackForwardCacheEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardCacheEntry.h; sourceTree = "<group>"; };
 		46FA2E752A04240300912BFE /* RemoteWorkerType.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteWorkerType.serialization.in; sourceTree = "<group>"; };
 		48B188FE2E789A3B009B57A9 /* AccessibilityPreferences.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = AccessibilityPreferences.mm; sourceTree = "<group>"; };
+		48E0172D2F36AEC50065AFB5 /* StreamConnectionBufferRingWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StreamConnectionBufferRingWrapper.h; sourceTree = "<group>"; };
 		493102BC2683F3A5002BB885 /* AppPrivacyReport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppPrivacyReport.h; sourceTree = "<group>"; };
 		4955A6E528076D4C00BB91C4 /* ArrayReferenceTuple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayReferenceTuple.h; sourceTree = "<group>"; };
 		4973DF472422941F00E4C26A /* NavigatingToAppBoundDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigatingToAppBoundDomain.h; sourceTree = "<group>"; };
@@ -10926,6 +10928,7 @@
 				7BE5134929768F0D00814F18 /* StreamClientConnectionBuffer.h */,
 				7B73123425CC8524003B2796 /* StreamConnectionBuffer.cpp */,
 				7B73123125CC8523003B2796 /* StreamConnectionBuffer.h */,
+				48E0172D2F36AEC50065AFB5 /* StreamConnectionBufferRingWrapper.h */,
 				7B73123925CC8525003B2796 /* StreamConnectionEncoder.h */,
 				7B73123225CC8523003B2796 /* StreamConnectionWorkQueue.cpp */,
 				7B73123525CC8524003B2796 /* StreamConnectionWorkQueue.h */,
@@ -18675,6 +18678,7 @@
 				7B73123C25CC8525003B2796 /* StreamClientConnection.h in Headers */,
 				7BE5134B29768F0E00814F18 /* StreamClientConnectionBuffer.h in Headers */,
 				7B73123A25CC8525003B2796 /* StreamConnectionBuffer.h in Headers */,
+				48E0172E2F36AEC50065AFB5 /* StreamConnectionBufferRingWrapper.h in Headers */,
 				7B73124225CC8525003B2796 /* StreamConnectionEncoder.h in Headers */,
 				7B73123E25CC8525003B2796 /* StreamConnectionWorkQueue.h in Headers */,
 				F4299507270E234D0032298B /* StreamMessageReceiver.h in Headers */,

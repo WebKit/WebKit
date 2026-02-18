@@ -49,7 +49,7 @@ StreamConnectionBuffer::Handle StreamConnectionBuffer::createHandle()
 
 std::span<uint8_t> StreamConnectionBuffer::headerForTesting()
 {
-    return m_sharedMemory->mutableSpan().first(headerSize());
+    return m_sharedMemory->mutableSpan().subspan(dataSize());
 }
 
 }

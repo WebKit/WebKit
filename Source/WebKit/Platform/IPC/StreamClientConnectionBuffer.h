@@ -27,6 +27,7 @@
 
 #include "IPCSemaphore.h"
 #include "StreamConnectionBuffer.h"
+#include "StreamConnectionBufferRingWrapper.h"
 #include "StreamConnectionEncoder.h"
 
 namespace IPC {
@@ -43,7 +44,7 @@ public:
     enum class WakeUpServer : bool { No, Yes };
     WakeUpServer release(size_t writeSize);
     void resetClientOffset();
-    std::span<uint8_t> alignedMutableSpan(size_t offset, size_t limit);
+    std::span<uint8_t> alignedMutableSpan(size_t offset, size_t limit, size_t reservedSpace = messageAlignment);
     void setSemaphores(IPC::Semaphore&& wakeUp, IPC::Semaphore&& clientWait);
     bool hasSemaphores() const { return m_semaphores.has_value(); }
     void wakeUpServer();
@@ -53,12 +54,9 @@ private:
     static constexpr size_t messageAlignment = StreamConnectionEncoder::messageAlignment;
     explicit StreamClientConnectionBuffer(Ref<WebCore::SharedMemory>);
 
-    size_t size(size_t offset, size_t limit) const;
-    size_t alignOffset(size_t offset) const { return StreamConnectionBuffer::alignOffset<messageAlignment>(offset, minimumMessageSize); }
     Atomic<ClientOffset>& sharedClientOffset() { return clientOffset(); }
     using ClientLimit = ServerOffset;
     Atomic<ClientLimit>& sharedClientLimit() { return serverOffset(); }
-    size_t toLimit(ClientLimit) const;
 
     size_t m_clientOffset { 0 };
     struct Semaphores {
@@ -66,6 +64,8 @@ private:
         Semaphore clientWait;
     };
     std::optional<Semaphores> m_semaphores;
+
+    RingBuffer m_ringBuffer;
 };
 
 inline std::optional<StreamClientConnectionBuffer> StreamClientConnectionBuffer::create(unsigned dataSizeLog2)
@@ -96,6 +96,7 @@ inline StreamClientConnectionBuffer::StreamClientConnectionBuffer(Ref<WebCore::S
     sharedClientOffset().store(ClientOffset::serverIsSleepingTag, std::memory_order_relaxed);
     // Write starts from 0 with a limit of the whole buffer.
     sharedClientLimit().store(static_cast<ClientLimit>(0), std::memory_order_relaxed);
+    m_ringBuffer = RingBuffer { mutableSpan() };
 }
 
 inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquire(Timeout timeout)
@@ -107,10 +108,11 @@ inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquir
 
     for (;;) {
         if (clientLimit != ClientLimit::clientIsWaitingTag) {
-            auto result = alignedMutableSpan(m_clientOffset, toLimit(clientLimit));
+            auto result = alignedMutableSpan(m_clientOffset, clientLimit);
             if (result.size() >= minimumMessageSize)
                 return result;
         }
+        // Wait until memory is released by the server:
         if (timeout.didTimeOut())
             break;
         ClientLimit oldClientLimit = sharedClientLimit().compareExchangeStrong(clientLimit, ClientLimit::clientIsWaitingTag, std::memory_order_acq_rel, std::memory_order_acquire);
@@ -155,13 +157,16 @@ inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquir
     // In case the transaction was cancelled, undo the transaction marker.
     sharedClientLimit().store(static_cast<ClientLimit>(0), std::memory_order_release);
     m_clientOffset = 0;
-    return alignedMutableSpan(m_clientOffset, 0);
+    return alignedMutableSpan(m_clientOffset, m_clientOffset);
 }
 
 inline StreamClientConnectionBuffer::WakeUpServer StreamClientConnectionBuffer::release(size_t size)
 {
     size = std::max(size, minimumMessageSize);
-    m_clientOffset = wrapOffset(alignOffset(m_clientOffset) + size);
+    m_clientOffset = roundUpToMultipleOf<messageAlignment>(m_clientOffset + size);
+    if (m_clientOffset >= dataSize())
+        m_clientOffset -= dataSize();
+
     ASSERT(m_clientOffset < dataSize());
     // If the server wrote over the clientOffset with serverIsSleepingTag, we know it is sleeping.
     ClientOffset oldClientOffset = sharedClientOffset().exchange(static_cast<ClientOffset>(m_clientOffset), std::memory_order_acq_rel);
@@ -177,36 +182,18 @@ inline void StreamClientConnectionBuffer::resetClientOffset()
     m_clientOffset = 0;
 }
 
-inline std::span<uint8_t> StreamClientConnectionBuffer::alignedMutableSpan(size_t offset, size_t limit)
+inline std::span<uint8_t> StreamClientConnectionBuffer::alignedMutableSpan(size_t offset, size_t limit, size_t reservedSpace)
 {
     ASSERT(offset < dataSize());
     ASSERT(limit < dataSize());
-    size_t aligned = alignOffset(offset);
-    size_t resultSize = 0;
-    if (offset < limit) {
-        if (aligned >= offset && aligned < limit)
-            resultSize = size(aligned, limit);
-    } else {
-        if (aligned >= offset || aligned < limit)
-            resultSize = size(aligned, limit);
-    }
-    return mutableSpan().subspan(aligned, resultSize);
-}
+    ASSERT(offset == roundUpToMultipleOf<messageAlignment>(offset));
+    if (offset < limit)
+        return m_ringBuffer.getSpan(offset, limit - offset - reservedSpace);
 
-inline size_t StreamClientConnectionBuffer::size(size_t offset, size_t limit) const
-{
-    if (!limit)
-        return dataSize() - 1 - offset;
-    if (limit <= offset)
-        return dataSize() - offset;
-    return limit - offset - 1;
-}
+    if (offset == limit)
+        return m_ringBuffer.getSpan(offset, dataSize() - reservedSpace);
 
-inline size_t StreamClientConnectionBuffer::toLimit(ClientLimit clientLimit) const
-{
-    ASSERT(!(clientLimit & ClientLimit::clientIsWaitingTag));
-    ASSERT(static_cast<size_t>(clientLimit) <= dataSize() - 1);
-    return static_cast<size_t>(clientLimit);
+    return m_ringBuffer.getSpan(offset, limit + dataSize() - offset - reservedSpace);
 }
 
 inline void StreamClientConnectionBuffer::setSemaphores(IPC::Semaphore&& wakeUp, IPC::Semaphore&& clientWait)

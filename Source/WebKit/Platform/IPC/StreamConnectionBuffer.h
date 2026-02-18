@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "StreamConnectionBufferRingWrapper.h"
 #include <WebCore/SharedMemory.h>
 #include <cstddef>
 #include <span>
@@ -87,15 +88,6 @@ public:
         return offset;
     }
 
-    template<size_t messageAlignment>
-    size_t alignOffset(size_t offset, size_t acquireSize) const
-    {
-        offset = roundUpToMultipleOf<messageAlignment>(offset);
-        if (offset + acquireSize >= dataSize())
-            offset = 0;
-        return offset;
-    }
-
     // Value denoting the client index to the buffer, with special tag values.
     // The client trusts this. The server converts the value to trusted size_t offset with a special function.
     enum ClientOffset : size_t {
@@ -112,8 +104,8 @@ public:
 
     Atomic<ClientOffset>& clientOffset() { return header().clientOffset; }
     Atomic<ServerOffset>& serverOffset() { return header().serverOffset; }
-    std::span<const uint8_t> span() const LIFETIME_BOUND { return m_sharedMemory->mutableSpan().subspan(headerSize()); }
-    std::span<uint8_t> mutableSpan() LIFETIME_BOUND { return m_sharedMemory->mutableSpan().subspan(headerSize()); }
+    std::span<const uint8_t> span() const LIFETIME_BOUND { return m_sharedMemory->mutableSpan().subspan(0, dataSize()); }
+    std::span<uint8_t> mutableSpan() LIFETIME_BOUND { return m_sharedMemory->mutableSpan().subspan(0, dataSize()); }
     size_t dataSize() const { return m_dataSize; }
 
     static constexpr size_t maximumSize() { return std::min(static_cast<size_t>(ClientOffset::serverIsSleepingTag), static_cast<size_t>(ServerOffset::clientIsWaitingTag)) - 1; }
@@ -138,7 +130,7 @@ protected:
 
 #undef HEADER_POINTER_ALIGNMENT
 
-    Header& header() const LIFETIME_BOUND { return reinterpretCastSpanStartTo<Header>(m_sharedMemory->mutableSpan()); }
+    Header& header() const LIFETIME_BOUND { return reinterpretCastSpanStartTo<Header>(m_sharedMemory->mutableSpan().subspan(dataSize())); }
     static constexpr size_t headerSize() { return roundUpToMultipleOf<alignof(std::max_align_t)>(sizeof(Header)); }
 
     size_t m_dataSize { 0 };
