@@ -392,6 +392,7 @@ void addMARTests();
 void addMemalignTests();
 void addMinHeapTests();
 void addPGMTests();
+void addPGMTraceTests();
 void addRaceTests();
 void addRedBlackTreeTests();
 void addScavengerExternalWorkTests();
@@ -883,6 +884,7 @@ int main(int argc, char** argv)
     ADD_SUITE(Memalign);
     ADD_SUITE(MinHeap);
     ADD_SUITE(PGM);
+    ADD_SUITE(PGMTrace);
     ADD_SUITE(Race);
     ADD_SUITE(RedBlackTree);
     ADD_SUITE(TLCDecommit);

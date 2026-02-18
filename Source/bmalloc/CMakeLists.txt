@@ -150,6 +150,7 @@ set(bmalloc_C_SOURCES
     libpas/src/libpas/pas_page_sharing_participant.c
     libpas/src/libpas/pas_page_sharing_pool.c
     libpas/src/libpas/pas_payload_reservation_page_list.c
+    libpas/src/libpas/pas_pgm_trace.c
     libpas/src/libpas/pas_physical_memory_transaction.c
     libpas/src/libpas/pas_primitive_heap_ref.c
     libpas/src/libpas/pas_probabilistic_guard_malloc_allocator.c
@@ -500,6 +501,7 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_page_sharing_pool_scavenge_result.h
     libpas/src/libpas/pas_page_sharing_pool_take_result.h
     libpas/src/libpas/pas_payload_reservation_page_list.h
+    libpas/src/libpas/pas_pgm_trace.h
     libpas/src/libpas/pas_physical_memory_synchronization_style.h
     libpas/src/libpas/pas_physical_memory_transaction.h
     libpas/src/libpas/pas_platform.h
