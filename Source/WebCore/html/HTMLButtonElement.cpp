@@ -37,6 +37,7 @@
 #include "RenderButton.h"
 #include "RenderStyle+GettersInlines.h"
 #include "Settings.h"
+#include "WindowsKeyboardCodes.h"
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -298,7 +299,7 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
     }
 
     if (RefPtr keyboardEvent = dynamicDowncast<KeyboardEvent>(event)) {
-        if (keyboardEvent->type() == eventNames.keydownEvent && keyboardEvent->keyIdentifier() == "U+0020"_s) {
+        if (keyboardEvent->type() == eventNames.keydownEvent && keyboardEvent->keyCode() == VK_SPACE) {
             setActive(true);
             // No setDefaultHandled() - IE dispatches a keypress in this case.
             return;
@@ -315,7 +316,7 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
                     return;
             }
         }
-        if (keyboardEvent->type() == eventNames.keyupEvent && keyboardEvent->keyIdentifier() == "U+0020"_s) {
+        if (keyboardEvent->type() == eventNames.keyupEvent && keyboardEvent->keyCode() == VK_SPACE) {
             if (active())
                 dispatchSimulatedClick(keyboardEvent.get());
             keyboardEvent->setDefaultHandled();

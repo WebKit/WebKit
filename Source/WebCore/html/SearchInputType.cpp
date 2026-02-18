@@ -49,6 +49,7 @@
 #include "StylePreferredSize.h"
 #include "TextControlInnerElements.h"
 #include "UserAgentParts.h"
+#include "WindowsKeyboardCodes.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -323,8 +324,7 @@ auto SearchInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBase
     if (!element->isMutable())
         return TextFieldInputType::handleKeydownEvent(event);
 
-    const String& key = event.keyIdentifier();
-    if (key == "U+001B"_s) {
+    if (event.keyCode() == VK_ESCAPE) {
         element->setValue(emptyString(), DispatchChangeEvent);
         event.setDefaultHandled();
         return ShouldCallBaseEventHandler::Yes;

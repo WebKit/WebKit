@@ -23,9 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VK_UNKNOWN
+#pragma once
 
+#ifndef VK_UNKNOWN
 #define VK_UNKNOWN 0
+#endif
 
 // Left mouse button
 // Right mouse button
@@ -316,5 +318,3 @@
 #define VK_PA1 0xFD // VK_PA1 (FD) PA1 key
 
 #define VK_OEM_CLEAR 0xFE // Clear key
-
-#endif // VK_UNKNOWN

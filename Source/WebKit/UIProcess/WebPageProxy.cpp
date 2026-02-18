@@ -10326,13 +10326,13 @@ void WebPageProxy::showDataListSuggestions(WebCore::DataListSuggestionInformatio
     protect(*internals().dataListSuggestionsDropdown)->show(WTF::move(info));
 }
 
-void WebPageProxy::handleKeydownInDataList(const String& key)
+void WebPageProxy::handleKeydownInDataList(int keyCode)
 {
     RefPtr dataListSuggestionsDropdown = internals().dataListSuggestionsDropdown;
     if (!dataListSuggestionsDropdown)
         return;
 
-    dataListSuggestionsDropdown->handleKeydownWithIdentifier(key);
+    dataListSuggestionsDropdown->handleKeydownWithKeyCode(keyCode);
 }
 
 void WebPageProxy::endDataListSuggestions()

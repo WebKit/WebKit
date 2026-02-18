@@ -62,7 +62,7 @@ private:
     WebDataListSuggestionsDropdownIOS(WebPageProxy&, WKContentView *);
 
     void show(WebCore::DataListSuggestionInformation&&) final;
-    void handleKeydownWithIdentifier(const String&) final;
+    void handleKeydownWithKeyCode(int) final;
     void close() final;
 
     WeakObjCPtr<WKContentView> m_contentView;

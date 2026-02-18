@@ -38,6 +38,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
+#include "WindowsKeyboardCodes.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -71,8 +72,7 @@ bool BaseCheckableInputType::appendFormData(DOMFormData& formData) const
 
 auto BaseCheckableInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseEventHandler
 {
-    const String& key = event.keyIdentifier();
-    if (key == "U+0020"_s) {
+    if (event.keyCode() == VK_SPACE) {
         ASSERT(element());
         protect(element())->setActive(true);
         // No setDefaultHandled(), because IE dispatches a keypress in this case

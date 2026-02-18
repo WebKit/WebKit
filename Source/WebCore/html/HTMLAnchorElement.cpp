@@ -62,6 +62,7 @@
 #include "SystemPreviewInfo.h"
 #include "URLKeepingBlobAlive.h"
 #include "UserGestureIndicator.h"
+#include "WindowsKeyboardCodes.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -659,7 +660,7 @@ bool isEnterKeyKeydownEvent(Event& event)
     if (event.type() != eventNames().keydownEvent)
         return false;
     auto* keyboardEvent = dynamicDowncast<KeyboardEvent>(event);
-    return keyboardEvent && keyboardEvent->keyIdentifier() == "Enter"_s;
+    return keyboardEvent && keyboardEvent->keyCode() == VK_RETURN;
 }
 
 bool shouldProhibitLinks(Element* element)

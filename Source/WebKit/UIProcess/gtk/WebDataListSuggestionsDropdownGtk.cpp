@@ -32,6 +32,7 @@
 #include "WebPageProxy.h"
 #include <WebCore/DataListSuggestionInformation.h>
 #include <WebCore/IntPoint.h>
+#include <WebCore/WindowsKeyboardCodes.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -213,13 +214,13 @@ void WebDataListSuggestionsDropdownGtk::show(WebCore::DataListSuggestionInformat
     gtk_widget_show(m_popup);
 }
 
-void WebDataListSuggestionsDropdownGtk::handleKeydownWithIdentifier(const String& key)
+void WebDataListSuggestionsDropdownGtk::handleKeydownWithKeyCode(int keyCode)
 {
     auto* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(m_treeView));
     GtkTreeModel* model;
     GtkTreeIter iter;
     bool hasSelection = gtk_tree_selection_get_selected(selection, &model, &iter);
-    if (key == "Enter"_s) {
+    if (keyCode == VK_RETURN) {
         if (hasSelection) {
             GUniqueOutPtr<char> item;
             gtk_tree_model_get(model, &iter, 0, &item.outPtr(), -1);
@@ -229,12 +230,12 @@ void WebDataListSuggestionsDropdownGtk::handleKeydownWithIdentifier(const String
         return;
     }
 
-    if (key == "Up"_s) {
+    if (keyCode == VK_UP) {
         if ((hasSelection && gtk_tree_model_iter_previous(model, &iter)) || gtk_tree_model_iter_nth_child(model, &iter, nullptr, gtk_tree_model_iter_n_children(model, nullptr) - 1))
             gtk_tree_selection_select_iter(selection, &iter);
         else
             return;
-    } else if (key == "Down"_s) {
+    } else if (keyCode == VK_DOWN) {
         if ((hasSelection && gtk_tree_model_iter_next(model, &iter)) || gtk_tree_model_get_iter_first(model, &iter))
             gtk_tree_selection_select_iter(selection, &iter);
         else

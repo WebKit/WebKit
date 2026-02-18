@@ -31,6 +31,7 @@
 #include "WebProcess.h"
 #include <WebCore/DataListSuggestionsClient.h>
 #include <WebCore/LocalFrameView.h>
+#include <WebCore/WindowsKeyboardCodes.h>
 
 namespace WebKit {
 
@@ -42,9 +43,9 @@ WebDataListSuggestionPicker::WebDataListSuggestionPicker(WebPage& page, WebCore:
 
 WebDataListSuggestionPicker::~WebDataListSuggestionPicker() = default;
 
-void WebDataListSuggestionPicker::handleKeydownWithIdentifier(const String& key)
+void WebDataListSuggestionPicker::handleKeydownWithKeyCode(int keyCode)
 {
-    if (key == "U+001B"_s) {
+    if (keyCode == VK_ESCAPE) {
         close();
         return;
     }
@@ -53,7 +54,7 @@ void WebDataListSuggestionPicker::handleKeydownWithIdentifier(const String& key)
     if (!page)
         return;
 
-    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::HandleKeydownInDataList(key), page->identifier());
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::HandleKeydownInDataList(keyCode), page->identifier());
 }
 
 void WebDataListSuggestionPicker::didSelectOption(const String& selectedOption)

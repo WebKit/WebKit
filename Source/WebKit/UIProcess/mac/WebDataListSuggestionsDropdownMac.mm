@@ -33,6 +33,7 @@
 #import "WebPreferencesDefaultValues.h"
 #import <WebCore/IntRect.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/WindowsKeyboardCodes.h>
 #import <pal/spi/mac/NSColorSPI.h>
 
 constexpr CGFloat dropdownTopMargin = 3;
@@ -60,7 +61,7 @@ static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionVi
 - (id)initWithInformation:(WebCore::DataListSuggestionInformation&&)information inView:(NSView *)view;
 - (void)showSuggestionsDropdown:(WebKit::WebDataListSuggestionsDropdownMac&)dropdown;
 - (void)updateWithInformation:(WebCore::DataListSuggestionInformation&&)information;
-- (void)moveSelectionByDirection:(const String&)direction;
+- (void)moveSelectionByDirection:(int)direction;
 - (void)invalidate;
 
 - (String)currentSelectedString;
@@ -116,12 +117,19 @@ void WebDataListSuggestionsDropdownMac::selectOption()
     close();
 }
 
-void WebDataListSuggestionsDropdownMac::handleKeydownWithIdentifier(const String& key)
+void WebDataListSuggestionsDropdownMac::handleKeydownWithKeyCode(int keyCode)
 {
-    if (key == "Enter"_s)
+    switch (keyCode) {
+    case VK_RETURN:
         selectOption();
-    else if (key == "Up"_s || key == "Down"_s)
-        [m_dropdownUI moveSelectionByDirection:key];
+        break;
+    case VK_UP:
+    case VK_DOWN:
+        [m_dropdownUI moveSelectionByDirection:keyCode];
+        break;
+    default:
+        break;
+    }
 }
 
 void WebDataListSuggestionsDropdownMac::close()
@@ -405,16 +413,16 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
     });
 }
 
-- (void)moveSelectionByDirection:(const String&)direction
+- (void)moveSelectionByDirection:(int)direction
 {
     size_t size = _suggestions.size();
     NSInteger oldSelection = [_table selectedRow];
     NSInteger newSelection = -1;
 
     if (oldSelection == -1)
-        newSelection = (direction == "Up"_s) ? (size - 1) : 0;
+        newSelection = (direction == VK_UP) ? (size - 1) : 0;
     else {
-        NSInteger adjustment = (direction == "Up"_s) ? -1 : 1;
+        NSInteger adjustment = (direction == VK_UP) ? -1 : 1;
         newSelection = std::clamp<NSInteger>(oldSelection + adjustment, 0, size);
     }
 

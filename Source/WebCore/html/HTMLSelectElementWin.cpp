@@ -30,16 +30,26 @@
 
 #include "Element.h"
 #include "KeyboardEvent.h"
+#include "WindowsKeyboardCodes.h"
 
 namespace WebCore {
 
 bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
 {
     // Allow (Shift) F4 and (Ctrl/Shift) Alt/AltGr + Up/Down arrow to pop the menu, matching Firefox.
-    bool eventShowsMenu = ((!event->altKey() && !event->ctrlKey() && event->keyIdentifier() == "F4"_s)
-        || event->altKey()) && (event->keyIdentifier() == "Down"_s || event->keyIdentifier() == "Up"_s);
-    if (!eventShowsMenu)
+    switch (event->keyCode()) {
+    case VK_F4:
+        if (event->altKey() || event->ctrlKey())
+            return false;
+        break;
+    case VK_DOWN:
+    case VK_UP:
+        if (!event->altKey())
+            return false;
+        break;
+    default:
         return false;
+    }
 
     // Save the selection so it can be compared to the new selection when dispatching change events during setSelectedIndex,
     // which gets called from RenderMenuList::valueChanged, which gets called after the user makes a selection from the menu.

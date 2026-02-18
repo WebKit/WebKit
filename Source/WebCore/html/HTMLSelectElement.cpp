@@ -73,6 +73,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SlotAssignment.h"
+#include "WindowsKeyboardCodes.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -1345,7 +1346,7 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
         return false;
 
     if (!document().settings().spatialNavigationEnabled()) {
-        if (event->keyIdentifier() == "Down"_s || event->keyIdentifier() == "Up"_s) {
+        if (event->keyCode() == VK_DOWN || event->keyCode() == VK_UP) {
             focus();
             protect(document())->updateStyleIfNeeded();
             // Calling focus() may cause us to lose our renderer. Return true so
@@ -1392,7 +1393,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
                 return;
         }
 
-        const String& keyIdentifier = keyboardEvent->keyIdentifier();
+        int keyCode = keyboardEvent->keyCode();
         bool handled = true;
         auto& listItems = this->listItems();
         int listIndex = optionToListIndex(selectedIndex());
@@ -1400,24 +1401,35 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
         // When using caret browsing, we want to be able to move the focus
         // out of the select element when user hits a left or right arrow key.
         if (document().settings().caretBrowsingEnabled()) {
-            if (keyIdentifier == "Left"_s || keyIdentifier == "Right"_s)
+            if (keyCode == VK_LEFT || keyCode == VK_RIGHT)
                 return;
         }
 
-        if (keyIdentifier == "Down"_s || keyIdentifier == "Right"_s)
+        switch (keyCode) {
+        case VK_DOWN:
+        case VK_RIGHT:
             listIndex = nextValidIndex(listIndex, SkipDirection::Forwards, 1);
-        else if (keyIdentifier == "Up"_s || keyIdentifier == "Left"_s)
+            break;
+        case VK_UP:
+        case VK_LEFT:
             listIndex = nextValidIndex(listIndex, SkipDirection::Backwards, 1);
-        else if (keyIdentifier == "PageDown"_s)
+            break;
+        case VK_NEXT:
             listIndex = nextValidIndex(listIndex, SkipDirection::Forwards, 3);
-        else if (keyIdentifier == "PageUp"_s)
+            break;
+        case VK_PRIOR:
             listIndex = nextValidIndex(listIndex, SkipDirection::Backwards, 3);
-        else if (keyIdentifier == "Home"_s)
+            break;
+        case VK_HOME:
             listIndex = nextValidIndex(-1, SkipDirection::Forwards, 1);
-        else if (keyIdentifier == "End"_s)
+            break;
+        case VK_END:
             listIndex = nextValidIndex(listItems.size(), SkipDirection::Backwards, 1);
-        else
+            break;
+        default:
             handled = false;
+            break;
+        }
 
         if (handled && static_cast<size_t>(listIndex) < listItems.size())
             selectOption(listToOptionIndex(listIndex), { SelectOptionFlag::DeselectOtherOptions, SelectOptionFlag::DispatchChangeEvent, SelectOptionFlag::UserDriven });
@@ -1648,59 +1660,64 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
         bool isHorizontalWritingMode = renderer ? renderer->writingMode().isHorizontal() : true;
         bool isBlockFlipped = renderer ? renderer->writingMode().isBlockFlipped() : false;
 
-        auto nextKeyIdentifier = isHorizontalWritingMode ? "Down"_s : "Right"_s;
-        auto previousKeyIdentifier = isHorizontalWritingMode ? "Up"_s : "Left"_s;
+        int nextKeyCode = isHorizontalWritingMode ? VK_DOWN : VK_RIGHT;
+        int previousKeyCode = isHorizontalWritingMode ? VK_UP : VK_LEFT;
         if (isBlockFlipped)
-            std::swap(nextKeyIdentifier, previousKeyIdentifier);
+            std::swap(nextKeyCode, previousKeyCode);
 
-        const String& keyIdentifier = keyboardEvent->keyIdentifier();
+        int keyCode = keyboardEvent->keyCode();
 
         bool handled = false;
         int endIndex = 0;
         if (m_activeSelectionEndIndex < 0) {
             // Initialize the end index
-            if (keyIdentifier == nextKeyIdentifier || keyIdentifier == "PageDown"_s) {
+            if (keyCode == nextKeyCode || keyCode == VK_NEXT) {
                 int startIndex = lastSelectedListIndex();
                 handled = true;
-                if (keyIdentifier == nextKeyIdentifier)
+                if (keyCode == nextKeyCode)
                     endIndex = nextSelectableListIndex(startIndex);
                 else
                     endIndex = nextSelectableListIndexPageAway(startIndex, SkipDirection::Forwards);
-            } else if (keyIdentifier == previousKeyIdentifier || keyIdentifier == "PageUp"_s) {
+            } else if (keyCode == previousKeyCode || keyCode == VK_PRIOR) {
                 int startIndex = optionToListIndex(selectedIndex());
                 handled = true;
-                if (keyIdentifier == previousKeyIdentifier)
+                if (keyCode == previousKeyCode)
                     endIndex = previousSelectableListIndex(startIndex);
                 else
                     endIndex = nextSelectableListIndexPageAway(startIndex, SkipDirection::Backwards);
             }
         } else {
             // Set the end index based on the current end index.
-            if (keyIdentifier == nextKeyIdentifier) {
+            if (keyCode == nextKeyCode) {
                 endIndex = nextSelectableListIndex(m_activeSelectionEndIndex);
                 handled = true;
-            } else if (keyIdentifier == previousKeyIdentifier) {
+            } else if (keyCode == previousKeyCode) {
                 endIndex = previousSelectableListIndex(m_activeSelectionEndIndex);
                 handled = true;
-            } else if (keyIdentifier == "PageDown"_s) {
+            } else if (keyCode == VK_NEXT) {
                 endIndex = nextSelectableListIndexPageAway(m_activeSelectionEndIndex, SkipDirection::Forwards);
                 handled = true;
-            } else if (keyIdentifier == "PageUp"_s) {
+            } else if (keyCode == VK_PRIOR) {
                 endIndex = nextSelectableListIndexPageAway(m_activeSelectionEndIndex, SkipDirection::Backwards);
                 handled = true;
             }
         }
-        if (keyIdentifier == "Home"_s) {
+        switch (keyCode) {
+        case VK_HOME:
             endIndex = firstSelectableListIndex();
             handled = true;
-        } else if (keyIdentifier == "End"_s) {
+            break;
+        case VK_END:
             endIndex = lastSelectableListIndex();
             handled = true;
+            break;
+        default:
+            break;
         }
 
         if (document().settings().spatialNavigationEnabled()) {
             // Check if the selection moves to the boundary.
-            if (keyIdentifier == "Left"_s || keyIdentifier == "Right"_s || ((keyIdentifier == "Down"_s || keyIdentifier == "Up"_s) && endIndex == m_activeSelectionEndIndex))
+            if (keyCode == VK_LEFT || keyCode == VK_RIGHT || ((keyCode == VK_DOWN || keyCode == VK_UP) && endIndex == m_activeSelectionEndIndex))
                 return;
         }
 

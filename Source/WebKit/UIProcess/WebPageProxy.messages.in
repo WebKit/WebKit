@@ -119,7 +119,7 @@ messages -> WebPageProxy {
     [EnabledBy=InputTypeColorEnabled] EndColorPicker();
 
     [EnabledBy=DataListElementEnabled] ShowDataListSuggestions(struct WebCore::DataListSuggestionInformation suggestionInformation);
-    [EnabledBy=DataListElementEnabled] HandleKeydownInDataList(String key);
+    [EnabledBy=DataListElementEnabled] HandleKeydownInDataList(int keyCode);
     [EnabledBy=DataListElementEnabled] EndDataListSuggestions();
 
     [EnabledBy=InputTypeDateEnabled || InputTypeDateTimeLocalEnabled || InputTypeMonthEnabled || InputTypeTimeEnabled || InputTypeWeekEnabled] ShowDateTimePicker(struct WebCore::DateTimeChooserParameters params);

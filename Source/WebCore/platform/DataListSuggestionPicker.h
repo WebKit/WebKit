@@ -39,7 +39,7 @@ public:
 
     virtual void detach() { }
     virtual void close() { }
-    virtual void handleKeydownWithIdentifier(const String&) { }
+    virtual void handleKeydownWithKeyCode(int) { }
     virtual void displayWithActivationType(DataListSuggestionActivationType) { }
 };
 

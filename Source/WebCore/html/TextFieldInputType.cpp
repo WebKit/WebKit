@@ -72,6 +72,7 @@
 #include "UserAgentParts.h"
 #include "UserGestureIndicator.h"
 #include "UserTypingGestureIndicator.h"
+#include "WindowsKeyboardCodes.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -208,9 +209,9 @@ auto TextFieldInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallB
     Ref element = *this->element();
     if (!element->focused())
         return ShouldCallBaseEventHandler::Yes;
-    const String& key = event.keyIdentifier();
-    if (RefPtr suggestionPicker = m_suggestionPicker; suggestionPicker && (key == "Enter"_s || key == "Up"_s || key == "Down"_s || key == "U+001B"_s)) {
-        suggestionPicker->handleKeydownWithIdentifier(key);
+    int keyCode = event.keyCode();
+    if (RefPtr suggestionPicker = m_suggestionPicker; suggestionPicker && (keyCode == VK_RETURN || keyCode == VK_UP || keyCode == VK_DOWN || keyCode == VK_ESCAPE)) {
+        suggestionPicker->handleKeydownWithKeyCode(keyCode);
         event.setDefaultHandled();
     }
     RefPtr frame = element->document().frame();
@@ -226,10 +227,10 @@ void TextFieldInputType::handleKeydownEventForSpinButton(KeyboardEvent& event)
         return;
     if (m_suggestionPicker)
         return;
-    const String& key = event.keyIdentifier();
-    if (key == "Up"_s)
+    int keyCode = event.keyCode();
+    if (keyCode == VK_UP)
         spinButtonStepUp();
-    else if (key == "Down"_s)
+    else if (keyCode == VK_DOWN)
         spinButtonStepDown();
     else
         return;

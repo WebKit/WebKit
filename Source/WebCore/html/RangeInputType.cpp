@@ -56,6 +56,7 @@
 #include "SliderThumbElement.h"
 #include "StepRange.h"
 #include "UserAgentParts.h"
+#include "WindowsKeyboardCodes.h"
 #include <limits>
 #include <numeric>
 #include <ranges>
@@ -202,8 +203,6 @@ auto RangeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
     if (element->isDisabledFormControl())
         return ShouldCallBaseEventHandler::Yes;
 
-    const String& key = event.keyIdentifier();
-
     const Decimal current = parseToNumberOrNaN(element->value());
     ASSERT(current.isFinite());
 
@@ -219,24 +218,34 @@ auto RangeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
         isVertical = renderer->style().usedAppearance() == StyleAppearance::SliderVertical;
 
     Decimal newValue;
-    if (key == "Up"_s)
+    switch (event.keyCode()) {
+    case VK_UP:
         newValue = current + step;
-    else if (key == "Down"_s)
+        break;
+    case VK_DOWN:
         newValue = current - step;
-    else if (key == "Left"_s)
+        break;
+    case VK_LEFT:
         newValue = isVertical ? current + step : current - step;
-    else if (key == "Right"_s)
+        break;
+    case VK_RIGHT:
         newValue = isVertical ? current - step : current + step;
-    else if (key == "PageUp"_s)
+        break;
+    case VK_PRIOR:
         newValue = current + bigStep;
-    else if (key == "PageDown"_s)
+        break;
+    case VK_NEXT:
         newValue = current - bigStep;
-    else if (key == "Home"_s)
+        break;
+    case VK_HOME:
         newValue = isVertical ? stepRange.maximum() : stepRange.minimum();
-    else if (key == "End"_s)
+        break;
+    case VK_END:
         newValue = isVertical ? stepRange.minimum() : stepRange.maximum();
-    else
+        break;
+    default:
         return ShouldCallBaseEventHandler::Yes; // Did not match any key binding.
+    }
 
     newValue = stepRange.clampValue(newValue);
 

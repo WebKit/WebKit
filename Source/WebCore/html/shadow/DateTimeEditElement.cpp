@@ -46,6 +46,7 @@
 #include "ScriptDisallowedScope.h"
 #include "Text.h"
 #include "UserAgentParts.h"
+#include "WindowsKeyboardCodes.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -236,7 +237,7 @@ size_t DateTimeEditElement::fieldIndexOf(const DateTimeFieldElement& fieldToFind
 void DateTimeEditElement::defaultEventHandler(Event& event)
 {
     if (RefPtr keyboardEvent = dynamicDowncast<KeyboardEvent>(event)) {
-        if (keyboardEvent->keyIdentifier() == "U+0020"_s && m_editControlOwner) {
+        if (keyboardEvent->keyCode() == VK_SPACE && m_editControlOwner) {
             // Forward space keypresses to the owner to activate the date picker.
             m_editControlOwner->didReceiveSpaceKeyFromControl();
             // We want to mark the event as handled to avoid scrolling the page.

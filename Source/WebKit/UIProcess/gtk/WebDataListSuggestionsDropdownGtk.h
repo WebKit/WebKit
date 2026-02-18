@@ -48,7 +48,7 @@ private:
     WebDataListSuggestionsDropdownGtk(GtkWidget*, WebPageProxy&);
 
     void show(WebCore::DataListSuggestionInformation&&) final;
-    void handleKeydownWithIdentifier(const String&) final;
+    void handleKeydownWithKeyCode(int) final;
     void close() final;
 
     static void treeViewRowActivatedCallback(GtkTreeView*, GtkTreePath*, GtkTreeViewColumn*, WebDataListSuggestionsDropdownGtk*);

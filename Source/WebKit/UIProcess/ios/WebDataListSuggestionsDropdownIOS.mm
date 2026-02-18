@@ -132,7 +132,7 @@ void WebDataListSuggestionsDropdownIOS::show(WebCore::DataListSuggestionInformat
     [m_suggestionsControl showSuggestionsDropdown:*this activationType:type];
 }
 
-void WebDataListSuggestionsDropdownIOS::handleKeydownWithIdentifier(const String&)
+void WebDataListSuggestionsDropdownIOS::handleKeydownWithKeyCode(int)
 {
 }
 

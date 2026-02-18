@@ -40,6 +40,7 @@
 #include "ResolvedStyle.h"
 #include "StyleResolver.h"
 #include "Text.h"
+#include "WindowsKeyboardCodes.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
@@ -101,21 +102,21 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent& keyboardEv
     if (keyboardEvent.type() != eventNames().keydownEvent)
         return;
 
-    auto key = keyboardEvent.keyIdentifier();
+    int keyCode = keyboardEvent.keyCode();
     auto code = keyboardEvent.code();
 
     bool isHorizontal = isFieldOwnerHorizontal();
-    auto nextKeyIdentifier = isHorizontal ? "Right"_s : "Down"_s;
-    auto previousKeyIdentifier = isHorizontal ? "Left"_s : "Up"_s;
-    auto stepUpKeyIdentifier = isHorizontal ? "Up"_s : "Right"_s;
-    auto stepDownKeyIdentifier = isHorizontal ? "Down"_s : "Left"_s;
+    int nextKeyCode = isHorizontal ? VK_RIGHT : VK_DOWN;
+    int previousKeyCode = isHorizontal ? VK_LEFT : VK_UP;
+    int stepUpKeyCode = isHorizontal ? VK_UP : VK_RIGHT;
+    int stepDownKeyCode = isHorizontal ? VK_DOWN : VK_LEFT;
 
-    if (key == previousKeyIdentifier && m_fieldOwner && m_fieldOwner->focusOnPreviousField(*this)) {
+    if (keyCode == previousKeyCode && m_fieldOwner && m_fieldOwner->focusOnPreviousField(*this)) {
         keyboardEvent.setDefaultHandled();
         return;
     }
 
-    if ((key == nextKeyIdentifier || code == "Comma"_s || code == "Minus"_s || code == "Period"_s || code == "Slash"_s || code == "Semicolon"_s)
+    if ((keyCode == nextKeyCode || code == "Comma"_s || code == "Minus"_s || code == "Period"_s || code == "Slash"_s || code == "Semicolon"_s)
         && m_fieldOwner && m_fieldOwner->focusOnNextField(*this)) {
         keyboardEvent.setDefaultHandled();
         return;
@@ -124,20 +125,20 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent& keyboardEv
     if (isFieldOwnerReadOnly())
         return;
 
-    if (key == stepUpKeyIdentifier) {
+    if (keyCode == stepUpKeyCode) {
         stepUp();
         keyboardEvent.setDefaultHandled();
         return;
     }
 
-    if (key == stepDownKeyIdentifier) {
+    if (keyCode == stepDownKeyCode) {
         stepDown();
         keyboardEvent.setDefaultHandled();
         return;
     }
 
     // Clear value when pressing backspace or delete.
-    if (key == "U+0008"_s || key == "U+007F"_s) {
+    if (keyCode == VK_BACK || keyCode == VK_DELETE) {
         setEmptyValue(DispatchInputAndChangeEvents);
         keyboardEvent.setDefaultHandled();
         return;

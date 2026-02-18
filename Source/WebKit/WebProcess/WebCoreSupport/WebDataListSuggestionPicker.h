@@ -57,7 +57,7 @@ public:
 private:
     WebDataListSuggestionPicker(WebPage&, WebCore::DataListSuggestionsClient&);
 
-    void handleKeydownWithIdentifier(const String&) final;
+    void handleKeydownWithKeyCode(int) final;
     void displayWithActivationType(WebCore::DataListSuggestionActivationType) final;
     void close() final;
     void detach() final;

@@ -39,7 +39,7 @@ public:
     virtual ~WebDataListSuggestionsDropdown();
 
     virtual void show(WebCore::DataListSuggestionInformation&&) = 0;
-    virtual void handleKeydownWithIdentifier(const String&) = 0;
+    virtual void handleKeydownWithKeyCode(int) = 0;
     virtual void close();
 
 protected:

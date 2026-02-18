@@ -58,6 +58,7 @@
 #include "ShadowRoot.h"
 #include "UserAgentParts.h"
 #include "UserGestureIndicator.h"
+#include "WindowsKeyboardCodes.h"
 #include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -112,8 +113,7 @@ void CheckboxInputType::createShadowSubtree()
 
 void CheckboxInputType::handleKeyupEvent(KeyboardEvent& event)
 {
-    const String& key = event.keyIdentifier();
-    if (key != "U+0020"_s)
+    if (event.keyCode() != VK_SPACE)
         return;
     dispatchSimulatedClickIfActive(event);
 }

@@ -3182,7 +3182,7 @@ private:
     void showColorPicker(IPC::Connection&, const WebCore::Color& initialColor, const WebCore::IntRect&, ColorControlSupportsAlpha, Vector<WebCore::Color>&&, std::optional<WebCore::FrameIdentifier>&&);
 
     void showDataListSuggestions(WebCore::DataListSuggestionInformation&&);
-    void handleKeydownInDataList(const String&);
+    void handleKeydownInDataList(int);
     void endDataListSuggestions();
 
     void showDateTimePicker(WebCore::DateTimeChooserParameters&&);

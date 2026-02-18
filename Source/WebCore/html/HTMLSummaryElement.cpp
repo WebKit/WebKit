@@ -34,6 +34,7 @@
 #include "SVGAElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "ShadowRoot.h"
+#include "WindowsKeyboardCodes.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -103,7 +104,7 @@ void HTMLSummaryElement::defaultEventHandler(Event& event)
         }
 
         if (auto* keyboardEvent = dynamicDowncast<KeyboardEvent>(event)) {
-            if (keyboardEvent->type() == eventNames.keydownEvent && keyboardEvent->keyIdentifier() == "U+0020"_s) {
+            if (keyboardEvent->type() == eventNames.keydownEvent && keyboardEvent->keyCode() == VK_SPACE) {
                 setActive(true);
                 // No setDefaultHandled() - IE dispatches a keypress in this case.
                 return;
@@ -120,7 +121,7 @@ void HTMLSummaryElement::defaultEventHandler(Event& event)
                     return;
                 }
             }
-            if (keyboardEvent->type() == eventNames.keyupEvent && keyboardEvent->keyIdentifier() == "U+0020"_s) {
+            if (keyboardEvent->type() == eventNames.keyupEvent && keyboardEvent->keyCode() == VK_SPACE) {
                 if (active())
                     dispatchSimulatedClick(&event);
                 keyboardEvent->setDefaultHandled();

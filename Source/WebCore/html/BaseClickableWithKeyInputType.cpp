@@ -34,6 +34,7 @@
 
 #include "HTMLInputElement.h"
 #include "KeyboardEvent.h"
+#include "WindowsKeyboardCodes.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -44,8 +45,7 @@ using namespace HTMLNames;
 
 auto BaseClickableWithKeyInputType::handleKeydownEvent(HTMLInputElement& element, KeyboardEvent& event) -> ShouldCallBaseEventHandler
 {
-    const String& key = event.keyIdentifier();
-    if (key == "U+0020"_s) {
+    if (event.keyCode() == VK_SPACE) {
         element.setActive(true);
         // No setDefaultHandled(), because IE dispatches a keypress in this case
         // and the caller will only dispatch a keypress if we don't call setDefaultHandled().
@@ -70,8 +70,7 @@ void BaseClickableWithKeyInputType::handleKeypressEvent(HTMLInputElement& elemen
 
 void BaseClickableWithKeyInputType::handleKeyupEvent(InputType& inputType, KeyboardEvent& event)
 {
-    const String& key = event.keyIdentifier();
-    if (key != "U+0020"_s)
+    if (event.keyCode() != VK_SPACE)
         return;
     // Simulate mouse click for spacebar for button types.
     inputType.dispatchSimulatedClickIfActive(event);
