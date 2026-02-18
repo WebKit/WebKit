@@ -374,6 +374,8 @@ enum class AXRelation : uint8_t {
     HeaderFor,
     LabeledBy,
     LabelFor,
+    NativeLabeledBy,
+    NativeLabelFor,
     OwnedBy,
     OwnerFor,
 };
@@ -750,6 +752,11 @@ public:
     AccessibilityChildrenVector flowFromObjects() const { return relatedObjects(AXRelation::FlowsFrom); }
     AccessibilityChildrenVector labeledByObjects() const { return relatedObjects(AXRelation::LabeledBy); }
     AccessibilityChildrenVector labelForObjects() const { return relatedObjects(AXRelation::LabelFor); }
+    // This function exists because in the accname calculation, aria-labelledby takes precedence over "native"
+    // labels (like <label for="z"><input id="z">), and thus we do not create a LabelFor relationship for the native
+    // label. However, sometimes outside of accname, we do also want to know the native label relationship,
+    // which is what this function is for.
+    AccessibilityChildrenVector nativeLabeledByObjects() const { return relatedObjects(AXRelation::NativeLabeledBy); }
     AccessibilityChildrenVector ownedObjects() const { return relatedObjects(AXRelation::OwnerFor); }
     AccessibilityChildrenVector owners() const { return relatedObjects(AXRelation::OwnedBy); }
     virtual AccessibilityChildrenVector relatedObjects(AXRelation) const = 0;

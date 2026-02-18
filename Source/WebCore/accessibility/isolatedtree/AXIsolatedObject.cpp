@@ -1139,16 +1139,21 @@ FloatRect AXIsolatedObject::relativeFrame() const
         std::optional<IntRect> rectFromLabels;
         if (isControl()) {
             // For controls, we can try to use the frame of any associated labels.
-            auto labels = labeledByObjects();
-            for (const auto& label : labels) {
-                std::optional frame = downcast<AXIsolatedObject>(label)->cachedRelativeFrame();
-                if (!frame)
-                    continue;
-                if (!rectFromLabels)
-                    rectFromLabels = *frame;
-                else if (rectFromLabels->intersects(*frame))
-                    rectFromLabels->unite(*frame);
-            }
+            // Prefer ARIA labels first, fall back to native labels if none provide geometry.
+            auto uniteLabelsIntoRect = [&rectFromLabels](const AccessibilityChildrenVector& labels) {
+                for (const auto& label : labels) {
+                    std::optional frame = downcast<AXIsolatedObject>(label)->cachedRelativeFrame();
+                    if (!frame)
+                        continue;
+                    if (!rectFromLabels)
+                        rectFromLabels = *frame;
+                    else if (rectFromLabels->intersects(*frame))
+                        rectFromLabels->unite(*frame);
+                }
+            };
+            uniteLabelsIntoRect(labeledByObjects());
+            if (!rectFromLabels)
+                uniteLabelsIntoRect(nativeLabeledByObjects());
         }
 
         if (rectFromLabels && !rectFromLabels->isEmpty())

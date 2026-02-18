@@ -5619,6 +5619,10 @@ AXRelation AXObjectCache::symmetricRelation(AXRelation relation)
         return AXRelation::LabelFor;
     case AXRelation::LabelFor:
         return AXRelation::LabeledBy;
+    case AXRelation::NativeLabeledBy:
+        return AXRelation::NativeLabelFor;
+    case AXRelation::NativeLabelFor:
+        return AXRelation::NativeLabeledBy;
     case AXRelation::OwnedBy:
         return AXRelation::OwnerFor;
     case AXRelation::OwnerFor:
@@ -5949,8 +5953,13 @@ void AXObjectCache::addLabelForRelation(Element& origin)
 
     // LabelFor relations are established for <label for=...>.
     if (RefPtr label = dynamicDowncast<HTMLLabelElement>(origin)) {
-        if (RefPtr control = Accessibility::controlForLabelElement(*label))
-            addedRelation = addRelation(origin, *control, AXRelation::LabelFor);
+        if (RefPtr control = Accessibility::controlForLabelElement(*label)) {
+            // Always add NativeLabelFor for geometry purposes.
+            addedRelation = addRelation(origin, *control, AXRelation::NativeLabelFor);
+            // Only add LabelFor (for accname) if no ARIA labelling exists.
+            if (!hasAnyARIALabelling(*control))
+                addRelation(origin, *control, AXRelation::LabelFor);
+        }
     }
 
     if (addedRelation)

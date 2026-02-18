@@ -888,6 +888,9 @@ accessibility/select-whitespace-collapsed-text.html [ Failure ]
 # Need to implement AccessibilityUIElement::insertText.
 accessibility/insert-text-into-password-field.html [ Skip ]
 
+# Need to implement AccessibilityUIElement::{pageX, pageY}.
+accessibility/native-label-geometry-with-aria-labelledby.html [ Skip ]
+
 # These test a Cocoa-only API.
 accessibility/mixed-contenteditable-visible-character-range-hang.html [ Skip ]
 accessibility/mixed-contenteditable-double-br-visible-character-range-hang.html [ Skip ]
