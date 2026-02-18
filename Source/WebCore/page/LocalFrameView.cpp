@@ -4809,14 +4809,12 @@ void LocalFrameView::scheduleResizeEventIfNeeded()
 
     IntSize currentSize = sizeForResizeEvent();
     float currentZoomFactor = renderView->style().usedZoom();
-    float currentFrameScaleFactor = m_frame->frameScaleFactor();
 
-    if (currentSize == m_lastViewportSize && currentZoomFactor == m_lastUsedZoomFactor && currentFrameScaleFactor == m_lastFrameScaleFactor)
+    if (currentSize == m_lastViewportSize && currentZoomFactor == m_lastUsedZoomFactor)
         return;
 
     m_lastViewportSize = currentSize;
     m_lastUsedZoomFactor = currentZoomFactor;
-    m_lastFrameScaleFactor = currentFrameScaleFactor;
 
     if (!layoutContext().didFirstLayout())
         return;

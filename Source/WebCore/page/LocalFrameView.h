@@ -1043,7 +1043,6 @@ private:
     OptionSet<PaintBehavior> m_paintBehavior;
 
     float m_lastUsedZoomFactor { 1 };
-    float m_lastFrameScaleFactor { 1 };
     unsigned m_visuallyNonEmptyCharacterCount { 0 };
     unsigned m_visuallyNonEmptyPixelCount { 0 };
     unsigned m_textRendererCountForVisuallyNonEmptyCharacters { 0 };
