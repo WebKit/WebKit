@@ -952,11 +952,9 @@ void HTMLMediaElement::didMoveToNewDocument(Document& oldDocument, Document& new
     ASSERT_WITH_SECURITY_IMPLICATION(&document() == &newDocument);
 
     // Handle lazy loading observer transfer between documents
-    if (newDocument.settings().lazyMediaLoadingEnabled()) {
-        oldDocument.lazyLoadMediaObserver().unobserve(*this, oldDocument);
-        if (isLazyLoadable())
-            LazyLoadMediaObserver::observe(*this);
-    }
+    oldDocument.lazyLoadMediaObserver().unobserve(*this, oldDocument);
+    if (newDocument.settings().lazyMediaLoadingEnabled() && isLazyLoadable())
+        LazyLoadMediaObserver::observe(*this);
 
     if (m_shouldDelayLoadEvent) {
         oldDocument.decrementLoadEventDelayCount();
@@ -1037,7 +1035,7 @@ void HTMLMediaElement::attributeChanged(const QualifiedName& name, const AtomStr
         // If a src attribute of a media element is set or changed, the user
         // agent must invoke the media element's media element load algorithm.
         if (!newValue.isNull()) {
-            if (isLazyLoadable() && document().settings().lazyMediaLoadingEnabled() && m_networkState == NETWORK_EMPTY)
+            if (m_networkState == NETWORK_EMPTY && document().settings().lazyMediaLoadingEnabled() && isLazyLoadable())
                 LazyLoadMediaObserver::observe(*this);
             else
                 prepareForLoad();
@@ -1142,11 +1140,11 @@ void HTMLMediaElement::didFinishInsertingNode()
 
     if (m_inActiveDocument && m_networkState == NETWORK_EMPTY) {
         if (!attributeWithoutSynchronization(srcAttr).isEmpty()) {
-            if (isLazyLoadable() && document().settings().lazyMediaLoadingEnabled())
+            if (document().settings().lazyMediaLoadingEnabled() && isLazyLoadable())
                 LazyLoadMediaObserver::observe(*this);
             else
                 prepareForLoad();
-        } else if (auto firstSource = childrenOfType<HTMLSourceElement>(*this).first()) {
+        } else if (RefPtr firstSource = childrenOfType<HTMLSourceElement>(*this).first()) {
             // If there are source children, they will trigger sourceWasAdded() which handles lazy loading
             // But if source children are already present when video is inserted, we need to check here 1
             sourceWasAdded(*firstSource);
@@ -1230,8 +1228,11 @@ void HTMLMediaElement::removedFromAncestor(RemovalType removalType, ContainerNod
 {
     HTMLMEDIAELEMENT_RELEASE_LOG(REMOVEDFROMANCESTOR);
 
-    if (document().settings().lazyMediaLoadingEnabled())
-        document().lazyLoadMediaObserver().unobserve(*this, document());
+    {
+        Ref document = this->document();
+        if (document->settings().lazyMediaLoadingEnabled())
+            document->lazyLoadMediaObserver().unobserve(*this, document);
+    }
 
     setInActiveDocument(false);
     if (removalType.disconnectedFromDocument) {
@@ -1538,18 +1539,20 @@ bool HTMLMediaElement::hasLazyLoadableAttributeValue(StringView attributeValue)
 
 bool HTMLMediaElement::isLazyLoadable() const
 {
-    if (!document().frame() || !document().frame()->checkedScript()->canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
+    Ref document = this->document();
+    if (!document->frame() || !protect(document->frame()->script())->canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
         return false;
 
-    if (document().paginated())
+    if (document->paginated())
         return false;
     return hasLazyLoadableAttributeValue(attributeWithoutSynchronization(HTMLNames::loadingAttr));
 }
 
 void HTMLMediaElement::loadDeferredMedia()
 {
-    if (document().settings().lazyMediaLoadingEnabled())
-        document().lazyLoadMediaObserver().unobserve(*this, document());
+    Ref document = this->document();
+    if (document->settings().lazyMediaLoadingEnabled())
+        document->lazyLoadMediaObserver().unobserve(*this, document);
 
     // Load the media - load() will handle both src attribute and source children
     if (networkState() == NETWORK_EMPTY) {
@@ -1561,8 +1564,9 @@ void HTMLMediaElement::loadDeferredMedia()
 void HTMLMediaElement::resumeLazyLoadingIfNeeded()
 {
     // Per HTML spec: user-initiated play() triggers lazy load resumption steps
-    if (document().settings().lazyMediaLoadingEnabled()) {
-        auto& observer = document().lazyLoadMediaObserver();
+    Ref document = this->document();
+    if (document->settings().lazyMediaLoadingEnabled()) {
+        auto& observer = document->lazyLoadMediaObserver();
         if (observer.isObserved(*this))
             loadDeferredMedia();
     }
@@ -5893,7 +5897,7 @@ void HTMLMediaElement::sourceWasAdded(HTMLSourceElement& source)
     // the media element's resource selection algorithm.
     if (m_networkState == NETWORK_EMPTY) {
         m_nextChildNodeToConsider = source;
-        if (isLazyLoadable() && document().settings().lazyMediaLoadingEnabled()) {
+        if (document().settings().lazyMediaLoadingEnabled() && isLazyLoadable()) {
             LazyLoadMediaObserver::observe(*this);
             return;
         }

@@ -75,8 +75,9 @@ private:
 
 void LazyLoadMediaObserver::observe(Element& element)
 {
-    auto& observer = element.document().lazyLoadMediaObserver();
-    auto* intersectionObserver = observer.intersectionObserver(protect(element.document()));
+    Ref protectedDocument = element.document();
+    auto& observer = protectedDocument->lazyLoadMediaObserver();
+    RefPtr intersectionObserver = observer.intersectionObserver(protectedDocument);
     if (!intersectionObserver)
         return;
     intersectionObserver->observe(element);
@@ -104,7 +105,8 @@ IntersectionObserver* LazyLoadMediaObserver::intersectionObserver(Document& docu
 
 bool LazyLoadMediaObserver::isObserved(Element& element) const
 {
-    return m_observer && m_observer->isObserving(element);
+    RefPtr observer = m_observer;
+    return observer && observer->isObserving(element);
 }
 
 }
