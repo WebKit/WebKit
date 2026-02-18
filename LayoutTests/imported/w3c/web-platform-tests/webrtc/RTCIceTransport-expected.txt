@@ -1,7 +1,7 @@
 
 Harness Error (TIMEOUT), message = null
 
-FAIL Two connected iceTransports should have matching local/remote candidates returned assert_true: Expect RTCIceRole to be either controlling or controlled, found undefined expected true got false
+FAIL Two connected iceTransports should have matching local/remote candidates returned assert_true: Expect RTCIceComponent to be either rtp or rtcp expected true got false
 FAIL Unconnected iceTransport should have empty remote candidates and selected pair promise_test: Unhandled rejection with value: object "TypeError: iceTransport.getRemoteCandidates is not a function. (In 'iceTransport.getRemoteCandidates()', 'iceTransport.getRemoteCandidates' is undefined)"
 PASS RTCIceTransport should be in state "new" initially
 PASS RTCIceTransport should transition to "gathering" then "complete", after sLD

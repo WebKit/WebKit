@@ -62,6 +62,8 @@ public:
     RTCIceTransportState state() const { return m_transportState; }
     RTCIceGatheringState gatheringState() const { return m_gatheringState; }
 
+    RTCIceRole role() const { return m_role; }
+
     const RTCIceTransportBackend& backend() const { return m_backend.get(); }
     RefPtr<RTCPeerConnection> connection() const { return m_connection; }
 
@@ -88,6 +90,7 @@ private:
     void onStateChanged(RTCIceTransportState) final;
     void onGatheringStateChanged(RTCIceGatheringState) final;
     void onSelectedCandidatePairChanged(RefPtr<RTCIceCandidate>&&, RefPtr<RTCIceCandidate>&&) final;
+    void onRoleChanged(RTCIceRole) final;
 
     bool m_isStopped { false };
     const UniqueRef<RTCIceTransportBackend> m_backend;
@@ -95,6 +98,7 @@ private:
     RTCIceTransportState m_transportState { RTCIceTransportState::New };
     RTCIceGatheringState m_gatheringState { RTCIceGatheringState::New };
     std::optional<CandidatePair> m_selectedCandidatePair;
+    RTCIceRole m_role { RTCIceRole::Unknown };
 };
 
 } // namespace WebCore

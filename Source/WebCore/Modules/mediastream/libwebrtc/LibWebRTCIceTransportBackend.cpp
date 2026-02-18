@@ -30,6 +30,7 @@
 #include "LibWebRTCProvider.h"
 #include "LibWebRTCUtils.h"
 #include "RTCIceCandidate.h"
+#include "RTCIceRole.h"
 #include <wtf/TZoneMallocInlines.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
@@ -76,6 +77,24 @@ static inline RTCIceGatheringState toRTCIceGatheringState(webrtc::IceGatheringSt
     }
 
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+static inline RTCIceRole toRTCIceRole(int role)
+{
+    // cricket::IceRole is an enum with values:
+    // ICEROLE_CONTROLLING = 0
+    // ICEROLE_CONTROLLED = 1
+    // ICEROLE_UNKNOWN = 2
+    switch (role) {
+    case 0: // ICEROLE_CONTROLLING
+        return RTCIceRole::Controlling;
+    case 1: // ICEROLE_CONTROLLED
+        return RTCIceRole::Controlled;
+    case 2: // ICEROLE_UNKNOWN
+        return RTCIceRole::Unknown;
+    default:
+        return RTCIceRole::Unknown;
+    }
 }
 
 class LibWebRTCIceTransportBackendObserver final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<LibWebRTCIceTransportBackendObserver>, public sigslot::has_slots<> {
@@ -126,12 +145,17 @@ void LibWebRTCIceTransportBackendObserver::start()
                     client->onStateChanged(RTCIceTransportState::Checking);
             });
         }
-        callOnMainThread([protectedThis = Ref { *this }, transportState, gatheringState = internal->gathering_state()] {
+
+        // Get initial role
+        auto iceRole = internal->GetIceRole();
+
+        callOnMainThread([protectedThis = Ref { *this }, transportState, gatheringState = internal->gathering_state(), iceRole] {
             RefPtr client = protectedThis->m_client.get();
             if (!client)
                 return;
             client->onStateChanged(toRTCIceTransportState(transportState));
             client->onGatheringStateChanged(toRTCIceGatheringState(gatheringState));
+            client->onRoleChanged(toRTCIceRole(iceRole));
         });
 
         if (auto candidatePair = internal->GetSelectedCandidatePair())
@@ -208,6 +232,12 @@ void LibWebRTCIceTransportBackend::unregisterClient()
 {
     ASSERT(m_observer);
     m_observer->stop();
+}
+
+RTCIceRole LibWebRTCIceTransportBackend::role() const
+{
+    // Return Unknown for now since the actual role will be set via observer callbacks.
+    return RTCIceRole::Unknown;
 }
 
 } // namespace WebCore
