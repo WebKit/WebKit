@@ -124,10 +124,16 @@ std::optional<RefPtr<SharedBuffer>> RemoteSnapshot::drawToPDF(const FloatSize& s
 
 #endif
 
-std::optional<ShareableBitmap::Handle> RemoteSnapshot::drawToBitmap(const FloatSize& size, FrameIdentifier rootFrameIdentifier)
+std::optional<std::pair<ShareableBitmap::Handle, Headroom>> RemoteSnapshot::drawToBitmap(const FloatSize& size, FrameIdentifier rootFrameIdentifier)
 {
     ASSERT(isComplete());
-    RefPtr image = WebImage::create(size, ImageOption::Shareable, DestinationColorSpace::SRGB());
+    auto imageOptions = { ImageOption::Shareable };
+
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    imageOptions = { ImageOption::Shareable, ImageOption::AllowHDR };
+#endif
+
+    RefPtr image = WebImage::create(size, imageOptions, DestinationColorSpace::SRGB());
     if (!image)
         return std::nullopt;
 
@@ -135,8 +141,14 @@ std::optional<ShareableBitmap::Handle> RemoteSnapshot::drawToBitmap(const FloatS
 
     if (!applyFrame(rootFrameIdentifier, context))
         return std::nullopt;
-
-    return image->createHandle(SharedMemory::Protection::ReadOnly);
+    if (auto handle = image->createHandle(SharedMemory::Protection::ReadOnly)) {
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    return std::pair { *handle, Headroom(context.maxPaintedEDRHeadroom()) };
+#else
+    return std::pair { *handle, Headroom::None };
+#endif
+    }
+    return std::nullopt;
 }
 
 }

@@ -13986,20 +13986,24 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawRectToImage(WebFr
         return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawRectToImage(frameID, printInfo, rect, imageSize), WTF::move(callback));
     }
 
+    auto gpuProcessCallback = [callback = WTF::move(callback)] (std::optional<WebCore::ShareableBitmap::Handle>&& handle, Headroom) mutable {
+        callback(WTF::move(handle));
+    };
+
     auto snapshotIdentifier = RemoteSnapshotIdentifier::generate();
     Ref gpuProcess = GPUProcessProxy::getOrCreate();
-    auto snapshotCallback = [weakGPUProcess = WeakPtr { gpuProcess }, snapshotIdentifier, callback = WTF::move(callback), rootFrameIdentifier = frameID, imageSize](bool success) mutable {
+    auto snapshotCallback = [weakGPUProcess = WeakPtr { gpuProcess }, snapshotIdentifier, gpuProcessCallback = WTF::move(gpuProcessCallback), rootFrameIdentifier = frameID, imageSize](bool success) mutable {
         RefPtr gpuProcess = weakGPUProcess.get();
         if (!gpuProcess || !gpuProcess->hasConnection()) {
-            callback({ });
+            gpuProcessCallback(std::nullopt, Headroom::None);
             return;
         }
         if (!success) {
             gpuProcess->releaseSnapshot(snapshotIdentifier);
-            callback({ });
+            gpuProcessCallback(std::nullopt, Headroom::None);
             return;
         }
-        gpuProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, imageSize, rootFrameIdentifier, WTF::move(callback));
+        gpuProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, imageSize, rootFrameIdentifier, WTF::move(gpuProcessCallback));
     };
 
     if (m_isPerformingDOMPrintOperation)
@@ -14613,12 +14617,16 @@ void WebPageProxy::takeSnapshot(const IntRect& rect, const IntSize& bitmapSize, 
             callback(nullptr);
             return;
         }
-        gpuProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, bitmapSize, rootFrameIdentifier, [callback = WTF::move(callback)] (std::optional<WebCore::ShareableBitmap::Handle>&& handle) mutable {
+        gpuProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, bitmapSize, rootFrameIdentifier, [callback = WTF::move(callback)] (std::optional<WebCore::ShareableBitmap::Handle>&& handle, Headroom headroom) mutable {
             if (!handle)
                 return;
             RetainPtr<CGImageRef> image;
             if (RefPtr bitmap = WebCore::ShareableBitmap::create(WTF::move(*handle), WebCore::SharedMemory::Protection::ReadOnly))
                 image = bitmap->createPlatformImage(DontCopyBackingStore);
+#if HAVE(SUPPORT_HDR_DISPLAY_APIS)
+            if (image && headroom > Headroom::None)
+                image = adoptCF(CGImageCreateCopyWithContentHeadroom(headroom.headroom, image.get()));
+#endif
             callback(image.get());
         });
     });
