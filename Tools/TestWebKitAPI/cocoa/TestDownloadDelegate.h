@@ -37,6 +37,7 @@ enum class DownloadCallback : uint8_t {
 #endif
     DidFinish,
     DidFailWithError,
+    DidStartProvisionalNavigation,
     NavigationActionBecameDownload,
     NavigationResponseBecameDownload,
     NavigationAction,
@@ -51,6 +52,7 @@ enum class DownloadCallback : uint8_t {
 @property (nonatomic, copy) void (^downloadDidFinish)(WKDownload *);
 @property (nonatomic, copy) void (^didFailWithError)(WKDownload *, NSError *, NSData *);
 
+@property (nonatomic, copy) void (^didStartProvisionalNavigation)(WKWebView *, WKNavigation *);
 @property (nonatomic, copy) void (^navigationActionDidBecomeDownload)(WKWebView *, WKNavigationAction *, WKDownload *);
 @property (nonatomic, copy) void (^navigationResponseDidBecomeDownload)(WKWebView *, WKNavigationResponse *, WKDownload *);
 @property (nonatomic, copy) void (^decidePolicyForNavigationAction)(WKNavigationAction *, void (^)(WKNavigationActionPolicy));

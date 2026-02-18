@@ -27,6 +27,7 @@
 #import "WKDownloadInternal.h"
 
 #import "APIDownloadClient.h"
+#import "APINavigation.h"
 #import "CompletionHandlerCallChecker.h"
 #import "DownloadProxy.h"
 #import "WKDownloadDelegate.h"
@@ -34,6 +35,7 @@
 #import "WKFrameInfoInternal.h"
 #import "WKNSData.h"
 #import "WKNSURLAuthenticationChallenge.h"
+#import "WKNavigationInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import <Foundation/Foundation.h>
@@ -318,6 +320,11 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 - (WKFrameInfo *)originatingFrame
 {
     return WebKit::wrapper(_download->frameInfo());
+}
+
+- (WKNavigation *)navigation
+{
+    return WebKit::wrapper(_download->navigation());
 }
 
 - (id <WKDownloadDelegate>)delegate

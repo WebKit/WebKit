@@ -27,6 +27,7 @@
 #include "DownloadProxyMap.h"
 
 #include "APIDownloadClient.h"
+#include "APINavigation.h"
 #include "AuxiliaryProcessProxy.h"
 #include "DownloadProxy.h"
 #include "DownloadProxyMessages.h"
@@ -82,9 +83,9 @@ void DownloadProxyMap::platformDestroy()
 }
 #endif
 
-Ref<DownloadProxy> DownloadProxyMap::createDownloadProxy(WebsiteDataStore& dataStore, Ref<API::DownloadClient>&& client, const WebCore::ResourceRequest& resourceRequest, const std::optional<FrameInfoData>& frameInfo, WebPageProxy* originatingPage)
+Ref<DownloadProxy> DownloadProxyMap::createDownloadProxy(WebsiteDataStore& dataStore, Ref<API::DownloadClient>&& client, const WebCore::ResourceRequest& resourceRequest, const std::optional<FrameInfoData>& frameInfo, API::Navigation* navigation, WebPageProxy* originatingPage)
 {
-    Ref downloadProxy = DownloadProxy::create(*this, dataStore, WTF::move(client), resourceRequest, frameInfo, originatingPage);
+    Ref downloadProxy = DownloadProxy::create(*this, dataStore, WTF::move(client), resourceRequest, frameInfo, navigation, originatingPage);
     m_downloads.set(downloadProxy->downloadID(), downloadProxy);
 
     RELEASE_LOG(Loading, "Adding download %" PRIu64 " to UIProcess DownloadProxyMap", downloadProxy->downloadID().toUInt64());

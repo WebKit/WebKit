@@ -2711,9 +2711,9 @@ void WebsiteDataStore::setEmulatedConditions(std::optional<int64_t>&& bytesPerSe
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
-Ref<DownloadProxy> WebsiteDataStore::createDownloadProxy(Ref<API::DownloadClient>&& client, const WebCore::ResourceRequest& request, WebPageProxy* originatingPage, const std::optional<FrameInfoData>& frameInfo)
+Ref<DownloadProxy> WebsiteDataStore::createDownloadProxy(Ref<API::DownloadClient>&& client, const WebCore::ResourceRequest& request, API::Navigation* navigation, WebPageProxy* originatingPage, const std::optional<FrameInfoData>& frameInfo)
 {
-    return protect(networkProcess())->createDownloadProxy(*this, WTF::move(client), request, frameInfo, originatingPage);
+    return protect(networkProcess())->createDownloadProxy(*this, WTF::move(client), request, frameInfo, navigation, originatingPage);
 }
 
 void WebsiteDataStore::download(const DownloadProxy& downloadProxy, const String& suggestedFilename)

@@ -27,6 +27,7 @@
 #import <WebKit/WKFoundation.h>
 
 @class WKFrameInfo;
+@class WKNavigation;
 @class WKWebView;
 @protocol NSProgressReporting;
 @protocol WKDownloadDelegate;
@@ -54,6 +55,9 @@ WK_SWIFT_UI_ACTOR
 
 /* @abstract The frame that originated this download. */
 @property (nonatomic, readonly) WKFrameInfo *originatingFrame WK_API_AVAILABLE(macos(15.2), ios(18.2));
+
+/* @abstract The navigation that initiated this download. */
+@property (nonatomic, readonly, weak) WKNavigation *navigation WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /* @abstract Cancel the download.
  @param completionHandler A block to invoke when cancellation is finished.

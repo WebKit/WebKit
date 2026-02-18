@@ -107,6 +107,9 @@ public:
 #if PLATFORM(MAC)
     void updateQuarantinePropertiesIfPossible();
 #endif
+
+    API::Navigation* navigation() { return m_navigation.get(); }
+
     API::FrameInfo& frameInfo() { return m_frameInfo.get(); }
 
     API::DownloadClient& client() { return m_client.get(); }
@@ -136,7 +139,7 @@ public:
 #endif
 
 private:
-    explicit DownloadProxy(DownloadProxyMap&, WebsiteDataStore&, API::DownloadClient&, const WebCore::ResourceRequest&, const std::optional<FrameInfoData>&, WebPageProxy*);
+    explicit DownloadProxy(DownloadProxyMap&, WebsiteDataStore&, API::DownloadClient&, const WebCore::ResourceRequest&, const std::optional<FrameInfoData>&, API::Navigation*, WebPageProxy*);
 
 
     // IPC::MessageReceiver
@@ -155,6 +158,8 @@ private:
     WebCore::ResourceRequest m_request;
     String m_suggestedFilename;
     String m_destinationFilename;
+
+    RefPtr<API::Navigation> m_navigation;
 
     WeakPtr<WebPageProxy> m_originatingPage;
     Vector<URL> m_redirectChain;

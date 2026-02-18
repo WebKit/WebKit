@@ -1504,14 +1504,20 @@ TEST(WKDownload, FinishSuccessfully)
     auto webView = adoptNS([WKWebView new]);
     [webView setNavigationDelegate:delegate.get()];
 
+    __block RetainPtr<WKNavigation> retainedNavigation;
     delegate.get().navigationResponseDidBecomeDownload = ^(WKWebView *, WKNavigationResponse *, WKDownload *download) {
         download.delegate = delegate.get();
+        EXPECT_NOT_NULL(download.navigation);
+        EXPECT_EQ(download.navigation, retainedNavigation.get());
         delegate.get().decideDestinationUsingResponse = ^(WKDownload *download, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
             EXPECT_NULL(download.progress.fileURL);
             completionHandler(expectedDownloadFile.get());
             EXPECT_NOT_NULL(download.progress.fileURL);
             EXPECT_WK_STREQ(download.progress.fileURL.absoluteString, expectedDownloadFile.get().absoluteString);
         };
+    };
+    delegate.get().didStartProvisionalNavigation = ^(WKWebView *, WKNavigation *navigation) {
+        retainedNavigation = navigation;
     };
     [webView loadRequest:server.request()];
     [delegate waitForDownloadDidFinish];
@@ -1521,6 +1527,7 @@ TEST(WKDownload, FinishSuccessfully)
 
     checkCallbackRecord(delegate.get(), {
         DownloadCallback::NavigationAction,
+        DownloadCallback::DidStartProvisionalNavigation,
         DownloadCallback::NavigationResponse,
         DownloadCallback::NavigationResponseBecameDownload,
         DownloadCallback::DecideDestination,

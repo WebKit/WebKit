@@ -55,12 +55,13 @@
 namespace WebKit {
 using namespace WebCore;
 
-DownloadProxy::DownloadProxy(DownloadProxyMap& downloadProxyMap, WebsiteDataStore& dataStore, API::DownloadClient& client, const ResourceRequest& resourceRequest, const std::optional<FrameInfoData>& frameInfoData, WebPageProxy* originatingPage)
+DownloadProxy::DownloadProxy(DownloadProxyMap& downloadProxyMap, WebsiteDataStore& dataStore, API::DownloadClient& client, const ResourceRequest& resourceRequest, const std::optional<FrameInfoData>& frameInfoData, API::Navigation* navigation, WebPageProxy* originatingPage)
     : m_downloadProxyMap(downloadProxyMap)
     , m_dataStore(&dataStore)
     , m_client(client)
     , m_downloadID(DownloadID::generate())
     , m_request(resourceRequest)
+    , m_navigation(navigation)
     , m_originatingPage(originatingPage)
     , m_frameInfo(frameInfoData ? API::FrameInfo::create(FrameInfoData { *frameInfoData }) : API::FrameInfo::create(legacyEmptyFrameInfo(ResourceRequest { URL { aboutBlankURL() } })))
 #if HAVE(MODERN_DOWNLOADPROGRESS)

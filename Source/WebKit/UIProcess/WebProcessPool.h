@@ -315,7 +315,7 @@ public:
     void setEnhancedAccessibility(bool);
     
     // Downloads.
-    Ref<DownloadProxy> createDownloadProxy(WebsiteDataStore&, const WebCore::ResourceRequest&, WebPageProxy* originatingPage, const std::optional<FrameInfoData>&);
+    Ref<DownloadProxy> createDownloadProxy(WebsiteDataStore&, const WebCore::ResourceRequest&, API::Navigation*, WebPageProxy* originatingPage, const std::optional<FrameInfoData>&);
 
     API::LegacyContextHistoryClient& historyClient() { return *m_historyClient; }
     WebContextClient& client() { return m_client; }

@@ -652,7 +652,7 @@ WebKitDownload* webkit_network_session_download_uri(WebKitNetworkSession* sessio
 
     WebCore::ResourceRequest request(String::fromUTF8(uri));
     Ref websiteDataStore = webkitWebsiteDataManagerGetDataStore(session->priv->websiteDataManager.get());
-    auto downloadProxy = websiteDataStore->createDownloadProxy(adoptRef(*new API::DownloadClient), request, nullptr, { });
+    auto downloadProxy = websiteDataStore->createDownloadProxy(adoptRef(*new API::DownloadClient), request, nullptr, nullptr, { });
     auto download = webkitDownloadCreate(downloadProxy);
     downloadProxy->setDidStartCallback([session = GRefPtr<WebKitNetworkSession> { session }, download = download.get()](auto* downloadProxy) {
         if (!downloadProxy)

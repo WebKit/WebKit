@@ -94,6 +94,14 @@
         _didFailWithError(download, error, resumeData);
 }
 
+- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
+{
+    _callbackRecord.append(DownloadCallback::DidStartProvisionalNavigation);
+
+    if (_didStartProvisionalNavigation)
+        _didStartProvisionalNavigation(webView, navigation);
+}
+
 - (void)webView:(WKWebView *)webView navigationAction:(WKNavigationAction *)navigationAction didBecomeDownload:(WKDownload *)download
 {
     _callbackRecord.append(DownloadCallback::NavigationActionBecameDownload);
