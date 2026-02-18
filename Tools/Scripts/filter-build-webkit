@@ -184,7 +184,19 @@ sub main() {
                 $path = " " . basename($1);
             }
             printLine("SwiftCompile$path", $target, $project, STYLE_PLAIN);
-        } elsif ($line =~ /^(\e\[1m)?(PhaseScriptExecution|RuleScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Preprocess|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|AnalyzeShallow|ProcessProductPackaging|ProcessProductPackagingDER|CodeSign|Validate|SymLink|Updating|CompileDTraceScript|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile|GenerateTAPI|CompileStoryboard|ExternalBuildToolExecution|CreateBuildDirectory|WriteAuxiliaryFile|RegisterWithLaunchServices|RegisterExecutionPolicyException|MkDir|Strip|MetalLink|CompileMetalFile|ValidateEmbeddedBinary|Copy|ScanDependencies|SwiftDriver|SwiftMergeGeneratedHeaders|SwiftDriverJobDiscovery|SwiftEmitModule|EmitSwiftModule|VerifyModule|ExecuteExternalTool|Unifdef|MergeInfoPlistFile|CompileAssetCatalogVariant|LinkAssetCatalog|GenerateAssetSymbols|GeneratedAssetSymbols|CopySwiftLibs|CopySwiftLibs)(\e\[0m)? ("[^"]+"|(\\|(?<=\\)\s|\S)+)?/) {
+        } elsif ($line =~ /^(\e\[1m)?SwiftVerifyEmittedModuleInterface(\e\[0m)?\s/) {
+            my $path = "";
+            if ($line =~ /(\S+\.swiftinterface)\s/) {
+                $path = " " . basename($1);
+            }
+            printLine("SwiftVerify$path", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^(\e\[1m)?SwiftEmitModule(\e\[0m)?\s/) {
+            my $moduleName = "";
+            if ($line =~ /Emitting\\?\s*module\\?\s*for\\?\s*(\S+)/) {
+                $moduleName = " " . $1;
+            }
+            printLine("SwiftEmitModule$moduleName", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^(\e\[1m)?(PhaseScriptExecution|RuleScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Preprocess|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|AnalyzeShallow|ProcessProductPackaging|ProcessProductPackagingDER|CodeSign|Validate|SymLink|Updating|CompileDTraceScript|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile|GenerateTAPI|CompileStoryboard|ExternalBuildToolExecution|CreateBuildDirectory|WriteAuxiliaryFile|RegisterWithLaunchServices|RegisterExecutionPolicyException|MkDir|Strip|MetalLink|CompileMetalFile|ValidateEmbeddedBinary|Copy|ScanDependencies|SwiftDriver|SwiftMergeGeneratedHeaders|EmitSwiftModule|VerifyModule|ExecuteExternalTool|Unifdef|MergeInfoPlistFile|CompileAssetCatalogVariant|LinkAssetCatalog|GenerateAssetSymbols|GeneratedAssetSymbols|CopySwiftLibs|CopySwiftLibs)(\e\[0m)? ("[^"]+"|(\\|(?<=\\)\s|\S)+)?/) {
             my ($command, $path) = ($2, basename($4));
             $command = "ScanDeps" if $command eq "ScanDependencies";
             $path =~ s/("|\\|\.[ah]$)//g;
@@ -525,6 +537,7 @@ sub shouldIgnoreLine($$)
     return 1 if $line =~ /^note: Building targets in dependency order/;
     return 1 if $line =~ /Xfrontend/;
     return 1 if $line =~ /SwiftDriver\\ Compilation/;
+    return 1 if $line =~ /SwiftDriverJobDiscovery/;
     return 1 if $line =~ /SwiftExplicitDependencyGeneratePcm/;
     return 1 if $line =~ /SwiftExplicitDependencyCompileModuleFromInterface/;
     return 1 if $line =~ /^Cache (hit|miss)/;
