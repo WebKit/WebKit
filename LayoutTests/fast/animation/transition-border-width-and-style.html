@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<style>
+ .initial {
+   transition: 1s;
+   border-style: none;
+   border-width: 3px;
+ }
+
+ .changed {
+   border-style: solid;
+   border-width: 0px;
+ }
+</style>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<body>
+  <span id="target" class="initial">This text should not have a border</span>
+</body>
+<script>
+  'use strict';
+
+  const elem = document.getElementById('target');
+
+  async function runAnimationTest() {
+    await waitForNextFrame();
+    await waitForNextFrame();
+    elem.classList.add('changed');
+    const anims = elem.getAnimations();
+    for (const anim of anims) {
+      anim.pause();
+      anim.currentTime = 500;
+    }
+  }
+
+  runAnimationTest();
+</script>
+</html>

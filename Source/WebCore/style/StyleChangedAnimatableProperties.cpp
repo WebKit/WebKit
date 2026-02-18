@@ -51,6 +51,16 @@ void conservativelyCollectChangedAnimatableProperties(const RenderStyle& a, cons
     // `insideLink` changes visited / non-visited colors, thus, we need to add all color properties.
     if (a.insideLink() != b.insideLink())
         changingProperties.m_properties.merge(CSSProperty::colorProperties);
+
+    // `border-*-width` changes must use the "used" value due to the effects of `border-*-style`.
+    if (a.usedBorderTopWidth() != b.usedBorderTopWidth())
+        changingProperties.m_properties.set(CSSPropertyBorderTopWidth);
+    if (a.usedBorderRightWidth() != b.usedBorderRightWidth())
+        changingProperties.m_properties.set(CSSPropertyBorderRightWidth);
+    if (a.usedBorderBottomWidth() != b.usedBorderBottomWidth())
+        changingProperties.m_properties.set(CSSPropertyBorderBottomWidth);
+    if (a.usedBorderLeftWidth() != b.usedBorderLeftWidth())
+        changingProperties.m_properties.set(CSSPropertyBorderLeftWidth);
 }
 
 } // namespace Style

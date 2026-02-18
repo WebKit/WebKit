@@ -35,7 +35,12 @@ class ChangedAnimatablePropertiesCustom final {
 public:
     static void conservativelyCollectChangedAnimatablePropertiesForCursor(const ComputedStyle::InheritedFlags&, const ComputedStyle::InheritedFlags&, CSSPropertiesBitSet&);
     static void conservativelyCollectChangedAnimatablePropertiesForZIndex(const BoxData&, const BoxData&, CSSPropertiesBitSet&);
-    static void conservativelyCollectChangedAnimatablePropertiesForCaretColor(const InheritedRareData&, const InheritedRareData&, CSSPropertiesBitSet&);
+
+    // `border-*-width` is handled after the generated checks due to the need to use the "used" value.
+    static void conservativelyCollectChangedAnimatablePropertiesForBorderBottomWidth(const auto&, const auto&, CSSPropertiesBitSet&) { }
+    static void conservativelyCollectChangedAnimatablePropertiesForBorderLeftWidth(const auto&, const auto&, CSSPropertiesBitSet&) { }
+    static void conservativelyCollectChangedAnimatablePropertiesForBorderRightWidth(const auto&, const auto&, CSSPropertiesBitSet&) { }
+    static void conservativelyCollectChangedAnimatablePropertiesForBorderTopWidth(const auto&, const auto&, CSSPropertiesBitSet&) { };
 };
 
 inline void ChangedAnimatablePropertiesCustom::conservativelyCollectChangedAnimatablePropertiesForCursor(const ComputedStyle::InheritedFlags& a, const ComputedStyle::InheritedFlags& b, CSSPropertiesBitSet& changingProperties)
