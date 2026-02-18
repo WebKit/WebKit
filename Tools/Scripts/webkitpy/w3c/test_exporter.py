@@ -110,9 +110,13 @@ class WebPlatformTestExporter(object):
     @property
     @memoized
     def _wpt_fork_remote(self):
+        # Always return a string to avoid None comparison crashes.
+        # Prefer explicit remote name, then username, then default to "origin".
         wpt_fork_remote = self._options.repository_remote
         if not wpt_fork_remote:
             wpt_fork_remote = self.username
+        if not wpt_fork_remote:
+            wpt_fork_remote = "origin"
 
         return wpt_fork_remote
 
@@ -231,30 +235,57 @@ class WebPlatformTestExporter(object):
         self._run_wpt_git(['checkout', self._wpt_repo.default_branch])
         self._run_wpt_git(['reset', '--hard', 'origin/master'])
 
+    def wpt_already_has_bug_export(self):
+        if not self._bug_id:
+            return False
+
+        grep_patterns = [str(self._bug_id), f'bugs.webkit.org/show_bug.cgi?id={self._bug_id}']
+        for pattern in grep_patterns:
+            result = self._run_wpt_git(['log', '--oneline', '-n', '1', f'--grep={pattern}'], capture_output=True)
+            if result.returncode == 0 and result.stdout and result.stdout.strip():
+                _log.error(f'Bug {self._bug_id} appears already exported to WPT: {result.stdout.decode("utf-8", "replace").strip()}')
+                return True
+        return False
+
     def create_branch_with_patch(self, patch):
         _log.info('Applying patch to web-platform-tests branch ' + self._branch_name)
-        try:
-            self._run_wpt_git(['checkout', '-b', self._branch_name])
-        except Exception as e:
-            _log.warning(e)
-            _log.info('Retrying to create the branch')
-            if self._run_wpt_git(['show-ref', '--quiet', '--verify', f'refs/heads/{self._branch_name}']):
+        # Use -B to create or reset the branch from current HEAD. Idempotent: re-running does not
+        # fail with "branch already exists". If -B fails (e.g. branch never existed), create with -b.
+        result = self._run_wpt_git(['checkout', '-B', self._branch_name])
+        if result.returncode:
+            if not self._run_wpt_git(['show-ref', '--quiet', '--verify', f'refs/heads/{self._branch_name}']).returncode:
                 self._run_wpt_git(['branch', '-D', self._branch_name])
             self._run_wpt_git(['checkout', '-b', self._branch_name])
 
         try:
-            output = self._run_wpt_git(['apply', '--index', patch, '-3'], stderr=subprocess.STDOUT)
+            output = self._run_wpt_git(['apply', '--index', '--binary', '-3', patch], capture_output=True)
             if output.returncode:
-                _log.error(f'Failed to apply patch!')
-                _log.error(f"{output.stdout.decode('utf-8', 'replace')}")
-                return False
+                # Fallback: --index can partially apply (text hunks into index) then fail on new
+                # files (e.g. binary PNGs) that don't exist in the index. The index is then dirty,
+                # so a retry without --index would see wrong context. Reset and clean before retry.
+                _log.info('Patch application with --index failed (likely contains new files), resetting and retrying without --index...')
+                self._run_wpt_git(['reset', '--hard', 'HEAD'])
+                self._run_wpt_git(['clean', '-fd'])
+                output = self._run_wpt_git(['apply', '--binary', '-3', patch], capture_output=True)
+                if output.returncode:
+                    _log.info('Retrying patch application without 3-way merge...')
+                    self._run_wpt_git(['reset', '--hard', 'HEAD'])
+                    self._run_wpt_git(['clean', '-fd'])
+                    output = self._run_wpt_git(['apply', '--binary', patch], capture_output=True)
+                    if output.returncode:
+                        _log.error('Failed to apply patch!')
+                        if output.stdout:
+                            _log.error(output.stdout.decode('utf-8', 'replace'))
+                        if getattr(output, 'stderr', None):
+                            _log.error(output.stderr.decode('utf-8', 'replace'))
+                        return False
         except Exception as e:
             _log.warning(e)
             return False
 
-        # Check if there are no changes to commit
+        # Add all changes to index (including new files created by the patch)
         if self._run_wpt_git(['add', '--all']).returncode:
-            _log.error('Failed to add changes')
+            _log.error('Failed to add changes to index')
             return False
 
         if not self._run_wpt_git(['diff', '--cached', '--quiet']).returncode:
@@ -268,18 +299,47 @@ class WebPlatformTestExporter(object):
         return True
 
     def set_up_wpt_fork(self):
-        if self._wpt_fork_remote not in self._run_wpt_git(['remote'], capture_output=True).stdout.decode('utf-8') and self._run_wpt_git(
-            ['remote', 'add', self._wpt_fork_remote, self._wpt_fork_push_url]
-        ).returncode not in [0, 3]:
-            _log.error("Failed to add '{}' remote\n".format(self._wpt_fork_remote))
+        # Ensure fork remote name is always a string (should be guaranteed by _wpt_fork_remote property)
+        fork_remote = self._wpt_fork_remote
+        if not fork_remote:
+            _log.error("Fork remote name is not set. Please provide --remote or ensure username is configured.")
             return
 
-        if self._run_wpt_git(['remote', 'show', self._wpt_fork_remote], capture_output=True).returncode:
+        # Check if remote already exists
+        remote_list_result = self._run_wpt_git(['remote'], capture_output=True)
+        remote_list = ''
+        if remote_list_result.stdout:
+            remote_list = remote_list_result.stdout.decode('utf-8', 'replace')
+
+        if fork_remote not in remote_list:
+            # Remote doesn't exist, try to add it
+            push_url = self._wpt_fork_push_url
+            if not push_url:
+                _log.error(
+                    f"Fork remote URL is not set. Expected remote name: '{fork_remote}'. "
+                    f"Please provide --remote-url or ensure username is configured.")
+                return
+
+            add_result = self._run_wpt_git(['remote', 'add', fork_remote, push_url])
+            if add_result.returncode not in [0, 3]:  # 0 = success, 3 = remote already exists
+                _log.error(
+                    f"Failed to add remote '{fork_remote}' with URL '{push_url}'. "
+                    f"Git error code: {add_result.returncode}")
+                return
+
+        # Verify the remote is accessible
+        show_result = self._run_wpt_git(['remote', 'show', fork_remote], capture_output=True)
+        if show_result.returncode:
+            push_url = self._wpt_fork_push_url or '(not set)'
+            username = self.username or '(not set)'
             # FIXME: If a fork doesn't exist, we should create one for the user - https://bugs.webkit.org/show_bug.cgi?id=293519
-            _log.error(f'Could not find a fork for {self._wpt_fork_remote}. Please fork WPT before continuing: https://github.com/web-platform-tests/wpt/fork')
+            _log.error(
+                f"Could not access fork remote '{fork_remote}' (URL: {push_url}, username: {username}). "
+                f"Please ensure the fork exists and is accessible. "
+                f"Fork WPT at: https://github.com/web-platform-tests/wpt/fork")
             return
 
-        self._run_wpt_git(['fetch', self._wpt_fork_remote, '--prune'])
+        self._run_wpt_git(['fetch', fork_remote, '--prune'])
         return True
 
     def push_to_wpt_fork(self):
@@ -353,6 +413,10 @@ class WebPlatformTestExporter(object):
         self._run_wpt_git(['fetch', 'origin', '--prune'])
         self.clean()
 
+        if self.wpt_already_has_bug_export():
+            _log.info(f'Bug {self._bug_id} has already been exported to WPT. Nothing to do.')
+            return 0
+
         if not self.set_up_wpt_fork():
             self.delete_local_branch(is_success=False)
             return 1
@@ -362,7 +426,7 @@ class WebPlatformTestExporter(object):
             self.delete_local_branch(is_success=False)
             return 1
 
-        if git_patch_file and self.clean:
+        if git_patch_file and self._options.clean:
             self._filesystem.remove(git_patch_file)
 
         if self._options.use_linter:
