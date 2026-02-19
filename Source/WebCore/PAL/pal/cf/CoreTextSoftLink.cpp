@@ -32,3 +32,8 @@ SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(PAL, OTSVG)
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, OTSVG, OTSVGTableCreateFromData, OTSVGTableRef, (CFDataRef svgTable, unsigned unitsPerEm, CGFloat fontSize), (svgTable, unitsPerEm, fontSize))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, OTSVG, OTSVGTableGetDocumentIndexForGlyph, CFIndex, (OTSVGTableRef table, CGGlyph glyph), (table, glyph))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, OTSVG, OTSVGTableRelease, void, (OTSVGTableRef table), (table))
+
+#if HAVE(CORE_TEXT_GLYPHHASCOMPLEXCOLOR_FUNCTION)
+SOFT_LINK_FRAMEWORK_FOR_SOURCE(PAL, CoreText)
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, CoreText, CTFontHasComplexColorFormatForGlyph, bool, (CTFontRef font, CGGlyph glyph), (font, glyph), PAL_EXPORT)
+#endif
