@@ -37,7 +37,6 @@
  - "grid"
  - "inline-grid"
  - "grid-lanes"
- - "inline-grid-lanes"
  - "contents"
  - "none"
  - "-webkit-box"

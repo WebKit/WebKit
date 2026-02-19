@@ -426,6 +426,12 @@ template<> struct ValueRepresentation<DisplayType> {
     }
 };
 
+// MARK: - Serialization
+
+template<> struct Serialize<DisplayType> {
+    void operator()(StringBuilder&, const CSS::SerializationContext&, const RenderStyle&, DisplayType);
+};
+
 // MARK: - Blending
 
 template<> struct Blending<Display> {

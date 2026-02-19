@@ -497,10 +497,6 @@
                     "settings-flag": "gridLanesEnabled"
                 },
                 {
-                    "value": "inline-grid-lanes",
-                    "settings-flag": "gridLanesEnabled"
-                },
-                {
                     "value": "ruby",
                     "status": "unimplemented"
                 },
@@ -15088,7 +15084,7 @@
             }
         },
         "<display-legacy>": {
-            "grammar": "inline-block | inline-table | inline-flex | inline-grid | inline-grid-lanes",
+            "grammar": "inline-block | inline-table | inline-flex | inline-grid",
             "specification": {
                 "category": "css-display",
                 "url": "https://www.w3.org/TR/css-display-3/#typedef-display-legacy"

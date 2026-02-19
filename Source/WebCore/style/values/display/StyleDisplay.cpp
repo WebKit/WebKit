@@ -28,6 +28,7 @@
 
 #include "AnimationUtilities.h"
 #include "StyleBuilderChecking.h"
+#include "StylePrimitiveKeyword+Serialization.h"
 
 namespace WebCore {
 namespace Style {
@@ -114,6 +115,24 @@ auto CSSValueConversion<Display>::operator()(BuilderState& state, const CSSValue
 
     state.setCurrentPropertyInvalidAtComputedValueTime();
     return Style::DisplayType::InlineFlow;
+}
+
+// MARK: - Serialization
+
+void Serialize<DisplayType>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle& style, DisplayType value)
+{
+    if (value == DisplayType::InlineGridLanes) {
+        // `inline-grid-lanes` is not a <display-legacy> keyword; serialize as
+        // the two-keyword form `inline grid-lanes`.
+        serializationForCSS(builder, context, style, CSS::Keyword::Inline { });
+        builder.append(' ');
+        serializationForCSS(builder, context, style, CSS::Keyword::GridLanes { });
+        return;
+    }
+
+    valueRepresentation(value, [&](const auto& alternative) {
+        serializationForCSS(builder, context, style, alternative);
+    });
 }
 
 // MARK: - Blending

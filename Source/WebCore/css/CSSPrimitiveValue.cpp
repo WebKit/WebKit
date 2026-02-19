@@ -1047,6 +1047,10 @@ String CSSPrimitiveValue::customCSSText(const CSS::SerializationContext& context
     case CSSUnitType::CSS_UNKNOWN:
         return String();
     case CSSUnitType::CSS_VALUE_ID:
+        // `inline-grid-lanes` is not a <display-legacy> keyword; serialize
+        // using the two-keyword form `inline grid-lanes`.
+        if (m_value.valueID == CSSValueInlineGridLanes)
+            return "inline grid-lanes"_s;
         return nameStringForSerialization(m_value.valueID);
     case CSSUnitType::CSS_PROPERTY_ID:
         return nameString(m_value.propertyID);

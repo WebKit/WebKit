@@ -1228,7 +1228,7 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "ltr", "rtl",
     ],
     "display": [
-        "none", "inline", "block", "list-item", "compact", "inline-block", "table", "inline-table", "table-row-group", "table-header-group", "table-footer-group", "table-row", "table-column-group", "table-column", "table-cell", "table-caption", "-webkit-box", "-webkit-inline-box", "flex", "-webkit-flex", "inline-flex", "-webkit-inline-flex", "contents", "grid", "inline-grid", "grid-lanes", "inline-grid-lanes",
+        "none", "inline", "block", "list-item", "compact", "inline-block", "table", "inline-table", "table-row-group", "table-header-group", "table-footer-group", "table-row", "table-column-group", "table-column", "table-cell", "table-caption", "-webkit-box", "-webkit-inline-box", "flex", "-webkit-flex", "inline-flex", "-webkit-inline-flex", "contents", "grid", "inline-grid", "grid-lanes",
     ],
     "dominant-baseline": [
         "middle", "auto", "alphabetic", "central", "text-before-edge", "text-after-edge", "ideographic", "hanging", "mathematical", "use-script", "no-change", "reset-size",

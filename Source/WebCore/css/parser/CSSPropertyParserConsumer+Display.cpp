@@ -238,11 +238,11 @@ RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range, CSS::PropertyParserS
     //                      ruby-base | ruby-text | ruby-base-container |
     //                      ruby-text-container
     // <display-box>      = contents | none
-    // <display-legacy>   = inline-block | inline-table | inline-flex | inline-grid | inline-grid-lanes
+    // <display-legacy>   = inline-block | inline-table | inline-flex | inline-grid
     // <display-non-standard> = -webkit-box | -webkit-inline-box | -webkit-flex | -webkit-inline-flex
     // https://drafts.csswg.org/css-display/#propdef-display
     //  and
-    // https://drafts.csswg.org/css-grid-3/#grid-lanes-containers (for additions of grid-lanes and inline-grid-lanes)
+    // https://drafts.csswg.org/css-grid-3/#grid-lanes-containers (for additions of grid-lanes)
 
     switch (range.peek().id()) {
     // <display-outside>
@@ -305,11 +305,6 @@ RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range, CSS::PropertyParserS
     case CSSValueInlineFlex:
     case CSSValueInlineGrid:
         return CSSPrimitiveValue::create(range.consumeIncludingWhitespace().id());
-    case CSSValueInlineGridLanes:
-        if (!state.context.gridLanesEnabled)
-            return nullptr;
-        return CSSPrimitiveValue::create(range.consumeIncludingWhitespace().id());
-
     // <display-non-standard>
     case CSSValueWebkitBox:
     case CSSValueWebkitInlineBox:
