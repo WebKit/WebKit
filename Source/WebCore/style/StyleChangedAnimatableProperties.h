@@ -36,7 +36,10 @@ namespace Style {
 // to precisely check equivalence before saying "this property needs to be visited". This is tuned
 // based on Speedometer3.0 data.
 
-void conservativelyCollectChangedAnimatableProperties(const RenderStyle&, const RenderStyle&, CSSPropertiesBitSet&);
+enum class AnimatablePropertiesCollectionQuirks : uint8_t {
+    ComparareUsedValuesForBorderWidth
+};
+void conservativelyCollectChangedAnimatableProperties(const RenderStyle&, const RenderStyle&, CSSPropertiesBitSet&, EnumSet<AnimatablePropertiesCollectionQuirks>);
 
 } // namespace Style
 } // namespace WebCore

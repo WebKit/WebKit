@@ -139,6 +139,7 @@ struct QuirksData {
         ShouldAvoidScrollingWhenFocusedContentIsVisibleQuirk,
         ShouldBlockFetchWithNewlineAndLessThan,
         ShouldBypassAsyncScriptDeferring,
+        ShouldComparareUsedValuesForBorderWidthForTriggeringTransitions,
         ShouldDelayReloadWhenRegisteringServiceWorker,
 #if HAVE(PIP_SKIP_PREROLL)
         ShouldDisableAdSkippingInPip,
