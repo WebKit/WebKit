@@ -1645,6 +1645,7 @@ class YarrGenerator final : public YarrJITInfo {
         // into the code for a node (likely where a backtrack will trigger
         // rematching).
         MacroAssembler::Label m_reentry;
+        MacroAssembler::Label m_adjustedReentry;
         MacroAssembler::JumpList m_jumps;
 
         // Used for backtracking when the prior alternative did not consume any
@@ -3631,8 +3632,10 @@ class YarrGenerator final : public YarrJITInfo {
                     if (alternative->m_minimumSize > priorAlternative->m_minimumSize) {
                         m_jit.add32(MacroAssembler::Imm32(alternative->m_minimumSize - priorAlternative->m_minimumSize), m_regs.index);
                         op.m_jumps.append(jumpIfNoAvailableInput());
-                    } else if (priorAlternative->m_minimumSize > alternative->m_minimumSize)
+                    } else if (priorAlternative->m_minimumSize > alternative->m_minimumSize) {
                         m_jit.sub32(MacroAssembler::Imm32(priorAlternative->m_minimumSize - alternative->m_minimumSize), m_regs.index);
+                        op.m_adjustedReentry = m_jit.label();
+                    }
                 } else if (op.m_nextOp == notFound) {
                     // This is the reentry point for the End of 'once through' alternatives,
                     // jumped to when the last alternative fails to match.
@@ -4397,14 +4400,10 @@ class YarrGenerator final : public YarrJITInfo {
                     // We only get here if an input check fails, it is only worth checking again
                     // if the next alternative has a minimum size less than the last.
                     if (prevOp->m_alternative->m_minimumSize > nextOp->m_alternative->m_minimumSize) {
-                        // FIXME: if we added an extra label to YarrOp, we could avoid needing to
-                        // subtract delta back out, and reduce this code. Should performance test
-                        // the benefit of this.
                         unsigned delta = prevOp->m_alternative->m_minimumSize - nextOp->m_alternative->m_minimumSize;
                         m_jit.sub32(MacroAssembler::Imm32(delta), m_regs.index);
                         MacroAssembler::Jump fail = jumpIfNoAvailableInput();
-                        m_jit.add32(MacroAssembler::Imm32(delta), m_regs.index);
-                        m_jit.jump(nextOp->m_reentry);
+                        m_jit.jump(nextOp->m_adjustedReentry);
                         fail.link(&m_jit);
                     } else if (prevOp->m_alternative->m_minimumSize < nextOp->m_alternative->m_minimumSize)
                         m_jit.add32(MacroAssembler::Imm32(nextOp->m_alternative->m_minimumSize - prevOp->m_alternative->m_minimumSize), m_regs.index);
