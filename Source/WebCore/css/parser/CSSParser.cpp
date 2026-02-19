@@ -86,6 +86,8 @@
 
 namespace WebCore {
 
+static constexpr auto maximumRuleListNestingLevel = 128;
+
 CSSParser::~CSSParser() = default;
 
 CSSParser::CSSParser(const CSSParserContext& context, StyleSheetContents* styleSheet)
@@ -700,7 +702,6 @@ Vector<Ref<StyleRuleBase>> CSSParser::consumeNestedGroupRules(CSSParserTokenRang
 {
     NestingLevelIncrementer incrementer { m_ruleListNestingLevel };
 
-    static constexpr auto maximumRuleListNestingLevel = 128;
     if (m_ruleListNestingLevel > maximumRuleListNestingLevel)
         return { };
 
@@ -1500,6 +1501,11 @@ static void observeSelectors(CSSParserObserverWrapper& wrapper, CSSParserTokenRa
 
 RefPtr<StyleRuleBase> CSSParser::consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
 {
+    NestingLevelIncrementer incrementer { m_ruleListNestingLevel };
+
+    if (m_ruleListNestingLevel > maximumRuleListNestingLevel)
+        return nullptr;
+
     auto preludeCopyForInspector = prelude;
     auto mutableSelectorList = parseMutableCSSSelectorList(prelude, m_context, protectedStyleSheet().get(), lastAncestorRuleType(), CSSParserEnum::IsForgiving::No, CSSSelectorParser::DisallowPseudoElement::No);
 
