@@ -310,7 +310,7 @@ void StyleOriginatedTimelinesController::unregisterNamedTimeline(const AtomStrin
     if (i == notFound)
         return;
 
-    auto timeline = timelines.at(i);
+    Ref timeline = timelines.at(i);
 
     // Make sure to remove the named timeline from our name-to-timelines map first,
     // such that re-syncing any CSS Animation previously registered with it resolves
