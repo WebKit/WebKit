@@ -34,7 +34,7 @@
 
 #import "Logging.h"
 #import "ParentalControlsContentFilter.h"
-#import "ParentalControlsURLFilterParameters.h"
+#import <WebCore/ParentalControlsURLFilterParameters.h>
 #import <pal/cocoa/WebContentRestrictionsSoftLink.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/MainThread.h>

@@ -37,7 +37,6 @@ class WorkQueue;
 
 namespace WebCore {
 
-struct ParentalControlsURLFilterParameters;
 class ParentalControlsContentFilter;
 
 class ParentalControlsURLFilter : public ThreadSafeRefCounted<ParentalControlsURLFilter, WTF::DestructionThread::Main> {
