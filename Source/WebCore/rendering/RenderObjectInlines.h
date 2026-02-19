@@ -77,11 +77,6 @@ inline Ref<Page> RenderObject::protectedPage() const
     return page();
 }
 
-inline Settings& RenderObject::settings() const
-{
-    return page().settings();
-}
-
 inline FloatQuad RenderObject::localToAbsoluteQuad(const FloatQuad& quad, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
 {
     return localToContainerQuad(quad, nullptr, mode, wasFixed);

@@ -46,6 +46,11 @@ inline RenderView& RenderObject::view() const
     return *document().renderView();
 }
 
+inline const Settings& RenderObject::settings() const
+{
+    return document().settings();
+}
+
 inline bool RenderObject::renderTreeBeingDestroyed() const
 {
     return document().renderTreeBeingDestroyed();
