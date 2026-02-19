@@ -1,0 +1,14 @@
+Test that cancelling a provisional cross-origin iframe load doesn't crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test 1: Remove cross-origin iframe before load completes
+PASS Iframe removed, no crash
+
+Test 2: Navigate cross-origin iframe away before load completes
+PASS Iframe navigated, no crash
+PASS All tests completed without crash
+PASS successfullyParsed is true
+
+TEST COMPLETE

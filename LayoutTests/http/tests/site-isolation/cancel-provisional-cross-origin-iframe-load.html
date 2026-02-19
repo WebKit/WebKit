@@ -1,0 +1,44 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+    description("Test that cancelling a provisional cross-origin iframe load doesn't crash.");
+
+    jsTestIsAsync = true;
+
+    // Test removing iframe before it finishes loading
+    function testRemoveIframe() {
+        debug("Test 1: Remove cross-origin iframe before load completes");
+        let iframe = document.createElement("iframe");
+        iframe.src = "http://localhost:8000/resources/network-simulator.py?test=cancel-load-remove-iframe&path=/site-isolation/resources/simple.html&initialdelay=2000";
+        document.body.appendChild(iframe);
+
+        // Remove immediately - the load will be cancelled while in progress
+        requestAnimationFrame(function () {
+            iframe.remove();
+            testPassed("Iframe removed, no crash");
+            testNavigateAwayIframe();
+        });
+    }
+
+    // Test navigating iframe away before it finishes loading
+    function testNavigateAwayIframe() {
+        debug("");
+        debug("Test 2: Navigate cross-origin iframe away before load completes");
+        let iframe = document.createElement("iframe");
+        iframe.src = "http://localhost:8000/resources/network-simulator.py?test=cancel-load-navigate-iframe&path=/site-isolation/resources/simple.html&initialdelay=2000";
+        document.body.appendChild(iframe);
+
+        // Navigate same-origin, cancelling the provisional cross-origin load
+        requestAnimationFrame(function () {
+            iframe.src = "/site-isolation/resources/simple.html";
+            testPassed("Iframe navigated, no crash");
+
+            requestAnimationFrame(function () {
+                testPassed("All tests completed without crash");
+                finishJSTest();
+            });
+        });
+    }
+
+    window.onload = testRemoveIframe;
+</script>
