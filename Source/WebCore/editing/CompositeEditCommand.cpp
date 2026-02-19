@@ -168,7 +168,7 @@ String AccessibilityUndoReplacedText::textDeletedByReapply()
 static void postTextStateChangeNotification(AXObjectCache* cache, const VisiblePosition& position, const String& deletedText, const String& insertedText)
 {
     ASSERT(cache);
-    RefPtr node { highestEditableRoot(position.deepEquivalent(), HasEditableAXRole) };
+    RefPtr node { highestEditableRoot(position.deepEquivalent(), EditableType::AXRole) };
     if (!node)
         return;
     if (insertedText.length() && deletedText.length())
@@ -1500,8 +1500,8 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
         }
     }
 
-    auto beforeParagraph = startOfParagraphToMove.previous(CannotCrossEditingBoundary);
-    auto afterParagraph = endOfParagraphToMove.next(CannotCrossEditingBoundary);
+    auto beforeParagraph = startOfParagraphToMove.previous(EditingBoundaryCrossingRule::CannotCross);
+    auto afterParagraph = endOfParagraphToMove.next(EditingBoundaryCrossingRule::CannotCross);
 
     // We upstream() the end and downstream() the start so that we don't include collapsed whitespace in the move.
     // When we paste a fragment, spaces after the end and before the start are treated as though they were rendered.
@@ -1695,7 +1695,7 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
     if (!isStartOfParagraph(caret) || !isEndOfParagraph(caret))
         return false;
 
-    VisiblePosition previous(caret.previous(CannotCrossEditingBoundary));
+    VisiblePosition previous(caret.previous(EditingBoundaryCrossingRule::CannotCross));
     // Only move forward if there's nothing before the caret, or if there's unquoted content before it.
     if (enclosingNodeOfType(previous.deepEquivalent(), &isMailBlockquote))
         return false;

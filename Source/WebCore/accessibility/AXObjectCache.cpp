@@ -209,7 +209,7 @@ void AccessibilityReplacedText::postTextStateChangeNotification(AXObjectCache* c
         return;
 
     VisiblePosition position = selection.start();
-    auto node = highestEditableRoot(position.deepEquivalent(), HasEditableAXRole);
+    auto node = highestEditableRoot(position.deepEquivalent(), EditableType::AXRole);
     if (m_replacedText.length())
         cache->postTextReplacementNotification(node.get(), AXTextEditType::Delete, m_replacedText, type, text, position);
     else

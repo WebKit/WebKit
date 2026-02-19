@@ -54,8 +54,8 @@ public:
     // FIXME: Change the following functions' parameter from a boolean to StayInEditableContent.
 
     // next() and previous() increment/decrement by a character cluster.
-    WEBCORE_EXPORT VisiblePosition next(EditingBoundaryCrossingRule = CanCrossEditingBoundary, bool* reachedBoundary = nullptr) const;
-    WEBCORE_EXPORT VisiblePosition previous(EditingBoundaryCrossingRule = CanCrossEditingBoundary, bool* reachedBoundary = nullptr) const;
+    WEBCORE_EXPORT VisiblePosition next(EditingBoundaryCrossingRule = EditingBoundaryCrossingRule::CanCross, bool* reachedBoundary = nullptr) const;
+    WEBCORE_EXPORT VisiblePosition previous(EditingBoundaryCrossingRule = EditingBoundaryCrossingRule::CanCross, bool* reachedBoundary = nullptr) const;
 
     VisiblePosition honorEditingBoundaryAtOrBefore(const VisiblePosition&, bool* reachedBoundary = nullptr) const;
     VisiblePosition honorEditingBoundaryAtOrAfter(const VisiblePosition&, bool* reachedBoundary = nullptr) const;

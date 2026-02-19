@@ -113,7 +113,7 @@ static Position nextLineCandidatePosition(Node* node, const VisiblePosition& vis
     RefPtr highestRoot = highestEditableRoot(visiblePosition.deepEquivalent(), editableType);
     RefPtr nextNode = nextLeafWithSameEditability(node, editableType);
     while (nextNode && (!nextNode->renderer() || inSameLine(firstPositionInOrBeforeNode(nextNode.get()), visiblePosition)))
-        nextNode = nextLeafWithSameEditability(nextNode.get(), ContentIsEditable);
+        nextNode = nextLeafWithSameEditability(nextNode.get(), EditableType::Content);
 
     while (nextNode && !nextNode->isShadowRoot()) {
         if (highestEditableRoot(firstPositionInOrBeforeNode(nextNode.get()), editableType) != highestRoot)
@@ -187,7 +187,7 @@ static const InlineIterator::LeafBoxIterator logicallyPreviousBox(const VisibleP
         if (!startNode)
             break;
 
-        Position position = previousLineCandidatePosition(startNode.get(), visiblePosition, ContentIsEditable);
+        Position position = previousLineCandidatePosition(startNode.get(), visiblePosition, EditableType::Content);
         if (position.isNull())
             break;
 
@@ -225,7 +225,7 @@ static const InlineIterator::LeafBoxIterator logicallyNextBox(const VisiblePosit
         if (!startNode)
             break;
 
-        Position position = nextLineCandidatePosition(startNode.get(), visiblePosition, ContentIsEditable);
+        Position position = nextLineCandidatePosition(startNode.get(), visiblePosition, EditableType::Content);
         if (position.isNull())
             break;
 
@@ -1136,9 +1136,9 @@ RefPtr<Node> findStartOfParagraph(Node* startNode, Node* highestRoot, Node* star
     RefPtr n = startNode;
     bool startNodeIsEditable = startNode->hasEditableStyle();
     while (n) {
-        if (boundaryCrossingRule == CannotCrossEditingBoundary && !Position::nodeIsUserSelectAll(n.get()) && n->hasEditableStyle() != startNodeIsEditable)
+        if (boundaryCrossingRule == EditingBoundaryCrossingRule::CannotCross && !Position::nodeIsUserSelectAll(n.get()) && n->hasEditableStyle() != startNodeIsEditable)
             break;
-        if (boundaryCrossingRule == CanSkipOverEditingBoundary) {
+        if (boundaryCrossingRule == EditingBoundaryCrossingRule::CanSkipOver) {
             while (n && n->hasEditableStyle() != startNodeIsEditable)
                 n = NodeTraversal::previousPostOrder(*n, startBlock);
             if (!n || !n->isDescendantOf(highestRoot))
@@ -1194,9 +1194,9 @@ RefPtr<Node> findEndOfParagraph(Node* startNode, Node* highestRoot, Node* stayIn
     RefPtr n = startNode;
     bool startNodeIsEditable = startNode->hasEditableStyle();
     while (n) {
-        if (boundaryCrossingRule == CannotCrossEditingBoundary && !Position::nodeIsUserSelectAll(n.get()) && n->hasEditableStyle() != startNodeIsEditable)
+        if (boundaryCrossingRule == EditingBoundaryCrossingRule::CannotCross && !Position::nodeIsUserSelectAll(n.get()) && n->hasEditableStyle() != startNodeIsEditable)
             break;
-        if (boundaryCrossingRule == CanSkipOverEditingBoundary) {
+        if (boundaryCrossingRule == EditingBoundaryCrossingRule::CanSkipOver) {
             while (n && n->hasEditableStyle() != startNodeIsEditable)
                 n = NodeTraversal::next(*n, stayInsideBlock);
             if (!n || !n->isDescendantOf(highestRoot))
@@ -1307,12 +1307,12 @@ VisiblePosition endOfParagraph(const VisiblePosition& c, EditingBoundaryCrossing
 // FIXME: isStartOfParagraph(startOfNextParagraph(pos)) is not always true
 VisiblePosition startOfNextParagraph(const VisiblePosition& visiblePosition)
 {
-    VisiblePosition paragraphEnd(endOfParagraph(visiblePosition, CanSkipOverEditingBoundary));
-    VisiblePosition afterParagraphEnd(paragraphEnd.next(CannotCrossEditingBoundary));
+    VisiblePosition paragraphEnd(endOfParagraph(visiblePosition, EditingBoundaryCrossingRule::CanSkipOver));
+    VisiblePosition afterParagraphEnd(paragraphEnd.next(EditingBoundaryCrossingRule::CannotCross));
     // The position after the last position in the last cell of a table
     // is not the start of the next paragraph.
     if (isFirstPositionAfterTable(afterParagraphEnd))
-        return afterParagraphEnd.next(CannotCrossEditingBoundary);
+        return afterParagraphEnd.next(EditingBoundaryCrossingRule::CannotCross);
     return afterParagraphEnd;
 }
 
@@ -1387,12 +1387,12 @@ bool inSameBlock(const VisiblePosition& a, const VisiblePosition& b)
 
 bool isStartOfBlock(const VisiblePosition& pos)
 {
-    return pos.isNotNull() && pos == startOfBlock(pos, CanCrossEditingBoundary);
+    return pos.isNotNull() && pos == startOfBlock(pos, EditingBoundaryCrossingRule::CanCross);
 }
 
 bool isEndOfBlock(const VisiblePosition& pos)
 {
-    return pos.isNotNull() && pos == endOfBlock(pos, CanCrossEditingBoundary);
+    return pos.isNotNull() && pos == endOfBlock(pos, EditingBoundaryCrossingRule::CanCross);
 }
 
 // ---------
@@ -1440,12 +1440,12 @@ VisiblePosition endOfDocument(const VisiblePosition& c)
 
 bool isStartOfDocument(const VisiblePosition& p)
 {
-    return p.isNotNull() && p.previous(CanCrossEditingBoundary).isNull();
+    return p.isNotNull() && p.previous(EditingBoundaryCrossingRule::CanCross).isNull();
 }
 
 bool isEndOfDocument(const VisiblePosition& p)
 {
-    return p.isNotNull() && p.next(CanCrossEditingBoundary).isNull();
+    return p.isNotNull() && p.next(EditingBoundaryCrossingRule::CanCross).isNull();
 }
 
 // ---------
@@ -1749,7 +1749,7 @@ VisiblePosition positionOfNextBoundaryOfGranularity(const VisiblePosition& vp, T
 {
     switch (granularity) {
     case TextGranularity::CharacterGranularity:
-        return nextCharacterBoundaryInDirection(vp, direction, CanCrossEditingBoundary);
+        return nextCharacterBoundaryInDirection(vp, direction, EditingBoundaryCrossingRule::CanCross);
     case TextGranularity::WordGranularity:
         return nextWordBoundaryInDirection(vp, direction);
     case TextGranularity::SentenceGranularity:
@@ -1852,14 +1852,14 @@ void charactersAroundPosition(const VisiblePosition& position, char32_t& oneAfte
     VisiblePosition startPosition = position;
     VisiblePosition endPosition = position;
 
-    VisiblePosition nextPosition = nextCharacterBoundaryInDirection(position, SelectionDirection::Forward, CannotCrossEditingBoundary);
+    VisiblePosition nextPosition = nextCharacterBoundaryInDirection(position, SelectionDirection::Forward, EditingBoundaryCrossingRule::CannotCross);
     if (nextPosition.isNotNull())
         endPosition = nextPosition;
 
-    VisiblePosition previousPosition = nextCharacterBoundaryInDirection(position, SelectionDirection::Backward, CannotCrossEditingBoundary);
+    VisiblePosition previousPosition = nextCharacterBoundaryInDirection(position, SelectionDirection::Backward, EditingBoundaryCrossingRule::CannotCross);
     if (previousPosition.isNotNull()) {
         startPosition = previousPosition;
-        previousPosition = nextCharacterBoundaryInDirection(previousPosition, SelectionDirection::Backward, CannotCrossEditingBoundary);
+        previousPosition = nextCharacterBoundaryInDirection(previousPosition, SelectionDirection::Backward, EditingBoundaryCrossingRule::CannotCross);
         if (previousPosition.isNotNull())
             startPosition = previousPosition;
     }

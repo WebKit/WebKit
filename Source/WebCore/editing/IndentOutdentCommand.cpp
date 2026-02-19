@@ -194,7 +194,7 @@ void IndentOutdentCommand::outdentParagraph()
         splitBlockquoteNode = splitTreeToNode(*startOfParagraphNode, *enclosingNode, true);
     else {
         // We split the blockquote at where we start outdenting.
-        RefPtr highestInlineNode = highestEnclosingNodeOfType(visibleStartOfParagraph.deepEquivalent(), isInline, CannotCrossEditingBoundary, enclosingBlockFlow.get());
+        RefPtr highestInlineNode = highestEnclosingNodeOfType(visibleStartOfParagraph.deepEquivalent(), isInline, EditingBoundaryCrossingRule::CannotCross, enclosingBlockFlow.get());
         splitElement(*enclosingNode, highestInlineNode ? *highestInlineNode : *visibleStartOfParagraph.deepEquivalent().deprecatedNode());
     }
 

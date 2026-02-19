@@ -683,7 +683,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
             selection->modify(FrameSelection::Alteration::Extend, SelectionDirection::Backward, TextGranularity::CharacterGranularity);
 
         const VisiblePosition& visibleStart = endingSelection().visibleStart();
-        const VisiblePosition& previousPosition = visibleStart.previous(CannotCrossEditingBoundary);
+        const VisiblePosition& previousPosition = visibleStart.previous(EditingBoundaryCrossingRule::CannotCross);
         RefPtr enclosingTableCell = enclosingNodeOfType(visibleStart.deepEquivalent(), &isTableCell);
         RefPtr enclosingTableCellForPreviousPosition = enclosingNodeOfType(previousPosition.deepEquivalent(), &isTableCell);
         if (previousPosition.isNull() || enclosingTableCell != enclosingTableCellForPreviousPosition) {
@@ -699,7 +699,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
         if (previousPosition.isNull()) {
             // When there are no visible positions in the editing root, delete its entire contents.
             // FIXME: Dispatch a `beforeinput` event here and bail if preventDefault() was invoked.
-            if (visibleStart.next(CannotCrossEditingBoundary).isNull() && makeEditableRootEmpty()) {
+            if (visibleStart.next(EditingBoundaryCrossingRule::CannotCross).isNull() && makeEditableRootEmpty()) {
                 typingAddedToOpenCommand(Type::DeleteKey);
                 return;
             }
@@ -710,7 +710,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
             return;
 
         // If the caret is at the start of a paragraph after a table, move content into the last table cell.
-        if (isStartOfParagraph(visibleStart) && isFirstPositionAfterTable(visibleStart.previous(CannotCrossEditingBoundary))) {
+        if (isStartOfParagraph(visibleStart) && isFirstPositionAfterTable(visibleStart.previous(EditingBoundaryCrossingRule::CannotCross))) {
             // Unless the caret is just before a table.  We don't want to move a table into the last table cell.
             if (isLastPositionBeforeTable(visibleStart))
                 return;
@@ -809,7 +809,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool sh
         if (enclosingTableCell && visibleEnd == lastPositionInNode(*enclosingTableCell))
             return;
         if (visibleEnd == endOfParagraph(visibleEnd))
-            downstreamEnd = visibleEnd.next(CannotCrossEditingBoundary).deepEquivalent().downstream();
+            downstreamEnd = visibleEnd.next(EditingBoundaryCrossingRule::CannotCross).deepEquivalent().downstream();
         // When deleting tables: Select the table first, then perform the deletion
         if (downstreamEnd.containerNode() && downstreamEnd.containerNode()->renderer() && downstreamEnd.containerNode()->renderer()->isRenderTable()
             && downstreamEnd.computeOffsetInContainerNode() <= caretMinOffset(*downstreamEnd.containerNode())) {

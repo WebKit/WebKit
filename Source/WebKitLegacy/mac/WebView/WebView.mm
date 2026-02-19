@@ -8368,7 +8368,7 @@ FORWARD(toggleUnderline)
     auto* coreFrame = core([self _selectedOrMainFrame]);
     if (!coreFrame)
         return NO;
-    return coreFrame->selection().isAll(WebCore::CanCrossEditingBoundary);
+    return coreFrame->selection().isAll(WebCore::EditingBoundaryCrossingRule::CanCross);
 }
 
 - (void)_simplifyMarkup:(DOMNode *)startNode endNode:(DOMNode *)endNode

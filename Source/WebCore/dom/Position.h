@@ -171,8 +171,8 @@ public:
     WEBCORE_EXPORT Position trailingWhitespacePosition(Affinity, bool considerNonCollapsibleWhitespace = false) const;
     
     // These return useful visually equivalent positions.
-    WEBCORE_EXPORT Position upstream(EditingBoundaryCrossingRule = CannotCrossEditingBoundary) const;
-    WEBCORE_EXPORT Position downstream(EditingBoundaryCrossingRule = CannotCrossEditingBoundary) const;
+    WEBCORE_EXPORT Position upstream(EditingBoundaryCrossingRule = EditingBoundaryCrossingRule::CannotCross) const;
+    WEBCORE_EXPORT Position downstream(EditingBoundaryCrossingRule = EditingBoundaryCrossingRule::CannotCross) const;
     
     bool isCandidate() const;
     bool isRenderedCharacter() const;

@@ -1108,13 +1108,13 @@ static RefPtr<Node> highestAncestorToWrapMarkup(const Position& start, const Pos
         }
 
         // Retain the Mail quote level by including all ancestor mail block quotes.
-        if (RefPtr highestMailBlockquote = highestEnclosingNodeOfType(start, isMailBlockquote, CanCrossEditingBoundary))
+        if (RefPtr highestMailBlockquote = highestEnclosingNodeOfType(start, isMailBlockquote, EditingBoundaryCrossingRule::CanCross))
             specialCommonAncestor = WTF::move(highestMailBlockquote);
     }
 
     RefPtr checkAncestor = specialCommonAncestor ? specialCommonAncestor : protect(commonAncestor);
     if (checkAncestor->renderer() && checkAncestor->renderer()->containingBlock()) {
-        RefPtr newSpecialCommonAncestor = highestEnclosingNodeOfType(firstPositionInNode(*checkAncestor), &isElementPresentational, CanCrossEditingBoundary, protect(checkAncestor->renderer()->containingBlock()->element()).get());
+        RefPtr newSpecialCommonAncestor = highestEnclosingNodeOfType(firstPositionInNode(*checkAncestor), &isElementPresentational, EditingBoundaryCrossingRule::CanCross, protect(checkAncestor->renderer()->containingBlock()->element()).get());
         if (newSpecialCommonAncestor)
             specialCommonAncestor = WTF::move(newSpecialCommonAncestor);
     }
