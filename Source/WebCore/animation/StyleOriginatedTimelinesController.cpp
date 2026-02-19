@@ -500,10 +500,10 @@ void StyleOriginatedTimelinesController::unregisterNamedTimelinesAssociatedWithE
 
 void StyleOriginatedTimelinesController::styleableWasRemoved(const Styleable& styleable)
 {
-    for (auto& timeline : m_removedTimelines) {
+    for (Ref timeline : m_removedTimelines) {
         if (originatingElement(timeline) != styleable)
             continue;
-        for (auto& animation : timeline->relevantAnimations()) {
+        for (Ref animation : timeline->relevantAnimations()) {
             if (RefPtr cssAnimation = dynamicDowncast<CSSAnimation>(animation.get())) {
                 if (auto owningElement = cssAnimation->owningElement()) {
                     attachAnimation(*cssAnimation, AllowsDeferral::Yes);
