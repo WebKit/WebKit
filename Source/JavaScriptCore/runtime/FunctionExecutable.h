@@ -237,7 +237,7 @@ public:
 
     void notifyCreation(VM& vm, JSFunction* function, const char* reason)
     {
-        m_singleton.notifyWrite(vm, this, function, reason);
+        m_singleton.notifyWriteWeak(vm, function, reason);
     }
 
     // Cached poly proto structure for the result of constructing this executable.

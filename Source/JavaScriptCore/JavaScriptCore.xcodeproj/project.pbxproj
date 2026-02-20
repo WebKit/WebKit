@@ -1037,6 +1037,7 @@
 		5333BBDB2110F7D2007618EC /* DFGSpeculativeJIT32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86880F1B14328BB900B08D42 /* DFGSpeculativeJIT32_64.cpp */; };
 		5333BBDC2110F7D9007618EC /* DFGSpeculativeJIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EC9DC21328DF82002B2AD7 /* DFGSpeculativeJIT.cpp */; };
 		5333BBDD2110F7E1007618EC /* DFGSpeculativeJIT64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86880F4C14353B2100B08D42 /* DFGSpeculativeJIT64.cpp */; };
+		5336EC502F48DA9C00F966AE /* WriteBarrierValidationSlotVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5336EC4D2F48DA9400F966AE /* WriteBarrierValidationSlotVisitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5338E2A72396EFFB00C61BAD /* CheckpointOSRExitSideState.h in Headers */ = {isa = PBXBuildFile; fileRef = 5338E2A62396EFEC00C61BAD /* CheckpointOSRExitSideState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5338EBA323AB04B800382662 /* FTLSelectPredictability.h in Headers */ = {isa = PBXBuildFile; fileRef = 5338EBA223AB04A300382662 /* FTLSelectPredictability.h */; };
 		533D074422C2D797004D2FE2 /* FinalizationRegistryConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 533D074322C2D797004D2FE2 /* FinalizationRegistryConstructor.h */; };
@@ -4317,6 +4318,8 @@
 		531EE7B922DE6BBB0030DA81 /* FinalizationRegistryPrototype.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FinalizationRegistryPrototype.h; sourceTree = "<group>"; };
 		531EE7BC22DE6EC60030DA81 /* FinalizationRegistryPrototype.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FinalizationRegistryPrototype.cpp; sourceTree = "<group>"; };
 		532631B3218777A5007B8191 /* JavaScriptCore.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = JavaScriptCore.modulemap; sourceTree = "<group>"; };
+		5336EC4D2F48DA9400F966AE /* WriteBarrierValidationSlotVisitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WriteBarrierValidationSlotVisitor.h; sourceTree = "<group>"; };
+		5336EC4E2F48DA9400F966AE /* WriteBarrierValidationSlotVisitor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WriteBarrierValidationSlotVisitor.cpp; sourceTree = "<group>"; };
 		5338E2A62396EFEC00C61BAD /* CheckpointOSRExitSideState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckpointOSRExitSideState.h; sourceTree = "<group>"; };
 		5338EBA223AB04A300382662 /* FTLSelectPredictability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLSelectPredictability.h; path = ftl/FTLSelectPredictability.h; sourceTree = "<group>"; };
 		533B15DE1DC7F463004D500A /* WasmOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmOps.h; sourceTree = "<group>"; };
@@ -7580,6 +7583,8 @@
 				14150132154BB13F005D8C98 /* WeakSetInlines.h */,
 				0FC8150814043BCA00CFA603 /* WriteBarrierSupport.cpp */,
 				0FC8150914043BD200CFA603 /* WriteBarrierSupport.h */,
+				5336EC4E2F48DA9400F966AE /* WriteBarrierValidationSlotVisitor.cpp */,
+				5336EC4D2F48DA9400F966AE /* WriteBarrierValidationSlotVisitor.h */,
 			);
 			path = heap;
 			sourceTree = "<group>";
@@ -12629,6 +12634,7 @@
 				A7DCB97312E5193F00911940 /* WriteBarrier.h in Headers */,
 				C2B6D75318A33793004A9301 /* WriteBarrierInlines.h in Headers */,
 				0FC8150A14043BF500CFA603 /* WriteBarrierSupport.h in Headers */,
+				5336EC502F48DA9C00F966AE /* WriteBarrierValidationSlotVisitor.h in Headers */,
 				9688CB160ED12B4E001D6492 /* X86_64Registers.h in Headers */,
 				9688CB160ED12B4E001D649F /* X86Assembler.h in Headers */,
 				9959E92E1BD17FA4001AA413 /* xxd.pl in Headers */,

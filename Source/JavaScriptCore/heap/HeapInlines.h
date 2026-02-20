@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -110,6 +110,12 @@ inline void Heap::writeBarrier(const JSCell* from, JSCell* to)
         return;
     if (!to) [[likely]]
         return;
+
+#if ASSERT_ENABLED
+    if (Options::validateWriteBarrier()) [[unlikely]]
+        validateWriteBarrier(from, to);
+#endif
+
     if (!isWithinThreshold(from->cellState(), barrierThreshold()))
         return;
     writeBarrierSlowPath(from);
@@ -231,7 +237,7 @@ inline void Heap::reportExtraMemoryAllocated(GCDeferralContext* deferralContext,
 
 inline void Heap::deprecatedReportExtraMemory(size_t size)
 {
-    if (size > minExtraMemory) 
+    if (size > minExtraMemory)
         deprecatedReportExtraMemorySlowCase(size);
 }
 
