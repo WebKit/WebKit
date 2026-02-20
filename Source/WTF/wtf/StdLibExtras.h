@@ -1144,9 +1144,12 @@ void secureMemsetSpan(std::span<T, Extent> destination, uint8_t byte)
 {
     static_assert(std::is_trivially_copyable_v<T>);
 #ifdef __STDC_LIB_EXT1__
-    memset_s(destination.data(), byte, destination.size_bytes()); // NOLINT
+    memset_s(destination.data(), destination.size_bytes(), byte, destination.size_bytes()); // NOLINT
 #else
-    memset(destination.data(), byte, destination.size_bytes()); // NOLINT
+    // Use a volatile function pointer to prevent the compiler from
+    // recognizing this as a dead store and optimizing it away.
+    static void* (* const volatile memsetPtr)(void*, int, size_t) = memset;
+    memsetPtr(destination.data(), byte, destination.size_bytes()); // NOLINT
 #endif
 }
 
