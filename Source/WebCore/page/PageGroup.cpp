@@ -113,8 +113,9 @@ void PageGroup::removePage(Page& page)
 #if ENABLE(VIDEO)
 void PageGroup::captionPreferencesChanged()
 {
-    for (auto& page : m_pages)
+    m_pages.forEach([](auto& page) {
         page.captionPreferencesChanged();
+    });
     BackForwardCache::singleton().markPagesForCaptionPreferencesChanged();
 }
 

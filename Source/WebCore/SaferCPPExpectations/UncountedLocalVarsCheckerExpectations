@@ -218,7 +218,6 @@ page/LocalFrame.cpp
 page/LocalFrameView.cpp
 page/OpportunisticTaskScheduler.cpp
 page/PageColorSampler.cpp
-page/PageGroup.cpp
 page/PageGroupLoadDeferrer.cpp
 page/PageSerializer.cpp
 page/PrintContext.cpp
