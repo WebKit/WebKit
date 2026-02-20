@@ -67,6 +67,7 @@ cat WebCore/css/CSSPropertyNames.in WebCore/css/SVGCSSPropertyNames.in > CSSProp
 rm -f ./idl_files.tmp
 python JavaScriptCore/KeywordLookupGenerator.py JavaScriptCore/parser/Keywords.table > KeywordLookup.h
 sed -e s/\<WebCore/\<WebKit/ -e s/DOMDOMImplementation/DOMImplementation/ /Volumes/Data/Build/Release/WebCore.framework/PrivateHeaders/DOM.h > /Volumes/Data/Build/Release/WebKit.framework/Versions/A/Headers/DOM.h
+SwiftDriverJobDiscovery normal (in target 'bmalloc' from project 'bmalloc')
 END
 
 for my $line (@expectIgnoredLines) {
