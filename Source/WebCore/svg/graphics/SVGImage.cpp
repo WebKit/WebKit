@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2026 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -506,6 +506,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
                 m_page->settings().setLayerBasedSVGEngineEnabled(parentSettings->layerBasedSVGEngineEnabled());
                 m_page->settings().fontGenericFamilies() = parentSettings->fontGenericFamilies();
                 m_page->settings().setCSSDPropertyEnabled(parentSettings->cssDPropertyEnabled());
+                m_page->settings().setDownloadableBinaryFontTrustedTypes(parentSettings->downloadableBinaryFontTrustedTypes());
             }
             m_page->setUseColorAppearance(observer->useSystemDarkAppearance(), false);
         }
