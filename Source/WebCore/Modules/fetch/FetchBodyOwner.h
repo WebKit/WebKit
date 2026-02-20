@@ -88,8 +88,8 @@ protected:
     FetchBodyOwner(ScriptExecutionContext*, std::optional<FetchBody>&&, Ref<FetchHeaders>&&);
 
     const FetchBody& body() const { return *m_body; }
-    bool isBodyNull() const { return !m_body; }
-    bool isBodyNullOrOpaque() const { return !m_body || m_isBodyOpaque; }
+    bool isBodyNull() const { return !m_body || m_isBodyNull; }
+    bool isBodyNullOrOpaque() const { return isBodyNull() || m_isBodyOpaque; }
     void cloneBody(JSDOMGlobalObject&, FetchBodyOwner&);
 
     ExceptionOr<void> extractBody(FetchBody::Init&&);
@@ -103,6 +103,7 @@ protected:
 
     void setDisturbed() { m_isDisturbed = true; }
 
+    void setBodyAsNull() { m_isBodyNull = true; }
     void setBodyAsOpaque() { m_isBodyOpaque = true; }
     bool isBodyOpaque() const { return m_isBodyOpaque; }
 
@@ -149,6 +150,7 @@ protected:
 private:
     RefPtr<BlobLoader> m_blobLoader;
     bool m_isBodyOpaque { false };
+    bool m_isBodyNull { false };
 
     Variant<std::nullptr_t, Exception, ResourceError> m_loadingError;
 };
