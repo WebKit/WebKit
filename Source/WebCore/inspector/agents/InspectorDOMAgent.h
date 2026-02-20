@@ -48,6 +48,7 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/text/AtomString.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace Inspector {
 class InjectedScriptManager;
@@ -326,43 +327,20 @@ private:
 #endif
 
     struct InspectorEventListener {
-        Inspector::Protocol::DOM::EventListenerId identifier { 1 };
-        RefPtr<EventTarget> eventTarget;
-        RefPtr<EventListener> eventListener;
-        AtomString eventType;
-        bool useCapture { false };
+        Inspector::Protocol::DOM::EventListenerId identifier { 0 };
         bool disabled { false };
         RefPtr<JSC::Breakpoint> breakpoint;
-
-        InspectorEventListener() { }
-
-        InspectorEventListener(Inspector::Protocol::DOM::EventListenerId identifier, EventTarget& target, const AtomString& type, EventListener& listener, bool capture)
-            : identifier(identifier)
-            , eventTarget(&target)
-            , eventListener(&listener)
-            , eventType(type)
-            , useCapture(capture)
-        {
-        }
-
-        bool matches(EventTarget& target, const AtomString& type, EventListener& listener, bool capture)
-        {
-            if (eventTarget.get() != &target)
-                return false;
-            if (eventListener.get() != &listener)
-                return false;
-            if (eventType != type)
-                return false;
-            if (useCapture != capture)
-                return false;
-            return true;
-        }
     };
 
     friend class EventFiredCallback;
 
     HashSet<const Event*> m_dispatchedEvents;
-    HashMap<Inspector::Protocol::DOM::EventListenerId, InspectorEventListener> m_eventListenerEntries;
+    // Keyed by listener identity (target, type, callback, capture) for O(1)
+    // lookup in the hot path. Raw pointers are safe because entries are removed
+    // in willRemoveEventListener before the target/listener are destroyed, and
+    // the entire map is cleared in discardBindings.
+    using EventListenerKey = std::tuple<EventTarget*, AtomString, EventListener*, bool>;
+    HashMap<EventListenerKey, InspectorEventListener> m_eventListenerEntries;
     Inspector::Protocol::DOM::EventListenerId m_lastEventListenerId { 1 };
 
     bool m_searchingForNode { false };

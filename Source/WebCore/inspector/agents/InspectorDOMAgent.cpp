@@ -1092,30 +1092,12 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::E
     auto listeners = JSON::ArrayOf<Inspector::Protocol::DOM::EventListener>::create();
 
     auto addListener = [&](RegisteredEventListener& listener, const EventListenerInfo& info) {
-        Inspector::Protocol::DOM::EventListenerId identifier = 0;
-        bool disabled = false;
-        RefPtr<JSC::Breakpoint> breakpoint;
+        auto result = m_eventListenerEntries.ensure({ info.eventTarget.get(), info.eventType, &listener.callback(), listener.useCapture() }, [&] {
+            return InspectorEventListener { m_lastEventListenerId++ };
+        });
+        auto& entry = result.iterator->value;
 
-        for (auto& inspectorEventListener : m_eventListenerEntries.values()) {
-            if (inspectorEventListener.matches(*info.eventTarget, info.eventType, listener.callback(), listener.useCapture())) {
-                identifier = inspectorEventListener.identifier;
-                disabled = inspectorEventListener.disabled;
-                breakpoint = inspectorEventListener.breakpoint;
-                break;
-            }
-        }
-
-        if (!identifier) {
-            InspectorEventListener inspectorEventListener(m_lastEventListenerId++, *info.eventTarget, info.eventType, listener.callback(), listener.useCapture());
-
-            identifier = inspectorEventListener.identifier;
-            disabled = inspectorEventListener.disabled;
-            breakpoint = inspectorEventListener.breakpoint;
-
-            m_eventListenerEntries.add(identifier, inspectorEventListener);
-        }
-
-        listeners->addItem(buildObjectForEventListener(listener, identifier, *info.eventTarget, info.eventType, disabled, breakpoint));
+        listeners->addItem(buildObjectForEventListener(listener, entry.identifier, *info.eventTarget, info.eventType, entry.disabled, entry.breakpoint));
     };
 
     // Get Capturing Listeners (in this order)
@@ -1144,45 +1126,49 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::E
 
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::setEventListenerDisabled(Inspector::Protocol::DOM::EventListenerId eventListenerId, bool disabled)
 {
-    auto it = m_eventListenerEntries.find(eventListenerId);
-    if (it == m_eventListenerEntries.end())
-        return makeUnexpected("Missing event listener for given eventListenerId"_s);
+    for (auto& entry : m_eventListenerEntries.values()) {
+        if (entry.identifier != eventListenerId)
+            continue;
 
-    it->value.disabled = disabled;
-
-    return { };
+        entry.disabled = disabled;
+        return { };
+    }
+    return makeUnexpected("Missing event listener for given eventListenerId"_s);
 }
 
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::setBreakpointForEventListener(Inspector::Protocol::DOM::EventListenerId eventListenerId, RefPtr<JSON::Object>&& options)
 {
     Inspector::Protocol::ErrorString errorString;
 
-    auto it = m_eventListenerEntries.find(eventListenerId);
-    if (it == m_eventListenerEntries.end())
-        return makeUnexpected("Missing event listener for given eventListenerId"_s);
+    for (auto& entry : m_eventListenerEntries.values()) {
+        if (entry.identifier != eventListenerId)
+            continue;
 
-    if (it->value.breakpoint)
-        return makeUnexpected("Breakpoint for given eventListenerId already exists"_s);
+        if (entry.breakpoint)
+            return makeUnexpected("Breakpoint for given eventListenerId already exists"_s);
 
-    it->value.breakpoint = InspectorDebuggerAgent::debuggerBreakpointFromPayload(errorString, WTF::move(options));
-    if (!it->value.breakpoint)
-        return makeUnexpected(errorString);
+        entry.breakpoint = InspectorDebuggerAgent::debuggerBreakpointFromPayload(errorString, WTF::move(options));
+        if (!entry.breakpoint)
+            return makeUnexpected(errorString);
 
-    return { };
+        return { };
+    }
+    return makeUnexpected("Missing event listener for given eventListenerId"_s);
 }
 
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::removeBreakpointForEventListener(Inspector::Protocol::DOM::EventListenerId eventListenerId)
 {
-    auto it = m_eventListenerEntries.find(eventListenerId);
-    if (it == m_eventListenerEntries.end())
-        return makeUnexpected("Missing event listener for given eventListenerId"_s);
+    for (auto& entry : m_eventListenerEntries.values()) {
+        if (entry.identifier != eventListenerId)
+            continue;
 
-    if (!it->value.breakpoint)
-        return makeUnexpected("Breakpoint for given eventListenerId missing"_s);
+        if (!entry.breakpoint)
+            return makeUnexpected("Breakpoint for given eventListenerId missing"_s);
 
-    it->value.breakpoint = nullptr;
-
-    return { };
+        entry.breakpoint = nullptr;
+        return { };
+    }
+    return makeUnexpected("Missing event listener for given eventListenerId"_s);
 }
 
 Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::AccessibilityProperties>> InspectorDOMAgent::getAccessibilityPropertiesForNode(Inspector::Protocol::DOM::NodeId nodeId)
@@ -2973,9 +2959,7 @@ void InspectorDOMAgent::willRemoveEventListener(EventTarget& target, const AtomS
     if (!listenerExists)
         return;
 
-    m_eventListenerEntries.removeIf([&] (auto& entry) {
-        return entry.value.matches(target, eventType, listener, capture);
-    });
+    m_eventListenerEntries.remove({ &target, eventType, &listener, capture });
 
     if (m_suppressEventListenerChangedEvent)
         return;
@@ -2987,11 +2971,10 @@ void InspectorDOMAgent::willRemoveEventListener(EventTarget& target, const AtomS
 
 bool InspectorDOMAgent::isEventListenerDisabled(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
 {
-    for (auto& inspectorEventListener : m_eventListenerEntries.values()) {
-        if (inspectorEventListener.matches(target, eventType, listener, capture))
-            return inspectorEventListener.disabled;
-    }
-    return false;
+    auto it = m_eventListenerEntries.find({ &target, eventType, &listener, capture });
+    if (it == m_eventListenerEntries.end())
+        return false;
+    return it->value.disabled;
 }
 
 void InspectorDOMAgent::eventDidResetAfterDispatch(const Event& event)
@@ -3018,20 +3001,18 @@ Vector<size_t> InspectorDOMAgent::flexibleBoxRendererCachedItemsAtStartOfLine(co
 
 RefPtr<JSC::Breakpoint> InspectorDOMAgent::breakpointForEventListener(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
 {
-    for (auto& inspectorEventListener : m_eventListenerEntries.values()) {
-        if (inspectorEventListener.matches(target, eventType, listener, capture))
-            return inspectorEventListener.breakpoint;
-    }
-    return nullptr;
+    auto it = m_eventListenerEntries.find({ &target, eventType, &listener, capture });
+    if (it == m_eventListenerEntries.end())
+        return nullptr;
+    return it->value.breakpoint;
 }
 
 Inspector::Protocol::DOM::EventListenerId InspectorDOMAgent::idForEventListener(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
 {
-    for (auto& inspectorEventListener : m_eventListenerEntries.values()) {
-        if (inspectorEventListener.matches(target, eventType, listener, capture))
-            return inspectorEventListener.identifier;
-    }
-    return 0;
+    auto it = m_eventListenerEntries.find({ &target, eventType, &listener, capture });
+    if (it == m_eventListenerEntries.end())
+        return 0;
+    return it->value.identifier;
 }
 
 #if ENABLE(VIDEO)
