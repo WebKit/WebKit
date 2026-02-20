@@ -3,8 +3,11 @@ var frameDidLoad = false;
 
 onload = function()
 {
-    if (window.opener)
-        window.opener.postMessage(frameDidLoad ? 'done' : 'blocked', '*');
+    // Delay message to allow frame load callbacks and console messages to be logged before test ends.
+    setTimeout(function() {
+        if (window.opener)
+            window.opener.postMessage(frameDidLoad ? 'done' : 'blocked', '*');
+    }, 10);
 }
 
 </script>
