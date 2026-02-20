@@ -1127,6 +1127,12 @@ void SessionWrapper::recreateSessionWithUpdatedProxyConfigurations(NetworkSessio
     webSocketDataTaskMap.clear();
 }
 
+SessionWrapper::~SessionWrapper()
+{
+    if (session)
+        [session invalidateAndCancel];
+}
+
 void SessionWrapper::initialize(NSURLSessionConfiguration *configuration, NetworkSessionCocoa& networkSession, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain)
 {
     UNUSED_PARAM(isNavigatingToAppBoundDomain);
