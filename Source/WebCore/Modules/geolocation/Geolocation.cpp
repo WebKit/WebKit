@@ -743,7 +743,8 @@ void Geolocation::stopUpdating()
     if (!page)
         return;
 
-    GeolocationController::checkedFrom(page.get())->removeObserver(*this);
+    if (CheckedPtr controller = GeolocationController::from(page.get()))
+        controller->removeObserver(*this);
 }
 
 void Geolocation::handlePendingPermissionNotifiers()
