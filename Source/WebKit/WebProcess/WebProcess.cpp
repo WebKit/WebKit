@@ -686,8 +686,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
 
     setMemoryCacheDisabled(parameters.memoryCacheDisabled);
 
-    WebCore::DeprecatedGlobalSettings::setAttrStyleEnabled(parameters.attrStyleEnabled);
-    
     commonVM().setGlobalConstRedeclarationShouldThrow(parameters.shouldThrowExceptionForGlobalConstantRedeclaration);
 
     ScriptExecutionContext::setCrossOriginMode(parameters.crossOriginMode);

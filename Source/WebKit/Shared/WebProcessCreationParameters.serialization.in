@@ -73,7 +73,6 @@
     bool hasStylusDevice;
 #endif
     bool memoryCacheDisabled;
-    bool attrStyleEnabled;
     bool shouldThrowExceptionForGlobalConstantRedeclaration;
     WebCore::CrossOriginMode crossOriginMode;
 

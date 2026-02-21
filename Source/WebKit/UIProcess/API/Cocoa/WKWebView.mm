@@ -876,6 +876,7 @@ static void addBrowsingContextControllerMethodStubsIfNeeded()
 
     // For SharedPreferencesForWebProcess
     preferences->setAllowTestOnlyIPC(!![_configuration _allowTestOnlyIPC]);
+    preferences->setDOMAttrStyleEnabled(pool.configuration().attrStyleEnabled());
     preferences->setUsesSingleWebProcess(pool.usesSingleWebProcess());
 
     preferences->endBatchingUpdates();
