@@ -178,7 +178,7 @@ public:
     void animatorWillBeDeleted(const QualifiedName&);
 
     using Node::computedStyle;
-    const RenderStyle* computedStyle(const std::optional<Style::PseudoElementIdentifier>&) final;
+    const RenderStyle* computedStyle(const Markable<Style::PseudoElementIdentifier>&) final;
 
     ColorInterpolation colorInterpolation() const;
 

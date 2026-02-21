@@ -184,7 +184,7 @@ private:
 
     // This returns the style that was in effect (applied to the render tree) before we started the style resolution.
     // Layout interleaving may cause different styles to be applied during the style resolution.
-    const RenderStyle* beforeResolutionStyle(const Element&, std::optional<PseudoElementIdentifier>);
+    const RenderStyle* beforeResolutionStyle(const Element&, Markable<PseudoElementIdentifier>);
     void saveBeforeResolutionStyleForInterleaving(const Element&, const RenderStyle*);
 
     bool hasUnresolvedAnchorPosition(const Styleable&) const;

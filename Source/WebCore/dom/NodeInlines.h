@@ -113,14 +113,14 @@ bool Node::isAfterPseudoElement() const
     return pseudoElement && pseudoElement->pseudoElementType() == PseudoElementType::After;
 }
 
-std::optional<PseudoElementType> Node::pseudoElementType() const
+Markable<PseudoElementType> Node::pseudoElementType() const
 {
     if (auto* pseudoElement = dynamicDowncast<PseudoElement>(*this))
         return pseudoElement->pseudoElementType();
     return { };
 }
 
-std::optional<Style::PseudoElementIdentifier> Node::pseudoElementIdentifier() const
+Markable<Style::PseudoElementIdentifier> Node::pseudoElementIdentifier() const
 {
     if (auto type = pseudoElementType())
         return Style::PseudoElementIdentifier { *type };

@@ -56,9 +56,9 @@ public:
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Extractor, Extractor);
 public:
     Extractor(Node*, bool allowVisitedStyle = false);
-    Extractor(Node*, bool allowVisitedStyle, const std::optional<Style::PseudoElementIdentifier>&);
+    Extractor(Node*, bool allowVisitedStyle, const Markable<Style::PseudoElementIdentifier>&);
     Extractor(Element*, bool allowVisitedStyle = false);
-    Extractor(Element*, bool allowVisitedStyle, const std::optional<Style::PseudoElementIdentifier>&);
+    Extractor(Element*, bool allowVisitedStyle, const Markable<Style::PseudoElementIdentifier>&);
 
     enum class UpdateLayout : bool { No, Yes };
 
@@ -104,7 +104,7 @@ private:
     const RenderStyle* computeStyleForCustomProperty(std::unique_ptr<RenderStyle>&) const;
 
     RefPtr<Element> m_element;
-    std::optional<Style::PseudoElementIdentifier> m_pseudoElementIdentifier;
+    Markable<Style::PseudoElementIdentifier> m_pseudoElementIdentifier;
     bool m_allowVisitedStyle;
 };
 

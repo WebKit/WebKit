@@ -32,6 +32,7 @@
 #include <type_traits>
 #include <wtf/EnumSet.h>
 #include <wtf/EnumTraits.h>
+#include <wtf/Markable.h>
 
 namespace WTF {
 class TextStream;
@@ -117,7 +118,7 @@ constexpr auto allInternalPseudoElementTypes = EnumSet {
 
 constexpr auto allPseudoElementTypes = allPublicPseudoElementTypes | allInternalPseudoElementTypes;
 
-inline std::optional<PseudoElementType> parentPseudoElement(PseudoElementType pseudoElementType)
+inline Markable<PseudoElementType> parentPseudoElement(PseudoElementType pseudoElementType)
 {
     switch (pseudoElementType) {
     case PseudoElementType::FirstLetter: return PseudoElementType::FirstLine;
@@ -125,7 +126,7 @@ inline std::optional<PseudoElementType> parentPseudoElement(PseudoElementType ps
     case PseudoElementType::ViewTransitionImagePair: return PseudoElementType::ViewTransitionGroup;
     case PseudoElementType::ViewTransitionNew: return PseudoElementType::ViewTransitionImagePair;
     case PseudoElementType::ViewTransitionOld: return PseudoElementType::ViewTransitionImagePair;
-    default: return std::nullopt;
+    default: return { };
     }
 }
 

@@ -659,7 +659,7 @@ Vector<Ref<const StyleRule>> Resolver::styleRulesForElement(const Element* eleme
     return pseudoStyleRulesForElement(element, { }, rulesToInclude);
 }
 
-Vector<Ref<const StyleRule>> Resolver::pseudoStyleRulesForElement(const Element* element, const std::optional<Style::PseudoElementRequest>& pseudoElementIdentifier, unsigned rulesToInclude)
+Vector<Ref<const StyleRule>> Resolver::pseudoStyleRulesForElement(const Element* element, const Markable<PseudoElementIdentifier>& pseudoElementIdentifier, unsigned rulesToInclude)
 {
     if (!element)
         return { };

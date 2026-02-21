@@ -131,7 +131,7 @@ struct AnchorPositionedState {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(AnchorPositionedState);
 };
 
-using AnchorPositionedKey = std::pair<RefPtr<const Element>, std::optional<PseudoElementIdentifier>>;
+using AnchorPositionedKey = std::pair<RefPtr<const Element>, Markable<PseudoElementIdentifier>>;
 using AnchorPositionedStates = HashMap<AnchorPositionedKey, std::unique_ptr<AnchorPositionedState>>;
 
 using AnchorsForAnchorName = HashMap<ResolvedScopedName, Vector<SingleThreadWeakRef<const RenderBoxModelObject>>>;
@@ -155,7 +155,7 @@ struct AnchorPositionedToAnchorEntry {
     // The pseudo-element identifier can be used to access the AnchorPositionedState struct
     // of the current element in an AnchorPositionedStates map, in combination with the relevant
     // Element object.
-    std::optional<PseudoElementIdentifier> pseudoElementIdentifier;
+    Markable<PseudoElementIdentifier> pseudoElementIdentifier;
 
     Vector<ResolvedAnchor> anchors;
 

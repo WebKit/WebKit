@@ -51,9 +51,9 @@ enum class IsInDisplayNoneTree : bool;
 
 struct Styleable {
     Element& element;
-    std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifier;
+    Markable<Style::PseudoElementIdentifier> pseudoElementIdentifier;
 
-    Styleable(Element& element, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+    Styleable(Element& element, const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
         : element(element)
         , pseudoElementIdentifier(pseudoElementIdentifier)
     {
@@ -230,11 +230,11 @@ public:
     }
 
     WeakPtr<Element, WeakPtrImplWithEventTargetData> element() const { return m_element; }
-    std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifier() const { return m_pseudoElementIdentifier; }
+    Markable<Style::PseudoElementIdentifier> pseudoElementIdentifier() const { return m_pseudoElementIdentifier; }
 
 private:
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_element;
-    std::optional<Style::PseudoElementIdentifier> m_pseudoElementIdentifier;
+    Markable<Style::PseudoElementIdentifier> m_pseudoElementIdentifier;
 };
 
 // FIXME: using PairHashTraits would give us constructDeletedValue() and isDeletedValue() for free.
@@ -246,7 +246,7 @@ struct WeakStyleableHashTraits : HashTraits<WeakStyleable> {
 };
 
 struct WeakStyleableHash {
-    static unsigned hash(const WeakStyleable& styleable) { return WTF::PairHash<Element*, std::optional<Style::PseudoElementIdentifier>>::hash({ styleable.element().get(), styleable.pseudoElementIdentifier() }); }
+    static unsigned hash(const WeakStyleable& styleable) { return WTF::PairHash<Element*, Markable<Style::PseudoElementIdentifier>>::hash({ styleable.element().get(), styleable.pseudoElementIdentifier() }); }
     static bool equal(const WeakStyleable& a, const WeakStyleable& b)
     {
         if (!a || !b)

@@ -74,7 +74,7 @@ public:
     void paintForegroundDecorations(const ForegroundDecorationGeometry&, const Styles&);
 
     static Color decorationColor(const RenderStyle&, OptionSet<PaintBehavior> paintBehavior = { });
-    static Styles stylesForRenderer(const RenderObject&, Style::TextDecorationLine requestedDecorations, bool firstLineStyle = false, OptionSet<PaintBehavior> paintBehavior = { }, std::optional<PseudoElementType> = { });
+    static Styles stylesForRenderer(const RenderObject&, Style::TextDecorationLine requestedDecorations, bool firstLineStyle = false, OptionSet<PaintBehavior> paintBehavior = { }, Markable<PseudoElementType> = { });
     static Style::TextDecorationLine textDecorationsInEffectForStyle(const TextDecorationPainter::Styles&);
 
 private:

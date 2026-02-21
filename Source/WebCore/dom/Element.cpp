@@ -4630,7 +4630,7 @@ const RenderStyle* Element::renderOrDisplayContentsStyle() const
     return renderOrDisplayContentsStyle({ });
 }
 
-const RenderStyle* Element::renderOrDisplayContentsStyle(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
+const RenderStyle* Element::renderOrDisplayContentsStyle(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
     if (pseudoElementIdentifier) {
         if (CheckedPtr style = renderOrDisplayContentsStyle()) {
@@ -4762,7 +4762,7 @@ const RenderStyle& Element::resolvePseudoElementStyle(const Style::PseudoElement
     return *computedStyle.unsafeGet();
 }
 
-const RenderStyle* Element::computedStyle(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+const RenderStyle* Element::computedStyle(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     if (!isConnected())
         return nullptr;
@@ -5233,39 +5233,39 @@ bool Element::mayHaveKeyframeEffects() const
     return hasRareData() && elementRareData()->hasAnimationRareData();
 }
 
-ElementAnimationRareData* Element::animationRareData(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
+ElementAnimationRareData* Element::animationRareData(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
     return hasRareData() ? elementRareData()->animationRareData(pseudoElementIdentifier) : nullptr;
 }
 
-ElementAnimationRareData& Element::ensureAnimationRareData(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+ElementAnimationRareData& Element::ensureAnimationRareData(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     return ensureElementRareData().ensureAnimationRareData(pseudoElementIdentifier);
 }
 
-AtomString Element::viewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
+AtomString Element::viewTransitionCapturedName(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
     return hasRareData() ? elementRareData()->viewTransitionCapturedName(pseudoElementIdentifier) : nullAtom();
 }
 
-void Element::setViewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, AtomString captureName)
+void Element::setViewTransitionCapturedName(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier, AtomString captureName)
 {
     return ensureElementRareData().setViewTransitionCapturedName(pseudoElementIdentifier, captureName);
 }
 
-KeyframeEffectStack* Element::keyframeEffectStack(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
+KeyframeEffectStack* Element::keyframeEffectStack(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
     if (auto* animationData = animationRareData(pseudoElementIdentifier))
         return animationData->keyframeEffectStack();
     return nullptr;
 }
 
-KeyframeEffectStack& Element::ensureKeyframeEffectStack(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+KeyframeEffectStack& Element::ensureKeyframeEffectStack(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     return ensureAnimationRareData(pseudoElementIdentifier).ensureKeyframeEffectStack();
 }
 
-bool Element::hasKeyframeEffects(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
+bool Element::hasKeyframeEffects(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
     if (auto* animationData = animationRareData(pseudoElementIdentifier)) {
         if (auto* keyframeEffectStack = animationData->keyframeEffectStack())
@@ -5274,83 +5274,83 @@ bool Element::hasKeyframeEffects(const std::optional<Style::PseudoElementIdentif
     return false;
 }
 
-const AnimationCollection* Element::animations(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
+const AnimationCollection* Element::animations(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
     if (auto* animationData = animationRareData(pseudoElementIdentifier))
         return &animationData->animations();
     return nullptr;
 }
 
-bool Element::hasCompletedTransitionForProperty(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const AnimatableCSSProperty& property) const
+bool Element::hasCompletedTransitionForProperty(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const AnimatableCSSProperty& property) const
 {
     if (auto* animationData = animationRareData(pseudoElementIdentifier))
         return animationData->completedTransitionsByProperty().contains(property);
     return false;
 }
 
-bool Element::hasRunningTransitionForProperty(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const AnimatableCSSProperty& property) const
+bool Element::hasRunningTransitionForProperty(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const AnimatableCSSProperty& property) const
 {
     if (auto* animationData = animationRareData(pseudoElementIdentifier))
         return animationData->runningTransitionsByProperty().contains(property);
     return false;
 }
 
-bool Element::hasRunningTransitions(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
+bool Element::hasRunningTransitions(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
     if (auto* animationData = animationRareData(pseudoElementIdentifier))
         return !animationData->runningTransitionsByProperty().isEmpty();
     return false;
 }
 
-const AnimatableCSSPropertyToTransitionMap* Element::completedTransitionsByProperty(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
+const AnimatableCSSPropertyToTransitionMap* Element::completedTransitionsByProperty(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
     if (auto* animationData = animationRareData(pseudoElementIdentifier))
         return &animationData->completedTransitionsByProperty();
     return nullptr;
 }
 
-const AnimatableCSSPropertyToTransitionMap* Element::runningTransitionsByProperty(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
+const AnimatableCSSPropertyToTransitionMap* Element::runningTransitionsByProperty(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
     if (auto* animationData = animationRareData(pseudoElementIdentifier))
         return &animationData->runningTransitionsByProperty();
     return nullptr;
 }
 
-AnimationCollection& Element::ensureAnimations(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+AnimationCollection& Element::ensureAnimations(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     return ensureAnimationRareData(pseudoElementIdentifier).animations();
 }
 
-CSSAnimationCollection& Element::animationsCreatedByMarkup(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+CSSAnimationCollection& Element::animationsCreatedByMarkup(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     return ensureAnimationRareData(pseudoElementIdentifier).animationsCreatedByMarkup();
 }
 
-void Element::setAnimationsCreatedByMarkup(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, CSSAnimationCollection&& animations)
+void Element::setAnimationsCreatedByMarkup(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier, CSSAnimationCollection&& animations)
 {
     if (animations.isEmpty() && !animationRareData(pseudoElementIdentifier))
         return;
     ensureAnimationRareData(pseudoElementIdentifier).setAnimationsCreatedByMarkup(WTF::move(animations));
 }
 
-AnimatableCSSPropertyToTransitionMap& Element::ensureCompletedTransitionsByProperty(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+AnimatableCSSPropertyToTransitionMap& Element::ensureCompletedTransitionsByProperty(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     return ensureAnimationRareData(pseudoElementIdentifier).completedTransitionsByProperty();
 }
 
-AnimatableCSSPropertyToTransitionMap& Element::ensureRunningTransitionsByProperty(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+AnimatableCSSPropertyToTransitionMap& Element::ensureRunningTransitionsByProperty(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     return ensureAnimationRareData(pseudoElementIdentifier).runningTransitionsByProperty();
 }
 
-const RenderStyle* Element::lastStyleChangeEventStyle(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
+const RenderStyle* Element::lastStyleChangeEventStyle(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
     if (auto* animationData = animationRareData(pseudoElementIdentifier))
         return animationData->lastStyleChangeEventStyle();
     return nullptr;
 }
 
-void Element::setLastStyleChangeEventStyle(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, std::unique_ptr<const RenderStyle>&& style)
+void Element::setLastStyleChangeEventStyle(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier, std::unique_ptr<const RenderStyle>&& style)
 {
     if (auto* animationData = animationRareData(pseudoElementIdentifier))
         animationData->setLastStyleChangeEventStyle(WTF::move(style));
@@ -5358,14 +5358,14 @@ void Element::setLastStyleChangeEventStyle(const std::optional<Style::PseudoElem
         ensureAnimationRareData(pseudoElementIdentifier).setLastStyleChangeEventStyle(WTF::move(style));
 }
 
-bool Element::hasPropertiesOverridenAfterAnimation(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
+bool Element::hasPropertiesOverridenAfterAnimation(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
     if (auto* animationData = animationRareData(pseudoElementIdentifier))
         return animationData->hasPropertiesOverridenAfterAnimation();
     return false;
 }
 
-void Element::setHasPropertiesOverridenAfterAnimation(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, bool value)
+void Element::setHasPropertiesOverridenAfterAnimation(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier, bool value)
 {
     if (auto* animationData = animationRareData(pseudoElementIdentifier)) {
         animationData->setHasPropertiesOverridenAfterAnimation(value);
@@ -5375,17 +5375,17 @@ void Element::setHasPropertiesOverridenAfterAnimation(const std::optional<Style:
         ensureAnimationRareData(pseudoElementIdentifier).setHasPropertiesOverridenAfterAnimation(true);
 }
 
-void Element::cssAnimationsDidUpdate(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+void Element::cssAnimationsDidUpdate(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     ensureAnimationRareData(pseudoElementIdentifier).cssAnimationsDidUpdate();
 }
 
-void Element::keyframesRuleDidChange(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+void Element::keyframesRuleDidChange(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     ensureAnimationRareData(pseudoElementIdentifier).keyframesRuleDidChange();
 }
 
-bool Element::hasPendingKeyframesUpdate(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
+bool Element::hasPendingKeyframesUpdate(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
     auto* data = animationRareData(pseudoElementIdentifier);
     return data && data->hasPendingKeyframesUpdate();
@@ -6444,7 +6444,7 @@ RefPtr<HTMLElement> Element::topmostPopoverAncestor(TopLayerElementType topLayer
     return topmostAncestor;
 }
 
-double Element::lookupCSSRandomBaseValue(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const CSSCalc::RandomCachingKey& key) const
+double Element::lookupCSSRandomBaseValue(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const CSSCalc::RandomCachingKey& key) const
 {
     return const_cast<Element*>(this)->ensureElementRareData().ensureRandomCachingKeyMap(pseudoElementIdentifier)->lookupCSSRandomBaseValue(key);
 }

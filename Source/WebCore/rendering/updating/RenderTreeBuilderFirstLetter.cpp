@@ -87,7 +87,7 @@ static std::optional<RenderStyle> styleForFirstLetter(const RenderElement& first
         }
     }
 
-    firstLetterStyle.setPseudoElementIdentifier({ { PseudoElementType::FirstLetter } });
+    firstLetterStyle.setPseudoElementIdentifier(Style::PseudoElementIdentifier { PseudoElementType::FirstLetter });
     // Force inline display (except for floating first-letters).
     firstLetterStyle.setDisplay(firstLetterStyle.floating() != Float::None ? Style::DisplayType::BlockFlow : Style::DisplayType::InlineFlow);
     // CSS2 says first-letter can't be positioned.

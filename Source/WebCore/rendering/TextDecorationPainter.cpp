@@ -320,7 +320,7 @@ void TextDecorationPainter::paintLineThrough(const ForegroundDecorationGeometry&
         m_context.drawLineForText(rect, m_isPrinting, style == TextDecorationStyle::Double, strokeStyle);
 }
 
-static void collectStylesForRenderer(TextDecorationPainter::Styles& result, const RenderObject& renderer, Style::TextDecorationLine remainingDecorations, bool firstLineStyle, OptionSet<PaintBehavior> paintBehavior, std::optional<PseudoElementType> pseudoElementType)
+static void collectStylesForRenderer(TextDecorationPainter::Styles& result, const RenderObject& renderer, Style::TextDecorationLine remainingDecorations, bool firstLineStyle, OptionSet<PaintBehavior> paintBehavior, Markable<PseudoElementType> pseudoElementType)
 {
     auto extractDecorations = [&] (const RenderStyle& style, Style::TextDecorationLine decorations) {
         if (!decorations.containsAny({ Style::TextDecorationLine::Flag::Underline, Style::TextDecorationLine::Flag::Overline, Style::TextDecorationLine::Flag::LineThrough }))
@@ -390,7 +390,7 @@ Color TextDecorationPainter::decorationColor(const RenderStyle& style, OptionSet
     return style.visitedDependentTextDecorationColorApplyingColorFilter(paintBehavior);
 }
 
-auto TextDecorationPainter::stylesForRenderer(const RenderObject& renderer, Style::TextDecorationLine requestedDecorations, bool firstLineStyle, OptionSet<PaintBehavior> paintBehavior, std::optional<PseudoElementType> pseudoElementType) -> Styles
+auto TextDecorationPainter::stylesForRenderer(const RenderObject& renderer, Style::TextDecorationLine requestedDecorations, bool firstLineStyle, OptionSet<PaintBehavior> paintBehavior, Markable<PseudoElementType> pseudoElementType) -> Styles
 {
     if (requestedDecorations.isNone())
         return { };

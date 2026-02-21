@@ -279,7 +279,7 @@ inline bool RenderStyle::hasPseudoStyle(PseudoElementType pseudo) const
     return m_computedStyle.hasPseudoStyle(pseudo);
 }
 
-inline std::optional<PseudoElementType> RenderStyle::pseudoElementType() const
+inline Markable<PseudoElementType> RenderStyle::pseudoElementType() const
 {
     return m_computedStyle.pseudoElementType();
 }
@@ -289,7 +289,7 @@ inline const AtomString& RenderStyle::pseudoElementNameArgument() const
     return m_computedStyle.pseudoElementNameArgument();
 }
 
-inline std::optional<Style::PseudoElementIdentifier> RenderStyle::pseudoElementIdentifier() const
+inline Markable<Style::PseudoElementIdentifier> RenderStyle::pseudoElementIdentifier() const
 {
     return m_computedStyle.pseudoElementIdentifier();
 }

@@ -87,7 +87,7 @@ static bool matchesActiveViewTransitionTypePseudoClass(const Element& element, c
 }
 
 struct SelectorChecker::LocalContext {
-    LocalContext(const CSSSelector& selector, const Element& element, VisitedMatchType visitedMatchType, std::optional<Style::PseudoElementIdentifier> requestedPseudoElement)
+    LocalContext(const CSSSelector& selector, const Element& element, VisitedMatchType visitedMatchType, Markable<Style::PseudoElementIdentifier> requestedPseudoElement)
         : selector(&selector)
         , element(&element)
         , visitedMatchType(visitedMatchType)
@@ -99,7 +99,7 @@ struct SelectorChecker::LocalContext {
     const Element* element;
     VisitedMatchType visitedMatchType;
     const CSSSelector* firstSelectorOfTheFragment;
-    std::optional<Style::PseudoElementIdentifier> requestedPseudoElement;
+    Markable<Style::PseudoElementIdentifier> requestedPseudoElement;
     bool isMatchElement { true };
     bool isSubjectOrAdjacentElement { true };
     bool inFunctionalPseudoClass { false };
@@ -205,7 +205,7 @@ void SelectorChecker::CheckingContext::setRequestedPseudoElement(Style::PseudoEl
     pseudoElementNameArgument = pseudoElementIdentifier.nameArgument;
 }
 
-std::optional<Style::PseudoElementIdentifier> SelectorChecker::CheckingContext::requestedPseudoElement() const
+Markable<Style::PseudoElementIdentifier> SelectorChecker::CheckingContext::requestedPseudoElement() const
 {
     if (!hasRequestedPseudoElement)
         return { };

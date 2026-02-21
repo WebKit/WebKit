@@ -276,6 +276,7 @@ using WTF::Logger;
 using WTF::MachSendRight;
 using WTF::MachSendRightAnnotated;
 using WTF::MainThreadDispatcher;
+using WTF::Markable;
 using WTF::MarkableTraits;
 using WTF::MonotonicTime;
 using WTF::NativePromise;

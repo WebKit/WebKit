@@ -93,7 +93,7 @@ void ComputedStyleBase::setAutosizeStatus(AutosizeStatus autosizeStatus)
 
 // MARK: - Pseudo element/style
 
-std::optional<PseudoElementIdentifier> ComputedStyleBase::pseudoElementIdentifier() const
+Markable<PseudoElementIdentifier> ComputedStyleBase::pseudoElementIdentifier() const
 {
     if (!pseudoElementType())
         return { };

@@ -38,8 +38,8 @@ struct SameSizeAsElementRareData : NodeRareData {
     int m_tabIndex;
     uint8_t contentRelevancy;
     IntPoint savedLayerScrollPosition;
-    HashMap<std::optional<Style::PseudoElementIdentifier>, std::unique_ptr<ElementAnimationRareData>> animationRareData;
-    HashMap<std::optional<Style::PseudoElementIdentifier>, AtomString> viewTransitionCapture;
+    HashMap<Markable<Style::PseudoElementIdentifier>, std::unique_ptr<ElementAnimationRareData>> animationRareData;
+    HashMap<Markable<Style::PseudoElementIdentifier>, AtomString> viewTransitionCapture;
     void* pointers[18];
     void* intersectionObserverData;
     void* resizeObserverData;
@@ -48,7 +48,7 @@ struct SameSizeAsElementRareData : NodeRareData {
     Markable<LayoutUnit> lastRemembedSize[2];
     ExplicitlySetAttrElementsMap explicitlySetAttrElementsMap;
     uint8_t visibilityAdjustment;
-    HashMap<std::optional<Style::PseudoElementIdentifier>, Ref<CSSCalc::RandomCachingKeyMap>> randomCachingKeyMaps;
+    HashMap<Markable<Style::PseudoElementIdentifier>, Ref<CSSCalc::RandomCachingKeyMap>> randomCachingKeyMaps;
     WeakPtr<Element, WeakPtrImplWithEventTargetData> invokedPopoverWeakPtr;
 };
 

@@ -44,7 +44,7 @@ struct ExtractorState {
     const RenderStyle& style;
 
     Ref<Element> element;
-    const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier;
+    const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier;
 
     const RenderElement* renderer;
 

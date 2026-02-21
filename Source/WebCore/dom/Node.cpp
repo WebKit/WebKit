@@ -1256,7 +1256,7 @@ const RenderStyle* Node::computedStyle()
     return computedStyle(std::nullopt);
 }
 
-const RenderStyle* Node::computedStyle(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+const RenderStyle* Node::computedStyle(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     RefPtr composedParent = parentElementInComposedTree();
     return composedParent ? composedParent->computedStyle(pseudoElementIdentifier) : nullptr;

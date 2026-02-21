@@ -199,11 +199,11 @@ public:
 
     // MARK: - Pseudo element/style
 
-    std::optional<PseudoElementType> pseudoElementType() const;
+    Markable<PseudoElementType> pseudoElementType() const;
     const AtomString& pseudoElementNameArgument() const;
 
-    std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifier() const;
-    inline void setPseudoElementIdentifier(std::optional<Style::PseudoElementIdentifier>&&);
+    Markable<Style::PseudoElementIdentifier> pseudoElementIdentifier() const;
+    inline void setPseudoElementIdentifier(Markable<Style::PseudoElementIdentifier>&&);
 
     inline bool hasAnyPublicPseudoStyles() const;
     inline bool hasPseudoStyle(PseudoElementType) const;

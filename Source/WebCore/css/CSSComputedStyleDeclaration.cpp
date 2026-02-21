@@ -60,7 +60,7 @@ CSSComputedStyleDeclaration::CSSComputedStyleDeclaration(Element& element, IsEmp
 {
 }
 
-CSSComputedStyleDeclaration::CSSComputedStyleDeclaration(Element& element, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+CSSComputedStyleDeclaration::CSSComputedStyleDeclaration(Element& element, const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
     : m_element(element)
     , m_pseudoElementIdentifier(pseudoElementIdentifier)
 {
@@ -73,7 +73,7 @@ Ref<CSSComputedStyleDeclaration> CSSComputedStyleDeclaration::create(Element& el
     return adoptRef(*new CSSComputedStyleDeclaration(element, allowVisited));
 }
 
-Ref<CSSComputedStyleDeclaration> CSSComputedStyleDeclaration::create(Element& element, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+Ref<CSSComputedStyleDeclaration> CSSComputedStyleDeclaration::create(Element& element, const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     return adoptRef(*new CSSComputedStyleDeclaration(element, pseudoElementIdentifier));
 }

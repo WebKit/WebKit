@@ -78,7 +78,7 @@ protected:
 
     void initialize(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
     virtual void syncPropertiesWithBackingAnimation();
-    virtual Ref<StyleOriginatedAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&) = 0;
+    virtual Ref<StyleOriginatedAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, const Markable<Style::PseudoElementIdentifier>&) = 0;
 
 private:
     void disassociateFromOwningElement();
@@ -96,7 +96,7 @@ private:
     AnimationEffectPhase m_previousPhase { AnimationEffectPhase::Idle };
 
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_owningElement;
-    std::optional<Style::PseudoElementIdentifier> m_owningPseudoElementIdentifier;
+    Markable<Style::PseudoElementIdentifier> m_owningPseudoElementIdentifier;
     double m_previousIteration;
 };
 

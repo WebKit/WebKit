@@ -823,12 +823,12 @@ Ref<KeyframeEffect> KeyframeEffect::create(Ref<KeyframeEffect>&& source)
     return keyframeEffect;
 }
 
-Ref<KeyframeEffect> KeyframeEffect::create(const Element& target, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+Ref<KeyframeEffect> KeyframeEffect::create(const Element& target, const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     return adoptRef(*new KeyframeEffect(const_cast<Element*>(&target), pseudoElementIdentifier));
 }
 
-KeyframeEffect::KeyframeEffect(Element* target, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+KeyframeEffect::KeyframeEffect(Element* target, const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
     : m_target(target)
     , m_pseudoElementIdentifier(pseudoElementIdentifier)
 {

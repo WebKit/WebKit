@@ -525,7 +525,7 @@ Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Inspector::Pr
                     continue;
 
                 if (auto protocolPseudoId = protocolValueForPseudoElementType(pseudoElementType)) {
-                    auto matchedRules = styleResolver.pseudoStyleRulesForElement(element, pseudoElementType, Style::Resolver::AllCSSRules);
+                    auto matchedRules = styleResolver.pseudoStyleRulesForElement(element, Style::PseudoElementIdentifier { pseudoElementType }, Style::Resolver::AllCSSRules);
                     if (!matchedRules.isEmpty()) {
                         auto matches = Inspector::Protocol::CSS::PseudoIdMatches::create()
                             .setPseudoId(protocolPseudoId.value())
@@ -1370,7 +1370,7 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(
     return bindStyleSheet(rule->parentStyleSheet()).buildObjectForRule(rule);
 }
 
-Ref<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>> InspectorCSSAgent::buildArrayForMatchedRuleList(const Vector<Ref<const StyleRule>>& matchedRules, Style::Resolver& styleResolver, Element& element, std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifier)
+Ref<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>> InspectorCSSAgent::buildArrayForMatchedRuleList(const Vector<Ref<const StyleRule>>& matchedRules, Style::Resolver& styleResolver, Element& element, Markable<Style::PseudoElementIdentifier> pseudoElementIdentifier)
 {
     auto result = JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>::create();
 

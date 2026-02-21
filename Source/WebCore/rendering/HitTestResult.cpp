@@ -211,12 +211,12 @@ void HitTestResult::setLocalPoint(const LayoutPoint& p)
     m_localPoint = m_pseudoElementIdentifier ? LayoutPoint() : p;
 }
 
-std::optional<Style::PseudoElementIdentifier> HitTestResult::pseudoElementIdentifier() const
+Markable<Style::PseudoElementIdentifier> HitTestResult::pseudoElementIdentifier() const
 {
     return m_pseudoElementIdentifier;
 }
 
-void HitTestResult::setPseudoElementIdentifier(std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifier)
+void HitTestResult::setPseudoElementIdentifier(Markable<Style::PseudoElementIdentifier> pseudoElementIdentifier)
 {
     m_pseudoElementIdentifier = pseudoElementIdentifier;
 }

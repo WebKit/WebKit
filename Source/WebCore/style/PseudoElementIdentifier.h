@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/RenderStyleConstants.h>
+#include <wtf/Markable.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/TextStream.h>
@@ -41,6 +42,49 @@ struct PseudoElementIdentifier {
     friend bool operator==(const PseudoElementIdentifier& a, const PseudoElementIdentifier& b) = default;
 };
 
+} // namespace WebCore
+
+namespace WTF {
+
+template<>
+struct MarkableTraits<WebCore::Style::PseudoElementIdentifier> {
+    static bool isEmptyValue(const WebCore::Style::PseudoElementIdentifier& identifer) { return EnumMarkableTraits<WebCore::PseudoElementType>::isEmptyValue(identifer.type); }
+    static WebCore::Style::PseudoElementIdentifier emptyValue() { return { EnumMarkableTraits<WebCore::PseudoElementType>::emptyValue() }; }
+};
+
+template<>
+struct HashTraits<WebCore::Style::PseudoElementIdentifier> : GenericHashTraits<WebCore::Style::PseudoElementIdentifier> {
+    typedef WebCore::Style::PseudoElementIdentifier EmptyValueType;
+
+    static constexpr bool emptyValueIsZero = false;
+    static EmptyValueType emptyValue() { return { { }, emptyAtom() }; }
+
+    static void constructDeletedValue(WebCore::Style::PseudoElementIdentifier& identifer) { new (NotNull, &identifer.nameArgument) AtomString { HashTableDeletedValue }; }
+    static bool isDeletedValue(const WebCore::Style::PseudoElementIdentifier& identifer) { return identifer.nameArgument.isHashTableDeletedValue(); }
+};
+
+template<>
+struct HashTraits<Markable<WebCore::Style::PseudoElementIdentifier>> : GenericHashTraits<Markable<WebCore::Style::PseudoElementIdentifier>> {
+    typedef Markable<WebCore::Style::PseudoElementIdentifier> EmptyValueType;
+
+    static constexpr bool emptyValueIsZero = false;
+    // We want empty Markable to be a valid hash table value so this differs from the Markable empty value.
+    static EmptyValueType emptyValue() { return WebCore::Style::PseudoElementIdentifier { { }, emptyAtom() }; }
+
+    static void constructDeletedValue(Markable<WebCore::Style::PseudoElementIdentifier>& identifer)
+    {
+        HashTraits<WebCore::Style::PseudoElementIdentifier>::constructDeletedValue(identifer.unsafeValue());
+    }
+    static bool isDeletedValue(const Markable<WebCore::Style::PseudoElementIdentifier>& identifer)
+    {
+        return HashTraits<WebCore::Style::PseudoElementIdentifier>::isDeletedValue(identifer.unsafeValue());
+    }
+};
+
+} // namespace WTF
+
+namespace WebCore::Style {
+
 inline void add(Hasher& hasher, const PseudoElementIdentifier& pseudoElementIdentifier)
 {
     add(hasher, pseudoElementIdentifier.type, pseudoElementIdentifier.nameArgument);
@@ -54,7 +98,7 @@ inline WTF::TextStream& operator<<(WTF::TextStream& ts, const PseudoElementIdent
     return ts;
 }
 
-inline bool isNamedViewTransitionPseudoElement(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+inline bool isNamedViewTransitionPseudoElement(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     if (!pseudoElementIdentifier)
         return false;
@@ -72,34 +116,3 @@ inline bool isNamedViewTransitionPseudoElement(const std::optional<Style::Pseudo
 
 } // namespace WebCore
 
-namespace WTF {
-
-template<>
-struct HashTraits<WebCore::Style::PseudoElementIdentifier> : GenericHashTraits<WebCore::Style::PseudoElementIdentifier> {
-    typedef WebCore::Style::PseudoElementIdentifier EmptyValueType;
-
-    static constexpr bool emptyValueIsZero = false;
-    static EmptyValueType emptyValue() { return WebCore::Style::PseudoElementIdentifier { { }, emptyAtom() }; }
-
-    static void constructDeletedValue(WebCore::Style::PseudoElementIdentifier& identifer) { new (NotNull, &identifer.nameArgument) AtomString { HashTableDeletedValue }; }
-    static bool isDeletedValue(const WebCore::Style::PseudoElementIdentifier& identifer) { return identifer.nameArgument.isHashTableDeletedValue(); }
-};
-
-template<>
-struct HashTraits<std::optional<WebCore::Style::PseudoElementIdentifier>> : GenericHashTraits<std::optional<WebCore::Style::PseudoElementIdentifier>> {
-    typedef std::optional<WebCore::Style::PseudoElementIdentifier> EmptyValueType;
-
-    static constexpr bool emptyValueIsZero = false;
-    static EmptyValueType emptyValue() { return HashTraits<WebCore::Style::PseudoElementIdentifier>::emptyValue(); }
-
-    static void constructDeletedValue(std::optional<WebCore::Style::PseudoElementIdentifier>& identifer)
-    {
-        HashTraits<WebCore::Style::PseudoElementIdentifier>::constructDeletedValue(identifer.emplace());
-    }
-    static bool isDeletedValue(const std::optional<WebCore::Style::PseudoElementIdentifier>& identifer)
-    {
-        return identifer && HashTraits<WebCore::Style::PseudoElementIdentifier>::isDeletedValue(*identifer);
-    }
-};
-
-} // namespace WTF

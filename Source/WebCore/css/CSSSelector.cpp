@@ -277,7 +277,7 @@ unsigned CSSSelector::specificityForPage() const
     return s;
 }
 
-std::optional<PseudoElementType> CSSSelector::stylePseudoElementTypeFor(PseudoElement type)
+Markable<PseudoElementType> CSSSelector::stylePseudoElementTypeFor(PseudoElement type)
 {
     switch (type) {
     case PseudoElement::FirstLine:

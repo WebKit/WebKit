@@ -66,7 +66,7 @@ static bool compareStyleOriginatedAnimationOwningElementPositionsInDocumentTreeO
     //     - ::after
     //     - element children
     enum SortingIndex : uint8_t { NotPseudo, Marker, Before, FirstLetter, FirstLine, GrammarError, Highlight, WebKitScrollbar, Selection, SpellingError, TargetText, Checkmark, After, PickerIcon, ViewTransition, ViewTransitionGroup, ViewTransitionImagePair, ViewTransitionOld, ViewTransitionNew, Other };
-    auto sortingIndex = [](const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) -> SortingIndex {
+    auto sortingIndex = [](const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier) -> SortingIndex {
         if (!pseudoElementIdentifier)
             return NotPseudo;
 
@@ -319,7 +319,7 @@ bool compareAnimationEventsByCompositeOrder(const AnimationEventBase& a, const A
 
 // FIXME: This should be owned by CSSSelector.
 // FIXME: Generate this function.
-String pseudoElementIdentifierAsString(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+String pseudoElementIdentifierAsString(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     if (!pseudoElementIdentifier)
         return emptyString();
@@ -378,8 +378,8 @@ String pseudoElementIdentifierAsString(const std::optional<Style::PseudoElementI
     }
 }
 
-// bool represents whether parsing was successful, std::optional<Style::PseudoElementIdentifier> is the result of the parsing when successful.
-std::pair<bool, std::optional<Style::PseudoElementIdentifier>> pseudoElementIdentifierFromString(const String& pseudoElement, Document* document)
+// bool represents whether parsing was successful, Markable<Style::PseudoElementIdentifier> is the result of the parsing when successful.
+std::pair<bool, Markable<Style::PseudoElementIdentifier>> pseudoElementIdentifierFromString(const String& pseudoElement, Document* document)
 {
     // https://drafts.csswg.org/web-animations-1/#dom-keyframeeffect-pseudoelement
     if (pseudoElement.isNull())

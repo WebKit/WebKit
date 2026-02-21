@@ -263,7 +263,7 @@ inline AppleVisualEffect ComputedStyleBase::usedAppleVisualEffectForSubtree() co
 
 #endif
 
-inline std::optional<PseudoElementType> ComputedStyleBase::pseudoElementType() const
+inline Markable<PseudoElementType> ComputedStyleBase::pseudoElementType() const
 {
     return m_nonInheritedFlags.pseudoElementType ? std::make_optional(static_cast<PseudoElementType>(m_nonInheritedFlags.pseudoElementType - 1)) : std::nullopt;
 }

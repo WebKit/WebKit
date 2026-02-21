@@ -224,7 +224,7 @@ inline void ComputedStyleBase::setHasPseudoStyles(EnumSet<PseudoElementType> set
     m_nonInheritedFlags.setHasPseudoStyles(set);
 }
 
-inline void ComputedStyleBase::setPseudoElementIdentifier(std::optional<PseudoElementIdentifier>&& identifier)
+inline void ComputedStyleBase::setPseudoElementIdentifier(Markable<PseudoElementIdentifier>&& identifier)
 {
     if (identifier) {
         m_nonInheritedFlags.pseudoElementType = std::to_underlying(identifier->type) + 1;

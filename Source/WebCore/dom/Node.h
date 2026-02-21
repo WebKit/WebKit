@@ -254,8 +254,8 @@ public:
     bool isPseudoElement() const { return isElementNode() && hasTypeFlag(TypeFlag::IsPseudoElementOrSpecialInternalNode); }
     inline bool isBeforePseudoElement() const;
     inline bool isAfterPseudoElement() const;
-    inline std::optional<PseudoElementType> pseudoElementType() const;
-    inline std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifier() const;
+    inline Markable<PseudoElementType> pseudoElementType() const;
+    inline Markable<Style::PseudoElementIdentifier> pseudoElementIdentifier() const;
 
 #if ENABLE(VIDEO)
     virtual bool isWebVTTElement() const { return false; }
@@ -512,7 +512,7 @@ public:
     inline const RenderStyle* renderStyle() const; // Defined in NodeRenderStyle.h
 
     WEBCORE_EXPORT const RenderStyle* computedStyle();
-    virtual const RenderStyle* computedStyle(const std::optional<Style::PseudoElementIdentifier>&);
+    virtual const RenderStyle* computedStyle(const Markable<Style::PseudoElementIdentifier>&);
 
     enum class InsertedIntoAncestorResult {
         Done,

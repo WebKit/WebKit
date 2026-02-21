@@ -37,16 +37,16 @@ public:
 
     double elapsedTime() const { return m_elapsedTime; }
     const String& pseudoElement();
-    const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier() const { return m_pseudoElementIdentifier; }
+    const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier() const { return m_pseudoElementIdentifier; }
 
 protected:
-    StyleOriginatedAnimationEvent(enum EventInterfaceType, const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double, const std::optional<Style::PseudoElementIdentifier>&);
+    StyleOriginatedAnimationEvent(enum EventInterfaceType, const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double, const Markable<Style::PseudoElementIdentifier>&);
     StyleOriginatedAnimationEvent(enum EventInterfaceType, const AtomString&, EventInit&&, IsTrusted, double, String&&);
 
 private:
     double m_elapsedTime;
     String m_pseudoElement;
-    std::optional<Style::PseudoElementIdentifier> m_pseudoElementIdentifier { };
+    Markable<Style::PseudoElementIdentifier> m_pseudoElementIdentifier { };
 };
 
 } // namespace WebCore

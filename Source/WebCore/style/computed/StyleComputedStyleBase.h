@@ -575,11 +575,11 @@ public:
 
     // MARK: - Pseudo element/style
 
-    inline std::optional<PseudoElementType> pseudoElementType() const;
+    inline Markable<PseudoElementType> pseudoElementType() const;
     const AtomString& pseudoElementNameArgument() const;
 
-    std::optional<PseudoElementIdentifier> pseudoElementIdentifier() const;
-    void setPseudoElementIdentifier(std::optional<PseudoElementIdentifier>&&);
+    Markable<PseudoElementIdentifier> pseudoElementIdentifier() const;
+    void setPseudoElementIdentifier(Markable<PseudoElementIdentifier>&&);
 
     inline bool hasAnyPublicPseudoStyles() const;
     inline bool hasPseudoStyle(PseudoElementType) const;

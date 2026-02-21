@@ -689,7 +689,7 @@ inline const RenderStyle* SVGElementRareData::overrideComputedStyle(Element& ele
     return m_overrideComputedStyle.get();
 }
 
-const RenderStyle* SVGElement::computedStyle(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+const RenderStyle* SVGElement::computedStyle(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     if (!m_svgRareData || !m_svgRareData->useOverrideComputedStyle())
         return Element::computedStyle(pseudoElementIdentifier);

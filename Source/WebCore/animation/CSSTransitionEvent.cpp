@@ -33,7 +33,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSTransitionEvent);
 
-CSSTransitionEvent::CSSTransitionEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const String propertyName)
+CSSTransitionEvent::CSSTransitionEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const String propertyName)
     : StyleOriginatedAnimationEvent(EventInterfaceType::CSSTransitionEvent, type, animation, scheduledTime, elapsedTime, pseudoElementIdentifier)
     , m_propertyName(propertyName)
 {

@@ -42,7 +42,7 @@ public:
 
     enum class AllowVisited : bool { No, Yes };
     WEBCORE_EXPORT static Ref<CSSComputedStyleDeclaration> create(Element&, AllowVisited);
-    static Ref<CSSComputedStyleDeclaration> create(Element&, const std::optional<Style::PseudoElementIdentifier>&);
+    static Ref<CSSComputedStyleDeclaration> create(Element&, const Markable<Style::PseudoElementIdentifier>&);
     static Ref<CSSComputedStyleDeclaration> createEmpty(Element&);
 
     WEBCORE_EXPORT virtual ~CSSComputedStyleDeclaration();
@@ -53,7 +53,7 @@ private:
     enum class IsEmpty : bool { No, Yes };
     CSSComputedStyleDeclaration(Element&, AllowVisited);
     CSSComputedStyleDeclaration(Element&, IsEmpty);
-    CSSComputedStyleDeclaration(Element&, const std::optional<Style::PseudoElementIdentifier>&);
+    CSSComputedStyleDeclaration(Element&, const Markable<Style::PseudoElementIdentifier>&);
 
     // CSSOM functions. Don't make these public.
     CSSRule* NODELETE parentRule() const final;
@@ -81,7 +81,7 @@ private:
     Style::Extractor extractor() const;
 
     const Ref<Element> m_element;
-    std::optional<Style::PseudoElementIdentifier> m_pseudoElementIdentifier { std::nullopt };
+    Markable<Style::PseudoElementIdentifier> m_pseudoElementIdentifier { std::nullopt };
     bool m_isEmpty { false };
     bool m_allowVisitedStyle { false };
 };

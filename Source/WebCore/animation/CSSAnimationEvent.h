@@ -32,7 +32,7 @@ namespace WebCore {
 class CSSAnimationEvent final : public StyleOriginatedAnimationEvent {
     WTF_MAKE_TZONE_ALLOCATED(CSSAnimationEvent);
 public:
-    static Ref<CSSAnimationEvent> create(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const String& animationName)
+    static Ref<CSSAnimationEvent> create(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const String& animationName)
     {
         return adoptRef(*new CSSAnimationEvent(type, animation, scheduledTime, elapsedTime, pseudoElementIdentifier, animationName));
     }
@@ -53,7 +53,7 @@ public:
     const String& animationName() const { return m_animationName; }
 
 private:
-    CSSAnimationEvent(const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&, const String& animationName);
+    CSSAnimationEvent(const AtomString& type, WebAnimation*, std::optional<Seconds> scheduledTime, double elapsedTime, const Markable<Style::PseudoElementIdentifier>&, const String& animationName);
     CSSAnimationEvent(const AtomString&, Init&&, IsTrusted);
 
     String m_animationName;

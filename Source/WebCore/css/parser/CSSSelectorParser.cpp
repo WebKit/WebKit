@@ -1443,7 +1443,7 @@ CSSSelectorList CSSSelectorParser::resolveNestingParent(const CSSSelectorList& n
     return CSSSelectorList { WTF::move(result) };
 }
 
-static std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifierFor(CSSSelectorPseudoElement selectorPseudoElement)
+static Markable<Style::PseudoElementIdentifier> pseudoElementIdentifierFor(CSSSelectorPseudoElement selectorPseudoElement)
 {
     auto type = CSSSelector::stylePseudoElementTypeFor(selectorPseudoElement);
     if (!type)
@@ -1453,7 +1453,7 @@ static std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifierFor(
 
 // FIXME: It's probably worth investigating if more logic can be shared with
 // CSSSelectorParser::consumePseudo(), though note that the requirements are subtly different.
-std::pair<bool, std::optional<Style::PseudoElementIdentifier>> CSSSelectorParser::parsePseudoElement(const String& input, const CSSSelectorParserContext& context)
+std::pair<bool, Markable<Style::PseudoElementIdentifier>> CSSSelectorParser::parsePseudoElement(const String& input, const CSSSelectorParserContext& context)
 {
     auto tokenizer = CSSTokenizer { input };
     auto range = tokenizer.tokenRange();

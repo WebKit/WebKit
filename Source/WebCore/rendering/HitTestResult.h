@@ -77,8 +77,8 @@ public:
     bool isOverWidget() const { return m_isOverWidget; }
     void setIsOverWidget(bool isOverWidget) { m_isOverWidget = isOverWidget; }
 
-    std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifier() const;
-    void setPseudoElementIdentifier(std::optional<Style::PseudoElementIdentifier>);
+    Markable<Style::PseudoElementIdentifier> pseudoElementIdentifier() const;
+    void setPseudoElementIdentifier(Markable<Style::PseudoElementIdentifier>);
 
     WEBCORE_EXPORT String linkSuggestedFilename() const;
 
@@ -197,7 +197,7 @@ private:
     RefPtr<Element> m_innerURLElement;
     RefPtr<Scrollbar> m_scrollbar;
     bool m_isOverWidget { false }; // Returns true if we are over a widget (and not in the border/padding area of a RenderWidget for example).
-    std::optional<Style::PseudoElementIdentifier> m_pseudoElementIdentifier;
+    Markable<Style::PseudoElementIdentifier> m_pseudoElementIdentifier;
 
     mutable std::unique_ptr<NodeSet> m_listBasedTestResult;
 };

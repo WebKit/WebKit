@@ -38,7 +38,7 @@ CSSAnimationEvent::CSSAnimationEvent(const AtomString& type, Init&& initializer,
 {
 }
 
-CSSAnimationEvent::CSSAnimationEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const String& animationName)
+CSSAnimationEvent::CSSAnimationEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, double elapsedTime, const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier, const String& animationName)
     : StyleOriginatedAnimationEvent(EventInterfaceType::CSSAnimationEvent, type, animation, scheduledTime, elapsedTime, pseudoElementIdentifier)
     , m_animationName(animationName)
 {

@@ -109,11 +109,11 @@ public:
     void setSavedLayerScrollPosition(ScrollPosition position) { m_savedLayerScrollPosition = position; }
 
     bool hasAnimationRareData() const { return !m_animationRareData.isEmpty(); }
-    ElementAnimationRareData* animationRareData(const std::optional<Style::PseudoElementIdentifier>&) const;
-    ElementAnimationRareData& ensureAnimationRareData(const std::optional<Style::PseudoElementIdentifier>&);
+    ElementAnimationRareData* animationRareData(const Markable<Style::PseudoElementIdentifier>&) const;
+    ElementAnimationRareData& ensureAnimationRareData(const Markable<Style::PseudoElementIdentifier>&);
 
-    AtomString viewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>&) const;
-    void setViewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>&, AtomString);
+    AtomString viewTransitionCapturedName(const Markable<Style::PseudoElementIdentifier>&) const;
+    void setViewTransitionCapturedName(const Markable<Style::PseudoElementIdentifier>&, AtomString);
 
     DOMTokenList* partList() const { return m_partList.get(); }
     void setPartList(const std::unique_ptr<DOMTokenList>&& partList) { lazyInitialize(m_partList, std::move(partList)); }
@@ -163,7 +163,7 @@ public:
     OptionSet<VisibilityAdjustment> visibilityAdjustment() const { return m_visibilityAdjustment; }
     void setVisibilityAdjustment(OptionSet<VisibilityAdjustment> adjustment) { m_visibilityAdjustment = adjustment; }
 
-    Ref<CSSCalc::RandomCachingKeyMap> ensureRandomCachingKeyMap(const std::optional<Style::PseudoElementIdentifier>&);
+    Ref<CSSCalc::RandomCachingKeyMap> ensureRandomCachingKeyMap(const Markable<Style::PseudoElementIdentifier>&);
     bool hasRandomCachingKeyMap() const;
 
 #if DUMP_NODE_STATISTICS
@@ -256,9 +256,9 @@ private:
     Markable<LayoutUnit> m_lastRememberedLogicalWidth;
     Markable<LayoutUnit> m_lastRememberedLogicalHeight;
 
-    HashMap<std::optional<Style::PseudoElementIdentifier>, std::unique_ptr<ElementAnimationRareData>> m_animationRareData;
+    HashMap<Markable<Style::PseudoElementIdentifier>, std::unique_ptr<ElementAnimationRareData>> m_animationRareData;
 
-    HashMap<std::optional<Style::PseudoElementIdentifier>, AtomString> m_viewTransitionCapturedName;
+    HashMap<Markable<Style::PseudoElementIdentifier>, AtomString> m_viewTransitionCapturedName;
 
     RefPtr<PseudoElement> m_beforePseudoElement;
     RefPtr<PseudoElement> m_afterPseudoElement;
@@ -281,7 +281,7 @@ private:
 
     OptionSet<VisibilityAdjustment> m_visibilityAdjustment;
 
-    HashMap<std::optional<Style::PseudoElementIdentifier>, Ref<CSSCalc::RandomCachingKeyMap>> m_randomCachingKeyMaps;
+    HashMap<Markable<Style::PseudoElementIdentifier>, Ref<CSSCalc::RandomCachingKeyMap>> m_randomCachingKeyMaps;
 };
 
 inline ElementRareData::ElementRareData()
@@ -325,12 +325,12 @@ inline void ElementRareData::setUnusualTabIndex(int tabIndex)
     m_unusualTabIndex = tabIndex;
 }
 
-inline ElementAnimationRareData* ElementRareData::animationRareData(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
+inline ElementAnimationRareData* ElementRareData::animationRareData(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
     return m_animationRareData.get(pseudoElementIdentifier);
 }
 
-inline ElementAnimationRareData& ElementRareData::ensureAnimationRareData(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+inline ElementAnimationRareData& ElementRareData::ensureAnimationRareData(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     if (auto* animationRareData = this->animationRareData(pseudoElementIdentifier))
         return *animationRareData;
@@ -340,17 +340,17 @@ inline ElementAnimationRareData& ElementRareData::ensureAnimationRareData(const 
     return *result.iterator->value.get();
 }
 
-inline AtomString ElementRareData::viewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
+inline AtomString ElementRareData::viewTransitionCapturedName(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
     return m_viewTransitionCapturedName.get(pseudoElementIdentifier);
 }
 
-inline void ElementRareData::setViewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, AtomString captureName)
+inline void ElementRareData::setViewTransitionCapturedName(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier, AtomString captureName)
 {
     m_viewTransitionCapturedName.set(pseudoElementIdentifier, captureName);
 }
 
-inline Ref<CSSCalc::RandomCachingKeyMap> ElementRareData::ensureRandomCachingKeyMap(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+inline Ref<CSSCalc::RandomCachingKeyMap> ElementRareData::ensureRandomCachingKeyMap(const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
 {
     return m_randomCachingKeyMaps.ensure(pseudoElementIdentifier, [] {
         return CSSCalc::RandomCachingKeyMap::create();

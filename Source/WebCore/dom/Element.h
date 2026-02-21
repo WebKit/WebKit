@@ -529,7 +529,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> insertAdjacentText(const String& where, String&& text);
 
     using Node::computedStyle;
-    const RenderStyle* computedStyle(const std::optional<Style::PseudoElementIdentifier>&) override;
+    const RenderStyle* computedStyle(const Markable<Style::PseudoElementIdentifier>&) override;
     const RenderStyle* computedStyleForEditability();
 
     bool needsStyleInvalidation() const;
@@ -686,33 +686,33 @@ public:
 
     virtual bool childShouldCreateRenderer(const Node&) const;
 
-    KeyframeEffectStack* keyframeEffectStack(const std::optional<Style::PseudoElementIdentifier>&) const;
-    KeyframeEffectStack& ensureKeyframeEffectStack(const std::optional<Style::PseudoElementIdentifier>&);
-    bool hasKeyframeEffects(const std::optional<Style::PseudoElementIdentifier>&) const;
+    KeyframeEffectStack* keyframeEffectStack(const Markable<Style::PseudoElementIdentifier>&) const;
+    KeyframeEffectStack& ensureKeyframeEffectStack(const Markable<Style::PseudoElementIdentifier>&);
+    bool hasKeyframeEffects(const Markable<Style::PseudoElementIdentifier>&) const;
     bool NODELETE mayHaveKeyframeEffects() const;
 
-    const AnimationCollection* animations(const std::optional<Style::PseudoElementIdentifier>&) const;
-    bool hasCompletedTransitionForProperty(const std::optional<Style::PseudoElementIdentifier>&, const AnimatableCSSProperty&) const;
-    bool hasRunningTransitionForProperty(const std::optional<Style::PseudoElementIdentifier>&, const AnimatableCSSProperty&) const;
-    bool hasRunningTransitions(const std::optional<Style::PseudoElementIdentifier>&) const;
-    AnimationCollection& ensureAnimations(const std::optional<Style::PseudoElementIdentifier>&);
+    const AnimationCollection* animations(const Markable<Style::PseudoElementIdentifier>&) const;
+    bool hasCompletedTransitionForProperty(const Markable<Style::PseudoElementIdentifier>&, const AnimatableCSSProperty&) const;
+    bool hasRunningTransitionForProperty(const Markable<Style::PseudoElementIdentifier>&, const AnimatableCSSProperty&) const;
+    bool hasRunningTransitions(const Markable<Style::PseudoElementIdentifier>&) const;
+    AnimationCollection& ensureAnimations(const Markable<Style::PseudoElementIdentifier>&);
 
-    const AnimatableCSSPropertyToTransitionMap* completedTransitionsByProperty(const std::optional<Style::PseudoElementIdentifier>&) const;
-    const AnimatableCSSPropertyToTransitionMap* runningTransitionsByProperty(const std::optional<Style::PseudoElementIdentifier>&) const;
+    const AnimatableCSSPropertyToTransitionMap* completedTransitionsByProperty(const Markable<Style::PseudoElementIdentifier>&) const;
+    const AnimatableCSSPropertyToTransitionMap* runningTransitionsByProperty(const Markable<Style::PseudoElementIdentifier>&) const;
 
-    AnimatableCSSPropertyToTransitionMap& ensureCompletedTransitionsByProperty(const std::optional<Style::PseudoElementIdentifier>&);
-    AnimatableCSSPropertyToTransitionMap& ensureRunningTransitionsByProperty(const std::optional<Style::PseudoElementIdentifier>&);
-    CSSAnimationCollection& animationsCreatedByMarkup(const std::optional<Style::PseudoElementIdentifier>&);
-    void setAnimationsCreatedByMarkup(const std::optional<Style::PseudoElementIdentifier>&, CSSAnimationCollection&&);
+    AnimatableCSSPropertyToTransitionMap& ensureCompletedTransitionsByProperty(const Markable<Style::PseudoElementIdentifier>&);
+    AnimatableCSSPropertyToTransitionMap& ensureRunningTransitionsByProperty(const Markable<Style::PseudoElementIdentifier>&);
+    CSSAnimationCollection& animationsCreatedByMarkup(const Markable<Style::PseudoElementIdentifier>&);
+    void setAnimationsCreatedByMarkup(const Markable<Style::PseudoElementIdentifier>&, CSSAnimationCollection&&);
 
-    const RenderStyle* lastStyleChangeEventStyle(const std::optional<Style::PseudoElementIdentifier>&) const;
-    void setLastStyleChangeEventStyle(const std::optional<Style::PseudoElementIdentifier>&, std::unique_ptr<const RenderStyle>&&);
-    bool hasPropertiesOverridenAfterAnimation(const std::optional<Style::PseudoElementIdentifier>&) const;
-    void setHasPropertiesOverridenAfterAnimation(const std::optional<Style::PseudoElementIdentifier>&, bool);
+    const RenderStyle* lastStyleChangeEventStyle(const Markable<Style::PseudoElementIdentifier>&) const;
+    void setLastStyleChangeEventStyle(const Markable<Style::PseudoElementIdentifier>&, std::unique_ptr<const RenderStyle>&&);
+    bool hasPropertiesOverridenAfterAnimation(const Markable<Style::PseudoElementIdentifier>&) const;
+    void setHasPropertiesOverridenAfterAnimation(const Markable<Style::PseudoElementIdentifier>&, bool);
 
-    void cssAnimationsDidUpdate(const std::optional<Style::PseudoElementIdentifier>&);
-    void keyframesRuleDidChange(const std::optional<Style::PseudoElementIdentifier>&);
-    bool hasPendingKeyframesUpdate(const std::optional<Style::PseudoElementIdentifier>&) const;
+    void cssAnimationsDidUpdate(const Markable<Style::PseudoElementIdentifier>&);
+    void keyframesRuleDidChange(const Markable<Style::PseudoElementIdentifier>&);
+    bool hasPendingKeyframesUpdate(const Markable<Style::PseudoElementIdentifier>&) const;
     // FIXME: do we need a counter style didChange here? (rdar://103018993).
 
     bool isLink() const { return hasStateFlag(StateFlag::IsLink); }
@@ -798,7 +798,7 @@ public:
 
     const RenderStyle* existingComputedStyle() const;
     WEBCORE_EXPORT const RenderStyle* renderOrDisplayContentsStyle() const;
-    WEBCORE_EXPORT const RenderStyle* renderOrDisplayContentsStyle(const std::optional<Style::PseudoElementIdentifier>&) const;
+    WEBCORE_EXPORT const RenderStyle* renderOrDisplayContentsStyle(const Markable<Style::PseudoElementIdentifier>&) const;
 
     void clearBeforePseudoElement();
     void clearAfterPseudoElement();
@@ -908,10 +908,10 @@ public:
     void updateEffectiveTextDirection();
     void updateEffectiveTextDirectionIfNeeded();
 
-    AtomString viewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>&) const;
-    void setViewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>&, AtomString);
+    AtomString viewTransitionCapturedName(const Markable<Style::PseudoElementIdentifier>&) const;
+    void setViewTransitionCapturedName(const Markable<Style::PseudoElementIdentifier>&, AtomString);
 
-    double lookupCSSRandomBaseValue(const std::optional<Style::PseudoElementIdentifier>&, const CSSCalc::RandomCachingKey&) const;
+    double lookupCSSRandomBaseValue(const Markable<Style::PseudoElementIdentifier>&, const CSSCalc::RandomCachingKey&) const;
     bool NODELETE hasRandomCachingKeyMap() const;
 
     void addShadowRoot(Ref<ShadowRoot>&&);
@@ -1027,8 +1027,8 @@ private:
     inline ElementRareData* elementRareData() const;
     ElementRareData& ensureElementRareData();
 
-    ElementAnimationRareData* animationRareData(const std::optional<Style::PseudoElementIdentifier>&) const;
-    ElementAnimationRareData& ensureAnimationRareData(const std::optional<Style::PseudoElementIdentifier>&);
+    ElementAnimationRareData* animationRareData(const Markable<Style::PseudoElementIdentifier>&) const;
+    ElementAnimationRareData& ensureAnimationRareData(const Markable<Style::PseudoElementIdentifier>&);
 
     virtual int defaultTabIndex() const;
 

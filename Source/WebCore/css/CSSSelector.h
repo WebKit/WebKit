@@ -126,7 +126,7 @@ public:
     enum AttributeMatchType { CaseSensitive, CaseInsensitive };
 
     // Maps from the selector pseudo-element type to the style type. Only pseudo-elements that are not element-backed have a type in style.
-    static std::optional<PseudoElementType> NODELETE stylePseudoElementTypeFor(PseudoElement);
+    static Markable<PseudoElementType> NODELETE stylePseudoElementTypeFor(PseudoElement);
     static bool isPseudoClassEnabled(PseudoClass, const CSSSelectorParserContext&);
     static bool isPseudoElementEnabled(PseudoElement, StringView, const CSSSelectorParserContext&);
     static std::optional<PseudoElement> parsePseudoElementName(StringView, const CSSSelectorParserContext&);

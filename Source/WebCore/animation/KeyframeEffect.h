@@ -66,7 +66,7 @@ class KeyframeEffect final : public AnimationEffect, public Style::Interpolation
 public:
     static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Document&, Element*, JSC::Strong<JSC::JSObject>&&, Variant<double, KeyframeEffectOptions>&&);
     static Ref<KeyframeEffect> create(Ref<KeyframeEffect>&&);
-    static Ref<KeyframeEffect> create(const Element&, const std::optional<Style::PseudoElementIdentifier>&);
+    static Ref<KeyframeEffect> create(const Element&, const Markable<Style::PseudoElementIdentifier>&);
 
     using KeyframeOffset = Variant<std::nullptr_t, double, TimelineRangeOffset, String>;
 
@@ -198,7 +198,7 @@ public:
 #endif
 
 private:
-    KeyframeEffect(Element*, const std::optional<Style::PseudoElementIdentifier>&);
+    KeyframeEffect(Element*, const Markable<Style::PseudoElementIdentifier>&);
     ~KeyframeEffect();
 
     enum class AcceleratedAction : uint8_t { Play, Pause, UpdateProperties, TransformChange, Stop };
@@ -265,7 +265,7 @@ private:
     private:
         RefPtr<KeyframeEffect> m_effect;
         RefPtr<Element> m_originalTarget;
-        std::optional<Style::PseudoElementIdentifier> m_originalPseudoElementIdentifier;
+        Markable<Style::PseudoElementIdentifier> m_originalPseudoElementIdentifier;
     };
 
     void scheduleAssociatedAcceleratedEffectStackUpdate(const std::optional<const Styleable>& = std::nullopt);
@@ -308,7 +308,7 @@ private:
     Vector<ParsedKeyframe> m_parsedKeyframes;
     Vector<AcceleratedAction> m_pendingAcceleratedActions;
     RefPtr<Element> m_target;
-    std::optional<Style::PseudoElementIdentifier> m_pseudoElementIdentifier { };
+    Markable<Style::PseudoElementIdentifier> m_pseudoElementIdentifier { };
 
 #if ENABLE(THREADED_ANIMATIONS)
     WeakPtr<AcceleratedEffect> m_acceleratedRepresentation;

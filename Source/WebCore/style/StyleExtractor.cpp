@@ -74,7 +74,7 @@ static Element* styleElementForNode(Node* node)
     return composedTreeAncestors(*node).first();
 }
 
-Extractor::Extractor(Node* node, bool allowVisitedStyle, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+Extractor::Extractor(Node* node, bool allowVisitedStyle, const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
     : Extractor(styleElementForNode(node), allowVisitedStyle, pseudoElementIdentifier)
 {
 }
@@ -84,7 +84,7 @@ Extractor::Extractor(Node* node, bool allowVisitedStyle)
 {
 }
 
-Extractor::Extractor(Element* element, bool allowVisitedStyle, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+Extractor::Extractor(Element* element, bool allowVisitedStyle, const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
     : m_element(element)
     , m_pseudoElementIdentifier(pseudoElementIdentifier)
     , m_allowVisitedStyle(allowVisitedStyle)
@@ -203,7 +203,7 @@ bool Extractor::updateStyleIfNeededForProperty(Element& element, CSSPropertyID p
     return true;
 }
 
-static inline const RenderStyle* computeRenderStyleForProperty(Element& element, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, CSSPropertyID propertyID, std::unique_ptr<RenderStyle>& ownedStyle)
+static inline const RenderStyle* computeRenderStyleForProperty(Element& element, const Markable<Style::PseudoElementIdentifier>& pseudoElementIdentifier, CSSPropertyID propertyID, std::unique_ptr<RenderStyle>& ownedStyle)
 {
     if (Style::Interpolation::isAccelerated(propertyID, element.document().settings())) {
         Styleable styleable(element, pseudoElementIdentifier);

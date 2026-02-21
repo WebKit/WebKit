@@ -141,7 +141,7 @@ public:
         AllCSSRules         = AllButEmptyCSSRules | EmptyCSSRules,
     };
     Vector<Ref<const StyleRule>> styleRulesForElement(const Element*, unsigned rulesToInclude = AllButEmptyCSSRules);
-    Vector<Ref<const StyleRule>> pseudoStyleRulesForElement(const Element*, const std::optional<Style::PseudoElementRequest>&, unsigned rulesToInclude = AllButEmptyCSSRules);
+    Vector<Ref<const StyleRule>> pseudoStyleRulesForElement(const Element*, const Markable<PseudoElementIdentifier>&, unsigned rulesToInclude = AllButEmptyCSSRules);
 
     bool hasSelectorForId(const AtomString&) const;
     bool hasSelectorForAttribute(const Element&, const AtomString&) const;

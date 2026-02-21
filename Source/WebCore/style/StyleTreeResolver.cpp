@@ -557,7 +557,7 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
             // ::first-line can inherit to ::before/::after
             if (auto firstLineContext = makeResolutionContextForInheritedFirstLine(elementUpdate, *elementUpdate.style)) {
                 auto firstLineStyle = scope().resolver->styleForPseudoElement(element, pseudoElementIdentifier, *firstLineContext);
-                firstLineStyle->style->setPseudoElementIdentifier({ { PseudoElementType::FirstLine } });
+                firstLineStyle->style->setPseudoElementIdentifier(PseudoElementIdentifier { PseudoElementType::FirstLine });
                 animatedUpdate.style->addCachedPseudoStyle(WTF::move(firstLineStyle->style));
             }
         }
@@ -622,7 +622,7 @@ std::optional<ResolvedStyle> TreeResolver::resolveAncestorFirstLinePseudoElement
             return { };
 
         auto elementStyle = scope().resolver->styleForElement(element, *resolutionContext);
-        elementStyle.style->setPseudoElementIdentifier({ { PseudoElementType::FirstLine } });
+        elementStyle.style->setPseudoElementIdentifier(PseudoElementIdentifier { PseudoElementType::FirstLine });
 
         return elementStyle;
     }
@@ -1871,7 +1871,7 @@ void TreeResolver::updateForPositionVisibility(RenderStyle& style, const Styleab
         style.setIsForceHidden();
 }
 
-const RenderStyle* TreeResolver::beforeResolutionStyle(const Element& element, std::optional<PseudoElementIdentifier> pseudo)
+const RenderStyle* TreeResolver::beforeResolutionStyle(const Element& element, Markable<PseudoElementIdentifier> pseudo)
 {
     auto resolvePseudoStyle = [&](auto* style) -> const RenderStyle* {
         if (!pseudo)

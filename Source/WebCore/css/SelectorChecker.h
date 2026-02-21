@@ -94,7 +94,7 @@ public:
         const SelectorChecker::Mode resolvingMode;
 
         void NODELETE setRequestedPseudoElement(Style::PseudoElementIdentifier);
-        std::optional<Style::PseudoElementIdentifier> NODELETE requestedPseudoElement() const;
+        Markable<Style::PseudoElementIdentifier> requestedPseudoElement() const;
 
     private:
         friend class SelectorCompiler::SelectorCodeGenerator;

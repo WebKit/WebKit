@@ -254,7 +254,7 @@ inline void RenderStyle::setHasPseudoStyles(EnumSet<PseudoElementType> set)
     m_computedStyle.setHasPseudoStyles(set);
 }
 
-inline void RenderStyle::setPseudoElementIdentifier(std::optional<Style::PseudoElementIdentifier>&& identifier)
+inline void RenderStyle::setPseudoElementIdentifier(Markable<Style::PseudoElementIdentifier>&& identifier)
 {
     m_computedStyle.setPseudoElementIdentifier(WTF::move(identifier));
 }
