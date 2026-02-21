@@ -145,6 +145,16 @@ public:
     {
         StackSlotLiveness liveness(m_code);
 
+        buildInterferenceGraph(liveness);
+        coalesceSlots();
+        assignStackLocations(assignedEscapedStackSlots);
+    }
+
+private:
+    void buildInterferenceGraph(StackSlotLiveness& liveness)
+    {
+        CompilerTimingScope timingScope("Air"_s, "StackAllocator::build"_s);
+
         for (BasicBlock* block : m_code) {
             StackSlotLiveness::LocalCalc localCalc(liveness, block);
 
@@ -244,6 +254,11 @@ public:
                 dataLog("\n");
             }
         }
+    }
+
+    void coalesceSlots()
+    {
+        CompilerTimingScope timingScope("Air"_s, "StackAllocator::coalesce"_s);
 
         // Now try to coalesce some moves.
         std::ranges::sort(m_coalescableMoves, std::ranges::greater { }, &CoalescableMove::frequency);
@@ -273,6 +288,11 @@ public:
                     inst = Inst();
             }
         }
+    }
+
+    void assignStackLocations(const Vector<StackSlot*>& assignedEscapedStackSlots)
+    {
+        CompilerTimingScope timingScope("Air"_s, "StackAllocator::assign"_s);
 
         // Now we assign stack locations. At its heart this algorithm is just first-fit. For each
         // StackSlot we just want to find the offsetFromFP that is closest to zero while ensuring no
@@ -299,7 +319,6 @@ public:
         }
     }
 
-private:
     struct CoalescableMove {
         CoalescableMove()
         {
