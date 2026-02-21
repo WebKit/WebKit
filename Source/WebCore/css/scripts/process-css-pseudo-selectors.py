@@ -880,7 +880,7 @@ class UserAgentPartsGenerator():
         for part_name, part_data in user_agent_parts.items():
             if 'conditional' in part_data:
                 writer.write(f'#if {part_data["conditional"]}')
-            writer.write(f'const AtomString& {format_name_for_function(part_name)}();')
+            writer.write(f'const AtomString& NODELETE {format_name_for_function(part_name)}();')
             if 'conditional' in part_data:
                 writer.write('#endif')
         writer.newline()
