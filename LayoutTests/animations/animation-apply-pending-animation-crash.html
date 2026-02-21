@@ -1,0 +1,18 @@
+<style>
+map {
+     backdrop-filter: blur();
+}
+</style>
+<script>
+function main() {
+     var style = document.createElement("style");
+     var animation = map.animate({ "rotate": ["360deg", "0deg", ]}, 100);
+     style.clientTop;
+     animation.currentTime = 200;
+     animation.effect = new KeyframeEffect(null, { "line-clamp": ["1", "0"]});
+}
+testRunner?.dumpAsText();
+</script>
+<body onload="main()">
+    <map id="map"/>
+<div>This test passes if it doesn't crash.</div>
