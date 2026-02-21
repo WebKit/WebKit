@@ -256,7 +256,6 @@ void EventLoop::removeRepeatingTimer(EventLoopTimer& timer)
 void EventLoop::queueMicrotask(JSC::QueuedTask&& microtask)
 {
     microtaskQueue().append(WTF::move(microtask));
-    scheduleToRunIfNeeded(); // FIXME: Remove this once everything is integrated with the event loop.
 }
 
 void EventLoop::performMicrotaskCheckpoint()
@@ -590,6 +589,11 @@ void EventLoopTaskGroup::queueMicrotask(EventLoop::TaskFunction&& function)
     JSC::JSLockHolder locker(vm);
     auto* cell = JSC::JSMicrotaskDispatcher::create(vm, EventLoopFunctionMicrotaskDispatcher::create(*this, WTF::move(function)));
     queueMicrotask(JSC::QueuedTask { cell });
+    // C++ callers of this function may not have a JSExecState on the stack,
+    // so there is no guarantee that ~JSExecState will drain the microtask queue.
+    // Schedule the event loop to run so these microtasks are not left stranded.
+    if (RefPtr eventLoop = m_eventLoop.get())
+        eventLoop->scheduleToRunIfNeeded();
 }
 
 void EventLoopTaskGroup::queueMicrotask(JSC::QueuedTask&& task)
