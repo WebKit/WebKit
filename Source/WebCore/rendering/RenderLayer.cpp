@@ -478,7 +478,7 @@ void RenderLayer::addChild(RenderLayer& child, RenderLayer* beforeChild)
 
 void RenderLayer::removeChild(RenderLayer& oldChild)
 {
-    if (!renderer().renderTreeBeingDestroyed())
+    if (!renderer().renderTreeBeingDestroyed() && !isReflectionLayer(oldChild))
         compositor().layerWillBeRemoved(*this, oldChild);
 
     // remove the child
