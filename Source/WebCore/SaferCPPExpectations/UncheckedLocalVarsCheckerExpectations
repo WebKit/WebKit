@@ -54,7 +54,6 @@ platform/graphics/cg/CGSubimageCacheWithTimer.cpp
 [ iOS ] platform/ios/DragImageIOS.mm
 [ iOS ] platform/ios/WebVideoFullscreenControllerAVKit.mm
 platform/network/mac/ResourceHandleMac.mm
-[ macOS ] rendering/AccessibilityRegionContext.cpp
 rendering/AutoTableLayout.cpp
 rendering/BackgroundPainter.cpp
 rendering/CounterNode.cpp

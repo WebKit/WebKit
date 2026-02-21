@@ -296,7 +296,7 @@ static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef, WKBundleFrameRef
         if (substituteRequest != originalRequest.get())
             return substituteRequest ? WKURLRequestCreateWithNSURLRequest(substituteRequest.get()) : nullptr;
     } else if ([loadDelegate respondsToSelector:@selector(webProcessPlugInBrowserContextController:frame:willSendRequest:redirectResponse:)]) {
-        RetainPtr originalRequest = wrapper(*WebKit::toImpl(request));
+        RetainPtr originalRequest = wrapper(protect(*WebKit::toImpl(request)));
         RetainPtr<NSURLRequest> substituteRequest = [loadDelegate webProcessPlugInBrowserContextController:pluginContextController frame:protect(wrapper(*WebKit::toProtectedImpl(frame))).get() willSendRequest:originalRequest.get()
             redirectResponse:WebKit::toImpl(redirectResponse)->resourceResponse().protectedNSURLResponse().get()];
 
