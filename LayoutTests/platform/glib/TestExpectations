@@ -4705,6 +4705,7 @@ webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointerevent_c
 webkit.org/b/263473 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-propagates-when-target-is-video_touch.html [ Skip ]
 
 webkit.org/b/290133 svg/dom/SVGGeometry-isPointInFill-with-null-path.html [ Skip ]
+svg/dom/SVGGeometry-isPointInStroke-with-null-path.html [ Skip ]
 
 fast/images/embed-image.html [ Failure ]
 fast/images/object-image.html [ Failure ]

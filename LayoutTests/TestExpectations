@@ -7858,6 +7858,7 @@ webkit.org/b/290285 imported/w3c/web-platform-tests/svg/struct/scripted/use-load
 
 # This test hits an assert in debug
 webkit.org/b/290133 [ Debug ] svg/dom/SVGGeometry-isPointInFill-with-null-path.html [ Skip ]
+[ Debug ] svg/dom/SVGGeometry-isPointInStroke-with-null-path.html [ Skip ]
 
 # The color input only has a swatch overlay on macOS
 fast/forms/color/input-color-swatch-overlay-appearance.html [ Skip ]

@@ -87,9 +87,8 @@ void RenderSVGShape::strokeShape(GraphicsContext& context) const
 
 bool RenderSVGShape::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)
 {
-    ASSERT(m_path);
-
     if (hasNonScalingStroke() && pointCoordinateSpace != LocalCoordinateSpace) {
+        ASSERT(m_path);
         AffineTransform nonScalingTransform = nonScalingStrokeTransform();
         Path* usePath = nonScalingStrokePath(m_path.get(), nonScalingTransform);
         return usePath->strokeContains(nonScalingTransform.mapPoint(point), [this] (GraphicsContext& context) {
@@ -97,7 +96,7 @@ bool RenderSVGShape::shapeDependentStrokeContains(const FloatPoint& point, Point
         });
     }
 
-    return m_path->strokeContains(point, [this] (GraphicsContext& context) {
+    return ensurePath().strokeContains(point, [this] (GraphicsContext& context) {
         SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
     });
 }
