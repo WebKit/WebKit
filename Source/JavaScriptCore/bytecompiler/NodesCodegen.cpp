@@ -4774,13 +4774,13 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     int profilerEndOffset = m_statement->endOffset() + (m_statement->isBlock() ? 1 : 0);
 
     {
-        RefPtr<RegisterID> enumerator = generator.newTemporary();
         RefPtr<RegisterID> mode = generator.emitLoad(generator.newTemporary(), jsNumber(static_cast<unsigned>(JSPropertyNameEnumerator::InitMode)));
         RefPtr<RegisterID> index = generator.emitLoad(generator.newTemporary(), jsNumber(0));
         RefPtr<RegisterID> propertyName = generator.newTemporary();
+        RefPtr<RegisterID> enumerator = generator.emitGetPropertyEnumerator(generator.newTemporary(), base.get());
+
         Ref<LabelScope> scope = generator.newLabelScope(LabelScope::Loop);
 
-        enumerator = generator.emitGetPropertyEnumerator(generator.newTemporary(), base.get());
         generator.emitJumpIfEmptyPropertyNameEnumerator(enumerator.get(), scope->breakTarget());
 
         generator.emitLabel(*scope->continueTarget());
