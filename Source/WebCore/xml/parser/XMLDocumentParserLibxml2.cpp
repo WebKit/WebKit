@@ -741,12 +741,12 @@ static inline String toString(const xmlChar* string)
 
 static inline AtomString toAtomString(std::span<const xmlChar> string)
 {
-    return AtomString::fromUTF8(byteCast<char>(string));
+    return byteCast<char8_t>(string);
 }
 
 static inline AtomString toAtomString(const xmlChar* string)
 {
-    return AtomString::fromUTF8(byteCast<char>(string));
+    return byteCast<char8_t>(unsafeSpan(byteCast<char>(string)));
 }
 
 struct _xmlSAX2Namespace {

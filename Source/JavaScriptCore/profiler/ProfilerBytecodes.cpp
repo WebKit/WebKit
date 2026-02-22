@@ -66,7 +66,7 @@ Ref<JSON::Value> Bytecodes::toJSON(Dumper& dumper) const
             sourceCode = makeString(StringView(sourceCode).left(size - 1), horizontalEllipsis);
     }
     result->setString(dumper.keys().m_sourceCode, WTF::move(sourceCode));
-    result->setString(dumper.keys().m_hash, String::fromUTF8(toCString(m_hash).span()));
+    result->setString(dumper.keys().m_hash, toString(m_hash));
     result->setDouble(dumper.keys().m_instructionCount, m_instructionCount);
     addSequenceProperties(dumper, result.get());
 

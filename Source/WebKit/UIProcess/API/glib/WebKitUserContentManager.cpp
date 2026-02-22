@@ -450,8 +450,8 @@ gboolean webkit_user_content_manager_register_script_message_handler(WebKitUserC
     g_return_val_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager), FALSE);
     g_return_val_if_fail(name, FALSE);
 
-    Ref<WebScriptMessageHandler> handler =
-        WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name, false), AtomString::fromUTF8(name), API::ContentWorld::pageContentWorldSingleton());
+    Ref handler =
+        WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name, false), byteCast<char8_t>(unsafeSpan(name)), API::ContentWorld::pageContentWorldSingleton());
     return manager->priv->userContentController->addUserScriptMessageHandler(handler.get());
 }
 
@@ -467,8 +467,8 @@ gboolean webkit_user_content_manager_register_script_message_handler(WebKitUserC
     g_return_val_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager), FALSE);
     g_return_val_if_fail(name, FALSE);
 
-    Ref<WebScriptMessageHandler> handler =
-        WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name, false), AtomString::fromUTF8(name), worldName ? webkitContentWorld(worldName) : API::ContentWorld::pageContentWorldSingleton());
+    Ref handler =
+        WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name, false), byteCast<char8_t>(unsafeSpan(name)), worldName ? webkitContentWorld(worldName) : API::ContentWorld::pageContentWorldSingleton());
     return manager->priv->userContentController->addUserScriptMessageHandler(handler.get());
 }
 
@@ -512,7 +512,7 @@ gboolean webkit_user_content_manager_register_script_message_handler_with_reply(
     g_return_val_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager), FALSE);
     g_return_val_if_fail(name, FALSE);
 
-    auto handler = WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name, true), AtomString::fromUTF8(name), worldName ? webkitContentWorld(worldName) : API::ContentWorld::pageContentWorldSingleton());
+    auto handler = WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name, true), byteCast<char8_t>(unsafeSpan(name)), worldName ? webkitContentWorld(worldName) : API::ContentWorld::pageContentWorldSingleton());
     return manager->priv->userContentController->addUserScriptMessageHandler(handler.get());
 }
 
@@ -523,8 +523,8 @@ gboolean webkit_user_content_manager_register_script_message_handler_in_world(We
     g_return_val_if_fail(name, FALSE);
     g_return_val_if_fail(worldName, FALSE);
 
-    Ref<WebScriptMessageHandler> handler =
-        WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name, false), AtomString::fromUTF8(name), webkitContentWorld(worldName));
+    Ref handler =
+        WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name, false), byteCast<char8_t>(unsafeSpan(name)), webkitContentWorld(worldName));
     return manager->priv->userContentController->addUserScriptMessageHandler(handler.get());
 }
 
@@ -534,7 +534,7 @@ void webkit_user_content_manager_unregister_script_message_handler_in_world(WebK
     g_return_if_fail(name);
     g_return_if_fail(worldName);
 
-    manager->priv->userContentController->removeUserMessageHandlerForName(String::fromUTF8(name), webkitContentWorld(worldName));
+    manager->priv->userContentController->removeUserMessageHandlerForName(byteCast<char8_t>(unsafeSpan(name)), webkitContentWorld(worldName));
 }
 #endif
 

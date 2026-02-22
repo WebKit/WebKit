@@ -37,13 +37,13 @@
 namespace WebCore {
 
 #define LOG_IF_DIFFERENT(name) \
-    do { logIfDifferent(ts, ASCIILiteral::fromLiteralUnsafe(#name), name, other.name); } while (0)
+    do { logIfDifferent(ts, #name ""_s, name, other.name); } while (0)
 
 #define LOG_IF_DIFFERENT_WITH_CAST(type, name) \
-    do { logIfDifferent(ts, ASCIILiteral::fromLiteralUnsafe(#name), static_cast<type>(name), static_cast<type>(other.name)); } while (0)
+    do { logIfDifferent(ts, #name ""_s, static_cast<type>(name), static_cast<type>(other.name)); } while (0)
 
 #define LOG_IF_DIFFERENT_WITH_FROM_RAW(type, name) \
-    do { logIfDifferent(ts, ASCIILiteral::fromLiteralUnsafe(#name), type::fromRaw(name), type::fromRaw(other.name)); } while (0)
+    do { logIfDifferent(ts, #name ""_s, type::fromRaw(name), type::fromRaw(other.name)); } while (0)
 
 template<class T>
 struct is_pointer_wrapper : std::false_type { };

@@ -43,6 +43,7 @@
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
+#include <wtf/SortedArrayMap.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -2183,41 +2184,41 @@ static bool parseCommandShortcut(const String& shortcut, OptionSet<ModifierFlags
     if (shortcut.isEmpty())
         return true;
 
-    static NeverDestroyed<HashMap<String, ModifierFlags>> modifierMap = HashMap<String, ModifierFlags> {
-        { "Ctrl"_s, ModifierFlags::Command },
-        { "Command"_s, ModifierFlags::Command },
+    static constexpr SortedArrayMap modifierMap { std::to_array<std::pair<ComparableASCIILiteral, ModifierFlags>>({
         { "Alt"_s, ModifierFlags::Option },
+        { "Command"_s, ModifierFlags::Command },
+        { "Ctrl"_s, ModifierFlags::Command },
         { "MacCtrl"_s, ModifierFlags::Control },
-        { "Shift"_s, ModifierFlags::Shift }
-    };
+        { "Shift"_s, ModifierFlags::Shift },
+    }) };
 
-    static NeverDestroyed<HashMap<String, String>> specialKeyMap = HashMap<String, String> {
-        { "Comma"_s, ","_s },
-        { "Period"_s, "."_s },
-        { "Space"_s, " "_s },
-        { "F1"_s, String::fromUTF8("\uF704") },
-        { "F2"_s, String::fromUTF8("\uF705") },
-        { "F3"_s, String::fromUTF8("\uF706") },
-        { "F4"_s, String::fromUTF8("\uF707") },
-        { "F5"_s, String::fromUTF8("\uF708") },
-        { "F6"_s, String::fromUTF8("\uF709") },
-        { "F7"_s, String::fromUTF8("\uF70A") },
-        { "F8"_s, String::fromUTF8("\uF70B") },
-        { "F9"_s, String::fromUTF8("\uF70C") },
-        { "F10"_s, String::fromUTF8("\uF70D") },
-        { "F11"_s, String::fromUTF8("\uF70E") },
-        { "F12"_s, String::fromUTF8("\uF70F") },
-        { "Insert"_s, String::fromUTF8("\uF727") },
-        { "Delete"_s, String::fromUTF8("\uF728") },
-        { "Home"_s, String::fromUTF8("\uF729") },
-        { "End"_s, String::fromUTF8("\uF72B") },
-        { "PageUp"_s, String::fromUTF8("\uF72C") },
-        { "PageDown"_s, String::fromUTF8("\uF72D") },
-        { "Up"_s, String::fromUTF8("\uF700") },
-        { "Down"_s, String::fromUTF8("\uF701") },
-        { "Left"_s, String::fromUTF8("\uF702") },
-        { "Right"_s, String::fromUTF8("\uF703") }
-    };
+    static constexpr SortedArrayMap specialKeyMap { std::to_array<std::pair<ComparableASCIILiteral, char16_t>>({
+        { "Comma"_s, u',' },
+        { "Delete"_s, u'\uF728' },
+        { "Down"_s, u'\uF701' },
+        { "End"_s, u'\uF72B' },
+        { "F1"_s, u'\uF704' },
+        { "F10"_s, u'\uF70D' },
+        { "F11"_s, u'\uF70E' },
+        { "F12"_s, u'\uF70F' },
+        { "F2"_s, u'\uF705' },
+        { "F3"_s, u'\uF706' },
+        { "F4"_s, u'\uF707' },
+        { "F5"_s, u'\uF708' },
+        { "F6"_s, u'\uF709' },
+        { "F7"_s, u'\uF70A' },
+        { "F8"_s, u'\uF70B' },
+        { "F9"_s, u'\uF70C' },
+        { "Home"_s, u'\uF729' },
+        { "Insert"_s, u'\uF727' },
+        { "Left"_s, u'\uF702' },
+        { "PageDown"_s, u'\uF72D' },
+        { "PageUp"_s, u'\uF72C' },
+        { "Period"_s, u'.' },
+        { "Right"_s, u'\uF703' },
+        { "Space"_s, u' ' },
+        { "Up"_s, u'\uF700' },
+    }) };
 
     auto parts = shortcut.split('+');
 
@@ -2228,7 +2229,7 @@ static bool parseCommandShortcut(const String& shortcut, OptionSet<ModifierFlags
     key = parts.takeLast();
 
     // Keys should not be present in the modifier map.
-    if (modifierMap.get().contains(key))
+    if (modifierMap.contains(key))
         return false;
 
     if (key.length() == 1) {
@@ -2238,21 +2239,21 @@ static bool parseCommandShortcut(const String& shortcut, OptionSet<ModifierFlags
 
         key = key.convertToASCIILowercase();
     } else {
-        auto entry = specialKeyMap.get().find(key);
-
         // Non-alphanumeric keys must be in the special key map.
-        if (entry == specialKeyMap.get().end())
+        auto* entry = specialKeyMap.tryGet(key);
+        if (!entry)
             return false;
 
-        key = entry->value;
+        key = singleElementSpan(*entry);
     }
 
     for (auto& part : parts) {
         // Modifiers must exist in the modifier map.
-        if (!modifierMap.get().contains(part))
+        auto* flag = modifierMap.tryGet(part);
+        if (flag)
             return false;
 
-        modifierFlags.add(modifierMap.get().get(part));
+        modifierFlags.add(*flag);
     }
 
     // At least one valid modifier is required.

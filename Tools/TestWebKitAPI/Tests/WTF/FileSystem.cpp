@@ -957,53 +957,39 @@ TEST_F(FileSystemTest, makeSafeToUseMemoryMapForPath)
 
 TEST_F(FileSystemTest, isAncestor)
 {
-    Vector<std::pair<std::pair<const char*, const char*>, bool>> narrowString {
-        { { "/a/b/c/", "/a/b/c/d" }, true },
-        { { "/a/b/c", "/a/b/c/d/e/.." }, true },
-        { { "/a/b/c/.", "/a/b/c/d" }, true },
-        { { "/a/b/c", "/a/b/c" }, false },
-        { { "/a/b/c/x/..", "/a/b/c" }, false },
-        { { "/a/b/c/dir1", "/a/b/c/dir2" }, false },
-        { { "/a/b/c", "/a/b/c/" }, false },
-        { { "/a/b/c", "/a/b/c/." }, false },
-        { { "a/b/c", "/a/b/c/" }, false },
-        { { "a/b/c", "a/b/c/" }, false },
-        { { "/a/b/c", "a/b/c/" }, false }
-    };
+    constexpr auto narrowString = std::to_array<std::pair<std::pair<ASCIILiteral, ASCIILiteral>, bool>>({
+        { { "/a/b/c/"_s, "/a/b/c/d"_s }, true },
+        { { "/a/b/c"_s, "/a/b/c/d/e/.."_s }, true },
+        { { "/a/b/c/."_s, "/a/b/c/d"_s }, true },
+        { { "/a/b/c"_s, "/a/b/c"_s }, false },
+        { { "/a/b/c/x/.."_s, "/a/b/c"_s }, false },
+        { { "/a/b/c/dir1"_s, "/a/b/c/dir2"_s }, false },
+        { { "/a/b/c"_s, "/a/b/c/"_s }, false },
+        { { "/a/b/c"_s, "/a/b/c/."_s }, false },
+        { { "a/b/c"_s, "/a/b/c/"_s }, false },
+        { { "a/b/c"_s, "a/b/c/"_s }, false },
+        { { "/a/b/c"_s, "a/b/c/"_s }, false }
+    });
     std::ranges::for_each(narrowString, [](auto input) {
-        EXPECT_EQ(
-            input.second,
-                FileSystem::isAncestor(
-                    ASCIILiteral::fromLiteralUnsafe(input.first.first),
-                    ASCIILiteral::fromLiteralUnsafe(input.first.second)
-                )
-            );
-        }
-    );
+        EXPECT_EQ(input.second, FileSystem::isAncestor(input.first.first, input.first.second));
+    });
 
-    Vector<std::pair<std::pair<const char16_t *, const char16_t *>, bool>> wideString {
-        { { u"/a/b/c/", u"/a/b/c/d" }, true },
-        { { u"/a/b/c", u"/a/b/c/d/e/.." }, true },
-        { { u"/a/b/c/.", u"/a/b/c/d" }, true },
-        { { u"/a/b/c", u"/a/b/c" }, false },
-        { { u"/a/b/c/x/..", u"/a/b/c" }, false },
-        { { u"/a/b/c/dir1", u"/a/b/c/dir2" }, false },
-        { { u"/a/b/c", u"/a/b/c/" }, false },
-        { { u"/a/b/c", u"/a/b/c/." }, false },
-        { { u"a/b/c", u"/a/b/c/" }, false },
-        { { u"a/b/c", u"a/b/c/" }, false },
-        { { u"/a/b/c", u"a/b/c/" }, false }
-    };
+    constexpr auto wideString = std::to_array<std::pair<std::pair<std::span<const char16_t>, std::span<const char16_t>>, bool>>({
+        { { u"/a/b/c/"_span, u"/a/b/c/d"_span }, true },
+        { { u"/a/b/c"_span, u"/a/b/c/d/e/.."_span }, true },
+        { { u"/a/b/c/."_span, u"/a/b/c/d"_span }, true },
+        { { u"/a/b/c"_span, u"/a/b/c"_span }, false },
+        { { u"/a/b/c/x/.."_span, u"/a/b/c"_span }, false },
+        { { u"/a/b/c/dir1"_span, u"/a/b/c/dir2"_span }, false },
+        { { u"/a/b/c"_span, u"/a/b/c/"_span }, false },
+        { { u"/a/b/c"_span, u"/a/b/c/."_span }, false },
+        { { u"a/b/c"_span, u"/a/b/c/"_span }, false },
+        { { u"a/b/c"_span, u"a/b/c/"_span }, false },
+        { { u"/a/b/c"_span, u"a/b/c/"_span }, false }
+    });
     std::ranges::for_each(wideString, [](auto input) {
-        EXPECT_EQ(
-            input.second,
-                FileSystem::isAncestor(
-                    std::span<const char16_t> { static_cast<const char16_t *>(input.first.first), std::char_traits<char16_t>::length(input.first.first) },
-                    std::span<const char16_t> { static_cast<const char16_t*>(input.first.second), std::char_traits<char16_t>::length(input.first.second) }
-                )
-            );
-        }
-    );
+        EXPECT_EQ(input.second, FileSystem::isAncestor(input.first.first, input.first.second));
+    });
 }
 
 } // namespace TestWebKitAPI

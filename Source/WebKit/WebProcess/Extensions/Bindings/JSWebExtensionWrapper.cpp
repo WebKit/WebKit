@@ -123,7 +123,7 @@ void WebExtensionCallbackHandler::reportError(const String& message)
 
     RELEASE_LOG_ERROR(Extensions, "Promise rejected: %" PUBLIC_LOG_STRING, message.utf8().data());
 
-    // This is a safer cpp false positive (rdar://163760990).
+    // This is a safer cpp false positive (rdar://148521896).
     SUPPRESS_UNCOUNTED_ARG JSValueRef messageValue = JSValueMakeString(m_globalContext.get(), toJSString(message).get());
     JSValueRef error = JSObjectMakeError(m_globalContext.get(), 1, &messageValue, nullptr);
 
@@ -242,7 +242,7 @@ JSValueRef toJSValueRef(JSContextRef context, const String& string, NullOrEmptyS
 
     case NullOrEmptyString::NullStringAsEmptyString:
         if (JSRetainPtr stringRef = toJSString(string)) {
-            // This is a safer cpp false positive (rdar://163760990).
+            // This is a safer cpp false positive (rdar://148521896).
             SUPPRESS_UNCOUNTED_ARG return JSValueMakeString(context, stringRef.get());
         }
 
@@ -269,7 +269,7 @@ JSValueRef deserializeJSONString(JSContextRef context, const String& jsonString)
         return JSValueMakeNull(context);
 
     if (JSRetainPtr string = toJSString(jsonString)) {
-        // This is a safer cpp false positive (rdar://163760990).
+        // This is a safer cpp false positive (rdar://148521896).
         SUPPRESS_UNCOUNTED_ARG if (JSValueRef value = JSValueMakeFromJSONString(context, string.get()))
             return value;
     }
@@ -317,7 +317,7 @@ static JSValueRef fromJSONObject(JSContextRef context, const JSON::Object& objec
     for (auto& key : object.keys()) {
         if (auto value = object.getValue(key)) {
             JSRetainPtr jsKey = toJSString(key);
-            // This is a safer cpp false positive (rdar://163760990).
+            // This is a safer cpp false positive (rdar://148521896).
             SUPPRESS_UNCOUNTED_ARG JSObjectSetProperty(context, result, jsKey.get(), fromJSON(context, value), 0, nullptr);
         }
     }
@@ -337,7 +337,7 @@ JSValueRef fromJSON(JSContextRef context, RefPtr<JSON::Value> value)
     case JSON::Value::Type::Boolean:
         return JSValueMakeBoolean(context, value->asBoolean().value());
     case JSON::Value::Type::String:
-        // This is a safer cpp false positive (rdar://163760990).
+        // This is a safer cpp false positive (rdar://148521896).
         SUPPRESS_UNCOUNTED_ARG return JSValueMakeString(context, toJSString(value->asString()).get());
     case JSON::Value::Type::Integer:
     case JSON::Value::Type::Double:
@@ -390,7 +390,7 @@ JSValueRef fromObject(JSContextRef context, HashMap<String, JSValueRef>&& object
 
     for (auto& key : object.keys()) {
         JSRetainPtr jsKey = toJSString(key);
-        // This is a safer cpp false positive (rdar://163760990).
+        // This is a safer cpp false positive (rdar://148521896).
         SUPPRESS_UNCOUNTED_ARG JSObjectSetProperty(context, result, jsKey.get(), object.get(key), 0, nullptr);
     }
 
@@ -537,7 +537,7 @@ bool isDictionary(JSContextRef context, JSValueRef value)
     JSObjectRef thisObject = JSValueToObject(context, value, nullptr);
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
 
-    // This is a safer cpp false positive (rdar://163760990).
+    // This is a safer cpp false positive (rdar://148521896).
     SUPPRESS_UNCOUNTED_ARG JSValueRef protoObject = JSObjectGetProperty(context, thisObject, protoString.get(), nullptr);
     SUPPRESS_UNCOUNTED_ARG JSObjectRef contextObject = JSValueToObject(context, JSObjectGetProperty(context, globalObject, objectString.get(), nullptr), nullptr);
     SUPPRESS_UNCOUNTED_ARG JSValueRef prototypeObject = JSObjectGetProperty(context, contextObject, prototypeString.get(), nullptr);
@@ -552,7 +552,7 @@ bool isRegularExpression(JSContextRef context, JSValueRef value)
 
     JSRetainPtr regexpString = toJSString("RegExp"_s);
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
-    // This is a safer cpp false positive (rdar://163760990).
+    // This is a safer cpp false positive (rdar://148521896).
     SUPPRESS_UNCOUNTED_ARG JSObjectRef regexpValue = JSValueToObject(context, JSObjectGetProperty(context, globalObject, regexpString.get(), nullptr), nullptr);
 
     return JSValueIsInstanceOfConstructor(context, value, regexpValue, nullptr);
@@ -565,7 +565,7 @@ bool isThenable(JSContextRef context, JSValueRef value)
 
     JSRetainPtr thenableString = toJSString("then"_s);
     JSObjectRef valueObject = JSValueToObject(context, value, nullptr);
-    // This is a safer cpp false positive (rdar://163760990).
+    // This is a safer cpp false positive (rdar://148521896).
     SUPPRESS_UNCOUNTED_ARG JSValueRef thenableObject = JSObjectGetProperty(context, valueObject, thenableString.get(), nullptr);
 
     return isFunction(context, thenableObject);

@@ -40,24 +40,28 @@
 namespace WTF {
 
 // Construct a string with UTF-16 data.
+// FIXME: We could implement the rule where a null span turns into a null String in StringImpl::create instead of here.
 String::String(std::span<const char16_t> characters)
     : m_impl(characters.data() ? RefPtr { StringImpl::create(characters) } : nullptr)
 {
 }
 
 // Construct a string with latin1 data.
+// FIXME: We could implement the rule where a null span turns into a null String in StringImpl::create instead of here.
 String::String(std::span<const Latin1Character> characters)
     : m_impl(characters.data() ? RefPtr { StringImpl::create(characters) } : nullptr)
 {
 }
 
 // Construct a string with UTF-8 data.
+// FIXME: We could implement the rule where a null span turns into a null String in StringImpl::create instead of here.
 String::String(std::span<const char8_t> characters)
-    : m_impl(StringImpl::create(characters))
+    : m_impl(characters.data() ? RefPtr { StringImpl::create(characters) } : nullptr)
 {
 }
 
 // Construct a string with Latin-1 data.
+// FIXME: We could implement the rule where a null span turns into a null String in StringImpl::create instead of here.
 String::String(std::span<const char> characters)
     : m_impl(characters.data() ? RefPtr { StringImpl::create(byteCast<Latin1Character>(characters)) } : nullptr)
 {

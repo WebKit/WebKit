@@ -319,14 +319,14 @@ private:
 };
 
 template<typename UnderlyingElementType> struct PaddingSpecification {
-    Latin1Character character;
+    char16_t character;
     unsigned length;
     UnderlyingElementType underlyingElement;
 };
 
-template<typename UnderlyingElementType> PaddingSpecification<UnderlyingElementType> pad(char character, unsigned length, UnderlyingElementType element)
+template<typename UnderlyingElementType> PaddingSpecification<UnderlyingElementType> pad(char16_t character, unsigned length, UnderlyingElementType element)
 {
-    return { byteCast<Latin1Character>(character), length, element };
+    return { character, length, element };
 }
 
 template<typename UnderlyingElementType> class StringTypeAdapter<PaddingSpecification<UnderlyingElementType>> {
@@ -338,7 +338,7 @@ public:
     }
 
     unsigned length() const { return std::max(m_padding.length, m_underlyingAdapter.length()); }
-    bool is8Bit() const { return m_underlyingAdapter.is8Bit(); }
+    bool is8Bit() const { return m_underlyingAdapter.is8Bit() && isLatin1(m_padding.character); }
     template<typename CharacterType> void writeTo(std::span<CharacterType> destination) const
     {
         unsigned underlyingLength = m_underlyingAdapter.length();

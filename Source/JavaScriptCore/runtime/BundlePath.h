@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <string>
 #include <wtf/text/CString.h>
 
 namespace JSC {

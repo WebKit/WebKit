@@ -125,12 +125,6 @@ AtomString AtomString::number(double number)
     return AtomString { byteCast<Latin1Character>(span) };
 }
 
-AtomString AtomString::fromUTF8Internal(std::span<const char> characters)
-{
-    ASSERT(!characters.empty());
-    return AtomStringImpl::add(byteCast<char8_t>(characters));
-}
-
 #ifndef NDEBUG
 
 void AtomString::show() const

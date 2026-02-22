@@ -158,7 +158,7 @@ static bool platformTypeConformsToWebArchivePBoardType(NSString *platformType, U
     return false;
 }
 
-static const char *safeTypeForDOMToReadAndWriteForPlatformType(NSString *platformType, PlatformPasteboard::IncludeImageTypes includeImageTypes)
+static ASCIILiteral safeTypeForDOMToReadAndWriteForPlatformType(NSString *platformType, PlatformPasteboard::IncludeImageTypes includeImageTypes)
 {
     RetainPtr utType = [UTType typeWithIdentifier:platformType];
     if ([utType conformsToType:UTTypePlainText])
@@ -191,12 +191,10 @@ static Vector<String> webSafeTypes(NSArray<NSString *> *platformTypes, PlatformP
             continue;
         }
 
-        if (auto* coercedType = safeTypeForDOMToReadAndWriteForPlatformType(type, includeImageTypes)) {
-            auto domTypeAsString = String::fromUTF8(coercedType);
-            if (domTypeAsString == "text/uri-list"_s && ([platformTypes containsObject:UTTypeFileURL.identifier] || shouldAvoidExposingURLType()))
+        if (auto coercedType = safeTypeForDOMToReadAndWriteForPlatformType(type, includeImageTypes)) {
+            if (coercedType == "text/uri-list"_s && ([platformTypes containsObject:UTTypeFileURL.identifier] || shouldAvoidExposingURLType()))
                 continue;
-
-            domPasteboardTypes.add(WTF::move(domTypeAsString));
+            domPasteboardTypes.add(coercedType);
         }
     }
     return copyToVector(domPasteboardTypes);

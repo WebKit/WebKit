@@ -3127,13 +3127,7 @@ static NSString *computeStringHashForContentBlockerRules(NSString *rules)
 {
     SHA1 sha1;
     sha1.addUTF8Bytes(rules);
-
-    SHA1::Digest digest;
-    sha1.computeHash(digest);
-
-    auto hashAsCString = SHA1::hexDigest(digest);
-    auto hashAsString = String::fromUTF8(hashAsCString.span()).createNSString();
-    return [hashAsString stringByAppendingString:[NSString stringWithFormat:@"-%zu", currentDeclarativeNetRequestRuleTranslatorVersion]];
+    return [NSString stringWithFormat:@"%s-%zu", sha1.computeHexDigest().data(), currentDeclarativeNetRequestRuleTranslatorVersion];
 }
 
 void WebExtensionContext::compileDeclarativeNetRequestRules(NSDictionary *rulesData, CompletionHandler<void(bool)>&& completionHandler)

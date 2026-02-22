@@ -4273,14 +4273,9 @@ static String accessibleNameForNode(Node& node, Node* labelledbyNode)
             }
             // Fall through to other name computation methods.
         } else {
-            String inputValue = input->value();
-            if (input->isPasswordField()) {
-                StringBuilder passwordValue;
-                passwordValue.reserveCapacity(inputValue.length());
-                for (size_t i = 0; i < inputValue.length(); i++)
-                    passwordValue.append(String::fromUTF8("•"));
-                return passwordValue.toString();
-            }
+            auto inputValue = input->value();
+            if (input->isPasswordField())
+                return makeString(pad(bullet, inputValue.get().length(), ""_s));
             return inputValue;
         }
     }

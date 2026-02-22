@@ -161,7 +161,7 @@ const HashMap<String, int>& WebGLProgram::uniformLocations() LIFETIME_BOUND
     if (!m_state.uniformLocations) {
         auto& locations = m_state.uniformLocations.emplace();
         for (auto& activeUniform : activeUniforms()) {
-            auto name = String::fromUTF8(activeUniform.name.data());
+            auto name = String::fromUTF8(activeUniform.name.span());
             locations.add(name, activeUniform.locations[0]);
             if (name.endsWith("[0]"_s)) {
                 auto baseName = name.left(name.length() - 3);
@@ -183,7 +183,7 @@ const HashMap<String, unsigned>& WebGLProgram::uniformIndices() LIFETIME_BOUND
         auto activeUniforms = this->activeUniforms();
         for (unsigned i = 0; i < activeUniforms.size(); ++i) {
             auto& activeUniform = activeUniforms[i];
-            auto name = String::fromUTF8(activeUniform.name.data());
+            auto name = String::fromUTF8(activeUniform.name.span());
             indices.add(name, i);
             if (name.endsWith("[0]"_s)) {
                 auto baseName = name.left(name.length() - 3);
