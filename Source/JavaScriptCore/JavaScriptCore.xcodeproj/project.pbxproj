@@ -1554,6 +1554,8 @@
 		A3FF9BC72234749100B1A9AB /* YarrFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = A3FF9BC52234746600B1A9AB /* YarrFlags.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A40755D92D10CAE000DC55FF /* AirAllocateRegistersByGreedy.h in Headers */ = {isa = PBXBuildFile; fileRef = A40755D72D10CABA00DC55FF /* AirAllocateRegistersByGreedy.h */; };
 		A43531C12D6E40E200B01FE1 /* AirRegisterAllocatorStats.h in Headers */ = {isa = PBXBuildFile; fileRef = A43531C02D6E40E200B01FE1 /* AirRegisterAllocatorStats.h */; };
+		A4AC51DC2F35530600C06B89 /* AirPhaseStats.h in Headers */ = {isa = PBXBuildFile; fileRef = A4AC51DB2F35530600C06B89 /* AirPhaseStats.h */; };
+		A4F6474C2F32D8E100CABA36 /* AirStackAllocatorStats.h in Headers */ = {isa = PBXBuildFile; fileRef = A4F6474B2F32D8C000CABA36 /* AirStackAllocatorStats.h */; };
 		A503FA1A188E0FB000110F14 /* JavaScriptCallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = A503FA14188E0FAF00110F14 /* JavaScriptCallFrame.h */; };
 		A503FA1E188E0FB000110F14 /* JSJavaScriptCallFramePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A503FA18188E0FB000110F14 /* JSJavaScriptCallFramePrototype.h */; };
 		A503FA2A188F105900110F14 /* JSGlobalObjectDebugger.h in Headers */ = {isa = PBXBuildFile; fileRef = A503FA28188F105900110F14 /* JSGlobalObjectDebugger.h */; };
@@ -5158,6 +5160,8 @@
 		A40755D72D10CABA00DC55FF /* AirAllocateRegistersByGreedy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AirAllocateRegistersByGreedy.h; path = b3/air/AirAllocateRegistersByGreedy.h; sourceTree = "<group>"; };
 		A40755D82D10CABA00DC55FF /* AirAllocateRegistersByGreedy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AirAllocateRegistersByGreedy.cpp; path = b3/air/AirAllocateRegistersByGreedy.cpp; sourceTree = "<group>"; };
 		A43531C02D6E40E200B01FE1 /* AirRegisterAllocatorStats.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AirRegisterAllocatorStats.h; path = b3/air/AirRegisterAllocatorStats.h; sourceTree = "<group>"; };
+		A4AC51DB2F35530600C06B89 /* AirPhaseStats.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AirPhaseStats.h; path = b3/air/AirPhaseStats.h; sourceTree = "<group>"; };
+		A4F6474B2F32D8C000CABA36 /* AirStackAllocatorStats.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AirStackAllocatorStats.h; path = b3/air/AirStackAllocatorStats.h; sourceTree = "<group>"; };
 		A503FA13188E0FAF00110F14 /* JavaScriptCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptCallFrame.cpp; sourceTree = "<group>"; };
 		A503FA14188E0FAF00110F14 /* JavaScriptCallFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptCallFrame.h; sourceTree = "<group>"; };
 		A503FA15188E0FB000110F14 /* JSJavaScriptCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSJavaScriptCallFrame.cpp; sourceTree = "<group>"; };
@@ -7015,6 +7019,7 @@
 				0F2AC56D1E8D7AFF0001EE3F /* AirPhaseInsertionSet.h */,
 				0FEC855E1BDACDC70080FF74 /* AirPhaseScope.cpp */,
 				0FEC855F1BDACDC70080FF74 /* AirPhaseScope.h */,
+				A4AC51DB2F35530600C06B89 /* AirPhaseStats.h */,
 				FE5628CB1E99512400C49E45 /* AirPrintSpecial.cpp */,
 				FE5628CC1E99512400C49E45 /* AirPrintSpecial.h */,
 				A43531C02D6E40E200B01FE1 /* AirRegisterAllocatorStats.h */,
@@ -7028,6 +7033,7 @@
 				0FEC85631BDACDC70080FF74 /* AirSpecial.h */,
 				0F5CF9861E9ED64E00C18692 /* AirStackAllocation.cpp */,
 				0F5CF9871E9ED64E00C18692 /* AirStackAllocation.h */,
+				A4F6474B2F32D8C000CABA36 /* AirStackAllocatorStats.h */,
 				0FEC85661BDACDC70080FF74 /* AirStackSlot.cpp */,
 				0FEC85671BDACDC70080FF74 /* AirStackSlot.h */,
 				0F2BBD9B1C5FF4050023EF23 /* AirStackSlotKind.cpp */,
@@ -10694,6 +10700,7 @@
 				0F9CABC91DB54A7A0008E83B /* AirPadInterference.h in Headers */,
 				0F2AC56F1E8D7B030001EE3F /* AirPhaseInsertionSet.h in Headers */,
 				0FEC85841BDACDC70080FF74 /* AirPhaseScope.h in Headers */,
+				A4AC51DC2F35530600C06B89 /* AirPhaseStats.h in Headers */,
 				FE5628CE1E99513200C49E45 /* AirPrintSpecial.h in Headers */,
 				A43531C12D6E40E200B01FE1 /* AirRegisterAllocatorStats.h in Headers */,
 				0FF4B4BD1E88449A00DBBE86 /* AirRegLiveness.h in Headers */,
@@ -10701,6 +10708,7 @@
 				0F338DFE1BED51270013C88F /* AirSimplifyCFG.h in Headers */,
 				0FEC85881BDACDC70080FF74 /* AirSpecial.h in Headers */,
 				0F5CF9891E9ED65200C18692 /* AirStackAllocation.h in Headers */,
+				A4F6474C2F32D8E100CABA36 /* AirStackAllocatorStats.h in Headers */,
 				0FEC858C1BDACDC70080FF74 /* AirStackSlot.h in Headers */,
 				0F2BBD9E1C5FF4050023EF23 /* AirStackSlotKind.h in Headers */,
 				0FEC858E1BDACDC70080FF74 /* AirTmp.h in Headers */,

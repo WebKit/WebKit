@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2025-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,10 +27,8 @@
 
 #if ENABLE(B3_JIT)
 
+#include "AirPhaseStats.h"
 #include "B3Bank.h"
-#include <wtf/DataLog.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/PrintStream.h>
 
 namespace JSC { namespace B3 { namespace Air {
 
@@ -40,15 +38,19 @@ namespace JSC { namespace B3 { namespace Air {
     macro(numUnspillableTmps)                   \
     macro(numSpillTmps)                         \
     macro(numTmpsOut)                           \
+    macro(numCoalescedRegisterMoves)            \
+    macro(numCoalescedStackSlotMoves)           \
     macro(numCoalescedPinned)                   \
     macro(numSpilledTmps)                       \
     macro(numSpillStackSlots)                   \
     macro(numLoadSpill)                         \
     macro(numStoreSpill)                        \
     macro(numInPlaceSpill)                      \
+    macro(numInPlaceSpillGiveUpSpillWidth)      \
     macro(numMoveSpillSpillInsts)               \
     macro(numRematerializeConst)                \
     macro(maxLiveRangeSize)                     \
+    macro(maxLiveRangeIntervals)                \
     macro(didSpill)                             \
     macro(numSplitAroundClobbers)               \
     macro(numSplitAroundClobberSpilled)         \
@@ -58,30 +60,19 @@ namespace JSC { namespace B3 { namespace Air {
     macro(numSplitIntraBlockClusterTmpsSpilled) \
     macro(numSplitIntraBlockLoad)               \
     macro(numSplitIntraBlockStore)              \
-    macro(numInsts)        \
+    macro(numInsts)                             \
 
 class AirAllocateRegistersStats {
-    WTF_MAKE_NONCOPYABLE(AirAllocateRegistersStats);
 public:
     AirAllocateRegistersStats(Bank bank)
         : m_bank(bank) { }
 
-    ~AirAllocateRegistersStats()
+    ASCIILiteral name() const
     {
-        if (Options::airDumpRegAllocStats())
-            dataLogLn("Register allocator stats for ", m_bank, " bank:", pointerDump(this));
+        return m_bank == GP ? "RegAlloc<GP>"_s : "RegAlloc<FP>"_s;
     }
 
-    void dump(PrintStream& out) const
-    {
-#define STAT_PRINT(name) out.print("\n   " #name ": ", name);
-        FOR_EACH_REGISTER_ALLOCATOR_STAT(STAT_PRINT)
-#undef STAT_PRINT
-    }
-
-#define STAT_DEF(name) unsigned name { 0 };
-    FOR_EACH_REGISTER_ALLOCATOR_STAT(STAT_DEF)
-#undef STAT_DEF
+    DEFINE_PHASE_STATS(AirAllocateRegistersStats, FOR_EACH_REGISTER_ALLOCATOR_STAT)
 
 private:
     Bank m_bank;
