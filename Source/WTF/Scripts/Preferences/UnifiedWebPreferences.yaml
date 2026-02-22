@@ -7173,17 +7173,17 @@ SecureContextChecksEnabled:
 
 SelectShowPickerEnabled:
   type: bool
-  status: testable
+  status: stable
   category: dom
   humanReadableName: "<select> showPicker() method"
   humanReadableDescription: "Enable showPicker() method on <select>"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 # FIXME: This is handled via WebView SPI rather than WebPreferences for WebKitLegacy. We should change the SPI to lookup the WebPreferences value instead.
 SelectTrailingWhitespaceEnabled:

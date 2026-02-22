@@ -2001,6 +2001,16 @@ void HTMLSelectElement::showPickerInternal()
     if (!usesBaseAppearancePicker()) {
 #if !PLATFORM(IOS_FAMILY)
         showPopup();
+#else
+        RefPtr frame = document().frame();
+        if (!frame)
+            return;
+
+        RefPtr page = document().page();
+        if (!page)
+            return;
+
+        page->chrome().client().requestShowPickerForElement(*this);
 #endif
         return;
     }

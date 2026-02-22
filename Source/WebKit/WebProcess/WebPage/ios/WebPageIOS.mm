@@ -1217,6 +1217,20 @@ void WebPage::setSelectElementIsOpen(const WebCore::ElementContext& context, boo
         select->setPopupIsVisible(isOpen);
 }
 
+void WebPage::showPickerForSelectElement(HTMLSelectElement& element)
+{
+    RefPtr localFrame = element.document().frame();
+    if (!localFrame)
+        return;
+
+    if (element.document().focusedElement() == &element) {
+        // Element is already focused, re-send focus information to UI process to trigger picker.
+        if (auto focusedElementInformation = this->focusedElementInformation())
+            send(Messages::WebPageProxy::ElementDidFocus(WTF::move(*focusedElementInformation), m_userIsInteracting, m_recentlyBlurredElement, m_lastActivityStateChanges, UserData()));
+    } else
+        protect(corePage())->focusController().setFocusedElement(&element, localFrame);
+}
+
 void WebPage::setIsShowingInputViewForFocusedElement(bool showingInputView)
 {
     m_isShowingInputViewForFocusedElement = showingInputView;

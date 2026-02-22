@@ -1098,6 +1098,17 @@ RefPtr<SearchPopupMenu> WebChromeClient::createSearchPopupMenu(PopupMenuClient& 
     return WebSearchPopupMenu::create(page.get(), &client);
 }
 
+#if PLATFORM(IOS_FAMILY)
+void WebChromeClient::requestShowPickerForElement(HTMLSelectElement& element)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    page->showPickerForSelectElement(element);
+}
+#endif
+
 GraphicsLayerFactory* WebChromeClient::graphicsLayerFactory() const
 {
     RefPtr page = m_page.get();

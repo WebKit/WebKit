@@ -235,6 +235,10 @@ private:
     RefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient&) const final;
     RefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient&) const final;
 
+#if PLATFORM(IOS_FAMILY)
+    void requestShowPickerForElement(WebCore::HTMLSelectElement&) final;
+#endif
+
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() const final;
     void attachRootGraphicsLayer(WebCore::LocalFrame&, WebCore::GraphicsLayer*) final;
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) final;

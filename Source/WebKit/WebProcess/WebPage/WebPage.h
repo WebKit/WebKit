@@ -1178,6 +1178,9 @@ public:
     void setFocusedElementValue(const WebCore::ElementContext&, const String&);
     void setFocusedElementSelectedIndex(const WebCore::ElementContext&, uint32_t index, bool allowMultipleSelection);
     void setSelectElementIsOpen(const WebCore::ElementContext&, bool isOpen);
+#if PLATFORM(IOS_FAMILY)
+    void showPickerForSelectElement(WebCore::HTMLSelectElement&);
+#endif
     void setIsShowingInputViewForFocusedElement(bool);
     bool isShowingInputViewForFocusedElement() const { return m_isShowingInputViewForFocusedElement; }
     void updateSelectionAppearance();

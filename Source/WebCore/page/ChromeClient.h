@@ -598,6 +598,11 @@ public:
     virtual RefPtr<PopupMenu> createPopupMenu(PopupMenuClient&) const = 0;
     virtual RefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient&) const = 0;
 
+#if PLATFORM(IOS_FAMILY)
+    // Request to show the picker for a select element programmatically.
+    virtual void requestShowPickerForElement(HTMLSelectElement&) { }
+#endif
+
     virtual void notifyScrollerThumbIsVisibleInRect(const IntRect&) { }
     virtual void recommendedScrollbarStyleDidChange(ScrollbarStyle) { }
 

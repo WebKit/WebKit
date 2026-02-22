@@ -1,0 +1,18 @@
+Test that HTMLSelectElement.showPicker() works on iOS by displaying the native picker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+=== Test 1: showPicker() without user activation should throw ===
+PASS select.showPicker() threw exception NotAllowedError: Select showPicker() requires a user gesture..
+
+=== Test 2: showPicker() with user activation should display the picker ===
+PASS select.matches(':open') is false
+Native picker appeared after showPicker()
+PASS select.matches(':open') is true
+PASS select.options[0].checkVisibility() is false
+PASS select.matches(':open') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ Show select picker
