@@ -41,6 +41,7 @@
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
+#import <WebKit/WKNavigationResponsePrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKURLRequest.h>
@@ -5127,4 +5128,80 @@ TEST(Navigation, FormResubmited)
     TestWebKitAPI::Util::run(&didReceiveForm);
 
     EXPECT_TRUE(requestHadSecFetchSiteCrossOrigin.value_or(false));
+}
+
+TEST(Navigation, NavigationInitiatingFrameInGoBackNavigation)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/firstSite"_s, { "firstSite"_s } },
+        { "/secondSite"_s, { "secondSite"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 300, 300) configuration:configuration.get()]);
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://firstSite.com/firstSite"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://secondSite.com/secondSite"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block bool done = false;
+
+    navigationDelegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *, void (^completionHandler)(WKNavigationActionPolicy)) {
+        completionHandler(WKNavigationActionPolicyAllow);
+    };
+
+    navigationDelegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *response, void (^completionHandler)(WKNavigationResponsePolicy)) {
+        EXPECT_NULL(response._navigationInitiatingFrame);
+
+        done = true;
+        completionHandler(WKNavigationResponsePolicyAllow);
+    };
+
+    [webView _clearBackForwardCache];
+    [webView goBack];
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(Navigation, NavigationInitiatingFrameInClientInputNavigation)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/firstSite"_s, { "firstSite"_s } },
+        { "/secondSite"_s, { "secondSite"_s } },
+        { "/thirdSite"_s, { "thirdSite"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 300, 300) configuration:configuration.get()]);
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://firstSite.com/firstSite"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://secondSite.com/secondSite"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block bool done = false;
+
+    navigationDelegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *, void (^completionHandler)(WKNavigationActionPolicy)) {
+        completionHandler(WKNavigationActionPolicyAllow);
+    };
+
+    navigationDelegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *response, void (^completionHandler)(WKNavigationResponsePolicy)) {
+        EXPECT_NULL(response._navigationInitiatingFrame);
+
+        done = true;
+        completionHandler(WKNavigationResponsePolicyAllow);
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://thirdSite.com/thirdSite"]]];
+    TestWebKitAPI::Util::run(&done);
 }
