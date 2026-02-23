@@ -176,29 +176,42 @@ static AVMediaType toAVMediaType(MediaSelectionOption::MediaType type)
 
 static RetainPtr<NSArray> mediaSelectionOptions(const Vector<MediaSelectionOption>& options)
 {
-    return createNSArray(options, [] (auto& option) -> RetainPtr<WebAVMediaSelectionOption> {
+    NSInteger index = 0;
+    return createNSArray(options, [&] (auto& option) -> RetainPtr<WebAVMediaSelectionOption> {
 #if HAVE(AVLEGIBLEMEDIAOPTIONSMENUCONTROLLER)
-        if (option.legibleType != MediaSelectionOption::LegibleType::Regular)
+        if (option.legibleType != MediaSelectionOption::LegibleType::Regular) {
+            ++index;
             return nil;
+        }
 #endif
-        return adoptNS([[WebAVMediaSelectionOption alloc] initWithMediaType:toAVMediaType(option.mediaType) displayName:option.displayName.createNSString().get() extendedLanguageTag:option.languageTag.createNSString().get()]);
+        return adoptNS([[WebAVMediaSelectionOption alloc] initWithMediaType:toAVMediaType(option.mediaType) displayName:option.displayName.createNSString().get() extendedLanguageTag:option.languageTag.createNSString().get() tag:index++]);
     });
+}
+
+static RetainPtr<WebAVMediaSelectionOption> mediaSelectionOptionWithTag(NSArray<WebAVMediaSelectionOption *> *options, NSInteger tag)
+{
+    auto index = [options indexOfObjectPassingTest:^(WebAVMediaSelectionOption *option, NSUInteger, BOOL *) {
+        return static_cast<BOOL>(option.tag == tag);
+    }];
+    if (index == NSNotFound)
+        return nil;
+    return options[index];
 }
 
 void PlaybackSessionInterfaceAVKitLegacy::audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
-    auto webOptions = mediaSelectionOptions(options);
+    RetainPtr webOptions = mediaSelectionOptions(options);
+    RetainPtr selectedOption = mediaSelectionOptionWithTag(webOptions.get(), static_cast<NSInteger>(selectedIndex)).get();
     [m_playerController setAudioMediaSelectionOptions:webOptions.get()];
-    if (selectedIndex < [webOptions count])
-        [m_playerController setCurrentAudioMediaSelectionOption:[webOptions objectAtIndex:static_cast<NSUInteger>(selectedIndex)]];
+    [m_playerController setCurrentAudioMediaSelectionOption:selectedOption.get()];
 }
 
 void PlaybackSessionInterfaceAVKitLegacy::legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
-    auto webOptions = mediaSelectionOptions(options);
+    RetainPtr webOptions = mediaSelectionOptions(options);
+    RetainPtr selectedOption = mediaSelectionOptionWithTag(webOptions.get(), static_cast<NSInteger>(selectedIndex)).get();
     [m_playerController setLegibleMediaSelectionOptions:webOptions.get()];
-    if (selectedIndex < [webOptions count])
-        [m_playerController setCurrentLegibleMediaSelectionOption:[webOptions objectAtIndex:static_cast<NSUInteger>(selectedIndex)]];
+    [m_playerController setCurrentLegibleMediaSelectionOption:selectedOption.get()];
 }
 
 void PlaybackSessionInterfaceAVKitLegacy::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType targetType, const String& localizedDeviceName)

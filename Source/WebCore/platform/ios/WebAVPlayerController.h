@@ -39,12 +39,13 @@ class PlaybackSessionInterfaceIOS;
 @class AVTimeRange;
 
 @interface WebAVMediaSelectionOption : NSObject
-- (instancetype)initWithMediaType:(AVMediaType)type displayName:(NSString *)displayName extendedLanguageTag:(NSString *)extendedLanguageTag;
+- (instancetype)initWithMediaType:(AVMediaType)type displayName:(NSString *)displayName extendedLanguageTag:(NSString *)extendedLanguageTag tag:(NSInteger)tag;
 
 @property (nonatomic, readonly) NSString *displayName;
 @property (nonatomic, readonly) NSString *localizedDisplayName;
 @property (nonatomic, readonly) AVMediaType mediaType;
 @property (nonatomic, readonly, nullable) NSString *extendedLanguageTag;
+@property (nonatomic, assign) NSInteger tag;
 @end
 
 @interface WebAVPlayerController : NSObject
