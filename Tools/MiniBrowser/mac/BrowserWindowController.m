@@ -369,8 +369,9 @@
 
 static CGRect coreGraphicsScreenRectForAppKitScreenRect(NSRect rect)
 {
-    NSScreen *firstScreen = [NSScreen screens][0];
-    return CGRectMake(NSMinX(rect), NSHeight(firstScreen.frame) - NSMinY(rect) - NSHeight(rect), NSWidth(rect), NSHeight(rect));
+    NSScreen *firstScreen = [[NSScreen screens] firstObject];
+    NSCAssert(firstScreen, @"No screens found, possibly due to no WindowServer session. This configuration is not supported.");
+    return CGRectMake(NSMinX(rect), NSHeight([firstScreen frame]) - NSMinY(rect) - NSHeight(rect), NSWidth(rect), NSHeight(rect));
 }
 
 - (NSImage *)sharingService:(NSSharingService *)sharingService transitionImageForShareItem:(id)item contentRect:(NSRect *)contentRect

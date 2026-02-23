@@ -159,6 +159,13 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 #pragma mark -
 #pragma mark Notifications
 
+static NSScreen *getFirstScreen()
+{
+    NSScreen *firstScreen = [[NSScreen screens] firstObject];
+    RELEASE_ASSERT_WITH_MESSAGE(firstScreen, "No screens found, possibly due to no WindowServer session. This configuration is not supported.");
+    return firstScreen;
+}
+
 - (void)applicationDidResignActive:(NSNotification*)notification
 {   
     NSWindow* fullscreenWindow = [self window];
@@ -167,7 +174,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     // Is the fullscreen screen the main screen? (Note: this covers the case where only a 
     // single screen is available.)  Is the fullscreen screen on the current space? IFF so, 
     // then exit fullscreen mode. 
-    if (fullscreenWindow.screen == [NSScreen screens][0] && fullscreenWindow.onActiveSpace)
+    if (fullscreenWindow.screen == getFirstScreen() && fullscreenWindow.onActiveSpace)
          [self cancelOperation:self];
 }
 
@@ -204,8 +211,8 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     NSRect webViewFrame = convertRectToScreen([_webView window], [_webView convertRect:[_webView frame] toView:nil]);
 
     // Flip coordinate system:
-    webViewFrame.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(webViewFrame);
-    
+    webViewFrame.origin.y = NSMaxY([getFirstScreen() frame]) - NSMaxY(webViewFrame);
+
     CGWindowID windowID = [[_webView window] windowNumber];
     RetainPtr webViewContents = WebCore::cgWindowListCreateImage(NSRectToCGRect(webViewFrame), kCGWindowListOptionIncludingWindow, windowID, kCGWindowImageShouldBeOpaque);
 
@@ -420,7 +427,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         // Auto-hide the menu bar if the fullscreenScreen contains the menu bar:
         // NOTE: if the fullscreenScreen contains the menu bar but not the dock, we must still 
         // auto-hide the dock, or an exception will be thrown.
-        if ([[NSScreen screens] objectAtIndex:0] == fullscreenScreen)
+        if (getFirstScreen() == fullscreenScreen)
             options |= (NSApplicationPresentationAutoHideMenuBar | NSApplicationPresentationAutoHideDock);
         // Check if the current screen contains the dock by comparing the screen's frame to its
         // visibleFrame; if a dock is present, the visibleFrame will differ. If the current screen

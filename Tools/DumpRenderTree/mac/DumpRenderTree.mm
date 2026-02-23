@@ -702,6 +702,15 @@ static void registerMockScrollbars()
 }
 #endif
 
+#if !PLATFORM(IOS_FAMILY)
+static NSScreen *getFirstScreen()
+{
+    NSScreen *firstScreen = [[NSScreen screens] firstObject];
+    RELEASE_ASSERT_WITH_MESSAGE(firstScreen, "No screens found, possibly due to no WindowServer session. This configuration is not supported.");
+    return firstScreen;
+}
+#endif
+
 RetainPtr<WebView> createWebViewAndOffscreenWindow()
 {
 #if !PLATFORM(IOS_FAMILY)
@@ -747,7 +756,8 @@ RetainPtr<WebView> createWebViewAndOffscreenWindow()
 
     // To make things like certain NSViews, dragging, and plug-ins work, put the WebView a window, but put it off-screen so you don't see it.
     // Put it at -10000, -10000 in "flipped coordinates", since WebCore and the DOM use flipped coordinates.
-    NSScreen *firstScreen = [[NSScreen screens] firstObject];
+    NSScreen *firstScreen = getFirstScreen();
+
     NSRect windowRect = (showWebView) ? NSOffsetRect(rect, 100, 100) : NSOffsetRect(rect, -10000, [firstScreen frame].size.height - rect.size.height + 10000);
     mainWindow = adoptNS([[DumpRenderTreeWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
     [mainWindow setReleasedWhenClosed:NO];

@@ -237,6 +237,13 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
     return _videoElement->screenRect();
 }
 
+static NSScreen *getFirstScreen()
+{
+    NSScreen *firstScreen = [[NSScreen screens] firstObject];
+    RELEASE_ASSERT_WITH_MESSAGE(firstScreen, "No screens found, possibly due to no WindowServer session. This configuration is not supported.");
+    return firstScreen;
+}
+
 - (void)applicationDidResignActive:(NSNotification*)notification
 {
     UNUSED_PARAM(notification);
@@ -246,7 +253,7 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
     // Is the fullscreen screen the main screen? (Note: this covers the case where only a
     // single screen is available.)  Is the fullscreen screen on the current space? IFF so,
     // then exit fullscreen mode.
-    if (fullscreenWindow.screen == [NSScreen screens][0] && fullscreenWindow.onActiveSpace)
+    if (fullscreenWindow.screen == getFirstScreen() && fullscreenWindow.onActiveSpace)
         [self _requestExit];
 }
 

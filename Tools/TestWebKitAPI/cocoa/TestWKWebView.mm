@@ -1661,12 +1661,19 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
     }
 }
 
+static NSScreen *getFirstScreen()
+{
+    NSScreen *firstScreen = [[NSScreen screens] firstObject];
+    RELEASE_ASSERT_WITH_MESSAGE(firstScreen, "No screens found, possibly due to no WindowServer session. This configuration is not supported.");
+    return firstScreen;
+}
+
 - (void)wheelEventAtPoint:(CGPoint)pointInWindow wheelDelta:(CGSize)delta
 {
     RetainPtr<CGEventRef> cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent(nullptr, kCGScrollEventUnitPixel, 2, delta.height, delta.width, 0));
 
     CGPoint locationInGlobalScreenCoordinates = [[self window] convertPointToScreen:pointInWindow];
-    locationInGlobalScreenCoordinates.y = [[[NSScreen screens] objectAtIndex:0] frame].size.height - locationInGlobalScreenCoordinates.y;
+    locationInGlobalScreenCoordinates.y = [getFirstScreen() frame].size.height - locationInGlobalScreenCoordinates.y;
     CGEventSetLocation(cgScrollEvent.get(), locationInGlobalScreenCoordinates);
     
     NSEvent* event = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
