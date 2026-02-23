@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,6 +90,16 @@ SOFT_LINK(WebKitLegacy, _WebCreateFragment, void, (WebCore::Document& document, 
 #endif
 
 namespace WebCore {
+
+#if PLATFORM(MAC)
+// rdar://157657531
+static void applyYahooMailPasteQuirk(String& markup)
+{
+    markup = makeStringByReplacingAll(markup, "<head><meta charset=\"UTF-8\"></head>"_s, ""_s);
+    markup = makeStringByReplacingAll(markup, "<head></head>"_s, ""_s);
+    markup = makeString("<div>"_s, markup, String::fromUTF8("<p>\xC2\xA0</p></div>"));
+}
+#endif
 
 #if PLATFORM(MACCATALYST)
 
@@ -598,7 +608,7 @@ bool WebContentReader::readWebArchive(SharedBuffer& buffer)
     });
     if (!result)
         return false;
-    
+
     Ref frameDocument = *frame->document();
     if (!DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
         m_fragment = createFragmentFromMarkup(frameDocument, result->markup, result->mainResource->url().string(), { });
@@ -615,6 +625,13 @@ bool WebContentReader::readWebArchive(SharedBuffer& buffer)
     String sanitizedMarkup = sanitizeMarkupWithArchive(frame, frameDocument, *result, msoListQuirksForMarkup(), [&] (const String& type) {
         return frame->loader().client().canShowMIMETypeAsHTML(type);
     });
+
+#if PLATFORM(MAC)
+    // rdar://157657531
+    if (frame->document()->quirks().needsYahooMailPasteFormattingQuirk())
+        applyYahooMailPasteQuirk(sanitizedMarkup);
+#endif
+
     m_fragment = createFragmentFromMarkup(frameDocument, sanitizedMarkup, aboutBlankURL().string(), { });
 
     return m_fragment;
@@ -632,14 +649,13 @@ bool WebContentMarkupReader::readWebArchive(SharedBuffer& buffer)
     if (!result)
         return false;
 
-    if (!shouldSanitize()) {
+    if (!shouldSanitize())
         m_markup = result->markup;
-        return true;
+    else {
+        m_markup = sanitizeMarkupWithArchive(frame, *protect(frame->document()), *result, msoListQuirksForMarkup(), [&] (const String& type) {
+            return frame->loader().client().canShowMIMETypeAsHTML(type);
+        });
     }
-
-    m_markup = sanitizeMarkupWithArchive(frame, *protect(frame->document()), *result, msoListQuirksForMarkup(), [&] (const String& type) {
-        return frame->loader().client().canShowMIMETypeAsHTML(type);
-    });
 
     return true;
 }
@@ -689,6 +705,7 @@ bool WebContentMarkupReader::readHTML(const String& string)
         return false;
 
     String rawHTML = stripMicrosoftPrefix(string);
+
     if (shouldSanitize()) {
         m_markup = sanitizeMarkup(rawHTML, frame().document(), msoListQuirksForMarkup(), WTF::Function<void (DocumentFragment&)> { [] (DocumentFragment& fragment) {
             removeSubresourceURLAttributes(fragment, [](auto& url) {

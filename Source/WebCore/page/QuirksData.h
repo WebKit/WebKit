@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -117,6 +117,9 @@ struct QuirksData {
         NeedsVP9FullRangeFlagQuirk,
         NeedsVideoShouldMaintainAspectRatioQuirk,
         NeedsWebKitMediaTextTrackDisplayQuirk,
+#if PLATFORM(MAC)
+        NeedsYahooMailPasteFormattingQuirk,
+#endif
 #if ENABLE(TWO_PHASE_CLICKS)
         NeedsYouTubeMouseOutQuirk,
 #endif

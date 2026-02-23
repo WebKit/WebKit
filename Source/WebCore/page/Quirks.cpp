@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -632,6 +632,18 @@ bool Quirks::needsPrimeVideoUserSelectNoneQuirk() const
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
     return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsPrimeVideoUserSelectNoneQuirk);
+#else
+    return false;
+#endif
+}
+
+// mail.yahoo.com rdar://157657531
+bool Quirks::needsYahooMailPasteFormattingQuirk() const
+{
+#if PLATFORM(MAC)
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsYahooMailPasteFormattingQuirk);
 #else
     return false;
 #endif
@@ -2724,6 +2736,18 @@ static void handleClaudeQuirks(QuirksData& quirksData, const URL& /* quirksURL *
 }
 #endif
 
+#if PLATFORM(MAC)
+// mail.yahoo.com rdar://157657531
+static void handleYahooQuirks(QuirksData& quirksData, const URL& quirksURL, const String& /* quirksDomainString */, const URL& /* documentURL */)
+{
+    auto topDocumentHost = quirksURL.host();
+    if (topDocumentHost != "mail.yahoo.com"_s && !topDocumentHost.endsWith(".mail.yahoo.com"_s))
+        return;
+
+    quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsYahooMailPasteFormattingQuirk);
+}
+#endif
+
 #if ENABLE(TEXT_AUTOSIZING)
 static void handleYCombinatorQuirks(QuirksData& quirksData, const URL& quirksURL, const String& /* quirksDomainString */, const URL& /* documentURL */)
 {
@@ -3584,6 +3608,9 @@ void Quirks::determineRelevantQuirks()
         { "wpdevelopment"_s, &handleWPDevelopmentQuirks },
 #endif
         { "x"_s, &handleTwitterXQuirks },
+#if PLATFORM(MAC)
+        { "yahoo"_s, &handleYahooQuirks },
+#endif
 #if ENABLE(TEXT_AUTOSIZING)
         { "ycombinator"_s, &handleYCombinatorQuirks },
 #endif
