@@ -43,6 +43,7 @@
 #include "LegacyRenderSVGRoot.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "LocalFrameViewDestructionObserver.h"
 #include "Logging.h"
 #include "NodeInlines.h"
 #include "NodeTraversal.h"
@@ -81,9 +82,19 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderView);
 
+RenderView::FrameViewDestructionObserver::FrameViewDestructionObserver(LocalFrameView& frameView)
+    : LocalFrameViewDestructionObserver(frameView)
+{
+}
+
+void RenderView::FrameViewDestructionObserver::frameViewIsBeingDestroyed()
+{
+    WTFReportBacktraceWithPrefix("RenderView::LocalFrameViewDestructionObserver::frameViewIsBeingDestroyed()");
+}
+
 RenderView::RenderView(Document& document, RenderStyle&& style)
     : RenderBlockFlow(Type::View, document, WTF::move(style))
-    , m_frameView(*document.view())
+    , m_frameViewDestructionObserver(makeUniqueRef<FrameViewDestructionObserver>(*document.view()))
     , m_initialContainingBlock(makeUniqueRef<Layout::InitialContainingBlock>(RenderStyle::clone(this->style())))
     , m_layoutState(makeUniqueRef<Layout::LayoutState>(document, m_initialContainingBlock, Layout::LayoutState::Type::Primary, LayoutIntegration::layoutWithFormattingContextForBox, LayoutIntegration::formattingContextRootLogicalWidthForType, LayoutIntegration::formattingContextRootLogicalHeightForType, LayoutIntegration::layoutWithFormattingContextForBlockInInline))
     , m_selection(*this)

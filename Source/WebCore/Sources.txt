@@ -2164,6 +2164,7 @@ page/LocalDOMWindow.cpp
 page/LocalDOMWindowProperty.cpp
 page/LocalFrame.cpp
 page/LocalFrameView.cpp
+page/LocalFrameViewDestructionObserver.cpp
 page/LocalFrameViewLayoutContext.cpp
 page/Location.cpp
 page/LoginStatus.cpp

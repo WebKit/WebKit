@@ -22,6 +22,7 @@
 #pragma once
 
 #include <WebCore/LocalFrameView.h>
+#include <WebCore/LocalFrameViewDestructionObserver.h>
 #include <WebCore/Region.h>
 #include <WebCore/RenderBlockFlow.h>
 #include <WebCore/RenderSelection.h>
@@ -74,7 +75,7 @@ public:
 
     float zoomFactor() const;
 
-    LocalFrameView& frameView() const { return m_frameView.get(); }
+    LocalFrameView& frameView() const { return m_frameViewDestructionObserver->frameView(); }
 
     Layout::InitialContainingBlock& initialContainingBlock() { return m_initialContainingBlock.get(); }
     const Layout::InitialContainingBlock& initialContainingBlock() const { return m_initialContainingBlock.get(); }
@@ -200,6 +201,15 @@ public:
         bool m_wasAccumulatingRepaintRegion { false };
     };
 
+    class FrameViewDestructionObserver final : public LocalFrameViewDestructionObserver {
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FrameViewDestructionObserver);
+        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameViewDestructionObserver);
+    public:
+        FrameViewDestructionObserver(LocalFrameView&);
+        void frameViewIsBeingDestroyed() final;
+        LocalFrameView& frameView() const { return *localFrameView(); }
+    };
+
     void registerBoxWithScrollSnapPositions(const RenderBox&);
     void unregisterBoxWithScrollSnapPositions(const RenderBox&);
     const SingleThreadWeakHashSet<const RenderBox>& boxesWithScrollSnapPositions() { return m_boxesWithScrollSnapPositions; }
@@ -250,7 +260,7 @@ private:
 
     void updateInitialContainingBlockSize();
 
-    const CheckedRef<LocalFrameView> m_frameView;
+    const UniqueRef<FrameViewDestructionObserver> m_frameViewDestructionObserver;
 
     // Include this RenderView.
     uint64_t m_rendererCount { 1 };
