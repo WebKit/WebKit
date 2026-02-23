@@ -1236,7 +1236,7 @@ bool GridTrackSizingAlgorithm::canParticipateInBaselineAlignment(const RenderBox
 
 bool GridTrackSizingAlgorithm::participateInBaselineAlignment(const RenderBox& gridItem, Style::GridTrackSizingDirection alignmentContextType) const
 {
-    return alignmentContextType == Style::GridTrackSizingDirection::Rows ? m_baselineAlignmentItemsForRows.get(&gridItem) : m_baselineAlignmentItemsForColumns.get(&gridItem);
+    return alignmentContextType == Style::GridTrackSizingDirection::Rows ? m_baselineAlignmentItemsForRows.contains(gridItem) : m_baselineAlignmentItemsForColumns.contains(gridItem);
 }
 
 void GridTrackSizingAlgorithm::updateBaselineAlignmentContext(const RenderBox& gridItem, Style::GridTrackSizingDirection alignmentContextType)
@@ -1281,9 +1281,9 @@ void GridTrackSizingAlgorithm::cacheBaselineAlignedItem(const RenderBox& item, S
         alignmentContextType = alignmentContextType == Style::GridTrackSizingDirection::Rows ? Style::GridTrackSizingDirection::Columns : Style::GridTrackSizingDirection::Rows;
 
     if (alignmentContextType == Style::GridTrackSizingDirection::Rows)
-        m_baselineAlignmentItemsForRows.add(item, true);
+        m_baselineAlignmentItemsForRows.add(item);
     else
-        m_baselineAlignmentItemsForColumns.add(item, true);
+        m_baselineAlignmentItemsForColumns.add(item);
 
     const auto* gridItemParent = dynamicDowncast<RenderGrid>(item.parent());
     if (gridItemParent) {
@@ -2085,17 +2085,11 @@ void GridTrackSizingAlgorithm::computeBaselineAlignmentContext()
     m_baselineAlignment.clear(alignmentContextType);
     m_baselineAlignment.setWritingMode(m_renderGrid->style().writingMode());
     BaselineItemsCache& baselineItemsCache = alignmentContextType == Style::GridTrackSizingDirection::Rows ? m_baselineAlignmentItemsForRows : m_baselineAlignmentItemsForColumns;
-    BaselineItemsCache tmpBaselineItemsCache = baselineItemsCache;
-    for (auto& gridItem : tmpBaselineItemsCache.keys()) {
-        // FIXME (jfernandez): We may have to get rid of the baseline participation
-        // flag (hence just using a HashSet) depending on the CSS WG resolution on
-        // https://github.com/w3c/csswg-drafts/issues/3046
-        if (canParticipateInBaselineAlignment(gridItem, alignmentContextType)) {
-            updateBaselineAlignmentContext(gridItem, alignmentContextType);
-            baselineItemsCache.set(gridItem, true);
-        } else
-            baselineItemsCache.set(gridItem, false);
-    }
+    baselineItemsCache.removeIf([&](const RenderBox& gridItem) {
+        return !canParticipateInBaselineAlignment(gridItem, alignmentContextType);
+    });
+    for (auto& gridItem : baselineItemsCache)
+        updateBaselineAlignmentContext(gridItem, alignmentContextType);
 }
 
 static void removeSubgridMarginBorderPaddingFromTracks(Vector<UniqueRef<GridTrack>>& tracks, LayoutUnit mbp, bool forwards)

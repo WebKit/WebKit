@@ -335,7 +335,7 @@ private:
     SizingState m_sizingState;
 
     GridBaselineAlignment m_baselineAlignment;
-    using BaselineItemsCache = HashMap<SingleThreadWeakRef<const RenderBox>, bool>;
+    using BaselineItemsCache = HashSet<SingleThreadWeakRef<const RenderBox>>;
 
     // Rows/columns here indicate the alignment context.
     BaselineItemsCache m_baselineAlignmentItemsForRows;
