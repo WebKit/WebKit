@@ -189,6 +189,8 @@ ALWAYS_INLINE JSArray* fastArrayOf(JSGlobalObject* globalObject, CallFrame* call
         nullptr, AllocationFailureMode::ReturnNull);
     if (!memory) [[unlikely]]
         return nullptr;
+
+    DeferGC deferGC(vm);
     auto* resultButterfly = Butterfly::fromBase(memory, 0, 0);
     resultButterfly->setVectorLength(vectorLength);
     resultButterfly->setPublicLength(length);
@@ -317,6 +319,8 @@ static ALWAYS_INLINE JSArray* tryCreateArrayFromArguments(JSGlobalObject* global
         nullptr, AllocationFailureMode::ReturnNull);
     if (!memory) [[unlikely]]
         return nullptr;
+
+    DeferGC deferGC(vm);
     auto* resultButterfly = Butterfly::fromBase(memory, 0, 0);
     resultButterfly->setVectorLength(vectorLength);
     resultButterfly->setPublicLength(length);
@@ -402,6 +406,8 @@ static JSArray* tryCreateArrayFromSet(JSGlobalObject* globalObject, JSSet* set)
         nullptr, AllocationFailureMode::ReturnNull);
     if (!memory) [[unlikely]]
         return nullptr;
+
+    DeferGC deferGC(vm);
     auto* resultButterfly = Butterfly::fromBase(memory, 0, 0);
     resultButterfly->setVectorLength(vectorLength);
     resultButterfly->setPublicLength(length);
@@ -509,6 +515,8 @@ static JSArray* tryCreateArrayFromMapIterator(JSGlobalObject* globalObject, JSMa
         nullptr, AllocationFailureMode::ReturnNull);
     if (!memory) [[unlikely]]
         return nullptr;
+
+    DeferGC deferGC(vm);
     auto* resultButterfly = Butterfly::fromBase(memory, 0, 0);
     resultButterfly->setVectorLength(vectorLength);
     resultButterfly->setPublicLength(length);

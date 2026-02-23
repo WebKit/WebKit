@@ -569,6 +569,8 @@ JSArray* JSArray::fastToReversed(JSGlobalObject* globalObject, uint64_t length)
             nullptr, AllocationFailureMode::ReturnNull);
         if (!memory) [[unlikely]]
             return nullptr;
+
+        DeferGC deferGC(vm);
         auto* butterfly = Butterfly::fromBase(memory, 0, 0);
         butterfly->setVectorLength(vectorLength);
         butterfly->setPublicLength(length);
@@ -671,6 +673,8 @@ JSArray* JSArray::fastWith(JSGlobalObject* globalObject, uint32_t index, JSValue
             nullptr, AllocationFailureMode::ReturnNull);
         if (!memory) [[unlikely]]
             return nullptr;
+
+        DeferGC deferGC(vm);
         auto* butterfly = Butterfly::fromBase(memory, 0, 0);
         butterfly->setVectorLength(vectorLength);
         butterfly->setPublicLength(length);
@@ -936,6 +940,8 @@ JSArray* JSArray::fastToSpliced(JSGlobalObject* globalObject, CallFrame* callFra
             nullptr, AllocationFailureMode::ReturnNull);
         if (!memory) [[unlikely]]
             return nullptr;
+
+        DeferGC deferGC(vm);
         auto* resultButterfly = Butterfly::fromBase(memory, 0, 0);
         resultButterfly->setVectorLength(vectorLength);
         resultButterfly->setPublicLength(newLength);
@@ -1409,6 +1415,7 @@ JSArray* JSArray::fastSlice(JSGlobalObject* globalObject, JSObject* source, uint
         if (!memory) [[unlikely]]
             return nullptr;
 
+        DeferGC deferGC(vm);
         auto* butterfly = Butterfly::fromBase(memory, 0, 0);
         butterfly->setVectorLength(vectorLength);
         butterfly->setPublicLength(initialLength);
@@ -2168,6 +2175,8 @@ JSArray* tryCloneArrayFromFast(JSGlobalObject* globalObject, JSValue arrayValue)
         throwOutOfMemoryError(globalObject, scope);
         return { };
     }
+
+    DeferGC deferGC(vm);
     auto* resultButterfly = Butterfly::fromBase(memory, 0, 0);
     resultButterfly->setVectorLength(vectorLength);
     resultButterfly->setPublicLength(resultSize);
@@ -2414,6 +2423,7 @@ JSArray* JSArray::fastFlat(JSGlobalObject* globalObject, uint64_t depth, uint64_
         if (!memory) [[unlikely]]
             return nullptr;
 
+        DeferGC deferGC(vm);
         auto* butterfly = Butterfly::fromBase(memory, 0, 0);
         butterfly->setVectorLength(vectorLength);
         butterfly->setPublicLength(flattenedLength);

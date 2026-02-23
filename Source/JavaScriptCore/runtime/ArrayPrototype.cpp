@@ -1552,6 +1552,8 @@ static JSArray* concatAppendArray(JSGlobalObject* globalObject, VM& vm, JSArray*
         throwOutOfMemoryError(globalObject, scope);
         return { };
     }
+
+    DeferGC deferGC(vm);
     auto* butterfly = Butterfly::fromBase(memory, 0, 0);
     butterfly->setVectorLength(vectorLength);
     butterfly->setPublicLength(resultSize);
