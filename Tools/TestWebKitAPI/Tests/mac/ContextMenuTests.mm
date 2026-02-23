@@ -324,36 +324,49 @@ TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringDefaultC
     EXPECT_NULL(elementInfo.qrCodePayloadString);
 }
 
-// FIXME when rdar://168100136 is resolved.
-#if PLATFORM(MAC) && defined(NDEBUG)
-TEST(ContextMenuTests, DISABLED_ContextMenuElementInfoContainsQRCodePayloadString)
-#else
 TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadString)
-#endif
 {
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr testMessageHandler = adoptNS([[TestMessageHandler alloc] init]);
+
+    __block bool imageLoaded = false;
+    [testMessageHandler addMessage:@"imageLoaded" withHandler:^{
+        imageLoaded = true;
+    }];
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:testMessageHandler.get() name:@"testHandler"];
     [configuration _setContextMenuQRCodeDetectionEnabled:YES];
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600) configuration:configuration.get()]);
-    [webView synchronouslyLoadHTMLString:@"<img src='qr-code.png'></img>"];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<img src='qr-code.png' onload=\"window.webkit.messageHandlers.testHandler.postMessage('imageLoaded')\"></img>"];
+    Util::run(&imageLoaded);
 
-    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(150, 150)];
-    EXPECT_NULL(elementInfo.qrCodePayloadString);
+    RetainPtr elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(150, 150)];
+    EXPECT_NULL([elementInfo qrCodePayloadString]);
 
     elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(300, 300)];
-    EXPECT_WK_STREQ(elementInfo.qrCodePayloadString, "https://www.webkit.org");
+    EXPECT_WK_STREQ([elementInfo qrCodePayloadString], "https://www.webkit.org");
 }
 
 TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringInsideLink)
 {
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr testMessageHandler = adoptNS([[TestMessageHandler alloc] init]);
+
+    __block bool imageLoaded = false;
+    [testMessageHandler addMessage:@"imageLoaded" withHandler:^{
+        imageLoaded = true;
+    }];
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:testMessageHandler.get() name:@"testHandler"];
     [configuration _setContextMenuQRCodeDetectionEnabled:YES];
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600) configuration:configuration.get()]);
-    [webView synchronouslyLoadHTMLString:@"<a href='https://www.webkit.org'><img src='qr-code.png'></img></a>"];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<a href='https://www.webkit.org'><img src='qr-code.png' onload=\"window.webkit.messageHandlers.testHandler.postMessage('imageLoaded')\"></img></a>"];
+    Util::run(&imageLoaded);
 
-    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(300, 300)];
-    EXPECT_NULL(elementInfo.qrCodePayloadString);
+    RetainPtr elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(300, 300)];
+    EXPECT_NULL([elementInfo qrCodePayloadString]);
 }
 
 TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringCanvas)
@@ -453,31 +466,37 @@ TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringSVGPageZ
     EXPECT_WK_STREQ(elementInfo.qrCodePayloadString, "https://www.webkit.org");
 }
 
-// FIXME: Re-enable this test once webkit.org/b/266650 is resolved
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000 && !defined(NDEBUG)
-TEST(ContextMenuElementInfoWithQRCodeDetectionCrash, DISABLED_ContextMenuTests)
-#else
 TEST(ContextMenuTests, ContextMenuElementInfoWithQRCodeDetectionCrash)
-#endif
 {
     auto createWebView = [] {
-        auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        RetainPtr testMessageHandler = adoptNS([[TestMessageHandler alloc] init]);
+
+        __block bool imageLoaded = false;
+        [testMessageHandler addMessage:@"imageLoaded" withHandler:^{
+            imageLoaded = true;
+        }];
+
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration userContentController] addScriptMessageHandler:testMessageHandler.get() name:@"testHandler"];
         [configuration _setContextMenuQRCodeDetectionEnabled:YES];
-        auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600) configuration:configuration.get()]);
-        [webView synchronouslyLoadHTMLString:@"<img src='qr-code.png'></img>"];
+
+        RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600) configuration:configuration.get()]);
+        [webView synchronouslyLoadHTMLString:@"<img src='qr-code.png' onload=\"window.webkit.messageHandlers.testHandler.postMessage('imageLoaded')\"></img>"];
+        Util::run(&imageLoaded);
+
         return webView;
     };
 
     @autoreleasepool {
-        auto webView = createWebView();
+        RetainPtr webView = createWebView();
         [webView rightClickAtPoint:CGPointMake(300, 300)];
         [webView waitForNextPresentationUpdate];
         [webView removeFromSuperview];
     }
 
-    auto webView = createWebView();
-    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(300, 300)];
-    EXPECT_WK_STREQ(elementInfo.qrCodePayloadString, "https://www.webkit.org");
+    RetainPtr webView = createWebView();
+    RetainPtr elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(300, 300)];
+    EXPECT_WK_STREQ([elementInfo qrCodePayloadString], "https://www.webkit.org");
 }
 
 #endif // ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
