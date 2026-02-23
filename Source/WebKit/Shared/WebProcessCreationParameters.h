@@ -223,6 +223,7 @@ struct WebProcessCreationParameters {
     WebCore::Color focusRingColor;
     String localizedDeviceModel;
     String contentSizeCategory;
+    String containerTemporaryDirectory;
 #endif
 
 #if USE(GBM)
