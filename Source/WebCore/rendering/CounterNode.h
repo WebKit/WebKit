@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include <optional>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
@@ -44,12 +45,17 @@ class RenderElement;
 class CounterNode : public RefCounted<CounterNode>, public CanMakeSingleThreadWeakPtr<CounterNode> {
 public:
     enum class Type : uint8_t { Increment, Reset, Set };
+    struct Plan {
+        OptionSet<Type> type;
+        int value { 0 };
+    };
 
-    static Ref<CounterNode> create(RenderElement&, OptionSet<Type>, int value);
+    static Ref<CounterNode> create(RenderElement&, OptionSet<Type>, int value, std::optional<Plan>);
     ~CounterNode();
     bool actsAsReset() const { return hasResetType() || !m_parent; }
     bool hasResetType() const { return m_type.contains(Type::Reset); }
     bool hasSetType() const { return m_type.contains(Type::Set); }
+    bool shouldShowZero() const;
     int value() const { return m_value; }
     int countInParent() const { return m_countInParent; }
     RenderElement& NODELETE owner() const;
@@ -74,7 +80,7 @@ public:
     void removeChild(CounterNode&);
 
 private:
-    CounterNode(RenderElement&, OptionSet<Type>, int value);
+    CounterNode(RenderElement&, OptionSet<Type>, int value, std::optional<Plan>);
     int NODELETE computeCountInParent() const;
     // Invalidates the text in the renderer of this counter, if any,
     // and in the renderers of all descendants of this counter, if any.
@@ -92,6 +98,7 @@ private:
     SingleThreadWeakPtr<CounterNode> m_nextSibling;
     SingleThreadWeakPtr<CounterNode> m_firstChild;
     SingleThreadWeakPtr<CounterNode> m_lastChild;
+    std::optional<Plan> m_plan;
 };
 
 } // namespace WebCore
