@@ -44,11 +44,11 @@ using namespace Inspector;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PageNetworkAgent);
 
-PageNetworkAgent::PageNetworkAgent(PageAgentContext& context, InspectorBackendClient* client)
+PageNetworkAgent::PageNetworkAgent(PageAgentContext& context, InspectorBackendClient& client)
     : InspectorNetworkAgent(context, { context.inspectedPage->settings().inspectorMaximumResourcesContentSize(), context.inspectedPage->settings().inspectorSupportsShowingCertificate() })
     , m_inspectedPage(context.inspectedPage)
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
-    , m_client(client)
+    , m_backendClient(client)
 #endif
 {
 #if !ENABLE(INSPECTOR_NETWORK_THROTTLING)
@@ -111,7 +111,7 @@ void PageNetworkAgent::setResourceCachingDisabledInternal(bool disabled)
 
 bool PageNetworkAgent::setEmulatedConditionsInternal(std::optional<int>&& bytesPerSecondLimit)
 {
-    return m_client && m_client->setEmulatedConditions(WTF::move(bytesPerSecondLimit));
+    return m_backendClient->setEmulatedConditions(WTF::move(bytesPerSecondLimit));
 }
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)

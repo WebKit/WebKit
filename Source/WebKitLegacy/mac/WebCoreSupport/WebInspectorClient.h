@@ -32,6 +32,7 @@
 #import <WebCore/InspectorBackendClient.h>
 #import <WebCore/InspectorDebuggableType.h>
 #import <WebCore/InspectorFrontendClientLocal.h>
+#import <wtf/CheckedRef.h>
 #import <wtf/Forward.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
@@ -56,11 +57,19 @@ class PageInspectorController;
 
 class WebInspectorFrontendClient;
 
-class WebInspectorClient final : public WebCore::InspectorBackendClient, public Inspector::FrontendChannel {
+class WebInspectorClient final : public WebCore::InspectorBackendClient, public Inspector::FrontendChannel, public CanMakeCheckedPtr<WebInspectorClient> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(WebInspectorClient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebInspectorClient);
 public:
     explicit WebInspectorClient(WebView *inspectedWebView);
     virtual ~WebInspectorClient();
+
+    // AbstractCanMakeCheckedPtr overrides
+    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
+    void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
     void inspectedPageDestroyed() override;
 
@@ -105,7 +114,7 @@ private:
     WeakObjCPtr<WebView> m_inspectedWebView;
     RetainPtr<WebNodeHighlighter> m_highlighter;
     WeakPtr<WebCore::Page> m_frontendPage;
-    std::unique_ptr<WebInspectorFrontendClient> m_frontendClient;
+    RefPtr<WebInspectorFrontendClient> m_frontendClient;
 };
 
 

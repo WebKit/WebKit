@@ -4841,11 +4841,8 @@ void LocalFrameView::scheduleResizeEventIfNeeded()
     LOG_WITH_STREAM(Events, stream << "LocalFrameView " << this << " scheduleResizeEventIfNeeded scheduling resize event for document" << document << ", size " << currentSize);
     document->setNeedsDOMWindowResizeEvent();
 
-    bool isMainFrame = m_frame->isMainFrame();
-    if (InspectorInstrumentation::hasFrontends() && isMainFrame) {
-        if (InspectorBackendClient* inspectorBackendClient = page ? page->inspectorController().inspectorBackendClient() : nullptr)
-            inspectorBackendClient->didResizeMainFrame(m_frame.ptr());
-    }
+    if (InspectorInstrumentation::hasFrontends() && m_frame->isMainFrame())
+        page->inspectorController().inspectorBackendClient().didResizeMainFrame(m_frame.ptr());
 }
 
 void LocalFrameView::willStartLiveResize()

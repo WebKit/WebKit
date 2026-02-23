@@ -789,6 +789,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         pageID,
         WebProcess::singleton().sessionID(),
         makeUniqueRef<WebEditorClient>(*this),
+        makeUniqueRef<WebInspectorBackendClient>(*this),
         WebSocketProvider::create(parameters.webPageProxyIdentifier),
         createLibWebRTCProvider(*this),
         WebProcess::singleton().cacheStorageProvider(),
@@ -822,7 +823,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if ENABLE(DRAG_SUPPORT)
     pageConfiguration.dragClient = makeUnique<WebDragClient>(this);
 #endif
-    pageConfiguration.inspectorBackendClient = makeUnique<WebInspectorBackendClient>(this);
 #if USE(AUTOCORRECTION_PANEL)
     pageConfiguration.alternativeTextClient = makeUnique<WebAlternativeTextClient>(this);
 #endif
@@ -2024,7 +2024,7 @@ void WebPage::close()
     if (WebProcess::singleton().injectedBundle())
         WebProcess::singleton().injectedBundle()->willDestroyPage(Ref { *this });
 
-    if (RefPtr inspector = std::exchange(m_inspector, nullptr))
+    if (RefPtr inspector = std::exchange(m_inspectorBackend, nullptr))
         inspector->disconnectFromPage();
 
     m_page->inspectorController().disconnectAllFrontends();
@@ -5249,13 +5249,13 @@ unsigned WebPage::remoteImagesCountForTesting() const
     return 0;
 }
 
-WebInspectorBackend* WebPage::inspector(LazyCreationPolicy behavior)
+WebInspectorBackend* WebPage::inspectorBackend(LazyCreationPolicy behavior)
 {
     if (m_isClosed)
         return nullptr;
-    if (!m_inspector && behavior == LazyCreationPolicy::CreateIfNeeded)
-        m_inspector = WebInspectorBackend::create(*this);
-    return m_inspector.get();
+    if (!m_inspectorBackend && behavior == LazyCreationPolicy::CreateIfNeeded)
+        m_inspectorBackend = WebInspectorBackend::create(*this);
+    return m_inspectorBackend.get();
 }
 
 WebInspectorUI* WebPage::inspectorUI()
@@ -6362,7 +6362,7 @@ bool WebPage::windowAndWebPageAreFocused() const
 bool WebPage::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::WebInspectorBackend::messageReceiverName()) {
-        if (RefPtr inspector = this->inspector())
+        if (RefPtr inspector = this->inspectorBackend())
             inspector->didReceiveMessage(connection, decoder);
         return true;
     }

@@ -66,7 +66,7 @@ class InspectorPageAgent final : public InspectorAgentBase, public Inspector::Pa
     WTF_MAKE_TZONE_ALLOCATED(InspectorPageAgent);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorPageAgent);
 public:
-    InspectorPageAgent(PageAgentContext&, InspectorBackendClient*, InspectorOverlay&);
+    InspectorPageAgent(PageAgentContext&, InspectorBackendClient&, InspectorOverlay&);
     ~InspectorPageAgent();
 
     // InspectorAgentBase
@@ -142,7 +142,7 @@ private:
     const Ref<Inspector::PageBackendDispatcher> m_backendDispatcher;
 
     WeakRef<Page> m_inspectedPage;
-    InspectorBackendClient* m_client { nullptr };
+    WeakRef<InspectorBackendClient> m_client;
     WeakRef<InspectorOverlay> m_overlay;
 
     WeakHashMap<Frame, String> m_frameToIdentifier;

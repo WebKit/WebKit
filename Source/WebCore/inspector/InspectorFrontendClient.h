@@ -38,6 +38,7 @@
 #include <WebCore/InspectorDebuggableType.h>
 #include <WebCore/InspectorFrontendAPIDispatcher.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -48,15 +49,6 @@ using ExtensionID = String;
 using ExtensionTabID = String;
 }
 #endif
-
-namespace WebCore {
-class InspectorFrontendClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::InspectorFrontendClient> : std::true_type { };
-}
 
 namespace WebCore {
 
@@ -76,7 +68,7 @@ struct InspectorFrontendClientSaveData {
     bool base64Encoded;
 };
 
-class InspectorFrontendClient : public CanMakeWeakPtr<InspectorFrontendClient> {
+class InspectorFrontendClient : public AbstractRefCountedAndCanMakeWeakPtr<InspectorFrontendClient> {
 public:
     enum class DockSide {
         Undocked = 0,

@@ -27,6 +27,7 @@
 
 #include <WebCore/InspectorBackendClient.h>
 #include <WebCore/PageOverlay.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -42,12 +43,20 @@ namespace WebKit {
 class WebPage;
 class RepaintIndicatorLayerClient;
 
-class WebInspectorBackendClient : public WebCore::InspectorBackendClient, private WebCore::PageOverlayClient {
+class WebInspectorBackendClient : public WebCore::InspectorBackendClient, private WebCore::PageOverlayClient, public CanMakeCheckedPtr<WebInspectorBackendClient> {
     WTF_MAKE_TZONE_ALLOCATED(WebInspectorBackendClient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebInspectorBackendClient);
 friend class RepaintIndicatorLayerClient;
 public:
-    WebInspectorBackendClient(WebPage*);
+    WebInspectorBackendClient(WebPage&);
     virtual ~WebInspectorBackendClient();
+
+    // AbstractCanMakeCheckedPtr overrides
+    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
+    void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
 private:
     // WebCore::InspectorBackendClient
@@ -88,7 +97,7 @@ private:
 
     void animationEndedForLayer(const WebCore::GraphicsLayer*);
 
-    WeakPtr<WebPage> m_page;
+    WeakRef<WebPage> m_inspectedPage;
     WeakPtr<WebCore::PageOverlay> m_highlightOverlay;
 
     RefPtr<WebCore::PageOverlay> m_paintRectOverlay;

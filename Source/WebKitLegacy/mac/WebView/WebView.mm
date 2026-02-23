@@ -1480,6 +1480,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         WebCore::PageIdentifier::generate(),
         [[self preferences] privateBrowsingEnabled] ? PAL::SessionID::legacyPrivateSessionID() : PAL::SessionID::defaultSessionID(),
         makeUniqueRef<WebEditorClient>(self),
+        makeUniqueRef<WebInspectorClient>(self),
         LegacySocketProvider::create(),
         WebCore::WebRTCProvider::create(),
         WebCore::CacheStorageProvider::create(),
@@ -1522,7 +1523,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #if !PLATFORM(IOS_FAMILY)
     pageConfiguration.validationMessageClient = makeUnique<WebValidationMessageClient>(self);
 #endif
-    pageConfiguration.inspectorBackendClient = makeUnique<WebInspectorClient>(self);
+    pageConfiguration.inspectorBackendClient = makeUniqueRef<WebInspectorClient>(self);
 
 #if ENABLE(DRAG_SUPPORT)
     pageConfiguration.dragClient = makeUnique<WebDragClient>(self);
@@ -1745,6 +1746,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         WebCore::PageIdentifier::generate(),
         [[self preferences] privateBrowsingEnabled] ? PAL::SessionID::legacyPrivateSessionID() : PAL::SessionID::defaultSessionID(),
         makeUniqueRef<WebEditorClient>(self),
+        makeUniqueRef<WebInspectorClient>(self),
         LegacySocketProvider::create(),
         WebCore::WebRTCProvider::create(),
         WebCore::CacheStorageProvider::create(),
@@ -1781,7 +1783,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.dragClient = makeUnique<WebDragClient>(self);
 #endif
 
-    pageConfiguration.inspectorBackendClient = makeUnique<WebInspectorClient>(self);
+    pageConfiguration.inspectorBackendClient = makeUniqueRef<WebInspectorClient>(self);
     pageConfiguration.databaseProvider = WebDatabaseProvider::singleton();
     pageConfiguration.storageNamespaceProvider = _private->group->storageNamespaceProvider();
     pageConfiguration.visitedLinkStore = _private->group->visitedLinkStore();

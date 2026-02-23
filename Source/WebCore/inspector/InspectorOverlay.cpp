@@ -396,7 +396,7 @@ static void drawShapeHighlight(GraphicsContext& context, Node& node, InspectorOv
     context.fillPath(shapePath);
 }
 
-InspectorOverlay::InspectorOverlay(PageInspectorController& controller, InspectorBackendClient* client)
+InspectorOverlay::InspectorOverlay(PageInspectorController& controller, InspectorBackendClient& client)
     : m_controller(controller)
     , m_client(client)
     , m_paintRectUpdateTimer(*this, &InspectorOverlay::updatePaintRectsTimerFired)

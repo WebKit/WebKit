@@ -451,12 +451,12 @@ void WKBundlePageListenForLayoutMilestones(WKBundlePageRef pageRef, WKLayoutMile
 
 void WKBundlePageCloseInspectorForTest(WKBundlePageRef page)
 {
-    protect(WebKit::toProtectedImpl(page)->inspector())->close();
+    protect(WebKit::toProtectedImpl(page)->inspectorBackend())->close();
 }
 
 void WKBundlePageEvaluateScriptInInspectorForTest(WKBundlePageRef page, WKStringRef script)
 {
-    protect(WebKit::toProtectedImpl(page)->inspector())->evaluateScriptForTest(WebKit::toWTFString(script));
+    protect(WebKit::toProtectedImpl(page)->inspectorBackend())->evaluateScriptForTest(WebKit::toWTFString(script));
 }
 
 void WKBundlePageForceRepaint(WKBundlePageRef page)

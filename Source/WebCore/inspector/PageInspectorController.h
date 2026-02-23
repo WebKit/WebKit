@@ -70,7 +70,7 @@ class PageInspectorController final : public Inspector::InspectorEnvironment, pu
     WTF_MAKE_TZONE_ALLOCATED(PageInspectorController);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageInspectorController);
 public:
-    PageInspectorController(Page&, std::unique_ptr<InspectorBackendClient>&&);
+    PageInspectorController(Page&, UniqueRef<InspectorBackendClient>&&);
     ~PageInspectorController() override;
 
     // AbstractCanMakeCheckedPtr overrides
@@ -90,7 +90,7 @@ public:
 
     WEBCORE_EXPORT void show();
 
-    WEBCORE_EXPORT void setInspectorFrontendClient(InspectorFrontendClient*);
+    WEBCORE_EXPORT void setInspectorFrontendClient(InspectorFrontendClient&);
     unsigned inspectionLevel() const;
     void didClearWindowObjectInWorld(LocalFrame&, DOMWrapperWorld&);
 
@@ -123,8 +123,8 @@ public:
     WEBCORE_EXPORT unsigned flexOverlayCount() const;
     WEBCORE_EXPORT unsigned paintRectCount() const;
 
-    InspectorBackendClient* inspectorBackendClient() const { return m_inspectorBackendClient.get(); }
-    InspectorFrontendClient* inspectorFrontendClient() const { return m_inspectorFrontendClient; }
+    InspectorBackendClient& inspectorBackendClient() const { return m_inspectorBackendClient.get(); }
+    InspectorFrontendClient* inspectorFrontendClient() const;
 
     InstrumentingAgents& instrumentingAgents() const { return m_instrumentingAgents.get(); }
     Inspector::BackendDispatcher& backendDispatcher() const { return m_backendDispatcher.get(); }
@@ -160,8 +160,8 @@ private:
     std::unique_ptr<PageDebugger> m_debugger;
     Inspector::AgentRegistry m_agents;
 
-    std::unique_ptr<InspectorBackendClient> m_inspectorBackendClient;
-    InspectorFrontendClient* m_inspectorFrontendClient { nullptr };
+    const UniqueRef<InspectorBackendClient> m_inspectorBackendClient;
+    WeakPtr<InspectorFrontendClient> m_inspectorFrontendClient;
 
     // Lazy, but also on-demand agents.
     CheckedPtr<Inspector::InspectorAgent> m_inspectorAgent;

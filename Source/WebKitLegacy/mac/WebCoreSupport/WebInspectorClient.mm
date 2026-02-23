@@ -116,12 +116,12 @@ FrontendChannel* WebInspectorClient::openLocalFrontend(PageInspectorController* 
     m_frontendPage = core([windowController.get() frontendWebView]);
 
     RefPtr webPageInspectorController = [m_inspectedWebView.get() inspectorController];
-    m_frontendClient = makeUnique<WebInspectorFrontendClient>(m_inspectedWebView.get().get(), *webPageInspectorController, windowController.get(), inspectedPageController, m_frontendPage.get(), createFrontendSettings());
+    m_frontendClient = adoptRef(*new WebInspectorFrontendClient(m_inspectedWebView.get().get(), *webPageInspectorController, windowController.get(), inspectedPageController, m_frontendPage.get(), createFrontendSettings()));
 
     RetainPtr<WebInspectorFrontend> webInspectorFrontend = adoptNS([[WebInspectorFrontend alloc] initWithFrontendClient:m_frontendClient.get()]);
     [[m_inspectedWebView.get() inspector] setFrontend:webInspectorFrontend.get()];
 
-    m_frontendPage->inspectorController().setInspectorFrontendClient(m_frontendClient.get());
+    m_frontendPage->inspectorController().setInspectorFrontendClient(*m_frontendClient);
 
     webPageInspectorController->connectFrontend(*this);
     return nullptr;
@@ -747,8 +747,6 @@ void WebInspectorFrontendClient::sendMessageToBackend(const String& message)
 {
     RetainPtr<WebInspectorWindowController> protect(self);
 
-    if (Page* frontendPage = _frontendClient->frontendPage())
-        frontendPage->inspectorController().setInspectorFrontendClient(nullptr);
     RefPtr { [_inspectedWebView.get() inspectorController] }->disconnectFrontend(*_inspectorClient);
 
     [[_inspectedWebView.get() inspector] releaseFrontend];

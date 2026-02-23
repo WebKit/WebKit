@@ -122,6 +122,7 @@ public:
         std::optional<PageIdentifier>,
         PAL::SessionID,
         UniqueRef<EditorClient>&&,
+        UniqueRef<InspectorBackendClient>&&,
         Ref<SocketProvider>&&,
         UniqueRef<WebRTCProvider>&&,
         Ref<CacheStorageProvider>&&,
@@ -164,7 +165,7 @@ public:
     UniqueRef<EditorClient> editorClient;
     Ref<SocketProvider> socketProvider;
     std::unique_ptr<DragClient> dragClient;
-    std::unique_ptr<InspectorBackendClient> inspectorBackendClient;
+    UniqueRef<InspectorBackendClient> inspectorBackendClient;
 #if ENABLE(APPLE_PAY)
     Ref<PaymentCoordinatorClient> paymentCoordinatorClient;
 #endif
