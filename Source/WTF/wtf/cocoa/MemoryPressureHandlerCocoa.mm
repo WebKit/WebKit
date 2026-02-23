@@ -36,17 +36,11 @@
 
 #define ENABLE_FMW_FOOTPRINT_COMPARISON 0
 
-extern "C" void cache_simulate_memory_warning_event(uint64_t);
-
 namespace WTF {
 
 void MemoryPressureHandler::platformReleaseMemory(Critical critical)
 {
-    if (critical == Critical::Yes && (!isUnderMemoryPressure() || m_isSimulatingMemoryPressure)) {
-        // libcache listens to OS memory notifications, but for process suspension
-        // or memory pressure simulation, we need to prod it manually:
-        cache_simulate_memory_warning_event(DISPATCH_MEMORYPRESSURE_CRITICAL);
-    }
+    UNUSED_PARAM(critical);
 }
 
 static OSObjectPtr<dispatch_source_t>& NODELETE memoryPressureEventSource()
