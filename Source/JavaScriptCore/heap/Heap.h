@@ -345,6 +345,10 @@ public:
     // Take this if you know that from->cellState() < barrierThreshold.
     JS_EXPORT_PRIVATE void writeBarrierSlowPath(const JSCell* from);
 
+#if ASSERT_ENABLED
+    JS_EXPORT_PRIVATE void validateWriteBarrier(const JSCell* from, JSCell* to);
+#endif
+
     Heap(VM&, HeapType);
     ~Heap();
     void lastChanceToFinalize();

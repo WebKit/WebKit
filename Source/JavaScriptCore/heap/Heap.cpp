@@ -90,6 +90,7 @@
 #include "WasmCallee.h"
 #include "WeakMapImplInlines.h"
 #include "WeakSetInlines.h"
+#include "WriteBarrierValidationSlotVisitor.h"
 #include <algorithm>
 #include <wtf/AvailableMemory.h>
 #include <wtf/CryptographicallyRandomNumber.h>
@@ -3366,6 +3367,15 @@ void Heap::verifierMark()
 
     visitor.setDoneMarking();
 }
+
+#if ASSERT_ENABLED
+void Heap::validateWriteBarrier(const JSCell* from, JSCell* to)
+{
+    WriteBarrierValidationSlotVisitor visitor(*this, from, to);
+    from->methodTable()->visitChildren(const_cast<JSCell*>(from), visitor);
+    // Validation happens in the visitor's destructor
+}
+#endif
 
 void Heap::dumpVerifierMarkerData(HeapCell* cell)
 {

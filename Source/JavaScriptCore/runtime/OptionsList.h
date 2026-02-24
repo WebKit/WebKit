@@ -446,6 +446,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, verifyGC, false, Normal, nullptr) \
     v(Bool, verboseVerifyGC, false, Normal, nullptr) \
     v(Bool, verifyHeap, false, Normal, nullptr) \
+    v(Bool, validateWriteBarrier, false, Normal, "Validate that writeBarrier(from, to) visits 'to' when visiting 'from'"_s) \
     v(Unsigned, numberOfGCCyclesToRecordForVerification, 3, Normal, nullptr) \
     \
     v(Unsigned, exceptionStackTraceLimit, 100, Normal, "Stack trace limit for internal Exception object"_s) \

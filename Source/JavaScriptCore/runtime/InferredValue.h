@@ -113,16 +113,29 @@ public:
     {
         if (state() == IsInvalidated) [[likely]]
             return;
-        notifyWriteSlow(vm, owner, value, detail);
+        constexpr bool needsWriteBarrier = true;
+        notifyWriteSlow(vm, owner, value, detail, needsWriteBarrier);
     }
-    
+
     void notifyWrite(VM& vm, JSCell* owner, JSCellType* value, const char* reason)
+    {
+        notifyWrite(vm, owner, value, StringFireDetail(reason));
+    }
+
+
+    void notifyWriteWeak(VM& vm, JSCellType* value, const FireDetail& detail)
     {
         if (state() == IsInvalidated) [[likely]]
             return;
-        notifyWriteSlow(vm, owner, value, reason);
+        constexpr bool needsWriteBarrier = false;
+        notifyWriteSlow(vm, nullptr, value, detail, needsWriteBarrier);
     }
-    
+
+    void notifyWriteWeak(VM& vm, JSCellType* value, const char* reason)
+    {
+        notifyWriteWeak(vm, value, StringFireDetail(reason));
+    }
+
     void finalizeUnconditionally(VM&, CollectionScope);
 
 private:
@@ -142,7 +155,7 @@ private:
             WatchpointSet::invalidate(vm, detail);
         }
 
-        void notifyWriteSlow(VM&, JSCell* owner, JSCellType*, const FireDetail&);
+        void notifyWriteSlow(VM&, JSCell* owner, JSCellType*, const FireDetail&, bool needsWriteBarrier);
 
     private:
         JSCellType* m_value;
@@ -197,19 +210,19 @@ private:
     InferredValueWatchpointSet* inflateSlow();
     void freeFat();
 
-    void notifyWriteSlow(VM&, JSCell* owner, JSCellType*, const FireDetail&);
-    void notifyWriteSlow(VM&, JSCell* owner, JSCellType*, const char* reason);
+    void notifyWriteSlow(VM&, JSCell* owner, JSCellType*, const FireDetail&, bool needsWriteBarrier);
     
     uintptr_t m_data;
 };
 
 template<typename JSCellType>
-void InferredValue<JSCellType>::InferredValueWatchpointSet::notifyWriteSlow(VM& vm, JSCell* owner, JSCellType* value, const FireDetail& detail)
+void InferredValue<JSCellType>::InferredValueWatchpointSet::notifyWriteSlow(VM& vm, JSCell* owner, JSCellType* value, const FireDetail& detail, bool needsWriteBarrier)
 {
     switch (state()) {
     case ClearWatchpoint:
         m_value = value;
-        vm.writeBarrier(owner, value);
+        if (needsWriteBarrier)
+            vm.writeBarrier(owner, value);
         startWatching();
         return;
 
@@ -229,11 +242,11 @@ void InferredValue<JSCellType>::InferredValueWatchpointSet::notifyWriteSlow(VM& 
 }
 
 template<typename JSCellType>
-void InferredValue<JSCellType>::notifyWriteSlow(VM& vm, JSCell* owner, JSCellType* value, const FireDetail& detail)
+void InferredValue<JSCellType>::notifyWriteSlow(VM& vm, JSCell* owner, JSCellType* value, const FireDetail& detail, bool needsWriteBarrier)
 {
     uintptr_t data = m_data;
     if (isFat(data)) {
-        fat(data)->notifyWriteSlow(vm, owner, value, detail);
+        fat(data)->notifyWriteSlow(vm, owner, value, detail, needsWriteBarrier);
         return;
     }
 
@@ -241,7 +254,8 @@ void InferredValue<JSCellType>::notifyWriteSlow(VM& vm, JSCell* owner, JSCellTyp
     case ClearWatchpoint:
         ASSERT(decodeState(m_data) != IsInvalidated);
         m_data = (std::bit_cast<uintptr_t>(value) & ValueMask) | encodeState(IsWatched);
-        vm.writeBarrier(owner, value);
+        if (needsWriteBarrier)
+            vm.writeBarrier(owner, value);
         return;
 
     case IsWatched:
@@ -257,12 +271,6 @@ void InferredValue<JSCellType>::notifyWriteSlow(VM& vm, JSCell* owner, JSCellTyp
     }
 
     ASSERT_NOT_REACHED();
-}
-
-template<typename JSCellType>
-void InferredValue<JSCellType>::notifyWriteSlow(VM& vm, JSCell* owner, JSCellType* value, const char* reason)
-{
-    notifyWriteSlow(vm, owner, value, StringFireDetail(reason));
 }
 
 template<typename JSCellType>

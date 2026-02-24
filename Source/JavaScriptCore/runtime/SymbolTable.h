@@ -751,7 +751,7 @@ public:
 
     void notifyCreation(VM& vm, JSScope* scope, const char* reason)
     {
-        m_singleton.notifyWrite(vm, this, scope, reason);
+        m_singleton.notifyWriteWeak(vm, scope, reason);
     }
 
     DECLARE_VISIT_CHILDREN;

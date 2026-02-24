@@ -98,7 +98,7 @@ void SymbolTable::visitChildrenImpl(JSCell* thisCell, Visitor& visitor)
     Base::visitChildren(thisSymbolTable, visitor);
 
     visitor.append(thisSymbolTable->m_arguments);
-    
+
     if (auto* rareData = thisSymbolTable->m_rareData.get())
         visitor.append(rareData->m_codeBlock);
     

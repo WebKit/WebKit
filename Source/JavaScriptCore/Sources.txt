@@ -577,6 +577,7 @@ heap/WeakBlock.cpp
 heap/WeakHandleOwner.cpp
 heap/WeakSet.cpp
 heap/WriteBarrierSupport.cpp
+heap/WriteBarrierValidationSlotVisitor.cpp
 
 inspector/AsyncStackTrace.cpp
 inspector/ConsoleMessage.cpp
