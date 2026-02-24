@@ -98,9 +98,18 @@ struct SameSizeAsMarginInfo {
 static_assert(sizeof(MarginValues) == sizeof(LayoutUnit[4]), "MarginValues should stay small");
 static_assert(sizeof(RenderBlockFlow::MarginInfo) == sizeof(SameSizeAsMarginInfo), "MarginInfo should stay small");
 
+struct SameSizeAsRenderBlockFlowRareData {
+    LayoutUnit margins[4];
+    uint32_t bitfields;
+    LayoutUnit alignContentShift;
+    void* multiColumnFlow;
+};
+
+static_assert(sizeof(RenderBlockFlowRareData) == sizeof(SameSizeAsRenderBlockFlowRareData), "RenderBlockFlowRareData should stay small");
+
 RenderBlockFlowRareData::RenderBlockFlowRareData(const RenderBlockFlow& block)
     : m_margins(positiveMarginBeforeDefault(block), negativeMarginBeforeDefault(block), positiveMarginAfterDefault(block), negativeMarginAfterDefault(block))
-    , m_lineBreakToAvoidWidow(-1)
+    , m_lineBreakToAvoidWidow(0)
     , m_didBreakAtLineToAvoidWidow(false)
 {
 }
@@ -2168,7 +2177,7 @@ void RenderBlockFlow::setBreakAtLineToAvoidWidow(int lineToBreak)
 {
     ASSERT(lineToBreak >= 0);
     ASSERT(!ensureRareBlockFlowData().m_didBreakAtLineToAvoidWidow);
-    ensureRareBlockFlowData().m_lineBreakToAvoidWidow = lineToBreak;
+    ensureRareBlockFlowData().m_lineBreakToAvoidWidow = lineToBreak + 1;
 }
 
 void RenderBlockFlow::setDidBreakAtLineToAvoidWidow()
@@ -2194,7 +2203,7 @@ void RenderBlockFlow::clearShouldBreakAtLineToAvoidWidow() const
     if (!hasRareBlockFlowData())
         return;
 
-    rareBlockFlowData()->m_lineBreakToAvoidWidow = -1;
+    rareBlockFlowData()->m_lineBreakToAvoidWidow = 0;
 }
 
 bool RenderBlockFlow::hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule pageBoundaryRule) const
