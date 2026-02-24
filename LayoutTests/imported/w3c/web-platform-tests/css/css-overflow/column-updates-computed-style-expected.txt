@@ -1,0 +1,3 @@
+
+FAIL ::column updates computed style on its originating element assert_equals: expected "rgb(255, 0, 0)" but got ""
+

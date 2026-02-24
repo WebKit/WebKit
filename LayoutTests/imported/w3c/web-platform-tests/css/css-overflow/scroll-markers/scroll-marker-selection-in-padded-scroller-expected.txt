@@ -1,0 +1,22 @@
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+
+Harness Error (FAIL), message = Error: assert_equals: marker 15 should be selected. expected "rgb(0, 128, 0)" but got ""
+
+FAIL scroll-marker selection at left edge with padding assert_equals: carousel is snapped back to initial position. expected 962 but got 0
+FAIL scroll-marker selection at right edge with padding assert_equals: carousel is snapped back to initial position. expected 5762 but got 6724
+

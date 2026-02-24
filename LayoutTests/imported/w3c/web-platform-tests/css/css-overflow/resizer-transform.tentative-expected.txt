@@ -1,3 +1,0 @@
-
-PASS Resizer should account for transforms to decide resize direction
-

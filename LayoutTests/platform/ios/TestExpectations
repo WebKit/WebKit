@@ -1362,8 +1362,15 @@ fast/scrolling/v-rl-scrollbars-initial-position.html [ Skip ]
 fast/scrolling/vertical-scrollbar-position.html [ Skip ]
 fast/scrolling/content-box-smaller-than-scrollbar.html [ Skip ]
 
+# These tests time out on iOS for some reason
+imported/w3c/web-platform-tests/css/css-overflow/keyboard-scroll.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrolling-with-margin-and-transform.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollable-overflow-padding-input.html [ Failure ]
+
+# scrollbar-gutter
 imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-root-both-edges.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-root.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-with-background-gradient.html [ ImageOnlyFailure ]
 
 # Subpixel line positioning
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/webkit-line-clamp-027.html [ ImageOnlyFailure ]

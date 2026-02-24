@@ -1,0 +1,11 @@
+legend
+
+FAIL Scroll second column into view assert_equals: expected 140 but got 0
+FAIL Scroll third column into view assert_equals: expected 280 but got 0
+FAIL Scroll fourth column into view assert_equals: expected 280 but got 0
+FAIL Scroll fifth column into view assert_equals: expected 280 but got 0
+FAIL Scroll fourth column into view again assert_equals: expected 280 but got 0
+FAIL Scroll third column into view again assert_equals: expected 280 but got 0
+FAIL Scroll second column into view again assert_equals: expected 140 but got 0
+PASS Scroll first column into view
+

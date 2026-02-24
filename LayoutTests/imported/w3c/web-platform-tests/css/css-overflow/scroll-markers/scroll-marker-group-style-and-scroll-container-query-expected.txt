@@ -1,0 +1,4 @@
+
+FAIL ::scroll-marker-group should not skip originating element for scroll-state queries assert_equals: expected "pass" but got ""
+FAIL ::scroll-marker-group should not skip originating element for style queries assert_equals: expected "pass" but got ""
+

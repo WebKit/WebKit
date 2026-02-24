@@ -1,0 +1,10 @@
+
+PASS "::scroll-button" should be an invalid selector
+PASS "::scroll-button)" should be an invalid selector
+PASS "::scroll-button(" should be an invalid selector
+PASS "::scroll-button()" should be an invalid selector
+PASS "::scroll-button('up')" should be an invalid selector
+PASS "::scroll-button(up, down)" should be an invalid selector
+PASS "::scroll-button(north)" should be an invalid selector
+PASS "::scroll-button(5051)" should be an invalid selector
+

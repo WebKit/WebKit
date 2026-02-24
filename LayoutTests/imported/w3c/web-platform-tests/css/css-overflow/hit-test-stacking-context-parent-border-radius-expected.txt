@@ -1,0 +1,18 @@
+
+FAIL Hit testing respects border-radius clipping on elements without creating stacking contexts assert_equals: expected Element node <body><div id="parent">
+  <div id="child"></div>
+</div>
+
+... but got Element node <div id="child"></div>
+FAIL Hit testing respects border-radius clipping on elements with will-change transform assert_equals: expected Element node <body><div id="parent">
+  <div id="child" style="will-cha... but got Element node <div id="child" style="will-change: transform;"></div>
+FAIL Hit testing respects border-radius clipping on elements with opacity < 1 assert_equals: expected Element node <body><div id="parent">
+  <div id="child" style="opacity:... but got Element node <div id="child" style="opacity: 0.2;"></div>
+FAIL Hit testing respects border-radius clipping on elements with a transform property assert_equals: expected Element node <body><div id="parent">
+  <div id="child" style="height: ... but got Element node <div id="child" style="height: 1000px; transform: transla...
+FAIL Hit testing respects border-radius clipping on elements with a PaintOffset from the container assert_equals: expected Element node <body><div id="parent">
+  <div id="child" style="position... but got Element node <div id="child" style="position: relative; top: 30px;"></...
+FAIL Hit testing respects border-radius clipping on elements with a PaintOffsetTranslation from the container assert_equals: expected Element node <body><div id="parent">
+  <div id="child" style="position... but got Element node <div id="child" style="position: relative; top: 30px; ove...
+FAIL Hit testing respects border-radius clipping on elements with a different coordinate space assert_equals: expected Element node <div style="width: 50px; height: 50px; overflow: scroll;"... but got Element node <div id="child" style="position: relative; top: 30px; ove...
+

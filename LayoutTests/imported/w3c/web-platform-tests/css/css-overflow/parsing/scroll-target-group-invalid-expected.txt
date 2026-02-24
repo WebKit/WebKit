@@ -1,0 +1,7 @@
+
+PASS e.style['scroll-target-group'] = "10" should not set the property value
+PASS e.style['scroll-target-group'] = "true" should not set the property value
+PASS e.style['scroll-target-group'] = "default" should not set the property value
+PASS e.style['scroll-target-group'] = "all" should not set the property value
+PASS e.style['scroll-target-group'] = "auto, auto" should not set the property value
+

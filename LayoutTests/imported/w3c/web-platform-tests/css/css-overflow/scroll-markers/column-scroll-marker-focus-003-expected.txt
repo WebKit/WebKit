@@ -1,0 +1,22 @@
+inline
+inline
+inline
+inline
+inline
+inline2 inline3
+inline3
+inline3
+inline3
+inline3
+inline4
+
+PASS Focus second column
+FAIL Focus third column assert_equals: expected Element node <span tabindex="0" id="inlineElm2">inline2</span> but got Element node <span tabindex="0" id="inlineElm1">
+      inline<br>
+    ...
+FAIL Focus fourth column assert_equals: expected Element node <div tabindex="0" id="inlineBlock1" style="display:inline... but got Element node <span tabindex="0" id="inlineElm1">
+      inline<br>
+    ...
+FAIL Focus fifth column assert_equals: expected Element node <span tabindex="0" id="inlineElm3" style="border:1px soli... but got Element node <div tabindex="0" style="display:inline-block; width:100%...
+FAIL Focus sixth column assert_equals: expected Element node <span tabindex="0" id="inlineElm4" style="border:1px soli... but got Element node <div tabindex="0" style="display:inline-block; width:100%...
+

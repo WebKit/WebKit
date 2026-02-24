@@ -1,0 +1,4 @@
+
+FAIL Scroll last item into view assert_equals: expected 800 but got 0
+FAIL Scroll seventh item into view assert_equals: expected 600 but got 0
+

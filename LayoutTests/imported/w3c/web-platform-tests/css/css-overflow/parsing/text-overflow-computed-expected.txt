@@ -1,4 +1,7 @@
 
 PASS Property text-overflow value 'clip'
 PASS Property text-overflow value 'ellipsis'
+FAIL Property text-overflow value '""' assert_true: '""' is a supported value for text-overflow. expected true got false
+FAIL Property text-overflow value '"-"' assert_true: '"-"' is a supported value for text-overflow. expected true got false
+FAIL Property text-overflow value '"marker string"' assert_true: '"marker string"' is a supported value for text-overflow. expected true got false
 

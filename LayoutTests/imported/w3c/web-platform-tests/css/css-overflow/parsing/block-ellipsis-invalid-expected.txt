@@ -1,7 +1,10 @@
 
 PASS e.style['block-ellipsis'] = "hidden" should not set the property value
+FAIL e.style['block-ellipsis'] = "none" should not set the property value assert_equals: expected "" but got "none"
 PASS e.style['block-ellipsis'] = "none auto" should not set the property value
+PASS e.style['block-ellipsis'] = "no-ellipsis auto" should not set the property value
 PASS e.style['block-ellipsis'] = "auto \"string\"" should not set the property value
 PASS e.style['block-ellipsis'] = "\"string\" none" should not set the property value
+PASS e.style['block-ellipsis'] = "\"string\" no-ellipsis" should not set the property value
 PASS e.style['block-ellipsis'] = "\"first\" \"second\"" should not set the property value
 
