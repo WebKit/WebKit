@@ -26,6 +26,9 @@
 #include "config.h"
 #include "Cookie.h"
 
+#include <wtf/WallTime.h>
+#include <wtf/text/StringBuilder.h>
+
 namespace WebCore {
     
 #if !PLATFORM(COCOA)
@@ -44,6 +47,41 @@ unsigned Cookie::hash() const
 #endif
 
 namespace CookieUtil {
+
+String buildSetCookieStringWithoutDomain(const Cookie& cookie)
+{
+    StringBuilder builder;
+    builder.append(cookie.name, '=', cookie.value);
+
+    if (!cookie.path.isEmpty())
+        builder.append("; Path="_s, cookie.path);
+
+    if (cookie.expires) {
+        auto now = WallTime::now().secondsSinceEpoch().milliseconds();
+        auto maxAgeSeconds = static_cast<int64_t>((*cookie.expires - now) / 1000);
+        if (maxAgeSeconds > 0)
+            builder.append("; Max-Age="_s, maxAgeSeconds);
+    }
+
+    if (cookie.httpOnly)
+        builder.append("; HttpOnly"_s);
+
+    if (cookie.secure)
+        builder.append("; Secure"_s);
+
+    switch (cookie.sameSite) {
+    case Cookie::SameSitePolicy::Lax:
+        builder.append("; SameSite=Lax"_s);
+        break;
+    case Cookie::SameSitePolicy::Strict:
+        builder.append("; SameSite=Strict"_s);
+        break;
+    case Cookie::SameSitePolicy::None:
+        break;
+    }
+
+    return builder.toString();
+}
 
 String defaultPathForURL(const URL& url)
 {

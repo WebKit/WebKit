@@ -65,6 +65,18 @@ NetworkStorageSession::~NetworkStorageSession()
 
 void NetworkStorageSession::setCookie(const Cookie& cookie)
 {
+    if (equalLettersIgnoringASCIICase(cookie.domain, "localhost"_s)
+        || cookie.domain.endsWithIgnoringASCIICase(".localhost"_s)) {
+        auto header = CookieUtil::buildSetCookieStringWithoutDomain(cookie);
+        auto url = URL { makeString("http://"_s, cookie.domain, cookie.path.isEmpty() ? "/"_s : cookie.path) };
+        NSDictionary *headerFields = @{ @"Set-Cookie": (NSString *)header };
+        auto nsCookies = [NSHTTPCookie cookiesWithResponseHeaderFields:headerFields forURL:url.createNSURL().get()];
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        [nsCookieStorage() setCookies:nsCookies forURL:url.createNSURL().get() mainDocumentURL:url.createNSURL().get()];
+        END_BLOCK_OBJC_EXCEPTIONS
+        return;
+    }
+
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS

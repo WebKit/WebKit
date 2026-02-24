@@ -126,6 +126,7 @@ struct Cookie {
 namespace CookieUtil {
 
 WEBCORE_EXPORT String defaultPathForURL(const URL&);
+WEBCORE_EXPORT String buildSetCookieStringWithoutDomain(const Cookie&);
 
 } // namespace CookieUtil
 
