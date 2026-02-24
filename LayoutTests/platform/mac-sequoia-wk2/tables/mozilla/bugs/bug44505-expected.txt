@@ -143,7 +143,11 @@ layer at (294,297) size 11x22 clip at (295,298) size 9x20
   RenderTableCell {TD} at (284,27) size 13x22 [bgcolor=#0000FF] [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
       text run at (2,2) width 4: " "
+<<<<<<< HEAD
 layer at (11,325) size 172x46 clip at (12,326) size 170x44 scrollWidth 216
+=======
+layer at (11,326) size 172x46 clip at (12,327) size 170x44 scrollWidth 226
+>>>>>>> 3dd3f19f008d (Block container inline-axis overflow includes padding + block-level child margins)
   RenderTableCell {TD} at (2,2) size 172x46 [bgcolor=#0000FF] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (11,11) size 206x24 [border: (3px solid #000000)]
       RenderText {#text} at (3,3) size 21x18
@@ -165,7 +169,11 @@ layer at (8,416) size 300x90 clip at (9,417) size 298x88
     RenderTableSection {TBODY} at (1,1) size 298x88
       RenderTableRow {TR} at (0,2) size 298x60
       RenderTableRow {TR} at (0,64) size 298x22
+<<<<<<< HEAD
 layer at (11,419) size 154x60 clip at (12,420) size 152x58 scrollWidth 207
+=======
+layer at (11,420) size 154x60 clip at (12,421) size 152x58 scrollWidth 208
+>>>>>>> 3dd3f19f008d (Block container inline-axis overflow includes padding + block-level child margins)
   RenderTableCell {TD} at (2,2) size 154x60 [bgcolor=#0000FF] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {P} at (2,18) size 206x24 [border: (3px solid #000000)]
       RenderText {#text} at (3,3) size 28x18

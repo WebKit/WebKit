@@ -150,21 +150,23 @@ public:
     RenderBox* nextSiblingBox() const;
     RenderBox* nextInFlowSiblingBox() const;
 
-    // Visual and layout overflow are in the coordinate space of the box.  This means that they aren't purely physical directions.
+    // Overflow rects are in the coordinate space of the box. This means that they aren't purely physical directions.
     // For horizontal-tb and vertical-lr they will match physical directions, but for horizontal-bt and vertical-rl, the top/bottom and left/right
     // respectively are flipped when compared to their physical counterparts.  For example minX is on the left in vertical-lr,
     // but it is on the right in vertical-rl.
     WEBCORE_EXPORT LayoutRect flippedClientBoxRect() const;
+    inline const LayoutRect scrollableContentAreaOverflowRect() const;
+    inline const LayoutRect scrollablePaddingAreaOverflowRect() const;
     LayoutRect layoutOverflowRect() const { return m_overflow ? m_overflow->layoutOverflowRect() : flippedClientBoxRect(); }
     inline LayoutUnit logicalLeftLayoutOverflow() const;
     inline LayoutUnit logicalRightLayoutOverflow() const;
-    
     LayoutRect visualOverflowRect() const { return m_overflow ? m_overflow->visualOverflowRect() : borderBoxRect(); }
     inline LayoutUnit logicalLeftVisualOverflow() const;
     inline LayoutUnit logicalRightVisualOverflow() const;
 
-    // RenderBox's basic implementation accounts for the writing mode (only).
+    // RenderBox's basic allowedLayoutOverflow() accounts for the writing mode (only).
     virtual LayoutOptionalOutsets allowedLayoutOverflow() const;
+    LayoutRect clampToAllowedLayoutOverflow(const LayoutRect&, const LayoutRect& flippedClientBoxRect);
     void addLayoutOverflow(const LayoutRect&);
     void addVisualOverflow(const LayoutRect&);
     void clearOverflow();
@@ -173,11 +175,13 @@ public:
     void addVisualEffectOverflow();
     LayoutRect applyVisualEffectOverflow(const LayoutRect&) const;
 
-    enum class ComputeOverflowOptions {
+    enum class ComputeOverflowOptions : uint8_t {
         None,
         RecomputeFloats = 1 << 0,
-        MarginsExtendContentArea = 1 << 1,
-        MarginsExtendLayoutOverflow = 1 << 2,
+        MarginsExtendContentAreaX = 1 << 1,
+        MarginsExtendContentAreaY = 1 << 2,
+        MarginsExtendContentArea = MarginsExtendContentAreaX | MarginsExtendContentAreaY,
+        MarginsExtendLayoutOverflow = 1 << 3,
     };
     virtual void addOverflowFromInFlowChildren(OptionSet<ComputeOverflowOptions> = { });
     void addOverflowFromContainedBox(const RenderBox& child, OptionSet<ComputeOverflowOptions> = { });
@@ -699,6 +703,7 @@ protected:
 
 private:
     void addOverflowWithRendererOffset(const RenderBox&, LayoutSize, OptionSet<ComputeOverflowOptions> = { });
+    void addMarginBoxOverflow(const RenderBox&, LayoutSize offsetFromThis, OptionSet<ComputeOverflowOptions>);
 
     void updateShapeOutsideInfoAfterStyleChange(const RenderStyle&, const RenderStyle* oldStyle, Style::Difference);
 

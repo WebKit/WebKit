@@ -670,7 +670,7 @@ void RenderBlockFlow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit 
         contentArea.shiftMaxYEdgeTo(afterPaddingEdge - paddingAfter());
     else
         contentArea.shiftMaxXEdgeTo(afterPaddingEdge - paddingAfter());
-    computeOverflow(contentArea);
+    computeOverflow(contentArea, isHorizontalWritingMode() ? ComputeOverflowOptions::MarginsExtendContentAreaX : ComputeOverflowOptions::MarginsExtendContentAreaY);
 
     auto* state = view().frameView().layoutContext().layoutState();
     if (state && state->pageLogicalHeight())

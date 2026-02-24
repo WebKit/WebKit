@@ -68,6 +68,8 @@ public:
     void addLayoutOverflow(const LayoutRect&);
     void addVisualOverflow(const LayoutRect&);
     void addContentOverflow(const LayoutRect& rect) { m_contentArea.uniteEvenIfEmpty(rect); }
+    void addContentOverflowX(const LayoutRect& rect) { m_contentArea.uniteXEvenIfEmpty(rect); }
+    void addContentOverflowY(const LayoutRect& rect) { m_contentArea.uniteYEvenIfEmpty(rect); }
 
     void setLayoutOverflow(const LayoutRect& rect) { m_layoutOverflow = rect; }
     void setVisualOverflow(const LayoutRect& rect) { m_visualOverflow = rect; }

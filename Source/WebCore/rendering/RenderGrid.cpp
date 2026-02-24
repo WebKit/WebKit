@@ -707,7 +707,7 @@ void RenderGrid::layoutMasonry(RelayoutChildren relayoutChildren)
 
         m_trackSizingAlgorithm.reset();
 
-        computeOverflow(contentOverflowRect());
+        computeOverflow(contentOverflowRect(), ComputeOverflowOptions::MarginsExtendLayoutOverflow);
 
         updateDescendantTransformsAfterLayout();
     }

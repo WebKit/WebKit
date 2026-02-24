@@ -4517,16 +4517,9 @@ void RenderBox::addOverflowWithRendererOffset(const RenderBox& renderer, LayoutS
     childLayoutOverflowRect.move(offsetFromThis);
     addLayoutOverflow(childLayoutOverflowRect);
 
-    // Some in-flow boxes (e.g. flex items) extend the content edge.
-    if (hasPotentiallyScrollableOverflow()
-        && (options.contains(ComputeOverflowOptions::MarginsExtendLayoutOverflow) || options.contains(ComputeOverflowOptions::MarginsExtendContentArea))) {
-        auto childMarginRect = renderer.marginBoxRect();
-        childMarginRect.move(offsetFromThis);
-        if (options.contains(ComputeOverflowOptions::MarginsExtendContentArea) && !flippedContentBoxRect().contains(childMarginRect)) {
-            ensureOverflow().addContentOverflow(childMarginRect);
-        }
-        if (options.contains(ComputeOverflowOptions::MarginsExtendLayoutOverflow))
-            addLayoutOverflow(childMarginRect);
+    if ((hasPotentiallyScrollableOverflow() || isRenderView())
+        && options.containsAny({ ComputeOverflowOptions::MarginsExtendLayoutOverflow, ComputeOverflowOptions::MarginsExtendContentAreaX, ComputeOverflowOptions::MarginsExtendContentAreaY })) {
+        addMarginBoxOverflow(renderer, offsetFromThis, options);
     }
 
     if (paintContainmentApplies())
@@ -4583,6 +4576,22 @@ LayoutOptionalOutsets RenderBox::allowedLayoutOverflow() const
     return allowance;
 }
 
+LayoutRect RenderBox::clampToAllowedLayoutOverflow(const LayoutRect& rect, const LayoutRect& flippedClientBoxRect)
+{
+    LayoutOptionalOutsets allowance = allowedLayoutOverflow();
+    LayoutRect clippedRect(rect);
+    // Non-negative values indicate a limit, let's apply them.
+    if (allowance.top())
+        clippedRect.shiftYEdgeTo(std::max(rect.y(), flippedClientBoxRect.y() - *allowance.top()));
+    if (allowance.bottom())
+        clippedRect.shiftMaxYEdgeTo(std::min(rect.maxY(), flippedClientBoxRect.maxY() + *allowance.bottom()));
+    if (allowance.left())
+        clippedRect.shiftXEdgeTo(std::max(rect.x(), flippedClientBoxRect.x() - *allowance.left()));
+    if (allowance.right())
+        clippedRect.shiftMaxXEdgeTo(std::min(rect.maxX(), flippedClientBoxRect.maxX() + *allowance.right()));
+    return clippedRect;
+}
+
 void RenderBox::addLayoutOverflow(const LayoutRect& rect)
 {
     auto clientBox = flippedClientBoxRect();
@@ -4590,26 +4599,17 @@ void RenderBox::addLayoutOverflow(const LayoutRect& rect)
         return;
 
     // For overflow clip objects, we don't want to propagate overflow into unreachable areas.
-    LayoutRect overflowRect(rect);
     if (hasPotentiallyScrollableOverflow() || isRenderView()) {
-        LayoutOptionalOutsets allowance = allowedLayoutOverflow();
-        // Non-negative values indicate a limit, let's apply them.
-        if (allowance.top())
-            overflowRect.shiftYEdgeTo(std::max(overflowRect.y(), clientBox.y() - *allowance.top()));
-        if (allowance.bottom())
-            overflowRect.shiftMaxYEdgeTo(std::min(overflowRect.maxY(), clientBox.maxY() + *allowance.bottom()));
-        if (allowance.left())
-            overflowRect.shiftXEdgeTo(std::max(overflowRect.x(), clientBox.x() - *allowance.left()));
-        if (allowance.right())
-            overflowRect.shiftMaxXEdgeTo(std::min(overflowRect.maxX(), clientBox.maxX() + *allowance.right()));
+        LayoutRect clippedRect = clampToAllowedLayoutOverflow(rect, clientBox);
 
         // Now re-test with the adjusted rectangle and see if it has become unreachable or fully
         // contained.
-        if (clientBox.contains(overflowRect) || overflowRect.isEmpty())
+        if (clientBox.contains(clippedRect) || clippedRect.isEmpty())
             return;
-    }
 
-    ensureOverflow().addLayoutOverflow(overflowRect);
+        ensureOverflow().addLayoutOverflow(clippedRect);
+    } else
+        ensureOverflow().addLayoutOverflow(rect);
 }
 
 void RenderBox::addVisualOverflow(const LayoutRect& rect)
@@ -4619,6 +4619,31 @@ void RenderBox::addVisualOverflow(const LayoutRect& rect)
         return;
 
     ensureOverflow().addVisualOverflow(rect);
+}
+
+void RenderBox::addMarginBoxOverflow(const RenderBox& renderer, LayoutSize offsetFromThis, OptionSet<ComputeOverflowOptions> options)
+{
+    auto childMarginRect = renderer.marginBoxRect();
+    childMarginRect.move(offsetFromThis);
+
+    auto contentArea = scrollableContentAreaOverflowRect();
+    if (contentArea.contains(childMarginRect))
+        return; // Quick-check short circuit.
+
+    // Some in-flow boxes (e.g. grid items) only extend the layout overflow edge.
+    if (options.contains(ComputeOverflowOptions::MarginsExtendLayoutOverflow)) {
+        auto clippedChildMarginRect = clampToAllowedLayoutOverflow(childMarginRect, flippedClientBoxRect());
+        if (!layoutOverflowRect().contains(clippedChildMarginRect))
+            ensureOverflow().addLayoutOverflow(clippedChildMarginRect);
+        ASSERT(!options.containsAny({ ComputeOverflowOptions::MarginsExtendContentAreaX, ComputeOverflowOptions::MarginsExtendContentAreaY })); // If you need this to work, remove the return statement.
+        return;
+    }
+
+    // Some in-flow boxes (e.g. flex items) extend the content overflow edge as well.
+    if (options.contains(ComputeOverflowOptions::MarginsExtendContentAreaX) && !contentArea.containsX(childMarginRect))
+        ensureOverflow().addContentOverflowX(childMarginRect);
+    if (options.contains(ComputeOverflowOptions::MarginsExtendContentAreaY) && !contentArea.containsY(childMarginRect))
+        ensureOverflow().addContentOverflowY(childMarginRect);
 }
 
 void RenderBox::clearOverflow()

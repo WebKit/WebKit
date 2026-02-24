@@ -570,16 +570,12 @@ void RenderBlock::computeOverflow(LayoutRect contentArea, OptionSet<ComputeOverf
     addOverflowFromInFlowChildren(options);
     addOverflowFromOutOfFlowBoxes();
 
-    if (hasPotentiallyScrollableOverflow()) {
+    if (hasPotentiallyScrollableOverflow() || isRenderView()) {
         if (!flippedContentBoxRect().contains(contentArea))
             ensureOverflow();
         if (hasRenderOverflow()) {
             m_overflow->addContentOverflow(contentArea);
-            auto contentOverflow = m_overflow->contentArea();
-            flipForWritingMode(contentOverflow);
-            contentOverflow.expand(padding());
-            flipForWritingMode(contentOverflow);
-            addLayoutOverflow(contentOverflow);
+            addLayoutOverflow(scrollablePaddingAreaOverflowRect());
         }
     }
 

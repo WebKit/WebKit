@@ -1,10 +1,6 @@
 
 PASS .scroll 1
-FAIL .scroll 2 assert_equals:
-<div class="scroll zero-w" data-expected-scroll-width="100">
-  <div class="zero-h"></div>
-</div>
-scrollWidth expected 100 but got -15
+PASS .scroll 2
 PASS .scroll 3
 PASS .scroll 4
 PASS .scroll 5
