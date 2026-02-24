@@ -53,10 +53,11 @@ static double adjustValueForPageZoom(double dimension, const CSSToLengthConversi
         return dimension;
 
     auto* style = conversionData.style();
-    if (!style || !evaluationTimeZoomEnabled(*style))
+    auto* renderView = conversionData.renderView();
+    if (!renderView || !style || !evaluationTimeZoomEnabled(*style))
         return dimension;
 
-    return dimension / conversionData.renderView()->zoomFactor();
+    return dimension / renderView->zoomFactor();
 }
 
 static double lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis logicalAxis, const FloatSize& size, const RenderStyle* style)
