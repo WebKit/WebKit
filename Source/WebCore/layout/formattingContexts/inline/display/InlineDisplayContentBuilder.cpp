@@ -878,15 +878,6 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
                 continue;
             }
             if (lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart()) {
-                // FIXME: While we should only get here with empty inline boxes, there are
-                // some cases where the inline box has some content on the paragraph level (at bidi split) but line breaking renders it empty
-                // or their content is completely collapsed.
-                // Such inline boxes should also be handled here.
-                if (!lineBox.hasContent()) {
-                    // FIXME: It's expected to not have any inline boxes on empty lines. They make the line taller. We should reconsider this.
-                    setInlineBoxGeometry(layoutBox, formattingContext().geometryForBox(layoutBox), { { }, { } }, true);
-                    continue;
-                }
                 auto isEmptyInlineBox = [&] {
                     // FIXME: Maybe we should not tag ruby bases with annotation boxes only contentful?
                     if (!lineBox.inlineLevelBoxFor(lineRun).hasContent())
@@ -923,6 +914,18 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
                 // Block content should always be placed at the start of the content box even when floats shrink the line.
                 auto lineOffset = lineBoxLogicalRect.left() - lineLayoutResult.lineGeometry.initialLogicalLeft;
                 isHorizontalWritingMode ? visualRectRelativeToRoot.moveHorizontally(lineOffset + boxMarginLeft) : visualRectRelativeToRoot.moveVertically(lineOffset + boxMarginLeft);
+
+                auto updateEnclosingInlineBoxesGeometryWithBlock = [&] {
+                    for (auto& displayBox : boxes) {
+                        ASSERT(displayBox.isInlineBox());
+                        if (!displayBox.isNonRootInlineBox())
+                            continue;
+                        displayBox.setRect(visualRectRelativeToRoot, visualRectRelativeToRoot);
+                        displayBox.setHasContent();
+                        setInlineBoxGeometry(displayBox.layoutBox(), formattingContext().geometryForBox(displayBox.layoutBox()), logicalRect, false);
+                    }
+                };
+                updateEnclosingInlineBoxesGeometryWithBlock();
 
                 appendBlockLevelDisplayBox(lineRun, visualRectRelativeToRoot, boxes);
                 boxGeometry.setTopLeft({ lineLogicalLeft + contentLineRightEdge - lineOffset, lineLogicalTop + logicalRect.top() });

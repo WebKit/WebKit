@@ -200,7 +200,7 @@ layer at (0,0) size 785x1452
             RenderText {#text} at (741,0) size 28x18
               text run at (741,0) width 28: "Test"
       RenderBlock (anonymous) at (0,730) size 769x690
-        RenderInline {B} at (0,0) size 0x0
+        RenderInline {B} at (0,0) size 769x690
           RenderText {#text} at (0,0) size 0x0
           RenderBlock {P} at (0,18) size 769x18
             RenderText {#text} at (91,0) size 678x18
@@ -255,8 +255,8 @@ layer at (0,0) size 785x1452
           RenderBlock {DIV} at (0,154) size 769x42
             RenderText {#text} at (682,0) size 61x18
               text run at (682,0) width 61: "This is a "
-            RenderInline {SPAN} at (0,0) size 0x0
-              RenderInline {EM} at (742,0) size 27x18
+            RenderInline {SPAN} at (742,0) size 27x42
+              RenderInline {EM} at (742,0) size 27x24
                 RenderText {#text} at (742,0) size 27x18
                   text run at (742,0) width 27: "Test"
                 RenderTable {TABLE} at (755,18) size 14x24

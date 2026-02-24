@@ -58,7 +58,7 @@ layer at (0,0) size 800x1230
             RenderText {#text} at (754,0) size 30x19
               text run at (754,0) width 30: "RTL"
           RenderBlock (anonymous) at (0,36) size 784x92
-            RenderInline {SPAN} at (740,-2) size 44x95 [bgcolor=#008000] [border: (2px solid #FF0000)]
+            RenderInline {SPAN} at (0,-2) size 784x96 [bgcolor=#008000] [border: (2px solid #FF0000)]
               RenderText {#text} at (740,0) size 22x19
                 text run at (740,0) width 22: "aaa"
               RenderBlock {DIV} at (0,36) size 784x20
@@ -73,7 +73,7 @@ layer at (0,0) size 800x1230
               text run at (629,0) width 5 RTL: "."
               text run at (633,0) width 151: "RTL, empty inline after"
           RenderBlock (anonymous) at (0,36) size 784x92
-            RenderInline {SPAN} at (740,-2) size 44x79 [bgcolor=#008000] [border: (2px solid #FF0000)]
+            RenderInline {SPAN} at (0,-2) size 784x80 [bgcolor=#008000] [border: (2px solid #FF0000)]
               RenderText {#text} at (740,0) size 22x19
                 text run at (740,0) width 22: "aaa"
               RenderBlock {DIV} at (0,36) size 784x20
@@ -99,7 +99,7 @@ layer at (0,0) size 800x1230
               text run at (557,0) width 5 RTL: "."
               text run at (561,0) width 223: "RTL, empty inline before and after"
           RenderBlock (anonymous) at (0,36) size 784x76
-            RenderInline {SPAN} at (762,-2) size 22x63 [bgcolor=#008000] [border: (2px solid #FF0000)]
+            RenderInline {SPAN} at (0,-2) size 784x64 [bgcolor=#008000] [border: (2px solid #FF0000)]
               RenderBlock {DIV} at (0,20) size 784x20
                 RenderText {#text} at (760,0) size 24x19
                   text run at (760,0) width 24: "bbb"
