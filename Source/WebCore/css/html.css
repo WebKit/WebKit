@@ -1142,8 +1142,8 @@ select::picker-icon {
     inset: auto;
     min-inline-size: -internal-auto-base(unset, anchor-size(self-inline));
     min-block-size: 1lh;
-    /* Go to the edge of the viewport, and add scrollbars if needed. */
-    max-block-size: stretch;
+    /* FIXME: This should be using `max-block-size: stretch` when supported */
+    max-block-size: 100svb;
     overflow: auto;
     /* Below and span-right, by default. */
     position-area: -internal-auto-base(unset, block-end span-inline-end);
