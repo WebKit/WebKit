@@ -1215,7 +1215,7 @@ TEST(WKHTTPCookieStore, SetCookieForLocalhost)
     done = false;
 
     // Verify cookie is sent in HTTP requests to localhost.
-    __block String receivedCookies;
+    String receivedCookies;
     HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
         while (true) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
