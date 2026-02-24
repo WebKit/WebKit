@@ -291,9 +291,9 @@ RefPtr<StringImpl> StringImpl::create(std::span<const char8_t> codeUnits)
     if (charactersAreAllASCII(codeUnits))
         return create(byteCast<Latin1Character>(codeUnits));
 
-    auto input = reinterpret_cast<const char*>(codeUnits.data());
     auto inputLength = codeUnits.size();
-
+#if CPU(ARM64)
+    auto input = reinterpret_cast<const char*>(codeUnits.data());
     if (!simdutf::validate_utf8(input, inputLength))
         return nullptr;
 
@@ -306,6 +306,15 @@ RefPtr<StringImpl> StringImpl::create(std::span<const char8_t> codeUnits)
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(written == utf16Length);
 
     return string;
+#else
+    Vector<char16_t, 1024> buffer(inputLength);
+    auto result = Unicode::convert(codeUnits, buffer.mutableSpan());
+    if (result.code != Unicode::ConversionResultCode::Success)
+        return nullptr;
+
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(result.buffer.size() <= inputLength);
+    return create(result.buffer);
+#endif
 }
 
 Ref<StringImpl> StringImpl::createStaticStringImpl(std::span<const Latin1Character> characters)
