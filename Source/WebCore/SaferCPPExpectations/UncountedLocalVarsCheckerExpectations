@@ -15,8 +15,8 @@ Modules/webaudio/PannerNode.cpp
 Modules/webaudio/ScriptProcessorNode.cpp
 Modules/webaudio/StereoPannerNode.cpp
 [ iOS ] Modules/webdatabase/DatabaseTracker.cpp
+[ iOS ] Source/WebCore/dom/ElementTraversal.h
 [ Mac ] accessibility/AccessibilityNodeObject.cpp
-[ iOS ] accessibility/AccessibilityNodeObject.cpp
 [ Mac ] accessibility/AccessibilityObject.cpp
 [ iOS ] accessibility/ios/AccessibilityObjectIOS.mm
 [ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
@@ -58,7 +58,6 @@ bindings/js/StructuredClone.cpp
 css/SelectorChecker.cpp
 css/ShorthandSerializer.cpp
 [ Mac ] dom/Document.cpp
-[ iOS ] dom/Document.cpp
 dom/Node.cpp
 dom/Position.cpp
 [ Mac ] dom/Range.cpp
@@ -97,7 +96,6 @@ page/FocusController.cpp
 [ Mac ] page/IntersectionObserver.cpp
 [ iOS ] page/LocalDOMWindow.cpp
 [ Mac ] page/LocalFrameView.cpp
-[ iOS ] page/LocalFrameView.cpp
 [ iOS ] page/Quirks.cpp
 [ iOS ] page/cocoa/ContentChangeObserver.cpp
 [ iOS ] page/ios/EventHandlerIOS.mm
@@ -116,7 +114,6 @@ platform/graphics/filters/software/FEMorphologySoftwareApplier.cpp
 [ Mac ] rendering/RenderBox.cpp
 rendering/RenderCounter.cpp
 [ Mac ] rendering/RenderImage.cpp
-[ iOS ] rendering/RenderImage.cpp
 rendering/RenderLayer.cpp
 [ iOS ] rendering/RenderLayerCompositor.cpp
 [ iOS ] rendering/RenderSelectFallbackButton.cpp
