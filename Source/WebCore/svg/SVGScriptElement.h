@@ -52,7 +52,7 @@ private:
     void childrenChanged(const ChildChange&) final;
     void finishParsingChildren() final;
 
-    bool isURLAttribute(const Attribute& attribute) const final { return attribute.name() == AtomString { sourceAttributeValue() }; }
+    bool NODELETE isURLAttribute(const Attribute&) const final;
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*) const final;

@@ -573,12 +573,12 @@ public:
 
     virtual bool accessKeyAction(bool /*sendToAnyEvent*/) { return false; }
 
-    virtual bool isURLAttribute(const Attribute&) const { return false; }
-    virtual bool attributeContainsURL(const Attribute& attribute) const { return isURLAttribute(attribute); }
+    virtual bool NODELETE isURLAttribute(const Attribute&) const { return false; }
+    virtual bool NODELETE attributeContainsURL(const Attribute& attribute) const { return isURLAttribute(attribute); }
     String resolveURLStringIfNeeded(const String& urlString, ResolveURLs = ResolveURLs::Yes, const URL& base = URL()) const;
     virtual String completeURLsInAttributeValue(const URL& base, const Attribute&, ResolveURLs = ResolveURLs::Yes) const;
     virtual Attribute replaceURLsInAttributeValue(const Attribute&, const CSS::SerializationContext&) const;
-    virtual bool isHTMLContentAttribute(const Attribute&) const { return false; }
+    virtual bool NODELETE isHTMLContentAttribute(const Attribute&) const { return false; }
 
     WEBCORE_EXPORT URL getURLAttribute(const QualifiedName&) const;
     inline URL getURLAttributeForBindings(const QualifiedName&) const;

@@ -139,7 +139,7 @@ private:
     
     void setDisabledState(bool);
 
-    bool isURLAttribute(const Attribute&) const final;
+    bool NODELETE isURLAttribute(const Attribute&) const final;
 
     HTMLLinkElement(const QualifiedName&, Document&, bool createdByParser);
 

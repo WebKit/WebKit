@@ -71,7 +71,7 @@ private:
 
     void childrenChanged(const ChildChange&) final;
 
-    bool isURLAttribute(const Attribute&) const final;
+    bool NODELETE isURLAttribute(const Attribute&) const final;
     const AtomString& imageSourceURL() const final;
 
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;

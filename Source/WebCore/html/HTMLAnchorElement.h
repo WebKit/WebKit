@@ -100,7 +100,7 @@ private:
     bool isKeyboardFocusable(const FocusEventData&) const override;
     void defaultEventHandler(Event&) final;
     void setActive(bool active, Style::InvalidationScope) final;
-    bool isURLAttribute(const Attribute&) const final;
+    bool NODELETE isURLAttribute(const Attribute&) const final;
     bool canStartSelection() const final;
     int defaultTabIndex() const final;
     bool draggable() const final;

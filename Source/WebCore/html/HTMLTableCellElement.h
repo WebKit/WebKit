@@ -69,7 +69,7 @@ private:
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
     const MutableStyleProperties* additionalPresentationalHintStyle() const override;
 
-    bool isURLAttribute(const Attribute&) const override;
+    bool NODELETE isURLAttribute(const Attribute&) const override;
 
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 };

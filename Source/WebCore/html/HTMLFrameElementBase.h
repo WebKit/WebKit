@@ -67,8 +67,8 @@ private:
     bool supportsFocus() const final;
     void setFocus(bool, FocusVisibility = FocusVisibility::Invisible) final;
     
-    bool isURLAttribute(const Attribute&) const final;
-    bool isHTMLContentAttribute(const Attribute&) const final;
+    bool NODELETE isURLAttribute(const Attribute&) const final;
+    bool NODELETE isHTMLContentAttribute(const Attribute&) const final;
 
     AtomString m_frameURL;
     bool m_openingURLAfterInserting { false };

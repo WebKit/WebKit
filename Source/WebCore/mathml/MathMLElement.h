@@ -82,7 +82,7 @@ private:
     bool canStartSelection() const final;
     bool isKeyboardFocusable(const FocusEventData&) const final;
     bool isMouseFocusable() const final;
-    bool isURLAttribute(const Attribute&) const final;
+    bool NODELETE isURLAttribute(const Attribute&) const final;
     bool supportsFocus() const final;
 };
 

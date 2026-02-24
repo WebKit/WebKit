@@ -36,7 +36,7 @@ public:
 private:
     HTMLModElement(const QualifiedName&, Document&);
 
-    bool isURLAttribute(const Attribute&) const final;
+    bool NODELETE isURLAttribute(const Attribute&) const final;
 };
 
 } // namespace WebCore

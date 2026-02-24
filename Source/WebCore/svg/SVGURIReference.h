@@ -74,7 +74,7 @@ public:
 protected:
     SVGURIReference(SVGElement* contextElement);
 
-    static bool isKnownAttribute(const QualifiedName& attributeName);
+    static bool NODELETE isKnownAttribute(const QualifiedName& attributeName);
 
     virtual bool haveFiredLoadEvent() const { return false; }
     virtual void setHaveFiredLoadEvent(bool) { }

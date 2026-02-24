@@ -87,7 +87,7 @@ private:
 
     ExceptionOr<void> setTextContent(ExceptionOr<String>);
 
-    bool isURLAttribute(const Attribute&) const final;
+    bool NODELETE isURLAttribute(const Attribute&) const final;
 
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 

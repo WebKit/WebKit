@@ -418,7 +418,7 @@ private:
 
     void reset() final;
 
-    bool isURLAttribute(const Attribute&) const final;
+    bool NODELETE isURLAttribute(const Attribute&) const final;
     bool isInRange() const final;
     bool isOutOfRange() const final;
 

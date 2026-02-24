@@ -743,7 +743,7 @@ protected:
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void finishParsingChildren() override;
-    bool isURLAttribute(const Attribute&) const override;
+    bool NODELETE isURLAttribute(const Attribute&) const override;
     void willAttachRenderers() override;
     void didAttachRenderers() override;
     void willDetachRenderers() override;

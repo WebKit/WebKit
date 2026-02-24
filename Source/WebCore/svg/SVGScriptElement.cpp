@@ -102,6 +102,11 @@ void SVGScriptElement::finishParsingChildren()
     ScriptElement::finishParsingChildren();
 }
 
+bool SVGScriptElement::isURLAttribute(const Attribute& attribute) const
+{
+    return SVGURIReference::isKnownAttribute(attribute.name()) || SVGElement::isURLAttribute(attribute);
+}
+
 void SVGScriptElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     SVGElement::addSubresourceAttributeURLs(urls);

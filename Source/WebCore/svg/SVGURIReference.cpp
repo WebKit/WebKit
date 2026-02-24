@@ -49,7 +49,9 @@ SVGURIReference::SVGURIReference(SVGElement* contextElement)
 
 bool SVGURIReference::isKnownAttribute(const QualifiedName& attributeName)
 {
-    return PropertyRegistry::isKnownAttribute(attributeName);
+    auto result = attributeName.matches(SVGNames::hrefAttr) || attributeName.matches(XLinkNames::hrefAttr);
+    ASSERT(result == PropertyRegistry::isKnownAttribute(attributeName));
+    return result;
 }
 
 SVGElement& SVGURIReference::contextElement() const

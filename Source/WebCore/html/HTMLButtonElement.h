@@ -80,7 +80,7 @@ private:
     bool isActivatedSubmit() const final;
     void setActivatedSubmit(bool flag) final;
 
-    bool isURLAttribute(const Attribute&) const final;
+    bool NODELETE isURLAttribute(const Attribute&) const final;
 
     bool canStartSelection() const final { return false; }
 
