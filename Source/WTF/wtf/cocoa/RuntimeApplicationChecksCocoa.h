@@ -207,6 +207,7 @@ WTF_EXPORT_PRIVATE bool isHoYoLAB();
 WTF_EXPORT_PRIVATE bool isMailCompositionService();
 WTF_EXPORT_PRIVATE bool isMiniBrowser();
 WTF_EXPORT_PRIVATE bool isMobileMail();
+WTF_EXPORT_PRIVATE bool isMaild();
 WTF_EXPORT_PRIVATE bool isMobileSafari();
 WTF_EXPORT_PRIVATE bool isNews();
 WTF_EXPORT_PRIVATE bool isSafariViewService();

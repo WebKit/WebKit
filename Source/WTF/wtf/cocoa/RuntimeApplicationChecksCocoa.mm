@@ -528,6 +528,12 @@ bool IOSApplication::isMobileMail()
     return isMobileMail;
 }
 
+bool IOSApplication::isMaild()
+{
+    static bool isMaild = applicationBundleIsEqualTo("com.apple.email.maild"_s);
+    return isMaild;
+}
+
 bool IOSApplication::isMailCompositionService()
 {
     static bool isMailCompositionService = applicationBundleIsEqualTo("com.apple.MailCompositionService"_s);

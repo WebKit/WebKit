@@ -1290,7 +1290,7 @@ void TreeResolver::resolveComposedTree()
 
         Ref element = Ref { downcast<Element>(node.get()) };
 
-        if (it.depth() > Settings::defaultMaximumRenderTreeDepth) {
+        if (it.depth() > Settings::maximumRenderTreeDepth()) {
             resetStyleForNonRenderedDescendants(element.get());
             it.traverseNextSkippingChildren();
             continue;

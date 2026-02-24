@@ -73,6 +73,8 @@ public:
     static const unsigned defaultMaximumHTMLParserDOMTreeDepth = 512;
     static const unsigned defaultMaximumRenderTreeDepth = 512;
 
+    static unsigned maximumRenderTreeDepth();
+
     virtual FontGenericFamilies& fontGenericFamilies() = 0;
     virtual const FontGenericFamilies& fontGenericFamilies() const = 0;
 

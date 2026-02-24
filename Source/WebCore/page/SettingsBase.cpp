@@ -55,6 +55,10 @@
 #include "MockRealtimeMediaSourceCenter.h"
 #endif
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SettingsBase);
@@ -100,6 +104,17 @@ uint64_t SettingsBase::defaultMaximumSourceBufferSize()
 #endif
 
 #endif
+
+unsigned SettingsBase::maximumRenderTreeDepth()
+{
+#if PLATFORM(IOS)
+    if (IOSApplication::isMaild()) {
+        static const unsigned maximumMaildRenderTreeDepth = 200;
+        return maximumMaildRenderTreeDepth;
+    }
+#endif
+    return defaultMaximumRenderTreeDepth;
+}
 
 const String& SettingsBase::standardFontFamily(UScriptCode script) const
 {
