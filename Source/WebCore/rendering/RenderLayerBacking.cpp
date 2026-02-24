@@ -350,7 +350,7 @@ RenderLayerBacking::~RenderLayerBacking()
     // Note that m_owningLayer->backing() is null here.
     updateAncestorClipping(false, nullptr);
     updateDescendantClippingLayer(false);
-    updateOverflowControlsLayers(false, false, false);
+    clearOverflowControlsLayers();
     updateForegroundLayer(false);
     updateBackgroundLayer(false);
     updateMaskingLayer(false, false);
@@ -2511,6 +2511,22 @@ bool RenderLayerBacking::requiresScrollCornerLayer() const
     auto verticalScrollbar = scrollableArea->verticalScrollbar();
     auto scrollbar = verticalScrollbar ? verticalScrollbar : scrollableArea->horizontalScrollbar();
     return requiresLayerForScrollbar(scrollbar);
+}
+
+void RenderLayerBacking::clearOverflowControlsLayers()
+{
+    auto destroyLayer = [&](RefPtr<GraphicsLayer>& layer) {
+        if (!layer)
+            return;
+
+        willDestroyLayer(layer.get());
+        GraphicsLayer::unparentAndClear(layer);
+    };
+
+    destroyLayer(m_overflowControlsContainer);
+    destroyLayer(m_layerForHorizontalScrollbar);
+    destroyLayer(m_layerForVerticalScrollbar);
+    destroyLayer(m_layerForScrollCorner);
 }
 
 bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScrollbarLayer, bool needsVerticalScrollbarLayer, bool needsScrollCornerLayer)
