@@ -441,8 +441,17 @@ private:
 #endif
 };
 
-class EmptyInspectorBackendClient final : public InspectorBackendClient {
+class EmptyInspectorBackendClient final : public InspectorBackendClient, public CanMakeCheckedPtr<EmptyInspectorBackendClient> {
     WTF_MAKE_TZONE_ALLOCATED(EmptyInspectorBackendClient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EmptyInspectorBackendClient);
+public:
+    // AbstractCanMakeCheckedPtr overrides
+    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
+    void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
+
     void NODELETE inspectedPageDestroyed() final { }
     Inspector::FrontendChannel* NODELETE openLocalFrontend(PageInspectorController*) final { return nullptr; }
     void NODELETE bringFrontendToFront() final { }
@@ -1248,6 +1257,7 @@ PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier
         identifier,
         sessionID,
         makeUniqueRef<EmptyEditorClient>(),
+        makeUniqueRef<EmptyInspectorBackendClient>(),
         adoptRef(*new EmptySocketProvider),
         WebRTCProvider::create(),
         CacheStorageProvider::create(),
@@ -1287,8 +1297,6 @@ PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier
 #if ENABLE(DRAG_SUPPORT)
     pageConfiguration.dragClient = makeUnique<EmptyDragClient>();
 #endif
-
-    pageConfiguration.inspectorBackendClient = makeUnique<EmptyInspectorBackendClient>();
 
     pageConfiguration.diagnosticLoggingClient = makeUnique<EmptyDiagnosticLoggingClient>();
 

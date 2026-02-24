@@ -27,7 +27,9 @@
 #pragma once
 
 #include <optional>
+#include <wtf/AbstractCanMakeCheckedPtr.h>
 #include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
 
 namespace Inspector {
 class FrontendChannel;
@@ -47,7 +49,7 @@ enum class InspectorBackendClientDeveloperPreference : uint8_t {
     NeedsSiteSpecificQuirks,
 };
 
-class InspectorBackendClient {
+class InspectorBackendClient : public AbstractCanMakeCheckedPtr, public CanMakeWeakPtr<InspectorBackendClient> {
 public:
     virtual ~InspectorBackendClient() = default;
 

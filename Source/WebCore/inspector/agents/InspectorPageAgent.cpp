@@ -104,7 +104,7 @@ Ref<InspectorOverlay> InspectorPageAgent::protectedOverlay() const
     return m_overlay.get();
 }
 
-InspectorPageAgent::InspectorPageAgent(PageAgentContext& context, InspectorBackendClient* client, InspectorOverlay& overlay)
+InspectorPageAgent::InspectorPageAgent(PageAgentContext& context, InspectorBackendClient& client, InspectorOverlay& overlay)
     : InspectorAgentBase("Page"_s, context)
     , m_frontendDispatcher(makeUniqueRef<Inspector::PageFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::PageBackendDispatcher::create(context.backendDispatcher, this))

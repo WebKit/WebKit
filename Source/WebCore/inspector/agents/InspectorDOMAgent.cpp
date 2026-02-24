@@ -1372,8 +1372,7 @@ void InspectorDOMAgent::setSearchingForNode(Inspector::Protocol::ErrorString& er
 
     protectedOverlay()->didSetSearchingForNode(m_searchingForNode);
 
-    if (InspectorBackendClient* client = m_inspectedPage->inspectorController().inspectorBackendClient())
-        client->elementSelectionChanged(m_searchingForNode);
+    m_inspectedPage->inspectorController().inspectorBackendClient().elementSelectionChanged(m_searchingForNode);
 }
 
 std::unique_ptr<InspectorOverlay::Highlight::Config> InspectorDOMAgent::highlightConfigFromInspectorObject(Inspector::Protocol::ErrorString& errorString, RefPtr<JSON::Object>&& highlightInspectorObject)

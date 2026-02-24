@@ -498,7 +498,7 @@ InspectorStubFrontend::InspectorStubFrontend(Page& inspectedPage, LocalFrame& ma
 {
     ASSERT_ARG(frontendWindow, frontendWindow);
 
-    frontendPage()->inspectorController().setInspectorFrontendClient(this);
+    frontendPage()->inspectorController().setInspectorFrontendClient(*this);
     inspectedPage.protectedInspectorController()->connectFrontend(*this);
     protect(mainFrame.inspectorController())->connectFrontend(*this);
 }
@@ -513,7 +513,6 @@ void InspectorStubFrontend::closeWindow()
     if (!m_frontendWindow)
         return;
 
-    frontendPage()->inspectorController().setInspectorFrontendClient(nullptr);
     if (RefPtr controller = m_mainFrameInspectorController.get())
         controller->disconnectFrontend(*this);
     if (RefPtr page = inspectedPage())
@@ -3372,7 +3371,7 @@ RefPtr<WindowProxy> Internals::openDummyInspectorFrontend(const String& url)
 #endif
 
     auto frontendWindowProxy = window->open(*window, *window, url, emptyAtom(), emptyString()).releaseReturnValue();
-    m_inspectorFrontend = makeUnique<InspectorStubFrontend>(*inspectedPage, *localMainFrame, downcast<LocalDOMWindow>(frontendWindowProxy->window()));
+    m_inspectorFrontend = adoptRef(*new InspectorStubFrontend(*inspectedPage, *localMainFrame, downcast<LocalDOMWindow>(frontendWindowProxy->window())));
     return frontendWindowProxy;
 }
 

@@ -78,6 +78,7 @@ PageConfiguration::PageConfiguration(
     std::optional<PageIdentifier> identifier,
     PAL::SessionID sessionID,
     UniqueRef<EditorClient>&& editorClient,
+    UniqueRef<InspectorBackendClient>&& inspectorBackendClient,
     Ref<SocketProvider>&& socketProvider,
     UniqueRef<WebRTCProvider>&& webRTCProvider,
     Ref<CacheStorageProvider>&& cacheStorageProvider,
@@ -115,6 +116,7 @@ PageConfiguration::PageConfiguration(
 #endif
     , editorClient(WTF::move(editorClient))
     , socketProvider(WTF::move(socketProvider))
+    , inspectorBackendClient(WTF::move(inspectorBackendClient))
 #if ENABLE(APPLE_PAY)
     , paymentCoordinatorClient(WTF::move(paymentCoordinatorClient))
 #endif

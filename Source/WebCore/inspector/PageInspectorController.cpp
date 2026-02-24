@@ -90,7 +90,7 @@ using namespace Inspector;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PageInspectorController);
 
-PageInspectorController::PageInspectorController(Page& page, std::unique_ptr<InspectorBackendClient>&& inspectorBackendClient)
+PageInspectorController::PageInspectorController(Page& page, UniqueRef<InspectorBackendClient>&& inspectorBackendClient)
     : m_page(page)
     , m_instrumentingAgents(InstrumentingAgents::create(*this))
     , m_injectedScriptManager(WebInjectedScriptManager::create(*this, WebInjectedScriptHost::create()))
@@ -100,7 +100,6 @@ PageInspectorController::PageInspectorController(Page& page, std::unique_ptr<Ins
     , m_executionStopwatch(Stopwatch::create())
     , m_inspectorBackendClient(WTF::move(inspectorBackendClient))
 {
-    ASSERT_ARG(inspectorBackendClient, m_inspectorBackendClient);
 
     auto pageContext = pageAgentContext();
 
@@ -112,7 +111,6 @@ PageInspectorController::PageInspectorController(Page& page, std::unique_ptr<Ins
 PageInspectorController::~PageInspectorController()
 {
     m_instrumentingAgents->reset();
-    ASSERT(!m_inspectorBackendClient);
 }
 
 void PageInspectorController::ref() const
@@ -198,16 +196,20 @@ void PageInspectorController::inspectedPageDestroyed()
 
     // Disconnect the client.
     m_inspectorBackendClient->inspectedPageDestroyed();
-    m_inspectorBackendClient = nullptr;
 
     m_agents.discardValues();
 
     m_debugger = nullptr;
 }
 
-void PageInspectorController::setInspectorFrontendClient(InspectorFrontendClient* inspectorFrontendClient)
+void PageInspectorController::setInspectorFrontendClient(InspectorFrontendClient& client)
 {
-    m_inspectorFrontendClient = inspectorFrontendClient;
+    m_inspectorFrontendClient = client;
+}
+
+InspectorFrontendClient* PageInspectorController::inspectorFrontendClient() const
+{
+    return m_inspectorFrontendClient.get();
 }
 
 bool PageInspectorController::hasLocalFrontend() const
@@ -241,7 +243,6 @@ void PageInspectorController::didClearWindowObjectInWorld(LocalFrame& frame, DOM
 
 void PageInspectorController::connectFrontend(Inspector::FrontendChannel& frontendChannel, bool isAutomaticInspection, bool immediatelyPause)
 {
-    ASSERT(m_inspectorBackendClient);
     Ref page = m_page.get();
 
     // If a frontend has connected enable the developer extras and keep them enabled.

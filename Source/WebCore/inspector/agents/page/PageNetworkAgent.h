@@ -37,7 +37,7 @@ class PageNetworkAgent final : public InspectorNetworkAgent {
     WTF_MAKE_NONCOPYABLE(PageNetworkAgent);
     WTF_MAKE_TZONE_ALLOCATED(PageNetworkAgent);
 public:
-    PageNetworkAgent(PageAgentContext&, InspectorBackendClient*);
+    PageNetworkAgent(PageAgentContext&, InspectorBackendClient&);
     ~PageNetworkAgent();
 
 private:
@@ -54,7 +54,7 @@ private:
 
     WeakRef<Page> m_inspectedPage;
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
-    InspectorBackendClient* m_client { nullptr };
+    WeakRef<InspectorBackendClient> m_backendClient;
 #endif
 };
 

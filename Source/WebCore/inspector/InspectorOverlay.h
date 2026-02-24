@@ -143,7 +143,7 @@ struct InspectorOverlayHighlight {
 class InspectorOverlay : public CanMakeWeakPtr<InspectorOverlay> {
     WTF_MAKE_TZONE_ALLOCATED(InspectorOverlay);
 public:
-    InspectorOverlay(PageInspectorController&, InspectorBackendClient*);
+    InspectorOverlay(PageInspectorController&, InspectorBackendClient&);
     ~InspectorOverlay();
 
     void ref() const;
@@ -254,7 +254,7 @@ private:
     Page& page() const;
 
     const WeakRef<PageInspectorController> m_controller;
-    InspectorBackendClient* m_client;
+    const WeakRef<InspectorBackendClient> m_client;
 
     RefPtr<Node> m_highlightNode;
     RefPtr<NodeList> m_highlightNodeList;

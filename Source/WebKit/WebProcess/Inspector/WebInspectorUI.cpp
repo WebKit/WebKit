@@ -76,7 +76,7 @@ void WebInspectorUI::establishConnection(WebPageProxyIdentifier inspectedPageIde
 
     m_frontendAPIDispatcher->reset();
     m_frontendController = m_page->corePage()->inspectorController();
-    Ref { *m_frontendController }->setInspectorFrontendClient(this);
+    Ref { *m_frontendController }->setInspectorFrontendClient(*this);
 
     updateConnection();
 
@@ -150,9 +150,6 @@ void WebInspectorUI::closeWindow()
 
     if (RefPtr backendConnection = std::exchange(m_backendConnection, nullptr))
         backendConnection->invalidate();
-
-    if (RefPtr frontendController = std::exchange(m_frontendController, nullptr).get())
-        frontendController->setInspectorFrontendClient(nullptr);
 
     if (RefPtr frontendHost = m_frontendHost)
         frontendHost->disconnectClient();

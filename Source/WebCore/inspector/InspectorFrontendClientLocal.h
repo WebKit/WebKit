@@ -35,6 +35,7 @@
 #include <WebCore/InspectorFrontendClient.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -49,7 +50,7 @@ class LocalFrame;
 class Page;
 class PageInspectorController;
 
-class InspectorFrontendClientLocal : public InspectorFrontendClient {
+class InspectorFrontendClientLocal : public RefCounted<InspectorFrontendClientLocal>, public InspectorFrontendClient {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(InspectorFrontendClientLocal, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(InspectorFrontendClientLocal);
 public:
@@ -67,6 +68,10 @@ public:
 
     WEBCORE_EXPORT InspectorFrontendClientLocal(PageInspectorController* inspectedPageController, Page* frontendPage, std::unique_ptr<Settings>, DispatchBackendTarget = DispatchBackendTarget::Page);
     WEBCORE_EXPORT ~InspectorFrontendClientLocal() override;
+
+    // InspectorFrontendClient.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     WEBCORE_EXPORT void resetState() override;
 

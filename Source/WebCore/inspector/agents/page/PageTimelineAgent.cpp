@@ -155,8 +155,7 @@ void PageTimelineAgent::internalStart(std::optional<int>&& maxCallStackDepth)
 
     InspectorTimelineAgent::internalStart(WTF::move(maxCallStackDepth));
 
-    if (auto* client = m_inspectedPage->inspectorController().inspectorBackendClient())
-        client->timelineRecordingChanged(true);
+    m_inspectedPage->inspectorController().inspectorBackendClient().timelineRecordingChanged(true);
 }
 
 void PageTimelineAgent::internalStop()
@@ -175,8 +174,7 @@ void PageTimelineAgent::internalStop()
 
     InspectorTimelineAgent::internalStop();
 
-    if (auto* client = m_inspectedPage->inspectorController().inspectorBackendClient())
-        client->timelineRecordingChanged(false);
+    m_inspectedPage->inspectorController().inspectorBackendClient().timelineRecordingChanged(false);
 }
 
 Inspector::Protocol::ErrorStringOr<void> PageTimelineAgent::setAutoCaptureEnabled(bool enabled)

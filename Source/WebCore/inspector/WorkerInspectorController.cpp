@@ -179,11 +179,7 @@ void WorkerInspectorController::updateServiceWorkerPageFrontendCount()
 
     // When a service worker is loaded in a Page, we need to report its inspector frontend count
     // up to the page's inspectorController so the client knows about it.
-    auto inspectorBackendClient = serviceWorkerPage->inspectorController().inspectorBackendClient();
-    if (!inspectorBackendClient)
-        return;
-
-    inspectorBackendClient->frontendCountChanged(m_frontendRouter->frontendCount());
+    serviceWorkerPage->inspectorController().inspectorBackendClient().frontendCountChanged(m_frontendRouter->frontendCount());
 }
 
 void WorkerInspectorController::dispatchMessageFromFrontend(const String& message)
