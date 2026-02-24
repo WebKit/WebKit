@@ -179,8 +179,12 @@ MarkingGCAwareJITStubRoutine::MarkingGCAwareJITStubRoutine(
     , m_cells(cells.size())
     , m_callLinkInfos(WTF::move(callLinkInfos))
 {
-    for (unsigned i = cells.size(); i--;)
-        m_cells[i].set(vm, owner, cells[i]);
+    for (unsigned i = cells.size(); i--;) {
+        if (owner)
+            m_cells[i].set(vm, owner, cells[i]);
+        else
+            m_cells[i].setWithoutWriteBarrier(cells[i]);
+    }
 }
 
 template<typename Visitor>
