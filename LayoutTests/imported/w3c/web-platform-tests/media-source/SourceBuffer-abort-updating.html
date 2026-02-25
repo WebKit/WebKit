@@ -80,6 +80,7 @@ function mediaTest(file, mime) {
                                     'Check the sequence of fired events.');
             }));
             var video = document.createElement('video');
+            document.body.appendChild(video);
             video.src = window.URL.createObjectURL(mediaSource);
         });
     }, 'SourceBuffer#abort() (' + mime + ') : Check the algorithm when the updating attribute is true.');
