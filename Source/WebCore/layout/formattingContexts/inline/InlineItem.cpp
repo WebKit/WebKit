@@ -43,8 +43,6 @@ struct SameSizeAsInlineItem {
     bool widthBool : 1;
     bool softHyphenBool : 1;
     bool isWordSeparator : 1;
-    uint8_t glyphTopOverflow : 5;
-    uint8_t glyphBottomOverflow : 3;
 };
 
 static_assert(sizeof(InlineItem) == sizeof(SameSizeAsInlineItem));
