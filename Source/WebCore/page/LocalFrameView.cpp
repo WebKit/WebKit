@@ -4581,6 +4581,8 @@ void LocalFrameView::scrollToPendingTextFragmentRange()
             return;
 
         auto textRects = RenderObject::absoluteTextRects(range);
+        if (!textRects.size())
+            return;
 
         static constexpr OptionSet hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
         auto result = localMainFrame->eventHandler().hitTestResultAtPoint(LayoutPoint(textRects.first().center()), hitType);
