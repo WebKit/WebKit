@@ -8491,5 +8491,3 @@ imported/w3c/web-platform-tests/css/css-highlight-api/highlight-text-across-elem
 # webkit.org/b/308506 UnifiedPDFPlugin on iOS should receive full annotations support
 pdf/annotations [ Skip ]
 pdf/pdf-in-iframe-with-text-annotation.html [ Skip ]
-
-webkit.org/b/308658 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ Pass ImageOnlyFailure ]
