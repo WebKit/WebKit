@@ -209,7 +209,7 @@ static void computedExpansions(const Line::RunList& runs, WTF::Range<size_t> run
             else {
                 expansionBehavior.left = runIsAfterExpansion ? ExpansionBehavior::Behavior::Forbid : ExpansionBehavior::Behavior::Allow;
                 expansionBehavior.right = ExpansionBehavior::Behavior::Allow;
-                auto& textContent = run.textContent();
+                auto& textContent = *run.textContent();
                 auto length = textContent.length;
                 if (lastTextRunIndexForTrimming && runIndex() == *lastTextRunIndexForTrimming) {
                     // Trailing hanging whitespace sequence is ignored when computing the expansion opportunities.

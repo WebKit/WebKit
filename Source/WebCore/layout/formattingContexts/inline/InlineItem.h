@@ -97,8 +97,6 @@ protected:
     bool m_hasWidth : 1 { false };
     bool m_hasTrailingSoftHyphen : 1 { false };
     bool m_isWordSeparator : 1 { false };
-    uint8_t m_glyphTopOverflow : 5 { 0 };
-    uint8_t m_glyphBottomOverflow : 3 { 0 };
 };
 
 inline InlineItem::InlineItem(const Box& layoutBox, Type type, UBiDiLevel bidiLevel)

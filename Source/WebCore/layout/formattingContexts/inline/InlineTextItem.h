@@ -52,7 +52,6 @@ public:
     bool isFullyTrimmable() const;
     bool hasTrailingSoftHyphen() const { return m_hasTrailingSoftHyphen; }
     std::optional<InlineLayoutUnit> width() const { return m_hasWidth ? std::make_optional(m_width) : std::optional<InlineLayoutUnit> { }; }
-    std::pair<uint8_t, uint8_t> glyphOverflow() const { return { m_glyphTopOverflow, m_glyphBottomOverflow }; }
 
     const InlineTextBox& inlineTextBox() const { return downcast<InlineTextBox>(layoutBox()); }
 
@@ -69,7 +68,6 @@ private:
     using InlineItem::TextItemType;
 
     InlineTextItem split(size_t leftSideLength);
-    void setGlyphOverflow(LayoutUnit top, LayoutUnit bottom);
 
     InlineTextItem(const InlineTextBox&, unsigned start, unsigned length, UBiDiLevel, bool hasTrailingSoftHyphen, bool isWordSeparator, std::optional<InlineLayoutUnit> width, TextItemType);
     explicit InlineTextItem(const InlineTextBox&);
@@ -90,12 +88,6 @@ inline InlineTextItem InlineTextItem::createEmptyItem(const InlineTextBox& inlin
 {
     ASSERT(!inlineTextBox.content().length());
     return InlineTextItem { inlineTextBox };
-}
-
-inline void InlineTextItem::setGlyphOverflow(LayoutUnit top, LayoutUnit bottom)
-{
-    m_glyphTopOverflow = top.ceil();
-    m_glyphBottomOverflow = bottom.ceil();
 }
 
 }

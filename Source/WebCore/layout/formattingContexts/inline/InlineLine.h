@@ -49,7 +49,7 @@ public:
 
     void initialize(const Vector<InlineItem, 1>& lineSpanningInlineBoxes, bool isFirstFormattedLine);
 
-    enum class ShapingBoundary : uint8_t { NotApplicable, Start, Inside, End };
+    enum class ShapingBoundary : uint8_t { Start, Inside, End };
     void appendText(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth, std::optional<ShapingBoundary>);
     void appendTextFast(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth); // Reserved for TextOnlySimpleLineBuilder
     void appendAtomicInlineBox(const InlineItem&, const RenderStyle&, InlineLayoutUnit marginBoxLogicalWidth);
@@ -124,7 +124,7 @@ public:
         bool isOpaque() const { return m_type == Type::Opaque; }
         bool isBlock() const { return m_type == Type::Block; }
 
-        bool isContentful() const { return (isText() && textContent().length) || isAtomicInlineBox() || isLineBreak() || isListMarker() || isBlock(); }
+        bool isContentful() const { return (isText() && textContent()->length) || isAtomicInlineBox() || isLineBreak() || isListMarker() || isBlock(); }
         bool isGenerated() const { return isListMarker(); }
         static bool isContentfulOrHasDecoration(const Run&, const InlineFormattingContext&);
 
@@ -134,7 +134,7 @@ public:
             size_t length { 0 };
             bool needsHyphen { false };
         };
-        const Text& textContent() const { return m_textContent; }
+        const std::optional<Text>& textContent() const { return m_textContent; }
 
         InlineLayoutUnit logicalWidth() const { return m_logicalWidth; }
         InlineLayoutUnit logicalLeft() const { return m_logicalLeft; }
@@ -142,17 +142,9 @@ public:
 
         const InlineDisplay::Box::Expansion& expansion() const { return m_expansion; }
 
-        bool hasTrailingWhitespace() const { return m_trailingWhitespace.type != TrailingWhitespace::Type::NotApplicable; }
-        InlineLayoutUnit trailingWhitespaceWidth() const { return m_trailingWhitespace.width; }
-        bool isWhitespaceOnly() const { return hasTrailingWhitespace() && m_trailingWhitespace.length == m_textContent.length; }
-
-        struct GlyphOverflow {
-            bool isEmpty() const { return !top && !bottom; }
-
-            uint8_t top : 5 { 0 };
-            uint8_t bottom: 3 { 0 };
-        };
-        GlyphOverflow glyphOverflow() const { return m_glyphOverflow; }
+        bool hasTrailingWhitespace() const { return m_trailingWhitespace.has_value(); }
+        InlineLayoutUnit trailingWhitespaceWidth() const { return m_trailingWhitespace ? m_trailingWhitespace->width : 0.f; }
+        bool isWhitespaceOnly() const { return hasTrailingWhitespace() && m_trailingWhitespace->length == m_textContent->length; }
 
         inline TextDirection inlineDirection() const;
         InlineLayoutUnit letterSpacing() const;
@@ -161,10 +153,10 @@ public:
 
         UBiDiLevel bidiLevel() const { return m_bidiLevel; }
 
-        bool isShapingBoundaryStart() const { return m_shapingBoundary == Line::ShapingBoundary::Start; }
-        bool isShapingBoundaryEnd() const { return m_shapingBoundary == Line::ShapingBoundary::End; }
-        bool isInsideShapingBoundary() const { return m_shapingBoundary == Line::ShapingBoundary::Inside; }
-        bool isShapingBoundary() const { return m_shapingBoundary != Line::ShapingBoundary::NotApplicable; }
+        bool isShapingBoundaryStart() const { return isShapingBoundary() && *m_shapingBoundary == Line::ShapingBoundary::Start; }
+        bool isShapingBoundaryEnd() const { return isShapingBoundary() && *m_shapingBoundary == Line::ShapingBoundary::End; }
+        bool isInsideShapingBoundary() const { return isShapingBoundary() && *m_shapingBoundary == Line::ShapingBoundary::Inside; }
+        bool isShapingBoundary() const { return m_shapingBoundary.has_value(); }
 
         // FIXME: Maybe add create functions intead?
         Run(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalLeft);
@@ -188,18 +180,17 @@ public:
         void setBidiLevel(UBiDiLevel bidiLevel) { m_bidiLevel = bidiLevel; }
 
         struct TrailingWhitespace {
-            enum class Type : uint8_t {
-                NotApplicable,
+            enum class Type {
                 NotCollapsible,
                 Collapsible,
                 Collapsed
             };
-            Type type { Type::NotApplicable };
-            size_t length : 24 { 0 };
-            InlineLayoutUnit width { 0.f };
+            Type type { Type::NotCollapsible };
+            InlineLayoutUnit width { 0 };
+            size_t length { 0 };
         };
-        bool hasCollapsibleTrailingWhitespace() const { return hasTrailingWhitespace() && (m_trailingWhitespace.type == TrailingWhitespace::Type::Collapsible || hasCollapsedTrailingWhitespace()); }
-        bool hasCollapsedTrailingWhitespace() const { return hasTrailingWhitespace() && m_trailingWhitespace.type == TrailingWhitespace::Type::Collapsed; }
+        bool hasCollapsibleTrailingWhitespace() const { return m_trailingWhitespace && (m_trailingWhitespace->type == TrailingWhitespace::Type::Collapsible || hasCollapsedTrailingWhitespace()); }
+        bool hasCollapsedTrailingWhitespace() const { return m_trailingWhitespace && m_trailingWhitespace->type == TrailingWhitespace::Type::Collapsed; }
         static std::optional<TrailingWhitespace::Type> trailingWhitespaceType(const InlineTextItem&);
         InlineLayoutUnit removeTrailingWhitespace();
 
@@ -209,19 +200,18 @@ public:
         InlineLayoutUnit trailingLetterSpacing() const;
         InlineLayoutUnit removeTrailingLetterSpacing();
 
-        TrailingWhitespace m_trailingWhitespace { };
         Type m_type { Type::Text };
-        Line::ShapingBoundary m_shapingBoundary { Line::ShapingBoundary::NotApplicable };
-        InlineLayoutUnit m_logicalLeft { 0 };
-        Markable<size_t> m_lastNonWhitespaceContentStart { };
-        InlineLayoutUnit m_logicalWidth { 0 };
-        UBiDiLevel m_bidiLevel { UBIDI_DEFAULT_LTR };
-        InlineLayoutUnit m_textSpacingAdjustment { 0 };
-        GlyphOverflow m_glyphOverflow;
         const Box* m_layoutBox { nullptr };
         const RenderStyle& m_style;
+        InlineLayoutUnit m_logicalLeft { 0 };
+        InlineLayoutUnit m_logicalWidth { 0 };
         InlineDisplay::Box::Expansion m_expansion;
-        Text m_textContent;
+        UBiDiLevel m_bidiLevel { UBIDI_DEFAULT_LTR };
+        std::optional<TrailingWhitespace> m_trailingWhitespace { };
+        std::optional<size_t> m_lastNonWhitespaceContentStart { };
+        std::optional<Text> m_textContent;
+        std::optional<Line::ShapingBoundary> m_shapingBoundary;
+        InlineLayoutUnit m_textSpacingAdjustment { 0 };
     };
     using RunList = Vector<Run, 1>;
     const RunList& runs() const { return m_runs; }
@@ -392,8 +382,8 @@ inline size_t Line::HangingContent::length() const
 
 inline void Line::Run::setNeedsHyphen(InlineLayoutUnit hyphenLogicalWidth)
 {
-    ASSERT(isText());
-    m_textContent.needsHyphen = true;
+    ASSERT(m_textContent);
+    m_textContent->needsHyphen = true;
     m_logicalWidth += hyphenLogicalWidth;
 }
 
