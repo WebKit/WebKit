@@ -2224,6 +2224,13 @@ bool Quirks::needsSuppressPostLayoutBoundaryEventsQuirk() const
     return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsSuppressPostLayoutBoundaryEventsQuirk);
 }
 
+bool Quirks::needsGlyphOverflowCollectQuirk() const
+{
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsGlyphOverflowCollectQuirk);
+}
+
 // tiktok.com rdar://149712691
 std::optional<Quirks::TikTokOverflowingContentQuirkType> Quirks::needsTikTokOverflowingContentQuirk(const Element& element, const RenderStyle& parentStyle) const
 {
@@ -3389,6 +3396,13 @@ static void handleCapitalGroupQuirks(QuirksData& quirksData, const URL&, const S
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldDelayReloadWhenRegisteringServiceWorker);
 }
 
+static void handleCogniaQuirks(QuirksData& quirksData, const URL&, const String& quirksDomainString, const URL&)
+{
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("cognia.org"_s);
+
+    quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsGlyphOverflowCollectQuirk);
+}
+
 static void handleCrunchyRollQuirks(QuirksData& quirksData, const URL&, const String& quirksDomainString, const URL&)
 {
     QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("crunchyroll.com"_s);
@@ -3456,6 +3470,7 @@ void Quirks::determineRelevantQuirks()
         { "digitaltrends"_s, &handleDigitalTrendsQuirks },
         { "steampowered"_s, &handleSteamQuirks },
 #endif
+        { "cognia"_s, &handleCogniaQuirks },
         { "crunchyroll"_s, &handleCrunchyRollQuirks },
         { "t-mobile"_s, &handleTMobileQuirks },
         { "descript"_s, &handleDescriptQuirks },
