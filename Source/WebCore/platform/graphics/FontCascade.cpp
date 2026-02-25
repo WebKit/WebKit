@@ -302,7 +302,8 @@ float FontCascade::width(const TextRun& run, SingleThreadWeakHashSet<const Font>
             glyphOverflow = nullptr;
     }
 
-    auto* cacheEntry = fonts()->glyphGeometryCache().add(run, { }, TextShapingContext { *this });
+    auto& cache = fonts()->glyphGeometryCache();
+    auto* cacheEntry = cache.isContextCacheable(run, TextShapingContext { *this }) ? cache.add(run.text(), { }) : nullptr;
 
     if (cacheEntry && cacheEntry->width) {
         if (!glyphOverflow)

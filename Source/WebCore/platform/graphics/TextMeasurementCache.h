@@ -126,8 +126,6 @@ private:
 
 public:
     TextMeasurementCache()
-        : m_interval(InitialInterval)
-        , m_countdown(InitialInterval)
     {
     }
 
@@ -142,36 +140,27 @@ public:
         if (length > MaxTextLength)
             return nullptr;
 
-        if (m_countdown > 0) {
-            --m_countdown;
-            return nullptr;
-        }
-
         return addSlowCase(text, WTF::move(entry));
-    }
-
-    CachedType* add(const TextRun& run, CachedType&& entry, TextShapingContext shapingContext)
-    {
-        // The width cache is not really profitable unless we're doing expensive glyph transformations.
-        if (!shapingContext.hasKerningOrLigatures)
-            return nullptr;
-        // Word spacing and letter spacing can change the width of a word.
-        if (shapingContext.hasWordSpacingOrLetterSpacing)
-            return nullptr;
-        // If we allow tabs and a tab occurs inside a word, the width of the word varies based on its position on the line.
-        if (run.allowTabs())
-            return nullptr;
-        // width calculation with text-spacing depends on context of adjacent characters.
-        if (shapingContext.hasTextSpacing && invalidateCacheForTextSpacing(run))
-            return nullptr;
-
-        return add(run.text(), WTF::move(entry));
     }
 
     void clear()
     {
         m_singleCharMap.clear();
         m_map.clear();
+    }
+
+    bool isContextCacheable(const TextRun& run, const TextShapingContext& context)
+    {
+        // Word spacing and letter spacing can change the width of a word.
+        if (context.hasWordSpacingOrLetterSpacing)
+            return false;
+        // If we allow tabs and a tab occurs inside a word, the width of the word varies based on its position on the line.
+        if (run.allowTabs())
+            return false;
+        // width calculation with text-spacing depends on context of adjacent characters.
+        if (context.hasTextSpacing && invalidateCacheForTextSpacing(run))
+            return false;
+        return true;
     }
 
 private:
@@ -198,15 +187,8 @@ private:
         }
 
         // Cache hit: ramp up by sampling the next few words.
-        if (!isNewEntry) {
-            m_interval = MinInterval;
+        if (!isNewEntry)
             return value;
-        }
-
-        // Cache miss: ramp down by increasing our sampling interval.
-        if (m_interval < MaxInterval)
-            ++m_interval;
-        m_countdown = m_interval;
 
         if ((m_singleCharMap.size() + m_map.size()) < MaxSize)
             return value;
@@ -237,8 +219,6 @@ private:
     using Map = HashMap<SmallStringKey, CachedType, DefaultHash<SmallStringKey>, SmallStringKeyHashTraits>;
     using SingleCharMap = HashMap<uint32_t, CachedType, DefaultHash<uint32_t>, HashTraits<uint32_t>>;
 
-    int m_interval;
-    int m_countdown;
     SingleCharMap m_singleCharMap;
     Map m_map;
     bool m_hasSeenIdeograph;
