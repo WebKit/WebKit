@@ -80,8 +80,7 @@ public:
     static void updateGlobalPosition(WebAnimation&);
 
 #if ENABLE(THREADED_ANIMATIONS)
-    bool canBeAccelerated() const { return m_canBeAccelerated; }
-    virtual bool computeCanBeAccelerated() const { return false; }
+    virtual bool canBeAccelerated() const { return false; }
     Ref<AcceleratedTimeline> acceleratedRepresentation();
     void runPostRenderingUpdateTasks();
     const TimelineIdentifier& acceleratedTimelineIdentifier() const { return m_acceleratedTimelineIdentifier; }
@@ -103,7 +102,7 @@ protected:
 
 private:
 #if ENABLE(THREADED_ANIMATIONS)
-    bool m_canBeAccelerated { false };
+    bool m_couldBeAcceleratedDuringLastRenderingUpdate { false };
 #endif
     std::optional<WebAnimationTime> m_currentTime;
     std::optional<WebAnimationTime> m_duration;

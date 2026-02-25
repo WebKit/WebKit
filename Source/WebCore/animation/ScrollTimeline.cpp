@@ -406,7 +406,7 @@ void ScrollTimeline::animationTimingDidChange(WebAnimation& animation)
 }
 
 #if ENABLE(THREADED_ANIMATIONS)
-bool ScrollTimeline::computeCanBeAccelerated() const
+bool ScrollTimeline::canBeAccelerated() const
 {
     RefPtr source = this->source();
     if (!source)

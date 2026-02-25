@@ -2523,3 +2523,5 @@ webkit.org/b/308326 [ Debug ] imported/w3c/web-platform-tests/fetch/api/basic/er
 webkit.org/b/308430 webanimations/threaded-animations/accelerated-timeline-preservation-during-update.html [ Pass Crash ]
 
 webkit.org/b/308334 [ Tahoe Debug ] http/tests/webgpu/webgpu/api/validation/gpu_external_texture_expiration.html [ Skip ]
+
+webkit.org/b/308304 webanimations/threaded-animations/scroll-driven-animation-failed-assertion-in-scroll-timeline.html [ Pass Crash ]
