@@ -155,7 +155,7 @@ void HTMLVideoElementCaptionDisplaySettings::showCaptionDisplaySettings(HTMLVide
             if (!frame)
                 return std::nullopt;
 
-            auto* JSDOMWindowBase = toJSDOMWindow(frame, mainThreadNormalWorldSingleton());
+            auto* JSDOMWindowBase = toJSDOMWindow(frame.get(), mainThreadNormalWorldSingleton());
             if (!JSDOMWindowBase)
                 return std::nullopt;
 
