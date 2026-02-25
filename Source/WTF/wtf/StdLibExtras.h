@@ -1564,6 +1564,16 @@ static constexpr auto dereferenceView = std::views::transform([](auto&& x) -> de
 
 }
 
+// We use this primitive on ARM to express memory ordering efficiently.
+template<typename T>
+inline T* addOpaqueZero(T* pointer, unsigned opaqueZero)
+{
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    // This is bounds-safe because opaqueZero is always zero.
+    return std::bit_cast<T*>(std::bit_cast<char*>(pointer) + opaqueZero);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+}
+
 } // namespace WTF
 
 namespace WTF {
@@ -1580,6 +1590,7 @@ template<typename T, typename U> constexpr auto forward_like_preserving_const(U&
 using WTF::GB;
 using WTF::KB;
 using WTF::MB;
+using WTF::addOpaqueZero;
 using WTF::approximateBinarySearch;
 using WTF::asBytes;
 using WTF::asByteSpan;
