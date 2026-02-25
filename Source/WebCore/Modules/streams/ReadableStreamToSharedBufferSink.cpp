@@ -28,6 +28,7 @@
 #include "ReadableStreamToSharedBufferSink.h"
 
 #include "DOMException.h"
+#include "EventLoop.h"
 #include "ExceptionOr.h"
 #include "JSDOMConvertBufferSource.h"
 #include "JSDOMGlobalObject.h"
@@ -48,6 +49,8 @@ public:
         RefPtr context = m_context.get();
         return context ? JSC::jsCast<JSDOMGlobalObject*>(context->globalObject()): nullptr;
     }
+
+    ScriptExecutionContext* context() const { return m_context.get(); }
 
 private:
     SinkReadRequest(ReadableStreamToSharedBufferSink& sink, ScriptExecutionContext& context)
@@ -135,6 +138,18 @@ void ReadableStreamToSharedBufferSink::enqueue(const Ref<JSC::Uint8Array>& buffe
             m_callback(buffer->span());
     }
 
+    RefPtr context = m_readRequest ? m_readRequest->context() : nullptr;
+    if (!context)
+        return;
+
+    protect(context->eventLoop())->queueMicrotask([weakThis = WeakPtr { *this }] {
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->keepReading();
+    });
+}
+
+void ReadableStreamToSharedBufferSink::keepReading()
+{
     RefPtr readRequest = m_readRequest;
     if (!readRequest)
         return;

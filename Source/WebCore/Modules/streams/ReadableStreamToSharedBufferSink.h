@@ -61,6 +61,8 @@ private:
     void error(Exception&&);
     void error(JSC::JSValue);
 
+    void keepReading();
+
     Callback m_callback;
     RefPtr<ReadableStreamDefaultReader> m_reader;
     RefPtr<SinkReadRequest> m_readRequest;
