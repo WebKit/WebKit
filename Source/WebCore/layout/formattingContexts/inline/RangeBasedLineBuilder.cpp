@@ -63,7 +63,7 @@ LineLayoutResult RangeBasedLineBuilder::layoutInlineContent(const LineInput& lin
             , WTF::move(inlineBoxRuns)
             , { }
             , { contentLeft, { }, contentLeft, std::max(0.f, contentLeft - lineRect.right()) }
-            , { lineRect.topLeft(), lineRect.width(), lineRect.left() }
+            , { lineRect.topLeft(), lineRect.width(), lineRect.topLeft() }
             , { }
             , { }
             , { isFirstFormattedLineCandidate ? IsFirstFormattedLine::Yes : IsFirstFormattedLine::No, { } }

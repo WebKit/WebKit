@@ -533,7 +533,8 @@ bool InlineFormattingContext::createDisplayContentForEmptyInlineContent(const Co
         return false;
 
     auto emptyLineBreakingResult =  LineLayoutResult { };
-    emptyLineBreakingResult.lineGeometry = { { constraints.horizontal().logicalLeft, constraints.logicalTop() }, { constraints.horizontal().logicalWidth } };
+    auto logicalTopLeft = InlineLayoutPoint { constraints.horizontal().logicalLeft, constraints.logicalTop() };
+    emptyLineBreakingResult.lineGeometry = { logicalTopLeft, { constraints.horizontal().logicalWidth }, logicalTopLeft };
     auto lineBox = LineBoxBuilder { *this, emptyLineBreakingResult }.build({ });
     createDisplayContentForInlineContent(lineBox, emptyLineBreakingResult, constraints, layoutResult.displayContent);
     return true;

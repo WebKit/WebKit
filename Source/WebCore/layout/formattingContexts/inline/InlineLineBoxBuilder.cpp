@@ -553,7 +553,7 @@ void LineBoxBuilder::constructBlockContent(LineBox& lineBox)
         ASSERT_NOT_REACHED();
     }
 
-    auto blockLineLogicalTopLeft = InlineLayoutPoint { lineLayoutResult.lineGeometry.initialLogicalLeft, lineLayoutResult.lineGeometry.logicalTopLeft.y() };
+    auto blockLineLogicalTopLeft = InlineLayoutPoint { lineLayoutResult.lineGeometry.initialLogicalTopLeft.x(), lineLayoutResult.lineGeometry.logicalTopLeft.y() };
     lineBox.setLogicalRect({ blockLineLogicalTopLeft, lineLayoutResult.lineGeometry.logicalWidth, blockGeometry.marginBoxHeight() });
     setVerticalPropertiesForInlineLevelBox(lineBox, lineBox.rootInlineBox());
     // FIXME: Let's considered collapsed block boxes contentful for now (webkit.org/b/302804).
@@ -835,7 +835,7 @@ void LineBoxBuilder::adjustOutsideListMarkersPosition(LineBox& lineBox)
     auto lineBoxRect = lineBox.logicalRect();
     auto floatConstraints = formattingContext().floatingContext().constraints(LayoutUnit { lineBoxRect.top() }, LayoutUnit { lineBoxRect.bottom() }, FloatingContext::MayBeAboveLastFloat::No);
 
-    auto lineBoxOffset = lineBoxRect.left() - (lineLayoutResult().lineGeometry.initialLogicalLeft + lineLayoutResult().lineGeometry.intrusiveFloatsOffset);
+    auto lineBoxOffset = lineBoxRect.left() - (lineLayoutResult().lineGeometry.initialLogicalTopLeft.x() + lineLayoutResult().lineGeometry.intrusiveFloatsOffset);
     auto rootInlineBoxLogicalLeft = lineBox.logicalRectForRootInlineBox().left();
     auto rootInlineBoxOffsetFromContentBoxOrIntrusiveFloat = lineBoxOffset + rootInlineBoxLogicalLeft;
     for (auto listMarkerBoxIndex : m_outsideListMarkers) {

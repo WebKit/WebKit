@@ -120,7 +120,7 @@ LineLayoutResult TextOnlySimpleLineBuilder::layoutInlineContent(const LineInput&
         , WTF::move(result.runs)
         , { }
         , { contentLogicalLeft, result.contentLogicalWidth, contentLogicalLeft + result.contentLogicalRight, m_overflowContentLogicalWidth }
-        , { m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), m_lineLogicalRect.left() }
+        , { m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), m_lineLogicalRect.topLeft() }
         , { !result.isHangingTrailingContentWhitespace, result.hangingTrailingContentWidth }
         , { }
         , { isFirstFormattedLineCandidate && inlineContentEnding.has_value() ? IsFirstFormattedLine::Yes : IsFirstFormattedLine::No, isLastInlineContent }
@@ -182,7 +182,7 @@ std::optional<LineLayoutResult> TextOnlySimpleLineBuilder::placeSingleCharacterC
         , WTF::move(singleRun)
         , { }
         , { contentLeft, contentWidth, contentRight, std::max(0.f, contentRight - lineRect.right()) }
-        , { lineRect.topLeft(), lineRect.width(), lineRect.left() }
+        , { lineRect.topLeft(), lineRect.width(), lineRect.topLeft() }
         , { }
         , { }
         , { isFirstFormattedLineCandidate ? IsFirstFormattedLine::Yes : IsFirstFormattedLine::No, true }

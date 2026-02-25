@@ -58,7 +58,7 @@ struct LineLayoutResult {
     struct LineGeometry {
         InlineLayoutPoint logicalTopLeft;
         InlineLayoutUnit logicalWidth { 0.f };
-        InlineLayoutUnit initialLogicalLeft { 0.f };
+        InlineLayoutPoint initialLogicalTopLeft;
         InlineLayoutUnit intrusiveFloatsOffset { 0.f }; // Inherited floats from parent formatting context offseting line box.
         std::optional<InlineLayoutUnit> initialLetterClearGap { };
     };
