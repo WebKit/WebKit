@@ -317,6 +317,8 @@ public:
 
     bool shouldComparareUsedValuesForBorderWidthForTriggeringTransitions() const;
 
+    bool needsGlyphOverflowCollectQuirk() const;
+
     void determineRelevantQuirks();
 
 private:
