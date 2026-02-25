@@ -233,7 +233,7 @@ Ref<WebCore::WebGPU::RenderPassEncoder> RemoteRenderPassEncoder::protectedBackin
 
 Ref<WebGPU::ObjectHeap> RemoteRenderPassEncoder::protectedObjectHeap() const
 {
-    return m_objectHeap.get();
+    return m_objectHeap;
 }
 
 } // namespace WebKit

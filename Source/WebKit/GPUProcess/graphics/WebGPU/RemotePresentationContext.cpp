@@ -109,7 +109,7 @@ Ref<WebCore::WebGPU::PresentationContext> RemotePresentationContext::protectedBa
 
 Ref<WebGPU::ObjectHeap> RemotePresentationContext::protectedObjectHeap() const
 {
-    return m_objectHeap.get();
+    return m_objectHeap;
 }
 
 Ref<IPC::StreamServerConnection> RemotePresentationContext::protectedStreamConnection() const

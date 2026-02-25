@@ -53,8 +53,8 @@ public:
     WebCore::BackForwardFrameItemIdentifier identifier() const { return m_identifier; }
     const String& url() const;
 
-    WebBackForwardListFrameItem* parent() const { return m_parent.get(); }
-    RefPtr<WebBackForwardListFrameItem> protectedParent() const { return m_parent.get(); }
+    WebBackForwardListFrameItem* parent() const { return m_parent; }
+    RefPtr<WebBackForwardListFrameItem> protectedParent() const { return m_parent; }
     void setParent(WebBackForwardListFrameItem* parent) { m_parent = parent; }
     bool sharesAncestor(WebBackForwardListFrameItem&) const;
 

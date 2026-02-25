@@ -141,7 +141,7 @@ Ref<IPC::StreamServerConnection> RemoteComputePassEncoder::protectedStreamConnec
 
 Ref<WebGPU::ObjectHeap> RemoteComputePassEncoder::protectedObjectHeap() const
 {
-    return m_objectHeap.get();
+    return m_objectHeap;
 }
 
 } // namespace WebKit

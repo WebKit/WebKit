@@ -120,10 +120,10 @@ public:
     void setInspectorClient(std::unique_ptr<API::InspectorClient>&&);
 
     // Public APIs
-    WebPageProxy* inspectedPage() const { return m_inspectedPage.get(); }
-    RefPtr<WebPageProxy> protectedInspectedPage() const { return m_inspectedPage.get(); }
-    WebPageProxy* inspectorPage() const { return m_inspectorPage.get(); }
-    RefPtr<WebPageProxy> protectedInspectorPage() const { return m_inspectorPage.get(); }
+    WebPageProxy* inspectedPage() const { return m_inspectedPage; }
+    RefPtr<WebPageProxy> protectedInspectedPage() const { return m_inspectedPage; }
+    WebPageProxy* inspectorPage() const { return m_inspectorPage; }
+    RefPtr<WebPageProxy> protectedInspectorPage() const { return m_inspectorPage; }
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     WebInspectorUIExtensionControllerProxy* extensionController() const { return m_extensionController.get(); }

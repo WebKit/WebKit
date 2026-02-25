@@ -76,7 +76,7 @@ private:
     WebCore::WebGPU::BindGroup& backing() { return m_backing; }
     Ref<WebCore::WebGPU::BindGroup> protectedBacking();
 
-    Ref<WebGPU::ObjectHeap> protectedObjectHeap() const { return m_objectHeap.get(); }
+    Ref<WebGPU::ObjectHeap> protectedObjectHeap() const { return m_objectHeap; }
     Ref<IPC::StreamServerConnection> protectedStreamConnection() const;
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
