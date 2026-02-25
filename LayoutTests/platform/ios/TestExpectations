@@ -8460,3 +8460,6 @@ webkit.org/b/305508 http/tests/resourceLoadStatistics/log-cross-site-load-with-l
 
 # rdar://168334716 (MTLCompilerService crashes when Metal Shader Validation is enabled on iOS Simulator)
 webgl/webgl2-provoking-vertex-primitive-restart-uint16-nocrash.html [ Skip ]
+
+# Requires mousedown
+media/caption-display-settings/caption-display-settings-default-anchorBounds.html [ Skip ]

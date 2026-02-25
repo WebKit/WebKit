@@ -38,9 +38,13 @@
 #include "CSSValuePair.h"
 #include "CaptionDisplaySettingsOptions.h"
 #include "Element.h"
+#include "EventHandler.h"
 #include "HTMLVideoElement.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSDOMWindow.h"
+#include "MouseEvent.h"
 #include "ResolvedCaptionDisplaySettingsOptions.h"
+#include "TouchEvent.h"
 
 namespace WebCore {
 
@@ -140,6 +144,48 @@ void HTMLVideoElementCaptionDisplaySettings::showCaptionDisplaySettings(HTMLVide
             resolvedOptions.anchorBounds = anchorElement->boundingBoxInRootViewCoordinates();
         if (!options->positionArea.isEmpty())
             parsePositionAreaString(options->positionArea, resolvedOptions);
+    }
+
+    if (!resolvedOptions.anchorBounds) {
+        resolvedOptions.anchorBounds = [&] -> std::optional<FloatRect> {
+            // In the absense of an explicit anchor element, provide a
+            // default anchor using the current window event, if present,
+            // or the last known mouse position, if not.
+            RefPtr frame = element.document().frame();
+            if (!frame)
+                return std::nullopt;
+
+            auto* JSDOMWindowBase = toJSDOMWindow(frame, mainThreadNormalWorldSingleton());
+            if (!JSDOMWindowBase)
+                return std::nullopt;
+
+            constexpr auto locationToRect = [](const DoublePoint& point) {
+                return FloatRect::narrowPrecision(point.x(), point.y(), 0, 0);
+            };
+
+            if (RefPtr currentEvent = JSDOMWindowBase->currentEvent()) {
+                if (RefPtr mouseEvent = dynamicDowncast<MouseEvent>(currentEvent))
+                    return locationToRect(mouseEvent->locationInRootViewCoordinates());
+
+#if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(TOUCH_EVENTS)
+                if (RefPtr touchEvent = dynamicDowncast<TouchEvent>(currentEvent))
+                    return locationToRect(touchEvent->locationInRootViewCoordinates());
+#endif
+
+                if (RefPtr currentElement = downcast<Element>(currentEvent->currentTarget()))
+                    return currentElement->boundingBoxInRootViewCoordinates();
+            }
+
+            RefPtr frameView = frame->view();
+            if (!frameView)
+                return std::nullopt;
+
+            auto position = frame->eventHandler().lastKnownMousePosition();
+            if (!position.isZero())
+                return locationToRect(position);
+
+            return std::nullopt;
+        }();
     }
 
     element.showCaptionDisplaySettingsPreview();
