@@ -478,32 +478,43 @@ void RemoteLayerTreeEventDispatcher::didRefreshDisplay(PlatformDisplayID display
     }
 #endif
 
-    Locker locker { m_scrollingTreeLock };
-
-    auto now = MonotonicTime::now();
-    m_lastDisplayDidRefreshTime = now;
-
-    scrollingTree->displayDidRefresh(displayID);
-
-    if (m_state != SynchronizationState::Idle) {
-        scrollingTree->tryToApplyLayerPositions();
 #if ENABLE(THREADED_ANIMATIONS)
+    auto needsAnimationUpdate = false;
+#endif
+    {
+        Locker locker { m_scrollingTreeLock };
+
+        auto now = MonotonicTime::now();
+        m_lastDisplayDidRefreshTime = now;
+
+        scrollingTree->displayDidRefresh(displayID);
+
+        if (m_state != SynchronizationState::Idle) {
+            scrollingTree->tryToApplyLayerPositions();
+#if ENABLE(THREADED_ANIMATIONS)
+            needsAnimationUpdate = true;
+#endif
+        }
+
+        switch (m_state) {
+        case SynchronizationState::Idle: {
+            m_state = SynchronizationState::WaitingForRenderingUpdate;
+            constexpr auto maxStartRenderingUpdateDelay = 1_ms;
+            scheduleDelayedRenderingUpdateDetectionTimer(maxStartRenderingUpdateDelay);
+            break;
+        }
+        case SynchronizationState::WaitingForRenderingUpdate:
+        case SynchronizationState::InRenderingUpdate:
+        case SynchronizationState::Desynchronized:
+            break;
+        }
+    }
+
+#if ENABLE(THREADED_ANIMATIONS)
+    if (needsAnimationUpdate)
         updateAnimations();
 #endif
-    }
 
-    switch (m_state) {
-    case SynchronizationState::Idle: {
-        m_state = SynchronizationState::WaitingForRenderingUpdate;
-        constexpr auto maxStartRenderingUpdateDelay = 1_ms;
-        scheduleDelayedRenderingUpdateDetectionTimer(maxStartRenderingUpdateDelay);
-        break;
-    }
-    case SynchronizationState::WaitingForRenderingUpdate:
-    case SynchronizationState::InRenderingUpdate:
-    case SynchronizationState::Desynchronized:
-        break;
-    }
 }
 
 void RemoteLayerTreeEventDispatcher::scheduleDelayedRenderingUpdateDetectionTimer(Seconds delay)
@@ -617,11 +628,11 @@ void RemoteLayerTreeEventDispatcher::renderingUpdateComplete()
 {
     ASSERT(isMainRunLoop());
 
-    Locker locker { m_scrollingTreeLock };
-
 #if ENABLE(THREADED_ANIMATIONS)
     updateAnimations();
 #endif
+
+    Locker locker { m_scrollingTreeLock };
 
     if (m_state == SynchronizationState::InRenderingUpdate)
         m_stateCondition.notifyOne();
