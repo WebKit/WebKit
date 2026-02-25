@@ -1,0 +1,14 @@
+
+PASS revert-rule in document rule falls back to :host rule
+PASS revert-rule in document rule falls back to ::slotted rule
+PASS revert-rule in :host rule has no effect when a document rule already wins
+PASS revert-rule with no shadow fallback falls through to unset (inherited)
+PASS revert-rule in document rule falls back to the winning :host rule
+PASS revert-rule chain across document rule and :host rule
+PASS revert-rule in ::part() rule falls back to earlier ::part() rule
+PASS revert-rule in ::part() rule falls back to shadow-internal rule
+PASS revert-rule in shadow-internal rule has no effect when ::part() rule wins
+PASS revert-rule in third ::part() rule falls back to second ::part() rule
+PASS revert-rule on host and ::part() rule on part are independent
+PASS revert-rule in higher-specificity ::part() rule falls back to lower-specificity ::part() rule
+

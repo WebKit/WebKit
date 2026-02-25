@@ -73,6 +73,8 @@ public:
 
     PropertyCascade(const MatchResult&, IncludedProperties&&, const HashSet<AnimatableCSSProperty>* = nullptr, const StyleProperties* positionTryFallbackProperties = nullptr);
     PropertyCascade(const PropertyCascade&, Origin, std::optional<ScopeOrdinal> rollbackScope = { }, std::optional<CascadeLayerPriority> maximumCascadeLayerPriorityForRollback = { });
+    // Constructor for revert-rule: rebuilds from scratch excluding the given set of author declaration indices.
+    PropertyCascade(const PropertyCascade&, Vector<unsigned>&& revertRuleExclusions);
 
     ~PropertyCascade();
 
@@ -84,6 +86,8 @@ public:
         FromStyleAttribute fromStyleAttribute;
         std::array<CSSValue*, 3> cssValue; // Values for link match states MatchDefault, MatchLink and MatchVisited
         std::array<Origin, 3> origins;
+        // Index into MatchResult::authorDeclarations for this property's winning declaration (used by revert-rule).
+        unsigned authorDeclarationsIndex { 0 };
     };
 
     bool isEmpty() const { return m_propertyIsPresent.isEmpty() && !m_seenLogicalGroupPropertyCount; }
@@ -107,18 +111,19 @@ public:
     const PropertyBitSet& propertyIsPresent() const { return m_propertyIsPresent; }
 
     bool applyLowPriorityOnly() const { return !m_includedProperties.ids.isEmpty(); }
+    const Vector<unsigned>& revertRuleExclusions() const { return m_revertRuleExclusions; }
 
 private:
     void buildCascade();
     bool addNormalMatches(Origin);
     void addImportantMatches(Origin);
-    bool addMatch(const MatchedProperties&, Origin, IsImportant);
+    bool addMatch(const MatchedProperties&, Origin, IsImportant, unsigned authorDeclarationsIndex = 0);
     bool shouldApplyAfterAnimation(const StyleProperties::PropertyReference&);
     void addPositionTryFallbackProperties();
 
-    void set(CSSPropertyID, CSSValue&, const MatchedProperties&, Origin);
-    void setLogicalGroupProperty(CSSPropertyID, CSSValue&, const MatchedProperties&, Origin);
-    static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, const MatchedProperties&, Origin);
+    void set(CSSPropertyID, CSSValue&, const MatchedProperties&, Origin, unsigned authorDeclarationsIndex);
+    void setLogicalGroupProperty(CSSPropertyID, CSSValue&, const MatchedProperties&, Origin, unsigned authorDeclarationsIndex);
+    static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, const MatchedProperties&, Origin, unsigned authorDeclarationsIndex);
 
     bool hasProperty(CSSPropertyID, const CSSValue&);
     bool mayOverrideExistingProperty(CSSPropertyID, const CSSValue&);
@@ -132,6 +137,8 @@ private:
     const Origin m_maximumOrigin;
     const std::optional<ScopeOrdinal> m_rollbackScope;
     const std::optional<CascadeLayerPriority> m_maximumCascadeLayerPriorityForRollback;
+    // For revert-rule rollback cascades: author declaration indices to skip, accumulated across chain levels.
+    const Vector<unsigned> m_revertRuleExclusions;
 
     struct AnimationLayer {
         AnimationLayer(const HashSet<AnimatableCSSProperty>&);

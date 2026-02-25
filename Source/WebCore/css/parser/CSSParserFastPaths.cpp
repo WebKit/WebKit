@@ -738,7 +738,8 @@ static bool isUniversalKeyword(StringView string)
         || equalLettersIgnoringASCIICase(string, "inherit"_s)
         || equalLettersIgnoringASCIICase(string, "unset"_s)
         || equalLettersIgnoringASCIICase(string, "revert"_s)
-        || equalLettersIgnoringASCIICase(string, "revert-layer"_s);
+        || equalLettersIgnoringASCIICase(string, "revert-layer"_s)
+        || equalLettersIgnoringASCIICase(string, "revert-rule"_s);
 }
 
 static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID property, StringView string, CSS::PropertyParserState& state)
