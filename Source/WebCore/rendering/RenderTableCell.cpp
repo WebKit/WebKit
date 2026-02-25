@@ -36,7 +36,6 @@
 #include "HTMLNames.h"
 #include "HTMLTableCellElement.h"
 #include "HTMLTableRowElement.h"
-#include "HTMLTableSectionElement.h"
 #include "LayoutScope.h"
 #include "PaintInfo.h"
 #include "RenderBoxInlines.h"
@@ -152,25 +151,19 @@ unsigned RenderTableCell::parseRowSpanFromDOM() const
     return 1;
 }
 
-unsigned RenderTableCell::calculateRowSpanForRowspanZero() const
+unsigned RenderTableCell::calculateRowSpanForRowSpanZero() const
 {
     // Handle rowspan="0" which means "span all remaining rows in the row group"
     // Per HTML spec: https://html.spec.whatwg.org/multipage/tables.html#attr-tdth-rowspan
-    //
-    // We use the DOM to count total rows because during grid construction (recalcCells),
-    // the DOM structure is complete even though the grid is still being built.
-
     if (CheckedPtr renderSection = this->section()) {
-        if (RefPtr sectionElement = dynamicDowncast<HTMLTableSectionElement>(renderSection->element())) {
-            unsigned totalRows = sectionElement->numRows();
-            unsigned currentRow = this->rowIndex();
-
-            if (currentRow < totalRows)
-                return totalRows - currentRow;
-        }
+        unsigned totalRows = 0;
+        for (CheckedPtr<RenderTableRow> row = renderSection->firstRow(); row; row = row->nextRow())
+            ++totalRows;
+        unsigned currentRow = this->rowIndex();
+        if (currentRow < totalRows)
+            return totalRows - currentRow;
     }
-
-    // Fallback: couldn't get section or DOM count
+    // Fallback: couldn't get section
     return 1;
 }
 
