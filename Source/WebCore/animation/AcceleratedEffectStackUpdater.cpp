@@ -28,6 +28,7 @@
 
 #if ENABLE(THREADED_ANIMATIONS)
 
+#include "AcceleratedEffectStack.h"
 #include "AcceleratedTimeline.h"
 #include "AcceleratedTimelinesUpdater.h"
 #include "DocumentPage.h"
@@ -50,6 +51,14 @@ void AcceleratedEffectStackUpdater::update()
 
     RefPtr<Page> page;
     HashSet<Ref<AcceleratedTimeline>> timelinesInUpdate;
+    // We keep a list of all the accelerated effect stacks that will change
+    // during this update so that the AcceleratedTimeline that were referenced
+    // from effects contained in those stacks are kept alive for the duration
+    // of this function. Once this function is done, timelines not in use by
+    // any remaining effect on any accelerated stack will be released and this
+    // will be picked up in `AcceleratedTimelinesUpdater::takeTimelinesUpdate()`
+    // to work out a list of destroyed accelerated timelines.
+    Vector<RefPtr<const AcceleratedEffectStack>> previousEffectStacks;
 
     auto targetsPendingUpdate = std::exchange(m_targetsPendingUpdate, { });
     for (auto [element, pseudoElementIdentifier] : targetsPendingUpdate) {
@@ -67,7 +76,9 @@ void AcceleratedEffectStackUpdater::update()
 
         auto* renderLayer = renderer->layer();
         ASSERT(renderLayer && renderLayer->backing());
-        renderLayer->backing()->updateAcceleratedEffectsAndBaseValues(timelinesInUpdate);
+        auto* backing = renderLayer->backing();
+        previousEffectStacks.append(protect(backing->acceleratedEffectStack()));
+        backing->updateAcceleratedEffectsAndBaseValues(timelinesInUpdate);
     }
 
     if (page && !timelinesInUpdate.isEmpty())

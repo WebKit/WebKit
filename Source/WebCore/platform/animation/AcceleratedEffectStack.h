@@ -44,7 +44,7 @@ public:
     const AcceleratedEffects& backdropLayerEffects() const { return m_backdropLayerEffects; }
     void setEffects(AcceleratedEffects&&);
 
-    const AcceleratedEffectValues& baseValues() { return m_baseValues; }
+    const AcceleratedEffectValues& baseValues() const { return m_baseValues; }
     void setBaseValues(AcceleratedEffectValues&&);
 
     virtual ~AcceleratedEffectStack() = default;

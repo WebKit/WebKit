@@ -543,7 +543,7 @@ public:
     virtual void markFrontBufferVolatileForTesting() { }
 
 #if ENABLE(THREADED_ANIMATIONS)
-    AcceleratedEffectStack* acceleratedEffectStack() const { return m_effectStack.get(); }
+    const AcceleratedEffectStack* acceleratedEffectStack() const { return m_effectStack.get(); }
     WEBCORE_EXPORT virtual void setAcceleratedEffectsAndBaseValues(AcceleratedEffects&&, AcceleratedEffectValues&&);
 #endif
 

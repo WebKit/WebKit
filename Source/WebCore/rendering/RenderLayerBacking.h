@@ -48,6 +48,7 @@ class TiledBacking;
 class TransformationMatrix;
 
 #if ENABLE(THREADED_ANIMATIONS)
+class AcceleratedEffectStack;
 class AcceleratedTimeline;
 #endif
 
@@ -196,6 +197,7 @@ public:
     void resumeAnimations();
 
 #if ENABLE(THREADED_ANIMATIONS)
+    const AcceleratedEffectStack* acceleratedEffectStack() const;
     void updateAcceleratedEffectsAndBaseValues(HashSet<Ref<AcceleratedTimeline>>&);
 #endif
 

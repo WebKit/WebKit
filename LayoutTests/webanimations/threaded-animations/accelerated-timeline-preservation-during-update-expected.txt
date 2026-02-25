@@ -1,0 +1,3 @@
+
+PASS Removing an animation and creating an animation that both used the same timeline in the same update preserves the shared timeline.
+

@@ -2436,3 +2436,90 @@ webkit.org/b/305403 [ Sequoia ] http/tests/performance/performance-resource-timi
 [ Sequoia+ arm64 ] platform/mac/media/encrypted-media/fps-generateRequest.html [ Timeout ]
 
 webkit.org/b/305508 http/tests/resourceLoadStatistics/log-cross-site-load-with-link-decoration.html [ Pass Failure ]
+
+webkit.org/b/305581 http/tests/workers/service/shownotification-allowed.html [ Pass Failure ]
+
+webkit.org/b/303348 http/tests/site-isolation/remote-frame-loaded-while-hidden.html [ ImageOnlyFailure ]
+
+webkit.org/b/305660 [ Debug ] http/tests/cache-storage/cache-clearing-all.https.html [ Pass Failure ]
+
+webkit.org/b/305671 fast/animation/css-animation-throttling.html [ Pass Failure ]
+
+webkit.org/b/305673 [ Debug ] inspector/idl-extensions/CanvasRenderingContext2D/setPath.html [ Timeout ]
+
+webkit.org/b/305675 fast/animation/request-animation-frame-throttle-subframe-zero-size.html [ Pass Failure ]
+
+webkit.org/b/305947 compositing/visibility/frameset-visibility-hidden.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/305958 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Pass Failure ]
+
+webkit.org/b/305959 fast/text/FontFaceSet-status-after-style-update.html [ Pass Failure ]
+
+webkit.org/b/306047 accessibility/mac/replaced-element-text-selection.html [ Pass Failure ]
+
+webkit.org/b/306278 [ arm64 ] media/media-source/media-managedmse-resume-after-remove.html [ Pass Failure ]
+
+webkit.org/b/306294 http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/306360 http/tests/download/sandboxed-iframe-download-not-allowed.html [ Pass Failure ]
+
+webkit.org/b/306570 [ Tahoe arm64 ] http/tests/webcodecs/video-decoder-callbacks-do-not-leak.html [ Pass Failure ]
+
+webkit.org/b/306629 [ Release arm64 ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-video-bitrate.html [ Pass Failure ]
+
+webkit.org/b/306301 [ x86_64 ] http/tests/webgpu/webgpu/api/validation/state/device_lost/destroy.html [ Failure ]
+
+webkit.org/b/306663 [ Debug arm64 ] webaudio/silent-audio-interrupted-in-background.html [ Pass Failure ]
+
+webkit.org/b/306670 [ Debug arm64 ] http/tests/webgpu/webgpu/api/validation/render_pipeline/resource_compatibility.html [ Pass Failure Timeout ]
+
+webkit.org/b/306785 imported/w3c/web-platform-tests/storage-access-api/requestStorageAccess-insecure.sub.window.html [ Pass Failure ]
+webkit.org/b/306785 imported/w3c/web-platform-tests/storage-access-api/storage-access-permission.sub.https.window.html [ Pass Failure ]
+
+webkit.org/b/306808 http/tests/webgpu/webgpu/shader/validation/parse/blankspace.html [ Pass Failure ]
+
+webkit.org/b/306821 [ Tahoe ] fast/css-grid-layout/grid-item-display.html [ Pass Failure ]
+
+webkit.org/b/307084 [ Tahoe Release ] webgl/smell-test.html [ ImageOnlyFailure Pass ]
+webkit.org/b/307088 [ Tahoe Release ] webgl/webgl-and-dom-in-gpup.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/307196 http/tests/geolocation/geolocation-get-current-position-does-not-leak.https.html [ Pass Failure ]
+
+webkit.org/b/307351 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-requestsubmit.html [ Pass Failure ]
+
+webkit.org/b/307385 fast/events/onunload-not-on-body.html [ Pass Failure ]
+
+webkit.org/b/307377 [ Tahoe Release arm64 ] compositing/webgl/update-composited-canvas-layer.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/307691 [ Tahoe Release arm64 ] svg/gradients/spreadMethod.svg [ ImageOnlyFailure Pass ]
+
+webkit.org/b/306436 http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-with-link-query-using-cookiestore-api.https.html [ Pass Failure ]
+
+webkit.org/b/306444 [ Release ] imported/w3c/web-platform-tests/editing/other/typing-around-link-element-at-non-collapsed-selection.tentative.html?target=DesignMode [ Pass Failure ]
+webkit.org/b/306444 [ Release ] imported/w3c/web-platform-tests/editing/other/typing-around-link-element-at-non-collapsed-selection.tentative.html?target=DesignMode&parent=b&child=i [ Pass Failure ]
+webkit.org/b/306444 [ Release ] imported/w3c/web-platform-tests/editing/other/typing-around-link-element-at-non-collapsed-selection.tentative.html?target=DesignMode&parent=b [ Pass Failure ]
+webkit.org/b/306444 [ Release ] imported/w3c/web-platform-tests/editing/other/typing-around-link-element-at-non-collapsed-selection.tentative.html?target=DesignMode&child=b [ Pass Failure ]
+
+webkit.org/b/307850 media/modern-media-controls/tracks-support/audio-single-track.html [ Pass Timeout ]
+
+webkit.org/b/307886 [ Release arm64 ] js/dom/promise-stack-overflow.html [ Pass Failure ]
+
+webkit.org/b/307889 http/tests/multipart/multipart-async-image.html [ Pass Failure ]
+
+webkit.org/b/308079 [ Tahoe Release arm64 ] http/tests/site-isolation/inspector/console/message-from-iframe.html [ Failure ]
+webkit.org/b/308079 [ Tahoe Release arm64 ] http/tests/site-isolation/inspector/console/message-from-worker.html [ Failure ]
+webkit.org/b/308240 http/tests/site-isolation/inspector/runtime/evaluate-in-cross-origin-iframe.html [ Failure ]
+webkit.org/b/308240 http/tests/site-isolation/inspector/runtime/execution-context-from-frame-target.html [ Failure ]
+webkit.org/b/308240 http/tests/site-isolation/inspector/runtime/executionContextCreated-frame-target.html [ Failure ]
+
+webkit.org/b/308165 [ Debug ] scrollingcoordinator/mac/latching/simple-page-rubberbands.html [ Pass Failure ]
+
+webkit.org/b/308243 [ Release ] http/tests/site-isolation/mixedContent/redirect-https-to-http-iframe-in-main-frame.html [ Pass Failure ]
+
+webkit.org/b/308325 [ Debug ] http/wpt/cache-storage/cache-in-stopped-context.html [ Pass Failure ]
+
+webkit.org/b/308326 [ Debug ] imported/w3c/web-platform-tests/fetch/api/basic/error-after-response.any.html [ Pass Failure ]
+
+webkit.org/b/308430 webanimations/threaded-animations/accelerated-timeline-preservation-during-update.html [ Pass Crash ]
+
+webkit.org/b/308334 [ Tahoe Debug ] http/tests/webgpu/webgpu/api/validation/gpu_external_texture_expiration.html [ Skip ]
