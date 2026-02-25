@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<!-- Test that fixed position elements positioned correctly when page scale < 1 with visual viewport disabled.
+     On success, the blue reference box should be invisible (covered by the fixed white box). -->
 <html>
 <head>
 <style>
@@ -43,7 +45,6 @@
 </script>
 </head>
 <body onload="runTest();">
-  On success, the blue reference box should be invisible (covered by the fixed box).
   <div class="reference"></div>
   <div class="fixed"></div>
 </body>
