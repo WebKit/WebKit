@@ -653,24 +653,22 @@ void RenderBlockFlow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit 
             }
         }
 
-        bool heightChanged = (previousHeight != newHeight);
-        if (heightChanged || alignContentShift)
-            relayoutChildren = RelayoutChildren::Yes;
-        if (isDocumentElementRenderer())
+        // Add overflow from children (unless we're multi-column, since in that case all our child overflow is clipped anyway).
+        auto contentArea = flippedContentBoxRect();
+        if (writingMode().isHorizontal())
+            contentArea.shiftMaxYEdgeTo(afterPaddingEdge - paddingAfter());
+        else
+            contentArea.shiftMaxXEdgeTo(afterPaddingEdge - paddingAfter());
+        updateInFlowDescendantTransformsAfterLayout();
+        computeInFlowOverflow(contentArea, isHorizontalWritingMode() ? ComputeOverflowOptions::MarginsExtendContentAreaX : ComputeOverflowOptions::MarginsExtendContentAreaY);
+
+        if (isDocumentElementRenderer() || previousHeight != newHeight || alignContentShift)
             layoutOutOfFlowBoxes(RelayoutChildren::Yes);
         else
             layoutOutOfFlowBoxes(relayoutChildren);
+        updateOutOfFlowDescendantTransformsAfterLayout();
+        addOverflowFromOutOfFlowBoxes();
     }
-
-    updateDescendantTransformsAfterLayout();
-
-    // Add overflow from children (unless we're multi-column, since in that case all our child overflow is clipped anyway).
-    auto contentArea = flippedContentBoxRect();
-    if (writingMode().isHorizontal())
-        contentArea.shiftMaxYEdgeTo(afterPaddingEdge - paddingAfter());
-    else
-        contentArea.shiftMaxXEdgeTo(afterPaddingEdge - paddingAfter());
-    computeOverflow(contentArea, isHorizontalWritingMode() ? ComputeOverflowOptions::MarginsExtendContentAreaX : ComputeOverflowOptions::MarginsExtendContentAreaY);
 
     auto* state = view().frameView().layoutContext().layoutState();
     if (state && state->pageLogicalHeight())
@@ -2513,9 +2511,9 @@ void RenderBlockFlow::addFloatsToNewParent(RenderBlockFlow& toBlockFlow) const
     }
 }
 
-void RenderBlockFlow::computeOverflow(LayoutRect contentArea, OptionSet<ComputeOverflowOptions> options)
+void RenderBlockFlow::computeInFlowOverflow(LayoutRect contentArea, OptionSet<ComputeOverflowOptions> options)
 {
-    RenderBlock::computeOverflow(contentArea, options);
+    RenderBlock::computeInFlowOverflow(contentArea, options);
 
     auto addOverflowFromFloatsIfApplicable = [&] {
 

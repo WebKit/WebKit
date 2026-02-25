@@ -140,7 +140,7 @@ protected:
     void simplifiedNormalFlowLayout() override;
     LayoutUnit shiftForAlignContent(LayoutUnit intrinsicLogicalHeight, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
 
-    void computeOverflow(LayoutRect contentArea, OptionSet<ComputeOverflowOptions> = { }) override;
+    void computeInFlowOverflow(LayoutRect contentArea, OptionSet<ComputeOverflowOptions> = { }) override;
     void addOverflowFromInFlowChildren(OptionSet<ComputeOverflowOptions> = { }) override;
 
     // RenderBlockFlows override these methods, since they are the only class that supports margin collapsing.

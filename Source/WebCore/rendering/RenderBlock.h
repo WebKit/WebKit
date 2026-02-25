@@ -233,7 +233,8 @@ public:
 
     virtual bool hasLineIfEmpty() const;
 
-    void updateDescendantTransformsAfterLayout();
+    void updateInFlowDescendantTransformsAfterLayout();
+    void updateOutOfFlowDescendantTransformsAfterLayout();
 
     virtual bool canPerformSimplifiedLayout() const;
 
@@ -307,7 +308,7 @@ protected:
 
     virtual bool isPointInOverflowControl(HitTestResult&, const LayoutPoint& locationInContainer, const LayoutPoint& accumulatedOffset);
 
-    virtual void computeOverflow(LayoutRect contentArea, OptionSet<ComputeOverflowOptions> = { });
+    virtual void computeInFlowOverflow(LayoutRect contentArea, OptionSet<ComputeOverflowOptions> = { });
     void addOverflowFromOutOfFlowBoxes();
     void addVisualOverflowFromTheme();
 

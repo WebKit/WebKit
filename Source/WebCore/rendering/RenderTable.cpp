@@ -633,19 +633,20 @@ void RenderTable::layout()
         if (isOutOfFlowPositioned())
             updateLogicalHeight();
 
-        // table can be containing block of positioned elements.
-        bool dimensionChanged = oldLogicalWidth != logicalWidth() || oldLogicalHeight != logicalHeight();
-        layoutOutOfFlowBoxes(dimensionChanged ? RelayoutChildren::Yes : RelayoutChildren::No);
-
-        updateLayerTransform();
-
         // Layout was changed, so probably borders too.
         invalidateCollapsedBorders();
 
         // The location or height of one or more sections may have changed.
         invalidateCachedColumnOffsets();
 
-        computeOverflow(flippedContentBoxRect());
+        computeInFlowOverflow(flippedContentBoxRect());
+
+        // table can be containing block of positioned elements.
+        bool dimensionChanged = oldLogicalWidth != logicalWidth() || oldLogicalHeight != logicalHeight();
+        layoutOutOfFlowBoxes(dimensionChanged ? RelayoutChildren::Yes : RelayoutChildren::No);
+        addOverflowFromOutOfFlowBoxes();
+
+        updateLayerTransform();
     }
 
     auto* layoutState = view().frameView().layoutContext().layoutState();

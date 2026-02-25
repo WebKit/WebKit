@@ -470,20 +470,18 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
             endAndCommitUpdateScrollInfoAfterLayoutTransaction();
         }
 
-        if (logicalHeight() != previousHeight)
-            relayoutChildren = RelayoutChildren::Yes;
+        repaintFlexItemsDuringLayoutIfMoved(oldFlexItemRects);
+        // FIXME: css3/flexbox/repaint-rtl-column.html seems to repaint more overflow than it needs to.
+        updateInFlowDescendantTransformsAfterLayout();
+        computeInFlowOverflow(flippedContentBoxRect(),  { ComputeOverflowOptions::MarginsExtendContentAreaX, ComputeOverflowOptions::MarginsExtendContentAreaY });
+        // FIXME: Only the items at the edges should contribute to the content area. But this distinction only matters in some weird cases with extreme negative margins.
 
-        if (isDocumentElementRenderer())
+        if (isDocumentElementRenderer() || logicalHeight() != previousHeight)
             layoutOutOfFlowBoxes(RelayoutChildren::Yes);
         else
             layoutOutOfFlowBoxes(relayoutChildren);
-
-        repaintFlexItemsDuringLayoutIfMoved(oldFlexItemRects);
-        // FIXME: css3/flexbox/repaint-rtl-column.html seems to repaint more overflow than it needs to.
-        computeOverflow(flippedContentBoxRect(), { ComputeOverflowOptions::MarginsExtendContentAreaX, ComputeOverflowOptions::MarginsExtendContentAreaY });
-        // FIXME: Only the items at the edges should contribute to the content area. But this distinction only matters in some weird cases with extreme negative margins.
-
-        updateDescendantTransformsAfterLayout();
+        updateOutOfFlowDescendantTransformsAfterLayout();
+        addOverflowFromOutOfFlowBoxes();
     }
 
     updateLayerTransform();

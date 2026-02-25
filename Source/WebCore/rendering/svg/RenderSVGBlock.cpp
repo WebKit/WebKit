@@ -123,9 +123,9 @@ FloatRect RenderSVGBlock::referenceBoxRect(CSSBoxType boxType) const
     return RenderBlockFlow::referenceBoxRect(boxType);
 }
 
-void RenderSVGBlock::computeOverflow(LayoutRect contentArea, OptionSet<ComputeOverflowOptions> options)
+void RenderSVGBlock::computeInFlowOverflow(LayoutRect contentArea, OptionSet<ComputeOverflowOptions> options)
 {
-    RenderBlockFlow::computeOverflow(contentArea, options);
+    RenderBlockFlow::computeInFlowOverflow(contentArea, options);
 
     if (document().settings().layerBasedSVGEngineEnabled())
         return;

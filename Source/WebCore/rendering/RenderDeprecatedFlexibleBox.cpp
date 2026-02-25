@@ -375,18 +375,15 @@ void RenderDeprecatedFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren,
 
         auto contentArea = flippedContentBoxRect();
         updateLogicalHeight();
+        updateInFlowDescendantTransformsAfterLayout();
+        computeInFlowOverflow(contentArea);
 
-        if (previousSize.height() != height())
-            relayoutChildren = RelayoutChildren::Yes;
-
-        if (isDocumentElementRenderer())
+        if (isDocumentElementRenderer() || previousSize.height() != height())
             layoutOutOfFlowBoxes(RelayoutChildren::Yes);
         else
             layoutOutOfFlowBoxes(relayoutChildren);
-
-        updateDescendantTransformsAfterLayout();
-
-        computeOverflow(contentArea);
+        updateOutOfFlowDescendantTransformsAfterLayout();
+        addOverflowFromOutOfFlowBoxes();
     }
 
     updateLayerTransform();
@@ -754,7 +751,7 @@ void RenderDeprecatedFlexibleBox::layoutSingleClampedFlexItem()
     setHeight(childBoxBottom + paddingBottom() + borderBottom());
     updateLogicalHeight();
 
-    computeOverflow(flippedContentBoxRect());
+    computeInFlowOverflow(flippedContentBoxRect());
 
     endAndCommitUpdateScrollInfoAfterLayoutTransaction();
 

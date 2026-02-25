@@ -550,19 +550,17 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
 
         endAndCommitUpdateScrollInfoAfterLayoutTransaction();
 
-        if (size() != previousSize)
-            relayoutChildren = RelayoutChildren::Yes;
+        updateInFlowDescendantTransformsAfterLayout();
+        computeInFlowOverflow(contentOverflowRect(), ComputeOverflowOptions::MarginsExtendLayoutOverflow);
 
-        if (isDocumentElementRenderer())
+        if (isDocumentElementRenderer() || size() != previousSize)
             layoutOutOfFlowBoxes(RelayoutChildren::Yes);
         else
             layoutOutOfFlowBoxes(relayoutChildren);
+        updateOutOfFlowDescendantTransformsAfterLayout();
+        addOverflowFromOutOfFlowBoxes();
 
         m_trackSizingAlgorithm.reset();
-
-        computeOverflow(contentOverflowRect(), ComputeOverflowOptions::MarginsExtendLayoutOverflow);
-
-        updateDescendantTransformsAfterLayout();
     }
 
     updateLayerTransform();
@@ -697,19 +695,17 @@ void RenderGrid::layoutMasonry(RelayoutChildren relayoutChildren)
 
         endAndCommitUpdateScrollInfoAfterLayoutTransaction();
 
-        if (size() != previousSize)
-            relayoutChildren = RelayoutChildren::Yes;
+        updateInFlowDescendantTransformsAfterLayout();
+        computeInFlowOverflow(contentOverflowRect());
 
-        if (isDocumentElementRenderer())
+        if (isDocumentElementRenderer() || size() != previousSize)
             layoutOutOfFlowBoxes(RelayoutChildren::Yes);
         else
             layoutOutOfFlowBoxes(relayoutChildren);
+        updateOutOfFlowDescendantTransformsAfterLayout();
+        addOverflowFromOutOfFlowBoxes();
 
         m_trackSizingAlgorithm.reset();
-
-        computeOverflow(contentOverflowRect(), ComputeOverflowOptions::MarginsExtendLayoutOverflow);
-
-        updateDescendantTransformsAfterLayout();
     }
 
     updateLayerTransform();
