@@ -26,6 +26,10 @@
 #include "config.h"
 #include "InlineDisplayContent.h"
 
+#include "DocumentInlines.h"
+#include "DocumentQuirks.h"
+#include "RenderObjectDocument.h"
+
 namespace WebCore {
 namespace InlineDisplay {
 
