@@ -2281,16 +2281,25 @@ LayoutRange RenderGrid::gridAreaRangeForOutOfFlow(const RenderBox& gridItem, Sty
         return borderBefore();
     }();
 
+    LayoutRange defaultRange(borderEdge, isRowAxis ? clientLogicalWidth() : clientLogicalHeight());
+    if (!gridItem.style().positionArea().isNone() && hasRenderOverflow() && hasPotentiallyScrollableOverflow()) {
+        // position-area uses the scrollable containing block
+        defaultRange = isRowAxis == writingMode().isHorizontal()
+            ? scrollablePaddingAreaOverflowRect().xRange() : scrollablePaddingAreaOverflowRect().yRange();
+        if (writingMode().isInlineFlipped() && isRowAxis)
+            defaultRange.moveTo(width() - defaultRange.max());
+    }
+
     if (currentGrid().needsItemsPlacement()) {
         // Haven't completed in-flow placement and grid sizing yet.
         // Return something basic that doesn't access unbuilt data structures.
-        return LayoutRange(borderEdge, isRowAxis ? clientLogicalWidth() : clientLogicalHeight());
+        return defaultRange;
     }
 
     int startLine, endLine;
     bool startIsAuto, endIsAuto;
     if (!computeGridPositionsForOutOfFlowGridItem(gridItem, direction, startLine, startIsAuto, endLine, endIsAuto) || (startIsAuto && endIsAuto))
-        return LayoutRange(borderEdge, isRowAxis ? clientLogicalWidth() : clientLogicalHeight());
+        return defaultRange;
 
     LayoutUnit start;
     LayoutUnit end;
@@ -2302,12 +2311,12 @@ LayoutRange RenderGrid::gridAreaRangeForOutOfFlow(const RenderBox& gridItem, Sty
     }
 
     if (startIsAuto)
-        start = borderEdge;
+        start = defaultRange.min();
     else {
         start = positions[startLine];
     }
     if (endIsAuto)
-        end = (isRowAxis ? clientLogicalWidth() : clientLogicalHeight()) + borderEdge;
+        end = defaultRange.max();
     else {
         end = positions[endLine];
         // These vectors store line positions including gaps, but we shouldn't consider them for the edges of the grid.

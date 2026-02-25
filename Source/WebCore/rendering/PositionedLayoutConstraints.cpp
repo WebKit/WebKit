@@ -71,10 +71,6 @@ PositionedLayoutConstraints::PositionedLayoutConstraints(const RenderBox& render
     m_containingInlineSize = (LogicalBoxAxis::Inline == m_containingAxis) ? m_containingRange.size()
         : renderer.containingBlockRangeForPositioned(*m_container, oppositeAxis(m_physicalAxis)).size();
 
-    // Adjust for scrollable area.
-    if (!m_style.positionArea().isNone() && PositionType::Fixed != m_style.position())
-        expandToScrollableArea(m_containingRange);
-
     // Adjust for grid-area.
     captureGridArea();
 
@@ -149,22 +145,15 @@ void PositionedLayoutConstraints::captureInsets()
 
 void PositionedLayoutConstraints::expandToScrollableArea(LayoutRange& containingRange, const std::optional<ScrollPosition> fromScrollPosition) const
 {
-    // FIXME: Extend this logic to other scrollable containing blocks.
-    if (!is<RenderView>(m_container))
+    auto containingBlock = dynamicDowncast<RenderBox>(m_container.get());
+    if (!containingBlock || !containingBlock->hasRenderOverflow()
+        || (!containingBlock->isRenderView() && !containingBlock->hasPotentiallyScrollableOverflow()))
         return;
 
-    auto initialContainingBlock = downcast<RenderBox>(m_container.get());
-    for (CheckedPtr child = initialContainingBlock->firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (child->isOutOfFlowPositioned())
-            continue;
-        LayoutUnit outerSize = BoxAxis::Vertical == m_physicalAxis
-            ? child->height() + std::max(0_lu, child->marginTop() + child->marginBottom())
-            : child->width() + std::max(0_lu, child->marginLeft() + child->marginRight());
-        if (startIsBefore())
-            containingRange.floorSizeFromMinEdge(outerSize);
-        else
-            containingRange.floorSizeFromMaxEdge(outerSize);
-    }
+    auto scrollableArea = containingBlock->scrollablePaddingAreaOverflowRect();
+    auto scrollableRange = BoxAxis::Horizontal == m_physicalAxis ? scrollableArea.xRange() : scrollableArea.yRange();
+    containingRange.capMinEdgeTo(scrollableRange.min());
+    containingRange.floorMaxEdgeTo(scrollableRange.max());
 
     if (fromScrollPosition) {
         auto scrollOffset = BoxAxis::Horizontal == m_physicalAxis ? fromScrollPosition->x() : fromScrollPosition->y();

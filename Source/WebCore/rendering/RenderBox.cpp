@@ -3955,6 +3955,19 @@ void RenderBox::computeAndSetBlockDirectionMargins(const RenderBlock& containing
 
 // MARK: - Positioned Layout
 
+inline static LayoutRange getScrollableContainingBlockRange(const RenderBox& containingBlock, BoxAxis physicalAxis)
+{
+    if (BoxAxis::Horizontal == physicalAxis) {
+        // PositionedLayoutConstraints expects us to not have adjusted for left-side scrollbars yet.
+        // FIXME: Get PositionedLayoutConstraints to work in pre-corrected coordinates instead of doing "fixup" afterwards.
+        auto range = containingBlock.scrollablePaddingAreaOverflowRect().xRange();
+        if (containingBlock.isHorizontalWritingMode() && containingBlock.shouldPlaceVerticalScrollbarOnLeft())
+            range.moveBy(-containingBlock.verticalScrollbarWidth());
+        return range;
+    }
+    return containingBlock.scrollablePaddingAreaOverflowRect().yRange();
+}
+
 LayoutRange RenderBox::containingBlockRangeForPositioned(const RenderBoxModelObject& container, BoxAxis physicalAxis) const
 {
     ASSERT(container.canContainAbsolutelyPositionedObjects() || container.canContainFixedPositionObjects());
@@ -3964,6 +3977,8 @@ LayoutRange RenderBox::containingBlockRangeForPositioned(const RenderBoxModelObj
 
     if (isFixedPositioned()) {
         if (auto* renderView = dynamicDowncast<RenderView>(container)) {
+            if (!style().positionArea().isNone() && renderView->hasRenderOverflow())
+                return getScrollableContainingBlockRange(*renderView, physicalAxis);
             return isContainerInlineAxis
                 ? LayoutRange(startEdge, renderView->clientLogicalWidthForFixedPosition())
                 : LayoutRange(startEdge, renderView->clientLogicalHeightForFixedPosition());
@@ -4014,6 +4029,9 @@ LayoutRange RenderBox::containingBlockRangeForPositioned(const RenderBoxModelObj
             }
         }
     }
+
+    if (!style().positionArea().isNone() && containingBlock->hasRenderOverflow() && containingBlock->hasPotentiallyScrollableOverflow())
+        return getScrollableContainingBlockRange(*containingBlock, physicalAxis);
 
     return BoxAxis::Horizontal == physicalAxis
         ? LayoutRange(startEdge, containingBlock->clientWidth())

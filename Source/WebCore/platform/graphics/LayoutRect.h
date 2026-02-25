@@ -34,6 +34,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LayoutPoint.h>
+#include <WebCore/LayoutRange.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Forward.h>
 
@@ -73,6 +74,8 @@ public:
     LayoutUnit maxY() const { return y() + height(); }
     LayoutUnit width() const { return m_size.width(); }
     LayoutUnit height() const { return m_size.height(); }
+    LayoutRange xRange() const { return { x(), width() }; }
+    LayoutRange yRange() const { return { y(), height() }; }
 
     template<typename T> void setX(T x) { m_location.setX(x); }
     template<typename T> void setY(T y) { m_location.setY(y); }

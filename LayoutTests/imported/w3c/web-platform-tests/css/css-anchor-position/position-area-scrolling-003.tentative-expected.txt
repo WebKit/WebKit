@@ -1,6 +1,6 @@
 
 
-PASS Initial scroll position
-PASS Scroll to 40,60
-PASS Redisplay at 40,60
+FAIL Initial scroll position assert_equals: e7 height expected 350 but got 100
+FAIL Scroll to 40,60 assert_equals: e7 height expected 350 but got 100
+FAIL Redisplay at 40,60 assert_equals: e7 height expected 350 but got 100
 
