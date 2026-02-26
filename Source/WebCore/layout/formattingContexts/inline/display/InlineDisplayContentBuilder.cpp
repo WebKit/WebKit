@@ -146,19 +146,20 @@ InlineDisplay::Boxes InlineDisplayContentBuilder::buildTextOnlyContent(const Lin
 static inline bool computeInkOverflowForInlineLevelBox(const Style::ComputedStyle& style, FloatRect& inkOverflow)
 {
     auto hasInkOverflow = false;
+    auto zoom = style.usedZoomForLength();
 
     auto inflateWithOutline = [&] {
         if (!style.hasOutlineInVisualOverflow())
             return;
-        inkOverflow.inflate(style.usedOutlineSize());
+        inkOverflow.inflate(style.usedOutlineSize(zoom, style.deviceScaleFactor()));
         hasInkOverflow = true;
     };
     inflateWithOutline();
 
     auto inflateWithBoxShadow = [&] {
         // FIXME: Use `Style::shadowOutsetExtent` to get all 4 extents at once after static cast to `int` in `shadowVerticalExtent` is understood.
-        auto [topBoxShadow, bottomBoxShadow] = Style::shadowVerticalExtent(style.boxShadow(), style.usedZoomForLength());
-        auto [leftBoxShadow, rightBoxShadow] = Style::shadowHorizontalExtent(style.boxShadow(), style.usedZoomForLength());
+        auto [topBoxShadow, bottomBoxShadow] = Style::shadowVerticalExtent(style.boxShadow(), zoom);
+        auto [leftBoxShadow, rightBoxShadow] = Style::shadowHorizontalExtent(style.boxShadow(), zoom);
         if (!topBoxShadow && !bottomBoxShadow && !leftBoxShadow && !rightBoxShadow)
             return;
         inkOverflow.inflate(-leftBoxShadow.toFloat(), -topBoxShadow.toFloat(), rightBoxShadow.toFloat(), bottomBoxShadow.toFloat());
@@ -178,7 +179,7 @@ static inline bool hasInlineBoxInkOverflow(const InlineLevelBox& inlineBox, cons
 static inline void adjustInkOverflowForInlineBox(const Box& layoutBox, const ElementBox& rootBox, const Style::ComputedStyle& style, FloatRect& inkOverflow)
 {
     if (style.hasOutlineInVisualOverflow())
-        inkOverflow.inflate(style.usedOutlineSize());
+        inkOverflow.inflate(style.usedOutlineSize(style.usedZoomForLength(), style.deviceScaleFactor()));
 
     if (!style.boxShadow().isNone()) {
         auto [topBoxShadow, bottomBoxShadow] = Style::shadowVerticalExtent(style.boxShadow(), style.usedZoomForLength());

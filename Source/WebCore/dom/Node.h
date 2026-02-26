@@ -409,9 +409,9 @@ public:
     inline Document* ownerDocument() const;
 
     // Returns the document associated with this node. A document node returns itself.
-    inline Document& document() const; // Defined in NodeDocument.h
+    inline Document& NODELETE document() const; // Defined in NodeDocument.h
 
-    TreeScope& treeScope() const
+    TreeScope& NODELETE treeScope() const
     {
         ASSERT(m_treeScope);
         return *m_treeScope;

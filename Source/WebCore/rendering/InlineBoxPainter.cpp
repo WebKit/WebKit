@@ -103,8 +103,8 @@ template<typename T>
 static LayoutRect clipRectForNinePieceImageStrip(const InlineIterator::InlineBox& box, const T& image, const LayoutRect& paintRect)
 {
     LayoutRect clipRect(paintRect);
-    auto& style = box.renderer().style();
-    LayoutBoxExtent outsets = style.imageOutsets(image);
+    CheckedRef style = box.renderer().style();
+    LayoutBoxExtent outsets = style->imageOutsets(image, style->deviceScaleFactor());
     auto closedEdges = box.closedEdges();
     if (box.isHorizontal()) {
         clipRect.setY(paintRect.y() - outsets.top());

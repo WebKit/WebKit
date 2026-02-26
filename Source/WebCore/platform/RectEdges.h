@@ -155,6 +155,18 @@ public:
         return yFlippedCopy();
     }
 
+    void transpose()
+    {
+        std::swap(m_sides[3], m_sides[2]);
+        std::swap(m_sides[2], m_sides[1]);
+        std::swap(m_sides[1], m_sides[0]);
+    }
+
+    RectEdges<T> transposed() const
+    {
+        return { left(), top(), right(), bottom() };
+    }
+
     template<typename F> bool anyOf(F&& functor) const
     {
         return std::ranges::any_of(m_sides, std::forward<F>(functor));

@@ -35,7 +35,7 @@ namespace WebCore {
 struct OutlineValue {
     Style::Color outlineColor { Style::Color::currentColor() };
     Style::LineWidth outlineWidth { Style::LineWidth::Length { 3.0f } };
-    Style::OutlineOffset outlineOffset { Style::Length<> { 0.0f } };
+    Style::OutlineOffset outlineOffset { Style::Length<CSS::AllUnzoomed> { 0.0f } };
     PREFERRED_TYPE(OutlineStyle) unsigned outlineStyle : 4 { static_cast<unsigned>(OutlineStyle::None) };
 
     bool isVisible() const;

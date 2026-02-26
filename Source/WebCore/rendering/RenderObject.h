@@ -742,7 +742,7 @@ public:
 
     inline Node* nonPseudoNode() const; // Defined in RenderObjectNode.h
 
-    inline Document& document() const; // Defined in RenderObjectDocument.h
+    inline Document& NODELETE document() const; // Defined in RenderObjectDocument.h
     inline TreeScope& treeScopeForSVGReferences() const; // Defined in RenderObjectInlines.h
     inline LocalFrame& frame() const; // Defined in RenderObjectDocument.h
     inline Page& page() const; // Defined in RenderObjectInlines.h

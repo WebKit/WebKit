@@ -524,9 +524,18 @@ LayoutRect nodeRectInAbsoluteCoordinates(const ContainerNode& containerNode, boo
         // the rect of the focused element.
         if (ignoreBorder) {
             CheckedRef style = renderer->style();
-            rect.move(Style::evaluate<LayoutUnit>(style->usedBorderLeftWidth(), Style::ZoomNeeded { }), Style::evaluate<LayoutUnit>(style->usedBorderTopWidth(), Style::ZoomNeeded { }));
-            rect.setWidth(rect.width() - Style::evaluate<LayoutUnit>(style->usedBorderLeftWidth(), Style::ZoomNeeded { }) - Style::evaluate<LayoutUnit>(style->usedBorderRightWidth(), Style::ZoomNeeded { }));
-            rect.setHeight(rect.height() - Style::evaluate<LayoutUnit>(style->usedBorderTopWidth(), Style::ZoomNeeded { }) - Style::evaluate<LayoutUnit>(style->usedBorderBottomWidth(), Style::ZoomNeeded { }));
+
+            auto zoom = style->usedZoomForLength();
+            auto deviceScaleFactor = style->deviceScaleFactor();
+
+            auto borderTop = Style::evaluate<LayoutUnit>(style->usedBorderTopWidth(), zoom, deviceScaleFactor);
+            auto borderRight = Style::evaluate<LayoutUnit>(style->usedBorderRightWidth(), zoom, deviceScaleFactor);
+            auto borderBottom = Style::evaluate<LayoutUnit>(style->usedBorderBottomWidth(), zoom, deviceScaleFactor);
+            auto borderLeft = Style::evaluate<LayoutUnit>(style->usedBorderLeftWidth(), zoom, deviceScaleFactor);
+
+            rect.move(borderLeft, borderTop);
+            rect.setWidth(rect.width() - borderLeft - borderRight);
+            rect.setHeight(rect.height() - borderTop - borderBottom);
         }
         return rect;
     }

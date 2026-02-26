@@ -136,15 +136,15 @@ static Color colorCompositedOverCanvasColor(CSSValueID cssValue, OptionSet<Style
     return blendSourceOver(backingColor, foregroundColor);
 }
 
-static void drawFocusRingForPathForVectorBasedControls(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect, Path path)
+static void drawFocusRingForPathForVectorBasedControls(const RenderObject& box, const PaintInfo& paintInfo, [[maybe_unused]] const FloatRect& rect, Path path)
 {
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
     // macOS controls have never honored outline offset.
 #if PLATFORM(IOS_FAMILY)
-    auto deviceScaleFactor = box.document().deviceScaleFactor();
-    auto outlineOffset = floorToDevicePixel(Style::evaluate<float>(box.style().usedOutlineOffset(), Style::ZoomNeeded { }), deviceScaleFactor);
+    auto deviceScaleFactor = box.style().deviceScaleFactor();
+    auto outlineOffset = floorToDevicePixel(Style::evaluate<float>(box.style().usedOutlineOffset(), box.style().usedZoomForLength()), deviceScaleFactor);
 
     if (outlineOffset > 0) {
         const auto center = rect.center();
@@ -153,8 +153,6 @@ static void drawFocusRingForPathForVectorBasedControls(const RenderObject& box, 
         context.scale(sizeWithOffset / rect.size());
         context.translate(-center);
     }
-#else
-    UNUSED_PARAM(rect);
 #endif
 
     auto focusRingColor = RenderTheme::singleton().focusRingColor(box.styleColorOptions() | StyleColorOptions::UseSystemAppearance);
@@ -3468,22 +3466,24 @@ bool RenderThemeCocoa::paintMenuListButtonDecorationsForVectorBasedControls(cons
     auto glyphBlockSize = isHorizontalWritingMode ? glyphSize.height() : glyphSize.width();
     glyphOrigin.setY(logicalRect.center().y() - glyphBlockSize / 2.0f);
 
+    auto zoom = style->usedZoomForLength();
+    auto deviceScaleFactor = style->deviceScaleFactor();
+
     auto glyphPaddingEnd = logicalRect.width();
-    auto usedZoom = style->usedZoomForLength();
     if (auto fixedPaddingEnd = style->paddingEnd().tryFixed())
-        glyphPaddingEnd = fixedPaddingEnd->resolveZoom(usedZoom);
+        glyphPaddingEnd = Style::evaluate<float>(*fixedPaddingEnd, zoom);
 
     // Add popup internal start padding for symmetry.
     if (is<RenderMenuList>(box)) {
         auto internalPadding = popupInternalPaddingBox(style.get());
         if (auto paddingStart = internalPadding.start(style->writingMode()).tryFixed())
-            glyphPaddingEnd += paddingStart->resolveZoom(usedZoom);
+            glyphPaddingEnd += Style::evaluate<float>(*paddingStart, style->usedZoomForLength());
     }
 
     if (!style->writingMode().isInlineFlipped())
-        glyphOrigin.setX(logicalRect.maxX() - glyphInlineSize - Style::evaluate<float>(box.style().usedBorderWidthEnd(), Style::ZoomNeeded { }) - glyphPaddingEnd);
+        glyphOrigin.setX(logicalRect.maxX() - glyphInlineSize - Style::evaluate<float>(style->usedBorderWidthEnd(), zoom, deviceScaleFactor) - glyphPaddingEnd);
     else
-        glyphOrigin.setX(logicalRect.x() + Style::evaluate<float>(box.style().usedBorderWidthEnd(), Style::ZoomNeeded { }) + glyphPaddingEnd);
+        glyphOrigin.setX(logicalRect.x() + Style::evaluate<float>(style->usedBorderWidthEnd(), zoom, deviceScaleFactor) + glyphPaddingEnd);
 
     if (!isHorizontalWritingMode)
         glyphOrigin = glyphOrigin.transposedPoint();
@@ -4754,7 +4754,7 @@ FloatSize RenderThemeCocoa::inflateRectForInteractionRegion(const RenderElement&
     return { 0, 0 };
 }
 
-float RenderThemeCocoa::adjustedMaximumLogicalWidthForControl(const Style::ComputedStyle& style, const Element& element, float maximumLogicalWidth) const
+float RenderThemeCocoa::adjustedMaximumLogicalWidthForControl([[maybe_unused]] const Style::ComputedStyle& style, [[maybe_unused]] const Element& element, float maximumLogicalWidth) const
 {
 #if PLATFORM(MAC)
     if (!formControlRefreshEnabled(&element) || !style.hasUsedAppearance() || style.nativeAppearanceDisabled())
@@ -4778,13 +4778,10 @@ float RenderThemeCocoa::adjustedMaximumLogicalWidthForControl(const Style::Compu
         if (auto paddingEdgeInlineStartFixed = paddingEdgeInlineStart.tryFixed()) {
             if (auto paddingEdgeInlineEndFixed = paddingEdgeInlineEnd.tryFixed()) {
                 auto usedZoom = style.usedZoomForLength();
-                maximumLogicalWidth += paddingEdgeInlineStartFixed->resolveZoom(usedZoom) - paddingEdgeInlineEndFixed->resolveZoom(usedZoom);
+                maximumLogicalWidth += Style::evaluate<float>(*paddingEdgeInlineStartFixed, usedZoom) - Style::evaluate<float>(*paddingEdgeInlineEndFixed, usedZoom);
             }
         }
     }
-#else
-    UNUSED_PARAM(style);
-    UNUSED_PARAM(element);
 #endif
     return maximumLogicalWidth;
 }
