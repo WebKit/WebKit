@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body>
+<script>
+    description("Tests that third-party cookies are blocked for requests made from an about:blank popup.");
+    jsTestIsAsync = true;
+
+    const firstPartyOrigin = "http://127.0.0.1:8000";
+    const thirdPartyOrigin = "https://localhost:8443";
+    const resourcePath = "/resourceLoadStatistics/resources";
+    const thirdPartyBaseUrl = thirdPartyOrigin + resourcePath;
+    const cookieName = "aboutBlankTestCookie";
+    const subPathToSetCookie = "/set-cookie.py?name=" + cookieName + "&value=value";
+    const returnUrl = firstPartyOrigin + "/resourceLoadStatistics/third-party-cookie-blocking-about-blank-popup.html";
+    const subPathToGetCookies = "/get-cookies.py?name1=" + cookieName;
+
+    function runTest() {
+        switch (document.location.hash) {
+            case "#step1":
+                document.location.href = thirdPartyBaseUrl + subPathToSetCookie + "#" + returnUrl + "#step2";
+                break;
+            case "#step2":
+                var popup = window.open("about:blank");
+                if (!popup) {
+                    testFailed("Could not open about:blank popup.");
+                    finishTest();
+                    return;
+                }
+
+                popup.eval(
+                    "fetch('" + thirdPartyOrigin + "/cookies/resources/echo-cookies.py', { credentials: 'include' })" +
+                    ".then(function(r) { return r.text(); })" +
+                    ".then(function(text) {" +
+                    "    window.opener.postMessage({ type: 'fetch-done', result: text }, '*');" +
+                    "})" +
+                    ".catch(function(err) {" +
+                    "    window.opener.postMessage({ type: 'fetch-done', result: 'ERROR: ' + err.message }, '*');" +
+                    "});"
+                );
+
+                window.addEventListener("message", function handler(event) {
+                    if (event.data && event.data.type === "fetch-done") {
+                        window.removeEventListener("message", handler);
+                        var result = event.data.result;
+                        if (result.indexOf(cookieName) === -1) {
+                            testPassed("about:blank popup: third-party cookie was correctly blocked.");
+                        } else {
+                            testFailed("about:blank popup: third-party cookie was sent. Result: " + result);
+                        }
+                        popup.close();
+                        finishTest();
+                    }
+                });
+                break;
+        }
+    }
+
+    function finishTest() {
+        testRunner.setStatisticsShouldBlockThirdPartyCookies(false, function() {
+            setEnableFeature(false, finishJSTest);
+        });
+    }
+
+    if (document.location.hash === "") {
+        setEnableFeature(true, function () {
+            document.location.hash = "step1";
+            testRunner.setStatisticsShouldBlockThirdPartyCookies(true, runTest);
+        });
+    } else {
+        runTest();
+    }
+</script>
+</body>
+</html>
