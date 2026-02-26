@@ -46,11 +46,6 @@
 #include "DisplayLinkObserverID.h"
 #endif
 
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
-#include "WebBackForwardList.h"
-#include "WebBackForwardListMessages.h"
-#endif
-
 namespace API {
 class Attachment;
 class ContentWorld;
@@ -548,6 +543,7 @@ class WebAutomationSession;
 class WebBackForwardCache;
 #if ENABLE(BACK_FORWARD_LIST_SWIFT)
 class WebBackForwardListWrapper;
+class WebBackForwardListMessageForwarder;
 #else
 class WebBackForwardList;
 using WebBackForwardListWrapper = WebBackForwardList;
@@ -798,7 +794,7 @@ public:
 
     WebBackForwardListWrapper& backForwardListWrapper() { return m_backForwardList; }
 #if ENABLE(BACK_FORWARD_LIST_SWIFT)
-    WebBackForwardList& backForwardList() const { return m_backForwardList->getImpl(); }
+    WebBackForwardList& backForwardList() const;
     WebBackForwardListMessageForwarder& backForwardListMessageReceiver() const;
 #else
     WebBackForwardList& backForwardList() const { return m_backForwardList; }

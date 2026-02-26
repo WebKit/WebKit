@@ -68,10 +68,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
-
-#if ENABLE(IPC_TESTING_SWIFT)
 #include "WebKit-Swift.h"
-#endif
 
 namespace WebKit::IPCTestingAPI {
 

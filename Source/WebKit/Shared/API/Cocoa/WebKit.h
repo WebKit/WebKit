@@ -87,6 +87,6 @@
 #import <WebKit/WKWebsiteDataStore.h>
 #import <WebKit/WKWindowFeatures.h>
 
-#if !defined(TARGET_OS_MACCATALYST) || !TARGET_OS_MACCATALYST
+#if (!defined(TARGET_OS_MACCATALYST) || !TARGET_OS_MACCATALYST) && !defined(WEBKIT_SWIFT_IMPLEMENTATION)
 #import <WebKit/WebKitLegacy.h>
 #endif

@@ -25,6 +25,14 @@
 
 #pragma once
 
+// Avoid recursively including WebKit-Swift-Generated.h while generating
+// clang modules upon which the Swift code depends.
+#ifndef __swift__
+
+// Only include the generated code if any WebKit features are enabled
+// that require Swift/C++ interop.
+#if ENABLE(SWIFT_DEMO_URI_SCHEME) || ENABLE(IPC_TESTING_SWIFT) || ENABLE(BACK_FORWARD_LIST_SWIFT)
+
 // Anything needing to use Swift types or functions should include
 // this rather than directly including WebKit-Swift-Generated.h. Its purposes:
 // - include any pre-requisite headers
@@ -51,6 +59,9 @@
 #include <WebKitAdditions/WebKit-Swift-Additions.h>
 #endif
 
+// rdar://165068038
+#define WEBKIT_SWIFT_IMPLEMENTATION
+
 // rdar://165192318
 IGNORE_CLANG_WARNINGS_BEGIN("arc-bridge-casts-disallowed-in-nonarc")
 #ifdef GENERATE_SINGLE_SWIFT_INTEROP_FILE
@@ -59,3 +70,9 @@ IGNORE_CLANG_WARNINGS_BEGIN("arc-bridge-casts-disallowed-in-nonarc")
 #include "WebKit-Swift-CPP.h"
 #endif
 IGNORE_CLANG_WARNINGS_END
+
+#undef WEBKIT_SWIFT_IMPLEMENTATION
+
+#endif // ENABLE(SWIFT_DEMO_URI_SCHEME) || ENABLE(IPC_TESTING_SWIFT) || ENABLE(BACK_FORWARD_LIST_SWIFT)
+
+#endif // __swift__

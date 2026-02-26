@@ -462,10 +462,7 @@
 #include "ModelPresentationManagerProxy.h"
 #endif
 
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=306415
-#if ENABLE(SWIFT_DEMO_URI_SCHEME) || ENABLE(IPC_TESTING_SWIFT) || ENABLE(BACK_FORWARD_LIST_SWIFT)
 #include "WebKit-Swift.h"
-#endif
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
 #include "RemoteAudioSessionConfiguration.h"
@@ -17758,6 +17755,11 @@ WebBackForwardListMessageForwarder& WebPageProxy::backForwardListMessageReceiver
 IGNORE_CLANG_WARNINGS_BEGIN("return-stack-address")
     return backForwardList().getMessageReceiver().get();
 IGNORE_CLANG_WARNINGS_END
+}
+
+WebBackForwardList& WebPageProxy::backForwardList() const
+{
+    return m_backForwardList->getImpl();
 }
 
 #endif

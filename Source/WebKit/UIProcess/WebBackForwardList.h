@@ -29,6 +29,7 @@
 #include "LoadedWebArchive.h"
 #include "MessageReceiver.h"
 #include "WebBackForwardListItem.h"
+#include "WebKit-Swift.h"
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/LocalFrameLoaderClient.h>
 #include <wtf/Ref.h>
@@ -133,9 +134,6 @@ private:
 using WebBackForwardListWrapper = WebBackForwardList;
 
 #else // ENABLE(BACK_FORWARD_LIST_SWIFT)
-
-// Avoid including WebKit-Swift.h in header files to avoid dependency loops.
-class WebBackForwardList;
 
 // This C++ stub object exists to forward API calls through to the Swift implementation.
 // Although the BackForwardList is in Swift, we retain a C++

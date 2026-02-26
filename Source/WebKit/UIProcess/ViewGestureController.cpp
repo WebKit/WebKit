@@ -53,11 +53,6 @@
 #include "ViewGestureGeometryCollectorMessages.h"
 #endif
 
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=306415
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
-#include "WebKit-Swift.h"
-#endif
-
 namespace WebKit {
 using namespace WebCore;
 
