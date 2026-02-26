@@ -256,21 +256,26 @@ void AnimationTimelinesController::updateAnimationsAndSendEvents(ReducedResoluti
     }
 }
 
-void AnimationTimelinesController::runPostRenderingUpdateTasks()
+void AnimationTimelinesController::updateStaleScrollTimelines()
 {
-#if ENABLE(THREADED_ANIMATIONS)
-    if (m_document->settings().threadedScrollDrivenAnimationsEnabled()) {
-        for (Ref timeline : m_timelines)
-            timeline->runPostRenderingUpdateTasks();
-        if (m_acceleratedEffectStackUpdater)
-            m_acceleratedEffectStackUpdater->update();
-    }
-#endif
     // https://drafts.csswg.org/scroll-animations-1/#event-loop
     auto scrollTimelines = std::exchange(m_updatedScrollTimelines, { });
     for (auto scrollTimeline : scrollTimelines)
         scrollTimeline->updateCurrentTimeIfStale();
 }
+
+#if ENABLE(THREADED_ANIMATIONS)
+void AnimationTimelinesController::runPostRenderingUpdateTasks()
+{
+    Ref settings = m_document->settings();
+    if (!settings->threadedScrollDrivenAnimationsEnabled() && !settings->threadedTimeBasedAnimationsEnabled())
+        return;
+    for (Ref timeline : m_timelines)
+        timeline->runPostRenderingUpdateTasks();
+    if (m_acceleratedEffectStackUpdater)
+        m_acceleratedEffectStackUpdater->update();
+}
+#endif
 
 std::optional<Seconds> AnimationTimelinesController::timeUntilNextTickForAnimationsWithFrameRate(FramesPerSecond frameRate) const
 {

@@ -11012,11 +11012,19 @@ void Document::updateAnimationsAndSendEvents()
         timelinesController->updateAnimationsAndSendEvents(window->frozenNowTimestamp());
 }
 
+void Document::updateStaleScrollTimelines()
+{
+    if (CheckedPtr timelinesController = this->timelinesController())
+        timelinesController->updateStaleScrollTimelines();
+}
+
+#if ENABLE(THREADED_ANIMATIONS)
 void Document::runPostRenderingUpdateAnimationTasks()
 {
     if (CheckedPtr timelinesController = this->timelinesController())
         timelinesController->runPostRenderingUpdateTasks();
 }
+#endif
 
 DocumentTimeline& Document::timeline()
 {
