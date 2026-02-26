@@ -30,8 +30,6 @@
 #include "JSObjectInlines.h"
 #include "StructureInlines.h"
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace JSC {
 
 const ClassInfo ScopedArgumentsTable::s_info = { "ScopedArgumentsTable"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(ScopedArgumentsTable) };
@@ -143,4 +141,3 @@ Structure* ScopedArgumentsTable::createStructure(VM& vm, JSGlobalObject* globalO
 
 } // namespace JSC
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

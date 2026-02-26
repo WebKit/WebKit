@@ -33,8 +33,6 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WTFConfig.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 WTF_MAKE_COMPACT_TZONE_ALLOCATED_IMPL(MetaAllocatorHandle);
@@ -502,4 +500,4 @@ void MetaAllocator::dumpProfile()
 
 } // namespace WTF
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+

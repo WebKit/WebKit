@@ -35,7 +35,7 @@ namespace JSC { namespace B3 { namespace Air {
 
 void PhaseInsertionSet::execute(BasicBlock* block)
 {
-    bubbleSort(m_insertions.mutableSpan());
+    bubbleSort(m_insertions.begin(), m_insertions.end());
     executeInsertions(block->m_insts, m_insertions);
 }
 

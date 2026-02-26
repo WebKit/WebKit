@@ -32,6 +32,12 @@
 
 #include <climits>
 
+#if OS(DARWIN)
+#include <mach/vm_param.h>
+#endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 template<Gigacage::Kind passedKind, typename T, typename PtrTraits = RawPtrTraits<T>>
@@ -69,12 +75,10 @@ public:
         return Gigacage::cagedMayBeNull(kind, ptr);
     }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     // We need the template here so that the type of U is deduced at usage time rather than class time. U should always be T.
     template<typename U = T>
-        requires (!std::same_as<void, U>)
-    WTF_UNSAFE_BUFFER_USAGE U& at(size_t index) const { return get()[index]; }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    typename std::enable_if<!std::is_same<void, U>::value, T>::type&
+    /* T& */ at(size_t index) const { return get()[index]; }
 
     CagedPtr(CagedPtr& other)
         : m_ptr(other.m_ptr)
@@ -120,6 +124,8 @@ protected:
 };
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 using WTF::CagedPtr;
 

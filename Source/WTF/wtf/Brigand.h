@@ -48,7 +48,6 @@
 
 #define BRIGAND_NO_BOOST_SUPPORT 1
 
-#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
@@ -454,10 +453,13 @@ namespace brigand
 {
 namespace detail
 {
-    constexpr std::size_t count_bools(std::span<const bool> data)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    constexpr std::size_t count_bools(bool const * const begin, bool const * const end,
+        std::size_t n)
     {
-        return std::ranges::count(data, true);
+        return begin == end ? n : detail::count_bools(begin + 1, end, n + *begin);
     }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     template <bool... Bs>
     struct template_count_bools
@@ -504,20 +506,20 @@ namespace lazy
     template <template<typename...> class S, typename... Ts, typename Pred>
     struct count_if<S<Ts...>, Pred>
     {
-        static constexpr auto s_v = std::to_array<bool>({ ::brigand::apply<Pred, Ts>::type::value... });
-        using type = brigand::size_t<::brigand::detail::count_bools(s_v)>;
+        static constexpr bool s_v[] = { ::brigand::apply<Pred, Ts>::type::value... };
+        using type = brigand::size_t<::brigand::detail::count_bools(s_v, s_v + sizeof...(Ts), 0u)>;
     };
     template <template <typename...> class S, typename... Ts, template <typename...> class F>
     struct count_if<S<Ts...>, bind<F, _1>>
     {
-        static constexpr auto s_v = std::to_array<bool>({ F<Ts>::value... });
-        using type = brigand::size_t<::brigand::detail::count_bools(s_v)>;
+        static constexpr bool s_v[] = { F<Ts>::value... };
+        using type = brigand::size_t<::brigand::detail::count_bools(s_v, s_v + sizeof...(Ts), 0u)>;
     };
     template <template <typename...> class S, typename... Ts, template <typename...> class F>
     struct count_if<S<Ts...>, F<_1>>
     {
-        static constexpr auto s_v = std::to_array<bool>({ F<Ts>::type::value... });
-        using type = brigand::size_t<::brigand::detail::count_bools(s_v)>;
+        static constexpr bool s_v[] = { F<Ts>::type::value... };
+        using type = brigand::size_t<::brigand::detail::count_bools(s_v, s_v + sizeof...(Ts), 0u)>;
     };
 #else
     template <template <typename...> class S, typename... Ts, typename Pred>
