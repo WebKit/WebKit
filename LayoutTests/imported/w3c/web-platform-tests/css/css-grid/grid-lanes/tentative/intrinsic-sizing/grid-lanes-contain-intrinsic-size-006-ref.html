@@ -1,14 +1,16 @@
 <!doctype html>
 <meta charset="utf8">
-<title>CSS contain-intrinsic-size: replaced content</title>
+<title>CSS contain-intrinsic-size: unsized div, intrinsic-size is small</title>
 <link rel="author" title="Vladimir Levin" href="mailto:vmpstr@chromium.org">
 <link rel="help" href="https://drafts.csswg.org/css-sizing-4/#intrinsic-size-override">
 
 <style>
-  #target {
-    width: 100px;
-    height: 200px;
-  }
+#target {
+  background: lightblue;
+  height: 6px;
+  contain: size;
+}
 </style>
 
-<img id=target src="../resources/dice.png"></img>
+<div id=target>Lorem ipsum</div>
+
