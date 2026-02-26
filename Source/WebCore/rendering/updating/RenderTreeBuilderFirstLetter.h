@@ -44,6 +44,9 @@ public:
 private:
     void updateStyle(RenderBlock& firstLetterBlock, RenderObject& currentChild);
     void createRenderers(RenderText& currentTextChild);
+    bool isStaleFirstLetterRenderer(RenderBlock&, RenderElement& firstLetterRenderer);
+    void destroyStaleFirstLetter(RenderBoxModelObject& staleFirstLetter);
+    void destroyStaleFirstLetterInBlock(RenderBlock&);
 
     RenderTreeBuilder& m_builder;
 };

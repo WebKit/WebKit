@@ -11,7 +11,7 @@ Inline to Block
 Test 3:
 pseudo
 pseudo
-Test 4: (Currently failing)
+Test 4:
 pseudo
 pseudo
 Test 5:
@@ -31,7 +31,7 @@ To Non Float
 PASS document.getElementById('test1').offsetWidth == document.getElementById('ref1').offsetWidth is true
 PASS document.getElementById('test2').offsetHeight == document.getElementById('ref2').offsetHeight is true
 PASS document.getElementById('test3').offsetWidth == document.getElementById('ref3').offsetWidth is true
-FAIL document.getElementById('test4').offsetWidth == document.getElementById('ref4').offsetWidth should be true. Was false.
+PASS document.getElementById('test4').offsetWidth == document.getElementById('ref4').offsetWidth is true
 PASS document.getElementById('test5').offsetWidth == document.getElementById('ref5').offsetWidth is true
 PASS document.getElementById('test6').offsetWidth == document.getElementById('ref6').offsetWidth is true
 PASS document.getElementById('test7').offsetWidth == document.getElementById('ref7').offsetWidth is true

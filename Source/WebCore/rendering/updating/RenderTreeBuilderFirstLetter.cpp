@@ -28,6 +28,7 @@
 #include "NodeInlines.h"
 #include "RenderBlock.h"
 #include "RenderButton.h"
+#include "RenderDescendantIterator.h"
 #include "RenderInline.h"
 #include "RenderObjectDocument.h"
 #include "RenderSVGText.h"
@@ -143,16 +144,112 @@ void RenderTreeBuilder::FirstLetter::updateAfterDescendants(RenderBlock& block)
         return;
 
     // If the child already has style, then it has already been created, so we just want
-    // to update it.
+    // to update it — unless the first-letter target has become stale (e.g. a ::before
+    // pseudo-element was dynamically added before the existing first-letter wrapper).
     if (firstLetter->parent()->style().pseudoElementType() == PseudoElementType::FirstLetter) {
-        updateStyle(block, *firstLetter);
+        if (!isStaleFirstLetterRenderer(block, *firstLetter->parent())) {
+            updateStyle(block, *firstLetter);
+            return;
+        }
+        // The existing first-letter wrapper is stale. Destroy it and reconstitute
+        // the text, then re-find the actual first letter candidate.
+        destroyStaleFirstLetter(downcast<RenderBoxModelObject>(*firstLetter->parent()));
+
+        auto [newFirstLetter, newFirstLetterContainer] = block.firstLetterAndContainer();
+        if (!newFirstLetter || &block != newFirstLetterContainer)
+            return;
+        if (newFirstLetter->parent()->style().pseudoElementType() == PseudoElementType::FirstLetter) {
+            updateStyle(block, *newFirstLetter);
+            return;
+        }
+        if (!is<RenderText>(newFirstLetter))
+            return;
+        createRenderers(downcast<RenderText>(*newFirstLetter));
         return;
     }
 
     if (!is<RenderText>(firstLetter))
         return;
 
+    // There may also be an orphaned first-letter wrapper deeper in the tree
+    // (e.g. from a previous first-letter on different text). Clean it up first.
+    destroyStaleFirstLetterInBlock(block);
+
     createRenderers(downcast<RenderText>(*firstLetter));
+}
+
+bool RenderTreeBuilder::FirstLetter::isStaleFirstLetterRenderer(RenderBlock& block, RenderElement& firstLetterRenderer)
+{
+    // A ::first-letter renderer is stale when content that should logically
+    // precede it has been inserted after it in the render tree. This happens
+    // when a ::before pseudo-element is dynamically added: its renderer gets
+    // placed after the anonymous first-letter wrapper (which occupies the
+    // first-child slot) even though ::before content comes first in the
+    // formatted text.
+    ASSERT(firstLetterRenderer.isFirstLetter());
+
+    for (auto* ancestor = &firstLetterRenderer; ancestor && ancestor != &block; ancestor = ancestor->parent()) {
+        for (auto* sibling = ancestor->nextSibling(); sibling; sibling = sibling->nextSibling()) {
+            if (auto* siblingElement = dynamicDowncast<RenderElement>(sibling)) {
+                if (siblingElement->style().pseudoElementType() == PseudoElementType::Before)
+                    return true;
+            }
+        }
+    }
+    return false;
+}
+
+void RenderTreeBuilder::FirstLetter::destroyStaleFirstLetter(RenderBoxModelObject& staleFirstLetter)
+{
+    // Get the remaining text fragment associated with the stale first-letter.
+    WeakPtr remainingText = staleFirstLetter.firstLetterRemainingText();
+
+    // Extract the original full text from the first-letter text fragment.
+    String firstLetterText;
+    if (auto* letterTextChild = staleFirstLetter.firstChild()) {
+        if (auto* letterFragment = dynamicDowncast<RenderTextFragment>(letterTextChild))
+            firstLetterText = letterFragment->originalText();
+    }
+
+    if (firstLetterText.isNull())
+        firstLetterText = emptyString();
+
+    // Destroy the stale first-letter wrapper and its children.
+    m_builder.destroy(staleFirstLetter, CanCollapseAnonymousBlock::No);
+
+    // If there was a remaining text fragment, replace it with a full text renderer
+    // containing the complete original text.
+    if (remainingText) {
+        RefPtr textNode = remainingText->textNode();
+        CheckedPtr parentRenderer = remainingText->parent();
+        WeakPtr nextSibling = remainingText->nextSibling();
+        WeakPtr inlineWrapperForDisplayContents = remainingText->inlineWrapperForDisplayContents();
+
+        String fullText = textNode ? textNode->data() : firstLetterText;
+
+        m_builder.destroy(*remainingText);
+
+        RenderPtr<RenderTextFragment> newText;
+        if (textNode) {
+            newText = createRenderer<RenderTextFragment>(*textNode, fullText, 0, fullText.length());
+            textNode->setRenderer(newText.get());
+        } else
+            newText = createRenderer<RenderTextFragment>(m_builder.m_view.document(), fullText, 0, fullText.length());
+
+        newText->setInlineWrapperForDisplayContents(inlineWrapperForDisplayContents.get());
+        m_builder.attach(*parentRenderer, WTF::move(newText), nextSibling.get());
+    }
+}
+
+void RenderTreeBuilder::FirstLetter::destroyStaleFirstLetterInBlock(RenderBlock& block)
+{
+    for (auto& descendant : descendantsOfType<RenderElement>(block)) {
+        if (descendant.isFirstLetter()) {
+            if (auto* firstLetterBox = dynamicDowncast<RenderBoxModelObject>(descendant))
+                destroyStaleFirstLetter(*firstLetterBox);
+            return;
+        }
+    }
 }
 
 void RenderTreeBuilder::FirstLetter::cleanupOnDestroy(RenderTextFragment& textFragment)
@@ -219,7 +316,7 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChil
         firstLetterContainer = textContentParent;
     if (!firstLetterContainer)
         return;
-    
+
     auto pseudoStyle = styleForFirstLetter(*firstLetterContainer);
     if (!pseudoStyle)
         return;

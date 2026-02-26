@@ -2534,9 +2534,7 @@ std::pair<RenderObject*, RenderElement*> RenderBlock::firstLetterAndContainer(Re
     // Don't recur
     if (style().pseudoElementType() == PseudoElementType::FirstLetter)
         return { };
-    
-    // FIXME: We need to destroy the first-letter object if it is no longer the first child. Need to find
-    // an efficient way to check for that situation though before implementing anything.
+
     RenderElement* firstLetterContainer = findFirstLetterBlock(this);
     if (!firstLetterContainer)
         return { };
