@@ -29,6 +29,8 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 ALWAYS_INLINE bool hasFence(std::memory_order order)
@@ -439,7 +441,7 @@ public:
     T* consume(T* pointer)
     {
 #if CPU(ARM64) || CPU(ARM)
-        return addOpaqueZero(pointer, m_value);
+        return std::bit_cast<T*>(std::bit_cast<char*>(pointer) + m_value);
 #else
         UNUSED_PARAM(m_value);
         return pointer;
@@ -497,3 +499,5 @@ using WTF::InputAndValue;
 using WTF::inputAndValue;
 using WTF::ensurePointer;
 using WTF::opaqueMixture;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -41,7 +41,7 @@ void InsertionSet::insertInsts(size_t index, Vector<Inst>&& insts)
 
 void InsertionSet::execute(BasicBlock* block)
 {
-    bubbleSort(m_insertions.mutableSpan());
+    bubbleSort(m_insertions.begin(), m_insertions.end());
     executeInsertions(block->m_insts, m_insertions);
 }
 

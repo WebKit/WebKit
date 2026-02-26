@@ -30,8 +30,9 @@
 #include <wtf/HashFunctions.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/TrailingArray.h>
 #include <wtf/Vector.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
@@ -76,7 +77,7 @@ public:
     size_t size() const
     {
         Table* table = m_table.loadRelaxed();
-        if (table == m_stubTable.get())
+        if (table == &m_stubTable)
             return sizeSlow();
         return table->load.loadRelaxed();
     }
@@ -90,11 +91,11 @@ public:
     WTF_EXPORT_PRIVATE void clear();
     
 private:
-    struct Table final : public TrailingArray<Table, Atomic<void*>> {
+    struct Table {
         WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Table);
-
+        
         static std::unique_ptr<Table> create(unsigned size);
-        static std::unique_ptr<Table> createStub();
+        void initializeStub();
 
         unsigned maxLoad() const { return size / 2; }
 
@@ -106,14 +107,9 @@ private:
         unsigned size; // This is immutable.
         unsigned mask; // This is immutable.
         Atomic<unsigned> load;
-
-    private:
-        Table(size_t size)
-            : TrailingArray<Table, Atomic<void*>>(size)
-        {
-        }
+        Atomic<void*> array[1];
     };
-
+    
     static unsigned hash(const void* ptr)
     {
         return PtrHash<const void*>::hash(ptr);
@@ -137,14 +133,14 @@ private:
     bool containsImpl(void* ptr) const
     {
         Table* table = m_table.loadRelaxed();
-        if (table == m_stubTable.get())
+        if (table == &m_stubTable)
             return containsImplSlow(ptr);
 
         unsigned mask = table->mask;
         unsigned startIndex = hash(ptr) & mask;
         unsigned index = startIndex;
         for (;;) {
-            void* entry = table->at(index).loadRelaxed();
+            void* entry = table->array[index].loadRelaxed();
             if (!entry)
                 return false;
             if (entry == ptr)
@@ -162,7 +158,7 @@ private:
         unsigned startIndex = hash(ptr) & mask;
         unsigned index = startIndex;
         for (;;) {
-            void* entry = table->at(index).loadRelaxed();
+            void* entry = table->array[index].loadRelaxed();
             if (!entry)
                 return addSlow(table, mask, startIndex, index, ptr);
             if (entry == ptr)
@@ -181,10 +177,12 @@ private:
 
     Vector<std::unique_ptr<Table>, 4> m_allTables;
     Atomic<Table*> m_table; // This is never null.
-    std::unique_ptr<Table> m_stubTable;
+    Table m_stubTable;
     mutable Lock m_lock; // We just use this to control resize races.
 };
 
 } // namespace WTF
 
 using WTF::ConcurrentPtrHashSet;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

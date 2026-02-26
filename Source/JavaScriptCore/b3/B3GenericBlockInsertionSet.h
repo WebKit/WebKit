@@ -83,7 +83,7 @@ public:
         // We allow insertions to be given to us in any order. So, we need to sort them before
         // running WTF::executeInsertions. We strongly prefer a stable sort and we want it to be
         // fast, so we use bubble sort.
-        bubbleSort(m_insertions.mutableSpan());
+        bubbleSort(m_insertions.begin(), m_insertions.end());
         
         executeInsertions(m_blocks, m_insertions);
         
