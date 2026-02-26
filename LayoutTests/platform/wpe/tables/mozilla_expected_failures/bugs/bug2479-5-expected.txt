@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-layer at (0,0) size 785x1317
-=======
 layer at (0,0) size 785x1327
->>>>>>> 3dd3f19f008d (Block container inline-axis overflow includes padding + block-level child margins)
   RenderView at (0,0) size 785x600
 layer at (8,8) size 769x1309
   RenderBlock {HTML} at (8,8) size 769x1309 [bgcolor=#008000] [border: (16px solid #00FF00)]

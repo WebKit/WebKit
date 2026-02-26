@@ -169,11 +169,7 @@ layer at (8,444) size 300x94 clip at (9,445) size 298x92
     RenderTableSection {TBODY} at (1,1) size 298x92
       RenderTableRow {TR} at (0,2) size 298x62
       RenderTableRow {TR} at (0,66) size 298x24
-<<<<<<< HEAD
-layer at (11,447) size 154x62 clip at (12,448) size 152x60 scrollWidth 207
-=======
 layer at (11,448) size 154x62 clip at (12,449) size 152x60 scrollWidth 208
->>>>>>> 3dd3f19f008d (Block container inline-axis overflow includes padding + block-level child margins)
   RenderTableCell {TD} at (2,2) size 154x62 [bgcolor=#0000FF] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {P} at (2,18) size 206x26 [border: (3px solid #000000)]
       RenderText {#text} at (3,3) size 28x19
