@@ -8464,4 +8464,3 @@ webgl/webgl2-provoking-vertex-primitive-restart-uint16-nocrash.html [ Skip ]
 # Requires mousedown
 media/caption-display-settings/caption-display-settings-default-anchorBounds.html [ Skip ]
 
-webkit.org/b/308304 webanimations/threaded-animations/scroll-driven-animation-failed-assertion-in-scroll-timeline.html [ Pass Crash ]
