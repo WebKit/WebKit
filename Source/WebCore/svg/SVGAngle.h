@@ -55,12 +55,13 @@ public:
         return adoptRef(*new SVGAngle(value.releaseReturnValue()));
     }
 
-    SVGAngleValue::Type unitType() const
+    unsigned short unitType() const
     {
         // Per spec https://svgwg.org/svg2-draft/types.html#__svg__SVGAngle__SVG_ANGLETYPE_UNKNOWN
-        if (m_value.unitType() > SVGAngleValue::Type::SVG_ANGLETYPE_GRAD)
-            return SVGAngleValue::Type::SVG_ANGLETYPE_UNKNOWN;
-        return m_value.unitType();
+        auto type = m_value.unitType();
+        if (type > SVGAngleType::Grad)
+            return std::to_underlying(SVGAngleType::Unknown);
+        return std::to_underlying(type);
     }
 
     ExceptionOr<void> setValueForBindings(float value)
