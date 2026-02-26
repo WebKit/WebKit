@@ -83,6 +83,7 @@ public:
     WEBCORE_EXPORT std::optional<uint64_t> indexInFrameTreeSiblings() const;
     WEBCORE_EXPORT Vector<uint64_t> pathToFrame() const;
     FrameIdentifier frameID() const { return m_frameID; }
+    WEBCORE_EXPORT SecurityOrigin& topOrigin() const;
     inline Page* page() const; // Defined in DocumentPage.h.
     inline RefPtr<Page> protectedPage() const; // Defined in DocumentPage.h.
     inline std::optional<PageIdentifier> pageID() const; // Defined in DocumentPage.h.

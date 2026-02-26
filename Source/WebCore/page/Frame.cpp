@@ -387,4 +387,12 @@ void Frame::setPrinting(bool printing, FloatSize pageSize, FloatSize originalPag
         loaderClient().setPrinting(printing, pageSize, originalPageSize, maximumShrinkRatio, shouldAdjustViewSize);
 }
 
+SecurityOrigin& Frame::topOrigin() const
+{
+    if (RefPtr page = this->page())
+        return page->mainFrameOrigin();
+
+    return SecurityOrigin::opaqueOrigin();
+}
+
 } // namespace WebCore

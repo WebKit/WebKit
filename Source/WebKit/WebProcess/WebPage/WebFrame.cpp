@@ -326,6 +326,7 @@ FrameInfoData WebFrame::info(WithCertificateInfo withCertificateInfo) const
         // FIXME: This should use the full request.
         ResourceRequest(url()),
         SecurityOriginData::fromFrame(coreLocalFrame.get()),
+        coreFrame ? coreFrame->topOrigin().data() : SecurityOriginData { },
         coreFrame ? coreFrame->tree().specifiedName().string() : String(),
         frameID(),
         page ? std::optional { page->webPageProxyIdentifier() } : std::nullopt,
