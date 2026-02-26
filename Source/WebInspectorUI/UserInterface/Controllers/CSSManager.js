@@ -214,6 +214,10 @@ WI.CSSManager = class CSSManager extends WI.Object
             return WI.unlocalizedString("::checkmark");
         case CSSManager.PseudoSelectorNames.PickerIcon:
             return WI.unlocalizedString("::picker-icon");
+        case CSSManager.PseudoSelectorNames.Track:
+            return WI.unlocalizedString("::track");
+        case CSSManager.PseudoSelectorNames.Fill:
+            return WI.unlocalizedString("::fill");
         case CSSManager.PseudoSelectorNames.TargetText:
             return WI.unlocalizedString("::target-text");
         case CSSManager.PseudoSelectorNames.ViewTransition:
@@ -861,6 +865,7 @@ WI.CSSManager.PseudoSelectorNames = {
     Before: "before",
     Backdrop: "backdrop",
     Checkmark: "checkmark",
+    Fill: "fill",
     FirstLetter: "first-letter",
     FirstLine: "first-line",
     Highlight: "highlight",
@@ -870,6 +875,7 @@ WI.CSSManager.PseudoSelectorNames = {
     Selection: "selection",
     SpellingError: "spelling-error",
     TargetText: "target-text",
+    Track: "track",
     ViewTransition: "view-transition",
     ViewTransitionGroup: "view-transition-group",
     ViewTransitionImagePair: "view-transition-image-pair",

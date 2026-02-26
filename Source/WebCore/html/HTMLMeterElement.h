@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -65,10 +66,14 @@ private:
     bool childShouldCreateRenderer(const Node&) const final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 
-    void didElementStateChange();
+    void appendShadowTreeForAutoAppearance(ShadowRoot&);
+    void appendShadowTreeForBaseAppearance(ShadowRoot&);
+
+    void didChangeElementValue();
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
 
-    RefPtr<HTMLElement> m_valueElement;
+    WeakPtr<HTMLDivElement, WeakPtrImplWithEventTargetData> m_valueElement;
+    WeakPtr<HTMLDivElement, WeakPtrImplWithEventTargetData> m_fillElement;
 };
 
 } // namespace WebCore

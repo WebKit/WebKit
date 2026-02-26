@@ -22,6 +22,7 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 0x16
+            RenderBlock {DIV} at (0,16) size 80x0
         RenderListItem {LI} at (40,36) size 744x18
           RenderListMarker at (-17,0) size 7x18: bullet
           RenderInline {B} at (0,0) size 16x18
@@ -33,6 +34,7 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 0x16
+            RenderBlock {DIV} at (0,16) size 80x0
         RenderListItem {LI} at (40,54) size 744x18
           RenderListMarker at (-17,0) size 7x18: bullet
           RenderText {#text} at (0,0) size 20x18
@@ -46,6 +48,7 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 20x16
+            RenderBlock {DIV} at (0,16) size 80x0
           RenderText {#text} at (184,0) size 110x18
             text run at (184,0) width 110: "(should be green)"
         RenderListItem {LI} at (40,72) size 744x18
@@ -61,6 +64,7 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 40x16
+            RenderBlock {DIV} at (0,16) size 80x0
           RenderText {#text} at (184,0) size 110x18
             text run at (184,0) width 110: "(should be green)"
         RenderListItem {LI} at (40,90) size 744x18
@@ -76,6 +80,7 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 60x16
+            RenderBlock {DIV} at (0,16) size 80x0
           RenderText {#text} at (184,0) size 110x18
             text run at (184,0) width 110: "(should be green)"
         RenderListItem {LI} at (40,108) size 744x18
@@ -91,6 +96,7 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,16) size 80x0
           RenderText {#text} at (184,0) size 118x18
             text run at (184,0) width 118: "(should be yellow)"
         RenderListItem {LI} at (40,126) size 744x18
@@ -106,6 +112,7 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,16) size 80x0
           RenderText {#text} at (203,0) size 118x18
             text run at (203,0) width 118: "(should be yellow)"
         RenderListItem {LI} at (40,144) size 744x18
@@ -121,6 +128,7 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 0x16
+            RenderBlock {DIV} at (0,16) size 80x0
         RenderListItem {LI} at (40,162) size 744x18
           RenderListMarker at (-17,0) size 7x18: bullet
           RenderText {#text} at (0,0) size 60x18
@@ -134,6 +142,7 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,16) size 80x0
           RenderText {#text} at (184,0) size 110x18
             text run at (184,0) width 110: "(should be green)"
         RenderListItem {LI} at (40,180) size 744x18
@@ -147,6 +156,7 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 0x16
+            RenderBlock {DIV} at (0,16) size 80x0
         RenderListItem {LI} at (40,198) size 744x18
           RenderListMarker at (-17,0) size 7x18: bullet
           RenderText {#text} at (0,0) size 40x18
@@ -160,6 +170,7 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 0x16
+            RenderBlock {DIV} at (0,16) size 80x0
         RenderListItem {LI} at (40,216) size 744x18
           RenderListMarker at (-17,0) size 7x18: bullet
           RenderText {#text} at (0,0) size 40x18
@@ -173,6 +184,7 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,16) size 80x0
           RenderText {#text} at (184,0) size 110x18
             text run at (184,0) width 110: "(should be green)"
         RenderListItem {LI} at (40,234) size 744x18
@@ -188,6 +200,7 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,16) size 80x0
           RenderText {#text} at (203,0) size 110x18
             text run at (203,0) width 110: "(should be green)"
         RenderListItem {LI} at (40,252) size 744x18
@@ -203,5 +216,6 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 40x16
+            RenderBlock {DIV} at (0,16) size 80x0
           RenderText {#text} at (184,0) size 110x18
             text run at (184,0) width 110: "(should be green)"

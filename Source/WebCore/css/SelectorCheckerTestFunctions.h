@@ -36,6 +36,7 @@
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
+#include "HTMLMeterElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
 #include "InspectorInstrumentation.h"
@@ -621,6 +622,27 @@ ALWAYS_INLINE bool matchesActiveViewTransitionPseudoClass(const Element& element
     if (&element != element.document().documentElement())
         return false;
     return !!element.document().activeViewTransition();
+}
+
+ALWAYS_INLINE bool matchesEvenLessGoodPseudoClass(const Element& element)
+{
+    if (RefPtr meterElement = dynamicDowncast<HTMLMeterElement>(element))
+        return meterElement->gaugeRegion() == HTMLMeterElement::GaugeRegion::EvenLessGood;
+    return false;
+}
+
+ALWAYS_INLINE bool matchesOptimumPseudoClass(const Element& element)
+{
+    if (RefPtr meterElement = dynamicDowncast<HTMLMeterElement>(element))
+        return meterElement->gaugeRegion() == HTMLMeterElement::GaugeRegion::Optimum;
+    return false;
+}
+
+ALWAYS_INLINE bool matchesSuboptimumPseudoClass(const Element& element)
+{
+    if (RefPtr meterElement = dynamicDowncast<HTMLMeterElement>(element))
+        return meterElement->gaugeRegion() == HTMLMeterElement::GaugeRegion::Suboptimal;
+    return false;
 }
 
 ALWAYS_INLINE bool matchesUsesMenulistPseudoClass(const Element& element)

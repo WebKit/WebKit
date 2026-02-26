@@ -49,6 +49,8 @@
                 "target-text",
                 "checkmark",
                 "picker-icon",
+                "track",
+                "fill",
                 "view-transition",
                 "view-transition-group",
                 "view-transition-image-pair",
