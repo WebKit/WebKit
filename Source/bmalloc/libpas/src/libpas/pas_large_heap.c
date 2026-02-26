@@ -323,6 +323,10 @@ bool pas_large_heap_try_shrink(uintptr_t begin,
     heap = map_entry.heap;
     type = pas_heap_for_large_heap(heap)->type;
 
+    // FIXME: if we ever want to support pas_shrink for delegating heaps,
+    // we need to add a new pathway for doing so here.
+    PAS_ASSERT(!map_entry.delegated_to_system_malloc);
+
     if (!new_size)
         new_size = heap_config->get_type_size(type);
 
