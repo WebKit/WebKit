@@ -76,17 +76,17 @@ inline ComposedTreeAncestorIterator::ComposedTreeAncestorIterator(Element& curre
 
 inline CheckedPtr<Element> ComposedTreeAncestorIterator::traverseParent(Node* current)
 {
-    RefPtr parent = current->parentNode();
+    auto* parent = current->parentNode();
     if (!parent)
         return nullptr;
     if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(*parent))
         return shadowRoot->host();
-    RefPtr parentElement = dynamicDowncast<Element>(*parent);
+    auto* parentElement = dynamicDowncast<Element>(*parent);
     if (!parentElement)
         return nullptr;
     if (RefPtr shadowRoot = parentElement->shadowRoot())
         return shadowRoot->findAssignedSlot(*current);
-    return parentElement.get();
+    return parentElement;
 }
 
 class ComposedTreeAncestorAdapter {
