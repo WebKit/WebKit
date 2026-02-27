@@ -10441,7 +10441,7 @@ class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
         expected_comment += "- `Tools/Scripts/update-safer-cpp-expectations -p WebKit --RefCntblBaseVirtualDtor File17.cpp --platform iOS`"
         self.assertEqual(self.getProperty('build_summary'), 'Found 1 fixed file: File17.cpp')
         self.assertEqual(self.getProperty('comment_text'), expected_comment)
-        self.assertEqual([LeaveComment(), BlockPullRequest(), SetBuildSummary()], next_steps)
+        self.assertEqual([LeaveComment(), SetBuildSummary()], next_steps)
         return rc
 
     def test_success_no_platform(self):
@@ -10458,7 +10458,7 @@ class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
         expected_comment += '\nUnable to find associated platform. See build for details.'
         self.assertEqual(self.getProperty('build_summary'), 'Found 1 fixed file: File17.cpp')
         self.assertEqual(self.getProperty('comment_text'), expected_comment)
-        self.assertEqual([LeaveComment(), BlockPullRequest(), SetBuildSummary()], next_steps)
+        self.assertEqual([LeaveComment(), SetBuildSummary()], next_steps)
         return rc
 
     def test_failure_new_failures(self):
@@ -10475,7 +10475,7 @@ class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
         expected_comment += "Please address these issues before landing. See [WebKit Guidelines for Safer C++ Programming](https://github.com/WebKit/WebKit/wiki/Safer-CPP-Guidelines).\n(cc @rniwa)\n"
         self.assertEqual(self.getProperty('comment_text'), expected_comment)
         self.assertEqual(self.getProperty('build_finish_summary'), 'Found 10 new failures in File1.cpp')
-        self.assertEqual([LeaveComment(), BlockPullRequest(), SetBuildSummary()], next_steps)
+        self.assertEqual([LeaveComment(), SetBuildSummary()], next_steps)
         return rc
 
     def test_failure_mixed(self):
@@ -10495,7 +10495,7 @@ class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
         expected_comment += '- `Tools/Scripts/update-safer-cpp-expectations -p WebKit --RefCntblBaseVirtualDtor File17.cpp --platform macOS`'
         self.assertEqual(self.getProperty('comment_text'), expected_comment)
         self.assertEqual(self.getProperty('build_finish_summary'), 'Found 10 new failures in File1.cpp')
-        self.assertEqual([LeaveComment(), BlockPullRequest(), SetBuildSummary()], next_steps)
+        self.assertEqual([LeaveComment(), SetBuildSummary()], next_steps)
 
 
 class TestCheckParentBuildStatus(BuildStepMixinAdditions, unittest.TestCase):
