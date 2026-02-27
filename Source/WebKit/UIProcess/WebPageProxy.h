@@ -2963,8 +2963,8 @@ public:
     void updateRemoteIntersectionObserversInOtherWebProcesses(IPC::Connection&);
 
 #if HAVE(SAFE_BROWSING)
-    void setHasShownSafeBrowsingWarningAfterLastLoadCommit() { m_hasShownSafeBrowsingWarningAfterLastLoadCommit = true; }
-    bool hasShownSafeBrowsingWarningAfterLastLoadCommit() const { return m_hasShownSafeBrowsingWarningAfterLastLoadCommit; }
+    void setSafeBrowsingWarningShownForNavigation(WebCore::NavigationIdentifier id) { m_safeBrowsingWarningShownForNavigation = id; }
+    std::optional<WebCore::NavigationIdentifier> safeBrowsingWarningShownForNavigation() const { return m_safeBrowsingWarningShownForNavigation; }
 #endif
 
 private:
@@ -4149,7 +4149,7 @@ private:
 #if HAVE(SAFE_BROWSING)
     Vector<CompletionHandler<void(bool)>> m_deferredModalHandlers;
     bool m_isSafeBrowsingCheckInProgress { false };
-    bool m_hasShownSafeBrowsingWarningAfterLastLoadCommit { false };
+    std::optional<WebCore::NavigationIdentifier> m_safeBrowsingWarningShownForNavigation;
 #endif
     bool m_isLockdownModeExplicitlySet { false };
 
