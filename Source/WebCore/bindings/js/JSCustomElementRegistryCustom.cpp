@@ -29,6 +29,7 @@
 #include "ContextDestructionObserverInlines.h"
 #include "CustomElementRegistry.h"
 #include "Document.h"
+#include "HTMLElementFactory.h"
 #include "HTMLNames.h"
 #include "JSCustomElementInterface.h"
 #include "JSDOMBinding.h"
@@ -105,6 +106,40 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
 
     CustomElementRegistry& registry = wrapped();
 
+    // https://html.spec.whatwg.org/#dom-customelementregistry-define step 6-7: Parse extends option.
+    AtomString extendsLocalName;
+    if (callFrame.argumentCount() >= 3 && !callFrame.uncheckedArgument(2).isUndefined()) {
+        JSValue optionsValue = callFrame.uncheckedArgument(2);
+        if (optionsValue.isObject()) {
+            JSValue extendsValue = optionsValue.getObject()->get(&lexicalGlobalObject, Identifier::fromString(vm, "extends"_s));
+            RETURN_IF_EXCEPTION(scope, { });
+
+            if (!extendsValue.isUndefined()) {
+                extendsLocalName = AtomString(extendsValue.toString(&lexicalGlobalObject)->toAtomString(&lexicalGlobalObject));
+                RETURN_IF_EXCEPTION(scope, { });
+
+                if (registry.isScoped()) {
+                    throwNotSupportedError(lexicalGlobalObject, scope, "Scoped custom element registries do not support extending built-in elements"_s);
+                    return jsUndefined();
+                }
+
+                if (Document::validateCustomElementName(extendsLocalName) == CustomElementNameValidationStatus::Valid) {
+                    throwNotSupportedError(lexicalGlobalObject, scope, "The extends option cannot be a valid custom element name"_s);
+                    return jsUndefined();
+                }
+
+                RefPtr contextDocument = downcast<Document>(wrapped().scriptExecutionContext());
+                if (contextDocument) {
+                    RefPtr testElement = HTMLElementFactory::createKnownElement(extendsLocalName, *contextDocument);
+                    if (!testElement || testElement->isUnknownElement()) {
+                        throwNotSupportedError(lexicalGlobalObject, scope, "The extends option must name a valid built-in HTML element"_s);
+                        return jsUndefined();
+                    }
+                }
+            }
+        }
+    }
+
     if (registry.elementDefinitionIsRunning()) {
         throwNotSupportedError(lexicalGlobalObject, scope, "Cannot define a custom element while defining another custom element"_s);
         return jsUndefined();
@@ -128,7 +163,7 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
     JSObject& prototypeObject = *asObject(prototypeValue);
 
     QualifiedName name(nullAtom(), localName, HTMLNames::xhtmlNamespaceURI);
-    auto elementInterface = JSCustomElementInterface::create(name, constructor, globalObject());
+    auto elementInterface = JSCustomElementInterface::create(name, constructor, globalObject(), extendsLocalName);
 
     auto* connectedCallback = getCustomElementCallback(lexicalGlobalObject, prototypeObject, Identifier::fromString(vm, "connectedCallback"_s));
     if (connectedCallback)

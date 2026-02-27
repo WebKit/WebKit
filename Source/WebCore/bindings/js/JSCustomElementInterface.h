@@ -56,9 +56,9 @@ enum class ParserConstructElementWithEmptyStack : bool { No, Yes };
 
 class JSCustomElementInterface : public RefCounted<JSCustomElementInterface>, public ActiveDOMCallback {
 public:
-    static Ref<JSCustomElementInterface> create(const QualifiedName& name, JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
+    static Ref<JSCustomElementInterface> create(const QualifiedName& name, JSC::JSObject* callback, JSDOMGlobalObject* globalObject, const AtomString& extendsLocalName = nullAtom())
     {
-        return adoptRef(*new JSCustomElementInterface(name, callback, globalObject));
+        return adoptRef(*new JSCustomElementInterface(name, callback, globalObject, extendsLocalName));
     }
 
     // ContextDestructionObserver.
@@ -116,6 +116,9 @@ public:
     JSC::JSObject* constructor() { return m_constructor.get(); }
 
     const QualifiedName& name() const { return m_name; }
+    const AtomString& extendsLocalName() const { return m_extendsLocalName; }
+    bool isCustomizedBuiltIn() const { return !m_extendsLocalName.isEmpty(); }
+    JSC::JSObject* extendsInterfacePrototype(JSC::VM&, JSDOMGlobalObject&, Document&) const;
 
     bool isUpgradingElement() const { return !m_constructionStack.isEmpty(); }
     Element* lastElementInConstructionStack() const { return m_constructionStack.last().get(); }
@@ -125,15 +128,19 @@ public:
 
     template<typename Visitor> void visitJSFunctions(Visitor&) const;
 private:
-    JSCustomElementInterface(const QualifiedName&, JSC::JSObject* callback, JSDOMGlobalObject*);
+    JSCustomElementInterface(const QualifiedName&, JSC::JSObject* callback, JSDOMGlobalObject*, const AtomString& extendsLocalName);
 
     RefPtr<Element> tryToConstructCustomElement(Document&, CustomElementRegistry&, const AtomString&, ParserConstructElementWithEmptyStack);
+    Ref<Element> createFailedCustomizedBuiltInFallback(Document&, CustomElementRegistry&);
 
     template<typename Function>
     void invokeCallback(Element&, JSC::JSObject* callback, NOESCAPE const Function& addArguments);
 
     QualifiedName m_name;
+    AtomString m_extendsLocalName; // Empty for autonomous custom elements; the built-in tag name (e.g. "button") for customized built-ins.
     JSC::Weak<JSC::JSObject> m_constructor;
+    mutable JSC::Weak<JSC::JSObject> m_cachedExtendsPrototype;
+    mutable JSC::Weak<JSDOMGlobalObject> m_cachedExtendsPrototypeGlobal;
     JSC::Weak<JSC::JSObject> m_connectedCallback;
     JSC::Weak<JSC::JSObject> m_disconnectedCallback;
     JSC::Weak<JSC::JSObject> m_adoptedCallback;

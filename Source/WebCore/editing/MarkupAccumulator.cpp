@@ -661,6 +661,12 @@ void MarkupAccumulator::appendStartTag(StringBuilder& result, const Element& ele
         }
     }
 
+    // https://html.spec.whatwg.org/#html-fragment-serialisation-algorithm
+    // If the element's is value is not null, and the element does not have an
+    // is attribute in its attribute list, append a synthetic "is" attribute.
+    if (!element.isValue().isEmpty() && !element.hasAttributeWithoutSynchronization(HTMLNames::isAttr))
+        appendAttribute(result, element, Attribute { HTMLNames::isAttr, element.isValue() }, namespaces);
+
     // Give an opportunity to subclasses to add their own attributes.
     appendCustomAttributes(result, element, namespaces);
 

@@ -44,6 +44,7 @@
 #include "ContentVisibilityDocumentState.h"
 #include "CustomElementReactionQueue.h"
 #include "CustomElementRegistry.h"
+#include "JSCustomElementInterface.h"
 #include "CustomStateSet.h"
 #include "DOMRect.h"
 #include "DOMRectList.h"
@@ -414,6 +415,18 @@ void Element::setNonce(const AtomString& newValue)
     ensureElementRareData().setNonce(newValue);
 }
 
+const AtomString& Element::isValue() const
+{
+    if (!hasRareData())
+        return nullAtom();
+    return elementRareData()->isValue();
+}
+
+void Element::setIsValue(const AtomString& value)
+{
+    ensureElementRareData().setIsValue(value);
+}
+
 void Element::hideNonceSlow()
 {
     // https://html.spec.whatwg.org/multipage/urls-and-fetching.html#nonce-attributes
@@ -737,6 +750,32 @@ Ref<Element> Element::cloneElementWithoutChildren(Document& document, CustomElem
     ASSERT(isHTMLElement() == clone->isHTMLElement());
 
     clone->cloneDataFromElement(*this);
+
+    // Preserve the "is" value for customized built-in elements.
+    if (!isValue().isEmpty()) {
+        clone->setIsValue(isValue());
+        if (isDefinedCustomElement() && registry) {
+            // If the source element is a defined custom element, enqueue an upgrade
+            // for the clone so it gets the correct prototype and custom element state.
+            if (RefPtr elementInterface = registry->findInterface(isValue())) {
+                clone->setIsCustomElementUpgradeCandidate();
+                clone->enqueueToUpgrade(*elementInterface);
+            }
+        } else if (isCustomElementUpgradeCandidate()) {
+            // The source is an undefined customized built-in element. Mark the clone
+            // as an upgrade candidate so it will be upgraded when the definition is
+            // registered and the clone is inserted into the document.
+            clone->setIsCustomElementUpgradeCandidate();
+            // Check if the target registry has a definition for this element (e.g.,
+            // importNode from a document where it's undefined into one where it's defined).
+            if (registry) {
+                if (RefPtr elementInterface = registry->findInterface(isValue())) {
+                    if (elementInterface->isCustomizedBuiltIn() && elementInterface->extendsLocalName() == clone->localName())
+                        clone->enqueueToUpgrade(*elementInterface);
+                }
+            }
+        }
+    }
 
     if (usesNullCustomElementRegistry() && !registry)
         clone->setUsesNullCustomElementRegistry();
@@ -6204,6 +6243,7 @@ void Element::setAttributeStyleMap(Ref<StylePropertyMap>&& map)
 
 void Element::ensureFormAssociatedCustomElement()
 {
+    ASSERT(is<HTMLMaybeFormAssociatedCustomElement>(*this));
     auto& customElement = downcast<HTMLMaybeFormAssociatedCustomElement>(*this);
     auto& data = ensureElementRareData();
     if (!data.formAssociatedCustomElement())

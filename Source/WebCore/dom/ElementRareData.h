@@ -135,6 +135,9 @@ public:
     const AtomString& nonce() const { return m_nonce; }
     void setNonce(const AtomString& value) { m_nonce = value; }
 
+    const AtomString& isValue() const { return m_isValue; }
+    void setIsValue(const AtomString& value) { m_isValue = value; }
+
     StylePropertyMap* attributeStyleMap() { return m_attributeStyleMap.get(); }
     void setAttributeStyleMap(Ref<StylePropertyMap>&& map) { m_attributeStyleMap = WTF::move(map); }
 
@@ -262,6 +265,7 @@ private:
     SpaceSplitString m_partNames;
 
     AtomString m_nonce;
+    AtomString m_isValue; // The custom element name for customized built-in elements (the "is" value per spec).
 
     ExplicitlySetAttrElementsMap m_explicitlySetAttrElementsMap;
 

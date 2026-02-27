@@ -67,6 +67,24 @@ namespace WebCore {
 using namespace ElementNames;
 using namespace HTMLNames;
 
+static CustomElementRegistry* registryForCurrentNode(Node& currentNode, TreeScope& treeScope);
+
+static AtomString findIsAttribute(const AtomHTMLToken& token)
+{
+    for (auto& attribute : token.attributes()) {
+        if (attribute.name() == HTMLNames::isAttr)
+            return attribute.value();
+    }
+    return nullAtom();
+}
+
+static void ensureCustomElementUpgradeCandidate(Element& element)
+{
+    if (!element.isDefinedCustomElement() && !element.isFailedOrPrecustomizedCustomElement()
+        && !element.isCustomElementUpgradeCandidate())
+        element.setIsCustomElementUpgradeCandidate();
+}
+
 enum class HasDuplicateAttribute : bool { No, Yes };
 static inline void setAttributes(Element& element, Vector<Attribute>& attributes, HasDuplicateAttribute hasDuplicateAttribute, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
@@ -309,7 +327,26 @@ void HTMLConstructionSite::dispatchDocumentElementAvailableIfNeeded()
 void HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML(AtomHTMLToken&& token)
 {
     auto element = HTMLHtmlElement::create(protect(m_document));
+
+    // Scan for "is" attribute before setAttributes, but defer upgrade enqueue until after.
+    AtomString isValue = findIsAttribute(token);
+    if (!isValue.isEmpty())
+        element->setIsValue(isValue);
+
     setAttributes(element, token, m_parserContentPolicy);
+
+    // Now that attributes are set, handle customized built-in element upgrade.
+    if (!isValue.isEmpty()) {
+        if (m_registry) {
+            RefPtr elementInterface = m_registry->findInterface(isValue);
+            if (elementInterface && elementInterface->isCustomizedBuiltIn() && elementInterface->extendsLocalName() == element->localName()) {
+                element->setIsCustomElementUpgradeCandidate();
+                element->enqueueToUpgrade(*elementInterface);
+            }
+        }
+        ensureCustomElementUpgradeCandidate(element);
+    }
+
     attachLater(protect(m_attachmentRoot), element.copyRef());
     m_openElements.pushHTMLHtmlElement(HTMLStackItem(element.copyRef(), WTF::move(token)));
 
@@ -634,7 +671,28 @@ void HTMLConstructionSite::insertScriptElement(AtomHTMLToken&& token)
     const bool parserInserted = !m_parserContentPolicy.contains(ParserContentPolicy::DoNotMarkAlreadyStarted);
     const bool alreadyStarted = m_isParsingFragment && parserInserted;
     auto element = HTMLScriptElement::create(scriptTag, ownerDocumentForCurrentNode(), parserInserted, alreadyStarted);
+
+    AtomString isValue = findIsAttribute(token);
+    if (!isValue.isEmpty())
+        element->setIsValue(isValue);
+
     setAttributes(element, token, m_parserContentPolicy);
+
+    // Now that attributes are set, handle customized built-in element upgrade.
+    if (!isValue.isEmpty()) {
+        Ref treeScope = treeScopeForCurrentNode();
+        RefPtr<CustomElementRegistry> registry = m_openElements.stackDepth() > 1 ? RefPtr { registryForCurrentNode(currentNode(), treeScope) } : m_registry;
+        if (registry) {
+            if (RefPtr elementInterface = registry->findInterface(isValue)) {
+                if (elementInterface->isCustomizedBuiltIn() && elementInterface->extendsLocalName() == element->localName()) {
+                    element->setIsCustomElementUpgradeCandidate();
+                    element->enqueueToUpgrade(*elementInterface);
+                }
+            }
+        }
+        ensureCustomElementUpgradeCandidate(element);
+    }
+
     if (scriptingContentIsAllowed(m_parserContentPolicy))
         attachLater(protect(currentNode()), element.copyRef());
     m_openElements.push(HTMLStackItem(WTF::move(element), WTF::move(token)));
@@ -820,6 +878,19 @@ std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomE
     bool insideTemplateElement = m_openElements.containsTemplateElement();
     RefPtr element = HTMLElementFactory::createKnownElement(token.tagName(), ownerDocument, insideTemplateElement ? nullptr : form(), true);
     RefPtr<CustomElementRegistry> registry = m_openElements.stackDepth() > 1 ? RefPtr { registryForCurrentNode(currentNode(), treeScope) } : m_registry;
+
+    // Scan for "is" attribute early but defer upgrade enqueue until after setAttributes()
+    // so the element is fully initialized (e.g., HTMLInputElement needs its type attribute
+    // set before m_inputType is initialized).
+    AtomString isValue;
+    bool hasIsAttribute = false;
+    if (element) {
+        isValue = findIsAttribute(token);
+        hasIsAttribute = !isValue.isNull();
+        if (hasIsAttribute)
+            element->setIsValue(isValue);
+    }
+
     if (!element) [[unlikely]] {
         RefPtr elementInterface = registry ? registry->findInterface(token.name()) : nullptr;
         if (elementInterface) [[unlikely]] {
@@ -865,6 +936,22 @@ std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomE
     }
 
     setAttributes(*element, token, m_parserContentPolicy);
+
+    // Now that attributes are set, handle customized built-in element upgrade.
+    // This must happen after setAttributes so that elements like HTMLInputElement
+    // have their lazy-init fields properly initialized (e.g., m_inputType).
+    if (hasIsAttribute) {
+        if (!isValue.isEmpty() && registry) {
+            RefPtr elementInterface = registry->findInterface(isValue);
+            if (elementInterface && elementInterface->isCustomizedBuiltIn() && elementInterface->extendsLocalName() == element->localName()) {
+                element->setIsCustomElementUpgradeCandidate();
+                element->enqueueToUpgrade(*elementInterface);
+            }
+        }
+        // Even with is="" (empty), the element should be in "undefined" state.
+        ensureCustomElementUpgradeCandidate(*element);
+    }
+
     return { element, nullptr, nullptr };
 }
 

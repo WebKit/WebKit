@@ -25,5 +25,6 @@
 
 // https://dom.spec.whatwg.org/#dictdef-elementcreationoptions
 dictionary ElementCreationOptions {
+    DOMString is;
     CustomElementRegistry? customElementRegistry;
 };

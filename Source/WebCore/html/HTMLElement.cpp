@@ -1039,6 +1039,10 @@ bool HTMLElement::shouldExtendSelectionToTargetNode(const Node& targetNode, cons
 
 ExceptionOr<Ref<ElementInternals>> HTMLElement::attachInternals()
 {
+    // Per spec, customized built-in elements cannot use attachInternals.
+    if (!isValue().isEmpty())
+        return Exception { ExceptionCode::NotSupportedError, "attachInternals is not supported on customized built-in elements"_s };
+
     CheckedPtr queue = reactionQueue();
     if (!queue)
         return Exception { ExceptionCode::NotSupportedError, "attachInternals is only supported on a custom element instance"_s };

@@ -28,6 +28,8 @@
 namespace WebCore {
 using namespace JSC;
 
+EncodedJSValue constructJSHTMLElement(JSGlobalObject*, CallFrame&);
+
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSDOMConstructorBase);
 
 JSC_DEFINE_HOST_FUNCTION(callThrowTypeErrorForJSDOMConstructor, (JSGlobalObject* globalObject, CallFrame*))
@@ -38,10 +40,25 @@ JSC_DEFINE_HOST_FUNCTION(callThrowTypeErrorForJSDOMConstructor, (JSGlobalObject*
     return JSValue::encode(jsNull());
 }
 
-JSC_DEFINE_HOST_FUNCTION(callThrowTypeErrorForJSDOMConstructorNotConstructable, (JSC::JSGlobalObject* globalObject, JSC::CallFrame*))
+JSC_DEFINE_HOST_FUNCTION(callThrowTypeErrorForJSDOMConstructorNotConstructable, (JSC::JSGlobalObject* globalObject, JSC::CallFrame* callFrame))
 {
     JSC::VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // Support customized built-in elements: when a non-constructable HTML element
+    // interface (e.g. HTMLDivElement, HTMLParagraphElement) is subclassed via
+    // `class MyDiv extends HTMLDivElement {}`, delegate to the HTMLElement
+    // constructor which handles custom element registration and upgrade.
+    if (callFrame && !callFrame->newTarget().isUndefined()) {
+        auto result = constructJSHTMLElement(globalObject, *callFrame);
+        if (!scope.exception())
+            return result;
+        // constructJSHTMLElement failed (e.g., new.target is not a registered
+        // custom element). Fall through to throw "Illegal constructor".
+        if (!scope.tryClearException())
+            return JSC::JSValue::encode(JSC::jsNull());
+    }
+
     JSC::throwTypeError(globalObject, scope, "Illegal constructor"_s);
     return JSC::JSValue::encode(JSC::jsNull());
 }

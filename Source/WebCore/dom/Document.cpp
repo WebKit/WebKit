@@ -1560,12 +1560,41 @@ static inline bool NODELETE isValidHTMLElementName(const QualifiedName& name)
     return Document::isValidName(name.localName());
 }
 
+// Look up the customized built-in definition for an element with an "is" value, and
+// synchronously upgrade if a matching definition is found.
+static bool tryUpgradeCustomizedBuiltIn(Element& element, const AtomString& isValue, CustomElementRegistry* registry, Document& document)
+{
+    ASSERT(!isValue.isEmpty());
+    if (!registry)
+        registry = document.customElementRegistry();
+    if (!registry)
+        return false;
+    RefPtr elementInterface = registry->findInterface(isValue);
+    if (!elementInterface || !elementInterface->isCustomizedBuiltIn() || elementInterface->extendsLocalName() != element.localName())
+        return false;
+    // Synchronously construct/upgrade using a CustomElementReactionStack.
+    if (auto* globalObject = document.globalObject()) {
+        CustomElementReactionStack reactionStack(globalObject);
+        element.setIsCustomElementUpgradeCandidate();
+        element.enqueueToUpgrade(*elementInterface);
+    } else
+        element.setIsCustomElementUpgradeCandidate();
+    return true;
+}
+
 template<typename NameType>
-static ExceptionOr<Ref<Element>> createHTMLElementWithNameValidation(Document& document, const NameType& name, CustomElementRegistry* registry)
+static ExceptionOr<Ref<Element>> createHTMLElementWithNameValidation(Document& document, const NameType& name, CustomElementRegistry* registry, const AtomString& isValue = nullAtom())
 {
     RefPtr element = HTMLElementFactory::createKnownElement(name, document);
-    if (element) [[likely]]
+    if (element) [[likely]] {
+        if (!isValue.isNull()) {
+            element->setIsValue(isValue);
+            if (!isValue.isEmpty() && tryUpgradeCustomizedBuiltIn(*element, isValue, registry, document))
+                return Ref<Element> { element.releaseNonNull() };
+            element->setIsCustomElementUpgradeCandidate();
+        }
         return Ref<Element> { element.releaseNonNull() };
+    }
 
     if (!registry)
         registry = document.customElementRegistry();
@@ -1585,8 +1614,11 @@ ExceptionOr<Ref<Element>> Document::createElementForBindings(const AtomString& n
 {
     Ref document = *this;
     RefPtr<CustomElementRegistry> registry;
+    AtomString isValue;
     bool shouldUseNullRegistry = usesNullCustomElementRegistry();
     if (auto* options = std::get_if<ElementCreationOptions>(&argument)) {
+        if (!options->is.isNull())
+            isValue = AtomString(options->is);
         auto optionalRegistry = options->customElementRegistry;
         if (optionalRegistry) [[unlikely]] {
             registry = *optionalRegistry;
@@ -1598,10 +1630,10 @@ ExceptionOr<Ref<Element>> Document::createElementForBindings(const AtomString& n
 
     auto result = [&]() -> ExceptionOr<Ref<Element>> {
         if (document->isHTMLDocument())
-            return createHTMLElementWithNameValidation(document, name.convertToASCIILowercase(), registry.get());
+            return createHTMLElementWithNameValidation(document, name.convertToASCIILowercase(), registry.get(), isValue);
 
         if (document->isXHTMLDocument())
-            return createHTMLElementWithNameValidation(document, name, registry.get());
+            return createHTMLElementWithNameValidation(document, name, registry.get(), isValue);
 
         if (!document->isValidName(name))
             return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid qualified name: '"_s, name, '\'') };
@@ -2012,8 +2044,11 @@ ExceptionOr<Ref<Element>> Document::createElementNS(const AtomString& namespaceU
 {
     Ref document = *this;
     RefPtr<CustomElementRegistry> registry;
+    AtomString isValue;
     bool shouldUseNullRegistry = usesNullCustomElementRegistry();
     if (auto* options = std::get_if<ElementCreationOptions>(&argument)) {
+        if (!options->is.isNull())
+            isValue = AtomString(options->is);
         auto optionalRegistry = options->customElementRegistry;
         if (optionalRegistry) [[unlikely]] {
             registry = *optionalRegistry;
@@ -2036,8 +2071,15 @@ ExceptionOr<Ref<Element>> Document::createElementNS(const AtomString& namespaceU
     })();
 
     auto result = [&]() -> ExceptionOr<Ref<Element>> {
-        if (opportunisticallyMatchedBuiltinElement) [[likely]]
+        if (opportunisticallyMatchedBuiltinElement) [[likely]] {
+            if (!isValue.isNull() && namespaceURI == xhtmlNamespaceURI) {
+                opportunisticallyMatchedBuiltinElement->setIsValue(isValue);
+                if (!isValue.isEmpty() && tryUpgradeCustomizedBuiltIn(*opportunisticallyMatchedBuiltinElement, isValue, registry.get(), document))
+                    return opportunisticallyMatchedBuiltinElement.releaseNonNull();
+                opportunisticallyMatchedBuiltinElement->setIsCustomElementUpgradeCandidate();
+            }
             return opportunisticallyMatchedBuiltinElement.releaseNonNull();
+        }
 
         auto parseResult = Document::parseQualifiedName(namespaceURI, qualifiedName);
         if (parseResult.hasException())
@@ -2047,7 +2089,7 @@ ExceptionOr<Ref<Element>> Document::createElementNS(const AtomString& namespaceU
             return Exception { ExceptionCode::NamespaceError };
 
         if (parsedName.namespaceURI() == xhtmlNamespaceURI)
-            return createHTMLElementWithNameValidation(document, parsedName, registry.get());
+            return createHTMLElementWithNameValidation(document, parsedName, registry.get(), isValue);
 
         return createElement(parsedName, false, registry.get());
     }();

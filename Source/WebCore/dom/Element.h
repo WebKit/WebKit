@@ -522,6 +522,9 @@ public:
     WEBCORE_EXPORT void setNonce(const AtomString&);
     inline void hideNonce(); // Defined in ElementInlines.h.
 
+    const AtomString& isValue() const;
+    void setIsValue(const AtomString&);
+
     ExceptionOr<void> insertAdjacentHTML(const String& where, const String& html, NodeVector* addedNodes);
 
     WEBCORE_EXPORT ExceptionOr<Element*> insertAdjacentElement(const String& where, Element& newChild);

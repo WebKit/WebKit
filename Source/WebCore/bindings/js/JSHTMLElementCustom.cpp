@@ -83,18 +83,49 @@ EncodedJSValue constructJSHTMLElement(JSGlobalObject* lexicalGlobalObject, CallF
     if (!elementInterface)
         return throwVMTypeError(lexicalGlobalObject, scope, "new.target does not define a custom element"_s);
 
-    if (!elementInterface->isUpgradingElement()) {
-        Structure* baseStructure = getDOMStructure<JSHTMLElement>(vm, *newTargetGlobalObject);
-        auto* newElementStructure = InternalFunction::createSubclassStructure(lexicalGlobalObject, newTarget, baseStructure);
+    // Spec step 6: Validate the callee's prototype against the expected interface prototype.
+    {
+        auto* calleeGlobalObject = jsCast<JSDOMGlobalObject*>(jsConstructor->globalObject());
+        JSValue calleePrototype = jsConstructor->get(lexicalGlobalObject, vm.propertyNames->prototype);
         RETURN_IF_EXCEPTION(scope, { });
+        JSValue expectedPrototype;
+        if (elementInterface->isCustomizedBuiltIn())
+            expectedPrototype = elementInterface->extendsInterfacePrototype(vm, *calleeGlobalObject, document);
+        else
+            expectedPrototype = JSHTMLElement::prototype(vm, *calleeGlobalObject);
+        ASSERT(expectedPrototype);
+        if (calleePrototype && calleePrototype != expectedPrototype)
+            return throwVMTypeError(lexicalGlobalObject, scope, "new.target is not a valid custom element constructor"_s);
+    }
 
+    if (!elementInterface->isUpgradingElement()) {
         Ref element = elementInterface->createElement(document);
         if (registry->isScoped())
             CustomElementRegistry::addToScopedCustomElementRegistryMap(element, *registry);
         element->setIsDefinedCustomElement(*elementInterface);
-        auto* jsElement = JSHTMLElement::create(newElementStructure, newTargetGlobalObject, element.get());
-        cacheWrapper(newTargetGlobalObject->world(), element.ptr(), jsElement);
-        return JSValue::encode(jsElement);
+
+        // Use toJS to create the correct wrapper type (e.g., JSHTMLAnchorElement for
+        // customized built-in elements extending HTMLAnchorElement), then set the
+        // custom element prototype.
+        JSValue elementWrapperValue = toJS(lexicalGlobalObject, jsConstructor->globalObject(), element.get());
+        ASSERT(elementWrapperValue.isObject());
+
+        JSValue newPrototype = newTarget->get(lexicalGlobalObject, vm.propertyNames->prototype);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+        // Per spec: if prototype is not an object, derive fallback from NewTarget's realm.
+        if (!newPrototype.isObject()) {
+            if (elementInterface->isCustomizedBuiltIn())
+                newPrototype = elementInterface->extendsInterfacePrototype(vm, *newTargetGlobalObject, document);
+            if (!newPrototype.isObject())
+                newPrototype = JSHTMLElement::prototype(vm, *newTargetGlobalObject);
+        }
+
+        JSObject* elementWrapperObject = asObject(elementWrapperValue);
+        JSObject::setPrototype(elementWrapperObject, lexicalGlobalObject, newPrototype, true /* shouldThrowIfCantSet */);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+        return JSValue::encode(elementWrapperValue);
     }
 
     RefPtr elementToUpgrade = elementInterface->lastElementInConstructionStack();
@@ -108,6 +139,14 @@ EncodedJSValue constructJSHTMLElement(JSGlobalObject* lexicalGlobalObject, CallF
 
     JSValue newPrototype = newTarget->get(lexicalGlobalObject, vm.propertyNames->prototype);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    // Per spec: if prototype is not an object, derive fallback from NewTarget's realm.
+    if (!newPrototype.isObject()) {
+        if (elementInterface->isCustomizedBuiltIn())
+            newPrototype = elementInterface->extendsInterfacePrototype(vm, *newTargetGlobalObject, document);
+        if (!newPrototype.isObject())
+            newPrototype = JSHTMLElement::prototype(vm, *newTargetGlobalObject);
+    }
 
     JSObject* elementWrapperObject = asObject(elementWrapperValue);
     JSObject::setPrototype(elementWrapperObject, lexicalGlobalObject, newPrototype, true /* shouldThrowIfCantSet */);

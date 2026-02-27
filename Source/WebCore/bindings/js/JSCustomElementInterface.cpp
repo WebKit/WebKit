@@ -33,6 +33,7 @@
 #include "DOMWrapperWorld.h"
 #include "ElementRareData.h"
 #include "EventLoop.h"
+#include "HTMLElementFactory.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLFormElement.h"
 #include "HTMLMaybeFormAssociatedCustomElement.h"
@@ -53,9 +54,10 @@
 namespace WebCore {
 using namespace JSC;
 
-JSCustomElementInterface::JSCustomElementInterface(const QualifiedName& name, JSObject* constructor, JSDOMGlobalObject* globalObject)
+JSCustomElementInterface::JSCustomElementInterface(const QualifiedName& name, JSObject* constructor, JSDOMGlobalObject* globalObject, const AtomString& extendsLocalName)
     : ActiveDOMCallback(globalObject->scriptExecutionContext())
     , m_name(name)
+    , m_extendsLocalName(extendsLocalName)
     , m_constructor(constructor)
     , m_isolatedWorld(globalObject->world())
     , m_isElementInternalsDisabled(false)
@@ -66,12 +68,27 @@ JSCustomElementInterface::JSCustomElementInterface(const QualifiedName& name, JS
 
 JSCustomElementInterface::~JSCustomElementInterface() = default;
 
-static RefPtr<Element> constructCustomElementSynchronously(Document&, VM&, JSGlobalObject&, JSObject* constructor, const AtomString& localName, ParserConstructElementWithEmptyStack);
+static RefPtr<Element> constructCustomElementSynchronously(Document&, VM&, JSGlobalObject&, JSObject* constructor, const AtomString& expectedLocalName, ParserConstructElementWithEmptyStack);
+
+Ref<Element> JSCustomElementInterface::createFailedCustomizedBuiltInFallback(Document& document, CustomElementRegistry& registry)
+{
+    RefPtr element = HTMLElementFactory::createKnownElement(m_extendsLocalName, document);
+    ASSERT(element);
+    element->setIsValue(m_name.localName());
+    element->setIsCustomElementUpgradeCandidate();
+    element->setIsFailedCustomElement();
+    if (registry.isScoped())
+        CustomElementRegistry::addToScopedCustomElementRegistryMap(*element, registry);
+    return element.releaseNonNull();
+}
 
 Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& document, CustomElementRegistry& registry, const AtomString& localName, ParserConstructElementWithEmptyStack parserConstructElementWithEmptyStack)
 {
     if (auto element = tryToConstructCustomElement(document, registry, localName, parserConstructElementWithEmptyStack))
         return element.releaseNonNull();
+
+    if (isCustomizedBuiltIn())
+        return createFailedCustomizedBuiltInFallback(document, registry);
 
     auto element = HTMLUnknownElement::create(QualifiedName(nullAtom(), localName, HTMLNames::xhtmlNamespaceURI), document);
     element->setIsCustomElementUpgradeCandidate();
@@ -90,6 +107,9 @@ Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& do
         return element.releaseNonNull();
     }
 
+    if (isCustomizedBuiltIn())
+        return createFailedCustomizedBuiltInFallback(document, registry);
+
     auto element = HTMLUnknownElement::create(name, document);
     element->setIsCustomElementUpgradeCandidate();
     element->setIsFailedCustomElement();
@@ -101,6 +121,13 @@ Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& do
 
 Ref<HTMLElement> JSCustomElementInterface::createElement(Document& document)
 {
+    if (isCustomizedBuiltIn()) {
+        RefPtr element = HTMLElementFactory::createKnownElement(m_extendsLocalName, document);
+        ASSERT(element);
+        element->setIsValue(m_name.localName());
+        return element.releaseNonNull();
+    }
+
     if (m_isFormAssociated) {
         auto element = HTMLMaybeFormAssociatedCustomElement::create(m_name, document);
         element->setInterfaceIsFormAssociated();
@@ -129,9 +156,12 @@ RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& 
     ASSERT(lexicalGlobalObject);
     if (!lexicalGlobalObject)
         return nullptr;
+    // For customized built-ins, the constructed element's localName is the extends value (e.g. "button"),
+    // not the custom element name (e.g. "my-button").
+    const AtomString& expectedLocalName = isCustomizedBuiltIn() ? m_extendsLocalName : localName;
     auto* oldRegistry = contextDocument->activeCustomElementRegistry();
     contextDocument->setActiveCustomElementRegistry(&registry);
-    auto element = constructCustomElementSynchronously(document, vm, *lexicalGlobalObject, m_constructor.get(), localName, parserConstructElementWithEmptyStack);
+    auto element = constructCustomElementSynchronously(document, vm, *lexicalGlobalObject, m_constructor.get(), expectedLocalName, parserConstructElementWithEmptyStack);
     contextDocument->setActiveCustomElementRegistry(oldRegistry);
     EXCEPTION_ASSERT(!!scope.exception() == !element);
     if (!element) {
@@ -146,7 +176,7 @@ RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& 
 
 // https://dom.spec.whatwg.org/#concept-create-element
 // 6. 1. If the synchronous custom elements flag is set
-static RefPtr<Element> constructCustomElementSynchronously(Document& document, VM& vm, JSGlobalObject& lexicalGlobalObject, JSObject* constructor, const AtomString& localName, ParserConstructElementWithEmptyStack parserConstructElementWithEmptyStack)
+static RefPtr<Element> constructCustomElementSynchronously(Document& document, VM& vm, JSGlobalObject& lexicalGlobalObject, JSObject* constructor, const AtomString& expectedLocalName, ParserConstructElementWithEmptyStack parserConstructElementWithEmptyStack)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto constructData = JSC::getConstructData(constructor);
@@ -189,7 +219,7 @@ static RefPtr<Element> constructCustomElementSynchronously(Document& document, V
         return nullptr;
     }
     ASSERT(wrappedElement->namespaceURI() == HTMLNames::xhtmlNamespaceURI);
-    if (wrappedElement->localName() != localName) {
+    if (wrappedElement->localName() != expectedLocalName) {
         throwNotSupportedError(lexicalGlobalObject, scope, "A newly constructed custom element has incorrect local name"_s);
         return nullptr;
     }
@@ -200,14 +230,14 @@ static RefPtr<Element> constructCustomElementSynchronously(Document& document, V
 // https://html.spec.whatwg.org/multipage/custom-elements.html#concept-upgrade-an-element
 void JSCustomElementInterface::upgradeElement(Element& element)
 {
-    ASSERT(element.tagQName().matches(name()));
+    if (isCustomizedBuiltIn()) {
+        ASSERT(element.localName() == m_extendsLocalName);
+        ASSERT(element.isValue() == m_name.localName());
+    } else
+        ASSERT(element.tagQName().matches(name()));
 
     if (!element.isCustomElementUpgradeCandidate() && !element.isUncustomizedCustomElement())
         return;
-
-    // FIXME: This assertion always seem to pass, even though the check above is more allowable.
-    // It would be great to figure out why: a spec bug, lack of test coverage, or the fact we don't support customized built-ins.
-    ASSERT(element.isCustomElementUpgradeCandidate());
 
     if (!canInvokeCallback())
         return;
@@ -247,11 +277,12 @@ void JSCustomElementInterface::upgradeElement(Element& element)
 
     if (m_isShadowDisabled && element.shadowRoot()) {
         element.clearReactionQueueFromFailedCustomElement();
-        reportException(lexicalGlobalObject, createDOMException(lexicalGlobalObject, ExceptionCode::NotSupportedError, "Failed to upgrade an element with shadow root: the custom element definition disallows shadow roots."_s));
+        auto* constructorGlobalObject = m_constructor->globalObject();
+        reportException(constructorGlobalObject, createDOMException(constructorGlobalObject, ExceptionCode::NotSupportedError, "Failed to upgrade an element with shadow root: the custom element definition disallows shadow roots."_s));
         return;
     }
 
-    if (m_isFormAssociated)
+    if (m_isFormAssociated && !isCustomizedBuiltIn())
         downcast<HTMLMaybeFormAssociatedCustomElement>(element).willUpgradeFormAssociated();
 
     auto* oldRegistry = document->activeCustomElementRegistry();
@@ -269,20 +300,23 @@ void JSCustomElementInterface::upgradeElement(Element& element)
 
     if (scope.exception()) [[unlikely]] {
         element.clearReactionQueueFromFailedCustomElement();
-        reportException(lexicalGlobalObject, scope.exception());
+        // Report the exception to the definition's global, not the document's global.
+        reportException(m_constructor->globalObject(), scope.exception());
         return;
     }
 
     CheckedPtr wrappedElement = JSElement::toWrapped(vm, returnedElement);
     if (!wrappedElement || wrappedElement != &element) {
         element.clearReactionQueueFromFailedCustomElement();
-        reportException(lexicalGlobalObject, createDOMException(lexicalGlobalObject, ExceptionCode::TypeError, "Custom element constructor returned a wrong element"_s));
+        // Report the exception to the definition's global, not the document's global.
+        auto* constructorGlobalObject = m_constructor->globalObject();
+        reportException(constructorGlobalObject, createDOMException(constructorGlobalObject, ExceptionCode::TypeError, "Custom element constructor returned a wrong element"_s));
         return;
     }
 
     element.setIsDefinedCustomElement(*this);
 
-    if (m_isFormAssociated) {
+    if (m_isFormAssociated && !isCustomizedBuiltIn()) {
         CustomElementReactionStack customElementReactionStack(lexicalGlobalObject);
         downcast<HTMLMaybeFormAssociatedCustomElement>(element).didUpgradeFormAssociated();
     }
@@ -450,10 +484,37 @@ ScriptExecutionContext* JSCustomElementInterface::scriptExecutionContext() const
     return ContextDestructionObserver::scriptExecutionContext();
 }
 
+JSObject* JSCustomElementInterface::extendsInterfacePrototype(VM&, JSDOMGlobalObject& globalObject, Document& document) const
+{
+    ASSERT(isCustomizedBuiltIn());
+    // Cache hit: same global, prototype still alive.
+    if (m_cachedExtendsPrototypeGlobal.get() == &globalObject) {
+        if (auto* proto = m_cachedExtendsPrototype.get())
+            return proto;
+    }
+    // Cache miss: compute via temp element.
+    RefPtr tempElement = HTMLElementFactory::createKnownElement(m_extendsLocalName, document);
+    if (!tempElement)
+        return nullptr;
+    auto* lexicalGlobalObject = jsCast<JSGlobalObject*>(&globalObject);
+    JSValue wrapper = toJS(lexicalGlobalObject, &globalObject, *tempElement);
+    if (!wrapper.isObject())
+        return nullptr;
+    JSValue protoDirect = asObject(wrapper)->getPrototypeDirect();
+    if (!protoDirect.isObject())
+        return nullptr;
+    auto* proto = asObject(protoDirect);
+    m_cachedExtendsPrototype = JSC::Weak<JSObject>(proto);
+    m_cachedExtendsPrototypeGlobal = JSC::Weak<JSDOMGlobalObject>(&globalObject);
+    return proto;
+}
+
 template<typename Visitor>
 void JSCustomElementInterface::visitJSFunctions(Visitor& visitor) const
 {
     visitor.append(m_constructor);
+    visitor.append(m_cachedExtendsPrototype);
+    visitor.append(m_cachedExtendsPrototypeGlobal);
     visitor.append(m_connectedCallback);
     visitor.append(m_disconnectedCallback);
     visitor.append(m_adoptedCallback);

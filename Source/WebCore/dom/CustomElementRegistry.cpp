@@ -77,11 +77,18 @@ void CustomElementRegistry::didAssociateWithDocument(Document& document)
     m_associatedDocuments.add(document);
 }
 
+static bool elementMatchesDefinition(const Element& element, const JSCustomElementInterface& elementInterface)
+{
+    if (elementInterface.isCustomizedBuiltIn())
+        return element.localName() == elementInterface.extendsLocalName() && element.isValue() == elementInterface.name().localName();
+    return element.tagQName().matches(elementInterface.name());
+}
+
 // https://dom.spec.whatwg.org/#concept-shadow-including-tree-order
 static void enqueueUpgradeInShadowIncludingTreeOrder(ContainerNode& node, JSCustomElementInterface& elementInterface, CustomElementRegistry& registry)
 {
     for (RefPtr element = ElementTraversal::firstWithin(node); element; element = ElementTraversal::next(*element)) {
-        if (element->isCustomElementUpgradeCandidate() && CustomElementRegistry::registryForElement(*element) == &registry && element->tagQName().matches(elementInterface.name()))
+        if (element->isCustomElementUpgradeCandidate() && CustomElementRegistry::registryForElement(*element) == &registry && elementMatchesDefinition(*element, elementInterface))
             element->enqueueToUpgrade(elementInterface);
         if (RefPtr shadowRoot = element->shadowRoot()) {
             if (shadowRoot->mode() != ShadowRootMode::UserAgent)
@@ -122,7 +129,19 @@ RefPtr<DeferredPromise> CustomElementRegistry::addElementDefinition(Ref<JSCustom
 
 JSCustomElementInterface* CustomElementRegistry::findInterface(const Element& element) const
 {
-    return findInterface(element.tagQName());
+    // Autonomous custom element: tagName IS the custom element name.
+    if (auto* iface = findInterface(element.tagQName()))
+        return iface;
+
+    // Customized built-in element: the "is" value IS the custom element name.
+    const AtomString& isVal = element.isValue();
+    if (!isVal.isEmpty()) {
+        if (auto* iface = m_nameMap.get(isVal)) {
+            if (iface->isCustomizedBuiltIn() && iface->extendsLocalName() == element.localName())
+                return iface;
+        }
+    }
+    return nullptr;
 }
 
 JSCustomElementInterface* CustomElementRegistry::findInterface(const QualifiedName& name) const
