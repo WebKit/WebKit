@@ -3656,6 +3656,7 @@ private:
 
     void beginSiteHasStorageCheck(const URL&, API::Navigation&, WebFramePolicyListenerProxy&);
     void beginEnhancedSecurityLinkCheck(const URL&, API::Navigation&, WebFramePolicyListenerProxy&);
+    void beginDNSResolutionCheck(const URL&, API::Navigation&, WebFramePolicyListenerProxy&);
 
     Ref<BrowsingContextGroup> browsingContextGroupForNavigation(WebFrameProxy&, API::Navigation&, WebsiteDataStore&, ProcessSwapRequestedByClient);
 

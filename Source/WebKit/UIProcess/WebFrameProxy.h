@@ -29,6 +29,7 @@
 #include "FrameLoadState.h"
 #include "MessageReceiver.h"
 #include "ProvisionalFrameCreationParameters.h"
+#include "WebFramePolicyListenerProxy.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/DocumentSecurityPolicy.h>
 #include <WebCore/FrameLoaderTypes.h>
@@ -114,11 +115,6 @@ enum class CanWrap : bool { No, Yes };
 enum class DidWrap : bool { No, Yes };
 enum class IsMainFrame : bool { No, Yes };
 enum class NavigatingToAppBoundDomain : bool;
-enum class ShouldExpectSafeBrowsingResult : bool;
-enum class ShouldExpectAppBoundDomainResult : bool;
-enum class ShouldWaitForInitialLinkDecorationFilteringData : bool;
-enum class ShouldWaitForSiteHasStorageCheck : bool;
-enum class ShouldWaitForEnhancedSecurityLinkCheck : bool;
 enum class ProcessSwapRequestedByClient : bool;
 enum class WasNavigationIntercepted : bool;
 
@@ -198,7 +194,7 @@ public:
     void didSameDocumentNavigation(URL&&); // eg. anchor navigation, session state change.
     void didChangeTitle(String&&);
 
-    WebFramePolicyListenerProxy& setUpPolicyListenerProxy(CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, std::optional<NavigatingToAppBoundDomain>, WasNavigationIntercepted)>&&, ShouldExpectSafeBrowsingResult, ShouldExpectAppBoundDomainResult, ShouldWaitForInitialLinkDecorationFilteringData, ShouldWaitForSiteHasStorageCheck, ShouldWaitForEnhancedSecurityLinkCheck);
+    WebFramePolicyListenerProxy& setUpPolicyListenerProxy(CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, std::optional<NavigatingToAppBoundDomain>, WasNavigationIntercepted)>&&, OptionSet<PolicyListenerCheck>);
 
 #if ENABLE(CONTENT_FILTERING)
     void contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler contentFilterUnblockHandler) { m_contentFilterUnblockHandler = WTF::move(contentFilterUnblockHandler); }

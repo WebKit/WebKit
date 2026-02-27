@@ -176,7 +176,8 @@ bool EnhancedSecurityTracking::enableIfRequired(const API::Navigation& navigatio
     auto currentRequestURL = navigation.currentRequest().url();
 
     if (currentRequestURL.protocolIs("http"_s)
-        && !SecurityOrigin::isLocalHostOrLoopbackIPAddress(currentRequestURL.host())) {
+        && !SecurityOrigin::isLocalHostOrLoopbackIPAddress(currentRequestURL.host())
+        && !navigation.doesCurrentSiteResolveToLoopbackAddress()) {
         enableFor(EnhancedSecurityReason::InsecureProvisional, navigation);
         return true;
     }

@@ -204,6 +204,9 @@ public:
     void setIsEnhancedSecurityLinkForCurrentSite(bool isEnhancedSecurityLink) { m_isEnhancedSecurityLinkForCurrentSite = isEnhancedSecurityLink; }
     bool isEnhancedSecurityLinkForCurrentSite() const { return m_isEnhancedSecurityLinkForCurrentSite; }
 
+    void setDoesCurrentSiteResolveToLoopbackAddress(bool value) { m_doesCurrentSiteResolveToLoopbackAddress = value; }
+    bool doesCurrentSiteResolveToLoopbackAddress() const { return m_doesCurrentSiteResolveToLoopbackAddress; }
+
 private:
     Navigation(WebCore::ProcessIdentifier);
     Navigation(WebCore::ProcessIdentifier, RefPtr<WebKit::WebBackForwardListItem>&&);
@@ -237,6 +240,7 @@ private:
     bool m_hadSafeBrowsingWarning : 1 { false };
     bool m_hasStorageForCurrentSite : 1 { false };
     bool m_isEnhancedSecurityLinkForCurrentSite : 1 { false };
+    bool m_doesCurrentSiteResolveToLoopbackAddress : 1 { false };
     RefPtr<API::WebsitePolicies> m_websitePolicies;
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> m_originatorAdvancedPrivacyProtections;
     MonotonicTime m_requestStart { MonotonicTime::now() };

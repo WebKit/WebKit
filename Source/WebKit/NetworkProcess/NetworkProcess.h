@@ -236,6 +236,7 @@ public:
     void findPendingDownloadLocation(NetworkDataTask&, ResponseCompletionHandler&&, const WebCore::ResourceResponse&);
 
     void prefetchDNS(const String&);
+    void doesHostResolveToLoopbackAddress(const String& hostname, CompletionHandler<void(bool)>&&);
 
     void addWebsiteDataStore(WebsiteDataStoreParameters&&);
 

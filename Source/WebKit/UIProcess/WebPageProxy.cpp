@@ -494,6 +494,8 @@ static constexpr Seconds tryCloseTimeoutDelay = 50_ms;
 static constexpr Seconds audibleActivityClearDelay = 10_s;
 #endif
 
+static constexpr Seconds loopbackDnsResolutionCheckTimeout = 1_s;
+
 #if PLATFORM(COCOA)
 static WorkQueue& sharedFileQueueSingleton()
 {
@@ -8624,29 +8626,27 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     }
 #endif
 
-    ShouldExpectSafeBrowsingResult shouldExpectSafeBrowsingResult = ShouldExpectSafeBrowsingResult::Yes;
-    if (!protect(preferences())->safeBrowsingEnabled())
-        shouldExpectSafeBrowsingResult = ShouldExpectSafeBrowsingResult::No;
+    bool expectSafeBrowsing = protect(preferences())->safeBrowsingEnabled();
 
-    ShouldWaitForSiteHasStorageCheck shouldWaitForSiteHasStorageCheck = ShouldWaitForSiteHasStorageCheck::Yes;
-    if (!frame.isMainFrame() || !protect(preferences())->enhancedSecurityHeuristicsEnabled())
-        shouldWaitForSiteHasStorageCheck = ShouldWaitForSiteHasStorageCheck::No;
-
-    ShouldWaitForEnhancedSecurityLinkCheck shouldWaitForEnhancedSecurityLink = ShouldWaitForEnhancedSecurityLinkCheck::No;
+    OptionSet<PolicyListenerCheck> listenerChecks;
+    if (frame.isMainFrame() && protect(preferences())->enhancedSecurityHeuristicsEnabled())
+        listenerChecks.add(PolicyListenerCheck::SiteHasStorage);
 #if HAVE(ENHANCED_SECURITY_LINKS)
     if (frame.isMainFrame() && protect(preferences())->enhancedSecurityHeuristicsEnabled() && protect(preferences())->enhancedSecurityLinksEnabled())
-        shouldWaitForEnhancedSecurityLink = ShouldWaitForEnhancedSecurityLinkCheck::Yes;
+        listenerChecks.add(PolicyListenerCheck::EnhancedSecurityLink);
 #endif
-
-    ShouldExpectAppBoundDomainResult shouldExpectAppBoundDomainResult = ShouldExpectAppBoundDomainResult::No;
+    if (frame.isMainFrame()
+        && protect(preferences())->enhancedSecurityHeuristicsEnabled()
+        && request.url().protocolIs("http"_s)
+        && !SecurityOrigin::isLocalHostOrLoopbackIPAddress(request.url().host())
+        && !URL::hostIsIPAddress(request.url().host().toString()))
+        listenerChecks.add(PolicyListenerCheck::DNSResolution);
 #if ENABLE(APP_BOUND_DOMAINS)
-    shouldExpectAppBoundDomainResult = ShouldExpectAppBoundDomainResult::Yes;
+    listenerChecks.add(PolicyListenerCheck::AppBoundDomainResult);
 #endif
-
-    auto shouldWaitForInitialLinkDecorationFilteringData = ShouldWaitForInitialLinkDecorationFilteringData::No;
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     if (LinkDecorationFilteringController::sharedSingleton().cachedListData().isEmpty())
-        shouldWaitForInitialLinkDecorationFilteringData = ShouldWaitForInitialLinkDecorationFilteringData::Yes;
+        listenerChecks.add(PolicyListenerCheck::LinkDecorationFiltering);
     else if (m_needsInitialLinkDecorationFilteringData)
         sendCachedLinkDecorationFilteringData();
 #endif
@@ -8665,7 +8665,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
         frameInfo,
         protectedPageClient = protect(pageClient())
 #if HAVE(SAFE_BROWSING)
-        , shouldExpectSafeBrowsingResult
+        , expectSafeBrowsing
 #endif
     ] (PolicyAction policyAction, API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient, std::optional<NavigatingToAppBoundDomain> isAppBoundDomain, WasNavigationIntercepted wasNavigationIntercepted) mutable {
         WEBPAGEPROXY_RELEASE_LOG(Loading, "decidePolicyForNavigationAction: listener called: frameID=%" PRIu64 ", isMainFrame=%d, navigationID=%" PRIu64  ", policyAction=%" PUBLIC_LOG_STRING ", isAppBoundDomain=%d, wasNavigationIntercepted=%d", frame->frameID().toUInt64(), frame->isMainFrame(), navigation ? navigation->navigationID().toUInt64() : 0, toString(policyAction).characters(), !!isAppBoundDomain, wasNavigationIntercepted == WasNavigationIntercepted::Yes);
@@ -8776,22 +8776,24 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
             return;
         }
 #if HAVE(SAFE_BROWSING)
-        if (shouldExpectSafeBrowsingResult == ShouldExpectSafeBrowsingResult::Yes)
+        if (expectSafeBrowsing)
             protectedThis->completeSafeBrowsingCheckForModals(true);
 #endif
         completionHandlerWrapper(policyAction);
 
-    }, ShouldExpectSafeBrowsingResult::No, shouldExpectAppBoundDomainResult, shouldWaitForInitialLinkDecorationFilteringData, shouldWaitForSiteHasStorageCheck, shouldWaitForEnhancedSecurityLink);
-    if (shouldExpectSafeBrowsingResult == ShouldExpectSafeBrowsingResult::Yes)
+    }, listenerChecks);
+    if (expectSafeBrowsing)
         beginSafeBrowsingCheck(request.url(), *navigation, frame.isMainFrame());
-    if (shouldWaitForInitialLinkDecorationFilteringData == ShouldWaitForInitialLinkDecorationFilteringData::Yes)
+    if (listenerChecks.contains(PolicyListenerCheck::LinkDecorationFiltering))
         waitForInitialLinkDecorationFilteringData(listener);
-    if (shouldWaitForSiteHasStorageCheck == ShouldWaitForSiteHasStorageCheck::Yes)
+    if (listenerChecks.contains(PolicyListenerCheck::SiteHasStorage))
         beginSiteHasStorageCheck(request.url(), *navigation, listener);
 #if HAVE(ENHANCED_SECURITY_LINKS)
-    if (shouldWaitForEnhancedSecurityLink == ShouldWaitForEnhancedSecurityLinkCheck::Yes)
+    if (listenerChecks.contains(PolicyListenerCheck::EnhancedSecurityLink))
         beginEnhancedSecurityLinkCheck(request.url(), *navigation, listener);
 #endif
+    if (listenerChecks.contains(PolicyListenerCheck::DNSResolution))
+        beginDNSResolutionCheck(request.url(), *navigation, listener);
 #if ENABLE(APP_BOUND_DOMAINS)
     bool shouldSendSecurityOriginData = !frame.isMainFrame() && shouldTreatURLProtocolAsAppBound(request.url(), websiteDataStore().configuration().enableInAppBrowserPrivacyForTesting());
     auto host = shouldSendSecurityOriginData ? frameInfo.securityOrigin.host() : request.url().host();
@@ -8956,7 +8958,7 @@ void WebPageProxy::decidePolicyForNewWindowAction(IPC::Connection& connection, N
         RELEASE_ASSERT(processSwapRequestedByClient == ProcessSwapRequestedByClient::No);
 
         receivedPolicyDecision(policyAction, nullptr, std::nullopt, WTF::move(navigationAction), WillContinueLoadInNewProcess::No, std::nullopt, std::nullopt, WTF::move(completionHandler));
-    }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No, ShouldWaitForInitialLinkDecorationFilteringData::No, ShouldWaitForSiteHasStorageCheck::No, ShouldWaitForEnhancedSecurityLinkCheck::No);
+    }, { });
 
     if (m_policyClient)
         m_policyClient->decidePolicyForNewWindowAction(*this, *frame, navigationAction.get(), request, frameName, WTF::move(listener));
@@ -8990,11 +8992,11 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
         m_openedMainFrameName = { };
     }
 
-    auto expectSafeBrowsing = ShouldExpectSafeBrowsingResult::No;
+    OptionSet<PolicyListenerCheck> listenerChecks;
     MonotonicTime requestStart;
 
     if (navigation && navigation->safeBrowsingCheckOngoing()) {
-        expectSafeBrowsing = ShouldExpectSafeBrowsingResult::Yes;
+        listenerChecks.add(PolicyListenerCheck::SafeBrowsingResult);
         requestStart = navigation->requestStart();
     }
 
@@ -9101,8 +9103,8 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
         }
 #endif
         completionHandlerWrapper(policyAction);
-    }, expectSafeBrowsing , ShouldExpectAppBoundDomainResult::No, ShouldWaitForInitialLinkDecorationFilteringData::No, ShouldWaitForSiteHasStorageCheck::No, ShouldWaitForEnhancedSecurityLinkCheck::No);
-    if (expectSafeBrowsing == ShouldExpectSafeBrowsingResult::Yes && navigation) {
+    }, listenerChecks);
+    if (listenerChecks.contains(PolicyListenerCheck::SafeBrowsingResult) && navigation) {
         Seconds timeout = (MonotonicTime::now() - requestStart) * 1.5 + 0.25_s;
         RunLoop::mainSingleton().dispatchAfter(timeout, [listener, navigation] mutable {
             listener->didReceiveSafeBrowsingResults({ });
@@ -17007,6 +17009,25 @@ void WebPageProxy::beginEnhancedSecurityLinkCheck(const URL& url, API::Navigatio
         networkProcess->sendWithAsyncReply(Messages::NetworkProcess::IsEnhancedSecurityLink(url), WTF::move(completionHandler));
 }
 #endif
+
+void WebPageProxy::beginDNSResolutionCheck(const URL& url, API::Navigation& navigation, WebFramePolicyListenerProxy& listener)
+{
+    auto completionHandler = [navigation = protect(navigation), url, listener = protect(listener)] (bool resolvesToLoopbackAddress) {
+        if (url == navigation->currentRequest().url()) {
+            navigation->setDoesCurrentSiteResolveToLoopbackAddress(resolvesToLoopbackAddress);
+            listener->didReceiveDNSResolutionResults();
+        }
+    };
+
+    if (RefPtr networkProcess = websiteDataStore().networkProcessIfExists())
+        networkProcess->sendWithAsyncReply(Messages::NetworkProcess::DoesHostResolveToLoopbackAddress(url.host().toString()), WTF::move(completionHandler));
+    else
+        listener.didReceiveDNSResolutionResults();
+
+    RunLoop::mainSingleton().dispatchAfter(loopbackDnsResolutionCheckTimeout, [listener = protect(listener)] () mutable {
+        listener->didReceiveDNSResolutionResults();
+    });
+}
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void WebPageProxy::pauseAllAnimations(CompletionHandler<void()>&& completionHandler)
