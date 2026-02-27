@@ -38,8 +38,43 @@
 #import <pal/system/mac/PopupMenu.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/ProcessPrivilege.h>
-#import <wtf/SetForScope.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+
+@interface WKPopupMenuDelegate : NSObject <NSMenuDelegate> {
+    RefPtr<WebKit::WebPopupMenuProxyMac> _menuProxy;
+    bool _menuDidClose;
+    bool _popUpMenuReturned;
+}
+- (instancetype)initWithMenuProxy:(WebKit::WebPopupMenuProxyMac&)menuProxy;
+- (void)popUpMenuReturned;
+@end
+
+@implementation WKPopupMenuDelegate
+
+- (instancetype)initWithMenuProxy:(WebKit::WebPopupMenuProxyMac&)menuProxy
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    _menuProxy = &menuProxy;
+    return self;
+}
+
+- (void)menuDidClose:(NSMenu *)menu
+{
+    _menuDidClose = true;
+    if (_popUpMenuReturned)
+        _menuProxy->didFinishShowingPopupMenu();
+}
+
+- (void)popUpMenuReturned
+{
+    _popUpMenuReturned = true;
+    if (_menuDidClose)
+        _menuProxy->didFinishShowingPopupMenu();
+}
+
+@end
 
 namespace WebKit {
 using namespace WebCore;
@@ -52,8 +87,10 @@ WebPopupMenuProxyMac::WebPopupMenuProxyMac(NSView *webView, WebPopupMenuProxy::C
 
 WebPopupMenuProxyMac::~WebPopupMenuProxyMac()
 {
-    if (m_popup)
+    if (m_popup) {
+        [[m_popup menu] setDelegate:nil];
         [m_popup setControlView:nil];
+    }
 }
 
 void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, NSFont *font, TextDirection menuTextDirection)
@@ -154,10 +191,11 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
         else
             location = NSMakePoint(NSMaxX(rect) - popUnderHorizontalAdjust, NSMaxY(rect) + popUnderVerticalAdjust);
     }
-    RetainPtr<NSView> dummyView = adoptNS([[NSView alloc] initWithFrame:rect]);
-    [dummyView.get() setUserInterfaceLayoutDirection:textDirection == TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
-    [m_webView.get() addSubview:dummyView.get()];
-    location = [dummyView convertPoint:location fromView:m_webView.get().get()];
+    m_isVisible = true;
+    m_dummyView = adoptNS([[NSView alloc] initWithFrame:rect]);
+    [m_dummyView setUserInterfaceLayoutDirection:textDirection == TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
+    [m_webView.get() addSubview:m_dummyView.get()];
+    location = [m_dummyView convertPoint:location fromView:m_webView.get().get()];
 
     NSControlSize controlSize;
     switch (data.menuSize) {
@@ -175,24 +213,33 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
         break;
     }
 
-    SetForScope visibleScope { m_isVisible, true };
+    m_menuDelegate = adoptNS([[WKPopupMenuDelegate alloc] initWithMenuProxy:*this]);
+    [menu setDelegate:m_menuDelegate.get()];
 
-    Ref<WebPopupMenuProxyMac> protect(*this);
-    PAL::popUpMenu(menu.get(), location, roundf(NSWidth(rect)), dummyView.get(), selectedIndex, bridge_cast(font.get()), controlSize, data.hideArrows);
+    PAL::popUpMenu(menu.get(), location, roundf(NSWidth(rect)), m_dummyView.get(), selectedIndex, bridge_cast(font.get()), controlSize, data.hideArrows);
 
+    [m_menuDelegate popUpMenuReturned];
+}
+
+void WebPopupMenuProxyMac::didFinishShowingPopupMenu()
+{
     [m_popup dismissPopUp];
-    [dummyView removeFromSuperview];
-    
+    [m_dummyView removeFromSuperview];
+    m_dummyView = nil;
+    [[m_popup menu] setDelegate:nil];
+    m_menuDelegate = nil;
+    m_isVisible = false;
+
     CheckedPtr client = this->client();
     if (!client || m_wasCanceled)
         return;
-    
+
     client->valueChangedForPopupMenu(this, [m_popup indexOfSelectedItem]);
-    
+
     // <https://bugs.webkit.org/show_bug.cgi?id=57904> This code is adopted from EventHandler::sendFakeEventsAfterWidgetTracking().
     if (!client->currentlyProcessedMouseDownEvent())
         return;
-    
+
     RetainPtr initiatingNSEvent = client->currentlyProcessedMouseDownEvent()->nativeEvent();
     if ([initiatingNSEvent type] != NSEventTypeLeftMouseDown)
         return;

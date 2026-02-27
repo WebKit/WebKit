@@ -33,6 +33,8 @@
 #include <wtf/WeakObjCPtr.h>
 
 OBJC_CLASS NSPopUpButtonCell;
+OBJC_CLASS NSView;
+OBJC_CLASS WKPopupMenuDelegate;
 OBJC_CLASS WKView;
 
 namespace WebKit {
@@ -54,6 +56,8 @@ public:
     NSPopUpButtonCell *NODELETE popup() const;
     bool isVisible() const { return m_isVisible; }
 
+    void didFinishShowingPopupMenu();
+
 private:
     WebPopupMenuProxyMac(NSView *, WebPopupMenuProxy::Client&);
 
@@ -63,6 +67,8 @@ private:
 
     RetainPtr<NSPopUpButtonCell> m_popup;
     WeakObjCPtr<NSView> m_webView;
+    RetainPtr<WKPopupMenuDelegate> m_menuDelegate;
+    RetainPtr<NSView> m_dummyView;
     bool m_wasCanceled { false };
     bool m_isVisible { false };
 };

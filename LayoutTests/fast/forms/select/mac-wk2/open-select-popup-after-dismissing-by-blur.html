@@ -31,9 +31,9 @@ function log(text) {
 }
 
 function clickOnSelectElement() {
-    const event = document.createEvent("MouseEvent");
-    event.initMouseEvent("mousedown", true, true, document.defaultView, 1, select.offsetLeft + 5, select.offsetTop + 5, select.offsetLeft + 5, select.offsetTop + 5, false, false, false, false, 0, document);
-    select.dispatchEvent(event);
+    eventSender.mouseMoveTo(select.offsetLeft + 5, select.offsetTop + 5);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
 }
 
 function roundTripToUIProcess() {
