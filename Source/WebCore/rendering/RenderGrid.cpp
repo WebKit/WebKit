@@ -65,7 +65,6 @@ enum class TrackSizeRestriction : uint8_t {
 RenderGrid::RenderGrid(Element& element, RenderStyle&& style)
     : RenderBlock(Type::Grid, element, WTF::move(style), { })
     , m_grid(*this)
-    , m_trackSizingAlgorithm(this, currentGrid())
     , m_masonryLayout(*this)
 {
     ASSERT(isRenderGrid());
@@ -265,14 +264,14 @@ std::optional<LayoutUnit> RenderGrid::availableSpaceForGutters(Style::GridTrackS
     return direction == Style::GridTrackSizingDirection::Columns ? contentBoxLogicalWidth() : contentBoxLogicalHeight();
 }
 
-void RenderGrid::computeTrackSizesForDefiniteSize(Style::GridTrackSizingDirection direction, LayoutUnit availableSpace, RenderGridLayoutState& gridLayoutState)
+void RenderGrid::computeTrackSizesForDefiniteSize(GridTrackSizingAlgorithm& algorithm, Style::GridTrackSizingDirection direction, LayoutUnit availableSpace, RenderGridLayoutState& gridLayoutState)
 {
     auto autoMarginResolutionScope = SetForScope(m_isComputingTrackSizes, true);
-    m_trackSizingAlgorithm.run(direction, numTracks(direction), SizingOperation::TrackSizing, availableSpace, gridLayoutState);
-    ASSERT(m_trackSizingAlgorithm.tracksAreWiderThanMinTrackBreadth());
+    algorithm.run(direction, numTracks(direction), SizingOperation::TrackSizing, availableSpace, gridLayoutState);
+    ASSERT(algorithm.tracksAreWiderThanMinTrackBreadth());
 }
 
-void RenderGrid::repeatTracksSizingIfNeeded(LayoutUnit availableSpaceForColumns, LayoutUnit availableSpaceForRows, RenderGridLayoutState& gridLayoutState)
+void RenderGrid::repeatTracksSizingIfNeeded(GridTrackSizingAlgorithm& algorithm, LayoutUnit availableSpaceForColumns, LayoutUnit availableSpaceForRows, RenderGridLayoutState& gridLayoutState)
 {
     // In orthogonal flow cases column track's size is determined by using the computed
     // row track's size, which it was estimated during the first cycle of the sizing
@@ -289,14 +288,14 @@ void RenderGrid::repeatTracksSizingIfNeeded(LayoutUnit availableSpaceForColumns,
     // FIXME: we are avoiding repeating the track sizing algorithm for grid item with baseline alignment
     // here in the case of using flex max-sizing functions. We probably also need to investigate whether
     // it is applicable for the case of percent-sized rows with indefinite height as well.
-    if (gridLayoutState.needsSecondTrackSizingPass() || m_trackSizingAlgorithm.hasAnyPercentSizedRowsIndefiniteHeight() || (m_trackSizingAlgorithm.hasAnyFlexibleMaxTrackBreadth() && !m_trackSizingAlgorithm.hasAnyBaselineAlignmentItem()) || gridLayoutState.hasAspectRatioBlockSizeDependentItem()) {
+    if (gridLayoutState.needsSecondTrackSizingPass() || algorithm.hasAnyPercentSizedRowsIndefiniteHeight() || (algorithm.hasAnyFlexibleMaxTrackBreadth() && !algorithm.hasAnyBaselineAlignmentItem()) || gridLayoutState.hasAspectRatioBlockSizeDependentItem()) {
 
-        populateGridPositionsForDirection(m_trackSizingAlgorithm, Style::GridTrackSizingDirection::Rows);
-        computeTrackSizesForDefiniteSize(Style::GridTrackSizingDirection::Columns, availableSpaceForColumns, gridLayoutState);
-        m_offsetBetweenColumns = computeContentPositionAndDistributionOffset(Style::GridTrackSizingDirection::Columns, m_trackSizingAlgorithm.freeSpace(Style::GridTrackSizingDirection::Columns).value(), nonCollapsedTracks(Style::GridTrackSizingDirection::Columns));
+        populateGridPositionsForDirection(algorithm, Style::GridTrackSizingDirection::Rows);
+        computeTrackSizesForDefiniteSize(algorithm, Style::GridTrackSizingDirection::Columns, availableSpaceForColumns, gridLayoutState);
+        m_offsetBetweenColumns = computeContentPositionAndDistributionOffset(Style::GridTrackSizingDirection::Columns, algorithm.freeSpace(Style::GridTrackSizingDirection::Columns).value(), nonCollapsedTracks(algorithm, Style::GridTrackSizingDirection::Columns));
 
-        computeTrackSizesForDefiniteSize(Style::GridTrackSizingDirection::Rows, availableSpaceForRows, gridLayoutState);
-        m_offsetBetweenRows = computeContentPositionAndDistributionOffset(Style::GridTrackSizingDirection::Rows, m_trackSizingAlgorithm.freeSpace(Style::GridTrackSizingDirection::Rows).value(), nonCollapsedTracks(Style::GridTrackSizingDirection::Rows));
+        computeTrackSizesForDefiniteSize(algorithm, Style::GridTrackSizingDirection::Rows, availableSpaceForRows, gridLayoutState);
+        m_offsetBetweenRows = computeContentPositionAndDistributionOffset(Style::GridTrackSizingDirection::Rows, algorithm.freeSpace(Style::GridTrackSizingDirection::Rows).value(), nonCollapsedTracks(algorithm, Style::GridTrackSizingDirection::Rows));
     }
 }
 
@@ -354,7 +353,7 @@ static void cacheBaselineAlignedGridItems(const RenderGrid& grid, GridTrackSizin
     }
 }
 
-Vector<RenderBox*> RenderGrid::computeAspectRatioDependentAndBaselineItems(RenderGridLayoutState& gridLayoutState)
+Vector<RenderBox*> RenderGrid::computeAspectRatioDependentAndBaselineItems(GridTrackSizingAlgorithm& algorithm, RenderGridLayoutState& gridLayoutState)
 {
     Vector<RenderBox*> dependentGridItems;
 
@@ -367,7 +366,7 @@ Vector<RenderBox*> RenderGrid::computeAspectRatioDependentAndBaselineItems(Rende
         }
     };
 
-    cacheBaselineAlignedGridItems(*this, m_trackSizingAlgorithm, { AlignmentContextTypes::Columns, AlignmentContextTypes::Rows }, computeOrthogonalAndDependentItems, !isSubgridRows());
+    cacheBaselineAlignedGridItems(*this, algorithm, { AlignmentContextTypes::Columns, AlignmentContextTypes::Rows }, computeOrthogonalAndDependentItems, !isSubgridRows());
     return dependentGridItems;
 }
 
@@ -442,6 +441,8 @@ const std::optional<LayoutUnit> RenderGrid::availableLogicalHeightForContentBox(
 
 void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
 {
+    GridTrackSizingAlgorithm trackSizingAlgorithm(this, currentGrid());
+    SetForScope currentAlgorithmScope(m_currentTrackSizingAlgorithm, &trackSizingAlgorithm);
 
     LayoutRepainter repainter(*this);
     {
@@ -458,7 +459,7 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
 
         LayoutSize previousSize = size();
 
-        auto aspectRatioBlockSizeDependentGridItems = computeAspectRatioDependentAndBaselineItems(gridLayoutState);
+        auto aspectRatioBlockSizeDependentGridItems = computeAspectRatioDependentAndBaselineItems(trackSizingAlgorithm, gridLayoutState);
 
         resetLogicalHeightBeforeLayoutIfNeeded();
 
@@ -475,37 +476,37 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
         LayoutUnit availableSpaceForColumns = contentBoxLogicalWidth();
         placeItemsOnGrid(availableSpaceForColumns);
 
-        m_trackSizingAlgorithm.setAvailableSpace(Style::GridTrackSizingDirection::Columns, availableSpaceForColumns);
-        performPreLayoutForGridItems(m_trackSizingAlgorithm, ShouldUpdateGridAreaLogicalSize::Yes);
+        trackSizingAlgorithm.setAvailableSpace(Style::GridTrackSizingDirection::Columns, availableSpaceForColumns);
+        performPreLayoutForGridItems(trackSizingAlgorithm, ShouldUpdateGridAreaLogicalSize::Yes);
 
         // 1. First, the track sizing algorithm is used to resolve the sizes of the grid columns. At this point the
         // logical width is always definite as the above call to updateLogicalWidth() properly resolves intrinsic
         // sizes. We cannot do the same for heights though because many code paths inside updateLogicalHeight() require
         // a previous call to setLogicalHeight() to resolve heights properly (like for positioned items for example).
-        computeTrackSizesForDefiniteSize(Style::GridTrackSizingDirection::Columns, availableSpaceForColumns, gridLayoutState);
+        computeTrackSizesForDefiniteSize(trackSizingAlgorithm, Style::GridTrackSizingDirection::Columns, availableSpaceForColumns, gridLayoutState);
 
         // 1.5. Compute Content Distribution offsets for column tracks
-        m_offsetBetweenColumns = computeContentPositionAndDistributionOffset(Style::GridTrackSizingDirection::Columns, m_trackSizingAlgorithm.freeSpace(Style::GridTrackSizingDirection::Columns).value(), nonCollapsedTracks(Style::GridTrackSizingDirection::Columns));
+        m_offsetBetweenColumns = computeContentPositionAndDistributionOffset(Style::GridTrackSizingDirection::Columns, trackSizingAlgorithm.freeSpace(Style::GridTrackSizingDirection::Columns).value(), nonCollapsedTracks(trackSizingAlgorithm, Style::GridTrackSizingDirection::Columns));
 
         // 2. Next, the track sizing algorithm resolves the sizes of the grid rows,
         // using the grid column sizes calculated in the previous step.
         auto availableLogicalHeightForContentBox = this->availableLogicalHeightForContentBox();
         bool shouldRecomputeHeight = false;
         if (!availableLogicalHeightForContentBox) {
-            computeTrackSizesForIndefiniteSize(m_trackSizingAlgorithm, Style::GridTrackSizingDirection::Rows, gridLayoutState);
+            computeTrackSizesForIndefiniteSize(trackSizingAlgorithm, Style::GridTrackSizingDirection::Rows, gridLayoutState);
             if (shouldApplySizeContainment())
                 shouldRecomputeHeight = true;
         } else
-            computeTrackSizesForDefiniteSize(Style::GridTrackSizingDirection::Rows, *availableLogicalHeightForContentBox, gridLayoutState);
+            computeTrackSizesForDefiniteSize(trackSizingAlgorithm, Style::GridTrackSizingDirection::Rows, *availableLogicalHeightForContentBox, gridLayoutState);
 
         LayoutUnit trackBasedLogicalHeight = borderAndPaddingLogicalHeight() + scrollbarLogicalHeight();
         if (auto size = explicitIntrinsicInnerLogicalSize(Style::GridTrackSizingDirection::Rows))
             trackBasedLogicalHeight += size.value();
         else
-            trackBasedLogicalHeight += m_trackSizingAlgorithm.computeTrackBasedSize();
+            trackBasedLogicalHeight += trackSizingAlgorithm.computeTrackBasedSize();
 
         if (shouldRecomputeHeight)
-            computeTrackSizesForDefiniteSize(Style::GridTrackSizingDirection::Rows, trackBasedLogicalHeight, gridLayoutState);
+            computeTrackSizesForDefiniteSize(trackSizingAlgorithm, Style::GridTrackSizingDirection::Rows, trackBasedLogicalHeight, gridLayoutState);
 
         setLogicalHeight(trackBasedLogicalHeight);
 
@@ -514,20 +515,20 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
         // Once grid's indefinite height is resolved, we can compute the
         // available free space for Content Alignment.
         if (!availableLogicalHeightForContentBox)
-            m_trackSizingAlgorithm.setFreeSpace(Style::GridTrackSizingDirection::Rows, logicalHeight() - trackBasedLogicalHeight);
+            trackSizingAlgorithm.setFreeSpace(Style::GridTrackSizingDirection::Rows, logicalHeight() - trackBasedLogicalHeight);
 
         // 2.5. Compute Content Distribution offsets for rows tracks
-        m_offsetBetweenRows = computeContentPositionAndDistributionOffset(Style::GridTrackSizingDirection::Rows, m_trackSizingAlgorithm.freeSpace(Style::GridTrackSizingDirection::Rows).value(), nonCollapsedTracks(Style::GridTrackSizingDirection::Rows));
+        m_offsetBetweenRows = computeContentPositionAndDistributionOffset(Style::GridTrackSizingDirection::Rows, trackSizingAlgorithm.freeSpace(Style::GridTrackSizingDirection::Rows).value(), nonCollapsedTracks(trackSizingAlgorithm, Style::GridTrackSizingDirection::Rows));
 
         if (!aspectRatioBlockSizeDependentGridItems.isEmpty()) {
-            updateGridAreaForAspectRatioItems(aspectRatioBlockSizeDependentGridItems, gridLayoutState);
+            updateGridAreaForAspectRatioItems(trackSizingAlgorithm, aspectRatioBlockSizeDependentGridItems, gridLayoutState);
             updateLogicalWidth();
         }
 
         // 3. If the min-content contribution of any grid items have changed based on the row
         // sizes calculated in step 2, steps 1 and 2 are repeated with the new min-content
         // contribution (once only).
-        repeatTracksSizingIfNeeded(availableSpaceForColumns, contentBoxLogicalHeight(), gridLayoutState);
+        repeatTracksSizingIfNeeded(trackSizingAlgorithm, availableSpaceForColumns, contentBoxLogicalHeight(), gridLayoutState);
 
         // Grid container should have the minimum height of a line if it's editable. That does not affect track sizing though.
         if (hasLineIfEmpty()) {
@@ -537,7 +538,7 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
             setLogicalHeight(std::max(logicalHeight(), minHeightForEmptyLine));
         }
 
-        layoutGridItems(gridLayoutState);
+        layoutGridItems(trackSizingAlgorithm, gridLayoutState);
 
         endAndCommitUpdateScrollInfoAfterLayoutTransaction();
 
@@ -550,15 +551,11 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
             layoutOutOfFlowBoxes(relayoutChildren);
         updateOutOfFlowDescendantTransformsAfterLayout();
         addOverflowFromOutOfFlowBoxes();
-
-        m_trackSizingAlgorithm.reset();
     }
 
     updateLayerTransform();
 
     repainter.repaintAfterLayout();
-
-    m_trackSizingAlgorithm.clearBaselineItemsCache();
 }
 
 bool RenderGrid::layoutUsingGridFormattingContext()
@@ -579,6 +576,9 @@ bool RenderGrid::layoutUsingGridFormattingContext()
 
 void RenderGrid::layoutMasonry(RelayoutChildren relayoutChildren)
 {
+    GridTrackSizingAlgorithm trackSizingAlgorithm(this, currentGrid());
+    SetForScope currentAlgorithmScope(m_currentTrackSizingAlgorithm, &trackSizingAlgorithm);
+
     LayoutRepainter repainter(*this);
     {
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || writingMode().isBlockFlipped());
@@ -596,7 +596,7 @@ void RenderGrid::layoutMasonry(RelayoutChildren relayoutChildren)
         // FIXME: We might need to cache the hasDefiniteLogicalHeight if the call of RenderBlock::hasDefiniteLogicalHeight() causes a relevant performance regression.
         bool hasDefiniteLogicalHeight = RenderBlock::hasDefiniteLogicalHeight() || overridingBorderBoxLogicalHeight() || computeContentLogicalHeight(style().logicalHeight(), std::nullopt);
 
-        auto aspectRatioBlockSizeDependentGridItems = computeAspectRatioDependentAndBaselineItems(gridLayoutState);
+        auto aspectRatioBlockSizeDependentGridItems = computeAspectRatioDependentAndBaselineItems(trackSizingAlgorithm, gridLayoutState);
 
         resetLogicalHeightBeforeLayoutIfNeeded();
 
@@ -610,33 +610,33 @@ void RenderGrid::layoutMasonry(RelayoutChildren relayoutChildren)
         LayoutUnit availableSpaceForColumns = contentBoxLogicalWidth();
         placeItemsOnGrid(availableSpaceForColumns);
 
-        m_trackSizingAlgorithm.setAvailableSpace(Style::GridTrackSizingDirection::Columns, availableSpaceForColumns);
-        performPreLayoutForGridItems(m_trackSizingAlgorithm, ShouldUpdateGridAreaLogicalSize::Yes);
+        trackSizingAlgorithm.setAvailableSpace(Style::GridTrackSizingDirection::Columns, availableSpaceForColumns);
+        performPreLayoutForGridItems(trackSizingAlgorithm, ShouldUpdateGridAreaLogicalSize::Yes);
 
         // 1. First, the track sizing algorithm is used to resolve the sizes of the grid columns. At this point the
         // logical width is always definite as the above call to updateLogicalWidth() properly resolves intrinsic
         // sizes. We cannot do the same for heights though because many code paths inside updateLogicalHeight() require
         // a previous call to setLogicalHeight() to resolve heights properly (like for positioned items for example).
-        computeTrackSizesForDefiniteSize(Style::GridTrackSizingDirection::Columns, availableSpaceForColumns, gridLayoutState);
+        computeTrackSizesForDefiniteSize(trackSizingAlgorithm, Style::GridTrackSizingDirection::Columns, availableSpaceForColumns, gridLayoutState);
 
         // 1.5. Compute Content Distribution offsets for column tracks
-        m_offsetBetweenColumns = computeContentPositionAndDistributionOffset(Style::GridTrackSizingDirection::Columns, m_trackSizingAlgorithm.freeSpace(Style::GridTrackSizingDirection::Columns).value(), nonCollapsedTracks(Style::GridTrackSizingDirection::Columns));
+        m_offsetBetweenColumns = computeContentPositionAndDistributionOffset(Style::GridTrackSizingDirection::Columns, trackSizingAlgorithm.freeSpace(Style::GridTrackSizingDirection::Columns).value(), nonCollapsedTracks(trackSizingAlgorithm, Style::GridTrackSizingDirection::Columns));
 
         // 2. Next, the track sizing algorithm resolves the sizes of the grid rows,
         // using the grid column sizes calculated in the previous step.
         bool shouldRecomputeHeight = false;
         if (!hasDefiniteLogicalHeight) {
-            computeTrackSizesForIndefiniteSize(m_trackSizingAlgorithm, Style::GridTrackSizingDirection::Rows, gridLayoutState);
+            computeTrackSizesForIndefiniteSize(trackSizingAlgorithm, Style::GridTrackSizingDirection::Rows, gridLayoutState);
             if (shouldApplySizeContainment())
                 shouldRecomputeHeight = true;
         } else
-            computeTrackSizesForDefiniteSize(Style::GridTrackSizingDirection::Rows, availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding), gridLayoutState);
+            computeTrackSizesForDefiniteSize(trackSizingAlgorithm, Style::GridTrackSizingDirection::Rows, availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding), gridLayoutState);
 
         auto performMasonryPlacement = [&](const Style::GridTrackSizingDirection masonryAxisDirection) {
             auto gridAxisDirection = masonryAxisDirection == Style::GridTrackSizingDirection::Rows ? Style::GridTrackSizingDirection::Columns : Style::GridTrackSizingDirection::Rows;
             unsigned gridAxisTracksBeforeAutoPlacement = currentGrid().numTracks(gridAxisDirection);
 
-            m_masonryLayout.performMasonryPlacement(m_trackSizingAlgorithm, gridAxisTracksBeforeAutoPlacement, masonryAxisDirection, GridMasonryLayout::MasonryLayoutPhase::LayoutPhase);
+            m_masonryLayout.performMasonryPlacement(trackSizingAlgorithm, gridAxisTracksBeforeAutoPlacement, masonryAxisDirection, GridMasonryLayout::MasonryLayoutPhase::LayoutPhase);
         };
 
         if (areMasonryRows())
@@ -651,10 +651,10 @@ void RenderGrid::layoutMasonry(RelayoutChildren relayoutChildren)
             if (areMasonryRows())
                 trackBasedLogicalHeight += m_masonryLayout.gridContentSize();
             else
-                trackBasedLogicalHeight += m_trackSizingAlgorithm.computeTrackBasedSize();
+                trackBasedLogicalHeight += trackSizingAlgorithm.computeTrackBasedSize();
         }
         if (shouldRecomputeHeight)
-            computeTrackSizesForDefiniteSize(Style::GridTrackSizingDirection::Rows, trackBasedLogicalHeight, gridLayoutState);
+            computeTrackSizesForDefiniteSize(trackSizingAlgorithm, Style::GridTrackSizingDirection::Rows, trackBasedLogicalHeight, gridLayoutState);
 
         setLogicalHeight(trackBasedLogicalHeight);
 
@@ -663,13 +663,13 @@ void RenderGrid::layoutMasonry(RelayoutChildren relayoutChildren)
         // Once grid's indefinite height is resolved, we can compute the
         // available free space for Content Alignment.
         if (!hasDefiniteLogicalHeight || areMasonryRows())
-            m_trackSizingAlgorithm.setFreeSpace(Style::GridTrackSizingDirection::Rows, logicalHeight() - trackBasedLogicalHeight);
+            trackSizingAlgorithm.setFreeSpace(Style::GridTrackSizingDirection::Rows, logicalHeight() - trackBasedLogicalHeight);
 
         // 2.5. Compute Content Distribution offsets for rows tracks
-        m_offsetBetweenRows = computeContentPositionAndDistributionOffset(Style::GridTrackSizingDirection::Rows, m_trackSizingAlgorithm.freeSpace(Style::GridTrackSizingDirection::Rows).value(), nonCollapsedTracks(Style::GridTrackSizingDirection::Rows));
+        m_offsetBetweenRows = computeContentPositionAndDistributionOffset(Style::GridTrackSizingDirection::Rows, trackSizingAlgorithm.freeSpace(Style::GridTrackSizingDirection::Rows).value(), nonCollapsedTracks(trackSizingAlgorithm, Style::GridTrackSizingDirection::Rows));
 
         if (!aspectRatioBlockSizeDependentGridItems.isEmpty()) {
-            updateGridAreaForAspectRatioItems(aspectRatioBlockSizeDependentGridItems, gridLayoutState);
+            updateGridAreaForAspectRatioItems(trackSizingAlgorithm, aspectRatioBlockSizeDependentGridItems, gridLayoutState);
             updateLogicalWidth();
         }
 
@@ -681,7 +681,7 @@ void RenderGrid::layoutMasonry(RelayoutChildren relayoutChildren)
             setLogicalHeight(std::max(logicalHeight(), minHeightForEmptyLine));
         }
 
-        layoutMasonryItems(gridLayoutState);
+        layoutMasonryItems(trackSizingAlgorithm, gridLayoutState);
 
         endAndCommitUpdateScrollInfoAfterLayoutTransaction();
 
@@ -694,15 +694,11 @@ void RenderGrid::layoutMasonry(RelayoutChildren relayoutChildren)
             layoutOutOfFlowBoxes(relayoutChildren);
         updateOutOfFlowDescendantTransformsAfterLayout();
         addOverflowFromOutOfFlowBoxes();
-
-        m_trackSizingAlgorithm.reset();
     }
 
     updateLayerTransform();
 
     repainter.repaintAfterLayout();
-
-    m_trackSizingAlgorithm.clearBaselineItemsCache();
 }
 
 LayoutUnit RenderGrid::gridGap(Style::GridTrackSizingDirection direction, std::optional<LayoutUnit> availableSize) const
@@ -825,6 +821,7 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
     Grid grid(const_cast<RenderGrid&>(*this));
     m_grid.m_currentGrid = std::ref(grid);
     GridTrackSizingAlgorithm algorithm(this, grid);
+    SetForScope currentAlgorithmScope(m_currentTrackSizingAlgorithm, &algorithm);
     // placeItemsOnGrid isn't const since it mutates our grid, but it's safe to do
     // so here since we've overridden m_currentGrid with a stack based temporary.
     const_cast<RenderGrid&>(*this).placeItemsOnGrid(std::nullopt);
@@ -1580,10 +1577,10 @@ void RenderGrid::updateGridAreaLogicalSize(RenderBox& gridItem, std::optional<La
     gridItem.setGridAreaContentLogicalHeight(height);
 }
 
-void RenderGrid::updateGridAreaForAspectRatioItems(const Vector<RenderBox*>& autoGridItems, RenderGridLayoutState& gridLayoutState)
+void RenderGrid::updateGridAreaForAspectRatioItems(const GridTrackSizingAlgorithm& algorithm, const Vector<RenderBox*>& autoGridItems, RenderGridLayoutState& gridLayoutState)
 {
-    populateGridPositionsForDirection(m_trackSizingAlgorithm, Style::GridTrackSizingDirection::Columns);
-    populateGridPositionsForDirection(m_trackSizingAlgorithm, Style::GridTrackSizingDirection::Rows);
+    populateGridPositionsForDirection(algorithm, Style::GridTrackSizingDirection::Columns);
+    populateGridPositionsForDirection(algorithm, Style::GridTrackSizingDirection::Rows);
 
     for (auto& autoGridItem : autoGridItems) {
         updateGridAreaIncludingAlignment(*autoGridItem);
@@ -1593,10 +1590,10 @@ void RenderGrid::updateGridAreaForAspectRatioItems(const Vector<RenderBox*>& aut
     }
 }
 
-void RenderGrid::layoutGridItems(RenderGridLayoutState& gridLayoutState)
+void RenderGrid::layoutGridItems(const GridTrackSizingAlgorithm& algorithm, RenderGridLayoutState& gridLayoutState)
 {
-    populateGridPositionsForDirection(m_trackSizingAlgorithm, Style::GridTrackSizingDirection::Columns);
-    populateGridPositionsForDirection(m_trackSizingAlgorithm, Style::GridTrackSizingDirection::Rows);
+    populateGridPositionsForDirection(algorithm, Style::GridTrackSizingDirection::Columns);
+    populateGridPositionsForDirection(algorithm, Style::GridTrackSizingDirection::Rows);
 
     for (auto& gridItem : childrenOfType<RenderBox>(*this)) {
         if (currentGrid().orderIterator().shouldSkipChild(gridItem)) {
@@ -1637,9 +1634,9 @@ void RenderGrid::layoutGridItems(RenderGridLayoutState& gridLayoutState)
     }
 }
 
-void RenderGrid::layoutMasonryItems(RenderGridLayoutState& gridLayoutState)
+void RenderGrid::layoutMasonryItems(const GridTrackSizingAlgorithm& algorithm, RenderGridLayoutState& gridLayoutState)
 {
-    layoutGridItems(gridLayoutState);
+    layoutGridItems(algorithm, gridLayoutState);
 }
 
 void RenderGrid::prepareGridItemForPositionedLayout(RenderBox& gridItem)
@@ -1682,7 +1679,8 @@ LayoutUnit RenderGrid::gridAreaBreadthForGridItemIncludingAlignmentOffsets(const
 {
     // We need the cached value when available because Content Distribution alignment properties
     // may have some influence in the final grid area breadth.
-    const auto& tracks = m_trackSizingAlgorithm.tracks(direction);
+    ASSERT(m_currentTrackSizingAlgorithm);
+    const auto& tracks = m_currentTrackSizingAlgorithm->tracks(direction);
     const auto& span = currentGrid().gridItemSpan(gridItem, direction);
     const auto& positions = this->positions(direction);
 
@@ -1993,7 +1991,8 @@ LayoutUnit RenderGrid::columnAxisBaselineOffsetForGridItem(const RenderBox& grid
             return outer->rowAxisBaselineOffsetForGridItem(gridItem);
         return outer->columnAxisBaselineOffsetForGridItem(gridItem);
     }
-    return m_trackSizingAlgorithm.baselineOffsetForGridItem(gridItem, Style::GridTrackSizingDirection::Rows);
+    ASSERT(m_currentTrackSizingAlgorithm);
+    return m_currentTrackSizingAlgorithm->baselineOffsetForGridItem(gridItem, Style::GridTrackSizingDirection::Rows);
 }
 
 LayoutUnit RenderGrid::rowAxisBaselineOffsetForGridItem(const RenderBox& gridItem) const
@@ -2009,7 +2008,8 @@ LayoutUnit RenderGrid::rowAxisBaselineOffsetForGridItem(const RenderBox& gridIte
             return outer->columnAxisBaselineOffsetForGridItem(gridItem);
         return outer->rowAxisBaselineOffsetForGridItem(gridItem);
     }
-    return m_trackSizingAlgorithm.baselineOffsetForGridItem(gridItem, Style::GridTrackSizingDirection::Columns);
+    ASSERT(m_currentTrackSizingAlgorithm);
+    return m_currentTrackSizingAlgorithm->baselineOffsetForGridItem(gridItem, Style::GridTrackSizingDirection::Columns);
 }
 
 GridAxisPosition RenderGrid::columnAxisPositionForGridItem(const RenderBox& gridItem) const
@@ -2490,9 +2490,9 @@ LayoutUnit RenderGrid::logicalOffsetForGridItem(const RenderBox& gridItem, Style
     return rowAxisOffset;
 }
 
-unsigned RenderGrid::nonCollapsedTracks(Style::GridTrackSizingDirection direction) const
+unsigned RenderGrid::nonCollapsedTracks(const GridTrackSizingAlgorithm& algorithm, Style::GridTrackSizingDirection direction) const
 {
-    auto& tracks = m_trackSizingAlgorithm.tracks(direction);
+    auto& tracks = algorithm.tracks(direction);
     size_t numberOfTracks = tracks.size();
     bool hasCollapsedTracks = currentGrid().hasAutoRepeatEmptyTracks(direction);
     size_t numberOfCollapsedTracks = hasCollapsedTracks ? currentGrid().autoRepeatEmptyTracks(direction)->size() : 0;

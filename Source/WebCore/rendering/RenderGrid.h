@@ -216,16 +216,16 @@ private:
     bool NODELETE hasStaticPositionForGridItem(const RenderBox&, Style::GridTrackSizingDirection) const;
     void layoutOutOfFlowBox(RenderBox&, RelayoutChildren, bool fixedPositionObjectsOnly) override;
 
-    void computeTrackSizesForDefiniteSize(Style::GridTrackSizingDirection, LayoutUnit availableSpace, RenderGridLayoutState&);
+    void computeTrackSizesForDefiniteSize(GridTrackSizingAlgorithm&, Style::GridTrackSizingDirection, LayoutUnit availableSpace, RenderGridLayoutState&);
     void computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm&, Style::GridTrackSizingDirection, RenderGridLayoutState&, LayoutUnit* minIntrinsicSize = nullptr, LayoutUnit* maxIntrinsicSize = nullptr) const;
     LayoutUnit computeTrackBasedLogicalHeight() const;
 
-    void repeatTracksSizingIfNeeded(LayoutUnit availableSpaceForColumns, LayoutUnit availableSpaceForRows, RenderGridLayoutState&);
+    void repeatTracksSizingIfNeeded(GridTrackSizingAlgorithm&, LayoutUnit availableSpaceForColumns, LayoutUnit availableSpaceForRows, RenderGridLayoutState&);
 
-    void updateGridAreaForAspectRatioItems(const Vector<RenderBox*>&, RenderGridLayoutState&);
+    void updateGridAreaForAspectRatioItems(const GridTrackSizingAlgorithm&, const Vector<RenderBox*>&, RenderGridLayoutState&);
 
-    void layoutGridItems(RenderGridLayoutState&);
-    void layoutMasonryItems(RenderGridLayoutState&);
+    void layoutGridItems(const GridTrackSizingAlgorithm&, RenderGridLayoutState&);
+    void layoutMasonryItems(const GridTrackSizingAlgorithm&, RenderGridLayoutState&);
 
     void populateGridPositionsForDirection(const GridTrackSizingAlgorithm&, Style::GridTrackSizingDirection);
 
@@ -258,7 +258,7 @@ private:
     LayoutUnit columnAxisBaselineOffsetForGridItem(const RenderBox&) const;
     LayoutUnit rowAxisBaselineOffsetForGridItem(const RenderBox&) const;
 
-    unsigned nonCollapsedTracks(Style::GridTrackSizingDirection) const;
+    unsigned nonCollapsedTracks(const GridTrackSizingAlgorithm&, Style::GridTrackSizingDirection) const;
 
     LayoutUnit translateRTLCoordinate(LayoutUnit) const;
 
@@ -266,7 +266,7 @@ private:
 
     bool aspectRatioPrefersInline(const RenderBox& gridItem, bool blockFlowIsColumnAxis);
 
-    Vector<RenderBox*> computeAspectRatioDependentAndBaselineItems(RenderGridLayoutState&);
+    Vector<RenderBox*> computeAspectRatioDependentAndBaselineItems(GridTrackSizingAlgorithm&, RenderGridLayoutState&);
 
     GridSpan gridSpanForOutOfFlowGridItem(const RenderBox&, Style::GridTrackSizingDirection) const;
 
@@ -289,9 +289,9 @@ private:
         mutable std::reference_wrapper<Grid> m_currentGrid { std::ref(m_layoutGrid) };
     } m_grid;
 
-    // FIXME: Refactor m_trackSizingAlgorithm to be inside of layoutGrid and layoutMasonry.
-    // https://bugs.webkit.org/show_bug.cgi?id=277496
-    GridTrackSizingAlgorithm m_trackSizingAlgorithm;
+    const GridTrackSizingAlgorithm* currentTrackSizingAlgorithm() const { return m_currentTrackSizingAlgorithm; }
+
+    mutable GridTrackSizingAlgorithm* m_currentTrackSizingAlgorithm { nullptr };
 
     Vector<LayoutUnit> m_columnPositions;
     Vector<LayoutUnit> m_rowPositions;

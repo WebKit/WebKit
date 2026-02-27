@@ -2077,9 +2077,11 @@ static void removeSubgridMarginBorderPaddingFromTracks(Vector<UniqueRef<GridTrac
 bool GridTrackSizingAlgorithm::copyUsedTrackSizesForSubgrid()
 {
     auto* outer = downcast<RenderGrid>(m_renderGrid->parent());
-    auto& parentAlgo = outer->m_trackSizingAlgorithm;
+    auto* parentAlgorithm = outer->currentTrackSizingAlgorithm();
+    if (!parentAlgorithm)
+        return false;
     auto direction = GridLayoutFunctions::flowAwareDirectionForParent(*m_renderGrid, *outer, m_direction);
-    auto& parentTracks = parentAlgo.tracks(direction);
+    auto& parentTracks = parentAlgorithm->tracks(direction);
 
     if (!parentTracks.size())
         return false;
