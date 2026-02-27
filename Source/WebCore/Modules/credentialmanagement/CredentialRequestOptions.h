@@ -29,6 +29,9 @@
 #if ENABLE(WEB_AUTHN)
 
 #include <WebCore/DigitalCredentialRequestOptions.h>
+#if ENABLE(FEDCM)
+#include <WebCore/IdentityCredentialRequestOptions.h>
+#endif
 #include <WebCore/MediationRequirement.h>
 #include <WebCore/PublicKeyCredentialRequestOptions.h>
 #include <wtf/RefCounted.h>
@@ -44,6 +47,9 @@ struct CredentialRequestOptions {
     std::optional<PublicKeyCredentialRequestOptions> publicKey;
 #if ENABLE(WEB_AUTHN)
     std::optional<DigitalCredentialRequestOptions> digital;
+#endif
+#if ENABLE(FEDCM)
+    std::optional<IdentityCredentialRequestOptions> identity;
 #endif
 };
 

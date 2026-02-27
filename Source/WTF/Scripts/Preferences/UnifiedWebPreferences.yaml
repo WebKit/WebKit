@@ -3034,6 +3034,21 @@ FasterClicksEnabled:
     WebKit:
       default: true
 
+FedCMEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "FedCM API"
+  humanReadableDescription: "Enable the Federated Credential Management API"
+  condition: ENABLE(FEDCM)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 FileReaderAPIEnabled:
   type: bool
   status: embedder

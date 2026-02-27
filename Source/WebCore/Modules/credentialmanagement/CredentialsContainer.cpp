@@ -34,8 +34,14 @@
 #include "CredentialRequestOptions.h"
 #include "DigitalCredential.h"
 #include "DocumentPage.h"
+#if ENABLE(FEDCM)
+#include "IdentityCredential.h"
+#endif
 #include "JSBasicCredential.h"
 #include "JSDigitalCredential.h"
+#if ENABLE(FEDCM)
+#include "JSIdentityCredential.h"
+#endif
 #include "LocalFrame.h"
 #include "Navigator.h"
 #include "Page.h"
@@ -64,6 +70,14 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPro
 #endif
         return;
     }
+
+#if ENABLE(FEDCM)
+    if (options.identity) {
+        IdentityCredential::discoverFromExternalSource(document, WTF::move(promise), WTF::move(options));
+        return;
+    }
+#endif
+
     document->page()->authenticatorCoordinator().discoverFromExternalSource(document, WTF::move(options), WTF::move(promise));
 }
 
@@ -88,6 +102,13 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Credent
         document->page()->authenticatorCoordinator().create(document, WTF::move(options), WTF::move(options.signal), WTF::move(promise));
         return;
     }
+
+#if ENABLE(FEDCM)
+    if (options.identity) {
+        IdentityCredential::createIdentityCredential(document, WTF::move(promise), WTF::move(*options.identity));
+        return;
+    }
+#endif
 
     promise.resolve(nullptr);
 }
@@ -126,15 +147,33 @@ bool CredentialsContainer::performCommonChecks(const Options& options, Credentia
     }
 
     if constexpr (std::is_same_v<Options, CredentialRequestOptions>) {
+#if ENABLE(WEB_AUTHN) || ENABLE(FEDCM)
+        {
+            bool hasRequestType = !!options.publicKey;
 #if ENABLE(WEB_AUTHN)
-        if (!options.publicKey && !options.digital) {
-            promise.reject(Exception { ExceptionCode::NotSupportedError, "Missing request type."_s });
-            return false;
+            hasRequestType = hasRequestType || options.digital;
+#endif
+#if ENABLE(FEDCM)
+            hasRequestType = hasRequestType || options.identity;
+#endif
+            if (!hasRequestType) {
+                promise.reject(Exception { ExceptionCode::NotSupportedError, "Missing request type."_s });
+                return false;
+            }
         }
 
-        if (options.publicKey && options.digital) {
-            promise.reject(Exception { ExceptionCode::NotSupportedError, "Only one request type is supported at a time."_s });
-            return false;
+        {
+            unsigned requestTypeCount = (options.publicKey ? 1 : 0);
+#if ENABLE(WEB_AUTHN)
+            requestTypeCount += (options.digital ? 1 : 0);
+#endif
+#if ENABLE(FEDCM)
+            requestTypeCount += (options.identity ? 1 : 0);
+#endif
+            if (requestTypeCount > 1) {
+                promise.reject(Exception { ExceptionCode::NotSupportedError, "Only one request type is supported at a time."_s });
+                return false;
+            }
         }
 #else
         if (!options.publicKey) {

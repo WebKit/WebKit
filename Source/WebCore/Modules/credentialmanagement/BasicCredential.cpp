@@ -49,6 +49,11 @@ String BasicCredential::type() const
     case Type::DigitalCredential:
         return "digital-credential"_s;
 
+#if ENABLE(FEDCM)
+    case Type::Identity:
+        return "identity"_s;
+#endif
+
     case Type::PublicKey:
         return "public-key"_s;
     }

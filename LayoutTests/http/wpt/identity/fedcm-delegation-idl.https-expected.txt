@@ -1,0 +1,6 @@
+
+PASS IdentityCredential interface exists
+PASS IdentityCredential inherits from Credential
+PASS IdentityCredential has token attribute
+PASS IdentityCredential has isAutoSelected attribute
+

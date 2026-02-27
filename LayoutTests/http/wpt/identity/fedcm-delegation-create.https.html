@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>FedCM Delegation: create() behavior tests</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<body></body>
+<script>
+    promise_setup(async () => {
+        if (document.visibilityState === "hidden") {
+            await new Promise((resolve) => {
+                document.onvisibilitychange = resolve;
+                testRunner.setPageVisibility("visible");
+            });
+        }
+        assert_equals(document.visibilityState, "visible", "should be visible");
+    });
+
+    promise_test(async (t) => {
+        internals.setMockFedCMConfiguration({ createToken: "created-token-456" });
+
+        const credential = await navigator.credentials.create({
+            identity: {
+                format: "vc+sd-jwt",
+                configURL: "https://idp.example/config"
+            }
+        });
+
+        assert_true(credential instanceof IdentityCredential, "Should return an IdentityCredential");
+        assert_equals(credential.token, "created-token-456", "Token should match mock create configuration");
+        assert_equals(credential.type, "identity", "type should be 'identity'");
+    }, "create() with mock returns IdentityCredential with correct token");
+
+    promise_test(async (t) => {
+        internals.setMockFedCMConfiguration({ error: "NetworkError" });
+
+        await promise_rejects_dom(
+            t,
+            "NetworkError",
+            navigator.credentials.create({
+                identity: {
+                    format: "vc+sd-jwt",
+                    configURL: "https://idp.example/config"
+                }
+            }),
+            "navigator.credentials.create() with mock error should reject."
+        );
+    }, "create() with mock error rejects with configured error type");
+</script>

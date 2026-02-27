@@ -48,6 +48,9 @@
 #include "DocumentLoader.h"
 #include "DocumentSyncClient.h"
 #include "DragClient.h"
+#if ENABLE(FEDCM)
+#include "DummyFedCMProxyClient.h"
+#endif
 #include "DummyModelPlayerProvider.h"
 #include "DummySpeechRecognitionProvider.h"
 #include "DummyStorageProvider.h"
@@ -1281,6 +1284,9 @@ PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier
         makeUniqueRef<DocumentSyncClient>()
 #if ENABLE(WEB_AUTHN)
         , EmptyCredentialRequestCoordinatorClient::create()
+#endif
+#if ENABLE(FEDCM)
+        , DummyFedCMProxyClient::create()
 #endif
     };
 

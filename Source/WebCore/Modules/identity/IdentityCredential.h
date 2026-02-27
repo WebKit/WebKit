@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2017 Google Inc. All rights reserved.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Shopify Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,14 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WEB_AUTHN,
-] dictionary CredentialRequestOptions {
-    CredentialMediationRequirement mediation = "optional";
-    AbortSignal signal;
-    PublicKeyCredentialRequestOptions publicKey;
-    // https://wicg.github.io/digital-identities/#extensions-to-credentialrequestoptions-dictionary
-    [EnabledBySetting=DigitalCredentialsEnabled] DigitalCredentialRequestOptions digital;
-    // https://fedidcg.github.io/FedCM/#credentialrequestoptions-extension
-    [Conditional=FEDCM, EnabledBySetting=FedCMEnabled] IdentityCredentialRequestOptions identity;
+#pragma once
+
+#if ENABLE(FEDCM)
+
+#include <WebCore/BasicCredential.h>
+#include <WebCore/JSDOMPromiseDeferredForward.h>
+#include <wtf/text/WTFString.h>
+
+namespace WebCore {
+
+class Document;
+struct CredentialRequestOptions;
+struct IdentityCredentialCreateOptions;
+using CredentialPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<BasicCredential>>>;
+
+class IdentityCredential final : public BasicCredential {
+public:
+    static Ref<IdentityCredential> create(const String& token, bool isAutoSelected);
+
+    virtual ~IdentityCredential();
+
+    const String& token() const { return m_token; }
+    bool isAutoSelected() const { return m_isAutoSelected; }
+
+    static void discoverFromExternalSource(const Document&, CredentialPromise&&, CredentialRequestOptions&&);
+    static void createIdentityCredential(const Document&, CredentialPromise&&, IdentityCredentialCreateOptions&&);
+
+private:
+    IdentityCredential(const String& token, bool isAutoSelected);
+
+    Type credentialType() const final { return Type::Identity; }
+
+    String m_token;
+    bool m_isAutoSelected { false };
 };
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BASIC_CREDENTIAL(IdentityCredential, BasicCredential::Type::Identity)
+
+#endif // ENABLE(FEDCM)

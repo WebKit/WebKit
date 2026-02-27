@@ -199,6 +199,9 @@ class WebCodecsVideoDecoder;
 
 template<typename IDLType> class DOMPromiseDeferred;
 
+#if ENABLE(FEDCM)
+struct MockFedCMConfiguration;
+#endif
 struct MockWebAuthenticationConfiguration;
 
 class Internals final
@@ -1493,6 +1496,9 @@ public:
 
 #if ENABLE(WEB_AUTHN)
     void setMockWebAuthenticationConfiguration(const MockWebAuthenticationConfiguration&);
+#endif
+#if ENABLE(FEDCM)
+    void setMockFedCMConfiguration(const MockFedCMConfiguration&);
 #endif
 
     int processIdentifier() const;

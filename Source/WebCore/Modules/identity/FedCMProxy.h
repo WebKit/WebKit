@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2017 Google Inc. All rights reserved.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Shopify Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,14 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WEB_AUTHN,
-] dictionary CredentialRequestOptions {
-    CredentialMediationRequirement mediation = "optional";
-    AbortSignal signal;
-    PublicKeyCredentialRequestOptions publicKey;
-    // https://wicg.github.io/digital-identities/#extensions-to-credentialrequestoptions-dictionary
-    [EnabledBySetting=DigitalCredentialsEnabled] DigitalCredentialRequestOptions digital;
-    // https://fedidcg.github.io/FedCM/#credentialrequestoptions-extension
-    [Conditional=FEDCM, EnabledBySetting=FedCMEnabled] IdentityCredentialRequestOptions identity;
+#pragma once
+
+#if ENABLE(FEDCM)
+
+#include <WebCore/BasicCredential.h>
+#include <WebCore/JSDOMPromiseDeferredForward.h>
+#include <WebCore/MockFedCMConfiguration.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+
+namespace WebCore {
+
+class Document;
+class FedCMProxyClient;
+class Page;
+struct IdentityCredentialCreateOptions;
+struct IdentityCredentialRequestOptions;
+using CredentialPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<BasicCredential>>>;
+
+class FedCMProxy : public RefCounted<FedCMProxy> {
+    WTF_MAKE_TZONE_ALLOCATED(FedCMProxy);
+public:
+    static Ref<FedCMProxy> create(Ref<FedCMProxyClient>&&, Page&);
+
+    void requestCredential(const Document&, CredentialPromise&&, IdentityCredentialRequestOptions&&);
+    void createCredential(const Document&, CredentialPromise&&, IdentityCredentialCreateOptions&&);
+
+    WEBCORE_EXPORT void setMockConfiguration(MockFedCMConfiguration&&);
+    WEBCORE_EXPORT void clearMockConfiguration();
+
+private:
+    FedCMProxy(Ref<FedCMProxyClient>&&, Page&);
+
+    const Ref<FedCMProxyClient> m_client;
+    WeakPtr<Page> m_page;
+    std::optional<MockFedCMConfiguration> m_mockConfig;
 };
+
+} // namespace WebCore
+
+#endif // ENABLE(FEDCM)

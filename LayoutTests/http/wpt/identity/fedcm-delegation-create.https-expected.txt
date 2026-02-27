@@ -1,0 +1,4 @@
+
+PASS create() with mock returns IdentityCredential with correct token
+PASS create() with mock error rejects with configured error type
+

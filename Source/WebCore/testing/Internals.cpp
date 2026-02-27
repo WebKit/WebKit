@@ -92,6 +92,9 @@
 #include "EventTargetInlines.h"
 #include "ExtendableEvent.h"
 #include "ExtensionStyleSheets.h"
+#if ENABLE(FEDCM)
+#include "FedCMProxy.h"
+#endif
 #include "FetchRequest.h"
 #include "FetchResponse.h"
 #include "File.h"
@@ -169,6 +172,9 @@
 #include "MemoryInfo.h"
 #include "MessagePort.h"
 #include "MockAudioDestinationCocoa.h"
+#if ENABLE(FEDCM)
+#include "MockFedCMConfiguration.h"
+#endif
 #include "MockLibWebRTCPeerConnection.h"
 #include "MockPageOverlay.h"
 #include "MockPageOverlayClient.h"
@@ -7412,6 +7418,19 @@ void Internals::setMockWebAuthenticationConfiguration(const MockWebAuthenticatio
     if (!page)
         return;
     page->chrome().client().setMockWebAuthenticationConfiguration(configuration);
+}
+#endif
+
+#if ENABLE(FEDCM)
+void Internals::setMockFedCMConfiguration(const MockFedCMConfiguration& configuration)
+{
+    auto* document = contextDocument();
+    if (!document)
+        return;
+    auto* page = document->page();
+    if (!page)
+        return;
+    page->fedCMProxy().setMockConfiguration(MockFedCMConfiguration { configuration });
 }
 #endif
 

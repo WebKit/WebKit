@@ -72,6 +72,9 @@ class ContextMenuClient;
 class CookieJar;
 class CredentialRequestCoordinatorClient;
 class CryptoClient;
+#if ENABLE(FEDCM)
+class FedCMProxyClient;
+#endif
 class DatabaseProvider;
 class DiagnosticLoggingClient;
 class DragClient;
@@ -149,6 +152,9 @@ public:
         UniqueRef<DocumentSyncClient>&&
 #if ENABLE(WEB_AUTHN)
         , Ref<CredentialRequestCoordinatorClient>&&
+#endif
+#if ENABLE(FEDCM)
+        , Ref<FedCMProxyClient>&&
 #endif
     );
     WEBCORE_EXPORT ~PageConfiguration();
@@ -256,6 +262,9 @@ public:
 
 #if ENABLE(WEB_AUTHN)
     Ref<CredentialRequestCoordinatorClient> credentialRequestCoordinatorClient;
+#endif
+#if ENABLE(FEDCM)
+    Ref<FedCMProxyClient> fedCMProxyClient;
 #endif
 };
 

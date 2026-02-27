@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2017 Google Inc. All rights reserved.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Shopify Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,14 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WEB_AUTHN,
-] dictionary CredentialRequestOptions {
-    CredentialMediationRequirement mediation = "optional";
-    AbortSignal signal;
-    PublicKeyCredentialRequestOptions publicKey;
-    // https://wicg.github.io/digital-identities/#extensions-to-credentialrequestoptions-dictionary
-    [EnabledBySetting=DigitalCredentialsEnabled] DigitalCredentialRequestOptions digital;
-    // https://fedidcg.github.io/FedCM/#credentialrequestoptions-extension
-    [Conditional=FEDCM, EnabledBySetting=FedCMEnabled] IdentityCredentialRequestOptions identity;
+#pragma once
+
+#if ENABLE(FEDCM)
+
+#include <wtf/CompletionHandler.h>
+#include <wtf/Expected.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/text/WTFString.h>
+
+namespace WebCore {
+
+struct ExceptionData;
+struct IdentityCredentialCreateOptions;
+struct IdentityCredentialRequestOptions;
+
+struct FedCMResponse {
+    String token;
+    bool isAutoSelected { false };
 };
+
+class FedCMProxyClient : public RefCounted<FedCMProxyClient> {
+    WTF_MAKE_TZONE_ALLOCATED(FedCMProxyClient);
+    WTF_MAKE_NONCOPYABLE(FedCMProxyClient);
+
+public:
+    FedCMProxyClient() = default;
+    virtual ~FedCMProxyClient() = default;
+
+    virtual void requestCredential(IdentityCredentialRequestOptions&&, CompletionHandler<void(Expected<FedCMResponse, ExceptionData>&&)>&&) = 0;
+    virtual void createCredential(IdentityCredentialCreateOptions&&, CompletionHandler<void(Expected<FedCMResponse, ExceptionData>&&)>&&) = 0;
+
+    void ref() const { RefCounted::ref(); }
+    void deref() const { RefCounted::deref(); }
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(FEDCM)

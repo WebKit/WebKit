@@ -1,0 +1,11 @@
+
+PASS get() with empty dictionary rejects with NotSupportedError
+PASS get() with empty providers rejects with TypeError
+PASS get() with empty configURL rejects with TypeError
+PASS get() with empty clientId rejects with TypeError
+PASS get() with aborted signal rejects with AbortError
+PASS get() with identity and publicKey is mutually exclusive
+PASS get() with mock returns IdentityCredential with correct token
+PASS get() with mock returns isAutoSelected=true when configured
+PASS get() with mock error rejects with configured error type
+

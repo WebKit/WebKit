@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>FedCM Delegation: get() behavior tests</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<body></body>
+<script>
+    promise_setup(async () => {
+        if (document.visibilityState === "hidden") {
+            await new Promise((resolve) => {
+                document.onvisibilitychange = resolve;
+                testRunner.setPageVisibility("visible");
+            });
+        }
+        assert_equals(document.visibilityState, "visible", "should be visible");
+    });
+
+    promise_test(async (t) => {
+        await promise_rejects_dom(
+            t,
+            "NotSupportedError",
+            navigator.credentials.get({}),
+            "navigator.credentials.get() with empty dictionary should reject."
+        );
+    }, "get() with empty dictionary rejects with NotSupportedError");
+
+    promise_test(async (t) => {
+        await promise_rejects_js(
+            t,
+            TypeError,
+            navigator.credentials.get({ identity: { providers: [] } }),
+            "navigator.credentials.get() with empty providers should reject."
+        );
+    }, "get() with empty providers rejects with TypeError");
+
+    promise_test(async (t) => {
+        await promise_rejects_js(
+            t,
+            TypeError,
+            navigator.credentials.get({
+                identity: {
+                    providers: [{ configURL: "", clientId: "client123" }]
+                }
+            }),
+            "navigator.credentials.get() with empty configURL should reject."
+        );
+    }, "get() with empty configURL rejects with TypeError");
+
+    promise_test(async (t) => {
+        await promise_rejects_js(
+            t,
+            TypeError,
+            navigator.credentials.get({
+                identity: {
+                    providers: [{ configURL: "https://idp.example/config", clientId: "" }]
+                }
+            }),
+            "navigator.credentials.get() with empty clientId should reject."
+        );
+    }, "get() with empty clientId rejects with TypeError");
+
+    promise_test(async (t) => {
+        const controller = new AbortController();
+        controller.abort();
+        await promise_rejects_dom(
+            t,
+            "AbortError",
+            navigator.credentials.get({
+                identity: {
+                    providers: [{ configURL: "https://idp.example/config", clientId: "client123" }]
+                },
+                signal: controller.signal
+            }),
+            "navigator.credentials.get() with aborted signal should reject."
+        );
+    }, "get() with aborted signal rejects with AbortError");
+
+    promise_test(async (t) => {
+        await promise_rejects_dom(
+            t,
+            "NotSupportedError",
+            navigator.credentials.get({
+                identity: {
+                    providers: [{ configURL: "https://idp.example/config", clientId: "client123" }]
+                },
+                publicKey: {
+                    challenge: new Uint8Array(32)
+                }
+            }),
+            "navigator.credentials.get() with both identity and publicKey should reject."
+        );
+    }, "get() with identity and publicKey is mutually exclusive");
+
+    promise_test(async (t) => {
+        internals.setMockFedCMConfiguration({ token: "mock-token-123", isAutoSelected: false });
+
+        let credentialPromise;
+        internals.withUserGesture(() => {
+            credentialPromise = navigator.credentials.get({
+                identity: {
+                    providers: [{
+                        configURL: "https://idp.example/config",
+                        clientId: "client123"
+                    }]
+                }
+            });
+        });
+        const credential = await credentialPromise;
+
+        assert_true(credential instanceof IdentityCredential, "Should return an IdentityCredential");
+        assert_equals(credential.token, "mock-token-123", "Token should match mock configuration");
+        assert_equals(credential.isAutoSelected, false, "isAutoSelected should match mock configuration");
+        assert_equals(credential.type, "identity", "type should be 'identity'");
+    }, "get() with mock returns IdentityCredential with correct token");
+
+    promise_test(async (t) => {
+        internals.setMockFedCMConfiguration({ token: "auto-token", isAutoSelected: true });
+
+        let credentialPromise;
+        internals.withUserGesture(() => {
+            credentialPromise = navigator.credentials.get({
+                identity: {
+                    providers: [{
+                        configURL: "https://idp.example/config",
+                        clientId: "client123",
+                        format: "vc+sd-jwt"
+                    }]
+                }
+            });
+        });
+        const credential = await credentialPromise;
+
+        assert_true(credential instanceof IdentityCredential, "Should return an IdentityCredential");
+        assert_equals(credential.isAutoSelected, true, "isAutoSelected should be true");
+    }, "get() with mock returns isAutoSelected=true when configured");
+
+    promise_test(async (t) => {
+        internals.setMockFedCMConfiguration({ error: "NotAllowedError" });
+
+        let credentialPromise;
+        internals.withUserGesture(() => {
+            credentialPromise = navigator.credentials.get({
+                identity: {
+                    providers: [{
+                        configURL: "https://idp.example/config",
+                        clientId: "client123"
+                    }]
+                }
+            });
+        });
+
+        await promise_rejects_dom(t, "NotAllowedError", credentialPromise,
+            "Should reject with NotAllowedError");
+    }, "get() with mock error rejects with configured error type");
+</script>

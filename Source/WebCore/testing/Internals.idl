@@ -1382,6 +1382,7 @@ enum ContentsFormat {
     undefined addPrefetchLoadEventListener(HTMLLinkElement link, EventListener? callback);
 
     [Conditional=WEB_AUTHN] undefined setMockWebAuthenticationConfiguration(MockWebAuthenticationConfiguration configuration);
+    [Conditional=FEDCM] undefined setMockFedCMConfiguration(MockFedCMConfiguration configuration);
 
     InternalsMapLike createInternalsMapLike();
     InternalsSetLike createInternalsSetLike();

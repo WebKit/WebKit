@@ -375,6 +375,21 @@
 		0DACE1F42E7C99E400CDA0DC /* GPU.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C66A7842A4F78440086DB6F /* GPU.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0DD1FE9B2E78C00B009DFD33 /* WebCoreInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DD1FE992E78C00B009DFD33 /* WebCoreInternal.h */; };
 		0DE11A792C8AB2950003F6EE /* DigitalCredentialsResponseData.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DE11A782C8AB2840003F6EE /* DigitalCredentialsResponseData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		12B6F0B1111E4F83A396AB45 /* FedCMProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = D3045FFC44E04044B081E866 /* FedCMProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A1B2C3D4E5F647839ABCDEF0 /* FedCMProxyClient.h in Headers */ = {isa = PBXBuildFile; fileRef = F0E1D2C3B4A596879ABCDEF0 /* FedCMProxyClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B2C3D4E5F6A748930BCDEF01 /* DummyFedCMProxyClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E1D2C3B4A5F698709ABCDEF0 /* DummyFedCMProxyClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B5DFC712212C463CBB81F8CB /* IdentityCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D989FD0BE6749B1A8925071 /* IdentityCredential.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6F7CA42B2DFD4C95B8E3CEF4 /* IdentityCredentialCreateOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AED04D0F47A47648E54BF57 /* IdentityCredentialCreateOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		34A47E71548F49BC9278BFA3 /* IdentityCredentialRequestOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 58377796EE6D4D2DA8601157 /* IdentityCredentialRequestOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		722CB616F8C6453183DB40E4 /* IdentityCredentialRequestOptionsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = B732B7C2218945AAA8D1D46E /* IdentityCredentialRequestOptionsContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		88800B1DADA24C2598647F4B /* IdentityCredentialRequestOptionsMode.h in Headers */ = {isa = PBXBuildFile; fileRef = B92A4F12B865409082F45772 /* IdentityCredentialRequestOptionsMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		915291F921BC43B5A656A66C /* IdentityProviderConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 062EECB58A49408AA3E27F46 /* IdentityProviderConfig.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		EB8C49CA693A4659A2B240B0 /* IdentityProviderRequestOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = EBCEAB65B1BF4E19AAD84B72 /* IdentityProviderRequestOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		29F5056752A042BDA65B56B4 /* MockFedCMConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = A33E5DE625AC409AB78203FB /* MockFedCMConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0DF0A0202E8479F90061AE21 /* DDModelPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DF0A01E2E8479F90061AE21 /* DDModelPlayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0DF0A03F2E85DBBF0061AE21 /* DDUpdateMaterialDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DF0A03D2E85DBBF0061AE21 /* DDUpdateMaterialDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0DF0A0402E85DBBF0061AE21 /* DDMaterialDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DF0A03B2E85DBBF0061AE21 /* DDMaterialDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0DF0A0412E85DBBF0061AE21 /* DDUpdateTextureDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DF0A03E2E85DBBF0061AE21 /* DDUpdateTextureDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0DF687F62C88414900C16DC9 /* DigitalCredentialsRequestData.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DF687F52C8840D100C16DC9 /* DigitalCredentialsRequestData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0DFB86682B16CC98009A0A0D /* JSCredentialMediationRequirement.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DFB86642B16CC1E009A0A0D /* JSCredentialMediationRequirement.h */; };
 		0E7058F41BC5CEDA0045A507 /* SearchPopupMenuCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E7058F31BC5CCD70045A507 /* SearchPopupMenuCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4245,6 +4260,8 @@
 		A1F76B4F1F44D2420014C318 /* PaymentDetailsModifier.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F76B4C1F44D2420014C318 /* PaymentDetailsModifier.h */; };
 		A1F76B551F44D2C70014C318 /* PaymentShippingOption.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F76B521F44D2C70014C318 /* PaymentShippingOption.h */; };
 		A1F76B5B1F44D3B20014C318 /* PaymentComplete.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F76B581F44D3B20014C318 /* PaymentComplete.h */; };
+		A1FE3B01302290A1008FC7AB /* JSMockFedCMConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1FE3B04302290A1008FC7AB /* JSMockFedCMConfiguration.cpp */; };
+		A1FE3B02302290A1008FC7AB /* JSMockFedCMConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = A1FE3B03302290A1008FC7AB /* JSMockFedCMConfiguration.h */; };
 		A31C4E4F16E02AB4002F7957 /* OESTextureHalfFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = A31C4E4E16E02AB4002F7957 /* OESTextureHalfFloat.h */; };
 		A31C4E5416E02B40002F7957 /* JSOESTextureHalfFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = A31C4E5316E02B40002F7957 /* JSOESTextureHalfFloat.h */; };
 		A336CF322B86492700464599 /* TrustedType.h in Headers */ = {isa = PBXBuildFile; fileRef = A32E83D82B7CD9250055FE75 /* TrustedType.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7873,6 +7890,28 @@
 		0D494DEC2B5DF3DC00B61C51 /* DigitalCredentialRequestOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DigitalCredentialRequestOptions.h; sourceTree = "<group>"; };
 		0D494DED2B5DF55000B61C51 /* DigitalCredentialGetRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DigitalCredentialGetRequest.h; sourceTree = "<group>"; };
 		0D494DEE2B5E0B5200B61C51 /* DigitalCredential.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DigitalCredential.cpp; sourceTree = "<group>"; };
+		DFB49AC5FC374B45B2A8EF5C /* FedCMProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FedCMProxy.cpp; sourceTree = "<group>"; };
+		D3045FFC44E04044B081E866 /* FedCMProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FedCMProxy.h; sourceTree = "<group>"; };
+		F0E1D2C3B4A596879ABCDEF0 /* FedCMProxyClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FedCMProxyClient.h; sourceTree = "<group>"; };
+		E1D2C3B4A5F698709ABCDEF0 /* DummyFedCMProxyClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DummyFedCMProxyClient.h; sourceTree = "<group>"; };
+		D2C3B4A5F6E798019ABCDEF0 /* DummyFedCMProxyClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DummyFedCMProxyClient.cpp; sourceTree = "<group>"; };
+		ED9805E80523467382DC7E1C /* IdentityCredential.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IdentityCredential.cpp; sourceTree = "<group>"; };
+		5D989FD0BE6749B1A8925071 /* IdentityCredential.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IdentityCredential.h; sourceTree = "<group>"; };
+		735F2013A423482EB26BA995 /* IdentityCredential.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IdentityCredential.idl; sourceTree = "<group>"; };
+		0AED04D0F47A47648E54BF57 /* IdentityCredentialCreateOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IdentityCredentialCreateOptions.h; sourceTree = "<group>"; };
+		4DFECF0D85C44ED2A43837DF /* IdentityCredentialCreateOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IdentityCredentialCreateOptions.idl; sourceTree = "<group>"; };
+		58377796EE6D4D2DA8601157 /* IdentityCredentialRequestOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IdentityCredentialRequestOptions.h; sourceTree = "<group>"; };
+		BE2241A7EF264B0BB6E34040 /* IdentityCredentialRequestOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IdentityCredentialRequestOptions.idl; sourceTree = "<group>"; };
+		B732B7C2218945AAA8D1D46E /* IdentityCredentialRequestOptionsContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IdentityCredentialRequestOptionsContext.h; sourceTree = "<group>"; };
+		9767A642625A43CD8C004A0E /* IdentityCredentialRequestOptionsContext.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IdentityCredentialRequestOptionsContext.idl; sourceTree = "<group>"; };
+		B92A4F12B865409082F45772 /* IdentityCredentialRequestOptionsMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IdentityCredentialRequestOptionsMode.h; sourceTree = "<group>"; };
+		F6173DFB826D4995848DBF69 /* IdentityCredentialRequestOptionsMode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IdentityCredentialRequestOptionsMode.idl; sourceTree = "<group>"; };
+		062EECB58A49408AA3E27F46 /* IdentityProviderConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IdentityProviderConfig.h; sourceTree = "<group>"; };
+		C021B2E19CF64AE2AA10E31B /* IdentityProviderConfig.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IdentityProviderConfig.idl; sourceTree = "<group>"; };
+		EBCEAB65B1BF4E19AAD84B72 /* IdentityProviderRequestOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IdentityProviderRequestOptions.h; sourceTree = "<group>"; };
+		D594E882E35243DA86BF8516 /* IdentityProviderRequestOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IdentityProviderRequestOptions.idl; sourceTree = "<group>"; };
+		A33E5DE625AC409AB78203FB /* MockFedCMConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockFedCMConfiguration.h; sourceTree = "<group>"; };
+		0EC4191FBDBD4F6D93C49D12 /* MockFedCMConfiguration.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MockFedCMConfiguration.idl; sourceTree = "<group>"; };
 		0D5C81052B8B0F560099BF96 /* WGSLLanguageFeatures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WGSLLanguageFeatures.h; sourceTree = "<group>"; };
 		0D5C81062B8B0F580099BF96 /* WGSLLanguageFeatures.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WGSLLanguageFeatures.idl; sourceTree = "<group>"; };
 		0D5C81072B8B0FED0099BF96 /* WGSLLanguageFeatures.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WGSLLanguageFeatures.cpp; sourceTree = "<group>"; };
@@ -16916,6 +16955,8 @@
 		A1F76B541F44D2C70014C318 /* PaymentShippingOption.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentShippingOption.idl; sourceTree = "<group>"; };
 		A1F76B581F44D3B20014C318 /* PaymentComplete.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentComplete.h; sourceTree = "<group>"; };
 		A1F76B5A1F44D3B20014C318 /* PaymentComplete.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaymentComplete.idl; sourceTree = "<group>"; };
+		A1FE3B03302290A1008FC7AB /* JSMockFedCMConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMockFedCMConfiguration.h; sourceTree = "<group>"; };
+		A1FE3B04302290A1008FC7AB /* JSMockFedCMConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMockFedCMConfiguration.cpp; sourceTree = "<group>"; };
 		A1F78D0B1C25422C00245446 /* ResourceResponseCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceResponseCocoa.mm; sourceTree = "<group>"; };
 		A208E222A56A0C7575F2A72E /* RenderMathMLMenclose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLMenclose.h; sourceTree = "<group>"; };
 		A31AC70A24340984007F00A2 /* MediaStrategy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStrategy.cpp; sourceTree = "<group>"; };
@@ -24216,6 +24257,24 @@
 				48BFAF292F3137FA00E7D926 /* DigitalCredentialsRequestDataBuilder.h */,
 				0DE11A782C8AB2840003F6EE /* DigitalCredentialsResponseData.h */,
 				4828C31C2F35643E009D206E /* DigitalCredentialsSecurityOriginData.h */,
+				DFB49AC5FC374B45B2A8EF5C /* FedCMProxy.cpp */,
+				D3045FFC44E04044B081E866 /* FedCMProxy.h */,
+				F0E1D2C3B4A596879ABCDEF0 /* FedCMProxyClient.h */,
+				ED9805E80523467382DC7E1C /* IdentityCredential.cpp */,
+				5D989FD0BE6749B1A8925071 /* IdentityCredential.h */,
+				735F2013A423482EB26BA995 /* IdentityCredential.idl */,
+				0AED04D0F47A47648E54BF57 /* IdentityCredentialCreateOptions.h */,
+				4DFECF0D85C44ED2A43837DF /* IdentityCredentialCreateOptions.idl */,
+				58377796EE6D4D2DA8601157 /* IdentityCredentialRequestOptions.h */,
+				BE2241A7EF264B0BB6E34040 /* IdentityCredentialRequestOptions.idl */,
+				B732B7C2218945AAA8D1D46E /* IdentityCredentialRequestOptionsContext.h */,
+				9767A642625A43CD8C004A0E /* IdentityCredentialRequestOptionsContext.idl */,
+				B92A4F12B865409082F45772 /* IdentityCredentialRequestOptionsMode.h */,
+				F6173DFB826D4995848DBF69 /* IdentityCredentialRequestOptionsMode.idl */,
+				062EECB58A49408AA3E27F46 /* IdentityProviderConfig.h */,
+				C021B2E19CF64AE2AA10E31B /* IdentityProviderConfig.idl */,
+				EBCEAB65B1BF4E19AAD84B72 /* IdentityProviderRequestOptions.h */,
+				D594E882E35243DA86BF8516 /* IdentityProviderRequestOptions.idl */,
 			);
 			name = identity;
 			path = Modules/identity;
@@ -26702,6 +26761,8 @@
 				A1B5B29D1AAA846E008B6042 /* MockContentFilterSettings.h */,
 				A19AEA1C1AAA7C4900B52B25 /* MockContentFilterSettings.idl */,
 				E3952FE427C6AC7F0086F5D9 /* MockContentFilterSettingsClient.h */,
+				A33E5DE625AC409AB78203FB /* MockFedCMConfiguration.h */,
+				0EC4191FBDBD4F6D93C49D12 /* MockFedCMConfiguration.idl */,
 				51058AD71D679257009A538C /* MockGamepad.cpp */,
 				51058AD81D679257009A538C /* MockGamepad.h */,
 				51058AD91D679257009A538C /* MockGamepadProvider.cpp */,
@@ -26789,6 +26850,8 @@
 				CDF4B72E1E03CA4A00E235A2 /* JSMockCDMFactory.h */,
 				A19AEA1D1AAA806E00B52B25 /* JSMockContentFilterSettings.cpp */,
 				A19AEA1E1AAA806E00B52B25 /* JSMockContentFilterSettings.h */,
+				A1FE3B04302290A1008FC7AB /* JSMockFedCMConfiguration.cpp */,
+				A1FE3B03302290A1008FC7AB /* JSMockFedCMConfiguration.h */,
 				A13AB0792EE788C0003C1ED5 /* JSMockMediaDeviceRoute.cpp */,
 				A13AB0782EE788C0003C1ED5 /* JSMockMediaDeviceRoute.h */,
 				A13AB06A2EE55781003C1ED5 /* JSMockMediaDeviceRouteController.cpp */,
@@ -40329,6 +40392,8 @@
 			children = (
 				E8BF3AE22D56003700E7ED0B /* DummyCredentialRequestCoordinatorClient.cpp */,
 				E8BF3AE12D56003700E7ED0B /* DummyCredentialRequestCoordinatorClient.h */,
+				D2C3B4A5F6E798019ABCDEF0 /* DummyFedCMProxyClient.cpp */,
+				E1D2C3B4A5F698709ABCDEF0 /* DummyFedCMProxyClient.h */,
 			);
 			path = dummy;
 			sourceTree = "<group>";
@@ -42631,6 +42696,7 @@
 				CD14C24E2ECBCDB900F9C56D /* JSMockCaptionDisplaySettingsClientCallback.h in Headers */,
 				538EC9331F99B9F7004D22A8 /* JSMockCDMFactory.h in Headers */,
 				A19AEA211AAA808600B52B25 /* JSMockContentFilterSettings.h in Headers */,
+				A1FE3B02302290A1008FC7AB /* JSMockFedCMConfiguration.h in Headers */,
 				A13AB07B2EE788C0003C1ED5 /* JSMockMediaDeviceRoute.h in Headers */,
 				A13AB06B2EE55781003C1ED5 /* JSMockMediaDeviceRouteController.h in Headers */,
 				A1C9F8662F281CD500F53830 /* JSMockMediaDeviceRouteURLCallback.h in Headers */,
@@ -43971,6 +44037,7 @@
 				1CAF56DB25301AC80017B472 /* DrawGlyphsRecorder.h in Headers */,
 				510A91F624D32DDC00BFD89C /* Dualshock3HIDGamepad.h in Headers */,
 				E8BF3AE42D56005800E7ED0B /* DummyCredentialRequestCoordinatorClient.h in Headers */,
+				B2C3D4E5F6A748930BCDEF01 /* DummyFedCMProxyClient.h in Headers */,
 				BC2B41252733600500A2D191 /* DummyModelPlayer.h in Headers */,
 				BC2B41312734A08600A2D191 /* DummyModelPlayerProvider.h in Headers */,
 				93D6B7A82551D41F0058DD3A /* DummySpeechRecognitionProvider.h in Headers */,
@@ -44092,6 +44159,8 @@
 				A75E8B8D0E1DE2D6007F2481 /* FEComponentTransfer.h in Headers */,
 				A75E8B8F0E1DE2D6007F2481 /* FEComposite.h in Headers */,
 				84730D791248F0B300D3A9C9 /* FEConvolveMatrix.h in Headers */,
+				12B6F0B1111E4F83A396AB45 /* FedCMProxy.h in Headers */,
+				A1B2C3D4E5F647839ABCDEF0 /* FedCMProxyClient.h in Headers */,
 				84730D7B1248F0B300D3A9C9 /* FEDiffuseLighting.h in Headers */,
 				84730D7D1248F0B300D3A9C9 /* FEDisplacementMap.h in Headers */,
 				4358E8811360A31700E4748C /* FEDropShadow.h in Headers */,
@@ -44641,6 +44710,14 @@
 				516103AF1CADBA770016B4C7 /* IDBValue.h in Headers */,
 				5185FCB01BB4C4E80012898F /* IDBVersionChangeEvent.h in Headers */,
 				E4A814E01C7338EB00BF85AC /* IdChangeInvalidation.h in Headers */,
+				1A71D57C0F33819000F9CE4E /* IdentifierRep.h in Headers */,
+				B5DFC712212C463CBB81F8CB /* IdentityCredential.h in Headers */,
+				6F7CA42B2DFD4C95B8E3CEF4 /* IdentityCredentialCreateOptions.h in Headers */,
+				34A47E71548F49BC9278BFA3 /* IdentityCredentialRequestOptions.h in Headers */,
+				722CB616F8C6453183DB40E4 /* IdentityCredentialRequestOptionsContext.h in Headers */,
+				88800B1DADA24C2598647F4B /* IdentityCredentialRequestOptionsMode.h in Headers */,
+				915291F921BC43B5A656A66C /* IdentityProviderConfig.h in Headers */,
+				EB8C49CA693A4659A2B240B0 /* IdentityProviderRequestOptions.h in Headers */,
 				49E911C50EF86D47009D0CAF /* IdentityTransformOperation.h in Headers */,
 				7CE9A12B1EA2F1DB00651AD1 /* IDLAttributes.json in Headers */,
 				9B864F06234C0893006D10EB /* IdleCallbackController.h in Headers */,
@@ -46153,6 +46230,7 @@
 				E3952FEB27C6DCCF0086F5D9 /* MockContentFilterManager.h in Headers */,
 				E3952FF127C7CDB50086F5D9 /* MockContentFilterSettings.h in Headers */,
 				E3952FE527C6AC7F0086F5D9 /* MockContentFilterSettingsClient.h in Headers */,
+				29F5056752A042BDA65B56B4 /* MockFedCMConfiguration.h in Headers */,
 				51058AE01D67C229009A538C /* MockGamepad.h in Headers */,
 				51058AE21D67C229009A538C /* MockGamepadProvider.h in Headers */,
 				413CCD4A20DE034F0065A21A /* MockMediaDevice.h in Headers */,
@@ -49415,6 +49493,7 @@
 				CD14C24C2ECBCDB900F9C56D /* JSMockCaptionDisplaySettingsClientCallback.cpp in Sources */,
 				CDF4B7321E03D06000E235A2 /* JSMockCDMFactory.cpp in Sources */,
 				A19AEA221AAA808A00B52B25 /* JSMockContentFilterSettings.cpp in Sources */,
+				A1FE3B01302290A1008FC7AB /* JSMockFedCMConfiguration.cpp in Sources */,
 				A13AB07A2EE788C0003C1ED5 /* JSMockMediaDeviceRoute.cpp in Sources */,
 				A13AB06C2EE55781003C1ED5 /* JSMockMediaDeviceRouteController.cpp in Sources */,
 				A16B9FCA2F2853220030CC4A /* JSMockMediaDeviceRouteURLCallback.cpp in Sources */,

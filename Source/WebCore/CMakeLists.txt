@@ -451,6 +451,13 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/identity/DigitalCredentialGetRequest.idl
     Modules/identity/DigitalCredentialPresentationProtocol.idl
     Modules/identity/DigitalCredentialRequestOptions.idl
+    Modules/identity/IdentityCredential.idl
+    Modules/identity/IdentityCredentialCreateOptions.idl
+    Modules/identity/IdentityCredentialRequestOptions.idl
+    Modules/identity/IdentityCredentialRequestOptionsContext.idl
+    Modules/identity/IdentityCredentialRequestOptionsMode.idl
+    Modules/identity/IdentityProviderConfig.idl
+    Modules/identity/IdentityProviderRequestOptions.idl
 
     Modules/identity/protocols/ISO18013/MobileDocumentRequest.idl
 
@@ -2493,6 +2500,7 @@ set(WebCoreTestSupport_IDL_FILES
     testing/MockCDMFactory.idl
     testing/MockCaptionDisplaySettingsClientCallback.idl
     testing/MockContentFilterSettings.idl
+    testing/MockFedCMConfiguration.idl
     testing/MockMediaDeviceRoute.idl
     testing/MockMediaDeviceRouteController.idl
     testing/MockMediaDeviceRouteURLCallback.idl

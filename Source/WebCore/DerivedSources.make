@@ -379,6 +379,13 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/identity/DigitalCredentialGetRequest.idl \
     $(WebCore)/Modules/identity/DigitalCredentialRequestOptions.idl \
     $(WebCore)/Modules/identity/DigitalCredentialPresentationProtocol.idl \
+    $(WebCore)/Modules/identity/IdentityCredential.idl \
+    $(WebCore)/Modules/identity/IdentityCredentialCreateOptions.idl \
+    $(WebCore)/Modules/identity/IdentityCredentialRequestOptions.idl \
+    $(WebCore)/Modules/identity/IdentityCredentialRequestOptionsContext.idl \
+    $(WebCore)/Modules/identity/IdentityCredentialRequestOptionsMode.idl \
+    $(WebCore)/Modules/identity/IdentityProviderConfig.idl \
+    $(WebCore)/Modules/identity/IdentityProviderRequestOptions.idl \
     $(WebCore)/Modules/identity/protocols/ISO18013/MobileDocumentRequest.idl \
     $(WebCore)/Modules/indexeddb/IDBCursor.idl \
     $(WebCore)/Modules/indexeddb/IDBCursorDirection.idl \
@@ -1792,6 +1799,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/testing/MockPageOverlay.idl \
     $(WebCore)/testing/MockPaymentAddress.idl \
     $(WebCore)/testing/MockPaymentContactFields.idl \
+    $(WebCore)/testing/MockFedCMConfiguration.idl \
     $(WebCore)/testing/MockPaymentCoordinator.idl \
     $(WebCore)/testing/MockPaymentError.idl \
     $(WebCore)/testing/MockWebAuthenticationConfiguration.idl \

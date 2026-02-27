@@ -430,6 +430,10 @@
 #include <WebCore/ExceptionData.h>
 #endif // ENABLE(WEB_AUTHN)
 
+#if ENABLE(FEDCM)
+#include <WebCore/DummyFedCMProxyClient.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
 #include "WebDeviceOrientationUpdateProvider.h"
 #endif
@@ -816,6 +820,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         makeUniqueRef<WebDocumentSyncClient>(*this)
 #if ENABLE(WEB_AUTHN)
         , DigitalCredentialsCoordinator::create(*this)
+#endif
+#if ENABLE(FEDCM)
+        , DummyFedCMProxyClient::create()
 #endif
     );
 

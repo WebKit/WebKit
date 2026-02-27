@@ -157,7 +157,10 @@ Modules/highlight/HighlightRegistry.cpp
 Modules/identity/CredentialRequestCoordinator.cpp
 Modules/identity/DigitalCredential.cpp
 Modules/identity/DigitalCredentialsRequestDataBuilder.cpp
+Modules/identity/FedCMProxy.cpp
+Modules/identity/IdentityCredential.cpp
 Modules/identity/dummy/DummyCredentialRequestCoordinatorClient.cpp
+Modules/identity/dummy/DummyFedCMProxyClient.cpp
 Modules/indexeddb/IDBCursor.cpp
 Modules/indexeddb/IDBCursorWithValue.cpp
 Modules/indexeddb/IDBDatabase.cpp
@@ -4420,6 +4423,13 @@ JSDigitalCredentialPresentationProtocol.cpp
 JSIdleDeadline.cpp
 JSIdleRequestCallback.cpp
 JSIdleRequestOptions.cpp
+JSIdentityCredential.cpp
+JSIdentityCredentialCreateOptions.cpp
+JSIdentityCredentialRequestOptions.cpp
+JSIdentityCredentialRequestOptionsContext.cpp
+JSIdentityCredentialRequestOptionsMode.cpp
+JSIdentityProviderConfig.cpp
+JSIdentityProviderRequestOptions.cpp
 JSImageBitmap.cpp
 JSImageBitmapOptions.cpp
 JSImageBitmapRenderingContext.cpp

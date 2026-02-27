@@ -66,6 +66,9 @@
 #include "AuthenticatorCoordinatorClient.h"
 #include "CredentialRequestCoordinatorClient.h"
 #endif
+#if ENABLE(FEDCM)
+#include "FedCMProxyClient.h"
+#endif
 #if ENABLE(APPLE_PAY)
 #include "PaymentCoordinatorClient.h"
 #endif
@@ -106,6 +109,9 @@ PageConfiguration::PageConfiguration(
 #if ENABLE(WEB_AUTHN)
     , Ref<CredentialRequestCoordinatorClient>&& credentialRequestCoordinatorClient
 #endif
+#if ENABLE(FEDCM)
+    , Ref<FedCMProxyClient>&& fedCMProxyClient
+#endif
 )
     : identifier(identifier)
     , sessionID(sessionID)
@@ -137,6 +143,9 @@ PageConfiguration::PageConfiguration(
     , documentSyncClient(WTF::move(documentSyncClient))
 #if ENABLE(WEB_AUTHN)
     , credentialRequestCoordinatorClient(WTF::move(credentialRequestCoordinatorClient))
+#endif
+#if ENABLE(FEDCM)
+    , fedCMProxyClient(WTF::move(fedCMProxyClient))
 #endif
 {
 }

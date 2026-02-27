@@ -55,6 +55,10 @@
 #include "CookieJar.h"
 #include "CredentialRequestCoordinator.h"
 #include "CryptoClient.h"
+#if ENABLE(FEDCM)
+#include "FedCMProxy.h"
+#include "FedCMProxyClient.h"
+#endif
 #include "DOMRect.h"
 #include "DOMRectList.h"
 #include "DOMTimer.h"
@@ -448,6 +452,9 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #if ENABLE(WEB_AUTHN)
     , m_authenticatorCoordinator(makeUniqueRefWithoutRefCountedCheck<AuthenticatorCoordinator>(*this, WTF::move(pageConfiguration.authenticatorCoordinatorClient)))
     , m_credentialRequestCoordinator(CredentialRequestCoordinator::create(WTF::move(pageConfiguration.credentialRequestCoordinatorClient), *this))
+#endif
+#if ENABLE(FEDCM)
+    , m_fedCMProxy(FedCMProxy::create(WTF::move(pageConfiguration.fedCMProxyClient), *this))
 #endif
 #if ENABLE(APPLICATION_MANIFEST)
     , m_applicationManifest(pageConfiguration.applicationManifest)
@@ -6002,6 +6009,13 @@ AcceleratedTimelinesUpdater& Page::ensureAcceleratedTimelinesUpdater()
     if (!m_acceleratedTimelinesUpdater)
         lazyInitialize(m_acceleratedTimelinesUpdater, makeUnique<AcceleratedTimelinesUpdater>());
     return *m_acceleratedTimelinesUpdater.get();
+}
+#endif
+
+#if ENABLE(FEDCM)
+FedCMProxy& Page::fedCMProxy()
+{
+    return m_fedCMProxy.get();
 }
 #endif
 

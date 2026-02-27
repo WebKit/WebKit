@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2017 Google Inc. All rights reserved.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Shopify Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,14 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WEB_AUTHN,
-] dictionary CredentialRequestOptions {
-    CredentialMediationRequirement mediation = "optional";
-    AbortSignal signal;
-    PublicKeyCredentialRequestOptions publicKey;
-    // https://wicg.github.io/digital-identities/#extensions-to-credentialrequestoptions-dictionary
-    [EnabledBySetting=DigitalCredentialsEnabled] DigitalCredentialRequestOptions digital;
-    // https://fedidcg.github.io/FedCM/#credentialrequestoptions-extension
-    [Conditional=FEDCM, EnabledBySetting=FedCMEnabled] IdentityCredentialRequestOptions identity;
+#pragma once
+
+#if ENABLE(FEDCM)
+
+#include <JavaScriptCore/JSCJSValue.h>
+#include <WebCore/IdentityProviderConfig.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
+
+namespace WebCore {
+
+struct IdentityProviderRequestOptions : IdentityProviderConfig {
+    String loginHint;
+    String domainHint;
+    std::optional<Vector<String>> fields;
+    JSC::JSValue params;
+    String format;
 };
+
+} // namespace WebCore
+
+#endif // ENABLE(FEDCM)

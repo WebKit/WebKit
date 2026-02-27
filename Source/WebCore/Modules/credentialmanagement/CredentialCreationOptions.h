@@ -31,6 +31,9 @@
 #include "AbortSignal.h"
 #include "MediationRequirement.h"
 #include "PublicKeyCredentialCreationOptions.h"
+#if ENABLE(FEDCM)
+#include <WebCore/IdentityCredentialCreateOptions.h>
+#endif
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -40,6 +43,9 @@ struct CredentialCreationOptions {
     MediationRequirement mediation;
     RefPtr<AbortSignal> signal;
     std::optional<PublicKeyCredentialCreationOptions> publicKey;
+#if ENABLE(FEDCM)
+    std::optional<IdentityCredentialCreateOptions> identity;
+#endif
 };
 
 } // namespace WebCore

@@ -40,6 +40,9 @@ class BasicCredential : public RefCounted<BasicCredential> {
 public:
     enum class Type {
         DigitalCredential,
+#if ENABLE(FEDCM)
+        Identity,
+#endif
         PublicKey,
     };
 

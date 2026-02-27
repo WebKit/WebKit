@@ -160,6 +160,9 @@
 #import <WebCore/DragEventTargetData.h>
 #import <WebCore/DragItem.h>
 #import <WebCore/DummyCredentialRequestCoordinatorClient.h>
+#if ENABLE(FEDCM)
+#import <WebCore/DummyFedCMProxyClient.h>
+#endif
 #import <WebCore/DummyModelPlayerProvider.h>
 #import <WebCore/DummySpeechRecognitionProvider.h>
 #import <WebCore/DummyStorageProvider.h>
@@ -1518,6 +1521,9 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #if ENABLE(WEB_AUTHN)
         , WebCore::DummyCredentialRequestCoordinatorClient::create()
 #endif
+#if ENABLE(FEDCM)
+        , WebCore::DummyFedCMProxyClient::create()
+#endif
     );
 #if !PLATFORM(IOS_FAMILY)
     pageConfiguration.validationMessageClient = makeUnique<WebValidationMessageClient>(self);
@@ -1775,6 +1781,9 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         makeUniqueRef<WebCore::DocumentSyncClient>()
 #if ENABLE(WEB_AUTHN)
         , WebCore::DummyCredentialRequestCoordinatorClient::create()
+#endif
+#if ENABLE(FEDCM)
+        , WebCore::DummyFedCMProxyClient::create()
 #endif
     );
 #if ENABLE(DRAG_SUPPORT)

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>FedCM Delegation: IDL exposure tests</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+    test(function() {
+        assert_true("IdentityCredential" in window, "IdentityCredential should be defined");
+    }, "IdentityCredential interface exists");
+
+    test(function() {
+        assert_true(window.IdentityCredential.prototype instanceof window.Credential,
+            "IdentityCredential prototype should inherit from Credential");
+    }, "IdentityCredential inherits from Credential");
+
+    test(function() {
+        const desc = Object.getOwnPropertyDescriptor(IdentityCredential.prototype, "token");
+        assert_not_equals(desc, undefined, "token property descriptor should exist");
+        assert_true(typeof desc.get === "function", "token should have a getter");
+    }, "IdentityCredential has token attribute");
+
+    test(function() {
+        const desc = Object.getOwnPropertyDescriptor(IdentityCredential.prototype, "isAutoSelected");
+        assert_not_equals(desc, undefined, "isAutoSelected property descriptor should exist");
+        assert_true(typeof desc.get === "function", "isAutoSelected should have a getter");
+    }, "IdentityCredential has isAutoSelected attribute");
+</script>

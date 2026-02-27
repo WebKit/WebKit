@@ -293,6 +293,7 @@ namespace WebCore {
     macro(ImageBitmapRenderingContext) \
     macro(ImageCapture) \
     macro(IdleDeadline) \
+    macro(IdentityCredential) \
     macro(InputDeviceInfo) \
     macro(InputEvent) \
     macro(InstallEvent) \
