@@ -218,8 +218,8 @@ void WebExtensionAPIRuntime::getPlatformInfo(Ref<WebExtensionCallbackHandler>&& 
 
     auto globalContext = callback->globalContext();
     callback->call(fromObject(callback->globalContext(), {
-        { "os"_s, JSValueMakeString(globalContext, toJSString(osValue).get()) },
-        { "arch"_s, JSValueMakeString(globalContext, toJSString(archValue).get()) }
+        { "os"_s, Protected(globalContext, JSValueMakeString(globalContext, toJSString(osValue).get())) },
+        { "arch"_s, Protected(globalContext, JSValueMakeString(globalContext, toJSString(archValue).get())) }
     }));
 }
 

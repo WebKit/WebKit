@@ -297,11 +297,16 @@ static JSValueRef fromJSONArray(JSContextRef context, const JSON::Array& array)
     if (!array)
         return JSValueMakeUndefined(context);
 
-    Vector<JSValueRef> retArray;
+    auto globalContext = JSContextGetGlobalContext(context);
+    Vector<Protected<JSValueRef>> retArray;
     for (Ref value : array)
-        retArray.append(fromJSON(context, value.get()));
+        retArray.append(Protected(globalContext, fromJSON(context, value.get())));
 
-    return JSObjectMakeArray(context, retArray.size(), retArray.span().data(), nullptr);
+    auto rawValues = retArray.map([](const Protected<JSValueRef>& ptr) {
+        return ptr.get();
+    });
+
+    return JSObjectMakeArray(context, rawValues.size(), rawValues.span().data(), nullptr);
 }
 
 static JSValueRef fromJSONObject(JSContextRef context, const JSON::Object& object)
@@ -353,12 +358,16 @@ JSValueRef fromJSON(JSContextRef context, RefPtr<JSON::Value> value)
     return JSValueMakeUndefined(context);
 }
 
-JSValueRef fromArray(JSContextRef context, Vector<JSValueRef>&& array)
+JSValueRef fromArray(JSContextRef context, Vector<Protected<JSValueRef>>&& array)
 {
     if (!context)
         return nullptr;
 
-    return JSObjectMakeArray(context, array.size(), array.span().data(), nullptr);
+    auto rawValues = array.map([](const Protected<JSValueRef>& ptr) {
+        return ptr.get();
+    });
+
+    return JSObjectMakeArray(context, rawValues.size(), rawValues.span().data(), nullptr);
 }
 
 JSValueRef fromArray(JSContextRef context, Vector<size_t>&& array)
@@ -367,7 +376,8 @@ JSValueRef fromArray(JSContextRef context, Vector<size_t>&& array)
         return nullptr;
 
     return fromArray(context, array.map([&context](auto num) {
-        return JSValueMakeNumber(context, num);
+        auto globalContext = JSContextGetGlobalContext(context);
+        return Protected(globalContext, JSValueMakeNumber(context, num));
     }));
 }
 
@@ -377,11 +387,12 @@ JSValueRef fromArray(JSContextRef context, Vector<String>&& array)
         return nullptr;
 
     return fromArray(context, array.map([&context](auto str) {
-        return JSValueMakeString(context, toJSString(str).get());
+        auto globalContext = JSContextGetGlobalContext(context);
+        return Protected(globalContext, JSValueMakeString(context, toJSString(str).get()));
     }));
 }
 
-JSValueRef fromObject(JSContextRef context, HashMap<String, JSValueRef>&& object)
+JSValueRef fromObject(JSContextRef context, HashMap<String, Protected<JSValueRef>>&& object)
 {
     if (!context)
         return nullptr;
@@ -391,7 +402,7 @@ JSValueRef fromObject(JSContextRef context, HashMap<String, JSValueRef>&& object
     for (auto& key : object.keys()) {
         JSRetainPtr jsKey = toJSString(key);
         // This is a safer cpp false positive (rdar://163760990).
-        SUPPRESS_UNCOUNTED_ARG JSObjectSetProperty(context, result, jsKey.get(), object.get(key), 0, nullptr);
+        SUPPRESS_UNCOUNTED_ARG JSObjectSetProperty(context, result, jsKey.get(), object.get(key).get(), 0, nullptr);
     }
 
     return result;
