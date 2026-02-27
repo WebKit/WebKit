@@ -39,6 +39,7 @@
 #include "MessageArgumentDescriptions.h"
 #include "MessageObserver.h"
 #include "NetworkProcessConnection.h"
+#include "Protected.h"
 #include "SerializedTypeInfo.h"
 #include "StreamClientConnection.h"
 #include "StreamConnectionBuffer.h"
@@ -2222,7 +2223,7 @@ static bool encodeConnectionHandle(IPC::Encoder& encoder, JSC::JSGlobalObject* g
 
 struct VectorEncodeHelper {
     JSContextRef context;
-    JSValueRef valueRef;
+    Protected<JSValueRef> valueRef;
     JSValueRef* exception;
     bool& success;
 
@@ -2230,7 +2231,7 @@ struct VectorEncodeHelper {
     {
         if (!success)
             return;
-        success = encodeArgument(encoder, context, valueRef, exception);
+        success = encodeArgument(encoder, context, valueRef.get(), exception);
     }
 };
 
@@ -2276,7 +2277,7 @@ static bool encodeArrayArgument(IPC::Encoder& encoder, ArrayMode arrayMode, JSCo
         auto itemRef = JSObjectGetPropertyAtIndex(context, objectRef, i, exception);
         if (!itemRef)
             return false;
-        vector.append(VectorEncodeHelper { context, itemRef, exception, success });
+        vector.append(VectorEncodeHelper { context, { JSContextGetGlobalContext(context), itemRef }, exception, success });
     }
     if (arrayMode == ArrayMode::Tuple) {
         for (auto& item : vector)
