@@ -67,7 +67,7 @@ namespace WebCore {
 using namespace ElementNames;
 using namespace HTMLNames;
 
-static CustomElementRegistry* registryForCurrentNode(Node& currentNode, TreeScope& treeScope);
+static CustomElementRegistry* registryForCurrentNode(Node& currentNode, TreeScope&);
 
 static AtomString findIsAttribute(const AtomHTMLToken& token)
 {
