@@ -1,0 +1,1 @@
+../../../../HowTos/WebKit/AddingNewMessageReceiver.md

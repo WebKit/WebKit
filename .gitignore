@@ -84,7 +84,6 @@ BenchmarkTemp
 CLAUDE.md
 .claude/commands
 .claude/settings.local.json
-.claude/skills
 
 # Remove mimalloc binaries
 /Source/bmalloc/mimalloc/mimalloc/bin/
