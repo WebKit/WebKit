@@ -27,13 +27,15 @@
 #import "WebKitMesh.h"
 
 #import "ModelTypes.h"
-#import "WebKitSwiftSoftLink.h"
 
+#import <WebCore/ProcessIdentity.h>
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/MathExtras.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/spi/cocoa/IOSurfaceSPI.h>
 #import <wtf/threads/BinarySemaphore.h>
+
+#import "WebKitSwiftSoftLink.h"
 
 namespace WebModel {
 
@@ -328,7 +330,8 @@ WebMesh::WebMesh(const WebModelCreateMeshDescriptor& descriptor)
     WKBridgeImageAsset *specularAsset = WebModel::convert(descriptor.specularTexture);
     if (configuration) {
         BinarySemaphore completion;
-        [configuration createMaterialCompiler:[&completion] mutable {
+        task_id_token_t memoryOwner = descriptor.processIdentity ? descriptor.processIdentity->taskIdToken() : 0;
+        [configuration createMaterialCompiler:memoryOwner completionHandler:[&completion] mutable {
             completion.signal();
         }];
         completion.wait();

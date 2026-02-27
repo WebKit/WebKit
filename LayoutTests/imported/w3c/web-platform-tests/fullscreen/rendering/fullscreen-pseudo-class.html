@@ -17,8 +17,7 @@
     const inner = outer.firstChild;
 
     // First request fullscreen for the outer element.
-    await trusted_request(outer);
-    await fullScreenChange();
+    await Promise.all([fullScreenChange(), trusted_request(outer)]);
     assert_equals(document.fullscreenElement, outer);
     assert_true(
       outer.matches(":fullscreen"),

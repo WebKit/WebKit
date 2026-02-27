@@ -2490,8 +2490,6 @@ webkit.org/b/308334 [ Tahoe Debug ] http/tests/webgpu/webgpu/api/validation/gpu_
 
 webkit.org/b/308494 media/remote-control-command-is-user-gesture.html [ Timeout Pass ]
 
-webkit.org/b/308586 imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-pseudo-class.html [ Pass Failure ]
-
 webkit.org/b/308594 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framerate.html [ Pass Failure ]
 
 webkit.org/b/308601 [ Release ] imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-updating.html [ Failure Pass ]

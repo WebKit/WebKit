@@ -26,7 +26,7 @@ import OSLog
 import WebKit
 import simd
 
-#if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreRenderer, _version: 11)
+#if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreRenderer, _version: 11) && compiler(>=6.2)
 @_weakLinked @_spi(UsdLoaderAPI) internal import _USDKit_RealityKit
 @_spi(RealityCoreRendererAPI) import RealityKit
 @_weakLinked @_spi(RealityCoreTextureProcessingAPI) internal import RealityCoreTextureProcessing
@@ -78,6 +78,7 @@ private func makeMTLTextureFromImageAsset(
     _ imageAsset: WKBridgeImageAsset,
     device: MTLDevice,
     generateMips: Bool,
+    memoryOwner: task_id_token_t,
     overridePixelFormat: Bool = false
 ) -> MTLTexture? {
     guard let imageAssetData = imageAsset.data else {
@@ -130,11 +131,11 @@ private func makeMTLTextureFromImageAsset(
         logError("failed to device.makeTexture")
         return nil
     }
+    mtlTexture.__setOwnerWithIdentity(memoryOwner)
 
     let bytesPerRow = imageAsset.width * imageAsset.bytesPerPixel
     let bytesPerImage = bytesPerRow * imageAsset.height
 
-    #if compiler(>=6.2)
     unsafe imageAssetData.bytes.withUnsafeBytes { textureBytes in
         guard let textureBytesBaseAddress = textureBytes.baseAddress else {
             return
@@ -153,26 +154,6 @@ private func makeMTLTextureFromImageAsset(
             )
         }
     }
-    #else
-    imageAssetData.bytes.withUnsafeBytes { textureBytes in
-        guard let textureBytesBaseAddress = textureBytes.baseAddress else {
-            return
-        }
-        for face in 0..<sliceCount {
-            let offset = face * bytesPerImage
-            let facePointer = textureBytesBaseAddress.advanced(by: offset)
-
-            mtlTexture.replace(
-                region: MTLRegionMake2D(0, 0, imageAsset.width, imageAsset.height),
-                mipmapLevel: 0,
-                slice: face,
-                withBytes: facePointer,
-                bytesPerRow: bytesPerRow,
-                bytesPerImage: bytesPerImage
-            )
-        }
-    }
-    #endif
 
     return mtlTexture
 }
@@ -183,6 +164,7 @@ private func makeTextureFromImageAsset(
     renderContext: _Proto_LowLevelRenderContext_v1,
     commandQueue: MTLCommandQueue,
     generateMips: Bool,
+    memoryOwner: task_id_token_t,
     overridePixelFormat: Bool,
     swizzle: MTLTextureSwizzleChannels = .init(red: .red, green: .green, blue: .blue, alpha: .alpha)
 ) -> _Proto_LowLevelTextureResource_v1? {
@@ -191,6 +173,7 @@ private func makeTextureFromImageAsset(
             imageAsset,
             device: device,
             generateMips: generateMips,
+            memoryOwner: memoryOwner,
             overridePixelFormat: overridePixelFormat
         )
     else {
@@ -314,11 +297,11 @@ extension WKBridgeUSDConfiguration {
         get { appRenderer.renderTargetDescriptor }
     }
 
-    @objc(initWithDevice:)
-    init(device: MTLDevice) {
+    @objc
+    init(device: MTLDevice, memoryOwner: task_id_token_t) {
         self.device = device
         do {
-            self.appRenderer = try Renderer(device: device)
+            self.appRenderer = try Renderer(device: device, memoryOwner: memoryOwner)
         } catch {
             fatalError("Exception creating renderer \(error)")
         }
@@ -410,6 +393,13 @@ extension WKBridgeReceiver {
     @nonobjc
     fileprivate var dontCaptureAgain: Bool = false
 
+    @nonobjc
+    fileprivate final var memoryOwner: mach_port_t {
+        get {
+            appRenderer.memoryOwner
+        }
+    }
+
     init(
         configuration: WKBridgeUSDConfiguration,
         diffuseAsset: WKBridgeImageAsset,
@@ -434,6 +424,7 @@ extension WKBridgeReceiver {
                 renderContext: renderContext,
                 commandQueue: configuration.commandQueue,
                 generateMips: true,
+                memoryOwner: configuration.appRenderer.memoryOwner,
                 overridePixelFormat: false,
                 swizzle: .init(red: .red, green: .red, blue: .red, alpha: .one)
             )
@@ -447,6 +438,7 @@ extension WKBridgeReceiver {
                 renderContext: renderContext,
                 commandQueue: configuration.commandQueue,
                 generateMips: true,
+                memoryOwner: configuration.appRenderer.memoryOwner,
                 overridePixelFormat: false,
                 swizzle: .init(red: .red, green: .red, blue: .red, alpha: .one)
             )
@@ -546,6 +538,7 @@ extension WKBridgeReceiver {
             renderContext: renderContext,
             commandQueue: commandQueue,
             generateMips: true,
+            memoryOwner: self.memoryOwner,
             overridePixelFormat: false
         ) {
             textureResources[textureHash] = textureResource
@@ -752,7 +745,14 @@ extension WKBridgeReceiver {
     @objc
     func setEnvironmentMap(_ imageAsset: WKBridgeImageAsset) {
         do {
-            guard let mtlTextureEquirectangular = makeMTLTextureFromImageAsset(imageAsset, device: device, generateMips: true) else {
+            guard
+                let mtlTextureEquirectangular = makeMTLTextureFromImageAsset(
+                    imageAsset,
+                    device: device,
+                    generateMips: true,
+                    memoryOwner: self.memoryOwner
+                )
+            else {
                 fatalError("Could not make metal texture from environment asset data")
             }
 
@@ -762,6 +762,7 @@ extension WKBridgeReceiver {
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
             // swift-format-ignore: NeverForceUnwrap
             let cubeMTLTexture = self.device.makeTexture(descriptor: cubeMTLTextureDescriptor)!
+            cubeMTLTexture.__setOwnerWithIdentity(self.memoryOwner)
 
             let diffuseMTLTextureDescriptor = try self.textureProcessingContext.createImageBasedLightDiffuseDescriptor(
                 fromCube: cubeMTLTexture
@@ -1016,11 +1017,7 @@ extension WKBridgeModelLoader {
         self.loader = USDModelLoader(objcInstance: self)
     }
 
-    @objc(
-        setCallbacksWithModelUpdatedCallback:
-        textureUpdatedCallback:
-        materialUpdatedCallback:
-    )
+    @objc
     func setCallbacksWithModelUpdatedCallback(
         _ modelUpdatedCallback: @escaping ((WKBridgeUpdateMesh) -> (Void)),
         textureUpdatedCallback: @escaping ((WKBridgeUpdateTexture) -> (Void)),
@@ -1089,7 +1086,6 @@ extension WKBridgeModelLoader {
     }
 }
 
-
 extension WKBridgeReceiver {
     internal func configureDeformation(
         identifier: _Proto_ResourceId,
@@ -1099,13 +1095,13 @@ extension WKBridgeReceiver {
         var deformers: [_Proto_LowLevelDeformerDescription_v1] = []
 
         if let skinningData = deformationData.skinningData {
-            let skinningDeformer = skinningData.makeDeformerDescription(device: self.device)
+            let skinningDeformer = skinningData.makeDeformerDescription(device: self.device, memoryOwner: self.memoryOwner)
             deformers.append(skinningDeformer)
         }
 
         if let blendShapeData = deformationData.blendShapeData {
             do {
-                let blendShapeDeformer = try blendShapeData.makeDeformerDescription(device: self.device)
+                let blendShapeDeformer = try blendShapeData.makeDeformerDescription(device: self.device, memoryOwner: self.memoryOwner)
                 deformers.append(blendShapeDeformer)
             } catch {
                 logError("Error creating blend shape deformer for \(identifier): \(error.localizedDescription)")
@@ -1115,7 +1111,7 @@ extension WKBridgeReceiver {
         // TODO: add tangent frame data to input
         // if let renormalizationData = deformationData.renormalizationData {
         //     do {
-        //         let renormalization = try renormalizationData.makeDeformerDescription(device: self.device)
+        //         let renormalization = try renormalizationData.makeDeformerDescription(device: self.device, memoryOwner: self.memoryOwner)
         //         deformers.append(renormalization)
         //     } catch {
         //         logError("Error creating renormalization deformer for \(identifier): \(error.localizedDescription)")
@@ -1133,7 +1129,8 @@ extension WKBridgeReceiver {
             let vertexPositionsBuffer = meshResource.readVertices(at: 1, using: commandBuffer)!
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
             // swift-format-ignore: NeverForceUnwrap
-            let inputPositionsBuffer = device.makeBuffer(length: vertexPositionsBuffer.length, options: .storageModeShared)!
+            let inputPositionsBuffer = unsafe device.makeBuffer(length: vertexPositionsBuffer.length, options: .storageModeShared)!
+            inputPositionsBuffer.__setOwnerWithIdentity(self.memoryOwner)
 
             // Copy data from vertexPositionsBuffer to inputPositionsBuffer
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
@@ -1215,9 +1212,7 @@ extension WKBridgeReceiver {
 }
 
 extension WKBridgeSkinningData {
-    fileprivate func makeDeformerDescription(device: MTLDevice) -> _Proto_LowLevelDeformerDescription_v1 {
-        // FIXME: (rdar://164559261) understand/document/remove unsafety
-        #if compiler(>=6.2)
+    fileprivate func makeDeformerDescription(device: MTLDevice, memoryOwner: mach_port_t) -> _Proto_LowLevelDeformerDescription_v1 {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
         // swift-format-ignore: NeverForceUnwrap
         let jointTransformsBuffer = unsafe device.makeBuffer(
@@ -1225,15 +1220,7 @@ extension WKBridgeSkinningData {
             length: self.jointTransforms.count * MemoryLayout<simd_float4x4>.size,
             options: .storageModeShared
         )!
-        #else
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-        // swift-format-ignore: NeverForceUnwrap
-        let jointTransformsBuffer = device.makeBuffer(
-            bytes: self.jointTransforms,
-            length: self.jointTransforms.count * MemoryLayout<simd_float4x4>.size,
-            options: .storageModeShared
-        )!
-        #endif
+        jointTransformsBuffer.__setOwnerWithIdentity(memoryOwner)
 
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
         // swift-format-ignore: NeverForceUnwrap
@@ -1244,8 +1231,6 @@ extension WKBridgeSkinningData {
             elementType: .float4x4
         )!
 
-        // FIXME: (rdar://164559261) understand/document/remove unsafety
-        #if compiler(>=6.2)
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
         // swift-format-ignore: NeverForceUnwrap
         let inverseBindPosesBuffer = unsafe device.makeBuffer(
@@ -1253,15 +1238,7 @@ extension WKBridgeSkinningData {
             length: self.inverseBindPoses.count * MemoryLayout<simd_float4x4>.size,
             options: .storageModeShared
         )!
-        #else
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-        // swift-format-ignore: NeverForceUnwrap
-        let inverseBindPosesBuffer = device.makeBuffer(
-            bytes: self.inverseBindPoses,
-            length: self.inverseBindPoses.count * MemoryLayout<simd_float4x4>.size,
-            options: .storageModeShared
-        )!
-        #endif
+        inverseBindPosesBuffer.__setOwnerWithIdentity(memoryOwner)
 
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
         // swift-format-ignore: NeverForceUnwrap
@@ -1272,8 +1249,6 @@ extension WKBridgeSkinningData {
             elementType: .float4x4
         )!
 
-        // FIXME: (rdar://164559261) understand/document/remove unsafety
-        #if compiler(>=6.2)
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
         // swift-format-ignore: NeverForceUnwrap
         let jointIndicesBuffer = unsafe device.makeBuffer(
@@ -1281,15 +1256,8 @@ extension WKBridgeSkinningData {
             length: self.influenceJointIndices.count * MemoryLayout<UInt32>.size,
             options: .storageModeShared
         )!
-        #else
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-        // swift-format-ignore: NeverForceUnwrap
-        let jointIndicesBuffer = device.makeBuffer(
-            bytes: self.influenceJointIndices,
-            length: self.influenceJointIndices.count * MemoryLayout<UInt32>.size,
-            options: .storageModeShared
-        )!
-        #endif
+        jointIndicesBuffer.__setOwnerWithIdentity(memoryOwner)
+
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
         // swift-format-ignore: NeverForceUnwrap
         let jointIndicesDescription = _Proto_LowLevelDeformationDescription_v1.Buffer.make(
@@ -1299,8 +1267,6 @@ extension WKBridgeSkinningData {
             elementType: .uint
         )!
 
-        // FIXME: (rdar://164559261) understand/document/remove unsafety
-        #if compiler(>=6.2)
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
         // swift-format-ignore: NeverForceUnwrap
         let influenceWeightsBuffer = unsafe device.makeBuffer(
@@ -1308,15 +1274,8 @@ extension WKBridgeSkinningData {
             length: self.influenceWeights.count * MemoryLayout<Float>.size,
             options: .storageModeShared
         )!
-        #else
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-        // swift-format-ignore: NeverForceUnwrap
-        let influenceWeightsBuffer = device.makeBuffer(
-            bytes: self.influenceWeights,
-            length: self.influenceWeights.count * MemoryLayout<Float>.size,
-            options: .storageModeShared
-        )!
-        #endif
+        influenceWeightsBuffer.__setOwnerWithIdentity(memoryOwner)
+
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
         // swift-format-ignore: NeverForceUnwrap
         let influenceWeightsDescription = _Proto_LowLevelDeformationDescription_v1.Buffer.make(
@@ -1340,7 +1299,7 @@ extension WKBridgeSkinningData {
 }
 
 extension WKBridgeBlendShapeData {
-    func makeDeformerDescription(device: MTLDevice) throws -> _Proto_LowLevelDeformerDescription_v1 {
+    func makeDeformerDescription(device: MTLDevice, memoryOwner: task_id_token_t) throws -> _Proto_LowLevelDeformerDescription_v1 {
         var weights: [Float] = []
 
         var debugWeights = self.weights
@@ -1354,11 +1313,13 @@ extension WKBridgeBlendShapeData {
 
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
         // swift-format-ignore: NeverForceUnwrap
-        let blendWeightsBuffer = device.makeBuffer(
+        let blendWeightsBuffer = unsafe device.makeBuffer(
             bytes: weights,
             length: weights.count * MemoryLayout<Float>.size,
             options: .storageModeShared
         )!
+        blendWeightsBuffer.__setOwnerWithIdentity(memoryOwner)
+
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
         // swift-format-ignore: NeverForceUnwrap
         let blendWeightsDescription = _Proto_LowLevelDeformationDescription_v1.Buffer.make(
@@ -1371,11 +1332,13 @@ extension WKBridgeBlendShapeData {
         let positionOffsets = debugPositionOffsets.flatMap(\.self)
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
         // swift-format-ignore: NeverForceUnwrap
-        let positionOffsetsBuffer = device.makeBuffer(
+        let positionOffsetsBuffer = unsafe device.makeBuffer(
             bytes: positionOffsets,
             length: positionOffsets.count * MemoryLayout<SIMD3<Float>>.size,
             options: .storageModeShared
         )!
+        positionOffsetsBuffer.__setOwnerWithIdentity(memoryOwner)
+
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
         // swift-format-ignore: NeverForceUnwrap
         let positionOffsetsDescription = _Proto_LowLevelDeformationDescription_v1.Buffer.make(
@@ -1399,15 +1362,17 @@ extension WKBridgeBlendShapeData {
 }
 
 extension WKBridgeRenormalizationData {
-    func makeDeformerDescription(device: MTLDevice) throws -> _Proto_LowLevelDeformerDescription_v1 {
+    func makeDeformerDescription(device: MTLDevice, memoryOwner: task_id_token_t) throws -> _Proto_LowLevelDeformerDescription_v1 {
         // Create adjacency buffer
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
         // swift-format-ignore: NeverForceUnwrap
-        let adjacenciesMetalBuffer = device.makeBuffer(
+        let adjacenciesMetalBuffer = unsafe device.makeBuffer(
             bytes: vertexAdjacencies,
             length: vertexAdjacencies.count * MemoryLayout<UInt32>.size,
             options: .storageModeShared
         )!
+        adjacenciesMetalBuffer.__setOwnerWithIdentity(memoryOwner)
+
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
         // swift-format-ignore: NeverForceUnwrap
         let adjacenciesBuffer = _Proto_LowLevelDeformationDescription_v1.Buffer.make(
@@ -1420,11 +1385,13 @@ extension WKBridgeRenormalizationData {
         // Create adjacency end indices buffer
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
         // swift-format-ignore: NeverForceUnwrap
-        let adjacencyEndIndicesMetalBuffer = device.makeBuffer(
+        let adjacencyEndIndicesMetalBuffer = unsafe device.makeBuffer(
             bytes: vertexAdjacencyEndIndices,
             length: vertexAdjacencyEndIndices.count * MemoryLayout<UInt32>.size,
             options: .storageModeShared
         )!
+        adjacencyEndIndicesMetalBuffer.__setOwnerWithIdentity(memoryOwner)
+
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
         // swift-format-ignore: NeverForceUnwrap
         let adjacencyEndIndicesBuffer = _Proto_LowLevelDeformationDescription_v1.Buffer.make(
@@ -1450,7 +1417,7 @@ extension WKBridgeRenormalizationData {
 @objc
 @implementation
 extension WKBridgeUSDConfiguration {
-    init(device: MTLDevice) {
+    init(device: MTLDevice, memoryOwner: task_id_token_t) {
     }
 
     @objc(createMaterialCompiler:)

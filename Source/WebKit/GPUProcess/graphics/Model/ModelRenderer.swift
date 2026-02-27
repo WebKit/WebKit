@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreRenderer, _version: 11)
+#if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreRenderer, _version: 11) && compiler(>=6.2)
 
 internal import QuartzCore
 @_weakLinked internal import USDKit
@@ -47,8 +47,9 @@ nonisolated class Renderer {
     }
     var pose: _Proto_Pose_v1
     var modelDistance: Float = 1.0
+    let memoryOwner: task_id_token_t
 
-    init(device: MTLDevice) throws {
+    init(device: MTLDevice, memoryOwner: task_id_token_t) throws {
         guard let commandQueue = device.makeCommandQueue() else {
             fatalError("Failed to create command queue.")
         }
@@ -57,10 +58,16 @@ nonisolated class Renderer {
         self.device = device
         self.commandQueue = commandQueue
         self.pose = .init(translation: [0, 0, 1], rotation: .init(ix: 0, iy: 0, iz: 0, r: 1))
+        self.memoryOwner = memoryOwner
     }
 
     func createMaterialCompiler(colorPixelFormat: MTLPixelFormat, rasterSampleCount: Int, colorSpace: CGColorSpace? = nil) async throws {
+        #if canImport(RealityCoreRenderer, _version: 9999)
         var configuration = _Proto_LowLevelRenderContextStandaloneConfiguration_v1(device: device)
+        configuration.memoryOwner = self.memoryOwner
+        #else
+        var configuration = _Proto_LowLevelRenderContextStandaloneConfiguration_v1(device: device)
+        #endif
         configuration.residencySetBehavior = _Proto_LowLevelRenderContextStandaloneConfiguration_v1.ResidencySetBehavior.disable
         let renderContext = try await _Proto_makeLowLevelRenderContextStandalone_v1(configuration: configuration)
 
