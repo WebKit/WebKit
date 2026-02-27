@@ -194,6 +194,8 @@ private:
 
     void collectChangedAnchorNames(const RenderStyle&, const RenderStyle* currentStyle);
 
+    static unsigned maximumRenderTreeDepth();
+
     const CheckedRef<Document> m_document;
     std::unique_ptr<RenderStyle> m_computedDocumentElementStyle;
 

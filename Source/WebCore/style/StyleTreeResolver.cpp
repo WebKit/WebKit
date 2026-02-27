@@ -75,6 +75,10 @@
 #include "WebAnimationUtilities.h"
 #include <ranges>
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 namespace WebCore {
 
 namespace Style {
@@ -1257,7 +1261,7 @@ void TreeResolver::resolveComposedTree()
 
         auto& element = downcast<Element>(node);
 
-        if (it.depth() > Settings::defaultMaximumRenderTreeDepth) {
+        if (it.depth() > maximumRenderTreeDepth()) {
             resetStyleForNonRenderedDescendants(element);
             it.traverseNextSkippingChildren();
             continue;
@@ -1924,6 +1928,20 @@ void TreeResolver::collectChangedAnchorNames(const RenderStyle& newStyle, const 
         addChanged(*currentStyle);
         addChanged(newStyle);
     }
+}
+
+unsigned TreeResolver::maximumRenderTreeDepth()
+{
+    static unsigned maximum = [] {
+#if PLATFORM(IOS)
+        if (WTF::IOSApplication::isMaild()) {
+            static const unsigned maximumMaildRenderTreeDepth = 200;
+            return maximumMaildRenderTreeDepth;
+        }
+#endif
+        return Settings::defaultMaximumRenderTreeDepth;
+    }();
+    return maximum;
 }
 
 static Vector<Function<void ()>>& postResolutionCallbackQueue()
