@@ -1,0 +1,58 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true MediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>media-source-evict-invalid-time-crash</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../../media/video-test.js"></script>
+    <script src="../../media/utilities.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function makeSyncSamples(trackID, start, end) {
+        var samples = [];
+        for (var pts = start; pts < end; pts++)
+            samples.push(makeASample(pts, pts, 1, 1, trackID, SAMPLE_FLAG.SYNC));
+        return concatenateSamples(samples);
+    }
+
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        source = new ManagedMediaSource();
+
+        run('video.src = URL.createObjectURL(source)');
+        run('video.disableRemotePlayback = true');
+        await waitFor(source, 'sourceopen');
+
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        run("initSegment = makeAInit(500, [makeATrack(1, 'mock', TRACK_KIND.VIDEO), makeATrack(2, 'mock', TRACK_KIND.AUDIO)])");
+        run('sourceBuffer.appendBuffer(initSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        run('sourceBuffer.appendBuffer(makeSyncSamples(1, 200, 400))');
+        await waitFor(sourceBuffer, 'updateend');
+
+        run('sourceBuffer.appendBuffer(makeSyncSamples(2, 250, 450))');
+        await waitFor(sourceBuffer, 'updateend');
+
+        run('video.currentTime = 200');
+        run('internals.beginSimulatedMemoryPressure()');
+        await waitFor(sourceBuffer, 'bufferedchange');
+
+        run('internals.endSimulatedMemoryPressure()');
+        consoleWrite('PASS: No crash from eviction with invalidTime.');
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    This tests that the eviction algorithm does not crash when the intersection
+    of track buffer ranges becomes empty during memory pressure eviction.
+    <video controls></video>
+</body>
+</html>

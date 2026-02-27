@@ -247,6 +247,7 @@ fast/shapes/shape-outside-floats/shape-outside-imagedata-overflow.html [ Skip ]
 [ Debug ] fast/files/blob-stream-chunks.html [ Skip ]
 [ Debug ] security/decode-buffer-size.html [ Skip ]
 [ Debug ] security/text-decode-long-strings.html [ Skip ]
+[ Debug ] media/media-source/media-source-evict-invalid-time-crash.html [ Skip ]
 
 # Only iOS supports QuickLook
 quicklook [ Skip ]

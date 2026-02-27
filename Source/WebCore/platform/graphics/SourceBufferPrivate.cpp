@@ -1526,6 +1526,10 @@ bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, const MediaTime& cur
 
         do {
             auto rangeStartBeforeCurrentTime = minimumBufferedTime();
+            if (!rangeStartBeforeCurrentTime.isValid()) {
+                ASSERT_NOT_REACHED();
+                break;
+            }
             auto rangeEndBeforeCurrentTime = std::min(rangeStartBeforeCurrentTime + timeChunk, maximumRangeEnd);
 
             if (rangeStartBeforeCurrentTime >= rangeEndBeforeCurrentTime)
@@ -1558,6 +1562,10 @@ bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, const MediaTime& cur
             });
 
             auto rangeEndAfterCurrentTime = buffered.maximumBufferedTime();
+            if (!rangeEndAfterCurrentTime.isValid()) {
+                ASSERT_NOT_REACHED();
+                break;
+            }
             auto rangeStartAfterCurrentTime = std::max(minimumRangeStartAfterCurrentTime, rangeEndAfterCurrentTime - timeChunk);
 
             if (rangeStartAfterCurrentTime >= rangeEndAfterCurrentTime)
