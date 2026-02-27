@@ -40,7 +40,7 @@ class EnhancedSecurityTracking final : public CanMakeWeakPtr<EnhancedSecurityTra
 public:
     void initializeWithWebsiteDataStore(WebsiteDataStore&);
 
-    void trackNavigation(const API::Navigation&, bool hasOpenedPage);
+    void trackNavigation(const API::Navigation&, bool hasOpenedPage, bool hasDeveloperExtrasEnabled);
 
     bool isEnhancedSecurityEnabled() const { return isEnhancedSecurityEnabledForState(enhancedSecurityState()); }
     EnhancedSecurity NODELETE enhancedSecurityState() const;
@@ -58,7 +58,7 @@ private:
     void handleBackForwardNavigation(const API::Navigation&);
 
     void enableFor(EnhancedSecurityReason, const API::Navigation&);
-    bool enableIfRequired(const API::Navigation&);
+    bool enableIfRequired(const API::Navigation&, bool hasDeveloperExtrasEnabled);
 
     void trackSameSiteNavigation(const API::Navigation&);
     void trackChangingSiteNavigation();
