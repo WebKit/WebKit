@@ -28,6 +28,7 @@
 
 #include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
+#include "ShadowRoot.h"
 #include "StyleInvalidationFunctions.h"
 
 namespace WebCore {
@@ -78,6 +79,11 @@ void PseudoClassChangeInvalidation::computeInvalidation(CSSSelector::PseudoClass
     }
 
     if (shouldInvalidateCurrent)
+        m_element.invalidateStyle();
+
+    // When a ::part() element's pseudo-class changes, rules in the host scope
+    // may reference this pseudo-class via ::part(name):pseudo-class selectors.
+    if (!m_element.partNames().isEmpty() && m_element.isInShadowTree())
         m_element.invalidateStyle();
 
     for (auto& key : makePseudoClassInvalidationKeys(pseudoClass, m_element))

@@ -76,13 +76,8 @@ JSValue toJS(JSGlobalObject*, JSDOMGlobalObject* globalObject, Element& element)
 
 JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<Element>&& element)
 {
-    if (element->isDefinedCustomElement()) {
-        JSValue result = getCachedWrapper(globalObject->world(), element);
-        if (result)
-            return result;
-        ASSERT(!globalObject->vm().exceptionForInspection());
-    }
-    ASSERT(!getCachedWrapper(globalObject->world(), element));
+    if (auto* wrapper = getCachedWrapper(globalObject->world(), element))
+        return wrapper;
     return createNewElementWrapper(globalObject, WTF::move(element));
 }
 

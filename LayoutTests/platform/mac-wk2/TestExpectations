@@ -2344,8 +2344,6 @@ webkit.org/b/299826 [ Release x86_64 ] media/modern-media-controls/media-control
 
 webkit.org/b/301153 [ Debug ] fast/parser/entity-comment-in-textarea.html [ Pass Timeout ]
 
-webkit.org/b/301566 [ Debug ] imported/w3c/web-platform-tests/custom-elements/registries/Element-innerHTML.html [ Skip ]
-
 # webkit.org/b/301384 REGRESSION(301931@main): [macOS x86_64] two tests in imported/w3c/web-platform-tests/css/css-backgrounds are constant image only failure 
 [ Release x86_64 ] imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-6.html [ ImageOnlyFailure ]
 [ Release x86_64 ] imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-7.html [ ImageOnlyFailure ]

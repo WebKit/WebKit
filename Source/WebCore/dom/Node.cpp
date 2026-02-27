@@ -2178,8 +2178,11 @@ inline unsigned Node::moveShadowTreeToNewDocumentFastCase(ShadowRoot& shadowRoot
 {
     ASSERT(isDocumentEligibleForFastAdoption(oldDocument, newDocument));
     adoptCustomElementRegistryIfNotExplicitlySet(shadowRoot, newDocument);
+    bool shouldSetNullRegistry = newDocument.usesNullCustomElementRegistry() && !shadowRoot.hasScopedCustomElementRegistry();
     return traverseSubtreeToUpdateTreeScope(shadowRoot, [&](Node& node) {
         node.moveNodeToNewDocumentFastCase(oldDocument, newDocument);
+        if (shouldSetNullRegistry && !node.usesNullCustomElementRegistry() && !node.usesScopedCustomElementRegistryMap()) [[unlikely]]
+            node.setUsesNullCustomElementRegistry();
     }, [&oldDocument, &newDocument](ShadowRoot& innerShadowRoot) {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&innerShadowRoot.document() == &oldDocument);
         innerShadowRoot.moveShadowRootToNewDocument(oldDocument, newDocument);
@@ -2191,8 +2194,11 @@ inline void Node::moveShadowTreeToNewDocumentSlowCase(ShadowRoot& shadowRoot, Do
 {
     ASSERT(!isDocumentEligibleForFastAdoption(oldDocument, newDocument));
     adoptCustomElementRegistryIfNotExplicitlySet(shadowRoot, newDocument);
+    bool shouldSetNullRegistry = newDocument.usesNullCustomElementRegistry() && !shadowRoot.hasScopedCustomElementRegistry();
     traverseSubtreeToUpdateTreeScope(shadowRoot, [&](Node& node) {
         node.moveNodeToNewDocumentSlowCase(oldDocument, newDocument);
+        if (shouldSetNullRegistry && !node.usesNullCustomElementRegistry() && !node.usesScopedCustomElementRegistryMap()) [[unlikely]]
+            node.setUsesNullCustomElementRegistry();
     }, [&oldDocument, &newDocument](ShadowRoot& innerShadowRoot) {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&innerShadowRoot.document() == &oldDocument);
         innerShadowRoot.moveShadowRootToNewDocument(oldDocument, newDocument);
@@ -2210,6 +2216,8 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
     bool newScopeIsUAShadowTree = newScope.rootNode().hasBeenInUserAgentShadowTree();
     if (&oldDocument.get() != &newDocument.get()) {
         oldDocument->incrementReferencingNodeCount();
+        auto* newDocRegistry = newDocument->customElementRegistry();
+        bool shouldSetNullForScopedDocRegistry = newDocRegistry && newDocRegistry->isScoped();
         bool isFastCase = isDocumentEligibleForFastAdoption(oldDocument, newDocument) && !newScopeIsUAShadowTree;
         if (isFastCase) {
             unsigned nodeCount = traverseSubtreeToUpdateTreeScope(root, [&](Node& node) {
@@ -2217,6 +2225,8 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
                 RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&node.treeScope() == &oldScope);
                 node.setTreeScope(newScope);
                 node.moveNodeToNewDocumentFastCase(oldDocument, newDocument);
+                if (shouldSetNullForScopedDocRegistry && !node.usesNullCustomElementRegistry() && !node.usesScopedCustomElementRegistryMap()) [[unlikely]]
+                    node.setUsesNullCustomElementRegistry();
             }, [&](ShadowRoot& shadowRoot) {
                 ASSERT_WITH_SECURITY_IMPLICATION(&shadowRoot.document() == oldDocument.ptr());
                 shadowRoot.moveShadowRootToNewParentScope(newScope, newDocument);
@@ -2232,6 +2242,8 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
                     node.setEventTargetFlag(EventTargetFlag::HasBeenInUserAgentShadowTree);
                 node.setTreeScope(newScope);
                 node.moveNodeToNewDocumentSlowCase(oldDocument, newDocument);
+                if (shouldSetNullForScopedDocRegistry && !node.usesNullCustomElementRegistry() && !node.usesScopedCustomElementRegistryMap()) [[unlikely]]
+                    node.setUsesNullCustomElementRegistry();
             }, [&](ShadowRoot& shadowRoot) {
                 ASSERT_WITH_SECURITY_IMPLICATION(&shadowRoot.document() == oldDocument.ptr());
                 shadowRoot.moveShadowRootToNewParentScope(newScope, newDocument);

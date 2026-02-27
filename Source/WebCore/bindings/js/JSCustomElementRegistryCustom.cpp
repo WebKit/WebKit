@@ -238,6 +238,25 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
     return jsUndefined();
 }
 
+// https://html.spec.whatwg.org/#dom-customelementregistry-getname
+JSValue JSCustomElementRegistry::getName(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)
+{
+    VM& vm = lexicalGlobalObject.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (callFrame.argumentCount() < 1) [[unlikely]]
+        return throwException(&lexicalGlobalObject, scope, createNotEnoughArgumentsError(&lexicalGlobalObject));
+
+    JSValue constructorValue = callFrame.uncheckedArgument(0);
+    if (!constructorValue.isConstructor())
+        return throwTypeError(&lexicalGlobalObject, scope, "The argument must be a constructor"_s);
+
+    String name = wrapped().getName(constructorValue);
+    if (name.isNull())
+        return jsNull();
+    return jsStringWithCache(vm, name);
+}
+
 // https://html.spec.whatwg.org/#dom-customelementregistry-whendefined
 static JSValue whenDefinedPromise(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame, JSDOMGlobalObject& globalObject, CustomElementRegistry& registry, JSPromise& promise)
 {

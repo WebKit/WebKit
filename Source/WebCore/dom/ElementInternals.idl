@@ -57,11 +57,13 @@
     [Reflect="aria-checked"] attribute DOMString? ariaChecked;
     [Reflect="aria-colcount"] attribute DOMString? ariaColCount;
     [Reflect="aria-colindex"] attribute DOMString? ariaColIndex;
+    [Reflect="aria-colindextext"] attribute DOMString? ariaColIndexText;
     [Reflect="aria-colspan"] attribute DOMString? ariaColSpan;
     [CustomGetter, Reflect="aria-controls"] attribute FrozenArray<Element>? ariaControlsElements;
     [CustomGetter, Reflect="aria-actions", EnabledBySetting=ARIAActionsSupportEnabled] attribute FrozenArray<Element>? ariaActionsElements;
     [Reflect="aria-current"] attribute DOMString? ariaCurrent;
     [CustomGetter, Reflect="aria-describedby"] attribute FrozenArray<Element>? ariaDescribedByElements;
+    [Reflect="aria-description"] attribute DOMString? ariaDescription;
     [CustomGetter, Reflect="aria-details"] attribute FrozenArray<Element>? ariaDetailsElements;
     [Reflect="aria-disabled"] attribute DOMString? ariaDisabled;
     [CustomGetter, Reflect="aria-errormessage"] attribute FrozenArray<Element>? ariaErrorMessageElements;
@@ -89,6 +91,7 @@
     [Reflect="aria-roledescription"] attribute DOMString? ariaRoleDescription;
     [Reflect="aria-rowcount"] attribute DOMString? ariaRowCount;
     [Reflect="aria-rowindex"] attribute DOMString? ariaRowIndex;
+    [Reflect="aria-rowindextext"] attribute DOMString? ariaRowIndexText;
     [Reflect="aria-rowspan"] attribute DOMString? ariaRowSpan;
     [Reflect="aria-selected"] attribute DOMString? ariaSelected;
     [Reflect="aria-setsize"] attribute DOMString? ariaSetSize;

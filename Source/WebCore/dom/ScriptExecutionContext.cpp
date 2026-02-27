@@ -496,6 +496,10 @@ bool ScriptExecutionContext::canIncludeErrorDetails(CachedScript* script, const 
     URL completeSourceURL = completeURL(sourceURL);
     if (completeSourceURL.protocolIsData())
         return true;
+    // Scripts from about:srcdoc and about:blank documents always inherit their
+    // parent's origin, so their error details should never be muted.
+    if (completeSourceURL.protocolIsAbout())
+        return true;
     if (script) {
         ASSERT(script->origin());
         ASSERT(securityOrigin()->toString() == script->origin()->toString());
