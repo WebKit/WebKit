@@ -48,7 +48,13 @@
     window.testRunner?.dumpAsText();
     window.testRunner?.waitUntilDone();
 
+    // Before animations are applied, the container has visual overflow.
+    // Once the animation is applied it no longer does since the content
+    // now have `scale: 0` set on it. We wait for the potential acceleration
+    // of that animation and its commit to the remote layer tree to make sure
+    // we do not crash.
     await animationAcceleration(document.getAnimations()[0]);
+    await threadedAnimationsCommit();
 
     window.testRunner?.notifyDone();
 })();
