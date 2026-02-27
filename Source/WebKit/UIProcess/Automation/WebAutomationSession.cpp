@@ -1086,6 +1086,32 @@ void WebAutomationSession::wheelEventsFlushedForPage(const WebPageProxy& page)
 #endif
 }
 
+void WebAutomationSession::failPendingNavigationsForFrame(const WebFrameProxy& frame)
+{
+    Vector<Inspector::CommandCallback<void>> callbacksToFail;
+    auto takeCallback = [&](auto& map, const auto& key) {
+        if (auto callback = map.take(key))
+            callbacksToFail.append(WTF::move(callback));
+    };
+
+    if (!frame.isMainFrame()) {
+        auto frameID = frame.frameID();
+        takeCallback(m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame, frameID);
+        takeCallback(m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame, frameID);
+    } else {
+        auto pageID = frame.page()->identifier();
+        takeCallback(m_pendingNormalNavigationInBrowsingContextCallbacksPerPage, pageID);
+        takeCallback(m_pendingEagerNavigationInBrowsingContextCallbacksPerPage, pageID);
+    }
+
+    if (callbacksToFail.isEmpty())
+        return;
+
+    m_loadTimer.stop();
+    for (auto& callback : callbacksToFail)
+        callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
+}
+
 #if ENABLE(WEBDRIVER_BIDI)
 void WebAutomationSession::didCreatePage(WebPageProxy& page)
 {
@@ -1118,6 +1144,7 @@ void WebAutomationSession::navigationFailedForFrame(const WebFrameProxy& frame, 
     m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::NavigationFailed, { }, [&]() {
         m_bidiProcessor->browsingContextDomainNotifier().navigationFailed(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), WallTime::now().secondsSinceEpoch().milliseconds(), frame.url().string());
     });
+    failPendingNavigationsForFrame(frame);
 }
 
 void WebAutomationSession::navigationAbortedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)
@@ -1125,6 +1152,7 @@ void WebAutomationSession::navigationAbortedForFrame(const WebFrameProxy& frame,
     m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::NavigationAborted, { }, [&]() {
         m_bidiProcessor->browsingContextDomainNotifier().navigationAborted(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), WallTime::now().secondsSinceEpoch().milliseconds(), frame.url().string());
     });
+    failPendingNavigationsForFrame(frame);
 }
 
 void WebAutomationSession::fragmentNavigatedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)

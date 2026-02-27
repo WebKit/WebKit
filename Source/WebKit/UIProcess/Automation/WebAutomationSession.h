@@ -168,6 +168,7 @@ public:
     void setProcessPool(WebProcessPool*);
 
     void navigationOccurredForFrame(const WebFrameProxy&);
+    void failPendingNavigationsForFrame(const WebFrameProxy&);
     void documentLoadedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>, WallTime timestamp);
     void loadCompletedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>, WallTime timestamp);
     void inspectorFrontendLoaded(const WebPageProxy&);

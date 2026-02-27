@@ -9103,6 +9103,15 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     }
 #endif
 
+#if PLATFORM(COCOA)
+    if (!canHandleRequest && frame.isMainFrame() && m_controlledByAutomation) {
+        if (RefPtr automationSession = activeAutomationSession()) {
+            automationSession->failPendingNavigationsForFrame(frame);
+            return receivedPolicyDecision(PolicyAction::Ignore, protect(m_navigationState->navigation(*navigationID)).get(), std::nullopt, WTF::move(navigationAction), WillContinueLoadInNewProcess::No, std::nullopt, std::nullopt, WTF::move(completionHandler));
+        }
+    }
+#endif
+
     ShouldExpectSafeBrowsingResult shouldExpectSafeBrowsingResult = ShouldExpectSafeBrowsingResult::Yes;
     if (!protect(preferences())->safeBrowsingEnabled())
         shouldExpectSafeBrowsingResult = ShouldExpectSafeBrowsingResult::No;
