@@ -543,7 +543,7 @@ template<typename CharacterType> String ContentSecurityPolicySourceList::parsePa
     ASSERT(buffer.position() <= buffer.end());
     ASSERT(buffer.atEnd() || (*buffer == '#' || *buffer == '?'));
 
-    return PAL::decodeURLEscapeSequences(begin.first(buffer.position() - begin.data()));
+    return String(begin.first(buffer.position() - begin.data()));
 }
 
 // port              = ":" ( 1*DIGIT / "*" )

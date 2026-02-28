@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='resources/multiple-iframe-test.js'></script>
+<script>
+var tests = [
+    // Normal path within allowed dir.
+    ['yes', 'script-src 127.0.0.1:8000/security/', 'resources/script.js'],
+
+    // Multi-level %2F..%2F traversal outside allowed dir. Normalizes to /resources/script.js.
+    ['no', 'script-src 127.0.0.1:8000/security/contentSecurityPolicy/resources/', 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources%2F..%2F..%2Fresources/script.js'],
+
+    // Single-level %2F..%2F traversal. Normalizes to /security/resources/script.js.
+    ['no', 'script-src 127.0.0.1:8000/security/contentSecurityPolicy/', 'http://127.0.0.1:8000/security/contentSecurityPolicy%2F..%2Fresources/script.js'],
+
+    // Lowercase %2f should also be blocked.
+    ['no', 'script-src 127.0.0.1:8000/security/contentSecurityPolicy/', 'http://127.0.0.1:8000/security/contentSecurityPolicy%2f..%2fresources/script.js'],
+
+    // Mixed case %2f and %2F in the same URL.
+    ['no', 'script-src 127.0.0.1:8000/security/contentSecurityPolicy/resources/', 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources%2f..%2F..%2Fresources/script.js'],
+
+    // Four consecutive dot segments. Normalizes to /resources/script.js.
+    ['no', 'script-src 127.0.0.1:8000/security/contentSecurityPolicy/resources/', 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources%2F..%2F..%2F..%2F..%2Fresources/script.js'],
+
+    // Traversal past root clamps to /. Normalizes to /etc/script.js.
+    ['no', 'script-src 127.0.0.1:8000/security/', 'http://127.0.0.1:8000/security%2F..%2F..%2F..%2F..%2Fetc/script.js'],
+];
+</script>
+</head>
+<body onload="test()">
+  <p>
+    Percent-encoded path traversal sequences (%2F..%2F) should not bypass CSP path restrictions.
+  </p>
+</body>
+</html>
