@@ -377,15 +377,16 @@ void WebExtensionAPIDeclarativeNetRequest::isRegexSupported(NSDictionary *option
         return;
 
     NSString *regexString = objectForKey<NSString>(options, regexKey);
-    if (![WKContentRuleList _supportsRegularExpression:regexString])
+    if (![WKContentRuleList _supportsRegularExpression:regexString]) {
         callback->call(fromObject(callback->globalContext(), {
-            { "isSupported"_s, JSValueMakeBoolean(callback->globalContext(), false) },
-            { "reason"_s, JSValueMakeString(callback->globalContext(), toJSString("syntaxError"_s).get()) }
+            { "isSupported"_s, Protected(callback->globalContext(), JSValueMakeBoolean(callback->globalContext(), false)) },
+            { "reason"_s, Protected(callback->globalContext(), JSValueMakeString(callback->globalContext(), toJSString("syntaxError"_s).get())) }
         }));
-    else
+    } else {
         callback->call(fromObject(callback->globalContext(), {
-            { "isSupported"_s, JSValueMakeBoolean(callback->globalContext(), true) }
+            { "isSupported"_s, Protected(callback->globalContext(), JSValueMakeBoolean(callback->globalContext(), true)) }
         }));
+    }
 }
 
 void WebExtensionAPIDeclarativeNetRequest::setExtensionActionOptions(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)

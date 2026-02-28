@@ -85,17 +85,18 @@ void WebExtensionAPIDevToolsInspectedWindow::eval(WebPageProxyIdentifier webPage
             // If an error occurred, element 0 will be undefined, and element 1 will contain an object giving details about the error.
             String valueKey = result.value().error() ? result.value().error()->message : emptyString();
             SUPPRESS_UNCOUNTED_ARG auto valueData = JSValueMakeString(globalContext, toJSString(valueKey).get());
-            callback->call(fromArray(globalContext, { undefinedValue, fromObject(globalContext, {
-                { "isExceptionKey"_s, JSValueMakeBoolean(globalContext, true) },
-                { "valueKey"_s, valueData }
-            }) }));
+            SUPPRESS_UNCOUNTED_ARG auto resultObject = fromObject(globalContext, {
+                { "isExceptionKey"_s, Protected(globalContext, JSValueMakeBoolean(globalContext, true)) },
+                { "valueKey"_s, Protected(globalContext, valueData) }
+            });
+            callback->call(fromArray(globalContext, { Protected(globalContext, undefinedValue), Protected(globalContext, resultObject) }));
             return;
         }
 
         auto scriptResult = result.value()->toJS(globalContext);
 
         // If no error occurred, element 0 will contain the result of evaluating the expression, and element 1 will be undefined.
-        callback->call(fromArray(globalContext, { scriptResult.get(), undefinedValue }));
+        callback->call(fromArray(globalContext, { Protected(globalContext, scriptResult.get()), Protected(globalContext, undefinedValue) }));
     }, extensionContext().identifier());
 }
 

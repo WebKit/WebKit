@@ -27,6 +27,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "Protected.h"
 #include <JavaScriptCore/JSRetainPtr.h>
 #if PLATFORM(COCOA)
 #include <JavaScriptCore/JavaScriptCore.h>
@@ -151,12 +152,12 @@ bool isDictionary(JSContextRef, JSValueRef);
 bool isRegularExpression(JSContextRef, JSValueRef);
 bool isThenable(JSContextRef, JSValueRef);
 
-JSValueRef fromArray(JSContextRef, Vector<JSValueRef>&&);
+JSValueRef fromArray(JSContextRef, Vector<Protected<JSValueRef>>&&);
 JSValueRef fromArray(JSContextRef, Vector<size_t>&&);
 JSValueRef fromArray(JSContextRef, Vector<String>&&);
 
 JSValueRef fromJSON(JSContextRef, RefPtr<JSON::Value>);
-JSValueRef fromObject(JSContextRef, HashMap<String, JSValueRef>&&);
+JSValueRef fromObject(JSContextRef, HashMap<String, Protected<JSValueRef>>&&);
 
 JSValueRef toJSValueRef(JSContextRef, const String&, NullOrEmptyString = NullOrEmptyString::NullStringAsEmptyString);
 

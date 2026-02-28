@@ -58,8 +58,8 @@ void WebExtensionAPIPermissions::getAll(Ref<WebExtensionCallbackHandler>&& callb
         auto originsValue = fromArray(globalContext, WTF::move(origins));
 
         callback->call(fromObject(globalContext, {
-            { permissionsKey, permissionsValue },
-            { originsKey, originsValue }
+            { permissionsKey, Protected(globalContext, permissionsValue) },
+            { originsKey, Protected(globalContext, originsValue) }
         }));
     }, extensionContext().identifier());
 }
