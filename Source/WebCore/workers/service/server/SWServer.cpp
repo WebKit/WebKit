@@ -123,7 +123,10 @@ std::optional<ServiceWorkerClientData> SWServer::serviceWorkerClientWithOriginBy
         return std::nullopt;
 
     auto clientIterator = m_clientsById.find(clientIdentifier);
-    ASSERT(clientIterator != m_clientsById.end());
+    if (clientIterator == m_clientsById.end()) [[unlikely]] {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
     return clientIterator->value;
 }
 
@@ -135,6 +138,10 @@ std::optional<ServiceWorkerClientData> SWServer::topLevelServiceWorkerClientFrom
 
     for (auto clientIdentifier : iterator->value.identifiers) {
         auto clientIterator = m_clientsById.find(clientIdentifier);
+        if (clientIterator == m_clientsById.end()) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
         if (clientIterator->value->frameType == ServiceWorkerClientFrameType::TopLevel && clientIterator->value->pageIdentifier == pageIdentifier)
             return clientIterator->value;
     }
