@@ -1831,19 +1831,23 @@ void GridTrackSizingAlgorithm::computeDefiniteAndIndefiniteItemsForMasonry(StdMa
     traverseSubgridTreeForIntrinsicSizing([&](RenderBox& gridItem, GridSpan gridItemSpan) {
         // Determine if this item has an indefinite position in the masonry grid-axis.
         // Check against the item's immediate parent grid, using the direction mapped
-        // into that parent's coordinate space.
-        auto* parentGrid = dynamicDowncast<RenderGrid>(gridItem.parent());
-        auto parentDirection = parentGrid
-            ? GridLayoutFunctions::flowAwareDirectionForGridItem(*m_renderGrid, *parentGrid, m_direction)
-            : m_direction;
-        bool isIndefinite = parentGrid && Style::GridPositionsResolver::resolveGridPositionsFromStyle(*parentGrid, gridItem, parentDirection).isIndefinite();
-        bool isDirectChildOfMasonryGrid = gridItem.parent() == m_renderGrid;
+        // into that parent's coordinate space. The parent is always a RenderGrid since
+        // traverseSubgridTreeForIntrinsicSizing only visits children of grid containers.
+        CheckedRef parentGrid = downcast<RenderGrid>(*gridItem.parent());
+        auto parentDirection = GridLayoutFunctions::flowAwareDirectionForGridItem(*m_renderGrid, parentGrid, m_direction);
+        // For display:grid subgrids (not display:grid-lanes) inside a grid-lanes parent,
+        // items have been placed by the grid's auto-placement algorithm, so they should
+        // not be considered indefinite even if their CSS style uses auto placement.
+        // We check isMasonry() (no direction argument) to see if the parent uses grid-lanes
+        // display at all, rather than checking the specific direction.
+        bool isIndefinite = parentGrid->isMasonry() && Style::GridPositionsResolver::resolveGridPositionsFromStyle(parentGrid, gridItem, parentDirection).isIndefinite();
+        bool isDirectChildOfMasonryGrid = parentGrid.ptr() == m_renderGrid;
 
         if (isIndefinite && !isDirectChildOfMasonryGrid) {
             // Items inside a masonry subgrid with indefinite placement could land in any
             // track the subgrid spans. Apply their contribution as a definite single-span
             // item to each content-sized track in the subgrid's span.
-            auto subgridSpan = m_renderGrid->gridSpanForGridItem(*parentGrid, m_direction);
+            auto subgridSpan = m_renderGrid->gridSpanForGridItem(parentGrid, m_direction);
             for (auto trackIndex : subgridSpan) {
                 if (!isTrackContentSized(trackIndex))
                     continue;
