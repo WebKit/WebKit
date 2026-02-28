@@ -61,14 +61,14 @@ bool SystemSettingsManagerProxy::darkMode() const
     // Or maybe just use the settings portal, because we don't want to depend on libhandy, and maybe don't want to depend on libadwaita?
     if (const char* themeNameEnv = g_getenv("GTK_THEME")) {
         String themeNameEnvString = String::fromUTF8(themeNameEnv);
-        return themeNameEnvString.endsWith("-dark"_s) || themeNameEnvString.endsWith("-Dark"_s) || themeNameEnvString.endsWith(":dark"_s);
+        return themeNameEnvString.containsIgnoringASCIICase("-dark-"_s) || themeNameEnvString.endsWithIgnoringASCIICase("-dark"_s) || themeNameEnvString.endsWith(":dark"_s);
     }
 
     GUniqueOutPtr<char> themeName;
     g_object_get(m_settings, "gtk-theme-name", &themeName.outPtr(), nullptr);
     if (themeName) {
         String themeNameString = String::fromUTF8(themeName.get());
-        if (themeNameString.endsWith("-dark"_s) || themeNameString.endsWith("-Dark"_s))
+        if (themeNameString.containsIgnoringASCIICase("-dark-"_s) || themeNameString.endsWithIgnoringASCIICase("-dark"_s))
             return true;
     }
 
