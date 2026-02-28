@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,10 +61,45 @@ static double WebAVPlayerControllerLiveStreamMinimumTargetDuration = 1.0; // Min
 static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 30.0;
 
 @interface WebAVPlayerControllerForwarder : NSObject
+@property (readwrite, strong) WebAVPlayerController *playerController;
 @end
 
 @implementation WebAVPlayerControllerForwarder {
-    RetainPtr<WebAVPlayerController> _playerController;
+    SUPPRESS_UNRETAINED_MEMBER WebAVPlayerController *_playerController;
+}
+
+// IMPORTANT: The -init and -dealloc methods below are copied to the dynamically created
+// WebAVPlayerControllerForwarder_AVKitCompatible class, which inherits from AVPlayerController.
+// When these methods call [super init] or [super dealloc], the compiler generates calls to
+// objc_msgSendSuper2, which stores a reference to the COMPILE-TIME class (WebAVPlayerControllerForwarder)
+// in the __objc_superrefs section. At runtime, objc_msgSendSuper2 looks up that class's superclass
+// (NSObject), NOT the dynamic class's superclass (AVPlayerController).
+//
+// This means:
+// - [super init] in the copied -init calls NSObject's -init, skipping AVPlayerController's -init
+// - [super dealloc] in the copied -dealloc calls NSObject's -dealloc, skipping AVPlayerController's -dealloc
+//
+// This is intentional: we use AVPlayerController as a superclass only to satisfy Swift's type system
+// at runtime, but we never actually initialize or use AVPlayerController's functionality.
+
+// Use object_getInstanceVariable/object_setInstanceVariable so these methods work for both
+// this class and the dynamically created WebAVPlayerControllerForwarder_AVKitCompatible subclass
+// (which has _playerController at a different offset due to inheriting from AVPlayerController).
+
+- (WebAVPlayerController *)playerController
+{
+    void *value = nullptr;
+    object_getInstanceVariable(self, "_playerController", &value);
+    return [[(__bridge WebAVPlayerController *)value retain] autorelease];
+}
+
+- (void)setPlayerController:(WebAVPlayerController *)playerController
+{
+    void *oldValue = nullptr;
+    object_getInstanceVariable(self, "_playerController", &oldValue);
+    [playerController retain];
+    object_setInstanceVariable(self, "_playerController", (__bridge void *)playerController);
+    [(__bridge id)oldValue release];
 }
 
 - (instancetype)init
@@ -73,19 +108,26 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
     if (!self)
         return nil;
 
-    _playerController = adoptNS([[WebAVPlayerController alloc] init]);
+    self.playerController = adoptNS([[WebAVPlayerController alloc] init]).get();
 
     return self;
 }
 
+- (void)dealloc
+{
+    self.playerController = nil;
+    [super dealloc];
+}
+
 - (BOOL)respondsToSelector:(SEL)aSelector
 {
-    return [_playerController respondsToSelector:aSelector];
+    return [self.playerController respondsToSelector:aSelector];
 }
 
 - (id)forwardingTargetForSelector:(SEL)aSelector
 {
-    return _playerController.get();
+    UNUSED_PARAM(aSelector);
+    return self.playerController;
 }
 
 - (id)valueForKey:(NSString *)key
@@ -122,21 +164,22 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 {
     // Only use the proxy object for key paths identifying undefined properties on WebAVPlayerController.
 
-    NSObject *target = [_playerController playerControllerProxy];
+    RetainPtr<WebAVPlayerController> playerController = self.playerController;
+    RetainPtr<NSObject> target = [playerController playerControllerProxy];
 
     NSString *propertyNameFromKeyPath = [[keyPath componentsSeparatedByString:@"."] firstObject];
     if (!propertyNameFromKeyPath.length)
-        return target;
+        return target.autorelease();
 
-    auto properties = class_copyPropertyListSpan([_playerController class]);
+    auto properties = class_copyPropertyListSpan([playerController class]);
     for (auto& property : properties.span()) {
         NSString *propertyName = [NSString stringWithUTF8String:property_getName(property)];
         if ([propertyNameFromKeyPath isEqualToString:propertyName]) {
-            target = _playerController.get();
+            target = WTF::move(playerController);
             break;
         }
     }
-    return target;
+    return target.autorelease();
 }
 
 @end
@@ -150,15 +193,26 @@ static Class createWebAVPlayerControllerForwarderClassSingleton()
     Class superClass = getAVPlayerControllerClassSingleton();
     Class implClass = [WebAVPlayerControllerForwarder class];
     Class newClass = objc_allocateClassPair(superClass, "WebAVPlayerControllerForwarder_AVKitCompatible", 0);
+
+    // Add ivar BEFORE registering the class pair (required by ObjC runtime).
+    class_addIvar(newClass, "_playerController", sizeof(WebAVPlayerController *), log2(sizeof(WebAVPlayerController *)), @encode(WebAVPlayerController *));
+
     objc_registerClassPair(newClass);
 
-    // Remove all of AVPlayerController's methods.
+    // Override all of AVPlayerController's methods with unknownMethodImp
+    // (except internal '.' methods like .cxx_destruct).
     auto methods = class_copyMethodListSpan(superClass);
     IMP unknownMethodImp = class_getMethodImplementation(superClass, NSSelectorFromString(@"_web_unknownMethod"));
-    for (auto& method : methods.span())
-        class_addMethod(newClass, method_getName(method), unknownMethodImp, method_getTypeEncoding(method));
+    for (auto& method : methods.span()) {
+        SEL selector = method_getName(method);
+        if ([NSStringFromSelector(selector) hasPrefix:@"."])
+            continue;
+        class_addMethod(newClass, selector, unknownMethodImp, method_getTypeEncoding(method));
+    }
 
     // Copy methods from WebAVPlayerControllerForwarder.
+    // All methods use object_getInstanceVariable/object_setInstanceVariable for the _playerController
+    // ivar, so they work regardless of ivar offset differences between class hierarchies.
     methods = class_copyMethodListSpan(implClass);
     for (auto& method : methods.span()) {
         SEL selector = method_getName(method);
@@ -167,10 +221,10 @@ static Class createWebAVPlayerControllerForwarderClassSingleton()
         class_replaceMethod(newClass, selector, method_getImplementation(method), method_getTypeEncoding(method));
     }
 
-    class_addIvar(newClass, "_playerController", sizeof(RetainPtr<WebAVPlayerController>), log2(sizeof(RetainPtr<WebAVPlayerController>)), @encode(RetainPtr<WebAVPlayerController>));
-
     return newClass;
 }
+
+namespace WebCore {
 
 RetainPtr<WebAVPlayerController> createWebAVPlayerController()
 {
@@ -185,6 +239,8 @@ Class webAVPlayerControllerClassSingleton()
         webAVPlayerControllerForwarderClass = createWebAVPlayerControllerForwarderClassSingleton();
     return webAVPlayerControllerForwarderClass;
 }
+
+} // namespace WebCore
 
 @implementation WebAVPlayerController {
     WeakPtr<WebCore::PlaybackSessionModel> _delegate;

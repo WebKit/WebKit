@@ -3811,6 +3811,7 @@
 		A1798B862243446B000764BD /* apple-pay-availability.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "apple-pay-availability.html"; sourceTree = "<group>"; };
 		A1798B8822435D2E000764BD /* apple-pay-availability-in-iframe.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "apple-pay-availability-in-iframe.html"; sourceTree = "<group>"; };
 		A17991861E1C994E00A505ED /* SharedBuffer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SharedBuffer.mm; sourceTree = "<group>"; };
+		6869316B2E69A1B000121550 /* WebAVPlayerControllerLeakTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAVPlayerControllerLeakTests.mm; sourceTree = "<group>"; };
 		A17991891E1CA24100A505ED /* SharedBufferTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBufferTest.cpp; sourceTree = "<group>"; };
 		A179918A1E1CA24100A505ED /* SharedBufferTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedBufferTest.h; sourceTree = "<group>"; };
 		A17A5A3422A887EC0065C5F0 /* AppKitTestSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppKitTestSPI.h; sourceTree = "<group>"; };
@@ -7001,6 +7002,7 @@
 				7BA3936B271EDFCA0015911C /* TestGraphicsContextGLCocoa.mm */,
 				74DEF21D2A946FD700E034A3 /* TestUTIRegistry.cpp */,
 				7498C3CF2A94435F009A387E /* TestUTIUtilities.cpp */,
+				6869316B2E69A1B000121550 /* WebAVPlayerControllerLeakTests.mm */,
 				CD89D0381C4EDB2A00040A04 /* WebCoreNSURLSession.mm */,
 				44D3F8382BE1A6BE00BE0218 /* XMLParsing.mm */,
 			);

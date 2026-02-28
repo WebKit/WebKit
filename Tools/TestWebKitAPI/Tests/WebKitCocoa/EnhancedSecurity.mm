@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,9 @@
 #import "PlatformUtilities.h"
 #import "TestCocoa.h"
 #import "TestNavigationDelegate.h"
+#import "TestUIDelegate.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>

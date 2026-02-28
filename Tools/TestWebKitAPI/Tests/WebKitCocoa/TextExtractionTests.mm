@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2025-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "HTTPServer.h"
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "SafeBrowsingSPI.h"
@@ -38,6 +39,7 @@
 #import <WebKit/_WKTextExtraction.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/WorkQueue.h>
+#import <wtf/text/MakeString.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(SafariSafeBrowsing);
 SOFT_LINK_CLASS(SafariSafeBrowsing, SSBLookupContext);

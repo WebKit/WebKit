@@ -53,6 +53,8 @@ ios/IOSMouseEventTestHarness.mm @nonARC
 
 Tests/WTF/cocoa/URLExtras.mm @nonARC
 
+Tests/WebCore/cocoa/WebAVPlayerControllerLeakTests.mm @nonARC
+
 Tests/WebKitCocoa/AVFoundationPreference.mm @nonARC
 Tests/WebKitCocoa/AdaptiveImageGlyph.mm @nonARC
 Tests/WebKitCocoa/AdditionalReadAccessAllowedURLs.mm @nonARC
