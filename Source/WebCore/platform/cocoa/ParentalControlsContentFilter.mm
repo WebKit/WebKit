@@ -144,8 +144,10 @@ void ParentalControlsContentFilter::finishedAddingData()
 
     // Callers expect state is ready after finishing adding data.
     Locker resultLocker { m_resultLock };
-    while (!m_isAllowdByWebContentRestrictions)
-        m_resultCondition.wait(m_resultLock);
+    while (!m_isAllowdByWebContentRestrictions) {
+        if (!m_resultCondition.waitFor(m_resultLock, 250_ms))
+            RELEASE_LOG_ERROR(ContentFiltering, "ParentalControlsContentFilter::finishedAddingData timed out waiting for result after 250 ms");
+    }
 
     m_state = *m_isAllowdByWebContentRestrictions ? State::Allowed : State::Blocked;
     m_replacementData = std::exchange(m_webContentRestrictionsReplacementData, nullptr);
