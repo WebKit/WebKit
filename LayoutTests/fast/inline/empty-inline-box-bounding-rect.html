@@ -1,0 +1,39 @@
+<style>
+.container {
+  width:100px;
+}
+
+.float-text {
+  float: left;  
+  width: 100%;
+  height: 20px;
+  background-color: green;
+}
+</style>
+<div class=container>somtextsome<div class="float-text"></div><span id=span> more</span></div>
+<pre id=result></pre>
+<script>
+testRunner?.dumpAsText();
+
+function checkForEmptyRects() {
+  const span = document.getElementById('span');
+  const rects = span.getClientRects();
+  const result = document.getElementById('result');
+
+  for (let i = 0; i < rects.length; i++) {
+    const rect = rects[i];
+    if (rect.width === 0 && rect.height === 0) {
+      result.textContent = 'FAIL: Found empty rect with width=0 and height=0\n';
+      result.textContent += 'All rects:\n';
+      for (let j = 0; j < rects.length; j++) {
+        result.textContent += `Rect ${j}: width=${rects[j].width}, height=${rects[j].height}, x=${rects[j].x}, y=${rects[j].y}\n`;
+      }
+      return;
+    }
+  }
+
+  result.textContent = 'PASS: No empty rects found';
+}
+
+checkForEmptyRects();
+</script>
