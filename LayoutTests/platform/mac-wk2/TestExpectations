@@ -2495,5 +2495,3 @@ webkit.org/b/308594 imported/w3c/web-platform-tests/media-source/mediasource-con
 webkit.org/b/308601 [ Release ] imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-updating.html [ Failure Pass ]
 
 webkit.org/b/308845 [ Debug arm64 ] fast/scrolling/latching/scroll-div-no-latching.html [ Failure Pass ]
-
-webkit.org/b/308856 [ Debug ] http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers.html [ Failure Pass ]
