@@ -49,6 +49,7 @@
 #import "WKWebViewForTestingImmediateActions.h"
 #import <WebCore/Color.h>
 #import <WebCore/ColorSerialization.h>
+#import <WebCore/IntPoint.h>
 #import <WebCore/WebEvent.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -364,6 +365,46 @@ UNIFIED_PDF_TEST(TextAnnotationHoverEffect)
     [webView waitForNextPresentationUpdate];
     auto colorsAfterHover = [webView sampleColors];
     EXPECT_EQ(colorsBeforeHover, colorsAfterHover);
+}
+
+UNIFIED_PDF_TEST(TextAnnotationBackgroundColorDoesNotAdaptToColorScheme)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
+    RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"textInput" withExtension:@"pdf"]];
+    [webView synchronouslyLoadRequest:request.get()];
+    [[webView window] makeFirstResponder:webView.get()];
+    [[webView window] makeKeyAndOrderFront:nil];
+    [[webView window] orderFrontRegardless];
+
+    auto evaluateAnnotationBackgroundColor = [&webView] {
+        static constexpr WebCore::IntPoint annotationPoint { 200, 200 };
+        [webView mouseMoveToPoint:annotationPoint withFlags:0];
+        [webView sendClickAtPoint:annotationPoint];
+        [webView waitForPendingMouseEvents];
+        [webView waitForNextPresentationUpdate];
+
+        RetainPtr backgroundColor = [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('#annotationContainer > input')).backgroundColor"];
+
+        static constexpr WebCore::IntPoint blankPoint { 50, 50 };
+        [webView mouseMoveToPoint:blankPoint withFlags:0];
+        [webView sendClickAtPoint:blankPoint];
+        [webView waitForPendingMouseEvents];
+        [webView waitForNextPresentationUpdate];
+
+        return backgroundColor;
+    };
+
+    [webView forceLightMode];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr lightModeColor = evaluateAnnotationBackgroundColor();
+
+    [webView forceDarkMode];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr darkModeColor = evaluateAnnotationBackgroundColor();
+
+    EXPECT_WK_STREQ(lightModeColor, darkModeColor);
 }
 
 #endif // PLATFORM(MAC)

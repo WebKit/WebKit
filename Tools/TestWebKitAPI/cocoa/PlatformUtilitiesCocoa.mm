@@ -64,6 +64,11 @@ std::string toSTD(NSString *string)
     return std::string(buffer.get(), stringLength);
 }
 
+std::string toSTD(RetainPtr<NSString> string)
+{
+    return toSTD(string.get());
+}
+
 bool jsonMatchesExpectedValues(NSString *jsonString, NSDictionary *expected)
 {
     NSError *error = nil;
