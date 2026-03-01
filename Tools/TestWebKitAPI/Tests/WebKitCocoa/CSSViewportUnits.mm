@@ -805,7 +805,7 @@ TEST(CSSViewportUnits, MaximumViewportInsetWithBounds)
 #if PLATFORM(MAC)
 
 // rdar://136706717
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
+#if PLATFORM(MAC)
 TEST(CSSViewportUnits, DISABLED_TopContentInset)
 #else
 TEST(CSSViewportUnits, TopContentInset)
@@ -907,7 +907,7 @@ TEST(CSSViewportUnits, MinimumViewportInsetWithTopContentInset)
 }
 
 // rdar://136706717
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
+#if PLATFORM(MAC)
 TEST(CSSViewportUnits, DISABLED_MaximumViewportInsetWithTopContentInset)
 #else
 TEST(CSSViewportUnits, MaximumViewportInsetWithTopContentInset)

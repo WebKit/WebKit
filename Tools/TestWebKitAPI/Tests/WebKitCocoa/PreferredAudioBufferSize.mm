@@ -95,7 +95,7 @@ TEST_F(PreferredAudioBufferSize, VideoOnly)
 }
 
 // rdar://136784916
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
+#if PLATFORM(MAC)
 TEST_F(PreferredAudioBufferSize, DISABLED_VideoWithAudio)
 #else
 TEST_F(PreferredAudioBufferSize, VideoWithAudio)

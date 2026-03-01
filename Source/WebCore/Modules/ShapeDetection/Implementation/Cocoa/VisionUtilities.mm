@@ -69,9 +69,6 @@ Vector<FloatPoint> convertCornerPoints(const FloatSize& imageSize, VNRectangleOb
 
 void configureRequestToUseCPUOrGPU(VNRequest *request)
 {
-#if USE(VISION_CPU_ONLY_PROPERTY)
-    request.usesCPUOnly = YES;
-#else
     NSError *error = nil;
     RetainPtr supportedComputeStageDevices = [request supportedComputeStageDevicesAndReturnError:&error];
     if (!supportedComputeStageDevices || error)
@@ -97,7 +94,6 @@ void configureRequestToUseCPUOrGPU(VNRequest *request)
             }
         }
     }
-#endif
 }
 
 } // namespace WebCore::ShapeDetection

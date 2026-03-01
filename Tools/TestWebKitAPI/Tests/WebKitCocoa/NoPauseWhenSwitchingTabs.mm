@@ -38,7 +38,7 @@
 namespace TestWebKitAPI {
 
 // rdar://137241352
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
+#if PLATFORM(MAC)
 TEST(WebKit, DISABLED_NoPauseWhenSwitchingTabs)
 #else
 TEST(WebKit, NoPauseWhenSwitchingTabs)

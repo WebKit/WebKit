@@ -37,7 +37,7 @@ static bool shrinkToFitAfterNavigationDone;
 static bool shrinkToFitDisabledDone;
 
 // rdar://136702089
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
+#if PLATFORM(MAC)
 TEST(WebKit, DISABLED_ShrinkToFit)
 #else
 TEST(WebKit, ShrinkToFit)

@@ -168,7 +168,7 @@ TEST(WKWebViewCandidateTests, InsertCharactersAfterCandidateInsertionWithSoftSpa
 }
 
 // rdar://137237282 && rdar://142904687
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000)
+#if PLATFORM(MAC)
 TEST(WKWebViewCandidateTests, DISABLED_InsertCandidateFromPartiallyTypedPhraseWithSoftSpace)
 #else
 TEST(WKWebViewCandidateTests, InsertCandidateFromPartiallyTypedPhraseWithSoftSpace)
