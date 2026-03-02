@@ -99,7 +99,7 @@ static float getAVSpeechUtteranceMaximumSpeechRate()
     m_synthesizerObject = synthesizer;
 
 #if HAVE(AVSPEECHSYNTHESIS_VOICES_CHANGE_NOTIFICATION)
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(availableVoicesDidChange) name:RetainPtr { AVSpeechSynthesisAvailableVoicesDidChangeNotification }.get() object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(availableVoicesDidChange) name:protect(AVSpeechSynthesisAvailableVoicesDidChangeNotification).get() object:nil];
 #endif
 
     return self;
@@ -107,9 +107,18 @@ static float getAVSpeechUtteranceMaximumSpeechRate()
 
 #if HAVE(AVSPEECHSYNTHESIS_VOICES_CHANGE_NOTIFICATION)
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:protect(AVSpeechSynthesisAvailableVoicesDidChangeNotification).get() object:nil];
+    [super dealloc];
+}
+
 - (void)availableVoicesDidChange
 {
-    Ref { *m_synthesizerObject }->voicesDidChange();
+    callOnMainThread([protectedSelf = protect(self)] {
+        if (RefPtr synthesizer = protectedSelf->m_synthesizerObject.get())
+            synthesizer->voicesDidChange();
+    });
 }
 
 #endif
