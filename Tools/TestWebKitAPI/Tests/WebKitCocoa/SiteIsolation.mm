@@ -3863,6 +3863,28 @@ TEST(SiteIsolation, RestoreSessionFromAnotherWebView)
     EXPECT_WK_STREQ([webView2 _test_waitForAlert], "done");
 }
 
+TEST(SiteIsolation, RestoreSessionFromAnotherWebViewAfterIframeNavigation)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe id='testFrame' src='https://webkit.org/frame1'></iframe>"_s } },
+        { "/frame1"_s, { "Frame 1 - No Alert"_s } },
+        { "/frame2"_s, { "<script> alert('frame2-loaded'); </script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView1, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView1 loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // Navigate iframe to frame2 (which shows an alert)
+    [webView1 evaluateJavaScript:@"document.getElementById('testFrame').src = 'https://webkit.org/frame2'" completionHandler:nil];
+    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "frame2-loaded");
+
+    // Restore session to webView2 - should restore iframe at frame2, not frame1
+    auto [webView2, navigationDelegate2] = siteIsolatedViewAndDelegate(server);
+    [webView2 _restoreSessionState:[webView1 _sessionState] andNavigate:YES];
+    EXPECT_WK_STREQ([webView2 _test_waitForAlert], "frame2-loaded");
+}
+
 static void testNavigateIframeBackForward(NSString *navigationURL, bool restoreSessionState)
 {
     HTTPServer server({
