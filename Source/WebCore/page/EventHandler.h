@@ -431,6 +431,8 @@ public:
 
     ScrollableArea* enclosingScrollableArea(Node*) const;
 
+    WEBCORE_EXPORT static bool shouldExtendSelectionToTargetNode(const Node& targetNode, const VisibleSelection& selectionBeforeUpdate);
+
 private:
 #if ENABLE(DRAG_SUPPORT)
     static DragState& dragState();

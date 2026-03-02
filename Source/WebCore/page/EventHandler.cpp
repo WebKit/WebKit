@@ -1120,7 +1120,7 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
     if (!target)
         return;
 
-    if (!HTMLElement::shouldExtendSelectionToTargetNode(*target, m_frame->selection().selection()))
+    if (!EventHandler::shouldExtendSelectionToTargetNode(*target, m_frame->selection().selection()))
         return;
 
     VisiblePosition targetPosition = selectionExtentRespectingEditingBoundary(m_frame->selection().selection(), hitTestResult.localPoint(), target.get());
@@ -5712,5 +5712,42 @@ HandleUserInputEventResult EventHandler::passMouseMoveEventToSubframe(MouseEvent
     return true;
 }
 #endif // !PLATFORM(COCOA) && !PLATFORM(WIN)
+
+// Determines if two nodes share the same nearest out-of-flow positioned ancestor.
+static bool haveSameOutOfFlowAncestor(const Node& anchorNode, const Node& targetNode)
+{
+    const CheckedPtr anchorRenderer = anchorNode.renderer();
+    const CheckedPtr targetRenderer = targetNode.renderer();
+    if (!anchorRenderer || !targetRenderer)
+        return true;
+
+    auto nearestOutOfFlowAncestor = [](CheckedPtr<RenderObject> renderer) -> CheckedPtr<RenderObject> {
+        while (renderer) {
+            if (renderer->isOutOfFlowPositioned())
+                return renderer;
+            renderer = renderer->containingBlock();
+        }
+        return nullptr;
+    };
+
+    CheckedPtr anchorOutOfFlowAncestor = nearestOutOfFlowAncestor(anchorRenderer);
+    CheckedPtr targetOutOfFlowAncestor = nearestOutOfFlowAncestor(targetRenderer);
+    return targetOutOfFlowAncestor == anchorOutOfFlowAncestor;
+}
+
+bool EventHandler::shouldExtendSelectionToTargetNode(const Node& targetNode, const VisibleSelection& selectionBeforeUpdate)
+{
+    if (auto range = selectionBeforeUpdate.range(); range && ImageOverlay::isInsideOverlay(*range))
+        return ImageOverlay::isOverlayText(targetNode);
+
+    if (Position::nodeIsUserSelectNone(&targetNode)) {
+        if (RefPtr anchorNode = selectionBeforeUpdate.anchor().anchorNode()) {
+            // Don't extend selection to a user-select: none node if they are not in the same flow.
+            return haveSameOutOfFlowAncestor(*anchorNode, targetNode);
+        }
+    }
+
+    return true;
+}
 
 } // namespace WebCore

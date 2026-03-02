@@ -33,7 +33,6 @@ class FormListedElement;
 class FormAssociatedElement;
 class HTMLButtonElement;
 class HTMLFormElement;
-class VisibleSelection;
 
 struct SRGBADescriptor;
 template<typename, typename> struct BoundedGammaEncoded;
@@ -138,8 +137,6 @@ public:
     bool isHiddenUntilFound() const;
     std::optional<Variant<bool, double, String>> hidden() const;
     void setHidden(const std::optional<Variant<bool, double, String>>&);
-
-    WEBCORE_EXPORT static bool shouldExtendSelectionToTargetNode(const Node& targetNode, const VisibleSelection& selectionBeforeUpdate);
 
     WEBCORE_EXPORT ExceptionOr<Ref<ElementInternals>> attachInternals();
 
