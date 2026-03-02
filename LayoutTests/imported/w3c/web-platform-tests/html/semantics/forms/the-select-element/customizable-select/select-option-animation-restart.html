@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<title>Test that animations for the select options restart when re-opening select</title>
+<link rel="author" title="Tim Nguyen" href="https://github.com/nt1m">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-actions.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+
+<style>
+select, select::picker(select) {
+  appearance: base-select;
+}
+
+option {
+  animation: fade-in 1ms forwards;
+  opacity: 0;
+}
+
+@keyframes fade-in {
+  to {
+    opacity: 1;
+  }
+}
+</style>
+
+<select>
+  <option>one</option>
+  <option>two</option>
+</select>
+
+<script>
+const select = document.querySelector("select");
+const firstOption = document.querySelector("option");
+
+function waitForAnimationEnd(element) {
+  return new Promise(resolve => element.addEventListener("animationend", resolve, { once: true }));
+}
+
+promise_test(async t => {
+  // Open picker and wait for the animation to complete.
+  await test_driver.bless();
+  assert_equals(getComputedStyle(firstOption).opacity, "0",
+    "option opacity should be 0 before opening the picker.");
+  select.showPicker();
+  assert_true(select.matches(":open"));
+
+  await waitForAnimationEnd(firstOption);
+  assert_equals(getComputedStyle(firstOption).opacity, "1",
+    "option opacity should be 1 after animation completes on first open.");
+
+  // Close the picker.
+  await test_driver.click(select);
+  assert_false(select.matches(":open"));
+
+  // Reopen the picker and verify the animation restarts and completes again.
+  await test_driver.bless();
+  assert_equals(getComputedStyle(firstOption).opacity, "0",
+    "option opacity should be 0 before opening the picker a second time.");
+  select.showPicker();
+  assert_true(select.matches(":open"));
+
+  await waitForAnimationEnd(firstOption);
+  assert_equals(getComputedStyle(firstOption).opacity, "1",
+    "option opacity should be 1 after animation completes on second open.");
+
+  // Close the picker.
+  await test_driver.click(select);
+}, "<option> animations should restart when the picker is reopened.");
+</script>

@@ -1,0 +1,4 @@
+
+
+PASS <optgroup> animations should restart when the picker is reopened.
+
