@@ -141,9 +141,10 @@ public:
     void invalidateNextTimerFireTimeCache() { m_nextTimerFireTimeCache = std::nullopt; }
     Markable<MonotonicTime> nextTimerFireTime() const;
 
+    void scheduleToRunIfNeeded();
+
 protected:
     EventLoop();
-    void scheduleToRunIfNeeded();
     void run(std::optional<ApproximateTime> deadline = std::nullopt);
     void clearAllTasks();
 
