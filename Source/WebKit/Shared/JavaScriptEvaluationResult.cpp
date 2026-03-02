@@ -270,9 +270,6 @@ std::optional<JSObjectID> JavaScriptEvaluationResult::JSExtractor::addObjectToMa
 
     auto identifier = JSObjectID::generate();
 
-    if (nestingLevel > maximumNestingLevel)
-        return std::nullopt;
-
     auto extractedValue = jsValueToExtractedValue(context, rootValue);
     if (!extractedValue)
         return std::nullopt;
@@ -280,7 +277,7 @@ std::optional<JSObjectID> JavaScriptEvaluationResult::JSExtractor::addObjectToMa
     if (std::holds_alternative<Vector<JSObjectID>>(*extractedValue))
         m_unprocessedContainers.append(PendingContainer { identifier, { context, rootValue }, nestingLevel, PendingContainer::ContainerType::Array });
     else if (std::holds_alternative<ObjectMap>(*extractedValue))
-        m_unprocessedContainers.append(PendingContainer { identifier, { context, rootValue }, nestingLevel , PendingContainer::ContainerType::Dictionary });
+        m_unprocessedContainers.append(PendingContainer { identifier, { context, rootValue }, nestingLevel, PendingContainer::ContainerType::Dictionary });
 
     m_valuesInMap.set({ context, rootValue }, identifier);
     auto result = m_map.set(identifier, WTF::move(*extractedValue));
@@ -295,6 +292,10 @@ bool JavaScriptEvaluationResult::JSExtractor::processContainersWithoutRecursion(
         auto pendingContainer = m_unprocessedContainers.takeLast();
         JSObjectRef object = JSValueToObject(context, pendingContainer.containerValue.get(), nullptr);
         size_t nextNestingLevel = pendingContainer.nestingLevel + 1;
+
+        if (nextNestingLevel > maximumNestingLevel)
+            return false;
+
         switch (pendingContainer.containerType) {
         case PendingContainer::ContainerType::Dictionary: {
             JSPropertyNameArrayRef names = JSObjectCopyPropertyNames(context, object);
@@ -314,10 +315,10 @@ bool JavaScriptEvaluationResult::JSExtractor::processContainersWithoutRecursion(
                     continue;
                 auto keyIdentifier = addObjectToMap(context, keyJSValue, nextNestingLevel);
                 if (!keyIdentifier)
-                    return false;
+                    continue;
                 auto valueIdentifier = addObjectToMap(context, valueJSValue, nextNestingLevel);
                 if (!valueIdentifier)
-                    return false;
+                    continue;
                 map.add(*keyIdentifier, *valueIdentifier);
             }
             m_map.set(pendingContainer.objectIdentifier, WTF::move(map));
