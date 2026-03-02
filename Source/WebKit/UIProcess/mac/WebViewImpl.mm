@@ -6950,7 +6950,7 @@ void WebViewImpl::handleClickForDataDetectionResult(const WebCore::DataDetectorE
 #if ENABLE(REVEAL)
     m_revealItemPresenter = adoptNS([[WKRevealItemPresenter alloc] initWithWebViewImpl:*this item:adoptNS([PAL::allocRVItemInstance() initWithDDResult:info.result.get()]).get() frame:info.elementBounds menuLocation:clickLocation]);
     [m_revealItemPresenter setShouldUseDefaultHighlight:NO];
-    [m_revealItemPresenter showContextMenu];
+    [protect(m_revealItemPresenter) showContextMenu];
 #else
     UNUSED_PARAM(info);
     UNUSED_PARAM(clickLocation);
