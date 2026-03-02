@@ -209,7 +209,7 @@ layer at (0,0) size 785x669
               RenderBR {BR} at (4,593) size 0x18
             RenderTableCell {TD} at (148,0) size 486x24 [bgcolor=#660000] [border: (1px inset #333333)] [r=0 c=1 rs=1 cs=3]
               RenderImage {IMG} at (10,4) size 466x16
-          RenderTableRow {TR} at (0,24) size 634x69
+          RenderTableRow {TR} at (0,24) size 634x162
             RenderTableCell {TD} at (148,24) size 128x69 [border: (1px inset #333333)] [r=1 c=1 rs=1 cs=1]
               RenderInline {A} at (4,50) size 120x18
                 RenderText {#text} at (0,0) size 0x0
@@ -275,8 +275,8 @@ layer at (0,0) size 785x669
                   RenderImage {IMG} at (25,362) size 125x125
                 RenderText {#text} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,93) size 634x116
-            RenderTableCell {TD} at (148,93) size 303x116 [bgcolor=#FFFFFF] [border: (1px inset #333333)] [r=2 c=1 rs=1 cs=2]
+          RenderTableRow {TR} at (0,186) size 634x116
+            RenderTableCell {TD} at (148,186) size 303x116 [bgcolor=#FFFFFF] [border: (1px inset #333333)] [r=2 c=1 rs=1 cs=2]
               RenderInline {A} at (295,4) size 0x18
                 RenderImage {IMG} at (4,4) size 288x26
               RenderBR {BR} at (295,4) size 0x18
@@ -293,8 +293,8 @@ layer at (0,0) size 785x669
                   RenderText {#text} at (4,94) size 47x18
                     text run at (4,94) width 47: "More..."
               RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,209) size 634x406
-            RenderTableCell {TD} at (148,209) size 303x313 [bgcolor=#C0C0C0] [border: (1px inset #333333)] [r=3 c=1 rs=1 cs=2]
+          RenderTableRow {TR} at (0,302) size 634x313
+            RenderTableCell {TD} at (148,302) size 303x313 [bgcolor=#C0C0C0] [border: (1px inset #333333)] [r=3 c=1 rs=1 cs=2]
               RenderImage {IMG} at (4,4) size 290x35
               RenderBR {BR} at (294,25) size 0x18
               RenderInline {A} at (4,37) size 248x18

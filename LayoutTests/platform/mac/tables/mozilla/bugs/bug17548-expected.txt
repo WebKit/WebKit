@@ -5,16 +5,16 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
       RenderTable {TABLE} at (0,0) size 784x78 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x76
-          RenderTableRow {TR} at (0,2) size 782x4
+          RenderTableRow {TR} at (0,2) size 782x8
             RenderTableCell {TD} at (2,2) size 198x49 [border: (1px inset #000000)] [r=0 c=0 rs=2 cs=1]
               RenderImage {IMG} at (2,2) size 194x45
-            RenderTableCell {TD} at (202,2) size 578x4 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-          RenderTableRow {TR} at (0,8) size 782x43
-            RenderTableCell {TD} at (202,18) size 578x23 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,12) size 81x19
+            RenderTableCell {TD} at (202,3) size 578x5 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
+          RenderTableRow {TR} at (0,11) size 782x40
+            RenderTableCell {TD} at (202,20) size 578x23 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,10) size 81x19
                 text run at (2,2) width 81: "Information "
-              RenderImage {IMG} at (82,19) size 5x8
-              RenderText {#text} at (86,12) size 84x19
+              RenderImage {IMG} at (82,17) size 5x8
+              RenderText {#text} at (86,10) size 84x19
                 text run at (86,2) width 5: " "
                 text run at (90,2) width 80: "Student Life"
           RenderTableRow {TR} at (0,53) size 782x21

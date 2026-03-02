@@ -39,10 +39,10 @@ PASS (document.getElementById('T12-1').offsetTop + document.getElementById('T12-
 PASS (document.getElementById('T12-2').offsetTop + document.getElementById('T12-2').offsetHeight) is (document.getElementById('T12-4').offsetTop + document.getElementById('T12-4').offsetHeight)
 
 Test 13 :
-PASS (document.getElementById('T13-1').offsetTop + document.getElementById('T13-1').offsetHeight) is (document.getElementById('T13-2').offsetTop + document.getElementById('T13-2').offsetHeight)
-PASS (document.getElementById('T13-1').offsetTop + document.getElementById('T13-1').offsetHeight) is (document.getElementById('T13-3').offsetTop + document.getElementById('T13-3').offsetHeight)
-PASS (document.getElementById('T13-1').offsetTop + document.getElementById('T13-1').offsetHeight) is (document.getElementById('T13-4').offsetTop + document.getElementById('T13-4').offsetHeight)
-PASS (document.getElementById('T13-1').offsetTop + document.getElementById('T13-1').offsetHeight) is (document.getElementById('T13-5').offsetTop + document.getElementById('T13-5').offsetHeight)
+FAIL (document.getElementById('T13-1').offsetTop + document.getElementById('T13-1').offsetHeight) should be 108. Was 107.
+FAIL (document.getElementById('T13-1').offsetTop + document.getElementById('T13-1').offsetHeight) should be 108. Was 107.
+FAIL (document.getElementById('T13-1').offsetTop + document.getElementById('T13-1').offsetHeight) should be 108. Was 107.
+FAIL (document.getElementById('T13-1').offsetTop + document.getElementById('T13-1').offsetHeight) should be 108. Was 107.
 
 Test 14 :
 PASS (document.getElementById('T14-1').offsetTop + document.getElementById('T14-1').offsetHeight) is (document.getElementById('T14-2').offsetTop + document.getElementById('T14-2').offsetHeight)

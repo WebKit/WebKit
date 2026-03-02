@@ -264,34 +264,10 @@ LayoutUnit RenderTableSection::calcRowLogicalHeight()
             CellStruct& current = cellAt(r, c);
             for (unsigned i = 0; i < current.cells.size(); i++) {
                 cell = current.cells[i];
-                if (current.inColSpan && cell->rowSpan() == 1)
+                // Phase 1: Only process rowspan=1 cells for base row heights.
+                // Rowspan>1 cells are handled in Phase 2 below.
+                if (current.inColSpan || cell->rowSpan() != 1)
                     continue;
-
-                // FIXME: We are always adding the height of a rowspan to the last rows which doesn't match
-                // other browsers. See webkit.org/b/52185 for example.
-                if ((cell->rowIndex() + cell->rowSpan() - 1) != r) {
-                    // We will apply the height of the rowspan to the current row if next row is not valid.
-                    if ((r + 1) < totalRows) {
-                        unsigned col = 0;
-                        CellStruct nextRowCell = cellAt(r + 1, col);
-
-                        // We are trying to find that next row is valid or not.
-                        while (nextRowCell.cells.size() && nextRowCell.cells[0]->rowSpan() > 1 && nextRowCell.cells[0]->rowIndex() < (r + 1)) {
-                            col++;
-                            if (col < totalCols)
-                                nextRowCell = cellAt(r + 1, col);
-                            else
-                                break;
-                        }
-
-                        // We are adding the height of the rowspan to the current row if next row is not valid.
-                        if (col < totalCols && nextRowCell.cells.size())
-                            continue;
-                    }
-                }
-
-                // For row spanning cells, |r| is the last row in the span.
-                unsigned cellStartRow = cell->rowIndex();
 
                 if (cell->overridingBorderBoxLogicalHeight() && !cell->isOrthogonal()) {
                     cell->clearIntrinsicPadding();
@@ -301,23 +277,16 @@ LayoutUnit RenderTableSection::calcRowLogicalHeight()
                 }
 
                 LayoutUnit cellLogicalHeight = cell->logicalHeightForRowSizing();
-                m_rowPos[r + 1] = std::max(m_rowPos[r + 1], m_rowPos[cellStartRow] + cellLogicalHeight);
+                m_rowPos[r + 1] = std::max(m_rowPos[r + 1], m_rowPos[r] + cellLogicalHeight);
 
-                // Find out the baseline. The baseline is set on the first row in a rowspan.
+                // Find out the baseline.
                 if (cell->isBaselineAligned()) {
                     LayoutUnit baselinePosition = cell->cellBaselinePosition() - cell->intrinsicPaddingBefore();
                     LayoutUnit borderAndComputedPaddingBefore = cell->borderAndPaddingBefore() - cell->intrinsicPaddingBefore();
                     if (baselinePosition > borderAndComputedPaddingBefore) {
-                        m_grid[cellStartRow].baseline = std::max(m_grid[cellStartRow].baseline, baselinePosition);
-                        // The descent of a cell that spans multiple rows does not affect the height of the first row it spans, so don't let it
-                        // become the baseline descent applied to the rest of the row. Also we don't account for the baseline descent of
-                        // non-spanning cells when computing a spanning cell's extent.
-                        LayoutUnit cellStartRowBaselineDescent;
-                        if (cell->rowSpan() == 1) {
-                            baselineDescent = std::max(baselineDescent, cellLogicalHeight - baselinePosition);
-                            cellStartRowBaselineDescent = baselineDescent;
-                        }
-                        m_rowPos[cellStartRow + 1] = std::max(m_rowPos[cellStartRow + 1], m_rowPos[cellStartRow] + m_grid[cellStartRow].baseline + cellStartRowBaselineDescent);
+                        m_grid[r].baseline = std::max(m_grid[r].baseline, baselinePosition);
+                        baselineDescent = std::max(baselineDescent, cellLogicalHeight - baselinePosition);
+                        m_rowPos[r + 1] = std::max(m_rowPos[r + 1], m_rowPos[r] + m_grid[r].baseline + baselineDescent);
                     }
                 }
             }
@@ -328,6 +297,201 @@ LayoutUnit RenderTableSection::calcRowLogicalHeight()
         spacing = table()->vBorderSpacing();
         m_rowPos[r + 1] += m_grid[r].rowRenderer ? spacing : 0_lu;
         m_rowPos[r + 1] = std::max(m_rowPos[r + 1], m_rowPos[r]);
+    }
+
+    // Phase 2: Distribute rowspan>1 cell heights across spanned rows.
+    {
+        LayoutUnit vspacing = table()->vBorderSpacing();
+
+        // 2a. Collect unique rowspan>1 cells from their originating rows.
+        struct RowspanCellInfo {
+            RenderTableCell* cell;
+            unsigned startRow;
+            unsigned endRow; // exclusive
+        };
+        Vector<RowspanCellInfo> rowspanCells;
+        HashSet<RenderTableCell*> seen;
+
+        for (unsigned r = 0; r < totalRows; r++) {
+            Row& row = m_grid[r].row;
+            unsigned totalCols = row.size();
+            for (unsigned c = 0; c < totalCols; c++) {
+                CellStruct& current = cellAt(r, c);
+                for (unsigned i = 0; i < current.cells.size(); i++) {
+                    RenderTableCell* cell = current.cells[i];
+                    if (cell->rowSpan() <= 1)
+                        continue;
+                    if (cell->rowIndex() != r)
+                        continue;
+                    if (!seen.add(cell).isNewEntry)
+                        continue;
+                    unsigned endRow = std::min(r + cell->rowSpan(), totalRows);
+                    if (endRow <= r + 1)
+                        continue;
+                    rowspanCells.append({ cell, r, endRow });
+                }
+            }
+        }
+
+        // 2b. Sort: enclosed cells process first, then earlier start row, then shorter span.
+        std::sort(rowspanCells.begin(), rowspanCells.end(), [](const RowspanCellInfo& a, const RowspanCellInfo& b) {
+            // If A is fully enclosed by B (not identical), A goes first.
+            bool aEnclosedByB = a.startRow >= b.startRow && a.endRow <= b.endRow && !(a.startRow == b.startRow && a.endRow == b.endRow);
+            bool bEnclosedByA = b.startRow >= a.startRow && b.endRow <= a.endRow && !(a.startRow == b.startRow && a.endRow == b.endRow);
+            if (aEnclosedByB != bEnclosedByA)
+                return aEnclosedByB;
+            if (a.startRow != b.startRow)
+                return a.startRow < b.startRow;
+            return (a.endRow - a.startRow) < (b.endRow - b.startRow);
+        });
+
+        // Returns true if the given row originates a rowspan>1 cell other than |excludeCell|.
+        auto rowOriginatesOtherRowspan = [&](unsigned r, RenderTableCell* excludeCell) -> bool {
+            Row& row = m_grid[r].row;
+            for (unsigned c = 0; c < row.size(); c++) {
+                CellStruct& cs = cellAt(r, c);
+                for (auto* otherCell : cs.cells) {
+                    if (otherCell != excludeCell && otherCell->rowSpan() > 1 && otherCell->rowIndex() == r)
+                        return true;
+                }
+            }
+            return false;
+        };
+
+        // Reusable buffers for per-cell distribution, avoiding repeated heap allocation.
+        Vector<LayoutUnit, 8> rowHeights;
+        Vector<LayoutUnit, 8> rowGrowth;
+
+        // Distributes |amount| proportionally to rows where |eligible| returns a non-zero weight.
+        // Rounding remainder goes to the last eligible row.
+        auto distributeProportionally = [&](LayoutUnit amount, unsigned startRow, unsigned endRow, auto&& eligible) -> LayoutUnit {
+            LayoutUnit totalWeight;
+            unsigned lastEligible = UINT_MAX;
+            for (unsigned r = startRow; r < endRow; r++) {
+                LayoutUnit weight = eligible(r);
+                if (weight > 0) {
+                    totalWeight += weight;
+                    lastEligible = r;
+                }
+            }
+            if (totalWeight <= 0)
+                return 0_lu;
+            LayoutUnit distributed;
+            for (unsigned r = startRow; r < endRow; r++) {
+                LayoutUnit weight = eligible(r);
+                if (weight > 0) {
+                    LayoutUnit share = (r == lastEligible) ? (amount - distributed) : (amount * weight / totalWeight);
+                    rowGrowth[r - startRow] += share;
+                    distributed += share;
+                }
+            }
+            return distributed;
+        };
+
+        // 2c-2d. Distribute each cell's extra height.
+        for (auto& info : rowspanCells) {
+            unsigned startRow = info.startRow;
+            unsigned endRow = info.endRow;
+            RenderTableCell* cell = info.cell;
+
+            // Re-layout cell if needed to get accurate height.
+            if (cell->overridingBorderBoxLogicalHeight() && !cell->isOrthogonal()) {
+                cell->clearIntrinsicPadding();
+                cell->clearOverridingSize();
+                cell->setChildNeedsLayout(MarkOnlyThis);
+                cell->layoutIfNeeded();
+            }
+
+            LayoutUnit cellLogicalHeight = cell->logicalHeightForRowSizing();
+
+            // Available space already allocated to the spanned rows.
+            // Match layoutRows() formula: m_rowPos[endRow] - m_rowPos[startRow] - vspacing
+            LayoutUnit availableSpace = m_rowPos[endRow] - m_rowPos[startRow] - vspacing;
+            LayoutUnit extra = cellLogicalHeight - availableSpace;
+            if (extra <= 0)
+                continue;
+
+            unsigned spanLength = endRow - startRow;
+
+            // Compute per-row heights (excluding border-spacing contribution).
+            rowHeights.resize(spanLength);
+            for (unsigned r = startRow; r < endRow; r++) {
+                LayoutUnit rh = m_rowPos[r + 1] - m_rowPos[r];
+                if (m_grid[r].rowRenderer)
+                    rh -= vspacing;
+                rowHeights[r - startRow] = std::max(rh, 0_lu);
+            }
+
+            rowGrowth.fill(0_lu, spanLength);
+
+            // Distribute extra height via priority cascade, then apply growth.
+            auto distributeAndApply = [&] {
+                LayoutUnit remaining = extra;
+
+                // Step 1: Rows originating other rowspan>1 cells (after startRow) get all extra, evenly.
+                unsigned originCount = 0;
+                for (unsigned r = startRow + 1; r < endRow; r++) {
+                    if (rowOriginatesOtherRowspan(r, cell))
+                        originCount++;
+                }
+                if (originCount > 0) {
+                    LayoutUnit perRow = remaining / originCount;
+                    LayoutUnit distributed;
+                    unsigned count = 0;
+                    for (unsigned r = startRow + 1; r < endRow; r++) {
+                        if (rowOriginatesOtherRowspan(r, cell)) {
+                            count++;
+                            LayoutUnit share = (count == originCount) ? (remaining - distributed) : perRow;
+                            rowGrowth[r - startRow] += share;
+                            distributed += share;
+                        }
+                    }
+                    remaining -= distributed;
+                    if (remaining <= 0)
+                        return;
+                }
+
+                // Step 2: Unconstrained non-zero rows grow proportionally.
+                remaining -= distributeProportionally(remaining, startRow, endRow, [&](unsigned r) -> LayoutUnit {
+                    return (!m_grid[r].logicalHeight.isFixed() && rowHeights[r - startRow] > 0) ? rowHeights[r - startRow] : 0_lu;
+                });
+                if (remaining <= 0)
+                    return;
+
+                // Step 3: All zero-height rows — last row gets all.
+                bool allEmpty = true;
+                for (unsigned r = startRow; r < endRow; r++) {
+                    if (rowHeights[r - startRow] + rowGrowth[r - startRow] > 0) {
+                        allEmpty = false;
+                        break;
+                    }
+                }
+                if (allEmpty) {
+                    rowGrowth[spanLength - 1] += remaining;
+                    return;
+                }
+
+                // Step 4: Constrained non-zero rows grow proportionally (fallback).
+                LayoutUnit distributed = distributeProportionally(remaining, startRow, endRow, [&](unsigned r) -> LayoutUnit {
+                    LayoutUnit effectiveHeight = rowHeights[r - startRow] + rowGrowth[r - startRow];
+                    return effectiveHeight > 0 ? effectiveHeight : 0_lu;
+                });
+                remaining -= distributed;
+
+                if (remaining > 0)
+                    rowGrowth[spanLength - 1] += remaining;
+            };
+
+            distributeAndApply();
+
+            // Apply cumulative growth to m_rowPos.
+            LayoutUnit cumGrowth;
+            for (unsigned r = startRow; r < totalRows; r++) {
+                if (r < endRow)
+                    cumGrowth += rowGrowth[r - startRow];
+                m_rowPos[r + 1] += cumGrowth;
+            }
+        }
     }
 
     for (size_t rowIndex = 0; rowIndex < totalRows; ++rowIndex) {

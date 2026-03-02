@@ -96,264 +96,27 @@ Distribution of table height over rowspan > 1 rows If there are any unconstraine
 Distribution of rowspan over percentage rows Percentage rows are considered empty if they cannot resolve
 
 PASS table 1
-FAIL table 2 assert_equals:
-<table>
-  <tbody>
-    <tr data-expected-height="50">
-      <td>0,0</td>
-      <td rowspan="2"><div class="sizer"></div></td>
-    </tr>
-    <tr data-expected-height="50">
-      <td>0,1</td>
-    </tr>
-</tbody></table>
-height expected 50 but got 18
-FAIL table 3 assert_equals:
-<table>
-  <tbody>
-    <tr data-expected-height="50">
-      <td>0,0</td>
-      <td rowspan="3"><div class="sizer"></div></td>
-    </tr>
-    <tr data-expected-height="0">
-    </tr>
-    <tr data-expected-height="50">
-      <td>0,2</td>
-    </tr>
-</tbody></table>
-height expected 50 but got 100
-FAIL table 4 assert_equals:
-<table>
-  <tbody>
-    <tr data-expected-height="0">
-      <td></td>
-      <td rowspan="3"><div class="sizer"></div></td>
-      <td></td>
-    </tr>
-    <tr data-expected-height="50">
-      <td>1,0</td>
-      <td></td>
-    </tr>
-    <tr data-expected-height="50">
-      <td>2,0</td>
-      <td></td>
-    </tr>
-</tbody></table>
-height expected 50 but got 18
-FAIL table 5 assert_equals:
-<table>
-  <tbody>
-    <tr data-expected-height="75">
-      <td><div style="height:45px">0,0</div></td>
-      <td rowspan="2"><div class="sizer"></div></td>
-    </tr>
-    <tr data-expected-height="25">
-      <td><div style="height:15px">0,1</div></td>
-    </tr>
-</tbody></table>
-height expected 75 but got 45
+PASS table 2
+PASS table 3
+PASS table 4
+PASS table 5
 PASS table 6
-FAIL table 7 assert_equals:
-<table>
-  <tbody>
-    <tr style="height: 20px" data-expected-height="25">
-      <td>20</td>
-      <td rowspan="3"><div class="sizer"></div></td>
-    </tr>
-    <tr style="height: 20px" data-expected-height="25">
-      <td>20</td>
-    </tr>
-    <tr style="height: 40px" data-expected-height="50">
-      <td>40</td>
-    </tr>
-</tbody></table>
-height expected 25 but got 20
-FAIL table 8 assert_equals:
-<table>
-  <tbody>
-    <tr style="height: 30%" data-expected-height="50">
-      <td>0,0 30%</td>
-      <td rowspan="2"><div class="sizer"></div></td>
-    </tr>
-    <tr data-expected-height="50">
-      <td>0,1</td>
-    </tr>
-    <tr style="height:100px"><td>100px</td></tr>
-</tbody></table>
-height expected 50 but got 18
-FAIL table 9 assert_equals:
-<table>
-  <tbody>
-    <tr data-expected-height="50">
-      <td>0,0</td>
-      <td rowspan="3"><div class="sizer"></div></td>
-    </tr>
-    <tr style="height:10%;background:red" data-expected-height="0">
-    </tr>
-    <tr data-expected-height="50">
-      <td>2,0</td>
-    </tr>
-</tbody></table>
-height expected 50 but got 100
-FAIL table 10 assert_equals:
-<table>
-  <tbody><tr data-expected-height="0">
-    <td rowspan="3"><div style="height:50px"></div></td>
-    <td rowspan="3"><div style="height:99px"></div></td>
-  </tr>
-  <tr data-expected-height="0">
-  </tr>
-  <tr data-expected-height="99">
-  </tr>
-  <tr>
-    <td>bottom</td>
-    <td>bottom</td>
-  </tr>
-</tbody></table>
-height expected 0 but got 99
+PASS table 7
+PASS table 8
+PASS table 9
+PASS table 10
 PASS table 11
-FAIL table 12 assert_equals:
-<table>
-  <tbody><tr data-expected-height="0">
-    <td rowspan="3"><div style="height:99px;width:20px"></div></td>
-  </tr>
-  <tr></tr>
-  <tr data-expected-height="99"></tr>
- <tr>
-    <td>bottom</td>
-    <td>bottom</td>
-  </tr>
-</tbody></table>
-height expected 0 but got 99
-FAIL table 13 assert_equals:
-<table>
-  <tbody><tr data-expected-height="0">
-    <td rowspan="4"><div style="height:50px;width:20px"></div></td>
-    <td></td>
-  </tr><tr data-expected-height="0">
-    <td></td>
-    <td rowspan="2"><div style="height:100px;width:20px"></div></td>
-  </tr>
-  <tr data-expected-height="100"></tr>
-  <tr data-expected-height="0"></tr>
-
-</tbody></table>
-height expected 0 but got 100
-FAIL table 14 assert_equals:
-<table>
-  <tbody><tr data-expected-height="0">
-    <td rowspan="4"><div style="height:50px;width:20px"></div></td>
-    <td></td>
-  </tr><tr data-expected-height="0"></tr>
-  <tr data-expected-height="0"></tr>
-  <tr data-expected-height="100">
-    <td></td>
-    <td rowspan="3"><div style="height:100px;width:20px"></div></td>
-  </tr>
-  <tr data-expected-height="0"></tr>
-  <tr data-expected-height="0"></tr>
-
-</tbody></table>
-height expected 0 but got 50
-FAIL table 15 assert_equals:
-<table>
-  <tbody data-expected-height="100">
-    <tr>
-      <td data-expected-height="50">0,0</td>
-      <td data-expected-height="100" rowspan="5"><div style="height:100px;">rowspan 5</div></td>
-    </tr>
-    <tr>
-      <td data-expected-height="50">1,0</td>
-    </tr>
-    <tr data-expected-height="0"></tr>
-  </tbody>
-  <tbody>
-    <tr>
-      <td>body 2</td>
-    </tr>
-  </tbody>
-</table>
-height expected 50 but got 18
+PASS table 12
+PASS table 13
+PASS table 14
+PASS table 15
 PASS table 16
 PASS table 17
 PASS table 18
-FAIL table 19 assert_equals:
-<table style="border-spacing:20px;border-collapse:separate " data-expected-height="100">
-  <tbody><tr data-expected-height="0">
-    <td rowspan="4"><div style="height:60px;width:40px"></div></td>
-  </tr>
-  <tr data-expected-height="0"></tr>
-  <tr data-expected-height="0"></tr>
-  <tr data-expected-height="0"></tr>
-</tbody></table>
-height expected 100 but got 160
+PASS table 19
 PASS table 20
 PASS table 21
-FAIL table 22 assert_equals:
-<table class="td-padding-xl" data-expected-height="360">
-  <tbody><tr>
-    <td rowspan="6"><div style="width:50px;height:280px"></div></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td></td>
-  </tr>
-  <tr style="height:30%;background:purple">
-    <td data-expected-height="20"></td>
-  </tr>
-  <tr data-expected-height="110">
-    <td rowspan="7"></td>
-  </tr>
-  <tr data-expected-height="110">
-    <td rowspan="17"><div style="width:50px;height:40px"></div></td>
-  </tr>
-  <tr>
-    <td></td>
-  </tr>
-  <tr>
-    <td></td>
-  </tr>
-    <tr>
-    <td></td>
-  </tr>
-    <tr>
-    <td></td>
-  </tr>
-</tbody></table>
-height expected 110 but got 0
-FAIL table 23 assert_equals:
-<table class="td-padding-xl" style="height:460px">
-  <tbody><tr>
-    <td rowspan="6"><div style="width:50px;height:280px" data-expected-height="280"></div></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td></td>
-  </tr>
-  <tr style="height:30%;background:purple" data-expected-height="120">
-    <td></td>
-  </tr>
-  <tr data-expected-height="110">
-    <td rowspan="7"></td>
-  </tr>
-  <tr data-expected-height="110">
-    <td rowspan="17"><div style="width:50px;height:40px"></div></td>
-  </tr>
-  <tr>
-    <td></td>
-  </tr>
-  <tr>
-    <td></td>
-  </tr>
-    <tr>
-    <td></td>
-  </tr>
-    <tr>
-    <td></td>
-  </tr>
-</tbody></table>
-height expected 110 but got 0
+PASS table 22
+PASS table 23
 PASS table 24
 
