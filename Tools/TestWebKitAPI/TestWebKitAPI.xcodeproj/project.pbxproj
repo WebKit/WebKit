@@ -400,6 +400,9 @@
 		76E182DD1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76E182DC1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp */; };
 		79C5D431209D768300F1E7CA /* InjectedBundleNodeHandleIsTextField.mm in Sources */ = {isa = PBXBuildFile; fileRef = 79C5D430209D768300F1E7CA /* InjectedBundleNodeHandleIsTextField.mm */; };
 		7A0509411FB9F06400B33FB8 /* JSONValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0509401FB9F04400B33FB8 /* JSONValue.cpp */; };
+		7A305A572F4E78840090F18A /* GetComputedStyleAfterIframeRemoval-subframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7A305A4D2F4E78520090F18A /* GetComputedStyleAfterIframeRemoval-subframe.html */; };
+		7A305A582F4E78840090F18A /* GetComputedStyleAfterIframeRemoval.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7A305A4B2F4E78520090F18A /* GetComputedStyleAfterIframeRemoval.html */; };
+		7A305A5C2F4E87300090F18A /* GetComputedStyleAfterIframeRemovalPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A305A4E2F4E78520090F18A /* GetComputedStyleAfterIframeRemovalPlugIn.mm */; };
 		7A32D74A1F02151500162C44 /* FileMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A32D7491F02151500162C44 /* FileMonitor.cpp */; };
 		7A7B0E7F1EAFE4C3006AB8AE /* LimitTitleSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A7B0E7E1EAFE454006AB8AE /* LimitTitleSize.mm */; };
 		7A89BB682331643A0042CB1E /* BundleFormDelegatePlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A89BB662331635D0042CB1E /* BundleFormDelegatePlugIn.mm */; };
@@ -2049,6 +2052,8 @@
 				A17C46B92C98E54B0023F3C7 /* geolocationGetCurrentPositionWithHighAccuracy.html in Copy Resources */,
 				A17C46BA2C98E54B0023F3C7 /* geolocationWatchPosition.html in Copy Resources */,
 				A17C46BB2C98E54B0023F3C7 /* geolocationWatchPositionWithHighAccuracy.html in Copy Resources */,
+				7A305A572F4E78840090F18A /* GetComputedStyleAfterIframeRemoval-subframe.html in Copy Resources */,
+				7A305A582F4E78840090F18A /* GetComputedStyleAfterIframeRemoval.html in Copy Resources */,
 				A17C47752C98E5C20023F3C7 /* getDisplayMedia.html in Copy Resources */,
 				A17C47762C98E5C20023F3C7 /* GetSessionCookie.html in Copy Resources */,
 				A17C46BC2C98E54B0023F3C7 /* getUserMedia-webaudio.html in Copy Resources */,
@@ -3388,6 +3393,11 @@
 		7A010BCC1D877C0D00EDE72A /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		7A0509401FB9F04400B33FB8 /* JSONValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSONValue.cpp; sourceTree = "<group>"; };
 		7A1458FB1AD5C03500E06772 /* mouse-button-listener.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "mouse-button-listener.html"; sourceTree = "<group>"; };
+		7A305A4B2F4E78520090F18A /* GetComputedStyleAfterIframeRemoval.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = GetComputedStyleAfterIframeRemoval.html; sourceTree = "<group>"; };
+		7A305A4C2F4E78520090F18A /* GetComputedStyleAfterIframeRemoval.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GetComputedStyleAfterIframeRemoval.mm; sourceTree = "<group>"; };
+		7A305A4D2F4E78520090F18A /* GetComputedStyleAfterIframeRemoval-subframe.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "GetComputedStyleAfterIframeRemoval-subframe.html"; sourceTree = "<group>"; };
+		7A305A4E2F4E78520090F18A /* GetComputedStyleAfterIframeRemovalPlugIn.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GetComputedStyleAfterIframeRemovalPlugIn.mm; sourceTree = "<group>"; };
+		7A305A4F2F4E78520090F18A /* GetComputedStyleAfterIframeRemovalProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GetComputedStyleAfterIframeRemovalProtocol.h; sourceTree = "<group>"; };
 		7A32D7491F02151500162C44 /* FileMonitor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FileMonitor.cpp; sourceTree = "<group>"; };
 		7A33FF2F27C82F0B00D7E03E /* LockdownModePDF.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = LockdownModePDF.html; sourceTree = "<group>"; };
 		7A33FF3227C8314D00D7E03E /* webkit-logo.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "webkit-logo.pdf"; sourceTree = "<group>"; };
@@ -4949,6 +4959,9 @@
 				CD7FC5D82CDAF7160032C1FC /* FullscreenScrollAndResize.mm */,
 				F4BDA42E27F8BF2F00F9647D /* FullscreenVideoTextRecognition.mm */,
 				631EFFF51E7B5E8D00D2EBB8 /* Geolocation.mm */,
+				7A305A4C2F4E78520090F18A /* GetComputedStyleAfterIframeRemoval.mm */,
+				7A305A4E2F4E78520090F18A /* GetComputedStyleAfterIframeRemovalPlugIn.mm */,
+				7A305A4F2F4E78520090F18A /* GetComputedStyleAfterIframeRemovalProtocol.h */,
 				07E1F6A01FFC3A080096C7EC /* GetDisplayMedia.mm */,
 				0738012E275EADAB000FA77C /* GetDisplayMediaWindowAndScreen.mm */,
 				2DADF26221CB8F32003D3E3A /* GetResourceData.mm */,
@@ -5930,6 +5943,8 @@
 				93A9BF6027BF5AE4000B44D3 /* general-storage-directory.origin */,
 				936EC36527BA3AF200AFA8AE /* general-storage-directory.salt */,
 				636353A61E9861940009F8AF /* GeolocationGetCurrentPositionResult.html */,
+				7A305A4D2F4E78520090F18A /* GetComputedStyleAfterIframeRemoval-subframe.html */,
+				7A305A4B2F4E78520090F18A /* GetComputedStyleAfterIframeRemoval.html */,
 				07E1F6A11FFC44F90096C7EC /* getDisplayMedia.html */,
 				467C565121B5ECDF0057516D /* GetSessionCookie.html */,
 				F47D30ED1ED28A6C000482E1 /* gif-and-file-input.html */,
@@ -8356,6 +8371,7 @@
 				A14FC58B1B89927100D107EB /* ContentFilteringPlugIn.mm in Sources */,
 				5C121E8D2410704900486F9B /* ContentWorldPlugIn.mm in Sources */,
 				F4B0168425AE08F800E445C4 /* DisableSpellcheckPlugIn.mm in Sources */,
+				7A305A5C2F4E87300090F18A /* GetComputedStyleAfterIframeRemovalPlugIn.mm in Sources */,
 				F460F65B261119580064F2B6 /* InjectedBundleHitTestPlugIn.mm in Sources */,
 				0E404A8C2166DE0A008271BA /* InjectedBundleNodeHandleIsSelectElement.mm in Sources */,
 				79C5D431209D768300F1E7CA /* InjectedBundleNodeHandleIsTextField.mm in Sources */,

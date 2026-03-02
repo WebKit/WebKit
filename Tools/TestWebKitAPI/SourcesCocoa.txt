@@ -141,6 +141,7 @@ Tests/WebKitCocoa/FullscreenScrollAndResize.mm @nonARC
 Tests/WebKitCocoa/FullscreenVideoTextRecognition.mm @nonARC
 Tests/WebKitCocoa/GPUProcess.mm @nonARC
 Tests/WebKitCocoa/Geolocation.mm @nonARC
+Tests/WebKitCocoa/GetComputedStyleAfterIframeRemoval.mm @nonARC
 Tests/WebKitCocoa/GetDisplayMedia.mm @nonARC
 Tests/WebKitCocoa/GetDisplayMediaWindowAndScreen.mm @nonARC
 Tests/WebKitCocoa/GetResourceData.mm @nonARC
