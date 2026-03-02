@@ -102,6 +102,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
 @interface WKActionSheetAssistant () <WKCaptionStyleMenuControllerDelegate>
 - (void)captionStyleMenuWillOpen:(PlatformMenu *)menu;
 - (void)captionStyleMenuDidClose:(PlatformMenu *)menu;
+- (void)captionStyleMenu:(PlatformMenu *)menu setPreviewProfileID:(NSString *)profileID;
 - (void)captionStyleMenu:(PlatformMenu *)menu didSelectProfile:(NSString *)profileID;
 @end
 #endif
@@ -921,6 +922,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     if ([_delegate respondsToSelector:@selector(captionStyleMenuWillOpenWithFrameInfo:identifier:)] && _mediaElementIdentifier && _frameInfo)
         [_delegate captionStyleMenuWillOpenWithFrameInfo:*_frameInfo identifier:*_mediaElementIdentifier];
+}
+
+- (void)captionStyleMenu:(PlatformMenu *)captionStyleMenu setPreviewProfileID:(NSString *)profileID
+{
+    RetainPtr protectedDelegate = _delegate.get();
+    if ([protectedDelegate respondsToSelector:@selector(captionStyleMenuWillOpenWithFrameInfo:identifier:)] && _frameInfo)
+        [protectedDelegate captionStyleMenuSetPreviewProfileID:profileID frameInfo:*_frameInfo identifier:*_mediaElementIdentifier];
 }
 
 - (void)captionStyleMenu:(PlatformMenu *)captionStyleMenu didSelectProfile:(NSString *)profileID

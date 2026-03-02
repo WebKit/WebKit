@@ -930,6 +930,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 #endif
 
 #if ENABLE(VIDEO)
+    SetCaptionDisplaySettingsPreviewProfileID(String profileID)
     ShowCaptionDisplaySettingsPreview(WebCore::MediaPlayerClientIdentifier identifier)
     HideCaptionDisplaySettingsPreview(WebCore::MediaPlayerClientIdentifier identifier)
 #endif

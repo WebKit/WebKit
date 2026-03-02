@@ -26,7 +26,7 @@
 #pragma once
 
 #include <wtf/Platform.h>
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) && HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 
 #include <WebCore/CSSPropertyNames.h>
 #include <WebCore/CaptionPreferencesDelegate.h>
@@ -34,9 +34,7 @@
 #include <WebCore/Color.h>
 #include <wtf/TZoneMalloc.h>
 
-#if PLATFORM(COCOA)
 OBJC_CLASS WebCaptionUserPreferencesMediaAFWeakObserver;
-#endif
 
 namespace WebCore {
 
@@ -46,7 +44,6 @@ public:
     WEBCORE_EXPORT static Ref<CaptionUserPreferencesMediaAF> create(PageGroup&);
     virtual ~CaptionUserPreferencesMediaAF();
 
-#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     CaptionDisplayMode captionDisplayMode() const override;
     void setCaptionDisplayMode(CaptionDisplayMode) override;
 
@@ -86,22 +83,18 @@ public:
     WEBCORE_EXPORT static void setCaptionPreferencesDelegate(std::unique_ptr<CaptionPreferencesDelegate>&&);
 
     bool testingMode() const final;
-#else
-    bool shouldFilterTrackMenu() const { return false; }
-#endif
 
-#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK) && PLATFORM(COCOA)
     static RefPtr<CaptionUserPreferencesMediaAF> extractCaptionUserPreferencesMediaAF(void* observer);
-#endif
 
     WEBCORE_EXPORT String captionsStyleSheetOverride() const override;
     Vector<Ref<AudioTrack>> sortedTrackListForMenu(AudioTrackList*) override;
     Vector<Ref<TextTrack>> sortedTrackListForMenu(TextTrackList*, HashSet<TextTrack::Kind>) override;
     String displayNameForTrack(const AudioTrack&) const override;
     String displayNameForTrack(const TextTrack&) const override;
+    String captionPreviewProfileID() const override;
+    void setCaptionPreviewProfileID(const String&) override;
     String captionPreviewTitle() const override;
 
-#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     WEBCORE_EXPORT String captionsWindowCSS() const;
     WEBCORE_EXPORT String captionsBackgroundCSS() const;
     WEBCORE_EXPORT String captionsTextColorCSS() const;
@@ -110,30 +103,23 @@ public:
     WEBCORE_EXPORT String captionsFontSizeCSS() const;
     WEBCORE_EXPORT String windowRoundedCornerRadiusCSS() const;
     WEBCORE_EXPORT String captionsTextEdgeCSS() const;
-    WEBCORE_EXPORT String colorPropertyCSS(CSSPropertyID, const Color&, bool) const;
-#endif
 
 private:
     explicit CaptionUserPreferencesMediaAF(PageGroup&);
 
-#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     void updateTimerFired();
     bool hasNullCaptionProfile() const;
-#endif
 
-#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK) && PLATFORM(COCOA)
     static RetainPtr<WebCaptionUserPreferencesMediaAFWeakObserver> createWeakObserver(CaptionUserPreferencesMediaAF*);
 
     const RetainPtr<WebCaptionUserPreferencesMediaAFWeakObserver> m_observer;
-#endif
 
-#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     Timer m_updateStyleSheetTimer;
     bool m_listeningForPreferenceChanges { false };
     bool m_registeringForNotification { false };
-#endif
+    String m_previewProfileID;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(VIDEO)
+#endif // ENABLE(VIDEO) && HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
