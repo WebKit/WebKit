@@ -395,6 +395,7 @@ ARM_INSTRUCTIONS =
      "bcs",
      "clrbp",
      "mvlbl",
+     "pcrtoaddr",
      "globaladdr",
      "sbci",
      "moveii",
