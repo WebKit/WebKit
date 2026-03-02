@@ -66,10 +66,10 @@ void ContentSecurityPolicyResponseHeaders::addPolicyHeadersTo(ResourceResponse& 
     for (const auto& header : m_headers) {
         switch (header.second) {
         case ContentSecurityPolicyHeaderType::Enforce:
-            response.setHTTPHeaderField(HTTPHeaderName::ContentSecurityPolicy, header.first);
+            response.addHTTPHeaderField(HTTPHeaderName::ContentSecurityPolicy, header.first);
             break;
         case ContentSecurityPolicyHeaderType::Report:
-            response.setHTTPHeaderField(HTTPHeaderName::ContentSecurityPolicyReportOnly, header.first);
+            response.addHTTPHeaderField(HTTPHeaderName::ContentSecurityPolicyReportOnly, header.first);
             break;
         }
     }
