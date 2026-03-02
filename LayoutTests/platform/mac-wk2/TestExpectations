@@ -2498,5 +2498,3 @@ tiled-drawing/mac/margin-tiles-with-banner-view-overlay-repeat-x.html [ Skip ]
 tiled-drawing/mac/margin-tiles-with-banner-view-overlay-repeat-y.html [ Skip ]
 
 webkit.org/b/308845 [ Debug arm64 ] fast/scrolling/latching/scroll-div-no-latching.html [ Failure Pass ]
-
-webkit.org/b/308856 [ Debug ] http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers.html [ Failure Pass ]
