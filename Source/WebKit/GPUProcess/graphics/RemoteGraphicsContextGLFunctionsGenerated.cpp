@@ -416,26 +416,37 @@ void RemoteGraphicsContextGL::generateMipmap(uint32_t target)
     protectedContext()->generateMipmap(target);
 }
 
-void RemoteGraphicsContextGL::activeAttribs(uint32_t program, CompletionHandler<void(Vector<WebCore::GCGLAttribActiveInfo>&&)>&& completionHandler)
+void RemoteGraphicsContextGL::getActiveAttrib(uint32_t program, uint32_t index, CompletionHandler<void(std::optional<WebCore::GraphicsContextGLActiveInfo>&&)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    Vector<WebCore::GCGLAttribActiveInfo> returnValue = { };
+    std::optional<WebCore::GraphicsContextGLActiveInfo> returnValue = { };
     MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
-    returnValue = protectedContext()->activeAttribs(program);
+    returnValue = protectedContext()->getActiveAttrib(program, index);
     completionHandler(WTF::move(returnValue));
 }
 
-void RemoteGraphicsContextGL::activeUniforms(uint32_t program, CompletionHandler<void(Vector<WebCore::GCGLUniformActiveInfo>&&)>&& completionHandler)
+void RemoteGraphicsContextGL::getActiveUniform(uint32_t program, uint32_t index, CompletionHandler<void(std::optional<WebCore::GraphicsContextGLActiveInfo>&&)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    Vector<WebCore::GCGLUniformActiveInfo> returnValue = { };
+    std::optional<WebCore::GraphicsContextGLActiveInfo> returnValue = { };
     MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
-    returnValue = protectedContext()->activeUniforms(program);
+    returnValue = protectedContext()->getActiveUniform(program, index);
     completionHandler(WTF::move(returnValue));
+}
+
+void RemoteGraphicsContextGL::getAttribLocation(uint32_t arg0, CString&& name, CompletionHandler<void(int32_t)>&& completionHandler)
+{
+    assertIsCurrent(workQueue());
+    GCGLint returnValue = { };
+    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
+    if (arg0)
+        arg0 = m_objectNames.get(arg0);
+    returnValue = protectedContext()->getAttribLocation(arg0, name);
+    completionHandler(returnValue);
 }
 
 void RemoteGraphicsContextGL::getBufferParameteri(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
@@ -630,6 +641,17 @@ void RemoteGraphicsContextGL::getUniformuiv(uint32_t program, int32_t location, 
     Vector<GCGLuint, 4> value(valueSize, 0);
     protectedContext()->getUniformuiv(program, location, value);
     completionHandler(spanReinterpretCast<const uint32_t>(value.span()));
+}
+
+void RemoteGraphicsContextGL::getUniformLocation(uint32_t arg0, CString&& name, CompletionHandler<void(int32_t)>&& completionHandler)
+{
+    assertIsCurrent(workQueue());
+    GCGLint returnValue = { };
+    MESSAGE_CHECK(m_objectNames.isValidKey(arg0));
+    if (arg0)
+        arg0 = m_objectNames.get(arg0);
+    returnValue = protectedContext()->getUniformLocation(arg0, name);
+    completionHandler(returnValue);
 }
 
 void RemoteGraphicsContextGL::getVertexAttribOffset(uint32_t index, uint32_t pname, CompletionHandler<void(uint64_t)>&& completionHandler)
@@ -1644,10 +1666,10 @@ void RemoteGraphicsContextGL::transformFeedbackVaryings(uint32_t program, Vector
     protectedContext()->transformFeedbackVaryings(program, varyings, bufferMode);
 }
 
-void RemoteGraphicsContextGL::getTransformFeedbackVarying(uint32_t program, uint32_t index, CompletionHandler<void(std::optional<WebCore::GCGLTransformFeedbackActiveInfo>&&)>&& completionHandler)
+void RemoteGraphicsContextGL::getTransformFeedbackVarying(uint32_t program, uint32_t index, CompletionHandler<void(std::optional<WebCore::GraphicsContextGLActiveInfo>&&)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    std::optional<WebCore::GCGLTransformFeedbackActiveInfo> returnValue = { };
+    std::optional<WebCore::GraphicsContextGLActiveInfo> returnValue = { };
     MESSAGE_CHECK(m_objectNames.isValidKey(program));
     if (program)
         program = m_objectNames.get(program);
@@ -1683,6 +1705,28 @@ void RemoteGraphicsContextGL::bindBufferRange(uint32_t target, uint32_t index, u
     if (buffer)
         buffer = m_objectNames.get(buffer);
     protectedContext()->bindBufferRange(target, index, buffer, static_cast<GCGLintptr>(offset), static_cast<GCGLsizeiptr>(arg4));
+}
+
+void RemoteGraphicsContextGL::getUniformIndices(uint32_t program, Vector<CString>&& uniformNames, CompletionHandler<void(Vector<uint32_t>&&)>&& completionHandler)
+{
+    assertIsCurrent(workQueue());
+    Vector<GCGLuint> returnValue = { };
+    MESSAGE_CHECK(m_objectNames.isValidKey(program));
+    if (program)
+        program = m_objectNames.get(program);
+    returnValue = protectedContext()->getUniformIndices(program, uniformNames);
+    completionHandler(WTF::move(returnValue));
+}
+
+void RemoteGraphicsContextGL::getActiveUniforms(uint32_t program, Vector<uint32_t>&& uniformIndices, uint32_t pname, CompletionHandler<void(Vector<int32_t>&&)>&& completionHandler)
+{
+    assertIsCurrent(workQueue());
+    Vector<GCGLint> returnValue = { };
+    MESSAGE_CHECK(m_objectNames.isValidKey(program));
+    if (program)
+        program = m_objectNames.get(program);
+    returnValue = protectedContext()->getActiveUniforms(program, uniformIndices, pname);
+    completionHandler(WTF::move(returnValue));
 }
 
 void RemoteGraphicsContextGL::getUniformBlockIndex(uint32_t program, CString&& uniformBlockName, CompletionHandler<void(uint32_t)>&& completionHandler)

@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #pragma once
@@ -28,12 +28,10 @@
 #if ENABLE(WEBGL)
 
 #include "ContextDestructionObserver.h"
-#include "GraphicsContextGLActiveInfo.h"
 #include "WebGLObject.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/Lock.h>
-#include <wtf/Markable.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -64,13 +62,7 @@ public:
 
     void contextDestroyed() final;
 
-    bool linkStatus();
-    std::span<const GCGLAttribActiveInfo> activeAttribs() LIFETIME_BOUND;
-    const HashMap<String, int>& attribLocations() LIFETIME_BOUND;
-    std::span<const GCGLUniformActiveInfo> activeUniforms();
-    const HashMap<String, int>& uniformLocations() LIFETIME_BOUND;
-    const HashMap<String, unsigned>& uniformIndices() LIFETIME_BOUND;
-    int requiredTransformFeedbackBufferCount();
+    bool getLinkStatus();
 
     unsigned getLinkCount() const { return m_linkCount; }
 
@@ -90,6 +82,11 @@ public:
     {
         m_requiredTransformFeedbackBufferCountAfterNextLink = count;
     }
+    int requiredTransformFeedbackBufferCount()
+    {
+        cacheInfoIfNeeded();
+        return m_requiredTransformFeedbackBufferCount;
+    }
 
     void addMembersToOpaqueRoots(const AbstractLocker&, JSC::AbstractSlotVisitor&);
 
@@ -101,19 +98,11 @@ private:
 
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
 
-    void updateLinkStatus();
+    void cacheInfoIfNeeded();
 
     static Lock s_instancesLock;
 
-    struct {
-        Markable<int> linkStatus;
-        Markable<int> requiredTransformFeedbackBufferCount;
-        std::optional<Vector<GCGLAttribActiveInfo>> activeAttribs;
-        std::optional<HashMap<String, int>> attribLocations;
-        std::optional<Vector<GCGLUniformActiveInfo>> activeUniforms;
-        std::optional<HashMap<String, int>> uniformLocations;
-        std::optional<HashMap<String, unsigned>> uniformIndices;
-    } m_state;
+    GCGLint m_linkStatus { 0 };
 
     // This is used to track whether a WebGLUniformLocation belongs to this program or not.
     unsigned m_linkCount { 0 };
@@ -121,7 +110,9 @@ private:
     RefPtr<WebGLShader> m_vertexShader;
     RefPtr<WebGLShader> m_fragmentShader;
 
+    bool m_infoValid { true };
     int m_requiredTransformFeedbackBufferCountAfterNextLink { 0 };
+    int m_requiredTransformFeedbackBufferCount { 0 };
 };
 
 } // namespace WebCore
