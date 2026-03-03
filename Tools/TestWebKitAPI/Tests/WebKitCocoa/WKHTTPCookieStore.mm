@@ -1230,6 +1230,63 @@ TEST(WKHTTPCookieStore, SetCookieForLocalhost)
     EXPECT_WK_STREQ("TestCookie=TestValue", receivedCookies);
 }
 
+TEST(WKHTTPCookieStore, SetSecureSameSiteNoneCookieForLocalhost)
+{
+    using namespace TestWebKitAPI;
+
+    RetainPtr cookie = [NSHTTPCookie cookieWithProperties:@{
+        NSHTTPCookiePath: @"/",
+        NSHTTPCookieName: @"SecureTestCookie",
+        NSHTTPCookieValue: @"SecureTestValue",
+        NSHTTPCookieDomain: @"localhost",
+        NSHTTPCookieSecure: @"TRUE",
+    }];
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    auto dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    configuration.get().websiteDataStore = dataStore;
+    auto cookieStore = dataStore.httpCookieStore;
+
+    // Set the Secure localhost cookie.
+    __block bool done = false;
+    [cookieStore setCookie:cookie.get() completionHandler:^{
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+
+    // Verify cookie was stored with correct properties.
+    [cookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
+        EXPECT_EQ([cookies count], 1u);
+        NSHTTPCookie *storedCookie = [cookies firstObject];
+        EXPECT_WK_STREQ(@"SecureTestCookie", storedCookie.name);
+        EXPECT_TRUE(storedCookie.secure);
+        EXPECT_TRUE(!storedCookie.sameSitePolicy);
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+
+    // Verify cookie is sent in HTTPS requests to localhost.
+    String receivedCookies;
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (true) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            receivedCookies = HTTPServer::parseCookies(request);
+            co_await connection.awaitableSend(HTTPResponse("hi"_s).serialize());
+        }
+    }, HTTPServer::Protocol::Https);
+
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:server.requestWithLocalhost()];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ("SecureTestCookie=SecureTestValue", receivedCookies);
+}
+
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
 TEST(WKHTTPCookieStore, PartitionedCookieShouldNotHavePartitionProperty)
 {

@@ -77,6 +77,8 @@ String buildSetCookieStringWithoutDomain(const Cookie& cookie)
         builder.append("; SameSite=Strict"_s);
         break;
     case Cookie::SameSitePolicy::None:
+        if (cookie.secure)
+            builder.append("; SameSite=None"_s);
         break;
     }
 
