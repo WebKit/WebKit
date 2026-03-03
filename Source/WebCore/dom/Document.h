@@ -1885,6 +1885,11 @@ public:
     const ListHashSet<Ref<Element>>& topLayerElements() const LIFETIME_BOUND { return m_topLayerElements; }
     bool hasTopLayerElement() const { return !m_topLayerElements.isEmpty(); }
 
+    void addPendingTopLayerRemoval(Element&);
+    void removePendingTopLayerRemoval(Element&);
+    bool isPendingTopLayerRemoval(const Element&) const;
+    void processTopLayerRemovals();
+
     const ListHashSet<Ref<HTMLElement>>& autoPopoverList() const LIFETIME_BOUND { return m_autoPopoverList; }
 
     HTMLDialogElement* activeModalDialog() const;
@@ -2620,6 +2625,7 @@ private:
     const Ref<FragmentDirective> m_fragmentDirectiveForBindings;
 
     ListHashSet<Ref<Element>> m_topLayerElements;
+    ListHashSet<Ref<Element>> m_pendingTopLayerRemovals;
     ListHashSet<Ref<HTMLElement>> m_autoPopoverList;
 
     WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_popoverPointerDownTarget;

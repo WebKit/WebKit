@@ -604,7 +604,7 @@ void DocumentFullscreen::finishExitFullscreen(Frame& currentFrame, ExitMode mode
             toRemove.append(element);
         }
         for (Ref element : toRemove)
-            element->removeFromTopLayer();
+            element->requestRemovalFromTopLayer();
     };
 
     auto exitDocuments = documentsToUnfullscreen(currentFrame);
@@ -615,7 +615,7 @@ void DocumentFullscreen::finishExitFullscreen(Frame& currentFrame, ExitMode mode
         else {
             RefPtr fullscreenElement = protect(exitDocument->fullscreen())->fullscreenElement();
             clearFullscreenFlags(*fullscreenElement);
-            fullscreenElement->removeFromTopLayer();
+            fullscreenElement->requestRemovalFromTopLayer();
         }
     }
 

@@ -496,6 +496,11 @@ enum class WordBreak : uint8_t {
     AutoPhrase
 };
 
+enum class Overlay : bool {
+    None,
+    Auto
+};
+
 enum class OverflowWrap : uint8_t {
     Normal,
     BreakWord,
@@ -1185,6 +1190,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, NinePieceImageRule);
 WTF::TextStream& operator<<(WTF::TextStream&, ObjectFit);
 WTF::TextStream& operator<<(WTF::TextStream&, Order);
 WTF::TextStream& operator<<(WTF::TextStream&, OutlineStyle);
+WTF::TextStream& operator<<(WTF::TextStream&, Overlay);
 WTF::TextStream& operator<<(WTF::TextStream&, WebCore::Overflow);
 WTF::TextStream& operator<<(WTF::TextStream&, OverflowAlignment);
 WTF::TextStream& operator<<(WTF::TextStream&, OverflowWrap);

@@ -113,6 +113,12 @@ abbr[title], acronym[title] {
     inset: 0;
 }
 
+/* overlay */
+
+/* https://drafts.csswg.org/css-position-4/#overlay */
+/* This prevents authors from setting overlay; it is controlled entirely by the UA. */
+* { overlay: none !important; }
+
 /* dialog */
 
 dialog {

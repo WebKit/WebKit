@@ -331,6 +331,7 @@ bool NonInheritedRareData::operator==(const NonInheritedRareData& o) const
         && applePayButtonType == o.applePayButtonType
 #endif
         && contentVisibility == o.contentVisibility
+        && overlay == o.overlay
         && breakAfter == o.breakAfter
         && breakBefore == o.breakBefore
         && breakInside == o.breakInside

@@ -219,6 +219,7 @@ public:
     PREFERRED_TYPE(TextDecorationStyle) unsigned textDecorationStyle : 3;
     PREFERRED_TYPE(TextGroupAlign) unsigned textGroupAlign : 3;
     PREFERRED_TYPE(ContentVisibility) unsigned contentVisibility : 2;
+    PREFERRED_TYPE(Overlay) unsigned overlay : 1;
     PREFERRED_TYPE(BlendMode) unsigned effectiveBlendMode: 5;
     PREFERRED_TYPE(Isolation) unsigned isolation : 1;
     PREFERRED_TYPE(InputSecurity) unsigned inputSecurity : 1;

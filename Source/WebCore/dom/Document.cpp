@@ -11048,6 +11048,7 @@ void Document::removeTopLayerElement(Element& element)
     RELEASE_ASSERT(&element.document() == this && element.isInTopLayer());
     auto didRemove = m_topLayerElements.remove(element);
     RELEASE_ASSERT(didRemove);
+    m_pendingTopLayerRemovals.remove(element);
     if (auto* candidatePopover = dynamicDowncast<HTMLElement>(element); candidatePopover && candidatePopover->isPopoverShowing() && candidatePopover->popoverState() == PopoverState::Auto) {
         m_autoPopoverList.remove(*candidatePopover);
 #if PLATFORM(IOS_FAMILY) && ENABLE(TOUCH_EVENTS)
@@ -11056,6 +11057,49 @@ void Document::removeTopLayerElement(Element& element)
             invalidateEventListenerRegions();
         }
 #endif
+    }
+}
+
+void Document::addPendingTopLayerRemoval(Element& element)
+{
+    RELEASE_ASSERT(&element.document() == this && element.isInTopLayer());
+    auto result = m_pendingTopLayerRemovals.add(element);
+    RELEASE_ASSERT(result.isNewEntry);
+    // Remove from the auto popover list immediately, since the popover is being hidden.
+    if (auto* candidatePopover = dynamicDowncast<HTMLElement>(element); candidatePopover && candidatePopover->isPopoverShowing() && candidatePopover->popoverState() == PopoverState::Auto) {
+#if PLATFORM(IOS_FAMILY) && ENABLE(TOUCH_EVENTS)
+        bool neededEventHandling = needsPointerEventHandlingForPopover();
+#endif
+        m_autoPopoverList.remove(*candidatePopover);
+#if PLATFORM(IOS_FAMILY) && ENABLE(TOUCH_EVENTS)
+        if (neededEventHandling && !needsPointerEventHandlingForPopover()) {
+            invalidateRenderingDependentRegions();
+            invalidateEventListenerRegions();
+        }
+#endif
+    }
+}
+
+void Document::removePendingTopLayerRemoval(Element& element)
+{
+    m_pendingTopLayerRemovals.remove(element);
+}
+
+bool Document::isPendingTopLayerRemoval(const Element& element) const
+{
+    return m_pendingTopLayerRemovals.contains(const_cast<Element&>(element));
+}
+
+// https://drafts.csswg.org/css-position-4/#process-top-layer-removals
+void Document::processTopLayerRemovals()
+{
+    if (m_pendingTopLayerRemovals.isEmpty())
+        return;
+
+    for (auto& element : copyToVectorOf<Ref<Element>>(m_pendingTopLayerRemovals)) {
+        auto* style = element->computedStyle();
+        if (!style || style->overlay() == Overlay::None || !element->renderer())
+            element->removeFromTopLayer();
     }
 }
 

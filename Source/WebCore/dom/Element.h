@@ -719,8 +719,10 @@ public:
     void setIsLink(bool flag);
 
     bool isInTopLayer() const { return hasEventTargetFlag(EventTargetFlag::IsInTopLayer); }
+    bool isPendingTopLayerRemoval() const;
     void addToTopLayer();
     void removeFromTopLayer();
+    void requestRemovalFromTopLayer();
 
 #if ENABLE(FULLSCREEN_API)
     bool hasFullscreenFlag() const { return hasStateFlag(StateFlag::IsFullscreen); }

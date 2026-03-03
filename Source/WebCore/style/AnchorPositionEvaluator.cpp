@@ -1184,7 +1184,7 @@ static RefPtr<Element> findImplicitAnchor(const Element& anchorPositionedElement
         // https://html.spec.whatwg.org/multipage/popover.html#the-popover-attribute
         // 24. Set element's implicit anchor element to invoker.
         if (auto popoverData = anchorPositionedElement.popoverData())
-            return popoverData->invoker();
+            return popoverData->implicitAnchor();
 
         return nullptr;
     };

@@ -466,6 +466,12 @@ void Adjuster::adjust(RenderStyle& style) const
         if (hasUnsupportedRubyDisplay(style.display(), m_element.get(), m_document))
             style.setDisplayMaintainingOriginalDisplay(style.display() == DisplayType::BlockRuby ? DisplayType::BlockFlow : DisplayType::InlineFlow);
 
+        // https://drafts.csswg.org/css-position-4/#overlay
+        // Inject overlay: auto for elements in the top layer that are not pending removal.
+        // This is the per-element UA !important rule that overrides the universal * { overlay: none !important } rule.
+        if (m_element && m_element->isInTopLayer() && !m_element->isPendingTopLayerRemoval())
+            style.setOverlay(Overlay::Auto);
+
         // Top layer elements are always position: absolute; unless the position is set to fixed.
         // https://fullscreen.spec.whatwg.org/#new-stacking-layer
         if (m_element != m_document->documentElement() && style.position() != PositionType::Absolute && style.position() != PositionType::Fixed && isInTopLayerOrBackdrop(style, m_element.get()))

@@ -4542,6 +4542,26 @@ static void forEachRenderLayer(Element& element, const std::function<void(Render
 
 void Element::addToTopLayer()
 {
+    Ref document = this->document();
+
+    // https://drafts.csswg.org/css-position-4/#add-an-element-to-the-top-layer
+    // If el is already contained in doc's top layer, it must also be in pending top layer removals.
+    // In that case, remove it from both sets before re-adding.
+    if (isInTopLayer()) {
+        RELEASE_ASSERT(document->isPendingTopLayerRemoval(*this));
+
+        forEachRenderLayer(*this, [](RenderLayer& layer) {
+            layer.establishesTopLayerWillChange();
+        });
+
+        document->removeTopLayerElement(*this);
+        clearEventTargetFlag(EventTargetFlag::IsInTopLayer);
+
+        forEachRenderLayer(*this, [](RenderLayer& layer) {
+            layer.establishesTopLayerDidChange();
+        });
+    }
+
     RELEASE_ASSERT(!isInTopLayer());
     RELEASE_ASSERT(isConnected());
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
@@ -4550,7 +4570,6 @@ void Element::addToTopLayer()
         layer.establishesTopLayerWillChange();
     });
 
-    Ref document = this->document();
     document->addTopLayerElement(*this);
     setEventTargetFlag(EventTargetFlag::IsInTopLayer);
 
@@ -4601,6 +4620,24 @@ void Element::removeFromTopLayer()
     forEachRenderLayer(*this, [](RenderLayer& layer) {
         layer.establishesTopLayerDidChange();
     });
+}
+
+// https://drafts.csswg.org/css-position-4/#request-an-element-to-be-removed-from-the-top-layer
+void Element::requestRemovalFromTopLayer()
+{
+    if (!isInTopLayer() || isPendingTopLayerRemoval())
+        return;
+
+    Ref document = this->document();
+    document->addPendingTopLayerRemoval(*this);
+
+    // Trigger a style update so the overlay transition can begin.
+    invalidateStyleInternal();
+}
+
+bool Element::isPendingTopLayerRemoval() const
+{
+    return document().isPendingTopLayerRemoval(*this);
 }
 
 static PseudoElement* beforeOrAfterPseudoElement(const Element& host, PseudoElementType pseudoElementSpecifier)
