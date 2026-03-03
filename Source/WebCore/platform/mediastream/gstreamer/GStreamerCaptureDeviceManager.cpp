@@ -313,6 +313,7 @@ void GStreamerCaptureDeviceManager::refreshCaptureDevices()
 {
     GST_DEBUG_OBJECT(m_deviceMonitor.get(), "Refreshing capture devices");
     m_devices.clear();
+    m_speakerDevices.clear();
     m_gstreamerDevices.clear();
     if (m_isTearingDown)
         return;

@@ -5,6 +5,7 @@
     <title>Test passing capture device IDs to getUserMedia</title>
     <script src="../../resources/testharness.js"></script>
     <script src="../../resources/testharnessreport.js"></script>
+    <script src="../../resources/platform-helper.js"></script>
     <script>
 
     function deviceFromLabel(devices, label)
@@ -24,6 +25,9 @@
 
     promise_test(async (test) => {
         window.internals.settings.setExposeSpeakersWithoutMicrophoneEnabled(false);
+        if (isWPE()) {
+            window.internals.settings.setExposeDefaultSpeakerAsSpecificDeviceEnabled(true);
+        }
 
         const stream = await navigator.mediaDevices.getUserMedia({ audio:true, video:true })
         test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));

@@ -376,6 +376,12 @@ void MediaDevices::exposeDevices(Vector<CaptureDeviceWithCapabilities>&& newDevi
     bool canAccessCamera = checkCameraAccess(document);
     bool canAccessMicrophone = checkMicrophoneAccess(document);
     bool canAccessSpeaker = checkSpeakerAccess(document);
+    bool shouldExposeSpeakersWithoutMic = exposeSpeakersWithoutMicrophoneAccess(document);
+    bool shouldExposeJustDefaultSpeakerWithoutMic = document->frame()->settings().exposeJustDefaultSpeakerWithoutMicrophoneEnabled()
+        && !shouldExposeDefaultSpeakerAsSpecificDevice && canAccessSpeaker && shouldExposeSpeakersWithoutMic;
+    bool hasAnyMicrophone = std::ranges::any_of(newDevices, [](auto& d) {
+        return d.device.type() == CaptureDevice::DeviceType::Microphone;
+    });
 
     m_audioOutputDeviceIdToPersistentId.clear();
 
@@ -398,14 +404,19 @@ void MediaDevices::exposeDevices(Vector<CaptureDeviceWithCapabilities>&& newDevi
         auto groupId = center.hashStringWithSalt(newDevice.groupId(), deviceIDHashSalts.ephemeralDeviceSalt);
 
         if (newDevice.type() == CaptureDevice::DeviceType::Speaker) {
-            if (exposeSpeakersWithoutMicrophoneAccess(document) || haveMicrophoneDevice(newDevices, newDevice.groupId())) {
+            bool hasMic = haveMicrophoneDevice(newDevices, newDevice.groupId());
+            if (shouldExposeSpeakersWithoutMic || hasMic) {
                 if (shouldExposeDefaultSpeakerAsSpecificDevice) {
                     shouldExposeDefaultSpeakerAsSpecificDevice = false;
                     devices.append(createDefaultSpeakerAsSpecificDevice(newDevice, groupId));
                 }
 
-                m_audioOutputDeviceIdToPersistentId.add(deviceId, newDevice.persistentId());
-                devices.append(MediaDeviceInfo::create(newDevice.label(), WTF::move(deviceId), WTF::move(groupId), MediaDeviceInfo::Kind::Audiooutput));
+                if (shouldExposeJustDefaultSpeakerWithoutMic && !hasAnyMicrophone)
+                    devices.append(MediaDeviceInfo::create(emptyString(), emptyString(), WTF::move(groupId), MediaDeviceInfo::Kind::Audiooutput));
+                else {
+                    m_audioOutputDeviceIdToPersistentId.add(deviceId, newDevice.persistentId());
+                    devices.append(MediaDeviceInfo::create(newDevice.label(), WTF::move(deviceId), WTF::move(groupId), MediaDeviceInfo::Kind::Audiooutput));
+                }
             }
         } else {
             if (newDevice.type() == CaptureDevice::DeviceType::Camera && !newDevice.label().isEmpty())

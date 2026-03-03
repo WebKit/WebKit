@@ -993,8 +993,16 @@ void UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList(FrameIden
 
     bool revealIdsAndLabels = cameraState == PermissionState::Granted || microphoneState == PermissionState::Granted;
     RefPtr page = m_page.get();
-    bool shoulExposeCaptureDevicesBasedOnPermission = page && !protect(page->preferences())->exposeCaptureDevicesAfterCaptureEnabled();
-    platformGetMediaStreamDevices(revealIdsAndLabels || wasGrantedVideoAccess(frameID) || wasGrantedAudioAccess(frameID), [frameID, logIdentifier = LOGIDENTIFIER, weakThis = WeakPtr { *this }, cameraState, microphoneState, revealIdsAndLabels, shoulExposeCaptureDevicesBasedOnPermission, completion = WTF::move(completion)](auto&& devicesWithCapabilities) mutable {
+    bool shouldExposeCaptureDevicesBasedOnPermission = false;
+    bool exposeJustDefaultSpeakerWithoutMicrophone = false;
+    if (page) {
+        Ref prefs = page->preferences();
+        shouldExposeCaptureDevicesBasedOnPermission = !prefs->exposeCaptureDevicesAfterCaptureEnabled();
+        exposeJustDefaultSpeakerWithoutMicrophone = prefs->exposeJustDefaultSpeakerWithoutMicrophoneEnabled()
+            && !prefs->exposeDefaultSpeakerAsSpecificDeviceEnabled() && prefs->exposeSpeakersEnabled()
+            && prefs->exposeSpeakersWithoutMicrophoneEnabled();
+    }
+    platformGetMediaStreamDevices(revealIdsAndLabels || wasGrantedVideoAccess(frameID) || wasGrantedAudioAccess(frameID), [frameID, logIdentifier = LOGIDENTIFIER, weakThis = WeakPtr { *this }, cameraState, microphoneState, revealIdsAndLabels, shouldExposeCaptureDevicesBasedOnPermission, exposeJustDefaultSpeakerWithoutMicrophone, completion = WTF::move(completion)](auto&& devicesWithCapabilities) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             completion({ });
@@ -1007,12 +1015,15 @@ void UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList(FrameIden
 
         bool shouldRestrictCamera = !protectedThis->wasGrantedVideoAccess(frameID);
         bool shouldRestrictMicrophone = !protectedThis->wasGrantedAudioAccess(frameID);
-        if (shoulExposeCaptureDevicesBasedOnPermission) {
+        if (shouldExposeCaptureDevicesBasedOnPermission) {
             shouldRestrictCamera = cameraState == PermissionState::Denied || (!revealIdsAndLabels && !protectedThis->wasGrantedVideoAccess(frameID));
             shouldRestrictMicrophone = microphoneState == PermissionState::Denied || (!revealIdsAndLabels && !protectedThis->wasGrantedAudioAccess(frameID));
         }
 
         bool shouldRestrictSpeaker = !protectedThis->wasGrantedAudioAccess(frameID);
+        bool hasMicrophones = std::ranges::any_of(devicesWithCapabilities, [](auto& d) {
+            return d.device.type() == WebCore::CaptureDevice::DeviceType::Microphone && d.device.enabled();
+        });
         Vector<CaptureDeviceWithCapabilities> filteredDevices;
         for (auto& deviceWithCapabilities : devicesWithCapabilities) {
             auto& device = deviceWithCapabilities.device;
@@ -1038,12 +1049,15 @@ void UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList(FrameIden
                 }
                 filteredDevices.append(deviceWithCapabilities);
                 break;
-            case WebCore::CaptureDevice::DeviceType::Speaker:
-                if (shouldRestrictSpeaker)
+            case WebCore::CaptureDevice::DeviceType::Speaker: {
+                bool canExposeJustDefault = exposeJustDefaultSpeakerWithoutMicrophone && !hasMicrophones;
+                bool shouldDropSpeaker = (canExposeJustDefault && !device.isDefault()) || (!canExposeJustDefault && shouldRestrictSpeaker);
+                if (shouldDropSpeaker)
                     break;
                 speakerCount++;
                 filteredDevices.append(deviceWithCapabilities);
                 break;
+            }
             default:
                 break;
             }

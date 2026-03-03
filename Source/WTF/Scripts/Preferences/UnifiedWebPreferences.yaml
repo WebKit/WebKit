@@ -2883,9 +2883,26 @@ ExposeDefaultSpeakerAsSpecificDeviceEnabled:
   condition: ENABLE(MEDIA_STREAM)
   defaultValue:
     WebKit:
+      "PLATFORM(WPE)": false
       default: true
     WebCore:
+      "PLATFORM(WPE)": false
       default: true
+
+ExposeJustDefaultSpeakerWithoutMicrophoneEnabled:
+  type: bool
+  status: internal
+  category: media
+  humanReadableName: "Expose only default speaker without label when no microphone is present"
+  humanReadableDescription: "Expose only default speaker without label when no microphone is present"
+  condition: ENABLE(MEDIA_STREAM)
+  defaultValue:
+    WebKit:
+      "PLATFORM(WPE)": true
+      default: false
+    WebCore:
+      "PLATFORM(WPE)": true
+      default: false
 
 ExposeRollAngleAsTwistEnabled:
   type: bool
@@ -2912,8 +2929,10 @@ ExposeSpeakersEnabled:
   defaultValue:
     WebKit:
       "PLATFORM(COCOA)": true
+      "PLATFORM(WPE)": true
       default: false
     WebCore:
+      "PLATFORM(WPE)": true
       default: false
 
 ExposeSpeakersWithoutMicrophoneEnabled:
@@ -2926,8 +2945,10 @@ ExposeSpeakersWithoutMicrophoneEnabled:
   defaultValue:
     WebKit:
       "PLATFORM(COCOA)": true
+      "PLATFORM(WPE)": true
       default: false
     WebCore:
+      "PLATFORM(WPE)": true
       default: false
 
 ExtendedAudioDescriptionsEnabled:
@@ -7828,8 +7849,10 @@ SpeakerSelectionRequiresUserGesture:
     WebKitLegacy:
       default: true
     WebKit:
+      "PLATFORM(WPE)": false
       default: true
     WebCore:
+      "PLATFORM(WPE)": false
       default: true
 
 SpeculationRulesPrefetchEnabled:
