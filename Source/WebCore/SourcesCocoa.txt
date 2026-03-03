@@ -732,9 +732,10 @@ platform/text/cocoa/LocaleCocoa.mm @nonARC
 platform/text/cocoa/LocalizedDateCache.mm @nonARC
 platform/text/cocoa/TextBoundaries.mm @nonARC
 platform/text/mac/TextCheckingMac.mm @nonARC
-platform/video-codecs/cocoa/RTCVideoDecoderVTBAV1.mm @nonARC
 platform/video-codecs/cocoa/VideoDecoderVTB.mm @nonARC
 platform/video-codecs/cocoa/WebRTCVideoDecoder.mm @nonARC
+platform/video-codecs/cocoa/WebRTCVideoDecoderVTB.mm @nonARC
+platform/video-codecs/cocoa/WebRTCVideoDecoderVTBAV1.mm @nonARC
 platform/xr/cocoa/PlatformXRPose.cpp
 rendering/AttachmentLayout.mm @nonARC
 rendering/TextAutoSizing.cpp

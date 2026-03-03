@@ -11162,9 +11162,9 @@
 		41E408381DCB747900EFCE19 /* PeerConnectionBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PeerConnectionBackend.cpp; sourceTree = "<group>"; };
 		41E4764E2B6CF88E00C30B11 /* BitReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitReader.cpp; sourceTree = "<group>"; };
 		41E4764F2B6CF88E00C30B11 /* BitReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitReader.h; sourceTree = "<group>"; };
-		41E476502B6CF8A700C30B11 /* RTCVideoDecoderVTBAV1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTCVideoDecoderVTBAV1.h; sourceTree = "<group>"; };
+		41E476502B6CF8A700C30B11 /* WebRTCVideoDecoderVTBAV1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebRTCVideoDecoderVTBAV1.h; sourceTree = "<group>"; };
 		41E476512B6CF8A700C30B11 /* WebRTCVideoDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebRTCVideoDecoder.h; sourceTree = "<group>"; };
-		41E476522B6CF8A800C30B11 /* RTCVideoDecoderVTBAV1.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RTCVideoDecoderVTBAV1.mm; sourceTree = "<group>"; };
+		41E476522B6CF8A800C30B11 /* WebRTCVideoDecoderVTBAV1.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebRTCVideoDecoderVTBAV1.mm; sourceTree = "<group>"; };
 		41E476532B6CF8A800C30B11 /* WebRTCVideoDecoder.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebRTCVideoDecoder.mm; sourceTree = "<group>"; };
 		41E593FD214865A900D3CB61 /* RTCPriorityType.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RTCPriorityType.idl; sourceTree = "<group>"; };
 		41E593FF214865AA00D3CB61 /* RTCRtpEncodingParameters.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RTCRtpEncodingParameters.idl; sourceTree = "<group>"; };
@@ -11226,6 +11226,8 @@
 		41FB278F1F34C28200795487 /* WindowOrWorkerGlobalScopeCaches.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WindowOrWorkerGlobalScopeCaches.cpp; sourceTree = "<group>"; };
 		41FB27991F34CE9C00795487 /* CacheQueryOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CacheQueryOptions.idl; sourceTree = "<group>"; };
 		41FB279B1F34CEF000795487 /* CacheQueryOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CacheQueryOptions.h; sourceTree = "<group>"; };
+		41FBB09D2F57272B0071B5E3 /* WebRTCVideoDecoderVTB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebRTCVideoDecoderVTB.h; sourceTree = "<group>"; };
+		41FBB09E2F57272B0071B5E3 /* WebRTCVideoDecoderVTB.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebRTCVideoDecoderVTB.mm; sourceTree = "<group>"; };
 		41FCA5F724EAAF15005E1BA6 /* TransformStream.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TransformStream.idl; sourceTree = "<group>"; };
 		41FCA5FA24EAAF16005E1BA6 /* TransformStreamDefaultController.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TransformStreamDefaultController.idl; sourceTree = "<group>"; };
 		41FCA5FB24EAAF16005E1BA6 /* TransformStreamDefaultController.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = TransformStreamDefaultController.js; sourceTree = "<group>"; };
@@ -26651,12 +26653,14 @@
 		41763D0C2ACAFA4A00283035 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				41E476502B6CF8A700C30B11 /* RTCVideoDecoderVTBAV1.h */,
-				41E476522B6CF8A800C30B11 /* RTCVideoDecoderVTBAV1.mm */,
 				41DC698F2F7290A70033015A /* VideoDecoderVTB.h */,
 				41DC69902F7290A70033015A /* VideoDecoderVTB.mm */,
 				41E476512B6CF8A700C30B11 /* WebRTCVideoDecoder.h */,
 				41E476532B6CF8A800C30B11 /* WebRTCVideoDecoder.mm */,
+				41FBB09D2F57272B0071B5E3 /* WebRTCVideoDecoderVTB.h */,
+				41FBB09E2F57272B0071B5E3 /* WebRTCVideoDecoderVTB.mm */,
+				41E476502B6CF8A700C30B11 /* WebRTCVideoDecoderVTBAV1.h */,
+				41E476522B6CF8A800C30B11 /* WebRTCVideoDecoderVTBAV1.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";

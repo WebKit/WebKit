@@ -991,6 +991,29 @@ String channelLayoutDescription(UInt32 channelLayoutTag)
     SUPPRESS_RETAINPTR_CTOR_ADOPT return adoptCF(channelLayoutName).get(); // The caller is responsible for releasing the returned string.
 }
 
+RetainPtr<CMSampleBufferRef> sampleBufferFromVideoData(std::span<const uint8_t> buffer, CMVideoFormatDescriptionRef videoFormat)
+{
+    CMBlockBufferRef newVlockBuffer;
+    if (auto error = PAL::CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, NULL, buffer.size(), kCFAllocatorDefault, NULL, 0, buffer.size(), kCMBlockBufferAssureMemoryNowFlag, &newVlockBuffer)) {
+        RELEASE_LOG_ERROR(Media, "CMBlockBufferCreateWithMemoryBlock failed with: %d", (int)error);
+        return nullptr;
+    }
+    auto blockBuffer = adoptCF(newVlockBuffer);
+
+    if (auto error = PAL::CMBlockBufferReplaceDataBytes(buffer.data(), blockBuffer.get(), 0, buffer.size())) {
+        RELEASE_LOG_ERROR(Media, "CMBlockBufferReplaceDataBytes failed with: %d", (int)error);
+        return nullptr;
+    }
+
+    CMSampleBufferRef sampleBuffer = nullptr;
+    if (auto error = PAL::CMSampleBufferCreate(kCFAllocatorDefault, blockBuffer.get(), true, nullptr, nullptr, videoFormat, 1, 0, nullptr, 0, nullptr, &sampleBuffer)) {
+        RELEASE_LOG_ERROR(Media, "CMSampleBufferCreate failed with: %d", (int)error);
+        return nullptr;
+    }
+
+    return adoptCF(sampleBuffer);
+}
+
 } // namespace WebCore
 
 #endif // PLATFORM(COCOA)

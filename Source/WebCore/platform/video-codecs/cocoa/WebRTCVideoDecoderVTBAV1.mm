@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,21 +21,55 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
+ *
  */
+
+#import "config.h"
+#import "WebRTCVideoDecoderVTBAV1.h"
 
 #if USE(LIBWEBRTC)
 
-typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
+#import "AV1Utilities.h"
+#import "CMUtilities.h"
+#import "TrackInfo.h"
+#import <wtf/BlockPtr.h>
 
-using RTCVideoDecoderVTBAV1Callback = void (^)(CVPixelBufferRef, int64_t timeStamp, int64_t timeStampNs, bool);
+namespace WebCore {
 
-__attribute__((objc_runtime_name("Web_RTCVideoDecoderVTBAV1")))
-@interface RTCVideoDecoderVTBAV1 : NSObject
-- (void)setCallback:(RTCVideoDecoderVTBAV1Callback)callback;
-- (void)setWidth:(uint16_t)width height:(uint16_t)height;
-- (NSInteger)releaseDecoder;
-- (NSInteger)decodeData:(const uint8_t *)data size:(size_t)size timeStamp:(int64_t)timeStamp;
-- (void)flush;
-@end
+static RetainPtr<CMVideoFormatDescriptionRef> computeAV1InputFormat(std::span<const uint8_t> data, int32_t width, int32_t height)
+{
+#if ENABLE(AV1)
+    RefPtr videoInfo = createVideoInfoFromAV1Stream(data);
+    if (!videoInfo)
+        return { };
 
+    if (width && videoInfo->size().width() != width)
+        return { };
+    if (height && videoInfo->size().height() != height)
+        return { };
+
+    return createFormatDescriptionFromTrackInfo(*videoInfo);
+#else
+    UNUSED_PARAM(data);
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(height);
+    ASSERT_NOT_REACHED();
+    return { };
+#endif
+}
+
+WebRTCVideoDecoderVTBAV1::WebRTCVideoDecoderVTBAV1(WebRTCVideoDecoderCallback callback)
+    : WebRTCVideoDecoderVTB(createMultiImageCallback(WTF::move(callback)))
+{
+}
+
+int32_t WebRTCVideoDecoderVTBAV1::decodeFrame(int64_t timeStamp, std::span<const uint8_t> data)
+{
+    if (auto videoFormat = computeAV1InputFormat(data, width(), height()))
+        setVideoFormat(WTF::move(videoFormat));
+
+    return decodeFrameInternal(timeStamp, data);
+}
+
+}
 #endif // USE(LIBWEBRTC)

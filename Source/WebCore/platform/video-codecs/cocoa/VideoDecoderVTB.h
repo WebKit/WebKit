@@ -34,6 +34,7 @@
 
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef;
+typedef CVPixelBufferRef CVImageBufferRef;
 typedef struct OpaqueCMTaggedBufferGroup *CMTaggedBufferGroupRef;
 typedef UInt32 VTDecodeInfoFlags;
 typedef struct OpaqueVTDecompressionSession*  VTDecompressionSessionRef;

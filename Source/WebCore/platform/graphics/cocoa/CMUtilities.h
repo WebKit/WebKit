@@ -39,6 +39,7 @@
 
 typedef struct AudioFormatVorbisModeInfo AudioFormatVorbisModeInfo;
 typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
+typedef const struct opaqueCMFormatDescription* CMVideoFormatDescriptionRef;
 typedef struct opaqueCMSampleBuffer* CMSampleBufferRef;
 typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
 typedef struct OpaqueCMBlockBuffer* CMBlockBufferRef;
@@ -104,6 +105,8 @@ private:
 };
 
 Vector<AudioStreamPacketDescription> getPacketDescriptions(CMSampleBufferRef);
+
+RetainPtr<CMSampleBufferRef> sampleBufferFromVideoData(std::span<const uint8_t>, CMVideoFormatDescriptionRef);
 
 }
 
