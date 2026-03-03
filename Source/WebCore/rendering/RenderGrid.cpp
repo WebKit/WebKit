@@ -808,11 +808,6 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
         auto gridLayout = LayoutIntegration::GridLayout { const_cast<RenderGrid&>(*this) };
         gridLayout.updateFormattingContextGeometries();
         std::tie(minLogicalWidth, maxLogicalWidth) = gridLayout.computeIntrinsicWidths();
-
-        // Add scrollbar width
-        LayoutUnit scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
-        minLogicalWidth += scrollbarWidth;
-        maxLogicalWidth += scrollbarWidth;
         return;
     }
 
@@ -857,10 +852,6 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
         minLogicalWidth = std::max(minLogicalWidth, gridItemMinWidth);
         maxLogicalWidth = std::max(maxLogicalWidth, gridItemMaxWidth);
     }
-
-    LayoutUnit scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
-    minLogicalWidth += scrollbarWidth;
-    maxLogicalWidth += scrollbarWidth;
 }
 
 void RenderGrid::computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm& algorithm, Style::GridTrackSizingDirection direction, RenderGridLayoutState& gridLayoutState, LayoutUnit* minIntrinsicSize, LayoutUnit* maxIntrinsicSize) const

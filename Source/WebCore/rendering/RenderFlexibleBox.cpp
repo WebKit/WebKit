@@ -143,18 +143,11 @@ ASCIILiteral RenderFlexibleBox::renderName() const
 
 void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    auto addScrollbarWidth = [&]() {
-        LayoutUnit scrollbarWidth(scrollbarLogicalWidth());
-        maxLogicalWidth += scrollbarWidth;
-        minLogicalWidth += scrollbarWidth;
-    };
-
     if (shouldApplySizeOrInlineSizeContainment()) {
         if (auto width = explicitIntrinsicInnerLogicalWidth()) {
             minLogicalWidth = width.value();
             maxLogicalWidth = width.value();
         }
-        addScrollbarWidth();
         return;
     }
 
@@ -217,8 +210,6 @@ void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidt
         minLogicalWidth = std::max(minLogicalWidth, flexItemMinWidth);
         maxLogicalWidth = std::max(maxLogicalWidth, flexItemMaxWidth);
     }
-
-    addScrollbarWidth();
 }
 
 #define SET_OR_CLEAR_OVERRIDING_SIZE(box, SizeType, size)       \

@@ -202,18 +202,11 @@ void RenderDeprecatedFlexibleBox::styleWillChange(Style::Difference diff, const 
 
 void RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    auto addScrollbarWidth = [&]() {
-        LayoutUnit scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
-        maxLogicalWidth += scrollbarWidth;
-        minLogicalWidth += scrollbarWidth;
-    };
-
     if (shouldApplySizeOrInlineSizeContainment()) {
         if (auto width = explicitIntrinsicInnerLogicalWidth()) {
             minLogicalWidth = width.value();
             maxLogicalWidth = width.value();
         }
-        addScrollbarWidth();
         return;
     }
 
@@ -241,7 +234,6 @@ void RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minL
     }
 
     maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
-    addScrollbarWidth();
 }
 
 void RenderDeprecatedFlexibleBox::computePreferredLogicalWidths()
@@ -251,8 +243,12 @@ void RenderDeprecatedFlexibleBox::computePreferredLogicalWidths()
     m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = 0;
     if (auto fixedWidth = style().width().tryFixed(); fixedWidth && fixedWidth->isPositive())
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedWidth);
-    else
+    else {
         computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+        int scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
+        m_minPreferredLogicalWidth += scrollbarWidth;
+        m_maxPreferredLogicalWidth += scrollbarWidth;
+    }
 
     RenderBox::computePreferredLogicalWidths(style().minWidth(), style().maxWidth(), borderAndPaddingLogicalWidth());
 

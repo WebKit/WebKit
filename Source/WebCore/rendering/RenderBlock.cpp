@@ -2266,10 +2266,6 @@ void RenderBlock::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Lay
         computeBlockPreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
 
     maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
-
-    int scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
-    maxLogicalWidth += scrollbarWidth;
-    minLogicalWidth += scrollbarWidth;
 }
 
 void RenderBlock::computePreferredLogicalWidths()
@@ -2287,12 +2283,19 @@ void RenderBlock::computePreferredLogicalWidths()
     } else if (logicalWidth.isMaxContent()) {
         computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth;
+        auto scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
+        m_minPreferredLogicalWidth += scrollbarWidth;
+        m_maxPreferredLogicalWidth += scrollbarWidth;
     } else if (shouldComputeLogicalWidthFromAspectRatio()) {
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = (computeLogicalWidthFromAspectRatio() - borderAndPaddingLogicalWidth());
         m_minPreferredLogicalWidth = std::max(0_lu, m_minPreferredLogicalWidth);
         m_maxPreferredLogicalWidth = std::max(0_lu, m_maxPreferredLogicalWidth);
-    } else 
+    } else {
         computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+        auto scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
+        m_minPreferredLogicalWidth += scrollbarWidth;
+        m_maxPreferredLogicalWidth += scrollbarWidth;
+    }
 
     RenderBox::computePreferredLogicalWidths(styleToUse.logicalMinWidth(), styleToUse.logicalMaxWidth(), borderAndPaddingLogicalWidth());
 
