@@ -1774,7 +1774,7 @@ void FrameLoader::loadWithNavigationAction(ResourceRequest&& request, Navigation
 
     m_errorOccurredInLoading = false;
     if (request.url().protocolIsJavaScript() && !action.isInitialFrameSrcLoad()) {
-        if (auto requester = action.requester(); requester && requester->documentIdentifier) {
+        if (auto& requester = action.requester(); requester && requester->documentIdentifier) {
             if (RefPtr requestingDocument = Document::allDocumentsMap().get(requester->documentIdentifier); requestingDocument && requestingDocument->contentSecurityPolicy()) {
                 if (!requestingDocument->contentSecurityPolicy()->allowJavaScriptURLs(protect(m_frame)->document()->url().string(), { }, request.url().string(), nullptr))
                     return completionHandler();
@@ -1998,7 +1998,7 @@ bool FrameLoader::willLoadMediaElementURL(URL& url, Node& initiatorNode)
 
 bool FrameLoader::shouldReloadToHandleUnreachableURL(DocumentLoader& docLoader)
 {
-    URL unreachableURL = docLoader.unreachableURL();
+    auto& unreachableURL = docLoader.unreachableURL();
 
     if (unreachableURL.isEmpty())
         return false;

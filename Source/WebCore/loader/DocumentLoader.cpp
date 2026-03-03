@@ -954,7 +954,7 @@ void DocumentLoader::responseReceived(ResourceResponse&& response, CompletionHan
     ResourceLoaderIdentifier identifier = m_identifierForLoadWithoutResourceLoader ? *m_identifierForLoadWithoutResourceLoader : *m_mainResource->resourceLoaderIdentifier();
 
     if (m_substituteData.isValid() || !platformStrategies()->loaderStrategy()->havePerformedSecurityChecks(response)) {
-        auto url = response.url();
+        auto& url = response.url();
         RefPtr frame = m_frame.get();
         // FIXME(294912): Clean up use of bare pointers for ReportingClient
         ReportingClient* reportingClient = nullptr;

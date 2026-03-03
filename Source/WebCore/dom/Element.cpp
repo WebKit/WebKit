@@ -385,7 +385,7 @@ bool Element::isNonceable() const
         static constexpr auto styleString = "<style"_s;
 
         for (auto& attribute : attributes()) {
-            auto name = attribute.localNameLowercase();
+            auto& name = attribute.localNameLowercase();
             auto value = attribute.value().convertToASCIILowercase();
             if (name.contains(scriptString)
                 || name.contains(styleString)
@@ -3376,7 +3376,7 @@ static bool canAttachAuthorShadowRoot(const Element& element)
         break;
     }
 
-    if (auto localName = element.localName(); Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid) {
+    if (auto& localName = element.localName(); Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid) {
         if (RefPtr window = element.document().window()) {
             RefPtr registry = window->customElementRegistry();
             if (registry && registry->isShadowDisabled(localName))

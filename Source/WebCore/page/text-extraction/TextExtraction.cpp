@@ -2065,7 +2065,7 @@ static String textDescription(const Element& element, Vector<String>& stringsToV
         needsParentContext = false;
     }
 
-    if (auto text = element.attributeWithoutSynchronization(HTMLNames::typeAttr); !text.isEmpty() && text != tagName)
+    if (auto& text = element.attributeWithoutSynchronization(HTMLNames::typeAttr); !text.isEmpty() && text != tagName)
         description.append(makeString(" of type "_s, text));
 
     if (auto text = normalizeText(element.attributeWithoutSynchronization(HTMLNames::placeholderAttr)); !text.isEmpty()) {
@@ -2091,12 +2091,12 @@ static String textDescription(const Element& element, Vector<String>& stringsToV
         return true;
     };
 
-    if (auto text = element.attributeWithoutSynchronization(HTMLNames::idAttr); isCandidateClassOrId(text)) {
+    if (auto& text = element.attributeWithoutSynchronization(HTMLNames::idAttr); isCandidateClassOrId(text)) {
         description.append(makeString(" with id "_s, wrapWithDoubleQuotes(text)));
         needsParentContext = false;
     }
 
-    if (auto classValue = element.attributeWithoutSynchronization(HTMLNames::classAttr); !classValue.isEmpty()) {
+    if (auto& classValue = element.attributeWithoutSynchronization(HTMLNames::classAttr); !classValue.isEmpty()) {
         Vector<String, maximumNumberOfClasses> humanReadableClassNames;
         for (auto className : StringView { classValue }.split(' ')) {
             if (!isCandidateClassOrId(className))

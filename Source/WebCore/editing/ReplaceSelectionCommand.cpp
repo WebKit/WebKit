@@ -1857,8 +1857,8 @@ ReplacementFragment* ReplaceSelectionCommand::ensureReplacementFragment()
 
 static bool fullySelectsEnclosingLink(const VisibleSelection& selection)
 {
-    auto start = selection.start();
-    auto end = selection.end();
+    auto& start = selection.start();
+    auto& end = selection.end();
     RefPtr ancestor = commonInclusiveAncestor(start, end);
     if (!ancestor)
         return false;

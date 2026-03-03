@@ -623,7 +623,7 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
 
 std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> InlineContentBreaker::tryBreakingOverflowingRun(const LineStatus& lineStatus, const ContinuousContent::RunList& runs, size_t overflowingRunIndex, InlineLayoutUnit nonOverflowingContentWidth) const
 {
-    auto overflowingRun = runs[overflowingRunIndex];
+    auto& overflowingRun = runs[overflowingRunIndex];
     ASSERT(!overflowingRun.inlineItem.isOutOfFlow());
     if (!isBreakableRun(overflowingRun))
         return { };

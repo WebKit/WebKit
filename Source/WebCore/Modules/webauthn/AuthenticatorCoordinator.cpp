@@ -99,7 +99,7 @@ static ScopeAndCrossOriginParent scopeAndCrossOriginParent(const Document& docum
 {
     bool isSameSite = true;
     Ref origin = document.securityOrigin();
-    auto url = document.url();
+    auto& url = document.url();
     std::optional<SecurityOriginData> crossOriginParent;
     for (RefPtr parentDocument = document.parentDocument(); parentDocument; parentDocument = parentDocument->parentDocument()) {
         if (!origin->isSameOriginDomain(protect(parentDocument->securityOrigin())) && !areRegistrableDomainsEqual(url, parentDocument->url()))

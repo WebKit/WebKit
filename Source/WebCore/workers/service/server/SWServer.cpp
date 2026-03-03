@@ -1554,7 +1554,7 @@ void SWServer::removeContextConnection(SWServerToContextConnection& connection)
 {
     RELEASE_LOG(ServiceWorker, "SWServer::removeContextConnection %" PRIu64, connection.identifier().toUInt64());
 
-    auto site = connection.site();
+    auto& site = connection.site();
     auto serviceWorkerPageIdentifier = connection.serviceWorkerPageIdentifier();
 
     ASSERT(m_contextConnections.get(site.domain()) == &connection);

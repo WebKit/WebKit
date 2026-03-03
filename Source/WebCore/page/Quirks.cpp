@@ -3468,7 +3468,7 @@ void Quirks::determineRelevantQuirks()
         return;
 
     RegistrableDomain registrableDomain { quirksURL };
-    auto quirksDomainString = registrableDomain.string();
+    auto& quirksDomainString = registrableDomain.string();
     auto quirkDomainWithoutPSL = PublicSuffixStore::singleton().domainWithoutPublicSuffix(quirksDomainString);
 
     using QuirkHandler = void (*)(QuirksData& quirksData, const URL& quirksURL, const String& quirksDomainString, const URL& documentURL);

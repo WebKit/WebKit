@@ -160,7 +160,7 @@ ExceptionOr<void> DatabaseTracker::canEstablishDatabase(DatabaseContext& context
     Locker lockDatabase { m_databaseGuard };
 
     // FIXME: What guarantees this context.securityOrigin() is non-null?
-    auto origin = context.securityOrigin();
+    auto& origin = context.securityOrigin();
 
     if (isDeletingDatabaseOrOriginFor(origin, name))
         return Exception { ExceptionCode::SecurityError };
@@ -208,7 +208,7 @@ ExceptionOr<void> DatabaseTracker::retryCanEstablishDatabase(DatabaseContext& co
     Locker lockDatabase { m_databaseGuard };
 
     // FIXME: What guarantees context.securityOrigin() is non-null?
-    auto origin = context.securityOrigin();
+    auto& origin = context.securityOrigin();
 
     // We have already eliminated other types of errors in canEstablishDatabase().
     // The only reason we're in retryCanEstablishDatabase() is because we gave

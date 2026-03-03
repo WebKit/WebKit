@@ -393,7 +393,7 @@ FloatSize InspectorOverlayLabel::expectedSize(const Vector<Content>& contents, A
                 ++currentLine;
             }
 
-            auto text = lines[i];
+            auto& text = lines[i];
             if (text.isEmpty())
                 continue;
 

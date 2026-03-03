@@ -143,11 +143,11 @@ String ContentType::toJSONString() const
 
     object->setString("containerType"_s, containerType());
 
-    auto codecs = codecsParameter();
+    auto& codecs = codecsParameter();
     if (!codecs.isEmpty())
         object->setString("codecs"_s, codecs);
 
-    auto profiles = profilesParameter();
+    auto& profiles = profilesParameter();
     if (!profiles.isEmpty())
         object->setString("profiles"_s, profiles);
 

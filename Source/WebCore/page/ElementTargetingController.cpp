@@ -240,7 +240,7 @@ static inline ChildElementPosition findChild(const Element& element, const Eleme
 static inline String computeIDSelector(const Element& element)
 {
     if (element.hasID()) {
-        auto elementID = element.getIdAttribute();
+        auto& elementID = element.getIdAttribute();
         if (auto* matches = element.treeScope().getAllElementsById(elementID); matches && matches->size() == 1)
             return makeString('#', elementID);
     }
@@ -792,7 +792,7 @@ static bool isNavigationalElement(const Element& element)
     if (element.hasTagName(HTMLNames::navTag))
         return true;
 
-    auto roleValue = element.attributeWithoutSynchronization(HTMLNames::roleAttr);
+    auto& roleValue = element.attributeWithoutSynchronization(HTMLNames::roleAttr);
     return AccessibilityObject::ariaRoleToWebCoreRole(roleValue) == AccessibilityRole::LandmarkNavigation;
 }
 

@@ -143,9 +143,9 @@ auto LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
     filterData->filter->clampFilterRegionIfNeeded();
 
 #if USE(CAIRO)
-    auto colorSpace = DestinationColorSpace::SRGB();
+    auto& colorSpace = DestinationColorSpace::SRGB();
 #else
-    auto colorSpace = DestinationColorSpace::LinearSRGB();
+    auto& colorSpace = DestinationColorSpace::LinearSRGB();
 #endif
 
     auto& results = filterData->filter->ensureResults([&]() {

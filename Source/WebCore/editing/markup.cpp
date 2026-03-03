@@ -704,7 +704,7 @@ bool StyledMarkupAccumulator::shouldPreserveMSOListStyleForElement(const Element
     if (m_inMSOList)
         return true;
     if (m_shouldPreserveMSOList) {
-        auto style = element.getAttribute(styleAttr);
+        auto& style = element.getAttribute(styleAttr);
         return style.startsWith("mso-list:"_s) || style.contains(";mso-list:"_s) || style.contains("\nmso-list:"_s);
     }
     return false;

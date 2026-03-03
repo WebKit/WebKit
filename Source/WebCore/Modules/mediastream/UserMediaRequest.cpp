@@ -185,7 +185,7 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
 
             if (!privateStreamOrError) {
                 RELEASE_LOG(MediaStream, "UserMediaRequest::allow failed to create media stream!");
-                auto error = privateStreamOrError.error();
+                auto& error = privateStreamOrError.error();
                 protectedThis->scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, error.errorMessage);
                 protectedThis->deny(error.denialReason, error.errorMessage, error.invalidConstraint);
                 return;

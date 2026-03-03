@@ -50,7 +50,7 @@ bool DOMCSSNamespace::supports(Document& document, const String& property, const
     CSSParserContext parserContext(document);
     parserContext.mode = HTMLStandardMode;
 
-    auto propertyNameWithoutWhitespace = property;
+    auto& propertyNameWithoutWhitespace = property;
     CSSPropertyID propertyID = cssPropertyID(propertyNameWithoutWhitespace);
     if (propertyID == CSSPropertyInvalid && isCustomPropertyName(propertyNameWithoutWhitespace)) {
         auto dummyStyle = MutableStyleProperties::create();

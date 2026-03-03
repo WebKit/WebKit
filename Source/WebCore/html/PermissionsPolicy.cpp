@@ -370,7 +370,7 @@ static PermissionsPolicy::PolicyDirective parsePolicyDirective(StringView value,
 // https://w3c.github.io/webappsec-permissions-policy/#algo-process-policy-attributes
 PermissionsPolicy::PolicyDirective PermissionsPolicy::processPermissionsPolicyAttribute(const HTMLIFrameElement& iframe)
 {
-    auto allowAttributeValue = iframe.attributeWithoutSynchronization(allowAttr);
+    auto& allowAttributeValue = iframe.attributeWithoutSynchronization(allowAttr);
     auto policyDirective = parsePolicyDirective(allowAttributeValue, protect(iframe.document())->securityOrigin().data(), declaredOrigin(iframe)->data());
 
     if (iframe.hasAttributeWithoutSynchronization(allowfullscreenAttr) || iframe.hasAttributeWithoutSynchronization(webkitallowfullscreenAttr))

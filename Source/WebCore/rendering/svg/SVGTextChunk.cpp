@@ -36,7 +36,7 @@ SVGTextChunk::SVGTextChunk(const Vector<InlineIterator::SVGTextBoxIterator>& lin
     ASSERT(first < limit);
     ASSERT(limit <= lineLayoutBoxes.size());
 
-    auto firstBox = lineLayoutBoxes[first];
+    auto& firstBox = lineLayoutBoxes[first];
     CheckedRef style = firstBox->renderer().style();
 
     if (style->writingMode().isBidiRTL())

@@ -176,7 +176,7 @@ RenderImage* toSimpleImage(RenderObject& renderer)
 // FIXME: This probably belongs on Element.
 bool hasRole(Element& element, StringView role)
 {
-    auto roleValue = element.attributeWithDefaultARIA(roleAttr);
+    auto& roleValue = element.attributeWithDefaultARIA(roleAttr);
     if (role.isNull())
         return roleValue.isEmpty();
     if (roleValue.isEmpty())
@@ -187,7 +187,7 @@ bool hasRole(Element& element, StringView role)
 
 bool hasAnyRole(Element& element, Vector<StringView>&& roles)
 {
-    auto roleValue = element.attributeWithDefaultARIA(roleAttr);
+    auto& roleValue = element.attributeWithDefaultARIA(roleAttr);
     if (roleValue.isEmpty())
         return false;
 

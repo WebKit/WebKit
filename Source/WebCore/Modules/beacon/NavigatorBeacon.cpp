@@ -98,7 +98,7 @@ void NavigatorBeacon::logError(const ResourceError& error)
         return;
 
     ASCIILiteral messageMiddle { ". "_s };
-    String description = error.localizedDescription();
+    auto& description = error.localizedDescription();
     if (description.isEmpty()) {
         if (error.isAccessControl())
             messageMiddle = " due to access control checks."_s;

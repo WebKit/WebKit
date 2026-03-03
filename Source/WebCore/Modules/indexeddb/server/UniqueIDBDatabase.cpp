@@ -135,7 +135,7 @@ static inline uint64_t estimateSize(const IDBObjectStoreInfo& info)
 {
     uint64_t size = 4;
     size += info.name().sizeInBytes();
-    if (auto keyPath = info.keyPath())
+    if (auto& keyPath = info.keyPath())
         size += estimateSize(*keyPath);
     return size;
 }

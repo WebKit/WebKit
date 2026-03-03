@@ -343,7 +343,7 @@ VisibleSelection Editor::selectionForCommand(Event* event)
     // If the target is a text control, and the current selection is outside of its shadow tree,
     // then use the saved selection for that text control.
     if (RefPtr target = dynamicDowncast<HTMLTextFormControlElement>(event->target()); target && target->isTextField()) {
-        auto start = selection.start();
+        auto& start = selection.start();
         if (start.isNull() || event->target() != enclosingTextFormControl(start)) {
             if (auto range = target->selection())
                 return { *range, Affinity::Downstream, selection.directionality() };
@@ -464,7 +464,7 @@ static Ref<DataTransfer> createDataTransferForClipboardEvent(Document& document,
         return DataTransfer::createForCopyAndPaste(document, DataTransfer::StoreMode::ReadWrite, makeUnique<StaticPasteboard>());
     case ClipboardEventKind::PasteAsPlainText:
         if (DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
-            auto plainTextType = textPlainContentTypeAtom();
+            auto& plainTextType = textPlainContentTypeAtom();
             auto plainText = Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(document.pageID()))->readString(plainTextType);
             auto pasteboard = makeUnique<StaticPasteboard>();
             pasteboard->writeString(plainTextType, plainText);
@@ -4852,7 +4852,7 @@ void Editor::cloneAttachmentData(const String& fromIdentifier, const String& toI
 
 void Editor::didInsertAttachmentElement(HTMLAttachmentElement& attachment)
 {
-    auto identifier = attachment.uniqueIdentifier();
+    auto& identifier = attachment.uniqueIdentifier();
     if (identifier.isEmpty())
         return;
 
@@ -4863,7 +4863,7 @@ void Editor::didInsertAttachmentElement(HTMLAttachmentElement& attachment)
 
 void Editor::didRemoveAttachmentElement(HTMLAttachmentElement& attachment)
 {
-    auto identifier = attachment.uniqueIdentifier();
+    auto& identifier = attachment.uniqueIdentifier();
     if (identifier.isEmpty())
         return;
 

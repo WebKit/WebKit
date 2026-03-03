@@ -456,7 +456,7 @@ static void switchToUTF16(xmlParserCtxtPtr ctxt)
 
 static bool shouldAllowExternalLoad(const URL& url)
 {
-    String urlString = url.string();
+    auto& urlString = url.string();
 
     // On non-Windows platforms libxml asks for this URL, the "XML_XML_DEFAULT_CATALOG", on initialization.
     if (urlString == "file:///etc/xml/catalog"_s)

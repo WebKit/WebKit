@@ -205,7 +205,7 @@ static Vector<uint8_t> normalizeStringData(PAL::TextEncoding& encoding, const St
 
 void FormData::appendMultiPartFileValue(const File& file, Vector<uint8_t>& header, PAL::TextEncoding& encoding)
 {
-    auto name = file.name();
+    auto& name = file.name();
 
     // We have to include the filename=".." part in the header, even if the filename is empty
     FormDataBuilder::addFilenameToMultiPartHeader(header, encoding, name);

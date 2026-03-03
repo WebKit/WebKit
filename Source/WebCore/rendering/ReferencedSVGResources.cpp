@@ -163,19 +163,19 @@ ReferencedSVGResources::SVGElementIdentifierAndTagPairs ReferencedSVGResources::
     }
 
     if (style.hasMarkers()) {
-        if (auto markerStartResource = style.markerStart(); !markerStartResource.isNone()) {
+        if (auto& markerStartResource = style.markerStart(); !markerStartResource.isNone()) {
             auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(markerStartResource, document);
             if (!resourceID.isEmpty())
                 referencedResources.append({ resourceID, { SVGNames::markerTag } });
         }
 
-        if (auto markerMidResource = style.markerMid(); !markerMidResource.isNone()) {
+        if (auto& markerMidResource = style.markerMid(); !markerMidResource.isNone()) {
             auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(markerMidResource, document);
             if (!resourceID.isEmpty())
                 referencedResources.append({ resourceID, { SVGNames::markerTag } });
         }
 
-        if (auto markerEndResource = style.markerEnd(); !markerEndResource.isNone()) {
+        if (auto& markerEndResource = style.markerEnd(); !markerEndResource.isNone()) {
             auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(markerEndResource, document);
             if (!resourceID.isEmpty())
                 referencedResources.append({ resourceID, { SVGNames::markerTag } });

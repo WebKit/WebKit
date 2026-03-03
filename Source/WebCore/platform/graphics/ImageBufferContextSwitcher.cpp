@@ -54,7 +54,7 @@ ImageBufferContextSwitcher::ImageBufferContextSwitcher(GraphicsContext& destinat
         return;
     }
 
-    auto state = destinationContext.state();
+    auto& state = destinationContext.state();
     m_sourceImage->context().mergeAllChanges(state);
 }
 

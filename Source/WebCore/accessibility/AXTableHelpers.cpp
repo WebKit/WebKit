@@ -376,7 +376,7 @@ bool isDataTableWithTraversal(HTMLTableElement& tableElement, AXObjectCache& cac
 
     // Check if there is an alternating row background color indicating a zebra striped style pattern.
     if (alternatingRowColorCount > 2) {
-        Color firstColor = alternatingRowColors[0];
+        auto& firstColor = alternatingRowColors[0];
         for (int k = 1; k < alternatingRowColorCount; k++) {
             // If an odd row was the same color as the first row, it's not alternating.
             if (k % 2 == 1 && alternatingRowColors[k] == firstColor)

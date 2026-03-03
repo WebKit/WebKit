@@ -881,7 +881,7 @@ static void writeCounterValuesFromChildren(TextStream& stream, const RenderEleme
         if (!isFirstCounter)
             stream << " ";
         isFirstCounter = false;
-        String str(counter.text());
+        auto& str = counter.text();
         stream << str;
     }
 }

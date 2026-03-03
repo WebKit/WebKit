@@ -1230,17 +1230,17 @@ RealtimeMediaSource::VideoPresetConstraints RealtimeMediaSource::extractVideoPre
     VideoPresetConstraints result;
     auto& capabilities = this->capabilities();
 
-    if (auto constraint = constraints.width()) {
+    if (auto& constraint = constraints.width()) {
         if (capabilities.supportsWidth())
             result.width = constraint->valueForCapabilityRange(size().width(), capabilities.width());
     }
 
-    if (auto constraint = constraints.height()) {
+    if (auto& constraint = constraints.height()) {
         if (capabilities.supportsHeight())
             result.height = constraint->valueForCapabilityRange(size().height(), capabilities.height());
     }
 
-    if (auto constraint = constraints.aspectRatio()) {
+    if (auto& constraint = constraints.aspectRatio()) {
         if (capabilities.supportsAspectRatio()) {
             auto size = this->size();
             auto range = capabilities.aspectRatio();
@@ -1254,21 +1254,21 @@ RealtimeMediaSource::VideoPresetConstraints RealtimeMediaSource::extractVideoPre
         }
     }
 
-    if (auto constraint = constraints.frameRate()) {
+    if (auto& constraint = constraints.frameRate()) {
         if (capabilities.supportsFrameRate()) {
             auto range = capabilities.frameRate();
             result.frameRate = constraint->valueForCapabilityRange(this->frameRate(), range);
         }
     }
 
-    if (auto constraint = constraints.zoom()) {
+    if (auto& constraint = constraints.zoom()) {
         if (capabilities.supportsZoom()) {
             auto range = capabilities.zoom();
             result.zoom = constraint->valueForCapabilityRange(this->zoom(), range);
         }
     }
 
-    if (auto contraint = constraints.powerEfficient())
+    if (auto& contraint = constraints.powerEfficient())
         contraint->getExact(result.shouldPreferPowerEfficiency) || contraint->getIdeal(result.shouldPreferPowerEfficiency);
 
     return result;

@@ -595,7 +595,7 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
     }
     WTF::switchOn(style.clipPath(),
         [&](const Style::ReferencePath& clipPath) {
-            auto id = clipPath.fragment();
+            auto& id = clipPath.fragment();
             if (auto* clipper = getRenderSVGResourceById<LegacyRenderSVGResourceClipper>(renderer.treeScopeForSVGReferences(), id)) {
                 ts << indent << ' ';
                 writeNameAndQuotedValue(ts, "clipPath"_s, id);

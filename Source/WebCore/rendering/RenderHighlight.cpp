@@ -100,8 +100,8 @@ bool RenderHighlight::setRenderRange(const HighlightRange& highlightRange)
     if (highlightRange.startPosition().isNull() || highlightRange.endPosition().isNull())
         return false;
 
-    auto startPosition = highlightRange.startPosition();
-    auto endPosition = highlightRange.endPosition();
+    auto& startPosition = highlightRange.startPosition();
+    auto& endPosition = highlightRange.endPosition();
 
     if (!startPosition.containerNode() || !endPosition.containerNode())
         return false;

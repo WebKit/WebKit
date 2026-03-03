@@ -476,8 +476,8 @@ void RenderBox::updateGridPositionAfterStyleChange(const RenderStyle& style, con
 
 void RenderBox::updateShapeOutsideInfoAfterStyleChange(const RenderStyle& style, const RenderStyle* oldStyle, Style::Difference diff)
 {
-    Style::ShapeOutside shapeOutside = style.shapeOutside();
-    Style::ShapeOutside oldShapeOutside = oldStyle ? oldStyle->shapeOutside() : Style::ComputedStyle::initialShapeOutside();
+    auto& shapeOutside = style.shapeOutside();
+    auto& oldShapeOutside = oldStyle ? oldStyle->shapeOutside() : Style::ComputedStyle::initialShapeOutside();
 
     Style::ShapeMargin shapeMargin = style.shapeMargin();
     Style::ShapeMargin oldShapeMargin = oldStyle ? oldStyle->shapeMargin() : Style::ComputedStyle::initialShapeMargin();
