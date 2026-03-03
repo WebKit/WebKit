@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #include "config.h"
@@ -111,103 +111,16 @@ void WebGLProgram::deleteObjectImpl(const AbstractLocker& locker, GraphicsContex
     }
 }
 
-bool WebGLProgram::linkStatus()
+bool WebGLProgram::getLinkStatus()
 {
-    if (!m_state.linkStatus) {
-        RefPtr context = graphicsContextGL();
-        if (!context)
-            return false;
-        m_state.linkStatus = context->getProgrami(object(), GraphicsContextGL::LINK_STATUS);
-    }
-    return *m_state.linkStatus;
-}
-
-std::span<const GCGLAttribActiveInfo> WebGLProgram::activeAttribs()
-{
-    if (!m_state.activeAttribs) {
-        RefPtr context = graphicsContextGL();
-        if (!context)
-            return { };
-        m_state.activeAttribs = context->activeAttribs(object());
-    }
-    return *m_state.activeAttribs;
-}
-
-const HashMap<String, int>& WebGLProgram::attribLocations()
-{
-    if (!m_state.attribLocations) {
-        auto& locations = m_state.attribLocations.emplace();
-        for (auto& activeAttrib : activeAttribs()) {
-            String name = String::fromUTF8(activeAttrib.name.span());
-            locations.add(name, activeAttrib.location);
-        }
-    }
-    return *m_state.attribLocations;
-}
-
-std::span<const GCGLUniformActiveInfo> WebGLProgram::activeUniforms()
-{
-    if (!m_state.activeUniforms) {
-        RefPtr context = graphicsContextGL();
-        if (!context)
-            return { };
-        m_state.activeUniforms = context->activeUniforms(object());
-    }
-    return *m_state.activeUniforms;
-}
-
-const HashMap<String, int>& WebGLProgram::uniformLocations()
-{
-    if (!m_state.uniformLocations) {
-        auto& locations = m_state.uniformLocations.emplace();
-        for (auto& activeUniform : activeUniforms()) {
-            auto name = String::fromUTF8(activeUniform.name.data());
-            locations.add(name, activeUniform.locations[0]);
-            if (name.endsWith("[0]"_s)) {
-                auto baseName = name.left(name.length() - 3);
-                locations.add(baseName, activeUniform.locations[0]);
-                for (size_t i = 1; i < activeUniform.locations.size(); ++i) {
-                    if (activeUniform.locations[i] != -1)
-                        locations.add(makeString(baseName, '[', i, ']'), activeUniform.locations[i]);
-                }
-            }
-        }
-    }
-    return *m_state.uniformLocations;
-}
-
-const HashMap<String, unsigned>& WebGLProgram::uniformIndices()
-{
-    if (!m_state.uniformIndices) {
-        auto& indices = m_state.uniformIndices.emplace();
-        auto activeUniforms = this->activeUniforms();
-        for (unsigned i = 0; i < activeUniforms.size(); ++i) {
-            auto& activeUniform = activeUniforms[i];
-            auto name = String::fromUTF8(activeUniform.name.data());
-            indices.add(name, i);
-            if (name.endsWith("[0]"_s)) {
-                auto baseName = name.left(name.length() - 3);
-                indices.add(baseName, i);
-            }
-        }
-    }
-    return *m_state.uniformIndices;
-}
-
-int WebGLProgram::requiredTransformFeedbackBufferCount()
-{
-    if (!m_state.requiredTransformFeedbackBufferCount) {
-        if (!linkStatus())
-            return false;
-        m_state.requiredTransformFeedbackBufferCount = m_requiredTransformFeedbackBufferCountAfterNextLink;
-    }
-    return *m_state.requiredTransformFeedbackBufferCount;
+    cacheInfoIfNeeded();
+    return m_linkStatus;
 }
 
 void WebGLProgram::increaseLinkCount()
 {
     ++m_linkCount;
-    m_state = { };
+    m_infoValid = false;
 }
 
 RefPtr<WebGLShader> WebGLProgram::fragmentShader() const
@@ -264,6 +177,24 @@ void WebGLProgram::addMembersToOpaqueRoots(const AbstractLocker&, JSC::AbstractS
 {
     addWebCoreOpaqueRoot(visitor, m_vertexShader.get());
     addWebCoreOpaqueRoot(visitor, m_fragmentShader.get());
+}
+
+void WebGLProgram::cacheInfoIfNeeded()
+{
+    if (m_infoValid)
+        return;
+
+    if (!object())
+        return;
+
+    RefPtr context = graphicsContextGL();
+    if (!context)
+        return;
+    GCGLint linkStatus = context->getProgrami(object(), GraphicsContextGL::LINK_STATUS);
+    m_linkStatus = linkStatus;
+    if (m_linkStatus)
+        m_requiredTransformFeedbackBufferCount = m_requiredTransformFeedbackBufferCountAfterNextLink;
+    m_infoValid = true;
 }
 
 }

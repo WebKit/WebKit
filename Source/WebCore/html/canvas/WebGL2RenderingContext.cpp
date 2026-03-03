@@ -2252,7 +2252,7 @@ RefPtr<WebGLActiveInfo> WebGL2RenderingContext::getTransformFeedbackVarying(WebG
         return nullptr;
     if (!validateWebGLObject("getTransformFeedbackVarying"_s, program))
         return nullptr;
-    if (!program.linkStatus()) {
+    if (!program.getLinkStatus()) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getTransformFeedbackVarying"_s, "program not linked"_s);
         return nullptr;
     }
@@ -2438,10 +2438,10 @@ std::optional<Vector<GCGLuint>> WebGL2RenderingContext::getUniformIndices(WebGLP
         return std::nullopt;
     if (!validateWebGLObject("getUniformIndices"_s, program))
         return std::nullopt;
-    auto& uniformIndices = program.uniformIndices();
-    return names.map([&](const String& uniformName) -> GCGLuint {
-        return uniformIndices.getOptional(uniformName).value_or(GraphicsContextGL::INVALID_INDEX);
+    auto namesUTF8 = names.map([](const String& value) {
+        return value.utf8();
     });
+    return graphicsContextGL()->getUniformIndices(program.object(), namesUTF8);
 }
 
 WebGLAny WebGL2RenderingContext::getActiveUniforms(WebGLProgram& program, const Vector<GCGLuint>& uniformIndices, GCGLenum pname)
@@ -2450,48 +2450,31 @@ WebGLAny WebGL2RenderingContext::getActiveUniforms(WebGLProgram& program, const 
         return nullptr;
     if (!validateWebGLObject("getActiveUniforms"_s, program))
         return nullptr;
-    auto activeUniforms = program.activeUniforms();
-    if (uniformIndices.size() > activeUniforms.size()) {
-        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "getActiveUniforms"_s, "uniformIndices length must be less than program active uniform count"_s);
-        return nullptr;
-    }
-    for (auto uniformIndex : uniformIndices) {
-        if (uniformIndex >= activeUniforms.size()) {
-            synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "getActiveUniforms"_s, "index must be less than program active uniform count"_s);
-            return nullptr;
-        }
-    }
+
     switch (pname) {
     case GraphicsContextGL::UNIFORM_TYPE: {
-        return uniformIndices.map([&](GCGLuint index) -> GCGLenum {
-            return activeUniforms[index].type;
+        auto result = graphicsContextGL()->getActiveUniforms(program.object(), uniformIndices, pname);
+        return result.map([](auto x) {
+            return static_cast<GCGLenum>(x);
         });
     }
     case GraphicsContextGL::UNIFORM_SIZE: {
-        return uniformIndices.map([&](GCGLuint index) -> GCGLuint {
-            return activeUniforms[index].locations.size();
+        auto result = graphicsContextGL()->getActiveUniforms(program.object(), uniformIndices, pname);
+        return result.map([](auto x) {
+            return static_cast<GCGLuint>(x);
         });
     }
     case GraphicsContextGL::UNIFORM_BLOCK_INDEX:
-        return uniformIndices.map([&](GCGLuint index) -> GCGLint {
-            return activeUniforms[index].blockIndex;
-        });
     case GraphicsContextGL::UNIFORM_OFFSET:
-        return uniformIndices.map([&](GCGLuint index) -> GCGLint {
-            return activeUniforms[index].offset;
-        });
     case GraphicsContextGL::UNIFORM_ARRAY_STRIDE:
-        return uniformIndices.map([&](GCGLuint index) -> GCGLint {
-            return activeUniforms[index].arrayStride;
-        });
     case GraphicsContextGL::UNIFORM_MATRIX_STRIDE:
-        return uniformIndices.map([&](GCGLuint index) -> GCGLint {
-            return activeUniforms[index].matrixStride;
+        return graphicsContextGL()->getActiveUniforms(program.object(), uniformIndices, pname);
+    case GraphicsContextGL::UNIFORM_IS_ROW_MAJOR: {
+        auto result = graphicsContextGL()->getActiveUniforms(program.object(), uniformIndices, pname);
+        return result.map([](auto x) {
+            return static_cast<bool>(x);
         });
-    case GraphicsContextGL::UNIFORM_IS_ROW_MAJOR:
-        return uniformIndices.map([&](GCGLuint index) -> bool {
-            return static_cast<bool>(activeUniforms[index].isRowMajor);
-        });
+    }
     default:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getActiveUniforms"_s, "invalid parameter name"_s);
         return nullptr;
@@ -2540,7 +2523,7 @@ String WebGL2RenderingContext::getActiveUniformBlockName(WebGLProgram& program, 
         return { };
     if (!validateWebGLObject("getActiveUniformBlockName"_s, program))
         return { };
-    if (!program.linkStatus()) {
+    if (!program.getLinkStatus()) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getActiveUniformBlockName"_s, "program not linked"_s);
         return { };
     }

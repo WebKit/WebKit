@@ -773,6 +773,15 @@ enum class WebCore::IndexedDB::RequestType : uint8_t {
     Downloads
 };
 
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+header: <WebCore/GraphicsContextGLActiveInfo.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::GraphicsContextGLActiveInfo {
+    CString name;
+    GCGLenum type;
+    GCGLint size;
+};
+#endif
+
 enum class WebCore::ViewportFit : uint8_t {
     Auto,
     Contain,

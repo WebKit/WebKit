@@ -104,8 +104,9 @@ public:
     void framebufferTexture2D(GCGLenum target, GCGLenum attachment, GCGLenum textarget, PlatformGLObject, GCGLint level) final;
     void frontFace(GCGLenum mode) final;
     void generateMipmap(GCGLenum target) final;
-    Vector<GCGLAttribActiveInfo> activeAttribs(PlatformGLObject program) final;
-    Vector<GCGLUniformActiveInfo> activeUniforms(PlatformGLObject program) final;
+    std::optional<GraphicsContextGLActiveInfo> getActiveAttrib(PlatformGLObject program, GCGLuint index) final;
+    std::optional<GraphicsContextGLActiveInfo> getActiveUniform(PlatformGLObject program, GCGLuint index) final;
+    GCGLint getAttribLocation(PlatformGLObject, const CString& name) final;
     void getBooleanv(GCGLenum pname, std::span<GCGLboolean> value) final;
     GCGLint getBufferParameteri(GCGLenum target, GCGLenum pname) final;
     GCGLErrorCodeSet getErrors() final;
@@ -127,6 +128,7 @@ public:
     void getUniformfv(PlatformGLObject program, GCGLint location, std::span<GCGLfloat> value) final;
     void getUniformiv(PlatformGLObject program, GCGLint location, std::span<GCGLint> value) final;
     void getUniformuiv(PlatformGLObject program, GCGLint location, std::span<GCGLuint> value) final;
+    GCGLint getUniformLocation(PlatformGLObject, const CString& name) final;
     GCGLsizeiptr getVertexAttribOffset(GCGLuint index, GCGLenum pname) final;
     void hint(GCGLenum target, GCGLenum mode) final;
     GCGLboolean isBuffer(PlatformGLObject) final;
@@ -275,11 +277,13 @@ public:
     void beginTransformFeedback(GCGLenum primitiveMode) final;
     void endTransformFeedback() final;
     void transformFeedbackVaryings(PlatformGLObject program, const Vector<CString>& varyings, GCGLenum bufferMode) final;
-    std::optional<GCGLTransformFeedbackActiveInfo> getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index) final;
+    std::optional<GraphicsContextGLActiveInfo> getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index) final;
     void pauseTransformFeedback() final;
     void resumeTransformFeedback() final;
     void bindBufferBase(GCGLenum target, GCGLuint index, PlatformGLObject buffer) final;
     void bindBufferRange(GCGLenum target, GCGLuint index, PlatformGLObject buffer, GCGLintptr offset, GCGLsizeiptr) final;
+    Vector<GCGLuint> getUniformIndices(PlatformGLObject program, const Vector<CString>& uniformNames) final;
+    Vector<GCGLint> getActiveUniforms(PlatformGLObject program, const Vector<GCGLuint>& uniformIndices, GCGLenum pname) final;
     GCGLuint getUniformBlockIndex(PlatformGLObject program, const CString& uniformBlockName) final;
     CString getActiveUniformBlockName(PlatformGLObject program, GCGLuint uniformBlockIndex) final;
     void uniformBlockBinding(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding) final;
