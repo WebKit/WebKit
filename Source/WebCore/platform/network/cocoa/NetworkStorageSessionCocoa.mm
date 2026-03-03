@@ -70,7 +70,8 @@ void NetworkStorageSession::setCookie(const Cookie& cookie)
         auto header = CookieUtil::buildSetCookieStringWithoutDomain(cookie);
         auto scheme = cookie.secure ? "https://"_s : "http://"_s;
         auto url = URL { makeString(scheme, cookie.domain, cookie.path.isEmpty() ? "/"_s : cookie.path) };
-        RetainPtr<NSDictionary> headerFields = @{ @"Set-Cookie": header.createNSString().get() };
+        RetainPtr nsHeader = header.createNSString();
+        RetainPtr<NSDictionary> headerFields = @{ @"Set-Cookie": nsHeader.get() };
         RetainPtr nsURL = url.createNSURL();
         RetainPtr nsCookies = [NSHTTPCookie cookiesWithResponseHeaderFields:headerFields.get() forURL:nsURL.get()];
         BEGIN_BLOCK_OBJC_EXCEPTIONS

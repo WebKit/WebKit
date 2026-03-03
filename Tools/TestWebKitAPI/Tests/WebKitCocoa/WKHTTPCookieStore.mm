@@ -1297,8 +1297,8 @@ TEST(WKHTTPCookieStore, SetSameSiteNoneCookieForLocalhost)
     auto cookieStore = dataStore.httpCookieStore;
 
     // Use an HTTPS localhost server that sets a SameSite=None; Secure cookie via Set-Cookie header.
-    __block String receivedCookies;
-    __block bool firstRequest = true;
+    String receivedCookies;
+    bool firstRequest = true;
     HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
         while (true) {
             auto request = co_await connection.awaitableReceiveHTTPRequest();
