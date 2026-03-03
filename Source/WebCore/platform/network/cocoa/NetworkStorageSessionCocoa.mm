@@ -69,8 +69,8 @@ void NetworkStorageSession::setCookie(const Cookie& cookie)
         || cookie.domain.endsWithIgnoringASCIICase(".localhost"_s)) {
         auto header = CookieUtil::buildSetCookieStringWithoutDomain(cookie);
         auto url = URL { makeString("http://"_s, cookie.domain, cookie.path.isEmpty() ? "/"_s : cookie.path) };
-        NSDictionary *headerFields = @{ @"Set-Cookie": header.createNSString().get() };
-        RetainPtr nsCookies = [NSHTTPCookie cookiesWithResponseHeaderFields:headerFields forURL:url.createNSURL().get()];
+        RetainPtr<NSDictionary> headerFields = @{ @"Set-Cookie": header.createNSString().get() };
+        RetainPtr nsCookies = [NSHTTPCookie cookiesWithResponseHeaderFields:headerFields.get() forURL:url.createNSURL().get()];
         BEGIN_BLOCK_OBJC_EXCEPTIONS
         [nsCookieStorage() setCookies:nsCookies.get() forURL:url.createNSURL().get() mainDocumentURL:url.createNSURL().get()];
         END_BLOCK_OBJC_EXCEPTIONS
