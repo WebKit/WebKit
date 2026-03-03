@@ -61,6 +61,8 @@ String buildSetCookieStringWithoutDomain(const Cookie& cookie)
         auto maxAgeSeconds = static_cast<int64_t>((*cookie.expires - now) / 1000);
         if (maxAgeSeconds > 0)
             builder.append("; Max-Age="_s, maxAgeSeconds);
+        else
+            builder.append("; Max-Age=0"_s);
     }
 
     if (cookie.httpOnly)

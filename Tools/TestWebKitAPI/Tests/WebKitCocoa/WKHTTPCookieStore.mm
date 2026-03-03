@@ -1340,6 +1340,42 @@ TEST(WKHTTPCookieStore, SetSameSiteNoneCookieForLocalhost)
     EXPECT_WK_STREQ("TestCookie=TestValue", receivedCookies);
 }
 
+TEST(WKHTTPCookieStore, SetCookieForLocalhostSubdomain)
+{
+    using namespace TestWebKitAPI;
+
+    RetainPtr cookie = [NSHTTPCookie cookieWithProperties:@{
+        NSHTTPCookiePath: @"/",
+        NSHTTPCookieName: @"SubCookie",
+        NSHTTPCookieValue: @"SubValue",
+        NSHTTPCookieDomain: @"sub.localhost",
+    }];
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    auto dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    configuration.get().websiteDataStore = dataStore;
+    auto cookieStore = dataStore.httpCookieStore;
+
+    // Set the *.localhost cookie.
+    __block bool done = false;
+    [cookieStore setCookie:cookie.get() completionHandler:^{
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+
+    // Verify cookie was stored.
+    [cookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
+        EXPECT_EQ([cookies count], 1u);
+        NSHTTPCookie *storedCookie = [cookies firstObject];
+        EXPECT_WK_STREQ(@"SubCookie", storedCookie.name);
+        EXPECT_WK_STREQ(@"SubValue", storedCookie.value);
+        EXPECT_WK_STREQ(@"sub.localhost", storedCookie.domain);
+        done = true;
+    }];
+    Util::run(&done);
+}
+
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
 TEST(WKHTTPCookieStore, PartitionedCookieShouldNotHavePartitionProperty)
 {
