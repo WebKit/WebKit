@@ -1230,7 +1230,7 @@ TEST(WKHTTPCookieStore, SetCookieForLocalhost)
     EXPECT_WK_STREQ("TestCookie=TestValue", receivedCookies);
 }
 
-TEST(WKHTTPCookieStore, SetSecureSameSiteNoneCookieForLocalhost)
+TEST(WKHTTPCookieStore, SetSecureCookieForLocalhost)
 {
     using namespace TestWebKitAPI;
 
@@ -1285,6 +1285,59 @@ TEST(WKHTTPCookieStore, SetSecureSameSiteNoneCookieForLocalhost)
     [webView loadRequest:server.requestWithLocalhost()];
     [delegate waitForDidFinishNavigation];
     EXPECT_WK_STREQ("SecureTestCookie=SecureTestValue", receivedCookies);
+}
+
+TEST(WKHTTPCookieStore, SetSameSiteNoneCookieForLocalhost)
+{
+    using namespace TestWebKitAPI;
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    auto dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    configuration.get().websiteDataStore = dataStore;
+    auto cookieStore = dataStore.httpCookieStore;
+
+    // Use an HTTPS localhost server that sets a SameSite=None; Secure cookie via Set-Cookie header.
+    __block String receivedCookies;
+    __block bool firstRequest = true;
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (true) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            if (firstRequest) {
+                firstRequest = false;
+                co_await connection.awaitableSend(HTTPResponse({ { "Set-Cookie"_s, "TestCookie=TestValue; Secure; SameSite=None"_s } }, "hi"_s).serialize());
+            } else {
+                receivedCookies = HTTPServer::parseCookies(request);
+                co_await connection.awaitableSend(HTTPResponse("hi"_s).serialize());
+            }
+        }
+    }, HTTPServer::Protocol::Https);
+
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    // First navigation sets the cookie via Set-Cookie header.
+    [webView loadRequest:server.requestWithLocalhost()];
+    [delegate waitForDidFinishNavigation];
+
+    // Verify cookie was stored.
+    __block bool done = false;
+    [cookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
+        EXPECT_EQ([cookies count], 1u);
+        NSHTTPCookie *storedCookie = [cookies firstObject];
+        EXPECT_WK_STREQ(@"TestCookie", storedCookie.name);
+        EXPECT_TRUE(storedCookie.secure);
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+
+    // Second navigation verifies cookie is sent back.
+    [webView loadRequest:server.requestWithLocalhost()];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ("TestCookie=TestValue", receivedCookies);
 }
 
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)

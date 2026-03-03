@@ -70,15 +70,16 @@ String buildSetCookieStringWithoutDomain(const Cookie& cookie)
         builder.append("; Secure"_s);
 
     switch (cookie.sameSite) {
+    case Cookie::SameSitePolicy::Default:
+        break;
+    case Cookie::SameSitePolicy::None:
+        builder.append("; SameSite=None"_s);
+        break;
     case Cookie::SameSitePolicy::Lax:
         builder.append("; SameSite=Lax"_s);
         break;
     case Cookie::SameSitePolicy::Strict:
         builder.append("; SameSite=Strict"_s);
-        break;
-    case Cookie::SameSitePolicy::None:
-        if (cookie.secure)
-            builder.append("; SameSite=None"_s);
         break;
     }
 

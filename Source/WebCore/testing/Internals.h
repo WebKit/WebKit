@@ -1438,6 +1438,7 @@ public:
             case Cookie::SameSitePolicy::Lax:
                 sameSite = "Lax"_s;
                 break;
+            case Cookie::SameSitePolicy::Default:
             case Cookie::SameSitePolicy::None:
                 sameSite = "None"_s;
                 break;
