@@ -30,6 +30,7 @@
 #include <WebCore/RenderStyleConstants.h>
 #include <WebCore/ScrollAxis.h>
 #include <WebCore/ScrollTimelineOptions.h>
+#include <WebCore/StyleScrollFunction.h>
 #include <WebCore/Styleable.h>
 #include <wtf/Ref.h>
 #include <wtf/WeakHashSet.h>
@@ -63,6 +64,8 @@ public:
     void setName(const AtomString& name) { m_name = name; }
 
     bool isInactiveStyleOriginatedTimeline() const { return m_isInactiveStyleOriginatedTimeline; }
+
+    bool matchesAnonymousScrollFunctionForSource(const Style::ScrollFunction&, const Styleable&) const;
 
     AnimationTimeline::ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents() override;
     void updateCurrentTimeIfStale();
@@ -103,6 +106,7 @@ protected:
     static ScrollableArea* scrollableAreaForSourceRenderer(const RenderElement*, Document&);
     ResolvedScrollDirection resolvedScrollDirection() const;
     void sourceMetricsDidChange();
+    bool isStyleOriginated() const { return m_isStyleOriginated; }
 
 #if ENABLE(THREADED_ANIMATIONS)
     void scheduleAcceleratedRepresentationUpdate();
@@ -137,6 +141,7 @@ private:
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_timelineScopeElement;
     CurrentTimeData m_cachedCurrentTimeData { };
     bool m_isInactiveStyleOriginatedTimeline { false };
+    bool m_isStyleOriginated { false };
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ScrollTimeline&);

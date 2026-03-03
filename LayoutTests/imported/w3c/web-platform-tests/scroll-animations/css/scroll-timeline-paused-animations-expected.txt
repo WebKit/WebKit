@@ -1,4 +1,4 @@
 
 PASS Test that the scroll animation is paused
-FAIL Test that the scroll animation is paused by updating animation-play-state assert_equals: Current time preserved when pause-pending. expected "200px" but got "50px"
+PASS Test that the scroll animation is paused by updating animation-play-state
 

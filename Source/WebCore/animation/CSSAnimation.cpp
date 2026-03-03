@@ -162,13 +162,25 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
     effectTimingDidChange();
 
     // Synchronize the play state
+    // https://drafts.csswg.org/css-animations-2/#animation-play-state
     if (!m_overriddenProperties.contains(Property::PlayState)) {
         auto styleOriginatedPlayState = animation.playState();
         if (m_lastStyleOriginatedPlayState != styleOriginatedPlayState) {
-            if (styleOriginatedPlayState == AnimationPlayState::Running && playState() == WebAnimation::PlayState::Paused)
-                play();
-            else if (styleOriginatedPlayState == AnimationPlayState::Paused && playState() == WebAnimation::PlayState::Running)
+            if (styleOriginatedPlayState == AnimationPlayState::Running) {
+                // If at any time, including when the animation is first generated, the resolved value of
+                // animation-play-state corresponding to an animation is newly running, the implementation
+                // must run the procedure to play an animation for the given animation with the auto-rewind
+                // flag set to false.
+                play(WebAnimation::AutoRewind::No);
+            } else if (playState() != WebAnimation::PlayState::Idle) {
+                // If at any time, including when the animation is first generated, the resolved value of
+                // animation-play-state corresponding to an animation is newly paused, the implementation
+                // must run the procedure to pause an animation for the given animation.
+                // FIXME: we should not have to check for playState() != WebAnimation::PlayState::Idle
+                // but this is needed so that we don't rewind canceled animations.
+                // https://github.com/w3c/csswg-drafts/issues/13503
                 pause();
+            }
         }
         m_lastStyleOriginatedPlayState = styleOriginatedPlayState;
     }
@@ -208,11 +220,19 @@ void CSSAnimation::syncStyleOriginatedTimeline()
             styleOriginatedTimelinesController->attachAnimation(*this);
         },
         [&](const Style::ScrollFunction& scrollFunction) {
+            if (RefPtr existingScrollTimeline = dynamicDowncast<ScrollTimeline>(timeline())) {
+                if (existingScrollTimeline->matchesAnonymousScrollFunctionForSource(scrollFunction, *owningElement()))
+                    return;
+            }
             auto scrollTimeline = ScrollTimeline::create(scrollFunction->scroller, scrollFunction->axis);
             scrollTimeline->setSource(*owningElement());
             setTimeline(WTF::move(scrollTimeline));
         },
         [&](const Style::ViewFunction& viewFunction) {
+            if (RefPtr existingViewTimeline = dynamicDowncast<ViewTimeline>(timeline())) {
+                if (existingViewTimeline->matchesAnonymousViewFunctionForSubject(viewFunction, *owningElement()))
+                    return;
+            }
             auto viewTimeline = ViewTimeline::create(nullAtom(), viewFunction->axis, viewFunction->insets);
             viewTimeline->setSubject(*owningElement());
             setTimeline(WTF::move(viewTimeline));

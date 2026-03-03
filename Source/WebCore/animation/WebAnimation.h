@@ -201,11 +201,13 @@ protected:
     virtual void animationDidFinish();
     WebAnimationTime zeroTime() const;
 
+    enum class AutoRewind : bool { No, Yes };
+    ExceptionOr<void> play(AutoRewind);
+
 private:
     enum class DidSeek : bool { No, Yes };
     enum class SynchronouslyNotify : bool { No, Yes };
     enum class RespectHoldTime : bool { No, Yes };
-    enum class AutoRewind : bool { No, Yes };
     enum class TimeToRunPendingTask : uint8_t { NotScheduled, ASAP, WhenReady };
 
     void timingDidChange(DidSeek, SynchronouslyNotify, Silently = Silently::No);
@@ -218,7 +220,6 @@ private:
     void finishNotificationSteps();
     bool hasPendingPauseTask() const { return m_timeToRunPendingPauseTask != TimeToRunPendingTask::NotScheduled; }
     bool hasPendingPlayTask() const { return m_timeToRunPendingPlayTask != TimeToRunPendingTask::NotScheduled; }
-    ExceptionOr<void> play(AutoRewind);
     void runPendingPauseTask();
     void runPendingPlayTask();
     void resetPendingTasks();

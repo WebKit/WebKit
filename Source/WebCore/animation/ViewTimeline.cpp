@@ -628,6 +628,11 @@ Ref<CSSNumericValue> ViewTimeline::endOffset() const
     return CSSNumericFactory::px(computeTimelineData().rangeEnd);
 }
 
+bool ViewTimeline::matchesAnonymousViewFunctionForSubject(const Style::ViewFunction& viewFunction, const Styleable& subject) const
+{
+    return isStyleOriginated() && name().isEmpty() && m_insets == viewFunction->insets && axis() == viewFunction->axis && m_subject.styleable() == subject;
+}
+
 WTF::TextStream& operator<<(WTF::TextStream& ts, const StickinessAdjustmentData& stickiness)
 {
     ts << "[ TopOrLeftAdjustment: "_s << stickiness.stickyTopOrLeftAdjustment << ", TopOrLeftLocation: "_s << stickiness.topOrLeftAdjustmentLocation << ", BottomOrRightAdjustment: "_s << stickiness.stickyBottomOrRightAdjustment << ", BottomOrRightLocation: "_s << stickiness.bottomOrRightAdjustmentLocation << " ]"_s;

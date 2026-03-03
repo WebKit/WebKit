@@ -1,0 +1,6 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS Test that the scroll animation is paused
+TIMEOUT Test that the scroll animation is paused by updating animation-play-state Test timed out
+

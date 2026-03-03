@@ -28,6 +28,7 @@
 #include <WebCore/CSSNumericValue.h>
 #include <WebCore/CSSPrimitiveValue.h>
 #include <WebCore/ScrollTimeline.h>
+#include <WebCore/StyleViewFunction.h>
 #include <WebCore/StyleViewTimelineInsets.h>
 #include <WebCore/Styleable.h>
 #include <WebCore/ViewTimelineOptions.h>
@@ -96,6 +97,8 @@ public:
     std::pair<WebAnimationTime, WebAnimationTime> intervalForAttachmentRange(const Style::SingleAnimationRange&) const final;
     std::pair<double, double> offsetIntervalForAttachmentRange(const Style::SingleAnimationRange&) const;
     std::pair<double, double> offsetIntervalForTimelineRangeName(Style::SingleAnimationRangeName) const;
+
+    bool matchesAnonymousViewFunctionForSubject(const Style::ViewFunction&, const Styleable&) const;
 
 private:
     ScrollTimeline::Data computeTimelineData(UseCachedCurrentTime = UseCachedCurrentTime::Yes) const final;

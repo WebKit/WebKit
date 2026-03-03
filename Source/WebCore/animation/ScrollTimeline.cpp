@@ -114,6 +114,7 @@ ScrollTimeline::ScrollTimeline(const AtomString& name, ScrollAxis axis)
 {
     m_axis = axis;
     m_name = name;
+    m_isStyleOriginated = true;
 }
 
 ScrollTimeline::ScrollTimeline(Scroller scroller, ScrollAxis axis)
@@ -121,6 +122,7 @@ ScrollTimeline::ScrollTimeline(Scroller scroller, ScrollAxis axis)
 {
     m_axis = axis;
     m_scroller = scroller;
+    m_isStyleOriginated = true;
 }
 
 RefPtr<Element> ScrollTimeline::bindingsSource() const
@@ -403,6 +405,11 @@ void ScrollTimeline::animationTimingDidChange(WebAnimation& animation)
 
     if (RefPtr page = source->element.protectedDocument()->page())
         page->scheduleRenderingUpdate(RenderingUpdateStep::Animations);
+}
+
+bool ScrollTimeline::matchesAnonymousScrollFunctionForSource(const Style::ScrollFunction& scrollFunction, const Styleable& source) const
+{
+    return m_isStyleOriginated && m_name.isEmpty() && m_scroller == scrollFunction->scroller && m_axis == scrollFunction->axis && m_source.styleable() == source;
 }
 
 #if ENABLE(THREADED_ANIMATIONS)
