@@ -143,7 +143,8 @@ void RealtimeOutgoingAudioSourceCocoa::pullAudioData()
     constexpr size_t chunkSampleCount = LibWebRTCAudioFormat::sampleRate / 100;
     size_t numberOfChannels = m_outputStreamDescription->numberOfChannels();
     size_t bufferSize = chunkSampleCount * LibWebRTCAudioFormat::sampleByteSize * numberOfChannels;
-    m_audioBuffer.grow(bufferSize);
+    if (bufferSize > m_audioBuffer.size())
+        m_audioBuffer.grow(bufferSize);
 
     AudioBufferList bufferList;
     bufferList.mNumberBuffers = 1;
