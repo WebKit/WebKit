@@ -151,6 +151,7 @@ Tests/WebKitCocoa/IDBCheckpointWAL.mm @nonARC
 Tests/WebKitCocoa/IDBDeleteRecovery.mm @nonARC
 Tests/WebKitCocoa/IDBIndexUpgradeToV2.mm @nonARC
 Tests/WebKitCocoa/IDBObjectStoreInfoUpgradeToV2.mm @nonARC
+Tests/WebKitCocoa/IPCSharedMemoryFallback.mm @nonARC
 Tests/WebKitCocoa/IPCTestingAPI.mm @nonARC
 Tests/WebKitCocoa/IconLoadingDelegate.mm @nonARC
 Tests/WebKitCocoa/ImageAnalysisTests.mm @nonARC

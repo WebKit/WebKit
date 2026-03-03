@@ -36,6 +36,7 @@
 #import "WKCrashReporter.h"
 #import "XPCUtilities.h"
 #import <WebCore/AXObjectCache.h>
+#import <WebCore/SharedMemory.h>
 #import <mach/mach_error.h>
 #import <mach/mach_init.h>
 #import <mach/mach_traps.h>
@@ -60,6 +61,14 @@ static const size_t inlineMessageMaxSize = 4096;
 // Arbitrary message IDs that do not collide with Mach notification messages (used my initials).
 constexpr mach_msg_id_t inlineBodyMessageID = 0xdba0dba;
 constexpr mach_msg_id_t outOfLineBodyMessageID = 0xdba1dba;
+constexpr mach_msg_id_t sharedMemoryBodyMessageID = 0xdba2dba;
+
+static bool s_forceUseSharedMemoryForSending { false };
+
+void Connection::setForceUseSharedMemoryForSendingForTesting(bool force)
+{
+    s_forceUseSharedMemoryForSending = force;
+}
 
 static void requestNoSenderNotifications(mach_port_t port, mach_port_t notify)
 {
@@ -219,7 +228,7 @@ void Connection::platformOpen()
     getAuditToken();
 }
 
-bool Connection::sendMessage(std::unique_ptr<MachMessage> message)
+Connection::SendMessageResult Connection::sendMessage(std::unique_ptr<MachMessage>& message, IsRetryDueToLargeSize isRetryDueToLargeSize)
 {
     ASSERT(message);
     ASSERT(!m_pendingOutgoingMachMessage);
@@ -229,12 +238,13 @@ bool Connection::sendMessage(std::unique_ptr<MachMessage> message)
     case MACH_MSG_SUCCESS:
         // The kernel has already adopted the descriptors.
         message->leakDescriptors();
-        return true;
+        message.reset();
+        return SendMessageResult::Success;
 
     case MACH_SEND_TIMED_OUT:
         // We timed out, stash away the message for later.
         m_pendingOutgoingMachMessage = WTF::move(message);
-        return false;
+        return SendMessageResult::Failure;
 
     case MACH_SEND_INVALID_DEST:
         // The other end has destroyed the receive right to the port we are trying to send to.
@@ -246,12 +256,19 @@ bool Connection::sendMessage(std::unique_ptr<MachMessage> message)
         // Noteworthy special case:
         // InitializeConnection message will hold our send right. If that send fails here, we will destroy
         // the send right inside the `message`that goes out of scope, and thus we get the NO_SENDERS.
-        return false;
+        return SendMessageResult::Failure;
 
-#if ENABLE(IPC_TESTING_API)
     case MACH_SEND_TOO_LARGE:
+#if ENABLE(IPC_TESTING_API)
         RELEASE_LOG_ERROR(Process, "%" PUBLIC_LOG_STRING "Error MACH_SEND_TOO_LARGE", WTF_PRETTY_FUNCTION);
-        return false;
+        return SendMessageResult::Failure;
+#else
+        if (isRetryDueToLargeSize == IsRetryDueToLargeSize::No) {
+            // The message exceeds kernel limits. Leave the message in place so the caller
+            // can extract port descriptors and retry with SharedMemory.
+            return SendMessageResult::MessageTooLarge;
+        }
+        [[fallthrough]];
 #endif
 
     default:
@@ -271,6 +288,35 @@ template<typename descriptorType>
 static descriptorType& popDescriptorAndAdvance(std::span<uint8_t>& data)
 {
     return consumeAndReinterpretCastTo<descriptorType>(data);
+}
+
+static void setPortDescriptor(std::span<uint8_t>& messageSpan, mach_port_t sendRight)
+{
+    auto& descriptor = popDescriptorAndAdvance<mach_msg_port_descriptor_t>(messageSpan);
+    descriptor.name = sendRight;
+    descriptor.disposition = MACH_MSG_TYPE_MOVE_SEND;
+    descriptor.type = MACH_MSG_PORT_DESCRIPTOR;
+}
+
+static Vector<MachSendRight> extractPortDescriptorsFromMessage(MachMessage& message)
+{
+    auto messageSpan = message.span();
+    auto& header = consumeAndReinterpretCastTo<mach_msg_header_t>(messageSpan);
+
+    if (!(header.msgh_bits & MACH_MSGH_BITS_COMPLEX))
+        return { };
+
+    auto& body = consumeAndReinterpretCastTo<mach_msg_body_t>(messageSpan);
+    bool hasOOLDescriptor = (header.msgh_id == outOfLineBodyMessageID);
+    auto portCount = body.msgh_descriptor_count - (hasOOLDescriptor ? 1 : 0);
+
+    Vector<MachSendRight> ports(portCount, [&](size_t) {
+        auto& descriptor = consumeAndReinterpretCastTo<mach_msg_port_descriptor_t>(messageSpan);
+        return MachSendRight::adopt(descriptor.name);
+    });
+
+    message.leakDescriptors();
+    return ports;
 }
 
 bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
@@ -312,12 +358,8 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
         auto& body = consumeAndReinterpretCastTo<mach_msg_body_t>(messageSpan);
         body.msgh_descriptor_count = numberOfPortDescriptors + messageBodyIsOOL;
 
-        for (auto& attachment : attachments) {
-            auto& descriptor = popDescriptorAndAdvance<mach_msg_port_descriptor_t>(messageSpan);
-            descriptor.name = attachment.leakSendRight();
-            descriptor.disposition = MACH_MSG_TYPE_MOVE_SEND;
-            descriptor.type = MACH_MSG_PORT_DESCRIPTOR;
-        }
+        for (auto& attachment : attachments)
+            setPortDescriptor(messageSpan, attachment.leakSendRight());
 
         if (messageBodyIsOOL) {
             auto& descriptor = popDescriptorAndAdvance<mach_msg_ool_descriptor_t>(messageSpan);
@@ -334,7 +376,66 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
     if (!messageBodyIsOOL)
         memcpySpan(messageSpan, encoder->span());
 
-    return sendMessage(WTF::move(message));
+    if (!s_forceUseSharedMemoryForSending) {
+        auto result = sendMessage(message);
+        if (result != SendMessageResult::MessageTooLarge)
+            return result == SendMessageResult::Success;
+
+        RELEASE_LOG_ERROR(IPC, "sendOutgoingMessage: MACH_SEND_TOO_LARGE for message '%" PUBLIC_LOG_STRING "', retrying with SharedMemory", description(encoder->messageName()).characters());
+    }
+
+    return retrySendMessageWithSharedMemory(WTF::move(message), encoder);
+}
+
+bool Connection::retrySendMessageWithSharedMemory(std::unique_ptr<MachMessage> failedMessage, UniqueRef<Encoder>& encoder)
+{
+    // On MACH_SEND_TOO_LARGE the kernel rejects the send without consuming
+    // any descriptors, so the ports in the MachMessage are still valid.
+    auto extractedPorts = extractPortDescriptorsFromMessage(*failedMessage);
+    failedMessage.reset();
+
+    // Create a VM-copy memory entry directly from the encoder's data.
+    auto shmHandle = WebCore::SharedMemoryHandle::createVMCopy(encoder->span(), WebCore::SharedMemoryProtection::ReadOnly);
+    if (!shmHandle) {
+        RELEASE_LOG_ERROR(IPC, "retrySendMessageWithSharedMemory: Failed to create memory entry");
+        CRASH_WITH_INFO(std::to_underlying(encoder->messageName()));
+    }
+    uint64_t shmSize = shmHandle->size();
+    auto shmSendRight = shmHandle->releaseHandle();
+
+    // Build the retry message: extractedPorts + shm port descriptor + uint64_t size inline.
+    size_t newPortCount = extractedPorts.size() + 1;
+    auto newMessageSize = MachMessage::messageSize(sizeof(uint64_t), newPortCount, 0);
+    if (newMessageSize.hasOverflowed()) [[unlikely]]
+        return false;
+
+    size_t safeNewMessageSize = newMessageSize;
+    auto newMessage = MachMessage::create(encoder->messageName(), safeNewMessageSize);
+    if (!newMessage)
+        return false;
+
+    auto newMessageSpan = newMessage->span();
+    auto& newHeader = consumeAndReinterpretCastTo<mach_msg_header_t>(newMessageSpan);
+    newHeader.msgh_bits = MACH_MSGH_BITS(MACH_MSG_TYPE_COPY_SEND, 0) | MACH_MSGH_BITS_COMPLEX;
+    newHeader.msgh_size = safeNewMessageSize;
+    newHeader.msgh_remote_port = m_sendPort;
+    newHeader.msgh_local_port = MACH_PORT_NULL;
+    newHeader.msgh_id = sharedMemoryBodyMessageID;
+
+    auto& newBody = consumeAndReinterpretCastTo<mach_msg_body_t>(newMessageSpan);
+    newBody.msgh_descriptor_count = newPortCount;
+
+    // Original port descriptors (message attachments).
+    for (auto& sendRight : extractedPorts)
+        setPortDescriptor(newMessageSpan, sendRight.leakSendRight());
+
+    // SharedMemory port descriptor (last).
+    setPortDescriptor(newMessageSpan, shmSendRight.leakSendRight());
+
+    // Inline body: uint64_t shared memory size.
+    memcpySpan(newMessageSpan, asByteSpan(shmSize));
+
+    return sendMessage(newMessage, IsRetryDueToLargeSize::Yes) == SendMessageResult::Success;
 }
 
 void Connection::initializeSendSource()
@@ -373,8 +474,15 @@ void Connection::initializeSendSource()
 
 void Connection::resumeSendSource()
 {
-    if (m_pendingOutgoingMachMessage)
-        sendMessage(WTF::move(m_pendingOutgoingMachMessage));
+    if (m_pendingOutgoingMachMessage) {
+        auto message = std::exchange(m_pendingOutgoingMachMessage, nullptr);
+        auto result = sendMessage(message);
+        if (result == SendMessageResult::MessageTooLarge) {
+            // m_pendingOutgoingMachMessage originates from MACH_SEND_TIMED_OUT, not
+            // expected to hit MACH_SEND_TOO_LARGE on retry. Drop the message.
+            RELEASE_LOG_ERROR(IPC, "resumeSendSource: Unexpected MACH_SEND_TOO_LARGE for pending message");
+        }
+    }
     sendOutgoingMessages();
 }
 
@@ -415,7 +523,10 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, 
     // If the message body was sent out-of-line, don't treat the last descriptor
     // as an attachment, since it is really the message body.
     bool messageBodyIsOOL = header->msgh_id == outOfLineBodyMessageID;
-    mach_msg_size_t numberOfAttachments = messageBodyIsOOL ? numberOfPortDescriptors - 1 : numberOfPortDescriptors;
+    // If the message body was sent via SharedMemory (retry after MACH_SEND_TOO_LARGE),
+    // the last port descriptor is the SharedMemory send right, not an attachment.
+    bool messageBodyIsSharedMemory = header->msgh_id == sharedMemoryBodyMessageID;
+    mach_msg_size_t numberOfAttachments = (messageBodyIsOOL || messageBodyIsSharedMemory) ? numberOfPortDescriptors - 1 : numberOfPortDescriptors;
 
     // Build attachment list
     Vector<Attachment> attachments(numberOfAttachments);
@@ -445,6 +556,29 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, 
             // FIXME: <rdar://problem/62086358> bufferDeallocator block ignores mach_msg_ool_descriptor_t->deallocate
             vm_deallocate(mach_task_self(), reinterpret_cast<vm_address_t>(buffer.data()), buffer.size_bytes());
         }, WTF::move(attachments));
+    }
+
+    if (messageBodyIsSharedMemory) {
+        // Last port descriptor is the SharedMemory send right.
+        auto& shmDescriptor = consumeAndReinterpretCastTo<mach_msg_port_descriptor_t>(remaining);
+        ASSERT(shmDescriptor.type == MACH_MSG_PORT_DESCRIPTOR);
+        if (shmDescriptor.type != MACH_MSG_PORT_DESCRIPTOR)
+            return nullptr;
+        auto shmSendRight = MachSendRight::adopt(shmDescriptor.name);
+
+        // Read size from inline body.
+        if (remaining.size() < sizeof(uint64_t))
+            return nullptr;
+        uint64_t shmSize = consumeAndReinterpretCastTo<uint64_t>(remaining);
+
+        // Map the shared memory.
+        WebCore::SharedMemoryHandle shmHandle(WTF::move(shmSendRight), shmSize);
+        shmHandle.takeOwnershipOfMemory(WebCore::MemoryLedger::Default);
+        auto sharedMemory = WebCore::SharedMemory::map(WTF::move(shmHandle), WebCore::SharedMemoryProtection::ReadOnly);
+        if (!sharedMemory)
+            return nullptr;
+
+        return Decoder::create(sharedMemory->span(), [sharedMemory = WTF::move(sharedMemory)](auto) { }, WTF::move(attachments));
     }
 
     ASSERT(std::to_address(message.subspan(sizeWithPortDescriptors.value()).begin()) == std::to_address(remaining.begin()));
@@ -519,6 +653,7 @@ void Connection::receiveSourceEventHandler()
 
     case inlineBodyMessageID:
     case outOfLineBodyMessageID:
+    case sharedMemoryBodyMessageID:
         break;
 
     case MACH_NOTIFY_SEND_ONCE:

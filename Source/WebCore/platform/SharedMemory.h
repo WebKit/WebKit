@@ -99,6 +99,8 @@ public:
 
 #if USE(UNIX_DOMAIN_SOCKETS)
     UnixFileDescriptor releaseHandle();
+#elif OS(DARWIN)
+    MachSendRight releaseHandle() { return std::exchange(m_handle, MachSendRight { }); }
 #endif
 
 private:

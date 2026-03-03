@@ -162,6 +162,7 @@ WK_CLASS_AVAILABLE(macos(14.5), ios(17.5), visionos(1.2))
 + (void)_forceGameControllerFramework WK_API_AVAILABLE(macos(10.13), ios(11.0));
 + (void)_setLinkedOnOrAfterEverythingForTesting WK_API_AVAILABLE(macos(12.0), ios(15.0));
 + (void)_crashOnMessageCheckFailureForTesting WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
++ (void)_forceUseSharedMemoryForSendingForTesting:(BOOL)force WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 + (void)_setLinkedOnOrBeforeEverythingForTesting WK_API_AVAILABLE(macos(12.0), ios(15.0));
 + (void)_setCaptivePortalModeEnabledGloballyForTesting:(BOOL)isEnabled WK_API_AVAILABLE(macos(13.0), ios(16.0));
 + (void)_clearCaptivePortalModeEnabledGloballyForTesting WK_API_AVAILABLE(macos(13.0), ios(16.0));
