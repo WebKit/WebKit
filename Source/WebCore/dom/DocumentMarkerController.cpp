@@ -133,6 +133,25 @@ void DocumentMarkerController::addTransparentContentMarker(const SimpleRange& ra
         addMarker(textPiece.node, { DocumentMarkerType::TransparentContent, textPiece.range, DocumentMarker::TransparentContentData { { textPiece.node.ptr() }, uuid } });
 }
 
+void DocumentMarkerController::addDictationStreamingOpacityMarker(const SimpleRange& range, float opacity, WTF::UUID identifier)
+{
+    for (auto& textPiece : collectTextRanges(range))
+        addMarker(textPiece.node, { DocumentMarkerType::DictationStreamingOpacity, textPiece.range, DocumentMarker::DictationStreamingOpacityData { opacity, identifier } });
+}
+
+void DocumentMarkerController::removeDictationStreamingOpacityMarkers(const WTF::UUID& identifier)
+{
+    removeMarkers({ DocumentMarkerType::DictationStreamingOpacity }, [&identifier](const RenderedDocumentMarker& marker) {
+        auto& data = std::get<DocumentMarker::DictationStreamingOpacityData>(marker.data());
+        return data.identifier == identifier ? FilterMarkerResult::Remove : FilterMarkerResult::Keep;
+    });
+}
+
+void DocumentMarkerController::removeAllDictationStreamingOpacityMarkers()
+{
+    removeMarkers({ DocumentMarkerType::DictationStreamingOpacity });
+}
+
 void DocumentMarkerController::removeMarkers(const SimpleRange& range, OptionSet<DocumentMarkerType> types, RemovePartiallyOverlappingMarker overlapRule)
 {
     filterMarkers(range, nullptr, types, overlapRule);

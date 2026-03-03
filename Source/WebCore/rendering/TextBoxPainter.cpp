@@ -438,6 +438,9 @@ void TextBoxPainter::paintForegroundAndDecorations()
             auto markedTextsForTransparentContent = MarkedText::collectForDraggedAndTransparentContent(DocumentMarkerType::TransparentContent, m_renderer, m_selectableRange);
             if (!markedTextsForTransparentContent.isEmpty())
                 markedTexts.appendVector(WTF::move(markedTextsForTransparentContent));
+            auto markedTextsForDictationStreamingOpacity = MarkedText::collectForDictationStreamingOpacity(m_renderer, m_selectableRange);
+            if (!markedTextsForDictationStreamingOpacity.isEmpty())
+                markedTexts.appendVector(WTF::move(markedTextsForDictationStreamingOpacity));
         }
     }
     // The selection marked text acts as a placeholder when computing the marked texts for the gaps...
@@ -654,7 +657,8 @@ void TextBoxPainter::paintForeground(const StyledMarkedText& markedText)
         m_isCombinedText ? &downcast<RenderCombineText>(m_renderer.get()) : nullptr
     };
 
-    bool isTransparentMarkedText = markedText.type == MarkedText::Type::DraggedContent || markedText.type == MarkedText::Type::TransparentContent;
+    bool isTransparentMarkedText = markedText.type == MarkedText::Type::DraggedContent || markedText.type == MarkedText::Type::TransparentContent
+        || markedText.type == MarkedText::Type::DictationStreamingOpacity;
     GraphicsContextStateSaver stateSaver(context, markedText.style.textStyles.strokeWidth > 0 || isTransparentMarkedText);
     if (isTransparentMarkedText)
         context.setAlpha(markedText.style.alpha);
@@ -716,7 +720,8 @@ TextDecorationPainter TextBoxPainter::createDecorationPainter(const StyledMarked
     // Note that if the text is truncated, we let the thing being painted in the truncation
     // draw its own decoration.
     GraphicsContextStateSaver stateSaver { context, false };
-    bool isTransparentContent = markedText.type == MarkedText::Type::DraggedContent || markedText.type == MarkedText::Type::TransparentContent;
+    bool isTransparentContent = markedText.type == MarkedText::Type::DraggedContent || markedText.type == MarkedText::Type::TransparentContent
+        || markedText.type == MarkedText::Type::DictationStreamingOpacity;
     if (isTransparentContent || !clipOutRect.isEmpty()) {
         stateSaver.save();
         if (isTransparentContent)
@@ -1240,6 +1245,8 @@ void TextBoxPainter::paintPlatformDocumentMarkers()
     // the other marked texts when being subdivided so that they do not get painted.
     Vector<MarkedText> allMarkedTexts;
     allMarkedTexts.appendVector(transparentContentMarkedTexts);
+    auto dictationStreamingOpacityMarkedTexts = MarkedText::collectForDictationStreamingOpacity(m_renderer, m_selectableRange);
+    allMarkedTexts.appendVector(dictationStreamingOpacityMarkedTexts);
     allMarkedTexts.appendVector(markedTexts);
     if (textDecorationLineSpellingErrorAsMarkedText)
         allMarkedTexts.append(*textDecorationLineSpellingErrorAsMarkedText);
@@ -1250,6 +1257,7 @@ void TextBoxPainter::paintPlatformDocumentMarkers()
         switch (markedText.type) {
         case MarkedText::Type::DraggedContent:
         case MarkedText::Type::TransparentContent:
+        case MarkedText::Type::DictationStreamingOpacity:
             continue;
 
         default:

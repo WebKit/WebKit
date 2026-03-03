@@ -99,6 +99,7 @@ enum class DocumentMarkerType : uint32_t {
     WritingToolsTextSuggestion = 1 << 16,
 #endif
     TransparentContent = 1 << 17,
+    DictationStreamingOpacity = 1 << 18,
 };
 
 // A range of a node within a document that is "marked", such as the range of a misspelled word.
@@ -142,6 +143,11 @@ public:
         WTF::UUID uuid;
     };
 
+    struct DictationStreamingOpacityData {
+        float opacity;
+        WTF::UUID identifier;
+    };
+
     using Data = Variant<
         String
         , DictationData // DictationAlternatives
@@ -157,6 +163,7 @@ public:
         , WritingToolsTextSuggestionData // WritingToolsTextSuggestion
 #endif
         , TransparentContentData // TransparentContent
+        , DictationStreamingOpacityData // DictationStreamingOpacity
     >;
 
     DocumentMarker(DocumentMarkerType, OffsetRange, Data&& = { });
@@ -211,6 +218,7 @@ constexpr auto DocumentMarker::allMarkers() -> OptionSet<DocumentMarkerType>
         DocumentMarkerType::WritingToolsTextSuggestion,
 #endif
         DocumentMarkerType::TransparentContent,
+        DocumentMarkerType::DictationStreamingOpacity,
     };
 }
 

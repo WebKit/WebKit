@@ -1383,6 +1383,8 @@ public:
     void addDictationAlternative(WebCore::TextAlternativeWithRange&&);
     void dictationAlternativesAtSelection(CompletionHandler<void(Vector<WebCore::DictationContext>&&)>&&);
     void clearDictationAlternatives(Vector<WebCore::DictationContext>&&);
+    void setDictationStreamingOpacity(const String& hypothesisText, const WebCore::CharacterRange& streamingRangeInHypothesis, float opacity, const WTF::UUID&);
+    void clearDictationStreamingOpacity();
 
     void hasMarkedText(CompletionHandler<void(bool)>&&);
     void getMarkedRangeAsync(CompletionHandler<void(const EditingRange&)>&&);

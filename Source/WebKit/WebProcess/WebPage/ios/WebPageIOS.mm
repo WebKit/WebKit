@@ -2208,24 +2208,19 @@ void WebPage::replaceDictatedText(const String& oldText, const String& newText)
 
     if (frame->selection().isNone())
         return;
-    
+
     if (frame->selection().isRange()) {
         protect(frame->editor())->deleteSelectionWithSmartDelete(false);
         return;
     }
-    VisiblePosition position = frame->selection().selection().start();
-    for (auto i = numGraphemeClusters(oldText); i; --i)
-        position = position.previous();
-    if (position.isNull())
-        position = startOfDocument(protect(frame->document()));
-    auto range = makeSimpleRange(position, frame->selection().selection().start());
 
-    if (plainTextForContext(range) != oldText)
+    auto range = findDictatedTextRangeBeforeCursor(*frame, oldText);
+    if (!range)
         return;
 
     // We don't want to notify the client that the selection has changed until we are done inserting the new text.
     IgnoreSelectionChangeForScope ignoreSelectionChanges { *frame };
-    protect(frame->selection())->setSelectedRange(range, Affinity::Upstream, WebCore::FrameSelection::ShouldCloseTyping::Yes);
+    protect(frame->selection())->setSelectedRange(*range, Affinity::Upstream, WebCore::FrameSelection::ShouldCloseTyping::Yes);
     protect(frame->editor())->insertText(newText, 0);
 }
 

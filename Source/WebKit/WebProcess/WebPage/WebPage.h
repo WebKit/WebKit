@@ -1345,6 +1345,9 @@ public:
     void addDictationAlternative(const String& text, WebCore::DictationContext, CompletionHandler<void(bool)>&&);
     void dictationAlternativesAtSelection(CompletionHandler<void(Vector<WebCore::DictationContext>&&)>&&);
     void clearDictationAlternatives(Vector<WebCore::DictationContext>&&);
+    std::optional<WebCore::SimpleRange> findDictatedTextRangeBeforeCursor(WebCore::LocalFrame&, const String&);
+    void setDictationStreamingOpacity(const String& hypothesisText, const WebCore::CharacterRange& streamingRangeInHypothesis, float opacity, const WTF::UUID&);
+    void clearDictationStreamingOpacity();
 #endif // PLATFORM(COCOA)
 
 #if PLATFORM(MAC)

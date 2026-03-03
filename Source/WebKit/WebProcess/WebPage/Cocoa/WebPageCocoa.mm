@@ -139,6 +139,7 @@
 #import <WebCore/UTIRegistry.h>
 #import <WebCore/UTIUtilities.h>
 #import <WebCore/UserTypingGestureIndicator.h>
+#import <WebCore/VisibleUnits.h>
 #import <WebCore/WebAccessibilityObjectWrapperMac.h>
 #import <WebCore/markup.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
@@ -543,6 +544,58 @@ void WebPage::clearDictationAlternatives(Vector<DictationContext>&& contexts)
             return FilterMarkerResult::Keep;
         return setOfContextsToRemove.contains(std::get<WebCore::DocumentMarker::DictationData>(marker.data()).context) ? FilterMarkerResult::Remove : FilterMarkerResult::Keep;
     }, DocumentMarkerType::DictationAlternatives);
+}
+
+std::optional<SimpleRange> WebPage::findDictatedTextRangeBeforeCursor(LocalFrame& frame, const String& text)
+{
+    VisiblePosition position = frame.selection().selection().start();
+    for (auto i = numGraphemeClusters(text); i; --i)
+        position = position.previous();
+    if (position.isNull())
+        position = startOfDocument(frame.document());
+
+    auto range = makeSimpleRange(position, frame.selection().selection().start());
+    if (!range || plainTextForContext(*range) != text)
+        return std::nullopt;
+    return range;
+}
+
+void WebPage::setDictationStreamingOpacity(const String& hypothesisText, const WebCore::CharacterRange& streamingRangeInHypothesis, float opacity, const WTF::UUID& identifier)
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame) {
+        WEBPAGE_RELEASE_LOG(ViewState, "setDictationStreamingOpacity - no focused frame");
+        return;
+    }
+
+    if (frame->selection().isNone() || !frame->selection().selection().isContentEditable()) {
+        WEBPAGE_RELEASE_LOG(ViewState, "setDictationStreamingOpacity - no editable selection");
+        return;
+    }
+
+    auto hypothesisRange = findDictatedTextRangeBeforeCursor(*frame, hypothesisText);
+    if (!hypothesisRange) {
+        WEBPAGE_RELEASE_LOG(ViewState, "setDictationStreamingOpacity - hypothesis text not found, expected length %u", hypothesisText.length());
+        return;
+    }
+
+    auto streamingRange = resolveCharacterRange(*hypothesisRange, streamingRangeInHypothesis);
+    if (streamingRange.collapsed()) {
+        WEBPAGE_RELEASE_LOG(ViewState, "setDictationStreamingOpacity - resolved streaming range is collapsed");
+        return;
+    }
+
+    protect(frame->document()->markers())->removeDictationStreamingOpacityMarkers(identifier);
+    protect(frame->document()->markers())->addDictationStreamingOpacityMarker(streamingRange, opacity, identifier);
+}
+
+void WebPage::clearDictationStreamingOpacity()
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame || !frame->document())
+        return;
+
+    protect(frame->document()->markers())->removeAllDictationStreamingOpacityMarkers();
 }
 
 void WebPage::accessibilityTransferRemoteToken(RetainPtr<NSData> remoteToken)
