@@ -574,14 +574,15 @@ static void updateSliderTrackPartForRenderer(SliderTrackPart& sliderTrackPart, c
         thumbPosition = (input->valueAsNumber() - minimum) / (maximum - minimum);
 
     Vector<double> tickRatios;
-    if (auto dataList = input->dataList()) {
-
-        for (Ref optionElement : dataList->suggestions()) {
-            auto optionValue = input->listOptionValueAsDouble(optionElement.get());
-            if (!optionValue)
-                continue;
-            double tickRatio = (*optionValue - minimum) / (maximum - minimum);
-            tickRatios.append(tickRatio);
+    if (maximum > minimum) {
+        if (auto dataList = input->dataList()) {
+            for (Ref optionElement : dataList->suggestions()) {
+                auto optionValue = input->listOptionValueAsDouble(optionElement.get());
+                if (!optionValue)
+                    continue;
+                double tickRatio = (*optionValue - minimum) / (maximum - minimum);
+                tickRatios.append(tickRatio);
+            }
         }
     }
 
