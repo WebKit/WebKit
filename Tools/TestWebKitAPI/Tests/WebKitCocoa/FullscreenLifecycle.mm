@@ -139,7 +139,7 @@ TEST(Fullscreen, VideoLifecycle)
 }
 
 // rdar://136730607
-#if PLATFORM(MAC) && defined(NDEBUG) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
+#if PLATFORM(MAC) && defined(NDEBUG)
 TEST(Fullscreen, DISABLED_VideoLifecycleElementFullscreenDisabled)
 #else
 TEST(Fullscreen, VideoLifecycleElementFullscreenDisabled)

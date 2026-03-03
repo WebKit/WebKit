@@ -195,7 +195,7 @@ TEST(VideoControlsManager, VideoControlsManagerSingleLargeVideo)
 }
 
 // rdar://136308546
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
 TEST(VideoControlsManager, DISABLED_VideoControlsManagerSingleSmallVideo)
 #else
 TEST(VideoControlsManager, VideoControlsManagerSingleSmallVideo)
@@ -232,7 +232,7 @@ TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosWithAudioA
 }
 
 // rdar://136308546
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
 TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosScrollPausedVideoOutOfView)
 #else
 TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPausedVideoOutOfView)
@@ -249,7 +249,7 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPausedVideoOu
 }
 
 // rdar://136308546
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
 TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosScrollPlayingVideoWithSoundOutOfView)
 #else
 TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPlayingVideoWithSoundOutOfView)
@@ -266,7 +266,7 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPlayingVideoW
 }
 
 // rdar://136308546
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
 TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosScrollPlayingMutedVideoOutOfView)
 #else
 TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPlayingMutedVideoOutOfView)
@@ -283,7 +283,7 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPlayingMutedV
 }
 
 // rdar://136308546
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
 TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosShowControlsForLastInteractedVideo)
 #else
 TEST(VideoControlsManager, VideoControlsManagerMultipleVideosShowControlsForLastInteractedVideo)
@@ -315,7 +315,7 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosShowControlsForLast
 }
 
 // rdar://136308546
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
 TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosSwitchControlledVideoWhenScrolling)
 #else
 TEST(VideoControlsManager, VideoControlsManagerMultipleVideosSwitchControlledVideoWhenScrolling)
@@ -360,7 +360,7 @@ TEST(VideoControlsManager, VideoControlsManagerSingleSmallAutoplayingVideo)
 }
 
 // rdar://136308546
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
 TEST(VideoControlsManager, DISABLED_VideoControlsManagerLargeAutoplayingVideoSeeksAfterEnding)
 #else
 TEST(VideoControlsManager, VideoControlsManagerLargeAutoplayingVideoSeeksAfterEnding)

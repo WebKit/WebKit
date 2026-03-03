@@ -523,11 +523,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 
 - (BOOL)useUISideCompositing
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
     bool useRemoteLayerTree = true;
-#else
-    bool useRemoteLayerTree = false;
-#endif
     id useRemoteLayerTreeBoolean = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseRemoteLayerTreeDrawingArea"];
     if (useRemoteLayerTreeBoolean)
         useRemoteLayerTree = [useRemoteLayerTreeBoolean boolValue];

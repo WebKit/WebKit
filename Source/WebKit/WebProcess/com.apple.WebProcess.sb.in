@@ -827,7 +827,7 @@
 #endif
 
 ; Needed for [CAContext remoteContextWithOptions]
-#if HAVE(SANDBOX_STATE_FLAGS) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
+#if HAVE(SANDBOX_STATE_FLAGS) && PLATFORM(MAC)
 (with-filter (require-not (lockdown-mode))
     (with-filter
         (require-any
@@ -1347,7 +1347,7 @@
 
 (allow syscall-unix (with report) (with telemetry) (syscalls-rarely-used))
 
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 140000
+#if !PLATFORM(MAC)
 (allow syscall-unix (syscall-unix-downlevels))
 (with-filter (require-not (lockdown-mode))
     (allow syscall-unix (syscall-unix-downlevels-blocked-in-lockdown-mode)))
@@ -1532,7 +1532,7 @@
                 (allow-mach-exceptions mach-message-send))
 
             (allow mach-message-send (kernel-mig-routines-in-use))
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 140000
+#if !PLATFORM(MAC)
             (allow mach-message-send (kernel-mig-routines-downlevels))
             (with-filter (require-not (lockdown-mode))
                 (allow mach-message-send (kernel-mig-routines-downlevels-blocked-in-lockdown-mode)))
@@ -1622,7 +1622,7 @@
         (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
             (allow syscall-mach (syscall-mach-downlevels-blocked-in-lockdown-mode))))
 #endif
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 140000
+#if !PLATFORM(MAC)
     (allow syscall-mach (syscall-mach-downlevels))
     (with-filter (require-not (lockdown-mode))
         (allow syscall-mach (syscall-mach-downlevels-blocked-in-lockdown-mode)))
@@ -1700,7 +1700,7 @@
 #endif
 )
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
+#if PLATFORM(MAC)
 (with-filter (webcontent-process-launched)
     (deny mach-task-special-port-get (with telemetry))
     (deny mach-task-special-port-set (with telemetry)))

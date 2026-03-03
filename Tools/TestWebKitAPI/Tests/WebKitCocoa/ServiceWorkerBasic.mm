@@ -1128,7 +1128,7 @@ window.webkit.messageHandlers.regularPage.postMessage("PASS");
 
 static bool isSWProcessConnectionCreationTestSlow()
 {
-#if (!defined(NDEBUG) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 140000)
+#if !defined(NDEBUG) && PLATFORM(MAC)
     return true;
 #else
     return false;

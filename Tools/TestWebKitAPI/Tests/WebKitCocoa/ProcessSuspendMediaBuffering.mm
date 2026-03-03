@@ -32,7 +32,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
+#if PLATFORM(MAC)
 TEST(WebKit, DISABLED_ProcessSuspendMediaBuffering)
 #else
 TEST(WebKit, ProcessSuspendMediaBuffering)

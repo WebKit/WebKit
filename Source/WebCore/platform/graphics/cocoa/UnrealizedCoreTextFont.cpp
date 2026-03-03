@@ -355,51 +355,6 @@ auto UnrealizedCoreTextFont::rebuildReason(CTFontRef font) const -> RebuildReaso
             rebuildReason.gxVariations = true;
     }
 
-    // On some OSes, all out-of-bounds variations need to be manually clamped.
-    // Here, our job is just to detect if an out of bounds value exists.
-    // If one does, we'll set rebuildReason.variationDefaults, which realize() will use to actually do the clamping.
-    // When the fix for rdar://problem/108877507 is deployed everywhere, we can delete this.
-#if USE(CORE_TEXT_VARIATIONS_CLAMPING_WORKAROUND)
-    if (!lazyDefaultVariations)
-        lazyDefaultVariations = defaultVariationValues(font, ShouldLocalizeAxisNames::No);
-
-    auto isOutOfBounds = [&lazyDefaultVariations](FontTag fontTag, float value) {
-        auto iterator = lazyDefaultVariations->find(fontTag);
-        if (iterator == lazyDefaultVariations->end()) {
-            // We can't be out of bounds if there is no range.
-            return false;
-        }
-        return !iterator->value.contains(value);
-    };
-
-    auto isOpticalSizeOutOfBounds = [&isOutOfBounds](float value) {
-        return isOutOfBounds({ { 'o', 'p', 's', 'z' } }, value);
-    };
-
-    WTF::switchOn(m_opticalSizingType, [&](OpticalSizingTypes::None) {
-        // We can't be out of bounds if there is no value.
-    }, [&](OpticalSizingTypes::JustVariation) {
-        if (isOpticalSizeOutOfBounds(m_size))
-            rebuildReason.variationDefaults = lazyDefaultVariations;
-    }, [&](const OpticalSizingTypes::Everything& everything) {
-        if (!everything.opticalSizingValue) {
-            // We can't be out of bounds if there is no value.
-            return;
-        }
-        if (isOpticalSizeOutOfBounds(*everything.opticalSizingValue))
-            rebuildReason.variationDefaults = lazyDefaultVariations;
-    });
-
-    if (!rebuildReason.variationDefaults) {
-        for (const auto& variationSetting : m_variationSettings) {
-            if (isOutOfBounds(variationSetting.tag(), variationSetting.value())) {
-                rebuildReason.variationDefaults = lazyDefaultVariations;
-                break;
-            }
-        }
-    }
-#endif
-
     return rebuildReason;
 }
 
@@ -428,27 +383,11 @@ RetainPtr<CTFontRef> UnrealizedCoreTextFont::realize() const
     if (auto rebuildReason = this->rebuildReason(font.get()); rebuildReason.hasEffect()) {
         VariationsMap variationsToBeApplied;
         std::optional<VariationDefaultsMap> variationDefaults = WTF::move(rebuildReason.variationDefaults);
-#if USE(CORE_TEXT_VARIATIONS_CLAMPING_WORKAROUND)
-        // Even if everything was in-bounds, we still have to clamp,
-        // because normalization might put us out-of-bounds.
-        if (!variationDefaults)
-            variationDefaults = defaultVariationValues(font.get(), ShouldLocalizeAxisNames::No);
-#endif
 
         auto maybeClampToRange = [&variationDefaults](FontTag fontTag, float value) -> std::optional<float> {
-#if USE(CORE_TEXT_VARIATIONS_CLAMPING_WORKAROUND)
-            ASSERT(variationDefaults);
-            auto iterator = variationDefaults->find(fontTag);
-            if (iterator == variationDefaults->end()) {
-                // The font doesn't support this variation axis.
-                return { };
-            }
-            return iterator->value.clamp(value);
-#else
             UNUSED_PARAM(variationDefaults);
             UNUSED_PARAM(fontTag);
             return value;
-#endif
         };
 
         auto setVariation = [&variationsToBeApplied, &maybeClampToRange](FontTag fontTag, float value) {

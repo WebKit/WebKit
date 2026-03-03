@@ -454,7 +454,7 @@ TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringSVGPageZ
 }
 
 // FIXME: Re-enable this test once webkit.org/b/266650 is resolved
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000 && !defined(NDEBUG)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000 && !defined(NDEBUG)
 TEST(ContextMenuElementInfoWithQRCodeDetectionCrash, DISABLED_ContextMenuTests)
 #else
 TEST(ContextMenuTests, ContextMenuElementInfoWithQRCodeDetectionCrash)
