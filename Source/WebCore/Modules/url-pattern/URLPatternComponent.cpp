@@ -114,8 +114,7 @@ URLPatternComponentResult URLPatternComponent::createComponentMatchResult(JSC::J
 
     Ref vm = globalObject->vm();
 
-    auto length = execResult.get(globalObject, vm->propertyNames->length).toIntegerOrInfinity(globalObject);
-    ASSERT(length >= 0 && std::isfinite(length));
+    auto length = std::min<unsigned>(execResult.get(globalObject, vm->propertyNames->length).toIntegerOrInfinity(globalObject), m_groupNameList.size() + 1);
 
     for (unsigned index = 1; index < length; ++index) {
         auto match = execResult.get(globalObject, index);
