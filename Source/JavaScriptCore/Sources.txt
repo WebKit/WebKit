@@ -985,6 +985,7 @@ runtime/Lookup.cpp
 runtime/MapConstructor.cpp
 runtime/MapIteratorPrototype.cpp
 runtime/MapPrototype.cpp
+runtime/MarkedVector.cpp
 runtime/MatchResult.cpp
 runtime/MathCommon.cpp
 runtime/MathObject.cpp

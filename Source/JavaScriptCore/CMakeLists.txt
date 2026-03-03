@@ -1279,6 +1279,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/LeafExecutable.h
     runtime/Lookup.h
     runtime/MachineContext.h
+    runtime/MarkedVector.h
     runtime/MatchResult.h
     runtime/MathCommon.h
     runtime/MathObject.h
