@@ -124,8 +124,9 @@ messages -> RemoteGraphicsContextGL Stream {
     void FramebufferTexture2D(uint32_t target, uint32_t attachment, uint32_t textarget, uint32_t arg3, int32_t level)
     void FrontFace(uint32_t mode)
     void GenerateMipmap(uint32_t target)
-    void ActiveAttribs(uint32_t program) -> (Vector<WebCore::GCGLAttribActiveInfo> returnValue) Synchronous
-    void ActiveUniforms(uint32_t program) -> (Vector<WebCore::GCGLUniformActiveInfo> returnValue) Synchronous
+    void GetActiveAttrib(uint32_t program, uint32_t index) -> (std::optional<WebCore::GraphicsContextGLActiveInfo> returnValue) Synchronous
+    void GetActiveUniform(uint32_t program, uint32_t index) -> (std::optional<WebCore::GraphicsContextGLActiveInfo> returnValue) Synchronous
+    void GetAttribLocation(uint32_t arg0, CString name) -> (int32_t returnValue) Synchronous
     void GetBufferParameteri(uint32_t target, uint32_t pname) -> (int32_t returnValue) Synchronous
     void GetString(uint32_t name) -> (CString returnValue) Synchronous
     void GetFloatv(uint32_t pname, uint64_t valueSize) -> (std::span<const float> value) Synchronous
@@ -146,6 +147,7 @@ messages -> RemoteGraphicsContextGL Stream {
     void GetUniformfv(uint32_t program, int32_t location, uint64_t valueSize) -> (std::span<const float> value) Synchronous
     void GetUniformiv(uint32_t program, int32_t location, uint64_t valueSize) -> (std::span<const int32_t> value) Synchronous
     void GetUniformuiv(uint32_t program, int32_t location, uint64_t valueSize) -> (std::span<const uint32_t> value) Synchronous
+    void GetUniformLocation(uint32_t arg0, CString name) -> (int32_t returnValue) Synchronous
     void GetVertexAttribOffset(uint32_t index, uint32_t pname) -> (uint64_t returnValue) Synchronous
     void Hint(uint32_t target, uint32_t mode)
     void IsBuffer(uint32_t arg0) -> (bool returnValue) Synchronous
@@ -290,11 +292,13 @@ messages -> RemoteGraphicsContextGL Stream {
     void BeginTransformFeedback(uint32_t primitiveMode)
     void EndTransformFeedback()
     void TransformFeedbackVaryings(uint32_t program, Vector<CString> varyings, uint32_t bufferMode)
-    void GetTransformFeedbackVarying(uint32_t program, uint32_t index) -> (std::optional<WebCore::GCGLTransformFeedbackActiveInfo> returnValue) Synchronous
+    void GetTransformFeedbackVarying(uint32_t program, uint32_t index) -> (std::optional<WebCore::GraphicsContextGLActiveInfo> returnValue) Synchronous
     void PauseTransformFeedback()
     void ResumeTransformFeedback()
     void BindBufferBase(uint32_t target, uint32_t index, uint32_t buffer)
     void BindBufferRange(uint32_t target, uint32_t index, uint32_t buffer, uint64_t offset, uint64_t arg4)
+    void GetUniformIndices(uint32_t program, Vector<CString> uniformNames) -> (Vector<uint32_t> returnValue) Synchronous
+    void GetActiveUniforms(uint32_t program, Vector<uint32_t> uniformIndices, uint32_t pname) -> (Vector<int32_t> returnValue) Synchronous
     void GetUniformBlockIndex(uint32_t program, CString uniformBlockName) -> (uint32_t returnValue) Synchronous
     void GetActiveUniformBlockName(uint32_t program, uint32_t uniformBlockIndex) -> (CString returnValue) Synchronous
     void UniformBlockBinding(uint32_t program, uint32_t uniformBlockIndex, uint32_t uniformBlockBinding)

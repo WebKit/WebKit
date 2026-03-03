@@ -75,8 +75,9 @@
     void framebufferTexture2D(uint32_t target, uint32_t attachment, uint32_t textarget, uint32_t arg3, int32_t level);
     void frontFace(uint32_t mode);
     void generateMipmap(uint32_t target);
-    void activeAttribs(uint32_t program, CompletionHandler<void(Vector<WebCore::GCGLAttribActiveInfo>&&)>&&);
-    void activeUniforms(uint32_t program, CompletionHandler<void(Vector<WebCore::GCGLUniformActiveInfo>&&)>&&);
+    void getActiveAttrib(uint32_t program, uint32_t index, CompletionHandler<void(std::optional<WebCore::GraphicsContextGLActiveInfo>&&)>&&);
+    void getActiveUniform(uint32_t program, uint32_t index, CompletionHandler<void(std::optional<WebCore::GraphicsContextGLActiveInfo>&&)>&&);
+    void getAttribLocation(uint32_t arg0, CString&& name, CompletionHandler<void(int32_t)>&&);
     void getBufferParameteri(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&&);
     void getString(uint32_t name, CompletionHandler<void(CString&&)>&&);
     void getFloatv(uint32_t pname, uint64_t valueSize, CompletionHandler<void(std::span<const float>)>&&);
@@ -97,6 +98,7 @@
     void getUniformfv(uint32_t program, int32_t location, uint64_t valueSize, CompletionHandler<void(std::span<const float>)>&&);
     void getUniformiv(uint32_t program, int32_t location, uint64_t valueSize, CompletionHandler<void(std::span<const int32_t>)>&&);
     void getUniformuiv(uint32_t program, int32_t location, uint64_t valueSize, CompletionHandler<void(std::span<const uint32_t>)>&&);
+    void getUniformLocation(uint32_t arg0, CString&& name, CompletionHandler<void(int32_t)>&&);
     void getVertexAttribOffset(uint32_t index, uint32_t pname, CompletionHandler<void(uint64_t)>&&);
     void hint(uint32_t target, uint32_t mode);
     void isBuffer(uint32_t arg0, CompletionHandler<void(bool)>&&);
@@ -241,11 +243,13 @@
     void beginTransformFeedback(uint32_t primitiveMode);
     void endTransformFeedback();
     void transformFeedbackVaryings(uint32_t program, Vector<CString>&& varyings, uint32_t bufferMode);
-    void getTransformFeedbackVarying(uint32_t program, uint32_t index, CompletionHandler<void(std::optional<WebCore::GCGLTransformFeedbackActiveInfo>&&)>&&);
+    void getTransformFeedbackVarying(uint32_t program, uint32_t index, CompletionHandler<void(std::optional<WebCore::GraphicsContextGLActiveInfo>&&)>&&);
     void pauseTransformFeedback();
     void resumeTransformFeedback();
     void bindBufferBase(uint32_t target, uint32_t index, uint32_t buffer);
     void bindBufferRange(uint32_t target, uint32_t index, uint32_t buffer, uint64_t offset, uint64_t arg4);
+    void getUniformIndices(uint32_t program, Vector<CString>&& uniformNames, CompletionHandler<void(Vector<uint32_t>&&)>&&);
+    void getActiveUniforms(uint32_t program, Vector<uint32_t>&& uniformIndices, uint32_t pname, CompletionHandler<void(Vector<int32_t>&&)>&&);
     void getUniformBlockIndex(uint32_t program, CString&& uniformBlockName, CompletionHandler<void(uint32_t)>&&);
     void getActiveUniformBlockName(uint32_t program, uint32_t uniformBlockIndex, CompletionHandler<void(CString&&)>&&);
     void uniformBlockBinding(uint32_t program, uint32_t uniformBlockIndex, uint32_t uniformBlockBinding);

@@ -41,8 +41,6 @@
 #include "NotImplemented.h"
 #include <algorithm>
 #include <cstring>
-#include <sstream>
-#include <string>
 #include <wtf/MallocSpan.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/Seconds.h>
@@ -1158,6 +1156,17 @@ void GraphicsContextGLANGLE::compressedTexSubImage3D(GCGLenum target, int level,
     GL_CompressedTexSubImage3DRobustANGLE(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, 0, reinterpret_cast<GLvoid*>(offset));
 }
 
+Vector<GCGLint> GraphicsContextGLANGLE::getActiveUniforms(PlatformGLObject program, const Vector<GCGLuint>& uniformIndices, GCGLenum pname)
+{
+    Vector<GCGLint> result(uniformIndices.size(), 0);
+    ASSERT(program);
+    if (!makeContextCurrent())
+        return result;
+
+    GL_GetActiveUniformsiv(program, uniformIndices.size(), uniformIndices.span().data(), pname, result.mutableSpan().data());
+    return result;
+}
+
 GCGLenum GraphicsContextGLANGLE::checkFramebufferStatus(GCGLenum target)
 {
     if (!makeContextCurrent())
@@ -1394,83 +1403,49 @@ void GraphicsContextGLANGLE::generateMipmap(GCGLenum target)
     GL_GenerateMipmap(target);
 }
 
-Vector<GCGLAttribActiveInfo> GraphicsContextGLANGLE::activeAttribs(PlatformGLObject program)
+std::optional<GraphicsContextGLActiveInfo> GraphicsContextGLANGLE::getActiveAttrib(PlatformGLObject program, GCGLuint index)
 {
     if (!makeContextCurrent())
-        return { };
+        return std::nullopt;
     GLint maxLength = 0;
     GL_GetProgramiv(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxLength);
-    if (!maxLength)
-        return { };
-    GLsizei activeAttribs = 0;
-    GL_GetProgramiv(program, GL_ACTIVE_ATTRIBUTES, &activeAttribs);
-    std::string name;
-    Vector<GCGLAttribActiveInfo> result;
-    result.reserveCapacity(activeAttribs);
-    for (GLsizei index = 0; index < activeAttribs; ++index) {
-        name.resize(maxLength); // GL_ACTIVE_ATTRIBUTE_MAX_LENGTH includes nul termination.
-        GLsizei length = 0;
-        GLint size = 0;
-        GLenum type = 0;
-        GL_GetActiveAttrib(program, index, maxLength, &length, &size, &type, name.data());
-        if (length < 1 || size != 1) {
-            ASSERT_NOT_REACHED();
-            return { };
-        }
-        name.resize(length);
-        result.append(GCGLAttribActiveInfo { name.data(), type, GL_GetAttribLocation(program, name.data()) });
-    }
-    return result;
+    // maxLength == 0 is ok, trying to access index in below call sets the consistent error.
+    Vector<char, 64> buffer(maxLength); // GL_ACTIVE_ATTRIBUTE_MAX_LENGTH includes nul termination.
+    GLsizei length = 0;
+    GLint size = 0;
+    GLenum type = 0;
+    GL_GetActiveAttrib(program, index, maxLength, &length, &size, &type, buffer.mutableSpan().data());
+    if (!length)
+        return std::nullopt;
+    return GraphicsContextGLActiveInfo { buffer.subspan(0, length), type, size };
 }
 
-Vector<GCGLUniformActiveInfo> GraphicsContextGLANGLE::activeUniforms(PlatformGLObject program)
+std::optional<GraphicsContextGLActiveInfo> GraphicsContextGLANGLE::getActiveUniform(PlatformGLObject program, GCGLuint index)
 {
     if (!makeContextCurrent())
-        return { };
-
+        return std::nullopt;
     GLint maxLength = 0;
     GL_GetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxLength);
-    if (!maxLength)
-        return { };
-    GLsizei activeUniforms = 0;
-    GL_GetProgramiv(program, GL_ACTIVE_UNIFORMS, &activeUniforms);
-    std::string name;
-    Vector<GCGLUniformActiveInfo> result;
-    result.reserveCapacity(activeUniforms);
-    for (GLuint index = 0; index < static_cast<GLuint>(activeUniforms); ++index) {
-        name.resize(maxLength); // GL_ACTIVE_UNIFORM_MAX_LENGTH includes nul termination.
-        GCGLUniformActiveInfo info;
-        GLsizei length = 0;
-        GLint size = 0;
-        GL_GetActiveUniform(program, index, maxLength, &length, &size, &info.type, name.data());
-        if (length < 1 || size < 1) {
-            ASSERT_NOT_REACHED();
-            return { };
-        }
-        name.resize(length);
-        info.name = name;
-        info.locations.append(GL_GetUniformLocation(program, name.data()));
-        if (m_isForWebGL2) {
-            GL_GetActiveUniformsiv(program, 1, &index, GL_UNIFORM_BLOCK_INDEX, &info.blockIndex);
-            GL_GetActiveUniformsiv(program, 1, &index, GL_UNIFORM_OFFSET, &info.offset);
-            GL_GetActiveUniformsiv(program, 1, &index, GL_UNIFORM_ARRAY_STRIDE, &info.arrayStride);
-            GL_GetActiveUniformsiv(program, 1, &index, GL_UNIFORM_MATRIX_STRIDE, &info.matrixStride);
-            GL_GetActiveUniformsiv(program, 1, &index, GL_UNIFORM_IS_ROW_MAJOR, &info.isRowMajor);
-        }
-        if (size > 1) {
-            if (!name.ends_with("[0]")) {
-                ASSERT_NOT_REACHED();
-                return { };
-            }
-            name.resize(name.length() - 3);
-            for (GLint arrayIndex = 1; arrayIndex < size; ++arrayIndex) {
-                auto elementName = (std::ostringstream() << name << '[' << arrayIndex << ']').str();
-                info.locations.append(GL_GetUniformLocation(program, elementName.data()));
-            }
-        }
-        result.append(WTF::move(info));
-    }
-    return result;
+    // maxLength == 0 is ok, trying to access index in below call sets the consistent error.
+    Vector<char, 64> buffer(maxLength); // GL_ACTIVE_UNIFORM_MAX_LENGTH includes nul termination.
+    GLsizei length = 0;
+    GLint size = 0;
+    GLenum type = 0;
+    GL_GetActiveUniform(program, index, maxLength, &length, &size, &type, buffer.mutableSpan().data());
+    if (!length)
+        return std::nullopt;
+    return GraphicsContextGLActiveInfo { buffer.subspan(0, length), type, size };
+}
+
+int GraphicsContextGLANGLE::getAttribLocation(PlatformGLObject program, const CString& name)
+{
+    if (!program)
+        return -1;
+
+    if (!makeContextCurrent())
+        return -1;
+
+    return GL_GetAttribLocation(program, name.span().data());
 }
 
 bool GraphicsContextGLANGLE::updateErrors()
@@ -2187,6 +2162,16 @@ void GraphicsContextGLANGLE::getUniformuiv(PlatformGLObject program, GCGLint loc
     GL_GetUniformuivRobustANGLE(program, location, bufSize, nullptr, value.data());
 }
 
+GCGLint GraphicsContextGLANGLE::getUniformLocation(PlatformGLObject program, const CString& name)
+{
+    ASSERT(program);
+
+    if (!makeContextCurrent())
+        return -1;
+
+    return GL_GetUniformLocation(program, name.data());
+}
+
 GCGLsizeiptr GraphicsContextGLANGLE::getVertexAttribOffset(GCGLuint index, GCGLenum pname)
 {
     if (!makeContextCurrent())
@@ -2483,7 +2468,7 @@ void GraphicsContextGLANGLE::transformFeedbackVaryings(PlatformGLObject program,
     GL_TransformFeedbackVaryings(program, pointersToVaryings.size(), pointersToVaryings.span().data(), bufferMode);
 }
 
-std::optional<GCGLTransformFeedbackActiveInfo> GraphicsContextGLANGLE::getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index)
+std::optional<GraphicsContextGLActiveInfo> GraphicsContextGLANGLE::getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index)
 {
     if (!makeContextCurrent())
         return std::nullopt;
@@ -2497,7 +2482,7 @@ std::optional<GCGLTransformFeedbackActiveInfo> GraphicsContextGLANGLE::getTransf
     GL_GetTransformFeedbackVarying(program, index, maxLength, &length, &size, &type, buffer.mutableSpan().data());
     if (!length)
         return std::nullopt;
-    return GCGLTransformFeedbackActiveInfo { buffer.subspan(0, length), type, size };
+    return GraphicsContextGLActiveInfo { buffer.subspan(0, length), type, size };
 }
 
 void GraphicsContextGLANGLE::bindBufferBase(GCGLenum target, GCGLuint index, PlatformGLObject buffer)
@@ -2958,6 +2943,18 @@ void GraphicsContextGLANGLE::bindBufferRange(GCGLenum target, GCGLuint index, Pl
         return;
 
     GL_BindBufferRange(target, index, buffer, offset, size);
+}
+
+Vector<GCGLuint> GraphicsContextGLANGLE::getUniformIndices(PlatformGLObject program, const Vector<CString>& uniformNames)
+{
+    ASSERT(program);
+    if (!makeContextCurrent())
+        return { };
+
+    Vector<const char*> cstr = uniformNames.map([](auto& x) { return x.data(); });
+    Vector<GCGLuint> result(cstr.size(), 0);
+    GL_GetUniformIndices(program, cstr.size(), cstr.span().data(), result.mutableSpan().data());
+    return result;
 }
 
 void GraphicsContextGLANGLE::getActiveUniformBlockiv(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLenum pname, std::span<GCGLint> params)

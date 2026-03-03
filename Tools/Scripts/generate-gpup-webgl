@@ -1225,8 +1225,8 @@ def main():
 
     size_t_cpp_type = get_cpp_type("size_t")
     webkit_ipc_types[size_t_cpp_type] = get_cpp_type("uint64_t")
-    active_info_types = set(["WebCore::GCGLAttribActiveInfo", "WebCore::GCGLUniformActiveInfo", "WebCore::GCGLTransformFeedbackActiveInfo"])
-    for builtin_type in webkit_ipc_builtin_types | active_info_types:
+
+    for builtin_type in webkit_ipc_builtin_types:
         cpp_type = get_cpp_type(builtin_type)
         webkit_ipc_types[cpp_type] = cpp_type
 

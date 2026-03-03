@@ -162,28 +162,4 @@ enum class WebCore::GraphicsContextGLSimulatedEventForTesting : uint8_t {
     DisplayBufferAllocationFailure
 };
 
-header: <WebCore/GraphicsContextGLActiveInfo.h>
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::GCGLUniformActiveInfo {
-    CString name;
-    GCGLenum type;
-    Vector<int> locations;
-    int blockIndex;
-    int offset;
-    int arrayStride;
-    int matrixStride;
-    int isRowMajor;
-};
-header: <WebCore/GraphicsContextGLActiveInfo.h>
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::GCGLAttribActiveInfo {
-    CString name;
-    GCGLenum type;
-    int location;
-};
-header: <WebCore/GraphicsContextGLActiveInfo.h>
-[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::GCGLTransformFeedbackActiveInfo {
-    CString name;
-    GCGLenum type;
-    int size;
-};
-
 #endif
