@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2010, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -863,9 +863,9 @@ void EditingStyle::removeStyleConflictingWithStyleOfNode(Node& node)
     if (!node.parentNode() || !m_mutableStyle)
         return;
 
-    auto parentStyle = copyPropertiesFromComputedStyle(protect(node.parentNode()).get(), PropertiesToInclude::EditingPropertiesInEffect);
+    auto parentStyle = EditingStyle::create(node.parentNode(), PropertiesToInclude::EditingPropertiesInEffect);
     auto nodeStyle = EditingStyle::create(&node, PropertiesToInclude::EditingPropertiesInEffect);
-    nodeStyle->removeEquivalentProperties(parentStyle.get());
+    nodeStyle->removeEquivalentProperties(*parentStyle->style());
 
     RefPtr mutableStyle = style();
     for (auto property : *nodeStyle->style())
@@ -1355,7 +1355,7 @@ Ref<EditingStyle> EditingStyle::wrappingStyleForSerialization(Node& context, boo
 
         // Call collapseTextDecorationProperties first or otherwise it'll copy the value over from in-effect to text-decorations.
         wrappingStyle->collapseTextDecorationProperties();
-        
+
         return wrappingStyle;
     }
 

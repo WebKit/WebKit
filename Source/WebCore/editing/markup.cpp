@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009, 2010, 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011 Igalia S.L.
  * Copyright (C) 2011 Motorola Mobility. All rights reserved.
@@ -620,6 +620,15 @@ void StyledMarkupAccumulator::appendText(StringBuilder& out, const Text& text)
         }());
     }
 
+    bool wrappingBackgroundColorSpan = false;
+    if (!wrappingSpan && !parentIsTextarea && m_wrappingStyle && m_wrappingStyle->style()) {
+        auto backgroundColor = m_wrappingStyle->style()->getPropertyValue(CSSPropertyBackgroundColor);
+        if (!backgroundColor.isEmpty() && backgroundColor != "transparent"_s) {
+            out.append("<span style=\"background-color: "_s, backgroundColor, "\">"_s);
+            wrappingBackgroundColorSpan = true;
+        }
+    }
+
     if (!shouldAnnotate() || parentIsTextarea) {
         auto content = textContentRespectingRange(text);
         appendCharactersReplacingEntities(out, content, entityMaskForText(text));
@@ -630,6 +639,9 @@ void StyledMarkupAccumulator::appendText(StringBuilder& out, const Text& text)
         appendCharactersReplacingEntities(buffer, content, EntityMaskInPCDATA);
         out.append(convertHTMLTextToInterchangeFormat(buffer.toString(), &text));
     }
+
+    if (wrappingBackgroundColorSpan)
+        out.append("</span>"_s);
 
     if (wrappingSpan)
         out.append(styleNodeCloseTag());
@@ -757,6 +769,8 @@ void StyledMarkupAccumulator::appendStartTag(StringBuilder& out, const Element& 
             newInlineStyle = m_wrappingStyle->copy();
             newInlineStyle->removePropertiesInElementDefaultStyle(*const_cast<Element*>(&element));
             newInlineStyle->removeStyleConflictingWithStyleOfNode(*const_cast<Element*>(&element));
+            if (isBlock(element) && newInlineStyle->style())
+                newInlineStyle->style()->removeProperty(CSSPropertyBackgroundColor);
         } else
             newInlineStyle = EditingStyle::create();
 
