@@ -383,7 +383,7 @@ private:
     bool preventsParentFromBeingComplete() const final;
     void changeLocation(FrameLoadRequest&&) final;
     void loadFrameRequest(FrameLoadRequest&&, Event*) final;
-    void didFinishLoadInAnotherProcess() final;
+    void didFinishLoadInAnotherProcess(const ResourceError&) final;
     SecurityOrigin* frameDocumentSecurityOrigin() const final;
     std::optional<DocumentSecurityPolicy> frameDocumentSecurityPolicy() const final;
     String frameURLProtocol() const final;

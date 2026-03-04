@@ -152,7 +152,7 @@ public:
     void invalidatePolicyListeners();
     void didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&&);
 
-    void didFinishLoadInAnotherProcess();
+    void didFinishLoadInAnotherProcess(const WebCore::ResourceError&);
     void removeFromTree();
 
     void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = { }, WebCore::FromDownloadAttribute = WebCore::FromDownloadAttribute::No);

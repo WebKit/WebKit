@@ -681,19 +681,21 @@ void WebLocalFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceErr
 
     RefPtr<API::Object> userData;
 
-    // Notify the bundle client.
-    webPage->injectedBundleLoaderClient().didFailProvisionalLoadWithErrorForFrame(*webPage, m_frame, error, userData);
+    if (dynamicDowncast<LocalFrame>(m_localFrame->tree().top())) {
+        // Notify the bundle client.
+        webPage->injectedBundleLoaderClient().didFailProvisionalLoadWithErrorForFrame(*webPage, m_frame, error, userData);
 
 #if ENABLE(WK_WEB_EXTENSIONS) && PLATFORM(COCOA)
-    // Notify the extensions controller.
-    if (RefPtr extensionControllerProxy = webPage->webExtensionControllerProxy())
-        extensionControllerProxy->didFailLoadForFrame(*webPage, m_frame, m_localFrame->loader().provisionalLoadErrorBeingHandledURL());
+        // Notify the extensions controller.
+        if (RefPtr extensionControllerProxy = webPage->webExtensionControllerProxy())
+            extensionControllerProxy->didFailLoadForFrame(*webPage, m_frame, m_localFrame->loader().provisionalLoadErrorBeingHandledURL());
 #endif
 
-    webPage->sandboxExtensionTracker().didFailProvisionalLoad(m_frame.ptr());
+        webPage->sandboxExtensionTracker().didFailProvisionalLoad(m_frame.ptr());
 
-    if (m_frame->isMainFrame())
-        completePageTransitionIfNeeded();
+        if (m_frame->isMainFrame())
+            completePageTransitionIfNeeded();
+    }
 
     // FIXME: This is gross. This is necessary because if the client calls WKBundlePageStopLoading() from within the didFailProvisionalLoadWithErrorForFrame
     // injected bundle client call, that will cause the provisional DocumentLoader to be disconnected from the Frame, and didDistroyNavigation message

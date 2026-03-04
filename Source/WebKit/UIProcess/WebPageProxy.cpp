@@ -7549,6 +7549,17 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
     MESSAGE_CHECK(process, error.hasMatchingFailingURLKeys());
 #endif
 
+    if (willInternallyHandleFailure == WillInternallyHandleFailure::Yes) {
+        if (auto provisionalFrame = frame.takeProvisionalFrame()) {
+            ASSERT(m_preferences->siteIsolationEnabled());
+            ASSERT(!frame.isMainFrame());
+            ASSERT_UNUSED(provisionalFrame, provisionalFrame->process().coreProcessIdentifier() != frame.process().coreProcessIdentifier());
+            frame.notifyParentOfLoadCompletion(process, error);
+            frame.broadcastFrameTreeSyncData(FrameTreeSyncData::create());
+            return;
+        }
+    }
+
     RefPtr protectedPageClient { pageClient() };
 
     if (m_controlledByAutomation && willInternallyHandleFailure == WillInternallyHandleFailure::No) {
@@ -7654,8 +7665,9 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
         ASSERT(m_preferences->siteIsolationEnabled());
         ASSERT(!frame.isMainFrame());
         ASSERT_UNUSED(provisionalFrame, provisionalFrame->process().coreProcessIdentifier() != frame.process().coreProcessIdentifier());
-        frame.notifyParentOfLoadCompletion(process);
+        frame.notifyParentOfLoadCompletion(process, error);
         frame.broadcastFrameTreeSyncData(FrameTreeSyncData::create());
+        return;
     }
 }
 

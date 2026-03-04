@@ -36,6 +36,7 @@
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ReferrerPolicy.h>
+#include <WebCore/ResourceError.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
@@ -238,7 +239,7 @@ public:
     RefPtr<ProvisionalFrameProxy> takeProvisionalFrame();
     WebProcessProxy& provisionalLoadProcess();
     std::optional<WebCore::PageIdentifier> webPageIDInCurrentProcess();
-    void notifyParentOfLoadCompletion(WebProcessProxy&);
+    void notifyParentOfLoadCompletion(WebProcessProxy&, const WebCore::ResourceError& = { });
 
     enum class ClearFrameTreeSyncData : bool {
         No,

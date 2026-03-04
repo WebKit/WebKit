@@ -52,6 +52,7 @@ class HTMLFrameOwnerElement;
 class NavigationScheduler;
 class Page;
 class RenderWidget;
+class ResourceError;
 class Settings;
 class WeakPtrImplWithEventTargetData;
 class WindowProxy;
@@ -117,7 +118,7 @@ public:
     virtual bool preventsParentFromBeingComplete() const = 0;
     virtual void changeLocation(FrameLoadRequest&&) = 0;
     virtual void loadFrameRequest(FrameLoadRequest&&, Event*) = 0;
-    virtual void didFinishLoadInAnotherProcess() = 0;
+    virtual void didFinishLoadInAnotherProcess(const ResourceError&) = 0;
 
     virtual FrameView* virtualView() const = 0;
     virtual void disconnectView() = 0;

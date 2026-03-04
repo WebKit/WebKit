@@ -843,7 +843,7 @@ public:
     void createRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID, const String& newChildFrameName, Ref<WebCore::FrameTreeSyncData>&&);
 
     Awaitable<std::optional<FrameTreeNodeData>> getFrameTree();
-    void didFinishLoadInAnotherProcess(WebCore::FrameIdentifier);
+    void didFinishLoadInAnotherProcess(WebCore::FrameIdentifier, const WebCore::ResourceError&);
     void frameWasRemovedInAnotherProcess(WebCore::FrameIdentifier);
 
     void topDocumentSyncDataChangedInAnotherProcess(const WebCore::DocumentSyncSerializationData&);

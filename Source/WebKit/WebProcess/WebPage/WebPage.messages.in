@@ -217,7 +217,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     CreateRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID, String frameName, Ref<WebCore::FrameTreeSyncData> frameTreeSyncData)
 
     GetFrameTree() -> (struct std::optional<WebKit::FrameTreeNodeData> data)
-    DidFinishLoadInAnotherProcess(WebCore::FrameIdentifier frameID)
+    DidFinishLoadInAnotherProcess(WebCore::FrameIdentifier frameID, WebCore::ResourceError error)
     FrameWasRemovedInAnotherProcess(WebCore::FrameIdentifier frameID)
 
     TopDocumentSyncDataChangedInAnotherProcess(struct WebCore::DocumentSyncSerializationData documentSyncData)

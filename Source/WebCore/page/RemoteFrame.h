@@ -101,7 +101,7 @@ private:
     bool NODELETE preventsParentFromBeingComplete() const final;
     void changeLocation(FrameLoadRequest&&) final;
     void loadFrameRequest(FrameLoadRequest&&, Event*) final;
-    void didFinishLoadInAnotherProcess() final;
+    void didFinishLoadInAnotherProcess(const ResourceError&) final;
     bool isRootFrame() const final { return false; }
     void documentURLForConsoleLog(CompletionHandler<void(const URL&)>&&) final;
     SecurityOrigin* NODELETE frameDocumentSecurityOrigin() const final;

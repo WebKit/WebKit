@@ -2354,11 +2354,14 @@ void FrameLoader::clearProvisionalLoad()
     setState(FrameState::Complete);
 }
 
-void FrameLoader::provisionalLoadFailedInAnotherProcess()
+void FrameLoader::provisionalLoadFailedInAnotherProcess(const ResourceError& error)
 {
+    ASSERT(m_frame->settings().siteIsolationEnabled());
     m_provisionalLoadHappeningInAnotherProcess = false;
-    if (RefPtr localParent = dynamicDowncast<LocalFrame>(m_frame->tree().parent()))
-        localParent->loader().checkLoadComplete();
+    setState(FrameState::Provisional);
+    setProvisionalDocumentLoader(m_documentLoader.copyRef());
+    m_progressTracker->progressStarted();
+    m_documentLoader->mainReceivedError(error, LoadWillContinueInAnotherProcess::No);
 }
 
 void FrameLoader::commitProvisionalLoad()

@@ -715,7 +715,7 @@ void WebFrameProxy::broadcastFrameTreeSyncData(Ref<FrameTreeSyncData>&& data)
     });
 }
 
-void WebFrameProxy::notifyParentOfLoadCompletion(WebProcessProxy& childFrameProcess)
+void WebFrameProxy::notifyParentOfLoadCompletion(WebProcessProxy& childFrameProcess, const WebCore::ResourceError& error)
 {
     RefPtr parentFrame = this->parentFrame();
     if (!parentFrame)
@@ -727,7 +727,7 @@ void WebFrameProxy::notifyParentOfLoadCompletion(WebProcessProxy& childFrameProc
     if (parentFrameProcess->coreProcessIdentifier() == childFrameProcess.coreProcessIdentifier())
         return;
 
-    parentFrameProcess->send(Messages::WebPage::DidFinishLoadInAnotherProcess(frameID()), *webPageID);
+    parentFrameProcess->send(Messages::WebPage::DidFinishLoadInAnotherProcess(frameID(), error), *webPageID);
 }
 
 std::optional<WebCore::PageIdentifier> WebFrameProxy::webPageIDInCurrentProcess()

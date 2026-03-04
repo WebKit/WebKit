@@ -567,10 +567,10 @@ void WebFrame::removeFromTree()
     coreFrame->disconnectView();
 }
 
-void WebFrame::didFinishLoadInAnotherProcess()
+void WebFrame::didFinishLoadInAnotherProcess(const WebCore::ResourceError& error)
 {
     if (RefPtr coreFrame = m_coreFrame.get())
-        coreFrame->didFinishLoadInAnotherProcess();
+        coreFrame->didFinishLoadInAnotherProcess(error);
 }
 
 void WebFrame::invalidatePolicyListeners()

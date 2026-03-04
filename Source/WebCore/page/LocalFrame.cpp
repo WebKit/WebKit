@@ -394,9 +394,10 @@ void LocalFrame::loadFrameRequest(FrameLoadRequest&& request, Event* event)
     loader().loadFrameRequest(WTF::move(request), event, { });
 }
 
-void LocalFrame::didFinishLoadInAnotherProcess()
+void LocalFrame::didFinishLoadInAnotherProcess(const ResourceError& error)
 {
-    loader().provisionalLoadFailedInAnotherProcess();
+    if (!error.isNull())
+        loader().provisionalLoadFailedInAnotherProcess(error);
 }
 
 void LocalFrame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsReason reason)

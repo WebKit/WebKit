@@ -1282,13 +1282,13 @@ Awaitable<std::optional<FrameTreeNodeData>> WebPage::getFrameTree()
     co_return m_mainFrame->frameTreeData();
 }
 
-void WebPage::didFinishLoadInAnotherProcess(WebCore::FrameIdentifier frameID)
+void WebPage::didFinishLoadInAnotherProcess(WebCore::FrameIdentifier frameID, const WebCore::ResourceError& error)
 {
     RefPtr frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return;
     ASSERT(frame->page() == this);
-    frame->didFinishLoadInAnotherProcess();
+    frame->didFinishLoadInAnotherProcess(error);
 }
 
 void WebPage::frameWasRemovedInAnotherProcess(WebCore::FrameIdentifier frameID)

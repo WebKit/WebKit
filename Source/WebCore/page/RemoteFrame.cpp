@@ -81,7 +81,7 @@ void RemoteFrame::disconnectView()
     m_view = nullptr;
 }
 
-void RemoteFrame::didFinishLoadInAnotherProcess()
+void RemoteFrame::didFinishLoadInAnotherProcess(const ResourceError&)
 {
     m_preventsParentFromBeingComplete = false;
 

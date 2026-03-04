@@ -274,7 +274,7 @@ public:
     bool isComplete() const { return m_isComplete; }
 
     void commitProvisionalLoad();
-    void provisionalLoadFailedInAnotherProcess();
+    void provisionalLoadFailedInAnotherProcess(const ResourceError&);
 
     void setLoadsSynchronously(bool loadsSynchronously) { m_loadsSynchronously = loadsSynchronously; }
     bool loadsSynchronously() const { return m_loadsSynchronously; }
