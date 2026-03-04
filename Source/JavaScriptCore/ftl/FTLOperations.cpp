@@ -89,6 +89,12 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalO
             JSValue value = JSValue::decode(values[i]);
             unsigned index = property.location().info();
 
+            if (value.isEmpty()) {
+                ASSERT(!hasDouble(materialization->indexingType()));
+                array->butterfly()->contiguous().atUnsafe(index).clear();
+                continue;
+            }
+
             array->putDirectIndex(globalObject, index, value);
             scope.assertNoExceptionExceptTermination();
         }
