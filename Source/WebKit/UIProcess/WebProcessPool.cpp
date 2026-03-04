@@ -386,10 +386,8 @@ WebProcessPool::~WebProcessPool()
     while (!m_processes.isEmpty()) {
         auto& process = m_processes.first();
 
-        ASSERT(process->isPrewarmed());
-        // We need to be the only one holding a reference to the pre-warmed process so that it gets destroyed.
-        // WebProcessProxies currently always expect to have a WebProcessPool.
-        ASSERT(process->hasOneRef());
+        ASSERT(!process->pageCount());
+        ASSERT(!process->provisionalPageCount());
 
         process->shutDown();
     }
@@ -1361,6 +1359,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         if (!process) {
             auto enableWebAssemblyDebugger = protect(pageConfiguration->preferences())->webAssemblyDebuggerEnabled() ? WebProcessProxy::EnableWebAssemblyDebugger::Yes : WebProcessProxy::EnableWebAssemblyDebugger::No;
             process = WebProcessProxy::create(*this, protect(pageConfiguration->websiteDataStore()).ptr(), lockdownMode, enhancedSecurity, WebProcessProxy::IsPrewarmed::No, CrossOriginMode::Shared, WebProcessProxy::ShouldLaunchProcess::No, enableWebAssemblyDebugger);
+            process->markAsDummyProcessProxy();
             m_dummyProcessProxies.add(pageConfiguration->websiteDataStore().sessionID(), *process);
             m_processes.append(*process);
         }
