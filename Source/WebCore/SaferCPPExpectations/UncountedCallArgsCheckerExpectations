@@ -401,7 +401,6 @@ page/DragController.cpp
 page/ElementTargetingController.cpp
 page/EventHandler.cpp
 page/EventSource.cpp
-page/FocusController.cpp
 page/FrameDestructionObserver.cpp
 page/FrameSnapshotting.cpp
 page/ImageOverlayController.cpp
