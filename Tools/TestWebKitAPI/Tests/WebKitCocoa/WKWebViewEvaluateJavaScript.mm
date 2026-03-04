@@ -1351,7 +1351,7 @@ TEST(EvaluateJavaScript, Serialization)
     // The full deepObject is 40,001 nesting levels deep, which should not be able to serialize.
     NSError *error = nil;
     result = [webView objectByCallingAsyncFunction:@"return window.deepObject" withArguments:nil error:&error];
-    EXPECT_TRUE(!!error);
+    EXPECT_NOT_NULL(error);
 
     // Returning an object 40,000 nesting levels deep should succeed.
     error = nil;
@@ -1373,7 +1373,11 @@ TEST(EvaluateJavaScript, Serialization)
 
     // One of the object values is not serializable, so it should be missing from the result.
     result = [webView objectByCallingAsyncFunction:@"return window.objectObject" withArguments:nil error:&error];
-    EXPECT_NOT_NULL(error);
-    EXPECT_NULL(result);
+    EXPECT_NULL(error);
+    NSDictionary *expectedDictionary = @{
+        @"bar" : @17,
+        @"foo" : @"bar"
+    };
+    EXPECT_TRUE([result isEqual:expectedDictionary]);
 }
 
