@@ -276,7 +276,6 @@ void JSCellLock::unlockSlow()
     IndexingTypeLockAlgorithm::unlockSlow(*lock);
 }
 
-#if CPU(X86_64)
 NEVER_INLINE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void reportZappedCellAndCrash(Heap& heap, const JSCell* cell)
 {
     MarkedBlock::Handle* foundBlockHandle = nullptr;
@@ -353,7 +352,6 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void reportZappedCellAndCras
 
     CRASH_WITH_INFO(cellAddress, headerWord, zapReasonAndMore, subspaceHash, cellSize, foundBlock, variousState);
 }
-#endif // CPU(X86_64)
 
 } // namespace JSC
 

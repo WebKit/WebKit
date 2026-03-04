@@ -59,14 +59,14 @@ namespace JSC {
 inline JSCell::JSCell(CreatingEarlyCellTag)
     : m_cellState(CellState::DefinitelyWhite)
 {
-    ASSERT(!isCompilationThread());
+    RELEASE_ASSERT(!isCompilationThread());
 }
 
 inline JSCell::JSCell(VM&, Structure* structure)
     : JSCell(CreatingWellDefinedBuiltinCell, structure->id(), structure->typeInfoBlob())
 {
-    ASSERT(!isCompilationThread());
-    ASSERT(m_cellState == CellState::DefinitelyWhite);
+    RELEASE_ASSERT(!isCompilationThread());
+    RELEASE_ASSERT(m_cellState == CellState::DefinitelyWhite);
 
     // Note that in the constructor initializer list above, we are only using values
     // inside structure but not necessarily the structure pointer itself. All these
@@ -103,18 +103,18 @@ inline void JSCell::finishCreation(VM& vm)
     // to make sure that none of our stores sink below here.
     vm.mutatorFence();
 #if ENABLE(GC_VALIDATION)
-    ASSERT(vm.isInitializingObject());
+    RELEASE_ASSERT(vm.isInitializingObject());
     vm.setInitializingObjectClass(0);
 #else
     UNUSED_PARAM(vm);
 #endif
-    ASSERT(m_structureID);
+    RELEASE_ASSERT(m_structureID);
 }
 
 inline void JSCell::finishCreation(VM& vm, Structure* structure, CreatingEarlyCellTag)
 {
 #if ENABLE(GC_VALIDATION)
-    ASSERT(vm.isInitializingObject());
+    RELEASE_ASSERT(vm.isInitializingObject());
     vm.setInitializingObjectClass(0);
     if (structure) {
 #endif
@@ -128,7 +128,7 @@ inline void JSCell::finishCreation(VM& vm, Structure* structure, CreatingEarlyCe
     UNUSED_PARAM(vm);
 #endif
     // Very first set of allocations won't have a real structure.
-    ASSERT(m_structureID || !vm.structureStructure);
+    RELEASE_ASSERT(m_structureID || !vm.structureStructure);
 }
 
 inline JSType JSCell::type() const
@@ -189,15 +189,15 @@ inline Allocator allocatorForConcurrently(VM& vm, size_t allocationSize, Allocat
 template<typename T, AllocationFailureMode failureMode>
 ALWAYS_INLINE void* tryAllocateCellHelper(VM& vm, size_t size, GCDeferralContext* deferralContext)
 {
-    ASSERT(deferralContext || vm.heap.isDeferred() || !AssertNoGC::isInEffectOnCurrentThread());
-    ASSERT(size >= sizeof(T));
+    RELEASE_ASSERT(deferralContext || vm.heap.isDeferred() || !AssertNoGC::isInEffectOnCurrentThread());
+    RELEASE_ASSERT(size >= sizeof(T));
     JSCell* result = static_cast<JSCell*>(subspaceFor<T>(vm)->allocate(vm, WTF::roundUpToMultipleOf<T::atomSize>(size), deferralContext, failureMode));
     if constexpr (failureMode == AllocationFailureMode::ReturnNull) {
         if (!result)
             return nullptr;
     }
 #if ENABLE(GC_VALIDATION)
-    ASSERT(!vm.isInitializingObject());
+    RELEASE_ASSERT(!vm.isInitializingObject());
     vm.setInitializingObjectClass(T::info());
 #endif
     result->clearStructure();
@@ -317,8 +317,8 @@ inline bool JSCell::isAPIValueWrapper() const
 
 ALWAYS_INLINE void JSCell::setStructure(VM& vm, Structure* structure)
 {
-    ASSERT(structure->classInfoForCells() == this->structure()->classInfoForCells());
-    ASSERT(!this->structure()
+    RELEASE_ASSERT(structure->classInfoForCells() == this->structure()->classInfoForCells());
+    RELEASE_ASSERT(!this->structure()
         || this->structure()->transitionWatchpointSetHasBeenInvalidated()
         || structure->id().decode() == structure);
     m_structureID = structure->id();
@@ -326,7 +326,7 @@ ALWAYS_INLINE void JSCell::setStructure(VM& vm, Structure* structure)
     m_type = structure->typeInfo().type();
     IndexingType newIndexingType = structure->indexingModeIncludingHistory();
     if (m_indexingTypeAndMisc != newIndexingType) {
-        ASSERT(!(newIndexingType & ~AllArrayTypesAndHistory));
+        RELEASE_ASSERT(!(newIndexingType & ~AllArrayTypesAndHistory));
         for (;;) {
             IndexingType oldValue = m_indexingTypeAndMisc;
             IndexingType newValue = (oldValue & ~AllArrayTypesAndHistory) | structure->indexingModeIncludingHistory();
@@ -340,10 +340,8 @@ ALWAYS_INLINE void JSCell::setStructure(VM& vm, Structure* structure)
 inline const MethodTable* JSCell::methodTable() const
 {
     Structure* structure = this->structure();
-#if ASSERT_ENABLED
     if (Structure* rootStructure = structure->structure())
-        ASSERT(rootStructure == rootStructure->structure());
-#endif
+        RELEASE_ASSERT(rootStructure == rootStructure->structure());
     return &structure->classInfoForCells()->methodTable;
 }
 
@@ -379,7 +377,7 @@ ALWAYS_INLINE const ClassInfo* JSCell::classInfo() const
     // may have been swept already (and we're probably being called from this object's destructor).
     // This can only be verified for the mutator thread since other threads might be querying JSCells
     // that are not being swept by the mutator.
-    ASSERT_IMPLIES(vm().currentThreadIsHoldingAPILock(), vm().heap.mutatorState() != MutatorState::Sweeping);
+    RELEASE_ASSERT_IMPLIES(vm().currentThreadIsHoldingAPILock(), vm().heap.mutatorState() != MutatorState::Sweeping);
     return structure()->classInfoForCells();
 }
 

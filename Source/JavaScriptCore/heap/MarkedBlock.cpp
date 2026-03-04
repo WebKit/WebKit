@@ -396,8 +396,9 @@ void MarkedBlock::Handle::removeFromDirectory()
 
 void MarkedBlock::Handle::didAddToDirectory(BlockDirectory* directory, unsigned index)
 {
-    ASSERT(m_index == std::numeric_limits<unsigned>::max());
-    ASSERT(!m_directory);
+    RELEASE_ASSERT(m_index == std::numeric_limits<unsigned>::max());
+    RELEASE_ASSERT(WTF::opaque(!m_directory));
+    RELEASE_ASSERT(WTF::opaque(directory));
     
     RELEASE_ASSERT(directory->subspace()->alignedMemoryAllocator() == m_alignedMemoryAllocator);
     
@@ -433,21 +434,19 @@ void MarkedBlock::Handle::didAddToDirectory(BlockDirectory* directory, unsigned 
 
 void MarkedBlock::Handle::didRemoveFromDirectory()
 {
-    ASSERT(m_index != std::numeric_limits<unsigned>::max());
-    ASSERT(m_directory);
+    RELEASE_ASSERT(m_index != std::numeric_limits<unsigned>::max());
+    RELEASE_ASSERT(m_directory);
     
     m_index = std::numeric_limits<unsigned>::max();
     m_directory = nullptr;
     blockHeader().m_subspace = nullptr;
 }
 
-#if ASSERT_ENABLED
 void MarkedBlock::assertValidCell(VM& vm, HeapCell* cell) const
 {
     RELEASE_ASSERT(&vm == &this->vm());
     RELEASE_ASSERT(const_cast<MarkedBlock*>(this)->handle().cellAlign(cell) == cell);
 }
-#endif // ASSERT_ENABLED
 
 void MarkedBlock::Handle::dumpState(PrintStream& out)
 {

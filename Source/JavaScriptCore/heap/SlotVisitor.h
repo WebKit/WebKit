@@ -65,7 +65,6 @@ public:
 
     class DefaultMarkingViolationAssertionScope {
     public:
-#if ASSERT_ENABLED
         DefaultMarkingViolationAssertionScope(SlotVisitor& visitor)
             : m_visitor(visitor)
         {
@@ -81,9 +80,6 @@ public:
     private:
         SlotVisitor& m_visitor;
         bool m_wasCheckingForDefaultMarkViolation;
-#else
-        DefaultMarkingViolationAssertionScope(SlotVisitor&) { }
-#endif
     };
 
     SlotVisitor(Heap&, CString codeName);
@@ -240,9 +236,7 @@ private:
     
     // Put padding here to mitigate false sharing between multiple SlotVisitors.
     char padding[64];
-#if ASSERT_ENABLED
     bool m_isCheckingForDefaultMarkViolation { false };
-#endif
 };
 
 class ParallelModeEnabler {

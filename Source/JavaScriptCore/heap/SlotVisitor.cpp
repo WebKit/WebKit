@@ -83,9 +83,7 @@ static void validate(JSCell* cell)
 SlotVisitor::SlotVisitor(JSC::Heap& heap, CString codeName)
     : Base(heap, codeName, heap.m_opaqueRoots)
     , m_markingVersion(MarkedSpace::initialVersion)
-#if ASSERT_ENABLED
     , m_isCheckingForDefaultMarkViolation(false)
-#endif
 {
 }
 
@@ -144,7 +142,7 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
     if (!heapCell)
         return;
     
-    ASSERT(!m_isCheckingForDefaultMarkViolation);
+    RELEASE_ASSERT(!m_isCheckingForDefaultMarkViolation);
     
     auto validateCell = [&] (JSCell* jsCell) {
         StructureID structureID = jsCell->structureID();
@@ -240,7 +238,7 @@ void SlotVisitor::appendHiddenSlow(JSCell* cell, Dependency dependency)
 
 ALWAYS_INLINE void SlotVisitor::appendHiddenSlowImpl(JSCell* cell, Dependency dependency)
 {
-    ASSERT(!m_isCheckingForDefaultMarkViolation);
+    RELEASE_ASSERT(!m_isCheckingForDefaultMarkViolation);
 
 #if ENABLE(GC_VALIDATION)
     validate(cell);
@@ -279,14 +277,13 @@ void SlotVisitor::appendToMarkStack(JSCell* cell)
 template<typename ContainerType>
 ALWAYS_INLINE void SlotVisitor::appendToMarkStack(ContainerType& container, JSCell* cell)
 {
-    ASSERT(m_heap.isMarked(cell));
-#if CPU(X86_64)
+    RELEASE_ASSERT(m_heap.isMarked(cell));
     if (Options::dumpZappedCellCrashData()) [[unlikely]] {
         if (cell->isZapped()) [[unlikely]]
             reportZappedCellAndCrash(m_heap, cell);
     }
-#endif
-    ASSERT(!cell->isZapped());
+
+    RELEASE_ASSERT(!cell->isZapped());
 
     container.noteMarked();
     
@@ -300,7 +297,7 @@ void SlotVisitor::markAuxiliary(const void* base)
 {
     HeapCell* cell = std::bit_cast<HeapCell*>(base);
     
-    ASSERT(cell->heap() == heap());
+    RELEASE_ASSERT(cell->heap() == heap());
     
     if (Heap::testAndSetMarked(m_markingVersion, cell))
         return;
@@ -349,7 +346,7 @@ private:
 
 ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
 {
-    ASSERT(m_heap.isMarked(cell));
+    RELEASE_ASSERT(m_heap.isMarked(cell));
     
     SetCurrentCellScope currentCellScope(*this, cell);
     
@@ -385,7 +382,6 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
     default:
         // FIXME: This could be so much better.
         // https://bugs.webkit.org/show_bug.cgi?id=162462
-#if CPU(X86_64)
         if (Options::dumpZappedCellCrashData()) [[unlikely]] {
             Structure* structure = cell->structure();
             if (structure) [[likely]] {
@@ -395,7 +391,6 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
             }
             reportZappedCellAndCrash(m_heap, const_cast<JSCell*>(cell));
         }
-#endif
         cell->methodTable()->visitChildren(const_cast<JSCell*>(cell), *this);
         break;
     }

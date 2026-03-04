@@ -544,9 +544,7 @@
 
 #if !defined(ENABLE_SECURITY_ASSERTIONS)
 /* Enable security assertions on all ASAN builds and debug builds. */
-#if ASAN_ENABLED || !defined(NDEBUG)
 #define ENABLE_SECURITY_ASSERTIONS 1
-#endif
 #endif
 
 #if !defined(ENABLE_SEPARATED_WX_HEAP)
@@ -814,7 +812,7 @@
 
 #endif /* !defined(ENABLE_DFG_JIT) && ENABLE(JIT) */
 
-#if ENABLE(DFG_JIT) && ASSERT_ENABLED
+#if ENABLE(DFG_JIT)
 #define ENABLE_DFG_DOES_GC_VALIDATION 1
 #else
 #define ENABLE_DFG_DOES_GC_VALIDATION 0
@@ -1007,9 +1005,7 @@
 #define ENABLE_THREADING_GENERIC 1
 #endif
 
-#if !defined(ENABLE_GC_VALIDATION) && !defined(NDEBUG)
 #define ENABLE_GC_VALIDATION 1
-#endif
 
 #if OS(DARWIN) && ENABLE(JIT) && USE(APPLE_INTERNAL_SDK) && CPU(ARM64E) && HAVE(JIT_CAGE) && !PLATFORM(MAC) && !PLATFORM(MACCATALYST)
 #define ENABLE_JIT_CAGE 1

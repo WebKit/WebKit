@@ -202,8 +202,8 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, verboseFTLFailure, false, Normal, nullptr) \
     v(Bool, testTheFTL, false, Normal, nullptr) \
     v(Bool, verboseSanitizeStack, false, Normal, nullptr) \
-    v(Bool, useGenerationalGC, true, Normal, nullptr) \
-    v(Bool, useConcurrentGC, true, Normal, nullptr) \
+    v(Bool, useGenerationalGC, false, Normal, nullptr) \
+    v(Bool, useConcurrentGC, false, Normal, nullptr) \
     v(Bool, collectContinuously, false, Normal, nullptr) \
     v(Double, collectContinuouslyPeriodMS, 1, Normal, nullptr) \
     v(Bool, forceFencedBarrier, false, Normal, nullptr) \
@@ -237,13 +237,13 @@ bool hasCapacityToUseLargeGigacage();
     v(Double, gcIncrementBytes, 10000, Normal, nullptr) \
     v(Double, gcIncrementMaxBytes, 100000, Normal, nullptr) \
     v(Double, gcIncrementScale, 0, Normal, nullptr) \
-    v(Bool, scribbleFreeCells, false, Normal, nullptr) \
+    v(Bool, scribbleFreeCells, true, Normal, nullptr) \
     v(Double, sizeClassProgression, 1.4, Normal, nullptr) \
     v(Unsigned, preciseAllocationCutoff, 100000, Normal, nullptr) \
     v(Bool, dumpSizeClasses, false, Normal, nullptr) \
-    v(Bool, stealEmptyBlocksFromOtherAllocators, true, Normal, nullptr) \
+    v(Bool, stealEmptyBlocksFromOtherAllocators, false, Normal, nullptr) \
     v(Bool, eagerlyUpdateTopCallFrame, false, Normal, nullptr) \
-    v(Bool, dumpZappedCellCrashData, false, Normal, nullptr) \
+    v(Bool, dumpZappedCellCrashData, true, Normal, nullptr) \
     \
     v(Bool, useOSREntryToDFG, true, Normal, nullptr) \
     v(Bool, useOSREntryToFTL, true, Normal, nullptr) \
@@ -282,7 +282,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, logExecutableAllocation, false, Normal, nullptr) \
     v(Unsigned, maxDFGNodesInBasicBlockForPreciseAnalysis, 20000, Normal, "Disable precise but costly analysis and give conservative results if the number of DFG nodes in a block exceeds this threshold"_s) \
     \
-    v(Bool, useConcurrentJIT, true, Normal, "allows the DFG / FTL compilation in threads other than the executing JS thread"_s) \
+    v(Bool, useConcurrentJIT, false, Normal, "allows the DFG / FTL compilation in threads other than the executing JS thread"_s) \
     v(Unsigned, minNumberOfWorklistThreads, computeNumberOfWorkerThreads(3, 2), Normal, nullptr) \
     v(Unsigned, maxNumberOfWorklistThreads, computeNumberOfWorkerThreads(3, 2), Normal, nullptr) \
     v(Unsigned, numberOfBaselineCompilerThreads, computeNumberOfWorkerThreads(3, 2), Normal, nullptr) \
@@ -410,9 +410,9 @@ bool hasCapacityToUseLargeGigacage();
     \
     v(Bool, alwaysHaveABadTime, false, Normal, "debugging option to test HaveABadTime mode"_s) \
     v(Bool, allowDoubleShape, true, Normal, "debugging option to test disabling use of DoubleShape"_s) \
-    v(Bool, useZombieMode, false, Normal, "debugging option to scribble over dead objects with 0xbadbeef0"_s) \
+    v(Bool, useZombieMode, true, Normal, "debugging option to scribble over dead objects with 0xbadbeef0"_s) \
     v(Bool, useImmortalObjects, false, Normal, "debugging option to keep all objects alive forever"_s) \
-    v(Bool, sweepSynchronously, false, Normal, "debugging option to sweep all dead objects synchronously at GC end before resuming mutator"_s) \
+    v(Bool, sweepSynchronously, true, Normal, "debugging option to sweep all dead objects synchronously at GC end before resuming mutator"_s) \
     v(Unsigned, maxSingleAllocationSize, 0, Configurable, "debugging option to limit individual allocations to a max size (0 = limit not set, N = limit size in bytes)"_s) \
     \
     v(GCLogLevel, logGC, GCLogging::None, Normal, "debugging option to log GC activity (0 = None, 1 = Basic, 2 = Verbose)"_s) \
