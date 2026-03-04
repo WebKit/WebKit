@@ -228,6 +228,7 @@
 #import <WebCore/ResourceLoadObserver.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/SQLiteFileSystem.h>
+#import <WebCore/SampleBufferDisplayLayer.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityPolicy.h>
@@ -1465,6 +1466,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #if USE(AUDIO_SESSION)
         WebCore::AudioSession::enableMediaPlayback();
 #endif
+        WebCore::SampleBufferDisplayLayer::enableMediaPlayback();
 
 #if ENABLE(VIDEO)
         WebCore::HTMLMediaElement::setMediaCacheDirectory(FileSystem::pathByAppendingComponent(String(NSTemporaryDirectory()), "MediaCache/"_s));

@@ -31,6 +31,13 @@
 
 namespace WebCore {
 
+static bool s_mediaPlaybackEnabled { false };
+
+void SampleBufferDisplayLayer::enableMediaPlayback()
+{
+    s_mediaPlaybackEnabled = true;
+}
+
 SampleBufferDisplayLayer::LayerCreator SampleBufferDisplayLayer::m_layerCreator = nullptr;
 void SampleBufferDisplayLayer::setCreator(LayerCreator creator)
 {
@@ -39,6 +46,9 @@ void SampleBufferDisplayLayer::setCreator(LayerCreator creator)
 
 RefPtr<SampleBufferDisplayLayer> SampleBufferDisplayLayer::create(SampleBufferDisplayLayerClient& client)
 {
+    if (!s_mediaPlaybackEnabled)
+        return nullptr;
+
     if (m_layerCreator)
         return m_layerCreator(client);
 

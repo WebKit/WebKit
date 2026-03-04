@@ -60,6 +60,7 @@ public:
     WEBCORE_EXPORT static RefPtr<SampleBufferDisplayLayer> create(SampleBufferDisplayLayerClient&);
     using LayerCreator = RefPtr<SampleBufferDisplayLayer> (*)(SampleBufferDisplayLayerClient&);
     WEBCORE_EXPORT static void setCreator(LayerCreator);
+    WEBCORE_EXPORT static void enableMediaPlayback();
 
     virtual ~SampleBufferDisplayLayer() = default;
 

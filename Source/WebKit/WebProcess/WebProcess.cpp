@@ -173,6 +173,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 #include "UserMediaCaptureManager.h"
+#include <WebCore/SampleBufferDisplayLayer.h>
 #endif
 
 #if USE(CG)
@@ -2681,6 +2682,10 @@ void WebProcess::enableMediaPlayback()
 
 #if ENABLE(ROUTING_ARBITRATION)
     lazyInitialize(m_routingArbitrator, makeUniqueWithoutRefCountedCheck<AudioSessionRoutingArbitrator>(*this));
+#endif
+
+#if PLATFORM(COCOA)
+    SampleBufferDisplayLayer::enableMediaPlayback();
 #endif
 }
 
