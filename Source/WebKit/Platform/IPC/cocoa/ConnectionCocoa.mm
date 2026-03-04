@@ -578,7 +578,11 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, 
         if (!sharedMemory)
             return nullptr;
 
-        return Decoder::create(sharedMemory->span(), [sharedMemory = WTF::move(sharedMemory)](auto) { }, WTF::move(attachments));
+        // Create a copy of the shared memory before decoding the data to guard against TOCTOU bugs.
+        Ref copy = WebCore::SharedBuffer::create(Vector<uint8_t> { sharedMemory->span() });
+        sharedMemory = nullptr;
+        auto span = copy->span();
+        return Decoder::create(span, [copy = WTF::move(copy)](auto) { }, WTF::move(attachments));
     }
 
     ASSERT(std::to_address(message.subspan(sizeWithPortDescriptors.value()).begin()) == std::to_address(remaining.begin()));
