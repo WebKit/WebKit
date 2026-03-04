@@ -60,12 +60,20 @@ public:
 
     void mouseDown(unsigned button, WKEventModifiers, WKStringRef pointerType = nullptr);
     void mouseUp(unsigned button, WKEventModifiers, WKStringRef pointerType = nullptr);
+    void mouseMoveTo(double x, double y, WKStringRef pointerType = nullptr);
+
+#if PLATFORM(MAC)
+    enum class EventDispatch : bool { Sync, Async };
+    void mouseDown(unsigned button, WKEventModifiers, EventDispatch, WKStringRef pointerType = nullptr);
+    void mouseUp(unsigned button, WKEventModifiers, EventDispatch, WKStringRef pointerType = nullptr);
+    void mouseMoveTo(double x, double y, EventDispatch, WKStringRef pointerType = nullptr);
+#endif
+
     void mouseForceDown();
     void mouseForceUp();
     void mouseForceChanged(float);
     void mouseForceClick();
     void startAndCancelMouseForceClick();
-    void mouseMoveTo(double x, double y, WKStringRef pointerType = nullptr);
     
     // Legacy wheel events.
     void mouseScrollBy(int x, int y);

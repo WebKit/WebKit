@@ -2739,8 +2739,12 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
         WKArrayAppendItem(array.get(), argument2);
         WKPagePostMessageToInjectedBundle(mainWebView()->page(), toWK("SetMousePosition").get(), array.get());
 
+#if PLATFORM(MAC)
+        m_eventSenderProxy->mouseMoveTo(x, y, EventSenderProxy::EventDispatch::Async, pointerType);
+#else
         m_eventSenderProxy->mouseMoveTo(x, y, pointerType);
         m_eventSenderProxy->waitForPendingMouseEvents();
+#endif
         completionHandler(nullptr);
         return;
     }
@@ -2750,8 +2754,12 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
         const auto array = arrayValue(argument2);
         const auto pointerType = stringValue(argument3);
 
+#if PLATFORM(MAC)
+        m_eventSenderProxy->mouseDown(button, parseModifierArray(array), EventSenderProxy::EventDispatch::Async, pointerType);
+#else
         m_eventSenderProxy->mouseDown(button, parseModifierArray(array), pointerType);
         m_eventSenderProxy->waitForPendingMouseEvents();
+#endif
         completionHandler(nullptr);
         return;
     }
@@ -2761,8 +2769,12 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
         const auto array = arrayValue(argument2);
         const auto pointerType = stringValue(argument3);
 
+#if PLATFORM(MAC)
+        m_eventSenderProxy->mouseUp(button, parseModifierArray(array), EventSenderProxy::EventDispatch::Async, pointerType);
+#else
         m_eventSenderProxy->mouseUp(button, parseModifierArray(array), pointerType);
         m_eventSenderProxy->waitForPendingMouseEvents();
+#endif
         completionHandler(nullptr);
         return;
     }
