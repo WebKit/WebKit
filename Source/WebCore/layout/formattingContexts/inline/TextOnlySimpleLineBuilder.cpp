@@ -321,7 +321,7 @@ TextOnlyLineBreakResult TextOnlySimpleLineBuilder::commitCandidateContent(const 
             m_line.appendTextFast(inlineTextItem, rootStyle, contentWidth(inlineTextItem, { }));
         }
 
-        if (m_line.hasContentOrListMarker())
+        if (m_line.hasContent())
             m_wrapOpportunityList.append(&m_inlineItemList[candidateContent.endIndex - 1]);
         return { InlineContentBreaker::IsEndOfLine::No, candidateContent.endIndex - candidateContent.startIndex };
     }
@@ -347,7 +347,7 @@ TextOnlyLineBreakResult TextOnlySimpleLineBuilder::handleOverflowingTextContent(
     auto availableWidth = this->availableWidth();
     auto lineBreakingResult = InlineContentBreaker::Result { InlineContentBreaker::Result::Action::Keep, InlineContentBreaker::IsEndOfLine::No, { }, { } };
     if (candidateContent.logicalWidth() > availableWidth) {
-        auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidth, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), m_line.hasContentOrListMarker(), !m_wrapOpportunityList.isEmpty() };
+        auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidth, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), m_line.hasContent(), !m_wrapOpportunityList.isEmpty() };
         lineBreakingResult = inlineContentBreaker().processInlineContent(candidateContent, lineStatus);
     }
 
@@ -355,7 +355,7 @@ TextOnlyLineBreakResult TextOnlySimpleLineBuilder::handleOverflowingTextContent(
         auto& committedRuns = candidateContent.runs();
         for (auto& run : committedRuns)
             m_line.appendTextFast(downcast<InlineTextItem>(run.inlineItem), run.style, run.contentWidth());
-        if (m_line.hasContentOrListMarker())
+        if (m_line.hasContent())
             m_wrapOpportunityList.append(&committedRuns.last().inlineItem);
         return { lineBreakingResult.isEndOfLine, committedRuns.size() };
     }
@@ -493,7 +493,6 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayoutByCon
         return false;
     if (!placedFloats.isEmpty())
         return false;
-
     return true;
 }
 
