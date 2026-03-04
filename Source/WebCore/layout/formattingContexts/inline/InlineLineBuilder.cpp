@@ -606,7 +606,7 @@ UniqueRef<LineContent> LineBuilder::placeInlineAndFloatContent(const InlineItemR
         auto handleTrailingContent = [&] {
             auto& quirks = formattingContext().quirks();
             auto lineHasOverflow = [&] {
-                return horizontalAvailableSpace < m_line.contentLogicalWidth() && m_line.hasContentOrListMarker();
+                return horizontalAvailableSpace < m_line.contentLogicalWidth() && m_line.hasContent(Line::IncludeInsideListMarker::Yes);
             };
             auto isLineBreakAfterWhitespace = [&] {
                 return rootStyle.lineBreak() == LineBreak::AfterWhiteSpace && intrinsicWidthMode() != IntrinsicWidthMode::Minimum && (!isLastInlineContent || lineHasOverflow());
@@ -1325,7 +1325,7 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
         return false;
 
     auto didApplyMargin = applyMarginInBlockDirectionIfNeeded(ShouldResetMarginValues::No);
-    ASSERT_UNUSED(didApplyMargin, !didApplyMargin || !m_line.hasContentOrListMarker());
+    ASSERT_UNUSED(didApplyMargin, !didApplyMargin || !m_line.hasContent(Line::IncludeInsideListMarker::Yes));
 
     auto& floatingContext = this->floatingContext();
     auto& boxGeometry = formattingContext().geometryForBox(floatBox);
@@ -1401,7 +1401,7 @@ void LineBuilder::handleBlockContent(const InlineItem& blockItem)
 {
     ASSERT(blockItem.isBlock());
     // Blocks are always the only content on the line.
-    ASSERT(!m_line.hasContentOrListMarker());
+    ASSERT(!m_line.hasContent(Line::IncludeInsideListMarker::Yes));
     if (isInIntrinsicWidthMode())
         return m_line.appendBlock(blockItem, formattingContext().formattingUtils().inlineItemWidth(blockItem, { }, false));
 
@@ -1418,7 +1418,7 @@ void LineBuilder::handleBlockContent(const InlineItem& blockItem)
 LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layoutRange, LineCandidate& lineCandidate)
 {
     auto result = applyLineBreakingOnCandidateInlineContent(layoutRange, lineCandidate);
-    if (!m_line.hasContentOrListMarker())
+    if (!m_line.hasContent(Line::IncludeInsideListMarker::Yes))
         return result;
 
     if (!applyMarginInBlockDirectionIfNeeded(ShouldResetMarginValues::Yes) || floatingContext().isEmpty())
@@ -1446,7 +1446,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
             if (!precedingNonContentfulContent.inlineContent.isEmpty()) {
                 commitCandidateContent(precedingNonContentfulContent, { });
                 // At this point we can't yet have contentful runs on the line.
-                ASSERT(!m_line.hasContentOrListMarker());
+                ASSERT(!m_line.hasContent(Line::IncludeInsideListMarker::Yes));
             }
         };
         commitPrecedingNonContentfulContent();
@@ -1477,7 +1477,7 @@ LineBuilder::Result LineBuilder::applyLineBreakingOnCandidateInlineContent(const
         return availableWidth(m_line, availableTotalWidthForContent, intrinsicWidthMode());
     }();
 
-    auto lineHasContent = m_line.hasContentOrListMarker();
+    auto lineHasContent = m_line.hasContent(Line::IncludeInsideListMarker::Yes);
     auto verticalPositionHasFloatOrInlineContent = lineHasContent || isLineConstrainedByFloat() || !constraints.constrainedSideSet.isEmpty();
     auto lineBreakingResult = InlineContentBreaker::Result { InlineContentBreaker::Result::Action::Keep, InlineContentBreaker::IsEndOfLine::No, { }, { } };
 
@@ -1760,7 +1760,7 @@ LineBuilder::Result LineBuilder::processLineBreakingResult(LineCandidate& lineCa
         // We are keeping this content on the line but we need to check if we could have wrapped here
         // in order to be able to revert back to this position if needed.
         // Let's just ignore cases like collapsed leading whitespace for now.
-        if (lineCandidate.inlineContent.hasTrailingSoftWrapOpportunity() && m_line.hasContentOrListMarker()) {
+        if (lineCandidate.inlineContent.hasTrailingSoftWrapOpportunity() && m_line.hasContent(Line::IncludeInsideListMarker::Yes)) {
             auto& trailingRun = candidateRuns.last();
             auto& trailingInlineItem = trailingRun.inlineItem;
 
