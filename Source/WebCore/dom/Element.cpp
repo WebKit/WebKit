@@ -2045,6 +2045,140 @@ std::optional<std::pair<CheckedPtr<RenderElement>, FloatRect>> Element::bounding
 FloatRect Element::boundingClientRect()
 {
     Ref document = this->document();
+
+    // Optimization: Skip layout if this element's bounding rect is stable.
+    // We walk the ancestor chain and verify:
+    // - All ancestors are in-flow blocks with no previous siblings
+    // - No ancestor needs style recalc or layout
+    // - Height is defined somewhere (viewport provides width)
+    auto canSkipLayout = [&]() -> bool {
+        CheckedPtr renderer = this->renderer();
+        if (!renderer) {
+            // WTFLogAlways("getBCR_DEBUG: canSkipLayout=NO (no renderer)");
+            return false;
+        }
+
+        CheckedPtr box = dynamicDowncast<RenderBox>(*renderer);
+        if (!box) {
+            // WTFLogAlways("getBCR_DEBUG: canSkipLayout=NO (not RenderBox)");
+            return false;
+        }
+
+        // Check if element is in fragmented flow (multi-column)
+        auto flowState = renderer->fragmentedFlowState();
+        (void)flowState;
+        // WTFLogAlways("getBCR_DEBUG: tag=%s id=%s fragmentedFlowState=%d",
+        //     tagName().utf8().data(),
+        //     getIdAttribute().string().utf8().data(),
+        //     static_cast<int>(flowState));
+
+        // Height must be defined by self (if we have children) or found in ancestor chain
+        auto definesHeight = [](const RenderBox& renderBox) {
+            auto& style = renderBox.style();
+            // Height is defined if it's not auto and not a percentage
+            return !style.height().isAuto() && !style.height().isPercentOrCalculated();
+        };
+
+        bool foundHeight = !box->firstChild() || definesHeight(*box);
+        // WTFLogAlways("getBCR_DEBUG: hasChildren=%d selfDefinesHeight=%d foundHeight=%d",
+        //     box->firstChild() ? 1 : 0,
+        //     definesHeight(*box) ? 1 : 0,
+        //     foundHeight ? 1 : 0);
+
+        // Walk ancestor chain including self
+        int depth = 0;
+        (void)depth;
+        for (CheckedPtr current = renderer.get(); current; current = current->parent()) {
+            String nodeNameStr = current->element() ? current->element()->tagName() : "(anon)"_s;
+            String nodeIdStr = (current->element() && current->element()->hasID())
+                ? current->element()->getIdAttribute().string() : ""_s;
+            (void)nodeNameStr;
+            (void)nodeIdStr;
+
+            // Must be in normal block flow (not flex, grid, table, etc.)
+            // RenderBlockFlow represents display-inside: flow
+            if (!current->isRenderBlockFlow()) {
+                // WTFLogAlways("getBCR_DEBUG: [%d] %s#%s FAIL: not RenderBlockFlow (isRenderBlock=%d isRenderGrid=%d)",
+                //     depth, nodeNameStr.utf8().data(), nodeIdStr.utf8().data(),
+                //     current->isRenderBlock() ? 1 : 0,
+                //     current->isRenderGrid() ? 1 : 0);
+                return false;
+            }
+
+            // Must be in normal flow (not floated, not out-of-flow positioned)
+            if (current->isFloating() || current->isOutOfFlowPositioned()) {
+                // WTFLogAlways("getBCR_DEBUG: [%d] %s#%s FAIL: not in flow (floating=%d outOfFlow=%d)",
+                //     depth, nodeNameStr.utf8().data(), nodeIdStr.utf8().data(),
+                //     current->isFloating() ? 1 : 0,
+                //     current->isOutOfFlowPositioned() ? 1 : 0);
+                return false;
+            }
+
+            // Must not need layout
+            if (current->selfNeedsLayout()) {
+                // WTFLogAlways("getBCR_DEBUG: [%d] %s#%s FAIL: selfNeedsLayout",
+                //     depth, nodeNameStr.utf8().data(), nodeIdStr.utf8().data());
+                return false;
+            }
+
+            // Must not need style recalc
+            if (auto* element = current->element()) {
+                if (element->needsStyleRecalc()) {
+                    // WTFLogAlways("getBCR_DEBUG: [%d] %s#%s FAIL: needsStyleRecalc",
+                    //     depth, nodeNameStr.utf8().data(), nodeIdStr.utf8().data());
+                    return false;
+                }
+            }
+
+            // Must not have previous siblings (their layout affects our position)
+            if (current->previousSibling()) {
+                // WTFLogAlways("getBCR_DEBUG: [%d] %s#%s FAIL: has previousSibling",
+                //     depth, nodeNameStr.utf8().data(), nodeIdStr.utf8().data());
+                return false;
+            }
+
+            // Check if this ancestor defines height
+            if (!foundHeight) {
+                if (auto* ancestorBox = dynamicDowncast<RenderBox>(current.get())) {
+                    if (definesHeight(*ancestorBox)) {
+                        foundHeight = true;
+                        // WTFLogAlways("getBCR_DEBUG: [%d] %s#%s found height definition",
+                        //     depth, nodeNameStr.utf8().data(), nodeIdStr.utf8().data());
+                    }
+                }
+            }
+
+            // WTFLogAlways("getBCR_DEBUG: [%d] %s#%s PASS (fragmentedFlowState=%d)",
+            //     depth, nodeNameStr.utf8().data(), nodeIdStr.utf8().data(), static_cast<int>(current->fragmentedFlowState()));
+
+            // Stop at RenderView (viewport)
+            if (current->isRenderView())
+                break;
+
+            depth++;
+        }
+
+        if (!foundHeight) {
+            // WTFLogAlways("getBCR_DEBUG: canSkipLayout=NO (no height found)");
+            return false;
+        }
+
+        // WTFLogAlways("getBCR_DEBUG: canSkipLayout=YES");
+        return true;
+    };
+
+    // DEBUG: Store what optimization would return, then compare with actual result
+    std::optional<FloatRect> optimizedResult;
+    if (canSkipLayout()) {
+        auto pair = boundingAbsoluteRectWithoutLayout();
+        if (pair) {
+            optimizedResult = pair->second;
+            document->convertAbsoluteToClientRect(*optimizedResult, pair->first->style());
+            return *optimizedResult;
+        }
+    }
+
+    // Always do layout (for testing)
     document->updateLayoutIfDimensionsOutOfDate(*this, { DimensionsCheck::Left, DimensionsCheck::Top, DimensionsCheck::Width, DimensionsCheck::Height, DimensionsCheck::IgnoreOverflow }, { LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible, LayoutOptions::CanDeferUpdateLayerPositions, LayoutOptions::IgnorePendingStylesheets });
     LocalFrameView::AutoPreventLayerAccess preventAccess(document->view());
     auto pair = boundingAbsoluteRectWithoutLayout();
@@ -2053,6 +2187,19 @@ FloatRect Element::boundingClientRect()
     CheckedPtr renderer = WTF::move(pair->first);
     FloatRect result = pair->second;
     document->convertAbsoluteToClientRect(result, renderer->style());
+
+    // // DEBUG: Compare and log if different
+    // if (optimizedResult && *optimizedResult != result) {
+    //     WTFLogAlways("getBCR MISMATCH: tag=%s id=%s",
+    //         tagName().utf8().data(),
+    //         getIdAttribute().string().utf8().data());
+    //     WTFLogAlways("  optimized: (%.1f,%.1f,%.1f,%.1f)",
+    //         optimizedResult->x(), optimizedResult->y(),
+    //         optimizedResult->width(), optimizedResult->height());
+    //     WTFLogAlways("  actual:    (%.1f,%.1f,%.1f,%.1f)",
+    //         result.x(), result.y(), result.width(), result.height());
+    // }
+
     return result;
 }
 
