@@ -5491,6 +5491,11 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
     return _page->pageLoadState().networkRequestsInProgress();
 }
 
+- (BOOL)_usesBackForwardCache
+{
+    return _page->shouldUseBackForwardCache();
+}
+
 static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingProgressEvents events)
 {
     OptionSet<WebCore::LayoutMilestone> milestones;

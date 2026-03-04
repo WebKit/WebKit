@@ -4133,7 +4133,9 @@ TEST(ProcessSwap, NumberOfPrewarmedProcesses)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    EXPECT_EQ(2u, [processPool _webProcessCount]);
+    // Site Isolation has 2 prewarmed processes while PSON only has 1.
+    auto expectedCount = isSiteIsolationEnabled(webView.get()) ? 3u : 2u;
+    EXPECT_EQ(expectedCount, [processPool _webProcessCount]);
     EXPECT_EQ(1u, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
     EXPECT_TRUE([processPool _hasPrewarmedWebProcess]);
 
@@ -4142,8 +4144,13 @@ TEST(ProcessSwap, NumberOfPrewarmedProcesses)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    EXPECT_EQ(3u, [processPool _webProcessCount]);
-    EXPECT_EQ(2u, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
+    // Site Isolation has 2 prewarmed processes while PSON only has 1.
+    expectedCount = isSiteIsolationEnabled(webView.get()) ? 4u : 3u;
+    EXPECT_EQ(expectedCount, [processPool _webProcessCount]);
+
+    // If page cache is disabled, process for www.webkit.org will enter process cache (cached).
+    expectedCount = webView.get()._usesBackForwardCache ? 2u : 1u;
+    EXPECT_EQ(expectedCount, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
     EXPECT_TRUE([processPool _hasPrewarmedWebProcess]);
 }
 
