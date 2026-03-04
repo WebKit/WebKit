@@ -29,6 +29,8 @@
 #if ENABLE(SCREEN_TIME)
 
 #import "WKWebViewInternal.h"
+#import <wtf/NeverDestroyed.h>
+#import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/darwin/DispatchExtras.h>
@@ -36,6 +38,12 @@
 #import <pal/cocoa/ScreenTimeSoftLink.h>
 
 static void *screenTimeConfigurationObserverKVOContext = &screenTimeConfigurationObserverKVOContext;
+
+static dispatch_queue_t screenTimeUpdateQueueSingleton()
+{
+    static NeverDestroyed<OSObjectPtr<dispatch_queue_t>> queue = adoptOSObject(dispatch_queue_create("com.apple.WebKit.ScreenTimeUpdateQueue", DISPATCH_QUEUE_SERIAL));
+    return queue.get().get();
+}
 
 @implementation WKScreenTimeConfigurationObserver {
     RetainPtr<STScreenTimeConfigurationObserver> _screenTimeConfigurationObserver;
@@ -69,7 +77,7 @@ static void *screenTimeConfigurationObserverKVOContext = &screenTimeConfiguratio
     if (_screenTimeConfigurationObserver)
         return;
 
-    _screenTimeConfigurationObserver = adoptNS([PAL::allocSTScreenTimeConfigurationObserverInstance() initWithUpdateQueue:globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)]);
+    _screenTimeConfigurationObserver = adoptNS([PAL::allocSTScreenTimeConfigurationObserverInstance() initWithUpdateQueue:screenTimeUpdateQueueSingleton()]);
     [_screenTimeConfigurationObserver addObserver:self forKeyPath:@"configuration.enforcesChildRestrictions" options:0 context:&screenTimeConfigurationObserverKVOContext];
     [_screenTimeConfigurationObserver startObserving];
 }
