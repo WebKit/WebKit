@@ -185,7 +185,7 @@ void HTMLDialogElement::close(const String& result, Element* source)
     removeAttribute(openAttr);
 
     if (isModal())
-        removeFromTopLayer();
+        requestRemovalFromTopLayer();
 
     setIsModal(false);
 

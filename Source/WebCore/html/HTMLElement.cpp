@@ -1292,7 +1292,7 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
     ASSERT(popoverData());
 
     if (isInTopLayer())
-        removeFromTopLayer();
+        requestRemovalFromTopLayer();
 
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (parentNode())

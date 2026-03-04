@@ -833,6 +833,15 @@ TextStream& operator<<(TextStream& ts, Overflow overflow)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, Overlay overlay)
+{
+    switch (overlay) {
+    case Overlay::None: ts << "none"_s; break;
+    case Overlay::Auto: ts << "auto"_s; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, OverflowAlignment alignment)
 {
     switch (alignment) {

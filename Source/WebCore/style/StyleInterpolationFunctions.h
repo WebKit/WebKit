@@ -90,6 +90,17 @@ inline WebCore::Color blendFunc(const WebCore::Color& from, const WebCore::Color
     return WebCore::blend(from, to, context);
 }
 
+inline Overlay blendFunc(Overlay from, Overlay to, const Context& context)
+{
+    // https://drafts.csswg.org/css-position-4/#overlay
+    // overlay: auto is preserved for 0 < p < 1, similar to how visibility: visible is preserved.
+    if (context.progress <= 0)
+        return from;
+    if (context.progress >= 1)
+        return to;
+    return Overlay::Auto;
+}
+
 inline ContentVisibility blendFunc(ContentVisibility from, ContentVisibility to, const Context& context)
 {
     // https://drafts.csswg.org/css-contain-3/#content-visibility-animation

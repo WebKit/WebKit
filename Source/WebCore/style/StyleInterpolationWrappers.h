@@ -373,6 +373,19 @@ public:
     }
 };
 
+// https://drafts.csswg.org/css-position-4/#overlay
+// overlay: auto is preserved for 0 < p < 1, similar to how visibility: visible is preserved.
+class OverlayWrapper final : public Wrapper<Overlay> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(OverlayWrapper, Animation);
+public:
+    using Wrapper::Wrapper;
+
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
+    {
+        return value(from) == Overlay::Auto || value(to) == Overlay::Auto;
+    }
+};
+
 // MARK: - CoordinatedValueList Wrappers
 
 // Wrapper base class for an animatable property in a CoordinatedValueList

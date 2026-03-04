@@ -56,6 +56,9 @@ public:
     HTMLElement* invoker() const { return m_invoker.get(); }
     void setInvoker(const HTMLElement* element) { m_invoker = element; }
 
+    HTMLElement* implicitAnchor() const { return m_implicitAnchor.get(); }
+    void setImplicitAnchor(const HTMLElement* element) { m_implicitAnchor = element; }
+
     class ScopedStartShowingOrHiding {
     public:
     explicit ScopedStartShowingOrHiding(Element& popover)
@@ -82,6 +85,7 @@ private:
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_previouslyFocusedElement;
     RefPtr<ToggleEventTask> m_toggleEventTask;
     WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_invoker;
+    WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_implicitAnchor;
     bool m_isHidingOrShowingPopover = false;
 };
 
