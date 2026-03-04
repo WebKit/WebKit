@@ -96,7 +96,7 @@ public:
     virtual void setTextTrackRepresentationBounds(const IntRect&) { }
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
-    virtual void requestShowCaptionDisplaySettingsPreview() { }
+    virtual void requestShowCaptionDisplaySettingsPreview(const String&) { }
     virtual void requestHideCaptionDisplaySettingsPreview() { }
 #endif
 

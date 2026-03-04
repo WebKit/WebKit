@@ -552,10 +552,10 @@ void VideoPresentationModelContext::setTextTrackRepresentationBounds(const IntRe
 }
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
-void VideoPresentationModelContext::requestShowCaptionDisplaySettingsPreview()
+void VideoPresentationModelContext::requestShowCaptionDisplaySettingsPreview(const String& profileID)
 {
     if (RefPtr manager = m_manager.get())
-        manager->requestShowCaptionDisplaySettingsPreview(m_contextId);
+        manager->requestShowCaptionDisplaySettingsPreview(m_contextId, profileID);
 }
 
 void VideoPresentationModelContext::requestHideCaptionDisplaySettingsPreview()
@@ -1397,9 +1397,10 @@ void VideoPresentationManagerProxy::performCaptionDisplaySettingsAction(Playback
     });
 }
 
-void VideoPresentationManagerProxy::requestShowCaptionDisplaySettingsPreview(PlaybackSessionContextIdentifier contextId)
+void VideoPresentationManagerProxy::requestShowCaptionDisplaySettingsPreview(PlaybackSessionContextIdentifier contextId, const String& profileID)
 {
-    performCaptionDisplaySettingsAction(contextId, [](WebPageProxy& page, const FrameInfoData& frameInfo, WebCore::HTMLMediaElementIdentifier htmlMediaElementIdentifier) {
+    performCaptionDisplaySettingsAction(contextId, [profileID](WebPageProxy& page, const FrameInfoData& frameInfo, WebCore::HTMLMediaElementIdentifier htmlMediaElementIdentifier) {
+        page.setCaptionDisplaySettingsPreviewProfileID(frameInfo, profileID);
         page.showCaptionDisplaySettingsPreview(frameInfo, htmlMediaElementIdentifier);
     });
 }

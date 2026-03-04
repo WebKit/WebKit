@@ -42,6 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)captionStyleMenuWillOpen:(PlatformMenu *)menu;
 - (void)captionStyleMenuDidClose:(PlatformMenu *)menu;
 @optional
+- (void)captionStyleMenu:(PlatformMenu *)menu setPreviewProfileID:(NSString *)profileID;
 - (void)captionStyleMenu:(PlatformMenu *)menu didSelectProfile:(NSString *)profileID;
 @end
 

@@ -441,6 +441,54 @@ TEST_F(CaptionPreferenceTests, TextEdge)
     EXPECT_STREQ(preferences->captionsTextEdgeCSS().utf8().data(), "stroke-color:black;paint-order:stroke;stroke-linejoin:round;stroke-linecap:round;");
 }
 
+TEST_F(CaptionPreferenceTests, PreviewStyles)
+{
+    if (!CaptionUserPreferencesMediaAF::canSetActiveProfileID())
+        return;
+
+    MediaAccessibilityShim shim;
+
+    auto shimmedMACaptionAppearanceExecuteBlockForProfileID = [](CFStringRef profileID, void (^aBlock)(void)) -> void {
+        SOFT_LINK_SHIM_SET_RESULT(MACaptionAppearanceGetDisplayType, kMACaptionAppearanceDisplayTypeAutomatic);
+        SOFT_LINK_SHIM_SET_RESULT(MACaptionAppearanceCopyForegroundColor, cachedCGColor(Color::magenta));
+        SOFT_LINK_SHIM_SET_RESULT(MACaptionAppearanceCopyBackgroundColor, cachedCGColor(Color::yellow));
+        SOFT_LINK_SHIM_SET_RESULT(MACaptionAppearanceCopyWindowColor, cachedCGColor(Color::cyan));
+        SOFT_LINK_SHIM_SET_RESULT(MACaptionAppearanceCopyFontDescriptorForStyle, adoptCF(CTFontDescriptorCreateWithNameAndSize(CFSTR(".AppleSystemUIFontMonospaced"), 10)));
+        SOFT_LINK_SHIM_SET_RESULT(MACaptionAppearanceGetForegroundOpacity, 0.75);
+        SOFT_LINK_SHIM_SET_RESULT(MACaptionAppearanceGetBackgroundOpacity, 0.5);
+        SOFT_LINK_SHIM_SET_RESULT(MACaptionAppearanceGetWindowOpacity, 0.25);
+        SOFT_LINK_SHIM_SET_RESULT(MACaptionAppearanceGetWindowRoundedCornerRadius, (CGFloat)5.f);
+        SOFT_LINK_SHIM_SET_RESULT(MACaptionAppearanceGetRelativeCharacterSize, (CGFloat)2.f);
+        SOFT_LINK_SHIM_SET_RESULT(MACaptionAppearanceGetTextEdgeStyle, kMACaptionAppearanceTextEdgeStyleDropShadow);
+        SOFT_LINK_SHIM_SET_RESULT(MACaptionAppearanceCopyProfileIDs, adoptCF((__bridge CFArrayRef)@[@"Profile 1", @"Profile 2", @"Profile 3"]));
+        SOFT_LINK_SHIM_SET_RESULT(MACaptionAppearanceCopyActiveProfileID, CFSTR("Profile 1"));
+
+        aBlock();
+    };
+    SoftLinkShim<void, CFStringRef, void (^)(void)> MACaptionAppearanceExecuteBlockForProfileIDShim { &softLinkMediaAccessibilityMACaptionAppearanceExecuteBlockForProfileID, shimmedMACaptionAppearanceExecuteBlockForProfileID, canLoad_MediaAccessibility_MACaptionAppearanceExecuteBlockForProfileID };
+
+    UniqueRef group = PageGroup::create("CaptionPreferenceTests"_s);
+    auto preferences = CaptionUserPreferencesMediaAF::create(group);
+
+    EXPECT_STREQ(preferences->captionsTextColorCSS().utf8().data(), "color:#ffffff;");
+    EXPECT_STREQ(preferences->captionsBackgroundCSS().utf8().data(), "background-color:#000000;");
+    EXPECT_STREQ(preferences->captionsWindowCSS().utf8().data(), "background-color:#000000;");
+    EXPECT_STREQ(preferences->windowRoundedCornerRadiusCSS().utf8().data(), "");
+    EXPECT_STREQ(preferences->captionsDefaultFontCSS().utf8().data(), "font-family: \"system-ui\";");
+    EXPECT_STREQ(preferences->captionsFontSizeCSS().utf8().data(), "font-size: 5cqmin;");
+    EXPECT_STREQ(preferences->captionsTextEdgeCSS().utf8().data(), "");
+
+    preferences->setCaptionPreviewProfileID("Profile 2"_s);
+
+    EXPECT_STREQ(preferences->captionsTextColorCSS().utf8().data(), "color:rgba(255, 0, 255, 0.75);");
+    EXPECT_STREQ(preferences->captionsBackgroundCSS().utf8().data(), "background-color:rgba(255, 255, 0, 0.5);");
+    EXPECT_STREQ(preferences->captionsWindowCSS().utf8().data(), "background-color:rgba(0, 255, 255, 0.25);");
+    EXPECT_STREQ(preferences->windowRoundedCornerRadiusCSS().utf8().data(), "border-radius:5px;padding:1.25px;");
+    EXPECT_STREQ(preferences->captionsDefaultFontCSS().utf8().data(), "font-family: \"ui-monospace\";");
+    EXPECT_STREQ(preferences->captionsFontSizeCSS().utf8().data(), "font-size: 10cqmin;");
+    EXPECT_STREQ(preferences->captionsTextEdgeCSS().utf8().data(), "text-shadow:0 .1em .16em black;stroke-color:black;paint-order:stroke;stroke-linejoin:round;stroke-linecap:round;");
+}
+
 #if !HAVE(AVLEGIBLEMEDIAOPTIONSMENUCONTROLLER)
 TEST_F(CaptionPreferenceTests, CaptionStyleMenu)
 {
@@ -500,10 +548,10 @@ TEST_F(CaptionPreferenceTests, CaptionStyleMenuHighlight)
         // TODO: Menu highlighting is currently not supported on IOS_FAMILY
 #if PLATFORM(MAC)
         [menu performSelector:@selector(highlightItem:) withObject:[menu itemAtIndex:1]];
-        EXPECT_WK_STREQ("Profile 2", CaptionUserPreferencesMediaAF::platformActiveProfileID());
+        EXPECT_WK_STREQ("Profile 1", CaptionUserPreferencesMediaAF::platformActiveProfileID());
 
         [menu performSelector:@selector(highlightItem:) withObject:[menu itemAtIndex:2]];
-        EXPECT_WK_STREQ("Profile 3", CaptionUserPreferencesMediaAF::platformActiveProfileID());
+        EXPECT_WK_STREQ("Profile 1", CaptionUserPreferencesMediaAF::platformActiveProfileID());
 #endif
     });
 

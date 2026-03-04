@@ -12277,6 +12277,11 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
     [_actionSheetAssistant showMediaControlsContextMenu:WTF::move(targetFrame) items:WTF::move(items) frameInfo:frameInfo identifier:identifier completionHandler:WTF::move(completionHandler)];
 }
 
+- (void)captionStyleMenuSetPreviewProfileID:(NSString *)profileID frameInfo:(const WebKit::FrameInfoData&)frameInfo identifier:(WebCore::HTMLMediaElementIdentifier)identifier
+{
+    protect(_page)->setCaptionDisplaySettingsPreviewProfileID(frameInfo, profileID);
+}
+
 - (void)captionStyleMenuWillOpenWithFrameInfo:(const WebKit::FrameInfoData&)frameInfo identifier:(WebCore::HTMLMediaElementIdentifier)identifier
 {
     _page->showCaptionDisplaySettingsPreview(frameInfo, identifier);

@@ -185,17 +185,12 @@ static bool menuHasMenuAncestor(NSMenu *childMenu, NSMenu *ancestorMenu)
 
 - (void)setPreviewProfileID:(NSString *)profileID
 {
-    if (profileID) {
-        CaptionUserPreferencesMediaAF::setActiveProfileID(WTF::String(profileID));
-
-        if (auto delegate = self.delegate)
+    if (auto delegate = self.delegate) {
+        if (profileID)
             [delegate captionStyleMenuWillOpen:_menu.get()];
-
-        return;
+        if ([delegate respondsToSelector:@selector(captionStyleMenu:setPreviewProfileID:)])
+            [delegate captionStyleMenu:self.menu setPreviewProfileID:profileID];
     }
-
-    if (self.savedActiveProfileID && self.savedActiveProfileID.length > 0)
-        CaptionUserPreferencesMediaAF::setActiveProfileID(WTF::String(self.savedActiveProfileID));
 }
 
 - (void)systemCaptionStyleSettingsItemSelected:(NSMenuItem *)sender
@@ -207,8 +202,6 @@ static bool menuHasMenuAncestor(NSMenu *childMenu, NSMenu *ancestorMenu)
 
 - (void)menuWillOpen:(NSMenu *)menu
 {
-    self.savedActiveProfileID = CaptionUserPreferencesMediaAF::platformActiveProfileID().createNSString().get();
-
     if (auto delegate = self.delegate)
         [delegate captionStyleMenuWillOpen:_menu.get()];
 }
