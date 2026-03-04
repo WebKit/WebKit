@@ -292,7 +292,7 @@ void RemoteGraphicsContextProxy::drawGlyphsImmediate(const Font& font, std::span
     ASSERT(glyphs.size() == advances.size());
     appendStateChangeItemIfNecessary();
     recordResourceUse(const_cast<Font&>(font));
-    send(Messages::RemoteGraphicsContext::DrawGlyphs(font.renderingResourceIdentifier(), { glyphs.data(), Vector<FloatSize>(advances).span().data(), glyphs.size() }, localAnchor, smoothingMode));
+    send(Messages::RemoteGraphicsContext::DrawGlyphs(font.renderingResourceIdentifier(), { glyphs.data(), advances.data(), glyphs.size() }, localAnchor, smoothingMode));
 }
 
 void RemoteGraphicsContextProxy::drawDisplayList(const DisplayList::DisplayList& displayList, ControlFactory&)

@@ -75,7 +75,7 @@ messages -> RemoteGraphicsContext Stream {
     ClipPath(WebCore::Path path, enum:bool WebCore::WindRule windRule) StreamBatched
     ClipCachedPath(WebKit::RemotePathImplIdentifier identifier, enum:bool WebCore::WindRule windRule)
     ResetClip() StreamBatched
-    DrawGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, IPC::ArrayReferenceTuple<WebCore::GlyphBufferGlyph, WebCore::FloatSize> glyphsAdvances, WebCore::FloatPoint localAnchor, enum:uint8_t WebCore::FontSmoothingMode smoothingMode) StreamBatched
+    DrawGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, IPC::ArrayReferenceTuple<WebCore::GlyphBufferGlyph, WebCore::GlyphBufferAdvance> glyphsAdvances, WebCore::FloatPoint localAnchor, enum:uint8_t WebCore::FontSmoothingMode smoothingMode) StreamBatched
     DrawDisplayList(WebKit::RemoteDisplayListIdentifier identifier) StreamBatched
     DrawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, WebCore::FloatRect sourceImageRect, Ref<WebCore::Filter> filter) StreamBatched
     DrawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::FloatRect destinationRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options) StreamBatched

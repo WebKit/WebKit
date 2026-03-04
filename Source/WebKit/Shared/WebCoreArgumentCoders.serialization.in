@@ -8772,8 +8772,14 @@ using WebCore::GraphicsStyle = Variant<WebCore::GraphicsDropShadow, WebCore::Gra
 enum class WebCore::ScrollBehaviorForFixedElements : bool
 #if USE(CG)
 using WebCore::GlyphBufferGlyph = CGGlyph
+using WebCore::GlyphBufferAdvance = CGSize;
+[AdditionalEncoder=StreamConnectionEncoder] struct CGSize {
+    CGFloat width;
+    CGFloat height;
+}
 #else
 using WebCore::GlyphBufferGlyph = WebCore::Glyph
+using WebCore::GlyphBufferAdvance = WebCore::FloatSize;
 #endif
 using WebCore::Glyph = unsigned short
 
