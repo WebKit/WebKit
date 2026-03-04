@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<input id="input" type="date" readonly value="1970-01-01"/>
+
+<script>
+
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Tests that a readonly date input's calendar view cannot be opened using the space key.");
+
+    showingPicker = await UIHelper.isShowingDateTimePicker();
+    shouldBeFalse("showingPicker");
+
+    debug("Focusing readonly input using tab key and then pressing space key.");
+    UIHelper.keyDown("\t");
+    UIHelper.keyDown(" ");
+    await UIHelper.ensurePresentationUpdate();
+
+    showingPicker = await UIHelper.isShowingDateTimePicker();
+    shouldBeFalse("showingPicker");
+
+    shouldBeEqualToString("document.getElementById('input').value", "1970-01-01");
+
+    debug("Removing readonly attribute and pressing space key.");
+    document.getElementById("input").removeAttribute("readonly");
+    UIHelper.keyDown(" ");
+    await UIHelper.ensurePresentationUpdate();
+
+    showingPicker = await UIHelper.isShowingDateTimePicker();
+    shouldBeTrue("showingPicker");
+
+    finishJSTest();
+});
+</script>
+
+</body>
+</html>

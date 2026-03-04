@@ -597,6 +597,10 @@ void BaseDateAndTimeInputType::didChangeValueFromControl()
 
 void BaseDateAndTimeInputType::didReceiveSpaceKeyFromControl()
 {
+    ASSERT(element());
+    if (!element()->renderer() || !protect(element())->isMutable())
+        return;
+
     // One of our subfields received a space key event, so let's move focus into the picker.
     m_pickerWasActivatedByKeyboard = true;
     m_didTransferFocusToPicker = true;
