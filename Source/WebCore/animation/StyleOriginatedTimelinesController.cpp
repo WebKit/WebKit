@@ -253,13 +253,13 @@ void StyleOriginatedTimelinesController::documentDidResolveStyle()
     }
 
     // Purge any inactive named timeline no longer attached to an animation.
-    for (auto& [name, timelines] : m_nameToTimelineMap) {
+    m_nameToTimelineMap.removeIf([](auto& keyValuePair) {
+        auto& timelines = keyValuePair.value;
         timelines.removeAllMatching([](auto& timeline) {
             return timeline->isInactiveStyleOriginatedTimeline() && timeline->relevantAnimations().isEmpty();
         });
-        if (timelines.isEmpty())
-            m_nameToTimelineMap.remove(name);
-    }
+        return timelines.isEmpty();
+    });
 
     m_removedTimelines.clear();
 }
