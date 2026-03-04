@@ -2467,8 +2467,11 @@ RefPtr<API::Navigation> WebPageProxy::loadSimulatedRequest(WebCore::ResourceRequ
 
     process->markProcessAsRecentlyUsed();
     process->assumeReadAccessToBaseURL(*this, baseURL, [weakProcess = WeakPtr { process }, loadParameters = WTF::move(loadParameters), simulatedResponse = WTF::move(simulatedResponse), webPageID = m_webPageID] () mutable {
-        weakProcess->send(Messages::WebPage::LoadSimulatedRequestAndResponse(WTF::move(loadParameters), simulatedResponse), webPageID);
-        weakProcess->startResponsivenessTimer();
+        RefPtr protectedProcess = weakProcess.get();
+        if (!protectedProcess)
+            return;
+        protectedProcess->send(Messages::WebPage::LoadSimulatedRequestAndResponse(WTF::move(loadParameters), simulatedResponse), webPageID);
+        protectedProcess->startResponsivenessTimer();
     });
 
     return navigation;
@@ -2525,14 +2528,18 @@ void WebPageProxy::loadAlternateHTML(Ref<WebCore::DataSegment>&& htmlData, const
     ] () mutable {
         process->markProcessAsRecentlyUsed();
         process->assumeReadAccessToBaseURLs(*this, { baseURL.string(), unreachableURL.string() }, [weakThis = WeakPtr { *this }, weakProcess = WeakPtr { process }, baseURL, unreachableURL, loadParameters = WTF::move(loadParameters)] () mutable {
-            if (!weakThis || !weakProcess)
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+            RefPtr protectedProcess = weakProcess.get();
+            if (!protectedProcess)
                 return;
             if (baseURL.protocolIsFile())
-                weakProcess->addPreviouslyApprovedFileURL(baseURL);
+                protectedProcess->addPreviouslyApprovedFileURL(baseURL);
             if (unreachableURL.protocolIsFile())
-                weakProcess->addPreviouslyApprovedFileURL(unreachableURL);
-            weakThis->send(Messages::WebPage::LoadAlternateHTML(WTF::move(loadParameters)));
-            weakProcess->startResponsivenessTimer();
+                protectedProcess->addPreviouslyApprovedFileURL(unreachableURL);
+            protectedThis->send(Messages::WebPage::LoadAlternateHTML(WTF::move(loadParameters)));
+            protectedProcess->startResponsivenessTimer();
         });
     };
 
@@ -2592,18 +2599,19 @@ RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> op
     if (!url.isEmpty()) {
         // We may not have an extension yet if back/forward list was reinstated after a WebProcess crash or a browser relaunch
         maybeInitializeSandboxExtensionHandle(protectedLegacyMainFrameProcess(), URL { url }, currentResourceDirectoryURL(), true, [weakThis = WeakPtr { *this }, process = WTF::move(process), options = WTF::move(options), sandboxExtensionHandle = WTF::move(sandboxExtensionHandle), navigation](std::optional<SandboxExtension::Handle>&& sandboxExtension) mutable {
-            if (!weakThis)
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
                 return;
             if (sandboxExtension)
                 sandboxExtensionHandle = WTF::move(*sandboxExtension);
-            weakThis->send(Messages::WebPage::Reload(navigation->navigationID(), options, WTF::move(sandboxExtensionHandle)));
+            protectedThis->send(Messages::WebPage::Reload(navigation->navigationID(), options, WTF::move(sandboxExtensionHandle)));
             process->startResponsivenessTimer();
 
-            if (weakThis->shouldForceForegroundPriorityForClientNavigation())
+            if (protectedThis->shouldForceForegroundPriorityForClientNavigation())
                 navigation->setClientNavigationActivity(process->protectedThrottler()->foregroundActivity("Client reload"_s));
 
 #if ENABLE(SPEECH_SYNTHESIS)
-            weakThis->resetSpeechSynthesizer();
+            protectedThis->resetSpeechSynthesizer();
 #endif
         });
     }
@@ -3643,13 +3651,14 @@ void WebPageProxy::executeEditCommand(const String& commandName, const String& a
 
     auto completionHandler = [weakThis = WeakPtr { *this }, commandName, argument, frameID] () mutable {
         static NeverDestroyed<String> ignoreSpellingCommandName(MAKE_STATIC_STRING_IMPL("ignoreSpelling"));
-        if (!weakThis)
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
         if (commandName == ignoreSpellingCommandName)
-            ++weakThis->m_pendingLearnOrIgnoreWordMessageCount;
+            ++protectedThis->m_pendingLearnOrIgnoreWordMessageCount;
 
-        weakThis->sendToProcessContainingFrame(frameID, Messages::WebPage::ExecuteEditCommand(commandName, argument));
+        protectedThis->sendToProcessContainingFrame(frameID, Messages::WebPage::ExecuteEditCommand(commandName, argument));
     };
 
     if (auto pasteAccessCategory = pasteAccessCategoryForCommand(commandName)) {
@@ -11004,9 +11013,8 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item, c
     }
     auto targetFrameID = focusedOrMainFrame() ? std::optional(focusedOrMainFrame()->frameID()) : std::nullopt;
     platformDidSelectItemFromActiveContextMenu(item, [weakThis = WeakPtr { *this }, item, targetFrameID] () mutable {
-        if (!weakThis)
-            return;
-        weakThis->sendToProcessContainingFrame(targetFrameID, Messages::WebPage::DidSelectItemFromActiveContextMenu(item));
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->sendToProcessContainingFrame(targetFrameID, Messages::WebPage::DidSelectItemFromActiveContextMenu(item));
     });
 }
 
