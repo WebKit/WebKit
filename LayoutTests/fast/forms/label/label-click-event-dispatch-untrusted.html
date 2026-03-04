@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="input" type="checkbox">
+<label id="label" for="input"></label>
+
+<script>
+
+description("Tests that clicking a label dispatches an untrusted click event on the associated form control.");
+
+input.addEventListener("click", (event) => {
+    shouldBeFalse("event.isTrusted");
+});
+
+label.click();
+
+</script>
+
+</body>
+</html>

@@ -27,6 +27,7 @@
 
 #if PLATFORM(COCOA)
 
+#import "IOSMouseEventTestHarness.h"
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -63,9 +64,38 @@ TEST(SwitchInputTests, HapticFeedbackOnDrag)
 
 #endif // PLATFORM(MAC)
 
+#if HAVE(UI_IMPACT_FEEDBACK_GENERATOR)
+
+TEST(SwitchInputTests, HapticFeedbackOnClick)
+{
+    __block bool done = false;
+
+    InstanceMethodSwizzler swizzler {
+        UIImpactFeedbackGenerator.class,
+        @selector(impactOccurred),
+        imp_implementationWithBlock(^{
+            done = true;
+        })
+    };
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 300)]);
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width,initial-scale=1'><label><input type='checkbox' switch></label>"];
+
+    TestWebKitAPI::MouseEventTestHarness testHarness { webView.get() };
+    testHarness.mouseMove(15, 10);
+    testHarness.mouseDown();
+    testHarness.mouseUp();
+    [webView waitForPendingMouseEvents];
+    [webView waitForNextPresentationUpdate];
+
+    TestWebKitAPI::Util::run(&done);
+}
+
+#endif // HAVE(UI_IMPACT_FEEDBACK_GENERATOR)
+
 #if HAVE(UI_IMPACT_FEEDBACK_GENERATOR) || PLATFORM(MAC)
 
-TEST(SwitchInputTests, HapticFeedbackRequiresUserGesture)
+TEST(SwitchInputTests, HapticFeedbackRequiresUserGestureAndTrustedEvent)
 {
     InstanceMethodSwizzler swizzler {
 #if PLATFORM(MAC)
@@ -81,9 +111,18 @@ TEST(SwitchInputTests, HapticFeedbackRequiresUserGesture)
     };
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 300)]);
-    [webView synchronouslyLoadHTMLString:@"<label><input type='checkbox' switch></label>"];
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width,initial-scale=1'><div style='width: 100px; height: 100px; background: red;' onclick=\"document.querySelector('label').click()\"></div><label><input type='checkbox' switch></label>"];
 
-    [webView stringByEvaluatingJavaScript:@"document.querySelector('label').click()"];
+#if PLATFORM(MAC)
+    [webView sendClickAtPoint:NSMakePoint(15, 290)];
+#else
+    TestWebKitAPI::MouseEventTestHarness testHarness { webView.get() };
+    testHarness.mouseMove(15, 10);
+    testHarness.mouseDown();
+    testHarness.mouseUp();
+#endif
+
+    [webView waitForPendingMouseEvents];
     [webView waitForNextPresentationUpdate];
 }
 

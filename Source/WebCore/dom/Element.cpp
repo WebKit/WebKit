@@ -629,7 +629,14 @@ bool Element::dispatchKeyEvent(const PlatformKeyboardEvent& platformEvent)
 
 bool Element::dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions eventOptions, SimulatedClickVisualOptions visualOptions)
 {
-    return simulateClick(*this, underlyingEvent, eventOptions, visualOptions, SimulatedClickSource::UserAgent);
+    auto simulatedClickSource = [&] {
+        if (!underlyingEvent)
+            return SimulatedClickSource::UserAgent;
+
+        return underlyingEvent->isTrusted() ? SimulatedClickSource::UserAgent : SimulatedClickSource::Bindings;
+    }();
+
+    return simulateClick(*this, underlyingEvent, eventOptions, visualOptions, simulatedClickSource);
 }
 
 Ref<Node> Element::cloneNodeInternal(Document& document, CloningOperation type, CustomElementRegistry* fallbackRegistry) const
