@@ -104,7 +104,6 @@ class LegacyWebPageInspectorController;
 
 @class NSCandidateListTouchBarItem;
 @class NSTextAlternatives;
-@class WebBasePluginPackage;
 @class WebDownload;
 @class WebImmediateActionController;
 @class WebNodeHighlight;
@@ -262,8 +261,8 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 #endif
 - (void)_willChangeValueForKey:(NSString *)key;
 - (void)_didChangeValueForKey:(NSString *)key;
-- (WebBasePluginPackage *)_pluginForMIMEType:(NSString *)MIMEType;
-- (WebBasePluginPackage *)_pluginForExtension:(NSString *)extension;
+- (id)_pluginForMIMEType:(NSString *)MIMEType;
+- (id)_pluginForExtension:(NSString *)extension;
 
 - (void)setCurrentNodeHighlight:(WebNodeHighlight *)nodeHighlight;
 - (WebNodeHighlight *)currentNodeHighlight;

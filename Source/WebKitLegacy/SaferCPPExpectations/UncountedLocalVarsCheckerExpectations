@@ -25,15 +25,12 @@ mac/History/WebHistoryItem.mm
 mac/Misc/WebElementDictionary.mm
 [ Mac ] mac/Misc/WebNSPasteboardExtras.mm
 [ Mac ] mac/Misc/WebSharingServicePickerController.mm
-mac/Plugins/WebPluginContainerCheck.mm
-mac/Plugins/WebPluginController.mm
 [ Mac ] mac/WebCoreSupport/PopupMenuMac.mm
 [ Mac ] mac/WebCoreSupport/WebContextMenuClient.mm
 mac/WebCoreSupport/WebEditorClient.mm
 mac/WebCoreSupport/WebFrameLoaderClient.mm
 mac/WebCoreSupport/WebGeolocationClient.mm
 [ Mac ] mac/WebCoreSupport/WebInspectorClient.mm
-mac/WebCoreSupport/WebPluginInfoProvider.mm
 [ Mac ] mac/WebCoreSupport/WebSelectionServiceController.mm
 mac/WebInspector/WebInspector.mm
 mac/WebView/WebArchive.mm

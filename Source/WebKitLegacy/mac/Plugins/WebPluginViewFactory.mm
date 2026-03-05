@@ -1,18 +1,18 @@
 /*
- * Copyright (C) 2005 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -26,16 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import "WebPluginViewFactory.h"
 
-#import <WebKitLegacy/WebBasePluginPackage.h>
+#import "WebPluginViewFactoryPrivate.h"
 
-@protocol WebPluginViewFactory;
-
-@interface WebPluginPackage : WebBasePluginPackage {
-    NSBundle *nsBundle;
-}
-
-- (Class)viewFactory;
-
-@end
+// These constants are used by the webView:plugInViewWithArguments: UI delegate method
+// to pass information to plugin views. They are maintained for API compatibility.
+NSString *WebPlugInBaseURLKey =                 @"WebPlugInBaseURLKey";
+NSString *WebPlugInAttributesKey =              @"WebPlugInAttributesKey";
+NSString *WebPlugInContainerKey =               @"WebPlugInContainerKey";
+NSString *WebPlugInModeKey =                    @"WebPlugInModeKey";
+NSString *WebPlugInShouldLoadMainResourceKey =  @"WebPlugInShouldLoadMainResourceKey";
+NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey";

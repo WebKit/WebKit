@@ -14,7 +14,6 @@ mac/DOM/DOMUtility.mm
 mac/DOM/WebDOMOperations.mm
 mac/Misc/WebElementDictionary.mm
 [ Mac ] mac/Misc/WebNSPasteboardExtras.mm
-[ iOS ] mac/Plugins/WebPluginController.mm
 [ Mac ] mac/WebCoreSupport/WebContextMenuClient.mm
 [ iOS ] mac/WebCoreSupport/WebEditorClient.mm
 mac/WebCoreSupport/WebFrameLoaderClient.mm

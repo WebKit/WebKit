@@ -37,7 +37,6 @@
 @class WebFrame;
 @class WebHistoryItem;
 @class WebView;
-@class WebPluginPackage;
 @class WebSecurityOrigin;
 @class UIWebPlugInView;
 
@@ -86,9 +85,9 @@ typedef NS_ENUM(NSInteger, WebMediaCaptureType) {
 - (void)webViewDidRestoreFromPageCache:(WebView *)webView;
 
 #if TARGET_OS_IPHONE
-- (WAKView *)webView:(WebView *)webView plugInViewWithArguments:(NSDictionary *)arguments fromPlugInPackage:(WebPluginPackage *)package;
+- (WAKView *)webView:(WebView *)webView plugInViewWithArguments:(NSDictionary *)arguments fromPlugInPackage:(id)package;
 #else
-- (NSView *)webView:(WebView *)webView plugInViewWithArguments:(NSDictionary *)arguments fromPlugInPackage:(WebPluginPackage *)package;
+- (NSView *)webView:(WebView *)webView plugInViewWithArguments:(NSDictionary *)arguments fromPlugInPackage:(id)package;
 #endif
 - (void)webView:(WebView *)webView willShowFullScreenForPlugInView:(id)plugInView;
 - (void)webView:(WebView *)webView didHideFullScreenForPlugInView:(id)plugInView;

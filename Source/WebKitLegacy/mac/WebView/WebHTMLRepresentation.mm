@@ -32,7 +32,6 @@
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
 #import "WebArchive.h"
-#import "WebBasePluginPackage.h"
 #import "WebDataSourceInternal.h"
 #import "WebDocumentPrivate.h"
 #import "WebFrameInternal.h"
@@ -81,12 +80,8 @@ using JSC::Yarr::RegularExpression;
 @interface WebHTMLRepresentationPrivate : NSObject {
 @public
     WebDataSource *dataSource;
-    
-    BOOL hasSentResponseToPlugin;
-    BOOL includedInWebKitStatistics;
 
-    id <WebPluginManualLoader> manualLoader;
-    NSView *pluginView;
+    BOOL includedInWebKitStatistics;
 }
 @end
 
@@ -147,12 +142,6 @@ using JSC::Yarr::RegularExpression;
     [super dealloc];
 }
 
-- (void)_redirectDataToManualLoader:(id<WebPluginManualLoader>)manualLoader forPluginView:(NSView *)pluginView
-{
-    _private->manualLoader = manualLoader;
-    _private->pluginView = pluginView;
-}
-
 - (void)setDataSource:(WebDataSource *)dataSource
 {
     _private->dataSource = dataSource;
@@ -175,39 +164,21 @@ using JSC::Yarr::RegularExpression;
     if (!webFrame)
         return;
 
-    if (!_private->pluginView)
-        [webFrame _commitData:data];
+    [webFrame _commitData:data];
 
     // If the document is a stand-alone media document, now is the right time to cancel the WebKit load
     auto* coreFrame = core(webFrame);
     if (coreFrame->document()->isMediaDocument() && coreFrame->loader().documentLoader())
         coreFrame->loader().documentLoader()->cancelMainResourceLoad(WebResourceLoadScheduler::pluginWillHandleLoadErrorFromResponse(coreFrame->loader().documentLoader()->response()));
-
-    if (_private->pluginView) {
-        if (!_private->hasSentResponseToPlugin) {
-            [_private->manualLoader pluginView:_private->pluginView receivedResponse:[dataSource response]];
-            _private->hasSentResponseToPlugin = YES;
-        }
-        
-        [_private->manualLoader pluginView:_private->pluginView receivedData:data];
-    }
 }
 
 - (void)receivedError:(NSError *)error withDataSource:(WebDataSource *)dataSource
 {
-    if (_private->pluginView) {
-        [_private->manualLoader pluginView:_private->pluginView receivedError:error];
-    }
 }
 
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
     WebFrame* webFrame = [dataSource webFrame];
-
-    if (_private->pluginView) {
-        [_private->manualLoader pluginViewFinishedLoading:_private->pluginView];
-        return;
-    }
 
     if (!webFrame)
         return;

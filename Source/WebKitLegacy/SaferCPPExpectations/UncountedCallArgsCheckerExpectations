@@ -127,8 +127,6 @@ mac/Misc/WebCoreStatistics.mm
 mac/Misc/WebElementDictionary.mm
 [ Mac ] mac/Misc/WebNSPasteboardExtras.mm
 [ Mac ] mac/Misc/WebSharingServicePickerController.mm
-mac/Plugins/WebPluginContainerCheck.mm
-mac/Plugins/WebPluginController.mm
 mac/Storage/WebDatabaseManager.mm
 mac/Storage/WebStorageManager.mm
 mac/WebCoreSupport/WebChromeClient.mm

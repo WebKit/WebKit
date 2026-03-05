@@ -33,11 +33,11 @@
 
 @class CALayer;
 @class WebFrame;
-@class WebPluginController;
 
 namespace WebCore {
 class CachedImage;
-    class KeyboardEvent;
+class KeyboardEvent;
+enum class ScrollbarWidth : uint8_t;
 }
 
 #if PLATFORM(MAC)
@@ -76,7 +76,6 @@ class CachedImage;
 #endif
 
 - (void)_web_updateLayoutAndStyleIfNeededRecursive;
-- (void)_destroyAllWebPlugins;
 - (BOOL)_needsLayout;
 
 #if PLATFORM(MAC)
@@ -97,8 +96,6 @@ class CachedImage;
 #endif
 
 - (void)_stopAutoscrollTimer;
-
-- (WebPluginController *)_pluginController;
 
 - (void)_executeSavedKeypressCommands;
 

@@ -15,6 +15,7 @@ list(APPEND WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKITLEGACY_DIR}"
     "${WEBKITLEGACY_DIR}/mac"
     "${WEBKITLEGACY_DIR}/mac/Misc"
+    "${WEBKITLEGACY_DIR}/mac/Plugins"
     "${WEBKITLEGACY_DIR}/mac/WebView"
     "${WEBKITLEGACY_DIR}/mac/WebCoreSupport"
     "${WebKitLegacy_FRAMEWORK_HEADERS_DIR}"
@@ -76,8 +77,6 @@ list(APPEND WebKitLegacy_SOURCES
     mac/Panels/WebAuthenticationPanel.m
     mac/Panels/WebPanelAuthenticationHandler.m
 
-    mac/Plugins/WebPluginPackage.mm
-
     mac/Storage/WebDatabaseManager.mm
     mac/Storage/WebDatabaseManagerClient.mm
     mac/Storage/WebDatabaseProvider.mm
@@ -103,7 +102,6 @@ list(APPEND WebKitLegacy_SOURCES
     mac/WebCoreSupport/WebOpenPanelResultListener.mm
     mac/WebCoreSupport/WebPaymentCoordinatorClient.mm
     mac/WebCoreSupport/WebPlatformStrategies.mm
-    mac/WebCoreSupport/WebPluginInfoProvider.mm
     mac/WebCoreSupport/WebProgressTrackerClient.mm
     mac/WebCoreSupport/WebSecurityOrigin.mm
     mac/WebCoreSupport/WebSelectionServiceController.mm
@@ -418,17 +416,8 @@ set(WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES
     mac/Panels/WebPanelAuthenticationHandler.h
     mac/Panels/WebAuthenticationPanel.h
 
-    mac/Plugins/WebPluginViewFactoryPrivate.h
-    mac/Plugins/WebBasePluginPackage.h
-    mac/Plugins/WebPluginController.h
-    mac/Plugins/WebPluginContainerCheck.h
-    mac/Plugins/WebPluginContainer.h
-    mac/Plugins/WebPluginPackagePrivate.h
-    mac/Plugins/WebPluginPackage.h
-    mac/Plugins/WebPluginContainerPrivate.h
     mac/Plugins/WebPluginViewFactory.h
-    mac/Plugins/WebPluginDatabase.h
-    mac/Plugins/WebPlugin.h
+    mac/Plugins/WebPluginViewFactoryPrivate.h
 
     mac/Storage/WebDatabaseManagerPrivate.h
     mac/Storage/WebStorageTrackerClient.h
@@ -451,7 +440,6 @@ set(WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES
     mac/WebCoreSupport/WebProgressTrackerClient.h
     mac/WebCoreSupport/WebDragClient.h
     mac/WebCoreSupport/WebChromeClient.h
-    mac/WebCoreSupport/WebPluginInfoProvider.h
     mac/WebCoreSupport/WebEditorClient.h
     mac/WebCoreSupport/CorrectionPanel.h
     mac/WebCoreSupport/WebSecurityOriginInternal.h
@@ -576,10 +564,6 @@ set(C99_FILES
     mac/Misc/WebNSURLRequestExtras.m
     mac/Misc/WebNSViewExtras.m
     mac/Misc/WebNSWindowExtras.m
-
-    mac/Plugins/WebPluginsPrivate.m
-
-    mac/Plugins/Hosted/WebTextInputWindowController.m
 
     mac/WebView/WebFormDelegate.m
 )

@@ -52,7 +52,6 @@ extern NSString *WebPageCacheDataSourceKey;
 extern NSString *WebPageCacheDocumentViewKey;
 
 extern NSString *WebFrameMainDocumentError;
-extern NSString *WebFrameHasPlugins;
 extern NSString *WebFrameHasUnloadListener;
 extern NSString *WebFrameUsesDatabases;
 extern NSString *WebFrameUsesGeolocation;

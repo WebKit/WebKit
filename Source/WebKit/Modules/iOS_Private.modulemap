@@ -2370,31 +2370,6 @@ framework module WebKit_Private [system] {
     export *
   }
 
-  explicit module WebPlugin {
-    header "WebPlugin.h"
-    export *
-  }
-
-  explicit module WebPluginContainer {
-    header "WebPluginContainer.h"
-    export *
-  }
-
-  explicit module WebPluginContainerPrivate {
-    header "WebPluginContainerPrivate.h"
-    export *
-  }
-
-  explicit module WebPluginDatabase {
-    header "WebPluginDatabase.h"
-    export *
-  }
-
-  explicit module WebPluginPackagePrivate {
-    header "WebPluginPackagePrivate.h"
-    export *
-  }
-
   explicit module WebPluginViewFactory {
     header "WebPluginViewFactory.h"
     export *
