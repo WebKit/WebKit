@@ -415,12 +415,14 @@ static ALWAYS_INLINE JSValue getByIdMegamorphic(JSGlobalObject* globalObject, VM
     bool shouldGiveUp = false;
     bool cacheable = true;
     while (true) {
-        if (TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags()) && object->type() != ArrayType && object->type() != JSFunctionType && object != globalObject->arrayPrototype()) [[unlikely]] {
-            if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm))
-                repatchGetBySlowPathCall(callFrame->codeBlock(), *stubInfo, kind);
-            if (object->getNonIndexPropertySlot(globalObject, uid, slot))
-                return slot.getValue(globalObject, uid);
-            return jsUndefined();
+        if (TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags())) {
+            if ((object->type() != ArrayType && object->type() != JSFunctionType && object != globalObject->arrayPrototype()) || (uid == vm.propertyNames->length || uid == vm.propertyNames->name)) [[unlikely]] {
+                if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm))
+                    repatchGetBySlowPathCall(callFrame->codeBlock(), *stubInfo, kind);
+                if (object->getNonIndexPropertySlot(globalObject, uid, slot))
+                    return slot.getValue(globalObject, uid);
+                return jsUndefined();
+            }
         }
 
         Structure* structure = object->structure();
@@ -734,12 +736,14 @@ static ALWAYS_INLINE JSValue inByIdMegamorphic(JSGlobalObject* globalObject, VM&
     bool shouldGiveUp = false;
     bool cacheable = true;
     while (true) {
-        if (TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags()) && object->type() != ArrayType && object->type() != JSFunctionType && object != globalObject->arrayPrototype()) [[unlikely]] {
-            if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm)) {
-                dataLogLnIf(verbose, " ", __LINE__);
-                repatchInBySlowPathCall(callFrame->codeBlock(), *stubInfo, InByKind::ById);
+        if (TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags())) {
+            if ((object->type() != ArrayType && object->type() != JSFunctionType && object != globalObject->arrayPrototype()) || (uid == vm.propertyNames->length || uid == vm.propertyNames->name)) [[unlikely]] {
+                if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm)) {
+                    dataLogLnIf(verbose, " ", __LINE__);
+                    repatchInBySlowPathCall(callFrame->codeBlock(), *stubInfo, InByKind::ById);
+                }
+                RELEASE_AND_RETURN(scope, jsBoolean(object->getNonIndexPropertySlot(globalObject, uid, slot)));
             }
-            RELEASE_AND_RETURN(scope, jsBoolean(object->getNonIndexPropertySlot(globalObject, uid, slot)));
         }
 
         Structure* structure = object->structure();
@@ -924,12 +928,13 @@ static ALWAYS_INLINE JSValue inByValMegamorphic(JSGlobalObject* globalObject, VM
     bool shouldGiveUp = false;
     bool cacheable = true;
     while (true) {
-        if (TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags()) && object->type() != ArrayType && object->type() != JSFunctionType && object != globalObject->arrayPrototype()) [[unlikely]] {
-            dataLogLnIf(verbose, " ", __LINE__);
-            if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm)) {
-                repatchInBySlowPathCall(callFrame->codeBlock(), *stubInfo, InByKind::ByVal);
+        if (TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags())) {
+            if ((object->type() != ArrayType && object->type() != JSFunctionType && object != globalObject->arrayPrototype()) || (uid == vm.propertyNames->length || uid == vm.propertyNames->name)) [[unlikely]] {
+                dataLogLnIf(verbose, " ", __LINE__);
+                if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm))
+                    repatchInBySlowPathCall(callFrame->codeBlock(), *stubInfo, InByKind::ByVal);
+                RELEASE_AND_RETURN(scope, jsBoolean(object->getNonIndexPropertySlot(globalObject, uid, slot)));
             }
-            RELEASE_AND_RETURN(scope, jsBoolean(object->getNonIndexPropertySlot(globalObject, uid, slot)));
         }
 
         Structure* structure = object->structure();
@@ -3635,14 +3640,16 @@ static ALWAYS_INLINE JSValue getByValMegamorphic(JSGlobalObject* globalObject, V
     bool shouldGiveUp = false;
     bool cacheable = true;
     while (true) {
-        if (TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags()) && object->type() != ArrayType && object->type() != JSFunctionType && object != globalObject->arrayPrototype()) [[unlikely]] {
-            if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm))
-                repatchGetBySlowPathCall(callFrame->codeBlock(), *stubInfo, kind);
-            bool result = object->getNonIndexPropertySlot(globalObject, uid, slot);
-            RETURN_IF_EXCEPTION(scope, { });
-            if (result)
-                RELEASE_AND_RETURN(scope, slot.getValue(globalObject, uid));
-            return jsUndefined();
+        if (TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags())) {
+            if ((object->type() != ArrayType && object->type() != JSFunctionType && object != globalObject->arrayPrototype()) || (uid == vm.propertyNames->length || uid == vm.propertyNames->name)) [[unlikely]] {
+                if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm))
+                    repatchGetBySlowPathCall(callFrame->codeBlock(), *stubInfo, kind);
+                bool result = object->getNonIndexPropertySlot(globalObject, uid, slot);
+                RETURN_IF_EXCEPTION(scope, { });
+                if (result)
+                    RELEASE_AND_RETURN(scope, slot.getValue(globalObject, uid));
+                return jsUndefined();
+            }
         }
 
         Structure* structure = object->structure();

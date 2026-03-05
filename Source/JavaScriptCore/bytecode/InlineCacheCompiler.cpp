@@ -4638,6 +4638,20 @@ RefPtr<AccessCase> InlineCacheCompiler::tryFoldToMegamorphic(CodeBlock* codeBloc
 
                 if (accessCase->usesPolyProto())
                     ++numberOfUndesiredMegamorphicAccessVariants;
+
+                Structure* currStructure = accessCase->structure();
+                if (auto* object = accessCase->tryGetAlternateBase())
+                    currStructure = object->structure();
+
+                if (identifier.uid() == vm().propertyNames->length) {
+                    if (currStructure->typeInfo().type() == JSFunctionType || currStructure->typeInfo().type() == ArrayType)
+                        return nullptr;
+                }
+
+                if (identifier.uid() == vm().propertyNames->name) {
+                    if (currStructure->typeInfo().type() == JSFunctionType)
+                        return nullptr;
+                }
             }
 
             // Currently, we do not apply megamorphic cache for "length" property since Array#length and String#length are too common.
@@ -4751,6 +4765,20 @@ RefPtr<AccessCase> InlineCacheCompiler::tryFoldToMegamorphic(CodeBlock* codeBloc
 
                 if (accessCase->usesPolyProto())
                     ++numberOfUndesiredMegamorphicAccessVariants;
+
+                Structure* currStructure = accessCase->structure();
+                if (auto* object = accessCase->tryGetAlternateBase())
+                    currStructure = object->structure();
+
+                if (identifier.uid() == vm().propertyNames->length) {
+                    if (currStructure->typeInfo().type() == JSFunctionType || currStructure->typeInfo().type() == ArrayType)
+                        return nullptr;
+                }
+
+                if (identifier.uid() == vm().propertyNames->name) {
+                    if (currStructure->typeInfo().type() == JSFunctionType)
+                        return nullptr;
+                }
             }
 
             // Currently, we do not apply megamorphic cache for "length" property since Array#length and String#length are too common.
