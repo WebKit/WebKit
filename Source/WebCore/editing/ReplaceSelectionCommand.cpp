@@ -716,7 +716,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
         }
 
         if (!inlineStyle || newInlineStyle->isEmpty()) {
-            if (isStyleSpanOrSpanWithOnlyStyleAttribute(*element) || isEmptyFontTag(element.get(), AllowNonEmptyStyleAttribute)) {
+            if (isStyleSpanOrSpanWithOnlyStyleAttribute(*element) || isEmptyFontTag(element.get(), AllowNonEmptyStyleAttribute) || element->tagName() == "MARK"_s) {
                 insertedNodes.willRemoveNodePreservingChildren(element.get());
                 removeNodePreservingChildren(*element);
                 continue;

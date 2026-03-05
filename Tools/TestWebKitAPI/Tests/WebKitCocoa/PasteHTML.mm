@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -619,5 +619,22 @@ TEST(PasteHTML, PasteDarkTextOnWhiteBackgroundIntoDarkModeEditor)
 }
 
 #endif // ENABLE(DARK_MODE_CSS)
+
+// <rdar://157505942>
+TEST(PasteHTML, MarkElementDoesNotOverrideForegroundColor)
+{
+    auto webView = createWebViewWithCustomPasteboardDataSetting(true);
+    [webView synchronouslyLoadHTMLString:@"<body contenteditable></body>"];
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+
+    writeHTMLToPasteboard(@"<span style=\"color: rgb(219, 52, 242); background-color: rgba(219, 52, 242, 0.15);\"><mark>highlighted text</mark></span>");
+    [webView paste:nil];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"!!document.querySelector('mark')"].boolValue);
+
+    RetainPtr computedColor = [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.querySelector('span')).color"];
+    EXPECT_WK_STREQ(computedColor.get(), "rgb(219, 52, 242)");
+}
 
 #endif // PLATFORM(COCOA)

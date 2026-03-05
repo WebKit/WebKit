@@ -598,7 +598,7 @@ bool WebContentReader::readWebArchive(SharedBuffer& buffer)
     });
     if (!result)
         return false;
-    
+
     Ref frameDocument = *frame->document();
     if (!DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
         m_fragment = createFragmentFromMarkup(frameDocument, result->markup, result->mainResource->url().string(), { });
