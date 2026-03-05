@@ -8464,6 +8464,8 @@ webkit.org/b/306998 [ Debug ] inspector/dom/customElementState.html [ Skip ]
 webkit.org/b/306998 [ Debug ] inspector/injected-script/observable.html [ Skip ]
 webkit.org/b/306998 [ Debug ] inspector/page/filter-cookies-for-domain.html [ Skip ]
 
+webkit.org/b/309283 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-base-appearance-computed-style.html [ Failure ]
+
 webkit.org/b/307091 inspector/network/intercept-aborted-request.html [ Skip ]
 
 # Requires mousedown
