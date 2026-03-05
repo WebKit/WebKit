@@ -27,6 +27,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "CSSStyleSheet.h"
 #include <WebCore/Supplementable.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -40,6 +41,7 @@ namespace WebCore {
 
 class DOMWrapperWorld;
 class Document;
+class HTMLMediaElement;
 class JSDOMGlobalObject;
 class ScriptController;
 
@@ -53,6 +55,8 @@ public:
     using JSSetupFunction = Function<bool(JSDOMGlobalObject&, JSC::JSGlobalObject&, ScriptController&, DOMWrapperWorld&)>;
     bool setupAndCallMediaControlsJS(NOESCAPE const JSSetupFunction&);
     bool setupAndCallYouTubeQuirkJS(NOESCAPE const JSSetupFunction&);
+
+    Vector<Ref<CSSStyleSheet>>& ensureMediaControlsStyleSheets(const HTMLMediaElement&);
 
 private:
     bool isDocumentMediaElement() const final { return true; }
@@ -68,6 +72,7 @@ private:
 
     CheckedRef<Document> m_document;
     RefPtr<DOMWrapperWorld> m_isolatedWorld;
+    Vector<Ref<CSSStyleSheet>> m_cachedMediaControlsStyleSheets;
     bool m_haveParsedMediaControlsScript { false };
     bool m_haveParsedYouTubeQuirkScript { false };
 };

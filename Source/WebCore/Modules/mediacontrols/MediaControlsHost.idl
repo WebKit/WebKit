@@ -86,6 +86,9 @@ enum DeviceType {
     readonly attribute SourceType? sourceType;
 
     readonly attribute sequence<DOMString> shadowRootStyleSheets;
+    readonly attribute sequence<CSSStyleSheet> uaStyleSheets;
+    readonly attribute DOMString captionPreferencesStyleSheet;
+    readonly attribute sequence<DOMString> showingTextTrackStyleSheets;
     DOMString base64StringForIconNameAndType(DOMString iconName, DOMString iconType);
     [Conditional=MEDIA_CONTROLS_CONTEXT_MENUS, EnabledBySetting=MediaControlsContextMenusEnabled] boolean showMediaControlsContextMenu(HTMLElement target, JSON options, VoidCallback callback);
     [Conditional=MEDIA_CONTROLS_CONTEXT_MENUS, EnabledBySetting=MediaControlsContextMenusEnabled, ImplementedAs=mediaControlsContextMenuItemsForBindings] sequence<MediaControlsContextMenuItem> mediaControlsContextMenuItems(JSON options);

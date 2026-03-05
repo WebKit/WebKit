@@ -31,6 +31,7 @@
 
 #include "AbortSignal.h"
 #include "AudioTrackList.h"
+#include "CSSStyleSheet.h"
 #include "CaptionUserPreferences.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -38,6 +39,7 @@
 #include "ContextMenuController.h"
 #include "ContextMenuItem.h"
 #include "ContextMenuProvider.h"
+#include "DocumentMediaElement.h"
 #include "DocumentPage.h"
 #include "DocumentQuirks.h"
 #include "Event.h"
@@ -75,6 +77,7 @@
 #include <wtf/JSONValues.h>
 #include <wtf/Scope.h>
 #include <wtf/UUID.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -422,6 +425,40 @@ String MediaControlsHost::generateUUID()
 Vector<String, 2> MediaControlsHost::shadowRootStyleSheets() const
 {
     return RenderTheme::singleton().mediaControlsStyleSheets(protect(m_mediaElement));
+}
+
+Vector<Ref<CSSStyleSheet>> MediaControlsHost::uaStyleSheets() const
+{
+    Ref mediaElement = m_mediaElement.get();
+    return DocumentMediaElement::from(protect(mediaElement->document())).ensureMediaControlsStyleSheets(mediaElement);
+}
+
+String MediaControlsHost::captionPreferencesStyleSheet() const
+{
+    if (RefPtr page = protect(m_mediaElement)->document().page())
+        return page->captionUserPreferencesStyleSheet();
+    return String();
+}
+
+Vector<String> MediaControlsHost::showingTextTrackStyleSheets() const
+{
+    Vector<String> result;
+    RefPtr tracks = protect(m_mediaElement)->textTracks();
+    if (!tracks)
+        return result;
+    for (unsigned i = 0; i < tracks->length(); ++i) {
+        RefPtr track = tracks->item(i);
+        if (!track || track->mode() != TextTrack::Mode::Showing)
+            continue;
+        if (const auto& sheets = track->styleSheets()) {
+            StringBuilder builder;
+            for (const auto& css : *sheets)
+                builder.append(css);
+            if (!builder.isEmpty())
+                result.append(builder.toString());
+        }
+    }
+    return result;
 }
 
 String MediaControlsHost::base64StringForIconNameAndType(const String& iconName, const String& iconType)

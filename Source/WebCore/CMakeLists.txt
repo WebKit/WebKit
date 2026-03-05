@@ -2638,6 +2638,7 @@ set(MODERN_MEDIA_CONTROLS_SCRIPTS
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/adwaita-fullscreen-media-controls.js"
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/adwaita-layout-traits.js"
     "${WEBCORE_DIR}/Modules/modern-media-controls/media/media-controller-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/stylesheet-support.js"
     "${WEBCORE_DIR}/Modules/modern-media-controls/media/airplay-support.js"
     "${WEBCORE_DIR}/Modules/modern-media-controls/media/audio-support.js"
     "${WEBCORE_DIR}/Modules/modern-media-controls/media/close-support.js"

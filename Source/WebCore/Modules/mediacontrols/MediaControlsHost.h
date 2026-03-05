@@ -39,6 +39,7 @@ namespace WebCore {
 
 class AudioTrack;
 class AudioTrackList;
+class CSSStyleSheet;
 class ContextMenuItem;
 class DOMPromise;
 class Element;
@@ -130,6 +131,9 @@ public:
     static String generateUUID();
 
     Vector<String, 2> shadowRootStyleSheets() const;
+    Vector<Ref<CSSStyleSheet>> uaStyleSheets() const;
+    String captionPreferencesStyleSheet() const;
+    Vector<String> showingTextTrackStyleSheets() const;
     static String base64StringForIconNameAndType(const String& iconName, const String& iconType);
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)

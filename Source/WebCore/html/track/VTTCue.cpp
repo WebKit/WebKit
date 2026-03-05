@@ -39,12 +39,10 @@
 #include "CSSValuePool.h"
 #include "CommonAtomStrings.h"
 #include "DocumentFragment.h"
-#include "DocumentPage.h"
 #include "ElementInlines.h"
 #include "Event.h"
 #include "HTMLDivElement.h"
 #include "HTMLSpanElement.h"
-#include "HTMLStyleElement.h"
 #include "JSVTTCue.h"
 #include "Logging.h"
 #include "NodeTraversal.h"
@@ -968,22 +966,6 @@ void VTTCue::obtainCSSBoxes()
         displayTree->applyCSSPropertiesWithRegion();
     else
         displayTree->applyCSSProperties();
-
-    Ref document = displayTree->document();
-    if (RefPtr page = document->page()) {
-        auto cssString = page->captionUserPreferencesStyleSheet();
-        Ref style = HTMLStyleElement::create(HTMLNames::styleTag, document.get(), false);
-        style->setTextContent(WTF::move(cssString));
-        displayTree->appendChild(WTF::move(style));
-    }
-
-    if (const auto& styleSheets = track()->styleSheets()) {
-        for (const auto& cssString : *styleSheets) {
-            auto style = HTMLStyleElement::create(HTMLNames::styleTag, document.get(), false);
-            style->setTextContent(String { cssString });
-            displayTree->appendChild(WTF::move(style));
-        }
-    }
 }
 
 void VTTCue::markFutureAndPastNodes(ContainerNode* root, const MediaTime& previousTimestamp, const MediaTime& movieTime)

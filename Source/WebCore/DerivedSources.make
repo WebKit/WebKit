@@ -2307,6 +2307,7 @@ MODERN_MEDIA_CONTROLS_SCRIPTS = \
     $(WebCore)/Modules/modern-media-controls/controls/watchos-media-controls.js \
     $(WebCore)/Modules/modern-media-controls/controls/watchos-layout-traits.js \
     $(WebCore)/Modules/modern-media-controls/media/media-controller-support.js \
+    $(WebCore)/Modules/modern-media-controls/media/stylesheet-support.js \
     $(WebCore)/Modules/modern-media-controls/media/airplay-support.js \
     $(WebCore)/Modules/modern-media-controls/media/audio-support.js \
     $(WebCore)/Modules/modern-media-controls/media/close-support.js \

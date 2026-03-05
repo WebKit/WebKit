@@ -35,6 +35,7 @@
 #include "RenderTheme.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
+#include "StyleSheetContents.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/TopExceptionScope.h>
@@ -174,6 +175,23 @@ bool DocumentMediaElement::setupAndCallJS(NOESCAPE const JSSetupFunction& task, 
     return result;
 }
 
+Vector<Ref<CSSStyleSheet>>& DocumentMediaElement::ensureMediaControlsStyleSheets(const HTMLMediaElement& element)
+{
+    if (!m_cachedMediaControlsStyleSheets.isEmpty())
+        return m_cachedMediaControlsStyleSheets;
+
+    auto styleSheetTexts = RenderTheme::singleton().mediaControlsStyleSheets(element);
+    // Use UASheetMode so UA-gated values like display: ruby are not dropped.
+    CSSParserContext parserContext(UASheetMode);
+    Ref protectedDocument = document();
+    for (auto& cssText : styleSheetTexts) {
+        Ref contents = StyleSheetContents::create(parserContext);
+        contents->parseString(cssText);
+        m_cachedMediaControlsStyleSheets.append(CSSStyleSheet::createFromContents(WTF::move(contents), protectedDocument));
+    }
+    return m_cachedMediaControlsStyleSheets;
 }
+
+} // namespace WebCore
 
 #endif

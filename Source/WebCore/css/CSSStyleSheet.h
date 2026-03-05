@@ -68,6 +68,7 @@ public:
     static Ref<CSSStyleSheet> create(Ref<StyleSheetContents>&&, Node& ownerNode, const std::optional<bool>& isOriginClean = std::nullopt);
     static Ref<CSSStyleSheet> createInline(Ref<StyleSheetContents>&&, Element& owner, const TextPosition& startPosition);
     static ExceptionOr<Ref<CSSStyleSheet>> create(Document&, Init&&);
+    static Ref<CSSStyleSheet> createFromContents(Ref<StyleSheetContents>&&, Document&);
 
     virtual ~CSSStyleSheet();
 

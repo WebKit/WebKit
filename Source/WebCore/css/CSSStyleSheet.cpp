@@ -120,6 +120,11 @@ ExceptionOr<Ref<CSSStyleSheet>> CSSStyleSheet::create(Document& document, Init&&
     return adoptRef(*new CSSStyleSheet(StyleSheetContents::create(parserContext), document, WTF::move(init)));
 }
 
+Ref<CSSStyleSheet> CSSStyleSheet::createFromContents(Ref<StyleSheetContents>&& contents, Document& document)
+{
+    return adoptRef(*new CSSStyleSheet(WTF::move(contents), document, Init { }));
+}
+
 CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, CSSImportRule* ownerRule, std::optional<bool> isOriginClean)
     : m_contents(WTF::move(contents))
     , m_isOriginClean(isOriginClean)

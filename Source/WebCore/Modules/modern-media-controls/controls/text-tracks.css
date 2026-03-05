@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-video::-webkit-media-text-track-container {
+[useragentpart="-webkit-media-text-track-container"] {
     overflow: hidden;
     padding-bottom: 0;
     z-index: 0;
@@ -43,7 +43,7 @@ video::-webkit-media-text-track-container {
     flex: 1 1 auto;
 }
 
-video[controls]::-webkit-media-text-track-container.visible-controls-bar {
+:host(video[controls]) [useragentpart="-webkit-media-text-track-container"].visible-controls-bar {
     height: calc(100% - var(--inline-controls-bar-height) - var(--inline-controls-inside-margin));
 }
 

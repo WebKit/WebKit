@@ -9,8 +9,7 @@ description("Testing the <code>MediaController</code> has a single container for
 const media = document.querySelector("video");
 const shadowRoot = window.internals.shadowRoot(media);
 
-shouldBeGreaterThanOrEqual("shadowRoot.childElementCount", "2");
-shouldBeEqualToString("shadowRoot.firstElementChild.localName", "style");
+shouldBe("shadowRoot.childElementCount", "1");
 shouldBeEqualToString("shadowRoot.lastElementChild.localName", "div");
 shouldBeEqualToString("shadowRoot.lastElementChild.className", "media-controls-container");
 

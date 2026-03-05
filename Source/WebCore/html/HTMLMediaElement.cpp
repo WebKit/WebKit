@@ -7940,8 +7940,10 @@ void HTMLMediaElement::configureTextTrackDisplay(TextTrackVisibilityCheckType ch
 
 void HTMLMediaElement::updateTextTrackDisplay()
 {
-    if (ensureMediaControls())
+    if (ensureMediaControls()) {
+        callControllerJSMethod("captionStyleSheetsDidChange"_s);
         m_mediaControlsHost->updateTextTrackContainer();
+    }
 }
 
 void HTMLMediaElement::updateTextTrackRepresentationImageIfNeeded()
@@ -8111,6 +8113,8 @@ void HTMLMediaElement::captionPreferencesChanged()
 
     if (RefPtr mediaControlsHost = m_mediaControlsHost.get())
         mediaControlsHost->captionPreferencesChanged();
+
+    callControllerJSMethod("captionStyleSheetsDidChange"_s);
 
     if (RefPtr player = m_player)
         player->tracksChanged();
@@ -8942,6 +8946,38 @@ void HTMLMediaElement::setControllerJSProperty(ASCIILiteral propertyName, JSC::J
     });
 }
 
+void HTMLMediaElement::callControllerJSMethod(ASCIILiteral methodName)
+{
+    DocumentMediaElement::from(protect(document())).setupAndCallMediaControlsJS([this, methodName](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController&, DOMWrapperWorld&) {
+        auto& vm = globalObject.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        if (!m_mediaControlsHost)
+            return false;
+
+        auto controllerValue = m_mediaControlsHost->controllerWrapper().getValue();
+        RETURN_IF_EXCEPTION(scope, false);
+        auto* controllerObject = controllerValue.toObject(&lexicalGlobalObject);
+        RETURN_IF_EXCEPTION(scope, false);
+
+        auto functionValue = controllerObject->get(&lexicalGlobalObject, JSC::Identifier::fromString(vm, methodName));
+        if (scope.exception()) [[unlikely]]
+            return false;
+        if (functionValue.isUndefinedOrNull())
+            return false;
+
+        auto* function = functionValue.toObject(&lexicalGlobalObject);
+        RETURN_IF_EXCEPTION(scope, false);
+
+        auto callData = JSC::getCallData(function);
+        if (callData.type == JSC::CallData::Type::None)
+            return false;
+
+        JSC::call(&lexicalGlobalObject, function, callData, controllerObject, JSC::MarkedArgumentBuffer());
+        RETURN_IF_EXCEPTION(scope, false);
+        return true;
+    });
+}
+
 bool HTMLMediaElement::ensureMediaControls()
 {
     if (m_controlsState == ControlsState::Ready)
@@ -8981,8 +9017,10 @@ bool HTMLMediaElement::ensureMediaControls()
             auto mediaJSWrapper = toJS(&lexicalGlobalObject, &globalObject, *this);
             auto mediaControlsHostJSWrapper = toJS(&lexicalGlobalObject, &globalObject, *m_mediaControlsHost);
 
+            Ref shadowRoot = ensureUserAgentShadowRoot();
+
             JSC::MarkedArgumentBuffer argList;
-            argList.append(toJS(&lexicalGlobalObject, &globalObject, Ref { ensureUserAgentShadowRoot() }));
+            argList.append(toJS(&lexicalGlobalObject, &globalObject, shadowRoot));
             argList.append(mediaJSWrapper);
             argList.append(mediaControlsHostJSWrapper);
             ASSERT(!argList.hasOverflowed());

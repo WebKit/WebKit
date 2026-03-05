@@ -772,6 +772,7 @@ $(PROJECT_DIR)/Modules/modern-media-controls/media/close-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/controls-visibility-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/fullscreen-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/media-controller-support.js
+$(PROJECT_DIR)/Modules/modern-media-controls/media/stylesheet-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/media-controller.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/media-document-controller.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/metadata-support.js
