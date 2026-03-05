@@ -56,6 +56,7 @@ class Git(mocks.Subprocess):
         git_svn=False, remotes=None, editor=None,
         is_worktree=False,
     ):
+        self.notes = {}
         self.path = path
         self.default_branch = default_branch
         self.remote = remote or 'git@example.org:mock/{}'.format(os.path.basename(path))
