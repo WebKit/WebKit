@@ -34,6 +34,16 @@
 
 #define WPE_API __attribute__((visibility("default")))
 
+#ifndef __has_attribute
+#define __has_attribute(x) 0
+#endif
+
+#if __has_attribute(flag_enum)
+#define WPE_FLAG_ENUM __attribute__((flag_enum))
+#else
+#define WPE_FLAG_ENUM
+#endif
+
 /*
  * The G_DECLARE_DERIVABLE_TYPE macro creates an instance struct that
  * has ParentName as its only member; but to be able to use smart pointers

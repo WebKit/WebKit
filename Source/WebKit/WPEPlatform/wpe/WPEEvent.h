@@ -114,7 +114,7 @@ typedef enum {
  *
  * Flags to indicate the state of modifier keys and pointer buttons.
  */
-typedef enum {
+typedef enum WPE_FLAG_ENUM {
     WPE_MODIFIER_KEYBOARD_CONTROL = 1 << 0,
     WPE_MODIFIER_KEYBOARD_SHIFT = 1 << 1,
     WPE_MODIFIER_KEYBOARD_ALT = 1 << 2,

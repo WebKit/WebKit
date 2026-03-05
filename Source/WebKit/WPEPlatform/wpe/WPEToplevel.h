@@ -72,7 +72,7 @@ struct _WPEToplevelClass
  *
  * The current state of a #WPEToplevel.
  */
-typedef enum {
+typedef enum WPE_FLAG_ENUM {
     WPE_TOPLEVEL_STATE_NONE       = 0,
     WPE_TOPLEVEL_STATE_FULLSCREEN = (1 << 0),
     WPE_TOPLEVEL_STATE_MAXIMIZED  = (1 << 1),

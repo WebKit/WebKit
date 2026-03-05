@@ -50,7 +50,7 @@ G_BEGIN_DECLS
 #define WPE_TYPE_DISPLAY (wpe_display_get_type())
 WPE_DECLARE_DERIVABLE_TYPE (WPEDisplay, wpe_display, WPE, DISPLAY, GObject)
 
-typedef enum {
+typedef enum WPE_FLAG_ENUM {
     WPE_AVAILABLE_INPUT_DEVICE_NONE        = 0,
     WPE_AVAILABLE_INPUT_DEVICE_MOUSE       = (1 << 0),
     WPE_AVAILABLE_INPUT_DEVICE_KEYBOARD    = (1 << 1),

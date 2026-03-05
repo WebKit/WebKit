@@ -107,8 +107,7 @@ typedef enum
  * Some common sense is expected when using these flags - mixing
  * %WPE_INPUT_HINT_LOWERCASE with any of the uppercase hints makes no sense.
  */
-typedef enum
-{
+typedef enum WPE_FLAG_ENUM {
   WPE_INPUT_HINT_NONE                = 0,
   WPE_INPUT_HINT_SPELLCHECK          = 1 << 0,
   WPE_INPUT_HINT_NO_SPELLCHECK       = 1 << 1,
