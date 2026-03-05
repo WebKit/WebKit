@@ -89,7 +89,10 @@ void WorkerModuleScriptLoader::load(ScriptExecutionContext& context, URL&& sourc
     ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
     if (!context.shouldBypassMainWorldContentSecurityPolicy()) {
         CheckedPtr contentSecurityPolicy = context.contentSecurityPolicy();
-        if (fetchOptions.destination == FetchOptions::Destination::Script) {
+        // Worklets and scripts are governed by script-src; workers are governed by worker-src.
+        bool shouldEnforceScriptSrc = fetchOptions.destination == FetchOptions::Destination::Script
+            || isWorkletDestination(fetchOptions.destination);
+        if (shouldEnforceScriptSrc) {
             cspCheckFailed = contentSecurityPolicy && !contentSecurityPolicy->allowScriptFromSource(m_sourceURL);
             contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::EnforceScriptSrcDirective;
         } else {

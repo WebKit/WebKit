@@ -108,10 +108,15 @@ inline bool isNonSubresourceRequest(FetchOptions::Destination destination)
         || destination == FetchOptions::Destination::Worker;
 }
 
-inline bool isScriptLikeDestination(FetchOptions::Destination destination)
+inline bool isWorkletDestination(FetchOptions::Destination destination)
 {
     return destination == FetchOptions::Destination::Audioworklet
-        || destination == FetchOptions::Destination::Paintworklet
+        || destination == FetchOptions::Destination::Paintworklet;
+}
+
+inline bool isScriptLikeDestination(FetchOptions::Destination destination)
+{
+    return isWorkletDestination(destination)
         || destination == FetchOptions::Destination::Script
         || destination == FetchOptions::Destination::Serviceworker
         || destination == FetchOptions::Destination::Sharedworker

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WorkerOrWorkletGlobalScope.h"
 
+#include "ContentSecurityPolicy.h"
 #include "NoiseInjectionPolicy.h"
 #include "ScriptModuleLoader.h"
 #include "ServiceWorkerGlobalScope.h"
@@ -156,6 +157,11 @@ OptionSet<NoiseInjectionPolicy> WorkerOrWorkletGlobalScope::noiseInjectionPolici
 RefPtr<WorkerOrWorkletThread> WorkerOrWorkletGlobalScope::workerOrWorkletThread() const
 {
     return m_thread.get();
+}
+
+void WorkerOrWorkletGlobalScope::applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders)
+{
+    checkedContentSecurityPolicy()->didReceiveHeaders(contentSecurityPolicyResponseHeaders, String { });
 }
 
 } // namespace WebCore
