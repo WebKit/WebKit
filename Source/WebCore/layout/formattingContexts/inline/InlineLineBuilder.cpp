@@ -1418,8 +1418,16 @@ void LineBuilder::handleBlockContent(const InlineItem& blockItem)
 LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layoutRange, LineCandidate& lineCandidate)
 {
     auto result = applyLineBreakingOnCandidateInlineContent(layoutRange, lineCandidate);
-    if (!m_line.hasContent(Line::IncludeInsideListMarker::Yes))
+    if (!m_line.hasContentOrDecoration(Line::IncludeInsideListMarker::Yes)) {
+        if (m_line.hasLineSpanningInlineBoxOnly()) {
+            // FIXME: We should always move these empty lines after the margin,
+            // and then move them back retroactively once the block-end side margin collapsing is complete.
+            // At this stage, we don't yet know whether this margin will collapse into the root container's margin.
+            return result;
+        }
+        applyMarginInBlockDirectionIfNeeded(ShouldResetMarginValues::No);
         return result;
+    }
 
     if (!applyMarginInBlockDirectionIfNeeded(ShouldResetMarginValues::Yes) || floatingContext().isEmpty())
         return result;
