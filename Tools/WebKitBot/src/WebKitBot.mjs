@@ -57,6 +57,15 @@ function parseBugId(string)
     return null;
 }
 
+export function parsePRUrl(string)
+{
+    if (!string)
+        return null;
+
+    let match = string.match(/https:\/\/github\.com\/WebKit\/WebKit\/pull\/\d+/im);
+    return match ? match[0] : null;
+}
+
 function extractRevision(text)
 {
     let revisions = [];
@@ -156,6 +165,15 @@ e.g. \`dry-revert 260220 Ensure it is working after refactoring\`
 \`dry-revert 260220,260221 Ensure it is working after refactoring\``,
             operation: this.dryRevertCommand.bind(this),
         });
+        if (process.env.USE_GIT_WEBKIT_REVERT === "true") {
+            this._commands.set("revert-with-pr", {
+                description: "Creates a GitHub PR to revert the specified revision.",
+                usage: `\`revert-with-pr SVN_REVISION [SVN_REVISIONS] REASON\`
+e.g. \`revert-with-pr 260220 Ensure it is working after refactoring\`
+\`revert-with-pr 260220,260221 Ensure it is working after refactoring\``,
+                operation: this.revertWithPRCommand.bind(this),
+            });
+        }
         this._commands.set("ping", {
             description: "Responds with pong to check if WebKitBot is alive/working",
             usage: "`ping`",
@@ -215,7 +233,7 @@ e.g. \`dry-revert 260220 Ensure it is working after refactoring\`
         }, defaultPullPeriod);
     }
 
-    async revertCommand(event, command, args)
+    async revertCommand(event, command, args, usePR = false)
     {
         let {revisions, reason} = extractRevisionsAndReason(args);
 
@@ -239,14 +257,21 @@ e.g. \`dry-revert 260220 Ensure it is working after refactoring\`
                         return `<${escapeForSlackText(`https://commits.webkit.org/${revRepr}|${revRepr}`)}>`;
                     }).join(" ")} ...`,
                 });
-                let bugId = await this._taskQueue.postOrFailWhenExceedingLimit({
-                    command: "revert",
+                let result = await this._taskQueue.postOrFailWhenExceedingLimit({
+                    command: usePR ? "revert-with-pr" : "revert",
                     revisions,
                     reason,
                 });
+
+                let successMessage;
+                if (result.startsWith("https://github.com/"))
+                    successMessage = `<@${event.user}> Created revert PR: ${escapeForSlackText(result)}`;
+                else
+                    successMessage = `<@${event.user}> Created a revert patch https://webkit.org/b/${escapeForSlackText(result)}`;
+
                 await this._web.chat.postMessage({
                     channel: event.channel,
-                    text: `<@${event.user}> Created a revert patch https://webkit.org/b/${escapeForSlackText(bugId)}`,
+                    text: successMessage,
                 });
             } catch (error) {
                 console.error(error);
@@ -290,7 +315,6 @@ ${escapeForSlackText(files.join("\n"))}\`\`\``,
                             });
                             return;
                         }
-
                     }
                 }
                 await this._web.chat.postMessage({
@@ -329,10 +353,30 @@ ${escapeForSlackText(stderr)}\`\`\`` : ""),
             return;
         }
 
+        let message = `revisions = \`${escapeForSlackText(revisions.join(","))}\`, reason = \`${escapeForSlackText(reason)}\``;
+
+        if (process.env.USE_GIT_WEBKIT_REVERT === "true") {
+            const gitWebkitPath = path.resolve("BotWebKit", "Tools", "Scripts", "git-webkit");
+            let gitWebkitArgs = [
+                gitWebkitPath,
+                "revert",
+                ...revisions,
+                "--reason", reason,
+                "--pr",
+                "--draft",
+            ];
+            message += `\nRevert command: \`${escapeForSlackText(gitWebkitArgs.join(" "))}\``;
+        }
+
         await this._web.chat.postMessage({
             channel: event.channel,
-            text: `<@${event.user}> revisions = \`${escapeForSlackText(revisions.join(","))}\`, reason = \`${escapeForSlackText(reason)}\``,
+            text: `<@${event.user}> ${message}`,
         });
+    }
+
+    async revertWithPRCommand(event, command, args)
+    {
+        return this.revertCommand(event, command, args, true);
     }
 
     async pullCommand(event, command, args)
@@ -458,7 +502,72 @@ Type \`help COMMAND\` for help on my individual commands.`,
         await this.execInWebKitDirectorySimple("git", ["checkout", "origin/main", "-b", "main"]);
     }
 
-    async generateRevertingPatch(revisions, reason)
+    async generateRevertingPatchWithGitWebkit(revisions, reason, issueUrl = null)
+    {
+        dataLogLn("Reverting with git-webkit: ", revisions, reason);
+
+        if (reason.startsWith("-"))
+            throw new Error(`The revert reason may not begin with - ("${reason}")`);
+
+        await this.cleanUpWorkingCopy();
+
+        dataLogLn("Creating revert PR with git-webkit");
+        let results;
+        try {
+            const gitWebkitPath = path.resolve("BotWebKit", "Tools", "Scripts", "git-webkit");
+            var pythonPath = which.sync("python3");
+
+            let args = [
+                gitWebkitPath,
+                "revert",
+                ...revisions,
+                "--reason", reason,
+                "--pr",
+                "--draft",
+            ];
+
+            if (issueUrl)
+                args.push("--issue", issueUrl);
+
+            results = await execFileAsync(pythonPath, args, {
+                cwd: process.env.webkitWorkingDirectory,
+                env: {
+                    GIT_AUTHOR_NAME: "WebKit Revert Bot",
+                    GIT_AUTHOR_EMAIL: "revert-bot@webkit.org",
+                    GIT_COMMITTER_NAME: "WebKit Revert Bot",
+                    GIT_COMMITTER_EMAIL: "revert-bot@webkit.org",
+                    GIT_EDITOR: "true",
+                    GITHUB_COM_USERNAME: process.env.GITHUB_COM_USERNAME,
+                    GITHUB_COM_TOKEN: process.env.GITHUB_COM_TOKEN,
+                    BUGS_WEBKIT_ORG_USERNAME: process.env.BUGS_WEBKIT_ORG_USERNAME,
+                    BUGS_WEBKIT_ORG_PASSWORD: process.env.BUGS_WEBKIT_ORG_PASSWORD,
+                    http_proxy: process.env.http_proxy,
+                    https_proxy: process.env.http_proxy,
+                    PATH: process.env.PATH,
+                    HOME: process.env.HOME || "/root",
+                },
+                timeout: defaultTimeoutForRevert,
+                maxBuffer: 1024 * 1024 * 50,
+            });
+        } catch (error) {
+            dataLogLn(error);
+            let newError = new Error("git-webkit revert command failed");
+            newError.stderr = error.stderr;
+            newError.stdout = error.stdout;
+            throw newError;
+        }
+
+        let {stdout, stderr} = results;
+        dataLogLn(stdout);
+        dataLogLn(stderr);
+        let prUrl = parsePRUrl(stdout) || parsePRUrl(stderr);
+        if (prUrl)
+            return prUrl;
+
+        throw new Error("PR URL not found in git-webkit output");
+    }
+
+    async generateRevertingPatch(revisions, reason, issueUrl = null)
     {
         dataLogLn("Reverting ", revisions, reason);
         let revisionsArgument = revisions.join(" ");
@@ -526,6 +635,10 @@ Type \`help COMMAND\` for help on my individual commands.`,
         case "revert": {
             let {revisions, reason} = task;
             return this.generateRevertingPatch(revisions, reason);
+        }
+        case "revert-with-pr": {
+            let {revisions, reason} = task;
+            return this.generateRevertingPatchWithGitWebkit(revisions, reason);
         }
         case "pull":
             return this.cleanUpWorkingCopy();
