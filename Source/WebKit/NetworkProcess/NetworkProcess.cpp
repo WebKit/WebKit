@@ -3420,4 +3420,19 @@ void NetworkProcess::isEnhancedSecurityLink(const URL& url, CompletionHandler<vo
 }
 #endif
 
+void NetworkProcess::doesHostResolveToLoopbackAddress(const String& hostname, CompletionHandler<void(bool)>&& completionHandler)
+{
+    static uint64_t nextIdentifier { 0 };
+    WebCore::resolveDNS(hostname, ++nextIdentifier, [completionHandler = WTF::move(completionHandler)](WebCore::DNSAddressesOrError&& result) mutable {
+        if (!result.has_value()) {
+            completionHandler(false);
+            return;
+        }
+        bool resolvesToLoopback = std::ranges::all_of(*result, [](const WebCore::IPAddress& address) {
+            return address.isLoopback();
+        });
+        completionHandler(resolvesToLoopback);
+    });
+}
+
 } // namespace WebKit
