@@ -69,6 +69,20 @@ PropertyCascade::PropertyCascade(const PropertyCascade& parent, Origin maximumOr
     buildCascade();
 }
 
+// Constructs a cascade where all properties in the parent cascade have been reverted.
+PropertyCascade::PropertyCascade(const PropertyCascade& parent, RevertRuleTag)
+    : m_matchResult(parent.m_matchResult)
+    , m_includedProperties(normalProperties())
+    , m_maximumOrigin(parent.m_maximumOrigin)
+    , m_rollbackScope(parent.m_rollbackScope)
+    , m_maximumCascadeLayerPriorityForRollback(parent.m_maximumCascadeLayerPriorityForRollback)
+    , m_ruleRollbackDepth(parent.m_ruleRollbackDepth + 1) // Increment rollback depth.
+    , m_animationLayer(parent.m_animationLayer)
+    , m_positionTryFallbackProperties(parent.m_positionTryFallbackProperties)
+{
+    buildCascade();
+}
+
 PropertyCascade::~PropertyCascade() = default;
 
 PropertyCascade::AnimationLayer::AnimationLayer(const HashSet<AnimatableCSSProperty>& properties)
@@ -104,6 +118,8 @@ void PropertyCascade::buildCascade()
     }
 
     sortLogicalGroupPropertyIDs();
+
+    m_delayedRollbackProperties.clear();
 }
 
 void PropertyCascade::setPropertyInternal(Property& property, CSSPropertyID id, CSSValue& cssValue, const MatchedProperties& matchedProperties, Origin origin)
@@ -132,8 +148,10 @@ void PropertyCascade::setPropertyInternal(Property& property, CSSPropertyID id, 
 
 void PropertyCascade::set(CSSPropertyID id, CSSValue& cssValue, const MatchedProperties& matchedProperties, Origin origin)
 {
-    ASSERT(!CSSProperty::isInLogicalPropertyGroup(id));
-    ASSERT(id < firstLogicalGroupProperty);
+    if (id >= firstLogicalGroupProperty) {
+        setLogicalGroupProperty(id, cssValue, matchedProperties, origin);
+        return;
+    }
 
     ASSERT(id < m_propertyIsPresent.size());
     if (id == CSSPropertyCustom) {
@@ -169,6 +187,29 @@ void PropertyCascade::setLogicalGroupProperty(CSSPropertyID id, CSSValue& cssVal
     }
     setLogicalGroupPropertyIndex(id, ++m_lastIndexForLogicalGroup);
     setPropertyInternal(property, id, cssValue, matchedProperties, origin);
+}
+
+void PropertyCascade::setDelayingForRuleRollback(CSSPropertyID propertyID, CSSValue& cssValue, const MatchedProperties& matchedProperties, Origin origin)
+{
+    ASSERT(m_ruleRollbackDepth);
+
+    auto key = [&] -> std::pair<unsigned, AtomString>  {
+        if (propertyID == CSSPropertyCustom)
+            return { propertyID, downcast<CSSCustomPropertyValue>(cssValue).name() };
+        return { propertyID, emptyAtom() };
+    }();
+    auto& delayedValues = m_delayedRollbackProperties.ensure(key, [&] {
+        return Deque<DelayedRollbackProperty>();
+    }).iterator->value;
+
+    delayedValues.prepend(DelayedRollbackProperty { cssValue, matchedProperties, origin });
+
+    // Ignore the last m_ruleRollbackDepth values for each property.
+    if (delayedValues.size() <= m_ruleRollbackDepth)
+        return;
+
+    auto last = delayedValues.takeLast();
+    set(propertyID, last.value, last.properties, last.origin);
 }
 
 bool PropertyCascade::hasProperty(CSSPropertyID propertyID, const CSSValue& value)
@@ -287,10 +328,12 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Origi
         if (!shouldIncludeProperty)
             continue;
 
-        if (propertyID < firstLogicalGroupProperty)
-            set(propertyID, *current.value(), matchedProperties, origin);
-        else
-            setLogicalGroupProperty(propertyID, *current.value(), matchedProperties, origin);
+        if (m_ruleRollbackDepth) {
+            setDelayingForRuleRollback(propertyID, *current.value(), matchedProperties, origin);
+            continue;
+        }
+
+        set(propertyID, *current.value(), matchedProperties, origin);
     }
 
     return hasImportantProperties;

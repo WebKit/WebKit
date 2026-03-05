@@ -55,6 +55,7 @@ PASS Query custom property including unknown var() reference with matching fallb
 PASS Query custom property matching guaranteed-invalid values
 PASS Style query with revert keyword is false
 PASS Style query with revert-layer keyword is false
+PASS Style query with revert-rule keyword is false
 PASS Style query 'initial' matching
 PASS Style query matching negated value-less query against initial value
 PASS Style query 'initial' not matching

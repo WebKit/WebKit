@@ -255,6 +255,7 @@ private:
 
     const PropertyCascade::Property* m_currentProperty { nullptr };
     SelectorChecker::LinkMatchMask m_linkMatch { };
+    const PropertyCascade* m_currentRollbackCascade { nullptr };
 
     bool m_fontDirty { false };
     Vector<AtomString> m_registeredContentAttributes;

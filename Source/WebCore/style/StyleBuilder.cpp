@@ -369,19 +369,27 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     bool isUnset = valueID == CSSValueUnset;
     bool isRevert = valueID == CSSValueRevert;
     bool isRevertLayer = valueID == CSSValueRevertLayer;
-    bool isRevertOrRevertLayer = isRevert || isRevertLayer;
+    bool isRevertRule = valueID == CSSValueRevertRule;
+    bool isAnyRevert = isRevert || isRevertLayer || isRevertRule;
 
-    if (isRevertOrRevertLayer) {
-        // In @keyframes, 'revert-layer' rolls back the cascaded value to the author level.
+    if (isAnyRevert) {
+        // In @keyframes, 'revert-layer' and 'revert-rule' roll back the cascaded value to the author level.
         // We can just not apply the property in order to keep the value from the base style.
-        if (isRevertLayer && m_state->m_isBuildingKeyframeStyle)
+        if ((isRevertLayer || isRevertRule) && m_state->m_isBuildingKeyframeStyle)
             return;
 
-        auto* rollbackCascade = isRevert ? ensureRollbackCascadeForRevert() : ensureRollbackCascadeForRevertLayer();
+        auto* rollbackCascade = [&] -> const PropertyCascade* {
+            if (isRevert)
+                return ensureRollbackCascadeForRevert();
+            if (isRevertLayer)
+                return ensureRollbackCascadeForRevertLayer();
+            return ensureRollbackCascadeForRevertRule();
+        }();
 
         if (rollbackCascade) {
             // With the rollback cascade built, we need to obtain the property and apply it. If the property is
             // not present, then we behave like "unset." Otherwise we apply the property instead of our own.
+            SetForScope rollbackScope(m_state->m_currentRollbackCascade, rollbackCascade);
             if (applyRollbackCascadeProperty(*rollbackCascade, id, linkMatchMask))
                 return;
         }
@@ -397,7 +405,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
         return isInheritedProperty() ? ApplyValueType::Inherit : ApplyValueType::Initial;
     };
 
-    if (isUnset || isRevertOrRevertLayer)
+    if (isUnset || isAnyRevert)
         valueType = unsetValueType();
 
     if (!m_state->applyPropertyToRegularStyle() && !isValidVisitedLinkProperty(id)) {
@@ -426,10 +434,10 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
 
     BuilderGenerated::applyProperty(id, m_state, valueToApply.get(), valueType);
 
-    if (!isRevertOrRevertLayer)
+    if (!isAnyRevert)
         m_state->disableNativeAppearanceIfNeeded(id, cascadeOrigin);
 
-    if (!isUnset && !isRevertOrRevertLayer && m_state->isCurrentPropertyInvalidAtComputedValueTime()) {
+    if (!isUnset && !isAnyRevert && m_state->isCurrentPropertyInvalidAtComputedValueTime()) {
         // https://drafts.csswg.org/css-variables-2/#invalid-variables
         // A declaration can be invalid at computed-value time if...
         // When this happens, the computed value is one of the following...
@@ -476,6 +484,7 @@ void Builder::applyCustomProperty(const AtomString& name, Variant<Ref<const Styl
             ApplyValueType valueType = ApplyValueType::Value;
             bool isRevert = false;
             bool isRevertLayer = false;
+            bool isRevertRule = false;
 
             auto isInheritedProperty = [&] {
                 return registeredCustomProperty ? registeredCustomProperty->inherits : true;
@@ -505,19 +514,31 @@ void Builder::applyCustomProperty(const AtomString& name, Variant<Ref<const Styl
                 isRevertLayer = true;
                 valueType = unsetValueType();
                 break;
+            case CSSWideKeyword::RevertRule:
+                isRevertRule = true;
+                valueType = unsetValueType();
+                break;
             }
 
-            if (isRevert || isRevertLayer) {
-                // In @keyframes, 'revert-layer' rolls back the cascaded value to the author level.
+            bool isAnyRevert = isRevert || isRevertLayer || isRevertRule;
+            if (isAnyRevert) {
+                // In @keyframes, 'revert-layer' and 'revert-rule' roll back the cascaded value to the author level.
                 // We can just not apply the property in order to keep the value from the base style.
-                if (isRevertLayer && m_state->m_isBuildingKeyframeStyle)
+                if ((isRevertLayer || isRevertRule) && m_state->m_isBuildingKeyframeStyle)
                     return;
 
-                auto* rollbackCascade = isRevert ? ensureRollbackCascadeForRevert() : ensureRollbackCascadeForRevertLayer();
+                auto* rollbackCascade = [&] -> const PropertyCascade* {
+                    if (isRevert)
+                        return ensureRollbackCascadeForRevert();
+                    if (isRevertLayer)
+                        return ensureRollbackCascadeForRevertLayer();
+                    return ensureRollbackCascadeForRevertRule();
+                }();
 
                 if (rollbackCascade) {
                     // With the rollback cascade built, we need to obtain the property and apply it. If the property is
                     // not present, then we behave like "unset." Otherwise we apply the property instead of our own.
+                    SetForScope rollbackScope(m_state->m_currentRollbackCascade, rollbackCascade);
                     if (applyRollbackCascadeCustomProperty(*rollbackCascade, name))
                         return;
                 }
@@ -636,7 +657,8 @@ RefPtr<const CustomProperty> Builder::resolveCustomPropertyForContainerQueries(c
                 return isInherited ? inherit() : initial();
             case CSSWideKeyword::Revert:
             case CSSWideKeyword::RevertLayer:
-                // https://drafts.csswg.org/css-contain-3/#style-container
+            case CSSWideKeyword::RevertRule:
+                // https://drafts.csswg.org/css-conditional-5/#style-container
                 // "Cascade-dependent keywords, such as revert and revert-layer, are invalid as values in a style feature,
                 // and cause the container style query to be false."
                 return nullptr;
@@ -761,7 +783,8 @@ const PropertyCascade* Builder::ensureRollbackCascadeForRevert()
         return nullptr;
     }
 
-    auto key = makeRollbackCascadeKey(rollbackOrigin);
+    auto& parentCascade = parentCascadeForRollback();
+    auto key = makeRollbackCascadeKey(parentCascade, rollbackOrigin);
     return m_rollbackCascades.ensure(key, [&] {
         return makeUnique<const PropertyCascade>(m_cascade, rollbackOrigin);
     }).iterator->value.get();
@@ -780,16 +803,37 @@ const PropertyCascade* Builder::ensureRollbackCascadeForRevertLayer()
     if (property.fromStyleAttribute == FromStyleAttribute::No)
         --rollbackLayerPriority;
 
-    auto key = makeRollbackCascadeKey(property.origin, property.styleScopeOrdinal, rollbackLayerPriority);
+    auto& parentCascade = parentCascadeForRollback();
+    auto key = makeRollbackCascadeKey(parentCascade, property.origin, property.styleScopeOrdinal, rollbackLayerPriority);
+
     return m_rollbackCascades.ensure(key, [&] {
-        return makeUnique<const PropertyCascade>(m_cascade, property.origin, property.styleScopeOrdinal, rollbackLayerPriority);
+        return makeUnique<const PropertyCascade>(parentCascade, property.origin, property.styleScopeOrdinal, rollbackLayerPriority);
     }).iterator->value.get();
 }
 
-auto Builder::makeRollbackCascadeKey(PropertyCascade::Origin cascadeOrigin, ScopeOrdinal scopeOrdinal, CascadeLayerPriority cascadeLayerPriority) -> RollbackCascadeKey
+const PropertyCascade* Builder::ensureRollbackCascadeForRevertRule()
 {
-    static constexpr auto isNonEmptyValue = true;
-    return { static_cast<unsigned>(cascadeOrigin), static_cast<unsigned>(scopeOrdinal), static_cast<unsigned>(cascadeLayerPriority), isNonEmptyValue };
+    auto& parentCascade = parentCascadeForRollback();
+    auto key = makeRollbackCascadeKeyForRevertRule(parentCascade);
+
+    return m_rollbackCascades.ensure(key, [&] {
+        return makeUnique<const PropertyCascade>(parentCascade, PropertyCascade::RevertRule);
+    }).iterator->value.get();
+}
+
+const PropertyCascade& Builder::parentCascadeForRollback()
+{
+    return m_state->m_currentRollbackCascade ? *m_state->m_currentRollbackCascade : m_cascade;
+}
+
+auto Builder::makeRollbackCascadeKey(const PropertyCascade& parentCascade, PropertyCascade::Origin cascadeOrigin, ScopeOrdinal scopeOrdinal, CascadeLayerPriority cascadeLayerPriority) -> RollbackCascadeKey
+{
+    return { &parentCascade, static_cast<unsigned>(cascadeOrigin), static_cast<unsigned>(scopeOrdinal), static_cast<unsigned>(cascadeLayerPriority), false };
+}
+
+auto Builder::makeRollbackCascadeKeyForRevertRule(const PropertyCascade& parentCascade) -> RollbackCascadeKey
+{
+    return { &parentCascade, 0, 0, 0, true };
 }
 
 }

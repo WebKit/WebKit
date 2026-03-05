@@ -38,7 +38,8 @@ enum class CSSWideKeyword : uint8_t {
     Inherit,
     Unset,
     Revert,
-    RevertLayer
+    RevertLayer,
+    RevertRule
 };
 
 inline bool isCSSWideKeyword(CSSValueID valueID)
@@ -49,6 +50,7 @@ inline bool isCSSWideKeyword(CSSValueID valueID)
     case CSSValueUnset:
     case CSSValueRevert:
     case CSSValueRevertLayer:
+    case CSSValueRevertRule:
         return true;
     default:
         return false;
@@ -68,6 +70,8 @@ inline std::optional<CSSWideKeyword> parseCSSWideKeyword(CSSValueID valueID)
         return CSSWideKeyword::Revert;
     case CSSValueRevertLayer:
         return CSSWideKeyword::RevertLayer;
+    case CSSValueRevertRule:
+        return CSSWideKeyword::RevertRule;
     default:
         return { };
     }
@@ -86,6 +90,8 @@ inline CSSValueID toValueID(CSSWideKeyword keyword)
         return CSSValueRevert;
     case CSSWideKeyword::RevertLayer:
         return CSSValueRevertLayer;
+    case CSSWideKeyword::RevertRule:
+        return CSSValueRevertRule;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

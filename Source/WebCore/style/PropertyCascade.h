@@ -73,6 +73,8 @@ public:
 
     PropertyCascade(const MatchResult&, IncludedProperties&&, const HashSet<AnimatableCSSProperty>* = nullptr, const StyleProperties* positionTryFallbackProperties = nullptr);
     PropertyCascade(const PropertyCascade&, Origin, std::optional<ScopeOrdinal> rollbackScope = { }, std::optional<CascadeLayerPriority> maximumCascadeLayerPriorityForRollback = { });
+    enum RevertRuleTag { RevertRule };
+    PropertyCascade(const PropertyCascade&, RevertRuleTag);
 
     ~PropertyCascade();
 
@@ -119,6 +121,7 @@ private:
     void set(CSSPropertyID, CSSValue&, const MatchedProperties&, Origin);
     void setLogicalGroupProperty(CSSPropertyID, CSSValue&, const MatchedProperties&, Origin);
     static void NODELETE setPropertyInternal(Property&, CSSPropertyID, CSSValue&, const MatchedProperties&, Origin);
+    void setDelayingForRuleRollback(CSSPropertyID, CSSValue&, const MatchedProperties&, Origin);
 
     bool NODELETE hasProperty(CSSPropertyID, const CSSValue&);
     bool NODELETE mayOverrideExistingProperty(CSSPropertyID, const CSSValue&);
@@ -132,6 +135,7 @@ private:
     const Origin m_maximumOrigin;
     const std::optional<ScopeOrdinal> m_rollbackScope;
     const std::optional<CascadeLayerPriority> m_maximumCascadeLayerPriorityForRollback;
+    const unsigned m_ruleRollbackDepth { 0 };
 
     struct AnimationLayer {
         AnimationLayer(const HashSet<AnimatableCSSProperty>&);
@@ -144,6 +148,13 @@ private:
     };
     std::optional<AnimationLayer> m_animationLayer;
     std::optional<MatchedProperties> m_positionTryFallbackProperties;
+
+    struct DelayedRollbackProperty {
+        CSSValue& value;
+        const MatchedProperties& properties;
+        Origin origin;
+    };
+    HashMap<std::pair<unsigned, AtomString>, Deque<DelayedRollbackProperty>> m_delayedRollbackProperties;
 
     // The CSSPropertyID enum is sorted like this:
     // 1. CSSPropertyInvalid and CSSPropertyCustom.

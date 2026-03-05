@@ -83,9 +83,12 @@ private:
 
     const PropertyCascade* ensureRollbackCascadeForRevert();
     const PropertyCascade* ensureRollbackCascadeForRevertLayer();
+    const PropertyCascade* ensureRollbackCascadeForRevertRule();
+    const PropertyCascade& parentCascadeForRollback();
 
-    using RollbackCascadeKey = std::tuple<unsigned, unsigned, unsigned, bool>;
-    RollbackCascadeKey makeRollbackCascadeKey(PropertyCascade::Origin, ScopeOrdinal = ScopeOrdinal::Element, CascadeLayerPriority = 0);
+    using RollbackCascadeKey = std::tuple<const PropertyCascade*, unsigned, unsigned, unsigned, bool>;
+    RollbackCascadeKey makeRollbackCascadeKey(const PropertyCascade& parentCascade, PropertyCascade::Origin, ScopeOrdinal = ScopeOrdinal::Element, CascadeLayerPriority = 0);
+    RollbackCascadeKey makeRollbackCascadeKeyForRevertRule(const PropertyCascade& parentCascade);
 
     const PropertyCascade m_cascade;
     // Rollback cascades are build on demand to resolve 'revert' and 'revert-layer' keywords.

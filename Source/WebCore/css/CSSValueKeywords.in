@@ -6,6 +6,7 @@ initial
 unset
 revert
 revert-layer
+revert-rule
 
 //
 // CSS_PROP_OUTLINE_STYLE
