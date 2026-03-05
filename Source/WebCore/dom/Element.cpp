@@ -5660,6 +5660,16 @@ void Element::updateIdForDocument(HTMLDocument& document, const AtomString& oldI
     }
 }
 
+bool Element::shouldNotifyTextManipulationControllerIfDisplayed() const
+{
+    return hasStateFlag(StateFlag::ShouldNotifyTextManipulationControllerIfDisplayed);
+}
+
+void Element::clearShouldNotifyTextManipulationControllerIfDisplayed()
+{
+    clearStateFlag(StateFlag::ShouldNotifyTextManipulationControllerIfDisplayed);
+}
+
 void Element::willModifyAttribute(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue)
 {
     if (name == HTMLNames::idAttr)
@@ -5671,7 +5681,8 @@ void Element::willModifyAttribute(const QualifiedName& name, const AtomString& o
             if (treeScope().shouldCacheLabelsByForAttribute())
                 label->updateLabel(treeScope(), oldValue, newValue);
         }
-    }
+    } else if (name == HTMLNames::hiddenAttr)
+        setStateFlag(StateFlag::ShouldNotifyTextManipulationControllerIfDisplayed);
 
     if (auto recipients = MutationObserverInterestGroup::createForAttributesMutation(*this, name))
         recipients->enqueueMutationRecord(MutationRecord::createAttributes(*this, name, oldValue));

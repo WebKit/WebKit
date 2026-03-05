@@ -319,6 +319,7 @@ TEST(TextManipulation, StartTextManipulationFindNewlyDisplayedParagraph)
             "<span class='hidden'>Kit</span>"
         "</div>"
         "<div class='hidden'>hey</div>"
+        "<section id='section' hidden='until-found'>there</section>"
         "</body></html>"];
 
     done = false;
@@ -344,7 +345,7 @@ TEST(TextManipulation, StartTextManipulationFindNewlyDisplayedParagraph)
     EXPECT_STREQ("Web", items[1].tokens[0].content.UTF8String);
     EXPECT_STREQ("Kit", items[1].tokens[1].content.UTF8String);
 
-    // This has to happen separately in order to have a deterministic ordering.
+    // These need to happen separately in order to have a deterministic ordering.
     done = false;
     delegate.get().itemCallback = ^(_WKTextManipulationItem *item) {
         done = true;
@@ -355,6 +356,14 @@ TEST(TextManipulation, StartTextManipulationFindNewlyDisplayedParagraph)
     EXPECT_EQ(items.count, 3UL);
     EXPECT_EQ(items[2].tokens.count, 1UL);
     EXPECT_STREQ("hey", items[2].tokens[0].content.UTF8String);
+
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"document.getElementById('section').removeAttribute('hidden');"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_EQ(items.count, 4UL);
+    EXPECT_EQ(items[3].tokens.count, 1UL);
+    EXPECT_STREQ("there", items[3].tokens[0].content.UTF8String);
 }
 
 TEST(TextManipulation, StartTextManipulationFindSameParagraphWithNewContent)

@@ -107,6 +107,7 @@
 #include "StyleScope.h"
 #include "Styleable.h"
 #include "TextAutoSizing.h"
+#include "TextManipulationController.h"
 #include "ViewTransition.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StackStats.h>
@@ -1067,6 +1068,13 @@ inline void RenderCounter::rendererStyleChanged(RenderElement& renderer, const R
 
 void RenderElement::styleDidChange(Style::Difference diff, const RenderStyle* oldStyle)
 {
+    RefPtr protectedElement = element();
+    if (protectedElement && protectedElement->shouldNotifyTextManipulationControllerIfDisplayed() && !isSkippedContent()) {
+        protectedElement->clearShouldNotifyTextManipulationControllerIfDisplayed();
+        if (auto* textManipulationController = document().textManipulationControllerIfExists())
+            textManipulationController->didAddOrCreateRendererForNode(*protectedElement);
+    }
+
     auto registerImages = [this](auto* style, auto* oldStyle) {
         if (!style && !oldStyle)
             return;
