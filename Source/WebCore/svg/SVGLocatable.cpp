@@ -93,9 +93,8 @@ AffineTransform SVGLocatable::computeCTM(SVGElement* element, CTMScope mode, Sty
     if (styleUpdateStrategy == AllowStyleUpdate)
         protect(element->document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, element);
 
-    RefPtr stopAtElement = mode == CTMScope::NearestViewportScope ? nearestViewportElement(element) : nullptr;
-
     if (element->document().settings().layerBasedSVGEngineEnabled()) {
+        RefPtr stopAtElement = mode == CTMScope::NearestViewportScope ? nearestViewportElement(element) : nullptr;
         // Rudimentary support for operations on "detached" elements.
         CheckedPtr renderer = dynamicDowncast<RenderLayerModelObject>(element->renderer());
         if (!renderer)
@@ -106,7 +105,15 @@ AffineTransform SVGLocatable::computeCTM(SVGElement* element, CTMScope mode, Sty
         return SVGLayerTransformComputation(*renderer).computeAccumulatedTransform(stopAtRenderer.get(), trackingMode);
     }
 
+    return computeCTMLegacy(element, mode);
+}
+
+AffineTransform SVGLocatable::computeCTMLegacy(SVGElement* element, CTMScope mode)
+{
+    // FIXME: may be nice to support this through SVGLayerTransformComputation for LBSE.
     AffineTransform ctm;
+
+    RefPtr stopAtElement = mode == CTMScope::NearestViewportScope ? nearestViewportElement(element) : nullptr;
 
     for (RefPtr<Element> currentElement = element; currentElement; currentElement = currentElement->parentOrShadowHostElement()) {
         RefPtr svgElement = dynamicDowncast<SVGElement>(*currentElement);

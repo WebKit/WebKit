@@ -46,6 +46,7 @@ public:
 
     Ref<SVGMatrix> getScreenCTMForBindings();
     AffineTransform getScreenCTM(StyleUpdateStrategy = AllowStyleUpdate) override;
+    AffineTransform getNonScalingStrokeCTM();
 
     AffineTransform localCoordinateSpaceTransform(CTMScope mode) const override { return SVGTransformable::localCoordinateSpaceTransform(mode); }
     AffineTransform animatedLocalTransform() const override;

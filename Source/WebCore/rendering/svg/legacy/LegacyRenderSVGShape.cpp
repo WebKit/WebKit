@@ -198,7 +198,7 @@ bool LegacyRenderSVGShape::setupNonScalingStrokeContext(AffineTransform& strokeT
 
 AffineTransform LegacyRenderSVGShape::nonScalingStrokeTransform() const
 {
-    return protect(graphicsElement())->getScreenCTM(SVGLocatable::DisallowStyleUpdate);
+    return protect(graphicsElement())->getNonScalingStrokeCTM();
 }
 
 void LegacyRenderSVGShape::fillShape(const RenderStyle& style, GraphicsContext& originalContext)

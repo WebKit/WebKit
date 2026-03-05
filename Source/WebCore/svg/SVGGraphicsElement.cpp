@@ -84,6 +84,11 @@ AffineTransform SVGGraphicsElement::getScreenCTM(StyleUpdateStrategy styleUpdate
     return SVGLocatable::computeCTM(this, CTMScope::ScreenScope, styleUpdateStrategy);
 }
 
+AffineTransform SVGGraphicsElement::getNonScalingStrokeCTM()
+{
+    return SVGLocatable::computeCTMLegacy(this, CTMScope::ScreenScope);
+}
+
 AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 {
     // LBSE handles transforms via RenderLayer, no need to handle CSS transforms here.

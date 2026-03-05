@@ -54,6 +54,7 @@ protected:
 
     static FloatRect getBBox(SVGElement*, StyleUpdateStrategy);
     static AffineTransform computeCTM(SVGElement*, CTMScope, StyleUpdateStrategy);
+    static AffineTransform computeCTMLegacy(SVGElement*, CTMScope);
 };
 
 } // namespace WebCore
