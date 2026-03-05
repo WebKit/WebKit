@@ -61,6 +61,7 @@ private:
 
     float blendAnimatedDimensonalFloat(float from, float to, FloatBlendMode, float progress);
     FloatPoint blendAnimatedFloatPoint(const FloatPoint& from, const FloatPoint& to, float progress);
+    FloatPoint blendAnimatedFloatPointSameCoordinates(const FloatPoint& fromPoint, const FloatPoint& toPoint, float progress);
 
     SingleThreadWeakRef<SVGPathSource> m_fromSource;
     SingleThreadWeakRef<SVGPathSource> m_toSource;
