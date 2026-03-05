@@ -56,11 +56,6 @@ InlineLayoutUnit InlineFormattingUtils::logicalTopForNextLine(const LineLayoutRe
         auto logicalTopCandidateByContent = [&] {
             // Normally the next line's logical top is the previous line's logical bottom, but when the line ends
             // with the clear property set, the next line needs to clear the existing floats.
-            if (!lineLayoutResult.hasContentfulInFlowContent() && lineLayoutResult.floatContent.placedFloats.isEmpty()) {
-                // We didn't manage to put any contentful inflow box on the last line, so next line should just be where the last one was.
-                // Normally line's bottom matches initial top (no content!) but block-in-inline's margin may push the line down.
-                return lineLayoutResult.lineGeometry.initialLogicalTopLeft.y();
-            }
             if (!lineLayoutResult.hasContentfulInlineContent())
                 return lineLogicalRect.bottom();
             auto& lastRunLayoutBox = lineLayoutResult.runs.last().layoutBox();
