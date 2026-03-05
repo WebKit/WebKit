@@ -187,7 +187,7 @@ static void interpolateCustomProperty(const AtomString& customProperty, RenderSt
     if (!fromValue || !toValue)
         return;
 
-    bool isInherited = client.document().customPropertyRegistry().isInherited(customProperty);
+    bool isInherited = client.document()->customPropertyRegistry().isInherited(customProperty);
     destination.setCustomPropertyValue(interpolatedCustomProperty(from, to, *fromValue, *toValue, context), isInherited);
 }
 

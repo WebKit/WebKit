@@ -146,7 +146,7 @@ public:
 
     void willChangeRenderer();
 
-    Document& document() const final { return m_document; }
+    Document* document() const final { return m_document; }
     RenderElement* renderer() const final;
     const RenderStyle& currentStyle() const final;
     bool triggersStackingContext() const { return m_triggersStackingContext; }
@@ -198,7 +198,7 @@ public:
 #endif
 
 private:
-    KeyframeEffect(Document&, Element*, const std::optional<Style::PseudoElementIdentifier>&);
+    KeyframeEffect(Document*, Element*, const std::optional<Style::PseudoElementIdentifier>&);
     ~KeyframeEffect();
 
     enum class AcceleratedAction : uint8_t { Play, Pause, UpdateProperties, TransformChange, Stop };
@@ -299,7 +299,7 @@ private:
     const TimingFunction* timingFunctionForKeyframe(const KeyframeInterpolation::Keyframe&) const final;
     bool isPropertyAdditiveOrCumulative(KeyframeInterpolation::Property) const final;
 
-    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 
     BlendingKeyframes m_blendingKeyframes { };
     HashSet<AnimatableCSSProperty> m_animatedProperties;
